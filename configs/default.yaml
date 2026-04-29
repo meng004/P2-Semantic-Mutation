@@ -1,0 +1,28 @@
+experiment:
+  K_eq: 1000              # E2 sampling count
+  N: 20                   # statistical repetition count
+  alpha: 0.05             # Wilcoxon significance
+  alpha_FDR: 0.05         # Benjamini-Hochberg FDR
+  bootstrap_iterations: 1000
+
+llm:
+  generator:
+    provider: anthropic
+    model: claude-opus-4-5
+    temperature: 0.3
+    seed: 42
+  reviewer:
+    provider: openai
+    model: gpt-4o
+    temperature: 0.0
+    seed: 42
+
+paths:
+  put_root: src/p2/puts
+  mutants: data/mutants
+  results: data/results
+  lrca: data/lrca
+
+p1_avp:
+  commit_hash: "TBD-pin-after-P1-arxiv-publish"
+  source_path: third_party/p1_avp
