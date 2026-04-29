@@ -13,7 +13,7 @@ def generate_mutants(
     Returns list of unified-diff strings. Filtering of malformed outputs
     is the caller's responsibility (see mutators.dual_blind_review).
     """
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
     diffs: List[str] = []
     for i in range(n_candidates):
         msg = client.messages.create(
