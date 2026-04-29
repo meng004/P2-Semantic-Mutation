@@ -1,0 +1,18 @@
+You are an expert in scientific computing. Inject the following semantic failure
+into the program below — produce a syntactically correct, executable mutant.
+
+PUT NAME: {put_name}
+SEMANTIC FAILURE INTENT: {mut_intent}
+
+REQUIREMENTS:
+- Output ONLY a unified diff (single contiguous hunk, < 10 lines)
+- Mutant MUST be syntactically valid Python and executable on legal inputs
+- DO NOT mention or use any metamorphic relation knowledge
+- DO NOT explain or comment
+
+PUT SOURCE:
+```python
+{put_source}
+```
+
+OUTPUT (unified diff only):
