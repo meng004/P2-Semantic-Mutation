@@ -1,0 +1,10 @@
+ conc    n   ok  fail    time   rps  first-fail
+    5   30   30     0   12.9s  2.33  None
+   10   30   30     0    8.6s  3.48  None
+   20   30   30     0    8.3s   3.6  None
+   30   30   30     0    6.1s  4.94  None
+   50   30   30     0    3.8s  7.91  None
+  >>> all levels OK, recommend concurrency = 30
+
+Recommended Semaphore limit: 30
+RECOMMENDED_SEMAPHORE_LIMIT=30
