@@ -1,41 +1,32 @@
-"""B2: MCMC Metropolis-Hastings sampler.
+"""B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).
 
-Library: numpy.random (numpy 2.4.4) — classic MH algorithm.
+Library: numpy.random (numpy 2.4.4)
 URL: https://numpy.org/doc/stable/reference/random/index.html
 
-Reference: Metropolis et al. (1953), Hastings (1970).
-Algorithm: https://en.wikipedia.org/wiki/Metropolis–Hastings_algorithm
-
-program(x) where x = [x0, log_sigma] (initial state, log of proposal std).
-Target distribution: standard normal N(0,1).
-Fixed: n_steps=2000, seed derived from x0 for determinism.
-Returns: sample mean of post-warmup chain (warmup = 500 steps).
+program(x) where x ∈ [0,1] scalar.
+x → target mean μ = 4x − 2 (range [−2, 2]).
+Runs MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.
+Returns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.
 """
 import numpy as np
 
 _N_STEPS = 2000
 _WARMUP = 500
+_PROPOSAL_STD = 0.5
+_SEED = 42
 
 
-def _log_target(z: float) -> float:
-    return -0.5 * z**2  # log N(0,1) up to constant
-
-
-def program(x: np.ndarray) -> float:
-    """Run Metropolis-Hastings from x0 with proposal std exp(log_sigma); return chain mean."""
-    x = np.asarray(x, dtype=float)
-    x0, log_sigma = float(x[0]), float(x[1])
-    proposal_std = np.exp(np.clip(log_sigma, -5.0, 5.0))
-    rng = np.random.default_rng(seed=int(abs(x0 * 1e6)) % (2**31))
-    current = x0
-    log_p_current = _log_target(current)
+def program(x) -> float:
+    x = float(x)
+    mu = 4.0 * x - 2.0
+    rng = np.random.default_rng(_SEED)
+    current = 0.0
     samples = []
     for i in range(_N_STEPS):
-        proposal = current + proposal_std * rng.standard_normal()
-        log_p_proposal = _log_target(proposal)
-        if np.log(rng.uniform()) < log_p_proposal - log_p_current:
+        proposal = current + _PROPOSAL_STD * rng.standard_normal()
+        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)
+        if np.log(rng.uniform()) < log_ratio:
             current = proposal
-            log_p_current = log_p_proposal
         if i >= _WARMUP:
             samples.append(current)
     return float(np.mean(samples))
