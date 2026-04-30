@@ -1,23 +1,19 @@
-"""B3: Monte Carlo integration — naive MC estimate of ∫_a^b sin(t)² dt.
+"""B3: Monte Carlo integration — ∫₀¹ (x + t²) dt = x + 1/3 (scalar x∈[0,1] interface).
 
-Library: numpy.random (numpy 2.4.4).
+Library: numpy.random (numpy 2.4.4)
 URL: https://numpy.org/doc/stable/reference/random/index.html
 
-True value: (b-a)/2 - (sin(2b) - sin(2a))/4.
-
-program(x) where x = [a, b, log_n] (integration bounds + log10 sample count).
-Returns MC estimate using n = round(10^log_n) samples with seed=42.
+program(x) where x ∈ [0,1] scalar (constant term in integrand).
+Returns MC estimate of ∫₀¹ (x + t²) dt ≈ x + 1/3 using n=5000 samples (seed=42).
+Conservation (MP1): ∫(x+c + t²) - ∫(x + t²) = c (linearity of integration).
 """
 import numpy as np
 
+_N_SAMPLES = 5000
 _SEED = 42
+_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)
 
 
-def program(x: np.ndarray) -> float:
-    """Estimate ∫_a^b sin(t)² dt via Monte Carlo; return scalar estimate."""
-    x = np.asarray(x, dtype=float)
-    a, b, log_n = float(x[0]), float(x[1]), float(x[2])
-    n = max(1, int(round(10.0 ** np.clip(log_n, 1.0, 6.0))))
-    rng = np.random.default_rng(_SEED)
-    t = rng.uniform(a, b, size=n)
-    return float((b - a) * np.mean(np.sin(t) ** 2))
+def program(x) -> float:
+    x = float(x)
+    return float(np.mean(x + _rng_samples**2))
