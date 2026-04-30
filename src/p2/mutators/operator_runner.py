@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from p2.mutators.async_llm import AsyncSemaphoreClient, async_chat_completion
+from p2.mutators.claude_cli import ClaudeCLIClient, claude_cli_chat
 from p2.mutators.operator_registry import MutationOperator
 from p2.mutators.validation import validate_mutant
 
@@ -94,7 +95,7 @@ async def run_operator_trial(
     put_source: str,
     put_name: str,
     scientific_domain: str,
-    generator_client: Optional[AsyncSemaphoreClient],
+    generator_client,  # AsyncSemaphoreClient | ClaudeCLIClient
     reviewer_client: Optional[AsyncSemaphoreClient],
     n_attempts: int = 10,
     generator_model: str = "claude-opus-4-6",
@@ -131,11 +132,16 @@ async def run_operator_trial(
               "If you cannot find a structurally different implementation, repeat "
               "the prior code verbatim rather than mutate the semantics."
         )
-    raw_code = await async_chat_completion(
-        client=generator_client, model=generator_model,
-        messages=[{"role": "user", "content": gen_prompt}],
-        temperature=temperature, max_tokens=1500,
-    )
+    if isinstance(generator_client, ClaudeCLIClient):
+        raw_code = await claude_cli_chat(
+            client=generator_client, prompt=gen_prompt, model=generator_model,
+        )
+    else:
+        raw_code = await async_chat_completion(
+            client=generator_client, model=generator_model,
+            messages=[{"role": "user", "content": gen_prompt}],
+            temperature=temperature, max_tokens=1500,
+        )
     code = _strip_fences(raw_code)
 
     # -- 2. mechanical V1-V4 (used as a hint for the reviewer)
@@ -176,11 +182,13 @@ async def run_operator_K_times(
     put_source: str,
     put_name: str,
     scientific_domain: str,
-    generator_client: AsyncSemaphoreClient,
+    generator_client,  # AsyncSemaphoreClient | ClaudeCLIClient
     reviewer_client: AsyncSemaphoreClient,
     temperature: float = 0.5,
     start_idx: int = 0,
     prior_history: int = 4,
+    generator_model: str = "claude-opus-4-6",
+    reviewer_model: str = "gpt-5.4",
 ) -> List[OperatorTrialResult]:
     """Run K trials for one operator sequentially with prior-candidate context.
 
@@ -204,6 +212,7 @@ async def run_operator_K_times(
             generator_client=generator_client, reviewer_client=reviewer_client,
             n_attempts=K + start_idx, temperature=temperature,
             prior_codes=history[-prior_history:] if history else None,
+            generator_model=generator_model, reviewer_model=reviewer_model,
         )
         results.append(r)
         if r.code and not r.code.startswith("# GENERATION_ERROR"):

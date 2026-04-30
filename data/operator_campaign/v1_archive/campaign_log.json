@@ -1,6 +1,6 @@
 {
-  "elapsed_s": 998.5,
-  "concurrency": 20,
+  "elapsed_s": 0,
+  "concurrency": 30,
   "K_default": 10,
   "temperature": 0.5,
   "summaries": [
@@ -9,7 +9,7 @@
       "put": "a1",
       "category": "CE",
       "K": 20,
-      "confirmed": 5,
+      "confirmed": 20,
       "is_key": true
     },
     {
@@ -17,7 +17,7 @@
       "put": "a1",
       "category": "OS",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -25,7 +25,7 @@
       "put": "a1",
       "category": "SI",
       "K": 10,
-      "confirmed": 4,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -33,7 +33,7 @@
       "put": "a1",
       "category": "HP",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -41,7 +41,7 @@
       "put": "a2",
       "category": "OS",
       "K": 20,
-      "confirmed": 5,
+      "confirmed": 2,
       "is_key": true
     },
     {
@@ -49,7 +49,7 @@
       "put": "a2",
       "category": "CE",
       "K": 10,
-      "confirmed": 6,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -57,7 +57,7 @@
       "put": "a2",
       "category": "SI",
       "K": 10,
-      "confirmed": 2,
+      "confirmed": 5,
       "is_key": false
     },
     {
@@ -65,7 +65,7 @@
       "put": "a3",
       "category": "CE",
       "K": 20,
-      "confirmed": 3,
+      "confirmed": 6,
       "is_key": true
     },
     {
@@ -73,7 +73,7 @@
       "put": "a3",
       "category": "OS",
       "K": 10,
-      "confirmed": 4,
+      "confirmed": 9,
       "is_key": false
     },
     {
@@ -81,7 +81,7 @@
       "put": "a3",
       "category": "SI",
       "K": 10,
-      "confirmed": 1,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -89,7 +89,7 @@
       "put": "b1",
       "category": "OS",
       "K": 20,
-      "confirmed": 6,
+      "confirmed": 20,
       "is_key": true
     },
     {
@@ -97,7 +97,7 @@
       "put": "b1",
       "category": "CE",
       "K": 10,
-      "confirmed": 4,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -105,7 +105,7 @@
       "put": "b1",
       "category": "HP",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -113,7 +113,7 @@
       "put": "b2",
       "category": "HP",
       "K": 20,
-      "confirmed": 5,
+      "confirmed": 20,
       "is_key": true
     },
     {
@@ -121,7 +121,7 @@
       "put": "b2",
       "category": "CF",
       "K": 10,
-      "confirmed": 2,
+      "confirmed": 1,
       "is_key": false
     },
     {
@@ -129,7 +129,7 @@
       "put": "b2",
       "category": "CE",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -137,7 +137,7 @@
       "put": "b3",
       "category": "OS",
       "K": 20,
-      "confirmed": 4,
+      "confirmed": 20,
       "is_key": true
     },
     {
@@ -145,7 +145,7 @@
       "put": "b3",
       "category": "CE",
       "K": 10,
-      "confirmed": 4,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -153,7 +153,7 @@
       "put": "b3",
       "category": "SI",
       "K": 10,
-      "confirmed": 2,
+      "confirmed": 0,
       "is_key": false
     },
     {
@@ -161,7 +161,7 @@
       "put": "c1",
       "category": "HP",
       "K": 20,
-      "confirmed": 5,
+      "confirmed": 20,
       "is_key": true
     },
     {
@@ -169,7 +169,7 @@
       "put": "c1",
       "category": "TF",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 7,
       "is_key": false
     },
     {
@@ -185,7 +185,7 @@
       "put": "c2",
       "category": "HP",
       "K": 20,
-      "confirmed": 5,
+      "confirmed": 20,
       "is_key": true
     },
     {
@@ -193,7 +193,7 @@
       "put": "c2",
       "category": "TF",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -225,7 +225,7 @@
       "put": "c3",
       "category": "CE",
       "K": 10,
-      "confirmed": 3,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -233,7 +233,7 @@
       "put": "d1",
       "category": "TF",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -249,7 +249,7 @@
       "put": "d1",
       "category": "SI",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -257,7 +257,7 @@
       "put": "d2",
       "category": "HP",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -265,7 +265,7 @@
       "put": "d2",
       "category": "TF",
       "K": 10,
-      "confirmed": 4,
+      "confirmed": 7,
       "is_key": false
     },
     {
@@ -273,7 +273,7 @@
       "put": "d2",
       "category": "OS",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -289,7 +289,7 @@
       "put": "d3",
       "category": "TF",
       "K": 10,
-      "confirmed": 5,
+      "confirmed": 10,
       "is_key": false
     },
     {
@@ -297,7 +297,7 @@
       "put": "d3",
       "category": "SI",
       "K": 10,
-      "confirmed": 4,
+      "confirmed": 0,
       "is_key": false
     }
   ]

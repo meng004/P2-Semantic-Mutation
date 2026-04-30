@@ -25,6 +25,7 @@ load_dotenv(ROOT / ".env")
 
 from p2.mutators.operator_registry import OPERATORS, MutationOperator
 from p2.mutators.async_llm import AsyncSemaphoreClient
+from p2.mutators.claude_cli import ClaudeCLIClient
 from p2.mutators.operator_runner import run_operator_K_times
 
 PUTS_DIR = ROOT / "src" / "p2" / "puts"
@@ -62,8 +63,9 @@ def load_put_source(put_id: str) -> str:
 
 
 async def run_one_operator(
-    op: MutationOperator, K: int, gen_client: AsyncSemaphoreClient,
+    op: MutationOperator, K: int, gen_client,
     rev_client: AsyncSemaphoreClient, temperature: float,
+    generator_model: str,
 ) -> dict:
     put_source = load_put_source(op.put)
     domain = DOMAINS[op.put]
@@ -73,6 +75,7 @@ async def run_one_operator(
         scientific_domain=domain,
         generator_client=gen_client, reviewer_client=rev_client,
         temperature=temperature, start_idx=0,
+        generator_model=generator_model,
     )
 
     if op.is_key:
@@ -81,6 +84,7 @@ async def run_one_operator(
             scientific_domain=domain,
             generator_client=gen_client, reviewer_client=rev_client,
             temperature=temperature, start_idx=K,
+            generator_model=generator_model,
         )
         results = results + extra
 
@@ -104,14 +108,26 @@ async def run_one_operator(
 
 async def main_async(args):
     sem_n = args.concurrency or read_semaphore_recommendation()
-    print(f"== concurrency limit: {sem_n} ==")
+    print(f"== reviewer concurrency limit: {sem_n} ==")
+    print(f"== generator backend: {args.generator} ==")
 
-    gen_client = AsyncSemaphoreClient(
+    if args.generator == "claude-cli":
+        gen_client = ClaudeCLIClient(concurrency=args.cli_concurrency)
+        print(f"== generator (Opus subscription via claude CLI): "
+              f"concurrency={args.cli_concurrency}, model={args.generator_model} ==")
+    else:
+        gen_client = AsyncSemaphoreClient(
+            api_key=os.environ["BLTCY_API_KEY"],
+            base_url=os.environ["BLTCY_BASE_URL"],
+            concurrency=sem_n,
+        )
+        print(f"== generator (bltcy.ai): {args.generator_model} ==")
+
+    rev_client = AsyncSemaphoreClient(
         api_key=os.environ["BLTCY_API_KEY"],
         base_url=os.environ["BLTCY_BASE_URL"],
         concurrency=sem_n,
     )
-    rev_client = gen_client  # same provider; share semaphore for fair RPM
 
     if args.op_id:
         ops = [op for op in OPERATORS if op.id == args.op_id]
@@ -124,7 +140,8 @@ async def main_async(args):
     t0 = time.time()
     coros = [
         run_one_operator(op, K=args.k, gen_client=gen_client,
-                         rev_client=rev_client, temperature=args.temperature)
+                         rev_client=rev_client, temperature=args.temperature,
+                         generator_model=args.generator_model)
         for op in ops
     ]
     summaries = await asyncio.gather(*coros)
@@ -152,10 +169,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--k", type=int, default=10, help="K trials per operator")
     parser.add_argument("--concurrency", type=int, default=0,
-                        help="override Semaphore limit (default: read probe)")
+                        help="override Semaphore limit for reviewer (default: read probe)")
     parser.add_argument("--temperature", type=float, default=0.5)
     parser.add_argument("--op-id", help="run a single operator (debug)")
     parser.add_argument("--put", help="run all operators for one PUT")
+    parser.add_argument("--generator", choices=["claude-cli", "bltcy"],
+                        default="claude-cli",
+                        help="generator backend: claude-cli (subscription) or bltcy")
+    parser.add_argument("--cli-concurrency", type=int, default=12,
+                        help="max concurrent claude CLI subprocesses (default 12)")
+    parser.add_argument("--generator-model", default="opus",
+                        help="generator model alias (default 'opus' for claude-cli)")
     args = parser.parse_args()
     asyncio.run(main_async(args))
 

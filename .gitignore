@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+*.egg-info/
 .pytest_cache/
 .ruff_cache/
 .venv/
@@ -28,5 +29,8 @@ data/results/*
 data/lrca/
 data/operator_campaign/raw/
 data/operator_campaign/cache/
+data/operator_campaign/v2_console.log
+data/operator_campaign/v1_archive/cache/
+data/operator_campaign/v1_archive/raw/
 *.pkl
 .DS_Store
