@@ -1,0 +1,304 @@
+{
+  "elapsed_s": 0,
+  "concurrency": 30,
+  "K_default": 10,
+  "temperature": 0.5,
+  "summaries": [
+    {
+      "op_id": "a1_CE1",
+      "put": "a1",
+      "category": "CE",
+      "K": 20,
+      "confirmed": 20,
+      "is_key": true
+    },
+    {
+      "op_id": "a1_OS1",
+      "put": "a1",
+      "category": "OS",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "a1_SI1",
+      "put": "a1",
+      "category": "SI",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "a1_HP1",
+      "put": "a1",
+      "category": "HP",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "a2_OS1",
+      "put": "a2",
+      "category": "OS",
+      "K": 20,
+      "confirmed": 2,
+      "is_key": true
+    },
+    {
+      "op_id": "a2_CE1",
+      "put": "a2",
+      "category": "CE",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "a2_SI1",
+      "put": "a2",
+      "category": "SI",
+      "K": 10,
+      "confirmed": 5,
+      "is_key": false
+    },
+    {
+      "op_id": "a3_CE1",
+      "put": "a3",
+      "category": "CE",
+      "K": 20,
+      "confirmed": 6,
+      "is_key": true
+    },
+    {
+      "op_id": "a3_OS1",
+      "put": "a3",
+      "category": "OS",
+      "K": 10,
+      "confirmed": 9,
+      "is_key": false
+    },
+    {
+      "op_id": "a3_SI1",
+      "put": "a3",
+      "category": "SI",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "b1_OS1",
+      "put": "b1",
+      "category": "OS",
+      "K": 20,
+      "confirmed": 20,
+      "is_key": true
+    },
+    {
+      "op_id": "b1_CE1",
+      "put": "b1",
+      "category": "CE",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "b1_HP1",
+      "put": "b1",
+      "category": "HP",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "b2_HP1",
+      "put": "b2",
+      "category": "HP",
+      "K": 20,
+      "confirmed": 20,
+      "is_key": true
+    },
+    {
+      "op_id": "b2_CF1",
+      "put": "b2",
+      "category": "CF",
+      "K": 10,
+      "confirmed": 1,
+      "is_key": false
+    },
+    {
+      "op_id": "b2_CE1",
+      "put": "b2",
+      "category": "CE",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "b3_OS1",
+      "put": "b3",
+      "category": "OS",
+      "K": 20,
+      "confirmed": 20,
+      "is_key": true
+    },
+    {
+      "op_id": "b3_CE1",
+      "put": "b3",
+      "category": "CE",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "b3_SI1",
+      "put": "b3",
+      "category": "SI",
+      "K": 10,
+      "confirmed": 0,
+      "is_key": false
+    },
+    {
+      "op_id": "c1_HP1",
+      "put": "c1",
+      "category": "HP",
+      "K": 20,
+      "confirmed": 20,
+      "is_key": true
+    },
+    {
+      "op_id": "c1_TF1",
+      "put": "c1",
+      "category": "TF",
+      "K": 10,
+      "confirmed": 7,
+      "is_key": false
+    },
+    {
+      "op_id": "c1_CE1",
+      "put": "c1",
+      "category": "CE",
+      "K": 10,
+      "confirmed": 0,
+      "is_key": false
+    },
+    {
+      "op_id": "c2_HP1",
+      "put": "c2",
+      "category": "HP",
+      "K": 20,
+      "confirmed": 20,
+      "is_key": true
+    },
+    {
+      "op_id": "c2_TF1",
+      "put": "c2",
+      "category": "TF",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "c2_OS1",
+      "put": "c2",
+      "category": "OS",
+      "K": 10,
+      "confirmed": 0,
+      "is_key": false
+    },
+    {
+      "op_id": "c3_HP1",
+      "put": "c3",
+      "category": "HP",
+      "K": 10,
+      "confirmed": 0,
+      "is_key": false
+    },
+    {
+      "op_id": "c3_TF1",
+      "put": "c3",
+      "category": "TF",
+      "K": 20,
+      "confirmed": 0,
+      "is_key": true
+    },
+    {
+      "op_id": "c3_CE1",
+      "put": "c3",
+      "category": "CE",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "d1_TF1",
+      "put": "d1",
+      "category": "TF",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "d1_HP1",
+      "put": "d1",
+      "category": "HP",
+      "K": 20,
+      "confirmed": 0,
+      "is_key": true
+    },
+    {
+      "op_id": "d1_SI1",
+      "put": "d1",
+      "category": "SI",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "d2_HP1",
+      "put": "d2",
+      "category": "HP",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "d2_TF1",
+      "put": "d2",
+      "category": "TF",
+      "K": 10,
+      "confirmed": 7,
+      "is_key": false
+    },
+    {
+      "op_id": "d2_OS1",
+      "put": "d2",
+      "category": "OS",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "d3_HP1",
+      "put": "d3",
+      "category": "HP",
+      "K": 10,
+      "confirmed": 0,
+      "is_key": false
+    },
+    {
+      "op_id": "d3_TF1",
+      "put": "d3",
+      "category": "TF",
+      "K": 10,
+      "confirmed": 10,
+      "is_key": false
+    },
+    {
+      "op_id": "d3_SI1",
+      "put": "d3",
+      "category": "SI",
+      "K": 10,
+      "confirmed": 0,
+      "is_key": false
+    }
+  ]
+}

@@ -66,7 +66,9 @@ def _strip_fences(text: str) -> str:
     return text
 
 
-def _parse_review(raw: str) -> dict:
+def _parse_review(raw) -> dict:
+    if not isinstance(raw, str):
+        return {"overall": "REJECTED", "reason": f"parse_error: reviewer returned {type(raw).__name__}"}
     m = re.search(r"\{.*\}", raw, re.DOTALL)
     if not m:
         return {"overall": "REJECTED", "reason": f"parse_error: {raw[:120]}"}

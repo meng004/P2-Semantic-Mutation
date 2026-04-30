@@ -38,7 +38,10 @@ async def async_chat_completion(
                     model=model, temperature=temperature,
                     max_tokens=max_tokens, messages=messages,
                 )
-                return resp.choices[0].message.content
+                content = resp.choices[0].message.content
+                if content is None:
+                    raise ValueError("API returned None content")
+                return content
             except Exception as e:
                 last_err = f"{type(e).__name__}: {e}"
                 if attempt < retries - 1:

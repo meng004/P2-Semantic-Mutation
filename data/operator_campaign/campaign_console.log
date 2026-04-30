@@ -1,0 +1,46 @@
+== concurrency limit: 30 ==
+== operators in campaign: 37 ==
+
+== campaign log rebuilt from raw/ files ==
+op_id      put  cat   K  conf  key
+----------------------------------------
+a1_CE1     a1   CE   20    20  ★
+a1_OS1     a1   OS   10    10  
+a1_SI1     a1   SI   10    10  
+a1_HP1     a1   HP   10    10  
+a2_OS1     a2   OS   20     2  ★
+a2_CE1     a2   CE   10    10  
+a2_SI1     a2   SI   10     5  
+a3_CE1     a3   CE   20     6  ★
+a3_OS1     a3   OS   10     9  
+a3_SI1     a3   SI   10    10  
+b1_OS1     b1   OS   20    20  ★
+b1_CE1     b1   CE   10    10  
+b1_HP1     b1   HP   10    10  
+b2_HP1     b2   HP   20    20  ★
+b2_CF1     b2   CF   10     1  
+b2_CE1     b2   CE   10    10  
+b3_OS1     b3   OS   20    20  ★
+b3_CE1     b3   CE   10    10  
+b3_SI1     b3   SI   10     0  
+c1_HP1     c1   HP   20    20  ★
+c1_TF1     c1   TF   10     7  
+c1_CE1     c1   CE   10     0  
+c2_HP1     c2   HP   20    20  ★
+c2_TF1     c2   TF   10    10  
+c2_OS1     c2   OS   10     0  
+c3_HP1     c3   HP   10     0  
+c3_TF1     c3   TF   20     0  ★
+c3_CE1     c3   CE   10    10  
+d1_TF1     d1   TF   10    10  
+d1_HP1     d1   HP   20     0  ★
+d1_SI1     d1   SI   10    10  
+d2_HP1     d2   HP   10    10  
+d2_TF1     d2   TF   10     7  
+d2_OS1     d2   OS   10    10  
+d3_HP1     d3   HP   10     0  
+d3_TF1     d3   TF   10    10  
+d3_SI1     d3   SI   10     0  
+
+total trials: 470  confirmed: 317  rate: 67.4%
+total elapsed: (multiple runs, see individual operator logs)
