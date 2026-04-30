@@ -3,7 +3,8 @@
 Checks applied to every generated mutant program string:
   V1  Syntax     — ast.parse succeeds
   V2  Executable — program(0.5) runs without exception, returns finite scalar or array
-  V3  Non-trivial — |mutant(x) - original(x)| > 1e-9 for at least one x in probe set
+  V3  Non-trivial — |mutant(x) - original(x)| > 1e-6 for at least one x in probe set
+                    (threshold matches AVP/E2 equivalence epsilon; see p2.equiv.judge)
   V4  Signature  — function named `program` with one positional argument exists
 """
 import ast
@@ -89,7 +90,7 @@ def validate_mutant(code: str, original: Callable) -> ValidationResult:
             y_orig = original(x)
             diff = float(np.linalg.norm(np.asarray(y_mut, float).flatten()
                                         - np.asarray(y_orig, float).flatten()))
-            if diff > 1e-9:
+            if diff > 1e-6:
                 all_equiv = False
                 break
         except Exception:

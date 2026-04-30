@@ -10,7 +10,11 @@ def is_equivalent(
     mr_set: Sequence[MR], sampler: InputSampler,
     k_eq: int, epsilon_eq: float, epsilon_avp: float,
 ) -> bool:
-    """equiv ⇔ (E1 AVP-coherent) ∧ (E2 output-equiv)."""
+    """equiv ⇔ (E1 AVP-coherent) ∧ (E2 output-equiv).
+
+    NOTE: epsilon_eq MUST equal epsilon_avp (currently both 1e-6).
+    This matches V3 mechanical-equiv threshold in p2.mutators.validation.
+    """
     samples = sample_inputs(sampler, k_eq)
     if not judge_e2(s_orig, s_mutant, samples, epsilon_eq):
         return False
