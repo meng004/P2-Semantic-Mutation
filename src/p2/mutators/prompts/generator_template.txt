@@ -1,0 +1,41 @@
+You are an expert in scientific computing software testing. Your task is to generate a GENUINE SEMANTIC MUTANT of the program below.
+
+PUT NAME: {put_name}
+SCIENTIFIC DOMAIN: {scientific_domain}
+SEMANTIC FAILURE INTENT: {mut_intent}
+CANDIDATE INDEX: {candidate_index} of {n_candidates}
+
+⚠ DIVERSITY REQUIREMENT: This is candidate #{candidate_index}. You MUST introduce a DIFFERENT defect than candidates #1–{prev_index}. Do NOT repeat the same numerical constant change, operator swap, or structural modification used by earlier candidates. Choose the LEAST OBVIOUS plausible defect you can think of.
+
+━━━ ORIGINAL PROGRAM ━━━
+```python
+{put_source}
+```
+
+━━━ YOUR TASK ━━━
+Produce a mutant that introduces exactly ONE plausible semantic defect.
+
+VALIDITY REQUIREMENTS — the mutant MUST satisfy all of these:
+1. Syntactically valid Python (parseable, no syntax errors)
+2. Executable: program(x) runs without exception for any x ∈ [0,1]
+3. Output varies with x (NOT a constant-output function)
+4. Output is finite (no NaN, no Inf, no unbounded values)
+5. Single fault: change exactly ONE computational aspect (≤10 lines diff)
+6. PLAUSIBLE DEFECT: the change must resemble a realistic programming mistake
+   that a competent scientist/programmer could make — such as:
+   • wrong numerical constant or coefficient
+   • wrong sign (e.g., + instead of −, or reversed inequality)
+   • wrong formula or operator (e.g., sum instead of product)
+   • wrong matrix structure or initialization
+   • wrong statistical rule or update equation
+   • wrong boundary condition or time step formula
+   • wrong index or axis selection
+
+FORBIDDEN:
+• Returning a hard-coded constant (e.g., return 0.0, return 1.0)
+• Adding random noise unrelated to the computation
+• Changing only variable names or comments
+• Obvious sabotage (return float('inf'), raise Exception, etc.)
+• Changing the function signature
+
+OUTPUT: Return ONLY the complete Python source of the mutant program. No explanation, no comments, no markdown fences. Start directly with import statements or the def statement.
