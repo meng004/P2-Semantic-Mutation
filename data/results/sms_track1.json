@@ -1,0 +1,306 @@
+{
+  "A2_MP1": {
+    "cell": "A2_MP1",
+    "inst": 5,
+    "equiv": 0,
+    "killed": 5,
+    "survive": 0,
+    "sms": 1.0,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "A3_MP1": {
+    "cell": "A3_MP1",
+    "inst": 3,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 3,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m02_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B1_MP2": {
+    "cell": "B1_MP2",
+    "inst": 3,
+    "equiv": 0,
+    "killed": 1,
+    "survive": 2,
+    "sms": 0.3333,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B3_MP2": {
+    "cell": "B3_MP2",
+    "inst": 5,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 5,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A1_MP1": {
+    "cell": "A1_MP1",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "only 0-dimensional arrays can be converted to Python scalars"
+  },
+  "C1_MP5": {
+    "cell": "C1_MP5",
+    "inst": 4,
+    "equiv": 0,
+    "killed": 3,
+    "survive": 1,
+    "sms": 0.75,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C2_MP5": {
+    "cell": "C2_MP5",
+    "inst": 4,
+    "equiv": 0,
+    "killed": 1,
+    "survive": 3,
+    "sms": 0.25,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "C3_MP5": {
+    "cell": "C3_MP5",
+    "inst": 4,
+    "equiv": 0,
+    "killed": 1,
+    "survive": 3,
+    "sms": 0.25,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D2_MP2": {
+    "cell": "D2_MP2",
+    "inst": 5,
+    "equiv": 0,
+    "killed": 2,
+    "survive": 3,
+    "sms": 0.4,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D3_MP2": {
+    "cell": "D3_MP2",
+    "inst": 5,
+    "equiv": 0,
+    "killed": 3,
+    "survive": 2,
+    "sms": 0.6,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "D1_MP2": {
+    "cell": "D1_MP2",
+    "inst": 3,
+    "equiv": 0,
+    "killed": 1,
+    "survive": 2,
+    "sms": 0.3333,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "B2_MP2": {
+    "cell": "B2_MP2",
+    "inst": 5,
+    "equiv": 0,
+    "killed": 1,
+    "survive": 4,
+    "sms": 0.2,
+    "outcomes": [
+      {
+        "file": "m01_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_llm.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_llm.py",
+        "label": "KILLED"
+      }
+    ]
+  }
+}
