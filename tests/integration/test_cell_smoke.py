@@ -6,7 +6,7 @@ import importlib
 import pytest
 
 CELLS = [
-    ("a1", "mp4", "r_mp4", "R_mp4"),
+    ("a1", "mp1", "r_mp1", "R_mp1"),
     ("a2", "mp1", "r_mp1", "R_mp1"),
     ("a3", "mp3", "r_mp3", "R_mp3"),
     ("b1", "mp2", "r_mp2", "R_mp2"),

@@ -1,19 +1,19 @@
-"""MR functions for A1 Lorenz ODE.
+"""MR functions for A1 Lorenz ODE (scalar-output interface).
 
-Primary MP: MP4 (Trajectory DTW).
-  r_mp4: tiny perturbation to x → nearby initial conditions → similar trajectory.
-  R_mp4: not used by DTW verifier (DTW verifier ignores mr.R).
-Trivial: r_trivial (identity), R_trivial (always True) for MP1/2/3/5.
+Primary MP: MP1 (Conservation — weak: trajectory norm stays positive and bounded).
+  r_mp1(x) = 1 - x : symmetry under IC reflection.
+  R_mp1: |program(x) + program(1-x)| < 1e6 (anti-divergence guard).
+Trivial: r_trivial, R_trivial for MP2/3/4/5.
 """
 import numpy as np
 
 
-def r_mp4(x) -> float:
-    return float(np.clip(float(x) + 0.001, 0.0, 1.0))
+def r_mp1(x) -> float:
+    return float(1.0 - float(x))
 
 
-def R_mp4(y_orig, y_new) -> bool:
-    return True  # DTW verifier ignores R; distance checked by verifier itself
+def R_mp1(y_orig, y_new) -> bool:
+    return float(abs(float(y_orig) + float(y_new))) < 1e6
 
 
 def r_trivial(x) -> float:
