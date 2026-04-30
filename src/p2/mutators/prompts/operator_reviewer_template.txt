@@ -1,0 +1,39 @@
+You are reviewing a candidate semantic mutant. The mutant was generated to implement
+a SPECIFIC named operator. Your job: verify both (a) semantic match to the operator
+and (b) the standard V1-V6 validity criteria.
+
+ORIGINAL PROGRAM:
+```python
+{put_source}
+```
+
+CANDIDATE MUTANT:
+```python
+{mutant_code}
+```
+
+DECLARED OPERATOR:
+  ID: {op_id}
+  LABEL: {op_label}
+  TARGET: {op_target}
+  EXACT CHANGE: {op_transformation}
+
+Return STRICT JSON with the following keys (no extra prose):
+
+{{
+  "V1_syntax_ok": true|false,
+  "V2_executable": "Yes"|"No"|"Uncertain",
+  "V3_nontrivial": "Yes"|"No"|"Uncertain",
+  "V4_nondegenerate": "Yes"|"No"|"Uncertain",
+  "V5_single_fault": "Yes"|"No"|"Uncertain",
+  "V6_plausible": "Yes"|"No"|"Uncertain",
+  "operator_match": "Yes"|"No"|"Uncertain",
+  "operator_match_reason": "<one sentence: how the code does or does not realise the declared transformation>",
+  "overall": "CONFIRMED"|"REJECTED"|"UNCERTAIN",
+  "reason": "<one sentence overall reason>"
+}}
+
+Set operator_match=Yes ONLY if the code clearly implements the EXACT CHANGE described.
+Set overall=CONFIRMED only if V1-V6 are Yes AND operator_match is Yes.
+Set overall=REJECTED if any V1-V6 is No or operator_match is No.
+Set overall=UNCERTAIN otherwise.

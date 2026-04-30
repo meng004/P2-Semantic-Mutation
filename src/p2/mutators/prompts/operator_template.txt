@@ -1,0 +1,37 @@
+You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT
+of the program below that implements EXACTLY the named operator described.
+
+PUT NAME: {put_name}
+SCIENTIFIC DOMAIN: {scientific_domain}
+
+OPERATOR ID: {op_id}
+OPERATOR LABEL: {op_label}
+TARGET LOCATOR: {op_target}
+EXACT CHANGE: {op_transformation}
+RATIONALE: {op_rationale}
+
+ATTEMPT INDEX: {attempt_idx} of {n_attempts}  (different seed; same operator)
+
+━━━ ORIGINAL PROGRAM ━━━
+```python
+{put_source}
+```
+
+━━━ YOUR TASK ━━━
+Produce a complete Python program that implements the EXACT CHANGE above and nothing else.
+
+VALIDITY REQUIREMENTS:
+1. Syntactically valid Python (parseable)
+2. Executable: program(x) runs without exception for any x ∈ [0,1]
+3. Output varies with x (NOT a constant-output function)
+4. Output is finite (no NaN, no Inf, no unbounded values)
+5. Single fault: only the change above; do not introduce unrelated edits
+6. Do not change the function signature or return type
+
+IMPLEMENTATION DIVERSITY: You MAY choose any IMPLEMENTATION that realises the
+declared operator semantics (e.g., for "prod→sum" you can use np.sum,
+functools.reduce(operator.add, ...), a Python loop with accumulator, etc.).
+The semantic effect must match the EXACT CHANGE exactly.
+
+OUTPUT: Return ONLY the complete Python source. No explanation, no comments,
+no markdown fences. Start directly with import statements or `def`.
