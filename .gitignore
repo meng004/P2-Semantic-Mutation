@@ -4,8 +4,11 @@ __pycache__/
 .ruff_cache/
 .venv/
 .env
-data/mutants/
-data/results/
+data/mutants/*
+!data/mutants/a2_MP1_mut1/
+!data/mutants/b2_MP2_mut1/
+data/results/*
+!data/results/pilot_results.json
 data/lrca/
 *.pkl
 .DS_Store

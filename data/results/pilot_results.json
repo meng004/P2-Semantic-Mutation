@@ -1,0 +1,60 @@
+{
+  "A2_MP1": {
+    "inst": 5,
+    "equiv": 1,
+    "killed": 4,
+    "survive": 0,
+    "sms": 1.0,
+    "outcomes": [
+      {
+        "file": "m01_shift.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_scale.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_sym_matrix.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m04_sum_diag.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_det_direct.py",
+        "label": "EQUIV"
+      }
+    ]
+  },
+  "B2_MP2": {
+    "inst": 5,
+    "equiv": 1,
+    "killed": 2,
+    "survive": 2,
+    "sms": 0.5,
+    "outcomes": [
+      {
+        "file": "m01_flip_mu.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_negate_mu.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_seed43.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_half_scale.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_equiv_refactor.py",
+        "label": "EQUIV"
+      }
+    ]
+  }
+}
