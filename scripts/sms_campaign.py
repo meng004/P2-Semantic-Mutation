@@ -1,11 +1,17 @@
-"""Track-1 SMS evaluator: evaluate SMS for all 45 LLM mutants across 12 cells.
+"""SMS evaluator for Track-1 (12 primary cells) and Track-2 (60 full matrix).
+
+Track 1: each PUT evaluated against its primary MP only (12 cells).
+Track 2: each PUT evaluated against ALL 5 MPs (60 cells); the same mutants
+         under data/mutants/{put_id}_MP{primary}_llm/ are reused per cell.
 
 Usage:
-  python scripts/sms_campaign.py               # all 12 cells, 4 workers
-  python scripts/sms_campaign.py --workers 2   # custom parallelism
-  python scripts/sms_campaign.py --cell a2     # single cell (LLM mutants)
+  python scripts/sms_campaign.py                       # Track 1 (default)
+  python scripts/sms_campaign.py --track 2             # Track 2, full 60-cell
+  python scripts/sms_campaign.py --track 2 --workers 6
+  python scripts/sms_campaign.py --cell a2             # single Track-1 cell
+  python scripts/sms_campaign.py --cell a2 --mp 3      # single (PUT, MP) cell
 
-Results saved to data/results/sms_track1.json.
+Results saved to data/results/sms_track{1|2}.json.
 """
 import argparse
 import importlib.util
@@ -58,34 +64,19 @@ def _load_mutants(cell_dir: Path) -> List[tuple]:
 
 
 def _build_mr(put_id: str, mp_k: int) -> MR:
-    """Build MR for a cell using the mrs module for put_id.
-
-    Special case: a3 is labeled MP1 in the directory naming convention but
-    uses MP3 (convergence) as its actual primary verifier.  We dispatch
-    correctly by reading the available r_/R_ functions from the MRS module.
-    """
+    """Build MR for a (PUT, MP) cell. Post-Track-2 each PUT exposes r/R for
+    all 5 MPs; raises if the requested mp_k is missing."""
     mrs_mod = _load_module(f"mrs_{put_id}", MRS_DIR / f"{put_id}.py")
-
-    # Determine which r/R pair to use based on mp_k
-    # Each MRS module exposes r_mp{k} / R_mp{k} for its primary MP.
-    # a3 is an exception: labeled mp_k=1 externally but internally uses MP3.
     attr_r = f"r_mp{mp_k}"
     attr_R = f"R_mp{mp_k}"
-
     if not (hasattr(mrs_mod, attr_r) and hasattr(mrs_mod, attr_R)):
-        # Fallback: scan for available primary (non-trivial) r_/R_ pair
-        for candidate in [1, 2, 3, 4, 5]:
-            cr = f"r_mp{candidate}"
-            cR = f"R_mp{candidate}"
-            if hasattr(mrs_mod, cr) and hasattr(mrs_mod, cR):
-                attr_r = cr
-                attr_R = cR
-                mp_k   = candidate
-                break
-
-    r_fn = getattr(mrs_mod, attr_r)
-    R_fn = getattr(mrs_mod, attr_R)
-    return MR(r=r_fn, R=R_fn, mp_index=mp_k, name=f"{put_id.upper()}_mp{mp_k}")
+        raise ValueError(f"{put_id} has no MR functions for MP{mp_k}")
+    return MR(
+        r=getattr(mrs_mod, attr_r),
+        R=getattr(mrs_mod, attr_R),
+        mp_index=mp_k,
+        name=f"{put_id.upper()}_mp{mp_k}",
+    )
 
 
 def evaluate_cell(
@@ -97,15 +88,15 @@ def evaluate_cell(
 
     Args:
         put_id: PUT identifier, e.g. "a2".
-        mp_k:   Primary MP index.
-        mutant_dir: Path to mutant directory.  Defaults to
-                    data/mutants/{put_id}_MP{mp_k}_llm/.
-
-    Returns a dict with keys:
-        cell, inst, equiv, killed, survive, sms, outcomes
+        mp_k:   Target MP index (may differ from PUT's primary MP).
+        mutant_dir: Path to mutant directory. Defaults to the PUT's
+                    primary mutant pool data/mutants/{put_id}_MP{primary}_llm/
+                    (Track-2 reuses the same per-PUT mutant pool across
+                    all 5 MPs to enable diagonal-vs-cross comparison).
     """
     if mutant_dir is None:
-        mutant_dir = MUTANTS_DIR / f"{put_id}_MP{mp_k}_llm"
+        primary_mp = PRIMARY_CELLS[put_id]
+        mutant_dir = MUTANTS_DIR / f"{put_id}_MP{primary_mp}_llm"
 
     cell_label = f"{put_id.upper()}_MP{mp_k}"
 
@@ -167,35 +158,47 @@ def _worker(put_id: str, mp_k: int) -> dict:
     return evaluate_cell(put_id, mp_k)
 
 
+def _build_cell_list(track: int, cell: Optional[str], mp: Optional[int]) -> list:
+    """Return a list of (put_id, mp_k) cells to evaluate."""
+    if cell is not None:
+        if mp is not None:
+            return [(cell, mp)]
+        return [(cell, PRIMARY_CELLS[cell])]
+    if track == 1:
+        return [(p, mp) for p, mp in PRIMARY_CELLS.items()]
+    # track == 2: full 12 × 5 = 60 matrix
+    return [(p, k) for p in PRIMARY_CELLS for k in (1, 2, 3, 4, 5)]
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Track-1 SMS campaign")
+    parser = argparse.ArgumentParser(description="P2 SMS campaign")
+    parser.add_argument("--track", type=int, default=1, choices=(1, 2),
+                        help="1=primary-MP only (12 cells); 2=full 60-cell matrix")
     parser.add_argument("--workers", type=int, default=4,
                         help="Number of parallel workers (default: 4)")
     parser.add_argument("--cell", default=None,
                         help="Run a single cell, e.g. --cell a2")
+    parser.add_argument("--mp", type=int, default=None,
+                        help="With --cell, force a specific MP index (1-5)")
     args = parser.parse_args()
 
-    if args.cell:
-        cells = {args.cell: PRIMARY_CELLS[args.cell]}
-    else:
-        cells = PRIMARY_CELLS
+    cells = _build_cell_list(args.track, args.cell, args.mp)
 
     print(f"\n{'='*60}")
-    print("P2 TRACK-1 SMS CAMPAIGN — LLM mutants")
+    print(f"P2 TRACK-{args.track} SMS CAMPAIGN — {len(cells)} cells")
     print(f"{'='*60}\n")
 
     all_results: dict = {}
 
     if len(cells) == 1:
-        # Single cell: run directly
-        (put_id, mp_k) = next(iter(cells.items()))
+        put_id, mp_k = cells[0]
         summary = evaluate_cell(put_id, mp_k)
         all_results[summary["cell"]] = summary
         _print_summary(summary)
     else:
         futures = {}
         with ProcessPoolExecutor(max_workers=args.workers) as executor:
-            for put_id, mp_k in cells.items():
+            for put_id, mp_k in cells:
                 fut = executor.submit(_worker, put_id, mp_k)
                 futures[fut] = (put_id, mp_k)
 
@@ -214,13 +217,11 @@ def main():
                 all_results[summary["cell"]] = summary
                 _print_summary(summary)
 
-    # Save results
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = RESULTS_DIR / "sms_track1.json"
+    out_path = RESULTS_DIR / f"sms_track{args.track}.json"
     out_path.write_text(json.dumps(all_results, indent=2, ensure_ascii=False))
     print(f"\nResults saved → {out_path}")
 
-    # Final table
     print(f"\n{'─'*50}")
     print(f"{'Cell':<16} {'inst':>4} {'equiv':>5} {'kill':>5} {'surv':>5} {'SMS':>7}")
     print(f"{'─'*50}")

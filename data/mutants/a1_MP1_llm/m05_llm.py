@@ -15,18 +15,25 @@ _RHO = 27.5
 _BETA = 8.0 / 3.0
 
 
-def _lorenz(t, y, sigma, rho, beta):
-    x, yy, z = y
-    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]
+def _lorenz(t, state, sigma, rho, beta):
+    a, b, c = state[0], state[1], state[2]
+    da = sigma * (b - a)
+    db = a * (rho - c) - b
+    dc = a * b - beta * c
+    return [da, db, dc]
 
 
 def program(x) -> float:
-    x = float(x)
-    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])
-    sol = solve_ivp(
+    xv = float(x)
+    shift = 20.0 * xv - 10.0
+    ic = np.array([shift, shift, 30.0 * xv + 5.0])
+    result = solve_ivp(
         _lorenz, (0.0, 1.0), ic,
         args=(_SIGMA, _RHO, _BETA),
         t_eval=[1.0], method="RK45", rtol=1e-8, atol=1e-10,
     )
-    final_state = sol.y[:, -1]
-    return float(np.linalg.norm(final_state))
+    end_state = result.y[:, -1]
+    squared_sum = 0.0
+    for component in end_state:
+        squared_sum += component * component
+    return float(np.sqrt(squared_sum))

@@ -11,7 +11,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 _SIGMA = 10.0
-_RHO = 27.5
+_RHO = 28.0
 _BETA = 8.0 / 3.0
 
 
@@ -26,7 +26,7 @@ def program(x) -> float:
     sol = solve_ivp(
         _lorenz, (0.0, 1.0), ic,
         args=(_SIGMA, _RHO, _BETA),
-        t_eval=[1.0], method="RK45", rtol=1e-8, atol=1e-10,
+        t_eval=[1.0], method="RK45", rtol=1e-3, atol=1e-10,
     )
     final_state = sol.y[:, -1]
     return float(np.linalg.norm(final_state))
