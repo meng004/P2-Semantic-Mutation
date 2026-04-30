@@ -100,6 +100,7 @@ async def run_operator_trial(
     generator_model: str = "claude-opus-4-6",
     reviewer_model: str = "gpt-5.4",
     temperature: float = 0.5,
+    prior_codes: Optional[List[str]] = None,
 ) -> OperatorTrialResult:
     # -- 1. generate
     gen_prompt = _OP_TEMPLATE.format(
@@ -109,6 +110,27 @@ async def run_operator_trial(
         attempt_idx=attempt_idx + 1, n_attempts=n_attempts,
         put_source=put_source,
     )
+    if prior_codes:
+        snippets = "\n\n".join(
+            f"--- Prior candidate #{i + 1} ---\n{c}"
+            for i, c in enumerate(prior_codes)
+        )
+        gen_prompt = (
+            gen_prompt
+            + "\n\n━━━ ALREADY GENERATED FOR THIS OPERATOR ━━━\n"
+            + snippets
+            + "\n\nIMPLEMENTATION DIVERSITY REQUIREMENT:\n"
+              "The OPERATOR SEMANTICS (EXACT CHANGE above) MUST remain identical "
+              "to all prior candidates — same fault, same direction, same magnitude. "
+              "Vary only the IMPLEMENTATION SURFACE: rename intermediate variables, "
+              "switch between loop / vectorized / list-comprehension forms, "
+              "introduce or inline temporary helpers, reorder independent statements, "
+              "or use an equivalent library call (e.g. np.sum vs functools.reduce). "
+              "DO NOT change any numeric constants or library-function choice that "
+              "is part of the operator's defined transformation. "
+              "If you cannot find a structurally different implementation, repeat "
+              "the prior code verbatim rather than mutate the semantics."
+        )
     raw_code = await async_chat_completion(
         client=generator_client, model=generator_model,
         messages=[{"role": "user", "content": gen_prompt}],
@@ -158,19 +180,32 @@ async def run_operator_K_times(
     reviewer_client: AsyncSemaphoreClient,
     temperature: float = 0.5,
     start_idx: int = 0,
+    prior_history: int = 4,
 ) -> List[OperatorTrialResult]:
-    """Run K trials for one operator concurrently (each gated by client semaphore).
+    """Run K trials for one operator sequentially with prior-candidate context.
+
+    Each trial sees up to `prior_history` previously generated codes from this
+    operator and is instructed to produce a structurally different variant.
+    This breaks the LLM's tendency to converge to one canonical implementation
+    under independent parallel sampling.
+
+    Trials within one operator are serial; concurrency across operators is
+    handled by the caller via asyncio.gather over operators.
 
     `start_idx` lets callers append additional K runs (key operators K=20 = 10+10).
     """
-    tasks = [
-        run_operator_trial(
+    results: List[OperatorTrialResult] = []
+    history: List[str] = []
+    for i in range(K):
+        r = await run_operator_trial(
             op=op, attempt_idx=start_idx + i,
             put_source=put_source, put_name=put_name,
             scientific_domain=scientific_domain,
             generator_client=generator_client, reviewer_client=reviewer_client,
             n_attempts=K + start_idx, temperature=temperature,
+            prior_codes=history[-prior_history:] if history else None,
         )
-        for i in range(K)
-    ]
-    return await asyncio.gather(*tasks)
+        results.append(r)
+        if r.code and not r.code.startswith("# GENERATION_ERROR"):
+            history.append(r.code)
+    return results

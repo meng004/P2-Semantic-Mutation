@@ -1,11 +1,20 @@
 """Implementation diversity metric over a set of K mutant code strings.
 
-We use an AST-node-name multiset (bag of node-class names) and report
-1 - Jaccard-multiset-similarity as pairwise distance, then take the
-median pairwise distance across all K(K-1)/2 pairs as the cell score.
+We use a parent→child AST bigram bag, augmented with literal values and
+identifier names, and report 1 - Jaccard-multiset-similarity as pairwise
+distance, then take the median pairwise distance across all K(K-1)/2
+pairs as the cell score.
 
-This is cheap (O(K²) AST parses) and stable; tree-edit-distance would
-be more accurate but unnecessary at K ≤ 20.
+The bigram + literal + identifier bag captures three kinds of differences
+that the bare node-class bag missed:
+
+  - constant value changes (e.g., `0.05` → `0.1`)
+  - identifier-name changes (e.g., `_NARROW_PROPOSAL` → `narrowed_std`)
+  - local structural shifts (e.g., introducing an intermediate variable
+    rewrites the parent→child edges around the affected expression)
+
+Cost is still O(K²) parses; tree-edit-distance would be more accurate but
+unnecessary at K ≤ 20.
 """
 import ast
 from collections import Counter
@@ -15,14 +24,25 @@ from typing import Dict, List
 
 
 def ast_token_bag(code: str) -> Dict[str, int]:
-    """Return Counter-as-dict of AST node class names."""
+    """Parent→child bigrams + literal values + identifier names."""
     try:
         tree = ast.parse(code)
     except SyntaxError:
         return {}
     counter: Counter = Counter()
-    for node in ast.walk(tree):
-        counter[type(node).__name__] += 1
+    for parent in ast.walk(tree):
+        ptype = type(parent).__name__
+        for child in ast.iter_child_nodes(parent):
+            ctype = type(child).__name__
+            counter[f"{ptype}>{ctype}"] += 1
+            if isinstance(child, ast.Constant):
+                counter[f"const::{type(child.value).__name__}::{repr(child.value)[:32]}"] += 1
+            elif isinstance(child, ast.Name):
+                counter[f"id::{child.id}"] += 1
+            elif isinstance(child, ast.arg):
+                counter[f"arg::{child.arg}"] += 1
+            elif isinstance(child, ast.Attribute):
+                counter[f"attr::{child.attr}"] += 1
     return dict(counter)
 
 

@@ -33,6 +33,22 @@ Return STRICT JSON with the following keys (no extra prose):
   "reason": "<one sentence overall reason>"
 }}
 
+V5_single_fault DEFINITION (READ CAREFULLY):
+  V5 asks whether there is at most ONE INJECTED FAULT in the mutant — i.e., one
+  semantic deviation from the original program. V5 is NOT a byte-diff check.
+  The following are NOT additional faults and MUST NOT lower V5:
+    • renaming local variables or intermediate temporaries
+    • introducing or inlining a temporary helper that is mathematically equivalent
+    • switching between equivalent forms (loop ↔ vectorised ↔ list-comprehension,
+      np.linalg.norm ↔ math.sqrt(sum of squares) ↔ np.sqrt(np.dot(v,v)),
+      np.array(list) ↔ list literal, np.sum ↔ functools.reduce(add, ...))
+    • reordering statements that have no data dependency between them
+  An ADDITIONAL FAULT means a SECOND semantic deviation from the original program
+  that changes its computed output beyond the declared EXACT CHANGE — e.g., a
+  different rtol, a different integration interval, a different distribution.
+  If the only semantic deviation is the declared EXACT CHANGE, V5 = "Yes" even
+  when many lines of the source text differ.
+
 Set operator_match=Yes ONLY if the code clearly implements the EXACT CHANGE described.
 Set overall=CONFIRMED only if V1-V6 are Yes AND operator_match is Yes.
 Set overall=REJECTED if any V1-V6 is No or operator_match is No.
