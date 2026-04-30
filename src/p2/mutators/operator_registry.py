@@ -176,10 +176,10 @@ OPERATORS: List[MutationOperator] = [
         rationale="extrapolation regime — surrogate fidelity drop",
     ),
     MutationOperator(
-        id="c1_CE1", put="c1", category="CE", label="noise sigma 1e-6→0.1",
-        target_locator="GPR alpha (noise) hyperparameter",
-        transformation="change alpha from 1e-6 to 0.1",
-        rationale="noisy fit — real but commonly-overlooked error",
+        id="c1_CE1", put="c1", category="CE", label="WhiteKernel noise 1e-4→1e-1",
+        target_locator="WhiteKernel noise_level inside the RBF+WhiteKernel composite kernel",
+        transformation="change WhiteKernel noise_level from 1e-4 to 1e-1",
+        rationale="over-noisy kernel assumption makes GPR over-smooth its predictions",
     ),
 
     # ── C2 PCE surrogate ───────────────────────────────────────────────────
@@ -197,24 +197,24 @@ OPERATORS: List[MutationOperator] = [
         rationale="ill-posed regression — fewer points than coefficients",
     ),
     MutationOperator(
-        id="c2_OS1", put="c2", category="OS", label="basis poly→cheb",
-        target_locator="orthogonal-polynomial basis selection",
-        transformation="replace Legendre with Chebyshev-1 basis",
-        rationale="wrong basis for the underlying density",
+        id="c2_OS1", put="c2", category="OS", label="basis poly→spline",
+        target_locator="feature transformer in the regression pipeline",
+        transformation="replace PolynomialFeatures(5, include_bias=True) with SplineTransformer(n_knots=6, degree=3)",
+        rationale="wrong basis class — spline basis spans a different function space than monomials",
     ),
 
     # ── C3 MLP surrogate ───────────────────────────────────────────────────
     MutationOperator(
-        id="c3_HP1", put="c3", category="HP", label="activation tanh→relu",
-        target_locator="hidden activation choice",
-        transformation="change activation from tanh to relu",
-        rationale="ReLU breaks monotone smoothness for sigmoid target",
+        id="c3_HP1", put="c3", category="HP", label="activation relu→tanh",
+        target_locator="MLPRegressor activation parameter",
+        transformation="change activation from 'relu' to 'tanh'",
+        rationale="saturating activation alters convergence dynamics on the sigmoid target",
     ),
     MutationOperator(
-        id="c3_TF1", put="c3", category="TF", label="epochs 200→5",
-        target_locator="training epoch count",
-        transformation="change epochs from 200 to 5",
-        rationale="under-training — easy oversight",
+        id="c3_TF1", put="c3", category="TF", label="max_iter 1000→5",
+        target_locator="MLPRegressor max_iter parameter",
+        transformation="change max_iter from 1000 to 5",
+        rationale="under-training — common manual configuration mistake",
         is_key=True,
     ),
     MutationOperator(
@@ -232,9 +232,9 @@ OPERATORS: List[MutationOperator] = [
         rationale="off-by-one label encoding mistake",
     ),
     MutationOperator(
-        id="d1_HP1", put="d1", category="HP", label="C 1.0→1e-4",
-        target_locator="SVM regularisation constant C",
-        transformation="change C from 1.0 to 1e-4",
+        id="d1_HP1", put="d1", category="HP", label="MLP alpha 1e-4→1.0",
+        target_locator="MLPClassifier alpha (L2 regularisation) parameter",
+        transformation="change alpha from 1e-4 (default) to 1.0",
         rationale="over-regularisation collapses decision boundary",
         is_key=True,
     ),
@@ -267,10 +267,10 @@ OPERATORS: List[MutationOperator] = [
 
     # ── D3 Decision Tree ───────────────────────────────────────────────────
     MutationOperator(
-        id="d3_HP1", put="d3", category="HP", label="max_depth None→1",
-        target_locator="DecisionTreeClassifier max_depth parameter",
-        transformation="set max_depth=1",
-        rationale="under-fitted stump — easy hyperparameter mistake",
+        id="d3_HP1", put="d3", category="HP", label="LR C 1.0→1e-4",
+        target_locator="LogisticRegression C parameter",
+        transformation="change C from 1.0 to 1e-4",
+        rationale="over-regularisation flattens decision boundary",
     ),
     MutationOperator(
         id="d3_TF1", put="d3", category="TF", label="train labels swapped",
