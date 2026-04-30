@@ -1,5 +1,8 @@
+import pytest
 import numpy as np
 from p2.avp.interface import AVPResult, MR
+
+fastdtw = pytest.importorskip("fastdtw", reason="fastdtw not installed")
 from p2.avp.mp4_dtw import verify_trajectory_dtw
 
 

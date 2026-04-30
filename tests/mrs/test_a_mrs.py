@@ -8,9 +8,9 @@ import p2.mrs.a2 as mrs_a2
 import p2.mrs.a3 as mrs_a3
 
 
-def test_a1_r_mp4_in_range():
+def test_a1_r_mp1_in_range():
     for x in [0.1, 0.5, 0.9]:
-        xp = mrs_a1.r_mp4(x)
+        xp = mrs_a1.r_mp1(x)
         assert 0.0 <= xp <= 1.0
 
 

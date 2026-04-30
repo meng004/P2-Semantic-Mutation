@@ -1,18 +1,18 @@
 import numpy as np
-import pytest
 from p2.puts.a1 import program
 
 
-def test_output_shape():
+def test_output_scalar():
     y = program(0.5)
-    assert isinstance(y, np.ndarray) and y.shape == (10,)
+    assert isinstance(y, float)
+    assert np.isfinite(y)
 
 
 def test_deterministic():
-    assert np.allclose(program(0.3), program(0.3))
+    assert np.isclose(program(0.3), program(0.3))
 
 
-def test_bounded_trajectory():
-    # Lorenz attractor is bounded; x-component stays within [-25, 25] for t ∈ [0,1]
+def test_bounded_norm():
+    # L2 norm of Lorenz state is bounded for t ∈ [0,1]
     y = program(0.5)
-    assert np.all(np.abs(y) < 25.0)
+    assert 0.0 < y < 200.0

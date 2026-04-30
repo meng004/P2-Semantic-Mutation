@@ -1,18 +1,23 @@
+"""Smoke: generate_mutants returns N strings (mocked LLM)."""
 from unittest.mock import MagicMock, patch
 from p2.mutators.llm_generator import generate_mutants
 
 
-@patch("p2.mutators.llm_generator.anthropic.Anthropic")
-def test_generates_n_candidates(mock_client_cls):
-    mock_client = MagicMock()
-    mock_client_cls.return_value = mock_client
-    mock_client.messages.create.return_value = MagicMock(
-        content=[MagicMock(text="--- a/foo.py\n+++ b/foo.py\n@@ -1,1 +1,1 @@\n-x = 1\n+x = 2")]
+@patch("p2.mutators.llm_generator.generator_client")
+def test_generates_n_candidates(mock_factory):
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = MagicMock(
+        choices=[MagicMock(message=MagicMock(
+            content="def program(x):\n    return float(x) + 1\n"
+        ))]
     )
-    diffs = generate_mutants(
-        prompt="test prompt", model="claude-opus-4-5",
-        n_candidates=3, temperature=0.3, seed=42,
+    mock_factory.return_value = (fake_client, "claude-opus-4-6")
+
+    out = generate_mutants(
+        put_source="def program(x): return float(x)",
+        put_name="A2", scientific_domain="LU", mut_intent="x",
+        n_candidates=3, temperature=0.7,
     )
-    assert len(diffs) == 3
-    for d in diffs:
-        assert d.startswith("--- ")
+    assert len(out) == 3
+    for code in out:
+        assert "def program" in code

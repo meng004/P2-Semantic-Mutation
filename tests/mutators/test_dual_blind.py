@@ -2,16 +2,18 @@ from p2.mutators.dual_blind import classify_mutant, MutantStatus
 from p2.mutators.llm_reviewer import ReviewVerdict
 
 
-def test_double_confirmed_when_all_yes():
-    v = ReviewVerdict(syntax_ok=True, executable="Yes", fault_injected="Yes")
-    assert classify_mutant(v) == MutantStatus.DOUBLE_CONFIRMED
+def _make_verdict(overall):
+    return ReviewVerdict(True, "Yes", "Yes", "Yes", "Yes", "Yes",
+                         overall, "ok", "gpt")
 
 
-def test_rejected_when_syntax_bad():
-    v = ReviewVerdict(syntax_ok=False, executable="No", fault_injected="Yes")
-    assert classify_mutant(v) == MutantStatus.REJECTED_L0
+def test_confirmed_verdict():
+    assert classify_mutant(_make_verdict("CONFIRMED")) == MutantStatus.CONFIRMED
 
 
-def test_arbitration_when_uncertain():
-    v = ReviewVerdict(syntax_ok=True, executable="Yes", fault_injected="Uncertain")
-    assert classify_mutant(v) == MutantStatus.ARBITRATION_QUEUE
+def test_rejected_verdict():
+    assert classify_mutant(_make_verdict("REJECTED")) == MutantStatus.REJECTED
+
+
+def test_uncertain_maps_to_arbitrated():
+    assert classify_mutant(_make_verdict("UNCERTAIN")) == MutantStatus.ARBITRATED
