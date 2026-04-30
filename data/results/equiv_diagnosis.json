@@ -1,0 +1,61 @@
+{
+  "interpretation": {
+    "case": "B",
+    "summary": "equiv=0 across all 60 Track-2 cells is a TRUE empirical observation, not a detector bug.",
+    "evidence": [
+      "All probed cells show |y_orig - y_new| diff_max well above the equiv threshold epsilon_eq=1e-6 (range 0.32 .. 12.04).",
+      "judge_e2 (output-equiv) is the binding constraint: it requires ||S(x) - s'(x)|| <= 1e-6 across K_eq samples; LLM mutants modify constants/operators and almost never preserve byte-equal numeric output.",
+      "judge_e1 (AVP-coherent) actually agrees PUT==mutant on most probes (A1_MP2/MP3/D2_MP5: 200/200; B2_MP2: 199/200) because R(.,.) is a tolerance/envelope predicate, not strict equality.",
+      "The 22% n_identical seen on D2_MP5 reflects branch-level partial equivalence (some inputs hit unchanged code paths), not whole-program equivalence."
+    ],
+    "decision": "No code change to src/p2/equiv/avp_coherent.py. The detector is working as the paper's E1 ∧ E2 definition specifies.",
+    "downstream_implication_for_RQ": "RQ1's equiv_rate column should report 0/N for all cells with the current mutant pool, and RQ2's H3 (○ vs ●● equiv_rate comparison) cannot be tested with this pool. Round 2 (per-PUT pool builder) should consider seeding a small fraction of intentionally output-equivalent mutants (e.g. variable renames, dead-code injection) so RQ1/RQ2 has signal."
+  },
+  "probes": [
+    {
+      "cell": "A1_MP2",
+      "mutant": "m01_llm.py",
+      "n_pass": 200,
+      "n_fail": 0,
+      "n_identical": 0,
+      "diff_max": 12.039440960988772,
+      "diff_mean": 3.104641631424567
+    },
+    {
+      "cell": "A1_MP3",
+      "mutant": "m01_llm.py",
+      "n_pass": 200,
+      "n_fail": 0,
+      "n_identical": 0,
+      "diff_max": 12.039440960988772,
+      "diff_mean": 3.104641631424567
+    },
+    {
+      "cell": "C3_MP5",
+      "mutant": "m01_llm.py",
+      "n_pass": 102,
+      "n_fail": 98,
+      "n_identical": 0,
+      "diff_max": 1.173467878126454,
+      "diff_mean": 0.3625950573164095
+    },
+    {
+      "cell": "D2_MP5",
+      "mutant": "m02_llm.py",
+      "n_pass": 200,
+      "n_fail": 0,
+      "n_identical": 44,
+      "diff_max": 0.9854583754627708,
+      "diff_mean": 0.1650545542538361
+    },
+    {
+      "cell": "B2_MP2",
+      "mutant": "m01_llm.py",
+      "n_pass": 199,
+      "n_fail": 1,
+      "n_identical": 0,
+      "diff_max": 0.31596948890510546,
+      "diff_mean": 0.15602771089446318
+    }
+  ]
+}
