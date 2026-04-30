@@ -1,0 +1,21 @@
+import numpy as np
+from sklearn.svm import SVC
+
+_rng = np.random.default_rng(42)
+_X_train = _rng.uniform(-1.5, 1.5, (400, 2))
+_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)
+
+_model = SVC(kernel="rbf", C=1.0, gamma="scale", probability=True, random_state=42)
+_model.fit(_X_train, _y_train)
+
+
+def _build_input(val):
+    row = [2.0 - 2.0 * val, 0.0]
+    return [row]
+
+
+def program(x) -> float:
+    xf = float(x)
+    sample = _build_input(xf)
+    margin = _model.decision_function(sample)
+    return float(np.asarray(margin).flatten()[0])

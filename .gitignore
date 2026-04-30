@@ -20,6 +20,9 @@ data/mutants/*
 !data/mutants/d1_MP2_llm/
 !data/mutants/d2_MP2_llm/
 !data/mutants/d3_MP2_llm/
+!data/mutants/*_pool/
+!data/mutants/*_pool/*.py
+!data/mutants/*_pool/manifest.json
 data/results/*
 !data/results/pilot_results.json
 !data/results/llm_campaign_log.json
