@@ -1,0 +1,97 @@
+{
+  "grid_size": 9,
+  "best": {
+    "ood_band": 0.02,
+    "tolerance_multiplier": 3.0,
+    "statistical_repeats": 20,
+    "mean_c1_share": 0.2,
+    "mean_suspect_share": 0.8,
+    "h5_cells_pass": 12,
+    "h5_pass_ratio": 0.2
+  },
+  "all": [
+    {
+      "ood_band": 0.02,
+      "tolerance_multiplier": 3.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.2,
+      "mean_suspect_share": 0.8,
+      "h5_cells_pass": 12,
+      "h5_pass_ratio": 0.2
+    },
+    {
+      "ood_band": 0.02,
+      "tolerance_multiplier": 10.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.2,
+      "mean_suspect_share": 0.8,
+      "h5_cells_pass": 12,
+      "h5_pass_ratio": 0.2
+    },
+    {
+      "ood_band": 0.02,
+      "tolerance_multiplier": 30.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.2,
+      "mean_suspect_share": 0.8,
+      "h5_cells_pass": 12,
+      "h5_pass_ratio": 0.2
+    },
+    {
+      "ood_band": 0.05,
+      "tolerance_multiplier": 3.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.1643,
+      "mean_suspect_share": 0.8357,
+      "h5_cells_pass": 10,
+      "h5_pass_ratio": 0.1667
+    },
+    {
+      "ood_band": 0.05,
+      "tolerance_multiplier": 10.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.1643,
+      "mean_suspect_share": 0.8357,
+      "h5_cells_pass": 10,
+      "h5_pass_ratio": 0.1667
+    },
+    {
+      "ood_band": 0.05,
+      "tolerance_multiplier": 30.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.1643,
+      "mean_suspect_share": 0.8357,
+      "h5_cells_pass": 10,
+      "h5_pass_ratio": 0.1667
+    },
+    {
+      "ood_band": 0.1,
+      "tolerance_multiplier": 3.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.1643,
+      "mean_suspect_share": 0.8357,
+      "h5_cells_pass": 10,
+      "h5_pass_ratio": 0.1667
+    },
+    {
+      "ood_band": 0.1,
+      "tolerance_multiplier": 10.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.1643,
+      "mean_suspect_share": 0.8357,
+      "h5_cells_pass": 10,
+      "h5_pass_ratio": 0.1667
+    },
+    {
+      "ood_band": 0.1,
+      "tolerance_multiplier": 30.0,
+      "statistical_repeats": 20,
+      "mean_c1_share": 0.1643,
+      "mean_suspect_share": 0.8357,
+      "h5_cells_pass": 10,
+      "h5_pass_ratio": 0.1667
+    }
+  ],
+  "h5_threshold_suspect": 0.2,
+  "h5_threshold_pass_ratio": 0.8
+}
