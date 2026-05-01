@@ -1,0 +1,100 @@
+{
+  "n_puts_with_cr_data": 1,
+  "n_puts_without_cr_data": 11,
+  "puts_with_cr_data": [
+    "a1"
+  ],
+  "puts_without_cr_data": [
+    "a2",
+    "a3",
+    "b1",
+    "b2",
+    "b3",
+    "c1",
+    "c2",
+    "c3",
+    "d1",
+    "d2",
+    "d3"
+  ],
+  "per_put": {
+    "a1": {
+      "put_id": "a1",
+      "p2_pool_dir": "data/mutants/a1_pool_v4",
+      "n_p2_mutants": 30,
+      "n_cosmic_ray_mutants": 201,
+      "n_cosmic_ray_unique_asts": 201,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 123,
+        "SURVIVED": 78
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "OS": {
+          "n_p2": 6,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "SI": {
+          "n_p2": 6,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    },
+    "a2": null,
+    "a3": null,
+    "b1": null,
+    "b2": null,
+    "b3": null,
+    "c1": null,
+    "c2": null,
+    "c3": null,
+    "d1": null,
+    "d2": null,
+    "d3": null
+  },
+  "aggregated": {
+    "n_p2_total": 30,
+    "n_cosmic_ray_total": 201,
+    "n_overlap_total": 0,
+    "overlap_rate_overall": 0.0,
+    "per_class_aggregated": {
+      "CE": {
+        "n_p2": 9,
+        "n_overlap": 0,
+        "rate": 0.0
+      },
+      "HP": {
+        "n_p2": 9,
+        "n_overlap": 0,
+        "rate": 0.0
+      },
+      "OS": {
+        "n_p2": 6,
+        "n_overlap": 0,
+        "rate": 0.0
+      },
+      "SI": {
+        "n_p2": 6,
+        "n_overlap": 0,
+        "rate": 0.0
+      }
+    }
+  },
+  "interpretation": "Per-PUT records are null when cosmic-ray has not yet been run on that PUT (i.e., data/results/cosmic_ray_<PUT_ID>.sqlite is absent). Run scripts/run_cosmic_ray_put.sh <PUT_ID> for each missing PUT then re-run this batch script. Aggregation is computed only over PUTs with cosmic-ray data; per-class rate is the union ratio (sum of overlap counts over sum of P2 mutants) across PUTs in scope."
+}
