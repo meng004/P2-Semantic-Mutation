@@ -1,0 +1,40 @@
+{
+  "n_observations": 60,
+  "class_means": {
+    "a": 0.06666666666666667,
+    "b": 0.15556,
+    "c": 0.04666666666666666,
+    "d": 0.08112666666666665
+  },
+  "converged": false,
+  "fixed_params": {},
+  "p_values": {},
+  "fit_error": "Singular matrix",
+  "fallback_model": "sms ~ C(class) + C(operator) + (1 | put)",
+  "fallback_converged": true,
+  "fallback_fixed_params": {
+    "Intercept": 0.2933333333333334,
+    "C(class)[T.b]": 0.06221111111111107,
+    "C(class)[T.c]": -0.02000000000000003,
+    "C(class)[T.d]": -0.012222222222222261,
+    "C(operator)[T.MP1_cross]": -0.0310277777777778,
+    "C(operator)[T.MP2_aligned]": -0.11889444444444441,
+    "C(operator)[T.MP2_cross]": -0.2833333333333334,
+    "C(operator)[T.MP3_cross]": -0.30083055555555555,
+    "C(operator)[T.MP4_cross]": -0.3008305555555556,
+    "C(operator)[T.MP5_cross]": -0.24833888888888894
+  },
+  "fallback_p_values": {
+    "Intercept": 4.0239394835537494e-05,
+    "C(class)[T.b]": 0.3588064960290295,
+    "C(class)[T.c]": 0.7343632901970333,
+    "C(class)[T.d]": 0.8569302163744223,
+    "C(operator)[T.MP1_cross]": 0.7695964192005316,
+    "C(operator)[T.MP2_aligned]": 0.26170688987751534,
+    "C(operator)[T.MP2_cross]": 0.00201206569533877,
+    "C(operator)[T.MP3_cross]": 0.0003279570001570682,
+    "C(operator)[T.MP4_cross]": 0.00032795700015706715,
+    "C(operator)[T.MP5_cross]": 0.0030232751988416677,
+    "Group Var": 0.9557019274273649
+  }
+}

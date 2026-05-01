@@ -21,8 +21,8 @@ from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-no
 from p2.stats.cliffs_delta import bootstrap_delta_ci, cliffs_delta, odds_ratio
 
 VERSION = os.environ.get("SMS_VERSION", "v3")
-SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
-OUT_FILE = "rq2_cliffs_delta_v3.json" if VERSION == "v3" else "rq2_cliffs_delta.json"
+SMS_FILE = f"sms_track2_{VERSION}.json" if VERSION != "v2" else "sms_track2_v2.json"
+OUT_FILE = f"rq2_cliffs_delta_{VERSION}.json" if VERSION != "v2" else "rq2_cliffs_delta.json"
 print(f"compute_rq2: SMS_VERSION={VERSION} reading {SMS_FILE} writing {OUT_FILE}")
 
 data = json.loads((ROOT / "data/results" / SMS_FILE).read_text())

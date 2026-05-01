@@ -21,12 +21,13 @@ _sys.path.insert(0, str(ROOT / "src"))
 from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
 
 VERSION = os.environ.get("SMS_VERSION", "v3")
-SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
-LRCA_FILE = "lrca_60cell_v3.json" if VERSION == "v3" else "lrca_60cell.json"
-RQ2_FILE = "rq2_cliffs_delta_v3.json" if VERSION == "v3" else "rq2_cliffs_delta.json"
-RQ3_FILE = "rq3_mixed_effects_v3.json" if VERSION == "v3" else "rq3_mixed_effects.json"
-RQ4_FILE = "rq4_pattern_coverage_v3.json" if VERSION == "v3" else "rq4_pattern_coverage.json"
-OUT_FILE = "paper_numbers_v3.json" if VERSION == "v3" else "paper_numbers.json"
+_suffix = f"_{VERSION}" if VERSION != "v2" else ""
+SMS_FILE = f"sms_track2{_suffix}.json" if VERSION != "v2" else "sms_track2_v2.json"
+LRCA_FILE = f"lrca_60cell{_suffix}.json" if VERSION != "v2" else "lrca_60cell.json"
+RQ2_FILE = f"rq2_cliffs_delta{_suffix}.json" if VERSION != "v2" else "rq2_cliffs_delta.json"
+RQ3_FILE = f"rq3_mixed_effects{_suffix}.json" if VERSION != "v2" else "rq3_mixed_effects.json"
+RQ4_FILE = f"rq4_pattern_coverage{_suffix}.json" if VERSION != "v2" else "rq4_pattern_coverage.json"
+OUT_FILE = f"paper_numbers{_suffix}.json" if VERSION != "v2" else "paper_numbers.json"
 print(f"build_paper_numbers: VERSION={VERSION} writing {OUT_FILE}")
 
 

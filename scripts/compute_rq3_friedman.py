@@ -25,10 +25,18 @@ sys.path.insert(0, str(ROOT / "src"))
 
 
 def main():
+    import os
     parser = argparse.ArgumentParser()
-    parser.add_argument("--v2", action="store_true", help="use sms_track2_v2.json")
+    parser.add_argument("--v2", action="store_true", help="use sms_track2_v2.json (legacy)")
     args = parser.parse_args()
-    sms_file = "sms_track2_v2.json" if args.v2 else "sms_track2_v3.json"
+    if args.v2:
+        sms_file = "sms_track2_v2.json"
+        out_name = "rq3_friedman.json"
+    else:
+        version = os.environ.get("SMS_VERSION", "v3")
+        sms_file = f"sms_track2_{version}.json"
+        out_name = f"rq3_friedman_{version}.json" if version != "v3" else "rq3_friedman.json"
+    print(f"compute_rq3_friedman: reading {sms_file} writing {out_name}")
     sms = json.loads((ROOT / "data/results" / sms_file).read_text())
 
     puts = ["a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3", "d1", "d2", "d3"]
@@ -82,7 +90,7 @@ def main():
             "p ≥ 0.05 ⇒ no significant MP × PUT effect; consistent with §5.8.2 sign test direction"
         ),
     }
-    out_path = ROOT / "data/results/rq3_friedman.json"
+    out_path = ROOT / "data/results" / out_name
     out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False))
     print(json.dumps(out, indent=2, ensure_ascii=False))
     print(f"\nsaved -> {out_path}")

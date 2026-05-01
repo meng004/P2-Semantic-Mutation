@@ -36,9 +36,9 @@ warnings.filterwarnings("ignore", category=UserWarning, module="statsmodels")
 warnings.filterwarnings("ignore", category=RuntimeWarning, module="statsmodels")
 
 VERSION = os.environ.get("SMS_VERSION", "v3")
-SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
-OUT_FILE = "rq3_mixed_effects_v3.json" if VERSION == "v3" else "rq3_mixed_effects.json"
-SUM_FILE = "rq3_model_summary_v3.txt" if VERSION == "v3" else "rq3_model_summary.txt"
+SMS_FILE = f"sms_track2_{VERSION}.json" if VERSION != "v2" else "sms_track2_v2.json"
+OUT_FILE = f"rq3_mixed_effects_{VERSION}.json" if VERSION != "v2" else "rq3_mixed_effects.json"
+SUM_FILE = f"rq3_model_summary_{VERSION}.txt" if VERSION != "v2" else "rq3_model_summary.txt"
 print(f"compute_rq3: SMS_VERSION={VERSION} reading {SMS_FILE} writing {OUT_FILE}")
 
 data = json.loads((ROOT / "data/results" / SMS_FILE).read_text())

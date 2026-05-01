@@ -24,8 +24,8 @@ from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-no
 from p2.stats.pattern_coverage import compute_pattern_coverage  # noqa: E402
 
 VERSION = os.environ.get("SMS_VERSION", "v3")
-SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
-OUT_FILE = "rq4_pattern_coverage_v3.json" if VERSION == "v3" else "rq4_pattern_coverage.json"
+SMS_FILE = f"sms_track2_{VERSION}.json" if VERSION != "v2" else "sms_track2_v2.json"
+OUT_FILE = f"rq4_pattern_coverage_{VERSION}.json" if VERSION != "v2" else "rq4_pattern_coverage.json"
 print(f"compute_rq4: SMS_VERSION={VERSION} reading {SMS_FILE} writing {OUT_FILE}")
 
 NARROW_EXC = (ValueError, ArithmeticError, TypeError, RuntimeError,

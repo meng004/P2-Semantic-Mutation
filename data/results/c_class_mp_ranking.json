@@ -1,0 +1,35 @@
+{
+  "per_put_mp_sms": {
+    "c1": {
+      "MP1": 0.0,
+      "MP2": 0.0,
+      "MP3": 0.0,
+      "MP4": 0.0,
+      "MP5": 0.0
+    },
+    "c2": {
+      "MP1": 0.0,
+      "MP2": 0.0,
+      "MP3": 0.0,
+      "MP4": 0.0,
+      "MP5": 0.0
+    },
+    "c3": {
+      "MP1": 0.7,
+      "MP2": 0.0,
+      "MP3": 0.0,
+      "MP4": 0.0,
+      "MP5": 0.0
+    }
+  },
+  "mean_per_mp_class_c": {
+    "MP1": 0.2333333333333333,
+    "MP2": 0.0,
+    "MP3": 0.0,
+    "MP4": 0.0,
+    "MP5": 0.0
+  },
+  "current_primary": "MP5",
+  "new_primary_recommended": "MP1",
+  "rationale": "Friedman per-class p=0.406 for class c (§5.8.4) → no MP dominates statistically; data-driven choice = argmax of class-mean SMS across c1/c2/c3, avoiding fixed-by-design MP5."
+}

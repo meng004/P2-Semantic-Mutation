@@ -1,0 +1,6127 @@
+{
+  "A2_MP1": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 11,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 0
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a2_CE1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m02_a2_CE1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m03_a2_CE1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m04_a2_CE1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m05_a2_CE1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m06_a2_CE1_a05.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m07_a2_OS1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m08_a2_OS1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m09_a2_OS1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m10_a2_OS1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m11_a2_OS1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m12_a2_SI1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_a2_SI1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 11,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "A2_MP2": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 11
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a2_CE1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a2_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_a2_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A2_MP3": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 11
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a2_CE1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a2_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_a2_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A2_MP4": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 11
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a2_CE1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a2_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_a2_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A2_MP5": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 11
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a2_CE1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a2_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_a2_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A3_MP1": {
+    "labels": {
+      "L0_artifact": 1,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 7
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a3_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a3_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a3_SI1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A3_MP2": {
+    "labels": {
+      "L0_artifact": 1,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 7
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a3_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a3_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a3_SI1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A3_MP3": {
+    "labels": {
+      "L0_artifact": 1,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 7
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a3_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a3_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a3_SI1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A3_MP4": {
+    "labels": {
+      "L0_artifact": 1,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 7
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a3_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a3_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a3_SI1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A3_MP5": {
+    "labels": {
+      "L0_artifact": 1,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 7
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a3_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a3_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a3_SI1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B1_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 9,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 6
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b1_CE1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m02_b1_CE1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m03_b1_CE1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m04_b1_CE1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m05_b1_HP1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m06_b1_HP1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m07_b1_HP1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m08_b1_HP1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m09_b1_HP1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m10_b1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_b1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_b1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_b1_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 9,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "B1_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 6,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 9
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b1_OS1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m11_b1_OS1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m12_b1_OS1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m13_b1_OS1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m14_b1_OS1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m15_b1_OS1_a05.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      }
+    ],
+    "n_killed": 6,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "B1_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 15
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_b1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_b1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_b1_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B1_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 15
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_b1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_b1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_b1_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B1_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 15
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_b1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_b1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_b1_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A1_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a1_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_a1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_a1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_a1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_a1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_a1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_a1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_a1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A1_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a1_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_a1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_a1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_a1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_a1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_a1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_a1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_a1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B2_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 12
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b2_CF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b2_CF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B2_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 12
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b2_CF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b2_CF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B2_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 2,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 10
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b2_CF1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m07_b2_CF1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m08_b2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 2,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "B3_MP1": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 4,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 4
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b3_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b3_OS1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m06_b3_OS1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m07_b3_OS1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m08_b3_OS1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m09_b3_SI1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_b3_SI1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 4,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "B3_MP2": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 8
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b3_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b3_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b3_SI1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_b3_SI1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B3_MP3": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 8
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b3_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b3_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b3_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_b3_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B3_MP4": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 8
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b3_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b3_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b3_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_b3_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "B3_MP5": {
+    "labels": {
+      "L0_artifact": 2,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 8
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b3_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b3_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b3_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b3_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b3_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b3_SI1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_b3_SI1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "L0_artifact"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C1_MP1": {
+    "labels": {
+      "L0_artifact": 15,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 5
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c1_CE1_a07.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m02_c1_CE1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m03_c1_CE1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m04_c1_CE1_a08.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m05_c1_CE1_a05.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m06_c1_CE1_a06.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m07_c1_CE1_a09.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m08_c1_CE1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m09_c1_CE1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_c1_CE1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m11_c1_HP1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m12_c1_HP1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_c1_HP1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m14_c1_HP1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m15_c1_HP1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m16_c1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C1_MP2": {
+    "labels": {
+      "L0_artifact": 15,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 5
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c1_CE1_a07.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m02_c1_CE1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m03_c1_CE1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m04_c1_CE1_a08.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m05_c1_CE1_a05.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m06_c1_CE1_a06.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m07_c1_CE1_a09.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m08_c1_CE1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m09_c1_CE1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_c1_CE1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m11_c1_HP1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m12_c1_HP1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_c1_HP1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m14_c1_HP1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m15_c1_HP1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m16_c1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C1_MP3": {
+    "labels": {
+      "L0_artifact": 15,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 5
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c1_CE1_a07.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m02_c1_CE1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m03_c1_CE1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m04_c1_CE1_a08.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m05_c1_CE1_a05.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m06_c1_CE1_a06.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m07_c1_CE1_a09.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m08_c1_CE1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m09_c1_CE1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_c1_CE1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m11_c1_HP1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m12_c1_HP1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_c1_HP1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m14_c1_HP1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m15_c1_HP1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m16_c1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C1_MP4": {
+    "labels": {
+      "L0_artifact": 15,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 5
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c1_CE1_a07.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m02_c1_CE1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m03_c1_CE1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m04_c1_CE1_a08.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m05_c1_CE1_a05.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m06_c1_CE1_a06.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m07_c1_CE1_a09.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m08_c1_CE1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m09_c1_CE1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_c1_CE1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m11_c1_HP1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m12_c1_HP1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_c1_HP1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m14_c1_HP1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m15_c1_HP1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m16_c1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C1_MP5": {
+    "labels": {
+      "L0_artifact": 15,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 5
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c1_CE1_a07.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m02_c1_CE1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m03_c1_CE1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m04_c1_CE1_a08.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m05_c1_CE1_a05.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m06_c1_CE1_a06.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m07_c1_CE1_a09.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m08_c1_CE1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m09_c1_CE1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m10_c1_CE1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m11_c1_HP1_a01.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m12_c1_HP1_a02.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m13_c1_HP1_a00.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m14_c1_HP1_a03.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m15_c1_HP1_a04.py",
+        "outcome": "EQUIV",
+        "lrca": "L0_artifact"
+      },
+      {
+        "file": "m16_c1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C2_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c2_OS1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c2_OS1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c2_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c2_OS1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c2_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C2_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c2_OS1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c2_OS1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c2_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c2_OS1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c2_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C2_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c2_OS1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c2_OS1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c2_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c2_OS1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c2_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C2_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c2_OS1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c2_OS1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c2_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c2_OS1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c2_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A1_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a1_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_a1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_a1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_a1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_a1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_a1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_a1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_a1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A1_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a1_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_a1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_a1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_a1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_a1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_a1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_a1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_a1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C2_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c2_OS1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c2_OS1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c2_OS1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c2_OS1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c2_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C3_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 30
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c3_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c3_TF1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c3_TF1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c3_TF1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c3_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c3_TF1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c3_TF1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c3_TF1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m21_c3_TF1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_c3_TF1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_c3_TF1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_c3_TF1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_c3_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_c3_TF1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_c3_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_c3_TF1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_c3_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_c3_TF1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C3_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 30
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c3_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c3_TF1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c3_TF1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c3_TF1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c3_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c3_TF1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c3_TF1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c3_TF1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m21_c3_TF1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_c3_TF1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_c3_TF1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_c3_TF1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_c3_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_c3_TF1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_c3_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_c3_TF1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_c3_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_c3_TF1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C3_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 18,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 3,
+      "C4_statistical_noise": 0,
+      "survived": 9
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c3_CE1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m02_c3_CE1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m03_c3_CE1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m04_c3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c3_TF1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m14_c3_TF1_a15.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m15_c3_TF1_a10.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m16_c3_TF1_a07.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m17_c3_TF1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m18_c3_TF1_a06.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m19_c3_TF1_a05.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m20_c3_TF1_a12.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m21_c3_TF1_a11.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m22_c3_TF1_a16.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m23_c3_TF1_a19.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m24_c3_TF1_a14.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m25_c3_TF1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m26_c3_TF1_a18.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m27_c3_TF1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m28_c3_TF1_a08.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m29_c3_TF1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m30_c3_TF1_a09.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      }
+    ],
+    "n_killed": 21,
+    "c1_share": 0.8571,
+    "suspect_share": 0.1429
+  },
+  "C3_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 30
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c3_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c3_TF1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c3_TF1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c3_TF1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c3_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c3_TF1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c3_TF1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c3_TF1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m21_c3_TF1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_c3_TF1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_c3_TF1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_c3_TF1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_c3_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_c3_TF1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_c3_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_c3_TF1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_c3_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_c3_TF1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "C3_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 30
+    },
+    "per_mutant": [
+      {
+        "file": "m01_c3_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_c3_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_c3_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_c3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_c3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_c3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_c3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_c3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_c3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_c3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_c3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_c3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_c3_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_c3_TF1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_c3_TF1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_c3_TF1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_c3_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_c3_TF1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_c3_TF1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_c3_TF1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m21_c3_TF1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_c3_TF1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_c3_TF1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_c3_TF1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_c3_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_c3_TF1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_c3_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_c3_TF1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_c3_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_c3_TF1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D1_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 30
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d1_HP1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d1_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d1_HP1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d1_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d1_HP1_a13.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d1_HP1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d1_HP1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d1_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d1_HP1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d1_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_d1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_d1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_d1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_d1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m21_d1_HP1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_d1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_d1_HP1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_d1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_d1_HP1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_d1_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_d1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_d1_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_d1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_d1_HP1_a17.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D1_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 30
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d1_HP1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d1_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d1_HP1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d1_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d1_HP1_a13.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d1_HP1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d1_HP1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d1_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d1_HP1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d1_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_d1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_d1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_d1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_d1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m21_d1_HP1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_d1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_d1_HP1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_d1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_d1_HP1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_d1_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_d1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_d1_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_d1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_d1_HP1_a17.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D1_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 5,
+      "C4_statistical_noise": 0,
+      "survived": 25
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d1_HP1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d1_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d1_HP1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d1_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d1_HP1_a13.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d1_HP1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d1_HP1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d1_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d1_HP1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d1_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d1_TF1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m17_d1_TF1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m18_d1_TF1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m19_d1_TF1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m20_d1_TF1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m21_d1_HP1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_d1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_d1_HP1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_d1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_d1_HP1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_d1_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_d1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_d1_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_d1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_d1_HP1_a17.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 5,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D1_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 30
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d1_HP1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d1_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d1_HP1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d1_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d1_HP1_a13.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d1_HP1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d1_HP1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d1_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d1_HP1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d1_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d1_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_d1_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_d1_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_d1_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m20_d1_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m21_d1_HP1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_d1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_d1_HP1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_d1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_d1_HP1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_d1_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_d1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_d1_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_d1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_d1_HP1_a17.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D2_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 5,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 9
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d2_OS1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m07_d2_OS1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m08_d2_OS1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m09_d2_OS1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m10_d2_OS1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m11_d2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 5,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "D2_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 14
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D2_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 14
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D2_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 14
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D2_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 14
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d2_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d2_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d2_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d2_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d2_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d2_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d2_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d2_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d2_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D3_MP1": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d3_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d3_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d3_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d3_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d3_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d3_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d3_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_d3_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_d3_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_d3_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D3_MP3": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d3_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d3_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d3_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d3_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d3_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d3_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d3_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_d3_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_d3_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_d3_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D3_MP4": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d3_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d3_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d3_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d3_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d3_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d3_TF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d3_TF1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_d3_TF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_d3_TF1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_d3_TF1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D1_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 5,
+      "C4_statistical_noise": 0,
+      "survived": 25
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d1_HP1_a19.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d1_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d1_HP1_a14.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d1_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d1_HP1_a13.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d1_HP1_a15.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d1_HP1_a18.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d1_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d1_HP1_a12.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d1_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_d1_TF1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m17_d1_TF1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m18_d1_TF1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m19_d1_TF1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m20_d1_TF1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C3_ood_concentrated"
+      },
+      {
+        "file": "m21_d1_HP1_a16.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m22_d1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m23_d1_HP1_a11.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m24_d1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m25_d1_HP1_a10.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m26_d1_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m27_d1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m28_d1_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m29_d1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m30_d1_HP1_a17.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 5,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "D3_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 5,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 14
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d3_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d3_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d3_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d3_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d3_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d3_TF1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m16_d3_TF1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m17_d3_TF1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m18_d3_TF1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m19_d3_TF1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      }
+    ],
+    "n_killed": 5,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "D3_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 5,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 14
+    },
+    "per_mutant": [
+      {
+        "file": "m01_d3_HP1_a07.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_d3_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_d3_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_d3_HP1_a08.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_d3_HP1_a05.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_d3_HP1_a06.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_d3_HP1_a09.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_d3_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_d3_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_d3_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_d3_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_d3_SI1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_d3_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_d3_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_d3_TF1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m16_d3_TF1_a02.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m17_d3_TF1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m18_d3_TF1_a01.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m19_d3_TF1_a00.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      }
+    ],
+    "n_killed": 5,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "B2_MP2": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 2,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 10
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b2_CF1_a04.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m07_b2_CF1_a03.py",
+        "outcome": "KILLED",
+        "lrca": "C1_legit_fault"
+      },
+      {
+        "file": "m08_b2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 2,
+    "c1_share": 1.0,
+    "suspect_share": 0.0
+  },
+  "B2_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 12
+    },
+    "per_mutant": [
+      {
+        "file": "m01_b2_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_b2_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_b2_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_b2_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_b2_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_b2_CF1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_b2_CF1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_b2_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_b2_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_b2_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_b2_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_b2_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  },
+  "A1_MP5": {
+    "labels": {
+      "L0_artifact": 0,
+      "C1_legit_fault": 0,
+      "C2_tolerance_borderline": 0,
+      "C3_ood_concentrated": 0,
+      "C4_statistical_noise": 0,
+      "survived": 19
+    },
+    "per_mutant": [
+      {
+        "file": "m01_a1_CE1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m02_a1_CE1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m03_a1_CE1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m04_a1_CE1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m05_a1_CE1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m06_a1_HP1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m07_a1_HP1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m08_a1_HP1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m09_a1_HP1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m10_a1_HP1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m11_a1_OS1_a03.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m12_a1_OS1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m13_a1_OS1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m14_a1_OS1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m15_a1_OS1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m16_a1_SI1_a01.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m17_a1_SI1_a02.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m18_a1_SI1_a04.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      },
+      {
+        "file": "m19_a1_SI1_a00.py",
+        "outcome": "SURVIVE",
+        "lrca": "survived"
+      }
+    ],
+    "n_killed": 0,
+    "c1_share": 0.0,
+    "suspect_share": 1.0
+  }
+}
