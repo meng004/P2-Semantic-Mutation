@@ -1,0 +1,57 @@
+{
+  "rq1": {
+    "n_cells": 60,
+    "mean_sms": 0.0944,
+    "median_sms": 0.0,
+    "std_sms": 0.2065,
+    "n_zero_sms": 46,
+    "mean_c1_share": 0.1604,
+    "mean_suspect_share": 0.8396,
+    "h5_threshold_suspect": 0.2,
+    "h5_cells_pass": 9,
+    "h5_pass_ratio": 0.15
+  },
+  "rq2": {
+    "n_aligned": 12,
+    "n_cross": 48,
+    "mean_aligned": 0.1972,
+    "mean_cross": 0.0687,
+    "median_aligned": 0.0833,
+    "median_cross": 0.0,
+    "cliffs_delta": 0.3212,
+    "delta_ci_95_lo": 0.0206,
+    "delta_ci_95_hi": 0.6389,
+    "h2_threshold_delta": 0.474,
+    "h2_delta_pass": false,
+    "h2_threshold_ratio": 3.0,
+    "h2_ratio_pass": true,
+    "odds_ratio_inf": true
+  },
+  "rq3": {
+    "n_observations": 60,
+    "class_mean_a": 0.0667,
+    "class_mean_b": 0.1556,
+    "class_mean_c": 0.0444,
+    "class_mean_d": 0.1111,
+    "class_max": "b",
+    "class_min": "c",
+    "primary_converged": false,
+    "fit_error": "Singular matrix",
+    "fallback_model": "sms ~ C(class) + C(operator) + (1 | put)",
+    "fallback_note": "Group Var hit boundary (PUT random-effect variance ~ 0); fixed-effect p-values are estimable but the random-intercept term is degenerate. Interpret p-values as approximate.",
+    "fallback_p_class_b": 0.3149,
+    "fallback_p_class_c": 0.856,
+    "fallback_p_class_d": 0.6999,
+    "sign_test_aligned_above_cross": 3
+  },
+  "rq4": {
+    "spearman_rho": 0.0264,
+    "spearman_p": 0.9351,
+    "kendall_tau": 0.0,
+    "kendall_p": 1.0,
+    "n_puts": 12,
+    "min_pc": 0.5,
+    "max_pc": 1.0,
+    "mean_pc": 0.7333
+  }
+}
