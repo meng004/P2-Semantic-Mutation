@@ -9,6 +9,8 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
+
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -39,8 +41,8 @@ report = {
     "n_cross": len(cross),
     "mean_aligned": sum(aligned) / len(aligned),
     "mean_cross": sum(cross) / len(cross),
-    "median_aligned": float(sorted(aligned)[len(aligned) // 2]),
-    "median_cross": float(sorted(cross)[len(cross) // 2]),
+    "median_aligned": float(np.median(aligned)),
+    "median_cross": float(np.median(cross)),
     "cliffs_delta": delta,
     "delta_ci_95": [lo, hi],
     "odds_ratio_median": ratio,
