@@ -70,9 +70,26 @@ SMS_VERSION=v4 P2_PRIMARY_VERSION=v3b
 
 `paper_numbers_v4.json` 与论文一致；上游 `sms_track2_v4.json` / `lrca_60cell_v4.json` 也未被改动。已在 REPRODUCIBILITY.md §4 显式记录这一双环境变量约定。
 
+## 5.2 R-1 翻译基础设施（2026-05-01 就绪）
+
+- 术语表：`docs/terminology_zh_en.md`（authoritative glossary）
+- 翻译脚本：`scripts/translate_paper.py`（Anthropic SDK + prompt caching，分章节、可断点续跑）
+- 输出目标：`论文初稿P2_EN.md`（待生成）
+- 章节切分：8 段（s0_prelude + §1–§7），总 57k Chinese chars
+
+**运行命令：**
+```bash
+PYTHONPATH=src .venv/bin/python scripts/translate_paper.py --dry-run         # 验证切分
+PYTHONPATH=src .venv/bin/python scripts/translate_paper.py                   # 全文翻译（~$7, ~10 min）
+PYTHONPATH=src .venv/bin/python scripts/translate_paper.py --section 1       # 单节 calibration sample（~$0.5）
+PYTHONPATH=src .venv/bin/python scripts/translate_paper.py --assemble-only   # 拼接 partials → 论文初稿P2_EN.md
+```
+
+partials 缓存于 `.translate_cache/`（已 gitignore）。失败重试只重跑该节。
+
 ## 6. 下一步候选（按 ROI）
 
-1. **R-1 全文英文翻译**（P0 blocker；~1 周；解锁投稿）
+1. **R-1 全文英文翻译**（P0 blocker；基础设施就绪，待运行 ~$7 / 10 min；之后人审）
 2. **R-25 artifact 公开包**（REPRODUCIBILITY 扩充 + Zenodo DOI；~3-5 h）
 3. **R-7/R-8 引用 + 定理证明**（P1；~1-2 天）
 4. **R-12/R-13 bootstrap + power analysis**（P2；~半天，提升 H2 可辩护性）
