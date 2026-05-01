@@ -57,6 +57,19 @@
 - 早期 manual pilot（`a2_MP1_mut1`, `b2_MP2_mut1`）→ 仅为 pipeline 验证，**不入论文**
 - LLM-only 单源 v2（`*_pool/`）→ 已被 cross-source v4（`*_pool_v4/`）supersede
 
+## 5.1 ⚠️ 遗留不一致（2026-05-01 发现）
+
+`SMS_VERSION=v4 .venv/bin/python scripts/build_paper_numbers.py` 重算结果与 `paper_numbers_v4.json`（论文 §5.7 引用源）**不一致**：
+- 论文/已 commit 的 v4: `mean_aligned=0.275, median_aligned=0.267, sign_test=4`
+- 重算的 v4: `mean_aligned=0.213, median_aligned=0.1, sign_test=3`
+- 关键的 `cliffs_delta=0.439` 与 `friedman_chi2=15.30` **未变**
+
+成因待查：可能是 `sms_track2_v4.json`（或上游 PRIMARY_CELLS / lrca_60cell_v4.json）在 paper_numbers_v4.json 落地后又被某次 commit 更新过。修复前 **不要重新运行 build_paper_numbers.py 写 v4**（默认值 SMS_VERSION=v3 已恢复以避免误触发）。
+
+调查路径：
+1. 比对 `git log --follow data/results/sms_track2_v4.json` 与 `paper_numbers_v4.json` 的提交时间
+2. 决定取舍：(a) 重新生成 paper_numbers_v4.json + 同步更新论文 §5.7 数字；或 (b) 锁定旧 sms_track2_v4 / lrca_60cell_v4 快照保护当前论文引用
+
 ## 6. 下一步候选（按 ROI）
 
 1. **R-1 全文英文翻译**（P0 blocker；~1 周；解锁投稿）
