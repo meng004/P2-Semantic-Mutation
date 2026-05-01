@@ -57,18 +57,18 @@
 - 早期 manual pilot（`a2_MP1_mut1`, `b2_MP2_mut1`）→ 仅为 pipeline 验证，**不入论文**
 - LLM-only 单源 v2（`*_pool/`）→ 已被 cross-source v4（`*_pool_v4/`）supersede
 
-## 5.1 ⚠️ 遗留不一致（2026-05-01 发现）
+## 5.1 ✅ 复现陷阱（已定位，2026-05-01）
 
-`SMS_VERSION=v4 .venv/bin/python scripts/build_paper_numbers.py` 重算结果与 `paper_numbers_v4.json`（论文 §5.7 引用源）**不一致**：
-- 论文/已 commit 的 v4: `mean_aligned=0.275, median_aligned=0.267, sign_test=4`
-- 重算的 v4: `mean_aligned=0.213, median_aligned=0.1, sign_test=3`
-- 关键的 `cliffs_delta=0.439` 与 `friedman_chi2=15.30` **未变**
+正确复现论文 v4 数字需要**两个**环境变量同时设置：
+```
+SMS_VERSION=v4 P2_PRIMARY_VERSION=v3b
+```
+- `SMS_VERSION=v4`：选 v4 跨源数据文件
+- `P2_PRIMARY_VERSION=v3b`：选 c-class 数据驱动 primary MP（c1/c2/c3 → MP1，§3.5.1）
 
-成因待查：可能是 `sms_track2_v4.json`（或上游 PRIMARY_CELLS / lrca_60cell_v4.json）在 paper_numbers_v4.json 落地后又被某次 commit 更新过。修复前 **不要重新运行 build_paper_numbers.py 写 v4**（默认值 SMS_VERSION=v3 已恢复以避免误触发）。
+**漏设 `P2_PRIMARY_VERSION=v3b`** → c-class 仍按默认 v3（→ MP5）分组 → `mean_aligned ≈ 0.213` ≠ 论文的 0.275（`cliffs_delta=0.439` 与 `friedman_chi2=15.30` 不受影响，只 aligned/cross 分组变）。
 
-调查路径：
-1. 比对 `git log --follow data/results/sms_track2_v4.json` 与 `paper_numbers_v4.json` 的提交时间
-2. 决定取舍：(a) 重新生成 paper_numbers_v4.json + 同步更新论文 §5.7 数字；或 (b) 锁定旧 sms_track2_v4 / lrca_60cell_v4 快照保护当前论文引用
+`paper_numbers_v4.json` 与论文一致；上游 `sms_track2_v4.json` / `lrca_60cell_v4.json` 也未被改动。已在 REPRODUCIBILITY.md §4 显式记录这一双环境变量约定。
 
 ## 6. 下一步候选（按 ROI）
 

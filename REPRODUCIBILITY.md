@@ -47,10 +47,15 @@ Two paths depending on whether you want to re-call LLMs.
 
 Cache contains **470 LLM trials with raw responses + V1-V6 reviewer labels**, sufficient to reproduce all paper numbers without any LLM API calls.
 
-Version is selected via the `SMS_VERSION` environment variable; the paper analysis uses `v4`.
+**Two environment variables together select the paper's analysis configuration:**
+- `SMS_VERSION=v4` — picks the v4 cross-source data files (sms_track2_v4.json, lrca_60cell_v4.json, rq{2,3,4}_*_v4.json).
+- `P2_PRIMARY_VERSION=v3b` — picks the data-driven c-class primary MP assignment (c1/c2/c3 → MP1, from `data/results/c_class_mp_ranking.json`); this is what §3.5.1 of the paper documents and what the `aligned` / `cross` grouping in §5.7 depends on.
+
+**Both are required.** Setting only `SMS_VERSION=v4` without `P2_PRIMARY_VERSION=v3b` will recompute aligned/cross with the v3 default primary (c-class → MP5) and produce numbers that do **not** match the paper.
 
 ```bash
-export SMS_VERSION=v4   # selects v4 cross-source data across all scripts below
+export SMS_VERSION=v4
+export P2_PRIMARY_VERSION=v3b   # REQUIRED — matches §3.5.1 c-class data-driven primary MP
 
 # 4A.1  Build per-PUT cross-source v4 pools (≤ 1 min)
 PYTHONPATH=src .venv/bin/python scripts/build_pools.py
@@ -77,7 +82,7 @@ PYTHONPATH=src .venv/bin/python scripts/build_paper_numbers.py
 PYTHONPATH=src .venv/bin/python scripts/render_figures.py
 ```
 
-**Note:** `build_paper_numbers.py` reads `SMS_VERSION` from the environment. Other scripts may operate on default file paths — set `SMS_VERSION` before running each, or check the script's docstring for the override mechanism.
+**Note:** All `compute_rq*.py` scripts and `build_paper_numbers.py` import `PRIMARY_CELLS` at module load, so the env vars **must** be exported before invoking each script. If you forget `P2_PRIMARY_VERSION=v3b`, `mean_aligned` will be ~0.213 instead of the paper's 0.275 (Cliff's δ and Friedman χ² stay the same; only aligned/cross grouping changes).
 
 ### Path B — Re-call LLMs from scratch (non-deterministic, ~3-4 h, USD ~$80)
 
