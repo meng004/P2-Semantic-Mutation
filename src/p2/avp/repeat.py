@@ -33,6 +33,9 @@ def call_avp_repeated(
 ) -> AVPResult:
     """Run call_avp `repeats` times, return PASS iff > 50% repeats PASS.
 
+    Ties (e.g. 10/10 at repeats=20) resolve to FAIL — a mutant survives
+    only when a strict majority of repeats pass.
+
     Repeats <= 1 falls back to a single call. Exceptions during call_avp
     are counted as FAIL for that repeat (the offending repeat is dropped
     from n_total; if every repeat raises, the verdict is FAIL).
@@ -44,8 +47,8 @@ def call_avp_repeated(
     for _ in range(repeats):
         try:
             r = call_avp(program, mr, epsilon)
-        except Exception as exc:
-            _record_new_repeat_exception(exc)
+        except (ValueError, ArithmeticError, TypeError, RuntimeError) as e:
+            _record_new_repeat_exception(e)
             continue
         n_total += 1
         if r == AVPResult.PASS:
