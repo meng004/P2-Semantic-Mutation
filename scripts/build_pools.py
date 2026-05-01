@@ -9,7 +9,10 @@ import json
 import os
 import shutil
 import sys
+import warnings
 from pathlib import Path
+
+warnings.filterwarnings("ignore")
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 

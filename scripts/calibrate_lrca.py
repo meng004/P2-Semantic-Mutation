@@ -14,7 +14,10 @@ import importlib.util
 import itertools
 import json
 import sys
+import warnings
 from pathlib import Path
+
+warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -29,9 +32,8 @@ H5_THRESHOLD = 0.20
 
 def _load(name, path):
     spec = importlib.util.spec_from_file_location(name, path)
-    mod = importlib.util.module_from_spec(spec)
-    assert spec is not None and spec.loader is not None
-    spec.loader.exec_module(mod)
+    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
 
 

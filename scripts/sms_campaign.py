@@ -19,9 +19,12 @@ import argparse
 import importlib.util
 import json
 import sys
+import warnings
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import List, Optional
+
+warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -51,8 +54,8 @@ EPSILON_AVP = 1e-6
 def _load_module(name: str, path: Path):
     """Import a Python file as a module."""
     spec = importlib.util.spec_from_file_location(name, path)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
 
 

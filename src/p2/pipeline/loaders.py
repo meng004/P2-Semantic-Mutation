@@ -18,8 +18,8 @@ def load_mutants(put_id: str, mp_index: int, mut_index: int, root: Path) -> List
         spec_name = f"_mutant_{py_file.stem}"
         import importlib.util
         spec = importlib.util.spec_from_file_location(spec_name, py_file)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
         mutants.append(mod.program)
     return mutants
 

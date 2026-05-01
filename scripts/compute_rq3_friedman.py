@@ -12,10 +12,13 @@ Reads data/results/sms_track2_v3.json by default; pass --v2 to read v2.
 import argparse
 import json
 import sys
+import warnings
 from pathlib import Path
 
 import numpy as np
 from scipy.stats import friedmanchisquare
+
+warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))

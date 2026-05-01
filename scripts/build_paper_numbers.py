@@ -7,9 +7,12 @@ the legacy (Round 4) files.
 import json
 import math
 import os
+import warnings
 from pathlib import Path
 
 import numpy as np
+
+warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).parent.parent
 RESULTS = ROOT / "data/results"

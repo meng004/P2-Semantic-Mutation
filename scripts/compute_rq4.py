@@ -9,10 +9,13 @@ import importlib.util
 import json
 import os
 import sys
+import warnings
 from pathlib import Path
 
 import numpy as np
 from scipy.stats import kendalltau, spearmanr
+
+warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -35,8 +38,8 @@ NARROW_EXC = (ValueError, ArithmeticError, TypeError, RuntimeError,
 
 def _load(name: str, path: Path):
     spec = importlib.util.spec_from_file_location(name, path)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
 
 
@@ -83,14 +86,14 @@ def main() -> None:
 
     cov_arr = [v["pattern_coverage"] for v in per_put.values()]
     sms_arr = [v["mean_sms_over_5_cells"] for v in per_put.values()]
-    rho, p_rho = spearmanr(cov_arr, sms_arr)
-    tau, p_tau = kendalltau(cov_arr, sms_arr)
+    sp = spearmanr(cov_arr, sms_arr)
+    kt = kendalltau(cov_arr, sms_arr)
     report = {
         "per_put": per_put,
-        "spearman_rho": float(rho),
-        "spearman_p": float(p_rho),
-        "kendall_tau": float(tau),
-        "kendall_p": float(p_tau),
+        "spearman_rho": float(sp.statistic),  # type: ignore[union-attr]
+        "spearman_p": float(sp.pvalue),  # type: ignore[union-attr]
+        "kendall_tau": float(kt.statistic),  # type: ignore[union-attr]
+        "kendall_p": float(kt.pvalue),  # type: ignore[union-attr]
         "n": len(per_put),
     }
     out = ROOT / "data/results" / OUT_FILE

@@ -8,10 +8,12 @@ H2 pass/fail flags to data/results/rq2_cliffs_delta.json.
 import json
 import os
 import sys
+import warnings
 from pathlib import Path
 
 import numpy as np
 
+warnings.filterwarnings("ignore")
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 

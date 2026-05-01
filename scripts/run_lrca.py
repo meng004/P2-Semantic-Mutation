@@ -16,7 +16,10 @@ Run from project root:
 import importlib.util
 import json
 import sys
+import warnings
 from pathlib import Path
+
+warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -39,8 +42,8 @@ _MUTANT_EXC = (ValueError, ArithmeticError, TypeError, RuntimeError, ImportError
 
 def _load(name: str, path: Path):
     spec = importlib.util.spec_from_file_location(name, path)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
 
 
