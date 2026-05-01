@@ -34,11 +34,13 @@ for cell, v in data.items():
     target = aligned if mp_k == PRIMARY[put_id] else cross
     target.append(v["sms"])
 
+N_BOOT = int(os.environ.get("RQ2_N_BOOT", "10000"))
 delta = cliffs_delta(aligned, cross)
-lo, hi = bootstrap_delta_ci(aligned, cross, n_boot=1000, alpha=0.05, seed=42)
+lo, hi = bootstrap_delta_ci(aligned, cross, n_boot=N_BOOT, alpha=0.05, seed=42)
 ratio = odds_ratio(aligned, cross)
 
 report = {
+    "n_boot": N_BOOT,
     "n_aligned": len(aligned),
     "n_cross": len(cross),
     "mean_aligned": sum(aligned) / len(aligned),
