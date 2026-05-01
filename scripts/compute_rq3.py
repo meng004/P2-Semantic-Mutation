@@ -88,6 +88,17 @@ if not out["converged"] or not out.get("fixed_params"):
             k.replace("cls_", "class"): float(v)
             for k, v in fb.pvalues.to_dict().items()
         }
+        # statsmodels' strict converged flag can be False even when the fit
+        # produced usable fixed-effect estimates (e.g. PUT random-effect
+        # variance hit the boundary at ~0). Annotate that case so readers
+        # know how to interpret the bare ``fallback_converged: false``.
+        if (report["fallback_fixed_params"]
+                and not report["fallback_converged"]):
+            report["fallback_note"] = (
+                "Group Var hit boundary (PUT random-effect variance ~ 0); "
+                "fixed-effect p-values are estimable but the random-intercept "
+                "term is degenerate. Interpret p-values as approximate."
+            )
         model_summary = str(fb.summary())
     except Exception as e:  # pragma: no cover - belt-and-braces
         report["fallback_error"] = str(e)

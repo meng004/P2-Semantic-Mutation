@@ -66,6 +66,8 @@ def fit_class_by_operator_model(df: pd.DataFrame, value_col: str = "sms") -> Dic
             "error": str(e),
             "class_means": class_means,
             "model_summary": "",
+            "fixed_params": {},
+            "p_values": {},
         }
     return {
         "converged": converged,
