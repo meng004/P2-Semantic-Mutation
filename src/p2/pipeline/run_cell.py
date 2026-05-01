@@ -23,14 +23,22 @@ def run_one_cell(
     mr_set: Sequence[MR], cell_id: str,
     sampler: InputSampler, k_eq: int,
     epsilon_eq: float, epsilon_avp: float,
+    repeats: int = 1,
 ) -> CellResult:
+    """Evaluate one (PUT, MR-set) cell against a list of mutants.
+
+    ``repeats`` is forwarded to :func:`p2.lrca.killed.is_killed`. When
+    > 1, the killed verdict is the majority vote of N AVP repetitions
+    (used by Round-4+ Track-2 to stabilize stochastic-PUT verdicts).
+    Equivalence detection is unaffected (still single-shot, k_eq inputs).
+    """
     result = CellResult(cell_id=cell_id, inst_count=len(mutants))
     for idx, sm in enumerate(mutants):
         if is_equivalent(put, sm, mr_set, sampler, k_eq, epsilon_eq, epsilon_avp):
             result.equiv_count += 1
             result.equiv_indices.append(idx)
             continue
-        if is_killed(put, sm, mr_set, epsilon_avp):
+        if is_killed(put, sm, mr_set, epsilon_avp, repeats=repeats):
             result.killed_count += 1
             result.killed_indices.append(idx)
         else:
