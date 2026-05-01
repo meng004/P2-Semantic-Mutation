@@ -1,7 +1,7 @@
 {
   "put": "c3",
   "n_target": 12,
-  "n_actual": 11,
+  "n_actual": 12,
   "mutants": [
     {
       "rank": 1,
@@ -79,6 +79,13 @@
       "operator": "c3_TF1",
       "attempt_idx": 12,
       "source_relpath": "data/operator_campaign/cache/c3_TF1_attempt12.py"
+    },
+    {
+      "rank": 12,
+      "filename": "m12_c3_TF1_a18.py",
+      "operator": "c3_TF1",
+      "attempt_idx": 18,
+      "source_relpath": "data/operator_campaign/cache/c3_TF1_attempt18.py"
     }
   ]
 }

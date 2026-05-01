@@ -1,7 +1,7 @@
 {
   "put": "b2",
   "n_target": 12,
-  "n_actual": 10,
+  "n_actual": 12,
   "mutants": [
     {
       "rank": 1,
@@ -72,6 +72,20 @@
       "operator": "b2_HP1",
       "attempt_idx": 4,
       "source_relpath": "data/operator_campaign/cache/b2_HP1_attempt04.py"
+    },
+    {
+      "rank": 11,
+      "filename": "m11_b2_HP1_a01.py",
+      "operator": "b2_HP1",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache/b2_HP1_attempt01.py"
+    },
+    {
+      "rank": 12,
+      "filename": "m12_b2_CE1_a00.py",
+      "operator": "b2_CE1",
+      "attempt_idx": 0,
+      "source_relpath": "data/operator_campaign/cache/b2_CE1_attempt00.py"
     }
   ]
 }
