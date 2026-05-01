@@ -44,6 +44,7 @@ def main() -> None:
             pool_dir = ROOT / f"data/mutants/{put_id}_MP{PRIMARY[put_id]}_llm"
         mrs_mod = _load(f"mrs_{put_id}", ROOT / f"src/p2/mrs/{put_id}.py")
         outcomes = []
+        xs = np.linspace(0.05, 0.95, 10)
         for fp in sorted(pool_dir.glob("m*.py")):
             try:
                 mut_mod = _load(f"_m_{put_id}_{fp.stem}", fp)
@@ -52,17 +53,18 @@ def main() -> None:
             for mp_k in (1, 2, 3, 4, 5):
                 r = getattr(mrs_mod, f"r_mp{mp_k}")
                 R = getattr(mrs_mod, f"R_mp{mp_k}")
-                try:
-                    xs = np.linspace(0.05, 0.95, 10)
-                    for x in xs:
+                for x in xs:
+                    try:
                         y_o = mut_mod.program(float(x))
                         y_n = mut_mod.program(float(r(x)))
                         outcomes.append((mp_k, bool(R(y_o, y_n))))
-                except NARROW_EXC:
-                    pass
+                    except NARROW_EXC:
+                        continue
         cov = compute_pattern_coverage(outcomes, n_mps=5)
         cell_smses = [v["sms"] for k, v in sms.items()
                       if k.startswith(put_id.upper() + "_")]
+        if not cell_smses:
+            raise KeyError(f"no SMS cells found for PUT {put_id}")
         per_put[put_id] = {
             "pattern_coverage": round(cov, 4),
             "mean_sms_over_5_cells": round(float(np.mean(cell_smses)), 4),
