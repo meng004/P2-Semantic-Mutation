@@ -11,11 +11,17 @@
 
 ## 1. Reviewer 28 项进度
 
-**已 close（24）：** P0: R-2, R-3, R-4, R-5, R-6, R-24 | P1: R-7, R-8, R-9, R-10, R-11 | P2: R-12, R-13, R-14, R-15, R-16(protocol), R-17, R-18, R-19, R-20, R-21, R-22, R-23, R-25(基础设施)
+**Pre-2026-05-01 review (24)：** P0: R-2/3/4/5/6/24 | P1: R-7/8/9/10/11 | P2: R-12/13/14/15/16(protocol)/17/18/19/20/21/22/23/25(基础设施)
 
-**Pending（4）：**
+**2026-05-01 reviewer-consensus revision round (9 ≥3/5 items, plan: docs/superpowers/plans/2026-05-01-p2-reviewer-consensus-revision.md):**
+- **P0:** P0-1 (title scope, 5/5) | P0-2 (17.6:1 删) | P0-3 (sign test 4/4 降级) | P0-4 (permutation null + Bonferroni) | P0-5 (chained conditioning) | P0-6 (IST 2024 撤掉, fabricated literature)
+- **P1:** P1-3 (§9 strict-vs-asymptotic + L1-L6 dependency, 4/5) | P1-5 (zero-mass to §5.7.2) | P1-7 (protocol asymmetry §7.1 R13)
+
+**Pending：**
 - **P0 blocker:** R-1（全文英文翻译，投稿必做；基础设施已就绪，待运行 ~$7 / 10 min；之后人审）
-- **P2:** R-26/R-27/R-28（杂项，需 reviewer 原文核对）
+- **P0 from 2026-05-01 review:** P0-7（pre-registration claim 证据，单 reviewer，未入此 plan）
+- **P1 from 2026-05-01 review:** P1-1/2/4/6/8/9/10/11（单 reviewer items，已 deferred）
+- **P2 misc:** R-26/R-27/R-28（需 reviewer 原文核对）
 
 ## 2. 论文章节状态（13 个 H1/H2）
 
