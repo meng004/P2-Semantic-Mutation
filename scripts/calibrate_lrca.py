@@ -23,10 +23,8 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from p2.avp.interface import MR
+from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]
 from p2.lrca.dispatcher import classify_mutant, LRCALabel
-
-PRIMARY = {"a1": 1, "a2": 1, "a3": 1, "b1": 2, "b2": 2, "b3": 2,
-           "c1": 5, "c2": 5, "c3": 5, "d1": 2, "d2": 2, "d3": 2}
 H5_THRESHOLD = 0.20
 
 

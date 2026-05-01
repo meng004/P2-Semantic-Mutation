@@ -25,16 +25,8 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from p2.avp.interface import MR  # noqa: E402
+from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
 from p2.lrca.dispatcher import LRCALabel, classify_mutant  # noqa: E402
-
-# Primary MP per PUT — used to fall back to <put>_MP<k>_llm dirs when
-# no per-PUT pool directory exists (Round 2 builders preceded Round 4).
-PRIMARY = {
-    "a1": 1, "a2": 1, "a3": 1,
-    "b1": 2, "b2": 2, "b3": 2,
-    "c1": 5, "c2": 5, "c3": 5,
-    "d1": 2, "d2": 2, "d3": 2,
-}
 
 # Narrow exception class per project pattern (mirrors p2.avp.repeat).
 _MUTANT_EXC = (ValueError, ArithmeticError, TypeError, RuntimeError, ImportError, SyntaxError)

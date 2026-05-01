@@ -30,16 +30,9 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from p2.avp.interface import MR
+from p2.config.primary import PRIMARY_CELLS  # type: ignore[import-not-found]
 from p2.equiv.sampler import UniformSampler
 from p2.pipeline.run_cell import run_one_cell
-
-# Primary (put_id -> mp_k) assignments — determines MR and mutant directory name
-PRIMARY_CELLS = {
-    "a1": 1, "a2": 1, "a3": 1,
-    "b1": 2, "b2": 2, "b3": 2,
-    "c1": 5, "c2": 5, "c3": 5,
-    "d1": 2, "d2": 2, "d3": 2,
-}
 
 PUTS_DIR = ROOT / "src" / "p2" / "puts"
 MRS_DIR  = ROOT / "src" / "p2" / "mrs"

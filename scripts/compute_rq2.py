@@ -17,14 +17,8 @@ warnings.filterwarnings("ignore")
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
+from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]
 from p2.stats.cliffs_delta import bootstrap_delta_ci, cliffs_delta, odds_ratio
-
-PRIMARY = {
-    "a1": 1, "a2": 1, "a3": 1,
-    "b1": 2, "b2": 2, "b3": 2,
-    "c1": 5, "c2": 5, "c3": 5,
-    "d1": 2, "d2": 2, "d3": 2,
-}
 
 VERSION = os.environ.get("SMS_VERSION", "v3")
 SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
