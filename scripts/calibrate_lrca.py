@@ -1,18 +1,28 @@
 """Sweep LRCA thresholds to find best H5 pass ratio.
 
-Grid (9 combos to keep wall time tractable):
-  ood_band ∈ {0.02, 0.05, 0.10}
-  tolerance_multiplier ∈ {3.0, 10.0, 30.0}
-  statistical_repeats fixed at 20 (§3.4 paper baseline)
+Grid sizing controlled by env LRCA_GRID:
+  "9"  (default, fast) — 3×3 grid:
+       ood_band ∈ {0.02, 0.05, 0.10}
+       tolerance_multiplier ∈ {3.0, 10.0, 30.0}
+  "49" (R-14 dense, ~5–6× wall time) — 7×7 grid:
+       ood_band ∈ {0.01, 0.02, 0.04, 0.07, 0.10, 0.15, 0.20}
+       tolerance_multiplier ∈ {1.0, 3.0, 5.0, 10.0, 20.0, 30.0, 50.0}
 
-For each combo, recompute LRCA label per (cell, mutant) using v3 SMS data,
-report mean_C1_share, mean_suspect_share, h5_cells_pass.
+statistical_repeats fixed at 20 (§3.4 paper baseline).
 
-Output: data/results/lrca_calibration.json
+Data version controlled by SMS_VERSION (default v3 to preserve historical
+output filename; set SMS_VERSION=v4 to use the cross-source primary data).
+
+For each combo, recompute LRCA label per (cell, mutant), report
+mean_C1_share, mean_suspect_share, h5_cells_pass.
+
+Output: data/results/lrca_calibration{_v4 if SMS_VERSION=v4 else ""}.json
+        (filename suffix mirrors the data version)
 """
 import importlib.util
 import itertools
 import json
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -23,7 +33,6 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from p2.avp.interface import MR
-from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]
 from p2.lrca.dispatcher import classify_mutant, LRCALabel
 H5_THRESHOLD = 0.20
 
@@ -35,15 +44,32 @@ def _load(name, path):
     return mod
 
 
+VERSION = os.environ.get("SMS_VERSION", "v3")
+GRID_SIZE = os.environ.get("LRCA_GRID", "9")
+SMS_FILE = f"sms_track2_{VERSION}.json" if VERSION != "v2" else "sms_track2_v2.json"
+OUT_FILE = (
+    f"lrca_calibration_{VERSION}.json"
+    if VERSION not in ("v2", "v3")
+    else "lrca_calibration.json"
+)
+print(
+    f"calibrate_lrca: SMS_VERSION={VERSION} GRID={GRID_SIZE} "
+    f"reading {SMS_FILE} writing {OUT_FILE}"
+)
+
+
 def _classify_60_cells(ood_band, tol_mult, repeats):
-    sms = json.loads((ROOT / "data/results/sms_track2_v3.json").read_text())
+    sms = json.loads((ROOT / "data/results" / SMS_FILE).read_text())
     suspect_shares = []
     for cell, v in sms.items():
         put_id = cell.split("_")[0].lower()
         mp_k = int(cell.split("MP")[1])
-        pool_dir = ROOT / f"data/mutants/{put_id}_pool_v3"
-        if not pool_dir.exists():
-            pool_dir = ROOT / f"data/mutants/{put_id}_pool"
+        pool_candidates = [
+            ROOT / f"data/mutants/{put_id}_pool_{VERSION}",
+            ROOT / f"data/mutants/{put_id}_pool_v3",
+            ROOT / f"data/mutants/{put_id}_pool",
+        ]
+        pool_dir = next((p for p in pool_candidates if p.exists()), pool_candidates[-1])
         try:
             put_mod = _load(f"put_{put_id}", ROOT / f"src/p2/puts/{put_id}.py")
             mrs_mod = _load(f"mrs_{put_id}", ROOT / f"src/p2/mrs/{put_id}.py")
@@ -86,10 +112,16 @@ def _classify_60_cells(ood_band, tol_mult, repeats):
 
 
 def main():
-    grid = list(itertools.product(
-        [0.02, 0.05, 0.10],   # ood_band
-        [3.0, 10.0, 30.0],    # tolerance_multiplier
-    ))
+    if GRID_SIZE == "49":
+        grid = list(itertools.product(
+            [0.01, 0.02, 0.04, 0.07, 0.10, 0.15, 0.20],
+            [1.0, 3.0, 5.0, 10.0, 20.0, 30.0, 50.0],
+        ))
+    else:
+        grid = list(itertools.product(
+            [0.02, 0.05, 0.10],
+            [3.0, 10.0, 30.0],
+        ))
     repeats = 20
     report = []
     for ob, tm in grid:
@@ -117,7 +149,7 @@ def main():
         "h5_threshold_suspect": H5_THRESHOLD,
         "h5_threshold_pass_ratio": 0.80,
     }
-    (ROOT / "data/results/lrca_calibration.json").write_text(
+    (ROOT / "data/results" / OUT_FILE).write_text(
         json.dumps(out, indent=2, ensure_ascii=False))
     print("\n=== BEST ===")
     print(json.dumps(report[0], indent=2, ensure_ascii=False))
