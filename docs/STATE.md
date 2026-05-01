@@ -11,12 +11,11 @@
 
 ## 1. Reviewer 28 项进度
 
-**已 close（15）：** P0: R-2, R-3, R-4, R-5, R-6, R-24 | P1: R-9, R-10, R-11 | P2: R-17, R-18, R-20, R-21, R-22, R-23
+**已 close（18）：** P0: R-2, R-3, R-4, R-5, R-6, R-24 | P1: R-7, R-8, R-9, R-10, R-11 | P2: R-17, R-18, R-20, R-21, R-22, R-23, R-25(基础设施)
 
-**Pending（13）：**
-- **P0 blocker:** R-1（全文英文翻译，投稿必做）
-- **P1:** R-7（reference 列表完整化）, R-8（SMS→MS theorem 形式化证明）
-- **P2:** R-12/R-13（bootstrap B≥10000 + power analysis）, R-14（LRCA grid 扩展）, R-15（mutmut ablation）, R-16（differential prompt 实验）, R-19（stakeholder 章节）, R-25（artifact commitment / 复现性公开包）, R-26/R-27/R-28（杂项）
+**Pending（10）：**
+- **P0 blocker:** R-1（全文英文翻译，投稿必做；基础设施已就绪，待运行 ~$7 / 10 min；之后人审）
+- **P2:** R-12/R-13（bootstrap B≥10000 + power analysis）, R-14（LRCA grid 扩展）, R-15（mutmut ablation）, R-16（differential prompt 实验）, R-19（stakeholder 章节）, R-26/R-27/R-28（杂项）
 
 ## 2. 论文章节状态（13 个 H1/H2）
 
@@ -30,7 +29,9 @@
 | §5 统计分析方法 | ✓ 完整（§5.6/5.7/5.7.2/5.8/5.9 全部已落数字） |
 | §6 讨论 | ✓ 完整（含 §6.1 v4 cross-source 叙事 + Petrović 重构） |
 | §7 风险与缓解 + Limitations | ✓ 完整（含 R8-R10） |
-| 全文英文版 | ✗ R-1 blocker，未完成 |
+| §8 参考文献 / References | ✓ NEW（R-7 close）；APA-7，11 学术引用 + 3 软件工具 + 2 P-series companions |
+| §9 SMS-MS 退化定理 | ✓ NEW（R-8 close）；6 退化条件 L1-L6 + 3 引理 + 主定理 + LRCA 平凡化推论 |
+| 全文英文版 | ✗ R-1 blocker，基础设施就绪，待用户运行 |
 
 ## 3. 关键 artifacts（v4 = primary）
 
