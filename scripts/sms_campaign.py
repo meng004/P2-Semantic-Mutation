@@ -83,20 +83,30 @@ def evaluate_cell(
     put_id: str,
     mp_k: int,
     mutant_dir: Optional[Path] = None,
+    repeats: int = 1,
 ) -> dict:
     """Evaluate SMS for one (put_id, mp_k) cell.
 
     Args:
         put_id: PUT identifier, e.g. "a2".
         mp_k:   Target MP index (may differ from PUT's primary MP).
-        mutant_dir: Path to mutant directory. Defaults to the PUT's
-                    primary mutant pool data/mutants/{put_id}_MP{primary}_llm/
-                    (Track-2 reuses the same per-PUT mutant pool across
-                    all 5 MPs to enable diagonal-vs-cross comparison).
+        mutant_dir: Path to mutant directory. Defaults to the per-PUT
+                    enriched pool ``data/mutants/{put_id}_pool/`` if it
+                    exists (Round-2 build, 8-12 mutants/PUT), else falls
+                    back to the legacy primary-MP pool
+                    ``data/mutants/{put_id}_MP{primary}_llm/`` (3-5
+                    mutants/PUT). Track-2 reuses the same per-PUT mutant
+                    pool across all 5 MPs for diagonal-vs-cross comparison.
+        repeats: N AVP repetitions per killed-check (Round-3 majority vote).
+                 Default 1 = legacy single-shot. Use 20 for stochastic PUTs.
     """
     if mutant_dir is None:
-        primary_mp = PRIMARY_CELLS[put_id]
-        mutant_dir = MUTANTS_DIR / f"{put_id}_MP{primary_mp}_llm"
+        pool_dir = MUTANTS_DIR / f"{put_id}_pool"
+        if pool_dir.exists():
+            mutant_dir = pool_dir
+        else:
+            primary_mp = PRIMARY_CELLS[put_id]
+            mutant_dir = MUTANTS_DIR / f"{put_id}_MP{primary_mp}_llm"
 
     cell_label = f"{put_id.upper()}_MP{mp_k}"
 
@@ -130,6 +140,7 @@ def evaluate_cell(
         k_eq=K_EQ,
         epsilon_eq=EPSILON_EQ,
         epsilon_avp=EPSILON_AVP,
+        repeats=repeats,
     )
 
     outcomes = []
@@ -153,9 +164,9 @@ def evaluate_cell(
     }
 
 
-def _worker(put_id: str, mp_k: int) -> dict:
+def _worker(put_id: str, mp_k: int, repeats: int = 1) -> dict:
     """Top-level worker for ProcessPoolExecutor (must be picklable)."""
-    return evaluate_cell(put_id, mp_k)
+    return evaluate_cell(put_id, mp_k, repeats=repeats)
 
 
 def _build_cell_list(track: int, cell: Optional[str], mp: Optional[int]) -> list:
@@ -180,6 +191,12 @@ def main():
                         help="Run a single cell, e.g. --cell a2")
     parser.add_argument("--mp", type=int, default=None,
                         help="With --cell, force a specific MP index (1-5)")
+    parser.add_argument("--repeats", type=int, default=1,
+                        help="N AVP repetitions per (mutant, MR) killed-check "
+                             "(default 1 = single shot; Round-4 uses 20)")
+    parser.add_argument("--out", type=str, default=None,
+                        help="Override output JSON path (default "
+                             "data/results/sms_track{N}.json)")
     args = parser.parse_args()
 
     cells = _build_cell_list(args.track, args.cell, args.mp)
@@ -192,14 +209,14 @@ def main():
 
     if len(cells) == 1:
         put_id, mp_k = cells[0]
-        summary = evaluate_cell(put_id, mp_k)
+        summary = evaluate_cell(put_id, mp_k, repeats=args.repeats)
         all_results[summary["cell"]] = summary
         _print_summary(summary)
     else:
         futures = {}
         with ProcessPoolExecutor(max_workers=args.workers) as executor:
             for put_id, mp_k in cells:
-                fut = executor.submit(_worker, put_id, mp_k)
+                fut = executor.submit(_worker, put_id, mp_k, args.repeats)
                 futures[fut] = (put_id, mp_k)
 
             for fut in as_completed(futures):
@@ -218,7 +235,11 @@ def main():
                 _print_summary(summary)
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = RESULTS_DIR / f"sms_track{args.track}.json"
+    if args.out:
+        out_path = Path(args.out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        out_path = RESULTS_DIR / f"sms_track{args.track}.json"
     out_path.write_text(json.dumps(all_results, indent=2, ensure_ascii=False))
     print(f"\nResults saved → {out_path}")
 
