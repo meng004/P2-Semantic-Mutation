@@ -1,0 +1,38 @@
+{
+  "p2_pool_dir": "data/mutants/a1_pool_v4",
+  "n_p2_mutants": 30,
+  "n_cosmic_ray_mutants": 201,
+  "n_cosmic_ray_unique_asts": 201,
+  "n_cosmic_ray_diff_apply_failed": 0,
+  "n_cosmic_ray_post_mutation_parse_failed": 0,
+  "cosmic_ray_outcome_counts": {
+    "KILLED": 123,
+    "SURVIVED": 78
+  },
+  "n_overlap": 0,
+  "overlap_rate_overall": 0.0,
+  "per_operator_class": {
+    "CE": {
+      "n_p2": 9,
+      "n_overlap": 0,
+      "overlap_rate": 0.0
+    },
+    "HP": {
+      "n_p2": 9,
+      "n_overlap": 0,
+      "overlap_rate": 0.0
+    },
+    "OS": {
+      "n_p2": 6,
+      "n_overlap": 0,
+      "overlap_rate": 0.0
+    },
+    "SI": {
+      "n_p2": 6,
+      "n_overlap": 0,
+      "overlap_rate": 0.0
+    }
+  },
+  "overlap_files": [],
+  "interpretation": "overlap_rate_overall is the fraction of P2 a1 mutants whose normalized AST is also produced by cosmic-ray's default operators on the same source. Low overall rate (<0.5) indicates P2 mutants are NOT a subset of syntactic mutants."
+}

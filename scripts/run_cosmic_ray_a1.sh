@@ -41,7 +41,7 @@ cat > "$CONF" <<'TOML'
 module-path = "src/p2/puts/a1.py"
 timeout = 30
 excluded-modules = []
-test-command = "PYTHONPATH=src .venv/bin/pytest -q tests/puts/test_a1.py tests/puts/test_a1_scalar_interface.py"
+test-command = "bash scripts/_cr_a1_pytest.sh"
 
 [cosmic-ray.distributor]
 name = "local"
