@@ -1,0 +1,30 @@
+{
+  "version": "v4",
+  "n_perm": 10000,
+  "seed": 42,
+  "method": "max-over-5 MP selection per c-class PUT, permute MP labels within PUT",
+  "observed": {
+    "per_put_max_sms": {
+      "c1": 0.2,
+      "c2": 0.0,
+      "c3": 0.7407
+    },
+    "c_class_aligned_mean": 0.3135666666666667
+  },
+  "null_distribution": {
+    "mean": 0.3135666666666667,
+    "std": 0.0,
+    "p25": 0.3135666666666667,
+    "p50": 0.3135666666666667,
+    "p75": 0.3135666666666667,
+    "p95": 0.3135666666666667,
+    "p99": 0.3135666666666667
+  },
+  "permutation_p_value_one_sided_geq": 1.0,
+  "bonferroni": {
+    "family_size": 5,
+    "alpha_naive": 0.05,
+    "alpha_effective": 0.01
+  },
+  "interpretation": "permutation_p_value_one_sided_geq quantifies how often the max-over-5 rule (used in §3.5.1) achieves a c-class aligned mean SMS at least as large as observed when MP labels are exchangeable within each c-class PUT. Bonferroni-effective alpha is the conservative bound when no permutation is run. Both are sensitivity analyses for the c-class primary MP shift's selection-on-response inflation."
+}
