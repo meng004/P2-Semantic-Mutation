@@ -1,0 +1,37 @@
+{
+  "source": "sms_track2_v4.json",
+  "design": "PUT (block, n=12) × MP (treatment, k=5)",
+  "chi2": 16.758620689655164,
+  "p_value": 0.0021531915223502577,
+  "df": 4,
+  "rank_means_mp1_to_mp5": [
+    3.083,
+    2.583,
+    2.0,
+    3.0,
+    4.333
+  ],
+  "per_class": {
+    "a": {
+      "chi2": 3.9999999999999867,
+      "p": 0.4060058497098402,
+      "n_puts": 3
+    },
+    "b": {
+      "chi2": 10.341463414634141,
+      "p": 0.03505229165119267,
+      "n_puts": 3
+    },
+    "c": {
+      "chi2": 5.600000000000006,
+      "p": 0.23107823797582777,
+      "n_puts": 3
+    },
+    "d": {
+      "chi2": 5.000000000000003,
+      "p": 0.28729749518364545,
+      "n_puts": 3
+    }
+  },
+  "interpretation": "p < 0.05 ⇒ MP-effect varies across PUTs (cross-class consistency rejected)"
+}

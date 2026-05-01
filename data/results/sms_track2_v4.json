@@ -1,0 +1,6562 @@
+{
+  "A2_MP1": {
+    "cell": "A2_MP1",
+    "mutant_dir": "data/mutants/a2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 27,
+    "survive": 0,
+    "sms": 1.0,
+    "outcomes": [
+      {
+        "file": "m01_a2_CE1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_a2_CE1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_a2_CE1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m04_a2_CE1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_a2_CE1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m06_a2_CE1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_a2_CE1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_a2_CE1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m09_a2_CE1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m10_a2_OS1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_a2_OS1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m12_a2_OS1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m13_a2_OS1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m14_a2_OS1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m15_a2_OS1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m16_a2_OS1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m17_a2_OS1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_a2_OS1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_a2_SI1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_a2_SI1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m21_a2_SI1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m22_a2_SI1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m23_a2_SI1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m24_a2_SI1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m25_a2_SI1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m26_a2_SI1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m27_a2_SI1_gpt_a01.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "A2_MP2": {
+    "cell": "A2_MP2",
+    "mutant_dir": "data/mutants/a2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a2_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a2_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a2_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a2_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a2_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a2_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a2_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a2_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a2_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A2_MP3": {
+    "cell": "A2_MP3",
+    "mutant_dir": "data/mutants/a2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a2_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a2_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a2_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a2_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a2_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a2_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a2_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a2_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a2_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A2_MP4": {
+    "cell": "A2_MP4",
+    "mutant_dir": "data/mutants/a2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a2_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a2_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a2_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a2_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a2_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a2_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a2_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a2_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a2_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A2_MP5": {
+    "cell": "A2_MP5",
+    "mutant_dir": "data/mutants/a2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a2_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a2_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a2_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a2_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a2_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a2_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a2_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a2_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a2_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP1": {
+    "cell": "A3_MP1",
+    "mutant_dir": "data/mutants/a3_pool_v4",
+    "repeats": 20,
+    "inst": 18,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 18,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP2": {
+    "cell": "A3_MP2",
+    "mutant_dir": "data/mutants/a3_pool_v4",
+    "repeats": 20,
+    "inst": 18,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 18,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP3": {
+    "cell": "A3_MP3",
+    "mutant_dir": "data/mutants/a3_pool_v4",
+    "repeats": 20,
+    "inst": 18,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 18,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP4": {
+    "cell": "A3_MP4",
+    "mutant_dir": "data/mutants/a3_pool_v4",
+    "repeats": 20,
+    "inst": 18,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 18,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP5": {
+    "cell": "A3_MP5",
+    "mutant_dir": "data/mutants/a3_pool_v4",
+    "repeats": 20,
+    "inst": 18,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 18,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B1_MP1": {
+    "cell": "B1_MP1",
+    "mutant_dir": "data/mutants/b1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 18,
+    "survive": 9,
+    "sms": 0.6667,
+    "outcomes": [
+      {
+        "file": "m01_b1_CE1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_b1_CE1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_b1_CE1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m04_b1_CE1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_b1_CE1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m06_b1_CE1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_b1_CE1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_b1_CE1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m09_b1_CE1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m10_b1_HP1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_b1_HP1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m12_b1_HP1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m13_b1_HP1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m14_b1_HP1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m15_b1_HP1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m16_b1_HP1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m17_b1_HP1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_b1_HP1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_b1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b1_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b1_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b1_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B1_MP2": {
+    "cell": "B1_MP2",
+    "mutant_dir": "data/mutants/b1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 9,
+    "survive": 18,
+    "sms": 0.3333,
+    "outcomes": [
+      {
+        "file": "m01_b1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b1_OS1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_b1_OS1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m21_b1_OS1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m22_b1_OS1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m23_b1_OS1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m24_b1_OS1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m25_b1_OS1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m26_b1_OS1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m27_b1_OS1_gpt_a01.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "B1_MP3": {
+    "cell": "B1_MP3",
+    "mutant_dir": "data/mutants/b1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b1_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b1_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b1_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B1_MP4": {
+    "cell": "B1_MP4",
+    "mutant_dir": "data/mutants/b1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b1_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b1_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b1_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B1_MP5": {
+    "cell": "B1_MP5",
+    "mutant_dir": "data/mutants/b1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b1_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b1_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b1_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A1_MP3": {
+    "cell": "A1_MP3",
+    "mutant_dir": "data/mutants/a1_pool_v4",
+    "repeats": 20,
+    "inst": 30,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 30,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m28_a1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m29_a1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m30_a1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A1_MP4": {
+    "cell": "A1_MP4",
+    "mutant_dir": "data/mutants/a1_pool_v4",
+    "repeats": 20,
+    "inst": 30,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 30,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m28_a1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m29_a1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m30_a1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP3": {
+    "cell": "B2_MP3",
+    "mutant_dir": "data/mutants/b2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b2_CF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_CF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_CF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_CF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_CF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_CF1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b2_CF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b2_CF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP4": {
+    "cell": "B2_MP4",
+    "mutant_dir": "data/mutants/b2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b2_CF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_CF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_CF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_CF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_CF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_CF1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b2_CF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b2_CF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP1": {
+    "cell": "B2_MP1",
+    "mutant_dir": "data/mutants/b2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 9,
+    "survive": 18,
+    "sms": 0.3333,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_b2_CF1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m12_b2_CF1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m13_b2_CF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m14_b2_CF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m15_b2_CF1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m16_b2_CF1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m17_b2_CF1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_b2_CF1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_b2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B3_MP1": {
+    "cell": "B3_MP1",
+    "mutant_dir": "data/mutants/b3_pool_v4",
+    "repeats": 20,
+    "inst": 20,
+    "equiv": 0,
+    "killed": 11,
+    "survive": 9,
+    "sms": 0.55,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_b3_OS1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m12_b3_OS1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m13_b3_OS1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m14_b3_OS1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m15_b3_OS1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m16_b3_OS1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m17_b3_OS1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_b3_OS1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_b3_SI1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_b3_SI1_claude_a02.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "B3_MP2": {
+    "cell": "B3_MP2",
+    "mutant_dir": "data/mutants/b3_pool_v4",
+    "repeats": 20,
+    "inst": 20,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 20,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b3_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B3_MP3": {
+    "cell": "B3_MP3",
+    "mutant_dir": "data/mutants/b3_pool_v4",
+    "repeats": 20,
+    "inst": 20,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 20,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b3_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B3_MP4": {
+    "cell": "B3_MP4",
+    "mutant_dir": "data/mutants/b3_pool_v4",
+    "repeats": 20,
+    "inst": 20,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 20,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b3_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B3_MP5": {
+    "cell": "B3_MP5",
+    "mutant_dir": "data/mutants/b3_pool_v4",
+    "repeats": 20,
+    "inst": 20,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 20,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b3_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b3_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b3_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b3_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b3_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b3_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b3_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b3_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b3_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C1_MP1": {
+    "cell": "C1_MP1",
+    "mutant_dir": "data/mutants/c1_pool_v4",
+    "repeats": 20,
+    "inst": 10,
+    "equiv": 0,
+    "killed": 2,
+    "survive": 8,
+    "sms": 0.2,
+    "outcomes": [
+      {
+        "file": "m01_c1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c1_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_c1_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_c1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C1_MP2": {
+    "cell": "C1_MP2",
+    "mutant_dir": "data/mutants/c1_pool_v4",
+    "repeats": 20,
+    "inst": 10,
+    "equiv": 0,
+    "killed": 2,
+    "survive": 8,
+    "sms": 0.2,
+    "outcomes": [
+      {
+        "file": "m01_c1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c1_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_c1_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_c1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C1_MP3": {
+    "cell": "C1_MP3",
+    "mutant_dir": "data/mutants/c1_pool_v4",
+    "repeats": 20,
+    "inst": 10,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 10,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c1_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c1_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C1_MP4": {
+    "cell": "C1_MP4",
+    "mutant_dir": "data/mutants/c1_pool_v4",
+    "repeats": 20,
+    "inst": 10,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 10,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c1_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c1_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C1_MP5": {
+    "cell": "C1_MP5",
+    "mutant_dir": "data/mutants/c1_pool_v4",
+    "repeats": 20,
+    "inst": 10,
+    "equiv": 0,
+    "killed": 2,
+    "survive": 8,
+    "sms": 0.2,
+    "outcomes": [
+      {
+        "file": "m01_c1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c1_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_c1_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_c1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C2_MP1": {
+    "cell": "C2_MP1",
+    "mutant_dir": "data/mutants/c2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A1_MP1": {
+    "cell": "A1_MP1",
+    "mutant_dir": "data/mutants/a1_pool_v4",
+    "repeats": 20,
+    "inst": 30,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 30,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m28_a1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m29_a1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m30_a1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C2_MP3": {
+    "cell": "C2_MP3",
+    "mutant_dir": "data/mutants/c2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A1_MP2": {
+    "cell": "A1_MP2",
+    "mutant_dir": "data/mutants/a1_pool_v4",
+    "repeats": 20,
+    "inst": 30,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 30,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m28_a1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m29_a1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m30_a1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C2_MP4": {
+    "cell": "C2_MP4",
+    "mutant_dir": "data/mutants/c2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C3_MP1": {
+    "cell": "C3_MP1",
+    "mutant_dir": "data/mutants/c3_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 20,
+    "survive": 7,
+    "sms": 0.7407,
+    "outcomes": [
+      {
+        "file": "m01_c3_CE1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m02_c3_CE1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m03_c3_CE1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m04_c3_CE1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m05_c3_CE1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m06_c3_CE1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_c3_CE1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_c3_CE1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m09_c3_CE1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m10_c3_HP1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_c3_HP1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m12_c3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c3_TF1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_c3_TF1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m21_c3_TF1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m22_c3_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m23_c3_TF1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m24_c3_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m25_c3_TF1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m26_c3_TF1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m27_c3_TF1_gpt_a01.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "C2_MP2": {
+    "cell": "C2_MP2",
+    "mutant_dir": "data/mutants/c2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C3_MP3": {
+    "cell": "C3_MP3",
+    "mutant_dir": "data/mutants/c3_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c3_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c3_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c3_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c3_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c3_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c3_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c3_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c3_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c3_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C3_MP2": {
+    "cell": "C3_MP2",
+    "mutant_dir": "data/mutants/c3_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c3_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c3_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c3_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c3_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c3_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c3_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c3_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c3_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c3_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C3_MP4": {
+    "cell": "C3_MP4",
+    "mutant_dir": "data/mutants/c3_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c3_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c3_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c3_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c3_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c3_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c3_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c3_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c3_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c3_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C2_MP5": {
+    "cell": "C2_MP5",
+    "mutant_dir": "data/mutants/c2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C3_MP5": {
+    "cell": "C3_MP5",
+    "mutant_dir": "data/mutants/c3_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_c3_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c3_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c3_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c3_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c3_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c3_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c3_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c3_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c3_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_c3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c3_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c3_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_c3_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_c3_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_c3_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_c3_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_c3_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_c3_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_c3_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D1_MP1": {
+    "cell": "D1_MP1",
+    "mutant_dir": "data/mutants/d1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d1_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d1_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d1_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d1_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d1_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D1_MP3": {
+    "cell": "D1_MP3",
+    "mutant_dir": "data/mutants/d1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d1_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d1_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d1_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d1_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d1_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D1_MP2": {
+    "cell": "D1_MP2",
+    "mutant_dir": "data/mutants/d1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 9,
+    "survive": 18,
+    "sms": 0.3333,
+    "outcomes": [
+      {
+        "file": "m01_d1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d1_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d1_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d1_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d1_TF1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_d1_TF1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m21_d1_TF1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m22_d1_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m23_d1_TF1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m24_d1_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m25_d1_TF1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m26_d1_TF1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m27_d1_TF1_gpt_a01.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "D1_MP4": {
+    "cell": "D1_MP4",
+    "mutant_dir": "data/mutants/d1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d1_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d1_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d1_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d1_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d1_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d1_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d1_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d1_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d1_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d1_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d1_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d1_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D2_MP1": {
+    "cell": "D2_MP1",
+    "mutant_dir": "data/mutants/d2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 8,
+    "survive": 19,
+    "sms": 0.2963,
+    "outcomes": [
+      {
+        "file": "m01_d2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d2_OS1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_d2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d2_OS1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m13_d2_OS1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m14_d2_OS1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m15_d2_OS1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m16_d2_OS1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m17_d2_OS1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_d2_OS1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_d2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D2_MP3": {
+    "cell": "D2_MP3",
+    "mutant_dir": "data/mutants/d2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D2_MP4": {
+    "cell": "D2_MP4",
+    "mutant_dir": "data/mutants/d2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D1_MP5": {
+    "cell": "D1_MP5",
+    "mutant_dir": "data/mutants/d1_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 9,
+    "survive": 18,
+    "sms": 0.3333,
+    "outcomes": [
+      {
+        "file": "m01_d1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d1_SI1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d1_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d1_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d1_TF1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_d1_TF1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m21_d1_TF1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m22_d1_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m23_d1_TF1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m24_d1_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m25_d1_TF1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m26_d1_TF1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m27_d1_TF1_gpt_a01.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "D2_MP2": {
+    "cell": "D2_MP2",
+    "mutant_dir": "data/mutants/d2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D3_MP1": {
+    "cell": "D3_MP1",
+    "mutant_dir": "data/mutants/d3_pool_v4",
+    "repeats": 20,
+    "inst": 25,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 25,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d3_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d3_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d3_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d3_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d3_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d3_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d3_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d3_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d3_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d3_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d3_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d3_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d3_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d3_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d3_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D3_MP3": {
+    "cell": "D3_MP3",
+    "mutant_dir": "data/mutants/d3_pool_v4",
+    "repeats": 20,
+    "inst": 25,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 25,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d3_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d3_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d3_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d3_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d3_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d3_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d3_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d3_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d3_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d3_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d3_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d3_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d3_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d3_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d3_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D3_MP4": {
+    "cell": "D3_MP4",
+    "mutant_dir": "data/mutants/d3_pool_v4",
+    "repeats": 20,
+    "inst": 25,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 25,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d3_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d3_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d3_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d3_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d3_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d3_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d3_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d3_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d3_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d3_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d3_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d3_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d3_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d3_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d3_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D3_MP2": {
+    "cell": "D3_MP2",
+    "mutant_dir": "data/mutants/d3_pool_v4",
+    "repeats": 20,
+    "inst": 25,
+    "equiv": 0,
+    "killed": 9,
+    "survive": 16,
+    "sms": 0.36,
+    "outcomes": [
+      {
+        "file": "m01_d3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d3_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d3_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d3_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d3_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d3_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d3_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d3_TF1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_d3_TF1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_d3_TF1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_d3_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m21_d3_TF1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m22_d3_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m23_d3_TF1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m24_d3_TF1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m25_d3_TF1_gpt_a01.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "D2_MP5": {
+    "cell": "D2_MP5",
+    "mutant_dir": "data/mutants/d2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_d2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d2_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d2_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d2_OS1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d2_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d2_OS1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d2_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d2_OS1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d2_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_d2_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_d2_TF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_d2_TF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_d2_TF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_d2_TF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_d2_TF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_d2_TF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_d2_TF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_d2_TF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_d2_TF1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "D3_MP5": {
+    "cell": "D3_MP5",
+    "mutant_dir": "data/mutants/d3_pool_v4",
+    "repeats": 20,
+    "inst": 25,
+    "equiv": 0,
+    "killed": 9,
+    "survive": 16,
+    "sms": 0.36,
+    "outcomes": [
+      {
+        "file": "m01_d3_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_d3_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_d3_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_d3_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_d3_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_d3_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_d3_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_d3_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_d3_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_d3_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_d3_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_d3_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_d3_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_d3_SI1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_d3_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_d3_SI1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_d3_TF1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_d3_TF1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_d3_TF1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m20_d3_TF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m21_d3_TF1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m22_d3_TF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m23_d3_TF1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m24_d3_TF1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m25_d3_TF1_gpt_a01.py",
+        "label": "KILLED"
+      }
+    ]
+  },
+  "A1_MP5": {
+    "cell": "A1_MP5",
+    "mutant_dir": "data/mutants/a1_pool_v4",
+    "repeats": 20,
+    "inst": 30,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 30,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a1_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a1_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a1_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a1_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a1_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a1_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a1_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a1_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a1_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a1_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a1_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a1_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a1_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a1_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a1_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a1_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a1_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a1_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a1_OS1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a1_OS1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a1_OS1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a1_OS1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_a1_OS1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_a1_OS1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_a1_SI1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_a1_SI1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_a1_SI1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m28_a1_SI1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m29_a1_SI1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m30_a1_SI1_gpt_a02.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP2": {
+    "cell": "B2_MP2",
+    "mutant_dir": "data/mutants/b2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 9,
+    "survive": 18,
+    "sms": 0.3333,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_claude_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_b2_CF1_claude_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m12_b2_CF1_claude_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m13_b2_CF1_deepseek_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m14_b2_CF1_deepseek_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m15_b2_CF1_deepseek_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m16_b2_CF1_gpt_a01.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m17_b2_CF1_gpt_a02.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m18_b2_CF1_gpt_a03.py",
+        "label": "KILLED"
+      },
+      {
+        "file": "m19_b2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP5": {
+    "cell": "B2_MP5",
+    "mutant_dir": "data/mutants/b2_pool_v4",
+    "repeats": 20,
+    "inst": 27,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 27,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CE1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CE1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CE1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CE1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b2_CF1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_CF1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_CF1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_CF1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_CF1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_CF1_gpt_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b2_CF1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b2_CF1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b2_HP1_claude_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b2_HP1_claude_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b2_HP1_claude_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b2_HP1_deepseek_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b2_HP1_deepseek_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b2_HP1_deepseek_a01.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m25_b2_HP1_gpt_a02.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m26_b2_HP1_gpt_a03.py",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m27_b2_HP1_gpt_a01.py",
+        "label": "SURVIVE"
+      }
+    ]
+  }
+}
