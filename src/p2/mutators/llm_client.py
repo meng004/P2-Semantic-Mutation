@@ -32,3 +32,29 @@ def reviewer2_client() -> tuple[OpenAI, str]:
         OpenAI(base_url=_env("DEEPSEEK_BASE_URL"), api_key=_env("DEEPSEEK_API_KEY")),
         "deepseek-v4-pro",
     )
+
+
+# Phase A: cross-source mutant generators (deepseek-chat replaces V4-Pro for
+# 6x lower latency and 3x lower token cost — V4-Pro is a reasoning model
+# whose reasoning_content overhead (~230 tokens/req) provides no quality gain
+# for mutant generation).
+
+def generator_claude() -> tuple[OpenAI, str]:
+    """Phase A LLM-G #1: Claude Opus 4.6 (same as default generator)."""
+    return generator_client()
+
+
+def generator_gpt() -> tuple[OpenAI, str]:
+    """Phase A LLM-G #2: GPT-5.4 via bltcy.ai."""
+    return (
+        OpenAI(base_url=_env("BLTCY_BASE_URL"), api_key=_env("BLTCY_API_KEY")),
+        "gpt-5.4",
+    )
+
+
+def generator_deepseek() -> tuple[OpenAI, str]:
+    """Phase A LLM-G #3: DeepSeek chat (NOT V4-Pro, see module note)."""
+    return (
+        OpenAI(base_url=_env("DEEPSEEK_BASE_URL"), api_key=_env("DEEPSEEK_API_KEY")),
+        "deepseek-chat",
+    )

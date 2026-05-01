@@ -20,10 +20,14 @@ from p2.mutators.pool_builder import select_mutants_for_put
 
 PUTS = ["a1","a2","a3","b1","b2","b3","c1","c2","c3","d1","d2","d3"]
 POOL_VERSION = os.environ.get("POOL_VERSION", "v3")
-N_PER_PUT = 30 if POOL_VERSION == "v3" else 12
-SUFFIX = "_pool_v3" if POOL_VERSION == "v3" else "_pool"
-CACHE = ROOT / "data/operator_campaign/cache"
-print(f"Building POOL_VERSION={POOL_VERSION} N_PER_PUT={N_PER_PUT} SUFFIX={SUFFIX}")
+_N_MAP = {"v2": 12, "v3": 30, "v4": 30}
+_SUFFIX_MAP = {"v2": "_pool", "v3": "_pool_v3", "v4": "_pool_v4"}
+N_PER_PUT = _N_MAP.get(POOL_VERSION, 12)
+SUFFIX = _SUFFIX_MAP.get(POOL_VERSION, "_pool")
+CACHE = (ROOT / "data/operator_campaign/cache_cross"
+         if POOL_VERSION == "v4" else ROOT / "data/operator_campaign/cache")
+print(f"Building POOL_VERSION={POOL_VERSION} N_PER_PUT={N_PER_PUT} "
+      f"SUFFIX={SUFFIX} CACHE={CACHE.name}")
 
 for put_id in PUTS:
     pool_dir = ROOT / f"data/mutants/{put_id}{SUFFIX}"

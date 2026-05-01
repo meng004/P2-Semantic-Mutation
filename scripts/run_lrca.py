@@ -42,17 +42,24 @@ def _load(name: str, path: Path):
 def main() -> None:
     import os
     version = os.environ.get("LRCA_VERSION", "v3")
-    sms_file = "sms_track2_v3.json" if version == "v3" else "sms_track2_v2.json"
-    out_name = "lrca_60cell_v3.json" if version == "v3" else "lrca_60cell.json"
+    if version == "v2":
+        sms_file = "sms_track2_v2.json"
+        out_name = "lrca_60cell.json"
+    else:
+        sms_file = f"sms_track2_{version}.json"
+        out_name = f"lrca_60cell_{version}.json"
     print(f"LRCA version={version} reading {sms_file} writing {out_name}")
     sms = json.loads((ROOT / "data/results" / sms_file).read_text())
     report: dict = {}
     for cell, v in sms.items():
         put_id = cell.split("_")[0].lower()
         mp_k = int(cell.split("MP")[1])
+        pool_v4 = ROOT / f"data/mutants/{put_id}_pool_v4"
         pool_v3 = ROOT / f"data/mutants/{put_id}_pool_v3"
         pool_v2 = ROOT / f"data/mutants/{put_id}_pool"
-        if version == "v3" and pool_v3.exists():
+        if version == "v4" and pool_v4.exists():
+            pool_dir = pool_v4
+        elif version in ("v3", "v3b") and pool_v3.exists():
             pool_dir = pool_v3
         elif pool_v2.exists():
             pool_dir = pool_v2

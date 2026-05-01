@@ -1,0 +1,31 @@
+"""C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.
+
+Library: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)
+URL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html
+
+program(x) where x ∈ [0,1] scalar.
+x → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).
+Degree-5 polynomial PCE. Returns scalar prediction. Monotone in x.
+"""
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import SplineTransformer
+
+_rng = np.random.default_rng(42)
+_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)
+_y_train = np.tanh(_t_train[:, 0])
+
+_model = Pipeline(
+    steps=[
+        ("feature transformer in the regression pipeline", SplineTransformer(n_knots=6, degree=3)),
+        ("regressor", LinearRegression()),
+    ]
+)
+_model.fit(_t_train, _y_train)
+
+
+def program(x) -> float:
+    t = 4.0 * float(x) - 2.0
+    value = _model.predict(np.array([[t]], dtype=float)).item()
+    return float(value)

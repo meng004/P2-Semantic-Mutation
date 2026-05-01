@@ -44,9 +44,12 @@ def main() -> None:
 
     per_put = {}
     for put_id in PRIMARY:
+        pool_v4 = ROOT / f"data/mutants/{put_id}_pool_v4"
         pool_v3 = ROOT / f"data/mutants/{put_id}_pool_v3"
         pool_v2 = ROOT / f"data/mutants/{put_id}_pool"
-        if VERSION == "v3" and pool_v3.exists():
+        if VERSION == "v4" and pool_v4.exists():
+            pool_dir = pool_v4
+        elif VERSION in ("v3", "v3b") and pool_v3.exists():
             pool_dir = pool_v3
         elif pool_v2.exists():
             pool_dir = pool_v2

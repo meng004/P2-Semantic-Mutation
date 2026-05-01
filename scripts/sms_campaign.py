@@ -108,9 +108,16 @@ def evaluate_cell(
                  Default 1 = legacy single-shot. Use 20 for stochastic PUTs.
     """
     if mutant_dir is None:
+        import os as _os
+        pv = _os.environ.get("POOL_VERSION", "")
+        pool_v4 = MUTANTS_DIR / f"{put_id}_pool_v4"
         pool_v3 = MUTANTS_DIR / f"{put_id}_pool_v3"
         pool_v2 = MUTANTS_DIR / f"{put_id}_pool"
-        if pool_v3.exists():
+        if pv == "v4" and pool_v4.exists():
+            mutant_dir = pool_v4
+        elif pv == "v3" and pool_v3.exists():
+            mutant_dir = pool_v3
+        elif pool_v3.exists():
             mutant_dir = pool_v3
         elif pool_v2.exists():
             mutant_dir = pool_v2
