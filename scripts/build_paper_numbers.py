@@ -1,17 +1,12 @@
 """Aggregate all numbers cited in 论文初稿P2.md §5.6-5.9 into a single JSON.
 
-Sources:
-  data/results/sms_track2_v2.json   — 60-cell SMS
-  data/results/lrca_60cell.json     — LRCA C1/C2/C3/C4 + suspect_share
-  data/results/rq2_cliffs_delta.json
-  data/results/rq3_mixed_effects.json
-  data/results/rq4_pattern_coverage.json
-
-Outputs:
-  data/results/paper_numbers.json   — flat, paper-ready
+Set env SMS_VERSION=v3 (default) to read sms_track2_v3 + lrca_60cell_v3 +
+rq2/3/4_*_v3.json and write paper_numbers_v3.json. Set SMS_VERSION=v2 for
+the legacy (Round 4) files.
 """
 import json
 import math
+import os
 from pathlib import Path
 
 import numpy as np
@@ -20,6 +15,15 @@ ROOT = Path(__file__).parent.parent
 RESULTS = ROOT / "data/results"
 PRIMARY = {"a1": 1, "a2": 1, "a3": 1, "b1": 2, "b2": 2, "b3": 2,
            "c1": 5, "c2": 5, "c3": 5, "d1": 2, "d2": 2, "d3": 2}
+
+VERSION = os.environ.get("SMS_VERSION", "v3")
+SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
+LRCA_FILE = "lrca_60cell_v3.json" if VERSION == "v3" else "lrca_60cell.json"
+RQ2_FILE = "rq2_cliffs_delta_v3.json" if VERSION == "v3" else "rq2_cliffs_delta.json"
+RQ3_FILE = "rq3_mixed_effects_v3.json" if VERSION == "v3" else "rq3_mixed_effects.json"
+RQ4_FILE = "rq4_pattern_coverage_v3.json" if VERSION == "v3" else "rq4_pattern_coverage.json"
+OUT_FILE = "paper_numbers_v3.json" if VERSION == "v3" else "paper_numbers.json"
+print(f"build_paper_numbers: VERSION={VERSION} writing {OUT_FILE}")
 
 
 def _load(name):
@@ -35,11 +39,15 @@ def _is_inf(v):
 
 
 def main() -> None:
-    sms = _load("sms_track2_v2.json")
-    lrca = _load("lrca_60cell.json")
-    rq2 = _load("rq2_cliffs_delta.json")
-    rq3 = _load("rq3_mixed_effects.json")
-    rq4 = _load("rq4_pattern_coverage.json")
+    sms = _load(SMS_FILE)
+    lrca = _load(LRCA_FILE)
+    rq2 = _load(RQ2_FILE)
+    rq3 = _load(RQ3_FILE)
+    rq4 = _load(RQ4_FILE)
+    try:
+        friedman = _load("rq3_friedman.json")
+    except FileNotFoundError:
+        friedman = None
 
     aligned, cross = [], []
     per_class_aligned = {"a": [], "b": [], "c": [], "d": []}
@@ -118,6 +126,13 @@ def main() -> None:
             "fallback_p_class_d": round(
                 rq3.get("fallback_p_values", {}).get("C(class)[T.d]", float("nan")), 4),
             "sign_test_aligned_above_cross": sign_passes,
+            "friedman_chi2": round(friedman["chi2"], 4) if friedman else None,
+            "friedman_p": round(friedman["p_value"], 4) if friedman else None,
+            "friedman_per_class_p": (
+                {c: round(friedman["per_class"][c]["p"], 4)
+                 for c in "abcd" if "p" in friedman["per_class"].get(c, {})}
+                if friedman else {}
+            ),
         },
         "rq4": {
             "spearman_rho": round(rq4["spearman_rho"], 4),
@@ -132,7 +147,7 @@ def main() -> None:
         },
     }
 
-    out_path = RESULTS / "paper_numbers.json"
+    out_path = RESULTS / OUT_FILE
     out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False))
     print(f"saved -> {out_path}")
     print(json.dumps(out, indent=2, ensure_ascii=False))

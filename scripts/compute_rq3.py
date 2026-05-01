@@ -17,6 +17,7 @@ Outputs:
     data/results/rq3_model_summary.txt  -- statsmodels summary table
 """
 import json
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -40,7 +41,13 @@ PRIMARY = {
     "d1": 2, "d2": 2, "d3": 2,
 }
 
-data = json.loads((ROOT / "data/results/sms_track2_v2.json").read_text())
+VERSION = os.environ.get("SMS_VERSION", "v3")
+SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
+OUT_FILE = "rq3_mixed_effects_v3.json" if VERSION == "v3" else "rq3_mixed_effects.json"
+SUM_FILE = "rq3_model_summary_v3.txt" if VERSION == "v3" else "rq3_model_summary.txt"
+print(f"compute_rq3: SMS_VERSION={VERSION} reading {SMS_FILE} writing {OUT_FILE}")
+
+data = json.loads((ROOT / "data/results" / SMS_FILE).read_text())
 
 rows = []
 for cell, v in data.items():
@@ -103,9 +110,9 @@ if not out["converged"] or not out.get("fixed_params"):
     except Exception as e:  # pragma: no cover - belt-and-braces
         report["fallback_error"] = str(e)
 
-(ROOT / "data/results/rq3_mixed_effects.json").write_text(
+(ROOT / "data/results" / OUT_FILE).write_text(
     json.dumps(report, indent=2, ensure_ascii=False)
 )
-(ROOT / "data/results/rq3_model_summary.txt").write_text(model_summary)
+(ROOT / "data/results" / SUM_FILE).write_text(model_summary)
 
 print(json.dumps(report, indent=2, ensure_ascii=False))

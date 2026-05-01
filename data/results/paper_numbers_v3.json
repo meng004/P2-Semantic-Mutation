@@ -1,0 +1,65 @@
+{
+  "rq1": {
+    "n_cells": 60,
+    "mean_sms": 0.0875,
+    "median_sms": 0.0,
+    "std_sms": 0.2003,
+    "n_zero_sms": 46,
+    "mean_c1_share": 0.1643,
+    "mean_suspect_share": 0.8357,
+    "h5_threshold_suspect": 0.2,
+    "h5_cells_pass": 10,
+    "h5_pass_ratio": 0.1667
+  },
+  "rq2": {
+    "n_aligned": 12,
+    "n_cross": 48,
+    "mean_aligned": 0.1831,
+    "mean_cross": 0.0636,
+    "median_aligned": 0.0833,
+    "median_cross": 0.0,
+    "cliffs_delta": 0.3229,
+    "delta_ci_95_lo": 0.0174,
+    "delta_ci_95_hi": 0.6217,
+    "h2_threshold_delta": 0.474,
+    "h2_delta_pass": false,
+    "h2_threshold_ratio": 3.0,
+    "h2_ratio_pass": true,
+    "odds_ratio_inf": true
+  },
+  "rq3": {
+    "n_observations": 60,
+    "class_mean_a": 0.0667,
+    "class_mean_b": 0.1556,
+    "class_mean_c": 0.0467,
+    "class_mean_d": 0.0811,
+    "class_max": "b",
+    "class_min": "c",
+    "primary_converged": false,
+    "fit_error": "Singular matrix",
+    "fallback_model": "sms ~ C(class) + C(operator) + (1 | put)",
+    "fallback_note": "",
+    "fallback_p_class_b": 0.2749,
+    "fallback_p_class_c": 0.8915,
+    "fallback_p_class_d": 0.9907,
+    "sign_test_aligned_above_cross": 3,
+    "friedman_chi2": 15.3028,
+    "friedman_p": 0.0041,
+    "friedman_per_class_p": {
+      "a": 0.406,
+      "b": 0.0292,
+      "c": 0.406,
+      "d": 0.2873
+    }
+  },
+  "rq4": {
+    "spearman_rho": 0.1068,
+    "spearman_p": 0.7412,
+    "kendall_tau": 0.0734,
+    "kendall_p": 0.7667,
+    "n_puts": 12,
+    "min_pc": 0.5,
+    "max_pc": 1.0,
+    "mean_pc": 0.7333
+  }
+}

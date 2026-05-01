@@ -45,13 +45,23 @@ def _load(name: str, path: Path):
 
 
 def main() -> None:
-    sms = json.loads((ROOT / "data/results/sms_track2_v2.json").read_text())
+    import os
+    version = os.environ.get("LRCA_VERSION", "v3")
+    sms_file = "sms_track2_v3.json" if version == "v3" else "sms_track2_v2.json"
+    out_name = "lrca_60cell_v3.json" if version == "v3" else "lrca_60cell.json"
+    print(f"LRCA version={version} reading {sms_file} writing {out_name}")
+    sms = json.loads((ROOT / "data/results" / sms_file).read_text())
     report: dict = {}
     for cell, v in sms.items():
         put_id = cell.split("_")[0].lower()
         mp_k = int(cell.split("MP")[1])
-        pool_dir = ROOT / f"data/mutants/{put_id}_pool"
-        if not pool_dir.exists():
+        pool_v3 = ROOT / f"data/mutants/{put_id}_pool_v3"
+        pool_v2 = ROOT / f"data/mutants/{put_id}_pool"
+        if version == "v3" and pool_v3.exists():
+            pool_dir = pool_v3
+        elif pool_v2.exists():
+            pool_dir = pool_v2
+        else:
             pool_dir = ROOT / f"data/mutants/{put_id}_MP{PRIMARY[put_id]}_llm"
         put_mod = _load(f"put_{put_id}", ROOT / f"src/p2/puts/{put_id}.py")
         mrs_mod = _load(f"mrs_{put_id}", ROOT / f"src/p2/mrs/{put_id}.py")
@@ -117,7 +127,7 @@ def main() -> None:
             flush=True,
         )
 
-    out_path = ROOT / "data/results/lrca_60cell.json"
+    out_path = ROOT / "data/results" / out_name
     out_path.write_text(json.dumps(report, indent=2, ensure_ascii=False))
     print(f"\nCells processed: {len(report)}")
     if report:

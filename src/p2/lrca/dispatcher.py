@@ -31,6 +31,9 @@ class LRCALabel(str, Enum):
 def classify_mutant(
     mutant: Callable, original: Callable, mr: MR, was_killed: bool,
     epsilon: float = 1e-6, ood_threshold: float = 0.5,
+    ood_band: float = 0.05,
+    tolerance_multiplier: float = 10.0,
+    statistical_repeats: int = 20,
 ) -> LRCALabel:
     """Return one LRCA label for a (mutant, MR) pair.
 
@@ -41,16 +44,21 @@ def classify_mutant(
       4. Tolerance borderline (strict fail / loose pass) → C2
       5. OOD-concentrated (R-fails clustered on boundary band) → C3
       6. Otherwise → C1 (legit semantic fault, the "good" kill)
+
+    Tunable thresholds (§4.6.4 calibration):
+      ood_band: boundary width for L2 OOD detection (default 0.05)
+      tolerance_multiplier: epsilon_loose = epsilon * mult (default 10.0)
+      statistical_repeats: N for L3 majority-vote (default 20)
     """
     l0 = classify_l0(mutant, n_samples=30, original=original)
     if l0 != L0Label.LEGIT:
         return LRCALabel.ARTIFACT
     if not was_killed:
         return LRCALabel.SURVIVED
-    if is_statistical_noise(mutant, mr, epsilon=epsilon, repeats=20):
+    if is_statistical_noise(mutant, mr, epsilon=epsilon, repeats=statistical_repeats):
         return LRCALabel.C4_STATISTICAL
-    if is_tolerance_borderline(mutant, mr, epsilon, epsilon * 10):
+    if is_tolerance_borderline(mutant, mr, epsilon, epsilon * tolerance_multiplier):
         return LRCALabel.C2_TOLERANCE
-    if ood_fail_share(mutant, original, mr) > ood_threshold:
+    if ood_fail_share(mutant, original, mr, ood_band=ood_band) > ood_threshold:
         return LRCALabel.C3_OOD
     return LRCALabel.C1_LEGIT

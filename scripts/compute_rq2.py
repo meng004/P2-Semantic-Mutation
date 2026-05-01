@@ -6,6 +6,7 @@ and writes Cliff's delta + 95% bootstrap CI + median odds-ratio plus
 H2 pass/fail flags to data/results/rq2_cliffs_delta.json.
 """
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -23,7 +24,12 @@ PRIMARY = {
     "d1": 2, "d2": 2, "d3": 2,
 }
 
-data = json.loads((ROOT / "data/results/sms_track2_v2.json").read_text())
+VERSION = os.environ.get("SMS_VERSION", "v3")
+SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
+OUT_FILE = "rq2_cliffs_delta_v3.json" if VERSION == "v3" else "rq2_cliffs_delta.json"
+print(f"compute_rq2: SMS_VERSION={VERSION} reading {SMS_FILE} writing {OUT_FILE}")
+
+data = json.loads((ROOT / "data/results" / SMS_FILE).read_text())
 
 aligned, cross = [], []
 for cell, v in data.items():
@@ -52,6 +58,6 @@ report = {
     "h2_ratio_pass": ratio >= 3.0,
 }
 
-out = ROOT / "data/results/rq2_cliffs_delta.json"
+out = ROOT / "data/results" / OUT_FILE
 out.write_text(json.dumps(report, indent=2, ensure_ascii=False))
 print(json.dumps(report, indent=2, ensure_ascii=False))

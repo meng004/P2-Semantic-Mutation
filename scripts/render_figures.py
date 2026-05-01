@@ -1,5 +1,9 @@
-"""Render Figures 1-5 for §5 of the P2 paper from canonical JSON datasets."""
+"""Render Figures 1-5 for §5 of the P2 paper from canonical JSON datasets.
+
+Set env SMS_VERSION=v3 (default) to read v3 datasets.
+"""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -11,13 +15,19 @@ from p2.viz.forest import render_class_forest  # noqa: E402
 from p2.viz.heatmap import render_60cell_heatmap  # noqa: E402
 from p2.viz.scatter import render_scatter  # noqa: E402
 
+VERSION = os.environ.get("SMS_VERSION", "v3")
+SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
+LRCA_FILE = "lrca_60cell_v3.json" if VERSION == "v3" else "lrca_60cell.json"
+RQ4_FILE = "rq4_pattern_coverage_v3.json" if VERSION == "v3" else "rq4_pattern_coverage.json"
+
 
 def main() -> None:
     fig_dir = ROOT / "figures"
     fig_dir.mkdir(exist_ok=True)
-    sms = json.loads((ROOT / "data/results/sms_track2_v2.json").read_text())
-    lrca = json.loads((ROOT / "data/results/lrca_60cell.json").read_text())
-    rq4 = json.loads((ROOT / "data/results/rq4_pattern_coverage.json").read_text())
+    print(f"render_figures: VERSION={VERSION}")
+    sms = json.loads((ROOT / "data/results" / SMS_FILE).read_text())
+    lrca = json.loads((ROOT / "data/results" / LRCA_FILE).read_text())
+    rq4 = json.loads((ROOT / "data/results" / RQ4_FILE).read_text())
 
     render_60cell_heatmap(sms, fig_dir / "fig1_60cell_heatmap.pdf")
     render_aligned_vs_cross(sms, fig_dir / "fig2_aligned_vs_cross_box.pdf")

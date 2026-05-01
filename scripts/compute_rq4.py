@@ -7,6 +7,7 @@ Output: data/results/rq4_pattern_coverage.json
 """
 import importlib.util
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -17,6 +18,11 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from p2.stats.pattern_coverage import compute_pattern_coverage  # noqa: E402
+
+VERSION = os.environ.get("SMS_VERSION", "v3")
+SMS_FILE = "sms_track2_v3.json" if VERSION == "v3" else "sms_track2_v2.json"
+OUT_FILE = "rq4_pattern_coverage_v3.json" if VERSION == "v3" else "rq4_pattern_coverage.json"
+print(f"compute_rq4: SMS_VERSION={VERSION} reading {SMS_FILE} writing {OUT_FILE}")
 
 PRIMARY = {"a1": 1, "a2": 1, "a3": 1,
            "b1": 2, "b2": 2, "b3": 2,
@@ -35,12 +41,17 @@ def _load(name: str, path: Path):
 
 
 def main() -> None:
-    sms = json.loads((ROOT / "data/results/sms_track2_v2.json").read_text())
+    sms = json.loads((ROOT / "data/results" / SMS_FILE).read_text())
 
     per_put = {}
     for put_id in PRIMARY:
-        pool_dir = ROOT / f"data/mutants/{put_id}_pool"
-        if not pool_dir.exists():
+        pool_v3 = ROOT / f"data/mutants/{put_id}_pool_v3"
+        pool_v2 = ROOT / f"data/mutants/{put_id}_pool"
+        if VERSION == "v3" and pool_v3.exists():
+            pool_dir = pool_v3
+        elif pool_v2.exists():
+            pool_dir = pool_v2
+        else:
             pool_dir = ROOT / f"data/mutants/{put_id}_MP{PRIMARY[put_id]}_llm"
         mrs_mod = _load(f"mrs_{put_id}", ROOT / f"src/p2/mrs/{put_id}.py")
         outcomes = []
@@ -82,7 +93,7 @@ def main() -> None:
         "kendall_p": float(p_tau),
         "n": len(per_put),
     }
-    out = ROOT / "data/results/rq4_pattern_coverage.json"
+    out = ROOT / "data/results" / OUT_FILE
     out.write_text(json.dumps(report, indent=2, ensure_ascii=False))
     print(json.dumps(report, indent=2, ensure_ascii=False))
 
