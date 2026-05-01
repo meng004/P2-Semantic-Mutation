@@ -23,6 +23,9 @@ data/mutants/*
 !data/mutants/*_pool/
 !data/mutants/*_pool/*.py
 !data/mutants/*_pool/manifest.json
+!data/mutants/*_pool_v3/
+!data/mutants/*_pool_v3/*.py
+!data/mutants/*_pool_v3/manifest.json
 data/results/*
 !data/results/pilot_results.json
 !data/results/llm_campaign_log.json
@@ -41,6 +44,17 @@ data/results/lrca_60cell_console.log
 !data/results/lrca_60cell.json
 !data/results/rq4_pattern_coverage.json
 !data/results/paper_numbers.json
+!data/results/sms_track2_v3.json
+!data/results/sms_track2_v3_console.log
+!data/results/lrca_60cell_v3.json
+!data/results/lrca_60cell_v3_console.log
+!data/results/paper_numbers_v3.json
+!data/results/rq2_cliffs_delta_v3.json
+!data/results/rq3_mixed_effects_v3.json
+!data/results/rq4_pattern_coverage_v3.json
+!data/results/rq3_friedman.json
+!data/results/lrca_calibration.json
+!data/results/lrca_calibration_console.log
 data/lrca/
 data/operator_campaign/raw/
 data/operator_campaign/cache/

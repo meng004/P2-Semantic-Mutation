@@ -112,9 +112,12 @@ def evaluate_cell(
                  Default 1 = legacy single-shot. Use 20 for stochastic PUTs.
     """
     if mutant_dir is None:
-        pool_dir = MUTANTS_DIR / f"{put_id}_pool"
-        if pool_dir.exists():
-            mutant_dir = pool_dir
+        pool_v3 = MUTANTS_DIR / f"{put_id}_pool_v3"
+        pool_v2 = MUTANTS_DIR / f"{put_id}_pool"
+        if pool_v3.exists():
+            mutant_dir = pool_v3
+        elif pool_v2.exists():
+            mutant_dir = pool_v2
         else:
             primary_mp = PRIMARY_CELLS[put_id]
             mutant_dir = MUTANTS_DIR / f"{put_id}_MP{primary_mp}_llm"

@@ -1,8 +1,12 @@
-"""Build data/mutants/{put_id}_pool/ for all 12 PUTs from operator cache.
-Target pool size: 12 mutants per PUT. Proportional distribution across operators.
-Records (path, op_id, attempt_idx) provenance to data/mutants/{put_id}_pool/manifest.json.
+"""Build data/mutants/{put_id}_pool[_v3]/ for all 12 PUTs from operator cache.
+
+v2 pool: 12 mutants/PUT, dir suffix _pool
+v3 pool: 30 mutants/PUT, dir suffix _pool_v3 (set POOL_VERSION='v3')
+
+Records (path, op_id, attempt_idx) provenance to manifest.json.
 """
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -12,11 +16,14 @@ sys.path.insert(0, str(ROOT / "src"))
 from p2.mutators.pool_builder import select_mutants_for_put
 
 PUTS = ["a1","a2","a3","b1","b2","b3","c1","c2","c3","d1","d2","d3"]
-N_PER_PUT = 12
+POOL_VERSION = os.environ.get("POOL_VERSION", "v3")
+N_PER_PUT = 30 if POOL_VERSION == "v3" else 12
+SUFFIX = "_pool_v3" if POOL_VERSION == "v3" else "_pool"
 CACHE = ROOT / "data/operator_campaign/cache"
+print(f"Building POOL_VERSION={POOL_VERSION} N_PER_PUT={N_PER_PUT} SUFFIX={SUFFIX}")
 
 for put_id in PUTS:
-    pool_dir = ROOT / f"data/mutants/{put_id}_pool"
+    pool_dir = ROOT / f"data/mutants/{put_id}{SUFFIX}"
     if pool_dir.exists():
         shutil.rmtree(pool_dir)
     pool_dir.mkdir(parents=True)
