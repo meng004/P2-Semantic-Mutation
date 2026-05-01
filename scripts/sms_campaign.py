@@ -1,8 +1,10 @@
 """SMS evaluator for Track-1 (12 primary cells) and Track-2 (60 full matrix).
 
 Track 1: each PUT evaluated against its primary MP only (12 cells).
-Track 2: each PUT evaluated against ALL 5 MPs (60 cells); the same mutants
-         under data/mutants/{put_id}_MP{primary}_llm/ are reused per cell.
+Track 2: each PUT evaluated against ALL 5 MPs (60 cells). Per-PUT mutant
+         pool is auto-resolved: prefer data/mutants/{put_id}_pool/ (Round-2
+         enriched, 8-12 mutants) when present, else fall back to legacy
+         data/mutants/{put_id}_MP{primary}_llm/ (3-5 mutants).
 
 Usage:
   python scripts/sms_campaign.py                       # Track 1 (default)
@@ -52,6 +54,15 @@ def _load_module(name: str, path: Path):
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
+
+
+def _rel_to_root(p: Path) -> str:
+    """Path relative to ROOT for JSON metadata; falls back to absolute when
+    the path lies outside ROOT (e.g. tmp_path during tests)."""
+    try:
+        return str(p.relative_to(ROOT))
+    except ValueError:
+        return str(p)
 
 
 def _load_mutants(cell_dir: Path) -> List[tuple]:
@@ -122,6 +133,8 @@ def evaluate_cell(
     if not named_mutants:
         return {
             "cell": cell_label,
+            "mutant_dir": _rel_to_root(mutant_dir),
+            "repeats": repeats,
             "inst": 0, "equiv": 0, "killed": 0, "survive": 0,
             "sms": 0.0, "outcomes": [],
         }
@@ -155,6 +168,8 @@ def evaluate_cell(
 
     return {
         "cell":    cell_label,
+        "mutant_dir": _rel_to_root(mutant_dir),
+        "repeats": repeats,
         "inst":    result.inst_count,
         "equiv":   result.equiv_count,
         "killed":  result.killed_count,
@@ -223,7 +238,7 @@ def main():
                 put_id, mp_k = futures[fut]
                 try:
                     summary = fut.result()
-                except Exception as exc:
+                except (ValueError, ArithmeticError, TypeError, RuntimeError, ImportError, OSError) as exc:
                     cell_label = f"{put_id.upper()}_MP{mp_k}"
                     print(f"  ERROR {cell_label}: {exc}")
                     summary = {
