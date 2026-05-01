@@ -17,6 +17,14 @@
 - **P0:** P0-1 (title scope, 5/5) | P0-2 (17.6:1 删) | P0-3 (sign test 4/4 降级) | P0-4 (permutation null + Bonferroni) | P0-5 (chained conditioning) | P0-6 (IST 2024 撤掉, fabricated literature)
 - **P1:** P1-3 (§9 strict-vs-asymptotic + L1-L6 dependency, 4/5) | P1-5 (zero-mass to §5.7.2) | P1-7 (protocol asymmetry §7.1 R13)
 
+**2026-05-01 R2 methodology framework restructure (plan: docs/superpowers/plans/2026-05-01-p2-r2-methodology-framework.md):** 3-layer methodology backbone surfaced as paper main contribution; H1/H2/H4/H5 60-cell audit demoted to auxiliary demonstration:
+- **T1** §3.2.0 — necessary conditions (a)(b)(c) for semantic mutation (Layer 1 — Definitional)
+- **T2** §3.2.6.0 — systematic vs incidental distinction (positive complement to §3.2.6.1 negative argument)
+- **T3** §3.2 / §3.3 — 5 classes lifted to meta-mutation operators + specialization framing
+- **T4** §2.3 / §4.4 — E1 ∧ E2 equivalence judgment as Layer 2 instantiation; 3-candidate trade-off
+- **T5** §3.2.6.3 — mutant traceability empirical (Layer 3 — Applied; cosmic-ray a1 + AST diff; **0.0000 overall overlap** including CE class — concept-aligned but instance-disjoint)
+- **T6** §1.2 / §6 / Abstract Conclusion — narrative reorganization around 3-layer backbone
+
 **Pending：**
 - **P0 blocker:** R-1（全文英文翻译，投稿必做；基础设施已就绪，待运行 ~$7 / 10 min；之后人审）
 - **P0 from 2026-05-01 review:** P0-7（pre-registration claim 证据，单 reviewer，未入此 plan）
