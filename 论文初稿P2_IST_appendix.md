@@ -182,6 +182,39 @@ Before the 12-PUT generalisation (§3.5 main), a single-PUT lightweight empirica
 
 j = k aligned diagonal is the H2 threshold-test slice; j ≠ k off-diagonal is control; 6 vacant cells (○, P1 H6) are not formally adjudicated and are repurposed in §6.2 as descriptive evidence for R_sem / R_kill decoupling. v3 → v3b leap (+0.123) attributes to MR-MP design reselection (single-class, post-hoc; §3.4 caveats); v3b → v4 micro-change (-0.007) attributes to LLM-source diversity under prompt-fixed.
 
+### B.6 Mutmut vs cosmic-ray default-operator overlap
+
+Reviewer-requested manual operator-class cross-reference between cosmic-ray's 13 default operators (cosmic-ray 8.4.6, `cosmic_ray.operators` package) and mutmut's 14 default operators (mutmut current `main`, `src/mutmut/mutation/mutators.py`). Both default-operator sets are first-order AST-local replacements; neither implements a cross-function-boundary, domain-knowledge-dependent, or algorithmic-class-changing mutation (the three §3.2 necessary conditions for semantic mutation).
+
+| Operator class | cosmic-ray default | mutmut default | Reaches §3.2 (a/b/c)? | P2 class reachability |
+|---|---|---|---|---|
+| Numeric literal ±1 | `number_replacer` | `operator_number` | (a) no, (b) no, (c) no | partial CE only (e.g. `_RHO=28.0 → 27.5`) |
+| Binary arithmetic swap (+, −, ×, ÷) | `binary_operator_replacement` | `operator_swap_op` (binary subset) | (a) no, (b) no, (c) no | partial OS only (incidental) |
+| Comparison swap (<, ≤, >, ≥, ==, !=) | `comparison_operator_replacement` | `operator_swap_op` (compare subset) | (a) no, (b) no, (c) no | none |
+| Boolean swap (and ↔ or) | `boolean_replacer` | `operator_swap_op` (bool subset) | (a) no, (b) no, (c) no | none |
+| Unary remove / swap | `unary_operator_replacement` | `operator_remove_unary_ops`, `operator_swap_op` | (a) no, (b) no, (c) no | none |
+| Keyword swap (True/False, etc.) | `keyword_replacer` | `operator_keywords`, `operator_name` | (a) no, (b) no, (c) no | none |
+| break ↔ continue / return | `break_continue` | `operator_keywords` (subset) | (a) no, (b) no, (c) no | none |
+| Exception class swap | `exception_replacer` | (none) | (a) no, (b) no, (c) no | none |
+| Decorator removal | `remove_decorator` | (none) | (a) no, (b) no, (c) no | none |
+| Variable-binding insert / replace | `variable_inserter`, `variable_replacer` | `operator_arg_removal`, `operator_assignment` | (a) no, (b) no, (c) no | none |
+| no_op insertion | `no_op` | (none) | (a) no, (b) no, (c) no | none |
+| Zero-iteration `for` loop | `zero_iteration_for_loop` | (none) | (a) no, (b) no, (c) no | none |
+| String content tweak (XX prefix, case flip) | (none) | `operator_string` | (a) no, (b) no, (c) no | none |
+| Lambda body → `None`/`0` | (none) | `operator_lambda` | (a) no, (b) no, (c) no | none |
+| Dict kwarg name (XX prefix) | (none) | `operator_dict_arguments` | (a) no, (b) no, (c) no | none |
+| Symmetric/asymmetric string-method swap | (none) | `operator_symmetric_string_methods_swap`, `operator_unsymmetrical_string_methods_swap` | (a) no, (b) no, (c) no | none |
+| Augmented → simple assignment | (none) | `operator_augmented_assignment` | (a) no, (b) no, (c) no | none |
+| `match` case removal | (none) | `operator_match` | (a) no, (b) no, (c) no | none |
+
+**Aggregate.** Cosmic-ray ∩ mutmut: ~9 of 13 cosmic-ray operators have a near-equivalent in mutmut (numeric, binary, compare, boolean, unary, keyword, break-continue, variable, plus partial overlap on string-prefix vs `XX`); 4 cosmic-ray operators are unique (exception, decorator, no_op, zero-iteration-for); 6 mutmut operators are unique (string content, lambda, dict-kwarg, string-method swap, aug-assignment, match-case). The union is approximately 21 distinct first-order AST-local operator classes. None of the 21 can:
+
+- (a) Cross a function-call or module-import boundary (e.g. replace `det(M)` with `sum(np.diag(M))` requires knowing the equivalence on diagonal matrices — outside any default-operator scope);
+- (b) Depend on domain knowledge for legality (e.g. a hyperparameter swap that knows `noise_level=1e-4` is the load-bearing knob in a Gaussian Process Regression PUT requires PUT-class awareness);
+- (c) Change the algorithmic class (e.g. swap `polynomial → spline basis` rewrites the surrogate's mathematical structure).
+
+The mutmut / cosmic-ray null intersection on §3.5's HP/SI/TF classes (zero overlap) therefore reflects a **structural property of first-order AST-local mutation** rather than a tool-specific limitation, supporting the §3.6 preventive-defence framing.
+
 ---
 
 ## C. Experimental Procedure Details
