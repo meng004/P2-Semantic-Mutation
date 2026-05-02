@@ -256,6 +256,8 @@ The diagonal cells `j = k` form the H2-aligned slice, the off-diagonal cells for
 
 **Exploratory v3b (post-hoc).** After observing the v3 data, the per-class Friedman test in §5.5 shows χ² = 4.00 and p = 0.406 for the c-class — no significant MP differentiation. On this non-significance basis we shift the c-class primary to the argmax-mean-SMS choice, which is MP1 (data: `c_class_mp_ranking.json`). This is **selection on the response**: it inflates the H4 sign test from 3/4 to 4/4 and Cliff's δ from 0.323 to 0.446 without applying a max-statistic correction. A permutation null over fully exchangeable c-class (PUT, MP) cell SMS values (10,000 permutations) gives one-sided p = 0.9885 and a Bonferroni-bounded effective α of 0.01 (`c_class_permutation_v4.json`). All v3b and v4 results are reported as exploratory; the H4 and H2 primary verdicts rest on v3. P4 will pre-register the c-class primary-MP rule on a fresh dataset.
 
+**Symbol convention.** Throughout the paper, a dagger (†) on a numeric quantity (δ, SMS percentage, sign-test count) flags that the number is derived under the v3b post-hoc c-class primary-MP shift (MP5 → MP1) and inherits the permutation-null one-sided p = 0.9885 caveat above. Numbers without † stand on the v3 pre-registered configuration.
+
 ### 3.5 P2 vs syntactic mutants — 12-PUT empirical (Layer 3)
 
 **Experimental design.** For each PUT, P2 v4 cross-source mutants (`data/mutants/${PUT}_pool_v4/`, 292 total) are compared at the AST-normalised level (`ast.dump(annotate_fields=False, include_attributes=False)`) with cosmic-ray default-operator mutants (1,250 total; `scripts/p2_vs_syntactic_ast_diff_batch.py`). Source: `data/results/cosmic_ray_12put_ast_diff.json`.
