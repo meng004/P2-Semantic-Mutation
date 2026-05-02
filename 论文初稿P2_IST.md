@@ -408,15 +408,19 @@ The **zero-mass dominance** (45/60 = 75%) is concentrated in the cross-MP slice:
 Three-stage delta:
 
 - **v3 (primary, pre-registered):** delta = **0.323**, 95% CI [0.017, 0.622]
-- v3b (exploratory, c→MP1 post-hoc): delta = 0.446, CI [0.154, 0.743]
-- v4 (exploratory, cross-source under fixed prompt): delta = 0.439, 95% CI [0.127, 0.740] (B = 10,000)
+- v3b (exploratory, c→MP1 post-hoc): delta = 0.446†, CI [0.154, 0.743]
+- v4 (exploratory, cross-source under fixed prompt, c→MP1): delta = 0.439†, 95% CI [0.127, 0.740] (B = 10,000)
+- **v4 robustness (cross-source, c-class held at v3 MP5):** delta = **0.314**, 95% CI [0.014, 0.622] — strips R11 chained conditioning by reverting c-class primary to the pre-registered v3 choice while keeping the cross-source pool. The contrast `δ_v4_mp5 − δ_v3 = −0.009` isolates the LLM-source-diversity axis from MR-design re-selection.
 
 **H2 verdict: not met under the pre-registered point-estimate criterion.** None of the three delta values crosses the Romano (2006) large-effect threshold 0.474. The two contrasts are reported separately:
 
 | Contrast | Delta-delta | CI | Interpretation |
 |---|---|---|---|
-| v3 → v3b (c-class primary MP shift) | +0.123 | (data-driven; not applicable, see §3.4) | Single-class post-hoc; reflects primary-MP sensitivity, not generic MR-design contribution |
-| v3b → v4 (cross-source, fixed prompt) | -0.007 | covers zero | Three LLMs near-identical under prompt-fixed; not a strong test of source diversity |
+| v3 → v3b (c-class primary MP shift, same-source) | +0.123 | (data-driven; not applicable, see §3.4) | Single-class post-hoc; reflects primary-MP sensitivity, not generic MR-design contribution |
+| v3b → v4 (cross-source, c→MP1, fixed prompt) | −0.007 | covers zero | Three LLMs near-identical under prompt-fixed (49.1% stipulated power) |
+| **v3 → v4 (under MP5, cross-source only)** | **−0.009** | **covers zero** | Robustness against R11. Source-axis change under MP5 reproduces the v3b → v4 micro-shift, supporting the source-diversity null reading across two independent MP conditions. |
+
+The "v3 → v4 (under MP5)" robustness contrast was added in response to a methodological-asymmetry concern: the −0.007 v3b → v4 contrast inherits R11 chained conditioning (cross-source pool + post-hoc MP1) and so cannot identify which factor is null. Under MP5, c-class is held at the pre-registered choice, so the only difference between this row and v3 (δ = 0.323) is the LLM-source axis. The reproduced ≤ 0.01 shift across two MP conditions feeds finding (iii).
 
 This is consistent with Tip et al. (2024) LLMorpheus's medium-effect range on JavaScript LLM mutants - a contextual literature observation (estimand caveat: their delta compares "LLM vs traditional mutants on fault detection", ours compares "aligned vs cross MP slice within one pool"; the numerical similarity is not substantive support).
 
