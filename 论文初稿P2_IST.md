@@ -570,9 +570,9 @@ The 60-cell empirical demonstration produces six findings.
 
 (ii) Under an identical prompt, three-LLM cross-source diversity does not move δ (Δδ = −0.007, 95% CI covers zero).
 
-(iii) MR design is the dominant lever on the aligned-vs-cross effect size.
+(iii) Across two c-class primary-MP conditions (MP5 and MP1), the LLM-source axis shifts Cliff's δ by ≤ 0.01 in magnitude (v3 → v4_mp5 = −0.009; v3b → v4 = −0.007), whereas the MR-design axis (MP5 ↔ MP1) shifts δ by approximately +0.12. Within this design, the c-class primary-MP choice — not LLM identity under an identical prompt — is the lever on the aligned-vs-cross effect size. A strong-sense source-diversity test with per-LLM differential prompts is deferred to P4.
 
-(iv) Cross-source pooling raises mutant *quality* (mean C1\_share +27%, class-c mean SMS +91.4%) without raising the effect size.
+(iv) Cross-source pooling raises mutant *quality* (mean C1\_share +27%, class-c mean SMS +91.4%†) without raising the effect size. († class-c +91.4% is conditional on the §3.4 v3b MP1 selection; permutation null one-sided p = 0.9885.)
 
 (v) The Friedman main effect on MP differentiation is χ² = 15.30, p = 0.0041.
 
