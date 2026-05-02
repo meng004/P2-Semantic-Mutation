@@ -65,7 +65,7 @@ The SMS metric is conceptually complementary to the code-verification scope of A
 - **RQ1** Distributions of inst_rate, equiv_rate, C1_share, survive_rate over 60 cells.
 - **RQ2** SMS difference structure between operator-MP aligned (j=k) and cross (j≠k) slices.
 - **RQ3** Cross-class consistency across 4 program classes × 5 operators.
-- **RQ4** Empirical relationship between SMS and pattern coverage (descriptive).
+- **RQ4** Empirical relationship between SMS and Pattern Coverage (**descriptive only at n = 12; no formal test**; pre-registered as a P4 hypothesis-generating observation).
 
 ### 1.5 Hypotheses
 
@@ -476,6 +476,8 @@ The mixed-effects primary model `sms ~ C(class) * C(operator) + (1 | put)` retur
 **Caveat.** Friedman tests "are MP rank differences present" (averaged over PUTs); H4 tests "is direction consistent across 4 classes". These are logically independent. H4 stands on the §5.5 sign test; per-class Friedman is descriptive only (small N=3 per class).
 
 ### 5.6 RQ4 — SMS vs Pattern Coverage
+
+**Status.** RQ4 is reported as a descriptive observation, not a hypothesis test, because n = 12 places the 95% Spearman CI at roughly [−0.5, +0.6] — the test has no power to distinguish zero, moderate-positive, or moderate-negative correlation. The numbers below are recorded so that P4 (n ≥ 30 PUTs) can pre-register a directional hypothesis.
 
 Pattern Coverage (PC) per PUT = #triggered (MP_k, R_outcome) cells / 10. Range [0.500, 1.000], mean 0.733. Pairing with mean SMS over 5 MPs: Spearman rho = **0.163** (p = 0.613); Kendall tau = 0.136 (p = 0.568); n = 12.
 
