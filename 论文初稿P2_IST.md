@@ -1,4 +1,4 @@
-# When Same-Prompt LLM Source Diversity Doesn't Help: An Ablation of Semantic Mutation Operators in Metamorphic Testing for Single-Output Scientific Computing Kernels
+# A semantic mutation metric for metamorphic relation adequacy in scientific computing programs
 
 ## Highlights
 
