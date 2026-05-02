@@ -633,6 +633,12 @@ The companion P-series roadmap is as follows.
 
 ---
 
+## Data and code availability
+
+All raw data, JSON SSOTs (paper_numbers_v3 / v3b / v4 / v4-mp5, lrca_60cell, c_class_permutation, rq2_power_stipulated, cosmic_ray_12put_ast_diff), mutant pools, AVP source, and analysis scripts will be archived on Zenodo at the time of acceptance under DOI [10.5281/zenodo.XXXXXXX] (placeholder, to be minted on acceptance). The repository structure follows `REPRODUCIBILITY.md` in the source tree. The cosmic-ray and mutmut operator versions referenced in §3.5, §3.6, and Appendix B.6 are pinned in `requirements-frozen.txt`.
+
+---
+
 ## References
 
 DeMillo, R. A., Lipton, R. J., & Sayward, F. G. (1978). Hints on test data selection: Help for the practicing programmer. *Computer*, 11(4), 34-41. https://doi.org/10.1109/C-M.1978.218136
