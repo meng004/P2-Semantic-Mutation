@@ -663,6 +663,22 @@ Moradi Dakhel, A., Nikanjam, A., Majdinasab, V., Khomh, F., & Desmarais, M. C. (
 
 Zhang, M., Keung, J. W., Chen, T. Y., & Xiao, Y. (2021). Validating class integration test order generation systems with Metamorphic Testing. *Information and Software Technology*, 132, 106507. https://doi.org/10.1016/j.infsof.2020.106507
 
+Clark, J. A., Dan, H., & Hierons, R. M. (2010). Semantic Mutation Testing. In *Proc. Third International Conference on Software Testing, Verification, and Validation Workshops (ICSTW)*, 100-109. IEEE. https://doi.org/10.1109/ICSTW.2010.8
+
+Dan, H., & Hierons, R. M. (2012). SMT-C: A Semantic Mutation Testing Tool for C. In *Proc. Fifth International Conference on Software Testing, Verification and Validation (ICST)*, 654-663. IEEE. https://doi.org/10.1109/ICST.2012.155
+
+Derezińska, A., & Zaremba, L. (2019). Mutating UML State Machine Behavior with Semantic Mutation Operators. In *Proc. International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)*, 385-393. https://doi.org/10.5220/0007735003850393
+
+Sun, C., Liu, Y., Wang, Z., & Chan, W. K. (2016). μMT: A Data Mutation Directed Metamorphic Relation Acquisition Methodology. In *Proc. 1st International Workshop on Metamorphic Testing (MET)*, 12-18. ACM. https://doi.org/10.1145/2896971.2896974
+
+Sun, C., Jin, H., Wu, S., Fu, A., Wang, Z., & Chan, W. K. (2023). Identifying metamorphic relations: A data mutation directed approach. *Software: Practice and Experience*, 54(3), 394-418. https://doi.org/10.1002/spe.3280
+
+Zhu, H., Bayley, I., Liu, D., & Zheng, X. (2020). Automation of Datamorphic Testing. In *Proc. IEEE International Conference On Artificial Intelligence Testing (AITest)*, 64-72. IEEE. https://doi.org/10.1109/AITEST49225.2020.00017
+
+Chan, P. Y. P., & Keung, J. (2024). Validating Unsupervised Machine Learning Techniques for Software Defect Prediction With Generic Metamorphic Testing. *IEEE Access*, 12, 165155-165172. https://doi.org/10.1109/ACCESS.2024.3494044
+
+Curtò, J. de, & Zarzà, I. de. (2025). Metamorphic Testing for Semantic Invariance in Large Language Models. *IEEE Access*, 13, 214772-214791. https://doi.org/10.1109/ACCESS.2025.3646270
+
 Ammann, P., & Offutt, J. (2008). *Introduction to software testing* (1st ed.). Cambridge University Press.
 
 Petrović, G., & Ivanković, M. (2018). State of mutation testing at Google. In *Proc. ICSE-SEIP 2018* (pp. 163-171). ACM. https://doi.org/10.1145/3183519.3183521
