@@ -411,7 +411,7 @@ The **zero-mass dominance** (45/60 = 75%) is concentrated in the cross-MP slice:
 | aligned (j = k, v4 + v3b primary) | 12 | 0.275 | 0.267 |
 | cross (j ≠ k) | 48 | 0.061 | 0.000 |
 
-Three-stage delta:
+Four delta point-estimates (three planned ablation stages plus one robustness contrast):
 
 - **v3 (primary, pre-registered):** delta = **0.323**, 95% CI [0.017, 0.622]
 - v3b (exploratory, c→MP1 post-hoc): delta = 0.446†, CI [0.154, 0.743]
