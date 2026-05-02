@@ -1331,14 +1331,14 @@ Future work (P4) will test: (a) pre-registered primary MP selection rule (avoidi
 
 #### 5.8.1 Class Means
 
-| Class | PUT set | Mean SMS (15 cells within class) |
-|---|---|---|
-| a (numeric) | a1, a2, a3 | 0.067 |
-| b (probabilistic) | b1, b2, b3 | 0.156 |
-| c (surrogate) | c1, c2, c3 | 0.047 |
-| d (ML) | d1, d2, d3 | 0.081 |
+| Class | PUT set | Mean SMS (15 cells, **v3 baseline**) | Mean SMS (**v4 cross-source**) |
+|---|---|---|---|
+| a (numeric) | a1, a2, a3 | 0.067 | 0.067 |
+| b (probabilistic) | b1, b2, b3 | 0.156 | 0.148 |
+| c (surrogate) | c1, c2, c3 | 0.047 | 0.089 |
+| d (ML) | d1, d2, d3 | 0.081 | 0.112 |
 
-Maximum between classes occurs in class b (0.156), minimum in class c (0.047).
+Across both versions the maximum between classes occurs in class b; the minimum is class c under v3 (0.047) and class a under v4 (0.067). **Cross-source main driver: class c +91.4% (see §6.1)** — class c is most sensitive to cross-source pool expansion, and together with the §3.5.1 v3b primary MP shift forms the empirical finding that "class c sensitivity to source diversity exceeds the other three classes".
 
 [Figure 3: Cross-class SMS forest plot (mean ± SEM)]
 
@@ -1422,7 +1422,7 @@ Pair by PUT (one PC value per PUT, paired with that PUT's mean SMS over 5 MPs):
 
 #### 5.9.3 Interpretation
 
-**Statistical-power caveat first**: n = 12 PUTs is severely under-powered. For a Spearman ρ at n = 12, the 95% CI covers approximately [−0.5, +0.6]; the measurement precision is insufficient to distinguish "zero correlation", "moderate positive correlation", or "moderate negative correlation". p = 0.74 / 0.77 does not constitute evidence that "correlation does not exist", only that "no correlation was detected at n = 12".
+**Statistical-power caveat first**: n = 12 PUTs is severely under-powered. For a Spearman ρ at n = 12, the 95% CI covers approximately [−0.5, +0.6]; the measurement precision is insufficient to distinguish "zero correlation", "moderate positive correlation", or "moderate negative correlation". p = 0.61 / 0.57 does not constitute evidence that "correlation does not exist", only that "no correlation was detected at n = 12".
 
 **Revised qualitative observation** (weakened from the original "almost independent"): Spearman ρ = 0.163 and Kendall τ = 0.136 are not significantly different from zero (p ≈ 0.61, 0.57), and the data **do not support** either the "SMS is independent of PC" claim or the "SMS is strongly correlated with PC" claim. **Orthogonal semantic dimension is a hypothesis, not a finding from this dataset** — its empirical test requires n ≥ 30 PUTs or a more refined PC operationalization (incorporating the mutant dimension). This paper records "no detectable statistical correlation between SMS and PC over 12 PUTs" as the conservative finding for RQ4, leaving orthogonality to the P4 paper (with expanded PUT scale or partial-correlation design).
 
@@ -1705,7 +1705,7 @@ v3 / v3b data collection used §4.2.4 original Phase-1 dual-blind protocol (Clau
 
 - **Tip, F., Bell, J., & Schäfer, M.** (2024). LLMorpheus: Mutation testing using large language models. *arXiv preprint* arXiv:2404.09952. https://arxiv.org/abs/2404.09952
 
-### 8.4 Probabilistic / numerical mutation benchmarks
+### 8.4 Deep-learning and general fault benchmarks
 
 - **Humbatova, N., Jahangirova, G., & Tonella, P.** (2021). DeepCrime: Mutation testing of deep learning systems based on real faults. In *Proceedings of the 30th ACM SIGSOFT International Symposium on Software Testing and Analysis* (ISSTA 2021) (pp. 67–78). ACM. https://doi.org/10.1145/3460319.3464825
 - **Just, R., Jalali, D., & Ernst, M. D.** (2014). Defects4J: A database of existing faults to enable controlled testing studies for Java programs. In *Proceedings of the International Symposium on Software Testing and Analysis* (ISSTA 2014) (pp. 437–440). ACM. https://doi.org/10.1145/2610384.2628055
