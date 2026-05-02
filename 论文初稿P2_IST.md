@@ -5,8 +5,8 @@
 - Five semantic mutation operators degenerate to the classical Mutation Score in a proven limit.
 - Across 12 Programs Under Test and 60 cells, 292 LLM-generated mutants overlap with 1,250 cosmic-ray syntactic mutants on only 5.14% of abstract syntax trees.
 - The Hyperparameter, Structural Injection, and Trajectory Flip classes (54.5% of the mutant pool) are unreachable under default first-order syntactic configurations (HOM compositions; Jia and Harman 2008; not refuted).
-- Primary v3 Cliff's delta = 0.323 (H2 large-effect threshold not met); cross-source pooling shifts delta by ≤ 0.01 across two MP conditions (v3 → v4-mp5 = −0.009; v3b → v4 = −0.007).
-- Stipulated-alternative power at the H2 boundary is 49.1%, so the "not met" verdict is a statement about the point estimate, not about the effect size.
+- Primary v3 Cliff's delta = 0.323 (H2 not met under pre-registered criterion; underpowered exploratory; deferred to P4).
+- Source-axis null reading rests on v3 vs v4-mp5 contrast (Δδ = −0.009), the only contrast not inheriting R11.
 
 ## Abstract
 
