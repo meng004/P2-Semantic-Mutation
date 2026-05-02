@@ -396,7 +396,7 @@ Cell-level multiple comparisons across the 60 cells use Benjamini-Hochberg FDR c
 
 The **zero-mass dominance** (45/60 = 75%) is concentrated in the cross-MP slice: ~88% (42/48) of cross cells are zero, ~25% (3/12) of aligned cells are zero. Cliff's delta is well-defined under this distribution but its inference is effectively dominated by `n_aligned = 12 + n_cross_nonzero ≈ 6 = 18`, not the surface n=60. Median odds ratio is formally infinite (median(cross) = 0); we report "aligned median > 0 = cross median" as auxiliary qualitative evidence.
 
-**Effective-n note (P1-5 revision, R0 W6 / R1 W7 / DA-3.1 consensus).** The surface n_aligned = 12 and n_cross = 48 mask an effective-n constraint at n_eff ≈ 18: this (a) explains why the §5.4 plug-in power for δ > 0.474 is only 0.42 (not a nominal-vs-effective-n error in our calculation); (b) explains the 95% bootstrap CI width [0.127, 0.740] (upper / lower ratio ≈ 5.83, consistent with known liberal tendency of percentile bootstrap at n_eff ≈ 18); (c) does **not** change the H2 verdict direction (point estimate 0.439 < 0.474 is an effect-size ceiling, not a sample-size issue, as §5.4 stipulated power analysis confirms). When future P4 work expands to n ≥ 30 PUTs, whether zero-mass dominance dilutes with PUT-class diversification is a testable hypothesis for effective-n improvement.
+**Effective-n note.** The surface n_aligned = 12 and n_cross = 48 mask an effective-n constraint at n_eff ≈ 18, which explains the wide 95% bootstrap CI [0.127, 0.740] (upper/lower ratio ≈ 5.83, consistent with known liberal tendency of percentile bootstrap at small n_eff). The implications for power and the H2 verdict direction are quantified jointly with the stipulated-alternative analysis in §5.4. PUT-class diversification at n ≥ 30 (P4) is a testable route to relaxing the effective-n constraint.
 
 **Consistency with LLM-mutant literature.** Tip et al. (2024) LLMorpheus reports high cross-MP failure proportions on JavaScript scientific-computing PUTs (specific numbers not listed in cited literature); zero-mass dominance appears to be a shared characteristic of LLM-mutant + existing MR-MP alignment designs, not a quirk of this paper's PUT selection.
 
@@ -428,7 +428,7 @@ This is consistent with Tip et al. (2024) LLMorpheus's medium-effect range on Ja
 
 ### 5.4 RQ2 — Stipulated-alternative power
 
-A plug-in bootstrap (5,000 replications, seed = 42) samples with replacement from the observed (n = 12, n = 48) v4 SMS distributions. The plug-in power table is:
+The §5.2 effective-n constraint motivates an explicit power analysis. A plug-in bootstrap (5,000 replications, seed = 42) samples with replacement from the observed (n = 12, n = 48) v4 SMS distributions. The plug-in power table is:
 
 | Threshold | Interpretation | Power at (12, 48) |
 |---|---|---|
@@ -445,6 +445,8 @@ The plug-in result answers the question "given the *observed* distribution, how 
 | 0.474 | Lower 95% CI bound > 0 (any effect) | 0.868 |
 
 Even when the truth equals the H2 boundary, this design returns "not met" verdicts in roughly half of replications. This supports the framing in §5.3: the H2 verdict is a factual statement about the point estimate failing to clear the threshold, not a claim that the effect is necessarily smaller than 0.474. Increasing the sample size narrows the confidence interval but cannot lift the point estimate. The plug-in sample-size sweep (n_aligned ∈ {6, 12, ..., 60}; n_cross = 4 × n_aligned; power for δ > 0 reaches 0.974 at n_aligned = 6 and 0.996 at 12, then plateaus) is in Appendix D.3.
+
+**Symmetric reading of the same power.** The 49.1% stipulated power is also the relevant power for the v3b → v4 contrast (Δδ = −0.007, CI covers zero): if the true source-diversity effect on δ were as large as 0.474, this design would correctly reject the null in roughly half of replications. The −0.007 null-shift is therefore consistent with a wide range of true source-diversity effects, and we explicitly do not read it as evidence that source diversity is inert. The strong-sense test is deferred to P4.
 
 **Note on monotone-transformation invariance.** Cliff's δ is rank-based — a function of U / (n₁·n₂) — so applying a logit transform to SMS gives δ_logit ≡ δ_raw by construction (`rq2_cliffs_delta_logit_v4.json` records δ_logit = 0.439 = δ_raw, difference 0.000). This is consistent with the rank-invariance theorem and does **not** constitute additional robustness evidence. The genuine robustness threats to the H2 verdict come from the v3b post-hoc selection (§3.4) and the zero-mass dominance (§5.2), not from any metric-scale choice. See Appendix D.2 for the full sensitivity analysis.
 
