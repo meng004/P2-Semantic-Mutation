@@ -264,6 +264,8 @@ The diagonal cells `j = k` form the H2-aligned slice, the off-diagonal cells for
 
 **Symbol convention.** Throughout the paper, a dagger (†) on a numeric quantity (δ, SMS percentage, sign-test count) flags that the number is derived under the v3b post-hoc c-class primary-MP shift (MP5 → MP1) and inherits the permutation-null one-sided p = 0.9885 caveat above. Numbers without † stand on the v3 pre-registered configuration.
 
+**Statistical-indistinguishability note (Round-8 reviewer-prompted).** The permutation null one-sided p = 0.9885 above means that **a δ inflation of the magnitude observed (v3 → v3b: +0.123) is essentially indistinguishable from what would arise from random reselection of the c-class primary MP** under the null. This is the formal interpretation of "selection on the response" in this design, and it applies to every † number throughout the paper. Sections 5 and 6 retain v3b/v4-mp1 numbers for completeness but do not use them as evidentiary anchors; the main narrative anchors are v3 (pre-registered) and v4-mp5 (robustness, MP held at pre-registered MP5). All † numbers are formally relocated to Appendix D as sensitivity analyses.
+
 **Naming convention.** For brevity, we write `v4-mp1` for the v4 cross-source pool with the v3b post-hoc c-class primary MP1 (Round-3 default; the version reaching δ = 0.439†) and `v4-mp5` for the v4 cross-source pool holding the c-class primary at the pre-registered MP5 (Round-3 robustness contrast; the version reaching δ = 0.314). Both share the same v4 mutant pool; only the c-class primary-MP convention differs.
 
 ### 3.5 P2 vs syntactic mutants — 12-PUT empirical (Layer 3)
@@ -661,7 +663,7 @@ The companion P-series roadmap is as follows.
 
 ## Data and code availability
 
-All raw data, JSON SSOTs (paper_numbers_v3 / v3b / v4 / v4-mp5, lrca_60cell, c_class_permutation, rq2_power_stipulated, cosmic_ray_12put_ast_diff), mutant pools, AVP source, and analysis scripts will be archived on Zenodo at the time of acceptance under DOI [10.5281/zenodo.XXXXXXX] (placeholder, to be minted on acceptance). The repository structure follows `REPRODUCIBILITY.md` in the source tree. The cosmic-ray and mutmut operator versions referenced in §3.5, §3.6, and Appendix B.6 are pinned in `requirements-frozen.txt`.
+All raw data, JSON SSOTs (paper_numbers_v3 / v3b / v4 / v4-mp5, lrca_60cell, c_class_permutation, rq2_power_stipulated, cosmic_ray_12put_ast_diff), mutant pools, AVP source, and analysis scripts will be archived on Zenodo at the time of acceptance under DOI [10.5281/zenodo.XXXXXXX] (placeholder, to be minted on acceptance). For peer review, an anonymized read-only mirror of the repository is available at [https://anonymous.4open.science/r/p2-sms-anon-XXXX] (URL to be provided by the corresponding author upon Editor request, per IST guidelines). The repository structure follows `REPRODUCIBILITY.md` in the source tree. The cosmic-ray and mutmut operator versions referenced in §3.5, §3.6, and Appendix B.6 are pinned in `requirements-frozen.txt`.
 
 ---
 
