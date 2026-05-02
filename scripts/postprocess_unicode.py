@@ -106,6 +106,7 @@ SUBSTITUTIONS = [
     # other ops occasionally seen
     ("⊔", r"$\sqcup$"),
     ("⊓", r"$\sqcap$"),
+    ("∘", r"$\circ$"),  # function composition, e.g. "AOR ∘ Statement-Deletion"
     # whitespace-like
     (" ", " "),  # NBSP → regular
 ]
