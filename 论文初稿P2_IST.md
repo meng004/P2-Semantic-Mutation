@@ -412,7 +412,7 @@ Three-stage delta:
 - **v3 (primary, pre-registered):** delta = **0.323**, 95% CI [0.017, 0.622]
 - v3b (exploratory, c→MP1 post-hoc): delta = 0.446†, CI [0.154, 0.743]
 - v4 (exploratory, cross-source under fixed prompt, c→MP1): delta = 0.439†, 95% CI [0.127, 0.740] (B = 10,000)
-- **v4 robustness (cross-source, c-class held at v3 MP5):** delta = **0.314**, 95% CI [0.014, 0.622] — strips R11 chained conditioning by reverting c-class primary to the pre-registered v3 choice while keeping the cross-source pool. The contrast `δ_v4_mp5 − δ_v3 = −0.009` isolates the LLM-source-diversity axis from MR-design re-selection.
+- **v4 robustness (cross-source, c-class held at v3 MP5):** delta = **0.314**, 95% CI [0.014, 0.622]. This row strips R11 chained conditioning by reverting c-class primary to the pre-registered v3 choice while keeping the cross-source pool. The contrast `δ_v4_mp5 − δ_v3 = −0.009` isolates the LLM-source-diversity axis from MR-design re-selection.
 
 **H2 verdict: not met under the pre-registered point-estimate criterion.** None of the three delta values crosses the Romano (2006) large-effect threshold 0.474. The two contrasts are reported separately:
 
@@ -477,7 +477,7 @@ The mixed-effects primary model `sms ~ C(class) * C(operator) + (1 | put)` retur
 
 ### 5.6 RQ4 — SMS vs Pattern Coverage
 
-**Status.** RQ4 is reported as a descriptive observation, not a hypothesis test, because n = 12 places the 95% Spearman CI at roughly [−0.5, +0.6] — the test has no power to distinguish zero, moderate-positive, or moderate-negative correlation. The numbers below are recorded so that P4 (n ≥ 30 PUTs) can pre-register a directional hypothesis.
+**Status.** RQ4 is reported as a descriptive observation, not a hypothesis test, because n = 12 places the 95% Spearman CI at roughly [−0.5, +0.6], so the test cannot distinguish zero, moderate-positive, or moderate-negative correlation. The numbers below are recorded so that P4 (n ≥ 30 PUTs) can pre-register a directional hypothesis.
 
 Pattern Coverage (PC) per PUT = #triggered (MP_k, R_outcome) cells / 10. Range [0.500, 1.000], mean 0.733. Pairing with mean SMS over 5 MPs: Spearman rho = **0.163** (p = 0.613); Kendall tau = 0.136 (p = 0.568); n = 12.
 
@@ -580,7 +580,7 @@ The 60-cell empirical demonstration produces six findings.
 
 (ii) Under an identical prompt, three-LLM cross-source diversity does not move δ (Δδ = −0.007, 95% CI covers zero).
 
-(iii) Across two c-class primary-MP conditions (MP5 and MP1), the LLM-source axis shifts Cliff's δ by ≤ 0.01 in magnitude (v3 → v4_mp5 = −0.009; v3b → v4 = −0.007), whereas the MR-design axis (MP5 ↔ MP1) shifts δ by approximately +0.12. Within this design, the c-class primary-MP choice — not LLM identity under an identical prompt — is the lever on the aligned-vs-cross effect size. A strong-sense source-diversity test with per-LLM differential prompts is deferred to P4.
+(iii) Across two c-class primary-MP conditions (MP5 and MP1), the LLM-source axis shifts Cliff's δ by ≤ 0.01 in magnitude (v3 → v4_mp5 = −0.009; v3b → v4 = −0.007), whereas the MR-design axis (MP5 ↔ MP1) shifts δ by approximately +0.12. Within this design, the c-class primary-MP choice, not LLM identity under an identical prompt, is the lever on the aligned-vs-cross effect size. A strong-sense source-diversity test with per-LLM differential prompts is deferred to P4.
 
 (iv) Cross-source pooling raises mutant *quality* (mean C1\_share +27%, class-c mean SMS +91.4%†) without raising the effect size. († class-c +91.4% is conditional on the §3.4 v3b MP1 selection; permutation null one-sided p = 0.9885.)
 
