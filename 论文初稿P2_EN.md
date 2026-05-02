@@ -1496,7 +1496,7 @@ This paper's RQ4 conservative conclusion is: **at the 12 PUT scale, SMS and the 
 
 #### 6.5.2 MR designers
 
-**Pain point**: MR designers (often researchers or senior developers in scientific computing domains) rely on intuition or literature patterns to propose new MRs, lacking a quantifiable "design feedback" metric—before P1, whether a new MR is "useful" can only be verified after deployment to real faults, with a very long feedback loop.
+**Pain point**: MR designers (often researchers or senior developers working on single-output scientific computing kernels of the type covered by §3.1.1) rely on intuition or literature patterns to propose new MRs, lacking a quantifiable "design feedback" metric—before P1, whether a new MR is "useful" can only be verified after deployment to real faults, with a very long feedback loop.
 
 **Capability SMS provides**: SSOT-based offline SMS batch runs (`scripts/sms_campaign.py`) give MR designers a quantifiable design-feedback metric — comparing the new MR's aligned-cell SMS against the existing-MR-set median (this paper's v4 main analysis aligned mean 0.275) gives an initial verdict within hours on whether the MR has acceptable failure-detection capability on aligned slices.
 

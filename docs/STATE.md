@@ -2,8 +2,8 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-05-02（commit a0fb8ed 后）
-**Stage:** Round-2 minor revision pass 完成，全部 5 reviewer Group A/B/C/D 修订已 commit；下一轮预期 Accept
+**Last synced:** 2026-05-02（Round-3 R3 verification 后,nit fix pending commit）
+**Stage:** **5/5 reviewers converge on Minor Revision**；R3 dissent 撤回（D-6 3/10 → 6/10）；论文进入 Accept-imminent 状态
 **Repo:** `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性`
 **Paper file (中文权威版)：** `论文初稿P2.md`（1853 行）
 **Paper file (英文翻译版)：** `论文初稿P2_EN.md`（1844 行）
@@ -18,8 +18,12 @@
 - R0 EIC: Major → **Minor**（6.7→7.4）
 - R1 Method: Major → **Minor**（6 items, 已修复）
 - R2 Domain: Major → **Minor**（6.71→7.43, 已修复）
-- R3 Persp: **Major round-2 §6.5**（D-6 stays 3/10）→ Group D 已修复后预期升至 Minor
+- R3 Persp: Major round-2 §6.5（D-6 3/10）→ **Minor**（Round-3 verification 后,D-6 升至 6/10,dissent 已撤回；docs/review_2026-05-02/r3_perspective_round3_verification.md）
 - R4 DA: NOT Accept → **Minor**（5 conditional fixes 已修复）
+
+**5/5 一致 verdict: Minor Revision conditional Accept**。Round-3 残余 nits 仅 2 项 non-blocking:
+- (i) §6.5 W6 ISO 26262-8 §11 TCL 2/3 verbatim language 未调用（实质内容已正确披露,non-blocking）
+- (ii) §6.5.2 line 1499 "scientific computing domains" 改为 "single-output scientific computing kernels of the type covered by §3.1.1"（已 fix pending commit）
 
 ---
 
