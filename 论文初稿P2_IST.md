@@ -422,7 +422,7 @@ Three-stage delta:
 | v3b → v4 (cross-source, c→MP1, fixed prompt) | −0.007 | covers zero | Three LLMs near-identical under prompt-fixed (49.1% stipulated power) |
 | **v3 → v4 (under MP5, cross-source only)** | **−0.009** | **covers zero** | Robustness against R11. Source-axis change under MP5 reproduces the v3b → v4 micro-shift, supporting the source-diversity null reading across two independent MP conditions. |
 
-The "v3 → v4 (under MP5)" robustness contrast was added in response to a methodological-asymmetry concern: the −0.007 v3b → v4 contrast inherits R11 chained conditioning (cross-source pool + post-hoc MP1) and so cannot identify which factor is null. Under MP5, c-class is held at the pre-registered choice, so the only difference between this row and v3 (δ = 0.323) is the LLM-source axis. The reproduced ≤ 0.01 shift across two MP conditions feeds finding (iii).
+The "v3 → v4 (under MP5)" robustness contrast was added in response to a methodological-asymmetry concern: the −0.007 v3b → v4 contrast inherits R11 chained conditioning (cross-source pool + post-hoc MP1) and so cannot identify which factor is null. Under MP5, c-class is held at the pre-registered choice, so the only difference between this row and v3 (δ = 0.323) is the LLM-source axis. The reproduced ≤ 0.01 shift across two MP conditions supports finding (iii).
 
 This is consistent with Tip et al. (2024) LLMorpheus's medium-effect range on JavaScript LLM mutants - a contextual literature observation (estimand caveat: their delta compares "LLM vs traditional mutants on fault detection", ours compares "aligned vs cross MP slice within one pool"; the numerical similarity is not substantive support).
 
