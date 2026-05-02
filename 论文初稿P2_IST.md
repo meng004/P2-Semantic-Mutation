@@ -4,7 +4,7 @@
 
 - Five semantic mutation operators degenerate to the classical Mutation Score in a proven limit.
 - Across 12 Programs Under Test and 60 cells, 292 LLM-generated mutants overlap with 1,250 cosmic-ray syntactic mutants on only 5.14% of abstract syntax trees.
-- The Hyperparameter, Structural Injection, and Trajectory Flip classes (54.5% of the mutant pool) are categorically unreachable by first-order syntactic tools.
+- The Hyperparameter, Structural Injection, and Trajectory Flip classes (54.5% of the mutant pool) are unreachable under default first-order syntactic configurations (HOM compositions; Jia and Harman 2008; not refuted).
 - Primary v3 Cliff's delta = 0.323 (H2 large-effect threshold not met); cross-source pooling shifts delta by ≤ 0.01 across two MP conditions (v3 → v4-mp5 = −0.009; v3b → v4 = −0.007).
 - Stipulated-alternative power at the H2 boundary is 49.1%, so the "not met" verdict is a statement about the point estimate, not about the effect size.
 
@@ -292,7 +292,7 @@ The diagonal cells `j = k` form the H2-aligned slice, the off-diagonal cells for
 
 **Interpretation: refuting the "post-classification copy" challenge.**
 
-- HP, SI, and TF (159 of 292 = 54.5% of v4 mutants) are **categorically** unrepresentable by cosmic-ray AST-local operators such as BinOp, Compare, and NumberReplacer. The unreachability is structural; enlarging the syntactic operator set does not help.
+- HP, SI, and TF (159 of 292 = 54.5% of v4 mutants) are **unrepresentable under default first-order configurations** of cosmic-ray's AST-local operators such as BinOp, Compare, and NumberReplacer. The unreachability is structural under first-order operators; whether HOM-based compositions (Jia and Harman 2008; not refuted) can close the gap is residual threat R12, addressed conceptually in §3.6(ii).
 - The CE class shows 7.81% incidental overlap, mostly LLM-generated half-step perturbations on a2 and b3 such as `_RHO=28.0 → 27.5`. The remaining 92.19% of CE mutants are AST-disjoint, because the LLMs prefer domain-aware perturbations over integer ±1 changes.
 - An earlier draft labelled the OS row "✗ tool-inexpressible". The 12-PUT data refines this categorical claim to "△ 88.33% disjoint, 11.67% incidental hits". The systematic-versus-incidental argument in §3.6 (with details in Appendix B.1.5) clarifies why those incidental hits are stochastic byproducts rather than systematic semantic mutation.
 - 94.86% of the v4 mutants cannot be reproduced by cosmic-ray defaults. The two pools occupy systematically distinct mutant spaces.
@@ -303,7 +303,7 @@ A multi-tool cross-comparison is reserved for P4: mutpy is incompatible with Pyt
 
 **Scope of the claim.** The preventive-defence claim below is conditional on a first-order syntactic baseline; HOM-based syntactic compositions are an open question (R12) and are not refuted by the §3.5 evidence.
 
-The HP, SI, and TF zero-overlap result, combined with the §3.2 necessary-conditions argument, amounts to a *preventive-defence* argument: semantic mutation operators address a class of fault hypotheses that lie categorically beyond the reach of first-order syntactic tools. Three points sharpen this framing.
+The HP, SI, and TF zero-overlap result, combined with the §3.2 necessary-conditions argument, amounts to a *preventive-defence* argument: semantic mutation operators address a class of fault hypotheses that lie beyond the reach of default first-order syntactic configurations (HOM not refuted; see §3.6(ii)). Three points sharpen this framing.
 
 **(i) Systematic versus incidental.** Satisfying conditions (a), (b), or (c) is sufficient for a single semantic mutation, but only when satisfaction reflects design intent — not stochastic byproduct — does it constitute a *systematic* semantic mutation method. A syntactic tool that occasionally hits (a) or (c) with its 12 default operators does so at a non-zero probability, but the hits are not repeatable and they carry neither of the two engineering goods we want. First, designing a semantic mutator like OS `det → sum(diag)` requires knowing that these expressions are equivalent on diagonal matrices but not on general matrices — a deepening of source-code understanding the syntactic tool does not exhibit. Second, domain-semantic faults — wrong physical constants, unit conversions, boundary conditions, hyperparameter semantics, numerical-method order — are not AST-local; the syntactic-tool design goals (operator typos, off-by-one errors, negation flips) do not target them. Systematic semantic mutation therefore requires (a), (b), or (c) to be design intent. Appendix B.1.5 records this argument in full.
 
@@ -514,7 +514,7 @@ Pattern Coverage (PC) per PUT = #triggered (MP_k, R_outcome) cells / 10. Range [
 
 Going from v3b same-source to v4 cross-source changes Cliff's δ by only −0.007 (95% CI covers zero); the v4-mp5 robustness contrast holding the c-class primary at the pre-registered MP5 reproduces this null shift (Δδ(v3 → v4-mp5) = −0.009, 95% CI covers zero), strengthening the source-axis null reading by replicating it under an independent MP condition that strips R11 chained conditioning. Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a 27%† relative increase), class-c mean SMS by **+91.4%†**, and class-d mean SMS by 38%†. Under an identical prompt template, three LLMs converge on near-identical distributions for the aligned-vs-cross question. This *inversely falsifies* our initial hypothesis that LLM same-source bias is the dominant factor in the H2 ceiling. The v3 → v3b shift of +0.123 attributes to MR design — specifically the c-class primary-MP shift, with the caveats in §3.4 — and the v3b → v4 micro-change attributes to source diversity under prompt-fixed conditions. We report these contrasts separately in §5.3 rather than as a synthetic ratio. The strong-sense source-diversity test, with per-LLM differential prompts (V_persona, V_cot), is deferred to P4. Appendix C.1.1 records the full protocol.
 
-The §3.5 evidence (5.14% AST overlap, HP/SI/TF at 0/0/0) confirms that the medium-effect ceiling is not an artefact of LLM-pool overlap with the syntactic-mutant space. 94.86% of v4 mutants are AST-disjoint from cosmic-ray defaults, and the three categorically-unreachable classes (HP, SI, TF; 159 of 292 mutants) lie outside that space by construction. An effect-size breakthrough therefore requires substantive MR-design refinement (a P4 task), not a larger sample.
+The §3.5 evidence (5.14% AST overlap, HP/SI/TF at 0/0/0) confirms that the medium-effect ceiling is not an artefact of LLM-pool overlap with the syntactic-mutant space. 94.86% of v4 mutants are AST-disjoint from cosmic-ray defaults, and the three classes unreachable under default first-order configurations (HP, SI, TF; 159 of 292 mutants; HOM not refuted, see §3.6(ii)) lie outside that space by construction. An effect-size breakthrough therefore requires substantive MR-design refinement (a P4 task), not a larger sample.
 
 **A numerical-coincidence note.** Petrović and Ivanković's (2018) ~20% productive-mutant rate at Google is close to our calibrated C1\_share of 0.20. Their construct is a developer survey (subjective usefulness), and LRCA's C1 is the output of a three-layer classifier; the agreement between the two is contextual, not mechanism validation.
 
@@ -606,7 +606,7 @@ This paper contributes a three-layer framework for domain-semantic mutation in s
 
 - **Layer 1 (§3.2).** Formal necessary conditions for semantic mutation — cross-function-boundary substitution, dependence on domain knowledge, change in algorithmic class — instantiated as five meta-operator classes: CE, OS, HP, TF, and SI (also written mut_C, mut_M, mut_G, mut_T, mut_F).
 - **Layer 2 (§2.3).** The E1 ∧ E2 equivalence judgement, the conservative complete instantiation of the Layer-1 conditions, with an explicit trade-off against E1-alone and E2-alone variants.
-- **Layer 3 (§3.5).** AST-normalised empirical traceability across all 12 PUTs: a 5.14% overall AST overlap with cosmic-ray defaults, and HP, SI, and TF categorically unreachable at 0/0/0.
+- **Layer 3 (§3.5).** AST-normalised empirical traceability across all 12 PUTs: a 5.14% overall AST overlap with cosmic-ray defaults, and HP, SI, and TF unreachable at 0/0/0 under default first-order configurations (HOM not refuted; see §3.6(ii)).
 
 SMS is backward-compatible with the classical MS through §2.6 Theorem 9.1, which establishes almost-everywhere degeneration in the limit `L = L_equiv ∧ L_killed ∧ L_mut`. The 60-cell empirical audit reported in §5 is one demonstration following this backbone, not the paper's main contribution.
 
