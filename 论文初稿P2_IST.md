@@ -262,6 +262,8 @@ The diagonal cells `j = k` form the H2-aligned slice, the off-diagonal cells for
 
 **Symbol convention.** Throughout the paper, a dagger (†) on a numeric quantity (δ, SMS percentage, sign-test count) flags that the number is derived under the v3b post-hoc c-class primary-MP shift (MP5 → MP1) and inherits the permutation-null one-sided p = 0.9885 caveat above. Numbers without † stand on the v3 pre-registered configuration.
 
+**Naming convention.** For brevity, we write `v4-mp1` for the v4 cross-source pool with the v3b post-hoc c-class primary MP1 (Round-3 default; the version reaching δ = 0.439†) and `v4-mp5` for the v4 cross-source pool holding the c-class primary at the pre-registered MP5 (Round-3 robustness contrast; the version reaching δ = 0.314). Both share the same v4 mutant pool; only the c-class primary-MP convention differs.
+
 ### 3.5 P2 vs syntactic mutants — 12-PUT empirical (Layer 3)
 
 **Experimental design.** For each PUT, P2 v4 cross-source mutants (`data/mutants/${PUT}_pool_v4/`, 292 total) are compared at the AST-normalised level (`ast.dump(annotate_fields=False, include_attributes=False)`) with cosmic-ray default-operator mutants (1,250 total; `scripts/p2_vs_syntactic_ast_diff_batch.py`). Source: `data/results/cosmic_ray_12put_ast_diff.json`.
