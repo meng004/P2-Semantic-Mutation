@@ -101,28 +101,30 @@ def translate_section(client, label: str, body: str, glossary: str, dry_run: boo
         },
     ]
 
-    response = client.messages.create(
+    user_msg = (
+        f"Translate the following section to English, preserving all "
+        f"markdown structure and applying the glossary strictly:\n\n{body}"
+    )
+    text_chunks: list[str] = []
+    final_usage = None
+    with client.messages.stream(
         model="claude-opus-4-7",
-        max_tokens=16000,
+        max_tokens=32000,
         system=system_blocks,
-        messages=[
-            {
-                "role": "user",
-                "content": f"Translate the following section to English, "
-                f"preserving all markdown structure and applying the "
-                f"glossary strictly:\n\n{body}",
-            }
-        ],
-    )
+        messages=[{"role": "user", "content": user_msg}],
+    ) as stream:
+        for text in stream.text_stream:
+            text_chunks.append(text)
+        final_message = stream.get_final_message()
+        final_usage = final_message.usage
 
-    usage = response.usage
     print(
-        f"  {label}: input={usage.input_tokens}, "
-        f"cache_read={getattr(usage, 'cache_read_input_tokens', 0)}, "
-        f"cache_create={getattr(usage, 'cache_creation_input_tokens', 0)}, "
-        f"output={usage.output_tokens}"
+        f"  {label}: input={final_usage.input_tokens}, "
+        f"cache_read={getattr(final_usage, 'cache_read_input_tokens', 0)}, "
+        f"cache_create={getattr(final_usage, 'cache_creation_input_tokens', 0)}, "
+        f"output={final_usage.output_tokens}"
     )
-    return response.content[0].text
+    return "".join(text_chunks)
 
 
 def main():
