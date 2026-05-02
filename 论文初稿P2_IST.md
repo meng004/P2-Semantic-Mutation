@@ -592,6 +592,18 @@ All three stakeholder classes consume the same single source of truth (`paper_nu
 
 (8) **Air-gap incompatibility.** The mutant-generation workflow calls external LLM APIs and is incompatible with most regulated air-gapped V&V environments (IEC 60880, DO-178C, IEC 62304, ISO 26262). Pre-generated mutant pools can be reproduced offline, but generating new pools requires LLM access. Self-hosted open-weight LLMs and offline-cached pools are P5 mitigations.
 
+### 7.X Statistical-modelling capacity at N = 60 cells / 12 PUTs
+
+The mixed-effects primary model `sms ~ C(class) * C(operator) + (1 | put)` returned a Singular matrix at N = 60; the fallback `sms ~ C(class) + C(operator) + (1 | put)` had the PUT random-intercept variance hit boundary 0 (degenerate). Both failures are not numerical — they are evidence that 60 observations across 12 PUTs cannot identify an 11-dimensional fixed-effects structure plus 12-PUT random intercepts. This is a hard limit of the present design: **the experiment cannot, in principle, fit a hierarchical model with this fixed-effect dimensionality at this sample size**. Friedman tests serve as the non-parametric formal alternative, but they answer a structurally different question. P4's expansion to n_PUT ≥ 30 is the only path to a properly identified hierarchical model.
+
+### 7.Y PUT-level zero-mass cohort (3 of 12 PUTs)
+
+Figure 2 and §6.2 document that PUTs A1, B1, and D2 produce all-zero rows across the five MPs in the v4 cross-source pool — that is, **for 25% of the PUTs, SMS gives zero signal at every operator-MP cell**. This is a substantive limitation of SMS as an adequacy metric on this PUT cohort: when the LRCA C1 mass collapses to zero across all aligned and cross slices for a PUT, SMS cannot distinguish strong from weak MR sets on that PUT. The phenomenon coexists with R_sem ≈ 1.0 (mutants are valid; §6.2), so the issue is not mutant generation but MR-design adequacy at the PUT level. P4's MR-design refinement (per-PUT MP discovery) and the proposed P4-pre-registered c-class primary-MP rule on a fresh dataset are the principal mitigation paths. We declare this as residual threat R14.
+
+### 7.Z R13 protocol-asymmetry magnitude estimate
+
+§4.2 declared protocol asymmetry R13: v3 / v3b used the Phase-1 dual-blind reviewer protocol (Claude generation + GPT-5.4 review + DeepSeek arbitration), while v4 (both v4-mp1 and v4-mp5) passes V1-V4 mechanical gates only. To quantify the potential δ-shift attributable to this asymmetry without dual-blind, we offer a **rough order-of-magnitude estimate**: in the Phase-1 audit, dual-blind review filtered approximately 5-10% of LLM-generated mutants as semantically inconsistent; if these filtered mutants were systematically less effective at killing under MR_aligned (a plausible but unverified premise), the upper-bound δ-shift contribution from removing the reviewer step is bounded above by approximately **±0.03 to ±0.05 on Cliff's δ** at n_aligned = 12. This bound is comparable in magnitude to but smaller than the +0.12 MR-design axis shift and an order of magnitude larger than the −0.009 source-axis shift. The bound therefore does not change the conclusion direction, but a direct dual-blind v4 rerun (P4 commitment) would give a tighter quantification.
+
 ---
 
 ## 8. Conclusion
