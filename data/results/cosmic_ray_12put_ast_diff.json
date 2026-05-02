@@ -1,10 +1,8 @@
 {
-  "n_puts_with_cr_data": 1,
-  "n_puts_without_cr_data": 11,
+  "n_puts_with_cr_data": 12,
+  "n_puts_without_cr_data": 0,
   "puts_with_cr_data": [
-    "a1"
-  ],
-  "puts_without_cr_data": [
+    "a1",
     "a2",
     "a3",
     "b1",
@@ -17,6 +15,7 @@
     "d2",
     "d3"
   ],
+  "puts_without_cr_data": [],
   "per_put": {
     "a1": {
       "put_id": "a1",
@@ -56,41 +55,411 @@
       },
       "overlap_files": []
     },
-    "a2": null,
-    "a3": null,
-    "b1": null,
-    "b2": null,
-    "b3": null,
-    "c1": null,
-    "c2": null,
-    "c3": null,
-    "d1": null,
-    "d2": null,
-    "d3": null
+    "a2": {
+      "put_id": "a2",
+      "p2_pool_dir": "data/mutants/a2_pool_v4",
+      "n_p2_mutants": 27,
+      "n_cosmic_ray_mutants": 17,
+      "n_cosmic_ray_unique_asts": 17,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 17
+      },
+      "n_overlap": 3,
+      "overlap_rate_overall": 0.1111111111111111,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 9,
+          "n_overlap": 3,
+          "overlap_rate": 0.3333333333333333
+        },
+        "OS": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "SI": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": [
+        "m03_a2_CE1_claude_a03.py",
+        "m02_a2_CE1_claude_a01.py",
+        "m01_a2_CE1_claude_a02.py"
+      ]
+    },
+    "a3": {
+      "put_id": "a3",
+      "p2_pool_dir": "data/mutants/a3_pool_v4",
+      "n_p2_mutants": 18,
+      "n_cosmic_ray_mutants": 336,
+      "n_cosmic_ray_unique_asts": 336,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 299,
+        "SURVIVED": 37
+      },
+      "n_overlap": 3,
+      "overlap_rate_overall": 0.16666666666666666,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "OS": {
+          "n_p2": 9,
+          "n_overlap": 3,
+          "overlap_rate": 0.3333333333333333
+        }
+      },
+      "overlap_files": [
+        "m14_a3_OS1_deepseek_a01.py",
+        "m15_a3_OS1_deepseek_a03.py",
+        "m13_a3_OS1_deepseek_a02.py"
+      ]
+    },
+    "b1": {
+      "put_id": "b1",
+      "p2_pool_dir": "data/mutants/b1_pool_v4",
+      "n_p2_mutants": 27,
+      "n_cosmic_ray_mutants": 76,
+      "n_cosmic_ray_unique_asts": 76,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 73,
+        "SURVIVED": 3
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "OS": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    },
+    "b2": {
+      "put_id": "b2",
+      "p2_pool_dir": "data/mutants/b2_pool_v4",
+      "n_p2_mutants": 27,
+      "n_cosmic_ray_mutants": 151,
+      "n_cosmic_ray_unique_asts": 151,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 116,
+        "SURVIVED": 35
+      },
+      "n_overlap": 3,
+      "overlap_rate_overall": 0.1111111111111111,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "CF": {
+          "n_p2": 9,
+          "n_overlap": 3,
+          "overlap_rate": 0.3333333333333333
+        },
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": [
+        "m14_b2_CF1_deepseek_a01.py",
+        "m13_b2_CF1_deepseek_a02.py",
+        "m15_b2_CF1_deepseek_a03.py"
+      ]
+    },
+    "b3": {
+      "put_id": "b3",
+      "p2_pool_dir": "data/mutants/b3_pool_v4",
+      "n_p2_mutants": 20,
+      "n_cosmic_ray_mutants": 32,
+      "n_cosmic_ray_unique_asts": 32,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 27,
+        "SURVIVED": 5
+      },
+      "n_overlap": 6,
+      "overlap_rate_overall": 0.3,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 9,
+          "n_overlap": 2,
+          "overlap_rate": 0.2222222222222222
+        },
+        "OS": {
+          "n_p2": 9,
+          "n_overlap": 4,
+          "overlap_rate": 0.4444444444444444
+        },
+        "SI": {
+          "n_p2": 2,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": [
+        "m12_b3_OS1_claude_a01.py",
+        "m13_b3_OS1_deepseek_a02.py",
+        "m15_b3_OS1_deepseek_a03.py",
+        "m06_b3_CE1_deepseek_a01.py",
+        "m14_b3_OS1_deepseek_a01.py",
+        "m04_b3_CE1_deepseek_a03.py"
+      ]
+    },
+    "c1": {
+      "put_id": "c1",
+      "p2_pool_dir": "data/mutants/c1_pool_v4",
+      "n_p2_mutants": 10,
+      "n_cosmic_ray_mutants": 66,
+      "n_cosmic_ray_unique_asts": 66,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 52,
+        "SURVIVED": 14
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 1,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "TF": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    },
+    "c2": {
+      "put_id": "c2",
+      "p2_pool_dir": "data/mutants/c2_pool_v4",
+      "n_p2_mutants": 27,
+      "n_cosmic_ray_mutants": 51,
+      "n_cosmic_ray_unique_asts": 51,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "SURVIVED": 13,
+        "KILLED": 38
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "OS": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "TF": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    },
+    "c3": {
+      "put_id": "c3",
+      "p2_pool_dir": "data/mutants/c3_pool_v4",
+      "n_p2_mutants": 27,
+      "n_cosmic_ray_mutants": 99,
+      "n_cosmic_ray_unique_asts": 99,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "SURVIVED": 20,
+        "KILLED": 79
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "CE": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "TF": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    },
+    "d1": {
+      "put_id": "d1",
+      "p2_pool_dir": "data/mutants/d1_pool_v4",
+      "n_p2_mutants": 27,
+      "n_cosmic_ray_mutants": 48,
+      "n_cosmic_ray_unique_asts": 48,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 21,
+        "SURVIVED": 27
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "SI": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "TF": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    },
+    "d2": {
+      "put_id": "d2",
+      "p2_pool_dir": "data/mutants/d2_pool_v4",
+      "n_p2_mutants": 27,
+      "n_cosmic_ray_mutants": 99,
+      "n_cosmic_ray_unique_asts": 99,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 73,
+        "SURVIVED": 26
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "OS": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "TF": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    },
+    "d3": {
+      "put_id": "d3",
+      "p2_pool_dir": "data/mutants/d3_pool_v4",
+      "n_p2_mutants": 25,
+      "n_cosmic_ray_mutants": 74,
+      "n_cosmic_ray_unique_asts": 74,
+      "n_cosmic_ray_diff_apply_failed": 0,
+      "n_cosmic_ray_post_mutation_parse_failed": 0,
+      "cosmic_ray_outcome_counts": {
+        "KILLED": 39,
+        "SURVIVED": 35
+      },
+      "n_overlap": 0,
+      "overlap_rate_overall": 0.0,
+      "per_operator_class": {
+        "HP": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "SI": {
+          "n_p2": 7,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        },
+        "TF": {
+          "n_p2": 9,
+          "n_overlap": 0,
+          "overlap_rate": 0.0
+        }
+      },
+      "overlap_files": []
+    }
   },
   "aggregated": {
-    "n_p2_total": 30,
-    "n_cosmic_ray_total": 201,
-    "n_overlap_total": 0,
-    "overlap_rate_overall": 0.0,
+    "n_p2_total": 292,
+    "n_cosmic_ray_total": 1250,
+    "n_overlap_total": 15,
+    "overlap_rate_overall": 0.05136986301369863,
     "per_class_aggregated": {
       "CE": {
+        "n_p2": 64,
+        "n_overlap": 5,
+        "rate": 0.078125
+      },
+      "CF": {
         "n_p2": 9,
-        "n_overlap": 0,
-        "rate": 0.0
+        "n_overlap": 3,
+        "rate": 0.3333333333333333
       },
       "HP": {
-        "n_p2": 9,
+        "n_p2": 72,
         "n_overlap": 0,
         "rate": 0.0
       },
       "OS": {
-        "n_p2": 6,
+        "n_p2": 60,
+        "n_overlap": 7,
+        "rate": 0.11666666666666667
+      },
+      "SI": {
+        "n_p2": 33,
         "n_overlap": 0,
         "rate": 0.0
       },
-      "SI": {
-        "n_p2": 6,
+      "TF": {
+        "n_p2": 54,
         "n_overlap": 0,
         "rate": 0.0
       }

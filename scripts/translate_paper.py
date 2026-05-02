@@ -174,9 +174,14 @@ def main():
             sys.exit("anthropic SDK not installed; pip install anthropic")
         from dotenv import load_dotenv  # type: ignore[import-not-found]
         load_dotenv(ROOT / ".env")
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            sys.exit("ANTHROPIC_API_KEY not set; see .env.example")
-        client = Anthropic()
+        api_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("BLTCY_API_KEY")
+        base_url = os.environ.get("ANTHROPIC_BASE_URL") or os.environ.get("BLTCY_BASE_URL")
+        if not api_key:
+            sys.exit("Neither ANTHROPIC_API_KEY nor BLTCY_API_KEY is set in .env")
+        if base_url and base_url.rstrip("/").endswith("/v1"):
+            base_url = base_url.rstrip("/")[:-3].rstrip("/")
+        client = Anthropic(api_key=api_key, base_url=base_url) if base_url else Anthropic(api_key=api_key)
+        print(f"[client] base_url={base_url or 'default Anthropic'}")
     else:
         client = None
 

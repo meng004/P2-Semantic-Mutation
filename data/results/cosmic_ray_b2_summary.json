@@ -1,12 +1,12 @@
 {
   "tool": "cosmic-ray",
-  "put_id": "a1",
-  "target_put": "src/p2/puts/a1.py",
-  "test_suite": "tests/puts/test_a1.py + tests/puts/test_a1_scalar_interface.py",
-  "mutants_total": 201,
-  "killed": 123,
-  "survived": 78,
+  "put_id": "b2",
+  "target_put": "src/p2/puts/b2.py",
+  "test_suite": "tests/puts/test_b2.py",
+  "mutants_total": 151,
+  "killed": 116,
+  "survived": 35,
   "incompetent": 0,
-  "survival_rate": 0.3880597014925373,
+  "survival_rate": 0.23178807947019867,
   "interpretation": "Per §3.2.6.1, cosmic-ray's default operators are AST-local (BinOp/Compare/BoolOp/etc.); none can express OS/HP/TF/SI. The mutant kill rate observed here reflects only that subset of P2's five operator classes that maps to CE-style literal edits. The qualitative implication — syntactic tools cover at most 1/5 of P2's semantic operator space — is robust to the specific kill rate value observed."
 }
