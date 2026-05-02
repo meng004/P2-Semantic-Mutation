@@ -2,10 +2,11 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-05-01（commit 2eb84ea 后）
-**Stage:** Major Revision response 进行中（5 reviewer reports，15/28 项已 close）
+**Last synced:** 2026-05-02（commit 37fa9bb 后）
+**Stage:** Major Revision response 完整提交，5-reviewer parallel re-review 进行中
 **Repo:** `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性`
-**Paper file:** `论文初稿P2.md`（83 KB，中文，仅 abstract+keywords 英文）
+**Paper file (中文权威版)：** `论文初稿P2.md`（134 KB，中文，仅 abstract+keywords 英文）
+**Paper file (英文翻译版)：** `论文初稿P2_EN.md`（150 KB,1700 行，commit 37fa9bb)
 
 ---
 
@@ -22,14 +23,20 @@
 - **T2** §3.2.6.0 — systematic vs incidental distinction (positive complement to §3.2.6.1 negative argument)
 - **T3** §3.2 / §3.3 — 5 classes lifted to meta-mutation operators + specialization framing
 - **T4** §2.3 / §4.4 — E1 ∧ E2 equivalence judgment as Layer 2 instantiation; 3-candidate trade-off
-- **T5** §3.2.6.3 — mutant traceability empirical (Layer 3 — Applied; cosmic-ray a1 + AST diff; **0.0000 overall overlap** including CE class — concept-aligned but instance-disjoint)
+- **T5** §3.2.6.3 — mutant traceability empirical (Layer 3 — Applied; **NEW-MAJOR-1 generalization closed 2026-05-02**: 12-PUT cosmic-ray full empirical, |P2|=292 / |CR|=1276 / overall AST overlap = **5.14%**; HP/SI/TF=0/0/0 categorically unreachable, CE=7.81% (boundary), OS=11.67% (88.33% disjoint + 11.67% incidental, §3.2.6.1 OS row downgraded honestly), CF=33.33% (b2 only n=9))
 - **T6** §1.2 / §6 / Abstract Conclusion — narrative reorganization around 3-layer backbone
 
 **Pending：**
-- **P0 blocker:** R-1（全文英文翻译，投稿必做；基础设施已就绪，待运行 ~$7 / 10 min；之后人审）
+- ~~**P0 blocker:** R-1（全文英文翻译）~~ ✓ **CLOSED 2026-05-02 commit 37fa9bb** — 论文初稿P2_EN.md 1,700 行,通过 BLTCY proxy + Anthropic Opus 4.7 streaming
 - **P0 from 2026-05-01 review:** P0-7（pre-registration claim 证据，单 reviewer，未入此 plan）
 - **P1 from 2026-05-01 review:** P1-1/2/4/6/8/9/10/11（单 reviewer items，已 deferred）
 - **P2 misc:** R-26/R-27/R-28（需 reviewer 原文核对）
+
+**2026-05-02 strict 5-reviewer parallel re-review（进行中）:**
+- 输入: 论文初稿P2_EN.md(post-revision)
+- 5 reviewer subagent 已在后台启动（agentId: a9a9278f6a87a5d6c R0 EIC, a1b29cf2169f4679d R1 Methodology, adc2441a0abe19804 R2 Domain, a83c7ee32fe13a053 R3 Perspective, a069925dd6784db02 R4 Devil's Advocate）
+- 输出目录: docs/review_2026-05-02/
+- 后续: 5 份完成后做 editorial synthesis,确定是否解除 Major Revision
 
 ## 2. 论文章节状态（13 个 H1/H2）
 
@@ -45,7 +52,7 @@
 | §7 风险与缓解 + Limitations | ✓ 完整（含 R8-R10） |
 | §8 参考文献 / References | ✓ NEW（R-7 close）；APA-7，11 学术引用 + 3 软件工具 + 2 P-series companions |
 | §9 SMS-MS 退化定理 | ✓ NEW（R-8 close）；6 退化条件 L1-L6 + 3 引理 + 主定理 + LRCA 平凡化推论 |
-| 全文英文版 | ✗ R-1 blocker，基础设施就绪，待用户运行 |
+| 全文英文版 | ✓ 已提交（commit 37fa9bb，论文初稿P2_EN.md 1700 行 / 150 KB） |
 
 ## 3. 关键 artifacts（v4 = primary）
 
