@@ -500,6 +500,8 @@ Pattern Coverage (PC) per PUT = #triggered (MP_k, R_outcome) cells / 10. Range [
 | Mean suspect_share (calibrated best) | 0.791 |
 | Cells meeting H5 (calibrated best) | **12 / 60 = 20.0%** |
 
+**H5 was pre-registered before pool characteristics were known**; the dense cutoff sweep below shows the verdict is intrinsic to LLM-mutant pools and not a calibration artefact, which is itself a finding worth reporting.
+
 **H5 verdict: not met.** A dense cutoff sweep (R-14 response, Appendix D.2) shows H5 pass-ratio is flat at 20% over cutoffs ∈ [0.05, 0.40]; no cutoff pushes it past 80%. H5 is **intrinsic data property, independent of cutoff choice**; v4's suspect_share distribution is severely bimodal (median 1.0, with 48 cross cells near 1 and 12 aligned cells near 0; the [0.20, 0.80] interior is nearly empty).
 
 ---
