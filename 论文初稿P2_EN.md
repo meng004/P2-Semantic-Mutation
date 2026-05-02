@@ -21,7 +21,7 @@ metamorphic testing; mutation testing; semantic mutation operators; single-outpu
 
 - Journal: *Information and Software Technology* (IST, preferred) / *Journal of Systems and Software* (JSS) / *Software Testing, Verification and Reliability* (STVR) (alternatives)
 - Submission window: 2027 Q3, expected publication 2028 Q2
-- Authors: Meng + Master's student B as co-first authors
+- Author: Meng Li (corresponding author, mlemon@usc.edu.cn, School of Computing, University of South China, postcode 421001, China)
 - Related work: [Meng Li et al., Progress in Nuclear Energy, under review] arXiv technical report (shared by P1 / P4)
 
 ---
