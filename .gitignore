@@ -110,3 +110,14 @@ data/operator_campaign/v1_archive/raw/
 .DS_Store
 .translate_cache/
 .claude/
+# Stage 5 LaTeX intermediates (commit .tex/.pdf/.docx only)
+submission/*.aux
+submission/*.log
+submission/*.out
+submission/*.toc
+submission/*.spl
+submission/*.fls
+submission/*.fdb_latexmk
+submission/*.synctex.gz
+# elsarticle from CTAN (downloaded by build script; not version-controlled)
+submission/texmf/

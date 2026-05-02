@@ -643,8 +643,8 @@ Per-PUT detailed distribution (only listing PUTs with non-zero overlap):
 **Section positioning**: §3.2 subsections mut_X provide abstract definitions of the 5 meta mutation operators (CE / OS / HP / TF / SI, i.e., mut_C / mut_M / mut_G / mut_T / mut_F). This section provides the **full specialization grid of meta operators across 12 PUTs × 5 MPs** (60 cells)—each cell is a concrete instantiation of a (meta operator, PUT type, meta pattern) triple. This section constitutes the **concrete instantiation** of §3.2 meta operators and serves as the reference object for the mutant traceability audit in §3.2.6.3.
 
 ```
-              MP_1  MP_2  MP_3  MP_4  MP_5
-              守恒  单调  收敛  轨迹  偏序
+              MP_1   MP_2   MP_3    MP_4    MP_5
+              cons.  mono.  conv.   traj.   p-ord.
             ┌─────┬─────┬─────┬─────┬─────┐
    A1 Lorenz│ ●●  │ ●   │ ●●  │ ●●  │  ○  │
    A2 LU    │ ●●  │  ○  │ ●   │ ●   │ ●●  │
