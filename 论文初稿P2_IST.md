@@ -460,10 +460,10 @@ Even when the truth equals the H2 boundary, this design returns "not met" verdic
 Sign test (within-class aligned mean − cross mean, sign = +):
 
 - **v3 (primary, pre-registered): 3 / 4 (partial)**.
-- v3b (exploratory, c→MP1): 4 / 4.
-- v4 cross-source: 4 / 4 (under v3b condition).
+- v3b (exploratory, c→MP1): 4 / 4†.
+- v4 cross-source: 4 / 4† (under v3b condition).
 
-**H4 primary verdict: partial (3/4) under v3.** v3b / v4 4/4 are sensitivity reports.
+**H4 primary verdict: partial (3/4) under v3.** v3b / v4 4/4† are sensitivity reports inheriting the §3.4 post-hoc selection.
 
 The mixed-effects primary model `sms ~ C(class) * C(operator) + (1 | put)` returned Singular matrix; the fallback `sms ~ C(class) + C(operator) + (1 | put)` had PUT random-intercept variance hit boundary 0 (degenerate). We therefore use Friedman as the non-parametric formal alternative:
 
@@ -496,7 +496,7 @@ Pattern Coverage (PC) per PUT = #triggered (MP_k, R_outcome) cells / 10. Range [
 
 ### 6.1 Cross-source contributes mutant quality, not effect size
 
-Going from v3b same-source to v4 cross-source changes Cliff's δ by only −0.007 (95% CI covers zero), yet raises mean C1\_share from 0.164 to 0.209 (a 27% relative increase), class-c mean SMS by **+91.4%**, and class-d mean SMS by 38%. Under an identical prompt template, three LLMs converge on near-identical distributions for the aligned-vs-cross question. This *inversely falsifies* our initial hypothesis that LLM same-source bias is the dominant factor in the H2 ceiling. The v3 → v3b shift of +0.123 attributes to MR design — specifically the c-class primary-MP shift, with the caveats in §3.4 — and the v3b → v4 micro-change attributes to source diversity under prompt-fixed conditions. We report these contrasts separately in §5.3 rather than as a synthetic ratio. The strong-sense source-diversity test, with per-LLM differential prompts (V_persona, V_cot), is deferred to P4. Appendix C.1.1 records the full protocol.
+Going from v3b same-source to v4 cross-source changes Cliff's δ by only −0.007 (95% CI covers zero), yet raises mean C1\_share from 0.164 to 0.209 (a 27%† relative increase), class-c mean SMS by **+91.4%†**, and class-d mean SMS by 38%†. Under an identical prompt template, three LLMs converge on near-identical distributions for the aligned-vs-cross question. This *inversely falsifies* our initial hypothesis that LLM same-source bias is the dominant factor in the H2 ceiling. The v3 → v3b shift of +0.123 attributes to MR design — specifically the c-class primary-MP shift, with the caveats in §3.4 — and the v3b → v4 micro-change attributes to source diversity under prompt-fixed conditions. We report these contrasts separately in §5.3 rather than as a synthetic ratio. The strong-sense source-diversity test, with per-LLM differential prompts (V_persona, V_cot), is deferred to P4. Appendix C.1.1 records the full protocol.
 
 The §3.5 evidence (5.14% AST overlap, HP/SI/TF at 0/0/0) confirms that the medium-effect ceiling is not an artefact of LLM-pool overlap with the syntactic-mutant space. 94.86% of v4 mutants are AST-disjoint from cosmic-ray defaults, and the three categorically-unreachable classes (HP, SI, TF; 159 of 292 mutants) lie outside that space by construction. An effect-size breakthrough therefore requires substantive MR-design refinement (a P4 task), not a larger sample.
 
@@ -512,7 +512,7 @@ This decoupling motivates the caveat in §3.4. The v3 → v3b shift of +0.123 at
 
 ### 6.3 H4 — partial under primary, exploratory 4/4
 
-All four class means are positive in v3, v3b, v4. Inter-class balance improves under cross-source (c +91.4%, d +38%), confirming that c / d classes have higher mutant-diversity demand than a / b. Mixed-effects unavailability (Singular) is a sample-size constraint at N = 60 / 12 PUTs, not evidence absence. **H4 primary: partial (3/4).** v3b / v4 4/4 are sensitivity-only with §3.4 caveats. The Friedman main effect (chi^2 = 15.30, p = 0.0041) speaks to MP differentiation, not H4 direction.
+All four class means are positive in v3, v3b, v4. Inter-class balance improves under cross-source (c +91.4%†, d +38%†), confirming that c / d classes have higher mutant-diversity demand than a / b. Mixed-effects unavailability (Singular) is a sample-size constraint at N = 60 / 12 PUTs, not evidence absence. **H4 primary: partial (3/4).** v3b / v4 4/4† are sensitivity-only with §3.4 caveats. The Friedman main effect (chi^2 = 15.30, p = 0.0041) speaks to MP differentiation, not H4 direction.
 
 ### 6.4 Stakeholder analysis (single-output kernels scope)
 
