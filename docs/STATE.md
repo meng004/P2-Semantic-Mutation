@@ -2,11 +2,24 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-05-02（commit 37fa9bb 后）
-**Stage:** Major Revision response 完整提交，5-reviewer parallel re-review 进行中
+**Last synced:** 2026-05-02（commit a0fb8ed 后）
+**Stage:** Round-2 minor revision pass 完成，全部 5 reviewer Group A/B/C/D 修订已 commit；下一轮预期 Accept
 **Repo:** `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性`
-**Paper file (中文权威版)：** `论文初稿P2.md`（134 KB，中文，仅 abstract+keywords 英文）
-**Paper file (英文翻译版)：** `论文初稿P2_EN.md`（150 KB,1700 行，commit 37fa9bb)
+**Paper file (中文权威版)：** `论文初稿P2.md`（1853 行）
+**Paper file (英文翻译版)：** `论文初稿P2_EN.md`（1844 行）
+
+**2026-05-02 Round-2 minor revision pass（commit a0fb8ed）：**
+- **Group A（已 commit a20e795,Round-2 ESCALATED 修复）**：§3.5.1 + §5.9.2/3 翻译、Abstract H2 wording、§3.2.6.1 OS 表格单元、LLM 源数字校对、Line 1185 dangling "IST 2024"
+- **Group B（R1 method）**：§5.7.3 stipulated-alternative power simulation（power point=0.491 / CI-lower=0.868）、§5.8.4 per-class Friedman + Bonferroni × 4 + Kendall's W、§7.1.2 K_eq sweep 下调 limitation
+- **Group C（R2 lit）**：§1.3.2 CPH grounding + 4 经典（DeMillo 1978/Andrews 2005/Just FSE 2014/Papadakis 2019）+ Ammann & Offutt 2008 + Vargha & Delaney 2000；§1.6.2 toy-scope；§9.5 Corollary 9.1 generic statement
+- **Group D（R3 §6.5）**：§6.5.3 阈值删除 + retitle "long-term aspiration"、§6.5.2 YAML 删除 + quarterly batch audit reframe、§6.5.1 air-gap incompatibility declaration、§1.1 scope 收紧、§8.6 ASME V&V 20-2009 reference
+
+**Round-2 reviewer 合议（docs/review_2026-05-02/editorial_decision.md）**：
+- R0 EIC: Major → **Minor**（6.7→7.4）
+- R1 Method: Major → **Minor**（6 items, 已修复）
+- R2 Domain: Major → **Minor**（6.71→7.43, 已修复）
+- R3 Persp: **Major round-2 §6.5**（D-6 stays 3/10）→ Group D 已修复后预期升至 Minor
+- R4 DA: NOT Accept → **Minor**（5 conditional fixes 已修复）
 
 ---
 
