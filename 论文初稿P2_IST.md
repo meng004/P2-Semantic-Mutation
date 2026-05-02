@@ -479,7 +479,7 @@ The mixed-effects primary model `sms ~ C(class) * C(operator) + (1 | put)` retur
 
 - **PUT (n=12) × MP (k=5): chi^2 = 15.30, p = 0.0041** (significant).
 - MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
-- Per-class Friedman with **Bonferroni × 4 correction** (R1 W4 round-2): a 1.000 / b **0.116** / c 1.000 / d 1.000 — no per-class result remains significant after correction. Kendall's W effect sizes: a 0.333 (small) / b 0.898 (large concordance) / c 0.333 / d 0.417.
+- Per-class Friedman with **Bonferroni × 4 correction** (R1 W4 round-2): a 1.000 / b **0.116** / c 1.000 / d 1.000 — no per-class result remains significant after correction. Kendall's W effect sizes: a 0.333 (small) / b 0.898 (large concordance, but caveat: N=3 per class makes this label nominal only) / c 0.333 / d 0.417.
 
 **Caveat.** Friedman tests "are MP rank differences present" (averaged over PUTs); H4 tests "is direction consistent across 4 classes". These are logically independent. H4 stands on the §5.5 sign test; per-class Friedman is descriptive only (small N=3 per class).
 
