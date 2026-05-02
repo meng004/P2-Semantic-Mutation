@@ -1,0 +1,29 @@
+{
+  "method": "stipulated-alternative parametric bootstrap (R1 W1 round-2)",
+  "n_simulations": 2000,
+  "seed": 42,
+  "version": "v4",
+  "observed": {
+    "n_aligned": 12,
+    "n_cross": 48,
+    "cliffs_delta_observed": 0.4392361111111111
+  },
+  "stipulated_truth": {
+    "target_delta": 0.474,
+    "mixture_weight": 0.09375,
+    "realized_E_delta_at_w": 0.4746302083333333,
+    "rationale": "SMS distributions have heavy ties at zero (45/60 cells = 0); raw shifting Cliff's δ is discontinuous (any ε > 0 jumps δ from 0.314 to 0.74). We instead use a mixture-weight construction: with probability w we draw from (observed_aligned + 0.001), and with probability 1-w from observed_aligned. This gives smooth control over realized δ. Calibrating w by bisection yields E[δ] = 0.4746 ≈ 0.474, stipulating the alternative as the H2 boundary. This answers R1 W1: 'if the truth is the H2 threshold, how often would our n=(12,48) design produce a δ_hat meeting the H2 criterion?'"
+  },
+  "stipulated_alternative_power": {
+    "power_point_estimate_meets_H2": 0.4915,
+    "power_CI_lower_above_zero": 0.8675,
+    "delta_hat_distribution_summary": {
+      "mean": 0.4698888888888889,
+      "std": 0.15516286215598846,
+      "p10": 0.2673611111111111,
+      "p50": 0.4722222222222222,
+      "p90": 0.6666666666666666
+    }
+  },
+  "interpretation": "Under stipulated truth δ = 0.474 (H2 large-effect threshold), the probability that a fresh n=(12,48) sample produces δ_hat >= 0.474 is 0.491. This is the directly relevant power for the H2 verdict: even if the underlying distribution actually attained the large-effect boundary, our sample size still produces δ_hat below the threshold a non-trivial fraction of the time. This complements (but does not replace) the plug-in power 0.42 in compute_rq2_power.py: the plug-in number answers 'with what power could we detect the observed δ = 0.439', while this stipulated number answers 'if the truth is at H2 boundary, what is our chance to confirm it'. Both are sub-0.80 at n=(12,48), consistent with §5.7.3's existing finding that the design is underpowered for distinguishing medium from large effects."
+}

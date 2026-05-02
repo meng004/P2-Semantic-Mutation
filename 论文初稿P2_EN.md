@@ -35,7 +35,7 @@ metamorphic testing; mutation testing; semantic mutation operators; single-outpu
 | **4 representative classes of scientific computing programs** | ~~4 paradigms~~ | "Paradigm" carries strong semantics in the SE/PL community as "programming paradigm = OO/FP/Logic," which differs from this paper's meaning of "scientific computing program categories" |
 | **cross-class consistency** | ~~cross-paradigm consistency~~ | Aligns with terminology unification |
 
-The English text uniformly uses *four representative classes of single-output scientific computing kernels* and *cross-class consistency*, avoiding *paradigm*. The scope of the contribution claim is determined by the title and §1.6; the narrative use of "scientific computing programs" in the main text applies to P-series overall discussion contexts (e.g., §1.3 / §1.6) without conflict.
+The English text uniformly uses *four representative classes of single-output scientific computing kernels* and *cross-class consistency*, avoiding *paradigm*. **The scope of the contribution claim is strictly bounded to single-output `float → float` kernels (each PUT source code < 2 KB, total 12 PUTs across 4 classes: numeric / probabilistic / surrogate / ML)**; the title, §1.6, §6.5, and §7.5 use this scope consistently. Where "scientific computing programs" appears in the body text, it functions only as a general domain term (as in §1.3 LLM-mutant literature review, §1.6 P-series roadmap) and **does not constitute a methodological claim over industrial-scale, multi-module, or multi-output scientific computing software**; §6.5 stakeholder pain-points and §6.5.3 V&V documentation discussion are also constrained to this single-output kernels scope.
 
 ### 1.2 Core Claims
 
@@ -77,7 +77,11 @@ Overview of semantic-aware mutation work in the past 5 years:
 
 P2's unique positioning: **meta pattern-driven + unified framework across 4 classes + strict compatibility with classic MS as an intensional extension**.
 
+**CPH grounding of classical mutation testing (R2 round-2 NEW)**: The syntactic baseline of this methodology rests on the classical Coupling Effect Hypothesis (CPH) — DeMillo, Lipton & Sayward (1978) hypothesized that tests detecting simple faults also detect complex faults; Andrews, Briand & Labiche (2005) and Just et al. (2014, FSE) empirically confirmed that mutants are valid surrogates for real faults; Papadakis et al. (2019) provided the most comprehensive post-Jia & Harman (2011) survey of mutation testing advances. §3.2.6 of this paper argues: **CPH holds within the scope of syntactic mutation but is non-trivial in the scope of domain-semantic mutation** — syntactic mutants cannot reach P2's four semantic operator classes (HP/SI/TF/OS); even when syntactic mutation testing couples simple syntactic faults to complex syntactic faults, that coupling does not extend to domain-semantic faults (see §3.2.6.0 systematic-vs-incidental + §3.2.6.3 12-PUT empirics 5.14% AST overlap rate).
+
 **Recent work on LLM-generated mutants**: Tip et al. (2024) proposed LLMorpheus, using LLMs to generate mutants on JavaScript instead of fixed operator sets, reporting fault-detection comparable to traditional operators but with lower equivalent rates, and observing medium-effect intervals in effect-size reports for LLM-mutants. Petrović & Ivanković (2018) reported approximately 20% productive mutant ratio on Google's internal 500,000-mutant dataset, numerically close to this paper's §5.6.2 LRCA C1_share measured levels (default threshold 0.16, calibrated 0.20) — **a numerical coincidence rather than mechanism validation**; see §6.1 for the detailed disambiguation. This paper's §5.7.2 measured Cliff's δ = 0.323 is in the same magnitude as the LLM-mutant medium-effect phenomenon observed by Tip et al. (2024) on JavaScript. **Estimand caveat**: Tip 2024 compares "LLM mutants vs traditional mutants on fault detection rate" (cross-source comparison), while this paper's §5.7.2 compares "aligned vs cross MP slice on the same mutant pool" (single-source within-pool comparison). The numerical proximity of the two δ values does not constitute substantive support, serving only as a reference to the medium-effect phenomenon in LLM-mutant literature.
+
+**Relation to existing V&V standards (R3 round-2 NEW)**: This paper's SMS is conceptually complementary to ASME V&V 20-2009 *Standard for Verification and Validation in Computational Fluid Dynamics and Heat Transfer* §3 code verification — the latter targets code-level correctness verification of numerical solvers, while this paper's SMS targets fault-detection adequacy of MR sets. This paper's empirical scope is strictly bounded to single-output kernels (§3.1.1), with a substantial scale gap to the multi-module CFD codes targeted by V&V 20; see §6.5.3 long-term aspiration discussion.
 
 ### 1.4 Research Questions (Purely Empirical, 4 Items)
 
@@ -116,7 +120,7 @@ P2's unique positioning: **meta pattern-driven + unified framework across 4 clas
 
 #### 1.6.2 Epistemological Statement
 
-SMS is an epistemological semantic detection metric, not an engineering value proxy. Engineering value requires separate metrics (P2-CN subject matter).
+SMS is an epistemological semantic detection metric, not an engineering value proxy. Engineering value requires separate metrics (P2-CN subject matter). **Toy-scope caveat (R2 round-2 NEW)**: The 12 PUTs in this paper are Numerical-Recipes-style "toy kernels" (each PUT < 2 KB, signature limited to `float → float`), intended to provide a verifiable minimum-working-example for the methodological backbone (§3.2.0 necessary conditions, §2.3-§4.4 equivalence judgment, §3.2.6.3 traceability). Empirical results at this scale do **not** constitute a methodological claim over industrial-scale, multi-module, or multi-output scientific computing software; transfer of the empirics to that scale is left to P5 (domain application).
 
 ---
 
@@ -1313,7 +1317,16 @@ Future work (P4) will test: (a) pre-registered primary MP selection rule (avoidi
 3. **Power to detect large-effect (H2 strict threshold) only 0.423**: This means even if true δ is around 0.474, sample size has only about 42% probability of detection. **But this cannot conversely say "insufficient power is the cause of H2 not being met"**—observed δ = 0.439 < 0.474, effect size itself is below threshold; increasing sample size will only narrow CI, will not automatically elevate point estimate to large.
 4. **Sample size sweep** (`rq2_power_v4.json` sample_size_curve_for_delta_gt_0): at n_aligned ∈ {6, 12, …, 60} (n_cross = 4×), power to detect δ > 0 reaches 0.974 at n_aligned = 6, 0.996 at 12, then plateaus. Indicates RQ2 primary analysis (detect-any-effect) has very low sample size requirement, **main bottleneck is effect size boundary itself, not sampling noise**.
 
-**Relationship to H2 verdict**: R-12/R-13 power supplement **supports rather than weakens** H2 rejected conclusion—observed effect is in medium range and CI cannot exclude < 0.474, continuing to claim "large-effect threshold not met" is statistically reasonable. **Effect-size ceiling breakthrough requires substantive improvement at MR design level (P4 direction), not larger sample**.
+**Relationship to H2 verdict**: R-12/R-13 power supplement **supports rather than weakens** the H2 "large-effect threshold not met" conclusion — observed effect is in the medium range and CI cannot exclude < 0.474, continuing to claim "large-effect threshold not met" is statistically reasonable. **Effect-size ceiling breakthrough requires substantive improvement at MR design level (P4 direction), not larger sample**.
+
+**Stipulated-alternative power supplement (R1 W1 round-2 NEW)**: The plug-in bootstrap above answers "given the *observed* distribution (δ ≈ 0.439), how effectively can we detect δ > threshold." R1 W1 further requires a stipulated-alternative design — "if the *truth* is exactly the H2 threshold 0.474, how effectively can our sample size confirm it?" We implement the stipulated alternative via a mixture-weight construction (script `scripts/compute_rq2_power_stipulated.py`, N_sim = 2000): SMS distributions have heavy ties at zero (45/60 cells = 0), raw shifting Cliff's δ is discontinuous (any ε > 0 jumps δ from 0.314 to 0.74), so we construct mixture aligned' = (probability w) sample from (observed_aligned + 0.001) + (probability 1 − w) sample from observed_aligned, calibrating w so that E[δ_stipulated] ≈ 0.474. Calibrated w = 0.094, realized E[δ] = 0.4746.
+
+| Stipulated δ_truth | Test criterion | Power at (12, 48) | Data source |
+|---|---|---|---|
+| 0.474 (H2 boundary) | δ_hat ≥ 0.474 (point-estimate criterion, used in P0-8 verdict) | **0.491** | `rq2_power_stipulated_v4.json` |
+| 0.474 (H2 boundary) | 95% CI lower > 0 (any-effect criterion) | 0.868 | same |
+
+**Stipulated interpretation**: Even if the *true* δ equals the H2 threshold 0.474, this design (12, 48) still has only **49.1%** probability that a fresh sample's δ_hat will reach 0.474 — this is the actual power under the point-estimate criterion used by the P0-8 verdict. **This precisely supports the §5.7.2 P0-8 revision** (changing "is rejected" to "is not met under the pre-registered point-estimate criterion"): the H2 verdict is a factual statement about the point estimate not meeting the threshold, **not a claim that the effect size is necessarily smaller than 0.474** — the stipulated power of 49.1% shows that even when the truth is exactly at 0.474, sample randomness still produces "not met" verdicts in roughly half of replications. This is fully consistent with the §5.7.2 estimand caveat.
 
 ---
 
@@ -1367,14 +1380,16 @@ Because mixed-effects primary model is Singular, we use Friedman χ² as formal 
 - **Primary statistic**: **χ² = 15.30, p = 0.0041** (< 0.05, significant)
 - **MP rank means** (MP1 → MP5): 2.92, 2.58, 2.08, 3.08, 4.33
 
-Within-class Friedman (each class 3 PUTs × 5 MPs):
+Within-class Friedman (each class 3 PUTs × 5 MPs) — **R1 W4 round-2: Bonferroni × 4 correction + Kendall's W effect size added**:
 
-| Class | χ² | p |
-|---|---|---|
-| a (numeric) | 4.00 | 0.406 |
-| b (probabilistic) | 10.78 | **0.029** |
-| c (surrogate) | 4.00 | 0.406 |
-| d (ML) | 5.00 | 0.287 |
+| Class | χ² | raw p | Bonferroni × 4 adjusted p | Kendall's W (n=3, k=5) | Effect strength |
+|---|---|---|---|---|---|
+| a (numeric) | 4.00 | 0.406 | 1.000 | 0.333 | small |
+| b (probabilistic) | 10.78 | **0.029** | 0.116 | 0.898 | large |
+| c (surrogate) | 4.00 | 0.406 | 1.000 | 0.333 | small |
+| d (ML) | 5.00 | 0.287 | 1.000 | 0.417 | small-medium |
+
+**R1 W4 round-2 correction interpretation**: Applying Bonferroni × 4 correction over the family of 4 per-class Friedman tests, the b-class original "individually significant" raw p = 0.029 rises to adjusted p = 0.116, **>** 0.05; **no per-class result remains significant at family-wise α = 0.05**. This is consistent with the small per-class sample N = 3 PUTs × 5 MPs — even though b-class Kendall's W = 0.898 indicates a strong rank-concordance pattern, 3 PUTs is insufficient to yield a conclusive within-class verdict after multiple-comparison correction. **This is consistent with the paper's H4 primary verdict still resting on the §5.8.2 sign test**: per-class Friedman serves as sensitivity / descriptive reporting only and does not drive the H4 verdict directly. Kendall's W provides the effect-size complement (b-class 0.898 falls in the "large concordance" range under Cohen 1988, even though not statistically significant after correction).
 
 Interpretation: Friedman test on full 60-cell data is **significant (p = 0.0041)**, indicating 5 MPs do exhibit systematic differences across 12 PUT blocks; rank means show MP3 lowest, MP5 highest, consistent with §5.7 aligned-cross asymmetry pattern.
 
@@ -1462,11 +1477,11 @@ This paper's RQ4 conservative conclusion is: **at the 12 PUT scale, SMS and the 
 
 ### 6.5 Stakeholder analysis: who benefits from SMS (R-19)
 
-> This section responds to the reviewer's explicit query on "practical implications" (R-19), explicitly distinguishing three stakeholder classes per IST convention—test engineers, MR designers, auditors/certification bodies—and for each class explaining: (a) pain point before SMS; (b) specific capability SMS provides; (c) executable workflow; (d) existing responsibilities not replaced.
+> **Scope** (R3 round-2 tightening): All stakeholder pain points, capability claims, and workflows discussed in this section are strictly bounded to **single-output `float → float` kernels (< 2 KB source code, the 12 PUTs in this paper)** — see §1.1 / §3.1.1 / §7.5. None of the claims in this section apply to industrial-scale, multi-module, or multi-output scientific computing software; the latter is the research scope of P5 / P2-CN (domain application). Per IST convention this section explicitly distinguishes three stakeholder classes — test engineers, MR designers, V&V documentation — and for each class explains: (a) pain point before SMS; (b) specific capability SMS provides; (c) executable workflow + resource cost; (d) existing responsibilities not replaced.
 
 #### 6.5.1 Test engineers
 
-**Pain point**: Testers of scientific computing software have long faced the judgment dilemma of "is my MR set sufficient." When code coverage tools (line/branch/MC-DC) report 90%+ high coverage, engineers cannot directly judge the detection capability of MRs on numerical/probabilistic/ML behaviors, because existing mutation testing tools (mutmut, cosmic-ray) produce mostly syntactic-layer mutants (arithmetic operator replacement, boolean inversion), with weak correlation to domain-level semantic errors (§3.2.6).
+**Pain point** (scoped to single-output kernels): When testing a single-output `float → float` numerical / probabilistic / surrogate / ML kernel, even when line / branch / MC-DC code coverage reports 90%+, the engineer still cannot directly judge whether the accompanying MR set has adequate detection capability over numerical / probabilistic / ML behaviors, because existing mutation testing tools (mutmut, cosmic-ray) produce mostly syntactic-layer mutants (see §3.2.6.1 operator-level cross-table, §3.2.6.3 12-PUT empirical 5.14% AST overlap rate), with weak correlation to domain-level semantic errors.
 
 **Capability SMS provides**: For each (PUT, MP) cell, provide a scalar SMS value from 0–1, directly reading "how many meaningful semantic mutations this MR kills under this MP." When SMS is significantly lower than the §5.7.2 same-class baseline (e.g., aligned mean 0.275), it prompts that the MR's oracle tolerance or verification logic may miss a class of domain errors.
 
@@ -1475,48 +1490,50 @@ This paper's RQ4 conservative conclusion is: **at the 12 PUT scale, SMS and the 
 2. If SMS = 0 (75% default case), first check LRCA labels in `lrca_60cell.json`—C2 (MP-semantic inconsistency) / C3 (AVP tolerance dispute) / C4 (MR design defect) each point to different repair paths;
 3. Rerun after revising MR; iterate until SMS enters reasonable range (§5.6 gives empirical ranges by PUT category).
 
+**Air-gap incompatibility declaration** (NEW, R3 round-2): This workflow depends on **external LLM API calls** (Claude / GPT / DeepSeek) for semantic mutant generation. This makes the method **incompatible with most regulated air-gapped V&V workflows** — code review in high-risk domains such as nuclear engineering (IEC 60880), aerospace (DO-178C), medical devices (IEC 62304), and automotive (ISO 26262) typically requires air-gapped build environments, where LLM API calls cannot execute. Possible mitigation paths (P5 future work): (i) self-hosted open-weight LLMs (Llama / DeepSeek local inference); (ii) offline-cached pre-generated mutant pools with signature locking. This paper's mutant pool is already pre-generated reproducibly via commit-hash + raw-response store (§4.2.3), so engineers can **reproduce a published mutant pool offline**, but **generating new mutant pools still requires external LLM access (off air-gap)**. This is a deployment scope limitation of the P2 methodology, explicitly acknowledged in §7.5 Limitations.
+
 **SMS does not replace**: Domain expert manual review of MR physical/mathematical correctness, regression testing against real historical faults, performance and stability testing. SMS only evaluates "semantic-layer failure detection capability," not "engineering practical value" (§7.5 R6 already declared).
 
 #### 6.5.2 MR designers
 
 **Pain point**: MR designers (often researchers or senior developers in scientific computing domains) rely on intuition or literature patterns to propose new MRs, lacking a quantifiable "design feedback" metric—before P1, whether a new MR is "useful" can only be verified after deployment to real faults, with a very long feedback loop.
 
-**Capability SMS provides**: When an MR is submitted as a pull request (PR), the CI pipeline automatically runs SMS; if the new MR's aligned-cell SMS is below the historical median (§5.7 v4 main analysis is 0.267), trigger a review warning. This shortens the MR-quality feedback loop from "quarterly fault regression" to "hourly SMS batch run."
+**Capability SMS provides**: SSOT-based offline SMS batch runs (`scripts/sms_campaign.py`) give MR designers a quantifiable design-feedback metric — comparing the new MR's aligned-cell SMS against the existing-MR-set median (this paper's v4 main analysis aligned mean 0.275) gives an initial verdict within hours on whether the MR has acceptable failure-detection capability on aligned slices.
 
-**Workflow** (embedded in CI template):
-```yaml
-# .github/workflows/mr-quality.yml (example)
-on: [pull_request]
-jobs:
-  sms-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: pip install -r requirements-frozen.txt
-      - run: SMS_VERSION=v4 P2_PRIMARY_VERSION=v3b \
-             python scripts/sms_campaign.py --track 2 --version-pr-only
-      - run: python scripts/sms_pr_gate.py  # compare new MR with baseline, fail < 0.10
-```
+**Workflow** (reframed to **quarterly batch audit**, not per-PR gating; R3 round-2):
+
+> **Removed in R3 round-2**: The original §6.5.2 GitHub Actions per-PR YAML template has been deleted — the original template hardcoded `SMS_VERSION=v4` + `P2_PRIMARY_VERSION=v3b` (§3.5.1 v3b is an exploratory post-hoc selection, not pre-registered) into a stakeholder-facing CI template, propagating the v3b selection-on-the-response confound into downstream adopters' pipelines, and the PR-CI threshold 0.10 contradicted the §6.5.3 audit threshold 0.20. This conflicted with the §3.5.1 caveat and is removed in R3 round-2 revision.
+
+**Replacement**: **Quarterly batch audit**, not per-PR gating —
+
+| Step | Description | Resource cost |
+|---|---|---|
+| 1. Offline mutant pool generation | Use LLM API to generate the mutant set corresponding to newly added MRs (per PUT 24-30 mutants × 12 PUTs ≈ 300 mutants) | LLM API: ~$5-15 per quarter; wall time ~30 min |
+| 2. SMS batch run | `python scripts/sms_campaign.py --track 2` | 4-core laptop: ~10-20 min per pool |
+| 3. LRCA three-layer diagnostic | `python scripts/run_lrca.py` annotates C1-C5 | <1 min |
+| 4. Quarterly review | MR design team manually reviews MRs whose aligned-cell SMS is significantly below the historical median (0.275) | Team meeting: 1-2 hours |
+
+**Resource estimate** (quarterly): API ~$10 + ~30 min automation + 1-2 h manual review ≈ 0.5 person-day/quarter — affordable for an active MR design team. **Per-PR gating is not recommended** (LLM API latency 5-30 s + cost + non-determinism + air-gap incompatibility all make per-PR impractical).
 
 **SMS does not replace**: Domain expert judgment of MR physical meaning reasonableness (§7.1.4 R4 already declared MR "reasonableness" is a priori); nor does it replace "whether MR covers a real business scenario" stakeholder review (completed by product requirements side).
 
-#### 6.5.3 Auditors / certification bodies
+#### 6.5.3 Research-grade evidence for V&V documentation (long-term aspiration)
 
-**Pain point**: Certification bodies in high-risk domains such as nuclear engineering, aerospace, medical devices (NRC, FDA, ISO 26262 review teams) need to examine test adequacy evidence for scientific computing software. Current IEC/ISO standards (such as IEC 60880, ISO 26262 ASIL D) have no quantitative acceptance criteria for mutation testing; certification review relies on testers' "subjective evidence collection"—code coverage reports + MR lists + domain SME signatures.
+> **R3 round-2 retitled** from "Auditors / certification bodies": This subsection makes **no** normative claim toward industrial certification bodies (NRC, FDA, ISO 26262 review teams). Within this paper's single-output kernels scope there is no traceable mapping to the normative bodies of current IEC 60880 / ISO 26262 / DO-178C / ASME V&V 20-2009 standards. The subsection is positioned as a **long-term aspiration** — SMS as research-grade test adequacy evidence may serve as **supplementary** (not normative) material in V&V documentation.
 
-**Capability SMS provides**: As **reproducible, quantifiable** supplementary evidence, complementing code coverage and MR lists. Audit materials can include: (a) aligned-cell SMS for each critical PUT; (b) LRCA three-layer diagnostic conclusions (C1 direct readout / C2-C5 engineering attribution); (c) visualization coverage map of 60-cell matrix (§6.2 fig1). Reviewers can independently run the reproduction package (`REPRODUCIBILITY.md`) to verify.
+**Pain point** (scoped to V&V documentation, not normative certification): V&V documentation for scientific computing software (per ASME V&V 20-2009 §3 code verification and similar guides) requires quantifiable evidence of test adequacy. Current V&V documentation often relies on code coverage reports + MR lists + domain SME signatures and lacks a mutation-based quantifiable supplement.
 
-**Acceptance threshold recommendations** (based on this paper's §5.6.2 LRCA calibration):
-- aligned-cell SMS ≥ 0.20 (P50) = **basically adequate**
-- aligned-cell SMS ≥ 0.30 (~P70) = **adequate**; C1_share ≤ 0.20 = **diagnostically clear**
+**SMS as research-grade supplementary evidence**: SMS values may appear in V&V documentation as supplementary evidence, alongside code coverage and MR lists. Documentation may include: (a) aligned-cell SMS for each critical PUT; (b) LRCA three-layer diagnostic conclusions (C1 direct readout / C2-C5 engineering attribution); (c) visualization coverage map of the 60-cell matrix (§6.2 fig1). Reviewers can independently run the reproduction package (`REPRODUCIBILITY.md`) to verify.
 
-However, **this is a research recommendation, not a mandatory industry standard**—further dialogue with industry associations (such as ASME V&V Committee, IEEE Computer Society) is needed before entering formal certification systems. This paper does not advocate that SMS be adopted by any certification body in 2027; P2-CN (NED) and P5 (domain application) are downstream vehicles for this dialogue.
+> **R3 round-2 deletion**: The original §6.5.3 proposed acceptance thresholds aligned-cell SMS ≥ 0.20 / ≥ 0.30 + C1_share ≤ 0.20. These thresholds were research recommendations on the empirical basis of this paper, **but**: (i) they have no normative backing in IEC / ISO / ASME standards; (ii) writing them under "acceptance threshold recommendations" risks reader misinterpretation as enforce-ready standards; (iii) the §3.5.1 caveat already declares that the 0.275 baseline is influenced by v3b post-hoc selection. R3 round-2 therefore removes the threshold recommendations — SMS values should be reported as **descriptive supplementary evidence**, with concrete "is it adequate" judgments left to actual V&V documentation reviewers on case-by-case engineering grounds.
 
-**SMS does not replace**: Domain expert (SME) signatures, safety analysis (FMECA, PIRT), system-level V&V, operational history accident retrospection. SMS is **one link** in the test adequacy evidence chain, not a single-point qualification determination.
+**Relation to existing V&V standards**: This work is conceptually complementary to ASME V&V 20-2009 (Standard for Verification and Validation in Computational Fluid Dynamics and Heat Transfer) §3 code verification — the latter emphasizes code-level correctness of numerical solvers, while this paper's SMS emphasizes the fault-detection adequacy of MR sets. However, this paper's empirical scope is strictly bounded to single-output `float → float` kernels, with a substantial scale gap to the multi-module industrial CFD code base targeted by ASME V&V 20-2009. Incorporating SMS into the V&V standards body would require (i) scale-up empirics on large multi-module CFD code (left to the P5 paper); (ii) multi-year dialogue with the ASME V&V 20 / IEEE 1012 / IEC 60880 committees. This paper does **not** advocate that SMS enter any normative certification system in 2027.
+
+**SMS does not replace**: Domain expert (SME) signatures, safety analysis (FMECA, PIRT), system-level V&V, operational history accident retrospection, or ASME V&V 20 §3 numerical solver verification. SMS is **one link** in the test adequacy evidence chain, not a single-point qualification determination.
 
 #### 6.5.4 Common interface across stakeholders
 
-All three stakeholder classes obtain consistent numbers through the same `data/results/paper_numbers_v4.json` (SSOT), and consistent diagnostic labels through `lrca_60cell_v4.json`. This avoids the document fragmentation problem of "SMS seen by engineers inconsistent with SMS in certification reports"—this is the prerequisite for the §6.5 stakeholder analysis to be implementable in engineering.
+All three stakeholder classes obtain consistent numbers through the same `data/results/paper_numbers_v4.json` (SSOT), and consistent diagnostic labels through `lrca_60cell_v4.json`. This avoids the document fragmentation problem of "SMS seen by engineers inconsistent with SMS in V&V documentation"—this is the prerequisite for the §6.5 stakeholder analysis to be implementable in engineering. All numbers are to be interpreted under the single-output kernels scope declared in §1.1 / §3.1.1.
 
 ---
 
@@ -1541,8 +1558,8 @@ All three stakeholder classes obtain consistent numbers through the same `data/r
 
 **Mitigation**:
 - §2.3 Explicitly declares equiv as probabilistic approximation rather than theorem-based determination
-- §5 Appendix provides sensitivity analysis for three configurations K_eq ∈ {500, 1000, 2000}
-- §7 Limitations cites Hoeffding-style upper bound to estimate false-equiv probability
+- ~~§5 Appendix provides sensitivity analysis for three configurations K_eq ∈ {500, 1000, 2000}~~ **(R1 W3 round-2 revision)**: The K_eq sweep sensitivity table was not executed in this submission; downgraded to §7.5 Limitations as a residual threat. The Hoeffding-style upper bound still provides a theoretical bound on the false-equiv probability; an empirical K_eq sweep is left to the P4 paper.
+- §7 Limitations cites the Hoeffding-style upper bound on false-equiv probability; K_eq sensitivity sweep is deferred to the P4 paper.
 
 #### 7.1.3 Circular Dependency Between AVP and P1 (R3)
 
@@ -1673,9 +1690,14 @@ v3 / v3b data collection used §4.2.4 original Phase-1 dual-blind protocol (Clau
 
 ### 8.1 Mutation testing classics / surveys
 
+- **DeMillo, R. A., Lipton, R. J., & Sayward, F. G.** (1978). Hints on test data selection: Help for the practicing programmer. *Computer*, 11(4), 34–41. https://doi.org/10.1109/C-M.1978.218136 (Origin of the **Coupling Effect Hypothesis (CPH)**: complex faults are detectable by tests that detect simple faults; cited in §1.3.2 as theoretical grounding for syntactic-mutation-based adequacy and contrasted with this paper's domain-semantic adequacy.)
 - **Jia, Y., & Harman, M.** (2011). An analysis and survey of the development of mutation testing. *IEEE Transactions on Software Engineering*, 37(5), 649–678. https://doi.org/10.1109/TSE.2010.62
 - **Jia, Y., & Harman, M.** (2009). Higher Order Mutation Testing. *Information and Software Technology*, 51(10), 1379–1393. https://doi.org/10.1016/j.infsof.2009.04.016
+- **Andrews, J. H., Briand, L. C., & Labiche, Y.** (2005). Is mutation an appropriate tool for testing experiments? In *Proceedings of the 27th International Conference on Software Engineering* (ICSE 2005) (pp. 402–411). ACM. https://doi.org/10.1145/1062455.1062530 (Empirical foundation that mutants are valid surrogates for real faults; cited in §1.3.2 as the substrate for using MS as an adequacy proxy.)
+- **Just, R., Jalali, D., Inozemtseva, L., Ernst, M. D., Holmes, R., & Fraser, G.** (2014). Are mutants a valid substitute for real faults in software testing? In *Proceedings of the 22nd ACM SIGSOFT International Symposium on Foundations of Software Engineering* (FSE 2014) (pp. 654–665). ACM. https://doi.org/10.1145/2635868.2635929 (Reaffirms and refines Andrews 2005's mutant-as-fault-proxy claim with stronger empirical evidence; cited in §1.3.2 as additional CPH validation.)
+- **Papadakis, M., Kintis, M., Zhang, J., Jia, Y., Le Traon, Y., & Harman, M.** (2019). Mutation testing advances: An analysis and survey. *Advances in Computers*, 112, 275–378. https://doi.org/10.1016/bs.adcom.2018.03.015 (Most-recent comprehensive survey of mutation testing advances post-Jia & Harman 2011; cited in §1.3.2 as the contemporary literature anchor for syntactic mutation testing methodology.)
 - **Kintis, M., Papadakis, M., Papadopoulos, A., Valvis, E., Malevris, N., & Le Traon, Y.** (2018). How effective are mutation testing tools? An empirical analysis of Java mutation testing tools with manual analysis and real faults. *Empirical Software Engineering*, 23(4), 2426–2463. https://doi.org/10.1007/s10664-017-9582-5
+- **Ammann, P., & Offutt, J.** (2008). *Introduction to software testing* (1st ed.). Cambridge University Press. (Standard pedagogical reference for mutation testing notation and equivalence detection; cited in §2.1.1 vocabulary inheritance.)
 
 ### 8.2 Industrial-scale mutation testing practice
 
@@ -1694,10 +1716,12 @@ v3 / v3b data collection used §4.2.4 original Phase-1 dual-blind protocol (Clau
 ### 8.5 Statistical methodology
 
 - **Romano, J., Kromrey, J. D., Coraggio, J., Skowronek, J., & Devine, L.** (2006). Appropriate statistics for ordinal level data: Should we really be using t-test and Cohen's d for evaluating group differences on the NSSE and other surveys? Annual Meeting of the Florida Association of Institutional Research, Cocoa Beach, FL. (Source of Cliff's δ small/medium/large thresholds 0.147 / 0.330 / 0.474; cited in §5.2 H2 definition and §5.7.2 verdict.)
+- **Vargha, A., & Delaney, H. D.** (2000). A critique and improvement of the CL common language effect size statistics of McGraw and Wong. *Journal of Educational and Behavioral Statistics*, 25(2), 101–132. https://doi.org/10.3102/10769986025002101 (Establishes the canonical Â₁₂ measure equivalent to Cliff's δ + 0.5, used as a methodological reference for non-parametric effect-size reporting in §5.6.)
 
 ### 8.6 Numerical / scientific computing reference
 
 - **Press, W. H., Teukolsky, S. A., Vetterling, W. T., & Flannery, B. P.** (2007). *Numerical Recipes: The Art of Scientific Computing* (3rd ed.). Cambridge University Press. (Used in §3.1.1 to ground the 12-PUT coverage against the 12 chapters of Numerical Recipes.)
+- **ASME V&V 20 Committee** (2009). *Standard for Verification and Validation in Computational Fluid Dynamics and Heat Transfer*. ASME V&V 20-2009. American Society of Mechanical Engineers. (Cited in §1.3.2 and §6.5.3 as the normative V&V framework whose §3 code verification this paper's SMS is conceptually complementary to; this paper does not claim normative compliance, see §6.5.3.)
 
 ### 8.7 Software / mutation testing tools (cited in §3.2.6 and §7 R12)
 
@@ -1786,14 +1810,11 @@ Substituting into the numerator and denominator on the right-hand side of the SM
 
 ### 9.5 Corollary: LRCA Trivialization
 
-**Corollary 9.1**. In the degenerate limit L, the likely root cause inventory (LRCA) C = {C1, ..., C5} degenerates to a single state {C1}, because the triggering preconditions for C2-C5 (MP-semantic inconsistency / AVP tolerance dispute / MR design defect / class mapping impropriety) all depend on at least one L condition being violated:
+**Corollary 9.1** (generic statement, post R2 round-2 attribution audit). In the degenerate limit L = L1 ∧ L2 ∧ L3 (the three joint conditions formalized in §9.2), the likely root cause inventory (LRCA) C = {C1, ..., C5} degenerates to a single state {C1}.
 
-- C2 triggering depends on L4 not holding (MP non-trivial)
-- C3 triggering depends on L3 not holding (AVP tolerance non-zero)
-- C4 triggering depends on L4 ∧ L5 not holding
-- C5 triggering depends on L6 not holding
+**Sketch**: Each of C2–C5's triggering preconditions depends on at least one of the L_j conditions being violated. Concretely, when L1 ∧ L2 ∧ L3 hold simultaneously, every "non-trivial space" dimension of the SMS formula (MP non-triviality, AVP tolerance non-zero, non-empty equiv set, MR-design degree of freedom, class-mapping openness) is closed at once, so the triggering set for C2–C5 is empty (read off from the LRCA decision tree in §2.6.1 and §4.6.3). The detailed per-C_k to per-L_j minimum-sufficient mapping depends on engineering details (§4.6 LRCA classifier thresholds), and we do not claim a one-to-one correspondence at the §9 formal level — readers wanting the concrete mapping can trace it via the §2.6 decision tree + §4.6 LRCA three-layer operator documentation.
 
-Thus under L, suspect_share → 0, LRCA reports only C1 (metric direct readout)—SMS degenerates to a single-layer metric, consistent with the engineering attribution structure of Jia & Harman (2011) MS. ∎
+Thus under L, suspect_share → 0, LRCA reports only C1 (metric direct readout) — SMS degenerates to a single-layer metric, consistent with the engineering attribution structure of Jia & Harman (2011) MS. ∎
 
 ### 9.6 Empirical Consistency Statement
 
