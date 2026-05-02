@@ -299,6 +299,8 @@ A multi-tool cross-comparison is reserved for P4: mutpy is incompatible with Pyt
 
 ### 3.6 Preventive-defence framing
 
+**Scope of the claim.** The preventive-defence claim below is conditional on a first-order syntactic baseline; HOM-based syntactic compositions are an open question (R12) and are not refuted by the §3.5 evidence.
+
 The HP, SI, and TF zero-overlap result, combined with the §3.2 necessary-conditions argument, amounts to a *preventive-defence* argument: semantic mutation operators address a class of fault hypotheses that lie categorically beyond the reach of first-order syntactic tools. Three points sharpen this framing.
 
 **(i) Systematic versus incidental.** Satisfying conditions (a), (b), or (c) is sufficient for a single semantic mutation, but only when satisfaction reflects design intent — not stochastic byproduct — does it constitute a *systematic* semantic mutation method. A syntactic tool that occasionally hits (a) or (c) with its 12 default operators does so at a non-zero probability, but the hits are not repeatable and they carry neither of the two engineering goods we want. First, designing a semantic mutator like OS `det → sum(diag)` requires knowing that these expressions are equivalent on diagonal matrices but not on general matrices — a deepening of source-code understanding the syntactic tool does not exhibit. Second, domain-semantic faults — wrong physical constants, unit conversions, boundary conditions, hyperparameter semantics, numerical-method order — are not AST-local; the syntactic-tool design goals (operator typos, off-by-one errors, negation flips) do not target them. Systematic semantic mutation therefore requires (a), (b), or (c) to be design intent. Appendix B.1.5 records this argument in full.
