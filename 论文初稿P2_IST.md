@@ -96,7 +96,7 @@ Seven classical mutation-testing concepts are inherited verbatim from Jia & Harm
 Three-state decomposition (mutually exclusive and exhaustive):
 
 ```
-mut_j(S_i) = equiv_{i,k,j} ⊔ killed_{i,k,j} ⊔ survive_{i,k,j}
+mut_j(S_i) = equiv_{i,k,j} ∪ killed_{i,k,j} ∪ survive_{i,k,j}   (disjoint)
 SMS_{i,k,j} := |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)  ∈ [0, 1]
 ```
 

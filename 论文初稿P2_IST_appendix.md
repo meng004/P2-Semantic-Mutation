@@ -37,11 +37,11 @@ Mutant:        s' ∈ mut_j(S_i)
 Alignment:     align(j) = j
 
 ═══════════════ Three-State Decomposition (Fixed) ═══════════════
-mut_j(S_i) = equiv_{i,k,j} ⊔ killed_{i,k,j} ⊔ survive_{i,k,j}    (mutually exclusive, exhaustive)
+mut_j(S_i) = equiv_{i,k,j} ∪ killed_{i,k,j} ∪ survive_{i,k,j}    (disjoint; mutually exclusive, exhaustive)
 
 equiv determination (dual conditions):
   (E1) AVP-coherent:  ∀ mr ∈ MR_{i,k}: AVP(S_i, mr) = AVP(s', mr)
-  (E2) Output-equiv:  ∀ x ∈ X_{K_eq} ~ D_S: ‖S_i(x) − s'(x)‖ ≤ ε_eq
+  (E2) Output-equiv:  ∀ x ∈ X_{K_eq} ~ D_S: ||S_i(x) − s'(x)|| ≤ ε_eq
 
 killed determination:
   killed(s', MR_{i,k}) ⇔ ∃ mr ∈ MR_{i,k}: AVP(S_i, mr) = pass ∧ AVP(s', mr) = fail

@@ -111,18 +111,54 @@ SUBSTITUTIONS = [
 ]
 
 
+def _split_verbatim(text):
+    """Split TeX text into segments, marking verbatim blocks so substitutions
+    skip them. Returns list of (is_verbatim, segment) tuples.
+
+    Verbatim blocks in LaTeX render their content literally. If we substitute
+    Unicode glyphs to LaTeX commands inside verbatim, the commands show as
+    raw text instead of the glyph. So we must preserve the original Unicode
+    inside verbatim — xelatex with the right font actually renders them fine
+    when in verbatim (Menlo / Courier supports the Unicode glyphs we use).
+    """
+    import re
+    segments = []
+    # Match \begin{verbatim}...\end{verbatim} (single-line content allowed)
+    pattern = re.compile(r"(\\begin\{verbatim\}.*?\\end\{verbatim\})", re.DOTALL)
+    last_end = 0
+    for m in pattern.finditer(text):
+        if m.start() > last_end:
+            segments.append((False, text[last_end:m.start()]))
+        segments.append((True, m.group(0)))
+        last_end = m.end()
+    if last_end < len(text):
+        segments.append((False, text[last_end:]))
+    return segments
+
+
 def main():
     if not TEX.exists():
         raise FileNotFoundError(TEX)
     text = TEX.read_text(encoding="utf-8")
     n_total = 0
-    for src, dst in SUBSTITUTIONS:
-        n = text.count(src)
-        if n:
-            text = text.replace(src, dst)
-            n_total += n
+    n_skipped_verbatim = 0
+    segments = _split_verbatim(text)
+    for i, (is_verb, seg) in enumerate(segments):
+        if is_verb:
+            # Count what we're skipping for telemetry
+            for src, _ in SUBSTITUTIONS:
+                n_skipped_verbatim += seg.count(src)
+            continue
+        for src, dst in SUBSTITUTIONS:
+            n = seg.count(src)
+            if n:
+                seg = seg.replace(src, dst)
+                n_total += n
+        segments[i] = (False, seg)
+    text = "".join(seg for _, seg in segments)
     TEX.write_text(text, encoding="utf-8")
-    print(f"Postprocessed {n_total} substitutions in {TEX}")
+    print(f"Postprocessed {n_total} substitutions in {TEX} "
+          f"({n_skipped_verbatim} preserved inside verbatim blocks)")
 
 
 if __name__ == "__main__":
