@@ -1,0 +1,26 @@
+{
+  "design": "v4 SMS pool, c-class primary fixed at MP5 (v3 spec)",
+  "purpose": "strip R11 chained conditioning by holding c-class primary at the pre-registered v3 choice",
+  "n_aligned": 12,
+  "n_cross": 48,
+  "mean_aligned": 0.213325,
+  "mean_cross": 0.07667291666666666,
+  "median_aligned": 0.1,
+  "median_cross": 0.0,
+  "cliffs_delta": 0.3142361111111111,
+  "delta_ci_95": [
+    0.01384548611111115,
+    0.6215277777777778
+  ],
+  "odds_ratio_median": Infinity,
+  "h2_threshold_delta": 0.474,
+  "h2_delta_pass": false,
+  "comparison_v3": {
+    "delta": 0.323,
+    "design": "v3 same-source, MP5"
+  },
+  "comparison_v4_mp1": {
+    "delta": 0.439,
+    "design": "v4 cross-source, MP1 (v3b post-hoc)"
+  }
+}
