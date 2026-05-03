@@ -4,6 +4,35 @@
 
 ---
 
+## 0. 不允许只说不做（ANTI-CLAIM-WITHOUT-ACTION，最高优先级）
+
+任何回复中出现以下表述时，必须 *在同一回合内* 真实执行对应工具调用并将证据回显给用户：
+
+**触发表述**（中英文均触发）：
+- 中文：`已记住`、`已保存`、`已添加`、`已修改`、`已写入`、`已更新`、`已删除`、`已重命名`、`已提交`
+- 英文：`I've noted`、`I've saved`、`I'll remember`、`I've added`、`I've modified`、`I've updated`、`I've committed`、`I've removed`
+
+**强制验证规则**：
+
+| 触发表述 | 必须执行的验证 |
+|---|---|
+| "已修改文件 X" / "I've modified X" | 紧接 `Read` 工具调用，显示修改后的相关行段（≥ 3 行上下文）|
+| "已记住偏好 Y" / "I'll remember Y" | 紧接 `Write` 工具调用，写入 `~/.claude/projects/.../memory/feedback_*.md` 并更新 `MEMORY.md` 索引 |
+| "已添加任务 Z" / "I've added Z" | 紧接 `TaskCreate` 工具调用，并在响应中给出 task ID |
+| "已提交 commit ABC" | 紧接 `Bash git log --oneline -1` 显示实际 commit hash |
+| "已删除 / 已移除" | 紧接 `Bash ls` 或 `grep` 验证目标已消失 |
+| "已重命名 X → Y" | 紧接 `Bash ls` 验证两个名字的存在状态 |
+
+**禁止行为**：
+1. 只说不做：声称"已记住"但未写入 memory 文件
+2. 假执行：声称"已修改"但实际未调用 Edit / Write 工具
+3. 推迟：用"稍后会..."、"将会..."替代立即执行
+4. 模糊化：用"已处理"、"已完成"等不可验证的笼统表述
+
+**例外**：仅当所述操作 *已在前序回合中以工具调用形式完成*，且本回合只是回顾汇报时，可免重复执行——但必须以 `（前序 commit ABC / Edit at L123 已完成）` 之类的引用替代裸声明。
+
+---
+
 ## 1. 写作规范
 
 ### Abstract / 摘要
