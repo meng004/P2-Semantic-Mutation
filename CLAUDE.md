@@ -175,3 +175,66 @@ Build: {pages}, {size}, zero "Missing character" warnings
 - **P3**: 工业 Java / C++ port + LRCA 二评者 κ — 未启动
 - **P4**: 形式理论 (minimal MR-subset 存在 + 三柱耦合) + n ≥ 30 — 未启动，targeted TOSEM
 - **P5 / P2-CN**: 法规转化 (IEC 60880 / ISO 26262 / DO-178C) — 中文在审
+
+---
+
+## 6. 增强对抗审议（Adversarial Review Strengthening, ARS）
+
+`academic-paper-reviewer` 的 Devil's Advocate 阶段完成后，**必须额外执行** Reviewer 2 视角的严苛审视。Devil's Advocate 关注论证一致性；Reviewer 2 关注 *学术诚信* 与 *可发表性硬伤*。
+
+### 扫描维度（5 类，逐项核对）
+
+1. **方法论缺陷**
+   - 控制变量是否充分？是否有未声明的混淆因素？
+   - 关键操作是否可重现？protocol 是否完整记录在 Appendix？
+   - 实验组 / 对照组是否可比？
+
+2. **外部效度问题**
+   - 样本代表性：n 是否足够？覆盖的子群是否典型？
+   - 泛化能力：结论能否外推到声称的目标域？
+   - PUT / 数据集 / 群体的选择是否引入了 selection bias？
+
+3. **统计选择偏差**
+   - Cherry-picking：是否只报告显著结果，遗漏不显著的？
+   - 多重比较：是否做了 Bonferroni / FDR 校正？
+   - Sub-group 分析：是否预注册？事后分组是否被标记？
+   - HARKing (Hypothesizing After Results are Known)：假设是否在数据收集前固定？
+
+4. **Benchmark 不公正**（核行业 / 工业控制系统 / 安全关键软件常见痛点）
+   - 对比基线是否是该领域的 SOTA？还是挑了较弱的对手？
+   - 评估指标是否对自己有利？是否报告对自己不利的指标？
+   - 测试集是否独立于训练 / 调参集？
+
+5. **霍桑效应**（教改 / 行为干预 / 流程改造类论文常见痛点）
+   - 实验对象是否知道自己在被观察？
+   - 观察行为本身是否改变了被观察对象的行为？
+   - 长期可持续性 vs 短期热度效应是否区分？
+
+### 输出格式（强制）
+
+```
+## Reviewer 2 视角的最严苛审稿意见
+
+- [致命问题 1]
+- [致命问题 2]
+...
+
+（无致命问题时明确写：Reviewer 2 视角扫描通过——5 类维度均无 publication blocker。）
+```
+
+### 处理原则
+
+| 识别结果 | 必须做 | 禁止做 |
+|---|---|---|
+| 致命问题（publication blocker） | **投稿前修改**正文 / 设计 / 数据 / 假设 | 装作没看见；用脚注 disclaim 替代修改；藏到 "limitations" 段绕过 |
+| 严重但非致命 | 在 §Threats / §Limitations 显式承认 + 提出后续验证路径 | 弱化措辞使其不可见 |
+| 已知小瑕疵 | 一句话脚注或 Appendix 提及 | — |
+
+### 与 Devil's Advocate 的分工
+
+| 阶段 | 关注点 | 典型问题 |
+|---|---|---|
+| Devil's Advocate | 论证内部一致性 | "你的 H2 verdict 与 Abstract 表述矛盾" |
+| Reviewer 2 (ARS) | 学术诚信 + 外部效度 | "n=12 的 cohort 凭什么外推到工业级" |
+
+ARS 是 *补充* 不是 *替代*——两者都必须执行。
