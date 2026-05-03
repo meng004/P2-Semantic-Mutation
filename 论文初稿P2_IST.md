@@ -2,11 +2,11 @@
 
 ## Highlights
 
-- Five semantic mutation operators degenerate to the classical Mutation Score in a proven limit.
-- Across 12 Programs Under Test and 60 cells, 292 LLM-generated mutants overlap with 1,250 cosmic-ray syntactic mutants on only 5.14% of abstract syntax trees.
-- The Hyperparameter, Structural Injection, and Trajectory Flip classes (54.5% of the mutant pool) are unreachable under default first-order syntactic configurations (HOM compositions; Jia and Harman 2008; not refuted).
-- The pre-registered large-effect threshold (Romano 2006) is not met under the point-estimate criterion; the observed effect lies in the medium-effect range.
-- Cross-source LLM pooling under an identical prompt does not appreciably shift Cliff's delta, indicating LLM identity is not the lever within this design.
+- Five semantic mutation operators degenerate to classical MS in a proven limit.
+- 12 PUTs, 60 cells: 5.14% AST overlap between LLM and cosmic-ray mutants.
+- HP, SI, TF classes unreachable under default first-order syntactic tools.
+- Pre-registered large-effect threshold not met; observed effect is medium-sized.
+- Cross-source LLM pooling does not appreciably shift Cliff's delta.
 
 ## Abstract
 
@@ -14,7 +14,7 @@
 
 **Objective.** We propose the Semantic Mutation Score (SMS), built on five domain-semantic operators (Conservation Erosion, Operator Substitution, Hyperparameter, Trajectory Flip, Structural Injection); SMS degenerates almost everywhere to the classical Mutation Score in a characterised limit, so any SMS-based conclusion remains consistent with prior mutation-testing literature in the classical regime.
 
-**Method.** A 12-Program-Under-Test by 5-meta-pattern design over four single-output `float → float` classes (numeric, probabilistic, surrogate, machine learning) is paired with a three-layer attribution classifier that separates true semantic faults from tolerance perturbation, out-of-distribution trips, statistical-assumption violation, and mutator artefacts. A two-stage same-source / cross-source ablation under an identical prompt isolates the contribution of LLM source diversity, holding the c-class primary metamorphic relation at the pre-registered level so that the cross-source contrast inherits no post-hoc selection. We compare the LLM-generated mutants against a default-configuration cosmic-ray syntactic pool at the AST-normalised level.
+**Method.** A 12-PUT by 5-MP design over four single-output `float → float` classes (numeric, probabilistic, surrogate, machine learning) is paired with a three-layer attribution classifier separating true semantic faults from tolerance, out-of-distribution, statistical, and artefact categories. A same-source / cross-source ablation under an identical prompt isolates the LLM-source-diversity contribution. LLM-generated mutants are compared against a default-configuration cosmic-ray syntactic pool at the AST-normalised level.
 
 **Results.** The pre-registered large-effect threshold for Cliff's delta (Romano 2006) is **not met under the point-estimate criterion**; the observed effect lies in the medium-effect range, and we frame the corresponding hypothesis as an underpowered exploratory contribution to be re-examined at larger sample size in a follow-up study. Cross-source pooling under an identical prompt does not appreciably shift Cliff's delta, indicating that LLM identity is not the lever on the aligned-versus-cross effect size within this design. AST-level overlap between LLM-generated and default cosmic-ray syntactic mutants is small; the Hyperparameter, Structural Injection, and Trajectory Flip classes are unreachable under default first-order syntactic configurations, while higher-order compositions (Jia and Harman 2008) are not refuted and are reserved as a residual threat.
 
@@ -22,7 +22,7 @@
 
 ## Keywords
 
-metamorphic testing; mutation testing; semantic mutation operators; LLM-generated mutants; ablation study; metamorphic relation adequacy; cross-source mutant pool; Cliff's delta; single-output scientific computing kernels
+metamorphic testing; mutation testing; semantic mutation operators; metamorphic relation adequacy; LLM-generated mutants; Cliff's delta; scientific computing kernels
 
 ---
 

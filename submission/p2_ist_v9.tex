@@ -51,22 +51,22 @@
 
 \begin{highlights}
 \item Five semantic mutation operators degenerate to classical MS in a proven limit
-\item 12 PUTs, 60 cells, 292 LLM vs 1,250 cosmic-ray mutants: 5.14\% AST overlap
-\item HP, SI, TF classes (54.5\% of pool) unreachable under default first-order syntactic configurations (HOM not refuted; R12)
-\item The pre-registered large-effect threshold (Romano 2006) is not met under the point-estimate criterion; observed effect lies in the medium-effect range
-\item Cross-source LLM pooling under identical prompts does not appreciably shift Cliff's $\delta$, indicating LLM identity is not the lever within this design
+\item 12 PUTs, 60 cells: 5.14\% AST overlap between LLM and cosmic-ray mutants
+\item HP, SI, TF classes unreachable under default first-order syntactic tools
+\item Pre-registered large-effect threshold not met; observed effect is medium-sized
+\item Cross-source LLM pooling does not appreciably shift Cliff's $\delta$
 \end{highlights}
 
 \begin{abstract}
 \noindent\textbf{Context.} Metamorphic Testing addresses the test-oracle problem in scientific computing, but classical Mutation Score operates on syntactic AST mutations and misses domain semantics.
 \textbf{Objective.} We propose Semantic Mutation Score (SMS), built on five domain-semantic operators (Conservation Erosion, Operator Substitution, Hyperparameter, Trajectory Flip, Structural Injection); SMS degenerates almost everywhere to MS in a characterised limit, so any SMS-based conclusion remains consistent with prior mutation-testing literature in the classical regime.
-\textbf{Method.} A 12-PUT $\times$ 5-MP design over four single-output \texttt{float}~$\to$~\texttt{float} classes (numeric / probabilistic / surrogate / ML) is paired with a three-layer attribution classifier separating true semantic faults from tolerance, out-of-distribution, statistical, and artefact categories. A two-stage same-source / cross-source ablation under an identical prompt isolates LLM source-diversity contributions, holding the c-class primary metamorphic relation at the pre-registered level so the cross-source contrast inherits no post-hoc selection. LLM-generated mutants are compared against a default-configuration cosmic-ray syntactic pool at the AST-normalised level.
+\textbf{Method.} A 12-PUT $\times$ 5-MP design over four single-output \texttt{float}~$\to$~\texttt{float} classes (numeric / probabilistic / surrogate / ML) is paired with a three-layer attribution classifier separating true semantic faults from tolerance, OOD, statistical, and artefact categories. A same-source / cross-source ablation under an identical prompt isolates the LLM-source-diversity contribution. LLM-generated mutants are compared against a default-configuration cosmic-ray syntactic pool at the AST-normalised level.
 \textbf{Results.} The pre-registered large-effect threshold for Cliff's $\delta$ (Romano 2006) is \textbf{not met under the point-estimate criterion}; the observed effect lies in the medium-effect range, and we frame the corresponding hypothesis as an underpowered exploratory contribution to be re-examined at larger sample size in a follow-up study. Cross-source pooling under an identical prompt does not appreciably shift $\delta$, indicating that LLM identity is not the lever on the aligned-versus-cross effect size within this design. AST-level overlap between LLM-generated and default cosmic-ray syntactic mutants is small; the Hyperparameter, Structural Injection, and Trajectory Flip classes are unreachable under default first-order syntactic configurations, while higher-order compositions (Jia and Harman 2008) are not refuted and are reserved as a residual threat.
 \textbf{Conclusion.} LLM-source diversity under an identical prompt does not appreciably move $\delta$ within this design; the strong-sense test (per-LLM differential prompts and a larger PUT sample) is deferred to follow-up work. The first-order unreachability evidence is independent of the effect-size question. SMS is a backward-compatible adequacy metric for domain-semantic metamorphic-relation sets in scientific computing.
 \end{abstract}
 
 \begin{keyword}
-metamorphic testing \sep mutation testing \sep semantic mutation operators \sep LLM-generated mutants \sep ablation study \sep metamorphic relation adequacy \sep cross-source mutant pool \sep Cliff's delta \sep single-output scientific computing kernels
+metamorphic testing \sep mutation testing \sep semantic mutation operators \sep metamorphic relation adequacy \sep LLM-generated mutants \sep Cliff's delta \sep scientific computing kernels
 \end{keyword}
 
 \end{frontmatter}
