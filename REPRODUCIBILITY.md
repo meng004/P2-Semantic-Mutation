@@ -28,15 +28,16 @@ python3.12 -m venv .venv
 # Configure LLM credentials (steps 3-4 only; skip if using committed cache)
 cp .env.example .env   # then edit .env to set:
 #   ANTHROPIC_API_KEY        (Claude Opus generator)
-#   BLTCY_BASE_URL + BLTCY_API_KEY    (GPT-5.4 reviewer via bltcy.ai proxy)
+#   BLTCY_BASE_URL + BLTCY_API_KEY    (GPT-5.4 reviewer via your OpenAI-compatible proxy)
 #   DEEPSEEK_BASE_URL + DEEPSEEK_API_KEY  (DeepSeek V4 Pro arbitrator)
+# Replace <YOUR_BASE_URL> / <YOUR_API_KEY> placeholders with your own credentials.
 ```
 
 ## 3. Smoke test
 
 ```bash
-PYTHONPATH=src .venv/bin/pytest -q
-# Expected: 116 passed, 0 failed, ~30s wallclock
+PYTHONPATH=src .venv/bin/pytest tests/ -q
+# Expected: 192 passed, 0 failed, ~30s wallclock
 ```
 
 ## 4. End-to-end reproduction

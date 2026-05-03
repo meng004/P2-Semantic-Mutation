@@ -61,11 +61,11 @@ AST overlap (12 PUT): 5.14% overall; HP/TF/SI = 0/0/0
 ```bash
 cp .env.example .env
 # 编辑 .env，填入：
-ANTHROPIC_API_KEY=sk-ant-xxx          # Claude Opus 4.6 (主生成器)
-BLTCY_BASE_URL=https://api.bltcy.ai   # GPT-5.4 reviewer 代理
-BLTCY_API_KEY=sk-yyy
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-DEEPSEEK_API_KEY=sk-zzz               # DeepSeek-chat arbitrator on UNCERTAIN
+ANTHROPIC_API_KEY=<YOUR_ANTHROPIC_API_KEY>     # Claude Opus 4.6 (主生成器)
+BLTCY_BASE_URL=<YOUR_BASE_URL>                  # GPT-5.4 reviewer; OpenAI-compatible 端点
+BLTCY_API_KEY=<YOUR_API_KEY>
+DEEPSEEK_BASE_URL=<YOUR_BASE_URL>               # DeepSeek 官方或兼容端点
+DEEPSEEK_API_KEY=<YOUR_API_KEY>                 # DeepSeek-chat arbitrator on UNCERTAIN
 ```
 
 ### 2.2 三阶段消融重跑（v3 → v3b → v4）

@@ -52,7 +52,7 @@ tests/
 - `src/p2/mutators/prompts/operator_template.txt` — per-operator structured prompt
 - `src/p2/mutators/prompts/operator_reviewer_template.txt` — operator-aware review prompt
 - `src/p2/mutators/operator_aggregator.py` — compute R_sem / D_impl / R_kill matrices
-- `scripts/probe_concurrency.py` — bench bltcy.ai actual RPM / concurrency cap
+- `scripts/probe_concurrency.py` — bench OpenAI-compatible proxy actual RPM / concurrency cap
 - `scripts/operator_campaign.py` — Layer 3 full campaign (async, K=10 + 7×K=10 keys)
 - `scripts/sms_campaign.py` — Track 1 SMS evaluator over existing 45 mutants
 - `tests/mutators/test_operator_registry.py`
@@ -120,14 +120,14 @@ Task 4 (script implementation + smoke test) can still run in parallel.
 - Create: `scripts/probe_concurrency.py`
 - Test: none (one-shot benchmark)
 
-**Why first:** Task 10 needs an empirically chosen Semaphore limit. We must measure bltcy.ai's actual RPM before launching 570 calls.
+**Why first:** Task 10 needs an empirically chosen Semaphore limit. We must measure OpenAI-compatible proxy's actual RPM before launching 570 calls.
 
 - [ ] **Step 1: Write probe script**
 
 Create `scripts/probe_concurrency.py`:
 
 ```python
-"""One-shot benchmark of bltcy.ai concurrency / RPM cap.
+"""One-shot benchmark of OpenAI-compatible proxy concurrency / RPM cap.
 
 Runs N parallel chat completions with trivial prompt, increasing concurrency
 each round, and reports first round where errors appear (rate-limit / 429).
@@ -229,7 +229,7 @@ This value is read by Task 10 to set `OPERATOR_CAMPAIGN_CONCURRENCY`.
 
 ```bash
 git add scripts/probe_concurrency.py data/results/concurrency_probe.txt
-git commit -m "feat(probe): benchmark bltcy.ai concurrency limits before campaign"
+git commit -m "feat(probe): benchmark OpenAI-compatible proxy concurrency limits before campaign"
 ```
 
 ---
@@ -1310,7 +1310,7 @@ git commit -m "feat(diversity): AST-bag pairwise distance + median diversity sco
 - Create: `src/p2/mutators/async_llm.py`
 - Create: `tests/mutators/test_async_llm.py`
 
-**Why:** The 570-call campaign must use `AsyncOpenAI` + `Semaphore` to respect bltcy.ai concurrency cap (Task 1 result). Wrap generator and reviewer call paths so the campaign can dispatch at scale.
+**Why:** The 570-call campaign must use `AsyncOpenAI` + `Semaphore` to respect OpenAI-compatible proxy concurrency cap (Task 1 result). Wrap generator and reviewer call paths so the campaign can dispatch at scale.
 
 - [ ] **Step 1: Write failing test**
 

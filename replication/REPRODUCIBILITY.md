@@ -58,8 +58,9 @@ If a replicator wishes to *regenerate* the v4 mutant pool from
 scratch (rather than replay the cache), they will need:
 
 - `ANTHROPIC_API_KEY` (Claude Opus 4.6 generator)
-- `BLTCY_BASE_URL` + `BLTCY_API_KEY` (GPT-5.4 reviewer via bltcy.ai
-  proxy)
+- `BLTCY_BASE_URL` + `BLTCY_API_KEY` (GPT-5.4 reviewer; any
+  OpenAI-compatible endpoint that exposes GPT-5.4 works — the
+  original campaign used a regional proxy)
 - `DEEPSEEK_BASE_URL` + `DEEPSEEK_API_KEY` (DeepSeek V4 Pro
   arbitrator on UNCERTAIN reviews)
 

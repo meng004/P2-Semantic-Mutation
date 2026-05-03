@@ -1,4 +1,4 @@
-"""One-shot benchmark of bltcy.ai concurrency / RPM cap.
+"""One-shot benchmark of the OpenAI-compatible proxy concurrency / RPM cap.
 
 Runs N parallel chat completions with trivial prompt, increasing concurrency
 each round, and reports first round where errors appear (rate-limit / 429).

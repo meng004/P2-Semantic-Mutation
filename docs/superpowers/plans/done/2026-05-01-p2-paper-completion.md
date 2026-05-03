@@ -812,7 +812,7 @@ git commit -m "docs: REPRODUCIBILITY guide + frozen requirements"
 
 ## Generation prompts
 - `src/p2/mutators/prompts/operator_template.txt` — generator prompt(Claude Opus 4.6)
-- `src/p2/mutators/prompts/operator_reviewer_template.txt` — reviewer prompt(GPT-5.4 via bltcy.ai)
+- `src/p2/mutators/prompts/operator_reviewer_template.txt` — reviewer prompt(GPT-5.4 via OpenAI-compatible proxy)
 - `src/p2/mutators/prompts/generator_template.txt` / `reviewer_template.txt` — Phase 1 (cell 级)模板,保留供对比
 
 ## Metrics outputs

@@ -6,7 +6,7 @@
 
 **Architecture:** Spiral execution over 14 small rounds. Each round addresses ONE focused gap, runs end-to-end (code + data + commit), and increments the RQ-completion percentage. Rounds 1-4 deepen the data layer; Rounds 5-7 build the statistical analysis layer; Rounds 8-9 build LRCA + pattern coverage; Rounds 10-12 generate visualizations and §5 paper sections; Rounds 13-14 finalize reproducibility infrastructure and self-review. No round depends on a future round.
 
-**Tech Stack:** Python 3.12, pytest, numpy, scipy.stats, scikit-learn, statsmodels (mixed-effects), matplotlib + seaborn (visualizations), claude CLI (Opus subscription) + bltcy.ai (gpt-5.4 reviewer), asyncio.
+**Tech Stack:** Python 3.12, pytest, numpy, scipy.stats, scikit-learn, statsmodels (mixed-effects), matplotlib + seaborn (visualizations), claude CLI (Opus subscription) + OpenAI-compatible proxy (gpt-5.4 reviewer), asyncio.
 
 **Round-to-RQ contribution map:**
 | Round | Focus | Contributes to | Expected RQ-% delta |
@@ -1877,7 +1877,7 @@ get K=20 trials.
 ## Generation prompts
 - `src/p2/mutators/prompts/operator_template.txt` — generator prompt (Claude Opus)
 - `src/p2/mutators/prompts/operator_reviewer_template.txt` — reviewer prompt
-  (GPT-5.4 via bltcy.ai)
+  (GPT-5.4 via OpenAI-compatible proxy)
 
 ## Metrics outputs
 - `data/results/operator_metrics.json` — R_sem / D_impl / R_kill per operator

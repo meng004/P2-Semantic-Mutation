@@ -51,7 +51,7 @@ Each entry: `target_locator + transformation + rationale + is_key`. The 12 `is_k
 ## 5. Generation prompts
 
 - `src/p2/mutators/prompts/operator_template.txt` — operator-level generator (Claude Opus 4.6).
-- `src/p2/mutators/prompts/operator_reviewer_template.txt` — reviewer (GPT-5.4 via bltcy.ai proxy; DeepSeek V4 Pro arbitrator on UNCERTAIN).
+- `src/p2/mutators/prompts/operator_reviewer_template.txt` — reviewer (GPT-5.4 via an OpenAI-compatible proxy; DeepSeek V4 Pro arbitrator on UNCERTAIN).
 - `src/p2/mutators/prompts/generator_template.txt` / `reviewer_template.txt` — Phase-1 cell-level templates (retained for ablation comparison).
 
 ## 6. Metrics outputs

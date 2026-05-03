@@ -121,7 +121,7 @@ async def main_async(args):
             base_url=os.environ["BLTCY_BASE_URL"],
             concurrency=sem_n,
         )
-        print(f"== generator (bltcy.ai): {args.generator_model} ==")
+        print(f"== generator (OpenAI-compatible proxy): {args.generator_model} ==")
 
     rev_client = AsyncSemaphoreClient(
         api_key=os.environ["BLTCY_API_KEY"],
@@ -173,9 +173,9 @@ def main():
     parser.add_argument("--temperature", type=float, default=0.5)
     parser.add_argument("--op-id", help="run a single operator (debug)")
     parser.add_argument("--put", help="run all operators for one PUT")
-    parser.add_argument("--generator", choices=["claude-cli", "bltcy"],
+    parser.add_argument("--generator", choices=["claude-cli", "proxy"],
                         default="claude-cli",
-                        help="generator backend: claude-cli (subscription) or bltcy")
+                        help="generator backend: claude-cli (subscription) or proxy (OpenAI-compatible endpoint set via BLTCY_BASE_URL)")
     parser.add_argument("--cli-concurrency", type=int, default=12,
                         help="max concurrent claude CLI subprocesses (default 12)")
     parser.add_argument("--generator-model", default="opus",

@@ -279,7 +279,7 @@
 ### 6.3 LLM 复现性
 
 - §7.1.7 R10 三件套(multi-turn de-dup + K=10/20 + raw response storage in `data/operator_campaign/raw/`)合理。`raw/` 提供完整 prompt + raw response 让后续读者**绕过 LLM 非确定性**直接复用本文 mutant 集合——这是 LLMorpheus 范式中没做到的。
-- 但 §4.2.4(g)「LLM-G 使用关闭检索增强生成 (RAG) / 关闭 web 搜索的 API 路径」——bltcy.ai 代理是否真能保证 close-RAG?如果代理在后端开了 web context,prompt leakage 可能仍存在。建议 §7 加 caveat 明示「we cannot fully verify RAG-off on the proxy infrastructure; this is residual」。
+- 但 §4.2.4(g)「LLM-G 使用关闭检索增强生成 (RAG) / 关闭 web 搜索的 API 路径」——OpenAI-compatible proxy 代理是否真能保证 close-RAG?如果代理在后端开了 web context,prompt leakage 可能仍存在。建议 §7 加 caveat 明示「we cannot fully verify RAG-off on the proxy infrastructure; this is residual」。
 
 ### 6.4 Reproducibility 评估总结
 

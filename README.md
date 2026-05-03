@@ -145,5 +145,6 @@ substantive review or collaboration, please use the email address.
 
 The P1 Automated Verification Pipeline (referenced under
 `third_party/p1_avp/`) is reused under its original MIT licence.
-LLM credits: Anthropic (Claude Opus 4.6), OpenAI / bltcy.ai (GPT-5.4),
-DeepSeek (V4 Pro). Development tooling: Claude Code (Anthropic).
+LLM credits: Anthropic (Claude Opus 4.6), GPT-5.4 (via an
+OpenAI-compatible proxy), DeepSeek (V4 Pro). Development tooling:
+Claude Code (Anthropic).

@@ -367,19 +367,19 @@ git commit -m "phase-B(paper): §3 + §5.8 + §6.3 c-class primary MP justificat
 
 ```python
 def generator_claude():
-    """LLM-G #1: Claude Opus 4.6 via bltcy.ai (current default)."""
+    """LLM-G #1: Claude Opus 4.6 via OpenAI-compatible proxy (current default)."""
     return _make_client(os.environ["BLTCY_API_KEY"],
-                        "https://api.bltcy.ai/v1"), "claude-opus-4-6"
+                        "<YOUR_BASE_URL>"), "claude-opus-4-6"
 
 def generator_gpt():
-    """LLM-G #2: GPT-5.4 via bltcy.ai."""
+    """LLM-G #2: GPT-5.4 via OpenAI-compatible proxy."""
     return _make_client(os.environ["BLTCY_API_KEY"],
-                        "https://api.bltcy.ai/v1"), "gpt-5.4"
+                        "<YOUR_BASE_URL>"), "gpt-5.4"
 
 def generator_deepseek():
     """LLM-G #3: DeepSeek V4 Pro via deepseek.com."""
     return _make_client(os.environ["DEEPSEEK_API_KEY"],
-                        "https://api.deepseek.com/v1"), "deepseek-v4-pro"
+                        "<YOUR_BASE_URL>"), "deepseek-v4-pro"
 ```
 
 ---

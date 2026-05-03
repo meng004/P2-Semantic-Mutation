@@ -99,7 +99,7 @@
 
 ### W4 §6.5.1 测试工程师 workflow 假设了 LLM API 可用,违反 air-gapped 部署约束 [MAJOR]
 
-**WHAT**: §6.5.1 测试工程师 workflow 步骤 1: "对一个新写的 MR,跑 `scripts/sms_campaign.py` 得到 SMS 值;" — 该脚本在 Path A 下用 cached LLM trials,在 Path B 下需要 Anthropic + bltcy.ai + DeepSeek 三家外部 API 凭证。
+**WHAT**: §6.5.1 测试工程师 workflow 步骤 1: "对一个新写的 MR,跑 `scripts/sms_campaign.py` 得到 SMS 值;" — 该脚本在 Path A 下用 cached LLM trials,在 Path B 下需要 Anthropic + OpenAI-compatible proxy + DeepSeek 三家外部 API 凭证。
 
 **WHERE**: §6.5.1 + REPRODUCIBILITY.md §2 (Configure LLM credentials)。
 

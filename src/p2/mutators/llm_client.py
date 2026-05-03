@@ -11,7 +11,11 @@ def _env(key: str) -> str:
 
 
 def generator_client() -> tuple[OpenAI, str]:
-    """Claude Opus 4.6 via bltcy.ai proxy."""
+    """Claude Opus 4.6 via an OpenAI-compatible proxy.
+
+    Configure BLTCY_BASE_URL / BLTCY_API_KEY in .env (see .env.example).
+    Any OpenAI-compatible endpoint that exposes Claude Opus 4.6 works.
+    """
     return (
         OpenAI(base_url=_env("BLTCY_BASE_URL"), api_key=_env("BLTCY_API_KEY")),
         "claude-opus-4-6",
@@ -19,7 +23,7 @@ def generator_client() -> tuple[OpenAI, str]:
 
 
 def reviewer1_client() -> tuple[OpenAI, str]:
-    """ChatGPT 5.4 via bltcy.ai proxy."""
+    """ChatGPT 5.4 via an OpenAI-compatible proxy."""
     return (
         OpenAI(base_url=_env("BLTCY_BASE_URL"), api_key=_env("BLTCY_API_KEY")),
         "gpt-5.4",
@@ -27,7 +31,10 @@ def reviewer1_client() -> tuple[OpenAI, str]:
 
 
 def reviewer2_client() -> tuple[OpenAI, str]:
-    """DeepSeek V4 Pro via deepseek.com OpenAI-compatible endpoint."""
+    """DeepSeek V4 Pro via its OpenAI-compatible endpoint.
+
+    Configure DEEPSEEK_BASE_URL / DEEPSEEK_API_KEY in .env.
+    """
     return (
         OpenAI(base_url=_env("DEEPSEEK_BASE_URL"), api_key=_env("DEEPSEEK_API_KEY")),
         "deepseek-v4-pro",
@@ -45,7 +52,7 @@ def generator_claude() -> tuple[OpenAI, str]:
 
 
 def generator_gpt() -> tuple[OpenAI, str]:
-    """Phase A LLM-G #2: GPT-5.4 via bltcy.ai."""
+    """Phase A LLM-G #2: GPT-5.4 via an OpenAI-compatible proxy."""
     return (
         OpenAI(base_url=_env("BLTCY_BASE_URL"), api_key=_env("BLTCY_API_KEY")),
         "gpt-5.4",

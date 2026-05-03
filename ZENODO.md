@@ -44,7 +44,7 @@ Contents:
 
 Reproducibility level: any-rerun (deterministic from committed cache).
 Path B (re-call all LLMs from scratch) requires API credentials for
-Claude (Anthropic), GPT-5.4 (OpenAI/bltcy.ai), DeepSeek V4 Pro and
+Claude (Anthropic), GPT-5.4 (via any OpenAI-compatible proxy), DeepSeek V4 Pro and
 ~USD $80; non-deterministic by construction.
 ```
 

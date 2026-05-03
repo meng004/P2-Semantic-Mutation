@@ -871,7 +871,7 @@ New primary = MP1 (data in `data/results/c_class_mp_ranking.json`).
 
 | Source | Proportion | Role |
 |---|---|---|
-| Multi-LLM consensus | 60% | Claude Opus 4.6 (via bltcy.ai) + GPT-5.4 (via bltcy.ai) + DeepSeek chat (via deepseek.com) three-model unanimous agreement required for pool admission (actual v4 implementation in this paper described in §4.2.5) |
+| Multi-LLM consensus | 60% | Claude Opus 4.6 + GPT-5.4 + DeepSeek chat three-model unanimous agreement required for pool admission (all called through OpenAI-compatible endpoints; actual v4 implementation in this paper described in §4.2.5) |
 | Manual injection | 40% | 1-2 scientific computing researchers manually write according to §3.2 rules |
 
 > Note: The "GPT-4o + Claude Opus + Gemini" in §4.2.1 is the P1 protocol description; the P2 implementation in this paper changed to Claude Opus 4.6 + GPT-5.4 + DeepSeek chat (see §4.2.5 cross-source protocol for details). The only difference between the two is the specific LLM selection; the prompt template and consensus voting mechanism remain unchanged. The v4 cross-source data in this paper (298 confirmed mutants) is entirely produced by the §4.2.5 protocol.
@@ -1125,7 +1125,7 @@ After N=20 repetitions for each (i, k, j) cell, output:
 
 #### 4.8.1 Pilot Design
 
-To calibrate end-to-end executability of §4.2 generation protocol, §4.3 L0 pre-screening, and §4.5 AVP invocation, a round of **operator-level pilot** was conducted in 2026 Q3 on 12 PUTs (37 named operators, 12 operators with is_key=True at K=20, remaining 25 at K=10, total 470 trials). Generator used Claude Opus (subscription authentication, subprocess invocation), reviewer used GPT-5.4 (bltcy.ai proxy), review prompt isomorphic to §4.2.4 double-blind protocol. Pilot output focused on three **operator-level precursor quantities**:
+To calibrate end-to-end executability of §4.2 generation protocol, §4.3 L0 pre-screening, and §4.5 AVP invocation, a round of **operator-level pilot** was conducted in 2026 Q3 on 12 PUTs (37 named operators, 12 operators with is_key=True at K=20, remaining 25 at K=10, total 470 trials). Generator used Claude Opus (subscription authentication, subprocess invocation), reviewer used GPT-5.4 (called through an OpenAI-compatible proxy), review prompt isomorphic to §4.2.4 double-blind protocol. Pilot output focused on three **operator-level precursor quantities**:
 
 - **R_sem**: proportion of K attempts per operator passing V1-V6 ∧ operator_match=Yes (semantic implementation success rate, corresponding to §4.2.4 double-blind review final judgment)
 - **D_impl**: median of K(K-1)/2 pairwise AST tuple + literal + identifier multiset Jaccard distances among confirmed mutants per operator (implementation diversity, characterizing "different implementation surfaces of the same operator")

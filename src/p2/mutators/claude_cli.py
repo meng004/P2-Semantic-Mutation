@@ -1,7 +1,8 @@
 """Subscription-auth Opus generator: shells out to `claude -p` per call.
 
 Used as a drop-in alternative to AsyncSemaphoreClient for the generator
-side of operator_runner. The reviewer side stays on bltcy.ai.
+side of operator_runner. The reviewer side stays on the configured
+OpenAI-compatible proxy (see ``llm_client.py``).
 
 Auth comes from Claude Code's macOS keychain entry; no API key needed.
 """
