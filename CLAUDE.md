@@ -305,6 +305,8 @@ ARS 是 *补充* 不是 *替代*——两者都必须执行。
 - 中文：`发布到 github`、`发到 arxiv`、`公开仓库`、`接受大家检查`、`上传 github`、`传到 github`、`发预印本`、`挂 arxiv`
 - 英文：`publish to github`、`upload to arxiv`、`go public`、`open the repo`、`release the bundle`、`mint a doi`
 
+**前置条件**：本节的所有发布动作以 §9（论文完结后的结构化归档）已通过为前提。如 §9 未做或半成品状态，**先**走 §9，再回 §8。
+
 ### 8.2 Step 1：意图确认（强制）
 
 **禁止静默假设**用户走哪条发布路径。先输出一段 ≤ 200 字的**三选项摘要**让用户选择：
@@ -517,3 +519,153 @@ git ls-files | xargs grep -lE "(192\.168\.|10\.[0-9]+\.|172\.(1[6-9]|2[0-9]|3[01
 - 把 push / arXiv 上传等不可逆操作放在初次执行流；必须分步等用户确认
 - 在用户没明确给 GitHub username 时静默假设仓库 URL
 - 把 Zenodo / arXiv / GitHub 三个动作打包成一次"全自动"流；学术诚信场景下用户必须逐步签字
+
+---
+
+## 9. 论文完结后的结构化归档（Post-Paper Archival Policy）
+
+适用阶段：论文 *submission-ready* / 已投出 / 已接受 之后，**任何**改动节奏放缓的回合。
+本节的产出是 §8 发布动作的前置条件——未走 §9 不能走 §8。
+
+### 9.1 触发条件（关键词扫描）
+
+用户回合中出现以下任一意图时，**必须**进入本节流程：
+
+- 中文：`整理`（限定语境：项目级 / 仓库级）、`归档`、`结题`、`项目结束`、`论文完成`、`论文写完了`、`论文完结`、`复现`（"便于复现" / "为复现做准备"）、`沉淀`
+- 英文：`wrap up`、`finalize the project`、`organize the repo`、`archive the work`、`post-paper cleanup`
+
+### 9.2 标准目录结构（Lock-down Layout）
+
+`submission-ready` 之后仓库**必须**呈现以下顶层骨架（缺失项即任务项）：
+
+```
+project-root/
+├── README.md                  # 项目入口（§9.3 定义必含 9 章）
+├── REPRODUCIBILITY.md         # 完整复现指南（系统要求 / 三档命令）
+├── DATASET.md                 # 数据 provenance + 版本谱系
+├── CHANGELOG.md               # 按里程碑或日期的变更历史
+├── CONTRIBUTING.md            # 贡献 / Issue / PR 政策
+├── RELEASE_CHECKLIST.md       # 发布前自检（§8 对外发布时使用）
+├── PROJECT_STRUCTURE.md       # 文件级 walkthrough
+├── LICENSE                    # 顶层协议（MIT for code）
+├── CITATION.cff               # 机器可读引用（GitHub 渲染识别）
+├── requirements.txt | requirements-frozen.txt   # pinned 依赖
+├── pyproject.toml | setup.py | package.json     # 项目元数据
+├── .gitignore                 # 含 §8.7 完整基线
+├── .env.example               # 凭证占位符（实际 .env 屏蔽）
+├── .github/                   # Issue / PR 模板 + workflows
+│   ├── ISSUE_TEMPLATE/
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/sanity.yml   # 至少跑 pytest 的 CI
+├── src/                       # 源代码（含 __init__.py 形成 package）
+├── tests/                     # 单元 / 集成 / smoke
+├── data/
+│   ├── raw/                   # 原始（不可变）
+│   ├── processed/             # deterministic 可重生
+│   └── results/               # SSOT（paper-cited 数字唯一来源）
+├── docs/
+│   ├── STATE.md               # 单一会话入口
+│   ├── theory/                # 理论笔记
+│   ├── experiment_documentation/  # EXPERIMENT_DESIGN / QUICK_START / DATA_README
+│   ├── review_<DATE>/         # 评审历史（按日期 / round 分子目录）
+│   └── release_<DATE>/        # 发布前 sanity / audit 日志
+├── figs/                      # 论文嵌图（最终版）
+├── figures/                   # 探索性 / 早期版（保留 lineage）
+├── scripts/                   # 端到端自动化脚本
+├── submission/                # 终稿 LaTeX + PDF + cover letter
+├── replication/               # Zenodo / 外部分发包
+├── archive/                   # 历史快照（v1-v(N-1) 中间稿）
+└── third_party/               # 第三方依赖代码（带 LICENSE 引用）
+```
+
+**整理动作**（按出现频率列）：
+- 多个 `<file>_v{1..N}.{ext}` 中间版本 → 仅保留 `<file>_final.{ext}` 在主目录；`v1..v(N-1)` 全部移到 `archive/<category>/`；`v(N)` 改名为 `final`
+- 多个 `build_<thing>_v{N}.sh` 中间脚本 → 同理
+- LaTeX byproducts（`.aux/.bbl/.blg/.log/.out/.spl/.fls/.fdb_latexmk/.synctex.gz`）→ **删除**（可由 .tex 重建）
+- 命名带版本号但未明确弃用的中间数据文件 → 询问用户保留 / 删除 / 归档
+- 完全重复的目录（`figs/` vs `figures/`）→ 保留一个为 canonical，另一个移 `archive/`，**不要**合并
+
+### 9.3 必备文件内容契约
+
+每个必备文件**必须**包含的关键章节（缺一不可）：
+
+| 文件 | 必含内容 |
+|---|---|
+| `README.md` | §8.6 的 9 章（动机 / 核心贡献 / 重要结论 / 仓库布局 / 复现流程 / 构建命令 / 敏感信息策略 / 引用 / 协议） |
+| `REPRODUCIBILITY.md` | 1-system requirements / 2-env setup / 3-smoke test / 4-cache replay / 5-re-LLM / 6-cost & time table / 7-determinism caveats |
+| `DATASET.md` | per-artefact provenance / version lineage / 数据→论文段落 reverse lookup / 许可 |
+| `CHANGELOG.md` | Keep-a-Changelog 格式；按里程碑（rounds / phases）；列 Added / Changed / Removed |
+| `CONTRIBUTING.md` | 哪些贡献欢迎 / 哪些 out-of-scope / PR workflow / code style / CoC |
+| `requirements*.txt` | **完全 pinned**（`==` 而非 `>=`）；区分 dev / runtime |
+| `pyproject.toml` | name / version / authors / dependencies / `[tool.pytest]` 配置 |
+| `LICENSE` | MIT for code（顶层）；CC-BY-4.0 for data / paper（在 `DATASET.md` / `README.md` License 段说明） |
+| `CITATION.cff` | `cff-version: 1.2.0`；title / authors / version / date-released / DOI（占位符到接受） |
+| `.env.example` | 每个环境变量占位符 + 注释说明用途 + 安全提示 |
+
+### 9.4 数据归档规则
+
+| 类别 | 处置 | 示例 |
+|---|---|---|
+| **Raw**（实验原始输出） | 只读、版本化、永不修改；commit 进 `data/raw/`（小） / Zenodo（大） | LLM trial 完整响应 |
+| **Processed**（中间产物） | deterministic 可由脚本 + SEED 重生；可 gitignore | mutant pool 经 normaliser 后 |
+| **Results**（统计 / 度量结果） | 必有一个 SSOT（如 `paper_numbers.json`）；paper 引用全部命中此处；JSON > CSV > pickle | `paper_numbers_v4.json` |
+| **Cache**（LLM raw response） | 大小是关键决策点：< 10 MB commit；10-100 MB commit + 警告；> 100 MB Zenodo 或 S3；> 2 GB 必须 LFS | `data/operator_campaign/cache_cross/` |
+| **Sqlite / 二进制** | < 100 MB 可 commit（标 binary in `.gitattributes`）；> 100 MB Zenodo | `cosmic_ray_*.sqlite` |
+
+**SSOT 验证规则**：从 raw + scripts 重生 SSOT 时，`git diff data/results/<SSOT>.json` 必须为空（byte-identical）；不空 → 论文数字与代码失去同步，**必须**修复才能进 §8。
+
+### 9.5 文档归档规则
+
+| 类别 | 落地位置 |
+|---|---|
+| 理论笔记 / 公式推导 | `docs/theory/` |
+| 实验设计 | `docs/experiment_documentation/EXPERIMENT_DESIGN.md` |
+| 评审历史（编辑 / 同行 / DA） | `docs/review_<DATE>/r{0..N}_<role>.md` |
+| 复现快速指南 | `docs/experiment_documentation/QUICK_START.md` |
+| 数据组织 reverse lookup | `docs/experiment_documentation/DATA_README.md` |
+| 发布前 sanity 日志 | `docs/release_<DATE>/sanity_check.log` |
+| 内部 plan（不应公开） | `docs/superpowers/plans/`（README 标"internal"）或 `archive/internal_planning/` |
+| 历史 cover letter / 中间稿 / 旧 build script | `archive/{cover_letters,submission_drafts,build_scripts}/` |
+
+### 9.6 复现路径必须三档
+
+`README.md` §3 + `REPRODUCIBILITY.md` 必须给出三档明确命令序列：
+
+| 档位 | 时长 | 用途 | 是否需 API key |
+|---|---|---|---|
+| **Smoke** | ≤ 5 min | "工具链能跑" | 否 |
+| **Cache replay** | ≤ 30 min | "paper 数字可复现" | 否 |
+| **Full re-run** | hours / days | "从 raw 重新生成全部" | 是（含成本估算） |
+
+每档命令必须可直接 copy-paste；预期输出（如 `192 passed`）必须明确标注。
+
+### 9.7 §9 验收标准（执行 §8 之前必须全绿）
+
+| 验收项 | 检查命令 / 标准 |
+|---|---|
+| 顶层骨架完整 | §9.2 列表逐项 `ls` 检查；缺失即任务项 |
+| 必备文件 9 项齐全 | §9.3 文件存在 + 关键章节命中（grep header） |
+| `pytest` 全绿 | `PYTHONPATH=src python -m pytest tests/ -q` 期望 `N passed` |
+| SSOT 可零 diff 重生 | 跑 `build_paper_numbers` → `git diff data/results/<SSOT>.json` 为空 |
+| `.gitignore` 含 §8.7 全部 13 项基线 | `for pat in <baseline>; do grep -qE "$pat" .gitignore; done` |
+| 敏感信息扫描 0 命中 | §8.8 四个 grep 命令组 |
+| 三档复现命令 copy-paste 可跑 | 在干净 venv 里跑一遍 smoke |
+| 新克隆者 30 min 内能 smoke 完 | 从 README 入手到 `pytest 通过` 全程  |
+| `archive/` 至少含一份历史 v1 | `ls archive/`，作为审稿 lineage 凭证 |
+
+### 9.8 §9 元流程（4 步，与 §8.3 同构）
+
+1. **§9.8.1 生成归档审计表**：把 §9.7 各项展开成 `docs/release_<DATE>/archival_audit.md`
+2. **§9.8.2 调用 `superpowers:writing-plans`**：依审计表生成阶段化执行计划，落地 `docs/superpowers/plans/<DATE>-archival.md`
+3. **§9.8.3 调用 `superpowers:executing-plans`**：逐阶段执行，每个 review checkpoint 必须停下等用户拍板
+4. **§9.8.4 用审计表逐项验证**：全绿 → 进入 §8 发布流程；任一红 → 回 §9.8.2 修订
+
+### 9.9 与 §8 的衔接
+
+| 状态 | 下一步 |
+|---|---|
+| §9 未启动 | 触发 §9.8 元流程 |
+| §9 进行中 | 继续推进；不允许并行启动 §8 |
+| §9 全绿 | 询问用户是否进入 §8 发布；不要静默推进 |
+| §9 全绿 + 用户确认走 §8 | 进入 §8.2 意图确认（arXiv/GitHub/Zenodo 三选） |
+| §9 任一项红 + 用户要求"立刻发布" | 拒绝；展示红项 + 修复路径，请求用户先关闭红项 |
