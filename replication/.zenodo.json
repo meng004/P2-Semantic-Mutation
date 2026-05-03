@@ -1,0 +1,67 @@
+{
+  "title": "Replication Package — When Same-Prompt LLM Source Diversity Doesn't Help: An Ablation of Semantic Mutation Operators in Metamorphic Testing for Single-Output Scientific Computing Kernels",
+  "upload_type": "software",
+  "description": "<p><strong>Companion replication archive</strong> for the P2 paper submitted to <em>Information and Software Technology</em> (2026). The paper proposes a Semantic Mutation Score (SMS) built on five domain-semantic mutation operators (Conservation, Monotonicity, Convergence, Trajectory, Fidelity-order) and demonstrates via a 12-PUT × 5-MP ablation (60 cells, 292 LLM-generated mutants vs 1,250 cosmic-ray syntactic mutants) that under an identical prompt MR-design, not LLM-source diversity, is the dominant lever on aligned-vs-cross effect size.</p><p><strong>Headline numbers reproduced from the cache:</strong> Cliff's δ = 0.439 (95% CI [0.13, 0.74]); Friedman χ² = 15.30, p = 0.0041; AST overlap with cosmic-ray = 5.14%; stipulated-alternative power at δ_truth = 0.474 = 49.1%.</p><p><strong>Bundle contents:</strong> 12 PUTs in <code>src/p2/puts/</code>, 60 MRs in <code>src/p2/mrs/</code>, 37 mutation operators, AVP dispatcher, three-layer LRCA classifier, SMS computation, RQ1–4 statistical analysis, end-to-end campaign scripts, 116-test pytest suite, 5 paper figures, and the Round-1 + Round-2 reviewer reports plus the Stage-4.5 final integrity report.</p><p><strong>Reproducibility:</strong> Deterministic from the committed cache (SEED=42, temperature=0); no LLM API access required. Three-command quickstart in <code>README.md</code> rebuilds <code>paper_numbers_v4.json</code> + <code>cosmic_ray_12put_ast_diff.json</code> in &lt; 5 minutes. Full pipeline finishes in ≤ 2 hours on a 4-core laptop.</p>",
+  "creators": [
+    {
+      "name": "Li, Meng",
+      "affiliation": "Affiliation Placeholder",
+      "orcid": "0000-0000-0000-0000"
+    }
+  ],
+  "keywords": [
+    "metamorphic testing",
+    "mutation testing",
+    "semantic mutation operators",
+    "test adequacy",
+    "scientific computing",
+    "large language models",
+    "LLM-generated mutants",
+    "ablation study",
+    "Cliff's delta",
+    "Python",
+    "reproducibility"
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "language": "eng",
+  "version": "1.0.0",
+  "publication_date": "2026-05-02",
+  "related_identifiers": [
+    {
+      "identifier": "10.1016/j.infsof.PLACEHOLDER",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "arXiv:PLACEHOLDER",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-preprint",
+      "scheme": "arxiv"
+    },
+    {
+      "identifier": "https://github.com/PLACEHOLDER/p2-sms-audit",
+      "relation": "isSupplementTo",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.PLACEHOLDER-P1",
+      "relation": "isPartOf",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1145/3460319.3464825",
+      "relation": "references",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    }
+  ],
+  "communities": [
+    {"identifier": "zenodo"},
+    {"identifier": "software"}
+  ],
+  "notes": "Round-1 and Round-2 reviewer reports plus the Stage-4.5 final integrity report are bundled under docs/review_2026-05-{01,02}/ for audit purposes. License nuance: code under MIT (LICENSE file); data and figures under CC-BY-4.0 (see CITATION.cff §License); reviewer reports and paper text are All Rights Reserved by the authors and included for audit only."
+}

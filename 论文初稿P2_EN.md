@@ -11,7 +11,15 @@
 
 ## Abstract
 
-**Context.** Metamorphic Testing (MT) addresses the test oracle problem in scientific computing software, but the fault-detection capability of metamorphic relations (MRs) has lacked a domain-aware adequacy metric: classical Mutation Score (MS) operates on syntactic AST mutations and does not capture domain semantics such as conservation laws, monotonicity, or convergence order. **Objective.** We propose Semantic Mutation Score (SMS), built on five domain-semantic mutation operators (Conservation, Monotonicity, Convergence, Trajectory, Fidelity-order breaks) that degenerate to classical MS in the syntactic limit (modulo D_S-measure-zero subsets, see §9 for the formal statement). **Method.** We instantiate a 12-PUT × 5-MP matrix (60 cells, average 24.3 LLM-generated mutants per cell, N=20 AVP repetitions) across four classes of single-output scientific computing kernels (each PUT a Python function with `float → float` signature, source code under 2 KB; the four classes are numeric, probabilistic, surrogate, ML). A three-layer Layered Root-Cause Analysis (LRCA) classifier separates legitimate semantic faults from artifacts/tolerance/OOD/statistical-noise. We design a three-stage ablation — v3 (same-source, P1-aligned), v3b (same-source, data-driven primary MP), v4 (cross-source over Claude/GPT/DeepSeek) — to isolate contributions of MR alignment design and LLM source diversity. **Results.** **The pre-registered H2 large-effect threshold (Cliff's δ ≥ 0.474, Romano 2006) is not met under the pre-registered point-estimate criterion** in the primary v3 analysis (δ = 0.323, 95% CI [0.017, 0.622]). Two exploratory follow-ups — v3b (data-driven c-class primary MP shift) and v4 (cross-source 3-LLM pool) — produce δ = 0.446 and 0.439 respectively, both still below 0.474. The exploratory contrasts give Δδ_MR = +0.123 (single-class primary-MP re-specification, post-hoc) and Δδ_LLM = −0.007 (cross-source under identical prompt template; CI overlaps zero). The two contrasts are reported separately rather than as a single ratio because the numerator reflects a confounded data-driven adjustment and the denominator reflects prompt determinism rather than source diversity in the strong sense. Cross-source pooling raises mutant quality (mean C1_share 0.164 → 0.209) and inter-class balance (class-c mean SMS +91.4% on a smaller mutant base, see §4.2.5). Friedman test confirms a significant MP main effect (χ² = 15.30, p = 0.0041); this is reported as a fallback non-parametric sensitivity, distinct from H4 cross-class consistency. Under pre-registered v3, the H4 sign test is 3/4 (partial); under exploratory v3b (post-hoc, conditional on c-class primary MP shift, §3.5.1) the same sign test is 4/4. We report v3 as the H4 primary result. SMS shows near-zero rank correlation with simple pattern coverage (ρ = 0.16, n = 12, p = 0.61, v4 primary); statistical power at this n is insufficient to support an "orthogonal" claim, framed instead as a hypothesis for future work. **Conclusion.** P2 contributes a three-layer methodology for domain-semantic mutation: (Layer 1) formal necessary conditions (cross-function-boundary substitution / domain knowledge / algorithmic class change) for "semantic mutation", instantiated as five meta-mutation operator classes (CE/OS/HP/TF/SI) with PUT-class specialization rules; (Layer 2) E1 ∧ E2 equivalence judgment as the conservative complete instantiation of the necessary conditions, with three-candidate trade-off analysis and §9 degeneration-theorem boundary; (Layer 3) AST-normalized empirical traceability proving P2 mutants are not a subset of syntactic-mutant pools (full 12-PUT empirics: 5.14% overall AST overlap rate against cosmic-ray default operators, with three of the five operator classes — HP/SI/TF, 159/292 mutants — categorically unreachable at 0% — positive empirical against the "new-concept classification" concern). SMS as an MR-adequacy demonstration metric degenerates to classical syntactic MS in the syntactic limit (modulo D_S-measure-zero subsets, §9). The 60-cell empirical audit (H1/H2/H4/H5) demonstrates, within the scope of single-output kernels and identical prompt template, that the LLM-mutant + current-MR-design configuration produces medium- not large-effect; this is an auxiliary finding under the methodology backbone, not the paper's main contribution.
+**Context.** Metamorphic Testing (MT) addresses the test-oracle problem in scientific computing software, but the fault-detection capability of metamorphic relations (MRs) has lacked a domain-aware adequacy metric. The classical Mutation Score (MS) is defined over syntactic Abstract Syntax Tree (AST) mutations and does not capture domain semantics such as conservation laws, monotonicity, or convergence order.
+
+**Objective.** We propose the Semantic Mutation Score (SMS), built on five domain-semantic mutation operators (Conservation, Monotonicity, Convergence, Trajectory, and Fidelity-order breaks). SMS degenerates to the classical MS in the syntactic limit, modulo D_S-measure-zero subsets, with the formal statement in §2.8.
+
+**Method.** We instantiate a 12 × 5 matrix of Programs Under Test (PUTs) and meta-patterns (MPs) yielding 60 cells, with a mean of 24.3 Large Language Model (LLM) generated mutants per cell and N = 20 Automated Verification Pipeline (AVP) repetitions. The PUTs span four classes of single-output scientific computing kernels — numeric, probabilistic, surrogate, and machine-learning — each implemented as a Python `float → float` function under 2 KB. A three-layer Layered Root-Cause Analysis (LRCA) classifier separates true semantic faults from artefacts, tolerance perturbation, out-of-distribution (OOD) trips, and statistical-assumption violations. A three-stage ablation — v3 same-source aligned with P1, v3b same-source with data-driven primary MP, and v4 cross-source over Claude, GPT, and DeepSeek — isolates the contribution of MR alignment design from that of LLM source diversity.
+
+**Results.** The pre-registered H2 large-effect threshold (Cliff's δ ≥ 0.474, Romano 2006) is **not met under the point-estimate criterion** in the primary v3 analysis (δ = 0.323, 95% confidence interval [0.017, 0.622]). The two exploratory follow-ups — v3b (data-driven c-class primary MP shift) and v4 (cross-source three-LLM pool) — give δ = 0.446 and 0.439, both still below 0.474. The two contrasts are Δδ_MR = +0.123 (single-class primary-MP re-specification, post-hoc) and Δδ_LLM = −0.007 (cross-source under an identical prompt template, with the confidence interval crossing zero). We report them separately rather than as a single ratio: the first contrast reflects a confounded data-driven adjustment, and the second reflects prompt determinism rather than source diversity in the strong sense. Cross-source pooling raises mutant quality (mean C1\_share 0.164 → 0.209) and inter-class balance (class-c mean SMS +91.4% on a smaller mutant base; see §4.2.5). The Friedman test confirms a significant MP main effect (χ² = 15.30, p = 0.0041); we report this as a fallback non-parametric sensitivity, distinct from the H4 cross-class consistency check. Under the pre-registered v3, the H4 sign test is 3/4 (partial); under exploratory v3b (post-hoc, conditional on the c-class primary MP shift in §3.5.1) the same sign test is 4/4. We report v3 as the H4 primary result. SMS shows near-zero rank correlation with simple pattern coverage (Spearman ρ = 0.16, n = 12, p = 0.61, v4 primary); the statistical power at this n is insufficient to support an "orthogonality" claim, which we frame instead as a hypothesis for future work.
+
+**Conclusion.** P2 contributes a three-layer methodology for domain-semantic mutation. Layer 1 gives the formal necessary conditions for semantic mutation (cross-function-boundary substitution, dependence on domain knowledge, change in algorithmic class), instantiated as the five meta-mutation operator classes CE, OS, HP, TF, and SI with PUT-class specialisation rules. Layer 2 gives the E1 ∧ E2 equivalence judgement as the conservative complete instantiation of the necessary conditions, with a three-candidate trade-off analysis and the §2.8 degeneration-theorem boundary. Layer 3 gives AST-normalised empirical traceability: a full 12-PUT comparison shows 5.14% overall AST overlap with cosmic-ray default operators, and three of the five operator classes (HP, SI, TF; 159 of 292 mutants) are categorically unreachable at 0%. SMS, as the MR-adequacy demonstration metric, degenerates to the classical syntactic MS in the syntactic limit (§2.8). The 60-cell empirical audit (H1, H2, H4, H5) shows that, within the scope of single-output kernels and an identical prompt template, the LLM-mutant plus current MR-design configuration produces a medium- rather than large-effect — this is an auxiliary finding under the methodology backbone, not the paper's main contribution.
 
 ## Keywords
 
@@ -39,17 +47,17 @@ The English text uniformly uses *four representative classes of single-output sc
 
 ### 1.2 Core Claims
 
-This paper proposes a **three-layer methodological framework** around domain-semantic mutation operators (explicitly revised in P2 R2):
+We organise the contribution as a three-layer framework around domain-semantic mutation operators.
 
-- **Layer 1 — Definitional** (§3.2.0): Establishes necessary conditions for semantic mutation: (a) cross-function-boundary replacement, (b) carrying domain knowledge, (c) altering algorithmic class. The five meta mutation operator classes (CE/OS/HP/TF/SI = mut_C/M/G/T/F) are specializations of these necessary conditions across the four PUT classes.
-- **Layer 2 — Operational** (§2.3 / §4.4): Provides equivalence criteria E1 ∧ E2 as a conservative complete instantiation of the necessary conditions. Justifies the selection among three candidate definitions (semantic equivalence / output equivalence / both).
-- **Layer 3 — Applied** (§3.2.6.3): Uses equivalence detection tools to trace P2 mutants back to syntactic mutants, providing positive empirical evidence that the P2 mutant pool ⊄ syntactic mutant pool (full 12-PUT cosmic-ray empirics: **5.14%** overall AST overlap rate, with three classes — HP/SI/TF, totaling 159 mutants — at **0/0/0** overlap).
+- **Layer 1, Definitional (§3.2.0).** Necessary conditions for semantic mutation: (a) cross-function-boundary replacement, (b) dependence on domain knowledge, and (c) change in algorithmic class. The five meta mutation operator classes — CE, OS, HP, TF, and SI (also written mut_C, mut_M, mut_G, mut_T, mut_F) — specialise these necessary conditions across the four PUT classes.
+- **Layer 2, Operational (§2.3, §4.4).** Equivalence criteria E1 ∧ E2 give the conservative complete instantiation of the necessary conditions. We justify this choice against three candidate definitions: semantic equivalence alone, output equivalence alone, and the conjunction.
+- **Layer 3, Applied (§3.2.6.3).** Equivalence-detection tools trace v4 mutants back to syntactic mutants, giving positive empirical evidence that the v4 mutant pool is not a subset of the syntactic-mutant pool. The full 12-PUT cosmic-ray comparison shows 5.14% overall AST overlap, with HP, SI, and TF (159 mutants in total) at 0/0/0.
 
-Additionally, this paper introduces three supporting tools: **Semantic Mutation Score (SMS)**, following the classic `killed/(mut−equiv)` structure, plus an **engineering attribution layer** using likely root cause analysis (LRCA) to conduct an empirical audit demonstration of MR sets across 60 cells spanning four representative classes of scientific computing programs. The audit reports: (a) tool implementation feasibility, (b) SMS behavior on meta pattern slices, (c) cross-class consistency, and (d) empirical differences from existing MR metrics (§5). **The 60-cell audit is an empirical demonstration following the establishment of the three-layer methodological framework, not the paper's main contribution** — the primary contribution lies in the methodological framework of Layers 1-3.
+The paper also introduces three supporting tools. The first is the SMS itself, which keeps the classical `killed / (mut − equiv)` formula. The second is an engineering attribution layer that uses LRCA. The third is the 60-cell empirical audit across four representative classes of scientific computing programs, which reports tool implementation feasibility, SMS behaviour on meta-pattern slices, cross-class consistency, and empirical differences from existing MR metrics (see §5). The 60-cell audit is one demonstration following the three-layer framework, not the paper's main contribution; the primary contribution is the framework of Layers 1 – 3.
 
-**Theoretical commitment**: This paper's SMS strictly reduces to the classic Jia & Harman syntactic Mutation Score (MS) in the degenerate limit — classic MS is a special case of SMS when all extension dimensions are disabled. This establishes this paper's identity as a true generalization of classic mutation testing.
+**Theoretical commitment.** SMS strictly reduces to the classical Jia and Harman syntactic Mutation Score in the degenerate limit, so the classical MS is a special case of SMS when all extension dimensions are disabled. This establishes the paper's identity as a true generalisation of classical mutation testing.
 
-This paper does not claim "how adequacy should be defined" — that proposition is reserved for P4 (TOSEM) unified theoretical work.
+We do not claim "how adequacy should be defined"; that proposition is reserved for the P4 unified-theory companion paper, currently targeted at *ACM Transactions on Software Engineering and Methodology*.
 
 ### 1.3 Three-Year Roadmap Position and Related Work
 
@@ -71,15 +79,15 @@ Overview of semantic-aware mutation work in the past 5 years:
 |---|---|---|
 | Humbatova, Jahangirova & Tonella (DeepCrime, ISSTA 2021) | Deep learning systems (real-fault-based mutation) | Single class (deep learning); P2 includes ML as one of 4 classes |
 | Tip, Bell & Schäfer (LLMorpheus, arXiv 2024) | JavaScript LLM mutants | Single language; P2 conducts cross-source LLM ablation on Python scientific computing kernels (§4.2.5) |
-| Jia & Harman (classic survey, TSE 2011) + Papadakis et al. (survey, Adv. Computers 2019) | Syntactic mutation | P2 is backward-compatible (§9 degeneration theorem) and extends at the domain-semantic layer |
+| Jia & Harman (classic survey, TSE 2011) + Papadakis et al. (survey, Adv. Computers 2019) | Syntactic mutation | P2 is backward-compatible (§2.8 degeneration theorem) and extends at the domain-semantic layer |
 
 P2's unique positioning: **meta pattern-driven + unified framework across 4 classes + strict compatibility with classic MS as an intensional extension**.
 
-**CPH grounding of classical mutation testing (R2 round-2 NEW)**: The syntactic baseline of this methodology rests on the classical Coupling Effect Hypothesis (CPH) — DeMillo, Lipton & Sayward (1978) hypothesized that tests detecting simple faults also detect complex faults; Andrews, Briand & Labiche (2005) and Just et al. (2014, FSE) empirically confirmed that mutants are valid surrogates for real faults; Papadakis et al. (2019) provided the most comprehensive post-Jia & Harman (2011) survey of mutation testing advances. §3.2.6 of this paper argues: **CPH holds within the scope of syntactic mutation but is non-trivial in the scope of domain-semantic mutation** — syntactic mutants cannot reach P2's four semantic operator classes (HP/SI/TF/OS); even when syntactic mutation testing couples simple syntactic faults to complex syntactic faults, that coupling does not extend to domain-semantic faults (see §3.2.6.0 systematic-vs-incidental + §3.2.6.3 12-PUT empirics 5.14% AST overlap rate).
+**CPH grounding of classical mutation testing.** The syntactic baseline of our methodology rests on the classical Coupling Effect Hypothesis (CPH). DeMillo, Lipton, and Sayward (1978) hypothesised that tests detecting simple faults also detect complex faults. Andrews, Briand, and Labiche (2005) and Just et al. (2014) empirically confirmed that mutants are valid surrogates for real faults. Papadakis et al. (2019) provided the most comprehensive post-2011 survey of mutation-testing advances. We argue in §3.2.6 that CPH holds within the scope of syntactic mutation but is non-trivial across the syntactic-versus-domain-semantic boundary: syntactic mutants cannot reach the four semantic operator classes HP, SI, TF, and OS, and even when syntactic mutation testing couples simple syntactic faults to complex syntactic faults, that coupling does not extend to domain-semantic faults. The §3.2.6.0 systematic-versus-incidental argument and the §3.2.6.3 12-PUT empirics (5.14% AST overlap) provide the empirical witness.
 
-**Recent work on LLM-generated mutants**: Tip et al. (2024) proposed LLMorpheus, using LLMs to generate mutants on JavaScript instead of fixed operator sets, reporting fault-detection comparable to traditional operators but with lower equivalent rates, and observing medium-effect intervals in effect-size reports for LLM-mutants. Petrović & Ivanković (2018) reported approximately 20% productive mutant ratio on Google's internal 500,000-mutant dataset, numerically close to this paper's §5.6.2 LRCA C1_share measured levels (default threshold 0.16, calibrated 0.20) — **a numerical coincidence rather than mechanism validation**; see §6.1 for the detailed disambiguation. This paper's §5.7.2 measured Cliff's δ = 0.323 is in the same magnitude as the LLM-mutant medium-effect phenomenon observed by Tip et al. (2024) on JavaScript. **Estimand caveat**: Tip 2024 compares "LLM mutants vs traditional mutants on fault detection rate" (cross-source comparison), while this paper's §5.7.2 compares "aligned vs cross MP slice on the same mutant pool" (single-source within-pool comparison). The numerical proximity of the two δ values does not constitute substantive support, serving only as a reference to the medium-effect phenomenon in LLM-mutant literature.
+**Recent work on LLM-generated mutants.** Tip, Bell, and Schäfer (2024) proposed LLMorpheus, which uses LLMs to generate mutants on JavaScript instead of fixed operator sets. They report fault detection comparable to traditional operators but lower equivalent rates, and observe medium-effect intervals when reporting effect sizes for LLM-mutants. Petrović and Ivanković (2018) reported approximately 20% productive mutants on Google's internal 500,000-mutant dataset, numerically close to our LRCA C1\_share measurements in §5.6.2 (0.16 at default threshold and 0.20 calibrated) — a numerical coincidence rather than mechanism validation, as we discuss in §6.1. The Cliff's δ = 0.323 from §5.7.2 is in the same magnitude as the LLM-mutant medium-effect phenomenon observed by Tip et al. (2024) on JavaScript. **Estimand caveat.** Tip et al. compare LLM mutants with traditional mutants on fault detection rate (cross-source comparison), while §5.7.2 compares aligned versus cross MP slices on the same mutant pool (single-source within-pool comparison). The numerical proximity of the two δ values does not constitute substantive support; it serves only as a reference to the medium-effect phenomenon in the LLM-mutant literature.
 
-**Relation to existing V&V standards (R3 round-2 NEW)**: This paper's SMS is conceptually complementary to ASME V&V 20-2009 *Standard for Verification and Validation in Computational Fluid Dynamics and Heat Transfer* §3 code verification — the latter targets code-level correctness verification of numerical solvers, while this paper's SMS targets fault-detection adequacy of MR sets. This paper's empirical scope is strictly bounded to single-output kernels (§3.1.1), with a substantial scale gap to the multi-module CFD codes targeted by V&V 20; see §6.5.3 long-term aspiration discussion.
+**Relation to existing V&V standards.** SMS is conceptually complementary to ASME V&V 20-2009 *Standard for Verification and Validation in Computational Fluid Dynamics and Heat Transfer* §3 code verification. The latter targets code-level correctness verification of numerical solvers, and SMS targets the fault-detection adequacy of MR sets. Our empirical scope is strictly bounded to single-output kernels (§3.1.1), with a substantial scale gap to the multi-module CFD codes targeted by V&V 20; §6.5.3 records the long-term aspiration.
 
 ### 1.4 Research Questions (Purely Empirical, 4 Items)
 
@@ -260,7 +268,7 @@ The equivalence determination E1 ∧ E2 given in this section is an **executable
 - E2 passes but E1 does not: extremely rare — mutant coincides at K_eq sampling points but significantly deviates at MR_i,k trigger points (mutant should not be judged equiv, E1 ∧ E2 correctly judges non-equiv)
 - E1 passes but E2 does not: common — mutant behavior consistent within MR framework but has numerical drift beyond ε_eq (still should not judge equiv, E1 ∧ E2 correct)
 
-**Degenerate Limit Connection to §9**: Under degenerate limit L_equiv (L1 ∧ L2), E2 alone already degenerates to classical bitwise equivalence (Lemma 9.1); E1 degenerates to trivial condition (MP set degenerates to equality determination under L4); three candidates are **almost everywhere consistent** under L. Under current paper data (non-degenerate limit), the conservative choice of E1 ∧ E2 is engineering-sound.
+**Degenerate Limit Connection to §2.8**: Under degenerate limit L_equiv (L1 ∧ L2), E2 alone already degenerates to classical bitwise equivalence (Lemma 9.1); E1 degenerates to trivial condition (MP set degenerates to equality determination under L4); three candidates are **almost everywhere consistent** under L. Under current paper data (non-degenerate limit), the conservative choice of E1 ∧ E2 is engineering-sound.
 
 #### 2.3.1 Determination Dual Conditions
 
@@ -371,6 +379,90 @@ AVP (component, P1) ─→ equiv & killed (construction, P2 internal extension)
               ─→ SMS (metric, classical structure)
               ─→ LRCA (description, P2 engineering attribution layer, not in SMS)
 ```
+
+### 2.8 SMS-MS Degeneration Theorem (R-8 Formalized Proof)
+
+> This section formalizes the core claim in the §2.0 P-I developmental principle: **SMS strictly regresses to the classical Jia & Harman (2011) syntactic Mutation Score (MS) in the degenerate limit where all extension dimensions are closed**. This theorem guarantees that the P2 metric family is upward-compatible with the existing mutation testing literature, and that all SMS-based empirical conclusions do not constitute metric-level semantic fragmentation in classical syntactic mutation scenarios. Theorem / Lemma / Corollary labels (9.1, 9.2, 9.3) are preserved as stable identifiers, corresponding to Appendix G of the IST submission trim.
+
+#### 2.8.1 Notation (following §2.1.2)
+
+Let the program under test (PUT) be S_i, mutation operator family mut (syntactic or semantic), mutant set mut(S_i), meta pattern (MP) set, equivalence tolerance ε_eq, equivalence sampling count K_eq, and AVP tolerance ε_AVP. Three-state decomposition: `mut(S) = killed ∪ equiv ∪ survive` (disjoint). SMS formula:
+
+$$
+\text{SMS}_{i,k,j} = \frac{|\text{killed}_{i,k,j}|}{|\text{mut}_j(S_i)| - |\text{equiv}_{i,k,j}|}
+$$
+
+#### 2.8.2 Degenerate Limit Definition (R-8 + P1-3 revision: rewritten from 6 axes to 3 joint conditions)
+
+The degenerate limit L consists of **3 joint conditions**, each controlling one layer of the SMS formula (numerator / denominator mut / denominator equiv); **L1–L6 are not 6 independent axes**, but paired joint conditions (this revision responds to the dependency queries in R0 W8 / R1 §4 / R2 W3 / DA-MAJOR-3).
+
+**Joint condition L_equiv** (controls equiv degeneration layer, Lemma 9.1):
+- **L1**: ε_eq → 0 (equivalence tolerance approaches zero)
+- **L2**: K_eq → ∞ (equivalence sampling covers the complete input space D_S)
+- Pairing rationale: On continuous D_S, when L1 holds alone but L2 does not, equiv remains a probabilistic approximation (K_eq samples cannot cover the entire D_S); when L2 holds alone but L1 does not, the bitwise equality condition is diluted by ε_eq tolerance. Both must take the limit simultaneously for equiv to degenerate to classical behavioral equivalence (which also holds strictly only outside a D_S-measure-zero set, see revised statement of Lemma 9.1).
+
+**Joint condition L_killed** (controls killed degeneration layer, Lemma 9.2):
+- **L3**: ε_AVP^k → 0 for all k ∈ MP (AVP tolerance approaches zero)
+- **L4**: MP set = {equality-checking MP_eq} (R(y, y') ≡ y = y')
+- Pairing rationale: When L3 holds but L4 does not, ε_AVP → 0 still allows non-trivial MP relations to exist (R can be monotonicity, convergence order, etc.), not degenerating to classical difference detection; when L4 holds but L3 does not, equality checking still carries ε_AVP tolerance, not strictly enforced. Both must take the limit simultaneously for killed determination to degenerate to classical difference detection.
+
+**Joint condition L_mut** (controls mut degeneration layer, Lemma 9.3):
+- **L5**: mut_j switches to rule-based syntactic operators (Mothra-style AOR/ROR/SDL/CRP, etc.), independent of domain semantics
+- **L6**: PUT class cls(I) ⊆ {imperative deterministic programs} (no probabilistic/surrogate/ML)
+- Pairing rationale: When L5 holds but L6 does not, syntactic operators on probabilistic/ML programs may still trigger subsets of domain-semantic mutation operators (e.g., literal constant replacement of dropout probability); when L6 holds but L5 does not, imperative deterministic programs can still be mutated by semantic operators (OS/HP/TF/SI), mut(S) ≠ syntactic mutants. Both must take the limit simultaneously for mut(S) to degenerate to the syntactic mutant set in the Jia & Harman literature.
+
+**Total limit L = L_equiv ∧ L_killed ∧ L_mut** (all three joint conditions hold simultaneously).
+
+#### 2.8.3 Lemmas: Three-State Decomposition Degenerates Under L
+
+**Lemma 9.1** (equiv degeneration, P1-3 revision: added measure-zero qualification). Under joint condition L_equiv (L1 ∧ L2), semantic-class equivalence (E1 ∧ E2) degenerates to classical behavioral equivalence **almost everywhere** (almost everywhere w.r.t. measure D_S).
+
+**Proof**:
+- E1 (type consistency) holds trivially in the ε_eq → 0 limit (L6 imperative program output spaces are scalar/vector, types statically guaranteed by the programming language).
+- E2 (numerical/semantic approximate equality) is defined as: for K_eq sampled inputs x ~ D_S, |S_i(x) − s'(x)| < ε_eq. Under L1 (ε_eq → 0) ∧ L2 (K_eq → ∞ with measure-equivalent sampling to D_S), this condition is **almost everywhere equivalent to** ∀x ∈ D_S \ N, S_i(x) = s'(x), where N is a D_S-measure-zero set (on continuous D_S, strict bitwise equality requires excluding measure-zero exceptions, such as numerical NaN propagation points or floating-point cancellation pathological points; on discrete D_S, N = ∅, strict bitwise equality)—this is consistent with the classical equivalent mutant definition in Jia & Harman (2011) §3 under measure-zero equivalence classes. ∎
+
+**Lemma 9.2** (killed degeneration). Under L3 ∧ L4, killed determination degenerates to classical difference detection.
+
+**Proof**:
+- L4 restricts the MP set to {MP_eq}, where MP_eq's relation R(y, y') ≡ y = y'.
+- Given mr = (r, R) ∈ MR, where r is an input transformation and R is an output relation. For mutant s', the violation condition for MP_eq is ∃x: S_i(x) ≠ s'(r(x)).
+- Under L3 (ε_AVP → 0), AVP tolerates no numerical difference; violation is equivalent to the exact inequality S_i(x) ≠ s'(r(x)).
+- When r = id (identity transformation), the violation condition becomes S_i(x) ≠ s'(x), i.e., the mutant deviates from the original program on some input—this is precisely the classical difference detection semantics.
+- When r ≠ id, MP_eq restricted by L4 still requires S_i(x) = s'(r(x)), treating it as a "reference output oracle" constructed from the original program; this still does not introduce new state classifications. ∎
+
+**Lemma 9.3** (mut degeneration). Under L5 ∧ L6, mut_j(S_i) degenerates to the syntactic mutant set in the Jia & Harman (2011) literature.
+
+**Proof**: L5 explicitly switches mut_j to rule-based syntactic operators (AOR, ROR, SDL, CRP, UOI, etc., standard Mothra/Proteum sets); L6 restricts PUTs to imperative deterministic programs, excluding triggering conditions for semantic operators on probabilistic/ML programs. Under this configuration, mut_j(S_i) is the syntactic mutant set as defined in the literature, independent of domain semantics. ∎
+
+#### 2.8.4 Main Theorem: SMS → MS
+
+**Theorem 9.1** (SMS-MS degeneration theorem, P1-3 revision). In the degenerate limit L = L_equiv ∧ L_killed ∧ L_mut, **almost everywhere** (almost everywhere w.r.t. D_S),
+
+$$
+\text{SMS}_{i,k,j} \xrightarrow{L} \text{MS}_{i,j} := \frac{|\text{killed}_{i,j}^{\text{classic}}|}{|\text{mut}_j^{\text{syntax}}(S_i)| - |\text{equiv}_{i,j}^{\text{classic}}|}
+$$
+
+where the right-hand side is the classical Mutation Score of Jia & Harman (2011), killed^classic is the difference detection set, equiv^classic is the behavioral equivalent mutant set, and mut^syntax is the syntactic mutant set.
+
+**Proof**: By Lemmas 9.1-9.3,
+
+- **Numerator**: Under L3 ∧ L4, killed_{i,k,j} → killed_{i,j}^{classic} (Lemma 9.2). L4 simultaneously makes the MR_{i,k} set trivial over k (only MP_eq remains), the index k degenerates, and the subscript k in SMS can be omitted.
+- **Denominator |mut_j(S_i)|**: Under L5 ∧ L6 → |mut_j^{syntax}(S_i)| (Lemma 9.3).
+- **Denominator |equiv_{i,k,j}|**: Under L1 ∧ L2 → |equiv_{i,j}^{classic}| (Lemma 9.1).
+
+Substituting into the numerator and denominator on the right-hand side of the SMS formula yields MS_{i,j}. ∎
+
+#### 2.8.5 Corollary: LRCA Trivialization
+
+**Corollary 9.1** (generic statement, post R2 round-2 attribution audit). In the degenerate limit L = L1 ∧ L2 ∧ L3 (the three joint conditions formalized in §2.8.2), the likely root cause inventory (LRCA) C = {C1, ..., C5} degenerates to a single state {C1}.
+
+**Sketch**: Each of C2–C5's triggering preconditions depends on at least one of the L_j conditions being violated. Concretely, when L1 ∧ L2 ∧ L3 hold simultaneously, every "non-trivial space" dimension of the SMS formula (MP non-triviality, AVP tolerance non-zero, non-empty equiv set, MR-design degree of freedom, class-mapping openness) is closed at once, so the triggering set for C2–C5 is empty (read off from the LRCA decision tree in §2.6.1 and §4.6.3). The detailed per-C_k to per-L_j minimum-sufficient mapping depends on engineering details (§4.6 LRCA classifier thresholds), and we do not claim a one-to-one correspondence at the §2.8 formal level — readers wanting the concrete mapping can trace it via the §2.6 decision tree + §4.6 LRCA three-layer operator documentation.
+
+Thus under L, suspect_share → 0, LRCA reports only C1 (metric direct readout) — SMS degenerates to a single-layer metric, consistent with the engineering attribution structure of Jia & Harman (2011) MS. ∎
+
+#### 2.8.6 Empirical Consistency Statement
+
+Theorem 9.1 + Corollary 9.1 jointly guarantee: **Any SMS-based empirical conclusions (such as Cliff's δ, Friedman χ², Spearman ρ in §5.7-§5.9) are structurally consistent with the existing Jia & Harman (2011) literature in classical syntactic mutation scenarios**, and do not constitute metric-level semantic fragmentation. This is the intrinsic scientific guarantee of this paper's symbolic system (§2.1) under the "symbolic stability statement" in §2.1.3.
 
 ---
 
@@ -521,7 +613,7 @@ Classic syntactic mutation tools (Jia & Harman 2011 survey) operate at the AST n
 
 **Higher-Order Mutation (HOM) caveat**: Jia & Harman (2009 SBSE) and Kintis et al. (2018 STVR) proposed that HOM, by combining multiple first-order syntactic mutations (e.g., AOR + SDL), could in principle produce composite syntactic mutants partially equivalent to OS / HP / TF / SI. For example, AOR (`*` → `+`) + SDL (delete one line) might simulate partial effects of OS API replacement on some PUTs. The §5 empirics in this paper did not conduct comparative experiments on HOM; §7 R12 (NEW) lists "empirical testing of HOM equivalence" as a residual threat; the "tool unreachability" claim in §3.2.6 is strictly limited to first-order syntactic tools (mutmut / cosmic-ray default configurations belong to this class).
 
-**Tool selection justification**: If comparative experiments are conducted (§5.10 plan), both mutmut [Hovde 2018] + cosmic-ray [Tomilin 2017] dual tools should be used simultaneously to exclude single-tool operator set bias; mutpy [Hovstadius 2014] is not selected due to Python 3.10+ incompatibility (testing sklearn/scipy reports errors); Pitest is a Java tool, not comparable. Multi-tool comparison can exclude reasonable reviewer concerns about "subjective tool selection."
+**Tool selection justification**: If comparative experiments are conducted (§5.10 plan), both mutmut [Hovmöller 2016] + cosmic-ray [Bingham 2015] dual tools should be used simultaneously to exclude single-tool operator set bias; mutpy [Hałas 2012] is not selected due to Python 3.10+ incompatibility (testing sklearn/scipy reports errors); Pitest is a Java tool, not comparable. Multi-tool comparison can exclude reasonable reviewer concerns about "subjective tool selection."
 
 **Expected findings from comparative experiments** (based on the argument that OS / HP / TF / SI are not covered by tools): The aligned-cross Cliff's δ on 60-cell SMS for mutants produced by syntactic tools should be significantly lower than the measured δ = 0.446 (v3b) for semantic operators in this paper, because syntactic tools do not distinguish MR-MP alignment, and their AST operations do not carry semantic alignment information.
 
@@ -1695,6 +1787,8 @@ v3 / v3b data collection used §4.2.4 original Phase-1 dual-blind protocol (Clau
 - **Papadakis, M., Kintis, M., Zhang, J., Jia, Y., Le Traon, Y., & Harman, M.** (2019). Mutation testing advances: An analysis and survey. *Advances in Computers*, 112, 275–378. https://doi.org/10.1016/bs.adcom.2018.03.015 (Most-recent comprehensive survey of mutation testing advances post-Jia & Harman 2011; cited in §1.3.2 as the contemporary literature anchor for syntactic mutation testing methodology.)
 - **Kintis, M., Papadakis, M., Papadopoulos, A., Valvis, E., Malevris, N., & Le Traon, Y.** (2018). How effective are mutation testing tools? An empirical analysis of Java mutation testing tools with manual analysis and real faults. *Empirical Software Engineering*, 23(4), 2426–2463. https://doi.org/10.1007/s10664-017-9582-5
 - **Ammann, P., & Offutt, J.** (2008). *Introduction to software testing* (1st ed.). Cambridge University Press. (Standard pedagogical reference for mutation testing notation and equivalence detection; cited in §2.1.1 vocabulary inheritance.)
+- **Delgado-Pérez, P., & Chicano, F.** (2020). An experimental and practical study on the equivalent mutant connection: An evolutionary approach. *Information and Software Technology*, 124, 106317. https://doi.org/10.1016/j.infsof.2020.106317 (Recent IST methodology paper on the equivalent-mutant problem; cited in §2.3 as foundation for extending bitwise-equivalence to E1 ∧ E2 semantic-class equivalence.)
+- **Zhang, M., Keung, J. W., Chen, T. Y., & Xiao, Y.** (2021). Validating class integration test order generation systems with Metamorphic Testing. *Information and Software Technology*, 132, 106507. https://doi.org/10.1016/j.infsof.2020.106507 (IST-published MT validation in non-scientific-computing domain; co-authored by T. Y. Chen, the originator of MT.)
 
 ### 8.2 Industrial-scale mutation testing practice
 
@@ -1704,6 +1798,7 @@ v3 / v3b data collection used §4.2.4 original Phase-1 dual-blind protocol (Clau
 ### 8.3 LLM-based mutation generation
 
 - **Tip, F., Bell, J., & Schäfer, M.** (2024). LLMorpheus: Mutation testing using large language models. *arXiv preprint* arXiv:2404.09952. https://arxiv.org/abs/2404.09952
+- **Moradi Dakhel, A., Nikanjam, A., Majdinasab, V., Khomh, F., & Desmarais, M. C.** (2024). Effective test generation using pre-trained Large Language Models and mutation testing. *Information and Software Technology*, 171, 107468. https://doi.org/10.1016/j.infsof.2024.107468 (IST-published LLM + mutation-testing for test-generation on Java PUTs; cited in §1.3.2 as the IST anchor for the LLM-mutant lineage.)
 
 ### 8.4 Deep-learning and general fault benchmarks
 
@@ -1712,7 +1807,7 @@ v3 / v3b data collection used §4.2.4 original Phase-1 dual-blind protocol (Clau
 
 ### 8.5 Statistical methodology
 
-- **Romano, J., Kromrey, J. D., Coraggio, J., Skowronek, J., & Devine, L.** (2006). Appropriate statistics for ordinal level data: Should we really be using t-test and Cohen's d for evaluating group differences on the NSSE and other surveys? Annual Meeting of the Florida Association of Institutional Research, Cocoa Beach, FL. (Source of Cliff's δ small/medium/large thresholds 0.147 / 0.330 / 0.474; cited in §5.2 H2 definition and §5.7.2 verdict.)
+- **Romano, J., Kromrey, J. D., Coraggio, J., & Skowronek, J.** (2006). Appropriate statistics for ordinal level data: Should we really be using t-test and Cohen's d for evaluating group differences on the NSSE and other surveys? Annual Meeting of the Florida Association of Institutional Research, Cocoa Beach, FL. (Source of Cliff's δ small/medium/large thresholds 0.147 / 0.330 / 0.474; cited in §5.2 H2 definition and §5.7.2 verdict.)
 - **Vargha, A., & Delaney, H. D.** (2000). A critique and improvement of the CL common language effect size statistics of McGraw and Wong. *Journal of Educational and Behavioral Statistics*, 25(2), 101–132. https://doi.org/10.3102/10769986025002101 (Establishes the canonical Â₁₂ measure equivalent to Cliff's δ + 0.5, used as a methodological reference for non-parametric effect-size reporting in §5.6.)
 
 ### 8.6 Numerical / scientific computing reference
@@ -1722,102 +1817,15 @@ v3 / v3b data collection used §4.2.4 original Phase-1 dual-blind protocol (Clau
 
 ### 8.7 Software / mutation testing tools (cited in §3.2.6 and §7 R12)
 
-- **Hovde, A.** (2018–present). *mutmut*: A Python mutation testing tool. https://github.com/boxed/mutmut (Python-based first-order syntactic mutation tool; cited as a representative of "first-order syntactic tools" in §3.2.6 caveat.)
-- **Tomilin, A.** (2017–present). *cosmic-ray*: Python mutation testing. https://github.com/sixty-north/cosmic-ray (Cited alongside mutmut for the §5.10 planned tool ablation.)
-- **Hovstadius, K.** (2014–present). *mutpy*: Mutation testing for Python. https://github.com/mutpy/mutpy (Cited in §7 R12 as Python-3.10+-incompatible; not used as a comparator.)
+- **Hovmöller, A.** (2016–present). *mutmut*: A Python mutation testing tool. https://github.com/boxed/mutmut (Python-based first-order syntactic mutation tool; cited as a representative of "first-order syntactic tools" in §3.2.6 caveat.)
+- **Bingham, A.** (2015–present). *cosmic-ray*: Python mutation testing. Sixty North. https://github.com/sixty-north/cosmic-ray (Cited alongside mutmut for the §5.10 planned tool ablation.)
+- **Hałas, K.** (2012–present). *mutpy*: Mutation testing for Python. https://github.com/mutpy/mutpy (Cited in §7 R12 as Python-3.10+-incompatible; not used as a comparator.)
 
 ### 8.8 Companion P-series papers
 
 - **Li, M. et al.** (under review). Empirical audit of metamorphic-relation meta-patterns in scientific computing software (P1). *International Conference on Software Analysis, Evolution and Reengineering (SANER) 2027.*
 - **Li, M. et al.** (under review). [P2-CN companion]. *Progress in Nuclear Energy* (NED). (Reference D7 in §1.6.1.)
 
----
-
-## Section 9 · SMS-MS Degeneration Theorem (R-8 Formalized Proof)
-
-> This section formalizes the core claim in the §2.0 P-I developmental principle: **SMS strictly regresses to the classical Jia & Harman (2011) syntactic Mutation Score (MS) in the degenerate limit where all extension dimensions are closed**. This theorem guarantees that the P2 metric family is upward-compatible with the existing mutation testing literature, and that all SMS-based empirical conclusions do not constitute metric-level semantic fragmentation in classical syntactic mutation scenarios.
-
-### 9.1 Notation (following §2.1.2)
-
-Let the program under test (PUT) be S_i, mutation operator family mut (syntactic or semantic), mutant set mut(S_i), meta pattern (MP) set, equivalence tolerance ε_eq, equivalence sampling count K_eq, and AVP tolerance ε_AVP. Three-state decomposition: `mut(S) = killed ∪ equiv ∪ survive` (disjoint). SMS formula:
-
-$$
-\text{SMS}_{i,k,j} = \frac{|\text{killed}_{i,k,j}|}{|\text{mut}_j(S_i)| - |\text{equiv}_{i,k,j}|}
-$$
-
-### 9.2 Degenerate Limit Definition (R-8 + P1-3 revision: rewritten from 6 axes to 3 joint conditions)
-
-The degenerate limit L consists of **3 joint conditions**, each controlling one layer of the SMS formula (numerator / denominator mut / denominator equiv); **L1–L6 are not 6 independent axes**, but paired joint conditions (this revision responds to the dependency queries in R0 W8 / R1 §4 / R2 W3 / DA-MAJOR-3).
-
-**Joint condition L_equiv** (controls equiv degeneration layer, Lemma 9.1):
-- **L1**: ε_eq → 0 (equivalence tolerance approaches zero)
-- **L2**: K_eq → ∞ (equivalence sampling covers the complete input space D_S)
-- Pairing rationale: On continuous D_S, when L1 holds alone but L2 does not, equiv remains a probabilistic approximation (K_eq samples cannot cover the entire D_S); when L2 holds alone but L1 does not, the bitwise equality condition is diluted by ε_eq tolerance. Both must take the limit simultaneously for equiv to degenerate to classical behavioral equivalence (which also holds strictly only outside a D_S-measure-zero set, see revised statement of Lemma 9.1).
-
-**Joint condition L_killed** (controls killed degeneration layer, Lemma 9.2):
-- **L3**: ε_AVP^k → 0 for all k ∈ MP (AVP tolerance approaches zero)
-- **L4**: MP set = {equality-checking MP_eq} (R(y, y') ≡ y = y')
-- Pairing rationale: When L3 holds but L4 does not, ε_AVP → 0 still allows non-trivial MP relations to exist (R can be monotonicity, convergence order, etc.), not degenerating to classical difference detection; when L4 holds but L3 does not, equality checking still carries ε_AVP tolerance, not strictly enforced. Both must take the limit simultaneously for killed determination to degenerate to classical difference detection.
-
-**Joint condition L_mut** (controls mut degeneration layer, Lemma 9.3):
-- **L5**: mut_j switches to rule-based syntactic operators (Mothra-style AOR/ROR/SDL/CRP, etc.), independent of domain semantics
-- **L6**: PUT class cls(I) ⊆ {imperative deterministic programs} (no probabilistic/surrogate/ML)
-- Pairing rationale: When L5 holds but L6 does not, syntactic operators on probabilistic/ML programs may still trigger subsets of domain-semantic mutation operators (e.g., literal constant replacement of dropout probability); when L6 holds but L5 does not, imperative deterministic programs can still be mutated by semantic operators (OS/HP/TF/SI), mut(S) ≠ syntactic mutants. Both must take the limit simultaneously for mut(S) to degenerate to the syntactic mutant set in the Jia & Harman literature.
-
-**Total limit L = L_equiv ∧ L_killed ∧ L_mut** (all three joint conditions hold simultaneously).
-
-### 9.3 Lemmas: Three-State Decomposition Degenerates Under L
-
-**Lemma 9.1** (equiv degeneration, P1-3 revision: added measure-zero qualification). Under joint condition L_equiv (L1 ∧ L2), semantic-class equivalence (E1 ∧ E2) degenerates to classical behavioral equivalence **almost everywhere** (almost everywhere w.r.t. measure D_S).
-
-**Proof**:
-- E1 (type consistency) holds trivially in the ε_eq → 0 limit (L6 imperative program output spaces are scalar/vector, types statically guaranteed by the programming language).
-- E2 (numerical/semantic approximate equality) is defined as: for K_eq sampled inputs x ~ D_S, |S_i(x) − s'(x)| < ε_eq. Under L1 (ε_eq → 0) ∧ L2 (K_eq → ∞ with measure-equivalent sampling to D_S), this condition is **almost everywhere equivalent to** ∀x ∈ D_S \ N, S_i(x) = s'(x), where N is a D_S-measure-zero set (on continuous D_S, strict bitwise equality requires excluding measure-zero exceptions, such as numerical NaN propagation points or floating-point cancellation pathological points; on discrete D_S, N = ∅, strict bitwise equality)—this is consistent with the classical equivalent mutant definition in Jia & Harman (2011) §3 under measure-zero equivalence classes. ∎
-
-**Lemma 9.2** (killed degeneration). Under L3 ∧ L4, killed determination degenerates to classical difference detection.
-
-**Proof**:
-- L4 restricts the MP set to {MP_eq}, where MP_eq's relation R(y, y') ≡ y = y'.
-- Given mr = (r, R) ∈ MR, where r is an input transformation and R is an output relation. For mutant s', the violation condition for MP_eq is ∃x: S_i(x) ≠ s'(r(x)).
-- Under L3 (ε_AVP → 0), AVP tolerates no numerical difference; violation is equivalent to the exact inequality S_i(x) ≠ s'(r(x)).
-- When r = id (identity transformation), the violation condition becomes S_i(x) ≠ s'(x), i.e., the mutant deviates from the original program on some input—this is precisely the classical difference detection semantics.
-- When r ≠ id, MP_eq restricted by L4 still requires S_i(x) = s'(r(x)), treating it as a "reference output oracle" constructed from the original program; this still does not introduce new state classifications. ∎
-
-**Lemma 9.3** (mut degeneration). Under L5 ∧ L6, mut_j(S_i) degenerates to the syntactic mutant set in the Jia & Harman (2011) literature.
-
-**Proof**: L5 explicitly switches mut_j to rule-based syntactic operators (AOR, ROR, SDL, CRP, UOI, etc., standard Mothra/Proteum sets); L6 restricts PUTs to imperative deterministic programs, excluding triggering conditions for semantic operators on probabilistic/ML programs. Under this configuration, mut_j(S_i) is the syntactic mutant set as defined in the literature, independent of domain semantics. ∎
-
-### 9.4 Main Theorem: SMS → MS
-
-**Theorem 9.1** (SMS-MS degeneration theorem, P1-3 revision). In the degenerate limit L = L_equiv ∧ L_killed ∧ L_mut, **almost everywhere** (almost everywhere w.r.t. D_S),
-
-$$
-\text{SMS}_{i,k,j} \xrightarrow{L} \text{MS}_{i,j} := \frac{|\text{killed}_{i,j}^{\text{classic}}|}{|\text{mut}_j^{\text{syntax}}(S_i)| - |\text{equiv}_{i,j}^{\text{classic}}|}
-$$
-
-where the right-hand side is the classical Mutation Score of Jia & Harman (2011), killed^classic is the difference detection set, equiv^classic is the behavioral equivalent mutant set, and mut^syntax is the syntactic mutant set.
-
-**Proof**: By Lemmas 9.1-9.3,
-
-- **Numerator**: Under L3 ∧ L4, killed_{i,k,j} → killed_{i,j}^{classic} (Lemma 9.2). L4 simultaneously makes the MR_{i,k} set trivial over k (only MP_eq remains), the index k degenerates, and the subscript k in SMS can be omitted.
-- **Denominator |mut_j(S_i)|**: Under L5 ∧ L6 → |mut_j^{syntax}(S_i)| (Lemma 9.3).
-- **Denominator |equiv_{i,k,j}|**: Under L1 ∧ L2 → |equiv_{i,j}^{classic}| (Lemma 9.1).
-
-Substituting into the numerator and denominator on the right-hand side of the SMS formula yields MS_{i,j}. ∎
-
-### 9.5 Corollary: LRCA Trivialization
-
-**Corollary 9.1** (generic statement, post R2 round-2 attribution audit). In the degenerate limit L = L1 ∧ L2 ∧ L3 (the three joint conditions formalized in §9.2), the likely root cause inventory (LRCA) C = {C1, ..., C5} degenerates to a single state {C1}.
-
-**Sketch**: Each of C2–C5's triggering preconditions depends on at least one of the L_j conditions being violated. Concretely, when L1 ∧ L2 ∧ L3 hold simultaneously, every "non-trivial space" dimension of the SMS formula (MP non-triviality, AVP tolerance non-zero, non-empty equiv set, MR-design degree of freedom, class-mapping openness) is closed at once, so the triggering set for C2–C5 is empty (read off from the LRCA decision tree in §2.6.1 and §4.6.3). The detailed per-C_k to per-L_j minimum-sufficient mapping depends on engineering details (§4.6 LRCA classifier thresholds), and we do not claim a one-to-one correspondence at the §9 formal level — readers wanting the concrete mapping can trace it via the §2.6 decision tree + §4.6 LRCA three-layer operator documentation.
-
-Thus under L, suspect_share → 0, LRCA reports only C1 (metric direct readout) — SMS degenerates to a single-layer metric, consistent with the engineering attribution structure of Jia & Harman (2011) MS. ∎
-
-### 9.6 Empirical Consistency Statement
-
-Theorem 9.1 + Corollary 9.1 jointly guarantee: **Any SMS-based empirical conclusions (such as Cliff's δ, Friedman χ², Spearman ρ in §5.7-§5.9) are structurally consistent with the existing Jia & Harman (2011) literature in classical syntactic mutation scenarios**, and do not constitute metric-level semantic fragmentation. This is the intrinsic scientific guarantee of this paper's symbolic system (§2.1) under the "symbolic stability statement" in §2.1.3.
-
----
 
 ## Locked Decision Inventory (D1-D8 + W-2)
 

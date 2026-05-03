@@ -1,0 +1,79 @@
+cff-version: 1.2.0
+message: "If you use this replication package, please cite both the paper and this archive."
+type: dataset
+title: "Replication Package — When Same-Prompt LLM Source Diversity Doesn't Help: An Ablation of Semantic Mutation Operators in Metamorphic Testing for Single-Output Scientific Computing Kernels"
+abstract: >
+  Replication bundle for the P2 SMS audit paper (IST 2026, under
+  review). Contains 12 Programs Under Test, 60 metamorphic-test cells,
+  292 confirmed LLM-generated mutants from a 3-LLM cross-source pool
+  (Claude Opus 4.6 + GPT-5.4 + DeepSeek V4 Pro), 1,250 cosmic-ray
+  syntactic mutants for AST comparison, the full statistical pipeline
+  (Cliff's δ, Friedman χ², mixed effects, RQ4 pattern coverage), 5
+  reviewer reports per round across two rounds, and the Stage-4.5
+  final integrity report. Replication from the committed cache is
+  deterministic (SEED=42, temperature=0); no LLM API access required.
+authors:
+  - family-names: "Li"
+    given-names: "Meng"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+    affiliation: "Affiliation Placeholder"
+version: "1.0.0"
+date-released: "2026-05-02"
+license: MIT
+license-url: "https://opensource.org/licenses/MIT"
+url: "https://github.com/PLACEHOLDER/p2-sms-audit"
+repository-code: "https://github.com/PLACEHOLDER/p2-sms-audit"
+doi: "10.5281/zenodo.PLACEHOLDER"
+keywords:
+  - "metamorphic testing"
+  - "mutation testing"
+  - "semantic mutation operators"
+  - "test adequacy"
+  - "scientific computing"
+  - "large language models"
+  - "LLM-generated mutants"
+  - "ablation study"
+  - "Cliff's delta"
+  - "reproducibility"
+references:
+  - type: article
+    title: "When Same-Prompt LLM Source Diversity Doesn't Help: An Ablation of Semantic Mutation Operators in Metamorphic Testing for Single-Output Scientific Computing Kernels"
+    authors:
+      - family-names: "Li"
+        given-names: "Meng"
+    journal: "Information and Software Technology"
+    year: 2026
+    doi: "10.1016/j.infsof.PLACEHOLDER"
+    notes: "Companion paper this archive replicates. DOI placeholder until acceptance."
+  - type: article
+    title: "Domain-Knowledge-Driven Metamorphic Relation Identification for Scientific Computing Software (P1 companion)"
+    authors:
+      - family-names: "Li"
+        given-names: "Meng"
+    year: 2025
+    doi: "10.5281/zenodo.PLACEHOLDER-P1"
+    notes: "Companion P1 paper providing the AVP infrastructure that P2 reuses."
+  - type: article
+    title: "DeepCrime: Mutation Testing of Deep Learning Systems Based on Real Faults"
+    authors:
+      - family-names: "Humbatova"
+        given-names: "Nargiz"
+      - family-names: "Jahangirova"
+        given-names: "Gunel"
+      - family-names: "Tonella"
+        given-names: "Paolo"
+    conference:
+      name: "ISSTA 2021"
+    year: 2021
+    doi: "10.1145/3460319.3464825"
+  - type: article
+    title: "LLMorpheus: Mutation Testing using Large Language Models"
+    authors:
+      - family-names: "Tip"
+        given-names: "Frank"
+      - family-names: "Bell"
+        given-names: "Jonathan"
+      - family-names: "Schaefer"
+        given-names: "Max"
+    year: 2024
+    notes: "LLM-mutant baseline cited in §2 and §3.2.6 (preventive defense)."

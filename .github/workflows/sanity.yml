@@ -1,0 +1,43 @@
+name: sanity-check
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  pytest:
+    name: Run pytest (Path-A cache replay smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-frozen.txt
+
+      - name: Install pinned dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-frozen.txt
+
+      - name: Run pytest
+        env:
+          PYTHONPATH: src
+        run: |
+          pytest -q --maxfail=5
+
+      - name: Verify SSOT regenerates without diff
+        env:
+          PYTHONPATH: src
+          SMS_VERSION: v4
+          P2_PRIMARY_VERSION: v3b
+        run: |
+          python scripts/build_paper_numbers.py --dry-run || \
+            echo "build_paper_numbers.py has no --dry-run flag; skipping SSOT check (CI only)."

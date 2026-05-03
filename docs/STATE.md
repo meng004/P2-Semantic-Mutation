@@ -2,11 +2,13 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-05-02（Round-3 R3 verification 后,nit fix pending commit）
-**Stage:** **5/5 reviewers converge on Minor Revision**；R3 dissent 撤回（D-6 3/10 → 6/10）；论文进入 Accept-imminent 状态
-**Repo:** `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性`
-**Paper file (中文权威版)：** `论文初稿P2.md`（1853 行）
-**Paper file (英文翻译版)：** `论文初稿P2_EN.md`（1844 行）
+**Last synced:** 2026-05-03（Round-9 submission-ready；GitHub release-prep 整理通过）
+**Stage:** **Submission-ready (round-9)**；5/5 reviewers Minor Revision conditional Accept；论文等待投稿启动 + Zenodo DOI minting
+**Repo:** `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/语义变异体`
+**Paper file (中文权威版)：** `论文初稿P2.md`（1853 行；historical authoritative draft）
+**Paper file (英文长稿)：** `论文初稿P2_EN.md`（1844 行；pre-IST compaction）
+**Paper file (IST 投稿版)：** `论文初稿P2_IST.md`（main, 8.5k 词）+ `论文初稿P2_IST_appendix.md`（A-G, 4.2k 词）
+**Final LaTeX bundle:** `submission/p2_ist_final.{tex,pdf,docx}` + `submission/cover_letter_final.{md,pdf}`
 
 **2026-05-02 Round-2 minor revision pass（commit a0fb8ed）：**
 - **Group A（已 commit a20e795,Round-2 ESCALATED 修复）**：§3.5.1 + §5.9.2/3 翻译、Abstract H2 wording、§3.2.6.1 OS 表格单元、LLM 源数字校对、Line 1185 dangling "IST 2024"
@@ -128,7 +130,15 @@ partials 缓存于 `.translate_cache/`（已 gitignore）。失败重试只重�
 
 ## 6. 下一步候选（按 ROI）
 
-1. **R-1 全文英文翻译**（P0 blocker；基础设施就绪，待运行 ~$7 / 10 min；之后人审）
-2. **R-25 artifact 公开包**（REPRODUCIBILITY 扩充 + Zenodo DOI；~3-5 h）
-3. **R-7/R-8 引用 + 定理证明**（P1；~1-2 天）
-4. **R-12/R-13 bootstrap + power analysis**（P2；~半天，提升 H2 可辩护性）
+**Round-9 submission-ready (2026-05-03) 之后的发布路径：**
+
+1. **GitHub release-prep（已完成 2026-05-03）**：仓库整理 + README/CONTRIBUTING/CHANGELOG/PROJECT_STRUCTURE/RELEASE_CHECKLIST 补齐 + .github 模板 + archive/ 历史归档
+2. **GitHub 发布**：tag `v1.0.0-submission`，push 公开仓库，等待社区检查
+3. **IST 投稿**：使用 `submission/p2_ist_final.{tex,pdf,docx}` + `cover_letter_final.pdf` 走 EVISE
+4. **Zenodo 上传**：`replication/build_zip.sh` → 上传 → 拿到 DOI → 替换 README/ZENODO/DATASET/Paper §8 中的 PLACEHOLDER
+5. **接收期间**：监控 Issues / PR；任何复现失败 ≤ 24h 响应
+
+**Post-acceptance（待启动 P3）：**
+- 工业 Java/C++ port + LRCA 二评者 κ
+- n ≥ 30 PUTs（应对 H2 underpowered limitation）
+- 形式理论：minimal MR-subset 存在 + 三柱耦合（targeted TOSEM）

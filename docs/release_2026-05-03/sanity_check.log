@@ -1,0 +1,79 @@
+# Pre-release sanity check log
+
+**Date:** 2026-05-03
+**Round:** 9 (submission-ready)
+**Operator:** automated harness (Claude Code)
+
+---
+
+## 1. Test suite (`pytest`)
+
+```
+$ PYTHONPATH=src python3 -m pytest tests/ -q
+==> 192 passed in ~30s
+```
+
+**Result:** PASS (192/192).
+
+Note: documentation in earlier rounds quoted 116 tests; the suite
+grew during rounds 4-8 (added Friedman, power simulation, AST-diff
+batch, cross-source equiv, calibration tests). README and
+PROJECT_STRUCTURE updated accordingly.
+
+---
+
+## 2. Sensitive-information scan
+
+| Check | Result |
+|---|---|
+| `.env` gitignored | ✓ |
+| `.claude/`, `.superpowers/`, `.translate_cache/` gitignored | ✓ |
+| API keys in tracked files (`sk-[a-zA-Z0-9]{20,}`) | ✓ none found |
+| `.env.example` contents | only placeholders (`sk-ant-...`) |
+| Author email in build scripts (`mlemon@usc.edu.cn`) | intentional (cover letter) |
+
+**Result:** PASS.
+
+---
+
+## 3. Module imports
+
+```
+$ PYTHONPATH=src python3 -c "from p2 import puts, mrs, mutators, equiv, lrca, avp, stats, pipeline"
+==> all p2 modules importable
+```
+
+**Result:** PASS.
+
+---
+
+## 4. Known caveats
+
+- The `.venv/` directory committed to git history points at the
+  pre-rename path (`MR识别/MT完备性`); contributors who clone fresh
+  must recreate their own venv via:
+  ```
+  python3.12 -m venv .venv && .venv/bin/pip install -r requirements-frozen.txt
+  ```
+  This is noted in `README.md` and `REPRODUCIBILITY.md`. `.venv` is
+  in `.gitignore`, so the GitHub clone won't carry the broken venv.
+
+- `data/lrca/` is empty (regenerable by `compute_lrca_v4_mp5.py`); not
+  a release blocker.
+
+- LaTeX byproducts (`*.aux`, `*.log`, `*.out`, `*.spl`) removed from
+  `submission/` and `archive/submission_drafts/`. Regenerable via
+  `scripts/build_ist_submission_v9.sh` (run from project root with
+  `xelatex` available).
+
+---
+
+## 5. Release decision
+
+- Software / data / manuscript: **green**.
+- Replication path A (cache replay) verified: pytest passes; modules
+  import; SSOT JSON present.
+- Pending external steps (not part of this sanity check):
+  - Zenodo upload → DOI minting → placeholder substitution
+  - GitHub repo creation / push
+  - IST EVISE submission
