@@ -238,3 +238,56 @@ Build: {pages}, {size}, zero "Missing character" warnings
 | Reviewer 2 (ARS) | 学术诚信 + 外部效度 | "n=12 的 cohort 凭什么外推到工业级" |
 
 ARS 是 *补充* 不是 *替代*——两者都必须执行。
+
+---
+
+## 7. 文献检索优先级（Paper-Search-First Policy）
+
+所有文献检索任务（含 ARS 13-Agent 研究队、reference verification、related-work 扩充、prior-art 防御），**必须优先调用 `paper-search-mcp` 工具**；Web 搜索仅作为降级 fallback。
+
+### 调用顺序（强制）
+
+```
+1. paper-search-mcp 学科首选数据库（见下表）
+2. paper-search-mcp 通用兜底：search_crossref / search_openalex / search_google_scholar
+3. WebSearch / WebFetch（仅当上述全部失败）
+```
+
+### 学科 → 首选数据库映射
+
+| 学科领域 | 首选 paper-search-mcp 工具（按优先级） | 备注 |
+|---|---|---|
+| **软件工程 / 计算机科学** | `search_dblp` → `search_arxiv` → IEEE / ACM via `search_crossref` | dblp 对 SE 顶会覆盖最全；arXiv 对最新 preprint |
+| **核行业 / 安全关键系统** | `search_crossref` → `search_openalex` → IEEE via `search_crossref` | Scopus 经 OpenAlex 间接覆盖；IEEE 对核仪控 |
+| **教改 / 教育研究** | ERIC（如可达）→ `search_crossref` → `search_openalex` | ERIC 是教育领域权威库 |
+| **生物医学 / 临床** | `search_pubmed` → `search_europepmc` → `search_medrxiv` / `search_biorxiv` | preprint 用 medrxiv / biorxiv |
+| **数学 / 物理 / 理论** | `search_arxiv` → `search_crossref` → `search_semantic` | arXiv 优先 |
+| **DOI 已知** | `get_crossref_paper_by_doi`（直查） | 跳过 search 阶段 |
+
+### ARS 13-Agent 研究队的硬约束
+
+**禁止**：将 `WebSearch` / `WebFetch` 作为首选检索工具。
+
+**必须**：先用 `paper-search-mcp` 学科首选 → 通用兜底 → 三连失败后才允许降级 Web 搜索；降级时必须在审计日志中记录"paper-search-mcp 在 [tool A, tool B, tool C] 上失败"。
+
+### 工具失败处理
+
+- **rate limit / timeout**：等 30 秒重试 1 次，仍失败则切换下一个 paper-search 工具
+- **DOI not found**：用 title + 第一作者 fuzzy search（`search_crossref`）
+- **author 名字变体**（如 Romanisation 不同）：尝试两种拼写
+- **conference paper without DOI**：用 `search_dblp` + venue 缩写
+- **textbook / standard / software repo**：跳过 paper-search，直接用 WebFetch 出版社页 / 标准官网 / GitHub 仓库
+
+### 审计日志格式
+
+每次文献检索任务结束须输出：
+
+```
+## 检索审计
+
+| Ref | 工具链 | 命中工具 | 耗时 | 状态 |
+|-----|--------|---------|------|------|
+| Sun 2024 | crossref(doi) | crossref | 0.8s | ✓ |
+| Romano 2006 | crossref(title) → openalex → google_scholar | google_scholar | 4.2s | △ no DOI |
+| ASME V&V 20 | webfetch(asme.org) | webfetch | 2.1s | ✓ standard |
+```
