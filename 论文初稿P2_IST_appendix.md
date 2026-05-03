@@ -180,7 +180,7 @@ Before the 12-PUT generalisation (§3.5 main), a single-PUT lightweight empirica
 
 ### B.5 Engineering-significance mapping
 
-j = k aligned diagonal is the H2 threshold-test slice; j ≠ k off-diagonal is control; 6 vacant cells (○, P1 H6) are not formally adjudicated and are repurposed in §6.2 as descriptive evidence for R_sem / R_kill decoupling. v3 → v3b leap (+0.123) attributes to MR-MP design reselection (single-class, post-hoc; §3.4 caveats); v3b → v4 micro-change (-0.007) attributes to LLM-source diversity under prompt-fixed.
+j = k aligned diagonal is the H2 threshold-test slice; j ≠ k off-diagonal is control; 6 vacant cells (○, P1 H6) are not formally adjudicated and are repurposed in §6.2 as descriptive evidence for R_sem / R_kill decoupling. The v3 → v4 micro-change (−0.009) attributes to LLM-source diversity under a fixed prompt; this is the source-axis null contrast underpinning §5.3.
 
 ### B.6 Mutmut vs cosmic-ray default-operator overlap
 
@@ -221,27 +221,24 @@ The mutmut / cosmic-ray null intersection on §3.5's HP/SI/TF classes (zero over
 
 ### C.1 Cross-source v4 protocol — full specification
 
-**Three-stage ablation.**
+**Two-stage ablation.**
 
 | Version | Mutant pool | c-class primary MP | Use |
 |---|---|---|---|
-| v3 | Single-source (Claude Opus 4.6) | MP5 (P1 legacy) | H2 baseline (pre-registered) |
-| v3b | Single-source (same as v3) | **MP1 (data-driven, §3.4)** | Isolate MR-MP design contribution |
-| v4 | **Cross-source** (Claude Opus 4.6 + GPT-5.4 + DeepSeek chat) | MP1 | Isolate LLM-source diversity |
+| v3 | Single-source (Claude Opus 4.6) | MP5 (P1 legacy, pre-registered) | H2 baseline |
+| v4 | **Cross-source** (Claude Opus 4.6 + GPT-5.4 + DeepSeek chat) | MP5 (held at pre-registered) | Isolate LLM-source diversity |
 
 **Protocol** (`scripts/cross_source_campaign.py`). (a) For each (PUT, operator), Claude / GPT / DeepSeek run K = 3 trials with identical prompt (§4.2.2), temperature 0.7; `source_tag` propagated to filenames. (b) **V1-V4 mechanical validation** (`src/p2/mutators/validation.py`): V1 syntax (`ast.parse`), V2 executability, V3 non-triviality (`|y_mutant - y_original| > 1e-6`), V4 signature consistency. (c) **DeepSeek model:** `deepseek-chat` (113 tokens/call, 1.8 s), not `deepseek-v4-pro` (340 tokens/call, 11 s) — quality-equivalent on a2_OS1 dry-run. (d) **Pool capacity:** 37 ops × 3 sources × 3 trials = 333 attempts; V1-V4 pass rate 89%; 298 confirmed mutants. Sources contribute nearly equally: Claude 101 / GPT 98 / DeepSeek 99 (Phase A engineering finding). (e) **Sampling** (`scripts/build_pools.py`, POOL_VERSION = v4): per-PUT 30 max, measured mean 24.3, range 10-30. c1 (GPR) yields only 10 because c1_HP1 / c1_CE1 have V1-V4 near-zero pass (WhiteKernel noise_level 1e-4 → 1e-1 perturbation has minimal output impact, triggers V3 non-trivial failure — itself §6.2 evidence).
 
-**Protocol-asymmetry (R13).** v4 does not invoke reviewer LLM (cost / speed priority; P4 will rerun dual-blind on v4 grid, ~$5-8 USD); v3 / v3b used the original Phase-1 dual-blind (Claude gen + GPT-5.4 review + DeepSeek arbitration). A fraction of Delta_delta(v3b → v4) = -0.007 may be slight v4 quality decline rather than LLM-source diversity.
+**Protocol-asymmetry (R13).** v4 does not invoke reviewer LLM (cost / speed priority; a follow-up study will rerun dual-blind on the v4 grid, ~$5-8 USD); v3 used the original Phase-1 dual-blind (Claude gen + GPT-5.4 review + DeepSeek arbitration). A fraction of the v3 → v4 source-axis shift may be slight v4 quality decline rather than LLM-source diversity.
 
-**Chained-conditioning (R11).** v4 inherits v3b post-hoc c-class primary MP selection. Delta_delta(v3b → v4) is conditional on v3b selection + identical prompt — not neutral-condition LLM-diversity test. v4-pre (cross-source × c→MP5 pre-shift) not run because (i) it answers the same question as the differential-prompt experiment more economically in P4, (ii) cost is asymmetric to narrative benefit already exposed (~$20-30, 2-3 days wall time).
+### C.1.1 Differential prompt protocol (future-work commitment)
 
-### C.1.1 Differential prompt protocol (R-16 future-work commitment)
-
-R-16 concern: v3b → v4 micro-change of -0.007 may reflect "three LLMs under identical prompt" rather than "true upper bound of LLM diversity". Separation requires *one tailored differential prompt per LLM* (skeleton: `scripts/run_differential_prompt.py`).
+The v3 → v4 micro-change of −0.009 may reflect "three LLMs under identical prompt" rather than "true upper bound of LLM diversity". Separation requires *one tailored differential prompt per LLM* (skeleton: `scripts/run_differential_prompt.py`).
 
 **Design (2×3 factorial, within-(PUT, operator)).** Factor A — prompt template, 3 levels: **V_canonical** (control, identical to v4), **V_persona** (per-LLM identity: Claude "numerical-analysis editor"; GPT "scientific-software refactorer"; DeepSeek "library-API substitution specialist"), **V_cot** (Claude `<thinking>` tags; GPT "step by step"; DeepSeek stepped-reasoning). Factor B — LLM source (Claude / GPT-5.4 / DeepSeek chat). K = 3 per cell; total 37 × 3 × 3 × 3 = **999 trials**.
 
-**Exit criteria.** If max(delta) − min(delta) < 0.05: v3b → v4 -0.007 robust. If ≥ 0.05 with prompt variant pushing delta past 0.474: H2 revised from "not met" to "prompt-conditional met" (`paper_numbers_v5.json`). If ≥ 0.05 but all delta < 0.474: prompt sensitivity exists but H2 unchanged.
+**Exit criteria.** If max(delta) − min(delta) < 0.05: the v3 → v4 −0.009 source-axis null is robust. If ≥ 0.05 with prompt variant pushing delta past 0.474: H2 revised from "not met" to "prompt-conditional met". If ≥ 0.05 but all delta < 0.474: prompt sensitivity exists but H2 unchanged.
 
 **Resources.** API ~$18-30 USD; wall 3-4 h at concurrency 4; V1-V4 only, no reviewer LLM.
 
@@ -308,7 +305,7 @@ The appendix of the reproducibility package provides cell-by-cell difference bet
 
 **Conclusion.** H5 verdict (not met) is intrinsic data property, independent of cutoff choice. v4 suspect_share distribution is severely bimodal: median 1.0, mean 0.79; 48 cross cells at suspect_share ≈ 1, 12 aligned cells in low end; the [0.20, 0.80] interior is nearly empty. Specific value 0.20 is **not load-bearing**.
 
-**Logit-transformation invariance.** Cliff's delta is rank-based (function of U / (n1·n2)), mathematically invariant under any strictly monotone transformation (Romano 2006). Logit is strictly monotone on (0, 1), so delta_logit ≡ delta_raw is a construction result. `data/results/rq2_cliffs_delta_logit_v4.json` shows delta_logit = 0.439 = delta_raw (difference 0.000), consistent with rank-invariance theorem. **Not additional robustness evidence**; H2 robustness threats come from §3.4 v3b post-hoc selection and §5.2 zero-mass dominance, not metric-scale choice.
+**Logit-transformation invariance.** Cliff's delta is rank-based (function of U / (n1·n2)), mathematically invariant under any strictly monotone transformation (Romano 2006). Logit is strictly monotone on (0, 1), so delta_logit ≡ delta_raw is a construction result. **Not additional robustness evidence**; H2 robustness threats come from §5.2 zero-mass dominance, not metric-scale choice.
 
 ### D.3 Power analysis — plug-in and stipulated-alternative
 
@@ -321,7 +318,7 @@ The appendix of the reproducibility package provides cell-by-cell difference bet
 | delta > 0.330 | Medium | 0.759 |
 | **delta > 0.474** | **Large (H2)** | **0.423** |
 
-Sample-size sweep (n_aligned ∈ {6, 12, ..., 60}, n_cross = 4×): power for delta > 0 reaches 0.974 at n=6, 0.996 at 12, plateaus thereafter. RQ2 primary analysis has very low sample-size requirement; the bottleneck is the effect-size boundary itself, not sampling noise. Even at delta_truth ≈ 0.474, sample has only ~42% chance of detecting under plug-in; but this does **not** mean "insufficient power is the cause of H2 not being met" — observed delta = 0.439 < 0.474; increasing sample only narrows CI.
+Sample-size sweep (n_aligned ∈ {6, 12, ..., 60}, n_cross = 4×): power for delta > 0 reaches 0.974 at n=6, 0.996 at 12, plateaus thereafter. RQ2 primary analysis has very low sample-size requirement; the bottleneck is the effect-size boundary itself, not sampling noise. Even at delta_truth ≈ 0.474, sample has only ~42% chance of detecting under plug-in; but this does **not** mean "insufficient power is the cause of H2 not being met" — observed delta_v3 = 0.323 < 0.474, observed delta_v4 = 0.314 < 0.474; increasing sample only narrows CI.
 
 **Stipulated-alternative (R1 W1 round-2).** Implementation via mixture-weight (`scripts/compute_rq2_power_stipulated.py`, N_sim = 2,000): SMS has heavy ties at zero (45/60 = 0), raw shifting is discontinuous (any ε > 0 jumps delta from 0.314 to 0.74). Mixture: aligned' = (probability w) sample from (observed_aligned + 0.001) + (probability 1−w) sample from observed_aligned, calibrate w so E[delta] ≈ 0.474. Calibrated w = 0.094, realised E[delta] = 0.4746.
 
@@ -365,7 +362,7 @@ The §6.4 workflow depends on external LLM API calls (Claude / GPT / DeepSeek), 
 
 ### E.2 Quarterly batch audit workflow
 
-The original §6.5.2 per-PR GitHub Actions YAML was removed in R3 round-2 because it hardcoded `SMS_VERSION=v4` + `P2_PRIMARY_VERSION=v3b` (exploratory post-hoc) into stakeholder-facing CI, propagating selection-on-response into adopters' pipelines; PR-CI threshold 0.10 contradicted §6.5.3 audit threshold 0.20.
+The original §6.5.2 per-PR GitHub Actions YAML was removed because PR-CI threshold 0.10 contradicted §6.5.3 audit threshold 0.20 and propagated stakeholder-facing CI assumptions into adopters' pipelines.
 
 **Replacement: quarterly batch audit:**
 
@@ -384,7 +381,7 @@ Quarterly: API ~$10 + automation 30 min + manual 1-2 h ≈ 0.5 person-day. Affor
 
 V&V documentation for scientific computing software (per ASME V&V 20-2009 §3 and similar guides) requires quantifiable test-adequacy evidence; current documentation often relies on code coverage + MR lists + SME signatures. SMS may appear as **research-grade supplementary evidence** alongside coverage and MR lists: (a) aligned-cell SMS per critical PUT; (b) LRCA three-layer diagnosis (C1 readout / C2-C5 attribution); (c) 60-cell matrix visualisation. Reviewers can independently run `REPRODUCIBILITY.md`.
 
-**R3 round-2 deletion** of original threshold recommendations (aligned-cell SMS ≥ 0.20 / 0.30 + C1_share ≤ 0.20): no normative backing in IEC / ISO / ASME; misreads as enforce-ready; §3.4 declares 0.275 baseline influenced by v3b post-hoc selection. **SMS reported as descriptive supplementary evidence**, with adequacy judgements left to V&V reviewers case-by-case.
+Original threshold recommendations (aligned-cell SMS ≥ 0.20 / 0.30 + C1_share ≤ 0.20) were removed: no normative backing in IEC / ISO / ASME; misreads as enforce-ready. **SMS reported as descriptive supplementary evidence**, with adequacy judgements left to V&V reviewers case-by-case.
 
 Conceptually complementary to ASME V&V 20-2009 §3 code verification (numerical-solver correctness) vs SMS (MR-set fault-detection adequacy). Substantial scale gap to multi-module CFD codes; incorporation into V&V standards body would require P5 large-scale empirics + multi-year dialogue with ASME V&V 20 / IEEE 1012 / IEC 60880 committees. **No advocacy that SMS enter any normative certification system in 2027.** SMS does not replace SME signatures, FMECA, PIRT, system-level V&V, or ASME V&V 20 §3 numerical-solver verification — it is one link in the evidence chain, not a single-point qualification.
 
@@ -402,10 +399,9 @@ Conceptually complementary to ASME V&V 20-2009 §3 code verification (numerical-
 | R4 | LRCA multi-label boundary | §A.2 priority C5>C4>C3>C2>C1; multi-label co-occurrence table in package; root_cause is "likely root cause" not definitive | C2-C5 may multi-trigger on B/D classes |
 | R9 | Mutant-pool size | Pool expanded to mean 17.4: delta moved 0.321 → 0.323, CI narrowed; **effect size is intrinsic ceiling, not pool dilution** | Some PUTs < 30 (cache-bound) |
 | R10 | LLM non-determinism | Multi-turn de-dup; K=10/20 repetitions; raw prompt+response committed for direct reuse | Claude Opus subscription lacks seed control |
-| **R11** | **Chained-conditioning (NEW, P0-5)** | Abstract / §5.5 / §6.3 downgraded v3b/v4 sign tests to exploratory; §3.4 permutation p = 0.9885; Bonferroni alpha_eff = 0.01 | Cannot be fully eliminated within this paper — needs v4-pre rerun or P4 differential prompt |
-| **R13** | **Protocol-implementation gap v3/v3b vs v4 (NEW, P1-7)** | v4 used 3 providers (Claude 101 / GPT 98 / DeepSeek 99); v4 C1_share 0.209 > v3b 0.164 weakly opposes "v4 quality decline" | Complete separation requires P4 dual-blind rerun on v4 grid |
+| **R13** | **Protocol-implementation gap v3 vs v4** | v4 used 3 providers (Claude 101 / GPT 98 / DeepSeek 99) without dual-blind; v4 C1_share 0.209 > v3 0.164 weakly opposes "v4 quality decline" | Complete separation requires a follow-up dual-blind rerun on the v4 grid |
 
-R11 and R13 are non-overlapping: R11 = *selection* asymmetry (c-class primary MP inheritance); R13 = *protocol* asymmetry (dual-blind vs V1-V4 only). Both contribute to the explanation space of Delta_delta(v3b → v4) and cannot be merged as a single signal.
+R13 is the protocol-asymmetry threat (dual-blind vs V1-V4 only) on the v3 → v4 source-axis contrast (Δδ = −0.009).
 
 ### F.2 External / construct / conclusion threats
 

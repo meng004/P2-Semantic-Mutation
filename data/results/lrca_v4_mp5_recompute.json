@@ -1,0 +1,89 @@
+{
+  "design": "v3 (same-source) vs v4 (cross-source) — class-mean SMS is primary-MP-independent",
+  "purpose": "Replace v3b-dagger-marked LRCA + class-mean numbers (Round-8.5)",
+  "note": "Class means over all 15 cells per class do NOT depend on primary-MP choice; v4 == v4-mp5 for these averages. Original v8 † was over-cautious.",
+  "anchor": "PRIMARY_CELLS_V3 (a/b/c/d → MP1/MP2/MP5/MP2)",
+  "class_means_15cells": {
+    "a": {
+      "v3_mean_sms_15cells": 0.0667,
+      "v4_mean_sms_15cells": 0.0667,
+      "pct_change": 0.0
+    },
+    "b": {
+      "v3_mean_sms_15cells": 0.1556,
+      "v4_mean_sms_15cells": 0.1478,
+      "pct_change": -5.0
+    },
+    "c": {
+      "v3_mean_sms_15cells": 0.0467,
+      "v4_mean_sms_15cells": 0.0894,
+      "pct_change": 91.5
+    },
+    "d": {
+      "v3_mean_sms_15cells": 0.0811,
+      "v4_mean_sms_15cells": 0.1122,
+      "pct_change": 38.3
+    }
+  },
+  "class_means_aligned_only": {
+    "a": {
+      "v3_aligned_mean_sms": 0.3333,
+      "v4_mp5_aligned_mean_sms": 0.3333,
+      "pct_change": 0.0,
+      "n_aligned_cells": 3
+    },
+    "b": {
+      "v3_aligned_mean_sms": 0.2556,
+      "v4_mp5_aligned_mean_sms": 0.2222,
+      "pct_change": -13.1,
+      "n_aligned_cells": 3
+    },
+    "c": {
+      "v3_aligned_mean_sms": 0.0,
+      "v4_mp5_aligned_mean_sms": 0.0667,
+      "pct_change": null,
+      "n_aligned_cells": 3
+    },
+    "d": {
+      "v3_aligned_mean_sms": 0.1433,
+      "v4_mp5_aligned_mean_sms": 0.2311,
+      "pct_change": 61.3,
+      "n_aligned_cells": 3
+    }
+  },
+  "class_means_cross_only": {
+    "a": {
+      "v3_cross_mean_sms": 0.0,
+      "v4_mp5_cross_mean_sms": 0.0,
+      "pct_change": null,
+      "n_cross_cells": 12
+    },
+    "b": {
+      "v3_cross_mean_sms": 0.1306,
+      "v4_mp5_cross_mean_sms": 0.1292,
+      "pct_change": -1.1,
+      "n_cross_cells": 12
+    },
+    "c": {
+      "v3_cross_mean_sms": 0.0583,
+      "v4_mp5_cross_mean_sms": 0.0951,
+      "pct_change": 63.0,
+      "n_cross_cells": 12
+    },
+    "d": {
+      "v3_cross_mean_sms": 0.0656,
+      "v4_mp5_cross_mean_sms": 0.0825,
+      "pct_change": 25.7,
+      "n_cross_cells": 12
+    }
+  },
+  "c1_share": {
+    "v3_mean_c1_share_aligned": 0.3333,
+    "v3_mean_c1_share_cross": 0.122,
+    "v3_mean_c1_share_overall": 0.1643,
+    "v4_mp5_mean_c1_share_aligned": 0.4167,
+    "v4_mp5_mean_c1_share_cross": 0.1573,
+    "v4_mp5_mean_c1_share_overall": 0.2092,
+    "pct_change_overall": 27.3
+  }
+}

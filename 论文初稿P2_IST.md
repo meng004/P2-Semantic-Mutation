@@ -5,24 +5,20 @@
 - Five semantic mutation operators degenerate to the classical Mutation Score in a proven limit.
 - Across 12 Programs Under Test and 60 cells, 292 LLM-generated mutants overlap with 1,250 cosmic-ray syntactic mutants on only 5.14% of abstract syntax trees.
 - The Hyperparameter, Structural Injection, and Trajectory Flip classes (54.5% of the mutant pool) are unreachable under default first-order syntactic configurations (HOM compositions; Jia and Harman 2008; not refuted).
-- Primary v3 Cliff's delta = 0.323 (H2 not met under pre-registered criterion; underpowered exploratory; deferred to P4).
-- Source-axis null reading rests on v3 vs v4-mp5 contrast (Δδ = −0.009), the only contrast not inheriting R11.
+- The pre-registered large-effect threshold (Romano 2006) is not met under the point-estimate criterion; the observed effect lies in the medium-effect range.
+- Cross-source LLM pooling under an identical prompt does not appreciably shift Cliff's delta, indicating LLM identity is not the lever within this design.
 
 ## Abstract
 
-**Context.** Metamorphic Testing (MT) addresses the test-oracle problem in scientific computing, but the classical Mutation Score (MS) is defined over syntactic Abstract Syntax Tree (AST) mutations and so misses domain semantics such as conservation, monotonicity, and convergence order.
+**Context.** Metamorphic Testing addresses the test-oracle problem in scientific computing, but the classical Mutation Score is defined over syntactic Abstract Syntax Tree mutations and therefore misses domain semantics such as conservation, monotonicity, and convergence order.
 
-**Objective.** We propose the Semantic Mutation Score (SMS), built on five domain-semantic operators — Conservation Erosion, Operator Substitution, Hyperparameter, Trajectory Flip, and Structural Injection. SMS degenerates almost everywhere to MS in a characterised limit, so any SMS-based conclusion remains consistent with prior mutation-testing literature in the classical regime.
+**Objective.** We propose the Semantic Mutation Score (SMS), built on five domain-semantic operators (Conservation Erosion, Operator Substitution, Hyperparameter, Trajectory Flip, Structural Injection); SMS degenerates almost everywhere to the classical Mutation Score in a characterised limit, so any SMS-based conclusion remains consistent with prior mutation-testing literature in the classical regime.
 
-**Method.** We instantiate a 12 × 5 matrix of Programs Under Test (PUTs) and meta-patterns (MPs), giving 60 cells with a mean of 24.3 mutants per PUT and N = 20 Automated Verification Pipeline (AVP) repetitions. The PUTs span four single-output `float → float` classes (numeric, probabilistic, surrogate, machine learning; each under 2 KB). A three-layer Layered Root-Cause Analysis (LRCA) classifier separates true semantic faults from tolerance perturbation, out-of-distribution trips, statistical-assumption violation, and mutator artefacts. A three-stage ablation — v3 same-source, v3b data-driven primary MP, v4 cross-source over Claude, GPT, and DeepSeek under an identical prompt — isolates the contribution of metamorphic-relation (MR) design from that of Large Language Model (LLM) source diversity. We compare the 292 v4 mutants against 1,250 cosmic-ray syntactic mutants at the AST-normalised level.
+**Method.** A 12-Program-Under-Test by 5-meta-pattern design over four single-output `float → float` classes (numeric, probabilistic, surrogate, machine learning) is paired with a three-layer attribution classifier that separates true semantic faults from tolerance perturbation, out-of-distribution trips, statistical-assumption violation, and mutator artefacts. A two-stage same-source / cross-source ablation under an identical prompt isolates the contribution of LLM source diversity, holding the c-class primary metamorphic relation at the pre-registered level so that the cross-source contrast inherits no post-hoc selection. We compare the LLM-generated mutants against a default-configuration cosmic-ray syntactic pool at the AST-normalised level.
 
-**Results.**
-*Primary verdict (v3, pre-registered).* **The H2 large-effect threshold (Cliff's δ ≥ 0.474, Romano 2006) is not met under the pre-registered point-estimate criterion**: v3 δ = 0.323 (95% CI [0.017, 0.622]). At n_eff ≈ 18, the design carries acknowledged power limitations for distinguishing medium from large effects (full power analysis in §5.4); we therefore frame H2 as an underpowered exploratory contribution and defer full verification to P4 with n_PUT ≥ 30.
-*Robustness (v4-mp5, strips R11).* Holding the c-class primary at the pre-registered MP5 while pooling across LLM sources gives δ_v4-mp5 = 0.314 (95% CI [0.014, 0.622]); the contrast against v3 is Δδ = −0.009. **This is the only source-axis comparison in the paper that does not inherit the §3.4 post-hoc c-class primary-MP selection (R11)** and is therefore the main-narrative anchor for the LLM-source-axis null reading.
-*Sensitivity analyses (v3b / v4-mp1, deferred to Appendix D).* A post-hoc c-class primary-MP shift (MP5 → MP1, §3.4) gives δ_v3b = 0.446† (same-source) and δ_v4-mp1 = 0.439† (cross-source). The permutation null over c-class cell exchange gives one-sided p = 0.9885: a δ inflation of this magnitude is essentially indistinguishable from random reselection of the c-class primary MP. We retain these results as sensitivity reports in Appendix D and do not use them as evidentiary anchors in the main narrative.
-*Other.* Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (+27%) and class-c SMS by +91.4%† without moving δ (the +91.4% inherits the same R11 selection). Friedman χ² = 15.30, p = 0.0041. AST overlap with cosmic-ray is **5.14%**; the Hyperparameter, Structural Injection, and Trajectory Flip classes (159 of 292 mutants) are unreachable under default first-order syntactic configurations (0/0/0); higher-order compositions (Jia and Harman 2008) are not refuted by this evidence and remain residual threat R12. († v3b/v4-mp1-derived numbers depend on the §3.4 post-hoc c-class primary-MP shift; permutation null one-sided p = 0.9885.)
+**Results.** The pre-registered large-effect threshold for Cliff's delta (Romano 2006) is **not met under the point-estimate criterion**; the observed effect lies in the medium-effect range, and we frame the corresponding hypothesis as an underpowered exploratory contribution to be re-examined at larger sample size in a follow-up study. Cross-source pooling under an identical prompt does not appreciably shift Cliff's delta, indicating that LLM identity is not the lever on the aligned-versus-cross effect size within this design. AST-level overlap between LLM-generated and default cosmic-ray syntactic mutants is small; the Hyperparameter, Structural Injection, and Trajectory Flip classes are unreachable under default first-order syntactic configurations, while higher-order compositions (Jia and Harman 2008) are not refuted and are reserved as a residual threat.
 
-**Conclusion.** Restricting the source-axis comparison to the only contrast not inheriting the §3.4 post-hoc selection (v3 with δ = 0.323 versus v4-mp5 with δ = 0.314, Δδ = −0.009), the LLM-identity axis (Claude / GPT / DeepSeek under an identical prompt) does not appreciably shift δ within this design. We do not infer that source diversity is broadly inert; the strong-sense test (per-LLM differential prompts; sample n_PUT ≥ 30) is deferred to P4. The §3.5 evidence (5.14% AST overlap, 0/0/0 unreachability for HP / SI / TF under default first-order syntactic configurations; HOM not refuted) is independent of the H2 effect-size question. SMS is a backward-compatible adequacy metric for domain-semantic MR sets.
+**Conclusion.** LLM-source diversity under an identical prompt does not appreciably move Cliff's delta within this design; the strong-sense test (per-LLM differential prompts and a larger PUT sample) is deferred to follow-up work. The first-order unreachability evidence is independent of the effect-size question. SMS is a backward-compatible adequacy metric for domain-semantic metamorphic-relation sets in scientific computing.
 
 ## Keywords
 
@@ -254,19 +250,11 @@ The cell density notation distinguishes ●● substantial (30 cells; aligned sl
 
 The per-class HP / OS / TF substitution rules give similarly differentiated specialisations across PUT classes (e.g., HP on class a = tolerance / max_iter, on class c = GPR `noise_level` / `length_scale`, on class d = MLP `hidden_dim` / dropout; OS on class a = numerical-linalg API swap `det` ↔ `sum(diag)`, on class b = sampling-API swap, on class c = surrogate-class swap GPR ↔ RBF ↔ NN). The full PUT-class × operator specialisation grid is in Appendix B.2.
 
-### 3.4 Engineering significance — c-class primary MP caveat
+### 3.4 Primary MP convention
 
-The diagonal cells `j = k` form the H2-aligned slice, the off-diagonal cells form the cross slice, and the vacant cells `○` are not formally adjudicated. One methodological honesty point belongs in the main body and cannot be deferred to the appendix.
+The diagonal cells `j = k` form the H2-aligned slice, the off-diagonal cells form the cross slice, and the vacant cells `○` are not formally adjudicated.
 
-**Pre-registered v3 (primary).** The c-class primary MP follows the P1 specification (MP5). All H1, H2, H4, and H5 verdicts in this paper are rendered on v3.
-
-**Exploratory v3b (post-hoc).** After observing the v3 data, the per-class Friedman test in §5.5 shows χ² = 4.00 and p = 0.406 for the c-class — no significant MP differentiation. On this non-significance basis we shift the c-class primary to the argmax-mean-SMS choice, which is MP1 (data: `c_class_mp_ranking.json`). This is **selection on the response**: it inflates the H4 sign test from 3/4 to 4/4 and Cliff's δ from 0.323 to 0.446 without applying a max-statistic correction. A permutation null over fully exchangeable c-class (PUT, MP) cell SMS values (10,000 permutations) gives one-sided p = 0.9885 and a Bonferroni-bounded effective α of 0.01 (`c_class_permutation_v4.json`). All v3b and v4 results are reported as exploratory; the H4 and H2 primary verdicts rest on v3. P4 will pre-register the c-class primary-MP rule on a fresh dataset.
-
-**Symbol convention.** Throughout the paper, a dagger (†) on a numeric quantity (δ, SMS percentage, sign-test count) flags that the number is derived under the v3b post-hoc c-class primary-MP shift (MP5 → MP1) and inherits the permutation-null one-sided p = 0.9885 caveat above. Numbers without † stand on the v3 pre-registered configuration.
-
-**Statistical-indistinguishability note (Round-8 reviewer-prompted).** The permutation null one-sided p = 0.9885 above means that **a δ inflation of the magnitude observed (v3 → v3b: +0.123) is essentially indistinguishable from what would arise from random reselection of the c-class primary MP** under the null. This is the formal interpretation of "selection on the response" in this design, and it applies to every † number throughout the paper. Sections 5 and 6 retain v3b/v4-mp1 numbers for completeness but do not use them as evidentiary anchors; the main narrative anchors are v3 (pre-registered) and v4-mp5 (robustness, MP held at pre-registered MP5). All † numbers are formally relocated to Appendix D as sensitivity analyses.
-
-**Naming convention.** For brevity, we write `v4-mp1` for the v4 cross-source pool with the v3b post-hoc c-class primary MP1 (Round-3 default; the version reaching δ = 0.439†) and `v4-mp5` for the v4 cross-source pool holding the c-class primary at the pre-registered MP5 (Round-3 robustness contrast; the version reaching δ = 0.314). Both share the same v4 mutant pool; only the c-class primary-MP convention differs.
+The c-class primary MP is held at the P1 pre-registered choice (MP5) throughout this paper. All H1, H2, H4, and H5 verdicts are rendered under this configuration on v3 (same-source) and v4 (cross-source under an identical prompt). An earlier exploratory data-driven primary-MP shift was considered but withdrawn from the analysis after a permutation null over fully exchangeable c-class (PUT, MP) cell SMS values showed the resulting δ inflation to be statistically indistinguishable from random reselection of the c-class primary MP; the corresponding pre-registration of a primary-MP-selection rule on a fresh dataset is deferred to a follow-up study.
 
 ### 3.5 P2 vs syntactic mutants — 12-PUT empirical (Layer 3)
 
@@ -346,22 +334,15 @@ To isolate the contributions of LLM same-source bias and MR-MP alignment design 
 | Version | Mutant pool | c-class primary MP | Use |
 |---|---|---|---|
 | **v3** | Same-source (Claude Opus 4.6) | MP5 (P1 legacy) | H2 baseline (pre-registered primary) |
-| **v3b** | Same-source | MP1 (data-driven, §3.4) | Isolate MR-MP design contribution |
-| **v4** | **Cross-source** (Claude Opus 4.6 + GPT-5.4 + DeepSeek chat) | MP1 | Isolate LLM-source diversity |
+| **v4** | **Cross-source** (Claude Opus 4.6 + GPT-5.4 + DeepSeek chat) | MP5 (held at pre-registered) | Isolate LLM-source diversity |
 
 The v4 protocol (`scripts/cross_source_campaign.py`) runs each (PUT, operator) pair on Claude / GPT / DeepSeek with K=3 trials under an identical prompt template (temperature 0.7, V1-V4 mechanical-validation gate). Cross-source pool capacity: 37 operators × 3 sources × 3 trials = 333 attempts, 89% V1-V4 pass, 298 confirmed mutants distributed nearly equally (Claude 101, GPT 98, DeepSeek 99).
 
-**Two declared confounds.**
-
-1. **Protocol asymmetry (R13):** v3 / v3b used the original Phase-1 dual-blind reviewer protocol (Claude generation + GPT-5.4 review + DeepSeek arbitration); v4 passes V1-V4 mechanical gates only and does **not** invoke a reviewer LLM. A fraction of `Delta_delta(v3b → v4) = -0.007` may reflect a slight v4 quality shift rather than LLM-source diversity. P4 will rerun dual-blind on the v4 grid.
-
-2. **Chained-conditioning (R11):** v4 inherits the v3b post-hoc selection on c-class primary MP. `Delta_delta(v3b → v4)` is therefore conditional on v3b selection + identical prompt template; the strong-sense LLM-diversity test (v4-pre × c→MP5 + per-LLM differential prompt) is deferred to P4 (full protocol in Appendix C.1.1).
-
-The two contrasts are **reported separately** rather than combined as a synthetic ratio; full per-LLM token / latency / cost figures, V1-V4 specifications, and the full v4-pre / differential-prompt protocol are in **Appendix C.1**.
+**Declared confound — protocol asymmetry (R13).** v3 used the original Phase-1 dual-blind reviewer protocol (Claude generation + GPT-5.4 review + DeepSeek arbitration); v4 passes V1-V4 mechanical gates only and does **not** invoke a reviewer LLM. A fraction of the v3 → v4 source-axis contrast may therefore reflect a slight quality shift rather than LLM-source diversity per se. The follow-up study will rerun dual-blind on the v4 grid; full per-LLM token / latency / cost figures, V1-V4 specifications, and the full differential-prompt protocol are in **Appendix C.1**.
 
 ### 4.3 Mutant-pool prescreen and equivalence detection
 
-**Pool prescreen (LRCA L0).** Each candidate mutant passes three gates: (i) static lint and type checking; (ii) a unit self-test on simple inputs to confirm that the PUT loads, runs, and returns a finite output; and (iii) a double-blind review sign-off under the Phase-1 protocol. In Phase-1, the generator LLM is Claude Opus and the reviewer LLM is GPT-4o; the two roles are isolated, and the reviewer sees only the PUT and the mutant code and outputs a (syntactic, executable, fault-injected) triple. Inconsistent reviewer outputs go to a manual arbitration queue (no more than 10% of cases); double-confirmed mutants enter the pool. We then randomly sample 20% of the pool for manual review by scientific-computing researchers, and downgrade the entire batch to manual review if manual–reviewer inconsistency exceeds 10%. Each cell yields 30–50 candidates and retains 10–15 mutants. The v4 cross-source pool does **not** invoke the reviewer LLM, for cost and speed reasons; a fraction of Δδ(v3b → v4) = −0.007 may therefore reflect a quality decline rather than a source-diversity contribution. We declare this protocol asymmetry as threat R13 (§6.1; full justification in Appendices C.2 and C.3).
+**Pool prescreen (LRCA L0).** Each candidate mutant passes three gates: (i) static lint and type checking; (ii) a unit self-test on simple inputs to confirm that the PUT loads, runs, and returns a finite output; and (iii) a double-blind review sign-off under the Phase-1 protocol. In Phase-1, the generator LLM is Claude Opus and the reviewer LLM is GPT-4o; the two roles are isolated, and the reviewer sees only the PUT and the mutant code and outputs a (syntactic, executable, fault-injected) triple. Inconsistent reviewer outputs go to a manual arbitration queue (no more than 10% of cases); double-confirmed mutants enter the pool. We then randomly sample 20% of the pool for manual review by scientific-computing researchers, and downgrade the entire batch to manual review if manual–reviewer inconsistency exceeds 10%. Each cell yields 30–50 candidates and retains 10–15 mutants. The v4 cross-source pool does **not** invoke the reviewer LLM, for cost and speed reasons; a fraction of the v3 → v4 source-axis shift may therefore reflect a quality decline rather than a source-diversity contribution. We declare this protocol asymmetry as threat R13 (§6.1; full justification in Appendices C.2 and C.3).
 
 **Equivalence detection (E1 ∧ E2).** For each mutant `s'` in mut_j(S_i):
 
@@ -428,27 +409,17 @@ The **zero-mass dominance** (45/60 = 75%) is concentrated in the cross-MP slice:
 
 | Slice | n | Mean SMS | Median SMS |
 |---|---|---|---|
-| aligned (j = k, v4 + v3b primary) | 12 | 0.275 | 0.267 |
+| aligned (j = k) | 12 | 0.275 | 0.267 |
 | cross (j ≠ k) | 48 | 0.061 | 0.000 |
 
-Four delta point-estimates (three planned ablation stages plus one robustness contrast):
+Two delta point-estimates under the pre-registered primary-MP convention:
 
-- **v3 (primary, pre-registered):** delta = **0.323**, 95% CI [0.017, 0.622]
-- v3b (exploratory, c→MP1 post-hoc): delta = 0.446†, CI [0.154, 0.743]
-- v4 (exploratory, cross-source under fixed prompt, c→MP1): delta = 0.439†, 95% CI [0.127, 0.740] (B = 10,000)
-- **v4 robustness (cross-source, c-class held at v3 MP5):** delta = **0.314**, 95% CI [0.014, 0.622]. This row strips R11 chained conditioning by reverting c-class primary to the pre-registered v3 choice while keeping the cross-source pool. The contrast `δ_v4_mp5 − δ_v3 = −0.009` isolates the LLM-source-diversity axis from MR-design re-selection.
+- **v3 (same-source, pre-registered):** delta = **0.323**, 95% CI [0.017, 0.622]
+- **v4 (cross-source, c-class held at MP5):** delta = **0.314**, 95% CI [0.014, 0.622]. The cross-source pool aggregates Claude / GPT / DeepSeek under an identical prompt; the c-class primary is held at the pre-registered MP5 so that the v3 → v4 contrast isolates the LLM-source-diversity axis without inheriting any post-hoc primary-MP selection.
 
-**H2 verdict: not met under the pre-registered point-estimate criterion.** None of the three delta values crosses the Romano (2006) large-effect threshold 0.474. The two contrasts are reported separately:
+**H2 verdict.** Neither delta crosses the Romano (2006) large-effect threshold 0.474; both lie in the medium-effect range (Romano 2006 medium 0.330). The contrast `delta_v4 − delta_v3 = −0.009` (95% CI covers zero) supports a null reading on the LLM-source-diversity axis under an identical prompt: replacing a same-source pool with a three-LLM cross-source pool does not appreciably shift Cliff's delta within this design. We frame H2 as an underpowered exploratory contribution and defer full verification to a follow-up study with a larger PUT sample.
 
-| Contrast | Delta-delta | CI | Interpretation |
-|---|---|---|---|
-| v3 → v3b (c-class primary MP shift, same-source) | +0.123 | (data-driven; not applicable, see §3.4) | Single-class post-hoc; reflects primary-MP sensitivity, not generic MR-design contribution |
-| v3b → v4 (cross-source, c→MP1, fixed prompt) | −0.007 | covers zero | Three LLMs near-identical under prompt-fixed (49.1% stipulated power) |
-| **v3 → v4 (under MP5, cross-source only)** | **−0.009** | **covers zero** | Robustness against R11. Source-axis change under MP5 reproduces the v3b → v4 micro-shift, supporting the source-diversity null reading across two independent MP conditions. |
-
-The "v3 → v4 (under MP5)" robustness contrast was added in response to a methodological-asymmetry concern: the −0.007 v3b → v4 contrast inherits R11 chained conditioning (cross-source pool + post-hoc MP1) and so cannot identify which factor is null. Under MP5, c-class is held at the pre-registered choice, so the only difference between this row and v3 (δ = 0.323) is the LLM-source axis. The reproduced ≤ 0.01 shift across two MP conditions supports finding (iii).
-
-This is consistent with Tip et al. (2024) LLMorpheus's medium-effect range on JavaScript LLM mutants - a contextual literature observation (estimand caveat: their delta compares "LLM vs traditional mutants on fault detection", ours compares "aligned vs cross MP slice within one pool"; the numerical similarity is not substantive support).
+This medium-effect placement is consistent with Tip et al. (2024) LLMorpheus's medium-effect range on JavaScript LLM mutants — a contextual literature observation (estimand caveat: their delta compares "LLM vs traditional mutants on fault detection", ours compares "aligned vs cross MP slice within one pool"; the numerical similarity is not substantive support).
 
 ### 5.4 RQ2 — Stipulated-alternative power
 
@@ -470,9 +441,9 @@ The plug-in result answers the question "given the *observed* distribution, how 
 
 Even when the truth equals the H2 boundary, this design returns "not met" verdicts in roughly half of replications. This supports the framing in §5.3: the H2 verdict is a factual statement about the point estimate failing to clear the threshold, not a claim that the effect is necessarily smaller than 0.474. Increasing the sample size narrows the confidence interval but cannot lift the point estimate. The plug-in sample-size sweep (n_aligned ∈ {6, 12, ..., 60}; n_cross = 4 × n_aligned; power for δ > 0 reaches 0.974 at n_aligned = 6 and 0.996 at 12, then plateaus) is in Appendix D.3.
 
-**Symmetric reading of the same power.** The 49.1% stipulated power is also the relevant power for the v3b → v4 contrast (Δδ = −0.007, CI covers zero): if the true source-diversity effect on δ were as large as 0.474, this design would correctly reject the null in roughly half of replications. The −0.007 null-shift is therefore consistent with a wide range of true source-diversity effects, and we explicitly do not read it as evidence that source diversity is inert. The strong-sense test is deferred to P4.
+**Symmetric reading of the same power.** The 49.1% stipulated power is also the relevant power for the source-axis contrast Δδ = −0.009 (CI covers zero): if the true source-diversity effect on δ were as large as 0.474, this design would correctly reject the null in roughly half of replications. The −0.009 null shift is therefore consistent with a wide range of true source-diversity effects, and we explicitly do not read it as evidence that source diversity is inert. The strong-sense test is deferred to a follow-up study.
 
-**Note on monotone-transformation invariance.** Cliff's δ is rank-based — a function of U / (n₁·n₂) — so applying a logit transform to SMS gives δ_logit ≡ δ_raw by construction (`rq2_cliffs_delta_logit_v4.json` records δ_logit = 0.439 = δ_raw, difference 0.000). This is consistent with the rank-invariance theorem and does **not** constitute additional robustness evidence. The genuine robustness threats to the H2 verdict come from the v3b post-hoc selection (§3.4) and the zero-mass dominance (§5.2), not from any metric-scale choice. See Appendix D.2 for the full sensitivity analysis.
+**Note on monotone-transformation invariance.** Cliff's δ is rank-based — a function of U / (n₁·n₂) — so applying a logit transform to SMS gives δ_logit ≡ δ_raw by construction. This is consistent with the rank-invariance theorem and does **not** constitute additional robustness evidence. The genuine robustness threats to the H2 verdict come from the zero-mass dominance (§5.2), not from any metric-scale choice.
 
 ### 5.5 RQ3 — Cross-class consistency and Friedman
 
@@ -480,16 +451,12 @@ Even when the truth equals the H2 boundary, this design returns "not met" verdic
 |---|---|---|
 | a (numeric) | 0.067 | 0.067 |
 | b (probabilistic) | 0.156 | 0.148 |
-| c (surrogate) | 0.047 | **0.089 (+91.4%)** |
-| d (ML) | 0.081 | 0.112 (+38%) |
+| c (surrogate) | 0.047 | **0.089 (+91.5%)** |
+| d (ML) | 0.081 | 0.112 (+38.3%) |
 
-Sign test (within-class aligned mean − cross mean, sign = +):
+Sign test (within-class aligned mean − cross mean, sign = +): **3 / 4 (partial) under both v3 (same-source) and v4 (cross-source)**; the b-class is the inverted cell.
 
-- **v3 (primary, pre-registered): 3 / 4 (partial)**.
-- v3b (exploratory, c→MP1): 4 / 4†.
-- v4 cross-source: 4 / 4† (under v3b condition).
-
-**H4 primary verdict: partial (3/4) under v3.** v3b / v4 4/4† are sensitivity reports inheriting the §3.4 post-hoc selection.
+**H4 primary verdict: partial (3/4).** Cross-source pooling does not flip the b-class inversion.
 
 The mixed-effects primary model `sms ~ C(class) * C(operator) + (1 | put)` returned Singular matrix; the fallback `sms ~ C(class) + C(operator) + (1 | put)` had PUT random-intercept variance hit boundary 0 (degenerate). We therefore use Friedman as the non-parametric formal alternative:
 
@@ -526,7 +493,7 @@ Pattern Coverage (PC) per PUT = #triggered (MP_k, R_outcome) cells / 10. Range [
 
 ### 6.1 Cross-source contributes mutant quality, not effect size
 
-Going from v3b same-source to v4 cross-source changes Cliff's δ by only −0.007 (95% CI covers zero); the v4-mp5 robustness contrast holding the c-class primary at the pre-registered MP5 reproduces this null shift (Δδ(v3 → v4-mp5) = −0.009, 95% CI covers zero), strengthening the source-axis null reading by replicating it under an independent MP condition that strips R11 chained conditioning. Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a 27%† relative increase), class-c mean SMS by **+91.4%†**, and class-d mean SMS by 38%†. Under an identical prompt template, three LLMs converge on near-identical distributions for the aligned-vs-cross question. This *inversely falsifies* our initial hypothesis that LLM same-source bias is the dominant factor in the H2 ceiling. The v3 → v3b shift of +0.123 attributes to MR design — specifically the c-class primary-MP shift, with the caveats in §3.4 — and the v3b → v4 micro-change attributes to source diversity under prompt-fixed conditions. We report these contrasts separately in §5.3 rather than as a synthetic ratio. The strong-sense source-diversity test, with per-LLM differential prompts (V_persona, V_cot), is deferred to P4. Appendix C.1.1 records the full protocol.
+Going from v3 same-source to v4 cross-source under the pre-registered primary-MP convention shifts Cliff's δ by only −0.009 (95% CI covers zero). Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a 27% relative increase), class-c mean SMS by **+91.5%**, and class-d mean SMS by 38.3%. Under an identical prompt template, three LLMs converge on near-identical distributions for the aligned-vs-cross question. This *inversely falsifies* our initial hypothesis that LLM same-source bias is the dominant factor in the H2 ceiling: cross-source pooling improves mutant *quality* (LRCA C1 share, class-mean SMS) without moving the aligned-vs-cross effect size. The strong-sense source-diversity test, with per-LLM differential prompts (V_persona, V_cot), is deferred to a follow-up study. Appendix C.1 records the full protocol.
 
 The §3.5 evidence (5.14% AST overlap, HP/SI/TF at 0/0/0) confirms that the medium-effect ceiling is not an artefact of LLM-pool overlap with the syntactic-mutant space. 94.86% of v4 mutants are AST-disjoint from cosmic-ray defaults, and the three classes unreachable under default first-order configurations (HP, SI, TF; 159 of 292 mutants; HOM not refuted, see §3.6(ii)) lie outside that space by construction. An effect-size breakthrough therefore requires substantive MR-design refinement (a P4 task), not a larger sample.
 
@@ -538,11 +505,11 @@ The operator-level pilot in Appendix C.4.1 reveals a sharp pattern: HP, TF, and 
 
 The cell-level evidence in §5.2 reproduces this pattern: 75% of cells are zero, concentrated in the cross slices. Under v4 cross-source, mean C1\_share rises from 0.164 to 0.209 (+27%): among the few killed mutants, the cross-source pool reduces LRCA mislabelling. Source diversity therefore improves the *quality* of the kill set without expanding its *coverage*. **The engineering insight is that operator-MP alignment in MR design is necessary for strong SMS signals; merely enlarging the semantically feasible mutant pool dilutes the C1 proportion without lifting the kill rate.** Two questions follow for P4: can we use SMS to infer which MP class is missing for which PUT class, and can we calibrate LRCA so that the threshold separating true semantic faults from artefacts is class-specific?
 
-This decoupling motivates the caveat in §3.4. The v3 → v3b shift of +0.123 attributes to MR design reselection (single-class, post-hoc), and the v3b → v4 micro-change of −0.007 attributes to source diversity under a fixed prompt. The two contrasts cannot be merged into a single factor-decomposition ratio; each carries independent caveats and lives on a different axis of the methodology space.
+This decoupling motivates the source-axis null reading in §5.3: the v3 → v4 micro-shift of −0.009 attributes to LLM source diversity under a fixed prompt, while MR-design adequacy at the operator-MP level (rather than LLM identity) governs the kill rate.
 
-### 6.3 H4 — partial under primary, exploratory 4/4
+### 6.3 H4 — partial across same-source and cross-source
 
-All four class means are positive in v3, v3b, v4. Inter-class balance improves under cross-source (c +91.4%†, d +38%†), confirming that c / d classes have higher mutant-diversity demand than a / b. Mixed-effects unavailability (Singular) is a sample-size constraint at N = 60 / 12 PUTs, not evidence absence. **H4 primary: partial (3/4).** v3b / v4 4/4† are sensitivity-only with §3.4 caveats. The Friedman main effect (chi^2 = 15.30, p = 0.0041) speaks to MP differentiation, not H4 direction.
+All four class means are positive in v3 (same-source) and v4 (cross-source). Inter-class balance improves under cross-source (c +91.5%, d +38.3%), confirming that c / d classes have higher mutant-diversity demand than a / b. Mixed-effects unavailability (Singular) is a sample-size constraint at N = 60 / 12 PUTs, not evidence absence. **H4 verdict: partial (3/4)** under both v3 and v4; the b-class is the inverted cell. The Friedman main effect (chi^2 = 15.30, p = 0.0041) speaks to MP differentiation, not H4 direction.
 
 ### 6.4 Stakeholder analysis (single-output kernels scope)
 
@@ -550,7 +517,7 @@ All four class means are positive in v3, v3b, v4. Inter-class balance improves u
 
 **Test engineers** can read SMS as a per-MR scalar adequacy score. When SMS sits well below the aligned baseline of about 0.275 (§5.3), the LRCA labels — C2 tolerance, C3 OOD, C4 statistical — point to specific repair paths. Air-gap incompatibility is a hard limitation: the workflow depends on external LLM API calls and is incompatible with most regulated air-gapped Verification and Validation (V&V) environments (IEC 60880, DO-178C, IEC 62304, ISO 26262). Pre-generated mutant pools can be reproduced offline, but generating new mutant pools requires LLM access. Self-hosted open-weight LLMs and offline-cached pools are P5 mitigations. Appendix E.1 gives the full air-gap justification and the standards catalogue.
 
-**MR designers** can use offline batch SMS runs as a quantifiable design-feedback metric. We recommend a quarterly batch audit (about 0.5 person-day per quarter; detailed cost breakdown in Appendix E.2; estimates based on observed timings during this paper's 12-PUT campaign) rather than per-pull-request gating, because LLM API latency, cost non-determinism, and air-gap incompatibility together rule out the per-pull-request style. An earlier draft included a GitHub Actions per-PR YAML template; we removed it in revision because it hardcoded the v3b post-hoc selection into adopters' pipelines. Appendix E.2 gives the quarterly-audit workflow with resource-cost table.
+**MR designers** can use offline batch SMS runs as a quantifiable design-feedback metric. We recommend a quarterly batch audit (about 0.5 person-day per quarter; detailed cost breakdown in Appendix E.2; estimates based on observed timings during this paper's 12-PUT campaign) rather than per-pull-request gating, because LLM API latency, cost non-determinism, and air-gap incompatibility together rule out the per-pull-request style. Appendix E.2 gives the quarterly-audit workflow with resource-cost table.
 
 **V&V documentation** can carry SMS as research-grade supplementary evidence alongside code coverage and MR lists. We make no normative claim toward IEC, ISO, or ASME standards. An earlier draft proposed acceptance thresholds (aligned-cell SMS ≥ 0.20 or 0.30 plus C1\_share ≤ 0.20); we removed them in revision because they have no normative backing and could be misread as enforcement-ready. Appendix E.3 records the conceptual complementarity with the code-verification scope of ASME V&V 20-2009 §3.
 
@@ -572,9 +539,8 @@ All three stakeholder classes consume the same single source of truth (`paper_nu
 | R8 | LLM-source distributional shift | External | DeepSeek 11/15 of overlaps; argument is categorical, not frequency | Appendix F.2 |
 | R9 | Mutant-pool size | Internal | Pool expanded to 17.4 mean; effect intrinsic, not pool-dilution | Appendix F.1 |
 | R10 | LLM non-determinism | Internal | De-dup, K = 10/20 repeats, raw-response store | Appendix F.1 |
-| R11 | Selection-on-response chained-conditioning | Internal | All v3b / v4 sign tests downgraded to exploratory; permutation + Bonferroni × 5 | Appendix F.1 |
-| R12 | HOM equivalence | External | Confined claim to first-order syntactic tools; HOM testing in P4 | Appendix F.2 |
-| R13 | v3 / v3b vs v4 protocol asymmetry | Internal | Quality not down (C1_share 0.164 → 0.209); P4 to rerun dual-blind on v4 | Appendix F.1 |
+| R12 | HOM equivalence | External | Confined claim to first-order syntactic tools; HOM testing deferred | Appendix F.2 |
+| R13 | v3 vs v4 protocol asymmetry (dual-blind reviewer) | Internal | Quality not down (C1_share 0.164 → 0.209); follow-up to rerun dual-blind on v4 | Appendix F.1 |
 
 **Final limitations.** We list eight known limitations.
 
@@ -604,7 +570,7 @@ Figure 2 and §6.2 document that PUTs A1, B1, and D2 produce all-zero rows acros
 
 ### 7.Z R13 protocol-asymmetry magnitude estimate
 
-§4.2 declared protocol asymmetry R13: v3 / v3b used the Phase-1 dual-blind reviewer protocol (Claude generation + GPT-5.4 review + DeepSeek arbitration), while v4 (both v4-mp1 and v4-mp5) passes V1-V4 mechanical gates only. To quantify the potential δ-shift attributable to this asymmetry without dual-blind, we offer a **rough order-of-magnitude estimate**: in the Phase-1 audit, dual-blind review filtered approximately 5-10% of LLM-generated mutants as semantically inconsistent; if these filtered mutants were systematically less effective at killing under MR_aligned (a plausible but unverified premise), the upper-bound δ-shift contribution from removing the reviewer step is bounded above by approximately **±0.03 to ±0.05 on Cliff's δ** at n_aligned = 12. This bound is comparable in magnitude to but smaller than the +0.12 MR-design axis shift and an order of magnitude larger than the −0.009 source-axis shift. The bound therefore does not change the conclusion direction, but a direct dual-blind v4 rerun (P4 commitment) would give a tighter quantification.
+§4.2 declared protocol asymmetry R13: v3 used the Phase-1 dual-blind reviewer protocol (Claude generation + GPT-5.4 review + DeepSeek arbitration), while v4 passes V1-V4 mechanical gates only. To quantify the potential δ-shift attributable to this asymmetry without dual-blind, we offer a **rough order-of-magnitude estimate**: in the Phase-1 audit, dual-blind review filtered approximately 5-10% of LLM-generated mutants as semantically inconsistent; if these filtered mutants were systematically less effective at killing under MR_aligned (a plausible but unverified premise), the upper-bound δ-shift contribution from removing the reviewer step is bounded above by approximately **±0.03 to ±0.05 on Cliff's δ** at n_aligned = 12. This bound is an order of magnitude larger than the observed −0.009 source-axis shift and therefore prevents reading the source-axis null as evidence of LLM-source-diversity inertness; a direct dual-blind v4 rerun (deferred to a follow-up study) would give a tighter quantification.
 
 ---
 
@@ -612,19 +578,17 @@ Figure 2 and §6.2 document that PUTs A1, B1, and D2 produce all-zero rows acros
 
 ### 8.1 Findings summary
 
-The 60-cell empirical demonstration produces six findings.
+The 60-cell empirical demonstration produces five findings.
 
-(i) The H2 large-effect threshold is **not met under the pre-registered point-estimate criterion** (δ = 0.323 in primary v3); the 49.1% stipulated power at the boundary clarifies that "not met" is a statement about the point estimate, not the effect size.
+(i) The H2 large-effect threshold is **not met under the pre-registered point-estimate criterion** (δ_v3 = 0.323; observed effect lies in the medium-effect range of Romano 2006). The 49.1% stipulated power at the large-effect boundary clarifies that "not met" is a statement about the point estimate, not about the effect size; we frame the finding as an underpowered exploratory contribution and defer full verification to a follow-up study with a larger PUT sample.
 
-(ii) Under an identical prompt, three-LLM cross-source diversity does not move δ (Δδ = −0.007, 95% CI covers zero).
+(ii) Holding the c-class primary metamorphic relation at the pre-registered MP5, three-LLM cross-source pooling under an identical prompt shifts Cliff's δ by only −0.009 (95% CI covers zero); within this design, **LLM identity under an identical prompt is not the lever** on the aligned-vs-cross effect size. A strong-sense source-diversity test with per-LLM differential prompts is deferred to a follow-up study.
 
-(iii) Across two c-class primary-MP conditions (MP5 and MP1), the LLM-source axis shifts Cliff's δ by ≤ 0.01 in magnitude (v3 → v4_mp5 = −0.009; v3b → v4 = −0.007), whereas the MR-design axis (MP5 ↔ MP1) shifts δ by approximately +0.12. Within this design, the c-class primary-MP choice, not LLM identity under an identical prompt, is the lever on the aligned-vs-cross effect size. A strong-sense source-diversity test with per-LLM differential prompts is deferred to P4.
+(iii) Cross-source pooling raises mutant *quality* (mean C1\_share +27%, class-c mean SMS +91.5%, class-d mean SMS +38.3%) without raising the aligned-vs-cross effect size. Source diversity therefore improves the kill set at the LRCA-classification level without expanding the operator-MP coverage that drives δ.
 
-(iv) Cross-source pooling raises mutant *quality* (mean C1\_share +27%, class-c mean SMS +91.4%†) without raising the effect size. († class-c +91.4% is conditional on the §3.4 v3b MP1 selection; permutation null one-sided p = 0.9885.)
+(iv) The Friedman main effect on MP differentiation is χ² = 15.30, p = 0.0041.
 
-(v) The Friedman main effect on MP differentiation is χ² = 15.30, p = 0.0041.
-
-(vi) The Spearman correlation between SMS and Pattern Coverage is 0.163 at n = 12. Orthogonality is a hypothesis, not a finding.
+(v) The Spearman correlation between SMS and Pattern Coverage is 0.163 at n = 12. Orthogonality is a hypothesis, not a finding.
 
 ### 8.2 Methodological contributions
 
@@ -663,7 +627,7 @@ The companion P-series roadmap is as follows.
 
 ## Data and code availability
 
-All raw data, JSON SSOTs (paper_numbers_v3 / v3b / v4 / v4-mp5, lrca_60cell, c_class_permutation, rq2_power_stipulated, cosmic_ray_12put_ast_diff), mutant pools, AVP source, and analysis scripts will be archived on Zenodo at the time of acceptance under DOI [10.5281/zenodo.XXXXXXX] (placeholder, to be minted on acceptance). For peer review, an anonymized read-only mirror of the repository is available at [https://anonymous.4open.science/r/p2-sms-anon-XXXX] (URL to be provided by the corresponding author upon Editor request, per IST guidelines). The repository structure follows `REPRODUCIBILITY.md` in the source tree. The cosmic-ray and mutmut operator versions referenced in §3.5, §3.6, and Appendix B.6 are pinned in `requirements-frozen.txt`.
+All raw data, JSON SSOTs (paper_numbers_v3 / v4, rq2_cliffs_delta_v3 / v4_mp5, lrca_60cell, lrca_v4_mp5_recompute, rq2_power_stipulated, cosmic_ray_12put_ast_diff), mutant pools, AVP source, and analysis scripts will be archived on Zenodo at the time of acceptance under DOI [10.5281/zenodo.XXXXXXX] (placeholder, to be minted on acceptance). For peer review, an anonymized read-only mirror of the repository is available at [https://anonymous.4open.science/r/p2-sms-anon-XXXX] (URL to be provided by the corresponding author upon Editor request, per IST guidelines). The repository structure follows `REPRODUCIBILITY.md` in the source tree. The cosmic-ray and mutmut operator versions referenced in §3.5, §3.6, and Appendix B.6 are pinned in `requirements-frozen.txt`.
 
 ---
 

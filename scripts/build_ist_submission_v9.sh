@@ -8,7 +8,7 @@
 #   - Strips H1 + Highlights + Abstract + Keywords markdown
 #     before pandoc (these go into elsarticle macros, not body).
 # Inputs : 论文初稿P2_IST.md + 论文初稿P2_IST_appendix.md + figs/*.png
-# Outputs: submission/p2_ist_v8.{tex,pdf}
+# Outputs: submission/p2_ist_v9.{tex,pdf}
 # Tools  : pandoc 3.9, xelatex (texlive), elsarticle.cls in submission/texmf/
 set -euo pipefail
 
@@ -87,10 +87,10 @@ pandoc "$OUT/_main_body.md" \
   -o "$OUT/_main_body.tex"
 
 # 3) DOCX intermediate (review-track convenience)
-pandoc "$MAIN_MD" -o "$OUT/p2_ist_v8.docx"
+pandoc "$MAIN_MD" -o "$OUT/p2_ist_v9.docx"
 
 # 4) Hand-wrap with elsarticle template + Highlights block
-cat > "$OUT/p2_ist_v8.tex" <<'PREAMBLE'
+cat > "$OUT/p2_ist_v9.tex" <<'PREAMBLE'
 %!TEX TS-program = xelatex
 %!TEX encoding = UTF-8 Unicode
 %
@@ -167,11 +167,11 @@ metamorphic testing \sep mutation testing \sep semantic mutation operators \sep 
 PREAMBLE
 
 # 5) Append the body
-cat "$OUT/_main_body.tex" >> "$OUT/p2_ist_v8.tex"
+cat "$OUT/_main_body.tex" >> "$OUT/p2_ist_v9.tex"
 
 # 6) Close document
-echo "" >> "$OUT/p2_ist_v8.tex"
-echo "\\end{document}" >> "$OUT/p2_ist_v8.tex"
+echo "" >> "$OUT/p2_ist_v9.tex"
+echo "\\end{document}" >> "$OUT/p2_ist_v9.tex"
 
 # 7) Apply Unicode → LaTeX postprocessing (operates on p2_ist.tex by default;
 #    swap path for v2 build)
@@ -182,9 +182,9 @@ sys.path.insert(0, "$ROOT/scripts")
 import importlib.util
 spec = importlib.util.spec_from_file_location("pp", "$ROOT/scripts/postprocess_unicode.py")
 mod = importlib.util.module_from_spec(spec)
-# Override target file before exec
-mod.TEX = Path("$ROOT/submission/p2_ist_v8.tex")
 spec.loader.exec_module(mod)
+# Override AFTER exec_module so module body's TEX = ... doesn't clobber
+mod.TEX = Path("$ROOT/submission/p2_ist_v9.tex")
 mod.main()
 PYEOF2
 
@@ -193,6 +193,6 @@ rm -f "$OUT/_main_body.md" "$OUT/_main_body.tex"
 
 echo
 echo "=== Build summary (v8) ==="
-ls -la "$OUT/p2_ist_v8.tex" "$OUT/p2_ist_v8.docx" 2>/dev/null || true
+ls -la "$OUT/p2_ist_v9.tex" "$OUT/p2_ist_v9.docx" 2>/dev/null || true
 echo
-echo "Next: cd $OUT && TEXINPUTS=./texmf//: xelatex -interaction=nonstopmode p2_ist_v8.tex (run twice for refs)"
+echo "Next: cd $OUT && TEXINPUTS=./texmf//: xelatex -interaction=nonstopmode p2_ist_v9.tex (run twice for refs)"
