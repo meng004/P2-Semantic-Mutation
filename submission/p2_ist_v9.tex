@@ -77,24 +77,23 @@ metamorphic testing \sep mutation testing \sep semantic mutation operators \sep 
 
 Metamorphic Testing (MT) addresses the test-oracle problem in scientific
 computing software: instead of checking outputs against a known-correct
-reference, MT checks metamorphic relations (MRs) --- invariants
-connecting outputs of related inputs. While \emph{semantic mutation
-testing} has been named since Clark, Dan, and Hierons (2010) and tooled
-for C (Dan and Hierons 2012) and for UML state-machine behaviour
-(Derezińska and Zaremba 2019), and while MR-adjacent data-semantic
-mutation (Sun et al.~2016, 2024; Zhu et al.~2020; Chan and Keung 2024)
-and recent LLM semantic-invariance MT (Curtò and Zarzà 2025) extend the
-mutation target to test data, relations, and task-level semantics, the
-adequacy of an MR set against \emph{domain-specific code-level faults}
---- conservation laws, monotonicity, convergence order, trajectory
-shape, fidelity ordering --- has lacked a backward-compatible metric
-tied to the classical Mutation Score (MS) lineage. Jia and Harman's
-(2011) MS is defined over syntactic Abstract Syntax Tree (AST) mutations
-and does not capture these domain semantics. Recent Large Language Model
-(LLM) generated mutants (Tip, Bell, and Schäfer 2024; Humbatova,
-Jahangirova, and Tonella 2021) do produce semantically richer mutants,
-but do not separate the contribution of LLM source diversity from the
-contribution of MR design.
+reference, MT checks metamorphic relations (MRs), invariants connecting
+outputs of related inputs. While \emph{semantic mutation testing} has
+been named since Clark, Dan, and Hierons (2010) and tooled for C (Dan
+and Hierons 2012) and for UML state-machine behaviour (Derezińska and
+Zaremba 2019), and while MR-adjacent data-semantic mutation (Sun et
+al.~2016, 2024; Zhu et al.~2020; Chan and Keung 2024) and recent LLM
+semantic-invariance MT (Curtò and Zarzà 2025) extend the mutation target
+to test data, relations, and task-level semantics, the adequacy of an MR
+set against \emph{domain-specific code-level faults}, conservation laws,
+monotonicity, convergence order, trajectory shape, fidelity ordering,
+has lacked a backward-compatible metric tied to the classical Mutation
+Score (MS) lineage. Jia and Harman's (2011) MS is defined over syntactic
+Abstract Syntax Tree (AST) mutations and does not capture these domain
+semantics. Recent Large Language Model (LLM) generated mutants (Tip,
+Bell, and Schäfer 2024; Humbatova, Jahangirova, and Tonella 2021) do
+produce semantically richer mutants, but do not separate the
+contribution of LLM source diversity from the contribution of MR design.
 
 Throughout this paper we use the term \emph{four representative classes
 of single-output scientific computing kernels} (numeric, probabilistic,
@@ -117,11 +116,10 @@ domain-semantic mutation operators.
   if it satisfies at least one of three necessary conditions: (a) it
   crosses a function-call or module-import boundary, (b) it depends on
   domain knowledge for legality, or (c) it changes the algorithmic
-  class. The five meta-operator classes --- Conservation Erosion (CE,
-  also written mut\_C), Operator Substitution (OS, mut\_M),
-  Hyperparameter (HP, mut\_G), Trajectory Flip (TF, mut\_T), and
-  Structural Injection (SI, mut\_F) --- specialise these conditions
-  across the four PUT classes.
+  class. The five meta-operator classes, Conservation Erosion (CE, also
+  written mut\_C), Operator Substitution (OS, mut\_M), Hyperparameter
+  (HP, mut\_G), Trajectory Flip (TF, mut\_T), and Structural Injection
+  (SI, mut\_F), specialise these conditions across the four PUT classes.
 \item
   \textbf{Layer 2, Operational (§2.3, §4.3).} An equivalence judgement
   E1 $\wedge$ E2, where E1 is Automated Verification Pipeline (AVP) coherence
@@ -163,15 +161,15 @@ Three lines of prior work bracket the contribution of this paper.
 
 \textbf{(i) Classical mutation testing.} Jia and Harman (2011) and
 Papadakis et al.~(2019) survey syntactic mutation. The Coupling Effect
-Hypothesis (CPH) --- that tests detecting simple faults also detect
-complex faults --- underpins the use of MS as a fault proxy (DeMillo,
-Lipton, and Sayward 1978; Andrews, Briand, and Labiche 2005; Just et
-al.~2014). We argue in §3.5 that CPH holds within syntactic mutation but
-does not automatically extend across the
-syntactic-versus-domain-semantic boundary, even when it couples simple
-syntactic faults to complex syntactic faults. The §3.5 empirical
-evidence (5.14\% AST overlap on 12 PUTs, with HP, SI, and TF at 0/0/0)
-is the empirical witness for this boundary.
+Hypothesis (CPH), that tests detecting simple faults also detect complex
+faults, underpins the use of MS as a fault proxy (DeMillo, Lipton, and
+Sayward 1978; Andrews, Briand, and Labiche 2005; Just et al.~2014). We
+argue in §3.5 that CPH holds within syntactic mutation but does not
+automatically extend across the syntactic-versus-domain-semantic
+boundary, even when it couples simple syntactic faults to complex
+syntactic faults. The §3.5 empirical evidence (5.14\% AST overlap on 12
+PUTs, with HP, SI, and TF at 0/0/0) is the empirical witness for this
+boundary.
 
 \textbf{(ii) Higher-order mutation.} Jia and Harman (2009) and Kintis et
 al.~(2018) study compositions of first-order syntactic mutants. We
@@ -191,10 +189,10 @@ equivalent-mutant problem, Delgado-Pérez and Chicano (2020) emphasise
 the importance of the \texttt{equiv} term in the MS denominator; we
 extend that classical bitwise-equivalence definition to a semantic-class
 equivalence E1 $\wedge$ E2 in §2.3. Zhang et al.~(2021) demonstrate MT
-validation in class-integration test ordering --- a
-non-scientific-computing domain --- and the present paper specialises MT
-to scientific-computing PUTs and couples it to a domain-semantic
-mutation operator framework.
+validation in class-integration test ordering, a
+non-scientific-computing domain, and the present paper specialises MT to
+scientific-computing PUTs and couples it to a domain-semantic mutation
+operator framework.
 
 \textbf{(iv) Semantic mutation operators across testing communities.}
 Semantic mutation as a research line is older than the LLM-mutant
@@ -225,9 +223,9 @@ targeting kernel-specific faults.}
 A numerical-coincidence note. Petrović and Ivanković's (2018)
 \textasciitilde20\% ``productive-mutant'' rate at Google is numerically
 close to our LRCA-calibrated C1\_share of 0.20. The two constructs
-differ --- developer survey (subjective) versus three-layer classifier
-(output) --- so the agreement is a contextual numerical coincidence
-rather than mechanism validation, as we discuss in §6.1.
+differ, developer survey (subjective) versus three-layer classifier
+(output), so the agreement is a contextual numerical coincidence rather
+than mechanism validation, as we discuss in §6.1.
 
 The SMS metric is conceptually complementary to the code-verification
 scope of ASME V\&V 20-2009 §3, which targets numerical-solver
@@ -420,7 +418,7 @@ Under the degenerate limit \texttt{L} defined in §2.6, SMS reduces
 almost everywhere to classical syntactic MS, equivalent mutants
 degenerate to classical behavioural equivalence, killed mutants
 degenerate to bitwise difference detection, and the LRCA layer
-trivialises --- C2 through C5 cannot fire when L1 $\wedge$ L2 $\wedge$ L3 hold. Any
+trivialises, C2 through C5 cannot fire when L1 $\wedge$ L2 $\wedge$ L3 hold. Any
 SMS-based empirical conclusion is therefore structurally consistent with
 the existing mutation-testing literature in the classical
 syntactic-mutation regime, so there is no metric-level semantic
@@ -640,13 +638,13 @@ The cell density notation distinguishes \textbullet\textbullet substantial (30 c
 aligned slice + strong off-diagonal cells where MR coverage is dense and
 mutant detection is expected), \textbullet moderate (24 cells; cross slice with
 non-trivial expected detection rate), and $\circ$ vacant (6 cells; inherited
-from P1 H6 --- historically empty cells where no MR is exercised). The
-12 aligned (j = k) cells are precisely the on-diagonal cells; the 48
-cross (j $\neq$ k) cells partition into the 24 \textbullet moderate + 18 \textbullet\textbullet
-off-diagonal substantive + 6 $\circ$ vacant cells. The \textbullet moderate / \textbullet\textbullet
-substantive distinction does not change SMS computation; it tracks
-expected MR coverage density per P1 documentation and informs the §6.2
-R\_sem / R\_kill decoupling discussion.
+from P1 H6, historically empty cells where no MR is exercised). The 12
+aligned (j = k) cells are precisely the on-diagonal cells; the 48 cross
+(j $\neq$ k) cells partition into the 24 \textbullet moderate + 18 \textbullet\textbullet off-diagonal
+substantive + 6 $\circ$ vacant cells. The \textbullet moderate / \textbullet\textbullet substantive
+distinction does not change SMS computation; it tracks expected MR
+coverage density per P1 documentation and informs the §6.2 R\_sem /
+R\_kill decoupling discussion.
 
 \textbf{Per-class operator specialisations (illustrative).} Each
 meta-operator (mut\_C / M / G / T / F = CE / OS / HP / TF / SI in their
@@ -718,7 +716,7 @@ cosmic-ray syntactic mutants across 12 PUTs (overall 5.14\%). HP, SI, TF
 main 5).}\label{fig:overlap}
 \end{figure}
 
-\subsubsection{3.5 P2 vs syntactic mutants --- 12-PUT empirical (Layer
+\subsubsection{3.5 P2 vs syntactic mutants: 12-PUT empirical (Layer
 3)}\label{p2-vs-syntactic-mutants-12-put-empirical-layer-3}
 
 \textbf{Experimental design.} For each PUT, P2 v4 cross-source mutants
@@ -820,30 +818,30 @@ this framing.
 
 \textbf{(i) Systematic versus incidental.} Satisfying conditions (a),
 (b), or (c) is sufficient for a single semantic mutation, but only when
-satisfaction reflects design intent --- not stochastic byproduct ---
-does it constitute a \emph{systematic} semantic mutation method. A
-syntactic tool that occasionally hits (a) or (c) with its 12 default
-operators does so at a non-zero probability, but the hits are not
-repeatable and they carry neither of the two engineering goods we want.
-First, designing a semantic mutator like OS \texttt{det\ $\to$\ sum(diag)}
-requires knowing that these expressions are equivalent on diagonal
-matrices but not on general matrices --- a deepening of source-code
-understanding the syntactic tool does not exhibit. Second,
-domain-semantic faults --- wrong physical constants, unit conversions,
-boundary conditions, hyperparameter semantics, numerical-method order
---- are not AST-local; the syntactic-tool design goals (operator typos,
-off-by-one errors, negation flips) do not target them. Systematic
-semantic mutation therefore requires (a), (b), or (c) to be design
-intent. Appendix B.1.5 records this argument in full.
+satisfaction reflects design intent, not stochastic byproduct, does it
+constitute a \emph{systematic} semantic mutation method. A syntactic
+tool that occasionally hits (a) or (c) with its 12 default operators
+does so at a non-zero probability, but the hits are not repeatable and
+they carry neither of the two engineering goods we want. First,
+designing a semantic mutator like OS \texttt{det\ $\to$\ sum(diag)} requires
+knowing that these expressions are equivalent on diagonal matrices but
+not on general matrices, a deepening of source-code understanding the
+syntactic tool does not exhibit. Second, domain-semantic faults, wrong
+physical constants, unit conversions, boundary conditions,
+hyperparameter semantics, numerical-method order, are not AST-local; the
+syntactic-tool design goals (operator typos, off-by-one errors, negation
+flips) do not target them. Systematic semantic mutation therefore
+requires (a), (b), or (c) to be design intent. Appendix B.1.5 records
+this argument in full.
 
 \textbf{(ii) HOM caveat.} HOM (Jia and Harman 2009; Kintis et al.~2018)
-could in principle compose syntactic mutants --- for example, an
-Arithmetic Operator Replacement combined with a Statement Deletion ---
-to partially simulate the effects of OS or HP on some PUTs. The §5
-empirics did not run a HOM comparison; we list HOM equivalence testing
-as residual threat R12 (Appendix F.2) and confine our ``tool
-unreachability'' claim to \emph{first-order} syntactic tools (mutmut and
-cosmic-ray default configurations).
+could in principle compose syntactic mutants, for example, an Arithmetic
+Operator Replacement combined with a Statement Deletion, to partially
+simulate the effects of OS or HP on some PUTs. The §5 empirics did not
+run a HOM comparison; we list HOM equivalence testing as residual threat
+R12 (Appendix F.2) and confine our ``tool unreachability'' claim to
+\emph{first-order} syntactic tools (mutmut and cosmic-ray default
+configurations).
 
 \textbf{Conceptual analysis of HOM reachability (Round-8 review
 response).} Higher-order mutation (HOM; Jia and Harman 2008, 2009;
@@ -966,7 +964,7 @@ gate). Cross-source pool capacity: 37 operators $\times$ 3 sources $\times$ 3 tr
 333 attempts, 89\% V1-V4 pass, 298 confirmed mutants distributed nearly
 equally (Claude 101, GPT 98, DeepSeek 99).
 
-\textbf{Declared confound --- protocol asymmetry (R13).} v3 used the
+\textbf{Declared confound: protocol asymmetry (R13).} v3 used the
 original Phase-1 dual-blind reviewer protocol (Claude generation +
 GPT-5.4 review + DeepSeek arbitration); v4 passes V1-V4 mechanical gates
 only and does \textbf{not} invoke a reviewer LLM. A fraction of the v3 $\to$
@@ -1024,7 +1022,7 @@ evaluations) and quickly discards numerically distinct mutants; the
 remaining candidates are screened by AVP for MR-relation equivalence.
 The joint condition is conservative: false-non-equivalent (E1 $\vee$ E2 fail)
 is much easier than false-equivalent (both must mis-pass
-simultaneously), biasing SMS slightly \emph{high} --- an explicit
+simultaneously), biasing SMS slightly \emph{high}, an explicit
 conservative engineering choice (Appendix A.3).
 
 \textbf{Killed determination.} With OR-aggregation across mr in
@@ -1050,9 +1048,9 @@ For each killed mutant the three-layer decision tree applies in order:
 \tightlist
 \item
   \textbf{L1 tolerance robustness} (all classes). N=20 replicates with a
-  fail-ratio cutoff at 0.80 --- a kill that survives less than 80\% of
-  the 20 replicates is labelled C2 (numerical-tolerance perturbation)
-  and exits.
+  fail-ratio cutoff at 0.80; a kill that survives less than 80\% of the
+  20 replicates is labelled C2 (numerical-tolerance perturbation) and
+  exits.
 \item
   \textbf{L2 OOD triage} (C / D classes only). Sample from
   \texttt{D\_S\^{}valid}; if the mutant fails \emph{only} in the OOD
@@ -1077,11 +1075,10 @@ at 20) lifts H5 from 10/60 to 12/60 cells; the best combination
 (\texttt{ood\_band\ =\ 0.02,\ tolerance\_multiplier\ =\ 3.0}) is
 reported as primary, with default-threshold results retained as control
 (\texttt{lrca\_60cell\_v3.json}). The calibration ceiling (12/60 = 20\%)
-remains far below the 80\% pre-registered threshold --- H5 is
-unattainable on this dataset as an intrinsic property of LLM-mutant
-pools, not a calibration issue. Detailed grid table, L0-L3
-sub-protocols, and decision-tree pseudocode are in \textbf{Appendix A.2
-+ C.4}.
+remains far below the 80\% pre-registered threshold; H5 is unattainable
+on this dataset as an intrinsic property of LLM-mutant pools, not a
+calibration issue. Detailed grid table, L0-L3 sub-protocols, and
+decision-tree pseudocode are in \textbf{Appendix A.2 + C.4}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1151,7 +1148,7 @@ equivalent mutants). Numbering H1, H2, H4, H5 is preserved with H3
 vacant. SMS variants (SMS, SMS\_unfiltered) and construction lemmas are
 in \textbf{Appendix D.1}.
 
-\subsubsection{5.2 RQ1 --- 60-cell
+\subsubsection{5.2 RQ1: 60-cell
 distribution}\label{rq1-60-cell-distribution}
 
 {\def\LTcaptype{none} % do not increment counter
@@ -1199,7 +1196,7 @@ literature); zero-mass dominance appears to be a shared characteristic
 of LLM-mutant + existing MR-MP alignment designs, not a quirk of this
 paper's PUT selection.
 
-\subsubsection{5.3 RQ2 --- Aligned vs cross (Cliff's
+\subsubsection{5.3 RQ2: Aligned vs cross (Cliff's
 delta)}\label{rq2-aligned-vs-cross-cliffs-delta}
 
 {\def\LTcaptype{none} % do not increment counter
@@ -1243,13 +1240,13 @@ design. We frame H2 as an underpowered exploratory contribution and
 defer full verification to a follow-up study with a larger PUT sample.
 
 This medium-effect placement is consistent with Tip et al.~(2024)
-LLMorpheus's medium-effect range on JavaScript LLM mutants --- a
-contextual literature observation (estimand caveat: their delta compares
-``LLM vs traditional mutants on fault detection'', ours compares
-``aligned vs cross MP slice within one pool''; the numerical similarity
-is not substantive support).
+LLMorpheus's medium-effect range on JavaScript LLM mutants, a contextual
+literature observation (estimand caveat: their delta compares ``LLM vs
+traditional mutants on fault detection'', ours compares ``aligned vs
+cross MP slice within one pool''; the numerical similarity is not
+substantive support).
 
-\subsubsection{5.4 RQ2 --- Stipulated-alternative
+\subsubsection{5.4 RQ2: Stipulated-alternative
 power}\label{rq2-stipulated-alternative-power}
 
 The §5.2 effective-n constraint motivates an explicit power analysis. A
@@ -1317,14 +1314,14 @@ explicitly do not read it as evidence that source diversity is inert.
 The strong-sense test is deferred to a follow-up study.
 
 \textbf{Note on monotone-transformation invariance.} Cliff's $\delta$ is
-rank-based --- a function of U / (n$_{1}$$\cdot$n$_{2}$) --- so applying a logit
-transform to SMS gives $\delta$\_logit ≡ $\delta$\_raw by construction. This is
-consistent with the rank-invariance theorem and does \textbf{not}
-constitute additional robustness evidence. The genuine robustness
-threats to the H2 verdict come from the zero-mass dominance (§5.2), not
-from any metric-scale choice.
+rank-based: a function of U / (n$_{1}$$\cdot$n$_{2}$), so applying a logit transform to
+SMS gives $\delta$\_logit ≡ $\delta$\_raw by construction. This is consistent with the
+rank-invariance theorem and does \textbf{not} constitute additional
+robustness evidence. The genuine robustness threats to the H2 verdict
+come from the zero-mass dominance (§5.2), not from any metric-scale
+choice.
 
-\subsubsection{5.5 RQ3 --- Cross-class consistency and
+\subsubsection{5.5 RQ3: Cross-class consistency and
 Friedman}\label{rq3-cross-class-consistency-and-friedman}
 
 {\def\LTcaptype{none} % do not increment counter
@@ -1365,11 +1362,10 @@ therefore use Friedman as the non-parametric formal alternative:
   MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
 \item
   Per-class Friedman with \textbf{Bonferroni $\times$ 4 correction} (R1 W4
-  round-2): a 1.000 / b \textbf{0.116} / c 1.000 / d 1.000 --- no
-  per-class result remains significant after correction. Kendall's W
-  effect sizes: a 0.333 (small) / b 0.898 (large concordance, but
-  caveat: N=3 per class makes this label nominal only) / c 0.333 / d
-  0.417.
+  round-2): a 1.000 / b \textbf{0.116} / c 1.000 / d 1.000, no per-class
+  result remains significant after correction. Kendall's W effect sizes:
+  a 0.333 (small) / b 0.898 (large concordance, but caveat: N=3 per
+  class makes this label nominal only) / c 0.333 / d 0.417.
 \end{itemize}
 
 \textbf{Caveat.} Friedman tests ``are MP rank differences present''
@@ -1377,7 +1373,7 @@ therefore use Friedman as the non-parametric formal alternative:
 classes''. These are logically independent. H4 stands on the §5.5 sign
 test; per-class Friedman is descriptive only (small N=3 per class).
 
-\subsubsection{5.6 RQ4 --- SMS vs Pattern
+\subsubsection{5.6 RQ4: SMS vs Pattern
 Coverage}\label{rq4-sms-vs-pattern-coverage}
 
 \textbf{Status.} RQ4 is reported as a descriptive observation, not a
@@ -1402,7 +1398,7 @@ strong claim that ``SMS is independent of PC'' or the strong claim that
 hypothesis for P4 (n $\geq$ 30 PUTs or refined PC operationalisation; full PC
 operationalisation in Appendix D.5).
 
-\subsubsection{5.7 H5 --- LRCA mass}\label{h5-lrca-mass}
+\subsubsection{5.7 H5: LRCA mass}\label{h5-lrca-mass}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
@@ -1474,7 +1470,7 @@ R\_kill}\label{decoupling-between-r_sem-and-r_kill}
 
 The operator-level pilot in Appendix C.4.1 reveals a sharp pattern: HP,
 TF, and OS operators on the c-class (surrogate) and d-class (machine
-learning) PUTs reach R\_sem $\approx$ 1.0 (semantic feasibility --- the LLM
+learning) PUTs reach R\_sem $\approx$ 1.0 (semantic feasibility, the LLM
 successfully produces a syntactically valid, executable, intent-bearing
 mutant) but R\_kill = 0 under the PUT's primary MP (the AVP fails to
 detect the mutant under that MR). Concretely, six cells show R\_sem $\geq$
@@ -1482,10 +1478,10 @@ detect the mutant under that MR). Concretely, six cells show R\_sem $\geq$
 c2\_OS1 (polynomial $\to$ spline basis), c3\_HP1 (relu $\to$ tanh), c3\_TF1
 (max\_iter 1000 $\to$ 5), d1\_HP1 (MLP $\alpha$ 1e-4 $\to$ 1.0), and d3\_HP1 (LR C 1.0
 $\to$ 1e-4). In each, the mutant \emph{is} a valid hyperparameter-semantic
-injection, but the primary MP --- MP5 asymptotic for the c-class and MP2
-monotonicity for the d-class --- is an asymptotic or statistical
-relation, and the parameter deviation it tolerates is wide enough to
-absorb the mutant.
+injection, but the primary MP, MP5 asymptotic for the c-class and MP2
+monotonicity for the d-class, is an asymptotic or statistical relation,
+and the parameter deviation it tolerates is wide enough to absorb the
+mutant.
 
 The cell-level evidence in §5.2 reproduces this pattern: 75\% of cells
 are zero, concentrated in the cross slices. Under v4 cross-source, mean
@@ -1505,7 +1501,7 @@ v4 micro-shift of −0.009 attributes to LLM source diversity under a
 fixed prompt, while MR-design adequacy at the operator-MP level (rather
 than LLM identity) governs the kill rate.
 
-\subsubsection{6.3 H4 --- partial across same-source and
+\subsubsection{6.3 H4: partial across same-source and
 cross-source}\label{h4-partial-across-same-source-and-cross-source}
 
 All four class means are positive in v3 (same-source) and v4
@@ -1521,16 +1517,16 @@ b-class is the inverted cell. The Friedman main effect (chi\^{}2 =
 scope)}\label{stakeholder-analysis-single-output-kernels-scope}
 
 \textbf{Scope.} All deployment claims in this subsection are bounded to
-single-output \texttt{float\ $\to$\ float} kernels under 2 KB --- the 12
-PUTs of this paper. They do not apply to industrial-scale, multi-module,
-or multi-output scientific computing software, which lies in the P5 /
-P2-CN scope.
+single-output \texttt{float\ $\to$\ float} kernels under 2 KB, the 12 PUTs
+of this paper. They do not apply to industrial-scale, multi-module, or
+multi-output scientific computing software, which lies in the P5 / P2-CN
+scope.
 
 \textbf{Test engineers} can read SMS as a per-MR scalar adequacy score.
 When SMS sits well below the aligned baseline of about 0.275 (§5.3), the
-LRCA labels --- C2 tolerance, C3 OOD, C4 statistical --- point to
-specific repair paths. Air-gap incompatibility is a hard limitation: the
-workflow depends on external LLM API calls and is incompatible with most
+LRCA labels, C2 tolerance, C3 OOD, C4 statistical, point to specific
+repair paths. Air-gap incompatibility is a hard limitation: the workflow
+depends on external LLM API calls and is incompatible with most
 regulated air-gapped Verification and Validation (V\&V) environments
 (IEC 60880, DO-178C, IEC 62304, ISO 26262). Pre-generated mutant pools
 can be reproduced offline, but generating new mutant pools requires LLM
@@ -1631,8 +1627,8 @@ dual-blind on v4 & Appendix F.1 \\
   cross-source pooling, training-data overlap across Claude, GPT, and
   DeepSeek may produce similar blind spots. Three-LLM rotation and 20\%
   manual sampling reduce but do not eliminate this risk. Future work
-  should add a fourth, independently-trained LLM family --- a
-  self-hosted open-weight model is the natural candidate.
+  should add a fourth, independently-trained LLM family, a self-hosted
+  open-weight model is the natural candidate.
 \item
   \textbf{Limited statistical power for cross-class consistency.} The
   four-class sign test has df = 3, and the mixed-effects model returns
@@ -1774,8 +1770,8 @@ mutation in single-output scientific computing kernels.
 \tightlist
 \item
   \textbf{Layer 1 (§3.2).} Formal necessary conditions for semantic
-  mutation --- cross-function-boundary substitution, dependence on
-  domain knowledge, change in algorithmic class --- instantiated as five
+  mutation, cross-function-boundary substitution, dependence on domain
+  knowledge, change in algorithmic class, instantiated as five
   meta-operator classes: CE, OS, HP, TF, and SI (also written mut\_C,
   mut\_M, mut\_G, mut\_T, mut\_F).
 \item
