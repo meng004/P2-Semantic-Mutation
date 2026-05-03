@@ -291,3 +291,229 @@ ARS 是 *补充* 不是 *替代*——两者都必须执行。
 | Romano 2006 | crossref(title) → openalex → google_scholar | google_scholar | 4.2s | △ no DOI |
 | ASME V&V 20 | webfetch(asme.org) | webfetch | 2.1s | ✓ standard |
 ```
+
+---
+
+## 8. arXiv + GitHub 发布准备（Release-Prep Policy）
+
+适用阶段：论文 *submission-ready* 之后、社区检查 / 投稿启动之前。
+
+### 8.1 触发条件（关键词扫描）
+
+用户回合中出现以下任一意图时，**必须**进入本节流程：
+
+- 中文：`发布到 github`、`发到 arxiv`、`公开仓库`、`接受大家检查`、`上传 github`、`传到 github`、`发预印本`、`挂 arxiv`
+- 英文：`publish to github`、`upload to arxiv`、`go public`、`open the repo`、`release the bundle`、`mint a doi`
+
+### 8.2 Step 1：意图确认（强制）
+
+**禁止静默假设**用户走哪条发布路径。先输出一段 ≤ 200 字的**三选项摘要**让用户选择：
+
+| 渠道 | 承载 | 标识符 | 适合 |
+|---|---|---|---|
+| **arXiv (cs.SE)** | 论文 PDF preprint | arXiv ID | 学术可见性 / 同行预审 |
+| **GitHub public** | 整个仓库 | URL + commit hash | 协作 / Issue / 持续公开 |
+| **Zenodo** | replication.zip | 强 archival DOI | 期刊 §Data Availability 引用支撑 |
+
+明确**告知互替代价**：单 arXiv 失去代码引用 / 单 GitHub 失去 archival DOI / 单 Zenodo 失去学术可见性。
+
+**等用户给出"做哪几样"的明确回复后再继续**。不要替用户决定"全做 / 不做 / 部分做"。
+
+### 8.3 Step 2.5：执行元流程（4 步，强制）
+
+用户确认意图后，**禁止**直接动手。必须按以下 4 步走，且步骤之间是 *门槛*（前一步通过才能进下一步）：
+
+#### 8.3.1 生成发布审计表（Audit Table）
+
+将 §8.5-§8.8 各分项展开成一份逐项可勾选的清单，写入 `docs/release_<DATE>/audit_table.md`。每行格式：
+
+```
+| 项 | 检查命令 / 验证标准 | 期望结果 | 状态 |
+|---|---|---|---|
+| arXiv tarball 含 .bbl | `tar tf p2_arxiv.tar.gz | grep '\.bbl$'` | 至少一个 .bbl | ⬜ |
+| README §1 动机 ≥ 2 prior-art | grep `\\cite\\|prior` README.md | ≥ 2 命中 | ⬜ |
+| .gitignore 含 `.env` | `git check-ignore .env` | 输出 `.env` | ⬜ |
+| 敏感 base URL 扫描 | §8.8 的 grep 命令组 | 0 命中 | ⬜ |
+| pytest | `PYTHONPATH=src .venv/bin/pytest tests/ -q` | 全绿 | ⬜ |
+| ... | ... | ... | ⬜ |
+```
+
+审计表行数 = §8.5+§8.6+§8.7+§8.8 所有子项之和；**不允许**省略。
+
+#### 8.3.2 调用 `superpowers:writing-plans` 制定计划
+
+把审计表交给 `superpowers:writing-plans` 技能，要求生成：
+- 阶段划分（≥ 3 个阶段：scrub / write / verify-and-push）
+- 每阶段的 review checkpoint（人工拍板点）
+- 每个待修改文件的具体改动 diff 描述
+- 失败回滚策略（每个 commit 应可独立 revert）
+
+计划文件落地在 `docs/superpowers/plans/<DATE>-release-prep.md`。
+
+#### 8.3.3 调用 `superpowers:executing-plans` 执行计划
+
+按计划逐阶段执行，每个 review checkpoint 处**必须停下**等用户确认。**禁止**：
+- 跳过 checkpoint 直接做下一阶段
+- 一次 commit 跨越多个阶段
+- 把破坏性操作（push / 删除 history）放在 checkpoint 之前
+
+#### 8.3.4 用审计表逐项验证
+
+执行完成后，对照 §8.3.1 审计表**每一行**跑一次检查命令，更新状态列：
+
+- 全部 ✅ → 进入 §8.9 推送步骤
+- 任一 ❌ → 回到 §8.3.2 修订计划，再走一遍 §8.3.3-§8.3.4
+
+最终审计结果（全绿快照）写入 `docs/release_<DATE>/audit_table.md` 同一文件，作为发布前的诚信凭证。
+
+### 8.4 Step 3：账号 / 凭证边界（不可代办清单）
+
+以下 **必须** 用户本人完成；助手只给清晰步骤指引：
+
+- GitHub 账号注册（浏览器 CAPTCHA / 邮箱验证 / 密码自设 / 2FA）
+- arXiv endorsement（需要既存 cs.SE 作者推荐；首投者要联系学科端有发表的同事）
+- Zenodo 账号（同 arXiv，邮箱验证）
+- SSH key 私钥生成（`ssh-keygen` 必须由用户运行，绝不能由助手代劳）
+- Personal Access Token 创建（GitHub 设置面板手动）
+
+可代办：
+- 写 `README.md`、`CONTRIBUTING.md`、`CHANGELOG.md`、`RELEASE_CHECKLIST.md`
+- 配置 / 检查 `.gitignore`
+- 跑敏感信息扫描
+- 用户给出 `<USERNAME>` + 已配 SSH 之后，执行 `git remote add origin` + `git push -u origin main`
+- 创建 GitHub Release（gh CLI）
+- 在用户给出 arXiv ID 后，替换 README / bibtex 中的占位符
+
+### 8.5 Step 4：arXiv 稿件准备清单
+
+确认走 arXiv 后（仅在 §8.3 元流程的 §8.3.3 执行阶段），**必须**完成：
+
+| 项 | 验证 |
+|---|---|
+| 论文 PDF 与 IST 投稿版一致 | `diff submission/p2_ist_final.tex submission/p2_arxiv.tex` 应为 0（如做 cosmetic 调整需说明） |
+| LaTeX 源能在 arXiv build 通过 | 本地 `xelatex` 改 `pdflatex` 测试一遍（arXiv 默认用 pdflatex；elsarticle.cls 兼容） |
+| BibTeX 文件已 inline 或 .bbl 一并上传 | `\bibliography{...}` 引用的 .bib 必须在 tarball 里 |
+| Figures 路径正确 | arXiv 解压不保留嵌套深路径，建议 `figures/figN.png` 平铺 |
+| Abstract ≤ 1920 字符（arXiv 上限） | `wc -c` 验证 |
+| Primary category：cs.SE | 如有 ML 内容可加 cs.LG secondary |
+| ancillary files：可选挂 replication.zip（≤ 100 MB） | 注意 arXiv 一旦上传不能删除，只能 supersede |
+| 作者 ORCID / affiliation 确认 | 与 IST 投稿一致 |
+
+### 8.6 Step 5：GitHub README 必含 9 章
+
+GitHub-facing `README.md` **必须**包含以下 9 节，缺一不可：
+
+| § | 标题 | 内容要点 |
+|---|---|---|
+| 1 | **动机**（Motivation） | 为什么做这项研究；指出领域 gap；引 ≥ 2 prior-art |
+| 2 | **核心贡献**（Core Contributions） | 编号列 C1...Cn（n ≥ 3），每条一句话 |
+| 3 | **重要结论**（Key Findings） | headline result（含 effect size / p / CI 数字） |
+| 4 | **仓库布局**（Repository Layout） | tree 输出 + 关键目录用途表 |
+| 5 | **复现流程**（Replication） | 至少三档：smoke / cache replay / re-run |
+| 6 | **构建命令**（Build Commands） | 论文 build script + figure 重生 + SSOT 重生 |
+| 7 | **敏感信息策略**（Sensitive Information Policy） | `.env` 不上传；占位符约定；扫描脚本 |
+| 8 | **引用**（Citation） | bibtex + CITATION.cff 路径 + arXiv / DOI 占位符 |
+| 9 | **协议**（License） | 论文 **CC-BY-4.0**；代码 **MIT**；数据 CC-BY-4.0 |
+
+### 8.7 Step 6：`.gitignore` 必含基线
+
+发布前 `.gitignore` **必须**屏蔽以下条目（不分 OS / 项目）：
+
+```gitignore
+# === Secrets ===
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials.json
+secrets/
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+.venv.*/
+venv/
+env/
+
+# === LaTeX byproducts ===
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.spl
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# === 论文项目本地工作目录 ===
+已有论文/
+相关论文/
+references_pdfs/
+旧稿/
+草稿/
+
+# === macOS / Editor ===
+.DS_Store
+.idea/
+.vscode/
+
+# === Claude Code 内部 ===
+.claude/
+.superpowers/
+.translate_cache/
+
+# === Build / dist ===
+dist/
+build/
+node_modules/
+```
+
+如发布前发现已 tracked 但应屏蔽的文件 → `git rm --cached <file>` + 加入 `.gitignore` + 单独 commit。
+
+### 8.8 Step 7：敏感信息扫描（强制门槛）
+
+push 前**必须**通过：
+
+```bash
+# (1) API key 模式
+git ls-files | xargs grep -lE "sk-[a-zA-Z0-9]{20,}" 2>/dev/null \
+    | grep -v "\.env\.example" | grep -v "\.md\.bak"
+
+# (2) 真实 base URL（按项目维护一份禁词表）
+git ls-files | xargs grep -lEn "(api\.bltcy\.ai|api\.deepseek\.com|api\.openai\.com|api\.anthropic\.com|company-internal\.[a-z]+)" 2>/dev/null
+
+# (3) 第三方邮箱（除主作者外）
+git ls-files | xargs grep -EHn "[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.(com|edu|cn|org|net)" 2>/dev/null \
+    | grep -v "<MAINTAINER_EMAIL>"
+
+# (4) 内网 IP / 数据库连接串
+git ls-files | xargs grep -lE "(192\.168\.|10\.[0-9]+\.|172\.(1[6-9]|2[0-9]|3[01])\.|postgres://|mysql://|mongodb://)" 2>/dev/null
+```
+
+任一命中 → 替换为 `<YOUR_BASE_URL>` / `<YOUR_API_KEY>` 占位符 + 单独 commit `release-prep: scrub <type>`。
+
+### 8.9 Step 8：发布顺序（推荐）
+
+1. 仓库整理 + 历史归档（已有 `archive/`）
+2. 敏感信息扫描 + 替换
+3. README 9-section 重写
+4. `.gitignore` 基线核对
+5. `pytest` 全绿（验证整理无破坏）
+6. 一次或多次 `release-prep:` commit（不混业务改动）
+7. 用户确认 GitHub 用户名 → `git push` + tag `v1.0.0-submission`
+8. 用户确认 arXiv → 构建 arXiv tarball → 用户上传
+9. （IST 接受后）Zenodo upload → DOI 替换占位符 → 重编 PDF → 重 push
+
+**禁止**：
+- 把 push / arXiv 上传等不可逆操作放在初次执行流；必须分步等用户确认
+- 在用户没明确给 GitHub username 时静默假设仓库 URL
+- 把 Zenodo / arXiv / GitHub 三个动作打包成一次"全自动"流；学术诚信场景下用户必须逐步签字
