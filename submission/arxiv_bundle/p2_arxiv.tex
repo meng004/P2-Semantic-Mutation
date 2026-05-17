@@ -357,10 +357,10 @@ SMS formula structure is preserved, with extension applied only to the
 
 Three-state decomposition (mutually exclusive and exhaustive):
 
-{\scriptsize \begin{verbatim}
-mut_j(S_i) = equiv_{i,k,j} ∪ killed_{i,k,j} ∪ survive_{i,k,j}   (disjoint)
-SMS_{i,k,j} := |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)  ∈ [0, 1]
-\end{verbatim}}
+\begin{align*}
+\mathrm{mut}_j(S_i) &= \mathrm{equiv}_{i,k,j} \cup \mathrm{killed}_{i,k,j} \cup \mathrm{survive}_{i,k,j} \quad \text{(disjoint)} \\
+\mathrm{SMS}_{i,k,j} &:= \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{mut}_j(S_i)| - |\mathrm{equiv}_{i,k,j}|} \in [0,\,1]
+\end{align*}
 
 The complete notation table is in Appendix A.1; index sets and tolerance
 parameters (\texttt{$\varepsilon$\_eq}, \texttt{$\varepsilon$\_AVP\^{}k},
@@ -370,11 +370,11 @@ parameters (\texttt{$\varepsilon$\_eq}, \texttt{$\varepsilon$\_AVP\^{}k},
 
 Operator family and alignment:
 
-{\scriptsize \begin{verbatim}
-MUT = {mut_C, mut_M, mut_G, mut_T, mut_F}     (open, extensible)
-mut_j : Programs → 2^Programs
-align(j) = j      (design choice, not theorem)
-\end{verbatim}}
+\begin{align*}
+\mathrm{MUT} &= \{\mathrm{mut}_C,\, \mathrm{mut}_M,\, \mathrm{mut}_G,\, \mathrm{mut}_T,\, \mathrm{mut}_F\} \quad \text{(open, extensible)} \\
+\mathrm{mut}_j &: \text{Programs} \to 2^{\text{Programs}} \\
+\mathrm{align}(j) &= j \quad \text{(design choice, not theorem)}
+\end{align*}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -651,23 +651,30 @@ least one of (a), (b), (c).
 
 \subsubsection{3.3 60-cell instantiation matrix}\label{cell-instantiation-matrix}
 
-{\scriptsize \begin{verbatim}
-              MP_1   MP_2   MP_3    MP_4    MP_5
-              cons.  mono.  conv.   traj.   p-ord.
-   A1 Lorenz   ●●     ●     ●●     ●●      ○
-   A2 LU       ●●     ○     ●      ●       ●●
-   A3 FDM      ●●     ●     ●●     ●●      ○
-   B1 BetaBin  ●●     ●     ○      ○       ●
-   B2 MCMC     ●      ●●    ●●     ●●      ●
-   B3 MC       ●●     ○     ●●     ●       ○
-   C1 GPR      ●      ●●    ●●     ●       ●●
-   C2 PCE      ●●     ●     ●●     ●       ●●
-   C3 NN-Surr  ●      ●●    ●●     ●●      ●●
-   D1 MLP      ●●     ●●    ●      ●       ●●
-   D2 SVM      ●      ●●    ●      ○       ●●
-   D3 LR       ●●     ●●    ●      ○       ●●
-   ●● substantial 30 / ● moderate 24 / ○ vacant 6 (P1 H6)
-\end{verbatim}}
+{\def\LTcaptype{table}
+\begin{longtable}[]{@{}lccccc@{}}
+\toprule\noalign{}
+PUT & MP\_1 cons. & MP\_2 mono. & MP\_3 conv. & MP\_4 traj. & MP\_5 p-ord. \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A1 Lorenz  & $\bullet\bullet$ & $\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ & $\circ$ \\
+A2 LU      & $\bullet\bullet$ & $\circ$ & $\bullet$ & $\bullet$ & $\bullet\bullet$ \\
+A3 FDM     & $\bullet\bullet$ & $\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ & $\circ$ \\
+B1 BetaBin & $\bullet\bullet$ & $\bullet$ & $\circ$ & $\circ$ & $\bullet$ \\
+B2 MCMC    & $\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet$ \\
+B3 MC      & $\bullet\bullet$ & $\circ$ & $\bullet\bullet$ & $\bullet$ & $\circ$ \\
+C1 GPR     & $\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet$ & $\bullet\bullet$ \\
+C2 PCE     & $\bullet\bullet$ & $\bullet$ & $\bullet\bullet$ & $\bullet$ & $\bullet\bullet$ \\
+C3 NN-Surr & $\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet\bullet$ \\
+D1 MLP     & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet$ & $\bullet$ & $\bullet\bullet$ \\
+D2 SVM     & $\bullet$ & $\bullet\bullet$ & $\bullet$ & $\circ$ & $\bullet\bullet$ \\
+D3 LR      & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet$ & $\circ$ & $\bullet\bullet$ \\
+\end{longtable}
+}
+
+\noindent\emph{Legend:} $\bullet\bullet$ substantial (30 cells); $\bullet$ moderate (24 cells); $\circ$ vacant (6 cells; P1 H6).
 
 Each PUT averages 24.3 mutants in the cross-source pool (range
 10-30); full 60-cell $\times$ N=20 = 292 mutant instantiations $\times$ 20 AVP
@@ -2044,65 +2051,66 @@ Engineering}.
 
 \subsubsection{A.1 Complete notation table}\label{a.1-complete-notation-table}
 
-{\scriptsize \begin{verbatim}
-═══════════════ Paper Domain ═══════════════
-Paper identity:   P1, P2, P4, P5
+\paragraph{Paper domain.} Paper identity: P1, P2, P4, P5.
 
-═══════════════ Experimental Objects ═══════════════
-PUT set I:        {A1,A2,A3, B1,B2,B3, C1,C2,C3, D1,D2,D3}, |I| = 12
-PUT:              S_i  (i ∈ I)
-Class mapping:    cls : I → {A, B, C, D}     (open, extensible)
-Valid input distribution:    D_S, sampling X_{K_eq} ~ D_S
+\paragraph{Experimental objects.}
+\begin{itemize}
+\item PUT set $I = \{\text{A1,A2,A3, B1,B2,B3, C1,C2,C3, D1,D2,D3}\}$, $|I| = 12$.
+\item PUT: $S_i$ ($i \in I$).
+\item Class mapping: $\mathrm{cls} : I \to \{A, B, C, D\}$ (open, extensible).
+\item Valid input distribution: $D_S$, sampling $X_{K_{\mathrm{eq}}} \sim D_S$.
+\end{itemize}
 
-═══════════════ Metamorphic Testing Side ═══════════════
-Meta-Pattern (MP):
-  MP = {MP_1, ..., MP_5}, k ∈ {1,...,5}      (open, extensible)
-  MP_1 Conservation  MP_2 Monotonicity  MP_3 Convergence
-  MP_4 Trajectory    MP_5 Partial-order
-Metamorphic Relation:  MR_{i,k} (provided by P1), mr = (r, R) ∈ MR_{i,k}
-Automated Verification Pipeline (AVP):
-  AVP : Programs × MR_universe × R⁺ → {pass, fail}
-  AVP(s, mr, ε_AVP^k)  invokes the verification method per MP_k
+\paragraph{Metamorphic testing side.}
+\begin{itemize}
+\item Meta-Pattern (MP): $\mathrm{MP} = \{\mathrm{MP}_1, \ldots, \mathrm{MP}_5\}$, $k \in \{1,\ldots,5\}$ (open, extensible). MP\_1 Conservation, MP\_2 Monotonicity, MP\_3 Convergence, MP\_4 Trajectory, MP\_5 Partial-order.
+\item Metamorphic Relation: $\mathrm{MR}_{i,k}$ (provided by P1); $\mathit{mr} = (r, R) \in \mathrm{MR}_{i,k}$.
+\item Automated Verification Pipeline (AVP): $\mathrm{AVP} : \text{Programs} \times \mathrm{MR}_{\text{universe}} \times \mathbb{R}^+ \to \{\text{pass}, \text{fail}\}$; $\mathrm{AVP}(s, \mathit{mr}, \varepsilon_{\mathrm{AVP}}^k)$ invokes the verification method per MP\_$k$.
+\end{itemize}
 
-═══════════════ Mutation Testing Side ═══════════════
-Mutation Operator family (MUT):
-  MUT = {mut_1, ..., mut_5}, j ∈ {1,...,5}    (open, extensible)
-  mut_1 = mut_C  mut_2 = mut_M  mut_3 = mut_G  mut_4 = mut_T  mut_5 = mut_F
-  Signature:  mut_j : Programs → 2^Programs
-Mutant:        s' ∈ mut_j(S_i)
-Alignment:     align(j) = j
+\paragraph{Mutation testing side.}
+\begin{itemize}
+\item Mutation operator family: $\mathrm{MUT} = \{\mathrm{mut}_1, \ldots, \mathrm{mut}_5\}$, $j \in \{1,\ldots,5\}$ (open, extensible); $\mathrm{mut}_1 = \mathrm{mut}_C$, $\mathrm{mut}_2 = \mathrm{mut}_M$, $\mathrm{mut}_3 = \mathrm{mut}_G$, $\mathrm{mut}_4 = \mathrm{mut}_T$, $\mathrm{mut}_5 = \mathrm{mut}_F$.
+\item Signature: $\mathrm{mut}_j : \text{Programs} \to 2^{\text{Programs}}$.
+\item Mutant: $s' \in \mathrm{mut}_j(S_i)$.
+\item Alignment: $\mathrm{align}(j) = j$.
+\end{itemize}
 
-═══════════════ Three-State Decomposition (Fixed) ═══════════════
-mut_j(S_i) = equiv_{i,k,j} ∪ killed_{i,k,j} ∪ survive_{i,k,j}    (disjoint; mutually exclusive, exhaustive)
+\paragraph{Three-state decomposition (fixed).}
+\[
+\mathrm{mut}_j(S_i) = \mathrm{equiv}_{i,k,j} \cup \mathrm{killed}_{i,k,j} \cup \mathrm{survive}_{i,k,j} \quad \text{(disjoint, mutually exclusive, exhaustive)}.
+\]
+\begin{itemize}
+\item \emph{equiv determination} (dual conditions):
+  (E1) AVP-coherent: $\forall \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \mathrm{AVP}(s', \mathit{mr})$;
+  (E2) Output-equiv: $\forall x \in X_{K_{\mathrm{eq}}} \sim D_S: \|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$.
+\item \emph{killed determination}: $\mathrm{killed}(s', \mathrm{MR}_{i,k}) \Leftrightarrow \exists \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \text{pass} \wedge \mathrm{AVP}(s', \mathit{mr}) = \text{fail}$.
+\end{itemize}
 
-equiv determination (dual conditions):
-  (E1) AVP-coherent:  ∀ mr ∈ MR_{i,k}: AVP(S_i, mr) = AVP(s', mr)
-  (E2) Output-equiv:  ∀ x ∈ X_{K_eq} ~ D_S: ||S_i(x) − s'(x)|| ≤ ε_eq
+\paragraph{Metric (fixed classical structure).}
+\begin{align*}
+\mathrm{SMS}_{i,k,j} &:= \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{mut}_j(S_i)| - |\mathrm{equiv}_{i,k,j}|} \\
+                    &\phantom{:}= \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{killed}_{i,k,j}| + |\mathrm{survive}_{i,k,j}|} \in [0, 1].
+\end{align*}
 
-killed determination:
-  killed(s', MR_{i,k}) ⇔ ∃ mr ∈ MR_{i,k}: AVP(S_i, mr) = pass ∧ AVP(s', mr) = fail
+\paragraph{LRCA engineering attribution layer (descriptive, not in SMS).}
+\begin{itemize}
+\item Likely root-cause inventory: $C = \{C_1, \ldots, C_5\}$ (open, extensible). C1 True semantic failure; C2 Tolerance perturbation; C3 OOD; C4 Statistical-assumption violation; C5 Mutator artefact.
+\item LRCA output: each $s' \in \mathrm{killed}$ annotated with $\mathrm{root\_cause}(s') \in C$.
+\item Descriptive quantities: $\mathrm{C1\_share}_{i,k,j}$, $\mathrm{suspect\_share}_{i,k,j}$.
+\end{itemize}
 
-═══════════════ Metric (Fixed Classical Structure) ═══════════════
-SMS_{i,k,j} := |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)
-            =  |killed_{i,k,j}| / (|killed_{i,k,j}| + |survive_{i,k,j}|)
-            ∈ [0, 1]
+\paragraph{Slicing and cross-class.}
+\begin{itemize}
+\item Slicing: aligned $j = k$; cross $j \neq k$.
+\item Cross-class: $\Delta\mathrm{SMS}_c$, $c \in \{A, B, C, D\}$; $\mathrm{CV}(\Delta\mathrm{SMS}) := \mathrm{std}(\Delta\mathrm{SMS}_c) / |\mathrm{mean}(\Delta\mathrm{SMS}_c)|$.
+\end{itemize}
 
-═══════════════ LRCA Engineering Attribution Layer (Descriptive, Not in SMS) ═══════════════
-Likely root-cause inventory:  C = {C1, ..., C5}      (open, extensible)
-  C1 True semantic failure / C2 Tolerance perturbation / C3 OOD
-  C4 Statistical-assumption violation / C5 Mutator artefact
-LRCA output:    each s' ∈ killed annotated with root_cause(s') ∈ C
-Descriptive quantities:    C1_share_{i,k,j}, suspect_share_{i,k,j}
-
-═══════════════ Slicing and Cross-Class ═══════════════
-Slicing:         aligned: j = k    cross: j ≠ k
-Cross-class:     ΔSMS_c, c ∈ {A, B, C, D}
-                 CV(ΔSMS) := std(ΔSMS_c) / |mean(ΔSMS_c)|
-
-═══════════════ Tolerance and Sampling ═══════════════
-Tolerance:       ε_AVP^k (MP-dependent), ε_eq (equivalence output tolerance)
-Sampling:        K_eq = 1000 (E2 sample size), N = 20 (statistical replicates)
-\end{verbatim}}
+\paragraph{Tolerance and sampling.}
+\begin{itemize}
+\item Tolerance: $\varepsilon_{\mathrm{AVP}}^k$ (MP-dependent), $\varepsilon_{\mathrm{eq}}$ (equivalence output tolerance).
+\item Sampling: $K_{\mathrm{eq}} = 1000$ (E2 sample size), $N = 20$ (statistical replicates).
+\end{itemize}
 
 The notation skeleton (11 core concepts + three-state decomposition +
 SMS formula + AVP interface) is \textbf{fixed}; the \emph{content} of
@@ -2131,26 +2139,22 @@ C5 & Mutator artefact \\
 
 \textbf{Three-layer diagnosis with L0 artefact pre-scan:}
 
-{\scriptsize \begin{verbatim}
-L0 artefact pre-scan:    double-blind review (§4.2.4 dual-LLM cross-source + 20% manual sampling)
-L1 tolerance robustness: N = 20 replicates, fail ratio ≥ 0.80 considered stable
-L2 OOD triage:           for C/D classes, distinguish valid D_S^valid from OOD
-L3 statistical baseline: for Wilcoxon/DTW, IID/stationarity pre-check on PUT samples
-\end{verbatim}}
+\begin{itemize}
+\item \textbf{L0 artefact pre-scan.} Double-blind review (§4.2.4 dual-LLM cross-source + 20\% manual sampling).
+\item \textbf{L1 tolerance robustness.} $N = 20$ replicates; fail ratio $\geq 0.80$ considered stable.
+\item \textbf{L2 OOD triage.} For C/D classes, distinguish valid $D_S^{\text{valid}}$ from OOD.
+\item \textbf{L3 statistical baseline.} For Wilcoxon/DTW, IID/stationarity pre-check on PUT samples.
+\end{itemize}
 
 \textbf{Decision tree:}
 
-{\scriptsize \begin{verbatim}
-For each s' ∈ killed_{i,k,j}:
-  L1: fail ratio < 0.80 → C2
-       otherwise → L2
-  L2 (C/D classes): fail only in OOD → C3
-       otherwise → L3
-  L3 (B/D classes + Wilcoxon/DTW): assumption violation → C4
-       otherwise → artefact recheck
-  Artefact evidence → C5
-       otherwise → C1
-\end{verbatim}}
+For each $s' \in \mathrm{killed}_{i,k,j}$:
+\begin{itemize}
+\item \textbf{L1.} fail ratio $< 0.80 \Rightarrow$ C2; otherwise $\Rightarrow$ L2.
+\item \textbf{L2} (C/D classes). fail only in OOD $\Rightarrow$ C3; otherwise $\Rightarrow$ L3.
+\item \textbf{L3} (B/D classes + Wilcoxon/DTW). assumption violation $\Rightarrow$ C4; otherwise $\Rightarrow$ artefact recheck.
+\item \textbf{Artefact recheck.} artefact evidence $\Rightarrow$ C5; otherwise $\Rightarrow$ C1.
+\end{itemize}
 
 \textbf{Multi-label priority:} C5 \textgreater{} C4 \textgreater{} C3
 \textgreater{} C2 \textgreater{} C1.
@@ -2707,10 +2711,11 @@ decoupling at cell level.
 
 \textbf{SMS\_unfiltered (reviewer comparison metric):}
 
-{\scriptsize \begin{verbatim}
-SMS_unfiltered_{i,k,j} := |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)
-                          (same form as primary; killed does not distinguish C1 vs C2-C5)
-\end{verbatim}}
+\[
+\mathrm{SMS}^{\mathrm{unfiltered}}_{i,k,j} := \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{mut}_j(S_i)| - |\mathrm{equiv}_{i,k,j}|}
+\]
+
+(Same form as the primary metric; here \texttt{killed} does not distinguish C1 from C2--C5.)
 
 The appendix of the reproducibility package provides cell-by-cell
 difference between SMS\_unfiltered and SMS; if relative difference
@@ -3138,9 +3143,9 @@ sample size K\_eq, AVP tolerance $\varepsilon$\_AVP. Three-state decomposition:
 \texttt{mut(S)\ =\ killed\ $\cup$\ equiv\ $\cup$\ survive} (disjoint). SMS
 formula:
 
-{\scriptsize \begin{verbatim}
-SMS_{i,k,j} = |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)
-\end{verbatim}}
+\[
+\mathrm{SMS}_{i,k,j} = \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{mut}_j(S_i)| - |\mathrm{equiv}_{i,k,j}|}
+\]
 
 \subsubsection{G.2 Degenerate-limit definition}\label{g.2-degenerate-limit-definition-r-8-p1-3-revision-3-joint-conditions}
 
@@ -3201,7 +3206,7 @@ is almost-everywhere equivalent to $\forall$ x $\in$ D\_S ~N: S\_i(x) = s'(x), w
 N is a D\_S-measure-zero set (continuous D\_S: floating-point
 pathological points / NaN propagation; discrete D\_S: N = $\emptyset$). This
 matches Jia \& Harman (2011) §3 classical equivalent-mutant definition
-under measure-zero equivalence classes. $\blacksquare$
+under measure-zero equivalence classes.
 
 \textbf{Lemma 9.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
 degenerates to classical difference detection.
@@ -3211,7 +3216,7 @@ mr = (r, R) and mutant s', the MP\_eq violation condition $\exists$ x: S\_i(x) $
 s'(r(x)) under L3 ($\varepsilon$\_AVP $\to$ 0) becomes exact inequality. With r = id,
 violation is S\_i(x) $\neq$ s'(x) --- classical difference detection. With r
 $\neq$ id, MP\_eq still requires S\_i(x) = s'(r(x)) as reference oracle from
-original program; no new state classifications introduced. $\blacksquare$
+original program; no new state classifications introduced.
 
 \textbf{Lemma 9.3 (mut degeneration).} Under L5 $\wedge$ L6, mut\_j(S\_i)
 degenerates to the syntactic mutant set of Jia \& Harman (2011).
@@ -3221,7 +3226,7 @@ ROR, SDL, CRP, UOI --- standard Mothra/Proteum sets); L6 restricts PUTs
 to imperative deterministic programs, excluding triggering conditions
 for semantic operators on probabilistic/ML programs. Under this
 configuration, mut\_j(S\_i) is the literature-defined syntactic mutant
-set, independent of domain semantics. $\blacksquare$
+set, independent of domain semantics.
 
 \subsubsection{G.4 Theorem 9.1 --- Detailed proof}\label{g.4-theorem-9.1-detailed-proof}
 
@@ -3248,7 +3253,7 @@ w.r.t. D\_S,
   almost-everywhere w.r.t. D\_S).
 \end{itemize}
 
-Substituting into the SMS formula yields MS\_\{i,j\}. $\blacksquare$
+Substituting into the SMS formula yields MS\_\{i,j\}.
 
 \textbf{Corollary 9.1 (LRCA trivialisation).} Under L = L1 $\wedge$ L2 $\wedge$ L3, C
 = \{C1, \ldots, C5\} degenerates to \{C1\}.
@@ -3263,7 +3268,7 @@ tree). The per-C\_k to per-L\_j minimum-sufficient mapping depends on
 correspondence at formal level --- readers can trace via §A.2 + §C.4.
 Under L, suspect\_share $\to$ 0, LRCA reports only C1 --- SMS degenerates to
 single-layer metric consistent with Jia \& Harman (2011) MS engineering
-structure. $\blacksquare$
+structure.
 
 \textbf{Empirical consistency.} Theorem 9.1 + Corollary 9.1 jointly
 guarantee any SMS-based empirical conclusion (Cliff's delta §5.3,
