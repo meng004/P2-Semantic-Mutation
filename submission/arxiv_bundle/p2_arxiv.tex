@@ -26,6 +26,20 @@
 % \usepackage{fontspec}  % arXiv pdflatex disabled
 % \setmainfont{Times New Roman}[Ligatures=TeX]  % arXiv pdflatex disabled
 % \setmonofont{Menlo}  % arXiv pdflatex disabled
+%% ---- arXiv pdflatex: layout safety nets ----
+\setcounter{secnumdepth}{0}    % suppress auto 0.X.Y; manual "1." / "1.1" in titles remain
+\sloppy
+\setlength{\emergencystretch}{3em}
+\lstset{
+  breaklines=true,
+  breakatwhitespace=true,
+  basicstyle=\ttfamily\small,
+  frame=none,
+  columns=fullflexible,
+  postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space}
+}
+\renewenvironment{verbatim}{\lstlisting}{\endlstlisting}
+
 %% ---- arXiv pdflatex: Unicode math/symbol char support ----
 \usepackage{newunicodechar}
 \newunicodechar{∀}{\ensuremath{\forall}}
@@ -2048,6 +2062,7 @@ Nuclear Energy} / SANER 2027.
 Li, M. et al.~(under review). {[}P2-CN companion{]}. \emph{Nuclear Power
 Engineering}.
 
+\clearpage
 \appendix
 
 \subsection{A. Notation and Operator
