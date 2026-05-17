@@ -413,7 +413,7 @@ print(f"-> {OUT_FILE}")
 - [ ] **Step 2: Run the script**
 
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 SMS_VERSION=v4 PYTHONPATH=src .venv/bin/python scripts/permutation_c_class_inflation.py
 ```
 Expected: prints `observed c-class aligned mean`, `permutation p`, `Bonferroni effective alpha`; writes `data/results/c_class_permutation_v4.json` (~0.7 KB).

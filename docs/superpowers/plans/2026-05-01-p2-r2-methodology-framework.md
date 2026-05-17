@@ -33,7 +33,7 @@
 
 - [ ] **Step 1**: Locate §3.2 head + §3.2.1 anchor
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 grep -nE "^### 3\.2|^#### 3\.2\.[0-9]" 论文初稿P2.md | head
 ```
 
@@ -354,7 +354,7 @@ EOF
 
 - [ ] **Step 1**: Install cosmic-ray + run on a1
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 .venv/bin/pip install -q "cosmic-ray>=8"
 bash scripts/run_cosmic_ray_a1.sh 2>&1 | tail -50
 ```
@@ -529,7 +529,7 @@ print(f"-> {OUT}")
 
 - [ ] **Step 3**: Run the script
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 PYTHONPATH=src .venv/bin/python scripts/p2_vs_syntactic_ast_diff.py
 ```
 Capture: `n_p2_mutants`, `n_cosmic_ray_mutants`, `n_overlap`, `overlap_rate_overall`, per-class breakdown.

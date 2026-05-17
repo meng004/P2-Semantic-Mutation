@@ -4,7 +4,7 @@
 
 **Last synced:** 2026-05-03（Round-9 submission-ready；GitHub release-prep 整理通过）
 **Stage:** **Submission-ready (round-9)**；5/5 reviewers Minor Revision conditional Accept；论文等待投稿启动 + Zenodo DOI minting
-**Repo:** `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/语义变异体`
+**Repo:** `<P2_ROOT>`
 **Paper file (中文权威版)：** `论文初稿P2.md`（1853 行；historical authoritative draft）
 **Paper file (英文长稿)：** `论文初稿P2_EN.md`（1844 行；pre-IST compaction）
 **Paper file (IST 投稿版)：** `论文初稿P2_IST.md`（main, 8.5k 词）+ `论文初稿P2_IST_appendix.md`（A-G, 4.2k 词）

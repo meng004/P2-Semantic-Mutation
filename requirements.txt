@@ -1,0 +1,32 @@
+# P2 runtime dependencies (unpinned for cross-platform installs).
+# For exact reproduction, use requirements-frozen.txt (frozen against the
+# round-9 release sanity check).
+
+# === LLM vendors (cross-source ablation, §5.2) ===
+anthropic
+openai
+
+# === Numeric / scientific stack ===
+numpy
+scipy
+matplotlib
+pandas
+
+# === Mutation infrastructure ===
+cosmic-ray         # default-configuration syntactic-mutant pool comparator
+fastdtw            # trajectory similarity in Trajectory Flip (TF) operator
+
+# === AST normalisation + 12-PUT pool ===
+astor              # AST round-trip normaliser
+
+# === Statistical analysis ===
+scipy              # Cliff's delta, Mann-Whitney U
+statsmodels        # confidence intervals + bootstrap
+
+# === Test infrastructure ===
+pytest
+pytest-cov
+
+# === LaTeX building (system-level, listed for completeness) ===
+# xelatex (via MacTeX 2026, TeX Live 2026, or BasicTeX + tlmgr install)
+# bibtex (bundled with TeX distributions; P2 uses inline plain-text APA, not bibtex)

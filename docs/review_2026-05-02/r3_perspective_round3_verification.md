@@ -1,7 +1,7 @@
 # Reviewer 3 Round-3 Verification — Cross-disciplinary / Practical Perspective
 
 > **Manuscript**: *When Same-Prompt LLM Source Diversity Doesn't Help: An Ablation of Semantic Mutation Operators in Metamorphic Testing for Single-Output Scientific Computing Kernels*
-> **File verified**: `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性/论文初稿P2_EN.md` (1,844 lines after Group D edits)
+> **File verified**: `<P2_SOURCE_PATH>/论文初稿P2_EN.md` (1,844 lines after Group D edits)
 > **Verification date**: 2026-05-02
 > **Verification scope**: §6.5 (lines 1478–1536) + §1.1 line 38 (permission-clause status) + §1.3.2 line 84 (V&V 20 conceptual-complementarity) + §8.6 line 1724 (ASME V&V 20-2009 entry)
 > **Inputs cross-checked**: R3 Round-2 re-review (`docs/review_2026-05-02/r3_perspective_rereview.md`); Round-2 editorial decision Group D items D1–D7 (`docs/review_2026-05-02/editorial_decision.md`); commit `a0fb8ed` Group D textual fixes

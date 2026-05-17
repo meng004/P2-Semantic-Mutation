@@ -4,7 +4,7 @@
 **Target Venue**: *Information and Software Technology* (IST)
 **Re-Review Date**: 2026-05-02
 **Reviewer Role**: R0 (EIC) — verification round on Major Revision response
-**Manuscript file inspected**: `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性/论文初稿P2_EN.md` (1,700 lines)
+**Manuscript file inspected**: `<P2_SOURCE_PATH>/论文初稿P2_EN.md` (1,700 lines)
 **Independence statement**: This re-review verifies the Major Revision against my own R0 (W1–W8) plus the 5/5-consensus structural concerns codified in `editorial_decision.md`. I have not consulted other reviewers' Round-2 reports for this round.
 
 ---

@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
 - [ ] **Step 1.2: 运行脚本**
 
-Run: `cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性" && PYTHONPATH=src python scripts/build_paper_numbers.py`
+Run: `cd "<MT_ROOT>" && PYTHONPATH=src python scripts/build_paper_numbers.py`
 
 - [ ] **Step 1.3: 验收**
 
@@ -696,7 +696,7 @@ git commit -m "draft(paper): §7 R8/R9/R10 + R6 mixed-effects degeneracy note"
 - [ ] **Step 8.1: 生成冻结依赖**
 
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 .venv/bin/pip freeze 2>/dev/null | grep -iE "^(numpy|scipy|scikit-learn|statsmodels|matplotlib|seaborn|fastdtw|openai|anthropic|pytest|python-dotenv|pandas)=" > requirements-frozen.txt
 wc -l requirements-frozen.txt
 ```

@@ -50,7 +50,7 @@
 - [ ] **Step 1.1: 检查每个 PUT 的 cache 容量上限**
 
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 for put in a1 a2 a3 b1 b2 b3 c1 c2 c3 d1 d2 d3; do
   count=$(ls data/operator_campaign/cache/${put}_*_attempt*.py 2>/dev/null | wc -l | tr -d ' ')
   echo "${put}: ${count} confirmed mutants"
@@ -97,7 +97,7 @@ Expected: 12 个 `*_pool_v3/` 目录,每个 ≥ 8 个 .py 文件 + manifest.json
 - [ ] 每池 manifest.json 中 `n_actual` 字段为整数
 
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 total=0
 for put in a1 a2 a3 b1 b2 b3 c1 c2 c3 d1 d2 d3; do
   n=$(python3 -c "import json; d=json.load(open('data/mutants/${put}_pool_v3/manifest.json')); print(d['n_actual'])")
@@ -184,7 +184,7 @@ Edit `.gitignore`,在 `!data/results/sms_track2_v2_console.log` 之后插入 v3 
 - [ ] **Step 2.3: 重跑 sms_campaign**
 
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 PYTHONPATH=src .venv/bin/python scripts/sms_campaign.py --track 2 --workers 6 --repeats 20 \
     2>&1 | tee data/results/sms_track2_v3_console.log
 ```
@@ -1007,7 +1007,7 @@ EOF
 - [ ] **Step 7.2: 全文 placeholder 与版本一致性扫描**
 
 ```bash
-cd "/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性"
+cd "<MT_ROOT>"
 # 1. 占位符
 grep -nE "TODO|TBD|FIXME|<[A-Z_]{2,}>" 论文初稿P2.md REPRODUCIBILITY.md DATASET.md 2>/dev/null && echo "FAIL placeholder" || echo "OK no placeholders"
 

@@ -110,7 +110,7 @@ print(json.dumps(report, indent=2, ensure_ascii=False))
 - [ ] **Step 2: 执行并核对**
 
 ```bash
-cd /Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性
+cd <MT_ROOT>
 .venv/bin/python scripts/compute_rq2_v4_mp5.py
 ```
 

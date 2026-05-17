@@ -36,19 +36,19 @@
 | 步骤 | 操作 | 时长 |
 |---|---|---|
 | (a) 注册 | https://github.com/signup → 邮箱 `mlemon@usc.edu.cn` | 5 min |
-| (b) 用户名 | 建议 `meng-li-usc` / `mlemon-usc` / `lemonmeng`；定下来即固化为仓库 URL 的 `<USERNAME>` | 1 min |
+| (b) 用户名 | 建议 `meng-li-usc` / `mlemon-usc` / `lemonmeng`；定下来即固化为仓库 URL 的 `meng004` | 1 min |
 | (c) 邮箱验证 | 点 GitHub 发的确认链接 | 1 min |
 | (d) 建空仓库 | 名称 `p2-sms-audit`；Public；**不勾选** README / .gitignore / license | 1 min |
 | (e) SSH key | 本地 `ssh-keygen -t ed25519 -C "mlemon@usc.edu.cn"` → 复制 `~/.ssh/id_ed25519.pub` → GitHub Settings → SSH keys → 新建 | 5 min |
-| (f) 测试连接 | `ssh -T git@github.com` → 应返回 `Hi <USERNAME>!` | 30 s |
+| (f) 测试连接 | `ssh -T git@github.com` → 应返回 `Hi meng004!` | 30 s |
 
 完成后告知助手：
-- GitHub 用户名（`<USERNAME>`）
-- 仓库 URL 是否选 `git@github.com:<USERNAME>/p2-sms-audit.git`（默认）
+- GitHub 用户名（`meng004`）
+- 仓库 URL 是否选 `git@github.com:meng004/p2-sms-audit.git`（默认）
 
 ---
 
-## 2. 用户给出 `<USERNAME>` 后，助手按 §8.3 元流程执行
+## 2. 用户给出 `meng004` 后，助手按 §8.3 元流程执行
 
 ### 2.1 §8.3.1 — 生成发布审计表
 

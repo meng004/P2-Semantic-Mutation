@@ -1,7 +1,7 @@
 # Reviewer 3 Re-Review — Cross-disciplinary / Practical Perspective
 
 > **Manuscript**: *When Same-Prompt LLM Source Diversity Doesn't Help: An Ablation of Semantic Mutation Operators in Metamorphic Testing for Single-Output Scientific Computing Kernels*
-> **File reviewed**: `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性/论文初稿P2_EN.md`
+> **File reviewed**: `<P2_SOURCE_PATH>/论文初稿P2_EN.md`
 > **Re-review date**: 2026-05-02
 > **Re-review pass**: independent verification against R3 original report (`docs/review_2026-05-01/r3_perspective.md`) and editorial decision letter (`docs/review_2026-05-01/editorial_decision.md`)
 > **Reviewer identity**: ASME V&V committee member + IEC 60880 working-group experience, 15 yr large-scale CFD / nuclear-engineering simulation. Same persona as R1 round.

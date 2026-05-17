@@ -1,0 +1,53 @@
+cff-version: 1.2.0
+title: "A semantic mutation metric for metamorphic relation adequacy in scientific computing programs"
+message: "If you use SMS in your research, please cite this preprint."
+type: software
+authors:
+  - given-names: "Meng"
+    family-names: "Li"
+    email: "mlemon@usc.edu.cn"
+    affiliation: "School of Computing, University of South China"
+abstract: >-
+  Metamorphic Testing addresses the test-oracle problem in scientific
+  computing, but classical Mutation Score (MS) operates on syntactic AST
+  mutations and misses domain semantics. We propose the Semantic Mutation
+  Score (SMS), built on five domain-semantic operators (Conservation
+  Erosion, Operator Substitution, Hyperparameter, Trajectory Flip,
+  Structural Injection). SMS degenerates almost everywhere to MS in a
+  characterised limit, preserving backward compatibility with the
+  classical mutation-testing lineage. A 12-PUT x 5-MP design over four
+  single-output float-to-float classes (numeric, probabilistic,
+  surrogate, ML) is paired with a three-layer attribution classifier
+  separating true semantic faults from tolerance, OOD, statistical, and
+  artefact categories. The pre-registered large-effect threshold for
+  Cliff's delta is not met under the point-estimate criterion; the
+  observed effect lies in the medium-effect range. Cross-source pooling
+  under an identical prompt does not appreciably shift delta. AST-level
+  overlap between LLM-generated and default cosmic-ray syntactic mutants
+  is small; the Hyperparameter, Structural Injection, and Trajectory
+  Flip classes are unreachable under default first-order syntactic
+  configurations.
+keywords:
+  - metamorphic testing
+  - mutation testing
+  - semantic mutation operators
+  - metamorphic relation adequacy
+  - LLM-generated mutants
+  - Cliff's delta
+  - scientific computing kernels
+license: MIT
+version: "1.0.0"
+date-released: "2026-05-17"
+url: "https://github.com/meng004/P2-Semantic-Mutation"
+repository-code: "https://github.com/meng004/P2-Semantic-Mutation"
+preferred-citation:
+  type: article
+  title: "A semantic mutation metric for metamorphic relation adequacy in scientific computing programs"
+  authors:
+    - given-names: "Meng"
+      family-names: "Li"
+      email: "mlemon@usc.edu.cn"
+      affiliation: "School of Computing, University of South China"
+  year: 2026
+  url: "https://arxiv.org/abs/<ARXIV_ID>"
+  notes: "arXiv preprint; submitted to Information and Software Technology (IST)"

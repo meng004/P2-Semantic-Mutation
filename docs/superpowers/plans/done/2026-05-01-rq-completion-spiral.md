@@ -1930,7 +1930,7 @@ git commit -m "docs: reproducibility guide + dataset card + MIT license"
 
 - [ ] **Step 12.1: Read current §5 to understand voice**
 
-Run: `Read /Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性/论文初稿P2.md offset=645 limit=60`
+Run: `Read <MT_ROOT>/论文初稿P2.md offset=645 limit=60`
 
 Goal: confirm tone, depth, formatting style for the new content.
 

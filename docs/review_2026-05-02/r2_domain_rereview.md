@@ -1,9 +1,9 @@
 # Reviewer 2 (Domain) — Verification Re-Review (2026-05-02)
 
 **Manuscript under re-review**: *When Same-Prompt LLM Source Diversity Doesn't Help: An Ablation of Semantic Mutation Operators in Metamorphic Testing for Single-Output Scientific Computing Kernels*
-**File**: `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性/论文初稿P2_EN.md` (1700 lines, English; 2026-05-02 snapshot)
+**File**: `<P2_SOURCE_PATH>/论文初稿P2_EN.md` (1700 lines, English; 2026-05-02 snapshot)
 **Reviewer role**: Domain (mutation testing / scientific-computing software / MT literature). Independent of R0/R1/R3/R4.
-**Re-review scope**: Verify resolution of W1-W10 from `/Users/limeng/Library/CloudStorage/OneDrive-个人/0-论文/MR识别/MT完备性/docs/review_2026-05-01/r2_domain.md`; assess the new three-layer methodology backbone, the new §3.2.6.3 12-PUT empirical, and the [Authors TBD] withdrawal.
+**Re-review scope**: Verify resolution of W1-W10 from `<P2_SOURCE_PATH>/docs/review_2026-05-01/r2_domain.md`; assess the new three-layer methodology backbone, the new §3.2.6.3 12-PUT empirical, and the [Authors TBD] withdrawal.
 
 ---
 
@@ -189,7 +189,7 @@ But I would happily recommend **Minor Revision → Accept** if items (1)–(4) a
 
 The following file-line references are the load-bearing locations for my verification verdicts:
 
-- **Layer 1 §3.2.0**: `/Users/limeng/.../论文初稿P2_EN.md` lines 448–474 (necessary conditions + 5×3 mapping table). **Verified ✓**.
+- **Layer 1 §3.2.0**: `<HOME>/.../论文初稿P2_EN.md` lines 448–474 (necessary conditions + 5×3 mapping table). **Verified ✓**.
 - **Layer 2 §2.3 (E1 ∧ E2)**: lines 237–261. **Verified ✓**.
 - **Layer 3 §3.2.6.3 (12-PUT empirical)**: lines 584–638. **Verified ✓**, this is the strongest Layer.
 - **§3.2.6.1 OS-row downgrade**: line 514 (from "✗" to "△ Mostly not covered (§3.2.6.3 empirics 88.33% AST-disjoint)"). **Verified ✓**.
