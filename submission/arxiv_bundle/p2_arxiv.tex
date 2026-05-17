@@ -28,6 +28,9 @@
 % \setmonofont{Menlo}  % arXiv pdflatex disabled
 %% ---- arXiv pdflatex: layout safety nets ----
 \setcounter{secnumdepth}{0}    % suppress auto 0.X.Y; manual "1." / "1.1" in titles remain
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\thefigure}{\arabic{figure}}
+
 \sloppy
 \setlength{\emergencystretch}{3em}
 \lstset{
@@ -209,7 +212,7 @@ cover regulatory and engineering transfer.
 
 Three lines of prior work bracket the contribution of this paper.
 
-\textbf{(i) Classical mutation testing.} Jia and Harman (2011) and
+\textbf{(a) Classical mutation testing.} Jia and Harman (2011) and
 Papadakis et al.~(2019) survey syntactic mutation. The Coupling Effect
 Hypothesis (CPH), that tests detecting simple faults also detect complex
 faults, underpins the use of MS as a fault proxy (DeMillo, Lipton, and
@@ -221,12 +224,12 @@ syntactic faults. The §3.5 empirical evidence (5.14\% AST overlap on 12
 PUTs, with HP, SI, and TF at 0/0/0) is the empirical witness for this
 boundary.
 
-\textbf{(ii) Higher-order mutation.} Jia and Harman (2009) and Kintis et
+\textbf{(b) Higher-order mutation.} Jia and Harman (2009) and Kintis et
 al.~(2018) study compositions of first-order syntactic mutants. We
 explicitly exclude any equivalence claim about Higher-Order Mutation
 (HOM) and list HOM as residual threat R12 (Appendix F.1).
 
-\textbf{(iii) LLM-generated mutants.} Tip, Bell, and Schäfer (2024)
+\textbf{(c) LLM-generated mutants.} Tip, Bell, and Schäfer (2024)
 introduce LLMorpheus, which uses single-LLM JavaScript mutants.
 Humbatova, Jahangirova, and Tonella (2021) introduce DeepCrime for
 deep-learning real-fault mutation. Moradi Dakhel et al.~(2024) extend
@@ -244,7 +247,7 @@ non-scientific-computing domain, and the present paper specialises MT to
 scientific-computing PUTs and couples it to a domain-semantic mutation
 operator framework.
 
-\textbf{(iv) Semantic mutation operators across testing communities.}
+\textbf{(d) Semantic mutation operators across testing communities.}
 Semantic mutation as a research line is older than the LLM-mutant
 lineage. Clark, Dan, and Hierons (2010) introduce \emph{semantic
 mutation testing} as a path distinct from syntactic mutation; Dan and
@@ -336,7 +339,7 @@ reachable adequacy, three-pillar coupling). The 12 PUTs are deliberately
 minimum working example for the three-layer backbone, and
 industrial-scale transfer is reserved for P5.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{2. Notation and Equivalence Judgement}\label{notation-and-equivalence-judgement}
 
@@ -532,7 +535,7 @@ existing mutation-testing literature in the classical syntactic-mutation
 regime, and \textbf{does not} constitute metric-level semantic
 fragmentation.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{3. Experimental Subjects and Operator Framework}\label{experimental-subjects-and-operator-framework}
 
@@ -854,7 +857,7 @@ hypotheses that lie beyond the reach of default first-order syntactic
 configurations (HOM not refuted; see §3.6(ii)). Three points sharpen
 this framing.
 
-\textbf{(i) Systematic versus incidental.} Satisfying conditions (a),
+\textbf{(a) Systematic versus incidental.} Satisfying conditions (a),
 (b), or (c) is sufficient for a single semantic mutation, but only when
 satisfaction reflects design intent, not stochastic byproduct, does it
 constitute a \emph{systematic} semantic mutation method. A syntactic
@@ -872,7 +875,7 @@ flips) do not target them. Systematic semantic mutation therefore
 requires (a), (b), or (c) to be design intent. Appendix B.1.5 records
 this argument in full.
 
-\textbf{(ii) HOM caveat.} HOM (Jia and Harman 2009; Kintis et al.~2018)
+\textbf{(b) HOM caveat.} HOM (Jia and Harman 2009; Kintis et al.~2018)
 could in principle compose syntactic mutants, for example, an Arithmetic
 Operator Replacement combined with a Statement Deletion, to partially
 simulate the effects of OS or HP on some PUTs. The §5 empirics did not
@@ -933,7 +936,7 @@ operator family reaches, is in Appendix B.6. The aggregate of the two
 default sets (\textasciitilde21 distinct first-order AST-local operator
 classes) collectively fails all three §3.2 necessary conditions.
 
-\textbf{(iii) Source distributional shift.} The 15 cosmic-ray AST
+\textbf{(c) Source distributional shift.} The 15 cosmic-ray AST
 overlaps are not evenly distributed across the three LLMs (DeepSeek
 11/15, Claude 4/15, GPT 0/15; see
 \texttt{cosmic\_ray\_12put\_ast\_diff.json}). DeepSeek tends to generate
@@ -943,7 +946,7 @@ argument, which is based on \emph{categorical} AST-locality, not hit
 frequency: the HP / SI / TF zero-overlap result is 0/0/0 across all
 three sources.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{4. Experimental Procedure}\label{experimental-procedure}
 
@@ -1110,7 +1113,7 @@ on this dataset as an intrinsic property of LLM-mutant pools, not a
 calibration issue. Detailed grid table, L0-L3 sub-protocols, and
 decision-tree pseudocode are in \textbf{Appendix A.2 + C.4}.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{5. Statistical Analysis and Empirical Results}\label{statistical-analysis-and-empirical-results}
 
@@ -1459,7 +1462,7 @@ distribution is severely bimodal (median 1.0, with 48 cross cells near 1
 and 12 aligned cells near 0; the {[}0.20, 0.80{]} interior is nearly
 empty).
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{6. Discussion}\label{discussion}
 
@@ -1583,7 +1586,7 @@ All three stakeholder classes consume the same single source of truth
 (\texttt{paper\_numbers\_v4.json} and \texttt{lrca\_60cell\_v4.json}) to
 avoid documentation fragmentation.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{7. Threats to Validity}\label{threats-to-validity}
 
@@ -1745,7 +1748,7 @@ and therefore prevents reading the source-axis null as evidence of
 LLM-source-diversity inertness; a direct dual-blind v4 rerun (deferred
 to a follow-up study) would give a tighter quantification.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{8. Conclusion}\label{conclusion}
 
@@ -1862,7 +1865,7 @@ The companion P-series roadmap is as follows.
   to \emph{Nuclear Power Engineering}).
 \end{itemize}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{Data and code availability}\label{data-and-code-availability}
 
@@ -1880,7 +1883,7 @@ IST guidelines). The repository structure follows
 mutmut operator versions referenced in §3.5, §3.6, and Appendix B.6 are
 pinned in \texttt{requirements-frozen.txt}.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{References}\label{references}
 
@@ -2212,7 +2215,7 @@ trigger points $\to$ non-equivalent); E1 passes but E2 does not (common;
 consistent within MR but numerical drift \textgreater{} $\varepsilon$\_eq $\to$
 non-equivalent).
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{B. Experimental Subjects and Mutation-Operator Specialisations}\label{b.-experimental-subjects-and-mutation-operator-specialisations}
 
@@ -2260,7 +2263,7 @@ two are equivalent on diagonal matrices but not on general matrices
 (\texttt{det\ =\ $\prod$\ eigvals} vs
 \texttt{sum(diag)\ =\ trace\ =\ $\sum$\ eigvals}); syntactic tool AST
 traversal does not require this understanding even when similar
-replacements appear. \textbf{(ii) Revealing deep faults.}
+replacements appear. \textbf{(b) Revealing deep faults.}
 Domain-semantic errors (physical-constant, unit conversion, boundary
 conditions, hyperparameter semantics, numerical-method order) are not
 AST-local; syntactic mutator design goals (operator typos, off-by-one,
@@ -2429,6 +2432,7 @@ for semantic mutation).
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\tiny
 \caption{Mutmut vs cosmic-ray default-operator overlap.}\label{tab:p2-19}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
@@ -2544,7 +2548,7 @@ The mutmut / cosmic-ray null intersection on §3.5's HP/SI/TF classes
 first-order AST-local mutation} rather than a tool-specific limitation,
 supporting the §3.6 preventive-defence framing.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{C. Experimental Procedure Details}\label{c.-experimental-procedure-details}
 
@@ -2696,7 +2700,7 @@ classes (a2\_CE1 LU det, a2\_OS1 prod$\to$sum, b1\_OS1 $\alpha$/$\beta$ swap, d1
 label flip). This is empirical evidence for §6.2 R\_sem / R\_kill
 decoupling at cell level.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{D. Statistical Analysis Details}\label{d.-statistical-analysis-details}
 
@@ -2897,7 +2901,7 @@ has lower SMS --- contradicts naive ``more PC kills more mutants''
 assumption. Suggestive of orthogonality but n = 12 cannot confirm. P4:
 expand to n $\geq$ 30 + refine PC to incorporate mutant dimension.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{E. Stakeholder Deployment Considerations}\label{e.-stakeholder-deployment-considerations-single-output-kernels-scope}
 
@@ -3019,7 +3023,7 @@ dialogue with ASME V\&V 20 / IEEE 1012 / IEC 60880 committees.
 V\&V, or ASME V\&V 20 §3 numerical-solver verification --- it is one
 link in the evidence chain, not a single-point qualification.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{F. Threats to Validity --- Detailed Mitigation}\label{f.-threats-to-validity-detailed-mitigation}
 
@@ -3123,7 +3127,7 @@ alpha\_FDR=0.05 (§D.1); N=20 stability handled by 1,000-iteration
 bootstrap CI (§D.3). Construct threat --- SMS measures epistemological
 semantic detection, not production engineering value (P2-CN scope).
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% [thematic break removed]
 
 \subsection{G. SMS $\to$ MS Degeneration Theorem --- Full Proof}\label{g.-sms-ms-degeneration-theorem-full-proof}
 
