@@ -357,10 +357,10 @@ SMS formula structure is preserved, with extension applied only to the
 
 Three-state decomposition (mutually exclusive and exhaustive):
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
 mut_j(S_i) = equiv_{i,k,j} ∪ killed_{i,k,j} ∪ survive_{i,k,j}   (disjoint)
 SMS_{i,k,j} := |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)  ∈ [0, 1]
-\end{verbatim}
+\end{verbatim}}
 
 The complete notation table is in Appendix A.1; index sets and tolerance
 parameters (\texttt{$\varepsilon$\_eq}, \texttt{$\varepsilon$\_AVP\^{}k},
@@ -370,11 +370,11 @@ parameters (\texttt{$\varepsilon$\_eq}, \texttt{$\varepsilon$\_AVP\^{}k},
 
 Operator family and alignment:
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
 MUT = {mut_C, mut_M, mut_G, mut_T, mut_F}     (open, extensible)
 mut_j : Programs → 2^Programs
 align(j) = j      (design choice, not theorem)
-\end{verbatim}
+\end{verbatim}}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -651,7 +651,7 @@ least one of (a), (b), (c).
 
 \subsubsection{3.3 60-cell instantiation matrix}\label{cell-instantiation-matrix}
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
               MP_1   MP_2   MP_3    MP_4    MP_5
               cons.  mono.  conv.   traj.   p-ord.
    A1 Lorenz   ●●     ●     ●●     ●●      ○
@@ -667,7 +667,7 @@ least one of (a), (b), (c).
    D2 SVM      ●      ●●    ●      ○       ●●
    D3 LR       ●●     ●●    ●      ○       ●●
    ●● substantial 30 / ● moderate 24 / ○ vacant 6 (P1 H6)
-\end{verbatim}
+\end{verbatim}}
 
 Each PUT averages 24.3 mutants in the cross-source pool (range
 10-30); full 60-cell $\times$ N=20 = 292 mutant instantiations $\times$ 20 AVP
@@ -2044,7 +2044,7 @@ Engineering}.
 
 \subsubsection{A.1 Complete notation table}\label{a.1-complete-notation-table}
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
 ═══════════════ Paper Domain ═══════════════
 Paper identity:   P1, P2, P4, P5
 
@@ -2102,7 +2102,7 @@ Cross-class:     ΔSMS_c, c ∈ {A, B, C, D}
 ═══════════════ Tolerance and Sampling ═══════════════
 Tolerance:       ε_AVP^k (MP-dependent), ε_eq (equivalence output tolerance)
 Sampling:        K_eq = 1000 (E2 sample size), N = 20 (statistical replicates)
-\end{verbatim}
+\end{verbatim}}
 
 The notation skeleton (11 core concepts + three-state decomposition +
 SMS formula + AVP interface) is \textbf{fixed}; the \emph{content} of
@@ -2131,16 +2131,16 @@ C5 & Mutator artefact \\
 
 \textbf{Three-layer diagnosis with L0 artefact pre-scan:}
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
 L0 artefact pre-scan:    double-blind review (§4.2.4 dual-LLM cross-source + 20% manual sampling)
 L1 tolerance robustness: N = 20 replicates, fail ratio ≥ 0.80 considered stable
 L2 OOD triage:           for C/D classes, distinguish valid D_S^valid from OOD
 L3 statistical baseline: for Wilcoxon/DTW, IID/stationarity pre-check on PUT samples
-\end{verbatim}
+\end{verbatim}}
 
 \textbf{Decision tree:}
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
 For each s' ∈ killed_{i,k,j}:
   L1: fail ratio < 0.80 → C2
        otherwise → L2
@@ -2150,7 +2150,7 @@ For each s' ∈ killed_{i,k,j}:
        otherwise → artefact recheck
   Artefact evidence → C5
        otherwise → C1
-\end{verbatim}
+\end{verbatim}}
 
 \textbf{Multi-label priority:} C5 \textgreater{} C4 \textgreater{} C3
 \textgreater{} C2 \textgreater{} C1.
@@ -2708,10 +2708,10 @@ decoupling at cell level.
 
 \textbf{SMS\_unfiltered (reviewer comparison metric):}
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
 SMS_unfiltered_{i,k,j} := |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)
                           (same form as primary; killed does not distinguish C1 vs C2-C5)
-\end{verbatim}
+\end{verbatim}}
 
 The appendix of the reproducibility package provides cell-by-cell
 difference between SMS\_unfiltered and SMS; if relative difference
@@ -3139,9 +3139,9 @@ sample size K\_eq, AVP tolerance $\varepsilon$\_AVP. Three-state decomposition:
 \texttt{mut(S)\ =\ killed\ $\cup$\ equiv\ $\cup$\ survive} (disjoint). SMS
 formula:
 
-\begin{verbatim}
+{\scriptsize \begin{verbatim}
 SMS_{i,k,j} = |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)
-\end{verbatim}
+\end{verbatim}}
 
 \subsubsection{G.2 Degenerate-limit definition}\label{g.2-degenerate-limit-definition-r-8-p1-3-revision-3-joint-conditions}
 
