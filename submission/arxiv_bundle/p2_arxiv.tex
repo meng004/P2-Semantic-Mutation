@@ -377,8 +377,9 @@ mut_j : Programs → 2^Programs
 align(j) = j      (design choice, not theorem)
 \end{verbatim}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
+\caption{Operator signatures.}\label{tab:p2-01}\\
 \toprule\noalign{}
 Operator & Failure semantics & Aligned MP \\
 \midrule\noalign{}
@@ -552,13 +553,14 @@ Framework}\label{experimental-subjects-and-operator-framework}
 \subsubsection{3.1 PUT selection (12 PUTs, 4
 classes)}\label{put-selection-12-puts-4-classes}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{Operator signatures.}\label{tab:p2-02}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Class
@@ -639,8 +641,9 @@ A mutation that satisfies none of (a) -- (c) is purely \emph{syntactic}:
 AST-local, domain-agnostic, and class-preserving. The five meta-operator
 classes (CE, OS, HP, TF, SI) are specialisations of (a) -- (c):
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lllll@{}}
+\caption{Operator signatures.}\label{tab:p2-03}\\
 \toprule\noalign{}
 Operator class & (a) & (b) & (c) & Primary condition \\
 \midrule\noalign{}
@@ -781,8 +784,9 @@ with cosmic-ray default-operator mutants (1,250 total;
 
 \textbf{Aggregate results.}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
+\caption{Primary MP convention.}\label{tab:p2-04}\\
 \toprule\noalign{}
 Metric & Value \\
 \midrule\noalign{}
@@ -798,8 +802,9 @@ AST-normalised overlap & 15 \\
 
 \textbf{Per-operator-class breakdown (12-PUT aggregate).}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lllll@{}}
+\caption{Primary MP convention.}\label{tab:p2-05}\\
 \toprule\noalign{}
 Class & n\_p2 & n\_overlap & Rate & Interpretation \\
 \midrule\noalign{}
@@ -981,12 +986,13 @@ corresponding to RQ1.
 To isolate the contributions of LLM same-source bias and MR-MP alignment
 design to Cliff's delta, we ran a three-stage ablation:
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Procedure overview.}\label{tab:p2-06}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Version
@@ -1151,11 +1157,12 @@ Empty rows = PUT-level zero-mass cohort (PUTs A1, B1, D2; see
 
 The primary statistical reporting follows a pre-registered hierarchy:
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Statistical pipeline.}\label{tab:p2-07}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 RQ
@@ -1203,8 +1210,9 @@ in \textbf{Appendix D.1}.
 \subsubsection{5.2 RQ1: 60-cell
 distribution}\label{rq1-60-cell-distribution}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
+\caption{Statistical pipeline.}\label{tab:p2-08}\\
 \toprule\noalign{}
 Metric & Value \\
 \midrule\noalign{}
@@ -1251,8 +1259,9 @@ paper's PUT selection.
 \subsubsection{5.3 RQ2: Aligned vs cross (Cliff's
 delta)}\label{rq2-aligned-vs-cross-cliffs-delta}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
+\caption{Statistical pipeline.}\label{tab:p2-09}\\
 \toprule\noalign{}
 Slice & n & Mean SMS & Median SMS \\
 \midrule\noalign{}
@@ -1306,8 +1315,9 @@ plug-in bootstrap (5,000 replications, seed = 42) samples with
 replacement from the observed (n = 12, n = 48) v4 SMS distributions. The
 plug-in power table is:
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
+\caption{Statistical pipeline.}\label{tab:p2-10}\\
 \toprule\noalign{}
 Threshold & Interpretation & Power at (12, 48) \\
 \midrule\noalign{}
@@ -1333,8 +1343,9 @@ aligned sample with probability w from (observed\_aligned + 0.001) and
 with probability 1 − w from observed\_aligned, calibrating w = 0.094 to
 realise E{[}$\delta${]} = 0.4746.
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
+\caption{Statistical pipeline.}\label{tab:p2-11}\\
 \toprule\noalign{}
 Stipulated truth & Criterion & Power \\
 \midrule\noalign{}
@@ -1376,8 +1387,9 @@ choice.
 \subsubsection{5.5 RQ3: Cross-class consistency and
 Friedman}\label{rq3-cross-class-consistency-and-friedman}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
+\caption{Statistical pipeline.}\label{tab:p2-12}\\
 \toprule\noalign{}
 Class & Mean SMS (v3) & Mean SMS (v4) \\
 \midrule\noalign{}
@@ -1452,8 +1464,9 @@ operationalisation in Appendix D.5).
 
 \subsubsection{5.7 H5: LRCA mass}\label{h5-lrca-mass}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
+\caption{H5: LRCA mass.}\label{tab:p2-13}\\
 \toprule\noalign{}
 Metric & Value \\
 \midrule\noalign{}
@@ -1612,13 +1625,14 @@ avoid documentation fragmentation.
 
 \subsection{7. Threats to Validity}\label{threats-to-validity}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{Threats to Validity.}\label{tab:p2-14}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \#
@@ -2142,8 +2156,9 @@ protocol}\label{a.2-lrca-decision-tree-and-three-layer-diagnostic-protocol}
 
 \textbf{Five likely root causes} (open):
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
+\caption{eferences.}\label{tab:p2-15}\\
 \toprule\noalign{}
 Code & Meaning \\
 \midrule\noalign{}
@@ -2206,12 +2221,13 @@ AVP source.
 
 \textbf{Three-candidate equivalence trade-off.}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{eferences.}\label{tab:p2-16}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Determination
@@ -2309,10 +2325,11 @@ carrying engineering value. Systematic semantic mutation requires
 \subsubsection{B.2 Per-class operator
 specialisations}\label{b.2-per-class-operator-specialisations}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\caption{eferences.}\label{tab:p2-17}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Operator
@@ -2368,11 +2385,12 @@ Bool literal); \texttt{BreakContinueReplacer} (Break/Continue);
 \texttt{ZeroIterationForLoop} (For); \texttt{ReplaceIfBlock} (If);
 \texttt{MutateSubscript}. None correspond to OS / HP / TF / SI:
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{eferences.}\label{tab:p2-18}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 P2 class
@@ -2460,13 +2478,14 @@ cross-function-boundary, domain-knowledge-dependent, or
 algorithmic-class-changing mutation (the three §3.2 necessary conditions
 for semantic mutation).
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{eferences.}\label{tab:p2-19}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Operator class
@@ -2591,12 +2610,13 @@ specification}\label{c.1-cross-source-v4-protocol-full-specification}
 
 \textbf{Two-stage ablation.}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{eferences.}\label{tab:p2-20}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Version
@@ -2761,11 +2781,12 @@ primary conclusions.
 
 \textbf{Primary-table construction.}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{eferences.}\label{tab:p2-21}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 RQ
@@ -2802,8 +2823,9 @@ $\in$ \{0.05, 0.10, \ldots, 0.50\}, step 0.05) on v4 data
 (\texttt{scripts/h5\_sensitivity.py},
 \texttt{data/results/h5\_sensitivity\_v4.json}):
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
+\caption{eferences.}\label{tab:p2-22}\\
 \toprule\noalign{}
 cutoff & h5\_cells\_pass & h5\_pass\_ratio \\
 \midrule\noalign{}
@@ -2843,8 +2865,9 @@ stipulated-alternative}\label{d.3-power-analysis-plug-in-and-stipulated-alternat
 aligned (n=12) and cross (n=48) v4 SMS pools; N\_sim = 5,000, seed = 42
 (\texttt{scripts/compute\_rq2\_power.py}, \texttt{rq2\_power\_v4.json}):
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
+\caption{eferences.}\label{tab:p2-23}\\
 \toprule\noalign{}
 Threshold & Interpretation & Power \\
 \midrule\noalign{}
@@ -2878,8 +2901,9 @@ Mixture: aligned' = (probability w) sample from (observed\_aligned +
 E{[}delta{]} $\approx$ 0.474. Calibrated w = 0.094, realised E{[}delta{]} =
 0.4746.
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
+\caption{eferences.}\label{tab:p2-24}\\
 \toprule\noalign{}
 Stipulated truth & Criterion & Power \\
 \midrule\noalign{}
@@ -2955,11 +2979,12 @@ justification}\label{e.1-air-gap-incompatibility-full-justification}
 The §6.4 workflow depends on external LLM API calls (Claude / GPT /
 DeepSeek), incompatible with most regulated air-gapped V\&V workflows:
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{eferences.}\label{tab:p2-25}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Domain
@@ -3000,11 +3025,12 @@ stakeholder-facing CI assumptions into adopters' pipelines.
 
 \textbf{Replacement: quarterly batch audit:}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{eferences.}\label{tab:p2-26}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Step
@@ -3076,12 +3102,13 @@ Mitigation}\label{f.-threats-to-validity-detailed-mitigation}
 
 \subsubsection{F.1 Internal threats}\label{f.1-internal-threats}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Internal threats.}\label{tab:p2-27}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ID
@@ -3130,12 +3157,13 @@ v3 $\to$ v4 source-axis contrast ($\Delta$$\delta$ = −0.009).
 \subsubsection{F.2 External / construct / conclusion
 threats}\label{f.2-external-construct-conclusion-threats}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Internal threats.}\label{tab:p2-28}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ID
@@ -3201,11 +3229,12 @@ controlling one layer of the SMS formula. L1-L6 are not 6 independent
 axes; the pairing responds to dependency queries (R0 W8 / R1 §4 / R2 W3
 / DA-MAJOR-3).
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Internal threats.}\label{tab:p2-29}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Joint condition
