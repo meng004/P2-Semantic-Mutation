@@ -62,8 +62,8 @@ plt.rcParams.update({
 # Figure 1: three-layer methodology backbone
 # ---------------------------------------------------------------------------
 def figure1(out_path: Path) -> None:
-    fig, ax = plt.subplots(figsize=(8.0, 6.0))
-    ax.set_xlim(0, 10)
+    fig, ax = plt.subplots(figsize=(9.0, 6.0))
+    ax.set_xlim(0, 11.5)
     ax.set_ylim(0, 8)
     ax.axis("off")
 
@@ -146,19 +146,18 @@ def figure1(out_path: Path) -> None:
         fontsize=9, color="#444444", zorder=5,
     )
 
-    # Arrow Layer 1 -> Layer 3 (refutation evidence, curving on the right)
+    # Arrow Layer 1 -> Layer 3 (refutation evidence, vertical, OUTSIDE box right edge)
     arr13 = FancyArrowPatch(
-        (8.6, 5.65), (8.6, 2.70),
-        connectionstyle="arc3,rad=0.30",
+        (9.85, 6.675), (9.85, 1.675),
         arrowstyle="-|>", mutation_scale=18,
         linewidth=1.8, color="#A04040", zorder=4,
         linestyle=(0, (4, 2)),
     )
     ax.add_patch(arr13)
     ax.text(
-        9.05, 4.20, "refutation\nevidence",
+        10.05, 4.175, "refutation\nevidence",
         fontsize=9, color="#A04040", zorder=5,
-        ha="left",
+        ha="left", va="center",
     )
 
     ax.set_title(

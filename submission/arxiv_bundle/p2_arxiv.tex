@@ -816,7 +816,7 @@ challenge.}
   NumberReplacer. The unreachability is structural under first-order
   operators; whether HOM-based compositions (Jia and Harman 2008; not
   refuted) can close the gap is residual threat R12, addressed
-  conceptually in §3.6(ii).
+  conceptually in §3.6(b).
 \item
   The CE class shows 7.81\% incidental overlap, mostly LLM-generated
   half-step perturbations on a2 and b3 such as
@@ -853,7 +853,7 @@ The HP, SI, and TF zero-overlap result, combined with the §3.2
 necessary-conditions argument, amounts to a \emph{preventive-defence}
 argument: semantic mutation operators address a class of fault
 hypotheses that lie beyond the reach of default first-order syntactic
-configurations (HOM not refuted; see §3.6(ii)). Three points sharpen
+configurations (HOM not refuted; see §3.6(b)). Three points sharpen
 this framing.
 
 \textbf{(a) Systematic versus incidental.} Satisfying conditions (a),
@@ -1013,9 +1013,9 @@ V1-V4 specifications, and the full differential-prompt protocol are in
 \subsubsection{4.3 Mutant-pool prescreen and equivalence detection}\label{mutant-pool-prescreen-and-equivalence-detection}
 
 \textbf{Pool prescreen (LRCA L0).} Each candidate mutant passes three
-gates: (i) static lint and type checking; (ii) a unit self-test on
+gates: (a) static lint and type checking; (b) a unit self-test on
 simple inputs to confirm that the PUT loads, runs, and returns a finite
-output; and (iii) a double-blind review sign-off under the Phase-1
+output; and (c) a double-blind review sign-off under the Phase-1
 protocol. In Phase-1, the generator LLM is Claude Opus and the reviewer
 LLM is GPT-4o; the two roles are isolated, and the reviewer sees only
 the PUT and the mutant code and outputs a (syntactic, executable,
@@ -1483,7 +1483,7 @@ the medium-effect ceiling is not an artefact of LLM-pool overlap with
 the syntactic-mutant space. 94.86\% of v4 mutants are AST-disjoint from
 cosmic-ray defaults, and the three classes unreachable under default
 first-order configurations (HP, SI, TF; 159 of 292 mutants; HOM not
-refuted, see §3.6(ii)) lie outside that space by construction. An
+refuted, see §3.6(b)) lie outside that space by construction. An
 effect-size breakthrough therefore requires substantive MR-design
 refinement (a P4 task), not a larger sample.
 
@@ -1805,7 +1805,7 @@ mutation in single-output scientific computing kernels.
   \textbf{Layer 3 (§3.5).} AST-normalised empirical traceability across
   all 12 PUTs: a 5.14\% overall AST overlap with cosmic-ray defaults,
   and HP, SI, and TF unreachable at 0/0/0 under default first-order
-  configurations (HOM not refuted; see §3.6(ii)).
+  configurations (HOM not refuted; see §3.6(b)).
 \end{itemize}
 
 SMS is backward-compatible with the classical MS through §2.6 Theorem
@@ -2249,7 +2249,7 @@ industrial PUTs (declared §7 R5; P3 validates on industrial-grade PUTs).
 
 Syntactic tools may \emph{occasionally} hit §3.2 (a)
 (cross-function-boundary) or (c) (algorithm class), but occasionality
-undermines two engineering functions of semantic mutation. \textbf{(i)
+undermines two engineering functions of semantic mutation. \textbf{(a)
 Deepening source-code understanding.} Designing OS
 \texttt{np.linalg.det(M)\ $\to$\ np.sum(np.diag(M))} requires knowing the
 two are equivalent on diagonal matrices but not on general matrices
@@ -2931,9 +2931,9 @@ non-compliant \\
 \end{longtable}
 }
 
-\textbf{Mitigation paths (P5).} (i) Self-hosted open-weight LLMs (Llama
+\textbf{Mitigation paths (P5).} (a) Self-hosted open-weight LLMs (Llama
 / DeepSeek local inference) --- capability gap vs API-served frontier
-models; quantitative impact on SMS untested. (ii) Offline-cached
+models; quantitative impact on SMS untested. (b) Offline-cached
 pre-generated mutant pools with commit-hash + raw-response signature
 locking --- adopters reproduce a published pool offline (this paper's
 package supports this), but generating new pools requires external LLM
