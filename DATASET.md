@@ -100,15 +100,15 @@ Data (mutants, results, figures): CC-BY-4.0.
 
 ## 9. Citation
 
-Pre-publication. Use the Zenodo DOI (see `ZENODO.md`) for archival reference; the journal citation will be added after acceptance.
+Replication package archived on Zenodo: **DOI `10.5281/zenodo.20250664`** (https://doi.org/10.5281/zenodo.20250664). Cite this DOI for the replication artefacts; the journal citation will be added after IST acceptance.
 
 ```bibtex
 @article{li2026sms,
-  title   = {When LLM Source Diversity Doesn't Help: A Semantic Mutation Score Audit},
-  author  = {Li, Meng and [coauthors]},
+  title   = {A semantic mutation metric for metamorphic relation adequacy in scientific computing programs},
+  author  = {Li, Meng},
   journal = {Information and Software Technology},
-  year    = {2027 (under review)},
-  note    = {Artifact: <Zenodo DOI placeholder>}
+  year    = {2026 (under review)},
+  note    = {Artifact: \url{https://doi.org/10.5281/zenodo.20250664}}
 }
 ```
 
