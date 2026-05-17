@@ -1013,10 +1013,14 @@ V1-V4 specifications, and the full differential-prompt protocol are in
 \subsubsection{4.3 Mutant-pool prescreen and equivalence detection}\label{mutant-pool-prescreen-and-equivalence-detection}
 
 \textbf{Pool prescreen (LRCA L0).} Each candidate mutant passes three
-gates: (a) static lint and type checking; (b) a unit self-test on
-simple inputs to confirm that the PUT loads, runs, and returns a finite
-output; and (c) a double-blind review sign-off under the Phase-1
-protocol. In Phase-1, the generator LLM is Claude Opus and the reviewer
+gates:
+\begin{enumerate}
+\tightlist
+\item Static lint and type checking.
+\item A unit self-test on simple inputs to confirm that the PUT loads,
+  runs, and returns a finite output.
+\item A double-blind review sign-off under the Phase-1 protocol.
+\end{enumerate} In Phase-1, the generator LLM is Claude Opus and the reviewer
 LLM is GPT-4o; the two roles are isolated, and the reviewer sees only
 the PUT and the mutant code and outputs a (syntactic, executable,
 fault-injected) triple. Inconsistent reviewer outputs go to a manual
@@ -2419,12 +2423,13 @@ algorithmic-class-changing mutation (the three §3.2 necessary conditions
 for semantic mutation).
 
 {\scriptsize\def\LTcaptype{table} % do not increment counter
+\def\_{\textunderscore\penalty0\hspace{0pt}} % allow line break at underscore inside this table
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1800}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1600}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2200}}@{}}
 \caption{Mutmut vs cosmic-ray default-operator overlap.}\label{tab:p2-19}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
