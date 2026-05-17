@@ -38,7 +38,9 @@
   columns=fullflexible,
   postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space}
 }
-\renewenvironment{verbatim}{\lstlisting}{\endlstlisting}
+% verbatim renewenvironment removed (broke UTF-8 in v4); rely on \sloppy for line breaks
+% Long verbatim formulas may still overflow; that's a P2 source-level issue (pandoc-generated)
+% requiring manual conversion of math-as-verbatim to display math \[...\]
 
 %% ---- arXiv pdflatex: Unicode math/symbol char support ----
 \usepackage{newunicodechar}
