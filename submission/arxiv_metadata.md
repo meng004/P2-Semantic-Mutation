@@ -13,8 +13,15 @@ Length: 95 chars. arXiv limit: 240 chars. ✓
 ## 2. Authors
 
 ```
-Meng Li (School of Computing, University of South China)
+Meng Li (1,2,3), Xiaohua Yang (1,2,3), Jie Liu (1,2,3), Shiyu Yan (1,2,3)
 ```
+
+Three shared affiliations (numbered for arXiv):
+1. School of Computing, University of South China, Hengyang, 421001, China
+2. Hunan Engineering Research Center of Software Evaluation and Testing for Intellectual Equipment, Hengyang, 421001, China
+3. CNNC Key Laboratory on High Trusted Computing, Hengyang, 421001, China
+
+Corresponding author: Meng Li (mlemon@usc.edu.cn)
 
 ## 3. Abstract (condensed for arXiv, ≤ 1920 chars)
 
