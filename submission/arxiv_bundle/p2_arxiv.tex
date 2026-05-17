@@ -316,19 +316,11 @@ aspiration only).
   \textbf{H2.} The aligned-SMS to cross-SMS odds ratio is $\geq$ 3.0, and
   Cliff's $\delta$ is $\geq$ 0.474.
 \item
-  \st{H3} retired during pre-registration revision: its bidirectional-threshold
-  formulation collapses on LLM-mutant data because too few cells trigger
-  any non-zero equivalent mutant. The R\_sem versus R\_kill decoupling
-  phenomenon now appears in §6.2 as descriptive evidence.
-\item
-  \textbf{H4.} A within-class sign test gives 4/4 across the 4 classes,
+  \textbf{H3.} A within-class sign test gives 4/4 across the 4 classes,
   and CV($\Delta$SMS) \textless{} 0.5.
 \item
-  \textbf{H5.} Mean suspect\_share is $\leq$ 0.20 across the 60 cells.
+  \textbf{H4.} Mean suspect\_share is $\leq$ 0.20 across the 60 cells.
 \end{itemize}
-
-We keep the numbering H1, H2, H4, H5 (with H3 vacant) for
-cross-reference consistency.
 
 \subsubsection{1.6 Boundary between P2 and the companion papers}\label{boundary-between-p2-and-the-companion-papers}
 
@@ -744,7 +736,7 @@ off-diagonal cells form the cross slice, and the vacant cells \texttt{$\circ$}
 are not formally adjudicated.
 
 The c-class primary MP is held at the P1 pre-registered choice (MP5)
-throughout this paper. All H1, H2, H4, and H5 verdicts are rendered
+throughout this paper. All H1, H2, H3, and H4 verdicts are rendered
 under this configuration on v3 (same-source) and v4 (cross-source under
 an identical prompt). An earlier exploratory data-driven primary-MP
 shift was considered but withdrawn from the analysis after a permutation
@@ -1111,11 +1103,11 @@ Multi-label priority C5 \textgreater{} C4 \textgreater{} C3
 non-semantic cause (decision-tree control flow). Threshold calibration
 over a 9-grid (\texttt{ood\_band\ $\in$\ \{0.02,\ 0.05,\ 0.10\}} $\times$
 \texttt{tolerance\_multiplier\ $\in$\ \{3.0,\ 10.0,\ 30.0\}}, repeats fixed
-at 20) lifts H5 from 10/60 to 12/60 cells; the best combination
+at 20) lifts H4 from 10/60 to 12/60 cells; the best combination
 (\texttt{ood\_band\ =\ 0.02,\ tolerance\_multiplier\ =\ 3.0}) is
 reported as primary, with default-threshold results retained as control
 (\texttt{lrca\_60cell\_v3.json}). The calibration ceiling (12/60 = 20\%)
-remains far below the 80\% pre-registered threshold; H5 is unattainable
+remains far below the 80\% pre-registered threshold; H4 is unattainable
 on this dataset as an intrinsic property of LLM-mutant pools, not a
 calibration issue. Detailed grid table, L0-L3 sub-protocols, and
 decision-tree pseudocode are in \textbf{Appendix A.2 + C.4}.
@@ -1179,14 +1171,11 @@ non-parametric formal alternative. The five hypotheses are
 pre-registered: H1 (operator implementability) requires $\geq$ 4 of 5
 operators producing $\geq$ 5 non-equivalent mutants on $\geq$ 9/12 PUTs; H2
 (aligned-vs-cross) requires odds ratio $\geq$ 3.0 \emph{and} Cliff's delta $\geq$
-0.474 (Romano 2006 large-effect threshold); H4 (cross-class consistency)
+0.474 (Romano 2006 large-effect threshold); H3 (cross-class consistency)
 requires sign-test 4/4 across 4 classes plus CV($\Delta$SMS) \textless{} 0.5;
-H5 (LRCA mass) requires mean suspect\_share $\leq$ 0.20. H3 was formally
-retired during pre-registration revision (its bidirectional threshold structure
-collapsed on LLM-mutant data because too few cells trigger non-zero
-equivalent mutants). Numbering H1, H2, H4, H5 is preserved with H3
-vacant. SMS variants (SMS, SMS\_unfiltered) and construction lemmas are
-in \textbf{Appendix D.1}.
+H4 (LRCA mass) requires mean suspect\_share $\leq$ 0.20. SMS variants
+(SMS, SMS\_unfiltered) and construction lemmas are in
+\textbf{Appendix D.1}.
 
 \subsubsection{5.2 RQ1: 60-cell distribution}\label{rq1-60-cell-distribution}
 
@@ -1384,7 +1373,7 @@ Sign test (within-class aligned mean − cross mean, sign = +): \textbf{3
 / 4 (partial) under both v3 (same-source) and v4 (cross-source)}; the
 b-class is the inverted cell.
 
-\textbf{H4 primary verdict: partial (3/4).} Cross-source pooling does
+\textbf{H3 primary verdict: partial (3/4).} Cross-source pooling does
 not flip the b-class inversion.
 
 The mixed-effects primary model
@@ -1410,8 +1399,8 @@ therefore use Friedman as the non-parametric formal alternative:
 \end{itemize}
 
 \textbf{Caveat.} Friedman tests ``are MP rank differences present''
-(averaged over PUTs); H4 tests ``is direction consistent across 4
-classes''. These are logically independent. H4 stands on the §5.5 sign
+(averaged over PUTs); H3 tests ``is direction consistent across 4
+classes''. These are logically independent. H3 stands on the §5.5 sign
 test; per-class Friedman is descriptive only (small N=3 per class).
 
 \subsubsection{5.6 RQ4: SMS vs Pattern Coverage}\label{rq4-sms-vs-pattern-coverage}
@@ -1438,11 +1427,11 @@ strong claim that ``SMS is independent of PC'' or the strong claim that
 hypothesis for P4 (n $\geq$ 30 PUTs or refined PC operationalisation; full PC
 operationalisation in Appendix D.5).
 
-\subsubsection{5.7 H5: LRCA mass}\label{h5-lrca-mass}
+\subsubsection{5.7 H4: LRCA mass}\label{h5-lrca-mass}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
-\caption{H5: LRCA mass.}\label{tab:p2-13}\\
+\caption{H4: LRCA mass.}\label{tab:p2-13}\\
 \toprule\noalign{}
 Metric & Value \\
 \midrule\noalign{}
@@ -1452,18 +1441,18 @@ Metric & Value \\
 Mean C1\_share (default threshold) & 0.164 \\
 Mean C1\_share (calibrated best, ood\_band = 0.02) & \textbf{0.209} \\
 Mean suspect\_share (calibrated best) & 0.791 \\
-Cells meeting H5 (calibrated best) & \textbf{12 / 60 = 20.0\%} \\
+Cells meeting H4 (calibrated best) & \textbf{12 / 60 = 20.0\%} \\
 \end{longtable}
 }
 
-\textbf{H5 was pre-registered before pool characteristics were known};
+\textbf{H4 was pre-registered before pool characteristics were known};
 the dense cutoff sweep below shows the verdict is intrinsic to
 LLM-mutant pools and not a calibration artefact, which is itself a
 finding worth reporting.
 
-\textbf{H5 verdict: not met.} A dense cutoff sweep (R-14 response,
-Appendix D.2) shows H5 pass-ratio is flat at 20\% over cutoffs $\in$
-{[}0.05, 0.40{]}; no cutoff pushes it past 80\%. H5 is \textbf{intrinsic
+\textbf{H4 verdict: not met.} A dense cutoff sweep (R-14 response,
+Appendix D.2) shows H4 pass-ratio is flat at 20\% over cutoffs $\in$
+{[}0.05, 0.40{]}; no cutoff pushes it past 80\%. H4 is \textbf{intrinsic
 data property, independent of cutoff choice}; v4's suspect\_share
 distribution is severely bimodal (median 1.0, with 48 cross cells near 1
 and 12 aligned cells near 0; the {[}0.20, 0.80{]} interior is nearly
@@ -1540,16 +1529,16 @@ v4 micro-shift of −0.009 attributes to LLM source diversity under a
 fixed prompt, while MR-design adequacy at the operator-MP level (rather
 than LLM identity) governs the kill rate.
 
-\subsubsection{6.3 H4: partial across same-source and cross-source}\label{h4-partial-across-same-source-and-cross-source}
+\subsubsection{6.3 H3: partial across same-source and cross-source}\label{h4-partial-across-same-source-and-cross-source}
 
 All four class means are positive in v3 (same-source) and v4
 (cross-source). Inter-class balance improves under cross-source (c
 +91.5\%, d +38.3\%), confirming that c / d classes have higher
 mutant-diversity demand than a / b. Mixed-effects unavailability
 (Singular) is a sample-size constraint at N = 60 / 12 PUTs, not evidence
-absence. \textbf{H4 verdict: partial (3/4)} under both v3 and v4; the
+absence. \textbf{H3 verdict: partial (3/4)} under both v3 and v4; the
 b-class is the inverted cell. The Friedman main effect (chi\^{}2 =
-15.30, p = 0.0041) speaks to MP differentiation, not H4 direction.
+15.30, p = 0.0041) speaks to MP differentiation, not H3 direction.
 
 \subsubsection{6.4 Stakeholder analysis}\label{stakeholder-analysis-single-output-kernels-scope}
 
@@ -1631,7 +1620,7 @@ R4 & LRCA multi-label boundary & Internal & Decision-tree priority +
 multi-label co-occurrence table & Appendix F.1 \\
 R5 & 12-PUT representativeness & External & Inherits P1; Appendix B.1
 coverage argument; P3 scaling & Appendix F.2 \\
-R6 & Cross-class statistical power & Conclusion & H4 framed exploratory;
+R6 & Cross-class statistical power & Conclusion & H3 framed exploratory;
 Friedman fallback; mixed-effects unavailable & Appendix F.2 \\
 R7 & LLM homogeneity bias & Construct & 3-LLM rotation + 20\% manual
 sampling & Appendix F.2 \\
@@ -1670,7 +1659,7 @@ dual-blind on v4 & Appendix F.1 \\
 \item
   \textbf{Limited statistical power for cross-class consistency.} The
   four-class sign test has df = 3, and the mixed-effects model returns
-  Singular matrix at N = 60 over 12 PUTs. We treat H4 as exploratory and
+  Singular matrix at N = 60 over 12 PUTs. We treat H3 as exploratory and
   present RQ3 in four pieces: class means, sign test, Friedman, and a
   forest plot.
 \item
@@ -2162,10 +2151,10 @@ For each $s' \in \mathrm{killed}_{i,k,j}$:
 \textbf{LRCA threshold calibration (9-grid scan;
 \texttt{lrca\_calibration.json}).} Best ood\_band=0.02 with any
 tolerance\_multiplier (3.0 / 10.0 / 30.0) yields mean\_C1\_share 0.200 /
-H5 12/60 (20.0\%); ood\_band=0.05 (default) or 0.10 yields 0.164 / 10/60
+H4 12/60 (20.0\%); ood\_band=0.05 (default) or 0.10 yields 0.164 / 10/60
 (16.7\%). \texttt{tolerance\_multiplier} has zero impact (L1 tolerance
 rarely triggered); \texttt{ood\_band} is the only discriminator.
-Calibration ceiling 12/60 = 20\% remains far below 80\% --- H5
+Calibration ceiling 12/60 = 20\% remains far below 80\% --- H4
 unattainable on this dataset, not a calibration issue (inherent SNR of
 LLM-mutant pools).
 
@@ -2406,7 +2395,7 @@ artefact); d2/d3 dominantly C1 / C3 mixed.
 
 \textbf{Expected suspect\_share thresholds.} A: 0.10-0.20 (acceptance $\leq$
 0.25); B: 0.20-0.35 ($\leq$ 0.40); C: 0.20-0.30 ($\leq$ 0.35); D: 0.25-0.40 ($\leq$
-0.45). 60-cell average: $\leq$ 0.20 (= H5; acceptance $\leq$ 0.25).
+0.45). 60-cell average: $\leq$ 0.20 (= H4; acceptance $\leq$ 0.25).
 
 \subsubsection{B.5 Engineering-significance mapping}\label{b.5-engineering-significance-mapping}
 
@@ -2674,7 +2663,7 @@ Decision tree, multi-label priority (C5 \textgreater{} C4 \textgreater{}
 C3 \textgreater{} C2 \textgreater{} C1), and output (\texttt{C1\_share},
 \texttt{suspect\_share}) are stated in §A.2; the full pseudocode is
 reproduced there. LRCA does \textbf{not} modify SMS; killed set is not
-filtered. §5.7 H5 numbers use best calibrated combination
+filtered. §5.7 H4 numbers use best calibrated combination
 (\texttt{ood\_band\ =\ 0.02,\ tolerance\_multiplier\ =\ 3.0,\ repeats\ =\ 20});
 default-threshold results retained in \texttt{lrca\_60cell\_v3.json} as
 control. Interface with §3.6 risk profile: L0 prescan $\leftrightarrow$ §C.2 dual-LLM
@@ -2759,7 +2748,7 @@ Benjamini-Hochberg FDR, alpha\_FDR = 0.05. N = 20 bootstrap intervals:
 
 \subsubsection{D.2 Cliff's delta cutoff sensitivity and logit-transformation invariance}\label{d.2-cliffs-delta-cutoff-sensitivity-and-logit-transformation-invariance}
 
-\textbf{H5 cutoff sensitivity (R-14 response).} Dense grid scan (cutoff
+\textbf{H4 cutoff sensitivity (R-14 response).} Dense grid scan (cutoff
 $\in$ \{0.05, 0.10, \ldots, 0.50\}, step 0.05) on v4 data
 (\texttt{scripts/h5\_sensitivity.py},
 \texttt{data/results/h5\_sensitivity\_v4.json}):
@@ -2786,7 +2775,7 @@ cutoff & h5\_cells\_pass & h5\_pass\_ratio \\
 \end{longtable}
 }
 
-\textbf{Conclusion.} H5 verdict (not met) is intrinsic data property,
+\textbf{Conclusion.} H4 verdict (not met) is intrinsic data property,
 independent of cutoff choice. v4 suspect\_share distribution is severely
 bimodal: median 1.0, mean 0.79; 48 cross cells at suspect\_share $\approx$ 1, 12
 aligned cells in low end; the {[}0.20, 0.80{]} interior is nearly empty.
@@ -2868,10 +2857,10 @@ raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.78 raw \textbf{0.029} adj
 W=0.333; d chi\^{}2=5.00 raw 0.287 adj 1.000, W=0.417. After correction,
 no per-class result remains significant at family-wise alpha = 0.05.
 Even b-class W = 0.898 (Cohen 1988 large concordance) is insufficient at
-N = 3 per class. \textbf{H4 verdict rests on §5.5 sign test}; per-class
+N = 3 per class. \textbf{H3 verdict rests on §5.5 sign test}; per-class
 Friedman is sensitivity / descriptive only. Friedman main effect on full
 60 cells (chi\^{}2 = 15.30, p = 0.0041) confirms MP rank differences but
-is logically independent from H4 cross-class consistency.
+is logically independent from H3 cross-class consistency.
 
 \textbf{Mixed-effects unavailability.} Primary
 \texttt{sms\ \textasciitilde{}\ C(class)\ +\ C(operator)\ +\ C(class):C(operator)\ +\ (1\ \textbar{}\ put)}
@@ -3110,7 +3099,7 @@ Mitigation
 \endlastfoot
 R5 & 12-PUT representativeness & External & Follows P1 site selection;
 §1.6 P-II open principle (cls extensible); P3 scaling to MD/QC/CFD \\
-R6 & Cross-class statistical power & Conclusion & H4 framed exploratory;
+R6 & Cross-class statistical power & Conclusion & H3 framed exploratory;
 mixed-effects unavailable (Singular at N=60); shifted to class means +
 sign test + Friedman + forest plot \\
 R7 & LLM homogeneity bias & Construct & §C.2 three-LLM rotation +
