@@ -155,8 +155,7 @@ strictly bounded to single-output \texttt{float\ $\to$\ float} kernels: each
 Program Under Test (PUT) is under 2 KB, and broader industrial transfer
 is reserved for the P3 and P5 companion papers.
 
-\subsubsection{1.2 Three-layer methodological
-framework}\label{three-layer-methodological-framework}
+\subsubsection{1.2 Three-layer methodological framework}\label{three-layer-methodological-framework}
 
 We organise the contribution as a three-layer framework around
 domain-semantic mutation operators.
@@ -200,8 +199,7 @@ judgement), Layer 3 (applied AST-normalised traceability across 12
 PUTs).}\label{fig:framework}
 \end{figure}
 
-\subsubsection{1.3 Related work and
-roadmap}\label{related-work-and-roadmap}
+\subsubsection{1.3 Related work and roadmap}\label{related-work-and-roadmap}
 
 This paper is P2 in a five-paper roadmap. P1 audits MR meta-patterns on
 the same 12-PUT infrastructure (Meng Li et al., \emph{Progress in
@@ -315,7 +313,7 @@ aspiration only).
   \textbf{H2.} The aligned-SMS to cross-SMS odds ratio is $\geq$ 3.0, and
   Cliff's $\delta$ is $\geq$ 0.474.
 \item
-  \st{H3} retired before v3 data collection: its bidirectional-threshold
+  \st{H3} retired during pre-registration revision: its bidirectional-threshold
   formulation collapses on LLM-mutant data because too few cells trigger
   any non-zero equivalent mutant. The R\_sem versus R\_kill decoupling
   phenomenon now appears in §6.2 as descriptive evidence.
@@ -329,8 +327,7 @@ aspiration only).
 We keep the numbering H1, H2, H4, H5 (with H3 vacant) for
 cross-reference consistency.
 
-\subsubsection{1.6 Boundary between P2 and the companion
-papers}\label{boundary-between-p2-and-the-companion-papers}
+\subsubsection{1.6 Boundary between P2 and the companion papers}\label{boundary-between-p2-and-the-companion-papers}
 
 P2 contributes the tool and the empirical report on 12 PUTs and 60
 cells. P4 will contribute formal theorems (minimal MR-subset existence,
@@ -341,8 +338,7 @@ industrial-scale transfer is reserved for P5.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{2. Notation and Equivalence
-Judgement}\label{notation-and-equivalence-judgement}
+\subsection{2. Notation and Equivalence Judgement}\label{notation-and-equivalence-judgement}
 
 \subsubsection{2.1 Vocabulary inheritance}\label{vocabulary-inheritance}
 
@@ -379,7 +375,7 @@ align(j) = j      (design choice, not theorem)
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Operator signatures (table 1).}\label{tab:p2-01}\\
+\caption{Operator signatures.}\label{tab:p2-01}\\
 \toprule\noalign{}
 Operator & Failure semantics & Aligned MP \\
 \midrule\noalign{}
@@ -397,8 +393,7 @@ mut\_F & Fidelity-order-breaking & MP\_5 Partial-order \\
 Per-PUT specialisation tables (mut\_C/M/G/T/F across 12 PUTs and 4
 classes) are deferred to \textbf{Appendix B.2}.
 
-\subsubsection{2.3 Equivalence judgement E1 $\wedge$ E2 (Layer
-2)}\label{equivalence-judgement-e1-e2-layer-2}
+\subsubsection{2.3 Equivalence judgement E1 $\wedge$ E2}\label{equivalence-judgement-e1-e2-layer-2}
 
 The equivalence judgement is the executable instantiation of the Layer-1
 necessary conditions (§3.2.0). For each candidate mutant
@@ -424,13 +419,9 @@ equivalence (Lemma 9.1).
 
 The killed determination preserves the classical OR-aggregation:
 
-\begin{verbatim}
-killed(s', MR_{i,k}) ⇔ ∃ mr ∈ MR_{i,k}: AVP(S_i, mr) = pass ∧ AVP(s', mr) = fail
-\end{verbatim}
+\[ \mathrm{killed}(s', \mathrm{MR}_{i,k}) \iff \exists\,mr \in \mathrm{MR}_{i,k}:\; \mathrm{AVP}(S_i, mr) = \text{pass} \wedge \mathrm{AVP}(s', mr) = \text{fail} \]
 
-\subsubsection{2.4 LRCA engineering attribution layer (descriptive, not
-in
-SMS)}\label{lrca-engineering-attribution-layer-descriptive-not-in-sms}
+\subsubsection{2.4 LRCA engineering attribution layer}\label{lrca-engineering-attribution-layer-descriptive-not-in-sms}
 
 LRCA annotates every killed mutant with one of five likely root causes:
 C1 true semantic failure, C2 numerical-tolerance perturbation, C3
@@ -453,8 +444,7 @@ artefact. Appendix A.2 gives the full decision tree, the 9-grid
 threshold calibration, and the engineering rationale for the priority
 ordering.
 
-\subsubsection{2.5 Backward-compatibility
-declaration}\label{backward-compatibility-declaration}
+\subsubsection{2.5 Backward-compatibility declaration}\label{backward-compatibility-declaration}
 
 The seven core concepts (PUT, mutation operator, mutant, equivalent
 mutant, killed mutant, surviving mutant, mutation score) and the SMS
@@ -480,8 +470,7 @@ decomposition, the SMS formula, and the AVP interface are fixed; the
 contents of MUT, MP, C, and \texttt{cls} remain open to future
 extension.
 
-\subsubsection{2.6 SMS $\to$ MS degeneration: formal
-statement}\label{sms-ms-degeneration-formal-statement}
+\subsubsection{2.6 SMS $\to$ MS degeneration: formal statement}\label{sms-ms-degeneration-formal-statement}
 
 The §2.5 backward-compatibility claim is formalised as a degeneration
 theorem. The full notation cross-reference is \textbf{Appendix G.1}; the
@@ -513,9 +502,7 @@ formula:
 \texttt{L}, \textbf{almost everywhere} with respect to the input
 distribution \texttt{D\_S},
 
-\begin{verbatim}
-SMS_{i,k,j}  -L→  MS_{i,j} = |killed_{i,j}^classic| / (|mut_j^syntax(S_i)| - |equiv_{i,j}^classic|)
-\end{verbatim}
+\[ \mathrm{SMS}_{i,k,j} \xrightarrow{L} \mathrm{MS}_{i,j} = \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
 
 where the right-hand side is the classical Mutation Score of Jia \&
 Harman (2011), \texttt{killed\^{}classic} is the difference-detection
@@ -547,11 +534,9 @@ fragmentation.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{3. Experimental Subjects and Operator
-Framework}\label{experimental-subjects-and-operator-framework}
+\subsection{3. Experimental Subjects and Operator Framework}\label{experimental-subjects-and-operator-framework}
 
-\subsubsection{3.1 PUT selection (12 PUTs, 4
-classes)}\label{put-selection-12-puts-4-classes}
+\subsubsection{3.1 PUT selection}\label{put-selection-12-puts-4-classes}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
@@ -560,7 +545,7 @@ classes)}\label{put-selection-12-puts-4-classes}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\caption{PUT selection (12 PUTs, 4 classes) (table 2).}\label{tab:p2-02}\\
+\caption{PUT selection.}\label{tab:p2-02}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Class
@@ -611,8 +596,7 @@ constraint (§7) that bounds the upper limit of mutant semantic
 complexity; transfer to industrial multi-output PUTs is reserved for the
 P3 and P5 papers.
 
-\subsubsection{3.2 Necessary conditions for semantic mutation (Layer
-1)}\label{necessary-conditions-for-semantic-mutation-layer-1}
+\subsubsection{3.2 Necessary conditions for semantic mutation}\label{necessary-conditions-for-semantic-mutation-layer-1}
 
 \textbf{Definition (Semantic mutation criteria).} A mutant
 \texttt{s\textquotesingle{}\ =\ mut\_j(S\_i)} is a \emph{semantic}
@@ -643,7 +627,7 @@ classes (CE, OS, HP, TF, SI) are specialisations of (a) -- (c):
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lllll@{}}
-\caption{Necessary conditions for semantic mutation (Layer 1) (table 3).}\label{tab:p2-03}\\
+\caption{Necessary conditions for semantic mutation.}\label{tab:p2-03}\\
 \toprule\noalign{}
 Operator class & (a) & (b) & (c) & Primary condition \\
 \midrule\noalign{}
@@ -662,8 +646,7 @@ Only \textbf{CE partially satisfies} the necessary conditions (it is a
 semantic / syntactic boundary class); OS, HP, TF, SI strongly satisfy at
 least one of (a), (b), (c).
 
-\subsubsection{3.3 60-cell instantiation
-matrix}\label{cell-instantiation-matrix}
+\subsubsection{3.3 60-cell instantiation matrix}\label{cell-instantiation-matrix}
 
 \begin{verbatim}
               MP_1   MP_2   MP_3    MP_4    MP_5
@@ -683,7 +666,7 @@ matrix}\label{cell-instantiation-matrix}
    ●● substantial 30 / ● moderate 24 / ○ vacant 6 (P1 H6)
 \end{verbatim}
 
-Each PUT averages 24.3 mutants in the v4 cross-source pool (range
+Each PUT averages 24.3 mutants in the cross-source pool (range
 10-30); full 60-cell $\times$ N=20 = 292 mutant instantiations $\times$ 20 AVP
 repetitions, with K\_eq = 1000 input samples for E2 evaluation. Detailed
 pool counts and per-class operator specialisations are in
@@ -771,10 +754,9 @@ cosmic-ray syntactic mutants across 12 PUTs (overall 5.14\%). HP, SI, TF
 main 5).}\label{fig:overlap}
 \end{figure}
 
-\subsubsection{3.5 P2 vs syntactic mutants: 12-PUT empirical (Layer
-3)}\label{p2-vs-syntactic-mutants-12-put-empirical-layer-3}
+\subsubsection{3.5 P2 vs syntactic mutants: 12-PUT empirical}\label{p2-vs-syntactic-mutants-12-put-empirical-layer-3}
 
-\textbf{Experimental design.} For each PUT, P2 v4 cross-source mutants
+\textbf{Experimental design.} For each PUT, P2 cross-source mutants
 (\texttt{data/mutants/\$\{PUT\}\_pool\_v4/}, 292 total) are compared at
 the AST-normalised level
 (\texttt{ast.dump(annotate\_fields=False,\ include\_attributes=False)})
@@ -786,7 +768,7 @@ with cosmic-ray default-operator mutants (1,250 total;
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
-\caption{P2 vs syntactic mutants: 12-PUT empirical (Layer 3) (table 4).}\label{tab:p2-04}\\
+\caption{P2 vs syntactic mutants: 12-PUT empirical.}\label{tab:p2-04}\\
 \toprule\noalign{}
 Metric & Value \\
 \midrule\noalign{}
@@ -804,7 +786,7 @@ AST-normalised overlap & 15 \\
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lllll@{}}
-\caption{P2 vs syntactic mutants: 12-PUT empirical (Layer 3) (table 5).}\label{tab:p2-05}\\
+\caption{P2 vs syntactic mutants: 12-PUT empirical.}\label{tab:p2-05}\\
 \toprule\noalign{}
 Class & n\_p2 & n\_overlap & Rate & Interpretation \\
 \midrule\noalign{}
@@ -858,8 +840,7 @@ overlap files are uneven (DeepSeek 11, Claude 4, GPT 0). Appendix B.3
 covers the cosmic-ray a1 single-PUT pre-12-PUT pilot, and Appendix F
 discusses the LLM-source distributional-shift threat R8.
 
-\subsubsection{3.6 Preventive-defence
-framing}\label{preventive-defence-framing}
+\subsubsection{3.6 Preventive-defence framing}\label{preventive-defence-framing}
 
 \textbf{Scope of the claim.} The preventive-defence claim below is
 conditional on a first-order syntactic baseline; HOM-based syntactic
@@ -968,11 +949,7 @@ three sources.
 
 \subsubsection{4.1 Procedure overview}\label{procedure-overview}
 
-\begin{verbatim}
-[§3.1 PUTs] → [§4.2 Mutant generation] → [LRCA L0 prescreen]
-            → [§4.4 Equivalence (E1 ∧ E2)] → [AVP → killed/survive]
-            → [LRCA three-layer diagnosis] → [SMS + C1_share report]
-\end{verbatim}
+\noindent\textsf{\small Pipeline order: §3.1 PUTs $\to$ §4.2 Mutant generation $\to$ LRCA L0 prescreen $\to$ §4.4 Equivalence ($E_1 \wedge E_2$) $\to$ AVP $\to$ killed/survive $\to$ LRCA three-layer diagnosis $\to$ SMS + $C_1$\_share report.}
 
 Each (i, k, j) cell is reported with \texttt{inst\_count},
 \texttt{equiv\_count}, \texttt{killed\_count}, \texttt{survive\_count},
@@ -980,8 +957,7 @@ SMS\_\{i,k,j\}, C1\_share\_\{i,k,j\}, suspect\_share\_\{i,k,j\}, and the
 three rates \texttt{inst\_rate\ /\ equiv\_rate\ /\ survive\_rate}
 corresponding to RQ1.
 
-\subsubsection{4.2 Cross-source v4 protocol
-(summary)}\label{cross-source-v4-protocol-summary}
+\subsubsection{4.2 Cross-source protocol}\label{cross-source-v4-protocol-summary}
 
 To isolate the contributions of LLM same-source bias and MR-MP alignment
 design to Cliff's delta, we ran a three-stage ablation:
@@ -992,7 +968,7 @@ design to Cliff's delta, we ran a three-stage ablation:
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Cross-source v4 protocol (summary) (table 6).}\label{tab:p2-06}\\
+\caption{Cross-source protocol.}\label{tab:p2-06}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Version
@@ -1032,8 +1008,7 @@ dual-blind on the v4 grid; full per-LLM token / latency / cost figures,
 V1-V4 specifications, and the full differential-prompt protocol are in
 \textbf{Appendix C.1}.
 
-\subsubsection{4.3 Mutant-pool prescreen and equivalence
-detection}\label{mutant-pool-prescreen-and-equivalence-detection}
+\subsubsection{4.3 Mutant-pool prescreen and equivalence detection}\label{mutant-pool-prescreen-and-equivalence-detection}
 
 \textbf{Pool prescreen (LRCA L0).} Each candidate mutant passes three
 gates: (i) static lint and type checking; (ii) a unit self-test on
@@ -1086,9 +1061,7 @@ conservative engineering choice (Appendix A.3).
 \textbf{Killed determination.} With OR-aggregation across mr in
 MR\_\{i,k\}:
 
-\begin{verbatim}
-killed(s', MR_{i,k}) ⇔ ∃ mr ∈ MR_{i,k}: AVP(S_i, mr) = pass ∧ AVP(s', mr) = fail
-\end{verbatim}
+\[ \mathrm{killed}(s', \mathrm{MR}_{i,k}) \iff \exists\,mr \in \mathrm{MR}_{i,k}:\; \mathrm{AVP}(S_i, mr) = \text{pass} \wedge \mathrm{AVP}(s', mr) = \text{fail} \]
 
 Each (i, k, j) cell is sampled N = 20 times (statistical replicate) to
 compute the per-cell SMS, with mutant-level fail ratios feeding the LRCA
@@ -1097,8 +1070,7 @@ L1 decision. AVP version is pinned to the P1 commit hash
 package embeds the complete AVP source so that P2 remains
 self-consistent under any P1 evolution.
 
-\subsubsection{4.4 LRCA three-layer
-diagnosis}\label{lrca-three-layer-diagnosis}
+\subsubsection{4.4 LRCA three-layer diagnosis}\label{lrca-three-layer-diagnosis}
 
 For each killed mutant the three-layer decision tree applies in order:
 
@@ -1140,12 +1112,11 @@ decision-tree pseudocode are in \textbf{Appendix A.2 + C.4}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{5. Statistical Analysis and Empirical
-Results}\label{statistical-analysis-and-empirical-results}
+\subsection{5. Statistical Analysis and Empirical Results}\label{statistical-analysis-and-empirical-results}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio,alt={60-cell heatmap of mean SMS over 12 PUTs \textbackslash times 5 MPs (v4 cross-source primary). Diagonal cells (operator-MP aligned) show concentrated mass; off-diagonal mass reflects bleed into adjacent MPs. Empty rows = PUT-level zero-mass cohort (PUTs A1, B1, D2; see §6.2).}]{figs/fig2_60cell_heatmap.png}
+\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio,alt={60-cell heatmap of mean SMS over 12 PUTs \textbackslash times 5 MPs (cross-source primary). Diagonal cells (operator-MP aligned) show concentrated mass; off-diagonal mass reflects bleed into adjacent MPs. Empty rows = PUT-level zero-mass cohort (PUTs A1, B1, D2; see §6.2).}]{figs/fig2_60cell_heatmap.png}
 \caption{60-cell heatmap of mean SMS over 12 PUTs \(\times\) 5 MPs (v4
 cross-source primary). Diagonal cells (operator-MP aligned) show
 concentrated mass; off-diagonal mass reflects bleed into adjacent MPs.
@@ -1162,7 +1133,7 @@ The primary statistical reporting follows a pre-registered hierarchy:
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Statistical pipeline (table 7).}\label{tab:p2-07}\\
+\caption{Statistical pipeline.}\label{tab:p2-07}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 RQ
@@ -1201,18 +1172,17 @@ operators producing $\geq$ 5 non-equivalent mutants on $\geq$ 9/12 PUTs; H2
 0.474 (Romano 2006 large-effect threshold); H4 (cross-class consistency)
 requires sign-test 4/4 across 4 classes plus CV($\Delta$SMS) \textless{} 0.5;
 H5 (LRCA mass) requires mean suspect\_share $\leq$ 0.20. H3 was formally
-retired before v3 data collection (its bidirectional threshold structure
+retired during pre-registration revision (its bidirectional threshold structure
 collapsed on LLM-mutant data because too few cells trigger non-zero
 equivalent mutants). Numbering H1, H2, H4, H5 is preserved with H3
 vacant. SMS variants (SMS, SMS\_unfiltered) and construction lemmas are
 in \textbf{Appendix D.1}.
 
-\subsubsection{5.2 RQ1: 60-cell
-distribution}\label{rq1-60-cell-distribution}
+\subsubsection{5.2 RQ1: 60-cell distribution}\label{rq1-60-cell-distribution}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
-\caption{RQ1: 60-cell distribution (table 8).}\label{tab:p2-08}\\
+\caption{RQ1: 60-cell distribution.}\label{tab:p2-08}\\
 \toprule\noalign{}
 Metric & Value \\
 \midrule\noalign{}
@@ -1256,12 +1226,11 @@ literature); zero-mass dominance appears to be a shared characteristic
 of LLM-mutant + existing MR-MP alignment designs, not a quirk of this
 paper's PUT selection.
 
-\subsubsection{5.3 RQ2: Aligned vs cross (Cliff's
-delta)}\label{rq2-aligned-vs-cross-cliffs-delta}
+\subsubsection{5.3 RQ2: Aligned vs cross}\label{rq2-aligned-vs-cross-cliffs-delta}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
-\caption{RQ2: Aligned vs cross (Cliff's delta) (table 9).}\label{tab:p2-09}\\
+\caption{RQ2: Aligned vs cross.}\label{tab:p2-09}\\
 \toprule\noalign{}
 Slice & n & Mean SMS & Median SMS \\
 \midrule\noalign{}
@@ -1307,8 +1276,7 @@ traditional mutants on fault detection'', ours compares ``aligned vs
 cross MP slice within one pool''; the numerical similarity is not
 substantive support).
 
-\subsubsection{5.4 RQ2: Stipulated-alternative
-power}\label{rq2-stipulated-alternative-power}
+\subsubsection{5.4 RQ2: Stipulated-alternative power}\label{rq2-stipulated-alternative-power}
 
 The §5.2 effective-n constraint motivates an explicit power analysis. A
 plug-in bootstrap (5,000 replications, seed = 42) samples with
@@ -1317,7 +1285,7 @@ plug-in power table is:
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{RQ2: Stipulated-alternative power (table 10).}\label{tab:p2-10}\\
+\caption{RQ2: Stipulated-alternative power.}\label{tab:p2-10}\\
 \toprule\noalign{}
 Threshold & Interpretation & Power at (12, 48) \\
 \midrule\noalign{}
@@ -1345,7 +1313,7 @@ realise E{[}$\delta${]} = 0.4746.
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{RQ2: Stipulated-alternative power (table 11).}\label{tab:p2-11}\\
+\caption{RQ2: Stipulated-alternative power.}\label{tab:p2-11}\\
 \toprule\noalign{}
 Stipulated truth & Criterion & Power \\
 \midrule\noalign{}
@@ -1384,12 +1352,11 @@ robustness evidence. The genuine robustness threats to the H2 verdict
 come from the zero-mass dominance (§5.2), not from any metric-scale
 choice.
 
-\subsubsection{5.5 RQ3: Cross-class consistency and
-Friedman}\label{rq3-cross-class-consistency-and-friedman}
+\subsubsection{5.5 RQ3: Cross-class consistency and Friedman}\label{rq3-cross-class-consistency-and-friedman}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{RQ3: Cross-class consistency and Friedman (table 12).}\label{tab:p2-12}\\
+\caption{RQ3: Cross-class consistency and Friedman.}\label{tab:p2-12}\\
 \toprule\noalign{}
 Class & Mean SMS (v3) & Mean SMS (v4) \\
 \midrule\noalign{}
@@ -1426,7 +1393,7 @@ therefore use Friedman as the non-parametric formal alternative:
   MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
 \item
   Per-class Friedman with \textbf{Bonferroni $\times$ 4 correction} (R1 W4
-  round-2): a 1.000 / b \textbf{0.116} / c 1.000 / d 1.000, no per-class
+  adversarial review): a 1.000 / b \textbf{0.116} / c 1.000 / d 1.000, no per-class
   result remains significant after correction. Kendall's W effect sizes:
   a 0.333 (small) / b 0.898 (large concordance, but caveat: N=3 per
   class makes this label nominal only) / c 0.333 / d 0.417.
@@ -1437,8 +1404,7 @@ therefore use Friedman as the non-parametric formal alternative:
 classes''. These are logically independent. H4 stands on the §5.5 sign
 test; per-class Friedman is descriptive only (small N=3 per class).
 
-\subsubsection{5.6 RQ4: SMS vs Pattern
-Coverage}\label{rq4-sms-vs-pattern-coverage}
+\subsubsection{5.6 RQ4: SMS vs Pattern Coverage}\label{rq4-sms-vs-pattern-coverage}
 
 \textbf{Status.} RQ4 is reported as a descriptive observation, not a
 hypothesis test, because n = 12 places the 95\% Spearman CI at roughly
@@ -1466,7 +1432,7 @@ operationalisation in Appendix D.5).
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
-\caption{H5: LRCA mass (table 13).}\label{tab:p2-13}\\
+\caption{H5: LRCA mass.}\label{tab:p2-13}\\
 \toprule\noalign{}
 Metric & Value \\
 \midrule\noalign{}
@@ -1497,10 +1463,9 @@ empty).
 
 \subsection{6. Discussion}\label{discussion}
 
-\subsubsection{6.1 Cross-source contributes mutant quality, not effect
-size}\label{cross-source-contributes-mutant-quality-not-effect-size}
+\subsubsection{6.1 Cross-source contributes mutant quality, not effect size}\label{cross-source-contributes-mutant-quality-not-effect-size}
 
-Going from v3 same-source to v4 cross-source under the pre-registered
+Going from same-source to cross-source under the pre-registered
 primary-MP convention shifts Cliff's $\delta$ by only −0.009 (95\% CI covers
 zero). Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a
 27\% relative increase), class-c mean SMS by \textbf{+91.5\%}, and
@@ -1530,8 +1495,7 @@ calibrated C1\_share of 0.20. Their construct is a developer survey
 classifier; the agreement between the two is contextual, not mechanism
 validation.
 
-\subsubsection{6.2 Decoupling between R\_sem and
-R\_kill}\label{decoupling-between-r_sem-and-r_kill}
+\subsubsection{6.2 Decoupling between R\_sem and R\_kill}\label{decoupling-between-r_sem-and-r_kill}
 
 The operator-level pilot in Appendix C.4.1 reveals a sharp pattern: HP,
 TF, and OS operators on the c-class (surrogate) and d-class (machine
@@ -1566,8 +1530,7 @@ v4 micro-shift of −0.009 attributes to LLM source diversity under a
 fixed prompt, while MR-design adequacy at the operator-MP level (rather
 than LLM identity) governs the kill rate.
 
-\subsubsection{6.3 H4: partial across same-source and
-cross-source}\label{h4-partial-across-same-source-and-cross-source}
+\subsubsection{6.3 H4: partial across same-source and cross-source}\label{h4-partial-across-same-source-and-cross-source}
 
 All four class means are positive in v3 (same-source) and v4
 (cross-source). Inter-class balance improves under cross-source (c
@@ -1578,8 +1541,7 @@ absence. \textbf{H4 verdict: partial (3/4)} under both v3 and v4; the
 b-class is the inverted cell. The Friedman main effect (chi\^{}2 =
 15.30, p = 0.0041) speaks to MP differentiation, not H4 direction.
 
-\subsubsection{6.4 Stakeholder analysis (single-output kernels
-scope)}\label{stakeholder-analysis-single-output-kernels-scope}
+\subsubsection{6.4 Stakeholder analysis}\label{stakeholder-analysis-single-output-kernels-scope}
 
 \textbf{Scope.} All deployment claims in this subsection are bounded to
 single-output \texttt{float\ $\to$\ float} kernels under 2 KB, the 12 PUTs
@@ -1632,7 +1594,7 @@ avoid documentation fragmentation.
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\caption{Threats to Validity (table 14).}\label{tab:p2-14}\\
+\caption{Threats to Validity.}\label{tab:p2-14}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \#
@@ -1733,8 +1695,7 @@ dual-blind on v4 & Appendix F.1 \\
   offline-cached pools are P5 mitigations.
 \end{enumerate}
 
-\subsubsection{7.X Statistical-modelling capacity at N = 60 cells / 12
-PUTs}\label{x-statistical-modelling-capacity-at-n-60-cells-12-puts}
+\subsubsection{7.1 Statistical-modelling capacity at N = 60 cells / 12 PUTs}\label{statistical-modelling-capacity-at-n-60-cells-12-puts}
 
 The mixed-effects primary model
 \texttt{sms\ \textasciitilde{}\ C(class)\ *\ C(operator)\ +\ (1\ \textbar{}\ put)}
@@ -1751,11 +1712,10 @@ non-parametric formal alternative, but they answer a structurally
 different question. P4's expansion to n\_PUT $\geq$ 30 is the only path to a
 properly identified hierarchical model.
 
-\subsubsection{7.Y PUT-level zero-mass cohort (3 of 12
-PUTs)}\label{y-put-level-zero-mass-cohort-3-of-12-puts}
+\subsubsection{7.2 PUT-level zero-mass cohort}\label{put-level-zero-mass-cohort}
 
 Figure 2 and §6.2 document that PUTs A1, B1, and D2 produce all-zero
-rows across the five MPs in the v4 cross-source pool; that is,
+rows across the five MPs in the cross-source pool; that is,
 \textbf{for 25\% of the PUTs, SMS gives zero signal at every operator-MP
 cell}. This is a substantive limitation of SMS as an adequacy metric on
 this PUT cohort: when the LRCA C1 mass collapses to zero across all
@@ -1767,8 +1727,7 @@ MP discovery) and the proposed P4-pre-registered c-class primary-MP rule
 on a fresh dataset are the principal mitigation paths. We declare this
 as residual threat R14.
 
-\subsubsection{7.Z R13 protocol-asymmetry magnitude
-estimate}\label{z-r13-protocol-asymmetry-magnitude-estimate}
+\subsubsection{7.3 R13 protocol-asymmetry magnitude estimate}\label{r13-protocol-asymmetry-magnitude-estimate}
 
 §4.2 declared protocol asymmetry R13: v3 used the Phase-1 dual-blind
 reviewer protocol (Claude generation + GPT-5.4 review + DeepSeek
@@ -1826,8 +1785,7 @@ The 60-cell empirical demonstration produces five findings.
   n = 12. Orthogonality is a hypothesis, not a finding.
 \end{enumerate}
 
-\subsubsection{8.2 Methodological
-contributions}\label{methodological-contributions}
+\subsubsection{8.2 Methodological contributions}\label{methodological-contributions}
 
 This paper contributes a three-layer framework for domain-semantic
 mutation in single-output scientific computing kernels.
@@ -1857,8 +1815,7 @@ SMS is backward-compatible with the classical MS through §2.6 Theorem
 audit reported in §5 is one demonstration following this backbone, not
 the paper's main contribution.
 
-\subsubsection{8.3 Future work and P-series
-roadmap}\label{future-work-and-p-series-roadmap}
+\subsubsection{8.3 Future work and P-series roadmap}\label{future-work-and-p-series-roadmap}
 
 We commit six P4 follow-ups.
 
@@ -1907,8 +1864,7 @@ The companion P-series roadmap is as follows.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{Data and code
-availability}\label{data-and-code-availability}
+\subsection{Data and code availability}\label{data-and-code-availability}
 
 All raw data, JSON SSOTs (paper\_numbers\_v3 / v4,
 rq2\_cliffs\_delta\_v3 / v4\_mp5, lrca\_60cell,
@@ -2081,11 +2037,9 @@ Engineering}.
 \clearpage
 \appendix
 
-\subsection{A. Notation and Operator
-Catalogue}\label{a.-notation-and-operator-catalogue}
+\subsection{A. Notation and Operator Catalogue}\label{a.-notation-and-operator-catalogue}
 
-\subsubsection{A.1 Complete notation
-table}\label{a.1-complete-notation-table}
+\subsubsection{A.1 Complete notation table}\label{a.1-complete-notation-table}
 
 \begin{verbatim}
 ═══════════════ Paper Domain ═══════════════
@@ -2151,14 +2105,13 @@ The notation skeleton (11 core concepts + three-state decomposition +
 SMS formula + AVP interface) is \textbf{fixed}; the \emph{content} of
 MUT, MP, C, and cls is open to extension.
 
-\subsubsection{A.2 LRCA decision tree and three-layer diagnostic
-protocol}\label{a.2-lrca-decision-tree-and-three-layer-diagnostic-protocol}
+\subsubsection{A.2 LRCA decision tree and three-layer diagnostic protocol}\label{a.2-lrca-decision-tree-and-three-layer-diagnostic-protocol}
 
 \textbf{Five likely root causes} (open):
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
-\caption{LRCA decision tree and three-layer diagnostic protocol (table 15).}\label{tab:p2-15}\\
+\caption{LRCA decision tree and three-layer diagnostic protocol.}\label{tab:p2-15}\\
 \toprule\noalign{}
 Code & Meaning \\
 \midrule\noalign{}
@@ -2209,8 +2162,7 @@ Calibration ceiling 12/60 = 20\% remains far below 80\% --- H5
 unattainable on this dataset, not a calibration issue (inherent SNR of
 LLM-mutant pools).
 
-\subsubsection{A.3 AVP protocol specification and equivalence-judgement
-trade-off}\label{a.3-avp-protocol-specification-and-equivalence-judgement-trade-off}
+\subsubsection{A.3 AVP protocol specification and equivalence-judgement trade-off}\label{a.3-avp-protocol-specification-and-equivalence-judgement-trade-off}
 
 \texttt{AVP\ :\ Programs\ $\times$\ MR\_universe\ $\times$\ R⁺\ $\to$\ \{pass,\ fail\}}.
 Per-MP verification: MP\_1 tolerance equality \textbar LHS −
@@ -2227,7 +2179,7 @@ AVP source.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{AVP protocol specification and equivalence-judgement trade-off (table 16).}\label{tab:p2-16}\\
+\caption{AVP protocol specification and equivalence-judgement trade-off.}\label{tab:p2-16}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Determination
@@ -2262,11 +2214,9 @@ non-equivalent).
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{B. Experimental Subjects and Mutation-Operator
-Specialisations}\label{b.-experimental-subjects-and-mutation-operator-specialisations}
+\subsection{B. Experimental Subjects and Mutation-Operator Specialisations}\label{b.-experimental-subjects-and-mutation-operator-specialisations}
 
-\subsubsection{B.1 PUT selection rationale (detailed coverage
-argument)}\label{b.1-put-selection-rationale-detailed-coverage-argument}
+\subsubsection{B.1 PUT selection rationale}\label{b.1-put-selection-rationale-detailed-coverage-argument}
 
 \textbf{(a) Library-stack coverage.} numpy 2.4.4 (A1-B3 linear algebra /
 arrays), scipy 1.17.1 (A1 integrate, A2 linalg, B2 stats), scikit-learn
@@ -2299,8 +2249,7 @@ scalarised PUTs upper-bound mutant semantic complexity and may
 systematically under-estimate SMS and cross-class differences on
 industrial PUTs (declared §7 R5; P3 validates on industrial-grade PUTs).
 
-\subsubsection{B.1.5 Systematic vs
-incidental}\label{b.1.5-systematic-vs-incidental}
+\subsubsection{B.1.5 Systematic vs incidental}\label{b.1.5-systematic-vs-incidental}
 
 Syntactic tools may \emph{occasionally} hit §3.2 (a)
 (cross-function-boundary) or (c) (algorithm class), but occasionality
@@ -2322,14 +2271,13 @@ satisfying (a)(b)(c) is stochastic byproduct --- not repeatable, not
 carrying engineering value. Systematic semantic mutation requires
 (a)(b)(c) to be design intent.
 
-\subsubsection{B.2 Per-class operator
-specialisations}\label{b.2-per-class-operator-specialisations}
+\subsubsection{B.2 Per-class operator specialisations}\label{b.2-per-class-operator-specialisations}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Per-class operator specialisations (table 17).}\label{tab:p2-17}\\
+\caption{Per-class operator specialisations.}\label{tab:p2-17}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Operator
@@ -2390,7 +2338,7 @@ Bool literal); \texttt{BreakContinueReplacer} (Break/Continue);
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Per-class operator specialisations (table 18).}\label{tab:p2-18}\\
+\caption{Per-class operator specialisations.}\label{tab:p2-18}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 P2 class
@@ -2422,8 +2370,7 @@ low-complexity sub-expressions can be incidentally hit by BinOp;
 empirical 11.67\% (§3.5) is consistent with 88.33\% AST-disjointness
 lower bound.
 
-\subsubsection{B.3 cosmic-ray a1 single-PUT pilot (pre-12-PUT
-empirical)}\label{b.3-cosmic-ray-a1-single-put-pilot-pre-12-put-empirical}
+\subsubsection{B.3 cosmic-ray a1 single-PUT pilot}\label{b.3-cosmic-ray-a1-single-put-pilot-pre-12-put-empirical}
 
 Before the 12-PUT generalisation (§3.5 main), a single-PUT lightweight
 empirical ran via \texttt{scripts/run\_cosmic\_ray\_a1.sh} on a1 (file
@@ -2436,8 +2383,7 @@ are not aligned with MR-violation detection. The 12-PUT generalisation
 (§3.5) supersedes this pilot but corroborates the same conclusion at
 scale.
 
-\subsubsection{B.4 Expected LRCA risk
-profile}\label{b.4-expected-lrca-risk-profile}
+\subsubsection{B.4 Expected LRCA risk profile}\label{b.4-expected-lrca-risk-profile}
 
 \textbf{PUT-class $\times$ LRCA-layer risk weights.} A numeric: C2 dominant
 ($\star$$\star$$\star$ on L1 tolerance). B probabilistic: C4 dominant ($\star$$\star$$\star$ on L3). C
@@ -2455,8 +2401,7 @@ artefact); d2/d3 dominantly C1 / C3 mixed.
 0.25); B: 0.20-0.35 ($\leq$ 0.40); C: 0.20-0.30 ($\leq$ 0.35); D: 0.25-0.40 ($\leq$
 0.45). 60-cell average: $\leq$ 0.20 (= H5; acceptance $\leq$ 0.25).
 
-\subsubsection{B.5 Engineering-significance
-mapping}\label{b.5-engineering-significance-mapping}
+\subsubsection{B.5 Engineering-significance mapping}\label{b.5-engineering-significance-mapping}
 
 j = k aligned diagonal is the H2 threshold-test slice; j $\neq$ k
 off-diagonal is control; 6 vacant cells ($\circ$, P1 H6) are not formally
@@ -2465,8 +2410,7 @@ R\_sem / R\_kill decoupling. The v3 $\to$ v4 micro-change (−0.009)
 attributes to LLM-source diversity under a fixed prompt; this is the
 source-axis null contrast underpinning §5.3.
 
-\subsubsection{B.6 Mutmut vs cosmic-ray default-operator
-overlap}\label{b.6-mutmut-vs-cosmic-ray-default-operator-overlap}
+\subsubsection{B.6 Mutmut vs cosmic-ray default-operator overlap}\label{b.6-mutmut-vs-cosmic-ray-default-operator-overlap}
 
 Reviewer-requested manual operator-class cross-reference between
 cosmic-ray's 13 default operators (cosmic-ray 8.4.6,
@@ -2485,7 +2429,7 @@ for semantic mutation).
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\caption{Mutmut vs cosmic-ray default-operator overlap (table 19).}\label{tab:p2-19}\\
+\caption{Mutmut vs cosmic-ray default-operator overlap.}\label{tab:p2-19}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Operator class
@@ -2602,11 +2546,9 @@ supporting the §3.6 preventive-defence framing.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{C. Experimental Procedure
-Details}\label{c.-experimental-procedure-details}
+\subsection{C. Experimental Procedure Details}\label{c.-experimental-procedure-details}
 
-\subsubsection{C.1 Cross-source v4 protocol --- full
-specification}\label{c.1-cross-source-v4-protocol-full-specification}
+\subsubsection{C.1 Cross-source protocol --- full specification}\label{c.1-cross-source-v4-protocol-full-specification}
 
 \textbf{Two-stage ablation.}
 
@@ -2616,7 +2558,7 @@ specification}\label{c.1-cross-source-v4-protocol-full-specification}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Cross-source v4 protocol --- full specification (table 20).}\label{tab:p2-20}\\
+\caption{Cross-source protocol --- full specification.}\label{tab:p2-20}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Version
@@ -2665,8 +2607,7 @@ grid, \textasciitilde\$5-8 USD); v3 used the original Phase-1 dual-blind
 v3 $\to$ v4 source-axis shift may be slight v4 quality decline rather than
 LLM-source diversity.
 
-\subsubsection{C.1.1 Differential prompt protocol (future-work
-commitment)}\label{c.1.1-differential-prompt-protocol-future-work-commitment}
+\subsubsection{C.1.1 Differential prompt protocol}\label{c.1.1-differential-prompt-protocol-future-work-commitment}
 
 The v3 $\to$ v4 micro-change of −0.009 may reflect ``three LLMs under
 identical prompt'' rather than ``true upper bound of LLM diversity''.
@@ -2692,9 +2633,7 @@ prompt sensitivity exists but H2 unchanged.
 \textbf{Resources.} API \textasciitilde\$18-30 USD; wall 3-4 h at
 concurrency 4; V1-V4 only, no reviewer LLM.
 
-\subsubsection{C.2 Manual pilot lineage, LLM-client configuration, and
-L0
-prescreen}\label{c.2-manual-pilot-lineage-llm-client-configuration-and-l0-prescreen}
+\subsubsection{C.2 Manual pilot lineage, LLM-client configuration, and L0 prescreen}\label{c.2-manual-pilot-lineage-llm-client-configuration-and-l0-prescreen}
 
 The original §4.2 protocol used 60\% multi-LLM consensus (Claude Opus
 4.6 + GPT-5.4 + DeepSeek chat unanimous) plus 40\% manual injection by
@@ -2722,8 +2661,7 @@ type checkers), a unit self-test (simple inputs produce finite output),
 and double-blind sign-off. Target: 30-50 candidates per cell $\to$ 10-15
 retained after prescreen.
 
-\subsubsection{C.4 LRCA three-layer execution
-(full)}\label{c.4-lrca-three-layer-execution-full}
+\subsubsection{C.4 LRCA three-layer execution}\label{c.4-lrca-three-layer-execution-full}
 
 Decision tree, multi-label priority (C5 \textgreater{} C4 \textgreater{}
 C3 \textgreater{} C2 \textgreater{} C1), and output (\texttt{C1\_share},
@@ -2737,8 +2675,7 @@ double-blind; L1 tolerance $\leftrightarrow$ N = 20 repetition subprocess; L2 OO
 input-distribution definition; L3 statistical baseline $\leftrightarrow$ pre-check
 protocol.
 
-\subsubsection{C.4.1 Pilot calibration (37 operators, K =
-10/20)}\label{c.4.1-pilot-calibration-37-operators-k-1020}
+\subsubsection{C.4.1 Pilot calibration}\label{c.4.1-pilot-calibration-37-operators-k-1020}
 
 A 2026 Q3 operator-level pilot ran 12 PUTs $\times$ 37 operators (12
 \texttt{is\_key=True} at K=20, 25 at K=10; 470 trials total). Pilot
@@ -2761,11 +2698,9 @@ decoupling at cell level.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{D. Statistical Analysis
-Details}\label{d.-statistical-analysis-details}
+\subsection{D. Statistical Analysis Details}\label{d.-statistical-analysis-details}
 
-\subsubsection{D.1 SMS variants and construction
-lemmas}\label{d.1-sms-variants-and-construction-lemmas}
+\subsubsection{D.1 SMS variants and construction lemmas}\label{d.1-sms-variants-and-construction-lemmas}
 
 \textbf{SMS\_unfiltered (reviewer comparison metric):}
 
@@ -2786,7 +2721,7 @@ primary conclusions.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{SMS variants and construction lemmas (table 21).}\label{tab:p2-21}\\
+\caption{SMS variants and construction lemmas.}\label{tab:p2-21}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 RQ
@@ -2814,9 +2749,7 @@ ranking comparison \\
 Benjamini-Hochberg FDR, alpha\_FDR = 0.05. N = 20 bootstrap intervals:
 1,000-iteration 95\% CI (B = 10,000 for the headline H2 delta CI).
 
-\subsubsection{D.2 Cliff's delta cutoff sensitivity and
-logit-transformation
-invariance}\label{d.2-cliffs-delta-cutoff-sensitivity-and-logit-transformation-invariance}
+\subsubsection{D.2 Cliff's delta cutoff sensitivity and logit-transformation invariance}\label{d.2-cliffs-delta-cutoff-sensitivity-and-logit-transformation-invariance}
 
 \textbf{H5 cutoff sensitivity (R-14 response).} Dense grid scan (cutoff
 $\in$ \{0.05, 0.10, \ldots, 0.50\}, step 0.05) on v4 data
@@ -2825,7 +2758,7 @@ $\in$ \{0.05, 0.10, \ldots, 0.50\}, step 0.05) on v4 data
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Cliff's delta cutoff sensitivity and logit-transformation invariance (table 22).}\label{tab:p2-22}\\
+\caption{Cliff's delta cutoff sensitivity and logit-transformation invariance.}\label{tab:p2-22}\\
 \toprule\noalign{}
 cutoff & h5\_cells\_pass & h5\_pass\_ratio \\
 \midrule\noalign{}
@@ -2858,8 +2791,7 @@ monotone transformation (Romano 2006). Logit is strictly monotone on (0,
 additional robustness evidence}; H2 robustness threats come from §5.2
 zero-mass dominance, not metric-scale choice.
 
-\subsubsection{D.3 Power analysis --- plug-in and
-stipulated-alternative}\label{d.3-power-analysis-plug-in-and-stipulated-alternative}
+\subsubsection{D.3 Power analysis --- plug-in and stipulated-alternative}\label{d.3-power-analysis-plug-in-and-stipulated-alternative}
 
 \textbf{Plug-in bootstrap.} With-replacement sample from observed
 aligned (n=12) and cross (n=48) v4 SMS pools; N\_sim = 5,000, seed = 42
@@ -2867,7 +2799,7 @@ aligned (n=12) and cross (n=48) v4 SMS pools; N\_sim = 5,000, seed = 42
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Power analysis --- plug-in and stipulated-alternative (table 23).}\label{tab:p2-23}\\
+\caption{Power analysis --- plug-in and stipulated-alternative.}\label{tab:p2-23}\\
 \toprule\noalign{}
 Threshold & Interpretation & Power \\
 \midrule\noalign{}
@@ -2892,7 +2824,7 @@ sampling noise. Even at delta\_truth $\approx$ 0.474, sample has only
 met'' --- observed delta\_v3 = 0.323 \textless{} 0.474, observed
 delta\_v4 = 0.314 \textless{} 0.474; increasing sample only narrows CI.
 
-\textbf{Stipulated-alternative (R1 W1 round-2).} Implementation via
+\textbf{Stipulated-alternative (R1 W1 adversarial review).} Implementation via
 mixture-weight (\texttt{scripts/compute\_rq2\_power\_stipulated.py},
 N\_sim = 2,000): SMS has heavy ties at zero (45/60 = 0), raw shifting is
 discontinuous (any $\varepsilon$ \textgreater{} 0 jumps delta from 0.314 to 0.74).
@@ -2903,7 +2835,7 @@ E{[}delta{]} $\approx$ 0.474. Calibrated w = 0.094, realised E{[}delta{]} =
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Power analysis --- plug-in and stipulated-alternative (table 24).}\label{tab:p2-24}\\
+\caption{Power analysis --- plug-in and stipulated-alternative.}\label{tab:p2-24}\\
 \toprule\noalign{}
 Stipulated truth & Criterion & Power \\
 \midrule\noalign{}
@@ -2920,8 +2852,7 @@ Even at delta\_truth = 0.474, the (12, 48) design returns delta\_hat $\geq$
 \emph{supports} the §5.3 framing that ``not met'' is point-estimate, not
 effect-size.
 
-\subsubsection{D.4 Friedman per-class --- discussion of small-N
-concordance}\label{d.4-friedman-per-class-discussion-of-small-n-concordance}
+\subsubsection{D.4 Friedman per-class --- discussion of small-N concordance}\label{d.4-friedman-per-class-discussion-of-small-n-concordance}
 
 Per-class Friedman (3 PUTs $\times$ 5 MPs) with Bonferroni $\times$ 4: a chi\^{}2=4.00
 raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.78 raw \textbf{0.029} adj
@@ -2945,8 +2876,7 @@ Fallback class p-values (descriptive only): b vs a 0.275 / c vs a 0.892
 / d vs a 0.991. RQ3 conclusion shifts to four-piece presentation (class
 means + sign test + Friedman + forest plot).
 
-\subsubsection{D.5 Pattern-coverage
-operationalisation}\label{d.5-pattern-coverage-operationalisation}
+\subsubsection{D.5 Pattern-coverage operationalisation}\label{d.5-pattern-coverage-operationalisation}
 
 Per PUT, (MP\_k, R\_outcome $\in$ \{True, False\}) binary-tuple coverage: 5
 MPs $\times$ 2 outcomes = 10 cells, PC = \#triggered / 10. Simplest baseline
@@ -2969,12 +2899,9 @@ expand to n $\geq$ 30 + refine PC to incorporate mutant dimension.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{E. Stakeholder Deployment Considerations (Single-Output
-Kernels
-Scope)}\label{e.-stakeholder-deployment-considerations-single-output-kernels-scope}
+\subsection{E. Stakeholder Deployment Considerations}\label{e.-stakeholder-deployment-considerations-single-output-kernels-scope}
 
-\subsubsection{E.1 Air-gap incompatibility --- full
-justification}\label{e.1-air-gap-incompatibility-full-justification}
+\subsubsection{E.1 Air-gap incompatibility --- full justification}\label{e.1-air-gap-incompatibility-full-justification}
 
 The §6.4 workflow depends on external LLM API calls (Claude / GPT /
 DeepSeek), incompatible with most regulated air-gapped V\&V workflows:
@@ -2984,7 +2911,7 @@ DeepSeek), incompatible with most regulated air-gapped V\&V workflows:
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Air-gap incompatibility --- full justification (table 25).}\label{tab:p2-25}\\
+\caption{Air-gap incompatibility --- full justification.}\label{tab:p2-25}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Domain
@@ -3016,8 +2943,7 @@ package supports this), but generating new pools requires external LLM
 access. SMS for air-gapped industrial deployment is a P5 research
 direction.
 
-\subsubsection{E.2 Quarterly batch audit
-workflow}\label{e.2-quarterly-batch-audit-workflow}
+\subsubsection{E.2 Quarterly batch audit workflow}\label{e.2-quarterly-batch-audit-workflow}
 
 The original §6.5.2 per-PR GitHub Actions YAML was removed because PR-CI
 threshold 0.10 contradicted §6.5.3 audit threshold 0.20 and propagated
@@ -3030,7 +2956,7 @@ stakeholder-facing CI assumptions into adopters' pipelines.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Quarterly batch audit workflow (table 26).}\label{tab:p2-26}\\
+\caption{Quarterly batch audit workflow.}\label{tab:p2-26}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Step
@@ -3060,12 +2986,10 @@ needing per-PR should use coverage / unit-test gates. SMS does not
 replace domain-expert MR physical-reasonableness judgement nor
 product-requirements review.
 
-\subsubsection{E.3 V\&V documentation --- conceptual complementarity
-with ASME V\&V
-20-2009}\label{e.3-vv-documentation-conceptual-complementarity-with-asme-vv-20-2009}
+\subsubsection{E.3 V\&V documentation --- conceptual complementarity with ASME V\&V 20-2009}\label{e.3-vv-documentation-conceptual-complementarity-with-asme-vv-20-2009}
 
 §6.5.3 was retitled from ``Auditors / certification bodies'' in R3
-round-2: this subsection makes \textbf{no normative claim} toward NRC,
+adversarial review: this subsection makes \textbf{no normative claim} toward NRC,
 FDA, or ISO 26262 review teams. Within single-output kernels scope, no
 traceable mapping exists to current IEC 60880 / ISO 26262 / DO-178C /
 ASME V\&V 20-2009 normative bodies.
@@ -3097,8 +3021,7 @@ link in the evidence chain, not a single-point qualification.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{F. Threats to Validity --- Detailed
-Mitigation}\label{f.-threats-to-validity-detailed-mitigation}
+\subsection{F. Threats to Validity --- Detailed Mitigation}\label{f.-threats-to-validity-detailed-mitigation}
 
 \subsubsection{F.1 Internal threats}\label{f.1-internal-threats}
 
@@ -3108,7 +3031,7 @@ Mitigation}\label{f.-threats-to-validity-detailed-mitigation}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Internal threats (table 27).}\label{tab:p2-27}\\
+\caption{Internal threats.}\label{tab:p2-27}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ID
@@ -3129,7 +3052,7 @@ should yield $\geq$ 90\% pool overlap & LLM training data may be updated
 post-submission \\
 R2 & Probabilistic equiv (K\_eq=1000) & §2.3 declares probabilistic
 approximation; Hoeffding-style false-equiv bound & K\_eq sweep $\in$
-\{500,1000,2000\} deferred to P4 (R1 W3 round-2) \\
+\{500,1000,2000\} deferred to P4 (R1 W3 adversarial review) \\
 R3 & P1 $\leftrightarrow$ P2 circular dependency & AVP version pinned to P1 commit hash;
 package embeds AVP source; §1.6 declares P1 as arXiv technical report &
 None within scope \\
@@ -3154,8 +3077,7 @@ the v4 grid \\
 R13 is the protocol-asymmetry threat (dual-blind vs V1-V4 only) on the
 v3 $\to$ v4 source-axis contrast ($\Delta$$\delta$ = −0.009).
 
-\subsubsection{F.2 External / construct / conclusion
-threats}\label{f.2-external-construct-conclusion-threats}
+\subsubsection{F.2 External / construct / conclusion threats}\label{f.2-external-construct-conclusion-threats}
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
@@ -3163,7 +3085,7 @@ threats}\label{f.2-external-construct-conclusion-threats}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{External / construct / conclusion threats (table 28).}\label{tab:p2-28}\\
+\caption{External / construct / conclusion threats.}\label{tab:p2-28}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ID
@@ -3203,11 +3125,9 @@ semantic detection, not production engineering value (P2-CN scope).
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsection{G. SMS $\to$ MS Degeneration Theorem --- Full
-Proof}\label{g.-sms-ms-degeneration-theorem-full-proof}
+\subsection{G. SMS $\to$ MS Degeneration Theorem --- Full Proof}\label{g.-sms-ms-degeneration-theorem-full-proof}
 
-\subsubsection{G.1 Notation cross-reference (with
-§2.1)}\label{g.1-notation-cross-reference-with-2.1}
+\subsubsection{G.1 Notation cross-reference}\label{g.1-notation-cross-reference-with-2.1}
 
 PUT \texttt{S\_i}, mutation operator family mut (syntactic or semantic),
 mutant set mut(S\_i), MP set, equivalence tolerance $\varepsilon$\_eq, equivalence
@@ -3219,9 +3139,7 @@ formula:
 SMS_{i,k,j} = |killed_{i,k,j}| / (|mut_j(S_i)| − |equiv_{i,k,j}|)
 \end{verbatim}
 
-\subsubsection{G.2 Degenerate-limit definition (R-8 + P1-3 revision: 3
-joint
-conditions)}\label{g.2-degenerate-limit-definition-r-8-p1-3-revision-3-joint-conditions}
+\subsubsection{G.2 Degenerate-limit definition}\label{g.2-degenerate-limit-definition-r-8-p1-3-revision-3-joint-conditions}
 
 The degenerate limit \texttt{L\ =\ L\_equiv\ $\wedge$\ L\_killed\ $\wedge$\ L\_mut}
 consists of three \textbf{joint conditions} (paired axes), each
@@ -3234,7 +3152,7 @@ axes; the pairing responds to dependency queries (R0 W8 / R1 §4 / R2 W3
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Degenerate-limit definition (R-8 + P1-3 revision: 3 joint conditions) (table 29).}\label{tab:p2-29}\\
+\caption{Degenerate-limit definition.}\label{tab:p2-29}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Joint condition
@@ -3265,8 +3183,7 @@ set. \\
 \end{longtable}
 }
 
-\subsubsection{G.3 Lemmas --- Three-state decomposition degenerates
-under L}\label{g.3-lemmas-three-state-decomposition-degenerates-under-l}
+\subsubsection{G.3 Lemmas --- Three-state decomposition degenerates under L}\label{g.3-lemmas-three-state-decomposition-degenerates-under-l}
 
 \textbf{Lemma 9.1 (equiv degeneration; P1-3 revision with measure-zero
 qualification).} Under L\_equiv (L1 $\wedge$ L2), semantic-class equivalence
@@ -3303,16 +3220,13 @@ for semantic operators on probabilistic/ML programs. Under this
 configuration, mut\_j(S\_i) is the literature-defined syntactic mutant
 set, independent of domain semantics. $\blacksquare$
 
-\subsubsection{G.4 Theorem 9.1 --- Detailed
-proof}\label{g.4-theorem-9.1-detailed-proof}
+\subsubsection{G.4 Theorem 9.1 --- Detailed proof}\label{g.4-theorem-9.1-detailed-proof}
 
 \textbf{Theorem 9.1 (SMS $\to$ MS degeneration).} In the degenerate limit
 \texttt{L\ =\ L\_equiv\ $\wedge$\ L\_killed\ $\wedge$\ L\_mut}, almost everywhere
 w.r.t. D\_S,
 
-\begin{verbatim}
-SMS_{i,k,j}  -L→  MS_{i,j} := |killed_{i,j}^classic| / (|mut_j^syntax(S_i)| − |equiv_{i,j}^classic|)
-\end{verbatim}
+\[ \mathrm{SMS}_{i,k,j} \xrightarrow{L} \mathrm{MS}_{i,j} := \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
 
 \emph{Proof.} Combine Lemmas 9.1-9.3:
 
