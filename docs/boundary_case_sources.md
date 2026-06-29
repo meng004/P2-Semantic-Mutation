@@ -40,3 +40,20 @@
 - REBOUND changelog 无逐条 issue/PR 号(版本标签+论文佐证)。
 - FN2/3/4 有 issue/changelog 但无 pin 到具体 patch commit(需 bisect/版本锁)。
 - 无真实缺陷的机制(OpenMOC 等变 / FiPy 守恒 / astropy 辛 / pyadjoint 伴随)→ **不需要**,上述主选已覆盖各机制。
+
+---
+
+## 实现结果(2026-06-30,TDD,全绿)
+
+| 案例 | 元模式 | 实现方式 | 版本/出处 | 强MR 判定 | 测试 |
+|---|---|---|---|---|---|
+| inv.eqv | 等变 FP | **真实版本切换**(uv) | scipy 1.13.0→1.13.1,#20660/PR#20573 | buggy 残差 2.0 杀 / fixed 1e-16 过 | 3 ✓ |
+| FN | 盲区/存活变异体 | **真实版本切换**(uv) | numpy 1.21.6→1.22.0,#17478/PR#20314 | 结构 MR 盲(两版均过);判别器 odd_frac 0 vs 0.5 揭示非等价 | 2 ✓ |
+| adjoint | 自伴 | 提取-diff(老 scipy arm64 无法装) | scipy #8900/PR#8962 那一行 | 错版杀 / 对版 1e-16 过 | PoC ✓ |
+| rev.traj | 辛 | 教科书兜底(真 REBOUND bug 1e-14 太微弱) | leapfrog vs 显式 Euler,Hairer-Lubich-Wanner | 增长率 MR:Euler ratio 1952 杀 / leapfrog 1.0 过 | 2 ✓ |
+| inv.con | 守恒 | 教科书兜底(GeoClaw 需 Fortran/Docker) | 守恒 vs 非守恒 Burgers,Hou-LeFloch 1994 | 激波速度:非守恒 -0.002 杀 / 守恒 0.498 过 | 2 ✓ |
+| PINN | 跨范式 | **真实最小 PINN**(torch) | soft vs hard BC,DeepXDE #26 精神 | BC 精确性:soft 5e-4 杀(strict)/ hard 0 过;演示 ε_tol 的 FP↔FN 权衡 | 3 ✓ |
+
+**真实版本切换通路成立**(scipy/numpy);老版本无 arm64 wheel(scipy 1.1.0)或真 bug 太微弱(REBOUND)或需重型构建(GeoClaw)的,按你的"无合适真实错版→教科书忠实实现"兜底,均注明出处。PINN 用真实 torch 最小模型。
+
+**ε_tol 全程显式因子**;PINN 案例额外把"灵敏度–特异度(FP↔FN)权衡"做成可运行演示(strict 杀 / loose 漏)。
