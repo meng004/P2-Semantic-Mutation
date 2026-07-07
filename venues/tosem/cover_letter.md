@@ -52,8 +52,8 @@ limit. Third, it instantiates five semantic operator families for
 scientific-computing kernels and audits their first-order syntactic
 reachability. Fourth, it separates MR alignment, aggregate kill rate, and
 real-defect detection using boundary and adjoint arms plus an industrial
-real-defect arm with a pre-registered four-group mutation comparison over
-reproduced library defects. Fifth, it narrows the claim from benchmark construction to construct
+real-defect arm with a four-group mutation comparison pre-registered in the
+dataset protocol over reproduced library defects. Fifth, it narrows the claim from benchmark construction to construct
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 

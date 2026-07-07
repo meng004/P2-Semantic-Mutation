@@ -135,7 +135,7 @@
 \noindent\textbf{Context.} Metamorphic Testing (MT) helps software engineers test scientific programs without full test oracles, but classical Mutation Score (MS) remains syntactic. It does not say whether a metamorphic-relation set observes domain-semantic effects such as conservation, monotonicity, convergence, trajectory, or fidelity-order violations.
 \textbf{Objective.} We introduce Semantic Mutation Score (SMS), a backward-compatible adequacy metric for declared semantic strata. The contribution is a metric and certificate model, not a new LLM mutator or benchmark release.
 \textbf{Method.} We define five semantic operator families and instantiate them on 12 Programs Under Test (PUTs) across five meta-patterns. Validation combines an analytical SMS-to-MS degeneration result, a 60-cell empirical audit, an Abstract Syntax Tree (AST)-normalised comparison with default first-order syntactic mutation, a diagnostic root-cause layer, a strong/weak metamorphic-relation boundary study, and an industrial real-defect arm built on reproduced defects from widely used scientific-computing libraries. The SMS instantiation is scoped to single-output scientific-computing kernels.
-\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered large-effect threshold is not met and suspect mass is high, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. On the industrial arm, a pre-registered four-group mutation comparison and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection can rank the same relations in opposite orders, supporting the paper's construct separation on real defects.
+\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered instantiability, effect-size, cross-class-consistency, and attribution thresholds are not met, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. On the industrial arm, a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs, supporting the paper's construct separation on real defects.
 \textbf{Conclusion.} SMS gives software-testing researchers a reproducible way to report which declared semantic effects an MR set observes, misses, or kills for non-semantic reasons. Its value is diagnostic and construct-level, not a claim of universal dominance.
 \end{abstract}
 
@@ -462,6 +462,9 @@ audits that universe. Taken together, the two papers come closest to
 semantic-effect-class denominators for MR adequacy, but neither yet
 attaches a per-mutant machine-checkable certificate showing that a
 syntactic edit belongs to a declared abstract semantic-effect class.
+Throughout this paper, a certificate is a recorded, budget-stamped
+piece of test evidence, not a proof object (Limitation 9); the
+undecidability result is precisely why nothing stronger is available.
 
 The SMS metric is conceptually complementary to the code-verification
 scope of ASME V\&V 20-2009 §3, which targets numerical-solver
@@ -570,6 +573,19 @@ which is a statistical hypothesis.
 \item
   \textbf{H4 (RQ4).} Mean suspect\_share is $\leq$ 0.20 across the 60 cells.
 \end{itemize}
+
+\textbf{What would count against the construct (stated post hoc).} The
+pre-registered thresholds stress one instantiation and do not exhaust
+falsifiability. The construct itself would be disconfirmed by: (i) the
+degeneration path failing empirically, with SMS and MS disagreeing on
+the same pools in the syntactic limit; (ii) the aligned-versus-cross
+direction reversing systematically across designs; (iii) the industrial
+arm showing the generic baselines' kill sets nesting the pattern-derived
+kill sets, leaving no construct separation; or (iv) certificates failing
+audit, with declared strata not matching observed effects. Criteria
+(ii)--(iv) were observed not to occur; criterion (i) was not directly
+tested and is open to replication. We state these criteria post hoc,
+after the verdicts, and label them accordingly.
 
 The 12 PUTs are deliberately \emph{Numerical Recipes}--style compact
 kernels: they provide a verifiable minimum working example for the
@@ -776,8 +792,9 @@ extension.
 \subsubsection{Degeneration to Classical Mutation Score}\label{sms-ms-degeneration-formal-statement}
 
 The Section~\ref{backward-compatibility-declaration} backward-compatibility claim is formalised as a degeneration
-theorem. The full notation cross-reference is \textbf{Appendix G.1}; the
-joint conditions and lemma proofs are in \textbf{Appendix G.2-G.4}. We
+theorem. The full notation cross-reference is \textbf{Appendix G.1}; the joint
+conditions are in \textbf{Appendix G.2}, the lemma proofs in
+\textbf{Appendix G.3}, and the full theorem proof in \textbf{Appendix G.4}. We
 state only the main theorem and corollary here; the three construction
 lemmas are stated and proved in the supplementary material as
 Lemma G.1--G.3.
@@ -826,6 +843,13 @@ mut\_j\^{}syntax(S\_i). Substituting into the SMS formula gives
 MS\_\{i,j\}. Full lemma proofs are in supplementary Appendix G.3 and the
 full theorem proof in supplementary Appendix G.4.
 \end{proof}
+
+Under the stated substitutions the equality is definitional once the
+three layers coincide; the almost-everywhere qualifier concerns only
+the bounded E2 classifier on floating-point pathological inputs. We
+therefore read Theorem~\ref{thm:degeneration} as a
+backward-compatibility characterisation of SMS, not as an independent
+mathematical contribution.
 
 \begin{corollary}[LRCA trivialisation]\label{cor:lrca}
 Under \texttt{L}, the
@@ -962,6 +986,11 @@ which is the formal reason the admission judgement (Section~\ref{equivalence-jud
 gate-shaped rather than a decision procedure.
 \end{proof}
 
+The theorem is a routine consequence of Rice's theorem, in the same
+spirit as the classical undecidability of mutant equivalence; we state
+it to fix the formal reason admission is gate-shaped, not as a novel
+result.
+
 \begin{proposition}[fiber characterization of classical practice]\label{prop:fiber}
 (i) Every semantic mutant arises from some syntactic edit; the
 stratum-$\psi$ class equals $\sigma^{-1}(\psi\text{-viol})$ intersected
@@ -1067,6 +1096,13 @@ monotonicity of both sets in $\varepsilon_{\mathrm{tol}}$ holds because
 both membership predicates are threshold comparisons against the same
 $\varepsilon_{\mathrm{tol}}$.
 \end{proof}
+
+Operationally, mode (i) does not inflate SMS: the killed predicate
+requires every counted MR to pass on the unmutated program, so a weak
+MR is rejected upstream at MR validation and contributes no kills.
+Proposition~\ref{prop:boundary}(i) therefore manifests as
+MR-validation failure on the correct program, and only mode (ii)
+enters the SMS denominator-numerator arithmetic directly.
 
 Theorem~\ref{thm:duality} thus holds within the strong regime, and the
 $\varepsilon_{\mathrm{tol}}$-governed strong boundary, where a strong
@@ -1314,10 +1350,12 @@ deferred to a follow-up study.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\linewidth,height=\textheight,keepaspectratio,alt={Per-class AST overlap rate between 292 semantic mutants and 1,250 cosmic-ray syntactic mutants across 12 PUTs (overall 5.14\%). HP, SI, TF (54.5\% of the semantic pool) are categorically unreachable (0/72, 0/33, 0/54); CE 7.81\%, OS 11.67\%, CF 33.33\% (CF is a class-specialisation, not in main 5).}]{figures/png/fig3_ast_overlap_per_class.png}
+\includegraphics[width=0.8\linewidth,height=\textheight,keepaspectratio,alt={Per-class AST overlap rate between 292 semantic mutants and 1,250 cosmic-ray syntactic mutants across 12 PUTs (overall 5.14\%). HP, SI, TF (54.5\% of the semantic pool) show zero overlap (0/72, 0/33, 0/54); CE 7.81\%, OS 11.67\%, CF 33.33\% (CF is a class-specialisation, not in main 5).}]{figures/png/fig3_ast_overlap_per_class.png}
 \caption{Per-class AST overlap rate between 292 semantic mutants and 1,250
 cosmic-ray syntactic mutants across 12 PUTs (overall 5.14\%). HP, SI, TF
-(54.5\% of the semantic pool) are categorically unreachable (0/72, 0/33, 0/54); CE
+(54.5\% of the semantic pool) show zero overlap (0/72, 0/33, 0/54): SI and TF
+are structurally cross-function, while HP zero overlap reflects the
+default first-order value menu; CE
 7.81\%, OS 11.67\%, CF 33.33\% (CF is a class-specialisation, not in
 main 5).}\label{fig:overlap}
 \end{figure}
@@ -1428,7 +1466,7 @@ this framing.
 (b), or (c) is sufficient for a single semantic mutation, but only when
 satisfaction reflects design intent, not stochastic byproduct, does it
 constitute a \emph{systematic} semantic mutation method. A syntactic
-tool that occasionally hits (a) or (c) with its 12 default operators
+tool that occasionally hits (a) or (c) with its 13 default operators
 does so at a non-zero probability, but the hits are not repeatable and
 they carry neither of the two engineering goods we want. First,
 designing a semantic mutator like OS \texttt{det\ $\to$\ sum(diag)} requires
@@ -1649,7 +1687,9 @@ evaluations) and quickly discards numerically distinct mutants; the
 remaining candidates are screened by AVP for MR-relation equivalence.
 The joint condition is conservative: false-non-equivalent (E1 $\vee$ E2 fail)
 is much easier than false-equivalent (both must mis-pass
-simultaneously), biasing SMS slightly \emph{high}, an explicit
+simultaneously), biasing SMS slightly \emph{low}: truly equivalent mutants misclassified
+as non-equivalent remain in the admitted denominator as unkillable
+survivors, understating adequacy, an explicit
 conservative engineering choice (Appendix A.3).
 
 \textbf{Killed determination.} With OR-aggregation across mr in
@@ -1665,9 +1705,9 @@ MR\_\{i,k\}:
 
 Each (i, k, j) cell is sampled N = 20 times (statistical replicate) to
 compute the per-cell SMS, with mutant-level fail ratios feeding the LRCA
-L1 decision. AVP version is pinned to the upstream infrastructure commit hash
-(\texttt{\textless{}AVP-vX.Y\textgreater{}}); our reproducibility
-package embeds the complete AVP source so that the package remains
+L1 decision. The AVP version is pinned by the frozen dependency file and the
+embedded source in the replication package; the reproducibility
+package carries the complete AVP source so that the package remains
 self-consistent under any upstream evolution.
 
 \subsection{Three-Layer Root-Cause Diagnosis}\label{lrca-three-layer-diagnosis}
@@ -1763,7 +1803,7 @@ RQ3 & inst\_rate, equiv\_rate, C1\_share, survive\_rate & 60-cell
 heatmap + 4-class marginals \\
 RQ4 & aligned-SMS vs cross-SMS; sparse $\circ$ vs dense \textbullet\textbullet equiv\_rate &
 Cliff's delta + odds ratio + 95\% bootstrap CI \\
-RQ5 & $\Delta$SMS\_c (c $\in$ \{A,B,C,D\}); CV($\Delta$SMS) & sign test (df = 3) +
+RQ5 & $\Delta$SMS\_c (c $\in$ \{A,B,C,D\}); CV($\Delta$SMS) & directional consistency count over the 4 classes (no p-value attached) +
 descriptive forest plot \\
 RQ5 (desc.) & Spearman $\rho$ + Kendall $\tau$ (SMS vs PC) & scatter + dual-metric ranking
 comparison \\
@@ -1833,7 +1873,8 @@ operator & deterministic count; verdict factual on this pool \\
 H2 Cliff's $\delta$, odds ratio, bootstrap CI & pre-registered
 exploratory large-effect target & cell (12 aligned vs 48 cross;
 non-independent within PUT) & point-estimate verdict only; no
-population claim (power 49.1\% at the boundary) \\
+population claim (pass probability $\approx$ 0.5 at the boundary is
+rule-intrinsic; Section~\ref{rq2-stipulated-alternative-power}) \\
 H3 sign test, CV($\Delta$SMS) & pre-registered threshold & class (n = 4)
 & verdict factual on these four classes \\
 H4 mean suspect\_share & pre-registered threshold & cell (n = 60) &
@@ -1846,7 +1887,7 @@ Spearman $\rho$ / Kendall $\tau$ (SMS vs PC) & none (descriptive) & PUT
 Industrial arm: four-group Wilcoxon, Holm-corrected & pre-registered in
 the dataset protocol & case (n = 34, paired) & inferential within the
 34-case pool; no corpus-level claim \\
-Industrial arm: 30/30 real-defect face & none (descriptive) & case &
+Industrial arm: 34/34 real-defect face & none (descriptive; selection-conditioned) & case &
 face-level count; not a coverage rate \\
 \end{longtable}
 }
@@ -1867,7 +1908,7 @@ Mean SMS & 0.104 \\
 Median SMS & 0.000 \\
 Std SMS & 0.213 \\
 Cells with SMS = 0 & 45 / 60 \\
-Mean mutants / cell (v4) & 24.3 (range 10-30) \\
+Mean mutants / PUT (v4) & 24.3 (range 10-30) \\
 \end{longtable}
 }
 
@@ -1876,30 +1917,27 @@ cross-MP slice: \textasciitilde88\% (42/48) of cross cells are zero,
 \textasciitilde25\% (3/12) of aligned cells are zero. Cliff's delta is
 well-defined under this distribution but its inference is effectively
 dominated by
-\texttt{n\_aligned\ =\ 12\ +\ n\_cross\_nonzero\ $\approx$\ 6\ =\ 18}, not the
+\texttt{n\_aligned\_nonzero\ $\approx$\ 9\ +\ n\_cross\_nonzero\ $\approx$\ 6\ =\ 15}, not the
 surface n=60. Median odds ratio is formally infinite (median(cross) =
 0); we report ``aligned median \textgreater{} 0 = cross median'' as
-auxiliary qualitative evidence.
+auxiliary qualitative evidence. A non-pre-registered binarized
+sensitivity uses the odds of nonzero SMS, aligned 9/12 versus cross
+6/48, giving an odds ratio of 21; we report it only to show that the
+ratio criterion's intent survives binarization, not as a licensed
+verdict.
 
 \textbf{Effective-n note.} The surface n\_aligned = 12 and n\_cross = 48
-mask a much smaller information content: only about 18 observations carry
-nonzero SMS (12 aligned + $\approx$ 6 nonzero cross). This is a heuristic
+mask a much smaller information content: only about 15 observations carry
+nonzero SMS (9 nonzero aligned + $\approx$ 6 nonzero cross). This is a heuristic
 information count, not a formal effective sample size, but it explains the
-wide 95\% bootstrap CI {[}0.127, 0.740{]} (upper/lower ratio $\approx$
-5.83, consistent with the known liberal tendency of the percentile
+wide 95\% bootstrap CI {[}0.014, 0.622{]} of the v4 primary delta
+(spanning negligible to large, consistent with the known liberal tendency of the percentile
 bootstrap when few observations carry signal). The implications for power and the H2 verdict direction are
 quantified jointly with the stipulated-alternative analysis in Section~\ref{rq2-stipulated-alternative-power}.
 PUT-class diversification at n $\geq$ 30 is a testable route to relaxing
 the effective-n constraint. Power and effect-size disambiguation are
 treated jointly with the stipulated-alternative analysis in Section~\ref{rq2-stipulated-alternative-power}
 (avoiding repetition).
-
-\textbf{Consistency with LLM-mutant literature.} \citet{tip2025llmorpheus}
-LLMorpheus reports high cross-MP failure proportions on JavaScript
-scientific-computing PUTs (specific numbers not listed in cited
-literature); zero-mass dominance appears to be a shared characteristic
-of LLM-mutant + existing MR-MP alignment designs, not a quirk of this
-paper's PUT selection.
 
 \textbf{H1 verdict: not met.} H1 (RQ3) requires at least 4 of the 5
 operators to produce $\geq 5$ non-equivalent (confirmed) mutants on at
@@ -2059,15 +2097,24 @@ Stipulated truth & Criterion & Power \\
 \end{longtable}
 }
 
-Even when the truth equals the H2 boundary, this design returns ``not
-met'' verdicts in roughly half of replications. This supports the
+Even when the truth equals the H2 boundary, the point-estimate
+decision rule returns ``not met'' in roughly half of replications; a
+pass probability near one half at the boundary is intrinsic to a
+threshold rule applied to an approximately median-unbiased estimator
+at any sample size, so the 49.1\% figure characterises the
+pre-registered decision rule, not a deficiency specific to the (12,
+48) design, and its exact value depends on the stipulated alternative
+(the mixture with E[$\delta$] = 0.4746 is one of many alternatives
+with that mean). This supports the
 framing in Section~\ref{rq2-aligned-vs-cross-cliffs-delta}: the H2 verdict is a factual statement about the point
 estimate failing to clear the threshold, not a claim that the effect is
 necessarily smaller than 0.474. Increasing the sample size narrows the
 confidence interval but cannot lift the point estimate. The plug-in
 sample-size sweep (n\_aligned $\in$ \{6, 12, \ldots, 60\}; n\_cross = 4 $\times$
 n\_aligned; power for $\delta$ \textgreater{} 0 reaches 0.974 at n\_aligned = 6
-and 0.996 at 12, then plateaus) is in Appendix D.3.
+and 0.996 at 12, then plateaus; the small discrepancy with the 0.997
+exceedance entry above reflects independent simulation runs) is in
+Appendix D.3.
 
 \textbf{The source-axis contrast is underpowered too.} We did not run a
 separate power simulation for the source-axis contrast $\Delta\delta$ =
@@ -2096,10 +2143,10 @@ choice.
 \toprule
 Metric & Value \\
 \midrule
-Mean C1\_share (default threshold) & 0.164 \\
-Mean C1\_share (calibrated best, ood\_band = 0.02) & \textbf{0.209} \\
-Mean suspect\_share (calibrated best) & \textbf{0.791} \\
-Cells with suspect\_share $\leq$ 0.20 (secondary) & 12 / 60 = 20.0\% \\
+Mean C1\_share (v3 same-source pool) & 0.164 \\
+Mean C1\_share (v4 cross-source pool) & \textbf{0.209} \\
+Mean suspect\_share (v4 cross-source pool) & \textbf{0.791} \\
+Cells with suspect\_share $\leq$ 0.20 (secondary; threshold-calibration best, ood\_band = 0.02) & 12 / 60 = 20.0\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2286,7 +2333,16 @@ injection, but the primary MP, partial-order (asymptotic) for the
 c-class and
 monotonicity for the d-class, is an asymptotic or statistical relation,
 and the parameter deviation it tolerates is wide enough to absorb the
-mutant.
+mutant. We note a family-boundary caveat these examples expose: edits
+such as an activation-function swap or an iteration-cap cut sit near
+the OS/HP and HP/TF boundaries, and the family label records the
+generating operator's intent rather than a unique structural class;
+the aligned-versus-cross reading should be taken with this labelling
+slack in mind. The same slack exists at the stratum level: S5 purity
+(one declared stratum per mutant) is enforced by generation intent and
+certificate review, not verified against all five invariants, so part
+of the off-diagonal kill mass may reflect multi-stratum effects rather
+than pure cross-stratum detection.
 
 The cell-level evidence in Section~\ref{rq1-60-cell-distribution} reproduces this pattern: 75\% of cells
 are zero, concentrated in the cross slices. Under v4 cross-source, mean
@@ -2322,19 +2378,38 @@ paper into a benchmark article:
 defect mining, rejected cases, repository tooling, and benchmark release
 are left outside the paper and remain contributions of the dataset. The result-level evidence summary used here is included
 in the supplementary evidence package: it records the five-stratum counts,
-the aggregate mutation-phase statistics, the 30/30 real-defect face, and
+the aggregate mutation-phase statistics, the 34/34 real-defect face, and
 the non-nesting case identifiers, but not candidate mining or tooling. In
-the pre-registered four-group mutation-phase comparison, the
-pattern-derived MR group beats
-literature-generic baselines under the primary all-mutant denominator
-(mean paired difference +0.101, Holm-adjusted \(p=0.046\), Cliff's
-\(\delta=+0.247\)), but the advantage is modest: the pattern-derived
-group does not significantly dominate its ablations under the same
-denominator. On the real-defect face, however, the distinction becomes
+the four-group mutation-phase comparison pre-registered in the dataset
+protocol, the four groups are the case's registered pattern-derived
+relation (T1), literature-generic baseline relations (B1), seeded
+random relations (B2), and mechanical ablations of T1 (A1); the
+comparison family is three one-sided case-level Wilcoxon signed-rank
+comparisons (T1 $>$ B1, T1 $>$ A1, B1 $>$ B2) under Holm correction,
+and the case census (n = 34) was fixed by the dataset's verification
+status before any comparison was run. Under the primary all-mutant
+denominator the group kill rates are T1 377/1124 = 0.335 (Wilson 95\%
+CI {[}0.308, 0.364{]}), A1 348/1124 = 0.310, B1 274/1124 = 0.244, and
+B2 228/1124 = 0.203. The pattern-derived group beats the
+literature-generic baselines (mean paired difference +0.101, bootstrap
+95\% CI {[}+0.029, +0.179{]}, Holm-adjusted \(p=0.046\), Cliff's
+\(\delta=+0.247\)); the verdict is marginal and is reported with its
+fragility: the paired difference narrowed when the dataset grew from 30
+to 34 cases, and a sensitivity rerun recorded in the dataset report
+(excluding the one case with a known tolerance-storm pathology) leaves
+the Holm-adjusted verdict unchanged. The other two family members are
+not significant after Holm correction: the pattern-derived group does
+not significantly dominate its ablations, and the generic baselines do
+not significantly dominate the random draws. On the real-defect face, however, the distinction becomes
 sharper: the pattern-derived relation detects every real defect in the
-reported mutation-suite face (30/30), whereas generic and random
-relations are mostly blind, and ablations that look close in aggregate
-kill-rate often lose the real defect.
+reported mutation-suite face (34/34). Because case admission itself
+requires an MR-detectable behavioural difference under the registered
+pattern-derived relation, this 34/34 count is selection-conditioned
+rather than evidential; the informative content of the face lies in the
+contrast on the same admitted cases: the literature-generic baselines
+detect nothing in 27 of 34 cases, the seeded random relations in 26 of
+34, and the dimension-reduction ablation loses the real defect in 19 of
+34 cases that its parent relation detects.
 
 The arm's cases were selected by a fixed inclusion rule: a case had to have a
 verified semantic fault, an executable pre/post or faithful contrast, and
@@ -2342,9 +2417,9 @@ an MR-detectable behavioral difference under the declared stratum.
 Cases requiring unsupported build stacks, lacking an executable contrast,
 or failing MR-detectability verification were excluded before the
 reported mutation-phase comparison. No case was dropped after observing
-the comparative SMS or baseline detection results. The 30/30 figure is
-therefore a face-level check on construct separation, not a corpus-level
-claim about real-defect coverage.
+the comparative SMS or baseline detection results. The face is therefore a selection-conditioned, face-level check on
+construct separation, not a corpus-level claim about real-defect
+coverage.
 
 This pattern is consistent with the construct separation predicted by the
 fiber view of Section~\ref{theory-fibers}. A mutant kill-rate is evidence about which sampled
@@ -2401,7 +2476,7 @@ therefore use Friedman as the non-parametric formal alternative:
 \tightlist
 \item
   \textbf{PUT (n=12) $\times$ MP (k=5): chi\^{}2 = 15.30, p = 0.0041}
-  (significant).
+  (significant; exploratory inferential per Table~\ref{tab:inference-permissions}).
 \item
   MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
 \item
@@ -2429,8 +2504,8 @@ hypothesis.
 
 Pattern Coverage (PC) per PUT = \#triggered (MP\_k, R\_outcome) cells /
 10. Range {[}0.500, 1.000{]}, mean 0.733. Pairing with mean SMS over 5
-MPs: Spearman rho = \textbf{0.163} (p = 0.613); Kendall tau = 0.136 (p =
-0.568); n = 12.
+MPs: Spearman rho = \textbf{0.163}; Kendall tau = 0.136; n = 12
+(descriptive; no inferential reading attaches).
 
 \textbf{Statistical-power caveat first.} At n = 12, Spearman's 95\% CI
 is approximately {[}-0.5, +0.6{]} (Fisher-z approximation, a rough
@@ -2447,7 +2522,7 @@ operationalisation in Appendix D.5).
 
 All four class means are positive in v3 (same-source) and v4
 (cross-source). Inter-class balance improves under cross-source (c
-+91.5\%, d +38.3\%), confirming that c / d classes have higher
++91.5\%, d +38.3\%), consistent with c / d classes having higher
 mutant-diversity demand than a / b. Mixed-effects unavailability
 (Singular) is a sample-size constraint at N = 60 / 12 PUTs, not evidence
 absence. \textbf{H3 verdict: not met}, the sign test is 3/4 (partial)
@@ -2605,9 +2680,9 @@ construction deferred outside this manuscript & Section~\ref{rq4-industrial-cons
 \item
   \textbf{Equivalence determination is a probabilistic approximation.}
   Sampling K\_eq = 1000 inputs is an engineering implementation of the
-  undecidable equivalence problem, not a theorem-based decision. We give
-  a Hoeffding-style upper bound on the false-equivalence probability in
-  Section~\ref{equivalence-judgement-e1-e2-layer-2}, but we did not execute a K\_eq sweep over \{500, 1000, 2000\}
+  undecidable equivalence problem, not a theorem-based decision. A
+  Hoeffding-style upper bound on the false-equivalence probability is
+  given in supplementary Appendix F.1, but we did not execute a K\_eq sweep over \{500, 1000, 2000\}
   for this submission. A follow-up study will run that sweep.
 \item
   \textbf{LLM generation homogeneity bias.} Even with three-LLM
@@ -2789,9 +2864,10 @@ instantiation, not as prerequisites for the SMS definition.
   design. The H2 large-effect threshold is \textbf{not met under the
   pre-registered point-estimate criterion}: \(\delta_{\mathrm{v3}} =
   0.323\), just below the \citet{romano2006cliff} medium threshold of
-  0.330. The 49.1\% stipulated power at the large-effect boundary shows
-  why this verdict should be read as a point-estimate result, not as a
-  proof that the true effect is below the large-effect threshold.
+  0.330. The stipulated-alternative analysis shows the point-estimate rule
+  itself passes with probability near one half when the truth sits at
+  the boundary, so the verdict is a point-estimate result, not a proof
+  that the true effect is below the large-effect threshold.
 \item
   Cross-source pooling changes mutant quality more than aligned-versus-
   cross separation. Holding the c-class primary metamorphic relation at
@@ -2810,7 +2886,7 @@ instantiation, not as prerequisites for the SMS definition.
   a future hypothesis.
 \item
   The industrial real-defect arm supports construct separation beyond
-  the small PUT audit. Pattern-derived relations detect all 30 tabled
+  the small PUT audit. Pattern-derived relations detect all 34 tabled
   real defects
   in the reported face, while the pre-registered four-group comparison
   shows only a modest aggregate kill-rate advantage
