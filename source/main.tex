@@ -1805,12 +1805,12 @@ the metric construction.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio,alt={60-cell heatmap of mean SMS over 12 PUTs \textbackslash times 5 MPs (cross-source primary). Diagonal cells (operator-MP aligned) show concentrated mass; off-diagonal mass reflects bleed into adjacent MPs. Empty rows = PUT-level zero-mass cohort (PUTs A1, B1, D2; see Section~\ref{decoupling-between-r_sem-and-r_kill}).}]{figures/png/fig2_60cell_heatmap.png}
-\Description{60-cell heatmap of mean SMS over 12 PUTs by five meta-patterns under the cross-source primary pool. Aligned cells concentrate the main signal, while many cross cells are zero; PUTs A1, B1, and D2 form all-zero rows.}
+\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio,alt={60-cell heatmap of mean SMS over 12 PUTs \textbackslash times 5 MPs (cross-source primary). Diagonal cells (operator-MP aligned) show concentrated mass; off-diagonal mass reflects bleed into adjacent MPs. Empty rows = PUT-level zero-mass cohort (PUTs A1, A3, C2; see Section~\ref{decoupling-between-r_sem-and-r_kill}).}]{figures/png/fig2_60cell_heatmap.png}
+\Description{60-cell heatmap of mean SMS over 12 PUTs by five meta-patterns under the cross-source primary pool. Aligned cells concentrate the main signal, while many cross cells are zero; PUTs A1, A3, and C2 form all-zero rows.}
 \caption{60-cell heatmap of mean SMS over 12 PUTs \(\times\) 5 MPs (v4
 cross-source primary). Diagonal cells (operator-MP aligned) show
 concentrated mass; off-diagonal mass reflects bleed into adjacent MPs.
-Empty rows = PUT-level zero-mass cohort (PUTs A1, B1, D2; see
+Empty rows = PUT-level zero-mass cohort (PUTs A1, A3, C2; see
 Section~\ref{decoupling-between-r_sem-and-r_kill}).}\label{fig:heatmap}
 \end{figure}
 
@@ -2478,7 +2478,13 @@ semantic effects an MR observes; it is not, by itself, a verdict on MR
 quality. The same industrial arm gives concrete non-nesting
 counterexamples, A-LAPACK-004, A-OPENBLAS-001, B-POCKETFFT-002, and
 E-ORDINARYDIFFEQ-001, where generic baselines kill mutants that the
-pattern-derived relation can miss or match.
+pattern-derived relation can miss or match. The mechanisms are
+distinct across the four cases, value destruction that preserves
+element order, zeroing that preserves a symmetry the relation checks,
+overshoot that stays within the tested bounds, and a
+variable-substitution/stale-read edit that operator mutation does not
+reach well, so no single relation family induces a total order over
+the others (supplementary Appendix I).
 Thus semantic mutation should be read as a certificate-bearing diagnostic
 for a declared semantic stratum, not as a scalar hierarchy in which one
 mutation family simply dominates another. This evidence therefore
@@ -2823,7 +2829,7 @@ properly identified hierarchical model.
 
 \subsection{Programs with Zero Observed Signal}\label{put-level-zero-mass-cohort}
 
-Figure 2 and Section~\ref{decoupling-between-r_sem-and-r_kill} document that PUTs A1, B1, and D2 produce all-zero
+Figure 2 and Section~\ref{decoupling-between-r_sem-and-r_kill} document that PUTs A1, A3, and C2 produce all-zero
 rows across the five MPs in the cross-source pool; that is,
 \textbf{for 25\% of the PUTs, SMS gives zero signal at every operator-MP
 cell}. This is a substantive limitation of SMS as an adequacy metric on

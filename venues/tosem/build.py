@@ -127,7 +127,10 @@ def extract_after_frontmatter(tex: str) -> str:
     marker = r"\end{frontmatter}"
     if marker not in tex:
         raise ValueError("source file has no \\end{frontmatter}")
-    return tex.split(marker, 1)[1].strip()
+    # Split on the LAST occurrence: the venue-neutral header comment near the
+    # top of source/main.tex also mentions \end{frontmatter}, and splitting on
+    # the first match would drag the authoring preamble into the body.
+    return tex.rsplit(marker, 1)[1].strip()
 
 
 def strip_references_and_tail(tex: str) -> str:

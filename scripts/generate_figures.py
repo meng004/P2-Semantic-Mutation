@@ -131,7 +131,7 @@ def figure1(out_path: Path) -> None:
         "Layer 3 -- Applied ($\\S$3.5)",
         ("12-PUT cosmic-ray AST traceability  (292 P2 vs 1,250 syntactic mutants)\n"
          "Overall AST overlap = 5.14%   (15 / 292)\n"
-         "HP / SI / TF categorically unreachable for syntactic mutants:  0 / 0 / 0"),
+         "HP / SI / TF: zero AST overlap with syntactic mutants:  0 / 0 / 0"),
     )
 
     # Arrow Layer 1 -> Layer 2 (operationalisation)
@@ -258,7 +258,7 @@ def figure3(out_path: Path) -> None:
     n_overlap = [v["n_overlap"] for _, v in items]
     n_p2 = [v["n_p2"] for _, v in items]
 
-    # Color scheme: HP / SI / TF (categorically unreachable) -> green;
+    # Color scheme: HP / SI / TF (zero AST overlap) -> green;
     # CE / OS / CF -> orange.
     green = "#3F8A4F"
     orange = "#D08A2C"
@@ -304,14 +304,14 @@ def figure3(out_path: Path) -> None:
     ax.set_title(
         "Per-class AST overlap with cosmic-ray (syntactic) mutants  "
         "($n_{P2}=292$, $n_{CR}=1{,}250$)\n"
-        "HP / SI / TF categorically unreachable by syntactic mutants  (0 / 0 / 0)",
+        "HP / SI / TF: zero AST overlap with syntactic mutants  (0 / 0 / 0)",
         fontsize=11.5, pad=8,
     )
 
     # Legend
     legend_handles = [
         mpatches.Patch(facecolor=green, edgecolor="#222222",
-                       label="categorically unreachable (rate = 0)"),
+                       label="zero AST overlap (rate = 0)"),
         mpatches.Patch(facecolor=orange, edgecolor="#222222",
                        label="partially overlapping with syntactic"),
     ]
