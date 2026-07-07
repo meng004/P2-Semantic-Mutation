@@ -352,12 +352,12 @@ works establish that mutation can target data, relation, task, and
 behavioural semantics. \textbf{The contribution of this paper is the
 first to formalise a domain-specific Semantic Mutation Score (SMS) for
 MR adequacy in scientific computing kernels, with a proven
-backward-compatible reduction to classical MS (Theorem 9.1) and a
+backward-compatible reduction to classical MS (Theorem~\ref{thm:degeneration}) and a
 code-level operator framework (Conservation Erosion, Operator
 Substitution, Hyperparameter, Trajectory Flip, Structural Injection)
 targeting kernel-specific faults, and to delineate the strong boundary
 of metamorphic-relation grounding, a strong/weak MR distinction whose
-$\varepsilon_{\mathrm{tol}}$-governed duality (Theorem 2, Proposition 2)
+$\varepsilon_{\mathrm{tol}}$-governed duality (Theorem~\ref{thm:duality}, Proposition~\ref{prop:boundary})
 is mapped empirically on real and textbook programs spanning the
 meta-patterns (Section~\ref{rq4-strong-boundary}), complemented by a cross-library adjoint extension
 arm (Section~\ref{adjoint-extension-arm-subjects}, Section~\ref{rq4-adjoint-extension-arm}) that supports the duality forward on third-party
@@ -482,8 +482,8 @@ lineage.
 The research questions are ordered from the theoretical foundation
 (RQ1), through the structural separation that motivates it (RQ2), to the
 empirical demonstration on the 60-cell audit (RQ3--RQ5). RQ1 is answered
-by construction and proof (Sections~\ref{theory-setting}--\ref{theory-fibers}: Theorem 1 undecidability,
-Proposition 1 fiber characterisation, and Theorem 2 duality, together
+by construction and proof (Sections~\ref{theory-setting}--\ref{theory-fibers}: the undecidability theorem (Theorem~\ref{thm:undecidability}),
+the fiber characterisation (Proposition~\ref{prop:fiber}), and the duality theorem (Theorem~\ref{thm:duality}), together
 with the SMS--MS degeneration of Section~\ref{sms-ms-degeneration-formal-statement}); RQ2 by the
 AST-normalised structural audit (Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3}); RQ3--RQ5 by the pre-registered
 statistical pipeline (Section~\ref{statistical-analysis-and-empirical-results}). This ordering mirrors the three-layer
@@ -498,15 +498,15 @@ carries RQ2.
   mutation be formalised as a fiber decomposition of a single effect map
   over admitted nonequivalent \emph{domain-semantic code mutants} for
   scientific-computing kernels, such that (a) stratum membership is
-  undecidable and therefore certificate-based (Theorem 1), (b) the
+  undecidable and therefore certificate-based (Theorem~\ref{thm:undecidability}), (b) the
   induced adequacy metric SMS degenerates almost everywhere to the
-  classical Mutation Score (Proposition 1; Theorem 9.1), and (c)
+  classical Mutation Score (Proposition~\ref{prop:fiber}; Theorem~\ref{thm:degeneration}), and (c)
   strong metamorphic relations detect only the semantically active
   mutants within a tolerance-bounded regime, while outside it the duality
   degrades along an $\varepsilon_{\mathrm{tol}}$-governed strong boundary
   into false positives (weak MRs, where a correct discrete program
   violates the invariant) and false negatives (surviving non-equivalent
-  mutants under coincidental satisfaction) (Theorem 2 and Proposition 2;
+  mutants under coincidental satisfaction) (Theorem~\ref{thm:duality} and Proposition~\ref{prop:boundary};
   the boundary is mapped empirically under RQ4)?
 \item
   \textbf{RQ2 (Syntactic unreachability).} To what extent is the
@@ -524,7 +524,7 @@ carries RQ2.
   operator-MP aligned slices (j=k) from
   cross slices (j$\neq$k); does cross-source LLM pooling under an
   identical prompt move the aligned-versus-cross effect size, or only the
-  kill-set quality; where does the strong boundary of Proposition 2
+  kill-set quality; where does the strong boundary of Proposition~\ref{prop:boundary}
   lie empirically, on which real and textbook programs does a strong
   MR kill the genuine fault, and where does the duality fail as a weak-MR
   false positive or as a surviving non-equivalent mutant; and does the
@@ -544,7 +544,7 @@ carries RQ2.
 \subsection{Hypotheses}\label{hypotheses}
 
 The empirical questions RQ3--RQ5 carry pre-registered hypotheses; RQ1 is
-answered by Theorem 9.1 and RQ2 by the Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3} structural audit, neither of
+answered by Theorem~\ref{thm:degeneration} and RQ2 by the Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3} structural audit, neither of
 which is a statistical hypothesis.
 
 \begin{itemize}
@@ -553,10 +553,13 @@ which is a statistical hypothesis.
   \textbf{H1 (RQ3).} At least 4 of the 5 operators produce $\geq$ 5 non-equivalent
   mutants on at least 9 of the 12 PUTs.
 \item
-  \textbf{H2 (RQ4; pre-registered, exploratory).} The aligned-SMS to
+  \textbf{H2 (RQ4; pre-registered as an exploratory large-effect
+  target).} The aligned-SMS to
   cross-SMS odds ratio is $\geq$ 3.0, and Cliff's $\delta$ is $\geq$ 0.474.
-  This large-effect threshold is an underpowered exploratory target
-  (point-estimate verdict and stipulated-alternative power in Section~\ref{rq2-stipulated-alternative-power}), not
+  The threshold was fixed before data collection, but the design is
+  underpowered at this boundary, so its verdict is read as a
+  point-estimate result
+  (stipulated-alternative power in Section~\ref{rq2-stipulated-alternative-power}), not
   a confirmatory claim of the paper.
 \item
   \textbf{H3 (RQ5).} A within-class sign test gives 4/4 across the 4 classes,
@@ -691,7 +694,7 @@ false-non-equiv requires only one of E1, E2 to fail for a truly equivalent
 mutant, biasing SMS slightly high. The trade-off table against
 E1-alone and E2-alone is in Appendix A.3. Under the Section~\ref{sms-ms-degeneration-formal-statement} degenerate
 limit \texttt{L}, E1 $\wedge$ E2 reduces almost everywhere to classical bitwise
-equivalence (Lemma 9.1).
+equivalence (Lemma G.1, supplementary Appendix G).
 
 \paragraph{Semantic certificate record.}
 For each admitted mutant, the empirical certificate is a structured
@@ -772,9 +775,9 @@ extension.
 The Section~\ref{backward-compatibility-declaration} backward-compatibility claim is formalised as a degeneration
 theorem. The full notation cross-reference is \textbf{Appendix G.1}; the
 joint conditions and lemma proofs are in \textbf{Appendix G.2-G.4}. We
-state only the main theorem and corollary here. Theorem and lemma labels
-(Theorem 9.1, Corollary 9.1, Lemma 9.1-9.3) are preserved as stable
-identifiers for cross-reference with Appendix G.
+state only the main theorem and corollary here; the three construction
+lemmas are stated and proved in the supplementary material as
+Lemma G.1--G.3.
 
 \textbf{Definition (Degenerate limit).}
 $L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$, where each joint
@@ -785,17 +788,18 @@ formula:
 \tightlist
 \item
   $L_{\mathrm{equiv}} = L1 \wedge L2$: $\varepsilon_{\mathrm{eq}} \to 0 \wedge K_{\mathrm{eq}} \to \infty$ (controls equiv
-  layer; Lemma 9.1).
+  layer; Lemma G.1).
 \item
   $L_{\mathrm{killed}} = L3 \wedge L4$: $\varepsilon_{\mathrm{AVP}} \to 0 \wedge$ MP set = $\{\mathrm{MP}_{\mathrm{eq}}\}$
-  (controls killed layer; Lemma 9.2).
+  (controls killed layer; Lemma G.2).
 \item
   $L_{\mathrm{mut}} = L5 \wedge L6$: $\mathrm{mut}_j$ switches to rule-based syntactic
   operators (Mothra-style, or modern MutMut/PIT-style) $\wedge$ PUT class $\subseteq$ imperative deterministic
-  programs (controls mut layer; Lemma 9.3).
+  programs (controls mut layer; Lemma G.3).
 \end{itemize}
 
-\textbf{Theorem 9.1 (SMS $\to$ MS degeneration).} In the degenerate limit
+\begin{theorem}[SMS $\to$ MS degeneration]\label{thm:degeneration}
+In the degenerate limit
 $L$, \textbf{almost everywhere} with respect to the input
 distribution $D_S$,
 
@@ -806,24 +810,30 @@ where the right-hand side is the classical Mutation Score of
 $\mathrm{killed}^{\mathrm{classic}}$ is the difference-detection set,
 $\mathrm{equiv}^{\mathrm{classic}}$ is the behavioural-equivalence set,
 and $\mathrm{mut}^{\mathrm{syntax}}$ is the syntactic-mutant set.
+\end{theorem}
 
-\textbf{Proof sketch.} By Lemma 9.1, equiv\_\{i,k,j\} $\to$
+\begin{proof}[Proof sketch]
+By Lemma G.1, equiv\_\{i,k,j\} $\to$
 equiv\_\{i,j\}\^{}classic almost everywhere with respect to D\_S; the
 measure-zero qualifier accommodates floating-point pathological points
-and Not-a-Number propagation. By Lemma 9.2, killed\_\{i,k,j\} $\to$
+and Not-a-Number propagation. By Lemma G.2, killed\_\{i,k,j\} $\to$
 killed\_\{i,j\}\^{}classic, and the MP index k degenerates because L4
-collapses MR\_\{i,k\} to \{MP\_eq\}. By Lemma 9.3, mut\_j(S\_i) $\to$
+collapses MR\_\{i,k\} to \{MP\_eq\}. By Lemma G.3, mut\_j(S\_i) $\to$
 mut\_j\^{}syntax(S\_i). Substituting into the SMS formula gives
-MS\_\{i,j\}. Full lemma proofs are in Appendix G.3 and the full theorem
-proof in Appendix G.4.
+MS\_\{i,j\}. Full lemma proofs are in supplementary Appendix G.3 and the
+full theorem proof in supplementary Appendix G.4.
+\end{proof}
 
-\textbf{Corollary 9.1 (LRCA trivialisation).} Under \texttt{L}, the
+\begin{corollary}[LRCA trivialisation]\label{cor:lrca}
+Under \texttt{L}, the
 likely-root-cause inventory C = \{C1, \ldots, C5\} degenerates to
 \{C1\}, so suspect\_share $\to$ 0 and SMS becomes a single-layer metric
 consistent with the engineering attribution structure of
 \citet{d7c38286734419b52de4262c9802ebdfcf4b9447}.
+\end{corollary}
 
-\textbf{Empirical consistency.} Theorem 9.1 + Corollary 9.1 jointly
+\textbf{Empirical consistency.} Theorem~\ref{thm:degeneration} and
+Corollary~\ref{cor:lrca} jointly
 show that the SMS-based empirical conclusions (Section~\ref{statistical-analysis-and-empirical-results} Cliff's delta,
 Friedman chi\^{}2, Spearman rho) are structurally consistent with
 existing mutation-testing literature in the classical syntactic-mutation
@@ -870,8 +880,8 @@ The family is open (the extensibility of $I$ noted in Section~\ref{theory-fibers
 invariant $\psi_6$, \emph{adjoint consistency}
 $\langle A x, y\rangle = \langle x, A^{\mathrm{H}} y\rangle$ for
 linear-operator kernels, instantiates the same construction. Its MR is
-strong (its violation set is closed under $\equiv_\alpha$), so by Theorem
-2 it detects only the semantically active mutants of the adjoint code
+strong (its violation set is closed under $\equiv_\alpha$), so by
+Theorem~\ref{thm:duality} it detects only the semantically active mutants of the adjoint code
 path. Because adjoint consistency is meaningful only for linear operators
 , not for the chaotic, stochastic, and nonlinear machine-learning
 kernels that make up most of the 12 PUTs, $\psi_6$ is \emph{not} folded
@@ -931,10 +941,15 @@ class is its $\sigma$-preimage. $P_e$ is \emph{semantically active} iff
 $P_e \not\equiv_\alpha P$; the strict syntactic-only mutants are exactly
 the inactive fiber $\sigma^{-1}(\equiv_\alpha)$.
 
-\textbf{Theorem 1 (undecidability of semantic-mutant membership).} For
+\begin{theorem}[undecidability of semantic-mutant membership]\label{thm:undecidability}
+For
 Turing-complete $\mathrm{Prog}(G)$ and non-trivial $\psi$, deciding
 whether an edit $e$ is a semantic mutant at stratum $\psi$
-(conditions S2--S4) is undecidable. \emph{Proof sketch.} S3 requires
+(conditions S2--S4) is undecidable.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+S3 requires
 deciding $\llbracket P_e \rrbracket \not\models \psi$, a non-trivial
 semantic property, undecidable by Rice's theorem; the termination clause
 of S4 is independently undecidable by reduction from the halting
@@ -942,32 +957,45 @@ problem. Semantic-mutant status therefore cannot be read off the edit;
 it can only be certified on bounded fragments with recorded budgets,
 which is the formal reason the admission judgement (Section~\ref{equivalence-judgement-e1-e2-layer-2}, Section~\ref{mutant-pool-prescreen-and-equivalence-detection}) is
 gate-shaped rather than a decision procedure.
+\end{proof}
 
-\textbf{Proposition 1 (fiber characterization of classical practice).}
+\begin{proposition}[fiber characterization of classical practice]\label{prop:fiber}
 (i) Every semantic mutant arises from some syntactic edit; the
 stratum-$\psi$ class equals $\sigma^{-1}(\psi\text{-viol})$ intersected
 with S4. (ii) The classical equivalent-mutant problem is exactly the
 degenerate fiber $\sigma^{-1}(\equiv_\alpha)$ of unconstrained syntactic
 sampling. (iii) Classical mutation testing and semantic mutation are the
 same effect map under two sampling policies: sample the edit domain
-blindly, versus sample a specified non-degenerate fiber. \emph{Proof.}
+blindly, versus sample a specified non-degenerate fiber.
+\end{proposition}
+
+\begin{proof}
 (i) holds because semantics changes only through syntax; (ii) and (iii)
-follow by unfolding the definitions. The SMS-to-MS degeneration of
-Theorem 9.1 (Section~\ref{sms-ms-degeneration-formal-statement}) is the metric-level shadow of (ii): when the admitted
+follow by unfolding the definitions.
+\end{proof}
+
+The SMS-to-MS degeneration of
+Theorem~\ref{thm:degeneration} (Section~\ref{sms-ms-degeneration-formal-statement}) is the metric-level shadow of (ii): when the admitted
 fiber collapses to the syntactic default, the SMS denominator collapses
 to the MS denominator.
 
-\textbf{Theorem 2 (duality with strong MRs).} Let $r$ be a
+\begin{theorem}[duality with strong MRs]\label{thm:duality}
+Let $r$ be a
 metamorphic relation whose violation set is closed under $\equiv_\alpha$
 (a \emph{strong} MR). Then $r$ detects no semantically inactive
 mutant, and conversely any mutant detected by a strong MR is
 semantically active. Hence over a strong MR universe the kill matrix
 is supported exactly on the semantically active fibers, and inactive
 (syntactic-only) mutants are structural noise for strong MT evaluation
-rather than hard cases. \emph{Proof.} If $P_e \equiv_\alpha P$ and $r$'s
+rather than hard cases.
+\end{theorem}
+
+\begin{proof}
+If $P_e \equiv_\alpha P$ and $r$'s
 violation predicate factors through $\alpha$, then $r$ flags $P_e$ iff
 it flags $P$; MR validity says $r$ does not flag $P$, so it does not
-flag $P_e$. The converse is the contrapositive. $\square$
+flag $P_e$. The converse is the contrapositive.
+\end{proof}
 
 The duality identifies $\alpha$ as the single hinge connecting MR-side
 quality (strength) and mutant-side quality (activity). Classification
@@ -975,11 +1003,11 @@ is relative to $(I, \alpha, \text{budget})$: extending $I$ can only move
 a mutant from active-off-taxonomy to $\psi$-stratified, never the
 reverse, and bounded $\equiv_\alpha$ verdicts are search conclusions,
 not proofs, so every certificate carries its $(I, \alpha, \text{budget})$
-stamp. The full reduction for Theorem 1 follows Rice's theorem together
+stamp. The full reduction for Theorem~\ref{thm:undecidability} follows Rice's theorem together
 with the standard halting reduction for the termination clause; the
-proof of Theorem 2 is the $\equiv_\alpha$-closure argument above.
+proof of Theorem~\ref{thm:duality} is the $\equiv_\alpha$-closure argument above.
 
-\textbf{Definition (strong MR, weak MR, strong boundary).} Theorem 2
+\textbf{Definition (strong MR, weak MR, strong boundary).} Theorem~\ref{thm:duality}
 reads off strength algebraically, assuming the invariant $\psi$ behind
 $r$ is satisfied by the correct program so that closure under
 $\equiv_\alpha$ makes a violation diagnostic. For a discrete program $P$
@@ -992,7 +1020,7 @@ $r$ \emph{strong} on $P$ when the correct $P$ satisfies $r$ within
 $\varepsilon_{\mathrm{tol}}$ (its residual stays below
 $\varepsilon_{\mathrm{tol}}$ under refinement), so that any violation
 beyond $\varepsilon_{\mathrm{tol}}$ certifies a semantically active
-mutant and Theorem 2 holds operationally; call $r$ \emph{weak} on $P$
+mutant and Theorem~\ref{thm:duality} holds operationally; call $r$ \emph{weak} on $P$
 when the correct $P$'s residual exceeds $\varepsilon_{\mathrm{tol}}$, so
 that the correct program is itself flagged because the discretisation,
 not a fault, breaks the invariant. The \emph{strong boundary} is the
@@ -1003,9 +1031,10 @@ MR is exactly a non-strong (non-grounded) MR in the effective, discrete
 sense: its violation set is not closed under the program's
 $\varepsilon_{\mathrm{tol}}$-level $\equiv_\alpha$.
 
-\textbf{Proposition 2 (the two boundary failures and their
-$\varepsilon_{\mathrm{tol}}$ coupling).} Relative to
-$(\varepsilon_{\mathrm{tol}}, P)$ the duality of Theorem 2 has two
+\begin{proposition}[the two boundary failures and their
+$\varepsilon_{\mathrm{tol}}$ coupling]\label{prop:boundary}
+Relative to
+$(\varepsilon_{\mathrm{tol}}, P)$ the duality of Theorem~\ref{thm:duality} has two
 failure modes. (i) \emph{False positive (weak MR).} When $r$ is weak the
 correct $P$ violates $r$ and a non-fault is reported; the
 rotational-symmetry invariant of a neutron-transport operator under a
@@ -1016,7 +1045,7 @@ $P_e \not\equiv_\alpha P$ can leave every invariant in $I$ satisfied
 within $\varepsilon_{\mathrm{tol}}$, a \emph{coincidental satisfaction
 of the MR}, and so survive the strong MR family; this surviving mutant
 is non-equivalent (genuinely $\not\equiv_\alpha P$) and is therefore
-distinct from the classical equivalent mutant of Proposition 1(ii), and
+distinct from the classical equivalent mutant of Proposition~\ref{prop:fiber}(ii), and
 when its signature lies below $\varepsilon_{\mathrm{tol}}$ it is a
 \emph{tolerance fault}. The two modes are coupled through
 $\varepsilon_{\mathrm{tol}}$: tightening it shrinks the false-negative
@@ -1024,14 +1053,19 @@ set (more surviving mutants are killed) but grows the false-positive set
 (more correct programs are flagged), and loosening it does the reverse.
 The boundary is therefore an $\varepsilon_{\mathrm{tol}}$-governed
 \emph{sensitivity--specificity trade-off}, not a defect to be engineered
-away. \emph{Proof.} (i) and (ii) instantiate the Definition: weakness
+away.
+\end{proposition}
+
+\begin{proof}
+(i) and (ii) instantiate the Definition: weakness
 places the correct program's residual above $\varepsilon_{\mathrm{tol}}$,
 and coincidental satisfaction places the mutant's signature below it;
 monotonicity of both sets in $\varepsilon_{\mathrm{tol}}$ holds because
 both membership predicates are threshold comparisons against the same
-$\varepsilon_{\mathrm{tol}}$. $\square$
+$\varepsilon_{\mathrm{tol}}$.
+\end{proof}
 
-Theorem 2 thus holds within the strong regime, and the
+Theorem~\ref{thm:duality} thus holds within the strong regime, and the
 $\varepsilon_{\mathrm{tol}}$-governed strong boundary, where a strong
 MR degrades into a weak MR (false positives) or is evaded by a surviving
 non-equivalent mutant (false negatives), is mapped empirically on real
@@ -1734,7 +1768,7 @@ comparison \\
 }
 
 This pipeline answers the empirical questions RQ3--RQ5; RQ1 is answered
-by Theorem 9.1 (Section~\ref{sms-ms-degeneration-formal-statement}) and RQ2 by the AST-normalised structural audit
+by Theorem~\ref{thm:degeneration} (Section~\ref{sms-ms-degeneration-formal-statement}) and RQ2 by the AST-normalised structural audit
 (Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3}), outside the statistical pipeline.
 
 Where multiple per-class tests are reported (the per-class Friedman tests
@@ -1756,6 +1790,48 @@ requires sign-test 4/4 across 4 classes plus CV($\Delta$SMS) \textless{} 0.5;
 H4 (LRCA mass) requires mean suspect\_share $\leq$ 0.20. SMS variants
 (SMS, SMS\_unfiltered) and construction lemmas are in
 \textbf{Appendix D.1}.
+
+Because the 60 cells share 12 PUTs and are not independent, each
+reported statistic carries an explicit inference permission
+(Table~\ref{tab:inference-permissions}); no number in this paper should
+be read above its row.
+
+{\def\LTcaptype{table} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.30}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.22}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.18}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.30}}@{}}
+\caption{Inference permissions for the reported statistics.}\label{tab:inference-permissions}\\
+\toprule\noalign{}
+Statistic & Pre-registration status & Sampling unit (n) & Licensed reading \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+H1 operator--PUT counts & pre-registered threshold & PUT $\times$
+operator & deterministic count; verdict factual on this pool \\
+H2 Cliff's $\delta$, odds ratio, bootstrap CI & pre-registered
+exploratory large-effect target & cell (12 aligned vs 48 cross;
+non-independent within PUT) & point-estimate verdict only; no
+population claim (power 49.1\% at the boundary) \\
+H3 sign test, CV($\Delta$SMS) & pre-registered threshold & class (n = 4)
+& verdict factual on these four classes \\
+H4 mean suspect\_share & pre-registered threshold & cell (n = 60) &
+descriptive mean; no independence assumed \\
+Friedman $\chi^2$ (MP effect; per-class Bonferroni) & exploratory
+inferential & PUT blocks (n = 12) & non-parametric alternative after
+mixed-effects singularity; exploratory \\
+Spearman $\rho$ / Kendall $\tau$ (SMS vs PC) & none (descriptive) & PUT
+(n = 12) & hypothesis-generating only \\
+Industrial arm: four-group Wilcoxon, Holm-corrected & pre-registered in
+the dataset protocol & case (n = 34, paired) & inferential within the
+34-case pool; no corpus-level claim \\
+Industrial arm: 30/30 real-defect face & none (descriptive) & case &
+face-level count; not a coverage rate \\
+\end{longtable}
+}
 
 \subsection{RQ3: Semantic-Mutation Score Distribution}\label{rq1-60-cell-distribution}
 
@@ -2121,7 +2197,7 @@ denominator.
 \subsection{RQ4: Strong-Boundary Failure Modes}\label{rq4-strong-boundary}
 
 The 60-cell audit (Sections~\ref{rq1-60-cell-distribution}--\ref{h5-lrca-mass}) exercises strong MRs in the regime where
-Theorem 2 holds. To map the strong boundary of Proposition 2 we run a
+Theorem~\ref{thm:duality} holds. To map the strong boundary of Proposition~\ref{prop:boundary} we run a
 complementary study on six third-party or textbook programs spanning the
 meta-patterns, kept separate from the 12 PUTs. Wherever a genuine fixed
 defect exists in a third-party library we use real version-switching:
@@ -2154,7 +2230,7 @@ struct.\ (FN) & numpy float32 RNG $1.21.6\to1.22.0$, \#17478 (real) & mean / ran
 \textbf{Strong regime (four cases).} For inv.con, inv.eqv, adj.self, and
 rev.traj the correct program satisfies the strong MR within
 $\varepsilon_{\mathrm{tol}}$ while the faulty program is killed, exactly
-as Theorem 2 predicts. Two are real fixed library defects (scipy
+as Theorem~\ref{thm:duality} predicts. Two are real fixed library defects (scipy
 \texttt{align\_vectors}; scipy \texttt{\_ScaledLinearOperator.\_adjoint},
 whose pre-fix release has no \texttt{arm64} wheel and is therefore
 exercised by applying the exact fix diff in reverse); two are textbook
@@ -2172,7 +2248,7 @@ $\varepsilon_{\mathrm{tol}} = 10^{-4}$, so the exact-boundary strong MR
 flags it: the discretisation (the soft constraint), not a fault, breaks
 the invariant. This is the discrete-program instance of the
 rotational-symmetry counterexample, a continuous invariant reproduced
-only approximately, and the empirical face of Proposition 2(i). The
+only approximately, and the empirical face of Proposition~\ref{prop:boundary}(i). The
 hard-constraint ansatz $u = x(1-x)\,\mathrm{NN}(x)$ satisfies the invariant
 by construction and passes, confirming that the violation is a property of
 the discretisation, not of training.
@@ -2187,8 +2263,8 @@ fault signature lies below the structural tolerance it is a tolerance
 fault; the surviving mutant is non-equivalent (an independent
 odd-bit-fraction discriminator reads $0.0$ for the buggy release versus
 $\approx 0.5$ for the correct one), and therefore distinct from a
-classical equivalent mutant. It is the empirical face of Proposition
-2(ii).
+classical equivalent mutant. It is the empirical face of
+Proposition~\ref{prop:boundary}(ii).
 
 \textbf{The $\varepsilon_{\mathrm{tol}}$ trade-off.} The PINN case makes
 the sensitivity--specificity coupling runnable: at the strict
@@ -2199,7 +2275,7 @@ residual pattern instead arose from a true boundary-condition fault,
 loosening $\varepsilon_{\mathrm{tol}}$ would turn that survival into a
 false negative. Tightening
 $\varepsilon_{\mathrm{tol}}$ trades false negatives for false positives and
-loosening it does the reverse, as Proposition 2 requires. The strong
+loosening it does the reverse, as Proposition~\ref{prop:boundary} requires. The strong
 boundary is therefore the honest scope of the duality, a tunable
 operating point, not a defect to be removed.
 
@@ -2759,8 +2835,8 @@ mutation in single-output scientific computing kernels.
   configurations (HOM not refuted; see Section~\ref{preventive-defence-framing}).
 \end{itemize}
 
-SMS is backward-compatible with the classical MS through Section~\ref{sms-ms-degeneration-formal-statement} Theorem
-9.1, which establishes almost-everywhere degeneration in the limit
+SMS is backward-compatible with the classical MS through
+Theorem~\ref{thm:degeneration} (Section~\ref{sms-ms-degeneration-formal-statement}), which establishes almost-everywhere degeneration in the limit
 $L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$. The 60-cell empirical
 audit reported in Section~\ref{statistical-analysis-and-empirical-results} is one demonstration following this backbone, not
 the paper's main contribution.
