@@ -513,11 +513,11 @@ carries RQ2.
 \item
   \textbf{RQ3 (Instantiability).} Do the five semantic mutation
   operators instantiate a usable nonequivalent semantic-mutant
-  denominator across the 60 PUT-MP-operator cells, as reflected by
+  denominator across the 60 SUT-MR-operator cells, as reflected by
   inst\_rate, equiv\_rate, C1\_share, and survive\_rate?
 \item
   \textbf{RQ4 (Discrimination, LLM-source decoupling, and the strong
-  boundary).} Does SMS discriminate operator-MP aligned slices (j=k) from
+  boundary).} Does SMS discriminate operator-MR aligned slices (j=k) from
   cross slices (j$\neq$k); does cross-source LLM pooling under an
   identical prompt move the aligned-versus-cross effect size, or only the
   kill-set quality; and where does the strong boundary of Proposition 2
@@ -578,12 +578,12 @@ kernel being assessed. We write the \(i\)-th PUT as \(S_i\).
 outputs of related inputs. The MR family used for PUT \(S_i\) and
 meta-pattern \(k\) is written \(\mathrm{MR}_{i,k}\).
 
-\textbf{Meta-pattern (MP).} An MP is a semantic stratum of MR behaviour,
+\textbf{Metamorphic-relation label.} Each label denotes a semantic stratum of MR behaviour,
 such as conservation, monotonicity, convergence, trajectory structure, or
-fidelity order. The index \(k\) denotes the MP being tested.
+fidelity order. The index \(k\) denotes the relation label being tested.
 
 \textbf{Semantic operator.} A semantic operator is a mutation family
-\(\mathrm{mut}_j\) designed to perturb a declared MP. The operator index
+\(\mathrm{mut}_j\) designed to perturb a declared relation label. The operator index
 \(j\) identifies the intended semantic effect.
 
 \textbf{Semantic mutant.} A semantic mutant \(s'\) is a finite syntactic
@@ -645,13 +645,13 @@ Operator family and alignment:
 \centering
 \begin{tabular}{@{}lll@{}}
 \toprule
-Operator & Failure semantics & Aligned MP \\
+Operator & Failure semantics & Aligned MR \\
 \midrule
-mut\_C & Conservation-breaking & MP\_1 Conservation \\
-mut\_M & Monotonicity-breaking & MP\_2 Monotonicity \\
-mut\_G & Convergence-breaking & MP\_3 Convergence \\
-mut\_T & Trajectory-distorting & MP\_4 Trajectory \\
-mut\_F & Fidelity-order-breaking & MP\_5 Partial-order \\
+mut\_C & Conservation-breaking & Cons. \\
+mut\_M & Monotonicity-breaking & Mono. \\
+mut\_G & Convergence-breaking & Conv. \\
+mut\_T & Trajectory-distorting & Traj. \\
+mut\_F & Fidelity-order-breaking & P-ord. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -756,7 +756,7 @@ the existing mutation-testing literature in the classical
 syntactic-mutation regime, so there is no metric-level semantic
 fragmentation. The skeleton of eleven concepts, the three-state
 decomposition, the SMS formula, and the AVP interface are fixed; the
-contents of MUT, MP, C, and $\mathrm{cls}$ remain open to future
+contents of MUT, $\mathcal{R}$, C, and $\mathrm{cls}$ remain open to future
 extension.
 
 \subsubsection{Degeneration to Classical Mutation Score}\label{sms-ms-degeneration-formal-statement}
@@ -779,7 +779,7 @@ formula:
   $L_{\mathrm{equiv}} = L1 \wedge L2$: $\varepsilon_{\mathrm{eq}} \to 0 \wedge K_{\mathrm{eq}} \to \infty$ (controls equiv
   layer; Lemma 9.1).
 \item
-  $L_{\mathrm{killed}} = L3 \wedge L4$: $\varepsilon_{\mathrm{AVP}} \to 0 \wedge$ MP set = $\{\mathrm{MP}_{\mathrm{eq}}\}$
+  $L_{\mathrm{killed}} = L3 \wedge L4$: $\varepsilon_{\mathrm{AVP}} \to 0 \wedge$ MR-label set = $\{\mathrm{MR}_{\mathrm{eq}}\}$
   (controls killed layer; Lemma 9.2).
 \item
   $L_{\mathrm{mut}} = L5 \wedge L6$: $\mathrm{mut}_j$ switches to rule-based syntactic
@@ -803,8 +803,8 @@ and $\mathrm{mut}^{\mathrm{syntax}}$ is the syntactic-mutant set.
 equiv\_\{i,j\}\^{}classic almost everywhere with respect to D\_S; the
 measure-zero qualifier accommodates floating-point pathological points
 and Not-a-Number propagation. By Lemma 9.2, killed\_\{i,k,j\} $\to$
-killed\_\{i,j\}\^{}classic, and the MP index k degenerates because L4
-collapses MR\_\{i,k\} to \{MP\_eq\}. By Lemma 9.3, mut\_j(S\_i) $\to$
+killed\_\{i,j\}\^{}classic, and the MR-label index k degenerates because L4
+collapses MR\_\{i,k\} to \{MR\_eq\}. By Lemma 9.3, mut\_j(S\_i) $\to$
 mut\_j\^{}syntax(S\_i). Substituting into the SMS formula gives
 MS\_\{i,j\}. Full lemma proofs are in Appendix G.3 and the full theorem
 proof in Appendix G.4.
@@ -853,7 +853,7 @@ the observable behaviour $\alpha \circ \llbracket P \rrbracket$. The five
 invariants are exactly the properties the meta-patterns of Section~\ref{operator-signatures} target:
 $\psi_1$ conservation, $\psi_2$ monotonicity, $\psi_3$ convergence order,
 $\psi_4$ trajectory determinism, $\psi_5$ partial-order consistency, so
-$\psi_k$ is the invariant whose violation MP$_k$ detects and whose
+$\psi_k$ is the invariant whose violation MR label $k$ detects and whose
 breakage $\mathrm{mut}_j$ (at $j=k$) targets. We write
 $\llbracket P \rrbracket \models \psi$ when $P$'s observable behaviour
 satisfies $\psi$.
@@ -1164,7 +1164,7 @@ least one of (a), (b), (c).
 \begin{longtable}[]{@{}lccccc@{}}
 \caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns). $\bullet\bullet$ substantial (30 cells), $\bullet$ moderate (24 cells), $\circ$ vacant (6 cells; no MR is exercised).}\label{tab:p2-cells}\\
 \toprule\noalign{}
-PUT & MP\_1 cons. & MP\_2 mono. & MP\_3 conv. & MP\_4 traj. & MP\_5 p-ord. \\
+SUT & Cons. & Mono. & Conv. & Traj. & P-ord. \\
 \midrule\noalign{}
 \endfirsthead
 \endhead
@@ -1249,21 +1249,21 @@ OS on class a = numerical-linalg API swap \texttt{det} $\leftrightarrow$
 surrogate-class swap GPR $\leftrightarrow$ RBF $\leftrightarrow$ NN). The full PUT-class $\times$ operator
 specialisation grid is in Appendix B.2.
 
-\subsection{Primary Meta-Pattern Convention}\label{primary-mp-convention}
+\subsection{Primary MR Convention}\label{primary-mp-convention}
 
 The diagonal cells \texttt{j\ =\ k} form the H2-aligned slice, the
 off-diagonal cells form the cross slice, and the vacant cells \texttt{$\circ$}
 are not formally adjudicated.
 
-The c-class primary MP is held at the pre-registered choice (MP5)
+The c-class primary MR is held at the pre-registered choice (P-ord.)
 throughout this paper. All H1, H2, H3, and H4 verdicts are rendered
 under this configuration on v3 (same-source) and v4 (cross-source under
-an identical prompt). An earlier exploratory data-driven primary-MP
+an identical prompt). An earlier exploratory data-driven primary-MR
 shift was considered but withdrawn from the analysis after a permutation
-null over fully exchangeable c-class (PUT, MP) cell SMS values showed
+null over fully exchangeable c-class (SUT, MR-label) cell SMS values showed
 the resulting $\delta$ inflation to be statistically indistinguishable from
-random reselection of the c-class primary MP; the corresponding
-pre-registration of a primary-MP-selection rule on a fresh dataset is
+random reselection of the c-class primary MR; the corresponding
+pre-registration of a primary-MR-selection rule on a fresh dataset is
 deferred to a follow-up study.
 
 \begin{figure}
@@ -1482,7 +1482,7 @@ equivalent mutants a strong MR must \emph{not} kill; the real defects are
 reproduced in extracted-diff form because the pre-fix releases are
 uninstallable on the host (no \texttt{arm64} wheel). The arm is
 confirmatory and additive: it does not alter the 60-cell denominator, the
-primary-MP convention, or the pre-registered hypotheses. Full subject
+primary-MR convention, or the pre-registered hypotheses. Full subject
 specifications and fault mechanisms are in supplementary Appendix H;
 results in Section~\ref{rq4-adjoint-extension-arm}.
 
@@ -1502,7 +1502,7 @@ corresponding to RQ3.
 
 \subsection{Cross-Source Generation Protocol}\label{cross-source-v4-protocol-summary}
 
-To isolate the contributions of LLM same-source bias and MR-MP alignment
+To isolate the contributions of LLM same-source bias and MR-label alignment
 design to Cliff's delta, we ran a three-stage ablation:
 
 {\def\LTcaptype{table} % do not increment counter
@@ -1518,7 +1518,7 @@ Version
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Mutant pool
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-c-class primary MP
+c-class primary MR
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Use
 \end{minipage} \\
@@ -1526,10 +1526,10 @@ Use
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{v3} & Same-source (Claude Opus 4.6) & MP5 (pre-registered) & H2
+\textbf{v3} & Same-source (Claude Opus 4.6) & P-ord. (pre-registered) & H2
 baseline (pre-registered primary) \\
 \textbf{v4} & \textbf{Cross-source} (Claude Opus 4.6 + GPT-5.4 +
-DeepSeek chat) & MP5 (held at pre-registered) & Isolate LLM-source
+DeepSeek chat) & P-ord. (held at pre-registered) & Isolate LLM-source
 diversity \\
 \end{longtable}
 }
@@ -1681,12 +1681,12 @@ the metric construction.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio,alt={60-cell heatmap of mean SMS over 12 PUTs \textbackslash times 5 MPs (cross-source primary). Diagonal cells (operator-MP aligned) show concentrated mass; off-diagonal mass reflects bleed into adjacent MPs. Empty rows = PUT-level zero-mass cohort (PUTs A1, B1, D2; see Section~\ref{decoupling-between-r_sem-and-r_kill}).}]{figures/png/fig2_60cell_heatmap.png}
-\Description{60-cell heatmap of mean SMS over 12 PUTs by five meta-patterns under the cross-source primary pool. Aligned cells concentrate the main signal, while many cross cells are zero; PUTs A1, B1, and D2 form all-zero rows.}
-\caption{60-cell heatmap of mean SMS over 12 PUTs \(\times\) 5 MPs (v4
-cross-source primary). Diagonal cells (operator-MP aligned) show
-concentrated mass; off-diagonal mass reflects bleed into adjacent MPs.
-Empty rows = PUT-level zero-mass cohort (PUTs A1, B1, D2; see
+\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio,alt={60-cell heatmap of mean SMS over 12 SUTs \textbackslash times 5 MRs (cross-source primary). Diagonal cells (operator-MR aligned) show concentrated mass; off-diagonal mass reflects bleed into adjacent MRs. Empty rows = SUT-level zero-mass cohort (SUTs A1, B1, D2; see Section~\ref{decoupling-between-r_sem-and-r_kill}).}]{figures/png/fig2_60cell_heatmap.png}
+\Description{60-cell heatmap of mean SMS over 12 systems under test by five metamorphic relations under the cross-source primary pool. Aligned cells concentrate the main signal, while many cross cells are zero; SUTs A1, B1, and D2 form all-zero rows.}
+\caption{60-cell heatmap of mean SMS over 12 SUTs \(\times\) 5 MRs (v4
+cross-source primary). Diagonal cells (operator-MR aligned) show
+concentrated mass; off-diagonal mass reflects bleed into adjacent MRs.
+Empty rows = SUT-level zero-mass cohort (SUTs A1, B1, D2; see
 Section~\ref{decoupling-between-r_sem-and-r_kill}).}\label{fig:heatmap}
 \end{figure}
 
@@ -1769,7 +1769,7 @@ Mean mutants / cell (v4) & 24.3 (range 10-30) \\
 }
 
 The \textbf{zero-mass dominance} (45/60 = 75\%) is concentrated in the
-cross-MP slice: \textasciitilde88\% (42/48) of cross cells are zero,
+cross-MR slice: \textasciitilde88\% (42/48) of cross cells are zero,
 \textasciitilde25\% (3/12) of aligned cells are zero. Cliff's delta is
 well-defined under this distribution but its inference is effectively
 dominated by
@@ -1792,10 +1792,10 @@ treated jointly with the stipulated-alternative analysis in Section~\ref{rq2-sti
 (avoiding repetition).
 
 \textbf{Consistency with LLM-mutant literature.} \citet{tip2025llmorpheus}
-LLMorpheus reports high cross-MP failure proportions on JavaScript
+LLMorpheus reports high cross-MR failure proportions on JavaScript
 scientific-computing PUTs (specific numbers not listed in cited
 literature); zero-mass dominance appears to be a shared characteristic
-of LLM-mutant + existing MR-MP alignment designs, not a quirk of this
+of LLM-mutant + existing MR-label alignment designs, not a quirk of this
 paper's PUT selection.
 
 \textbf{H1 verdict: not met.} H1 (RQ3) requires at least 4 of the 5
@@ -1858,7 +1858,7 @@ cross (j $\neq$ k) & 48 & 0.061 & 0.000 \\
 \end{longtable}
 }
 
-Two delta point-estimates under the pre-registered primary-MP
+Two delta point-estimates under the pre-registered primary-MR
 convention:
 
 \begin{itemize}
@@ -1867,11 +1867,11 @@ convention:
   \textbf{v3 (same-source, pre-registered):} delta = \textbf{0.323},
   95\% CI {[}0.017, 0.622{]}
 \item
-  \textbf{v4 (cross-source, c-class held at MP5):} delta =
+  \textbf{v4 (cross-source, c-class held at P-ord.):} delta =
   \textbf{0.314}, 95\% CI {[}0.014, 0.622{]}. The cross-source pool
   aggregates Claude / GPT / DeepSeek under an identical prompt; the
-  c-class primary is held at the pre-registered MP5 so that the v3 $\to$ v4
-  contrast holds the prompt and primary-MP choice fixed. Because v4 uses
+  c-class primary is held at the pre-registered P-ord. so that the v3 $\to$ v4
+  contrast holds the prompt and primary-MR choice fixed. Because v4 uses
   mechanical gates rather than the v3 dual-blind reviewer step, the
   source-axis reading is qualified by the protocol-asymmetry analysis in
   Section~\ref{r13-protocol-asymmetry-magnitude-estimate}.
@@ -1899,7 +1899,7 @@ This medium-effect placement is consistent with \citet{tip2025llmorpheus}
 LLMorpheus's medium-effect range on JavaScript LLM mutants, a contextual
 literature observation (estimand caveat: their delta compares ``LLM vs
 traditional mutants on fault detection'', ours compares ``aligned vs
-cross MP slice within one pool''; the numerical similarity is not
+cross-MR slice within one pool''; the numerical similarity is not
 substantive support).
 
 \subsection{RQ4: Stipulated-Alternative Power Analysis}\label{rq2-stipulated-alternative-power}
@@ -2024,10 +2024,10 @@ therefore use Friedman as the non-parametric formal alternative:
 \begin{itemize}
 \tightlist
 \item
-  \textbf{PUT (n=12) $\times$ MP (k=5): chi\^{}2 = 15.30, p = 0.0041}
+  \textbf{PUT (n=12) $\times$ MR label (k=5): chi\^{}2 = 15.30, p = 0.0041}
   (significant).
 \item
-  MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
+  MR-label rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
 \item
   Per-class Friedman with \textbf{Bonferroni $\times$ 4 correction}: a
   1.000 / b \textbf{0.116} / c 1.000 / d 1.000, no per-class
@@ -2036,7 +2036,7 @@ therefore use Friedman as the non-parametric formal alternative:
   class makes this label nominal only) / c 0.333 / d 0.417.
 \end{itemize}
 
-\textbf{Caveat.} Friedman tests ``are MP rank differences present''
+\textbf{Caveat.} Friedman tests ``are MR-label rank differences present''
 (averaged over PUTs); H3 tests ``is direction consistent across 4
 classes''. These are logically independent. H3 stands on the Section~\ref{rq3-cross-class-consistency-and-friedman} sign
 test; per-class Friedman is descriptive only (small N=3 per class).
@@ -2051,7 +2051,7 @@ moderate-positive, or moderate-negative correlation. The numbers below
 are recorded so that a future study (n $\geq$ 30 PUTs) can pre-register a directional
 hypothesis.
 
-Pattern Coverage (PC) per PUT = \#triggered (MP\_k, R\_outcome) cells /
+Pattern Coverage (PC) per PUT = \#triggered (MR\_k, R\_outcome) cells /
 10. Range {[}0.500, 1.000{]}, mean 0.733. Pairing with mean SMS over 5
 MPs: Spearman rho = \textbf{0.163} (p = 0.613); Kendall tau = 0.136 (p =
 0.568); n = 12.
@@ -2099,7 +2099,7 @@ characteristics were known, so this is a finding worth reporting.
 
 \textbf{C1-weighted sensitivity.} Because LRCA deliberately does not
 filter SMS, we add a diagnostic secondary view
-$\mathrm{SMS}_{\mathrm{C1}} = \mathrm{SMS} \times \mathrm{C1\_share}$.
+$\mathrm{SMS}_{\mathrm{C1}} = \mathrm{SMS} \times \texttt{C1\_share}$.
 On the v4 60-cell table, mean SMS is 0.104 and mean
 $\mathrm{SMS}_{\mathrm{C1}}$ is 0.0873; nonzero cells fall from 15/60 to
 13/60. The conclusion is therefore conservative: suspect mass is high
@@ -2220,7 +2220,7 @@ than measures adequacy (adjoint-arm reproduction-fidelity threat).
 \subsection{Cross-source contributes mutant quality, not effect size}\label{cross-source-contributes-mutant-quality-not-effect-size}
 
 Going from same-source to cross-source under the pre-registered
-primary-MP convention shifts Cliff's $\delta$ by only −0.009 (95\% CI covers
+primary-MR convention shifts Cliff's $\delta$ by only −0.009 (95\% CI covers
 zero). Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a
 27\% relative increase), class-c mean SMS by \textbf{+91.5\%}, and
 class-d mean SMS by 38.3\%. Under an identical prompt template, three
@@ -2257,13 +2257,13 @@ The operator-level pilot in Appendix C.4.1 reveals a sharp pattern: HP,
 TF, and OS operators on the c-class (surrogate) and d-class (machine
 learning) PUTs reach R\_sem $\approx$ 1.0 (semantic feasibility, the LLM
 successfully produces a syntactically valid, executable, intent-bearing
-mutant) but R\_kill = 0 under the PUT's primary MP (the AVP fails to
+mutant) but R\_kill = 0 under the PUT's primary MR (the AVP fails to
 detect the mutant under that MR). Concretely, six cells show R\_sem $\geq$
 0.9 with R\_kill = 0: c1\_CE1 (GPR \texttt{noise\_level} 1e-4 $\to$ 1e-1),
 c2\_OS1 (polynomial $\to$ spline basis), c3\_HP1 (relu $\to$ tanh), c3\_TF1
 (max\_iter 1000 $\to$ 5), d1\_HP1 (MLP $\alpha$ 1e-4 $\to$ 1.0), and d3\_HP1 (LR C 1.0
 $\to$ 1e-4). In each, the mutant \emph{is} a valid hyperparameter-semantic
-injection, but the primary MP, MP5 asymptotic for the c-class and MP2
+injection, but the primary MR, P-ord. asymptotic for the c-class and Mono.
 monotonicity for the d-class, is an asymptotic or statistical relation,
 and the parameter deviation it tolerates is wide enough to absorb the
 mutant.
@@ -2274,16 +2274,16 @@ C1\_share rises from 0.164 to 0.209 (+27\%): among the few killed
 mutants, the cross-source pool produces cleaner LRCA diagnostic labels.
 Source diversity therefore improves the \emph{quality} of the kill set
 without expanding its \emph{coverage}. \textbf{The engineering insight is that
-operator-MP alignment in MR design is necessary for strong SMS signals;
+operator-MR alignment in MR design is necessary for strong SMS signals;
 merely enlarging the semantically feasible mutant pool dilutes the C1
 proportion without lifting the kill rate.} Two open questions remain:
-whether SMS can infer which MP class is missing for which PUT class, and
+whether SMS can infer which MR-label class is missing for which PUT class, and
 whether LRCA can be calibrated with class-specific thresholds separating
 likely semantic failures from artefacts.
 
 This decoupling motivates the source-axis reading in Section~\ref{rq2-aligned-vs-cross-cliffs-delta}: the v3 $\to$
 v4 micro-shift of −0.009 estimates LLM source diversity under a fixed
-prompt, while MR-design adequacy at the operator-MP level governs the
+prompt, while MR-design adequacy at the operator-MR level governs the
 kill rate in this design.
 
 \textbf{Real-defect evidence slice.} A 34-case real-defect evidence
@@ -2338,7 +2338,7 @@ mutant-diversity demand than a / b. Mixed-effects unavailability
 absence. \textbf{H3 verdict: not met}, the sign test is 3/4 (partial)
 under both v3 and v4 with the b-class inverted, and CV($\Delta$SMS)
 exceeds the 0.5 dispersion threshold. The Friedman main effect (chi\^{}2 =
-15.30, p = 0.0041) speaks to MP differentiation, not H3 direction.
+15.30, p = 0.0041) speaks to MR-label differentiation, not H3 direction.
 
 \subsection{Practical Interpretation and Deployment Scope}\label{stakeholder-analysis-single-output-kernels-scope}
 
@@ -2575,18 +2575,18 @@ non-parametric formal alternative, but they answer a structurally
 different question. Expansion to n\_PUT $\geq$ 30 is the only path to a
 properly identified hierarchical model.
 
-\subsection{Programs with Zero Observed Signal}\label{put-level-zero-mass-cohort}
+\subsection{Systems with Zero Observed Signal}\label{put-level-zero-mass-cohort}
 
-Figure 2 and Section~\ref{decoupling-between-r_sem-and-r_kill} document that PUTs A1, B1, and D2 produce all-zero
-rows across the five MPs in the cross-source pool; that is,
-\textbf{for 25\% of the PUTs, SMS gives zero signal at every operator-MP
+Figure 2 and Section~\ref{decoupling-between-r_sem-and-r_kill} document that SUTs A1, B1, and D2 produce all-zero
+rows across the five MRs in the cross-source pool; that is,
+\textbf{for 25\% of the SUTs, SMS gives zero signal at every operator-MR
 cell}. This is a substantive limitation of SMS as an adequacy metric on
-this PUT cohort: when the LRCA C1 mass collapses to zero across all
-aligned and cross slices for a PUT, SMS cannot distinguish strong from
-weak MR sets on that PUT. The phenomenon coexists with R\_sem $\approx$ 1.0
+this SUT cohort: when the LRCA C1 mass collapses to zero across all
+aligned and cross slices for an SUT, SMS cannot distinguish strong from
+weak MR sets on that SUT. The phenomenon coexists with R\_sem $\approx$ 1.0
 (mutants are valid; Section~\ref{decoupling-between-r_sem-and-r_kill}), so the issue is not mutant generation but
-MR-design adequacy at the PUT level. MR-design refinement (per-PUT
-MP discovery) and the proposed pre-registered c-class primary-MP rule
+MR-design adequacy at the SUT level. MR-design refinement (per-SUT
+MR discovery) and the proposed pre-registered c-class primary-MR rule
 on a fresh dataset are the principal mitigation paths. We declare this
 as a residual PUT-level zero-signal threat.
 
@@ -2616,7 +2616,7 @@ Seven directions follow from this study.
 
 \begin{enumerate}
 \item
-  A pre-registered c-class primary-MP rule on a fresh dataset.
+  A pre-registered c-class primary-MR rule on a fresh dataset.
 \item
   A differential-prompt LLM-diversity test using V\_canonical,
   V\_persona, and V\_cot (full protocol in Appendix C.1.1).
@@ -2665,7 +2665,7 @@ instantiation, not as prerequisites for the SMS definition.
   Structural Injection, and Trajectory Flip are 0/72, 0/33, and 0/54
   under first-order defaults.
 \item
-  Operator-MP alignment produces a positive but not large effect in this
+  Operator-MR alignment produces a positive but not large effect in this
   design. The H2 large-effect threshold is \textbf{not met under the
   pre-registered point-estimate criterion}: \(\delta_{\mathrm{v3}} =
   0.323\), just below the \citet{romano2006cliff} medium threshold of
@@ -2675,13 +2675,13 @@ instantiation, not as prerequisites for the SMS definition.
 \item
   Cross-source pooling changes mutant quality more than aligned-versus-
   cross separation. Holding the c-class primary metamorphic relation at
-  the pre-registered MP5, three-LLM pooling under an identical prompt
+  the pre-registered P-ord., three-LLM pooling under an identical prompt
   shifts Cliff's \(\delta\) by only -0.009 (95\% CI covers zero), while
   raising mean C1\_share by 27\%, class-c mean SMS by 91.5\%, and
   class-d mean SMS by 38.3\%.
 \item
-  The MP structure is visible, but cross-class consistency is not yet
-  stable. The Friedman main effect on MP differentiation is
+  The MR-label structure is visible, but cross-class consistency is not yet
+  stable. The Friedman main effect on MR-label differentiation is
   \(\chi^2 = 15.30\), \(p = 0.0041\), whereas the pre-registered H3
   criteria are not met: the class-level sign test is 3/4 and
   CV(\(\Delta\)SMS) exceeds 0.5. The Spearman correlation between SMS
