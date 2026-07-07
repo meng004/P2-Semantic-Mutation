@@ -1243,7 +1243,7 @@ least one of (a), (b), (c).
 {\def\LTcaptype{table}
 \small
 \begin{longtable}[]{@{}lccccc@{}}
-\caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns). $\bullet\bullet$ substantial (30 cells), $\bullet$ moderate (24 cells), $\circ$ vacant (6 cells; no MR is exercised).}\label{tab:p2-cells}\\
+\caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns). $\bullet\bullet$ substantial (32 cells), $\bullet$ moderate (19 cells), $\circ$ vacant (9 cells; no MR is exercised).}\label{tab:p2-cells}\\
 \toprule\noalign{}
 PUT & Conservation & Monotonicity & Convergence & Trajectory & Partial order \\
 \midrule\noalign{}
@@ -1266,7 +1266,7 @@ D3 LR      & $\bullet\bullet$ & $\bullet\bullet$ & $\bullet$ & $\circ$ & $\bulle
 \end{longtable}
 }
 
-\noindent\emph{Legend:} $\bullet\bullet$ substantial (30 cells); $\bullet$ moderate (24 cells); $\circ$ vacant (6 cells; no MR exercised).
+\noindent\emph{Legend:} $\bullet\bullet$ substantial (32 cells); $\bullet$ moderate (19 cells); $\circ$ vacant (9 cells; no MR exercised).
 
 Each PUT averages 24.3 mutants in the cross-source pool (range
 10-30), for 292 unique v4 mutants across the 12 PUTs; each mutant is
@@ -1275,14 +1275,18 @@ repetitions per cell, and K\_eq = 1000 input samples for E2 evaluation. Detailed
 pool counts and per-class operator specialisations are in
 \textbf{Appendix B.2}.
 
-The cell density notation distinguishes \textbullet\textbullet substantial (30 cells;
+The cell density notation distinguishes \textbullet\textbullet substantial (32 cells;
 aligned slice + strong off-diagonal cells where MR coverage is dense and
-mutant detection is expected), \textbullet moderate (24 cells; cross slice with
-non-trivial expected detection rate), and $\circ$ vacant (6 cells;
-historically empty cells where no MR is exercised). The 12
-aligned (j = k) cells are precisely the on-diagonal cells; the 48 cross
-(j $\neq$ k) cells partition into the 24 \textbullet moderate + 18 \textbullet\textbullet off-diagonal
-substantive + 6 $\circ$ vacant cells. The \textbullet moderate / \textbullet\textbullet substantive
+mutant detection is expected), \textbullet moderate (19 cells; cross slice with
+non-trivial expected detection rate), and $\circ$ vacant (9 cells;
+historically empty cells where no MR is exercised); the counts are
+read mechanically from the coverage grids recorded in the MR
+implementation files and correct the 30/24/6 figures carried by
+earlier drafts. The 12
+aligned (j = k) cells are defined by each PUT's class-primary
+meta-pattern; the 48 cross
+(j $\neq$ k) cells comprise the remaining substantial, moderate, and
+vacant cells. The \textbullet moderate / \textbullet\textbullet substantive
 distinction does not change SMS computation; it tracks expected MR
 coverage density per the infrastructure documentation and informs the Section~\ref{decoupling-between-r_sem-and-r_kill} R\_sem /
 R\_kill decoupling discussion.

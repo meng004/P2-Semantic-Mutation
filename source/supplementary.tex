@@ -266,7 +266,7 @@ equal & High \\
 E1 alone is fooled by insufficient AVP coverage; E2 alone by numerical
 coincidence on $K_{\mathrm{eq}}$. E1 $\wedge$ E2 is the conservative complete
 instantiation; under $L_{\mathrm{equiv}}$ it reduces almost-everywhere to
-classical bitwise equivalence (Lemma 9.1). Counter-examples: E2 passes
+classical bitwise equivalence (Lemma G.1). Counter-examples: E2 passes
 but E1 does not (rare; mutant coincides at K\_eq but deviates at MR
 trigger points $\to$ non-equivalent); E1 passes but E2 does not (common;
 consistent within MR but numerical drift \textgreater{} $\varepsilon_{\mathrm{eq}} \to$
@@ -467,7 +467,7 @@ artefact); d2/d3 dominantly C1 / C3 mixed.
 \subsection{Engineering-significance mapping}\label{b.5-engineering-significance-mapping}
 
 j = k aligned diagonal is the H2 threshold-test slice; j $\neq$ k
-off-diagonal is control; 6 vacant cells ($\circ$, no MR exercised) are not formally
+off-diagonal is control; 9 vacant cells ($\circ$, no MR exercised) are not formally
 adjudicated and are repurposed in the main manuscript's R\_sem/R\_kill decoupling discussion as descriptive evidence for
 R\_sem / R\_kill decoupling. The v3 $\to$ v4 micro-change (−0.009)
 attributes to LLM-source diversity under a fixed prompt; this is the
@@ -742,13 +742,16 @@ protocol.
 
 A 2026 Q3 operator-level pilot ran 12 PUTs $\times$ 37 operators (12
 \texttt{is\_key=True} at K=20, 25 at K=10; 470 trials total). Pilot
-precursor quantities: R\_sem (V1-V6 $\wedge$ operator\_match pass rate),
+precursor quantities: R\_sem (V1-V4 $\wedge$ operator\_match pass rate),
 D\_impl (median pairwise AST + literal + identifier Jaccard distance
 among confirmed mutants), R\_kill (proportion of confirmed mutants
 killed by AVP under that PUT's primary MR). Aggregate (N=37): R\_sem
 median 0.50 mean 0.468 (0/37 with R\_sem=0); D\_impl median 0.42 mean
 0.392 (1/37 with D\_impl $\approx$ 0); R\_kill median 0.00 mean 0.189. All 37
-operators produced $\geq$ 1 V1-V6 passing mutant (verifying H1).
+operators produced $\geq$ 1 V1-V4 passing mutant, a necessary
+precondition for H1; the pre-registered H1 threshold itself ($\geq$ 5
+non-equivalent mutants on $\geq$ 9/12 PUTs for $\geq$ 4 of 5 operator
+families) is nonetheless not met, as reported in the main text.
 
 \textbf{Key R\_sem / R\_kill decoupling pattern.} R\_sem $\geq$ 0.9 $\wedge$ R\_kill
 = 0 combinations all on HP / TF / OS operators in c / d classes (e.g.,
@@ -809,8 +812,10 @@ ranking comparison \\
 \end{longtable}
 }
 
-\textbf{Multiple comparisons.} Cell-level claims across 60 cells use
-Benjamini-Hochberg FDR, $\alpha_{\mathrm{FDR}} = 0.05$. N = 20 bootstrap intervals:
+\textbf{Multiple comparisons.} No cell-level family of p-values is
+claimed across the 60 cells (main text, statistical pipeline); the
+per-class Friedman tests carry a Bonferroni $\times$ 4 correction.
+N = 20 bootstrap intervals:
 1,000-iteration 95\% CI (B = 10,000 for the headline H2 delta CI).
 
 \subsection{Effect-Size Sensitivity and Transformation Invariance}\label{d.2-cliffs-delta-cutoff-sensitivity-and-logit-transformation-invariance}
@@ -1094,6 +1099,19 @@ link in the evidence chain, not a single-point qualification.
 
 \subsection{Internal threats}\label{f.1-internal-threats}
 
+\textbf{Hoeffding-style false-equivalence bound (referenced by
+main-text Limitation 1).} For a mutant whose true per-sample
+disagreement probability against the original program under $D_S$ is
+at least $p_0$ (at the E2 tolerance), the probability that all
+$K_{\mathrm{eq}}$ independent E2 samples agree, producing a false
+equivalence verdict, is at most $(1-p_0)^{K_{\mathrm{eq}}} \leq
+\exp(-K_{\mathrm{eq}}\,p_0)$. At $K_{\mathrm{eq}} = 1000$: $p_0 =
+0.005$ gives $\leq e^{-5} \approx 0.7\%$; $p_0 = 0.01$ gives $\leq
+e^{-10} \approx 4.5 \times 10^{-5}$. The bound conditions on $p_0$ and
+says nothing about mutants whose disagreement is concentrated below the
+E2 tolerance; those are governed by the E1 arm and remain the residual
+risk the K\_eq sweep (deferred) would quantify.
+
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
@@ -1189,8 +1207,9 @@ work \\
 \end{longtable}
 }
 
-Conclusion threats: multiple comparisons handled by BH-FDR at
-$\alpha_{\mathrm{FDR}}=0.05$ (§D.1); N=20 stability handled by 1,000-iteration
+Conclusion threats: multiple comparisons handled per the main-text
+policy (per-class Bonferroni $\times$ 4; no cell-level family claimed;
+§D.1); N=20 stability handled by 1,000-iteration
 bootstrap CI (§D.3). Construct threat, SMS measures epistemological
 semantic detection, not production engineering value (out of scope here).
 
@@ -1237,16 +1256,16 @@ Pairing rationale
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{$L_{\mathrm{equiv}}$} (Lemma 9.1) & L1: $\varepsilon_{\mathrm{eq}} \to 0$; L2: $K_{\mathrm{eq}} \to \infty$ & L1 alone:
+\textbf{$L_{\mathrm{equiv}}$} (Lemma G.1) & L1: $\varepsilon_{\mathrm{eq}} \to 0$; L2: $K_{\mathrm{eq}} \to \infty$ & L1 alone:
 equiv stays probabilistic ($K_{\mathrm{eq}}$ cannot cover $D_S$). L2 alone: bitwise
 equality diluted by $\varepsilon_{\mathrm{eq}}$. Both simultaneously degenerate equiv to
 classical behavioural equivalence outside a D\_S-measure-zero set. \\
-\textbf{$L_{\mathrm{killed}}$} (Lemma 9.2) & L3: $\varepsilon_{\mathrm{AVP}}^k \to 0$; L4: MR-label set =
+\textbf{$L_{\mathrm{killed}}$} (Lemma G.2) & L3: $\varepsilon_{\mathrm{AVP}}^k \to 0$; L4: MR-label set =
 $\{\mathrm{MR}_{\mathrm{eq}}\}$, R(y,y') ≡ y = y' & L3 alone: $\varepsilon_{\mathrm{AVP}} \to 0$ still allows
 non-trivial MR (monotonicity, convergence). L4 alone: equality still
 carries $\varepsilon_{\mathrm{AVP}}$ tolerance. Both simultaneously degenerate killed to
 classical difference detection. \\
-\textbf{$L_{\mathrm{mut}}$} (Lemma 9.3) & L5: $\mathrm{mut}_j \to$ rule-based syntactic (Mothra
+\textbf{$L_{\mathrm{mut}}$} (Lemma G.3) & L5: $\mathrm{mut}_j \to$ rule-based syntactic (Mothra
 AOR/ROR/SDL/CRP); L6: cls(I) $\subseteq$ \{imperative deterministic\} & L5 alone:
 syntactic ops on probabilistic/ML may still trigger domain-semantic
 subsets. L6 alone: imperative programs still mutable by OS/HP/TF/SI.
@@ -1257,7 +1276,7 @@ set. \\
 
 \subsection{Lemmas for Three-State Decomposition}\label{g.3-lemmas-three-state-decomposition-degenerates-under-l}
 
-\textbf{Lemma 9.1 (equiv degeneration; measure-zero
+\textbf{Lemma G.1 (equiv degeneration; measure-zero
 qualification).} Under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2), semantic-class equivalence
 (E1 $\wedge$ E2) degenerates to classical behavioural equivalence
 \textbf{almost everywhere} w.r.t. measure $D_S$.
@@ -1272,7 +1291,7 @@ pathological points / NaN propagation; discrete $D_S$: $N = \emptyset$). This
 matches \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} §3 classical equivalent-mutant definition
 under measure-zero equivalence classes.
 
-\textbf{Lemma 9.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
+\textbf{Lemma G.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
 degenerates to classical difference detection.
 
 \emph{Proof.} L4 restricts the MR-label set to \{MR\_eq\} with R(y, y') ≡ y = y'. For
@@ -1282,7 +1301,7 @@ violation is $S_i(x) \neq s'(x)$, classical difference detection. With r
 $\neq$ id, $\mathrm{MR}_{\mathrm{eq}}$ still requires $S_i(x) = s'(r(x))$ as reference oracle from
 original program; no new state classifications introduced.
 
-\textbf{Lemma 9.3 (mut degeneration).} Under L5 $\wedge$ L6, mut\_j(S\_i)
+\textbf{Lemma G.3 (mut degeneration).} Under L5 $\wedge$ L6, mut\_j(S\_i)
 degenerates to the syntactic mutant set of \citet{d7c38286734419b52de4262c9802ebdfcf4b9447}.
 
 \emph{Proof.} L5 switches $\mathrm{mut}_j$ to rule-based syntactic operators (AOR,
@@ -1292,9 +1311,10 @@ for semantic operators on probabilistic/ML programs. Under this
 configuration, $\mathrm{mut}_j(S_i)$ is the literature-defined syntactic mutant
 set, independent of domain semantics.
 
-\subsection{Theorem 9.1: Detailed Proof}\label{g.4-theorem-9.1-detailed-proof}
+\subsection{Degeneration Theorem: Detailed Proof}\label{g.4-theorem-9.1-detailed-proof}
 
-\textbf{Theorem 9.1 (SMS $\to$ MS degeneration).} In the degenerate limit
+\textbf{Theorem G (SMS $\to$ MS degeneration; stated in the main text
+as the degeneration theorem).} In the degenerate limit
 $L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$, almost everywhere
 w.r.t. $D_S$,
 
@@ -1306,20 +1326,20 @@ w.r.t. $D_S$,
 \tightlist
 \item
   Numerator: under L3 $\wedge$ L4, $\mathrm{killed}_{i,k,j} \to
-  \mathrm{killed}_{i,j}^{\mathrm{classic}}$ (Lemma 9.2); L4 makes $\mathrm{MR}_{i,k}$ trivial
+  \mathrm{killed}_{i,j}^{\mathrm{classic}}$ (Lemma G.2); L4 makes $\mathrm{MR}_{i,k}$ trivial
   over k (only $\mathrm{MR}_{\mathrm{eq}}$ remains), so subscript k degenerates.
 \item
   Denominator $|\mathrm{mut}_j(S_i)|$: under L5 $\wedge$ L6 $\to$
-  $|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)|$ (Lemma 9.3).
+  $|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)|$ (Lemma G.3).
 \item
   Denominator $|\mathrm{equiv}_{i,k,j}|$: under L1 $\wedge$ L2 $\to$
-  $|\mathrm{equiv}_{i,j}^{\mathrm{classic}}|$ (Lemma 9.1;
+  $|\mathrm{equiv}_{i,j}^{\mathrm{classic}}|$ (Lemma G.1;
   almost-everywhere w.r.t. $D_S$).
 \end{itemize}
 
 Substituting into the SMS formula gives $\mathrm{MS}_{i,j}$.
 
-\textbf{Corollary 9.1 (LRCA trivialisation).} Under $L = L1 \wedge L2 \wedge L3$, C
+\textbf{Corollary G (LRCA trivialisation).} Under $L = L1 \wedge L2 \wedge L3$, C
 = \{C1, \ldots, C5\} degenerates to \{C1\}.
 
 \emph{Sketch.} Each of C2-C5's triggering precondition depends on at
@@ -1334,7 +1354,8 @@ Under L, $\texttt{suspect\_share} \to 0$, LRCA reports only C1, SMS degenerates 
 single-layer metric consistent with \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} MS engineering
 structure.
 
-\textbf{Empirical consistency.} Theorem 9.1 + Corollary 9.1 jointly
+\textbf{Empirical consistency.} Theorem G and the LRCA-trivialisation
+corollary jointly
 show that the SMS-based empirical conclusions (Cliff's delta in the aligned-versus-cross results,
 Friedman chi\^{}2 in the cross-class consistency results, and Spearman rho in the SMS-vs-Pattern-Coverage analysis) are structurally consistent
 with existing \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} literature in classical
@@ -1444,10 +1465,10 @@ closest baseline by +0.101 on mean score (Holm-adjusted \(p = 0.046\),
 Cliff's \(\delta = +0.247\)); the remaining pairwise contrasts are not
 significant & Supports a modest, qualified
 mutation-score advantage rather than a dominance claim \\
-Real-defect face & The semantic-mutation track detects all 30 tabled
-real defects; two generic baselines have nonzero detection in 4/30 and
-6/30 cases, and two ablated variants miss 17/30 and 16/30 cases,
-respectively, with 10 shared misses & Separates real-defect detection from aggregate mutant
+Real-defect face & The semantic-mutation track detects all 34 tabled
+real defects; the two generic baseline groups have nonzero detection in
+7/34 and 8/34 cases, and the two ablated variants miss 19/34 and 17/34
+cases, respectively, with 11 shared misses & Separates real-defect detection from aggregate mutant
 kill-rate \\
 Non-nesting cases & Four verified non-nesting defects spanning linear
 algebra, FFT, and ordinary-differential-equation solvers & Supports the semantic-effect fiber view rather
