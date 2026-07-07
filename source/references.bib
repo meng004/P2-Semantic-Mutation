@@ -1,4 +1,4 @@
-@misc{8d7f3a3b7231100756a729aba720f4f81bcf5a8b,
+@misc{li2026sms,
   author = {Meng Li and Xiaohua Yang and Jie Liu and Shiyu Yan School of Computing and University of South China and Hengyang and 421001 and China Hunan Engineering Research Center of Software Evaluation and Testing for Intellectual Equipment and China Cnnc Key Laboratory on High Trusted Computing and China},
   title = {A semantic mutation metric for metamorphic relation adequacy in scientific computing programs},
   journal = {Unknown Journal},
@@ -6,7 +6,7 @@
   abstract = {Context. Metamorphic Testing addresses the test-oracle problem in scientific computing, but classical Mutation Score operates on syntactic AST mutations and misses domain semantics. Objective. We propose the Semantic Mutation Score (SMS), built on five domain-semantic operators (Conservation Erosion, Operator Substitution, Hyperparameter, Trajectory Flip, Structural Injection). SMS degenerates almost everywhere to MS in a characterised limit, so any SMS-based conclusion remains consistent with prior mutation-testing literature in the classical regime. Method. A 12-SUT x 5-MR design over four single-output float-to-float classes (numeric, probabilistic, surrogate, machine-learning) is paired with a three-layer attribution classifier separating true semantic faults from tolerance, OOD, statistical, and artefact categories. A same-source / cross-source ablation under an identical prompt isolates the LLM-source-diversity contribution. LLM-generated mutants are compared against a default-configuration cosmic-ray syntactic pool at the AST-normalised level. Results. The pre-registered large-effect threshold for Cliff's delta is not met under the point-estimate criterion; the observed effect lies in the medium-effect range. Cross-source pooling under an identical prompt does not appreciably shift delta, indicating that LLM identity is not the lever within this design. AST-level overlap between LLM-generated and default cosmic-ray syntactic mutants is small; the Hyperparameter, Structural Injection, and Trajectory Flip classes are unreachable under default first-order syntactic configurations. Conclusion. SMS is a backward-compatible adequacy metric for domain-semantic metamorphic-relation sets in scientific computing. The first-order unreachability evidence is independent of the effect-size question.}
 }
 
-@misc{ecf4ccd0f2897516b0205a4b1e35ea81b68aa277,
+@misc{li2026minmrcomplete,
   author = {Meng Li and Xiaohua Yang and Jie-Sheng Liu and Shiyu Yan},
   title = {Minimum Complete MR Subsets under Semantic-Mutation Fault Models: A Support-Set Domination Boundary},
   journal = {Unknown Journal},
@@ -20,6 +20,66 @@
   howpublished = {Unpublished project design note and artifact specification},
   year = {2026},
   note = {Project material, University of South China}
+}
+
+@article{chen2018metamorphic,
+  author = {Tsong Yueh Chen and Fei-Ching Kuo and Huai Liu and Pak-Lok Poon and Dave Towey and T. H. Tse and Zhi Quan Zhou},
+  title = {Metamorphic Testing},
+  journal = {ACM Computing Surveys},
+  year = {2018},
+  volume = {51},
+  number = {1},
+  pages = {1--27},
+  doi = {10.1145/3143561},
+  publisher = {Association for Computing Machinery}
+}
+
+@article{segura2016survey,
+  author = {Sergio Segura and Gordon Fraser and Ana B. Sanchez and Antonio Ruiz-Cortes},
+  title = {A Survey on Metamorphic Testing},
+  journal = {IEEE Transactions on Software Engineering},
+  year = {2016},
+  volume = {42},
+  number = {9},
+  pages = {805--824},
+  doi = {10.1109/TSE.2016.2532875},
+  publisher = {IEEE}
+}
+
+@article{liu2014alleviate,
+  author = {Huai Liu and Fei-Ching Kuo and Dave Towey and Tsong Yueh Chen},
+  title = {How Effectively Does Metamorphic Testing Alleviate the Oracle Problem?},
+  journal = {IEEE Transactions on Software Engineering},
+  year = {2014},
+  volume = {40},
+  number = {1},
+  pages = {4--22},
+  doi = {10.1109/TSE.2013.46},
+  publisher = {IEEE}
+}
+
+@article{kanewala2014scientific,
+  author = {Upulee Kanewala and James M. Bieman},
+  title = {Testing Scientific Software: A Systematic Literature Review},
+  journal = {Information and Software Technology},
+  year = {2014},
+  volume = {56},
+  number = {10},
+  pages = {1219--1232},
+  doi = {10.1016/j.infsof.2014.05.006},
+  publisher = {Elsevier}
+}
+
+@article{budd1982correctness,
+  author = {Timothy A. Budd and Dana Angluin},
+  title = {Two Notions of Correctness and Their Relation to Testing},
+  journal = {Acta Informatica},
+  year = {1982},
+  volume = {18},
+  number = {1},
+  pages = {31--45},
+  doi = {10.1007/BF00625279},
+  publisher = {Springer}
 }
 
 @misc{xiang2019compositeMR,
@@ -1379,14 +1439,16 @@
   pages = {3-17}
 }
 
-@misc{91b1f655c6e42c02eed722b213e3c03df2e2d75a,
-  author = {R. DeMillo and R. Lipton and F. Sayward},
+@article{demillo1978hints,
+  author = {Richard A. DeMillo and Richard J. Lipton and Frederick G. Sayward},
   title = {Hints on Test Data Selection: Help for the Practicing Programmer},
   journal = {Computer},
   year = {1978},
   doi = {10.1109/C-M.1978.218136},
   volume = {11},
-  pages = {34-41}
+  number = {4},
+  pages = {34--41},
+  publisher = {IEEE}
 }
 
 @misc{1a6ef3f15536949d913623c2e4203e9c2dfc2e29,
