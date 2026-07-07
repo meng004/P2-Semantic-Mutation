@@ -469,7 +469,8 @@ artefact); d2/d3 dominantly C1 / C3 mixed.
 j = k aligned diagonal is the H2 threshold-test slice; j $\neq$ k
 off-diagonal is control; 9 vacant cells ($\circ$, no MR exercised) are not formally
 adjudicated and are repurposed in the main manuscript's R\_sem/R\_kill decoupling discussion as descriptive evidence for
-R\_sem / R\_kill decoupling. The v3 $\to$ v4 micro-change (−0.009)
+R\_sem / R\_kill decoupling. The v3 $\to$ v4 micro-change
+($\Delta\delta = -0.009$, paired-role bootstrap 95\% CI [-0.238, 0.207])
 attributes to LLM-source diversity under a fixed prompt; this is the
 source-axis null contrast underpinning the main manuscript's aligned-versus-cross results.
 
@@ -672,7 +673,8 @@ LLM-source diversity.
 
 \subsection{Differential prompt protocol}\label{c.1.1-differential-prompt-protocol-future-work-commitment}
 
-The v3 $\to$ v4 micro-change of −0.009 may reflect ``three LLMs under
+The v3 $\to$ v4 micro-change of -0.009 (paired-role bootstrap 95\% CI
+[-0.238, 0.207]) may reflect ``three LLMs under
 identical prompt'' rather than ``true upper bound of LLM diversity''.
 Separation requires \emph{one tailored differential prompt per LLM}
 (skeleton: \path{scripts/run_differential_prompt.py}).
@@ -740,7 +742,9 @@ protocol.
 
 \subsection{Pilot calibration}\label{c.4.1-pilot-calibration-37-operators-k-1020}
 
-A 2026 Q3 operator-level pilot ran 12 PUTs $\times$ 37 operators (12
+A 2026 Q3 operator-level pilot ran 12 PUTs $\times$ 37 operators (36
+primary PUT-class operator pairs plus one CF structural-injection
+specialisation; the conceptual semantic family count remains five; 12
 \texttt{is\_key=True} at K=20, 25 at K=10; 470 trials total). Pilot
 precursor quantities: R\_sem (V1-V4 $\wedge$ operator\_match pass rate),
 D\_impl (median pairwise AST + literal + identifier Jaccard distance
@@ -860,6 +864,23 @@ monotone transformation (Romano 2006). Logit is strictly monotone on (0,
 1), so $\delta_{\mathrm{logit}} \equiv \delta_{\mathrm{raw}}$ is a construction result. \textbf{Not
 additional robustness evidence}; H2 robustness threats come from the main manuscript's 60-cell distribution results
 zero-mass dominance, not metric-scale choice.
+
+\textbf{Vacant-cell sensitivity.} Excluding the 9 vacant cells (cells
+with no exercised MR) leaves the aligned-versus-cross verdict unchanged.
+In v4 the analysis becomes n = 11 aligned and n = 40 cross with
+$\delta = 0.323$ (95\% CI [-0.011, 0.648]); the matching v3 slice gives
+$\delta = 0.270$ (95\% CI [-0.043, 0.595]). The exclusion widens the
+interval because the design is smaller, but it does not move H2 across
+the pre-registered Romano medium threshold.
+
+\textbf{Primary-MR withdrawal permutation-null.} The auxiliary c-class
+check pools 15 SMS values, shuffles labels over the $3 \times 5$ (PUT,
+MR) grid, and applies the max-over-five withdrawal rule with 10,000
+permutations (seed 42). The observed c-class mean is 0.314 versus null
+mean 0.349, one-sided $p = 0.989$
+(\path{data/results/c_class_permutation_v4.json}). This supports treating
+the primary-MR convention as a protocol choice rather than as evidence of
+a hidden c-class inflation effect.
 
 \subsection{Power Analysis under Observed and Stipulated Effects}\label{d.3-power-analysis-plug-in-and-stipulated-alternative}
 
@@ -1163,7 +1184,8 @@ the v4 grid \\
 }
 
 The protocol-asymmetry threat (dual-blind vs V1-V4 only) applies to the
-v3 $\to$ v4 source-axis contrast ($\Delta\delta = -0.009$).
+v3 $\to$ v4 source-axis contrast ($\Delta\delta = -0.009$, paired-role
+bootstrap 95\% CI [-0.238, 0.207]).
 
 \subsection{External / construct / conclusion threats}\label{f.2-external-construct-conclusion-threats}
 
@@ -1470,7 +1492,9 @@ real defects; the two generic baseline groups have nonzero detection in
 7/34 and 8/34 cases, and the two ablated variants miss 19/34 and 17/34
 cases, respectively, with 11 shared misses & Separates real-defect detection from aggregate mutant
 kill-rate \\
-Non-nesting cases & Four verified non-nesting defects spanning linear
+Non-nesting cases & Four verified non-nesting defects (A-LAPACK-004,
+A-OPENBLAS-001, B-POCKETFFT-002, and E-ORDINARYDIFFEQ-001) spanning
+linear
 algebra, FFT, and ordinary-differential-equation solvers & Supports the semantic-effect fiber view rather
 than a single scalar hierarchy \\
 \end{longtable}

@@ -562,6 +562,12 @@ carries RQ2.
 The empirical questions RQ3--RQ5 carry pre-registered hypotheses; RQ1 is
 answered by Theorem~\ref{thm:degeneration} and RQ2 by the Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3} structural audit, neither of
 which is a statistical hypothesis.
+The hypothesis definitions, primary-MR convention, and statistical
+reporting hierarchy are frozen in
+\texttt{docs/experiment\_documentation/EXPERIMENT\_DESIGN.md} at commit
+\texttt{0f2509527f346f9433c3cf90959bb07d80601a23} and in the Zenodo
+replication package
+\href{https://doi.org/10.5281/zenodo.20250664}{10.5281/zenodo.20250664}.
 
 \begin{itemize}
 \tightlist
@@ -1360,7 +1366,13 @@ null over fully exchangeable c-class (PUT, MP) cell SMS values showed
 the resulting $\delta$ inflation to be statistically indistinguishable from
 random reselection of the c-class primary MP; the corresponding
 pre-registration of a primary-MP-selection rule on a fresh dataset is
-deferred to a follow-up study.
+deferred to a follow-up study. The null pools all 15 c-class cell SMS
+values, shuffles them over the three PUTs and five MR labels, recomputes
+the max-over-five primary choice per PUT, and averages the selected
+values. With 10,000 permutations (seed 42), the observed c-class aligned
+mean is 0.314, the null mean is 0.349, and the one-sided permutation
+probability of a null value at least as large as observed is 0.989
+(\path{data/results/c_class_permutation_v4.json}).
 
 \begin{figure}
 \centering
@@ -1640,6 +1652,11 @@ gate). Cross-source pool capacity: 37 operators $\times$ 3 sources $\times$ 3 tr
 equally (Claude 101, GPT 98, DeepSeek 99); final-stage rejection of
 duplicate and QA-failing mutants leaves the 292 that enter the v4 pool
 used for SMS and the AST audit.
+Here ``37 operators'' denotes the executable operator-specialisation
+inventory: 36 primary PUT-class operator pairs plus one CF
+structural-injection specialisation. The conceptual operator family
+count remains five (CE, OS, HP, TF, SI); CF is reported only as a
+specialised SI/structural-injection row in the AST-overlap audit.
 
 \textbf{Declared confound: protocol asymmetry.} v3 used the
 original Phase-1 dual-blind reviewer protocol (Claude generation +
@@ -1670,11 +1687,18 @@ enter the pool. We then randomly sample 20\% of the pool for manual
 review by scientific-computing researchers, and downgrade the entire
 batch to manual review if manual--reviewer inconsistency exceeds 10\%.
 Each cell produces 30--50 candidates and retains 10--15 mutants. The v4
-cross-source pool does \textbf{not} invoke the reviewer LLM, for cost
-and speed reasons; a fraction of the v3 $\to$ v4 source-axis shift may
-therefore reflect a quality decline rather than a source-diversity
-contribution. We declare this protocol asymmetry in Section~\ref{cross-source-contributes-mutant-quality-not-effect-size};
-full justification in Appendices C.2 and C.3).
+cross-source pool uses a different L0 execution path: it applies V1--V4
+mechanical validation, duplicate removal, and final QA rejection before
+SMS evaluation, but it does \textbf{not} invoke the reviewer LLM, for
+cost and speed reasons. Consequently v4 C5 (artefact) labels are
+assigned only after a killed mutant reaches LRCA artefact recheck, where
+a human reviewer inspects the mutant code, generation trace, and prompt
+history for over-injection or other mutator artefacts; they are not
+inherited from a blind LLM reviewer vote. A fraction of the v3 $\to$ v4
+source-axis shift may therefore reflect a quality decline rather than a
+source-diversity contribution. We declare this protocol asymmetry in
+Section~\ref{cross-source-contributes-mutant-quality-not-effect-size};
+full justification is in Appendices C.1--C.3.
 
 \textbf{Equivalence detection (E1 $\wedge$ E2).} For each mutant
 $s' \in \mathrm{mut}_j(S_i)$:
@@ -2038,18 +2062,30 @@ Cliff's $\delta \geq 0.474$ and an aligned-to-cross odds ratio
 $\geq 3.0$. Neither delta crosses the \citet{romano2006cliff}
 large-effect threshold 0.474, 0.323 and 0.314 both fall just below the
 \citet{romano2006cliff} medium threshold of 0.330, so the delta criterion fails. The
+Romano threshold is retained as the frozen decision anchor because it is
+the threshold recorded in the experiment design; we do not re-anchor the
+verdict post hoc to a Vargha--Delaney interpretation scale. The
 odds ratio is degenerate: because the cross-slice median SMS is exactly
 0 (table above), the median odds ratio is $+\infty$, so the ratio
 criterion is satisfied only trivially under zero-inflation and carries no
 evidential weight. H2 is therefore not met as a large-effect target. The
-contrast $\delta_{\mathrm{v4}} - \delta_{\mathrm{v3}} = -0.009$ (95\% CI covers
-zero) is too small to interpret as a stable LLM-source-diversity effect
+contrast $\delta_{\mathrm{v4}} - \delta_{\mathrm{v3}} = -0.009$ (paired-role
+bootstrap 95\% CI {[}-0.238, 0.207{]}) is too small to interpret as a stable LLM-source-diversity effect
 under the present asymmetric protocol: replacing a same-source pool with
 a three-LLM cross-source pool does not appreciably shift Cliff's delta
 within this design, but the exact source-diversity contribution requires
 a dual-blind v4 rerun. We frame H2 as an underpowered exploratory
 contribution and defer full verification to a follow-up study with a
 larger PUT sample.
+
+\textbf{Vacant-cell sensitivity.} Excluding the 9 cells marked vacant in
+Table~\ref{tab:p2-cells} gives the same H2 verdict. Under the frozen
+primary-MR convention, v4 has n = 11 aligned and n = 40 cross cells,
+$\delta = 0.323$ with 95\% CI {[}-0.011, 0.648{]}; v3 has
+$\delta = 0.270$ with 95\% CI {[}-0.043, 0.595{]}. The direction remains
+positive but still below 0.474, and the interval crosses zero once vacant
+cells are removed. The sensitivity is a denominator check, not a changed
+conclusion.
 
 This medium-effect placement is consistent with \citet{tip2025llmorpheus}
 LLMorpheus's medium-effect range on JavaScript LLM mutants, a contextual
@@ -2132,7 +2168,7 @@ Appendix D.3.
 
 \textbf{The source-axis contrast is underpowered too.} We did not run a
 separate power simulation for the source-axis contrast $\Delta\delta$ =
-−0.009 (CI covers zero); its estimand and dependence structure differ
+−0.009 (paired-role bootstrap 95\% CI {[}-0.238, 0.207{]}); its estimand and dependence structure differ
 from the aligned-vs-cross $\delta$, so the 49.1\% figure above does not
 transfer to it. The small design (n = 12 PUTs) leaves the −0.009 null
 consistent with a wide range of true source-diversity effects, so we
@@ -2300,8 +2336,8 @@ than measures adequacy (adjoint-arm reproduction-fidelity threat).
 \subsection{Cross-source contributes mutant quality, not effect size}\label{cross-source-contributes-mutant-quality-not-effect-size}
 
 Going from same-source to cross-source under the pre-registered
-primary-MP convention shifts Cliff's $\delta$ by only −0.009 (95\% CI covers
-zero). Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a
+primary-MP convention shifts Cliff's $\delta$ by only −0.009 (paired-role
+bootstrap 95\% CI {[}-0.238, 0.207{]}). Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a
 27\% relative increase), class-c mean SMS by \textbf{+91.5\%}, and
 class-d mean SMS by 38.3\%. Under an identical prompt template, three
 LLMs produce similar distributions for the aligned-vs-cross question.
@@ -2439,9 +2475,10 @@ coverage.
 This pattern is consistent with the construct separation predicted by the
 fiber view of Section~\ref{theory-fibers}. A mutant kill-rate is evidence about which sampled
 semantic effects an MR observes; it is not, by itself, a verdict on MR
-quality. The same industrial arm also records non-nesting cases in
-which generic baselines kill mutants that the pattern-derived relation is
-structurally blind to.
+quality. The same industrial arm gives concrete non-nesting
+counterexamples, A-LAPACK-004, A-OPENBLAS-001, B-POCKETFFT-002, and
+E-ORDINARYDIFFEQ-001, where generic baselines kill mutants that the
+pattern-derived relation can miss or match.
 Thus semantic mutation should be read as a certificate-bearing diagnostic
 for a declared semantic stratum, not as a scalar hierarchy in which one
 mutation family simply dominates another. This evidence therefore
@@ -2533,17 +2570,16 @@ strong claim that ``SMS is independent of PC'' or the strong claim that
 hypothesis for a future study (n $\geq$ 30 PUTs or refined PC operationalisation; full PC
 operationalisation in Appendix D.5).
 
-\subsection{Class-Level Stability across Sources}\label{h4-partial-across-same-source-and-cross-source}
+\subsection{Class-Level Stability and Source-Axis Interpretation}\label{h4-partial-across-same-source-and-cross-source}
 
-All four class means are positive in v3 (same-source) and v4
-(cross-source). Inter-class balance improves under cross-source (c
-+91.5\%, d +38.3\%), consistent with c / d classes having higher
-mutant-diversity demand than a / b. Mixed-effects unavailability
-(Singular) is a sample-size constraint at N = 60 / 12 PUTs, not evidence
-absence. \textbf{H3 verdict: not met}, the sign test is 3/4 (partial)
-under both v3 and v4 with the b-class inverted, and CV($\Delta$SMS)
-exceeds the 0.5 dispersion threshold. The Friedman main effect (chi\^{}2 =
-15.30, p = 0.0041) speaks to MP differentiation, not H3 direction.
+Section~\ref{rq3-cross-class-consistency-and-friedman} gives the formal
+H3 verdict, so this deployment-facing reading is deliberately shorter:
+cross-source pooling improves the c- and d-class means (+91.5\% and
++38.3\%), consistent with c / d classes having higher mutant-diversity
+demand than a / b, but it does not repair the b-class inversion or the
+CV($\Delta$SMS) dispersion failure. The mixed-effects singularity and the
+Friedman fallback are treated once, in that RQ5 result section, not as a
+second independent result here.
 
 \subsection{Practical Interpretation and Deployment Scope}\label{stakeholder-analysis-single-output-kernels-scope}
 
@@ -2888,7 +2924,8 @@ instantiation, not as prerequisites for the SMS definition.
   cross separation. Holding the c-class primary metamorphic relation at
   the pre-registered partial-order meta-pattern, three-LLM pooling under
   an identical prompt
-  shifts Cliff's \(\delta\) by only -0.009 (95\% CI covers zero), while
+  shifts Cliff's \(\delta\) by only -0.009 (paired-role bootstrap 95\%
+  CI {[}-0.238, 0.207{]}), while
   raising mean C1\_share by 27\%, class-c mean SMS by 91.5\%, and
   class-d mean SMS by 38.3\%.
 \item
