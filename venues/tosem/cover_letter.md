@@ -13,8 +13,18 @@ backward-compatible adequacy metric that preserves the denominator logic of
 classical mutation testing while making the observed semantic effect explicit
 for metamorphic-relation sets. The empirical evidence combines a 12-program
 stress test, an AST-normalized syntactic-overlap audit, boundary and adjoint
-arms, and a narrow result-level real-defect evidence slice used only to support
-construct separation.
+arms, and an industrial real-defect arm: result-level statistics over
+reproduced, MR-detectable defects from widely used scientific-computing
+libraries, used to confirm the paper's construct separation among aggregate
+kill-rate, semantic alignment, and real-defect detection.
+
+Related-work disclosure. The industrial arm draws its result-level statistics
+from a defect dataset curated and archived by the authors (Zenodo DOI
+10.5281/zenodo.21203424). Benchmark construction, curation protocol, and
+governance are not claimed as contributions of this manuscript and are
+intended for a separate benchmark/artifact paper; the two manuscripts do not
+overlap in claimed contributions (metric and construct validation here;
+dataset construction methodology there).
 
 An earlier version is available on arXiv as arXiv:2605.17437. The current
 submission substantially sharpens the semantic-mutation framework, adds
@@ -41,8 +51,9 @@ establishes the degeneration of SMS to classical mutation score under the syntac
 limit. Third, it instantiates five semantic operator families for
 scientific-computing kernels and audits their first-order syntactic
 reachability. Fourth, it separates MR alignment, aggregate kill rate, and
-real-defect detection using boundary, adjoint, and result-level real-defect
-evidence. Fifth, it narrows the claim from benchmark construction to construct
+real-defect detection using boundary and adjoint arms plus an industrial
+real-defect arm with a pre-registered four-group mutation comparison over
+reproduced library defects. Fifth, it narrows the claim from benchmark construction to construct
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 

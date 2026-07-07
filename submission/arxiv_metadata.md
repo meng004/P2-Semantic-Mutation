@@ -42,8 +42,17 @@ Conclusion. SMS is a backward-compatible adequacy metric for domain-semantic met
 ## 4. Comments
 
 ```
-Submitted to Information and Software Technology (IST), Elsevier. Manuscript: 93 pages in elsarticle review mode (12pt double-spaced, ~28-35 pp typeset). Supplementary code and 12-PUT pool at https://github.com/meng004/P2-Semantic-Mutation (replace placeholder with real URL once published).
+93 pages in elsarticle review mode (12pt double-spaced, ~28-35 pp typeset), 3 figures. Replication package: https://doi.org/10.5281/zenodo.20250664
 ```
+
+> **2026-07-07 修订（阻断项修复）**：旧版 Comments 声称 "Submitted to
+> Information and Software Technology (IST), Elsevier"，但该文从未实际投出
+> IST。此句已公开显示在 arXiv:2605.17437 页面上，与任何期刊投稿信中的
+> "not under simultaneous archival review elsewhere" 声明表面冲突，构成
+> desk-reject 风险。**动作**：向任何期刊提交之前，必须先在 arXiv 作者
+> 面板更新该文的 Comments 字段为上方新文本（元数据修改需 arXiv 审核，
+> 约 1-2 个工作日生效），确认页面更新后再投。今后 Comments 字段只写
+> 页数 / 图数 / artifact DOI 等稳定事实，不写投稿去向。
 
 ## 5. Categories
 

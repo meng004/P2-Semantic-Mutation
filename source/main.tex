@@ -123,7 +123,7 @@
 \item Semantic operators define effect fibers for metamorphic-relation (MR) adequacy
 \item 12 Programs Under Test (PUTs), 60 cells: 5.14\% Abstract Syntax Tree (AST) overlap
 \item Hyperparameter, Structural Injection, and Trajectory Flip are unreachable by first-order defaults
-\item Real-defect evidence separates kill-rate, semantic alignment, and defect detection
+\item An industrial real-defect arm separates kill-rate, alignment, and defect detection
 \item A strong/weak metamorphic-relation boundary maps false positives and false negatives
 \item An adjoint extension arm shows strong relations detecting real adjoint defects
 \end{highlights}
@@ -131,8 +131,8 @@
 \begin{abstract}
 \noindent\textbf{Context.} Metamorphic Testing (MT) helps software engineers test scientific programs without full test oracles, but classical Mutation Score (MS) remains syntactic. It does not say whether a metamorphic-relation set observes domain-semantic effects such as conservation, monotonicity, convergence, trajectory, or fidelity-order violations.
 \textbf{Objective.} We introduce Semantic Mutation Score (SMS), a backward-compatible adequacy metric for declared semantic strata. The contribution is a metric and certificate model, not a new LLM mutator or benchmark release.
-\textbf{Method.} We define five semantic operator families and instantiate them on 12 Programs Under Test (PUTs) across five meta-patterns. Validation combines an analytical SMS-to-MS degeneration result, a 60-cell empirical audit, an Abstract Syntax Tree (AST)-normalised comparison with default first-order syntactic mutation, a diagnostic root-cause layer, a strong/weak metamorphic-relation boundary study, and a compact real-defect evidence slice. The claims are scoped to single-output scientific-computing kernels.
-\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered large-effect threshold is not met and suspect mass is high, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. The real-defect evidence slice separates aggregate kill-rate from semantic alignment and defect detection.
+\textbf{Method.} We define five semantic operator families and instantiate them on 12 Programs Under Test (PUTs) across five meta-patterns. Validation combines an analytical SMS-to-MS degeneration result, a 60-cell empirical audit, an Abstract Syntax Tree (AST)-normalised comparison with default first-order syntactic mutation, a diagnostic root-cause layer, a strong/weak metamorphic-relation boundary study, and an industrial real-defect arm built on reproduced defects from widely used scientific-computing libraries. The SMS instantiation is scoped to single-output scientific-computing kernels.
+\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered large-effect threshold is not met and suspect mass is high, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. On the industrial arm, a pre-registered four-group mutation comparison and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection can rank the same relations in opposite orders, confirming the paper's construct separation on real defects.
 \textbf{Conclusion.} SMS gives software-testing researchers a reproducible way to report which declared semantic effects an MR set observes, misses, or kills for non-semantic reasons. Its value is diagnostic and construct-level, not a claim of universal dominance.
 \end{abstract}
 
@@ -172,14 +172,16 @@ strictly bounded to single-output float-to-float kernels: each
 Program Under Test (PUT) is under 2 KB. We do not claim industrial transfer
 for multi-output software in this paper.
 
-A compact real-defect evidence slice then checks the same semantic
-distinction developed here: mutation kill-rate, semantic stratum
+An industrial real-defect arm then tests the same semantic
+distinction developed here on reproduced defects from widely used
+scientific-computing libraries: mutation kill-rate, semantic stratum
 alignment, and real-defect detection are related but different
-constructs. The slice strengthens the semantic-mutant argument at result
-level; it is not presented as a reusable benchmark artifact. The slice was
-selected only after defect/MR detectability verification and is reported
-here at result level. Candidate mining, rejected cases, repository
-tooling, and benchmark release are outside this manuscript.
+constructs. The arm strengthens the semantic-mutant argument at result
+level; it is not presented as a reusable benchmark artifact. Its cases
+were admitted only after defect/MR detectability verification and are
+reported here at result level. Candidate mining, rejected cases,
+repository tooling, and benchmark release are outside this manuscript
+and remain contributions of the archived dataset it draws on.
 
 The intended reader is a software-testing researcher or practitioner who
 needs to decide whether a set of MRs is adequate for a declared semantic
@@ -234,13 +236,13 @@ The empirical evidence has four roles. The 12-PUT audit is the main
 stress test of the SMS construction. The AST audit tests whether the
 semantic-mutant space is reachable by default first-order syntactic
 mutation. The boundary and adjoint arms map when strong MRs do, and do
-not, detect semantic effects. The real-defect slice checks whether the
-construct distinctions remain visible on verified MR-detectable defects.
+not, detect semantic effects. The industrial real-defect arm checks whether
+the construct distinctions remain visible on verified MR-detectable defects.
 These parts should be read in sequence: the theory defines the metric,
 the 12-PUT audit stress-tests one empirical instantiation, the boundary
-and adjoint arms test the strong-MR duality, and the real-defect slice
+and adjoint arms test the strong-MR duality, and the industrial arm
 checks whether the same construct separation appears outside synthetic
-mutants.
+mutants and outside author-written kernels.
 
 \begin{table}[t]
 \caption{Evidence-to-claim map for the empirical argument.}
@@ -267,8 +269,9 @@ SMS exposes adequacy boundaries & H1--H4 failures, zero-mass cells,
 root-cause labels, and strong-boundary false-positive / false-negative
 cases & Failed thresholds are treated as empirical success criteria \\
 Real-defect behaviour is distinct from aggregate kill-rate & The
-result-level real-defect slice separates semantic alignment, aggregate
-kill-rate, and defect detection & The manuscript contributes a reusable
+industrial real-defect arm: a pre-registered four-group mutation
+comparison plus a per-defect detection face on reproduced library
+defects & The manuscript contributes a reusable
 real-defect benchmark \\
 \bottomrule
 \end{tabular}
@@ -278,7 +281,7 @@ real-defect benchmark \\
 This table also marks the paper's non-claims. We do not claim that SMS
 is universally superior to classical MS, that pattern-derived MRs
 dominate all generic relations, that higher-order mutation has been
-refuted, that the real-defect slice is a benchmark contribution, or that
+refuted, that the industrial real-defect arm is a benchmark contribution, or that
 the reported SMS values define industrial acceptance thresholds.
 
 \begin{figure}
@@ -516,14 +519,19 @@ carries RQ2.
   denominator across the 60 PUT-MP-operator cells, as reflected by
   inst\_rate, equiv\_rate, C1\_share, and survive\_rate?
 \item
-  \textbf{RQ4 (Discrimination, LLM-source decoupling, and the strong
-  boundary).} Does SMS discriminate operator-MP aligned slices (j=k) from
+  \textbf{RQ4 (Discrimination, LLM-source decoupling, the strong
+  boundary, and industrial construct separation).} Does SMS discriminate
+  operator-MP aligned slices (j=k) from
   cross slices (j$\neq$k); does cross-source LLM pooling under an
   identical prompt move the aligned-versus-cross effect size, or only the
-  kill-set quality; and where does the strong boundary of Proposition 2
+  kill-set quality; where does the strong boundary of Proposition 2
   lie empirically, on which real and textbook programs does a strong
   MR kill the genuine fault, and where does the duality fail as a weak-MR
-  false positive or as a surviving non-equivalent mutant?
+  false positive or as a surviving non-equivalent mutant; and does the
+  construct separation among aggregate kill-rate, semantic alignment,
+  and real-defect detection remain visible on an industrial arm of
+  reproduced, MR-detectable defects from widely used
+  scientific-computing libraries?
 \item
   \textbf{RQ5 (Cross-class consistency).} Does the aligned-versus-cross
   SMS pattern generalise across four representative classes of
@@ -2286,15 +2294,25 @@ v4 micro-shift of −0.009 estimates LLM source diversity under a fixed
 prompt, while MR-design adequacy at the operator-MP level governs the
 kill rate in this design.
 
-\textbf{Real-defect evidence slice.} A 34-case real-defect evidence
-slice gives a useful check on this interpretation without changing the
-paper into a benchmark article. We report verified result totals only:
+\subsection{RQ4: Industrial Construct-Separation Evidence}\label{rq4-industrial-construct-separation}
+
+The industrial arm answers the last clause of RQ4: whether the
+construct separation among aggregate kill-rate, semantic alignment, and
+real-defect detection remains visible outside synthetic mutants and
+outside author-written kernels. The arm is a 34-case study over
+reproduced, MR-detectable defects from widely used scientific-computing
+libraries, drawn from an archived dataset
+(\href{https://doi.org/10.5281/zenodo.21203424}{10.5281/zenodo.21203424});
+each case pairs a buggy and a fixed revision and registers the
+metamorphic relation that discriminates the two. We report verified
+result totals only, and the arm does not change the
+paper into a benchmark article:
 defect mining, rejected cases, repository tooling, and benchmark release
-are left outside the paper. The result-level evidence summary used here is included
+are left outside the paper and remain contributions of the dataset. The result-level evidence summary used here is included
 in the supplementary evidence package: it records the five-stratum counts,
 the aggregate mutation-phase statistics, the 30/30 real-defect face, and
 the non-nesting case identifiers, but not candidate mining or tooling. In
-this mutation-phase slice, the
+the pre-registered four-group mutation-phase comparison, the
 pattern-derived MR group beats
 literature-generic baselines under the primary all-mutant denominator
 (mean paired difference +0.101, Holm-adjusted \(p=0.046\), Cliff's
@@ -2306,7 +2324,7 @@ reported mutation-suite face (30/30), whereas generic and random
 relations are mostly blind, and ablations that look close in aggregate
 kill-rate often lose the real defect.
 
-The slice was selected by a fixed inclusion rule: a case had to have a
+The arm's cases were selected by a fixed inclusion rule: a case had to have a
 verified semantic fault, an executable pre/post or faithful contrast, and
 an MR-detectable behavioral difference under the declared stratum.
 Cases requiring unsupported build stacks, lacking an executable contrast,
@@ -2319,7 +2337,7 @@ claim about real-defect coverage.
 This pattern is consistent with the construct separation predicted by the
 fiber view of Section~\ref{theory-fibers}. A mutant kill-rate is evidence about which sampled
 semantic effects an MR observes; it is not, by itself, a verdict on MR
-quality. The same real-defect slice also records non-nesting cases in
+quality. The same industrial arm also records non-nesting cases in
 which generic baselines kill mutants that the pattern-derived relation is
 structurally blind to.
 Thus semantic mutation should be read as a certificate-bearing diagnostic
@@ -2478,9 +2496,9 @@ Internal & Real defects reproduced through extracted diffs (no
 \texttt{arm64} wheel); arm is confirmatory on hand-constructed,
 low-cardinality pools, not a high-adequacy discovery; scipy \#8900 is
 shared with the Section~\ref{rq4-strong-boundary} boundary study & Section~\ref{rq4-adjoint-extension-arm} \\
-Real-defect evidence & Real-defect evidence-slice boundary & External & Used only as a
-compact support slice for construct separation; reusable benchmark
-construction deferred outside this manuscript & Section~\ref{decoupling-between-r_sem-and-r_kill} \\
+Real-defect evidence & Industrial real-defect arm boundary & External & Used at result
+level to confirm construct separation; reusable benchmark
+construction deferred outside this manuscript & Section~\ref{rq4-industrial-construct-separation} \\
 \end{longtable}
 }
 
@@ -2550,12 +2568,17 @@ construction deferred outside this manuscript & Section~\ref{decoupling-between-
   a declared semantic-effect class. This is the main gap between SMS and
   a certificate-bearing semantic mutation framework.
 \item
-  \textbf{Real-defect evidence is used narrowly.} The real-defect slice
-  strengthens this paper's construct argument by showing that mutant
+  \textbf{Real-defect evidence is used narrowly.} The industrial
+  real-defect arm strengthens this paper's construct argument by showing
+  that mutant
   kill-rate, semantic alignment, and real-defect detection can separate
-  in practice. We do not claim benchmark construction, candidate curation,
+  in practice on reproduced library defects. We do not claim benchmark
+  construction, candidate curation,
   repository tooling, or corpus release as contributions of this paper;
-  those are deferred to post-publication artifact work.
+  those remain contributions of the archived dataset the arm draws on.
+  The semantic-mutant SMS instantiation itself is evaluated on the
+  12 controlled kernels only; extending SMS computation to the
+  industrial cases is registered follow-up work on the same dataset.
 \end{enumerate}
 
 \subsection{Statistical-Modelling Capacity}\label{statistical-modelling-capacity-at-n-60-cells-12-puts}
@@ -2688,13 +2711,16 @@ instantiation, not as prerequisites for the SMS definition.
   and Pattern Coverage is 0.163 at \(n = 12\), so orthogonality remains
   a future hypothesis.
 \item
-  The real-defect slice supports construct separation beyond the small
-  PUT audit. Pattern-derived relations detect all 30 tabled real defects
-  in the reported face, while aggregate mutant kill-rate gives only a
-  modest advantage over literature-generic baselines and non-nesting
-  cases remain. Thus kill-rate, semantic-stratum alignment, and
+  The industrial real-defect arm supports construct separation beyond
+  the small PUT audit. Pattern-derived relations detect all 30 tabled
+  real defects
+  in the reported face, while the pre-registered four-group comparison
+  shows only a modest aggregate kill-rate advantage
+  over literature-generic baselines, and non-nesting
+  cases remain in both directions. Thus kill-rate, semantic-stratum
+  alignment, and
   real-defect detection should be interpreted as related but distinct
-  constructs.
+  constructs, on industrial code and not only on the controlled kernels.
 \item
   The remaining failed thresholds delimit the current instantiation.
   Operator implementability H1 is not met because only Hyperparameter
@@ -2743,6 +2769,12 @@ lrca\_v4\_mp5\_recompute, rq2\_power\_stipulated,
 cosmic\_ray\_12put\_ast\_diff), mutant pools, AVP source, and analysis
 scripts are archived on Zenodo under DOI
 \href{https://doi.org/10.5281/zenodo.20250664}{10.5281/zenodo.20250664}.
+The industrial real-defect arm (Section~\ref{rq4-industrial-construct-separation}) draws its result-level
+statistics from a separately archived defect dataset maintained by the
+authors, available on Zenodo under DOI
+\href{https://doi.org/10.5281/zenodo.21203424}{10.5281/zenodo.21203424};
+benchmark construction and governance are contributions of that dataset,
+not of this paper.
 An earlier version of this work is available on arXiv:
 \href{https://arxiv.org/abs/2605.17437}{arXiv:2605.17437} [cs.SE].
 For peer review, an anonymized read-only mirror of the repository can
