@@ -1791,6 +1791,21 @@ H4 (LRCA mass) requires mean suspect\_share $\leq$ 0.20. SMS variants
 (SMS, SMS\_unfiltered) and construction lemmas are in
 \textbf{Appendix D.1}.
 
+The results are reported in RQ order. RQ3 is answered in
+Section~\ref{rq1-60-cell-distribution}. RQ4 spans the aligned-versus-cross
+comparison (Section~\ref{rq2-aligned-vs-cross-cliffs-delta}), its power
+analysis (Section~\ref{rq2-stipulated-alternative-power}), the root-cause
+diagnostics (Section~\ref{h5-lrca-mass}), the strong-boundary and adjoint
+studies (Sections~\ref{rq4-strong-boundary} and~\ref{rq4-adjoint-extension-arm}),
+the cross-source analysis
+(Sections~\ref{cross-source-contributes-mutant-quality-not-effect-size}
+and~\ref{decoupling-between-r_sem-and-r_kill}), and the industrial
+construct-separation arm
+(Section~\ref{rq4-industrial-construct-separation}). RQ5 follows in
+Sections~\ref{rq3-cross-class-consistency-and-friedman}
+and~\ref{rq4-sms-vs-pattern-coverage}, with the class-level stability
+discussion in Section~\ref{h4-partial-across-same-source-and-cross-source}.
+
 Because the 60 cells share 12 PUTs and are not independent, each
 reported statistic carries an explicit inference permission
 (Table~\ref{tab:inference-permissions}); no number in this paper should
@@ -2068,91 +2083,6 @@ robustness evidence. The genuine robustness threats to the H2 verdict
 come from the zero-mass dominance (Section~\ref{rq1-60-cell-distribution}), not from any metric-scale
 choice.
 
-\subsection{RQ5: Cross-Class Consistency}\label{rq3-cross-class-consistency-and-friedman}
-
-{\def\LTcaptype{table} % do not increment counter
-\begin{longtable}[]{@{}lll@{}}
-\caption{RQ5: Cross-class consistency and Friedman statistics.}\label{tab:p2-12}\\
-\toprule\noalign{}
-Class & Mean SMS (v3) & Mean SMS (v4) \\
-\midrule\noalign{}
-\endfirsthead
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-a (numeric) & 0.067 & 0.067 \\
-b (probabilistic) & 0.156 & 0.148 \\
-c (surrogate) & 0.047 & \textbf{0.089 (+91.5\%)} \\
-d (ML) & 0.081 & 0.112 (+38.3\%) \\
-\end{longtable}
-}
-
-Sign test (within-class aligned mean − cross mean, sign = +): \textbf{3
-/ 4 (partial) under both v3 (same-source) and v4 (cross-source)}; the
-b-class is the inverted cell.
-
-\textbf{H3 verdict: not met.} H3 carries two pre-registered criteria, a
-within-class sign test of 4/4 and CV($\Delta$SMS) $<$ 0.5. The sign test
-is 3/4 (partial) under both v3 and v4, cross-source pooling does not
-flip the b-class inversion, so the consistency criterion fails. The
-per-class effects $\Delta$SMS\_c (aligned mean $-$ cross mean) span from
-negative in the inverted class to large positive elsewhere, giving
-CV($\Delta$SMS) well above 1, far exceeding the 0.5 dispersion threshold,
-so the dispersion criterion also fails.
-
-The mixed-effects primary model
-\texttt{sms\ \textasciitilde{}\ C(class)\ *\ C(operator)\ +\ (1\ \textbar{}\ put)}
-returned Singular matrix; the fallback
-\texttt{sms\ \textasciitilde{}\ C(class)\ +\ C(operator)\ +\ (1\ \textbar{}\ put)}
-had PUT random-intercept variance hit boundary 0 (degenerate). We
-therefore use Friedman as the non-parametric formal alternative:
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{PUT (n=12) $\times$ MP (k=5): chi\^{}2 = 15.30, p = 0.0041}
-  (significant).
-\item
-  MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
-\item
-  Per-class Friedman with \textbf{Bonferroni $\times$ 4 correction}: a
-  1.000 / b \textbf{0.116} / c 1.000 / d 1.000, no per-class
-  result remains significant after correction. Kendall's W effect sizes:
-  a 0.333 (small) / b 0.898 (large concordance, but caveat: N=3 per
-  class makes this label nominal only) / c 0.333 / d 0.417.
-\end{itemize}
-
-\textbf{Caveat.} Friedman tests ``are MP rank differences present''
-(averaged over PUTs); H3 tests ``is direction consistent across 4
-classes''. These are logically independent. H3 stands on the Section~\ref{rq3-cross-class-consistency-and-friedman} sign
-test; per-class Friedman is descriptive only (small N=3 per class).
-
-\subsection{RQ5: Semantic-Mutation Score and Pattern Coverage}\label{rq4-sms-vs-pattern-coverage}
-
-\textbf{Status.} The SMS--Pattern-Coverage relationship, a descriptive
-sub-question of RQ5, is reported as a descriptive observation, not a
-hypothesis test, because n = 12 places the 95\% Spearman CI at roughly
-{[}−0.5, +0.6{]}, so the test cannot distinguish zero,
-moderate-positive, or moderate-negative correlation. The numbers below
-are recorded so that a future study (n $\geq$ 30 PUTs) can pre-register a directional
-hypothesis.
-
-Pattern Coverage (PC) per PUT = \#triggered (MP\_k, R\_outcome) cells /
-10. Range {[}0.500, 1.000{]}, mean 0.733. Pairing with mean SMS over 5
-MPs: Spearman rho = \textbf{0.163} (p = 0.613); Kendall tau = 0.136 (p =
-0.568); n = 12.
-
-\textbf{Statistical-power caveat first.} At n = 12, Spearman's 95\% CI
-is approximately {[}-0.5, +0.6{]} (Fisher-z approximation, a rough
-small-sample heuristic); the test cannot distinguish ``zero
-correlation'' from ``moderate positive correlation'' or ``moderate
-negative correlation''. p = 0.61 / 0.57 does \textbf{not} support the
-strong claim that ``SMS is independent of PC'' or the strong claim that
-``SMS is strongly correlated with PC''. The conservative finding is
-\emph{no detectable correlation at n = 12}; orthogonality is a
-hypothesis for a future study (n $\geq$ 30 PUTs or refined PC operationalisation; full PC
-operationalisation in Appendix D.5).
-
 \subsection{RQ4: Root-Cause Diagnostic Results}\label{h5-lrca-mass}
 
 \begin{table}[t]
@@ -2424,6 +2354,91 @@ for a declared semantic stratum, not as a scalar hierarchy in which one
 mutation family simply dominates another. This evidence therefore
 strengthens the paper's main argument while keeping benchmark construction
 outside the manuscript's contribution boundary.
+
+\subsection{RQ5: Cross-Class Consistency}\label{rq3-cross-class-consistency-and-friedman}
+
+{\def\LTcaptype{table} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\caption{RQ5: Cross-class consistency and Friedman statistics.}\label{tab:p2-12}\\
+\toprule\noalign{}
+Class & Mean SMS (v3) & Mean SMS (v4) \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+a (numeric) & 0.067 & 0.067 \\
+b (probabilistic) & 0.156 & 0.148 \\
+c (surrogate) & 0.047 & \textbf{0.089 (+91.5\%)} \\
+d (ML) & 0.081 & 0.112 (+38.3\%) \\
+\end{longtable}
+}
+
+Sign test (within-class aligned mean − cross mean, sign = +): \textbf{3
+/ 4 (partial) under both v3 (same-source) and v4 (cross-source)}; the
+b-class is the inverted cell.
+
+\textbf{H3 verdict: not met.} H3 carries two pre-registered criteria, a
+within-class sign test of 4/4 and CV($\Delta$SMS) $<$ 0.5. The sign test
+is 3/4 (partial) under both v3 and v4, cross-source pooling does not
+flip the b-class inversion, so the consistency criterion fails. The
+per-class effects $\Delta$SMS\_c (aligned mean $-$ cross mean) span from
+negative in the inverted class to large positive elsewhere, giving
+CV($\Delta$SMS) well above 1, far exceeding the 0.5 dispersion threshold,
+so the dispersion criterion also fails.
+
+The mixed-effects primary model
+\texttt{sms\ \textasciitilde{}\ C(class)\ *\ C(operator)\ +\ (1\ \textbar{}\ put)}
+returned Singular matrix; the fallback
+\texttt{sms\ \textasciitilde{}\ C(class)\ +\ C(operator)\ +\ (1\ \textbar{}\ put)}
+had PUT random-intercept variance hit boundary 0 (degenerate). We
+therefore use Friedman as the non-parametric formal alternative:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{PUT (n=12) $\times$ MP (k=5): chi\^{}2 = 15.30, p = 0.0041}
+  (significant).
+\item
+  MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
+\item
+  Per-class Friedman with \textbf{Bonferroni $\times$ 4 correction}: a
+  1.000 / b \textbf{0.116} / c 1.000 / d 1.000, no per-class
+  result remains significant after correction. Kendall's W effect sizes:
+  a 0.333 (small) / b 0.898 (large concordance, but caveat: N=3 per
+  class makes this label nominal only) / c 0.333 / d 0.417.
+\end{itemize}
+
+\textbf{Caveat.} Friedman tests ``are MP rank differences present''
+(averaged over PUTs); H3 tests ``is direction consistent across 4
+classes''. These are logically independent. H3 stands on the Section~\ref{rq3-cross-class-consistency-and-friedman} sign
+test; per-class Friedman is descriptive only (small N=3 per class).
+
+\subsection{RQ5: Semantic-Mutation Score and Pattern Coverage}\label{rq4-sms-vs-pattern-coverage}
+
+\textbf{Status.} The SMS--Pattern-Coverage relationship, a descriptive
+sub-question of RQ5, is reported as a descriptive observation, not a
+hypothesis test, because n = 12 places the 95\% Spearman CI at roughly
+{[}−0.5, +0.6{]}, so the test cannot distinguish zero,
+moderate-positive, or moderate-negative correlation. The numbers below
+are recorded so that a future study (n $\geq$ 30 PUTs) can pre-register a directional
+hypothesis.
+
+Pattern Coverage (PC) per PUT = \#triggered (MP\_k, R\_outcome) cells /
+10. Range {[}0.500, 1.000{]}, mean 0.733. Pairing with mean SMS over 5
+MPs: Spearman rho = \textbf{0.163} (p = 0.613); Kendall tau = 0.136 (p =
+0.568); n = 12.
+
+\textbf{Statistical-power caveat first.} At n = 12, Spearman's 95\% CI
+is approximately {[}-0.5, +0.6{]} (Fisher-z approximation, a rough
+small-sample heuristic); the test cannot distinguish ``zero
+correlation'' from ``moderate positive correlation'' or ``moderate
+negative correlation''. p = 0.61 / 0.57 does \textbf{not} support the
+strong claim that ``SMS is independent of PC'' or the strong claim that
+``SMS is strongly correlated with PC''. The conservative finding is
+\emph{no detectable correlation at n = 12}; orthogonality is a
+hypothesis for a future study (n $\geq$ 30 PUTs or refined PC operationalisation; full PC
+operationalisation in Appendix D.5).
 
 \subsection{Class-Level Stability across Sources}\label{h4-partial-across-same-source-and-cross-source}
 
