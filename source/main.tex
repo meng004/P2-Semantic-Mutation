@@ -294,16 +294,26 @@ PUTs).}\label{fig:framework}
 
 Seven lines of prior work bracket the contribution of this paper.
 
+General MT foundations and surveys define the oracle-problem setting and
+the role of metamorphic relations in paired-test reasoning
+\citep{chen2018metamorphic,segura2016survey,liu2014alleviate}. Because
+our empirical subject class is scientific computing, we also take the
+scientific-software testing survey by \citet{kanewala2014scientific} as
+the nearest domain background.
+
 \textbf{(a) Classical mutation testing.} \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} and
 \citet{d461ab9482b7fb5eadd7e6cd2c6dffced8ede8b8} survey syntactic mutation. The Coupling Effect
 Hypothesis (CPH), that tests detecting simple faults also detect complex
-faults, underpins the use of MS as a fault proxy \citep{91b1f655c6e42c02eed722b213e3c03df2e2d75a,andrews2005mutation,just2014mutants}. We
+faults, underpins the use of MS as a fault proxy \citep{demillo1978hints,andrews2005mutation,just2014mutants}. We
 argue in Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3} that CPH holds within syntactic mutation but does not
 automatically extend across the syntactic-versus-domain-semantic
 boundary, even when it couples simple syntactic faults to complex
 syntactic faults. The Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3} empirical evidence (5.14\% AST overlap on 12
 PUTs, with HP, SI, and TF at 0/0/0) is the empirical witness for this
-boundary.
+boundary. The connection between correctness notions and test evidence
+also precedes modern mutation-score practice \citep{budd1982correctness};
+SMS inherits that concern but changes the adequacy object from a program
+test set to an MR set over admitted semantic mutants.
 
 \textbf{(b) Higher-order mutation.} \citet{c03829bdd1a6e45113092384bf0fa05a064ca54a} and \citet{kintis2018effective}
 study compositions of first-order syntactic mutants. We
@@ -444,7 +454,7 @@ certification layer is empirical and structural rather than
 machine-checkable proof-carrying.
 
 \textbf{Closest comparison.} The closest adjacent work is the
-Min-MR-Complete formulation \citep{ecf4ccd0f2897516b0205a4b1e35ea81b68aa277}, which uses
+Min-MR-Complete formulation \citep{li2026minmrcomplete}, which uses
 the same semantic-mutation family as the fault model for MR-subset
 completeness and identifies when class-level reasoning collapses to a
 mutant-level set-cover problem. The present paper differs in role: it
@@ -1095,7 +1105,7 @@ posterior & \textasciitilde60 \\
 \end{longtable}
 }
 
-The 12 PUTs are taken from the shared 12-PUT infrastructure \citep{ecf4ccd0f2897516b0205a4b1e35ea81b68aa277} but
+The 12 PUTs are taken from the shared 12-PUT infrastructure \citep{li2026minmrcomplete} but
 independently justified along four dimensions: library-stack coverage
 (numpy 2.4.4, scipy 1.17.1, scikit-learn 1.8.0); mathematical-structure
 coverage (8 of 12 chapters of \emph{Numerical Recipes}); overlap with
