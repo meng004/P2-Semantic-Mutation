@@ -45,7 +45,7 @@ PRIMARY_MP = {
 PUTS = ["a1", "a2", "a3", "b1", "b2", "b3",
         "c1", "c2", "c3", "d1", "d2", "d3"]
 MPS = [1, 2, 3, 4, 5]
-MP_LABELS = ["MP1\ncons.", "MP2\nmono.", "MP3\nconv.", "MP4\ntraj.", "MP5\np-ord."]
+MP_LABELS = ["Cons.", "Mono.", "Conv.", "Traj.", "P-ord."]
 
 plt.rcParams.update({
     "font.family": "sans-serif",

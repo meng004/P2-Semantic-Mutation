@@ -1172,7 +1172,7 @@ least one of (a), (b), (c).
 \begin{longtable}[]{@{}lccccc@{}}
 \caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns). $\bullet\bullet$ substantial (30 cells), $\bullet$ moderate (24 cells), $\circ$ vacant (6 cells; no MR is exercised).}\label{tab:p2-cells}\\
 \toprule\noalign{}
-PUT & MP\_1 cons. & MP\_2 mono. & MP\_3 conv. & MP\_4 traj. & MP\_5 p-ord. \\
+PUT & Conservation & Monotonicity & Convergence & Trajectory & Partial order \\
 \midrule\noalign{}
 \endfirsthead
 \endhead
@@ -1263,7 +1263,8 @@ The diagonal cells \texttt{j\ =\ k} form the H2-aligned slice, the
 off-diagonal cells form the cross slice, and the vacant cells \texttt{$\circ$}
 are not formally adjudicated.
 
-The c-class primary MP is held at the pre-registered choice (MP5)
+The c-class primary MP is held at the pre-registered choice (the
+partial-order meta-pattern)
 throughout this paper. All H1, H2, H3, and H4 verdicts are rendered
 under this configuration on v3 (same-source) and v4 (cross-source under
 an identical prompt). An earlier exploratory data-driven primary-MP
@@ -1534,10 +1535,10 @@ Use
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{v3} & Same-source (Claude Opus 4.6) & MP5 (pre-registered) & H2
+\textbf{v3} & Same-source (Claude Opus 4.6) & partial-order (pre-registered) & H2
 baseline (pre-registered primary) \\
 \textbf{v4} & \textbf{Cross-source} (Claude Opus 4.6 + GPT-5.4 +
-DeepSeek chat) & MP5 (held at pre-registered) & Isolate LLM-source
+DeepSeek chat) & partial-order (held at pre-registered) & Isolate LLM-source
 diversity \\
 \end{longtable}
 }
@@ -1875,10 +1876,11 @@ convention:
   \textbf{v3 (same-source, pre-registered):} delta = \textbf{0.323},
   95\% CI {[}0.017, 0.622{]}
 \item
-  \textbf{v4 (cross-source, c-class held at MP5):} delta =
+  \textbf{v4 (cross-source, c-class held at partial-order):} delta =
   \textbf{0.314}, 95\% CI {[}0.014, 0.622{]}. The cross-source pool
   aggregates Claude / GPT / DeepSeek under an identical prompt; the
-  c-class primary is held at the pre-registered MP5 so that the v3 $\to$ v4
+  c-class primary is held at the pre-registered partial-order
+  meta-pattern so that the v3 $\to$ v4
   contrast holds the prompt and primary-MP choice fixed. Because v4 uses
   mechanical gates rather than the v3 dual-blind reviewer step, the
   source-axis reading is qualified by the protocol-asymmetry analysis in
@@ -2271,7 +2273,8 @@ detect the mutant under that MR). Concretely, six cells show R\_sem $\geq$
 c2\_OS1 (polynomial $\to$ spline basis), c3\_HP1 (relu $\to$ tanh), c3\_TF1
 (max\_iter 1000 $\to$ 5), d1\_HP1 (MLP $\alpha$ 1e-4 $\to$ 1.0), and d3\_HP1 (LR C 1.0
 $\to$ 1e-4). In each, the mutant \emph{is} a valid hyperparameter-semantic
-injection, but the primary MP, MP5 asymptotic for the c-class and MP2
+injection, but the primary MP, partial-order (asymptotic) for the
+c-class and
 monotonicity for the d-class, is an asymptotic or statistical relation,
 and the parameter deviation it tolerates is wide enough to absorb the
 mutant.
@@ -2698,7 +2701,8 @@ instantiation, not as prerequisites for the SMS definition.
 \item
   Cross-source pooling changes mutant quality more than aligned-versus-
   cross separation. Holding the c-class primary metamorphic relation at
-  the pre-registered MP5, three-LLM pooling under an identical prompt
+  the pre-registered partial-order meta-pattern, three-LLM pooling under
+  an identical prompt
   shifts Cliff's \(\delta\) by only -0.009 (95\% CI covers zero), while
   raising mean C1\_share by 27\%, class-c mean SMS by 91.5\%, and
   class-d mean SMS by 38.3\%.
