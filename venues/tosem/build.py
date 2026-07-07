@@ -40,7 +40,7 @@ ABSTRACT = (
     "and a per-defect detection face show that aggregate kill-rate, semantic "
     "alignment, and real-defect detection can rank the same relations in "
     "opposite orders. SMS is therefore a construct-level diagnostic for "
-    "declared semantic strata, with its construct separation confirmed on "
+    "declared semantic strata, with its construct separation supported on "
     "industrial code."
 )
 

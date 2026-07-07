@@ -28,6 +28,8 @@ references.
 
 All raw data, JSON single sources of truth, mutant pools, AVP source, and
 analysis scripts are archived on Zenodo under DOI 10.5281/zenodo.20250664.
+The industrial real-defect arm draws its result-level statistics from a
+separately archived defect dataset, Zenodo DOI 10.5281/zenodo.21203424.
 
 ## Generative AI Disclosure
 
