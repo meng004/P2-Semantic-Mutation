@@ -2,8 +2,19 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-07-08（tosem-r3：Wave A-D 全闭合，TOSEM fast-impact 包可编译、submit-ready）
-**Stage:** **TOSEM fast-impact submit-ready (tosem-r3)**；2026-07-08 五角色评审 + 三路 Wave-D 验收：0 残留 blocker，acceptance-readiness 7.5/10（submit-now 区间）
+**Last synced:** 2026-07-08（study2 收官：双研究稿 submit-ready，TOSEM **Regular track**）
+**Stage:** **双研究稿 submit-ready（phase-K）**；终评 J1 7/10 + J2 8/10（minor 水平），六项 must-fix 全闭合
+
+**Study-2（2026-07-08 当日完成，预注册验证性研究）：**
+- 预注册 v1.1 冻结于数据前（commits 072a015/c904bba；**Zenodo 铸造待用户**，稿中已如实声明自证状态）
+- 30-PUT 池（18 新增盲编写）、{a2,b4} 校准试点（P1-P5 缺陷修复）、28-PUT 一次性验证性生成（774→756 admitted，747 盲评审，6 仲裁全 CONFIRM）
+- **判定（预冻结脚本，零调参）**：H2-1' CONFIRM（δ=+0.4295，单侧下界 +0.2653）| H1' CONFIRM（5/5 族）| H3' CONFIRM（3/4 类）| **H4' NOT_CONFIRMED**（suspect_share 0.1714，泄漏泛化到 TF/OS——真实发现，前置呈现）| H2-2 NOT-RUN（same-vendor 门控，无替代）
+- 事故台账：P6（track 默认值写覆 Study-1 文件，git restore 恢复）、P7（盲化断言拦截 docstring 泄漏，导出层脱敏）、D-A1（gated CLI 数据后补，披露为 deviation）——全部在 PILOT_LOG.md 与稿中披露
+- **正文 51 页 + 附录 24 页，超 fast-impact 45 页限 → 已转 TOSEM Regular track**（cover letter/declarations 已改）；AI 生成数据披露已如实改写；slot-label 透明句已加
+- 包：`submission/TOSEM_regular_20260708/`（tectonic 零警告）
+- **用户门槛项**：(a) Zenodo 铸造预注册与复制包；(b) 实际投稿操作；(c) 可选：跨厂商凭证到位后补跑 H2-2
+
+**（前史）tosem-r3 单研究版状态如下，已被双研究版取代：**
 
 **tosem-r3 摘要（commits 3014fa3 / 855df4a / d7ecb56 / 9337a8e）：**
 - **S5 purity 已验证**（不再是 unverified hedge）：σ 在 263/292=90.1% mutant 上单值；29 个多层例外全部来自 CF(9/9)+TF(20/54)；RQ2 off-diagonal 实测拆分 57:31；SSOT `data/results/s5_purity_v4.json`
