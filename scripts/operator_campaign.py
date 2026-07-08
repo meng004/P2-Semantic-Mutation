@@ -46,6 +46,25 @@ DOMAINS: dict[str, str] = {
     "d1": "Linear SVM binary classifier",
     "d2": "RBF SVM binary classifier",
     "d3": "Decision Tree binary classifier",
+    # Study-2 expansion (18 new PUTs); domains from PUT source docstrings.
+    "a4": "Gauss-Legendre quadrature of ∫₋₁¹(x+½t²)dt",
+    "a5": "Natural cubic-spline interpolation of sin(πt)",
+    "a6": "Brent root-finding for r³+r=4x-2",
+    "a7": "Tridiagonal SPD linear solve (Thomas/solve_banded)",
+    "a8": "Explicit fixed-step RK4 integrator for u'=-u",
+    "b4": "Nonparametric Efron bootstrap of a location shift",
+    "b5": "Acceptance-rejection sampling of a truncated Gaussian",
+    "b6": "Inverse-transform (quantile) exponential sampling",
+    "b7": "Self-normalised importance-sampling expectation",
+    "c4": "k-Nearest-Neighbours regression surrogate for arctan(3t)",
+    "c5": "Random-Forest regression surrogate for tanh(2t)",
+    "c6": "Thin-plate RBF interpolation surrogate for erf(t)",
+    "c7": "RBF-kernel epsilon-SVR surrogate for tanh(1.5t)",
+    "d4": "Gaussian Naive Bayes binary classifier",
+    "d5": "Linear Discriminant Analysis binary classifier",
+    "d6": "Quadratic Discriminant Analysis binary classifier",
+    "d7": "SGD logistic (log-loss) binary classifier",
+    "d8": "Gaussian Process (RBF) binary classifier",
 }
 
 

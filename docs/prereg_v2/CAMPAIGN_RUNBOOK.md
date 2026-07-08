@@ -1,0 +1,189 @@
+# Study-2 Campaign Runbook — cross-source dual-blind mutant generation
+
+**Status:** campaign machinery is READY. All steps below are executable the
+moment a valid `.env` is supplied. Nothing here has been run against a live LLM
+(no credentials at authoring time). This runbook is the single documented
+command sequence for Study-2 data generation.
+
+**Preconditions (all satisfied at authoring):**
+- Pre-registration frozen: `docs/prereg_v2/PREREGISTRATION_STUDY2.md` (§5
+  dual-blind protocol, §7 SSOT paths, master seed `20260708`, K=3).
+- PUT grid expanded 12→30 (`PUT_EXPANSION_IMPLEMENTATION.md`).
+- Operator registry expanded 37→91 specs
+  (`src/p2/mutators/operator_registry.py`): 37 original + 54 new (18 PUTs ×
+  3 ops), authored blind to mutation outcomes.
+- Full suite green: `PYTHONPATH=src python3 -m pytest tests/ -q` → 324 passed.
+- Offline dry-run proves the pipeline end-to-end minus the API (see §5).
+
+---
+
+## 1. Environment variables (`.env` at repo root)
+
+Copy `.env.example` → `.env` and fill in real values. Required keys
+(consumed by `src/p2/mutators/llm_client.py`):
+
+| Var | Role |
+|---|---|
+| `BLTCY_BASE_URL` / `BLTCY_API_KEY` | OpenAI-compatible proxy — Claude generator + GPT reviewer |
+| `DEEPSEEK_BASE_URL` / `DEEPSEEK_API_KEY` | DeepSeek generator + arbiter |
+
+`.env` is gitignored. Never commit real keys. The generator/reviewer family
+map is `claude → gpt → deepseek → claude` (ring rotation, §5: generator ≠
+reviewer ≠ arbiter on every item).
+
+Sanity-check credentials load before spending tokens:
+
+```bash
+PYTHONPATH=src python3 -c "from p2.mutators.llm_client import generator_claude, generator_gpt, generator_deepseek; [f() for f in (generator_claude, generator_gpt, generator_deepseek)]; print('credentials OK')"
+```
+
+---
+
+## 2. Command sequence (run in order)
+
+All commands assume repo root and a populated `.env`. Seeds/counts are the
+registered ones (seed `20260708`, K=3); do not override them.
+
+### 2.1 Mutant generation — cross-source arm (v4-style, 3 families)
+
+```bash
+PYTHONPATH=src python3 scripts/cross_source_campaign.py --arm cross --review
+```
+
+- 91 operators × 3 sources × K=3 = **819 generation trials**, each followed by
+  the §5 blind review (reviewer sees only mutant + operator spec + PUT source;
+  generator identity, arm label, and SMS are withheld) and arbitration on
+  disagreement.
+- Output cache: `data/operator_campaign/cache_cross/{op}_{source}_attempt{NN}.py`
+  + `_log.json` (per-trial metadata, incl. `review` verdicts).
+
+### 2.2 Mutant generation — same-source arm (v3-style, 1 family)
+
+```bash
+PYTHONPATH=src python3 scripts/cross_source_campaign.py --arm same --review
+```
+
+- 91 operators × 1 source × K=3 = **273 generation trials**, identical review
+  pipeline. This is the asymmetry fix (L4): both arms score through the *same*
+  dual-blind protocol, so any Δδ is attributable to source diversity, not to a
+  review-quality drop.
+
+> Both arms write into the same cache dir with distinct source tags; keep the
+> arms' outputs separated for Δδ by tagging (the same-source arm uses only the
+> `claude` tag). Commit the review labels to
+> `data/operator_campaign/cache_cross/` **before** any SMS is computed (§5
+> "freeze then score"; analyst blindness).
+
+### 2.3 Build per-PUT mutant pools (dedup / proportional selection)
+
+```bash
+POOL_VERSION=v4 PYTHONPATH=src python3 scripts/build_pools.py   # cross arm  → data/mutants/{put}_pool_v4/
+POOL_VERSION=v3 PYTHONPATH=src python3 scripts/build_pools.py   # same arm   → data/mutants/{put}_pool_v3/
+```
+
+`build_pools.py` reads `POOL_VERSION` (v4 = `cache_cross`, v3 = `cache`) and
+calls `p2.mutators.pool_builder.select_mutants_for_put` (seed `20260708`) to
+select the registered N valid mutants per PUT (v4 = 12, v3 = 30) proportionally
+across the operators.
+
+### 2.4 SMS scoring — Track-2 full 30×5 = 150-cell matrix
+
+```bash
+P2_PRIMARY_VERSION=v3 PYTHONPATH=src python3 scripts/sms_campaign.py --track 2 --workers 6 \
+    --out data/results/sms_track2_v5.json
+```
+
+Runs V1–V4 + AVP/equiv + SMS bookkeeping per cell. `P2_PRIMARY_VERSION=v3` is
+mandatory (§4: the deterministic class-indexed primary rule; the v3b path is
+prohibited in Study 2).
+
+---
+
+## 3. Cost & runtime estimate (anchored to Study-1 logs)
+
+From `data/operator_campaign/cache_cross/_log.json` (6 ops × 3 × K=3 = 54
+trials) and `campaign_log.json` (37 ops, K=10/20):
+
+| Quantity | Study-1 observed | Study-2 projection |
+|---|---|---|
+| Gen tokens / trial | ~559 prompt + ~338 completion ≈ **900** | same |
+| Latency / trial | ~7.2 s (3 sources parallel → ~3.5 s wall) | same |
+| Gen trials | 54 (pilot) | **819 (cross) + 273 (same) = 1 092** |
+| Review round-trips | n/a (v4 was mechanical-only) | ~1 / passed mutant; pass rate ≈ 35 % → ~**380** reviews + arbiter subset |
+| Total tokens | 48 k (pilot) | gen ≈ 1.0 M + review ≈ 0.4 M ≈ **1.4 M** |
+| Wall time @ concurrency 20 | 190 s (54 trials) / 999 s (37 ops K≈13) | **~2–4 h** (generation + review dominate) |
+
+Dollar cost depends on the proxied model prices; at ~1.4 M mixed tokens this is
+a **small single-digit-dollar to low-tens-of-dollars** campaign, not a large
+spend. Budget for retries (transient 429/timeout; `async_llm` retries 3× with
+backoff).
+
+---
+
+## 4. Output SSOT paths (registration §7) and downstream analysis
+
+| Artefact | SSOT path |
+|---|---|
+| SMS pool (30×5) | `data/results/sms_track2_v5.json` |
+| Aligned/cross Cliff's δ | `data/results/rq2_cliffs_delta_v5.json` |
+| Dual-blind Δδ (both arms) | `data/results/dualblind_delta_delta_v5.json` |
+| Industrial per-case (frozen census) | `data/results/industrial_percase_v2.json` |
+| Industrial stats | `data/results/industrial_stats_v2.json` |
+| Power reference (this registration) | `data/results/power_study2.json` |
+
+Registered analysis scripts that consume the SSOTs (run after generation):
+
+```bash
+# H2-1 aligned-vs-cross δ (bootstrap lower bound, seed 20260708)
+PYTHONPATH=src python3 scripts/compute_rq2.py --in data/results/sms_track2_v5.json \
+    --out data/results/rq2_cliffs_delta_v5.json
+# H2-2 dual-blind Δδ (paired-role bootstrap) — registered script to author:
+PYTHONPATH=src python3 scripts/compute_dualblind_delta.py     # §7: new script
+# H2-3/H2-4 industrial (Wilcoxon Holm-3 + Fisher incidence) on frozen census:
+PYTHONPATH=src python3 scripts/compute_industrial_stats.py    # §7: on industrial_percase_v2
+PYTHONPATH=src python3 scripts/compute_h2_incidence.py
+```
+
+`compute_dualblind_delta.py` and `compute_industrial_stats.py` are registered
+in §7 but not yet in `scripts/` — they are the only remaining author-time gaps
+and must be written before the analysis leg (not before generation).
+
+---
+
+## 5. What the dry-run mocks (offline pipeline proof)
+
+```bash
+PYTHONPATH=src python3 scripts/cross_source_campaign.py --dry-run
+```
+
+Runs the FULL pipeline on 2 PUTs (a2 = existing, a4 = new) with **no network**,
+and exits cleanly (`324 passed` suite covers it via
+`tests/mutators/test_dryrun_campaign.py`). It exercises: mock generation →
+fence normalization → V1–V4 validation → blind dual-blind review + role
+rotation → proportional pool selection (dedup) → AVP/equiv → SMS bookkeeping.
+
+| Real step | Mocked in dry-run | Everything else |
+|---|---|---|
+| Generator LLM call (`_generate_one`) | `MockLLMClient` extracts the original program from the prompt and wraps it with a small deterministic perturbation → a guaranteed-valid, non-trivial fixture mutant | REAL: `_strip_fences`, `validate_mutant`, cache write, `pool_builder.select_mutants_for_put`, `sms_campaign.evaluate_cell` (AVP conservation, equiv, SMS) |
+| Reviewer / arbiter LLM call (`_live_review_call`) | mock reviewer returns a fixed CONFIRMED JSON | REAL: `build_blind_review_packet` (blinding), `assign_review_roles` (rotation), verdict parse + `classify_mutant` |
+
+The single live-only site is `_live_review_call()` (and the generator's
+`client.chat.completions.create`); both are the documented TODO-gates that the
+mock bypasses. Nothing else changes between dry-run and live — the same
+functions run, only the client is swapped.
+
+Dry-run expected output: 18 generated trials, 18/18 V1–V4 pass, 18/18
+blind-review CONFIRMED, SMS A2_MP1 and A4_MP1 pools each `inst=6`. The harness
+removes its scratch cache (`data/operator_campaign/cache_dryrun/`) on exit.
+
+---
+
+## 6. Integrity notes
+
+- Operator specs (`operator_registry.py`, the 54 new entries) were authored
+  from PUT source + registry conventions only; **no `data/results/*`** file was
+  read. Existing 37 operators are byte-unchanged (`test_old_put_operators_unchanged`).
+- SMS is computed only *after* review labels are frozen (§5). Reviewers never
+  see kills; the analyst does not alter review labels.
+- Primary-MP is the deterministic class rule (A→MP1, B→MP2, C→MP5, D→MP2);
+  run with `P2_PRIMARY_VERSION=v3`. No outcome-conditioned reselection.
