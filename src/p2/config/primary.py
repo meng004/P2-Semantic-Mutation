@@ -22,6 +22,14 @@ PRIMARY_CELLS_V3 = {
     "b1": 2, "b2": 2, "b3": 2,
     "c1": 5, "c2": 5, "c3": 5,
     "d1": 2, "d2": 2, "d3": 2,
+    # Study-2 expansion (18 new PUTs). Same deterministic class→MP rule:
+    # A→MP1 (conservation), B→MP2 (monotonicity), C→MP5 (partial-order),
+    # D→MP2 (monotonicity). Authored blind to mutation outcomes; final
+    # primary designation is owned by the E1 pre-registration agent.
+    "a4": 1, "a5": 1, "a6": 1, "a7": 1, "a8": 1,
+    "b4": 2, "b5": 2, "b6": 2, "b7": 2,
+    "c4": 5, "c5": 5, "c6": 5, "c7": 5,
+    "d4": 2, "d5": 2, "d6": 2, "d7": 2, "d8": 2,
 }
 
 

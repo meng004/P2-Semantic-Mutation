@@ -37,6 +37,35 @@ CELLS = {
     "d1": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
     "d2": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
     "d3": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    # ── Study-2 expansion (18 new PUTs) ────────────────────────────────────
+    # Primary MP follows the deterministic PRIMARY_CELLS_V3 class rule:
+    # A→MP1, B→MP2, C→MP5, D→MP2. Authored blind to mutation outcomes.
+    "a4": {"primary": 1, "r": {1: "r_mp1"}, "R": {1: "R_mp1"}},
+    "a5": {"primary": 1, "r": {1: "r_mp1"}, "R": {1: "R_mp1"}},
+    "a6": {"primary": 1, "r": {1: "r_mp1"}, "R": {1: "R_mp1"}},
+    "a7": {"primary": 1, "r": {1: "r_mp1"}, "R": {1: "R_mp1"}},
+    "a8": {"primary": 1, "r": {1: "r_mp1"}, "R": {1: "R_mp1"}},
+    "b4": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "b5": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "b6": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "b7": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "c4": {"primary": 5, "r": {5: "r_mp5"}, "R": {5: "R_mp5"}},
+    "c5": {"primary": 5, "r": {5: "r_mp5"}, "R": {5: "R_mp5"}},
+    "c6": {"primary": 5, "r": {5: "r_mp5"}, "R": {5: "R_mp5"}},
+    "c7": {"primary": 5, "r": {5: "r_mp5"}, "R": {5: "R_mp5"}},
+    "d4": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "d5": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "d6": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "d7": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+    "d8": {"primary": 2, "r": {2: "r_mp2"}, "R": {2: "R_mp2"}},
+}
+
+# PUTs whose export JSON already exists and is version-pinned; the generator
+# leaves these untouched so committed artefacts are not perturbed by library
+# minor-version drift. Only the 18 Study-2 PUTs are (re)generated here.
+_STUDY2_NEW = {
+    "a4", "a5", "a6", "a7", "a8", "b4", "b5", "b6", "b7",
+    "c4", "c5", "c6", "c7", "d4", "d5", "d6", "d7", "d8",
 }
 
 SAMPLE_XS = [0.2, 0.5, 0.75]
@@ -49,8 +78,17 @@ def _scalar_output(y):
     return float(y)
 
 
-def generate():
+def generate(only_new: bool = True):
+    """Write one JSON per (PUT, MP) cell.
+
+    only_new=True (default): regenerate only the 18 Study-2 expansion PUTs,
+    leaving the version-pinned original-12 export artefacts untouched so that
+    library minor-version drift cannot silently perturb committed files.
+    only_new=False: regenerate every PUT in CELLS.
+    """
     for put_id, spec in CELLS.items():
+        if only_new and put_id not in _STUDY2_NEW:
+            continue
         put_mod = importlib.import_module(f"p2.puts.{put_id}")
         mr_mod = importlib.import_module(f"p2.mrs.{put_id}")
         primary_k = spec["primary"]
