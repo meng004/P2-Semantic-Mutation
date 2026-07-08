@@ -1,0 +1,4337 @@
+{
+  "overall": {
+    "n_mutants": 292,
+    "flip_histogram": {
+      "0": 170,
+      "1": 93,
+      "2": 27,
+      "3": 2
+    },
+    "n_silent_flip0": 170,
+    "n_pure_flip1": 93,
+    "n_multistratum_flip_ge2": 29,
+    "n_detected": 122,
+    "sigma_well_defined_fraction": 0.9007,
+    "multistratum_fraction": 0.0993,
+    "purity_among_detected": 0.7623,
+    "purity_flip1_over_all": 0.3185
+  },
+  "per_put": {
+    "A1": {
+      "primary_mp": 1,
+      "n_mutants": 30,
+      "n_detected": 0,
+      "n_pure": 0,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "A2": {
+      "primary_mp": 1,
+      "n_mutants": 27,
+      "n_detected": 27,
+      "n_pure": 27,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "A3": {
+      "primary_mp": 1,
+      "n_mutants": 18,
+      "n_detected": 0,
+      "n_pure": 0,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "B1": {
+      "primary_mp": 2,
+      "n_mutants": 27,
+      "n_detected": 27,
+      "n_pure": 27,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "B2": {
+      "primary_mp": 2,
+      "n_mutants": 27,
+      "n_detected": 9,
+      "n_pure": 0,
+      "n_multistratum": 9,
+      "s5_clean": false,
+      "multistratum_detail": {
+        "m10_b2_CF1_claude_a02.py": [
+          1,
+          2
+        ],
+        "m11_b2_CF1_claude_a03.py": [
+          1,
+          2
+        ],
+        "m12_b2_CF1_claude_a01.py": [
+          1,
+          2
+        ],
+        "m13_b2_CF1_deepseek_a02.py": [
+          1,
+          2
+        ],
+        "m14_b2_CF1_deepseek_a01.py": [
+          1,
+          2
+        ],
+        "m15_b2_CF1_deepseek_a03.py": [
+          1,
+          2
+        ],
+        "m16_b2_CF1_gpt_a01.py": [
+          1,
+          2
+        ],
+        "m17_b2_CF1_gpt_a02.py": [
+          1,
+          2
+        ],
+        "m18_b2_CF1_gpt_a03.py": [
+          1,
+          2
+        ]
+      }
+    },
+    "B3": {
+      "primary_mp": 2,
+      "n_mutants": 20,
+      "n_detected": 11,
+      "n_pure": 11,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "C1": {
+      "primary_mp": 5,
+      "n_mutants": 10,
+      "n_detected": 2,
+      "n_pure": 0,
+      "n_multistratum": 2,
+      "s5_clean": false,
+      "multistratum_detail": {
+        "m06_c1_TF1_deepseek_a02.py": [
+          1,
+          2,
+          5
+        ],
+        "m07_c1_TF1_deepseek_a01.py": [
+          1,
+          2,
+          5
+        ]
+      }
+    },
+    "C2": {
+      "primary_mp": 5,
+      "n_mutants": 27,
+      "n_detected": 0,
+      "n_pure": 0,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "C3": {
+      "primary_mp": 5,
+      "n_mutants": 27,
+      "n_detected": 20,
+      "n_pure": 20,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "D1": {
+      "primary_mp": 2,
+      "n_mutants": 27,
+      "n_detected": 9,
+      "n_pure": 0,
+      "n_multistratum": 9,
+      "s5_clean": false,
+      "multistratum_detail": {
+        "m19_d1_TF1_claude_a02.py": [
+          2,
+          5
+        ],
+        "m20_d1_TF1_claude_a03.py": [
+          2,
+          5
+        ],
+        "m21_d1_TF1_claude_a01.py": [
+          2,
+          5
+        ],
+        "m22_d1_TF1_deepseek_a02.py": [
+          2,
+          5
+        ],
+        "m23_d1_TF1_deepseek_a03.py": [
+          2,
+          5
+        ],
+        "m24_d1_TF1_deepseek_a01.py": [
+          2,
+          5
+        ],
+        "m25_d1_TF1_gpt_a02.py": [
+          2,
+          5
+        ],
+        "m26_d1_TF1_gpt_a03.py": [
+          2,
+          5
+        ],
+        "m27_d1_TF1_gpt_a01.py": [
+          2,
+          5
+        ]
+      }
+    },
+    "D2": {
+      "primary_mp": 2,
+      "n_mutants": 27,
+      "n_detected": 8,
+      "n_pure": 8,
+      "n_multistratum": 0,
+      "s5_clean": true,
+      "multistratum_detail": {}
+    },
+    "D3": {
+      "primary_mp": 2,
+      "n_mutants": 25,
+      "n_detected": 9,
+      "n_pure": 0,
+      "n_multistratum": 9,
+      "s5_clean": false,
+      "multistratum_detail": {
+        "m17_d3_TF1_claude_a01.py": [
+          2,
+          5
+        ],
+        "m18_d3_TF1_claude_a02.py": [
+          2,
+          5
+        ],
+        "m19_d3_TF1_claude_a03.py": [
+          2,
+          5
+        ],
+        "m20_d3_TF1_deepseek_a02.py": [
+          2,
+          5
+        ],
+        "m21_d3_TF1_deepseek_a03.py": [
+          2,
+          5
+        ],
+        "m22_d3_TF1_deepseek_a01.py": [
+          2,
+          5
+        ],
+        "m23_d3_TF1_gpt_a02.py": [
+          2,
+          5
+        ],
+        "m24_d3_TF1_gpt_a03.py": [
+          2,
+          5
+        ],
+        "m25_d3_TF1_gpt_a01.py": [
+          2,
+          5
+        ]
+      }
+    }
+  },
+  "per_operator": {
+    "CE": {
+      "aligned_mp": 1,
+      "n_mutants": 64,
+      "n_detected": 27,
+      "n_pure_flip1": 27,
+      "n_multistratum": 0,
+      "pct_flip_exactly_one_of_detected": 100.0,
+      "flip_histogram": {
+        "0": 37,
+        "1": 27
+      }
+    },
+    "CF": {
+      "aligned_mp": 2,
+      "n_mutants": 9,
+      "n_detected": 9,
+      "n_pure_flip1": 0,
+      "n_multistratum": 9,
+      "pct_flip_exactly_one_of_detected": 0.0,
+      "flip_histogram": {
+        "2": 9
+      }
+    },
+    "HP": {
+      "aligned_mp": 3,
+      "n_mutants": 72,
+      "n_detected": 11,
+      "n_pure_flip1": 11,
+      "n_multistratum": 0,
+      "pct_flip_exactly_one_of_detected": 100.0,
+      "flip_histogram": {
+        "0": 61,
+        "1": 11
+      }
+    },
+    "OS": {
+      "aligned_mp": 2,
+      "n_mutants": 60,
+      "n_detected": 35,
+      "n_pure_flip1": 35,
+      "n_multistratum": 0,
+      "pct_flip_exactly_one_of_detected": 100.0,
+      "flip_histogram": {
+        "0": 25,
+        "1": 35
+      }
+    },
+    "SI": {
+      "aligned_mp": 5,
+      "n_mutants": 33,
+      "n_detected": 11,
+      "n_pure_flip1": 11,
+      "n_multistratum": 0,
+      "pct_flip_exactly_one_of_detected": 100.0,
+      "flip_histogram": {
+        "0": 22,
+        "1": 11
+      }
+    },
+    "TF": {
+      "aligned_mp": 4,
+      "n_mutants": 54,
+      "n_detected": 29,
+      "n_pure_flip1": 9,
+      "n_multistratum": 20,
+      "pct_flip_exactly_one_of_detected": 31.0,
+      "flip_histogram": {
+        "0": 25,
+        "1": 9,
+        "2": 18,
+        "3": 2
+      }
+    }
+  },
+  "rq2_off_diagonal_reattribution": {
+    "aligned_diagonal_kill_mass": 65,
+    "off_diagonal_kill_mass": 88,
+    "off_diagonal_from_pure": 57,
+    "off_diagonal_from_multistratum": 31,
+    "pct_off_diagonal_from_multistratum": 35.2,
+    "off_diagonal_cells": {
+      "B1_MP1": {
+        "pure": 18,
+        "multi": 0
+      },
+      "B2_MP1": {
+        "pure": 0,
+        "multi": 9
+      },
+      "B3_MP1": {
+        "pure": 11,
+        "multi": 0
+      },
+      "C1_MP1": {
+        "pure": 0,
+        "multi": 2
+      },
+      "C1_MP2": {
+        "pure": 0,
+        "multi": 2
+      },
+      "C3_MP1": {
+        "pure": 20,
+        "multi": 0
+      },
+      "D1_MP5": {
+        "pure": 0,
+        "multi": 9
+      },
+      "D2_MP1": {
+        "pure": 8,
+        "multi": 0
+      },
+      "D3_MP5": {
+        "pure": 0,
+        "multi": 9
+      }
+    }
+  },
+  "per_mutant": [
+    {
+      "put": "A1",
+      "file": "m01_a1_CE1_claude_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m02_a1_CE1_claude_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m03_a1_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m04_a1_CE1_deepseek_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m05_a1_CE1_deepseek_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m06_a1_CE1_deepseek_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m07_a1_CE1_gpt_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m08_a1_CE1_gpt_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m09_a1_CE1_gpt_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m10_a1_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m11_a1_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m12_a1_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m13_a1_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m14_a1_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m15_a1_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m16_a1_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m17_a1_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m18_a1_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m19_a1_OS1_claude_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m20_a1_OS1_claude_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m21_a1_OS1_deepseek_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m22_a1_OS1_deepseek_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m23_a1_OS1_gpt_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m24_a1_OS1_gpt_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m25_a1_SI1_claude_a02.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m26_a1_SI1_claude_a01.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m27_a1_SI1_deepseek_a01.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m28_a1_SI1_deepseek_a02.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m29_a1_SI1_gpt_a03.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A1",
+      "file": "m30_a1_SI1_gpt_a02.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A2",
+      "file": "m01_a2_CE1_claude_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m02_a2_CE1_claude_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m03_a2_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m04_a2_CE1_deepseek_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m05_a2_CE1_deepseek_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m06_a2_CE1_deepseek_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m07_a2_CE1_gpt_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m08_a2_CE1_gpt_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m09_a2_CE1_gpt_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m10_a2_OS1_claude_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m11_a2_OS1_claude_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m12_a2_OS1_claude_a01.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m13_a2_OS1_deepseek_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m14_a2_OS1_deepseek_a01.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m15_a2_OS1_deepseek_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m16_a2_OS1_gpt_a01.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m17_a2_OS1_gpt_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m18_a2_OS1_gpt_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m19_a2_SI1_claude_a02.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m20_a2_SI1_claude_a03.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m21_a2_SI1_claude_a01.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m22_a2_SI1_deepseek_a02.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m23_a2_SI1_deepseek_a03.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m24_a2_SI1_deepseek_a01.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m25_a2_SI1_gpt_a02.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m26_a2_SI1_gpt_a03.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A2",
+      "file": "m27_a2_SI1_gpt_a01.py",
+      "operator": "SI",
+      "primary_mp": 1,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "A3",
+      "file": "m01_a3_CE1_claude_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m02_a3_CE1_claude_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m03_a3_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m04_a3_CE1_deepseek_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m05_a3_CE1_deepseek_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m06_a3_CE1_deepseek_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m07_a3_CE1_gpt_a02.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m08_a3_CE1_gpt_a03.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m09_a3_CE1_gpt_a01.py",
+      "operator": "CE",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m10_a3_OS1_claude_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m11_a3_OS1_claude_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m12_a3_OS1_claude_a01.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m13_a3_OS1_deepseek_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m14_a3_OS1_deepseek_a01.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m15_a3_OS1_deepseek_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m16_a3_OS1_gpt_a01.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m17_a3_OS1_gpt_a02.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "A3",
+      "file": "m18_a3_OS1_gpt_a03.py",
+      "operator": "OS",
+      "primary_mp": 1,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B1",
+      "file": "m01_b1_CE1_claude_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m02_b1_CE1_claude_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m03_b1_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m04_b1_CE1_deepseek_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m05_b1_CE1_deepseek_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m06_b1_CE1_deepseek_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m07_b1_CE1_gpt_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m08_b1_CE1_gpt_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m09_b1_CE1_gpt_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m10_b1_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m11_b1_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m12_b1_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m13_b1_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m14_b1_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m15_b1_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m16_b1_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m17_b1_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m18_b1_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m19_b1_OS1_claude_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m20_b1_OS1_claude_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m21_b1_OS1_claude_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m22_b1_OS1_deepseek_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m23_b1_OS1_deepseek_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m24_b1_OS1_deepseek_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m25_b1_OS1_gpt_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m26_b1_OS1_gpt_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B1",
+      "file": "m27_b1_OS1_gpt_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2
+      ],
+      "flip_count": 1,
+      "aligned_killed": true,
+      "cross_killed_mps": [],
+      "sigma": "psi2",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B2",
+      "file": "m01_b2_CE1_claude_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m02_b2_CE1_claude_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m03_b2_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m04_b2_CE1_deepseek_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m05_b2_CE1_deepseek_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m06_b2_CE1_deepseek_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m07_b2_CE1_gpt_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m08_b2_CE1_gpt_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m09_b2_CE1_gpt_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m10_b2_CF1_claude_a02.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m11_b2_CF1_claude_a03.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m12_b2_CF1_claude_a01.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m13_b2_CF1_deepseek_a02.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m14_b2_CF1_deepseek_a01.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m15_b2_CF1_deepseek_a03.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m16_b2_CF1_gpt_a01.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m17_b2_CF1_gpt_a02.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m18_b2_CF1_gpt_a03.py",
+      "operator": "CF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1,
+        2
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "MULTI:psi1+psi2",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "B2",
+      "file": "m19_b2_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m20_b2_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m21_b2_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m22_b2_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m23_b2_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m24_b2_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m25_b2_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m26_b2_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B2",
+      "file": "m27_b2_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m01_b3_CE1_claude_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m02_b3_CE1_claude_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m03_b3_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m04_b3_CE1_deepseek_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m05_b3_CE1_deepseek_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m06_b3_CE1_deepseek_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m07_b3_CE1_gpt_a02.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m08_b3_CE1_gpt_a03.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m09_b3_CE1_gpt_a01.py",
+      "operator": "CE",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "B3",
+      "file": "m10_b3_OS1_claude_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m11_b3_OS1_claude_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m12_b3_OS1_claude_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m13_b3_OS1_deepseek_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m14_b3_OS1_deepseek_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m15_b3_OS1_deepseek_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m16_b3_OS1_gpt_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m17_b3_OS1_gpt_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m18_b3_OS1_gpt_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m19_b3_SI1_claude_a03.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "B3",
+      "file": "m20_b3_SI1_claude_a02.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C1",
+      "file": "m01_c1_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C1",
+      "file": "m02_c1_TF1_claude_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C1",
+      "file": "m03_c1_TF1_claude_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C1",
+      "file": "m04_c1_TF1_claude_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C1",
+      "file": "m05_c1_TF1_deepseek_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C1",
+      "file": "m06_c1_TF1_deepseek_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1,
+        2,
+        5
+      ],
+      "flip_count": 3,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1,
+        2
+      ],
+      "sigma": "MULTI:psi1+psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "C1",
+      "file": "m07_c1_TF1_deepseek_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1,
+        2,
+        5
+      ],
+      "flip_count": 3,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        1,
+        2
+      ],
+      "sigma": "MULTI:psi1+psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "C1",
+      "file": "m08_c1_TF1_gpt_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C1",
+      "file": "m09_c1_TF1_gpt_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C1",
+      "file": "m10_c1_TF1_gpt_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m01_c2_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m02_c2_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m03_c2_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m04_c2_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m05_c2_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m06_c2_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m07_c2_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m08_c2_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m09_c2_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m10_c2_OS1_claude_a02.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m11_c2_OS1_claude_a03.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m12_c2_OS1_claude_a01.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m13_c2_OS1_deepseek_a02.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m14_c2_OS1_deepseek_a01.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m15_c2_OS1_deepseek_a03.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m16_c2_OS1_gpt_a01.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m17_c2_OS1_gpt_a02.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m18_c2_OS1_gpt_a03.py",
+      "operator": "OS",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m19_c2_TF1_claude_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m20_c2_TF1_claude_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m21_c2_TF1_claude_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m22_c2_TF1_deepseek_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m23_c2_TF1_deepseek_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m24_c2_TF1_deepseek_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m25_c2_TF1_gpt_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m26_c2_TF1_gpt_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C2",
+      "file": "m27_c2_TF1_gpt_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m01_c3_CE1_claude_a02.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m02_c3_CE1_claude_a01.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m03_c3_CE1_claude_a03.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m04_c3_CE1_deepseek_a03.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m05_c3_CE1_deepseek_a02.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m06_c3_CE1_deepseek_a01.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m07_c3_CE1_gpt_a02.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m08_c3_CE1_gpt_a03.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m09_c3_CE1_gpt_a01.py",
+      "operator": "CE",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m10_c3_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m11_c3_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m12_c3_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m13_c3_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m14_c3_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m15_c3_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m16_c3_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m17_c3_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m18_c3_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 5,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "C3",
+      "file": "m19_c3_TF1_claude_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m20_c3_TF1_claude_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m21_c3_TF1_claude_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m22_c3_TF1_deepseek_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m23_c3_TF1_deepseek_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m24_c3_TF1_deepseek_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m25_c3_TF1_gpt_a02.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m26_c3_TF1_gpt_a03.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "C3",
+      "file": "m27_c3_TF1_gpt_a01.py",
+      "operator": "TF",
+      "primary_mp": 5,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D1",
+      "file": "m01_d1_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m02_d1_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m03_d1_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m04_d1_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m05_d1_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m06_d1_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m07_d1_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m08_d1_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m09_d1_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m10_d1_SI1_claude_a02.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m11_d1_SI1_claude_a03.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m12_d1_SI1_claude_a01.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m13_d1_SI1_deepseek_a02.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m14_d1_SI1_deepseek_a01.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m15_d1_SI1_deepseek_a03.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m16_d1_SI1_gpt_a01.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m17_d1_SI1_gpt_a02.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m18_d1_SI1_gpt_a03.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D1",
+      "file": "m19_d1_TF1_claude_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m20_d1_TF1_claude_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m21_d1_TF1_claude_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m22_d1_TF1_deepseek_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m23_d1_TF1_deepseek_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m24_d1_TF1_deepseek_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m25_d1_TF1_gpt_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m26_d1_TF1_gpt_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D1",
+      "file": "m27_d1_TF1_gpt_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D2",
+      "file": "m01_d2_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m02_d2_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m03_d2_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m04_d2_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m05_d2_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m06_d2_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m07_d2_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m08_d2_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m09_d2_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m10_d2_OS1_claude_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m11_d2_OS1_claude_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m12_d2_OS1_claude_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m13_d2_OS1_deepseek_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m14_d2_OS1_deepseek_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m15_d2_OS1_deepseek_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m16_d2_OS1_gpt_a01.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m17_d2_OS1_gpt_a02.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m18_d2_OS1_gpt_a03.py",
+      "operator": "OS",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        1
+      ],
+      "flip_count": 1,
+      "aligned_killed": false,
+      "cross_killed_mps": [
+        1
+      ],
+      "sigma": "psi1",
+      "s5_class": "pure"
+    },
+    {
+      "put": "D2",
+      "file": "m19_d2_TF1_claude_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m20_d2_TF1_claude_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m21_d2_TF1_claude_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m22_d2_TF1_deepseek_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m23_d2_TF1_deepseek_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m24_d2_TF1_deepseek_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m25_d2_TF1_gpt_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m26_d2_TF1_gpt_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D2",
+      "file": "m27_d2_TF1_gpt_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m01_d3_HP1_claude_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m02_d3_HP1_claude_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m03_d3_HP1_claude_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m04_d3_HP1_deepseek_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m05_d3_HP1_deepseek_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m06_d3_HP1_deepseek_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m07_d3_HP1_gpt_a02.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m08_d3_HP1_gpt_a03.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m09_d3_HP1_gpt_a01.py",
+      "operator": "HP",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m10_d3_SI1_claude_a02.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m11_d3_SI1_claude_a01.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m12_d3_SI1_deepseek_a02.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m13_d3_SI1_deepseek_a01.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m14_d3_SI1_deepseek_a03.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m15_d3_SI1_gpt_a03.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m16_d3_SI1_gpt_a01.py",
+      "operator": "SI",
+      "primary_mp": 2,
+      "flipped_invariants": [],
+      "flip_count": 0,
+      "aligned_killed": false,
+      "cross_killed_mps": [],
+      "sigma": "active-off-taxonomy",
+      "s5_class": "silent"
+    },
+    {
+      "put": "D3",
+      "file": "m17_d3_TF1_claude_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m18_d3_TF1_claude_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m19_d3_TF1_claude_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m20_d3_TF1_deepseek_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m21_d3_TF1_deepseek_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m22_d3_TF1_deepseek_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m23_d3_TF1_gpt_a02.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m24_d3_TF1_gpt_a03.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    },
+    {
+      "put": "D3",
+      "file": "m25_d3_TF1_gpt_a01.py",
+      "operator": "TF",
+      "primary_mp": 2,
+      "flipped_invariants": [
+        2,
+        5
+      ],
+      "flip_count": 2,
+      "aligned_killed": true,
+      "cross_killed_mps": [
+        5
+      ],
+      "sigma": "MULTI:psi2+psi5",
+      "s5_class": "multi-stratum"
+    }
+  ],
+  "_meta": {
+    "description": "S5 stratum-purity verification for the v4 semantic-mutant corpus. A mutant perturbs invariant k iff KILLED under MP_k (offline AVP dispatcher, src/p2/avp/, repeats=20).",
+    "source": "data/results/sms_track2_v4.json",
+    "n_puts": 12,
+    "primary_mp_map": {
+      "A": 1,
+      "B": 2,
+      "C": 5,
+      "D": 2
+    }
+  }
+}

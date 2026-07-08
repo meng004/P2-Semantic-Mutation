@@ -1,0 +1,175 @@
+{
+  "task": "T3 H2 detection-incidence sensitivity",
+  "estimand": "detection incidence (P[SMS>0]); distinct from H2 magnitude (Cliff delta>=0.474)",
+  "test_family": "own labeled sensitivity family, OUTSIDE the pre-registered Holm family",
+  "prereg_status": "post-hoc-specified; NOT a confirmatory H2 pass; H2 magnitude verdict stays 'not met'",
+  "headline_ssot_correct": {
+    "table_aligned": {
+      "nonzero": 6,
+      "zero": 6,
+      "n": 12
+    },
+    "table_cross": {
+      "nonzero": 9,
+      "zero": 39,
+      "n": 48
+    },
+    "aligned_incidence": 0.5,
+    "cross_incidence": 0.1875,
+    "sample_odds_ratio": 4.333333333333333,
+    "conditional_mle_odds_ratio": 4.203830827118499,
+    "or_ci95_onesided_lower": 1.116478833148599,
+    "or_ci95_onesided_upper": null,
+    "or_ci95_twosided": [
+      0.8989089898228029,
+      20.249164077388915
+    ],
+    "fisher_p_onesided_greater": 0.03548831185676838,
+    "fisher_p_twosided": 0.05604059681803848,
+    "pool": "v4 cross-source, MP5-held (v3 spec), all 60 cells"
+  },
+  "robustness_grid": {
+    "v4_mp5_vacant_excluded": {
+      "table_aligned": {
+        "nonzero": 6,
+        "zero": 5,
+        "n": 11
+      },
+      "table_cross": {
+        "nonzero": 9,
+        "zero": 31,
+        "n": 40
+      },
+      "aligned_incidence": 0.5454545454545454,
+      "cross_incidence": 0.225,
+      "sample_odds_ratio": 4.133333333333334,
+      "conditional_mle_odds_ratio": 3.9989488104545963,
+      "or_ci95_onesided_lower": 1.009554131240144,
+      "or_ci95_onesided_upper": null,
+      "or_ci95_twosided": [
+        0.8092230830990856,
+        21.11944174887429
+      ],
+      "fisher_p_onesided_greater": 0.04861013591496229,
+      "fisher_p_twosided": 0.06122520083585316,
+      "pool": "v4 MP5-held, 9 vacant cells dropped"
+    },
+    "v4_mp5_live_puts_only": {
+      "table_aligned": {
+        "nonzero": 6,
+        "zero": 3,
+        "n": 9
+      },
+      "table_cross": {
+        "nonzero": 9,
+        "zero": 27,
+        "n": 36
+      },
+      "aligned_incidence": 0.6666666666666666,
+      "cross_incidence": 0.25,
+      "sample_odds_ratio": 6.0,
+      "conditional_mle_odds_ratio": 5.7215169016628,
+      "or_ci95_onesided_lower": 1.240931627324893,
+      "or_ci95_onesided_upper": null,
+      "or_ci95_twosided": [
+        0.9838789059604478,
+        42.9209307385703
+      ],
+      "fisher_p_onesided_greater": 0.02631296550154956,
+      "fisher_p_twosided": 0.042458017619972435,
+      "pool": "v4 MP5-held, 3 all-zero PUTs (a1,a3,c2) dropped"
+    },
+    "v3_mp5": {
+      "table_aligned": {
+        "nonzero": 6,
+        "zero": 6,
+        "n": 12
+      },
+      "table_cross": {
+        "nonzero": 8,
+        "zero": 40,
+        "n": 48
+      },
+      "aligned_incidence": 0.5,
+      "cross_incidence": 0.16666666666666666,
+      "sample_odds_ratio": 5.0,
+      "conditional_mle_odds_ratio": 4.830277789449893,
+      "or_ci95_onesided_lower": 1.2616193864969074,
+      "or_ci95_onesided_upper": null,
+      "or_ci95_twosided": [
+        1.0142878856500765,
+        23.889192550234903
+      ],
+      "fisher_p_onesided_greater": 0.023835539461356595,
+      "fisher_p_twosided": 0.02383553946135659,
+      "pool": "v3 same-source, MP5-held"
+    },
+    "v4_v3b_cMP1": {
+      "table_aligned": {
+        "nonzero": 7,
+        "zero": 5,
+        "n": 12
+      },
+      "table_cross": {
+        "nonzero": 8,
+        "zero": 40,
+        "n": 48
+      },
+      "aligned_incidence": 0.5833333333333334,
+      "cross_incidence": 0.16666666666666666,
+      "sample_odds_ratio": 7.0,
+      "conditional_mle_odds_ratio": 6.701918628961685,
+      "or_ci95_onesided_lower": 1.7678310559944466,
+      "or_ci95_onesided_upper": null,
+      "or_ci95_twosided": [
+        1.4324645171732557,
+        34.76867133924094
+      ],
+      "fisher_p_onesided_greater": 0.006356380868238918,
+      "fisher_p_twosided": 0.006356380868238916,
+      "pool": "v4 cross-source, v3b (c-class primary MP1)"
+    }
+  },
+  "manuscript_claim_9_12_vs_6_48": {
+    "table_aligned": {
+      "nonzero": 9,
+      "zero": 3,
+      "n": 12
+    },
+    "table_cross": {
+      "nonzero": 6,
+      "zero": 42,
+      "n": 48
+    },
+    "aligned_incidence": 0.75,
+    "cross_incidence": 0.125,
+    "sample_odds_ratio": 21.0,
+    "conditional_mle_odds_ratio": 19.32417465172715,
+    "or_ci95_onesided_lower": 4.474758738884526,
+    "or_ci95_onesided_upper": null,
+    "or_ci95_twosided": [
+      3.6184202943888875,
+      143.69320491877798
+    ],
+    "fisher_p_onesided_greater": 5.292123622609684e-05,
+    "fisher_p_twosided": 5.2921236226096834e-05,
+    "note": "Manuscript-stated (mislabeled) counts aligned 9/12 vs cross 6/48. The '9' is the number of PUTs with ANY nonzero cell (9/12 PUTs are non-dead); it is NOT the aligned-cell nonzero count. SSOT-correct aligned-cell nonzero = 6/12, cross-cell nonzero = 9/48 (see headline). Labels are swapped in the manuscript and in R3 focus-2."
+  },
+  "diagnosis": "Manuscript (main.tex:1962) and R3 focus-2 report aligned 9/12 vs cross 6/48 -> OR 21, Fisher one-sided p=5.3e-5. The SSOT MP5-held pool that generates the headline delta=0.314 gives the SWAPPED split: aligned 6/12 nonzero, cross 9/48 nonzero. Only 9 of 12 PUTs have any nonzero cell (a1,a3,c2 fully dead); '9/12' is a PUT-level any-signal count, not the aligned-cell count. Honest incidence advantage is real but far weaker than OR=21.",
+  "provenance": {
+    "sms_v4": "data/results/sms_track2_v4.json",
+    "sms_v3": "data/results/sms_track2_v3.json",
+    "primary_convention": "src/p2/config/primary.py PRIMARY_CELLS_V3 (MP5-held)",
+    "vacant_cells": [
+      "A1_MP5",
+      "A2_MP2",
+      "A3_MP5",
+      "B1_MP3",
+      "B1_MP4",
+      "B3_MP2",
+      "B3_MP5",
+      "D2_MP4",
+      "D3_MP4"
+    ]
+  }
+}

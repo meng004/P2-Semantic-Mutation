@@ -1,0 +1,290 @@
+{
+  "artefact": "industrial_stats_v1",
+  "generated_by": "scripts/build_industrial_ssot.py (derive mode)",
+  "derives_from": "data/results/industrial_percase_v1.json",
+  "bootstrap_B": 10000,
+  "bootstrap_seed": 20260704,
+  "primary_comparison_T1_gt_B1": {
+    "comparison": "T1>B1",
+    "mean_paired_diff": 0.101,
+    "bootstrap_percentile_ci95": [
+      0.029,
+      0.179
+    ],
+    "bootstrap_B": 10000,
+    "bootstrap_seed": 20260704,
+    "wilcoxon": {
+      "V_wplus": 279.5,
+      "n_eff": 27,
+      "z": 2.1623,
+      "p_normal_one_sided": 0.0153,
+      "p_exact_sign_flip_rank": 0.01423
+    },
+    "cliffs_delta": 0.247,
+    "holm_adjusted_p": 0.046
+  },
+  "R3_strengthening_battery": {
+    "estimand": "one-sided case-level T1>B1 paired contrast (identical to the pre-registered Holm-family member)",
+    "exact_sign_flip_permutation_on_rank_statistic": {
+      "method": "full 2^n_eff sign-flip null of Wilcoxon W+ via DP over tie-averaged ranks scaled x2 (exact enumeration, not sampled)",
+      "n_eff_nonzero_diffs": 27,
+      "p_one_sided": 0.01423
+    },
+    "monte_carlo_sign_flip_on_mean_diff": {
+      "method": "Monte Carlo sign-flip of the 34 paired differences, statistic = mean; add-one convention (r+1)/(B+1)",
+      "B": 10000,
+      "seed": 20260704,
+      "p_one_sided": 0.0047
+    },
+    "bca_bootstrap_ci_cliffs_delta": {
+      "method": "paired case-resampling BCa (jackknife acceleration)",
+      "B": 10000,
+      "seed": 20260704,
+      "ci95": [
+        0.068,
+        0.461
+      ],
+      "excludes_zero": true
+    },
+    "wilcoxon_summary_statistics": {
+      "V_wplus": 279.5,
+      "z": 2.1623,
+      "p_unadjusted_one_sided": 0.0153,
+      "holm_adjusted_p": 0.046
+    }
+  },
+  "sensitivity_excl_E_SUNDIALS_005": {
+    "comparison": "T1>B1",
+    "mean_paired_diff": 0.104,
+    "bootstrap_percentile_ci95": [
+      0.031,
+      0.183
+    ],
+    "bootstrap_B": 10000,
+    "bootstrap_seed": 20260704,
+    "wilcoxon": {
+      "V_wplus": 279.5,
+      "n_eff": 27,
+      "z": 2.1623,
+      "p_normal_one_sided": 0.0153,
+      "p_exact_sign_flip_rank": 0.01423
+    },
+    "cliffs_delta": 0.253,
+    "holm_adjusted_p": 0.046
+  },
+  "full_family_sensitivity": [
+    {
+      "comparison": "T1>B1",
+      "mean_paired_diff": 0.104,
+      "bootstrap_percentile_ci95": [
+        0.031,
+        0.183
+      ],
+      "bootstrap_B": 10000,
+      "bootstrap_seed": 20260704,
+      "wilcoxon": {
+        "V_wplus": 279.5,
+        "n_eff": 27,
+        "z": 2.1623,
+        "p_normal_one_sided": 0.0153,
+        "p_exact_sign_flip_rank": 0.01423
+      },
+      "cliffs_delta": 0.253,
+      "holm_adjusted_p": 0.046
+    },
+    {
+      "comparison": "T1>A1",
+      "mean_paired_diff": 0.025,
+      "bootstrap_percentile_ci95": [
+        -0.002,
+        0.059
+      ],
+      "bootstrap_B": 10000,
+      "bootstrap_seed": 20260704,
+      "wilcoxon": {
+        "V_wplus": 78.5,
+        "n_eff": 14,
+        "z": 1.6012,
+        "p_normal_one_sided": 0.0547,
+        "p_exact_sign_flip_rank": 0.05377
+      },
+      "cliffs_delta": 0.05,
+      "holm_adjusted_p": 0.089
+    },
+    {
+      "comparison": "B1>B2",
+      "mean_paired_diff": 0.043,
+      "bootstrap_percentile_ci95": [
+        -0.001,
+        0.089
+      ],
+      "bootstrap_B": 10000,
+      "bootstrap_seed": 20260704,
+      "wilcoxon": {
+        "V_wplus": 243.0,
+        "n_eff": 26,
+        "z": 1.7017,
+        "p_normal_one_sided": 0.0444,
+        "p_exact_sign_flip_rank": 0.04398
+      },
+      "cliffs_delta": 0.14,
+      "holm_adjusted_p": 0.089
+    }
+  ],
+  "verification_vs_paper": [
+    {
+      "check": "n_cases",
+      "derived": 34,
+      "paper": 34,
+      "pass": true
+    },
+    {
+      "check": "denominator",
+      "derived": 1124,
+      "paper": 1124,
+      "pass": true
+    },
+    {
+      "check": "kills[T1]",
+      "derived": 377,
+      "paper": 377,
+      "pass": true
+    },
+    {
+      "check": "rate[T1]",
+      "derived": 0.335,
+      "paper": 0.335,
+      "pass": true
+    },
+    {
+      "check": "kills[B1]",
+      "derived": 274,
+      "paper": 274,
+      "pass": true
+    },
+    {
+      "check": "rate[B1]",
+      "derived": 0.244,
+      "paper": 0.244,
+      "pass": true
+    },
+    {
+      "check": "kills[B2]",
+      "derived": 228,
+      "paper": 228,
+      "pass": true
+    },
+    {
+      "check": "rate[B2]",
+      "derived": 0.203,
+      "paper": 0.203,
+      "pass": true
+    },
+    {
+      "check": "kills[A1]",
+      "derived": 348,
+      "paper": 348,
+      "pass": true
+    },
+    {
+      "check": "rate[A1]",
+      "derived": 0.31,
+      "paper": 0.31,
+      "pass": true
+    },
+    {
+      "check": "T1 Wilson CI",
+      "derived": [
+        0.308,
+        0.364
+      ],
+      "paper": [
+        0.308,
+        0.364
+      ],
+      "pass": true
+    },
+    {
+      "check": "mean paired diff T1-B1",
+      "derived": 0.101,
+      "paper": 0.101,
+      "pass": true
+    },
+    {
+      "check": "bootstrap CI T1-B1",
+      "derived": [
+        0.029,
+        0.179
+      ],
+      "paper": [
+        0.029,
+        0.179
+      ],
+      "pass": true
+    },
+    {
+      "check": "Holm p T1>B1",
+      "derived": 0.046,
+      "paper": 0.046,
+      "pass": true
+    },
+    {
+      "check": "Cliff's delta T1-B1",
+      "derived": 0.247,
+      "paper": 0.247,
+      "pass": true
+    },
+    {
+      "check": "T1>A1 and B1>B2 not significant after Holm",
+      "derived": [
+        0.063,
+        0.063
+      ],
+      "paper": ">=0.05 (reported not significant)",
+      "pass": true
+    },
+    {
+      "check": "sensitivity excl E-SUNDIALS-005 leaves T1>B1 Holm verdict unchanged (<0.05)",
+      "derived": 0.046,
+      "paper": "significant (verdict unchanged)",
+      "pass": true
+    },
+    {
+      "check": "face T1 detect",
+      "derived": 34,
+      "paper": 34,
+      "pass": true
+    },
+    {
+      "check": "face B1 zero-detect (miss) cases",
+      "derived": 27,
+      "paper": 27,
+      "pass": true
+    },
+    {
+      "check": "face B2 zero-detect (miss) cases",
+      "derived": 26,
+      "paper": 26,
+      "pass": true
+    },
+    {
+      "check": "face A1-a (dimension-reduction) LOSE",
+      "derived": 19,
+      "paper": 19,
+      "pass": true
+    },
+    {
+      "check": "face A1-b (de-strictification) LOSE",
+      "derived": 17,
+      "paper": 17,
+      "pass": true
+    },
+    {
+      "check": "face shared (both-ablation) losses",
+      "derived": 11,
+      "paper": 11,
+      "pass": true
+    }
+  ],
+  "all_checks_pass": true
+}
