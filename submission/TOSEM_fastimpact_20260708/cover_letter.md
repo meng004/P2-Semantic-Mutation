@@ -15,7 +15,7 @@ for metamorphic-relation sets. The empirical evidence combines a 12-program
 stress test, an AST-normalized syntactic-overlap audit, boundary and adjoint
 arms, and an industrial real-defect arm: result-level statistics over
 reproduced, MR-detectable defects from widely used scientific-computing
-libraries, used to confirm the paper's construct separation among aggregate
+libraries, used to support the paper's construct separation among aggregate
 kill-rate, semantic alignment, and real-defect detection.
 
 Related-work disclosure. The industrial arm draws its result-level statistics
@@ -24,7 +24,12 @@ from a defect dataset curated and archived by the authors (Zenodo DOI
 governance are not claimed as contributions of this manuscript and are
 intended for a separate benchmark/artifact paper; the two manuscripts do not
 overlap in claimed contributions (metric and construct validation here;
-dataset construction methodology there).
+dataset construction methodology there). To keep the industrial arm
+checkable inside this manuscript's own artifact, the per-case
+34-case kill matrix and real-defect face are now mirrored in-repo as a
+single-source-of-truth file (data/results/industrial_percase_v1.json,
+with dataset DOI and archive SHA-256 recorded), from which every RQ4
+number is re-derived.
 
 An earlier version is available on arXiv as arXiv:2605.17437. The current
 submission substantially sharpens the semantic-mutation framework, adds
@@ -57,9 +62,10 @@ dataset protocol over reproduced library defects. Fifth, it narrows the claim fr
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
-Length statement. The main manuscript is 40 pages including references in the
-ACM manuscript-review format; the text before the bibliography remains below
-the 45-page Fast-Impact threshold stated in the TOSEM author guidance.
+Length statement. The main manuscript is 46 pages including references in the
+ACM manuscript-review format; the text before the bibliography (43 pages)
+remains below the 45-page Fast-Impact threshold stated in the TOSEM author
+guidance.
 
 Sincerely,
 

@@ -508,7 +508,7 @@ def main() -> None:
     write(out_dir / "supplementary.tex", build_supplement())
     shutil.copy2(SOURCE / "references.bib", out_dir / "references.bib")
     copy_used_figures(out_dir)
-    for name in ("acmart.cls", "ACM-Reference-Format.bst", "acmsmall-submission.tex", "acmmanuscript.tex"):
+    for name in ("acmart.cls", "ACM-Reference-Format.bst"):
         template_path = TEMPLATE / name
         if template_path.exists():
             shutil.copy2(template_path, out_dir / name)

@@ -148,7 +148,7 @@
   pages = {75-80}
 }
 
-@misc{11efca8804ed387c9cc3956868f0eb43597c8d10,
+@misc{westbrook2013approx,
   author = {Edwin M. Westbrook and Swarat Chaudhuri},
   title = {A Semantics for Approximate Program Transformations},
   journal = {ArXiv},
@@ -157,7 +157,7 @@
   abstract = {An approximate program transformation is a transformation that can change the semantics of a program within a specified empirical error bound. Such transformations have wide applications: they can decrease computation time, power consumption, and memory usage, and can, in some cases, allow implementations of incomputable operations. Correctness proofs of approximate program transformations are by definition quantitative. Unfortunately, unlike with standard program transformations, there is as of yet no modular way to prove correctness of an approximate transformation itself. Error bounds must be proved for each transformed program individually, and must be re-proved each time a program is modified or a different set of approximations are applied. In this paper, we give a semantics that enables quantitative reasoning about a large class of approximate program transformations in a local, composable way. Our semantics is based on a notion of distance between programs that defines what it means for an approximate transformation to be correct up to an error bound. The key insight is that distances between programs cannot in general be formulated in terms of metric spaces and real numbers. Instead, our semantics admits natural notions of distance for each type construct; for example, numbers are used as distances for numerical data, functions are used as distances for functional data, an polymorphic lambda-terms are used as distances for polymorphic data. We then show how our semantics applies to two example approximations: replacing reals with floating-point numbers, and loop perforation.}
 }
 
-@misc{6d492b783178b02dae163fbfe837857b982deed2,
+@misc{geoffroy2021partialmetric,
   author = {Guillaume Geoffroy and Paolo Pistone},
   title = {A Partial Metric Semantics of Higher-Order Types and Approximate Program Transformations},
   journal = {Unknown Journal},
@@ -177,7 +177,7 @@
   abstract = {This paper introduces semantic mutation testing SMT into multi-agent systems. SMT is a test assessment technique that makes changes to the interpretation of a program and then examines whether a given test set has the ability to detect each change to the original interpretation. These changes represent possible misunderstandings of how the program is interpreted. SMT can also be used to assess robustness to and reliability of semantic changes. This paper applies SMT to three rule-based agent programming languages, namely Jason, GOAL and 2APL, provides several contexts in which SMT for these languages is useful, and proposes three sets of semantic mutation operators i.e., rules to make semantic changes for these languages respectively, and a systematic approach to derivation of semantic mutation operators for rule-based agent languages. This paper then shows, through preliminary evaluation of our semantic mutation operators for Jason, that SMT has some potential to assess tests, robustness to and reliability of semantic changes.}
 }
 
-@misc{97a550b469c6151734d1220e37a7985d896191ee,
+@misc{aichernig2007utp,
   author = {B. Aichernig and J. He},
   title = {Refinement and Test Case Generation in UTP},
   journal = {Unknown Journal},
@@ -187,7 +187,7 @@
   abstract = {This paper presents a theory of testing that integrates into Hoare and He's Unifying Theory of Programming (UTP). We give test cases a denotational semantics by viewing them as specification predicates. This reformulation of test cases allows for relating test cases via refinement to specifications and programs. Having such a refinement order that integrates test cases, we develop a testing theory for fault-based testing. Fault-based testing uses test data designed to demonstrate the absence of a set of pre-specified faults. A well-known fault-based technique is mutation testing. In mutation testing, first, faults are injected into a program by altering (mutating) its source code. Then, test cases that can detect these errors are designed. The assumption is that other faults will be caught, too. In this paper, we apply the mutation technique to both, specifications and programs. Using our theory of testing, two new test case generation laws for detecting injected (anticipated) faults are presented: one is based on the semantic level of design specifications, the other on the algebraic properties of a programming language.}
 }
 
-@misc{72269d5ab33ed790ece6856ba0309ed070d83622,
+@misc{cousot2002transform,
   author = {P. Cousot and R. Cousot},
   title = {Systematic design of program transformation frameworks by abstract interpretation},
   journal = {Unknown Journal},
@@ -196,7 +196,7 @@
   pages = {178-190}
 }
 
-@misc{92d99528fe8e70345901cf56aa4d1037f0c3aa96,
+@misc{aichernig2002contract,
   author = {B. Aichernig},
   title = {Contract-based mutation testing in the refinement calculus},
   journal = {Unknown Journal},
@@ -206,7 +206,7 @@
   abstract = {This article discusses mutation testing strategies in the context of refinement. Here, a novel generalization of mutation testing techniques is presented to be applied to contracts ranging from formal specifications to programs. It is demonstrated that refinement and its dual abstraction are the key notions leading to a precise and yet simple theory of mutation testing. The refinement calculus of Back and von Wright is used to express the concepts like contracts, useful mutations, test-cases and test-coverage.}
 }
 
-@misc{7a867d014c3e10e45e4220c5dcf605e8df6ef38d,
+@misc{dotzel2023usageaware,
   author = {Myra Dotzel and Stefan Mitsch and André Platzer},
   title = {A Usage-Aware Sequent Calculus for Differential Dynamic Logic},
   journal = {ArXiv},
@@ -216,7 +216,7 @@
   abstract = {Ensuring that safety-critical applications behave as intended is an important yet challenging task. Modeling languages like differential dynamic logic (dL) have proof calculi capable of proving guarantees for such applications. However, dL programmers may unintentionally over-specify assumptions and program statements, which results in overly constrained models that yield weak or vacuous guarantees. In hybrid systems models, such constraints are ubiquitous; they may appear as assumptions, conditions on control switches, and evolution domain constraints in systems of differential equations which makes it nontrivial to systematically detect which ones are over-specified. Existing approaches are limited, either lacking formal correctness guarantees or the granularity to detect all kinds of bugs arising in a given formula. As a remedy, we present a novel proof-based technique that detects which constraints in a dL formula are vacuous or over-specified and suggests ways in which these components could be mutated while preserving correctness proofs. When properties follow entirely from constraints uninfluenced by program statements, this analysis spots outright flaws in models. Otherwise, it helps make models more flexible by identifying specific ways in which they may be generalized. The resulting analysis is thorough, catching bugs at a fine-grained level and proposing mutations that could be applied in combination. We prove soundness and completeness with respect to dL to ensure the correctness of suggested mutations and general applicability of our technique.}
 }
 
-@misc{46aba24d3e925f6d8d2efd5b5f6ee0d5ea7558cd,
+@misc{cousot1992absint,
   author = {P. Cousot and R. Cousot},
   title = {Abstract Interpretation Frameworks},
   journal = {J. Log. Comput.},
@@ -226,7 +226,7 @@
   pages = {511-547}
 }
 
-@misc{0ed19a2ecb5537dbf1c5f25a818f45a34d418ae8,
+@misc{bartocci2023propertymut,
   author = {E. Bartocci and L. Mariani and D. Ničković and Drishti Yadav},
   title = {Property-Based Mutation Testing},
   journal = {2023 IEEE Conference on Software Testing, Verification and Validation (ICST)},
@@ -281,7 +281,7 @@
   abstract = {In any setting in which observable properties have a quantitative flavour, it is natural to compare computational objects by way of \\emph\{metrics\} rather than equivalences or partial orders. This holds, in particular, for probabilistic higher-order programs. A natural notion of comparison, then, becomes context distance, the metric analogue of Morris' context equivalence. In this paper, we analyze the main properties of the context distance in fully-fledged probabilistic \$\\lambda\$-calculi, this way going beyond the state of the art, in which only affine calculi were considered. We first of all study to which extent the context distance trivializes, giving a sufficient condition for trivialization. We then characterize context distance by way of a coinductively defined, tuple-based notion of distance in one of those calculi, called \$\\Lambda\^\\oplus\_!\$. We finally derive pseudometrics for call-by-name and call-by-value probabilistic \$\\lambda\$-calculi, and prove them fully-abstract.}
 }
 
-@misc{302e9d254f138148abce2feda1319f9cb32cd914,
+@misc{alblwi2023semanticcoverage,
   author = {Samia Al Blwi and A. Ayad and Besma Khaireddine and Imen Marsit and A. Mili},
   title = {Semantic Coverage: Measuring Test Suite Effectiveness},
   journal = {Unknown Journal},
@@ -291,7 +291,7 @@
   abstract = {: Several syntactic measures have been deﬁned in the past to assess the effectiveness of a test suite: statement coverage, condition coverage, branch coverage, path coverage, etc. There is ample analytical and empirical evidence to the effect that these are imperfect measures: exercising all of a program’s syntactic features is neither necessary nor sufﬁcient to ensure test suite adequacy; not to mention that it may be impossible to exercise all the syntactic features of a program (re: unreachable code). Mutation scores are often used as reliable measures of test suite effectiveness, but they have issues of their own: some mutants may survive because they are equivalent to the base program not because the test suite is inadequate; the same mutation score may mean vastly different things depending on whether the killed mutants are distinct from each other or equivalent; the same test suite and the same program may yield different mutation scores depending on the mutation operators that we use. Fundamentally, whether a test suite T is adequate for a program P depends on the semantics of the program, the speciﬁcation that the program is tested against, and the property of correctness that the program is tested for (total correctness, partial correctness). In this paper we present a formula for the effectiveness of a test suite T which depends exactly on the semantics of P , the correctness property that we are testing P for, and the speciﬁcation against which this correctness property is tested; it does not depend on the syntax of P , nor on any mutation experiment we may run. We refer to this formula as the semantic coverage of the test suite, and we investigate its properties.}
 }
 
-@misc{525d0597f3b46f6b8dc6e0ee1e0cd507d23dc22b,
+@misc{jeangoudoux2021interval,
   author = {Clothilde Jeangoudoux and Eva Darulova and C. Lauter},
   title = {Interval constraint-based mutation testing of numerical specifications},
   journal = {Proceedings of the 30th ACM SIGSOFT International Symposium on Software Testing and Analysis},
@@ -428,7 +428,7 @@
   abstract = {Mutation testing is a well known fault-based testing technique that is normally used to assess the quality of a test suite. In this paper we use the mutation operation to derive test cases that demonstrate the absence of certain faults in an implementation: In difference to conventional mutation testing, which mutates program code, we mutate program contracts and generate test-input data that is able to distinguish the mutated contract from the original one. We show how existing development tools can be used as a foundation for the presented methodology: In particular we rely on the counter-example generation capabilities of the Spec\#/Boogie/Z3 system.}
 }
 
-@misc{0fa97cc4e2a0ffb6a777669b1b541c0372fac0d2,
+@misc{curto2025semanticinvariance,
   author = {J. Curtò and I. D. Zarzà},
   title = {Metamorphic Testing for Semantic Invariance in Large Language Models},
   journal = {IEEE Access},
@@ -528,7 +528,7 @@
   abstract = {The detection of faults in software systems can be enhanced effectively by model-based mutation testing. The efficiency of this technique is hindered when mutants are equivalent to the original system model, since this makes them useless. Recently, the application of model-based mutation testing to real-time systems modelled as timed games has been investigated, which has resulted in guidelines for statically avoiding equivalent mutants.In this paper, we recast this problem into the framework of parametric timed games. We then prove a correspondence between theoretical results for the detection of equivalent mutants in timed games and the property of monotonicity that is known to hold for a sub-class of parametric timed games called L/U parametric timed games. The presented results not only simplify the theory underlying the detection of equivalent mutants in timed games, but at the same time they improve the expressiveness of a known decidable fragment of parametric timed games for which monotonicity holds.}
 }
 
-@misc{d461ab9482b7fb5eadd7e6cd2c6dffced8ede8b8,
+@misc{papadakis2019advances,
   author = {Mike Papadakis and Marinos Kintis and Jie M. Zhang and Yue Jia and Y. L. Traon and M. Harman},
   title = {Chapter Six - Mutation Testing Advances: An Analysis and Survey},
   journal = {Adv. Comput.},
@@ -675,7 +675,7 @@
   pages = {787-805}
 }
 
-@misc{1929c365d171c78c9c24b242b5b57e2832bc907b,
+@misc{petrovic2021improve,
   author = {Goran R. Petrovi'c and Marko Ivanković and Gordon Fraser and René Just},
   title = {Does Mutation Testing Improve Testing Practices?},
   journal = {2021 IEEE/ACM 43rd International Conference on Software Engineering (ICSE)},
@@ -834,7 +834,7 @@
   abstract = {Mutation testing is an effective but time consuming method for gauging the quality of a test suite. It functions by repeatedly making changes, called mutants, to the source code and checking whether the test suite fails (i.e., whether the mutant is killed). Recent work has shown cases in which applying multiple changes, called a higher order mutation, is more difficult to kill than a single change, called a first order mutation. Specifically, a special kind of higher order mutation, called a strongly subsuming higher order mutation (SSHOM), can enable equivalent accuracy in assessing the quality of the test suite with fewer executions of tests. Little is known about these SSHOMs, as they are difficult to find. Our goal in this research is to identify a faster, more reliable method for finding SSHOMs in order to characterize them in the future. We propose an approach based on variational execution to find SSHOMs. Preliminary results indicate that variational execution performs better than the existing genetic algorithm in terms of speed and completeness of results. Out of a set of 33 first order mutations, our variational execution approach finds all 38 SSHOMs in 4.5 seconds, whereas the genetic algorithm only finds 36 of the 38 SSHOMs in 50 seconds.}
 }
 
-@article{d7c38286734419b52de4262c9802ebdfcf4b9447,
+@article{jia2011analysis,
   author = {Yue Jia and Mark Harman},
   title = {An Analysis and Survey of the Development of Mutation Testing},
   journal = {IEEE Transactions on Software Engineering},
@@ -940,7 +940,7 @@
   pages = {740-743}
 }
 
-@misc{c03829bdd1a6e45113092384bf0fa05a064ca54a,
+@misc{jia2009hom,
   author = {Yue Jia and M. Harman},
   title = {Higher Order Mutation Testing},
   journal = {Inf. Softw. Technol.},
@@ -1528,7 +1528,7 @@
   abstract = {Our focus is on the semantics of programming and specification languages. Over the years, different approaches to give semantics to these languages have been put forward. We restrict ourselves to the operational and the denotational approach, two main streams in the field of semantics. Two notions which play an important role in this paper are (non)determinism and (non)termination. Nondeterminism arises naturally in concurrent languages and it is a key concept in specification languages. Nontermination is usually caused by recursive constructs which are crucial in programming. The operational models are based on labelled transition systems. The definition of these systems is guided by the structure of the language. Metric spaces are an essential ingredient of our denotational models. We exploit the metric structure to model recursive constructs and to define operators on infinite entities. Furthermore, we also employ the metric structure to relate operational and denotational models for a given language. On the basis of four toy languages, we develop some general theory for defining operational and denotational semantic models and for relating them. This theory is applicable to a wide variety of languages. We start with a very simple deterministic and terminating imperative programming language. By adding the recursive while statement, we obtain a deterministic and nonterminating language. Next, we augment the language with the parallel composition resulting in a bounded nondeterministic and nonterminating language. Finally, we add some timed constructs. We obtain an unbounded nondeterministic and nonterminating specification language.}
 }
 
-@misc{7a6c280d9584691800e71876c716ea229335abeb,
+@misc{clark2010semanticmut,
   author = {John A. Clark and Haitao Dan and R. Hierons},
   title = {Semantic Mutation Testing},
   journal = {2010 Third International Conference on Software Testing, Verification, and Validation Workshops},
@@ -2276,4 +2276,24 @@
   pages = {402--411},
   year = {2005},
   doi = {10.1145/1062455.1062530}
+}
+
+@inproceedings{degiovanni2022mubert,
+  author = {Renzo Degiovanni and Mike Papadakis},
+  title = {{$\mu$BERT}: Mutation Testing using Pre-Trained Language Models},
+  booktitle = {2022 IEEE International Conference on Software Testing, Verification and Validation Workshops (ICSTW)},
+  pages = {160--169},
+  year = {2022},
+  doi = {10.1109/ICSTW55395.2022.00039},
+  publisher = {IEEE}
+}
+
+@inproceedings{foster2025ach,
+  author = {Christopher Foster and Abhishek Gulati and Mark Harman and Inna Harper and Ke Mao and Jillian Ritchey and Herv{\'e} Robert and Shubho Sengupta},
+  title = {Mutation-Guided {LLM}-based Test Generation at Meta},
+  booktitle = {Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE Industry)},
+  year = {2025},
+  doi = {10.1145/3696630.3728544},
+  publisher = {Association for Computing Machinery},
+  note = {Automated Compliance Hardening (ACH); also arXiv:2501.12862}
 }
