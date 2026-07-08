@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "purpose": "Study-2 pre-registration power analysis; frozen before any Study-2 data generation.",
+    "master_seed": 20260708,
+    "n_sim": 2000,
+    "n_boot": 400,
+    "alpha": 0.05,
+    "dgp_source": "data/results/sms_track2_v4.json (MP5-held, delta=0.314 pool)",
+    "industrial_source": "data/results/industrial_percase_v1.json",
+    "numpy": "2.4.6",
+    "scipy": "scipy"
+  },
+  "a_cliffs_delta_power": {
+    "design": "n_aligned=n_PUT, n_cross=4*n_PUT; one-sided 95% bootstrap lower bound on Cliff's delta > delta_ref",
+    "dgp": {
+      "aligned_nonzero_mag": [
+        1.0,
+        0.3333,
+        0.3333,
+        0.2,
+        0.3333,
+        0.36
+      ],
+      "cross_nonzero_mag": [
+        0.6667,
+        0.3333,
+        0.55,
+        0.2,
+        0.2,
+        0.7407,
+        0.3333,
+        0.2963,
+        0.36
+      ],
+      "p_nonzero_aligned": 0.5,
+      "p_nonzero_cross": 0.1875,
+      "mean_aligned": 0.213325,
+      "mean_cross": 0.07667291666666666
+    },
+    "true_delta_dgp": 0.3208,
+    "n_sim": 2000,
+    "n_boot": 400,
+    "power_by_threshold": {
+      "delta_ref_0.0": {
+        "12": 0.661,
+        "18": 0.813,
+        "24": 0.8855,
+        "30": 0.9445,
+        "36": 0.971
+      },
+      "delta_ref_0.147": {
+        "12": 0.29,
+        "18": 0.3675,
+        "24": 0.4565,
+        "30": 0.5065,
+        "36": 0.5805
+      },
+      "delta_ref_0.33": {
+        "12": 0.051,
+        "18": 0.044,
+        "24": 0.0455,
+        "30": 0.0405,
+        "36": 0.0425
+      }
+    },
+    "min_n_80pct": {
+      "delta_ref_0.0": 18,
+      "delta_ref_0.147": null,
+      "delta_ref_0.33": null
+    }
+  },
+  "b_dual_blind_delta_delta": {
+    "contrast": "Delta-delta = delta(cross-source) - delta(same-source), paired on PUTs",
+    "target_paired_se_n12": 0.1135,
+    "per_arm_delta_sd": {
+      "12": 0.1634,
+      "18": 0.1281,
+      "24": 0.1109,
+      "30": 0.0992,
+      "36": 0.0918
+    },
+    "calibrated_paired_rho": 0.7587,
+    "paired_se_by_n": {
+      "12": 0.1135,
+      "18": 0.089,
+      "24": 0.0771,
+      "30": 0.0689,
+      "36": 0.0638
+    },
+    "power": {
+      "dd_0.1": {
+        "12": 0.14195,
+        "18": 0.203875,
+        "24": 0.25335,
+        "30": 0.304675,
+        "36": 0.351125
+      },
+      "dd_0.15": {
+        "12": 0.263425,
+        "18": 0.394325,
+        "24": 0.49435,
+        "30": 0.581925,
+        "36": 0.65255
+      },
+      "dd_0.2": {
+        "12": 0.423725,
+        "18": 0.61125,
+        "24": 0.736975,
+        "30": 0.823875,
+        "36": 0.87995
+      }
+    },
+    "min_n_80pct": {
+      "dd_0.1": null,
+      "dd_0.15": null,
+      "dd_0.2": 30
+    }
+  },
+  "c_industrial_expansion": {
+    "study1_observed": {
+      "n_cases": 34,
+      "mean_paired_diff_T1_minus_B1": 0.1005,
+      "n_pos": 16,
+      "n_neg": 11,
+      "n_tie": 7,
+      "wilcoxon_stat": 279.5,
+      "wilcoxon_p_onesided_greater": 0.0148,
+      "t1_face_detect": 34,
+      "b1_face_detect": 7
+    },
+    "wilcoxon_power": {
+      "34": 0.724,
+      "35": 0.745,
+      "40": 0.788,
+      "45": 0.833,
+      "52": 0.8775
+    },
+    "signflip_power": {
+      "34": 0.8905,
+      "35": 0.897,
+      "40": 0.929,
+      "45": 0.952,
+      "52": 0.9755
+    },
+    "fisher_incidence_power": {
+      "34": 1.0,
+      "35": 1.0,
+      "40": 1.0,
+      "45": 1.0,
+      "52": 1.0
+    },
+    "min_n_80pct": {
+      "wilcoxon_power": 45,
+      "signflip_power": 34,
+      "fisher_incidence_power": 34
+    }
+  }
+}
