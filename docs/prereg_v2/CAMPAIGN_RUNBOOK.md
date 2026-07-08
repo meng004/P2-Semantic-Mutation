@@ -206,6 +206,97 @@ removes its scratch cache (`data/operator_campaign/cache_dryrun/`) on exit.
 
 ---
 
+## 5b. Harness mode — generation/review WITHOUT a network API
+
+When no external LLM credentials exist, the §2 live path (`--review`, the three
+family clients) cannot run. Study-2 generation and review are instead served by
+**Claude-agent instances orchestrated by the main session** (disclosed in the
+v1.1 amendment). The offline pipeline is untouched: normalization, V1–V4, dedup,
+AVP/equiv, and SMS bookkeeping remain EXACTLY the registered machinery. Only the
+generator/reviewer *transport* changes — from a chat-completion call to a
+file-based PACKET exchange. Ingestion re-uses `admit_mutant()`, the SAME
+normalization → V1–V4 → admission function the live and mock clients call, so a
+packet-ingested mutant is byte-indistinguishable downstream.
+
+### Orchestration sequence
+
+```
+1. export generation packets      (once, for the confirmatory run)
+2. spawn agents per packet batch   → each writes a response file
+3. ingest generation              → per-PUT admitted mutant cache
+4. build pools + SMS              (§2.3–§2.4, unchanged; CF/TF filter still applies)
+5. export blinded review packets  → spawn reviewer agents → ingest review
+6. ingest review → arbitration packets for disagreements → ingest arbitration
+7. analysis                       (§4, unchanged)
+```
+
+### Commands
+
+```bash
+# 1. GENERATION packets (one per PUT). Confirmatory run: emit ALL PUTs ONCE.
+PYTHONPATH=src python3 scripts/cross_source_campaign.py \
+    --export-packets data/study2_packets/gen --arm cross     # (or --puts a2,a4)
+
+# 2–3. Agents fill data/study2_packets/gen/gen_<put>_response.json, then:
+PYTHONPATH=src python3 scripts/cross_source_campaign.py \
+    --ingest-generation data/study2_packets/gen \
+    --cache-dir data/operator_campaign/cache_cross            # SAME admission gate
+
+# 4. pools + SMS exactly as §2.3–§2.4 (build_pools.py, sms_campaign.py).
+
+# 5. BLINDED review packets (one per admitted mutant), agents write verdicts:
+PYTHONPATH=src python3 scripts/cross_source_campaign.py \
+    --export-review-packets data/study2_packets/review \
+    --cache-dir data/operator_campaign/cache_cross
+PYTHONPATH=src python3 scripts/cross_source_campaign.py \
+    --ingest-review data/study2_packets/review
+
+# 6. Arbitration packets land in data/study2_packets/review/arbitration/;
+#    agents write verdicts there, then re-ingest that sub-directory:
+PYTHONPATH=src python3 scripts/cross_source_campaign.py \
+    --ingest-review data/study2_packets/review/arbitration \
+    --packets-dir  data/study2_packets/review/arbitration
+```
+
+### What packets contain (and deliberately omit)
+
+- **Generation packet** (`gen_<put>.json`): the registered prompt template
+  (pinned by `sha256`; the F2 single-stratum CF/TF clause of §2.3 is folded into
+  the rendered prompt when enabled), PUT source, MR definitions, per-operator
+  specs (incl. the CF/TF `constraint_flag` integration point), mutant-count
+  target, `seed`, and the response schema. **No SMS/outcome field anywhere.**
+- **Review packet** (`rev_<blind>.json`): mutant code + PUT + operator context
+  only. **Blinded** — no generator identity, no arm label, no cell aggregates,
+  no SMS. The blind-id→source map (`_blind_map.json`) is private (audit only,
+  never shown to the reviewer agent). Verdicts carry V-checks + an E1∧E2
+  equivalence opinion (recorded; the mechanical AVP/equiv pipeline stays
+  authoritative for SMS).
+
+### Batch sizes
+
+- **Generation**: batch by PUT (one packet = one PUT = up to ~3 operators ×
+  |sources| × K=3 slots). Spawn one agent per packet; ~10–15 packets per wave
+  keeps orchestration reviewable. 30 PUTs → 30 generation packets.
+- **Review**: batch ~20–40 blinded packets per agent wave (each verdict is
+  independent and short). Arbitration is a small tail (only disagreements).
+
+### One-shot rule (confirmatory)
+
+Packets for the confirmatory run are generated **once**. `--export-packets`
+writes a manifest (`manifest.json`: per-packet `sha256`, slot counts,
+timestamps) and appends a `campaign_log.json` entry; re-exporting the same PUT
+overwrites its manifest row rather than silently forking a second draw. The
+manifest is the proof of one-shot: any re-generation is visible as a changed
+`sha256`/timestamp. Strict ingestion rejects malformed responses (logged with
+clear errors) and never applies packet-specific leniency, so the admitted pool
+is a pure function of the agent responses + the registered gate.
+
+The round-trip is covered offline by `tests/mutators/test_packet_harness.py`
+(export → synthetic well-formed + malformed responses → ingest → pool → SMS
+cell appears; malformed rejected with clear errors; review blinding + arbitration).
+
+---
+
 ## 6. Integrity notes
 
 - Operator specs (`operator_registry.py`, the 54 new entries) were authored

@@ -116,6 +116,10 @@ data/operator_campaign/cache_cross/*
 data/operator_campaign/v2_console.log
 data/operator_campaign/v2_revised*.log
 
+# Study-2 harness-mode packet workflow (generation/review packets + agent
+# responses + manifests). Retained locally for audit; not committed.
+data/study2_packets/
+
 # Brainstorm/skill workspace artifacts
 .superpowers/
 .gitignore.tmp

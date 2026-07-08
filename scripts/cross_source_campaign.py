@@ -15,6 +15,7 @@ Usage:
 """
 import argparse
 import asyncio
+import hashlib
 import importlib.util
 import json
 import re
@@ -22,6 +23,7 @@ import sys
 import time
 import warnings
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -42,6 +44,8 @@ from p2.mutators.llm_client import (  # type: ignore[import-not-found]  # noqa: 
 from p2.mutators.operator_registry import OPERATORS  # type: ignore[import-not-found]  # noqa: E402
 from p2.mutators.validation import validate_mutant  # type: ignore[import-not-found]  # noqa: E402
 from p2.config.primary import PRIMARY_CELLS  # type: ignore[import-not-found]  # noqa: E402
+from p2.config.campaign import single_stratum_filter_enabled  # type: ignore[import-not-found]  # noqa: E402
+from p2.mutators.stratum_filter import single_stratum_prompt_clause  # type: ignore[import-not-found]  # noqa: E402
 
 CACHE_DIR = ROOT / "data/operator_campaign/cache_cross"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
@@ -323,6 +327,46 @@ def _generate_one(client: OpenAI, model: str, prompt: str, max_tokens: int = 800
     }
 
 
+def admit_mutant(op, raw_code, original_fn, source_tag, attempt,
+                 cache_dir=None, meta=None):
+    """THE shared normalization → V1–V4 → admission path.
+
+    Every source of a raw mutant string — the live LLM client, the offline
+    MockLLMClient, and the packet-workflow agent responses — funnels through
+    this ONE function. There is deliberately NO packet-specific leniency: the
+    fence stripping, `validate_mutant` gate, and cache-write naming convention
+    (`{op}_{source}_attemptNN.py`) are identical regardless of caller, so a
+    packet-ingested mutant is byte-indistinguishable from a live-generated one
+    downstream (pool_builder → AVP/equiv → SMS).
+
+    Returns the per-trial record dict; on V-pass it also writes the admitted
+    mutant into `cache_dir` and stamps `record["filename"]`.
+    """
+    cache_dir = cache_dir if cache_dir is not None else CACHE_DIR
+    code = _strip_fences(raw_code)
+    v = validate_mutant(code, original_fn)
+    record = {
+        "op": op.id,
+        "put": op.put,
+        "source": source_tag,
+        "attempt": attempt,
+        "v_syntax": v.syntax_ok,
+        "v_executable": v.executable,
+        "v_nontrivial": v.nontrivial,
+        "v_passed": v.passed,
+        "v_error": v.error,
+    }
+    if meta is not None:
+        record["latency_s"] = meta.get("latency_s")
+        record["prompt_tokens"] = meta.get("prompt_tokens")
+        record["completion_tokens"] = meta.get("completion_tokens")
+    if v.passed:
+        fname = f"{op.id}_{source_tag}_attempt{attempt:02d}.py"
+        (cache_dir / fname).write_text(code)
+        record["filename"] = fname
+    return record
+
+
 def _run_one_op_one_source(op, original_code, original_fn, source_tag, factory, k_trials):
     """Synchronous helper: run K trials for one (operator, source)."""
     client, model = factory()
@@ -339,6 +383,12 @@ def _run_one_op_one_source(op, original_code, original_fn, source_tag, factory, 
             n_attempts=k_trials,
             original_code=original_code,
         )
+        # Study-2 weak spec-level guardrail for CF/TF (layer 1; the load-bearing
+        # enforcement is the post-generation single-stratum admission screen in
+        # scripts/build_pools.py). Returns "" for the four local-edit families,
+        # so non-CF/TF prompts stay byte-identical to before.
+        if single_stratum_filter_enabled():
+            prompt += single_stratum_prompt_clause(op.category)
         try:
             code, meta = _generate_one(client, model, prompt)
         except Exception as e:
@@ -348,29 +398,12 @@ def _run_one_op_one_source(op, original_code, original_fn, source_tag, factory, 
             })
             continue
 
-        v = validate_mutant(code, original_fn)
-        record = {
-            "op": op.id,
-            "put": op.put,
-            "source": source_tag,
-            "model": model,
-            "attempt": attempt,
-            "v_syntax": v.syntax_ok,
-            "v_executable": v.executable,
-            "v_nontrivial": v.nontrivial,
-            "v_passed": v.passed,
-            "v_error": v.error,
-            "latency_s": meta["latency_s"],
-            "prompt_tokens": meta["prompt_tokens"],
-            "completion_tokens": meta["completion_tokens"],
-        }
-        if v.passed:
-            fname = f"{op.id}_{source_tag}_attempt{attempt:02d}.py"
-            (CACHE_DIR / fname).write_text(code)
-            record["filename"] = fname
+        record = admit_mutant(op, code, original_fn, source_tag, attempt,
+                              cache_dir=CACHE_DIR, meta=meta)
+        record["model"] = model
         results.append(record)
         print(f"  [{op.id} {source_tag} a{attempt:02d}] "
-              f"{'PASS' if v.passed else 'FAIL'} {meta['latency_s']}s "
+              f"{'PASS' if record['v_passed'] else 'FAIL'} {meta['latency_s']}s "
               f"{meta['completion_tokens']}t",
               flush=True)
     return results
@@ -465,6 +498,532 @@ def run_dry_run() -> int:
             shutil.rmtree(dry_cache)  # leave no artifact
 
 
+# ══════════════════════════════════════════════════════════════════════════
+# PACKET WORKFLOW (harness mode) — Study-2 generation/review WITHOUT network.
+#
+# When no external LLM credentials exist, generator/reviewer roles are served
+# by Claude-agent instances orchestrated by the main session (disclosed in the
+# v1.1 amendment). The campaign becomes two offline phases per cell batch:
+#   export  → agent fills responses → ingest.
+# The ingest side re-uses `admit_mutant` (the SAME normalization → V1–V4 →
+# admission path as the live/mock client) so the offline pipeline (dedup,
+# AVP/equiv, SMS bookkeeping) stays byte-for-byte the registered machinery.
+# Packets carry NO SMS/outcome fields; review packets are additionally blinded
+# (no generator identity, no arm label, no cell aggregates).
+# ══════════════════════════════════════════════════════════════════════════
+
+PACKET_ROOT = ROOT / "data" / "study2_packets"
+
+# Field-name tokens that must NEVER appear as keys in any packet (outcome leak).
+_FORBIDDEN_PACKET_KEY_TOKENS = ("sms", "killed", "survive", "outcome", "verdict",
+                                "kill_count")
+
+GENERATION_RESPONSE_SCHEMA = {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": ["packet_id", "put_id", "mutants"],
+    "mutants_item_fields": {
+        "op_id": "one of the packet's operator ids",
+        "source": "one of the packet's 'sources' role tags",
+        "attempt": "integer in 1..k_per_source",
+        "code": "complete Python mutant program (```python fences tolerated, "
+                "stripped on ingest); must define def program(x)",
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": list(_FORBIDDEN_PACKET_KEY_TOKENS) + ["equiv"],
+    "strictness": "Malformed entries are rejected and logged; well-formed "
+                  "entries run the identical V1–V4 admission gate as live runs.",
+}
+
+REVIEW_RESPONSE_SCHEMA = {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": ["blind_id", "V1_syntax_ok", "V2_executable",
+                           "V3_nontrivial", "operator_match", "equivalence",
+                           "overall", "reason"],
+    "field_domains": {
+        "V1_syntax_ok": "true|false",
+        "V2_executable": "Yes|No|Uncertain",
+        "V3_nontrivial": "Yes|No|Uncertain",
+        "operator_match": "Yes|No|Uncertain",
+        "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} "
+                       "per the registered E1∧E2 equivalence protocol",
+        "overall": "CONFIRMED|REJECTED|UNCERTAIN",
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; "
+            "the equivalence opinion is recorded, not used to alter the pool.",
+}
+
+
+def _sha256_text(s: str) -> str:
+    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _pin_template(source_name: str, text: str) -> dict:
+    """Pin the registered prompt template by content hash (auditability §5)."""
+    return {"source": source_name, "sha256": _sha256_text(text),
+            "char_len": len(text)}
+
+
+def _load_mrs_source(put: str) -> dict:
+    p = ROOT / "src" / "p2" / "mrs" / f"{put}.py"
+    text = p.read_text()
+    mps = sorted({int(m) for m in re.findall(r"def r_mp(\d)\(", text)})
+    return {"path": f"src/p2/mrs/{put}.py", "sha256": _sha256_text(text),
+            "available_mps": mps, "source": text}
+
+
+def _operator_spec(op) -> dict:
+    spec = {
+        "id": op.id, "put": op.put, "category": op.category, "label": op.label,
+        "target_locator": op.target_locator, "transformation": op.transformation,
+        "rationale": op.rationale, "is_key": bool(getattr(op, "is_key", False)),
+    }
+    # CF/TF constraint flag: forward-compatible with F2's registry change. When
+    # MutationOperator gains `constraint_flag`, it is consumed here with no
+    # packet-code change; until then we surface the documented integration
+    # point so CF/TF packets are audit-complete either way. (F2's landed layer
+    # is the single_stratum admission screen in build_pools.py; a per-operator
+    # flag field, if added, is picked up here automatically.)
+    cf = getattr(op, "constraint_flag", None)
+    if cf is None:
+        cf = getattr(op, "cf_tf_constraint", None)
+    spec["constraint_flag"] = cf
+    if cf is None and op.category in ("CF", "TF"):
+        spec["constraint_flag_integration_point"] = (
+            "MutationOperator exposes no constraint_flag yet; when F2's registry "
+            "change merges a per-operator flag, it is read via "
+            "getattr(op,'constraint_flag') with no packet-code change. The "
+            "load-bearing CF/TF enforcement is the single-stratum admission "
+            "screen in build_pools.py.")
+    return spec
+
+
+def _assert_no_outcome_fields(obj, path="root") -> None:
+    """Recursively assert no packet KEY leaks an SMS/outcome field (§ blinding)."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            kl = str(k).lower()
+            for tok in _FORBIDDEN_PACKET_KEY_TOKENS:
+                if tok in kl:
+                    raise AssertionError(
+                        f"packet leaks outcome field '{k}' at {path}")
+            _assert_no_outcome_fields(v, f"{path}.{k}")
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            _assert_no_outcome_fields(v, f"{path}[{i}]")
+
+
+def _manifest_path(d) -> Path:
+    return Path(d) / "manifest.json"
+
+
+def _load_manifest(d) -> dict:
+    p = _manifest_path(d)
+    if p.exists():
+        return json.loads(p.read_text())
+    return {"generation_packets": [], "generation_responses": [],
+            "review_packets": [], "review_verdicts": []}
+
+
+def _save_manifest(d, m) -> None:
+    _manifest_path(d).write_text(json.dumps(m, indent=2, ensure_ascii=False))
+
+
+def _campaign_log_append(work_dir, event: str, payload: dict) -> None:
+    log = Path(work_dir) / "campaign_log.json"
+    entries = json.loads(log.read_text()) if log.exists() else []
+    entries.append({"event": event, "ts": _now_iso(), **payload})
+    log.write_text(json.dumps(entries, indent=2, ensure_ascii=False))
+    # Best-effort global audit trail under data/study2_packets/.
+    try:
+        PACKET_ROOT.mkdir(parents=True, exist_ok=True)
+        with (PACKET_ROOT / "campaign_log.jsonl").open("a") as fh:
+            fh.write(json.dumps({"event": event, "ts": _now_iso(),
+                                 "work_dir": str(work_dir), **payload}) + "\n")
+    except OSError:
+        pass
+
+
+# ── Phase 1: export GENERATION packets ─────────────────────────────────────
+
+def export_generation_packets(out_dir, puts=None, arm="cross",
+                              k=REGISTERED_K, seed=REGISTERED_SEED) -> dict:
+    """One GENERATION packet per selected PUT (its operators feed one per-PUT
+    pool, reused across all 5 MPs). NO SMS/outcome fields anywhere."""
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    all_puts = sorted({o.put for o in OPERATORS})
+    puts = sorted(puts) if puts else all_puts
+    sources = list(ARMS[arm])
+    tpl = _pin_template("cross_source_campaign.PROMPT_TEMPLATE", PROMPT_TEMPLATE)
+    manifest = _load_manifest(out_dir)
+    written = []
+    for put in puts:
+        ops = sorted((o for o in OPERATORS if o.put == put), key=lambda o: o.id)
+        if not ops:
+            continue
+        original_code, _ = _load_put_program(put)
+        # Mirror the live generator prompt EXACTLY: append F2's single-stratum
+        # CF/TF guardrail clause when enabled (empty for the 4 local-edit
+        # families), so packet prompts are byte-identical to a live campaign.
+        stratum_on = single_stratum_filter_enabled()
+        op_blocks, slots = [], []
+        for op in ops:
+            clause = single_stratum_prompt_clause(op.category) if stratum_on else ""
+            prompts = {
+                str(a): PROMPT_TEMPLATE.format(
+                    put_name=op.put.upper(), op_id=op.id, op_label=op.label,
+                    target_locator=op.target_locator,
+                    transformation=op.transformation, rationale=op.rationale,
+                    attempt_idx=a, n_attempts=k, original_code=original_code) + clause
+                for a in range(1, k + 1)
+            }
+            op_blocks.append({"spec": _operator_spec(op),
+                              "prompts_by_attempt": prompts})
+            for source in sources:
+                for a in range(1, k + 1):
+                    slots.append({"op_id": op.id, "source": source, "attempt": a})
+        packet = {
+            "packet_type": "generation",
+            "packet_id": f"gen_{put}",
+            "put_id": put,
+            "arm": arm,
+            "seed": seed,
+            "k_per_source": k,
+            "sources": sources,
+            "registered_prompt_template": tpl,
+            "single_stratum_guardrail": stratum_on,
+            "put_source": original_code,
+            "mr_definitions": _load_mrs_source(put),
+            "operators": op_blocks,
+            "mutant_count_target": {
+                "per_operator_total": len(sources) * k,
+                "n_operators": len(ops),
+                "packet_total": len(slots),
+            },
+            "required_slots": slots,
+            "response_schema": GENERATION_RESPONSE_SCHEMA,
+            "instructions": (
+                "Act as the mutant generator. For EACH required slot, follow the "
+                "operator's rendered prompt (operators[].prompts_by_attempt[attempt]) "
+                "and return the complete mutant program in the 'code' field. Return "
+                "exactly one mutants[] entry per required_slots item. Do NOT include "
+                "any SMS/kill/survive/outcome field."),
+        }
+        _assert_no_outcome_fields(packet)
+        text = json.dumps(packet, indent=2, ensure_ascii=False)
+        path = out_dir / f"{packet['packet_id']}.json"
+        path.write_text(text)
+        entry = {"packet_id": packet["packet_id"], "put": put,
+                 "file": path.name, "sha256": _sha256_text(text),
+                 "n_operators": len(ops), "n_slots": len(slots),
+                 "created": _now_iso()}
+        manifest["generation_packets"] = [
+            e for e in manifest["generation_packets"]
+            if e["packet_id"] != entry["packet_id"]] + [entry]
+        written.append(entry)
+    _save_manifest(out_dir, manifest)
+    _campaign_log_append(out_dir, "export-generation",
+                         {"arm": arm, "k": k, "seed": seed,
+                          "n_packets": len(written),
+                          "puts": [e["put"] for e in written]})
+    print(f"[export-packets] wrote {len(written)} generation packet(s) → {out_dir}")
+    return manifest
+
+
+# ── Phase 2: ingest GENERATION responses ───────────────────────────────────
+
+def _validate_generation_response(obj, packet) -> tuple[list, list]:
+    """Strict schema validation. Returns (valid_entries, errors)."""
+    errors, valid = [], []
+    if not isinstance(obj, dict):
+        return [], ["response is not a JSON object"]
+    for key in ("packet_id", "put_id", "mutants"):
+        if key not in obj:
+            errors.append(f"missing top-level key '{key}'")
+    if errors:
+        return [], errors
+    if obj["packet_id"] != packet["packet_id"]:
+        errors.append(f"packet_id mismatch: {obj['packet_id']} != {packet['packet_id']}")
+    if obj["put_id"] != packet["put_id"]:
+        errors.append(f"put_id mismatch: {obj['put_id']} != {packet['put_id']}")
+    if not isinstance(obj["mutants"], list):
+        errors.append("'mutants' is not a list")
+        return [], errors
+    allowed = {(s["op_id"], s["source"], s["attempt"])
+               for s in packet["required_slots"]}
+    op_ids = {s["op_id"] for s in packet["required_slots"]}
+    sources = set(packet["sources"])
+    k = packet["k_per_source"]
+    for i, m in enumerate(obj["mutants"]):
+        tag = f"mutants[{i}]"
+        if not isinstance(m, dict):
+            errors.append(f"{tag}: not an object")
+            continue
+        leak = [key for key in m
+                if any(t in str(key).lower() for t in _FORBIDDEN_PACKET_KEY_TOKENS)]
+        if leak:
+            errors.append(f"{tag}: forbidden outcome field(s) {leak}")
+            continue
+        missing = [f for f in ("op_id", "source", "attempt", "code") if f not in m]
+        if missing:
+            errors.append(f"{tag}: missing field(s) {missing}")
+            continue
+        if m["op_id"] not in op_ids:
+            errors.append(f"{tag}: op_id '{m['op_id']}' not in packet")
+            continue
+        if m["source"] not in sources:
+            errors.append(f"{tag}: source '{m['source']}' not a packet source")
+            continue
+        if not isinstance(m["attempt"], int) or not (1 <= m["attempt"] <= k):
+            errors.append(f"{tag}: attempt '{m['attempt']}' out of 1..{k}")
+            continue
+        if (m["op_id"], m["source"], m["attempt"]) not in allowed:
+            errors.append(f"{tag}: slot ({m['op_id']},{m['source']},{m['attempt']}) "
+                          "not a declared slot")
+            continue
+        if not isinstance(m["code"], str) or not m["code"].strip():
+            errors.append(f"{tag}: empty/non-string code")
+            continue
+        valid.append(m)
+    return valid, errors
+
+
+def _iter_response_files(in_dir):
+    for f in sorted(Path(in_dir).glob("*.json")):
+        if f.name in ("manifest.json", "campaign_log.json",
+                      "_blind_map.json", "ingest_generation_log.json",
+                      "ingest_review_log.json"):
+            continue
+        try:
+            obj = json.loads(f.read_text())
+        except json.JSONDecodeError as e:
+            yield f, None, f"invalid JSON: {e}"
+            continue
+        if isinstance(obj, dict) and obj.get("packet_type") in (
+                "generation", "review"):
+            continue  # a packet, not a response
+        yield f, obj, None
+
+
+def ingest_generation(in_dir, cache_dir=None, packets_dir=None) -> dict:
+    """Validate agent GENERATION responses (strict) and run each admitted
+    mutant through the SAME admission path as the live/mock client."""
+    in_dir = Path(in_dir)
+    packets_dir = Path(packets_dir) if packets_dir else in_dir
+    cache_dir = Path(cache_dir) if cache_dir else CACHE_DIR
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    manifest = _load_manifest(in_dir)
+    all_records, all_errors, per_put = [], [], {}
+    put_fn_cache: dict = {}
+    for f, obj, ferr in _iter_response_files(in_dir):
+        if ferr:
+            all_errors.append({"file": f.name, "errors": [ferr]})
+            print(f"[ingest-generation] REJECT {f.name}: {ferr}")
+            continue
+        if not isinstance(obj, dict) or "mutants" not in obj:
+            continue  # not a generation response
+        pid = obj.get("packet_id")
+        ppath = packets_dir / f"{pid}.json"
+        if not ppath.exists():
+            msg = f"no matching packet '{pid}.json' in {packets_dir}"
+            all_errors.append({"file": f.name, "errors": [msg]})
+            print(f"[ingest-generation] REJECT {f.name}: {msg}")
+            continue
+        packet = json.loads(ppath.read_text())
+        valid, errs = _validate_generation_response(obj, packet)
+        for e in errs:
+            print(f"[ingest-generation] {f.name}: SCHEMA-ERR {e}")
+        if errs:
+            all_errors.append({"file": f.name, "errors": errs})
+        put = packet["put_id"]
+        if put not in put_fn_cache:
+            put_fn_cache[put] = _load_put_program(put)
+        _, original_fn = put_fn_cache[put]
+        op_by_id = {o.id: o for o in OPERATORS if o.put == put}
+        covered = set()
+        for m in valid:
+            op = op_by_id[m["op_id"]]
+            rec = admit_mutant(op, m["code"], original_fn, m["source"],
+                               m["attempt"], cache_dir=cache_dir)
+            rec["ingested_from"] = f.name
+            all_records.append(rec)
+            covered.add((m["op_id"], m["source"], m["attempt"]))
+        declared = {(s["op_id"], s["source"], s["attempt"])
+                    for s in packet["required_slots"]}
+        gaps = sorted(declared - covered)
+        n_pass = sum(1 for r in all_records
+                     if r.get("ingested_from") == f.name and r.get("v_passed"))
+        per_put[put] = {"file": f.name, "n_valid": len(valid),
+                        "n_admitted": n_pass, "n_gaps": len(gaps),
+                        "n_schema_errors": len(errs)}
+        manifest["generation_responses"] = [
+            e for e in manifest["generation_responses"]
+            if e.get("file") != f.name] + [{
+                "file": f.name, "packet_id": pid, "put": put,
+                "sha256": _sha256_text(f.read_text()),
+                "n_valid": len(valid), "n_admitted": n_pass,
+                "n_gaps": len(gaps), "n_schema_errors": len(errs),
+                "ingested": _now_iso()}]
+        print(f"[ingest-generation] {f.name}: {len(valid)} valid, {n_pass} "
+              f"admitted (V1–V4), {len(errs)} schema-err, {len(gaps)} gaps")
+    _save_manifest(in_dir, manifest)
+    _campaign_log_append(in_dir, "ingest-generation", {
+        "n_records": len(all_records),
+        "n_admitted": sum(1 for r in all_records if r.get("v_passed")),
+        "n_files_with_errors": len(all_errors),
+        "per_put": per_put})
+    (in_dir / "ingest_generation_log.json").write_text(
+        json.dumps({"records": all_records, "errors": all_errors,
+                    "per_put": per_put}, indent=2, ensure_ascii=False))
+    return {"records": all_records, "errors": all_errors, "per_put": per_put,
+            "cache_dir": str(cache_dir)}
+
+
+# ── Phase 3: export/ingest blinded REVIEW packets ──────────────────────────
+
+def _blind_id(op_id: str, source: str, attempt: int) -> str:
+    return "rev_" + _sha256_text(f"{op_id}|{source}|{attempt}")[:12]
+
+
+def export_review_packets(cache_dir=None, out_dir=None) -> dict:
+    """One BLINDED review packet per admitted mutant. Omits generator identity,
+    arm label, and cell aggregates; carries mutant code + PUT + operator only."""
+    cache_dir = Path(cache_dir) if cache_dir else CACHE_DIR
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    op_by_id = {o.id: o for o in OPERATORS}
+    manifest = _load_manifest(out_dir)
+    blind_map = {}
+    n = 0
+    for mut in sorted(cache_dir.glob("*_attempt*.py")):
+        m = re.match(r"([a-d]\d+_[A-Z]+\d+)_([a-z]+)_attempt(\d+)\.py$", mut.name)
+        if not m:
+            continue
+        op_id, source, attempt = m.group(1), m.group(2), int(m.group(3))
+        op = op_by_id.get(op_id)
+        if op is None:
+            continue
+        put_source, _ = _load_put_program(op.put)
+        code = mut.read_text()
+        blind = _blind_id(op_id, source, attempt)
+        packet = build_blind_review_packet(op, put_source, code)
+        packet.update({
+            "packet_type": "review",
+            "blind_id": blind,
+            "review_prompt": REVIEW_PROMPT_TEMPLATE.format(
+                op_id=op.id, op_label=op.label,
+                target_locator=op.target_locator,
+                transformation=op.transformation,
+                put_source=put_source, mutant_code=code),
+            "response_schema": REVIEW_RESPONSE_SCHEMA,
+            "instructions": (
+                "Act as a BLIND reviewer. You are given only the original PUT, "
+                "the candidate mutant, and the operator spec. Judge the V-checks "
+                "and give an equivalence opinion under the E1∧E2 protocol. Return "
+                "the JSON verdict; do not guess who generated it."),
+        })
+        # Blinding guarantees (§5): no source/arm/cell-aggregate leak.
+        _assert_no_outcome_fields(packet)
+        flat = json.dumps(packet).lower()
+        for fam in FAMILIES:
+            assert fam not in flat, f"review packet leaks generator family {fam}"
+        assert "arm" not in packet and source not in packet.get("blind_id", "")
+        text = json.dumps(packet, indent=2, ensure_ascii=False)
+        (out_dir / f"{blind}.json").write_text(text)
+        blind_map[blind] = {"op_id": op_id, "put": op.put, "source": source,
+                            "attempt": attempt, "mutant_file": mut.name,
+                            "packet_sha256": _sha256_text(text)}
+        n += 1
+    # Private map (audit only — never shown to the reviewer agent).
+    (out_dir / "_blind_map.json").write_text(
+        json.dumps(blind_map, indent=2, ensure_ascii=False))
+    manifest["review_packets"] = [{"blind_id": b, **v}
+                                  for b, v in sorted(blind_map.items())]
+    _save_manifest(out_dir, manifest)
+    _campaign_log_append(out_dir, "export-review", {"n_packets": n})
+    print(f"[export-review-packets] wrote {n} blinded review packet(s) → {out_dir}")
+    return {"n_packets": n, "blind_map": blind_map}
+
+
+def _validate_review_response(obj) -> tuple[dict, list]:
+    errors = []
+    if not isinstance(obj, dict):
+        return None, ["verdict is not a JSON object"]
+    for key in REVIEW_RESPONSE_SCHEMA["required_top_level"]:
+        if key not in obj:
+            errors.append(f"missing key '{key}'")
+    if errors:
+        return None, errors
+    if obj["overall"] not in ("CONFIRMED", "REJECTED", "UNCERTAIN"):
+        errors.append(f"overall '{obj['overall']}' not in domain")
+    if not isinstance(obj.get("equivalence"), dict):
+        errors.append("equivalence must be an object {E1,E2,equivalent}")
+    if errors:
+        return None, errors
+    return obj, []
+
+
+def ingest_review(in_dir, packets_dir=None) -> dict:
+    """Ingest agent REVIEW verdicts (strict); classify and, for disagreements
+    (UNCERTAIN → arbitration), emit blinded arbitration packets."""
+    from types import SimpleNamespace
+    from p2.mutators.dual_blind import classify_mutant, MutantStatus
+    in_dir = Path(in_dir)
+    packets_dir = Path(packets_dir) if packets_dir else in_dir
+    manifest = _load_manifest(in_dir)
+    verdicts, errors, arbitration_ids = [], [], []
+    arb_dir = in_dir / "arbitration"
+    for f, obj, ferr in _iter_response_files(in_dir):
+        if ferr:
+            errors.append({"file": f.name, "errors": [ferr]})
+            print(f"[ingest-review] REJECT {f.name}: {ferr}")
+            continue
+        if not isinstance(obj, dict) or "overall" not in obj or "blind_id" not in obj:
+            continue  # not a verdict file
+        parsed, errs = _validate_review_response(obj)
+        if errs:
+            for e in errs:
+                print(f"[ingest-review] {f.name}: SCHEMA-ERR {e}")
+            errors.append({"file": f.name, "errors": errs})
+            continue
+        blind = parsed["blind_id"]
+        status = classify_mutant(SimpleNamespace(overall=parsed["overall"]))
+        rec = {"blind_id": blind, "overall": parsed["overall"],
+               "operator_match": parsed.get("operator_match"),
+               "equivalence": parsed.get("equivalence"),
+               "status": status.value, "file": f.name}
+        verdicts.append(rec)
+        if status == MutantStatus.ARBITRATED:
+            arbitration_ids.append(blind)
+            src_packet = packets_dir / f"{blind}.json"
+            if src_packet.exists():
+                arb_dir.mkdir(parents=True, exist_ok=True)
+                pk = json.loads(src_packet.read_text())
+                pk["packet_type"] = "review"
+                pk["arbitration"] = True
+                pk["instructions"] = (
+                    "ARBITRATION: generator/reviewer disagreed. Re-judge this "
+                    "blinded mutant independently under the same E1∧E2 protocol.")
+                (arb_dir / f"{blind}.json").write_text(
+                    json.dumps(pk, indent=2, ensure_ascii=False))
+    manifest["review_verdicts"] = verdicts
+    _save_manifest(in_dir, manifest)
+    (in_dir / "ingest_review_log.json").write_text(
+        json.dumps({"verdicts": verdicts, "errors": errors,
+                    "arbitration": arbitration_ids}, indent=2, ensure_ascii=False))
+    _campaign_log_append(in_dir, "ingest-review", {
+        "n_verdicts": len(verdicts), "n_errors": len(errors),
+        "n_arbitration": len(arbitration_ids)})
+    print(f"[ingest-review] {len(verdicts)} verdict(s), {len(errors)} rejected, "
+          f"{len(arbitration_ids)} → arbitration")
+    return {"verdicts": verdicts, "errors": errors,
+            "arbitration": arbitration_ids}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--put", default=None, help="restrict to one PUT (e.g. a2)")
@@ -485,7 +1044,47 @@ def main():
     parser.add_argument("--k", type=int, default=3, help="trials per (op, source)")
     parser.add_argument("--workers", type=int, default=3,
                         help="parallel sources (Claude+GPT+DeepSeek = 3)")
+    # ── Harness (packet) mode — offline generation/review, no network ──────
+    parser.add_argument("--export-packets", dest="export_packets", default=None,
+                        metavar="DIR",
+                        help="HARNESS: write one GENERATION packet per PUT to DIR")
+    parser.add_argument("--ingest-generation", dest="ingest_generation", default=None,
+                        metavar="DIR",
+                        help="HARNESS: ingest agent generation responses from DIR")
+    parser.add_argument("--export-review-packets", dest="export_review", default=None,
+                        metavar="DIR",
+                        help="HARNESS: write blinded review packets to DIR")
+    parser.add_argument("--ingest-review", dest="ingest_review", default=None,
+                        metavar="DIR",
+                        help="HARNESS: ingest agent review verdicts from DIR")
+    parser.add_argument("--puts", default=None,
+                        help="comma-separated PUT ids for --export-packets (default all)")
+    parser.add_argument("--packets-dir", dest="packets_dir", default=None,
+                        metavar="DIR",
+                        help="where matching packets live for an ingest step "
+                             "(default = the ingest DIR)")
+    parser.add_argument("--cache-dir", dest="cache_dir", default=None,
+                        metavar="DIR",
+                        help="mutant cache dir for packet ingest / review export "
+                             "(default data/operator_campaign/cache_cross)")
     args = parser.parse_args()
+
+    # ── Harness (packet) dispatch — each is a terminal offline action ──────
+    if args.export_packets:
+        puts = args.puts.split(",") if args.puts else None
+        export_generation_packets(args.export_packets, puts=puts, arm=args.arm,
+                                  k=args.k, seed=REGISTERED_SEED)
+        raise SystemExit(0)
+    if args.ingest_generation:
+        ingest_generation(args.ingest_generation, cache_dir=args.cache_dir,
+                          packets_dir=args.packets_dir)
+        raise SystemExit(0)
+    if args.export_review:
+        export_review_packets(cache_dir=args.cache_dir, out_dir=args.export_review)
+        raise SystemExit(0)
+    if args.ingest_review:
+        ingest_review(args.ingest_review, packets_dir=args.packets_dir)
+        raise SystemExit(0)
 
     if args.dry_run:
         raise SystemExit(run_dry_run())
