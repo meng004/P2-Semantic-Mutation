@@ -144,19 +144,51 @@ backoff).
 | Dual-blind Δδ (both arms) | `data/results/dualblind_delta_delta_v5.json` |
 | Industrial per-case (frozen census) | `data/results/industrial_percase_v2.json` |
 | Industrial stats | `data/results/industrial_stats_v2.json` |
-| Power reference (this registration) | `data/results/power_study2.json` |
+| H1' instantiability | `data/results/h1_instantiability_v5.json` |
+| H3' class consistency | `data/results/h3_class_consistency_v5.json` |
+| H4' attribution purity (S5) | `data/results/s5_purity_v5.json` |
+| Power reference (v1.0) | `data/results/power_study2.json` |
+| Power/feasibility reference (v1.1) | `data/results/power_study2_v11.json` |
 
-Registered analysis scripts that consume the SSOTs (run after generation):
+Registered analysis scripts that consume the SSOTs (run after generation). The
+analysis leg now covers **H2-1', H1', H3', H4' + industrial** (H2-2 gated
+not-run under the same-vendor freeze, §5b of the v1.1 amendment):
 
 ```bash
-# H2-1 aligned-vs-cross δ + H2-2 dual-blind Δδ (Families A, B).
-# H2-1: one-sided 95% bootstrap lower bound > 0 (seed 20260708).
-# H2-2: paired-role bootstrap Δδ = δ(cross-source) − δ(same-source), the two
-#       arms block-resampled on the SAME 30 PUTs. Reads both arms' SMS pools.
+# H2-1' aligned-vs-cross δ + H2-2 dual-blind Δδ (Families A, B).
+# H2-1': one-sided 95% bootstrap lower bound > 0 (seed 20260708).
+# H2-2:  paired-role bootstrap Δδ = δ(cross-source) − δ(same-source), the two
+#        arms block-resampled on the SAME PUTs. Reads both arms' SMS pools.
 PYTHONPATH=src python3 scripts/compute_dualblind_delta.py \
     --cross data/results/sms_track2_v5.json \
     --same  data/results/sms_track2_v5_same.json \
     --out   data/results/dualblind_delta_delta_v5.json
+
+# H1' operator instantiability (Family E; §3 H1', §7b). Per family, count the
+# 28 confirmatory PUTs with ≥5 non-equivalent admitted mutants; verdict = ≥4 of
+# 5 families clear ≥8/28. Consumes the admitted-pool SSOT (post V1–V4 + dedup +
+# CF/TF single-stratum filter). Pilots {a2,b4} and Study-1 pools excluded.
+# Expected verdict line: "VERDICT: CONFIRM/NOT_CONFIRMED — …"; emits the SSOT.
+PYTHONPATH=src python3 scripts/compute_h1_instantiability.py \
+    --pool data/results/sms_track2_v5.json \
+    --out  data/results/h1_instantiability_v5.json
+
+# H3' cross-class direction consistency (Family E; §3 H3', §7b). Per class
+# (A,B,C,D), sign of (class-mean aligned − class-mean cross) SMS; verdict = ≥3
+# of 4 classes positive. Per-class binomial sign-test p reported descriptively;
+# Friedman χ² across MPs stays exploratory (Family X). Pilots excluded.
+PYTHONPATH=src python3 scripts/compute_h3_class_consistency.py \
+    --pool data/results/sms_track2_v5.json \
+    --out  data/results/h3_class_consistency_v5.json
+
+# H4' attribution purity (Family E; §3 H4', §7b). Mean suspect_share (LRCA
+# multi-stratum leakage fraction) over the 140 confirmatory cells (28×5); the
+# LRCA/S5 machinery is IMPORTED from p2.mutators.stratum_filter (identical to
+# Study 1), never reimplemented. Verdict = mean ≤ 0.05. Pilots excluded.
+PYTHONPATH=src python3 scripts/compute_h4_attribution.py \
+    --matrix data/results/sms_track2_v5.json \
+    --out    data/results/s5_purity_v5.json
+
 # H2-3/H2-4 industrial (Tier-A Wilcoxon Holm-3 + Fisher incidence, Tier-B
 #           sensitivity kept separate) on the frozen two-tier census:
 PYTHONPATH=src python3 scripts/compute_industrial_stats.py \
@@ -166,15 +198,19 @@ PYTHONPATH=src python3 scripts/compute_industrial_stats.py \
 PYTHONPATH=src python3 scripts/compute_h2_incidence.py
 ```
 
-Both `compute_dualblind_delta.py` and `compute_industrial_stats.py` are now
-present in `scripts/`, **pre-frozen before any Study-2 data exists** (the
-gold-standard ordering: analysis code frozen pre-data). Each carries the header
-"Pre-frozen under PREREGISTRATION_STUDY2.md before Study-2 data generation; any
-post-data modification must be disclosed as a deviation", encodes the registered
-decision rules (printing the licensed verdict per hypothesis, not just numbers),
-and is covered by offline synthetic-fixture tests in `tests/analysis/` that
-exercise every branch (confirm / not-confirmed / under-recruited / bounded-null /
-inconclusive). No author-time analysis-script gaps remain.
+`compute_dualblind_delta.py`, `compute_industrial_stats.py`,
+`compute_h1_instantiability.py`, `compute_h3_class_consistency.py`, and
+`compute_h4_attribution.py` are all present in `scripts/`, **pre-frozen before
+any Study-2 data exists** (the gold-standard ordering: analysis code frozen
+pre-data). Each carries the header "Pre-frozen under
+PREREGISTRATION_STUDY2_v1.1.md before Study-2 data generation; any post-data
+modification must be disclosed as a deviation", encodes the registered decision
+rules (printing the licensed verdict per hypothesis, not just numbers), and is
+covered by offline synthetic-fixture tests in `tests/analysis/` that exercise
+every branch (confirm / not-confirmed / boundary / missing-cell / pilot-exclusion
+enforced / malformed-input rejected, plus under-recruited / bounded-null /
+inconclusive for the A/B/C/D families). No author-time analysis-script gaps
+remain.
 
 ---
 
