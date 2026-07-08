@@ -166,3 +166,23 @@ Both fixes change packet *presentation* only: schemas, admission gates,
 blinding guarantees, and verdict semantics are untouched. Classified
 code-level under §2b. The 54 pilot verdicts remain valid (reviewer
 inference matched the registered semantics; filenames converged).
+
+## Confirmatory-phase incidents and disclosed deviations (post-freeze)
+
+| # | Item | Class | Detail |
+|---|---|---|---|
+| P6 | `sms_campaign.py` defaulted to `--track 1` and wrote the 28 primary-cell scores over the tracked Study-1 `data/results/sms_track1.json` | tooling incident, no protocol impact | File restored via `git restore` before any use; rerun with explicit `--track 2 --out data/results/sms_track2_v5.json`. SMS scoring is a deterministic mechanical measurement of the frozen pools — the rerun is re-execution, not regeneration. Runbook command updated. |
+| P7 | Review-packet export tripped the blinding assertion: b5's 27 mutants carried the slot's source label in their docstrings | blinding guard worked as designed | Presentation-layer redaction added at export (source-family tokens → "src" in the DISPLAYED code only; artifacts on disk untouched; assertion retained as final guard). 315 partially-exported packets discarded and re-exported. |
+| D-A1 | `compute_dualblind_delta.py` gained a `--gated-h2-2` CLI mode POST-DATA | **disclosed deviation** (script-interface, non-statistical) | The frozen CLI required both arm files even though H2-2 is gated not-run by registration v1.1 (same-vendor freeze). The added mode skips only the H2-2 computation and emits the registered NOT-RUN verdict; H2-1 statistical logic is byte-unchanged. Recorded in the output SSOT (`post_freeze_deviation`) and here. |
+
+## Confirmatory verdicts (registered decision rules, pre-frozen scripts)
+
+| Hypothesis | Verdict | SSOT |
+|---|---|---|
+| H2-1' aligned>cross (Family A) | **CONFIRM** (δ=+0.4295, one-sided 95% lower +0.2653; descriptive Romano band medium, two-sided CI [0.2328, 0.6193]) | dualblind_delta_delta_v5.json |
+| H1' instantiability | **CONFIRM** (5/5 families ≥8/28; CE 23, OS 14, HP 21, TF 15, SI 8) | h1_instantiability_v5.json |
+| H3' class consistency | **CONFIRM** (3/4 classes positive; class C negative, reported) | h3_class_consistency_v5.json |
+| H4' attribution purity | **NOT_CONFIRMED** (mean suspect_share 0.1714 > 0.05; multi-stratum by family CF 9 / OS 27 / SI 9 / TF 72 — leakage generalises beyond the Study-1 CF/TF diagnosis) | s5_purity_v5.json |
+| H2-2 cross-vendor dual-blind (Family B) | **NOT-RUN** (gated; same-vendor freeze, no substitution) | dualblind_delta_delta_v5.json |
+
+Review pipeline: 747 blinded verdicts (18 independent reviewer instances), 4 REJECTED at round 1, 6 UNCERTAIN → third-instance arbitration (all 6 CONFIRMED under a uniform GP-hyperparameter-pinning rationale). Admission: 774 valid → 756 admitted (V1–V4); pools 756 mutants / 28 PUTs; 140 confirmatory cells (36 nonzero).

@@ -1,0 +1,131 @@
+{
+  "artefact": "h3_class_consistency_v5",
+  "generated_by": "scripts/compute_h3_class_consistency.py",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY2_v1.1.md (§3 H3'; §4 primary-MP rule; §2b/§2c; §7b contract)",
+  "integrity": "Pre-frozen before Study-2 data generation; any post-data modification must be disclosed as a deviation.",
+  "inputs": {
+    "per_cell_sms_pool": "data/results/sms_track2_v5.json"
+  },
+  "master_seed": 20260708,
+  "H3_class_direction_consistency": {
+    "family": "E — Cross-class direction consistency (verdict-factual)",
+    "statistic": "per class, sign of (class-mean aligned SMS - class-mean cross SMS) over the class's confirmatory PUTs",
+    "registered_threshold": {
+      "positive_classes_required": 3,
+      "of_classes": 4,
+      "shape": ">=3 of 4 classes show positive aligned>cross direction",
+      "power": 0.949
+    },
+    "primary_mp_rule": "PRIMARY_CELLS_V3 (§4 deterministic class rule; v3b prohibited)",
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "per_class": [
+      {
+        "class": "A",
+        "confirmatory_puts": [
+          "a1",
+          "a3",
+          "a4",
+          "a5",
+          "a6",
+          "a7",
+          "a8"
+        ],
+        "registered_class_size": 7,
+        "class_mean_aligned_sms": 0.3333,
+        "class_mean_cross_sms": 0.0119,
+        "direction": "positive",
+        "positive": true,
+        "descriptive_sign_test": {
+          "n_puts_positive": 5,
+          "n_puts_nonzero_delta": 5,
+          "one_sided_binomial_p": 0.0312,
+          "note": "DESCRIPTIVE only (§3 H3'): under-powered at 6-8 PUTs/class with heavy SMS ties; never a confirmatory pass."
+        }
+      },
+      {
+        "class": "B",
+        "confirmatory_puts": [
+          "b1",
+          "b2",
+          "b3",
+          "b5",
+          "b6",
+          "b7"
+        ],
+        "registered_class_size": 6,
+        "class_mean_aligned_sms": 0.2222,
+        "class_mean_cross_sms": 0.0903,
+        "direction": "positive",
+        "positive": true,
+        "descriptive_sign_test": {
+          "n_puts_positive": 4,
+          "n_puts_nonzero_delta": 5,
+          "one_sided_binomial_p": 0.1875,
+          "note": "DESCRIPTIVE only (§3 H3'): under-powered at 6-8 PUTs/class with heavy SMS ties; never a confirmatory pass."
+        }
+      },
+      {
+        "class": "C",
+        "confirmatory_puts": [
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "c5",
+          "c6",
+          "c7"
+        ],
+        "registered_class_size": 7,
+        "class_mean_aligned_sms": 0.0476,
+        "class_mean_cross_sms": 0.0714,
+        "direction": "negative",
+        "positive": false,
+        "descriptive_sign_test": {
+          "n_puts_positive": 1,
+          "n_puts_nonzero_delta": 5,
+          "one_sided_binomial_p": 0.9688,
+          "note": "DESCRIPTIVE only (§3 H3'): under-powered at 6-8 PUTs/class with heavy SMS ties; never a confirmatory pass."
+        }
+      },
+      {
+        "class": "D",
+        "confirmatory_puts": [
+          "d1",
+          "d2",
+          "d3",
+          "d4",
+          "d5",
+          "d6",
+          "d7",
+          "d8"
+        ],
+        "registered_class_size": 8,
+        "class_mean_aligned_sms": 0.3333,
+        "class_mean_cross_sms": 0.0937,
+        "direction": "positive",
+        "positive": true,
+        "descriptive_sign_test": {
+          "n_puts_positive": 7,
+          "n_puts_nonzero_delta": 8,
+          "one_sided_binomial_p": 0.0352,
+          "note": "DESCRIPTIVE only (§3 H3'): under-powered at 6-8 PUTs/class with heavy SMS ties; never a confirmatory pass."
+        }
+      }
+    ],
+    "n_classes_positive": 3,
+    "verdict": "CONFIRM",
+    "licensed_claim": "aligned>cross direction is consistent across classes (>=3/4 classes positive)",
+    "friedman_across_mps_exploratory": {
+      "computed": true,
+      "family": "X — exploratory (NOT confirmatory)",
+      "n_blocks_puts": 28,
+      "n_treatments_mps": 5,
+      "friedman_chi2": 26.2297,
+      "p_value": 0.0,
+      "note": "Across-MP Friedman stays exploratory exactly as Study 1 (§3)."
+    }
+  }
+}

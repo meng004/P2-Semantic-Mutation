@@ -1,0 +1,22 @@
+"""D7: SGD logistic classifier — scalar x in [0,1] interface (MUTANT)."""
+import warnings
+
+import numpy as np
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.linear_model import SGDClassifier
+
+_rng = np.random.default_rng(42)
+_X_train = _rng.uniform(-1.5, 1.5, (400, 2))
+_y_train = (_X_train[:, 0] > 0).astype(int)
+
+_budget = 2
+_clf = SGDClassifier(loss="log_loss", max_iter=_budget, random_state=42)
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", ConvergenceWarning)
+    _clf.fit(_X_train, _y_train)
+_model = _clf
+
+
+def program(x) -> float:
+    x = float(x)
+    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])

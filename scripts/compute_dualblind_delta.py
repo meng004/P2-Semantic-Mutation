@@ -314,9 +314,10 @@ def analyze_h2_2(sms_cross: dict, sms_same: dict, B: int = B_BOOT,
 # Driver
 # --------------------------------------------------------------------------- #
 def run(cross_path=SMS_CROSS, same_path=SMS_SAME, out_path=OUT,
-        B: int = B_BOOT, seed: int = MASTER_SEED) -> dict:
+        B: int = B_BOOT, seed: int = MASTER_SEED,
+        gated_h2_2: bool = False) -> dict:
     sms_cross = load_sms(cross_path)
-    sms_same = load_sms(same_path)
+    sms_same = None if gated_h2_2 else load_sms(same_path)
     report = {
         "artefact": "dualblind_delta_delta_v5",
         "generated_by": "scripts/compute_dualblind_delta.py",
@@ -333,9 +334,25 @@ def run(cross_path=SMS_CROSS, same_path=SMS_SAME, out_path=OUT,
         "primary_mp_rule": "PRIMARY_CELLS_V3 (§4 deterministic class rule; "
                            "v3b prohibited)",
         "H2_1_aligned_dominates_cross": analyze_h2_1(sms_cross, B=B, seed=seed),
-        "H2_2_source_diversity_dual_blind": analyze_h2_2(sms_cross, sms_same,
-                                                         B=B, seed=seed),
+        "H2_2_source_diversity_dual_blind": (
+            {
+                "verdict": "NOT-RUN",
+                "reason": "Gated per registration v1.1 (§3 Family B, §5b): the "
+                          "harness is same-vendor, so the cross-vendor "
+                          "dual-blind arm cannot be instantiated; H2-2 is "
+                          "reported not-run with no substitution.",
+            }
+            if gated_h2_2 else
+            analyze_h2_2(sms_cross, sms_same, B=B, seed=seed)
+        ),
     }
+    if gated_h2_2:
+        report["inputs"]["same_source_arm_sms"] = None
+        report["post_freeze_deviation"] = (
+            "D-A1 (disclosed): --gated-h2-2 interface added POST-DATA because "
+            "the frozen CLI required both arm files even when H2-2 is gated "
+            "not-run by registration v1.1. H2-1 computation is byte-unchanged; "
+            "no statistical logic was modified. Logged in PILOT_LOG.md.")
     if out_path is not None:
         Path(out_path).write_text(json.dumps(report, indent=2, ensure_ascii=False))
     return report
@@ -351,6 +368,9 @@ def _print_verdicts(report: dict) -> None:
     print(f"    VERDICT: {h1['verdict']} — {h1['licensed_claim']}")
     print(f"    (descriptive) Romano band: {h1['descriptive_only']['romano_band']}, "
           f"two-sided CI {h1['descriptive_only']['two_sided_ci95']}")
+    if h2.get("verdict") == "NOT-RUN":
+        print(f"[H2-2 / Family B] NOT-RUN — {h2['reason']}")
+        return
     print(f"[H2-2 / Family B] Delta-delta={h2['delta_delta_point']:+.4f} "
           f"CI {h2['ci95_two_sided']} half-width={h2['ci95_half_width']:.4f} "
           f"(n_puts={h2['n_puts_paired']})")
@@ -367,15 +387,20 @@ def main() -> int:
     ap.add_argument("--same", default=str(SMS_SAME),
                     help="same-source arm SMS pool SSOT")
     ap.add_argument("--out", default=str(OUT), help="output SSOT path")
+    ap.add_argument("--gated-h2-2", action="store_true",
+                    help="registration v1.1 gate: same-vendor freeze; compute "
+                         "H2-1 only and report H2-2 as NOT-RUN (no same-arm "
+                         "file required)")
     args = ap.parse_args()
-    for p in (args.cross, args.same):
+    required = (args.cross,) if args.gated_h2_2 else (args.cross, args.same)
+    for p in required:
         if not Path(p).exists():
             print(f"ERROR: input SSOT missing: {p}\n"
                   "This script runs on the ANALYSIS leg, after Study-2 data "
                   "generation (CAMPAIGN_RUNBOOK.md §2). No Study-2 data exists "
                   "yet at freeze time.", file=sys.stderr)
             return 2
-    report = run(args.cross, args.same, args.out)
+    report = run(args.cross, args.same, args.out, gated_h2_2=args.gated_h2_2)
     _print_verdicts(report)
     print(f"\nwrote {args.out}")
     return 0

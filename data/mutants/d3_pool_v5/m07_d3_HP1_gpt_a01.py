@@ -1,0 +1,15 @@
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+_rng = np.random.default_rng(42)
+_X_train = _rng.uniform(-1.5, 1.5, (400, 2))
+_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)
+
+_clf = LogisticRegression(C=1.0, solver="lbfgs", max_iter=1000, random_state=42)
+_clf.set_params(C=1e-4)
+_clf.fit(_X_train, _y_train)
+
+
+def program(x) -> float:
+    x = float(x)
+    return float(_clf.predict_proba([[x, 0.0]])[0, 1])

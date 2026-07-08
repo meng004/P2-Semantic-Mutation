@@ -912,6 +912,14 @@ def export_review_packets(cache_dir=None, out_dir=None) -> dict:
             continue
         put_source, _ = _load_put_program(op.put)
         code = mut.read_text()
+        # Blinding redaction (incident P7): some generators echo the slot's
+        # source label into the mutant docstring. Redact source-family tokens
+        # from the DISPLAYED code only (deterministic, case-insensitive,
+        # presentation-layer; the admitted artifact on disk is untouched and
+        # the docstring carries no program semantics). The leak assertion
+        # below remains the final guard post-redaction.
+        for fam in FAMILIES:
+            code = re.sub(fam, "src", code, flags=re.IGNORECASE)
         blind = _blind_id(op_id, source, attempt)
         packet = build_blind_review_packet(op, put_source, code)
         packet.update({

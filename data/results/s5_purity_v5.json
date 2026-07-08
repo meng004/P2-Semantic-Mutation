@@ -1,0 +1,756 @@
+{
+  "artefact": "s5_purity_v5",
+  "generated_by": "scripts/compute_h4_attribution.py",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY2_v1.1.md (§3 H4'; §2b/§2c pilot exclusion; §7b contract)",
+  "integrity": "Pre-frozen before Study-2 data generation; any post-data modification must be disclosed as a deviation.",
+  "inputs": {
+    "per_cell_sms_matrix": "data/results/sms_track2_v5.json"
+  },
+  "master_seed": 20260708,
+  "H4_attribution_purity": {
+    "family": "E — Attribution purity (descriptive mean, verdict-factual)",
+    "statistic": "mean suspect_share (multi-stratum leakage fraction) over the 140 confirmatory cells (28 PUTs x 5 MP)",
+    "lrca_machinery": "IMPORTED from p2.mutators.stratum_filter.audit_matrix (identical to the Study-1 S5 audit / scripts/compute_s5_purity.py; not reimplemented)",
+    "registered_threshold": 0.05,
+    "projected_upper_rule_of_three": 0.0131,
+    "margin_above_projected_upper": 0.0369,
+    "n_cells_expected": 140,
+    "n_cells_scored": 140,
+    "cells_missing": [],
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "mean_suspect_share": 0.1714,
+    "per_family_multistratum": {
+      "CE": {
+        "n_mutants": 207,
+        "n_multistratum": 0
+      },
+      "CF": {
+        "n_mutants": 18,
+        "n_multistratum": 9
+      },
+      "HP": {
+        "n_mutants": 189,
+        "n_multistratum": 0
+      },
+      "OS": {
+        "n_mutants": 123,
+        "n_multistratum": 27
+      },
+      "SI": {
+        "n_mutants": 69,
+        "n_multistratum": 9
+      },
+      "TF": {
+        "n_mutants": 135,
+        "n_multistratum": 72
+      }
+    },
+    "verdict": "NOT_CONFIRMED",
+    "licensed_claim": "observed multi-stratum leakage exceeds 0.05; offending families reported factually: ['CF', 'OS', 'SI', 'TF']",
+    "per_cell_suspect_share": {
+      "A1_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A1_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A1_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A1_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A1_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A3_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A3_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A3_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A3_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A3_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A4_MP1": {
+        "n_killed": 27,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A4_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A4_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A4_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A4_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A5_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "A5_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A5_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A5_MP4": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "A5_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A6_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A6_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A6_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A6_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A6_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A7_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A7_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A7_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A7_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A7_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A8_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A8_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A8_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A8_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "A8_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B1_MP1": {
+        "n_killed": 18,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B1_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B1_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B1_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B1_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B2_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "B2_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "B2_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B2_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B2_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B3_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B3_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B3_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B3_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B3_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B5_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B5_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "B5_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B5_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B5_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "B6_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B6_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "B6_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B6_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B6_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "B7_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B7_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B7_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B7_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "B7_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C1_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C1_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C1_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C1_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C1_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C2_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C2_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C2_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C2_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C2_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C3_MP1": {
+        "n_killed": 18,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C3_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C3_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C3_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C3_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C4_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C4_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C4_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C4_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C4_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C5_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C5_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C5_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C5_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C5_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C6_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C6_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C6_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C6_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C6_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C7_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C7_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "C7_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C7_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "C7_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D1_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D1_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D1_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D1_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D1_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D2_MP1": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D2_MP2": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D2_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D2_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D2_MP5": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D3_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D3_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D3_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D3_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D3_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D4_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D4_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D4_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D4_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D4_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D5_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D5_MP2": {
+        "n_killed": 18,
+        "n_suspect_multistratum": 18,
+        "suspect_share": 1.0
+      },
+      "D5_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D5_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D5_MP5": {
+        "n_killed": 18,
+        "n_suspect_multistratum": 18,
+        "suspect_share": 1.0
+      },
+      "D6_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D6_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D6_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D6_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D6_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D7_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D7_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D7_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D7_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D7_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D8_MP1": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D8_MP2": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      },
+      "D8_MP3": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D8_MP4": {
+        "n_killed": 0,
+        "n_suspect_multistratum": 0,
+        "suspect_share": 0.0
+      },
+      "D8_MP5": {
+        "n_killed": 9,
+        "n_suspect_multistratum": 9,
+        "suspect_share": 1.0
+      }
+    }
+  }
+}

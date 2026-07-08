@@ -1,0 +1,39 @@
+{
+  "artefact": "dualblind_delta_delta_v5",
+  "generated_by": "scripts/compute_dualblind_delta.py",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY2.md (§3 H2-1, H2-2; §4 primary-MP rule; §7 SSOT/seeds)",
+  "integrity": "Pre-frozen before Study-2 data generation; any post-data modification must be disclosed as a deviation.",
+  "inputs": {
+    "cross_source_arm_sms": "data/results/sms_track2_v5.json",
+    "same_source_arm_sms": null
+  },
+  "master_seed": 20260708,
+  "bootstrap_B": 10000,
+  "primary_mp_rule": "PRIMARY_CELLS_V3 (§4 deterministic class rule; v3b prohibited)",
+  "H2_1_aligned_dominates_cross": {
+    "family": "A — SMS magnitude (single test, confirmatory)",
+    "statistic": "two-sample Cliff's delta, aligned (j=k) vs cross (j!=k)",
+    "n_aligned": 28,
+    "n_cross": 112,
+    "cliffs_delta": 0.4295,
+    "bootstrap_B": 10000,
+    "bootstrap_seed": 20260708,
+    "one_sided_95_lower_bound": 0.2653,
+    "registered_test": "one-sided 95% percentile-bootstrap lower bound > 0",
+    "verdict": "CONFIRM",
+    "licensed_claim": "aligned slice dominates cross (directional construct claim; NOT a large-effect claim)",
+    "descriptive_only": {
+      "two_sided_ci95": [
+        0.2328,
+        0.6193
+      ],
+      "romano_band": "medium (>=0.330)",
+      "note": "Romano band + two-sided CI are EXPLORATORY (§3, §7); never promoted to a confirmatory large-effect pass."
+    }
+  },
+  "H2_2_source_diversity_dual_blind": {
+    "verdict": "NOT-RUN",
+    "reason": "Gated per registration v1.1 (§3 Family B, §5b): the harness is same-vendor, so the cross-vendor dual-blind arm cannot be instantiated; H2-2 is reported not-run with no substitution."
+  },
+  "post_freeze_deviation": "D-A1 (disclosed): --gated-h2-2 interface added POST-DATA because the frozen CLI required both arm files even when H2-2 is gated not-run by registration v1.1. H2-1 computation is byte-unchanged; no statistical logic was modified. Logged in PILOT_LOG.md."
+}
