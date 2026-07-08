@@ -424,9 +424,9 @@ low-complexity hits) \\
 \end{longtable}
 }
 
-\textbf{Operator-level conclusion.} All 12 default classes remain
-AST-local (BinOp / Compare / BoolOp / UnaryOp / NameConstant / Subscript
-/ If / For / Break / Continue / decorator / except). Categorically, no
+\textbf{Operator-level conclusion.} All 13 default classes remain
+AST-local (BinOp / Compare / BoolOp / UnaryOp / NameConstant / Number /
+Subscript / If / For / Break / Continue / decorator / except). Categorically, no
 entry recognises sklearn / scipy hyperparameter semantics (HP),
 numerical-method order (TF), or control-flow intent (SI / CF). For OS,
 low-complexity sub-expressions can be incidentally hit by BinOp;
@@ -438,7 +438,7 @@ lower bound.
 Before the 12-PUT generalisation in the main manuscript's AST-overlap audit, a single-PUT lightweight
 empirical used \path{scripts/run_cosmic_ray_a1.sh} on a1 (file
 934 B, AST-bound). Outcome: mutants\_generated \textasciitilde tens; $\geq$
-90\% belong to BinOp / Compare / 12 default classes; small
+90\% belong to BinOp / Compare / 13 default classes; small
 killed-by-\texttt{test\_a1.py} ratio (PUT unit tests are
 output-shape/type sanity checks; most cosmic-ray mutants not killed), an
 empirical manifestation of the semantic-mutation criteria in the main manuscript: syntactic-tool mutants
@@ -948,14 +948,14 @@ effect-size.
 \subsection{Per-Class Friedman Tests}\label{d.4-friedman-per-class-discussion-of-small-n-concordance}
 
 Per-class Friedman (3 SUTs $\times$ 5 MRs) with Bonferroni $\times$ 4: a chi\^{}2=4.00
-raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.78 raw \textbf{0.029} adj
-\textbf{0.116}, W=\textbf{0.898}; c chi\^{}2=4.00 raw 0.406 adj 1.000,
-W=0.333; d chi\^{}2=5.00 raw 0.287 adj 1.000, W=0.417. After correction,
+raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.34 raw \textbf{0.035} adj
+\textbf{0.140}, W=\textbf{0.862}; c chi\^{}2=5.60 raw 0.231 adj 0.924,
+W=0.467; d chi\^{}2=5.00 raw 0.287 adj 1.000, W=0.417. After correction,
 no per-class result remains significant at family-wise alpha = 0.05.
-Even b-class W = 0.898 (Cohen 1988 large concordance) is insufficient at
+Even b-class W = 0.862 (Cohen 1988 large concordance) is insufficient at
 N = 3 per class. \textbf{H3 verdict rests on the main manuscript's cross-class consistency sign test}; per-class
 Friedman is sensitivity / descriptive only. Friedman main effect on full
-60 cells (chi\^{}2 = 15.30, p = 0.0041) confirms MR rank differences but
+60 cells (chi\^{}2 = 16.76, p = 0.0022) confirms MR rank differences but
 is logically independent from H3 cross-class consistency.
 
 \textbf{Mixed-effects unavailability.} Primary
@@ -975,12 +975,13 @@ Per SUT, (MR\_k, R\_outcome $\in$ \{True, False\}) binary-tuple coverage: 5
 MRs $\times$ 2 outcomes = 10 cells, PC = \#triggered / 10. Simplest baseline
 (per-SUT granularity, not distinguishing mutants). PC range over 12
 SUTs: {[}0.500, 1.000{]}, mean 0.733 (\texttt{paper\_numbers\_v4.json}).
-Pairing per PUT: Spearman rho = 0.163 (p = 0.613); Kendall tau = 0.136
-(p = 0.568).
+Pairing per PUT: Spearman rho = 0.163; Kendall tau = 0.136 (descriptive
+only; this row carries no inferential licence in the main manuscript's
+inference-permissions table, so no $p$-value is attached).
 
 \textbf{Power caveat.} At n = 12, Spearman 95\% CI $\approx$ {[}-0.5, +0.6{]}
 (Fisher-z approximation); cannot distinguish ``zero correlation'' from ``moderate positive'' or
-``moderate negative''. p = 0.61 / 0.57 means ``no correlation detected
+``moderate negative''. The descriptive rho / tau mean ``no correlation detected
 at n = 12'', not ``correlation does not exist''.
 
 \textbf{Within-class descriptive.} b2 PC = 1.0 with mean SMS = 0.067; b1
@@ -1310,7 +1311,7 @@ under L1 ($\varepsilon_{\mathrm{eq}} \to 0$) $\wedge$ L2 ($K_{\mathrm{eq}} \to \
 is almost-everywhere equivalent to $\forall x \in D_S \setminus N: S_i(x) = s'(x)$, where
 $N$ is a $D_S$-measure-zero set (continuous $D_S$: floating-point
 pathological points / NaN propagation; discrete $D_S$: $N = \emptyset$). This
-matches \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} §3 classical equivalent-mutant definition
+matches \citet{jia2011analysis} §3 classical equivalent-mutant definition
 under measure-zero equivalence classes.
 
 \textbf{Lemma G.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
@@ -1324,7 +1325,7 @@ $\neq$ id, $\mathrm{MR}_{\mathrm{eq}}$ still requires $S_i(x) = s'(r(x))$ as ref
 original program; no new state classifications introduced.
 
 \textbf{Lemma G.3 (mut degeneration).} Under L5 $\wedge$ L6, mut\_j(S\_i)
-degenerates to the syntactic mutant set of \citet{d7c38286734419b52de4262c9802ebdfcf4b9447}.
+degenerates to the syntactic mutant set of \citet{jia2011analysis}.
 
 \emph{Proof.} L5 switches $\mathrm{mut}_j$ to rule-based syntactic operators (AOR,
 ROR, SDL, CRP, UOI, standard Mothra/Proteum sets); L6 restricts PUTs
@@ -1373,14 +1374,14 @@ tree). The per-C\_k to per-L\_j minimum-sufficient mapping depends on
 the main manuscript's LRCA-diagnosis engineering thresholds; we do not claim one-to-one
 correspondence at formal level, readers can trace through §A.2 + §C.4.
 Under L, $\texttt{suspect\_share} \to 0$, LRCA reports only C1, SMS degenerates to
-single-layer metric consistent with \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} MS engineering
+single-layer metric consistent with \citet{jia2011analysis} MS engineering
 structure.
 
 \textbf{Empirical consistency.} Theorem G and the LRCA-trivialisation
 corollary jointly
 show that the SMS-based empirical conclusions (Cliff's delta in the aligned-versus-cross results,
 Friedman chi\^{}2 in the cross-class consistency results, and Spearman rho in the SMS-vs-Pattern-Coverage analysis) are structurally consistent
-with existing \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} literature in classical
+with existing \citet{jia2011analysis} literature in classical
 syntactic-mutation scenarios, no metric-level semantic fragmentation.
 
 \section{Adjoint Extension Study}\label{h.-adjoint-extension-arm}
