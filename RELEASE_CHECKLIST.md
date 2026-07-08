@@ -118,6 +118,15 @@
 - [ ] Highlights, Abstract, Keywords, suggested reviewers, declared
       conflicts of interest — fill in EVISE form.
 - [ ] Data and Code Availability statement: paste the Zenodo DOI URL.
+- [ ] NOETHER terminology gate passes:
+      - [ ] Run the fixed **Gate A** command in
+            `docs/decisions/2026-07-08-noether-mp-terminology-precheck.md`
+            (single-quoted pattern, includes the LaTeX-form alternatives
+            `mathrm\{mut\}_[CMGTF]` and `mut\\_[CMGTF]`, scans both
+            `main.tex` and `supplementary.tex`); expected: no hits
+      - [ ] No reader-facing use of `CE/OS/HP/TF/SI` as concept names
+      - [ ] MR MetaPattern / MR Family terminology follows
+            `docs/naming_convention.md`
 - [ ] Submit.
 - [ ] Save the EVISE confirmation email; record the submission ID
       in `docs/STATE.md` under "Stage".
@@ -137,6 +146,16 @@
 ---
 
 ## F. Sanity grep (run before each push)
+
+```bash
+# NOETHER terminology gate (fixed Gate A): old five-class taxonomy should
+# not reappear as the paper's reader-facing concept system. Keep the pattern
+# single-quoted; the LaTeX-form alternatives (mathrm{mut}_C, mut\_C) only
+# match when the shell passes the backslashes through unchanged.
+rtk rg -n 'Conservation Erosion|Operator Substitution|Trajectory Flip|Structural Injection|domain-semantic mutation operator|semantic mutation operators|meta-operator|mut_C|mut_M|mut_G|mut_T|mut_F|mathrm\{mut\}_[CMGTF]|mut\\_[CMGTF]|HP, SI|HP/SI|CE class|OS row|CE / OS' \
+  README.md DATASET.md CITATION.cff docs/terminology_zh_en.md docs/naming_convention.md \
+  submission/TOSEM_regular_20260707/main.tex submission/TOSEM_regular_20260707/supplementary.tex
+```
 
 ```bash
 # Should produce no output
