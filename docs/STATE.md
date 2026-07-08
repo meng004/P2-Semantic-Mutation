@@ -2,8 +2,18 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-05-03（Round-9 submission-ready；GitHub release-prep 整理通过）
-**Stage:** **Submission-ready (round-9)**；5/5 reviewers Minor Revision conditional Accept；论文等待投稿启动 + Zenodo DOI minting
+**Last synced:** 2026-07-08（tosem-r3：Wave A-D 全闭合，TOSEM fast-impact 包可编译、submit-ready）
+**Stage:** **TOSEM fast-impact submit-ready (tosem-r3)**；2026-07-08 五角色评审 + 三路 Wave-D 验收：0 残留 blocker，acceptance-readiness 7.5/10（submit-now 区间）
+
+**tosem-r3 摘要（commits 3014fa3 / 855df4a / d7ecb56 / 9337a8e）：**
+- **S5 purity 已验证**（不再是 unverified hedge）：σ 在 263/292=90.1% mutant 上单值；29 个多层例外全部来自 CF(9/9)+TF(20/54)；RQ2 off-diagonal 实测拆分 57:31；SSOT `data/results/s5_purity_v4.json`
+- **H2 incidence 数据错误修正**：原稿 "aligned 9/12 vs cross 6/48, OR=21" 系 2×2 标签写反；SSOT 正确值 aligned 6/12 vs cross 9/48 → OR≈4.2、单侧 p=0.035（稳健网格 OR 4.1-7.0）；升级为一等 detection-incidence 敏感性（独立 family、post-hoc 标注、two-part hurdle）；H2 magnitude 判定仍 "not met"；SSOT `data/results/h2_incidence_v4.json`
+- **工业臂仓库内 SSOT 化 + 精确推断加强**：per-case 矩阵自 Zenodo 10.5281/zenodo.21203424 导入（`data/results/industrial_percase_v1.json`,provenance 含 sha256）;全部 23-24 项聚合校验零错配;加强统计:精确 sign-flip 置换 p=0.014(2^27 DP)、MC p=0.005、BCa δ CI [+0.068,+0.461] 排除 0、Wilcoxon V=279.5/z=2.162/p=0.015 —— p=0.046 非刀口
+- **Friedman v3→v4**（χ²=16.76, p=0.0022）；tab:p2-09 均值改用 MP5 池 0.213/0.077 与 δ=0.314 同源；rank_means 改 scipy rankdata
+- **文献**：µBERT (degiovanni2022mubert) + Meta ACH (foster2025ach) 已引；16 个 hash citation key 全部改可读键
+- **包**：`submission/TOSEM_fastimpact_20260708/` acmart 单 documentclass、tectonic 编译 rc=0、零 Missing character/未定义引用；主稿 45 页（正文 42,规则为 45 页正文不含参考文献,达标）;坏包 20260707 与陈旧 zip 已退役
+- **叙事**：Intro 已在散文中前置 H1-H4 四项阈值未达;冗余(mixed-effects/H3/HOM)已合并
+- **遗留（均为 future work,非投稿 blocker）**：source-diversity 双盲重跑需 n≥30 PUT(文中已声明);工业语料扩展 34→70+;评审历史见 docs/review_2026-07-08/(r0-r4 + d1-d3 验收)
 **Repo:** `<P2_ROOT>`
 **Paper file (中文权威版)：** `论文初稿P2.md`（1853 行；historical authoritative draft）
 **Paper file (英文长稿)：** `论文初稿P2_EN.md`（1844 行；pre-IST compaction）
