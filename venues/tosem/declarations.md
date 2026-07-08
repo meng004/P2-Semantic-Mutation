@@ -20,8 +20,8 @@ cover letter includes the requested journal-first novelty statement.
 
 ## Length
 
-The main manuscript is 46 pages including references in ACM manuscript-review
-format, and the text before the bibliography (43 pages) is below the 45-page
+The main manuscript is 45 pages including references in ACM manuscript-review
+format, and the text before the bibliography (42 pages) is below the 45-page
 threshold excluding references.
 
 ## Data and Artifact Availability

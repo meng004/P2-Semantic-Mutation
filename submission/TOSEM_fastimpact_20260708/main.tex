@@ -98,7 +98,7 @@
 \begin{document}
 
 \begin{abstract}
-Metamorphic testing mitigates the test-oracle problem by checking relations among executions, but classical mutation score is defined over syntactic edits and does not say whether a metamorphic-relation set observes declared domain-semantic effects. This paper introduces Semantic Mutation Score (SMS), an MR-relative adequacy metric over an admitted universe of nonequivalent semantic mutants with explicit certificates and a degeneration path back to classical mutation score. We instantiate five semantic operator families on 12 single-output scientific-computing programs and audit the resulting 60-cell design with an SMS-to-MS proof, an AST-normalized syntactic comparison, aligned-versus-cross relation analysis, and boundary and adjoint studies. The semantic pool has 5.14% AST-normalized overlap with default first-order syntactic mutants. Several pre-registered empirical thresholds are not met; we use these failures to delimit operator applicability, MR-design adequacy, and kill attribution rather than to claim universal dominance. An industrial real-defect arm of reproduced, MR-detectable defects from widely used scientific-computing libraries then tests the central construct claim: a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs. SMS is therefore a construct-level diagnostic for declared semantic strata, with its construct separation supported on industrial code.
+Metamorphic testing mitigates the test-oracle problem by checking relations among executions, but classical mutation score is defined over syntactic edits and does not say whether a metamorphic-relation set observes declared domain-semantic effects. This paper introduces Semantic Mutation Score (SMS), an MR-relative adequacy metric over an admitted universe of nonequivalent semantic mutants with explicit certificates and a degeneration path back to classical mutation score. We instantiate five semantic operator families on 12 single-output scientific-computing programs and audit the resulting 60-cell design with an SMS-to-MS proof, an AST-normalized syntactic comparison, aligned-versus-cross relation analysis, and boundary and adjoint studies. The semantic pool has 5.14% AST-normalized overlap with default first-order syntactic mutants. Several pre-registered empirical thresholds are not met; we use these failures to delimit operator applicability, MR-design adequacy, and kill attribution rather than to claim universal dominance. A direct stratum-purity audit confirms the semantic-effect map is single-valued on the large majority of admitted mutants, with the multi-stratum exceptions characterized, and a post-hoc detection-incidence sensitivity finds aligned meta-patterns detect a nonzero effect more often than cross patterns while the effect-size gap itself stays below the pre-registered large-effect threshold. An industrial real-defect arm of reproduced, MR-detectable defects from widely used scientific-computing libraries then tests the central construct claim: a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs. SMS is therefore a construct-level diagnostic for declared semantic strata, with its construct separation supported on industrial code.
 \end{abstract}
 
 \maketitle
@@ -1472,7 +1472,7 @@ The HP, SI, and TF zero-overlap result, combined with the Section~\ref{necessary
 necessary-conditions argument, amounts to a \emph{preventive-defence}
 argument: semantic mutation operators address a class of fault
 hypotheses that lie beyond the reach of default first-order syntactic
-configurations (HOM not refuted; see the scope note above). Three points sharpen
+configurations (HOM not refuted). Three points sharpen
 this framing.
 
 \textbf{(a) Systematic versus incidental.} Satisfying conditions (a),
@@ -1493,14 +1493,13 @@ flips) do not target them. Systematic semantic mutation therefore
 requires (a), (b), or (c) to be design intent. Appendix B.1.5 records
 this argument in full.
 
-\textbf{(b) HOM caveat.} HOM \citep{jia2009hom,kintis2018effective}
-could in principle compose syntactic mutants, for example, an Arithmetic
-Operator Replacement combined with a Statement Deletion, to partially
-simulate the effects of OS or HP on some PUTs. The Section~\ref{statistical-analysis-and-empirical-results} empirics did not
-run a HOM comparison; we list HOM equivalence testing as residual threat
-higher-order mutation equivalence (Appendix F.2) and confine our ``tool unreachability'' claim to
-\emph{first-order} syntactic tools (mutmut and cosmic-ray default
-configurations).
+\textbf{(b) HOM caveat.} The Section~\ref{statistical-analysis-and-empirical-results}
+empirics did not run a HOM comparison, so we confine the ``tool
+unreachability'' claim to \emph{first-order} syntactic tools (mutmut and
+cosmic-ray default configurations) and list HOM equivalence testing as a
+residual threat (Appendix F.2). Whether HOM
+\citep{jia2009hom,kintis2018effective} compositions can partially
+simulate OS or HP effects is analysed conceptually next.
 
 \textbf{Conceptual analysis of HOM reachability.} Higher-order mutation
 (HOM; \citealp{jia2008subtle,jia2009hom,kintis2018effective}) composes multiple first-order operators on the same
@@ -1959,7 +1958,7 @@ outside the H2 pre-registration), binarizes SMS and asks how often each
 slice scores any nonzero effect. Under the MP5-held primary convention,
 aligned cells are nonzero in 6/12 cases versus cross cells in 9/48
 (incidence 50\% vs 18.75\%; only 9 of the 12 PUTs carry any nonzero
-cell). A one-sided Fisher exact test gives $p = 0.036$ with
+cell). A one-sided Fisher exact test gives $p = 0.035$ with
 conditional-MLE odds ratio 4.2 (sample OR 4.33; exact one-sided 95\% CI
 $[1.12, +\infty)$), and the advantage is directionally stable across
 pool variants (OR 4.1--7.0, one-sided $p = 0.006$--$0.049$). Aligned
@@ -2426,7 +2425,7 @@ four local-edit families (CE, OS, HP, SI) are 100\% pure (0/229;
 Table~\ref{tab:s5-purity}). Re-attributing the aligned-versus-cross
 off-diagonal kill mass, 57/88 (64.8\%) comes from pure single-invariant
 mutants (genuine cross-stratum detection) and 31/88 (35.2\%) from
-multi-stratum mutants, the latter confined to the four cells
+multi-stratum mutants, the latter confined to the five cells
 \texttt{B2\_MP1}, \texttt{C1\_MP1}, \texttt{C1\_MP2}, \texttt{D1\_MP5},
 and \texttt{D3\_MP5}. The fiber partition thus survives at the $\sigma$
 level (R2's $\ge 90\%$-purity decision rule is met), and the
@@ -2600,11 +2599,9 @@ negative in the inverted class to large positive elsewhere, giving
 CV($\Delta$SMS) well above 1, far exceeding the 0.5 dispersion threshold,
 so the dispersion criterion also fails.
 
-The mixed-effects primary model
-\texttt{sms\ \textasciitilde{}\ C(class)\ *\ C(operator)\ +\ (1\ \textbar{}\ put)}
-returned Singular matrix; the fallback
-\texttt{sms\ \textasciitilde{}\ C(class)\ +\ C(operator)\ +\ (1\ \textbar{}\ put)}
-had PUT random-intercept variance hit boundary 0 (degenerate). We
+The mixed-effects primary model returned a Singular matrix, and its
+reduced fallback was degenerate (the full identifiability analysis is in
+Section~\ref{statistical-modelling-capacity-at-n-60-cells-12-puts}); we
 therefore use Friedman as the non-parametric formal alternative:
 
 \begin{itemize}
@@ -2614,7 +2611,7 @@ therefore use Friedman as the non-parametric formal alternative:
   (significant; exploratory inferential per Table~\ref{tab:inference-permissions};
   v4 pool, \texttt{rq3\_friedman\_v4.json}).
 \item
-  MP rank means: 3.08, 2.58, 2.00, 3.00, 4.33.
+  MP rank means: 3.88, 3.38, 2.38, 2.38, 3.00.
 \item
   Per-class Friedman with \textbf{Bonferroni $\times$ 4 correction}: a
   1.000 / b \textbf{0.140} / c 0.924 / d 1.000, no per-class
@@ -2664,8 +2661,8 @@ cross-source pooling improves the c- and d-class means (+91.5\% and
 +38.3\%), consistent with c / d classes having higher mutant-diversity
 demand than a / b, but it does not repair the b-class inversion or the
 CV($\Delta$SMS) dispersion failure. The mixed-effects singularity and the
-Friedman fallback are treated once, in that RQ5 result section, not as a
-second independent result here.
+Friedman fallback are treated once (Section~\ref{statistical-modelling-capacity-at-n-60-cells-12-puts}),
+not as a second independent result here.
 
 \subsection{Practical Interpretation and Deployment Scope}\label{stakeholder-analysis-single-output-kernels-scope}
 

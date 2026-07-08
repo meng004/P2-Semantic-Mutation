@@ -16,7 +16,7 @@ import warnings
 from pathlib import Path
 
 import numpy as np
-from scipy.stats import friedmanchisquare
+from scipy.stats import friedmanchisquare, rankdata
 
 warnings.filterwarnings("ignore")
 
@@ -54,7 +54,11 @@ def main():
         stat, p_main = float("nan"), 1.0
         print(f"WARN main Friedman: {exc}")
 
-    ranks = np.argsort(np.argsort(M, axis=1), axis=1) + 1
+    # Average ranks (ties resolved by mean) are the Friedman-consistent
+    # convention; the previous ordinal argsort assigned an arbitrary,
+    # column-order-dependent rank to tied (all-zero) rows, which is unstable
+    # across numpy builds. Headline chi2/p are unaffected.
+    ranks = rankdata(M, axis=1, method="average")
     rank_means = ranks.mean(axis=0).tolist()
 
     per_class = {}
