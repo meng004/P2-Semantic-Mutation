@@ -14,8 +14,8 @@
 | RQ | 内容 | 操作化定义 | SSOT 字段 |
 |----|------|-----------|-----------|
 | **RQ1** | 60 个单元格上 inst_rate / equiv_rate / C1_share / survive_rate 的分布 | 每个 (PUT, MR-pattern) 单元格的 4 项描述统计 | `paper_numbers_v4.json::rq1` |
-| **RQ2** | 算子-MR 对齐切片（j=k）vs 交叉切片（j≠k）的 SMS 差异结构 | Cliff's δ + 95% CI + Wilson 比例置信区间，预注册 H2 阈值 δ ≥ 0.474 (Romano 2006) | `paper_numbers_v4.json::rq2` |
-| **RQ3** | 4 个程序类（A/B/C/D）× 5 个算子的跨类一致性 | Friedman χ² 跨类排名一致性检验 + Bonferroni × 5 多重校正 | `paper_numbers_v4.json::rq3` |
+| **RQ2** | 算子-MR 对齐切片（j=k）vs 交叉切片（j≠k）的 SMS 差异结构 | MP5 frozen-primary Cliff's δ + 95% CI；MP1/data-driven contrast retained as sensitivity | `paper_numbers_v4.json::rq2_primary_mp5`（H2 verdict）; `::rq2`（sensitivity） |
+| **RQ3** | 12 个 PUT × 5 个 MP 的 MP-rank 差异 | Friedman χ² MP-rank 检验 + per-class Bonferroni × 4 多重校正；不是 H4 verdict | `paper_numbers_v4.json::rq3` |
 | **RQ4** | SMS 与简单模式覆盖率（pattern coverage）的实证关系 | Spearman ρ + Kendall τ 排序相关 | `paper_numbers_v4.json::rq4` |
 
 ## 2. 评价指标（Evaluation Metrics）
@@ -60,7 +60,7 @@ LRCA 三层分类器（layered_root_cause_analysis）：
   - 95% CI 用 BCa bootstrap (B=10000)
   - 实现：`scripts/compute_rq2.py`
 - **Vargha-Delaney Â₁₂** = δ/2 + 0.5（参考报告，未作主指标）
-- **Friedman χ²**: 跨类一致性（n=12 PUT × 5 algorithms）
+- **Friedman χ²**: MP-rank 差异（n=12 PUT × 5 MP treatments；exploratory, not H4 verdict）
   - 实现：`scripts/compute_rq3_friedman.py`
 - **Spearman ρ / Kendall τ**: 排序相关（RQ4）
 
@@ -195,27 +195,27 @@ mean_suspect_share     = 0.7908
 H5 (suspect ≤ 0.20)    = 12/60 cells pass (20%)
 ```
 
-### 5.2 RQ2 算子-MR 对齐（v4 primary）
+### 5.2 RQ2 算子-MR 对齐（v4 primary MP5）
 
 ```
 n_aligned (j=k)        = 12
 n_cross (j≠k)          = 48
-mean_aligned           = 0.2750
-mean_cross             = 0.0612
-Cliff's δ              = 0.4392
-95% CI                 = [0.1267, 0.7396]
+mean_aligned           = 0.2133
+mean_cross             = 0.0767
+Cliff's δ              = 0.3142
+95% CI                 = [0.0138, 0.6215]
 H2 threshold (δ≥0.474) = NOT MET (point estimate)
-H2 threshold (OR≥3.0)  = MET (odds ratio +∞ due to zeros)
+MP1 sensitivity δ      = 0.4392, 95% CI = [0.1267, 0.7396]
 ```
 
 **Stipulated-alternative power simulation**（`scripts/compute_rq2_power_stipulated.py`）:
 
-- 给定 δ_truth = 0.474（H2 boundary），用 mixture-weight 构造 calibrated alternative
-- (n_aligned, n_cross) = (12, 48) 设计在该真值下的 point-estimate power = **49.1%**
+- 给定 MP1 sensitivity δ_truth = 0.474（large-effect boundary），用 mixture-weight 构造 calibrated alternative
+- (n_aligned, n_cross) = (12, 48) 设计在该真值下的 MP1 sensitivity point-estimate power = **49.9%**
 - CI-lower power = 86.8%
 - 论文表述: "H2 not met under point-estimate criterion" 是事实判定，不是 effect-size claim
 
-### 5.3 RQ3 跨类一致性（v4 primary）
+### 5.3 RQ3/RQ5 MP-rank analysis（v4 primary）
 
 ```
 class_mean_a (numeric)        = 0.0667
@@ -223,10 +223,10 @@ class_mean_b (probabilistic)  = 0.1478  ← 最高
 class_mean_c (surrogate)      = 0.0894
 class_mean_d (ML)             = 0.1122
 sign_test_aligned > cross     = 4/4
-Friedman χ²                   = 15.30
-Friedman p                    = 0.0041 (显著一致)
+Friedman χ²                   = 16.76
+Friedman p                    = 0.0022 (MP-rank effect; not H4 verdict)
 Per-class p:
-  a = 0.406, b = 0.029, c = 0.406, d = 0.287
+  a = 0.406, b = 0.035, c = 0.231, d = 0.287
 ```
 
 主模型 mixed-effects（`scripts/compute_rq3.py`）汇报「Singular matrix」失败，回退 fallback 模型 `sms ~ C(class) + C(operator) + (1|put)` 报告。Friedman 检验作为 robustness check 显著。
@@ -287,8 +287,9 @@ Categorically unreachable (HP+TF+SI): 159/292 = 54.5% of P2 pool
 |------|----|----|----|-----------|-----------|
 | **mean_c1_share** | 0.1643 | 0.1643 | **0.2092** | 0 | +0.045 |
 | **mean_sms** | 0.0875 | 0.0875 | **0.1040** | 0 | +0.017 |
-| **rq2 Cliff's δ** | 0.323 | 0.446 | **0.439** | +0.123 | −0.007 |
-| **rq2 mean_aligned** | 0.183 | 0.241 | **0.275** | +0.058 | +0.034 |
+| **rq2 primary MP5 Cliff's δ** | 0.323 | — | **0.314** | — | — |
+| **rq2 MP1 sensitivity Cliff's δ** | 0.323 | 0.446 | **0.439** | +0.123 | −0.007 |
+| **rq2 primary MP5 mean_aligned** | 0.183 | — | **0.213** | — | — |
 | **class_mean_c** | 0.0467 | 0.0467 | **0.0894** | 0 | **+0.0427 (+91.4%)** |
 | **rq4 spearman_p** | 0.741 | 0.741 | **0.613** | 0 | −0.128 |
 
@@ -322,7 +323,7 @@ Categorically unreachable (HP+TF+SI): 159/292 = 54.5% of P2 pool
 2. **三层方法骨架解耦**: Layer 1 定义性（§3.2.0 必要条件）/ Layer 2 操作性（§2.3 E1∧E2）/ Layer 3 应用性（§3.5 12-PUT 实证）三层独立验证；§5 60-cell 实证只是 Layer 3 的展示样本，不是论文主贡献。
 3. **AST 实证锚定不可达性**: §3.2.6.3 实测 5.14% overall AST overlap；HP/TF/SI 3 类（54.5% pool）0/0/0 完全不可达，为 "P2 不是语法 mutant pool 子集" 提供阳性实证。
 4. **三阶段消融分离 MR-design 与 LLM diversity**: v3 → v3b → v4 三套数据，独立报告 v3 → v3b（+0.123）与 v3b → v4（−0.007）两个 contrast，避免被合并为单一 ratio claim。
-5. **Stipulated power 校准 H2 表述**: 49.1% point-estimate power 直接量化 "(n_a=12, n_c=48) 设计在 δ_truth=0.474 真值下的检出概率"，避免把 "not met" 误解为 effect-size 否决。
+5. **Stipulated power 校准敏感性表述**: 49.9% point-estimate power 直接量化 "(n_a=12, n_c=48) 设计在 MP1 sensitivity δ_truth=0.474 真值下的检出概率"，避免把 "not met" 误解为 effect-size 否决；它不是 frozen-primary MP5 的 H2 功效。
 6. **诚实承认 selection-on-response**: §3.4 v3b c-class primary MP shift 用 cross-cell exchangeability permutation null + Bonferroni × 5 量化披露，不为切换 primary 做事后辩护。
 7. **LRCA 三层分类降噪**: C1/C2/C3/C4/C5 attribution 把 "killed" 进一步分解，避免把 tolerance perturbation / OOD / noise 混入 SMS 分子。
 8. **Reproducibility-first**: 60-cell 全 SSOT JSON 持久化（`data/results/*.json`），全 mutant pool 提交（`data/mutants/*_pool_v4/`），cosmic-ray sqlite 备份（`data/results/cosmic_ray_*.sqlite`）。

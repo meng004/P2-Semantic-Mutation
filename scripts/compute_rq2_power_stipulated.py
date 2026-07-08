@@ -1,26 +1,26 @@
-"""Stipulated-alternative power simulation for RQ2 H2 (R1 W1 round-2).
+"""Stipulated-alternative power simulation for RQ2 sensitivity analysis.
 
 Complementary to scripts/compute_rq2_power.py (which uses parametric
 bootstrap from the *observed* empirical distributions). R1 W1 noted
 that the plug-in approach answers "with what power could we detect
 the *observed* δ = 0.439", but does not answer "if the truth is
-δ = 0.474 (the H2 large-effect threshold), what is our power".
+δ = 0.474 (the large-effect threshold), what is our power".
 
 This script implements the stipulated-alternative simulation:
 1. Take the observed cross pool C = {SMS values for cross MP slices, n=48}
    as fixed.
 2. Search numerically for a shift constant Δ such that the shifted
    aligned pool A' = {x + Δ : x in observed aligned pool} has Cliff's δ
-   against C exactly equal to the H2 threshold 0.474.
+   against C exactly equal to the large-effect threshold 0.474.
 3. Resample (n_a=12, n_c=48) from (A', C) NSIM times; for each draw
    compute Cliff's δ and bootstrap-CI lower bound; tally rejection
-   rate against H2 (δ point ≥ 0.474; CI lower bound > 0).
-4. Report stipulated-alternative power at H2.
+   rate against the sensitivity threshold (δ point ≥ 0.474; CI lower bound > 0).
+4. Report stipulated-alternative power for the MP1/data-driven sensitivity contrast.
 
 This answers R1 W1 directly:
-  "Given that the *truth* is δ = 0.474 (H2 large-effect boundary), how
+  "Given that the *truth* is δ = 0.474 (large-effect boundary), how
    often would n=(12,48) bootstrapping produce a δ point estimate
-   meeting the H2 criterion?"
+   meeting that sensitivity criterion?"
 
 Configurable via env vars:
   SMS_VERSION         (default v4)
@@ -87,7 +87,8 @@ def calibrate_mixture_weight(
     has Cliff's δ ≈ target against the (fixed) observed cross pool.
 
     SMS distributions have heavy ties at zero (45/60 cells = 0); raw
-    shifting is discontinuous (any ε > 0 jumps δ from 0.314 to 0.74).
+    shifting is discontinuous (any ε > 0 jumps the MP1 sensitivity δ from
+    0.439 to 0.74).
     The mixture approach gives smooth control: w = 0 reproduces
     observed (δ = 0.439); w = 1 produces strongly-shifted pool
     (δ ≈ 0.736); intermediate w produces intermediate δ.
@@ -197,19 +198,20 @@ report = {
         "realized_E_delta_at_w": float(realized),
         "rationale": (
             "SMS distributions have heavy ties at zero (45/60 cells = 0); "
-            "raw shifting Cliff's δ is discontinuous (any ε > 0 jumps δ "
-            "from 0.314 to 0.74). We instead use a mixture-weight "
+            "raw shifting Cliff's δ is discontinuous (any ε > 0 jumps the "
+            "MP1 sensitivity δ from 0.439 to 0.74). We instead use a mixture-weight "
             "construction: with probability w we draw from (observed_aligned + "
             "0.001), and with probability 1-w from observed_aligned. "
             "This gives smooth control over realized δ. Calibrating w "
             f"by bisection yields E[δ] = {realized:.4f} ≈ {H2_TARGET}, "
-            "stipulating the alternative as the H2 boundary. This answers "
-            "R1 W1: 'if the truth is the H2 threshold, how often would "
-            "our n=(12,48) design produce a δ_hat meeting the H2 criterion?'"
+            "stipulating the alternative as the large-effect boundary for "
+            "the MP1/data-driven sensitivity contrast. This answers: if "
+            "the sensitivity truth is at the threshold, how often would "
+            "our n=(12,48) design produce a δ_hat meeting that criterion?"
         ),
     },
     "stipulated_alternative_power": {
-        "power_point_estimate_meets_H2": float(point_rate),
+        "power_point_estimate_meets_large_effect_sensitivity": float(point_rate),
         "power_CI_lower_above_zero":      float(ci_zero_rate),
         "delta_hat_distribution_summary": {
             "mean": float(np.mean(delta_hats)),
@@ -220,16 +222,18 @@ report = {
         },
     },
     "interpretation": (
-        "Under stipulated truth δ = 0.474 (H2 large-effect threshold), "
+        "Under stipulated truth δ = 0.474 (large-effect threshold for the "
+        "MP1/data-driven sensitivity contrast), "
         "the probability that a fresh n=(12,48) sample produces δ_hat >= "
-        f"{H2_TARGET} is {point_rate:.3f}. This is the directly relevant "
-        "power for the H2 verdict: even if the underlying distribution "
+        f"{H2_TARGET} is {point_rate:.3f}. This is sensitivity power, not "
+        "the frozen-primary MP5 H2 power: even if the sensitivity distribution "
         "actually attained the large-effect boundary, our sample size "
         "still produces δ_hat below the threshold a non-trivial fraction "
         "of the time. This complements (but does not replace) the plug-in "
         "power 0.42 in compute_rq2_power.py: the plug-in number answers "
         "'with what power could we detect the observed δ = 0.439', while "
-        "this stipulated number answers 'if the truth is at H2 boundary, "
+        "this stipulated number answers 'if the sensitivity truth is at "
+        "the large-effect boundary, "
         "what is our chance to confirm it'. Both are sub-0.80 at n=(12,48), "
         "consistent with §5.7.3's existing finding that the design is "
         "underpowered for distinguishing medium from large effects."

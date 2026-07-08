@@ -20,9 +20,9 @@ cover letter includes the requested journal-first novelty statement.
 
 ## Length
 
-The main manuscript is 40 pages including references in ACM manuscript-review
-format, and the text before the bibliography is below 45 pages excluding
-references.
+The compiled main manuscript PDF is 43 pages including references in ACM
+manuscript-review format, and the text before the bibliography is below 45
+pages excluding references. The accompanying supplementary PDF is 21 pages.
 
 ## Data and Artifact Availability
 

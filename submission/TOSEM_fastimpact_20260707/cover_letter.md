@@ -57,9 +57,10 @@ dataset protocol over reproduced library defects. Fifth, it narrows the claim fr
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
-Length statement. The main manuscript is 40 pages including references in the
-ACM manuscript-review format; the text before the bibliography remains below
-the 45-page Fast-Impact threshold stated in the TOSEM author guidance.
+Length statement. The compiled main manuscript PDF is 43 pages including
+references in the ACM manuscript-review format; the text before the
+bibliography remains below the 45-page Fast-Impact threshold stated in the
+TOSEM author guidance. The accompanying supplementary PDF is 21 pages.
 
 Sincerely,
 

@@ -2,7 +2,7 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-05-03（Round-9 submission-ready；GitHub release-prep 整理通过）
+**Last synced:** 2026-07-08（NOETHER MR MetaPattern 术语门禁已加入投稿前检查）
 **Stage:** **Submission-ready (round-9)**；5/5 reviewers Minor Revision conditional Accept；论文等待投稿启动 + Zenodo DOI minting
 **Repo:** `<P2_ROOT>`
 **Paper file (中文权威版)：** `论文初稿P2.md`（1853 行；historical authoritative draft）
@@ -12,7 +12,7 @@
 
 **2026-05-02 Round-2 minor revision pass（commit a0fb8ed）：**
 - **Group A（已 commit a20e795,Round-2 ESCALATED 修复）**：§3.5.1 + §5.9.2/3 翻译、Abstract H2 wording、§3.2.6.1 OS 表格单元、LLM 源数字校对、Line 1185 dangling "IST 2024"
-- **Group B（R1 method）**：§5.7.3 stipulated-alternative power simulation（power point=0.491 / CI-lower=0.868）、§5.8.4 per-class Friedman + Bonferroni × 4 + Kendall's W、§7.1.2 K_eq sweep 下调 limitation
+- **Group B（R1 method）**：§5.7.3 stipulated-alternative power simulation（MP1 sensitivity power point=0.499 / CI-lower=0.868）、§5.8.4 per-class Friedman + Bonferroni × 4 + Kendall's W、§7.1.2 K_eq sweep 下调 limitation
 - **Group C（R2 lit）**：§1.3.2 CPH grounding + 4 经典（DeMillo 1978/Andrews 2005/Just FSE 2014/Papadakis 2019）+ Ammann & Offutt 2008 + Vargha & Delaney 2000；§1.6.2 toy-scope；§9.5 Corollary 9.1 generic statement
 - **Group D（R3 §6.5）**：§6.5.3 阈值删除 + retitle "long-term aspiration"、§6.5.2 YAML 删除 + quarterly batch audit reframe、§6.5.1 air-gap incompatibility declaration、§1.1 scope 收紧、§8.6 ASME V&V 20-2009 reference
 
@@ -75,11 +75,12 @@
 
 ## 3. 关键 artifacts（v4 = primary）
 
-**最新数字源：** `data/results/paper_numbers_v4.json`
+**最新数字源：** `data/results/paper_numbers_v4.json` plus frozen-primary
+`data/results/rq2_cliffs_delta_v4_mp5.json`
 - RQ1: mean SMS = 0.104, n_zero=45/60, mean C1_share = 0.209
-- RQ2: Cliff's δ = **0.439**（CI [0.109, 0.748]，未达 0.474 阈值，H2 rejected）
-- RQ3: Friedman χ² = 15.30, **p = 0.0041**（b 类内 p=0.029）；mixed-effects singular
-- RQ4: Spearman ρ = 0.163, p = 0.613（H6 几乎独立 ✓）
+- RQ2 primary MP5: Cliff's δ = **0.314**（CI [0.014, 0.622]，未达 0.474 阈值，H2 rejected）；MP1 sensitivity δ = 0.439
+- RQ3/RQ5 MP-rank analysis: Friedman χ² = 16.76, **p = 0.0022**（b 类内 p=0.035）；mixed-effects singular
+- RQ4: Spearman ρ = 0.163, p = 0.613（n=12 下未检测到相关；hypothesis-generating）
 
 **v4 cross-source LRCA：** `data/results/lrca_60cell_v4.json`
 **v4 SMS：** `data/results/sms_track2_v4.json`
@@ -107,7 +108,7 @@ SMS_VERSION=v4 P2_PRIMARY_VERSION=v3b
 - `SMS_VERSION=v4`：选 v4 跨源数据文件
 - `P2_PRIMARY_VERSION=v3b`：选 c-class 数据驱动 primary MP（c1/c2/c3 → MP1，§3.5.1）
 
-**漏设 `P2_PRIMARY_VERSION=v3b`** → c-class 仍按默认 v3（→ MP5）分组 → `mean_aligned ≈ 0.213` ≠ 论文的 0.275（`cliffs_delta=0.439` 与 `friedman_chi2=15.30` 不受影响，只 aligned/cross 分组变）。
+**口径提醒：** MP5 frozen-primary 是 H2 verdict（`mean_aligned ≈ 0.213`, `cliffs_delta≈0.314`）；`P2_PRIMARY_VERSION=v3b` 只用于生成 MP1/data-driven sensitivity 字段（`mean_aligned≈0.275`, `cliffs_delta≈0.439`）。
 
 `paper_numbers_v4.json` 与论文一致；上游 `sms_track2_v4.json` / `lrca_60cell_v4.json` 也未被改动。已在 REPRODUCIBILITY.md §4 显式记录这一双环境变量约定。
 
@@ -127,6 +128,14 @@ PYTHONPATH=src .venv/bin/python scripts/translate_paper.py --assemble-only   # �
 ```
 
 partials 缓存于 `.translate_cache/`（已 gitignore）。失败重试只重跑该节。
+
+## 5.3 NOETHER 术语门禁（2026-07-08 已采纳）
+
+- 决策文档：`docs/decisions/2026-07-08-noether-mp-terminology-precheck.md`
+- 权威术语表：`docs/naming_convention.md` + `docs/terminology_zh_en.md`
+- 投稿前检查规则：不再把 `CE/OS/HP/TF/SI` 作为论文中的 MR 元模式、语义变异算子或 reader-facing 缩写；既有 `CE1/OS1/HP1/TF1/SI1` 仅作为历史内部 fault-campaign ID 保留。
+- 正式 MR 元模式轴：`inv`、`mono`、`conv`、`dyn`、`cmp`；扩展槽：`adj`、`rev`、`rel`。
+- `RELEASE_CHECKLIST.md` 已加入 NOETHER terminology gate。
 
 ## 6. 下一步候选（按 ROI）
 

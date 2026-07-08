@@ -36,9 +36,10 @@ Two gaps in this picture motivated the audit:
 
 1. **Syntactic ≠ semantic.** Classical MS is defined over AST-level
    edits (e.g., cosmic-ray's default operator suite). Real
-   scientific-computing faults — broken conservation laws, lost
-   monotonicity, mis-ordered convergence, drifted hyperparameter
-   regimes — live one level above the AST. An MR set that survives a
+   scientific-computing faults — broken invariance/equivariance,
+   monotonicity/order violations, mis-ordered convergence, qualitative
+   dynamics changes, and method-comparison regressions — live one level
+   above the AST. An MR set that survives a
    100% classical MS may still let through faults that violate
    conservation. The community needs an MR-adequacy metric that
    speaks the language of the domain, not of the parser.
@@ -65,11 +66,11 @@ two gaps within the scope of single-output `float → float` kernels.
 |---|---|---|
 | C1 | **Three-layer methodology backbone** — Layer 1 *Definitional* (necessary conditions for "semantic mutation"), Layer 2 *Operational* (the E1 ∧ E2 equivalence judge), Layer 3 *Applied* (AST-normalised traceability against cosmic-ray) | `submission/p2_ist_final.pdf` §3 |
 | C2 | **Semantic Mutation Score (SMS)** with a degeneration theorem: SMS reduces almost-everywhere to the classical Mutation Score in the syntactic limit, modulo a domain-set measure-zero subset. SMS is therefore *backward compatible* — any SMS-based conclusion remains consistent with prior mutation-testing literature in the classical regime. | §2 + Appendix A.5 |
-| C3 | **Five domain-semantic operator classes** — Conservation Erosion (CE), Operator Substitution (OS), Hyperparameter (HP), Trajectory Flip (TF), Structural Injection (SI) — instantiated as 37 named operators and exercised over 12 PUTs × 5 metamorphic patterns. | `src/p2/mutators/`, §3.2-3.6 |
+| C3 | **NOETHER-aligned MR MetaPattern axes** — invariance/equivariance (`inv`), monotonicity/order (`mono`), convergence/limit (`conv`), qualitative dynamics (`dyn`), and method comparison (`cmp`) — exercised over 12 PUTs x 5 MR-pattern cells. Existing mutant-file suffixes such as `CE1/OS1/HP1/TF1/SI1` are historical internal IDs, not reader-facing concept names. | `src/p2/mutators/`, §3.2-3.6 |
 | C4 | **Three-stage same-source / cross-source ablation** (v3 / v3b / v4) cleanly isolating MR-alignment design from LLM source diversity under identical prompt. | `data/operator_campaign/`, §4.2.5 |
-| C5 | **AST-normalised empirical traceability** showing P2 mutants are *not* a subset of cosmic-ray's syntactic-mutant pool: 5.14 % overall AST overlap across 12 PUTs; HP / SI / TF (54.5 % of P2 pool, 159 / 292 mutants) categorically unreachable at 0 % under default first-order syntactic configurations. | `figs/fig3_ast_overlap_per_class.png`, §3.6 |
-| C6 | **Pre-registered headline finding (negative)** — the H2 large-effect threshold (Cliff's δ ≥ 0.474, Romano 2006) is **not met** under the point-estimate criterion (δ = 0.323 / 0.446 / 0.439 across v3 / v3b / v4); cross-source pooling under an identical prompt does not move δ. We frame this as an *underpowered exploratory contribution*, not a false-positive rescue. | §5.7, §5.9 |
-| C7 | **Reproducible artefact** — 192-test pytest suite, deterministic 5-minute cache replay, pinned dependencies, and provenance for every paper-cited number through `data/results/paper_numbers_v4.json` (the single source of truth, regeneratable by `scripts/build_paper_numbers.py`). | `tests/`, `replication/`, `REPRODUCIBILITY.md` |
+| C5 | **AST-normalised empirical traceability** showing P2 mutants are *not* a subset of cosmic-ray's syntactic-mutant pool: 5.14 % overall AST overlap across 12 PUTs; the structurally non-local semantic-effect faults account for 54.5 % of the P2 pool (159 / 292 mutants) and are unreachable at 0 % under default first-order syntactic configurations. | `figs/fig3_ast_overlap_per_class.png`, §3.6 |
+| C6 | **Pre-registered headline finding (negative)** — the H2 large-effect threshold (Cliff's δ ≥ 0.474, Romano 2006) is **not met** under the frozen-primary MP5 criterion (δ = 0.323 in v3 and 0.314 in v4). The MP1/data-driven v4 contrast is retained as sensitivity (δ = 0.439), not as the H2 verdict. We frame this as a bounded, underpowered exploratory contribution, not a false-positive rescue. | §5.7, §5.9 |
+| C7 | **Reproducible artefact** — 192-test pytest suite, deterministic 5-minute cache replay, pinned dependencies, and provenance for every paper-cited number through `data/results/paper_numbers_v4.json`, `data/results/rq2_cliffs_delta_v4_mp5.json`, `data/results/rq3_friedman_v4.json`, and `data/results/rq4_pattern_coverage_v4.json`. | `tests/`, `replication/`, `REPRODUCIBILITY.md` |
 
 The audit's scientific posture is conservative: we report a
 **negative result on the LLM-diversity lever**, retain the H2

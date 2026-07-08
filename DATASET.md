@@ -22,10 +22,16 @@
 
 `src/p2/mrs/{a1..d3}.py` — 60 MRs, 5 MPs per PUT. Strength labels ●● / ● / ○ in each module's docstring header (consistent with §3.3 matrix).
 
-## 3. Mutation operators
+## 3. Semantic-effect fault campaigns
 
-`src/p2/mutators/operator_registry.py` — 37 named operators in 5 classes:
-- **CE** (constant edit), **OS** (operator substitution), **HP** (hyperparameter), **TF** (transform), **SI/CF** (structural / control flow).
+`src/p2/mutators/operator_registry.py` — 37 named historical fault-generation entries. Their legacy suffixes (`CE1/OS1/HP1/TF1/SI1`) are retained in file names and logs for reproducibility only. They are not reader-facing MR MetaPattern names.
+
+Paper terminology follows the NOETHER MetaPattern vocabulary:
+- **inv** invariance/equivariance, including conservation instances;
+- **mono** monotonicity/order;
+- **conv** convergence/limit;
+- **dyn** qualitative dynamics, including trajectory-shape relations;
+- **cmp** method comparison / no-worse-than partial orders.
 
 Each entry: `target_locator + transformation + rationale + is_key`. The 12 `is_key=True` operators are generated under K=20 repeats for stability metrics.
 
@@ -59,13 +65,14 @@ Each entry: `target_locator + transformation + rationale + is_key`. The 12 `is_k
 ### v4 (PRIMARY — cited in paper)
 | File | Content |
 |---|---|
-| `data/results/paper_numbers_v4.json` | **SSOT for §5.6–§5.9, §6** — RQ1/2/3/4 aggregate numbers |
+| `data/results/paper_numbers_v4.json` | **SSOT for §5.6–§5.9, §6** — RQ1/2/3/4 aggregate numbers; contains `rq2_primary_mp5` for the H2 verdict and `rq2` for MP1 sensitivity |
 | `data/results/sms_track2_v4.json` | per-cell SMS, 60 cells × N=20 repeats |
 | `data/results/lrca_60cell_v4.json` | per-cell C1/C2/C3/C4/Artifact counts + suspect_share |
-| `data/results/rq2_cliffs_delta_v4.json` | Cliff's δ + 95% bootstrap CI |
+| `data/results/rq2_cliffs_delta_v4_mp5.json` | Frozen-primary MP5 Cliff's δ + 95% bootstrap CI for the H2 verdict |
+| `data/results/rq2_cliffs_delta_v4.json` | MP1/data-driven Cliff's δ + 95% bootstrap CI for sensitivity |
 | `data/results/rq2_cliffs_delta_logit_v4.json` | logit-transformed robustness check (R-22) |
 | `data/results/rq3_mixed_effects_v4.json` | primary mixed-effects (Singular) + fallback FE |
-| `data/results/rq3_friedman_v4.json` | Friedman χ² test (H4 verdict source, R-21) |
+| `data/results/rq3_friedman_v4.json` | Friedman χ² test for exploratory MP-rank differences; H4 itself is the LRCA suspect-share threshold |
 | `data/results/rq3_model_summary_v4.txt` | fallback model full summary |
 | `data/results/rq4_pattern_coverage_v4.json` | per-PUT PC + Spearman / Kendall |
 

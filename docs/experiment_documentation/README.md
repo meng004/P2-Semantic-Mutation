@@ -55,7 +55,7 @@
 
 - **方法**: SMS（Semantic Mutation Score）+ 三层方法骨架（定义/操作/应用）+ LRCA 三层归因 + E1∧E2 等价判定
 - **实验**: 12 PUT × 5 MP × 5 算子 = 60 单元格；v3/v3b/v4 三阶段消融
-- **关键数字**: δ = 0.4392（v4，未达 H2 阈值 0.474，stipulated power 49.1%）；AST overlap 5.14%（HP/TF/SI 0/0/0 不可达）；class-c SMS +91.4% (v3b→v4)
+- **关键数字**: H2 primary MP5 δ = 0.3142（v4，未达 H2 阈值 0.474）；MP1 sensitivity δ = 0.4392；AST overlap 5.14%（HP/TF/SI 0/0/0 不可达）；class-c SMS +91.4% (v3b→v4)
 - **结论**: 同 prompt 下 **MR-design** 而非 LLM-source diversity 是 aligned-vs-cross 效应量主导杠杆
 
 ---

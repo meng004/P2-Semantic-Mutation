@@ -10,6 +10,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\let\Bbbk\relax
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
 \usepackage{textcomp}
@@ -884,8 +885,8 @@ a hidden c-class inflation effect.
 
 \subsection{Power Analysis under Observed and Stipulated Effects}\label{d.3-power-analysis-plug-in-and-stipulated-alternative}
 
-\textbf{Plug-in bootstrap.} With-replacement sample from observed
-aligned (n=12) and cross (n=48) v4 SMS pools; N\_sim = 5,000, seed = 42
+\textbf{Plug-in bootstrap.} With-replacement sample from the MP1/data-driven
+sensitivity aligned (n=12) and cross (n=48) v4 SMS pools; N\_sim = 5,000, seed = 42
 (\path{scripts/compute_rq2_power.py}, \path{rq2_power_v4.json}):
 
 {\def\LTcaptype{table} % do not increment counter
@@ -901,16 +902,17 @@ Threshold & Interpretation & Power \\
 delta \textgreater{} 0.000 & Any-effect & \textbf{0.997} \\
 delta \textgreater{} 0.147 & Small & 0.966 \\
 delta \textgreater{} 0.330 & Medium & 0.759 \\
-\textbf{delta \textgreater{} 0.474} & \textbf{Large (H2)} &
+\textbf{delta \textgreater{} 0.474} & \textbf{Large-effect sensitivity threshold} &
 \textbf{0.423} \\
 \end{longtable}
 }
 
 Sample-size sweep ($n_{\mathrm{aligned}} \in \{6, 12, \ldots, 60\}$, $n_{\mathrm{cross}} = 4 \times n_{\mathrm{aligned}}$):
 power for delta \textgreater{} 0 reaches 0.974 at n=6, 0.996 at 12,
-plateaus thereafter. RQ4 primary analysis has very low sample-size
+plateaus thereafter. This RQ2 sensitivity sweep has very low sample-size
 requirement; the bottleneck is the effect-size boundary itself, not
-sampling noise. Even at $\delta_{\mathrm{truth}} \approx 0.474$, sample has only
+sampling noise. This table is a sensitivity calculation and does not show
+that the frozen MP5 primary contrast has been adequately powered. Even at $\delta_{\mathrm{truth}} \approx 0.474$, sample has only
 \textasciitilde42\% chance of detecting under plug-in; but this does
 \textbf{not} mean ``insufficient power is the cause of H2 not being
 met'', observed $\delta_{\mathrm{v3}} = 0.323 < 0.474$, observed
@@ -918,8 +920,8 @@ $\delta_{\mathrm{v4}} = 0.314 < 0.474$; increasing sample only narrows CI.
 
 \textbf{Stipulated-alternative.} Implemented in
 mixture-weight (\path{scripts/compute_rq2_power_stipulated.py},
-N\_sim = 2,000): SMS has heavy ties at zero (45/60 = 0), raw shifting is
-discontinuous (any $\varepsilon$ \textgreater{} 0 jumps delta from 0.314 to 0.74).
+N\_sim = 5,000): SMS has heavy ties at zero (45/60 = 0), raw shifting is
+discontinuous (any $\varepsilon$ \textgreater{} 0 jumps the MP1 sensitivity delta from 0.439 to 0.74).
 Mixture: aligned' = (probability w) sample from (observed\_aligned +
 0.001) + (probability 1−w) sample from observed\_aligned, calibrate w so
 E{[}delta{]} $\approx$ 0.474. Calibrated w = 0.094, realised E{[}delta{]} =
@@ -935,27 +937,27 @@ Stipulated truth & Criterion & Power \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.474 & $\hat{\delta} \geq 0.474$ (point-estimate) & \textbf{0.491} \\
+0.474 & $\hat{\delta} \geq 0.474$ (point-estimate) & \textbf{0.499} \\
 0.474 & 95\% CI lower \textgreater{} 0 (any-effect) & 0.868 \\
 \end{longtable}
 }
 
 Even at $\delta_{\mathrm{truth}} = 0.474$, the (12, 48) design returns $\hat{\delta} \geq
-0.474$ in only \textasciitilde49\% of replications. This
+0.474$ in only \textasciitilde50\% of replications. This
 \emph{supports} the main manuscript's aligned-versus-cross framing that ``not met'' is point-estimate, not
 effect-size.
 
 \subsection{Per-Class Friedman Tests}\label{d.4-friedman-per-class-discussion-of-small-n-concordance}
 
 Per-class Friedman (3 SUTs $\times$ 5 MRs) with Bonferroni $\times$ 4: a chi\^{}2=4.00
-raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.78 raw \textbf{0.029} adj
-\textbf{0.116}, W=\textbf{0.898}; c chi\^{}2=4.00 raw 0.406 adj 1.000,
-W=0.333; d chi\^{}2=5.00 raw 0.287 adj 1.000, W=0.417. After correction,
+raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.34 raw \textbf{0.035} adj
+\textbf{0.140}, W=\textbf{0.862}; c chi\^{}2=5.60 raw 0.231 adj 0.924,
+W=0.467; d chi\^{}2=5.00 raw 0.287 adj 1.000, W=0.417. After correction,
 no per-class result remains significant at family-wise alpha = 0.05.
-Even b-class W = 0.898 (Cohen 1988 large concordance) is insufficient at
+Even b-class W = 0.862 (Cohen 1988 large concordance) is insufficient at
 N = 3 per class. \textbf{H3 verdict rests on the main manuscript's cross-class consistency sign test}; per-class
 Friedman is sensitivity / descriptive only. Friedman main effect on full
-60 cells (chi\^{}2 = 15.30, p = 0.0041) confirms MR rank differences but
+60 cells (chi\^{}2 = 16.76, p = 0.0022) confirms MR rank differences but
 is logically independent from H3 cross-class consistency.
 
 \textbf{Mixed-effects unavailability.} Primary
@@ -965,8 +967,8 @@ interaction; N=60 too small for 11-d fixed-effects + 12 PUT random
 intercepts). Fallback
 \texttt{sms\ \textasciitilde{}\ C(class)\ +\ C(operator)\ +\ (1\ \textbar{}\ put)}
 had PUT random-intercept variance hit boundary 0 (degenerates to OLS).
-Fallback class p-values (descriptive only): b vs a 0.275 / c vs a 0.892
-/ d vs a 0.991. RQ5 conclusion shifts to four-piece presentation (class
+Fallback class p-values (descriptive only): b vs a 0.428 / c vs a 0.713
+/ d vs a 0.769. RQ5 conclusion shifts to four-piece presentation (class
 means + sign test + Friedman + forest plot).
 
 \subsection{Pattern-coverage operationalisation}\label{d.5-pattern-coverage-operationalisation}
@@ -974,7 +976,7 @@ means + sign test + Friedman + forest plot).
 Per SUT, (MR\_k, R\_outcome $\in$ \{True, False\}) binary-tuple coverage: 5
 MRs $\times$ 2 outcomes = 10 cells, PC = \#triggered / 10. Simplest baseline
 (per-SUT granularity, not distinguishing mutants). PC range over 12
-SUTs: {[}0.500, 1.000{]}, mean 0.733 (\texttt{paper\_numbers\_v4.json}).
+SUTs: {[}0.500, 1.000{]}, mean 0.750 (\texttt{rq4\_pattern\_coverage\_v4.json}).
 Pairing per PUT: Spearman rho = 0.163 (p = 0.613); Kendall tau = 0.136
 (p = 0.568).
 
@@ -1070,8 +1072,8 @@ API \$5-15; \textasciitilde30 min \\
 2 & \texttt{sms\_campaign.py\ -\/-track\ 2} & 4-core laptop
 \textasciitilde10-20 min \\
 3 & \texttt{run\_lrca.py} & \textless{} 1 min \\
-4 & MR-design team review of MRs with aligned-cell SMS significantly
-below historical median (0.275) & 1-2 h meeting \\
+4 & MR-design team review of MRs with aligned-cell SMS below the
+final-study aligned-cell reference & 1-2 h meeting \\
 \end{longtable}
 }
 
@@ -1379,7 +1381,7 @@ structure.
 \textbf{Empirical consistency.} Theorem G and the LRCA-trivialisation
 corollary jointly
 show that the SMS-based empirical conclusions (Cliff's delta in the aligned-versus-cross results,
-Friedman chi\^{}2 in the cross-class consistency results, and Spearman rho in the SMS-vs-Pattern-Coverage analysis) are structurally consistent
+Friedman chi\^{}2 in the MP-rank analysis, and Spearman rho in the SMS-vs-Pattern-Coverage analysis) are structurally consistent
 with existing \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} literature in classical
 syntactic-mutation scenarios, no metric-level semantic fragmentation.
 

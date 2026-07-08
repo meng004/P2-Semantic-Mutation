@@ -28,9 +28,9 @@ source .venv/bin/activate
 pip install -r requirements-frozen.txt
 
 # 2. 运行三条复现命令（全部使用 cache，无 API call）
-python3 scripts/build_paper_numbers.py --variant v4   # → data/results/paper_numbers_v4.json
-python3 scripts/compute_rq2.py            --variant v4   # 确认 Cliff's δ = 0.4392
-python3 scripts/compute_rq3_friedman.py   --variant v4   # 确认 χ² = 15.30, p = 0.0041
+SMS_VERSION=v4 python3 scripts/compute_rq2_v4_mp5.py      # H2 primary MP5
+SMS_VERSION=v4 P2_PRIMARY_VERSION=v3b python3 scripts/build_paper_numbers.py
+SMS_VERSION=v4 python3 scripts/compute_rq3_friedman.py    # 确认 χ² = 16.76, p = 0.0022
 
 # 3. 校验
 python3 scripts/show_numbers.py
@@ -40,9 +40,10 @@ python3 scripts/show_numbers.py
 
 ```
 RQ1: mean_c1_share = 0.2092, mean_sms = 0.1040
-RQ2: Cliff's δ = 0.4392, 95% CI = [0.1267, 0.7396]
+RQ2 primary MP5: Cliff's δ = 0.3142, 95% CI = [0.0138, 0.6215]
+RQ2 MP1 sensitivity: Cliff's δ = 0.4392, 95% CI = [0.1267, 0.7396]
      H2 (δ ≥ 0.474): NOT MET
-RQ3: Friedman χ² = 15.30, p = 0.0041
+RQ3/RQ5 MP-rank: Friedman χ² = 16.76, p = 0.0022
      class_mean_c = 0.0894 (v4) — vs v3b 0.0467 (+91.4%)
 RQ4: Spearman ρ = 0.1628, p = 0.6133
 AST overlap (12 PUT): 5.14% overall; HP/TF/SI = 0/0/0
@@ -115,7 +116,7 @@ python3 scripts/p2_vs_syntactic_ast_diff_batch.py \
 python3 scripts/compute_rq2_power_stipulated.py \
         --delta-truth 0.474 --n-aligned 12 --n-cross 48 \
         --n-replications 10000 --seed 42
-# 期望: point-estimate power ≈ 49.1%, CI-lower power ≈ 86.8%
+# 期望: point-estimate power ≈ 49.9%, CI-lower power ≈ 86.8%
 ```
 
 ---
@@ -211,8 +212,9 @@ python3 scripts/h5_sensitivity.py \
 | `data/results/paper_numbers_v3b.json` | v3b post-hoc primary MP shift | §3.4 + §5.7.2 |
 | `data/results/lrca_60cell_v4.json` | 60 cells full LRCA breakdown | RQ1 cell-level |
 | `data/results/cosmic_ray_12put_ast_diff.json` | 292 P2 vs 1,250 CR mutants AST diff | §3.5 + §6 AST overlap |
-| `data/results/rq2_cliffs_delta_v4.json` | δ + 95% CI (BCa B=10000) | §5.7.1 RQ2 effect-size |
-| `data/results/rq2_power_stipulated_v4.json` | 49.1% point-estimate power | §5.7.2 power calibration |
+| `data/results/rq2_cliffs_delta_v4_mp5.json` | frozen-primary δ + 95% CI (B=10000) | §5.7.1 RQ2 H2 verdict |
+| `data/results/rq2_cliffs_delta_v4.json` | MP1 sensitivity δ + 95% CI (BCa B=10000) | §5.7.1 sensitivity effect-size |
+| `data/results/rq2_power_stipulated_v4.json` | 49.9% point-estimate power | §5.7.2 MP1 sensitivity power calibration |
 | `data/results/rq3_friedman_v4.json` | χ² + per-class p | §5.8 RQ3 |
 | `data/results/c_class_permutation_v4.json` | cross-cell exchangeability null | §3.4 v3b post-hoc |
 

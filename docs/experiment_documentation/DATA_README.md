@@ -121,11 +121,14 @@ data/mutants/<put>_<variant>/<m##>_<put>_<operator><idx>_<llm>_<a##>.py
 {
   "rq1": { "n_cells": 60, "mean_sms": 0.104, "median_sms": 0.0,
            "mean_c1_share": 0.2092, "mean_suspect_share": 0.7908, ... },
+  "rq2_primary_mp5": { "n_aligned": 12, "n_cross": 48, "cliffs_delta": 0.3142,
+           "delta_ci_95_lo": 0.0138, "delta_ci_95_hi": 0.6215,
+           "h2_threshold_delta": 0.474, "h2_delta_pass": false, ... },
   "rq2": { "n_aligned": 12, "n_cross": 48, "cliffs_delta": 0.4392,
            "delta_ci_95_lo": 0.1267, "delta_ci_95_hi": 0.7396,
            "h2_threshold_delta": 0.474, "h2_delta_pass": false, ... },
-  "rq3": { "class_mean_a/b/c/d": ..., "friedman_chi2": 15.30,
-           "friedman_p": 0.0041, "friedman_per_class_p": {...} },
+  "rq3": { "class_mean_a/b/c/d": ..., "friedman_chi2": 16.7586,
+           "friedman_p": 0.0022, "friedman_per_class_p": {...} },
   "rq4": { "spearman_rho": 0.1628, "spearman_p": 0.6133, ... }
 }
 ```
@@ -149,7 +152,7 @@ data/mutants/<put>_<variant>/<m##>_<put>_<operator><idx>_<llm>_<a##>.py
 | `rq2_cliffs_delta_v{3,3b,4}.json` | δ + BCa 95% CI (B=10000) |
 | `rq2_cliffs_delta_logit_v{3b,4}.json` | logit-link 备选模型（robustness） |
 | `rq2_power_v4.json` (1.2 KB) | naive power（H_alt: aligned-cross diff = observed） |
-| **`rq2_power_stipulated_v4.json`** (2.1 KB) | **stipulated δ_truth=0.474 power** — paper §5.7.2 49.1% 数字 |
+| **`rq2_power_stipulated_v4.json`** (2.1 KB) | **stipulated δ_truth=0.474 MP1 sensitivity power** — paper §5.7.2 49.9% 数字 |
 
 ### 3.4 RQ3 详细输出
 
@@ -262,15 +265,16 @@ data/mutants/<put>_<variant>/<m##>_<put>_<operator><idx>_<llm>_<a##>.py
 
 | paper 数字 | SSOT 文件 | JSON 字段 |
 |-----------|----------|-----------|
-| **§Abstract**: δ = 0.439 | `paper_numbers_v4.json` | `rq2.cliffs_delta` |
+| **§Abstract / H2 primary**: δ = 0.314 | `paper_numbers_v4.json` | `rq2_primary_mp5.cliffs_delta` |
 | **§5 mean SMS = 0.104** | `paper_numbers_v4.json` | `rq1.mean_sms` |
 | **§5 mean C1_share = 0.209** | `paper_numbers_v4.json` | `rq1.mean_c1_share` |
-| **§5.7.1 δ = 0.439, CI = [0.127, 0.740]** | `rq2_cliffs_delta_v4.json` | top-level |
+| **§5.7.1 primary MP5 δ = 0.314, CI = [0.014, 0.622]** | `rq2_cliffs_delta_v4_mp5.json` | top-level |
+| **§5.7.1 MP1 sensitivity δ = 0.439, CI = [0.127, 0.740]** | `rq2_cliffs_delta_v4.json` | top-level |
 | **§5.7.1 v3 δ = 0.323** | `paper_numbers_v3.json` | `rq2.cliffs_delta` |
 | **§5.7.1 v3b δ = 0.446** | `paper_numbers_v3b.json` | `rq2.cliffs_delta` |
-| **§5.7.2 49.1% point-estimate power** | `rq2_power_stipulated_v4.json` | `point_estimate_power` |
-| **§5.7.2 86.8% CI-lower power** | `rq2_power_stipulated_v4.json` | `ci_lower_power` |
-| **§5.8 Friedman χ² = 15.30, p = 0.0041** | `rq3_friedman_v4.json` | top-level |
+| **§5.7.2 49.9% point-estimate sensitivity power** | `rq2_power_stipulated_v4.json` | `stipulated_alternative_power.power_point_estimate_meets_large_effect_sensitivity` |
+| **§5.7.2 86.8% CI-lower power** | `rq2_power_stipulated_v4.json` | `stipulated_alternative_power.power_CI_lower_above_zero` |
+| **§5.8 Friedman χ² = 16.76, p = 0.0022** | `rq3_friedman_v4.json` | top-level |
 | **§5.8 class_mean_b = 0.148** | `paper_numbers_v4.json` | `rq3.class_mean_b` |
 | **§5.8 c-class +91.4%** (v3b → v4) | computed: `(0.0894-0.0467)/0.0467 × 100` | `paper_numbers_v3b.json::rq3.class_mean_c` 与 v4 |
 | **§5.7.4 Spearman ρ = 0.163, p = 0.613** | `rq4_pattern_coverage_v4.json` | top-level |

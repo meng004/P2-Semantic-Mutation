@@ -14,7 +14,7 @@
     "power_at_delta_gt_0.33": 0.759,
     "power_at_delta_gt_0.474": 0.423
   },
-  "interpretation": "achieved_power_at_delta_gt_0.000 = probability of detecting any stochastic dominance; achieved_power_at_delta_gt_0.330 = probability of detecting a medium-or-larger effect; achieved_power_at_delta_gt_0.474 = probability of detecting a large effect at the Romano (2006) threshold (this is the H2 power).",
+  "interpretation": "achieved_power_at_delta_gt_0.000 = probability of detecting any stochastic dominance; achieved_power_at_delta_gt_0.330 = probability of detecting a medium-or-larger effect; achieved_power_at_delta_gt_0.474 = probability of detecting a large effect at the Romano (2006) threshold for the MP1/data-driven sensitivity contrast; this is not the frozen-primary MP5 H2 power.",
   "sample_size_curve_for_delta_gt_0": {
     "n_aligned=6_n_cross=24": 0.9738,
     "n_aligned=12_n_cross=48": 0.9964,

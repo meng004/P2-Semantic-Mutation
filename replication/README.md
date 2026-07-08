@@ -26,6 +26,7 @@ pipeline. **Replication from the committed cache is deterministic
 pip install -r requirements-frozen.txt
 
 # 2. Rebuild the SSOT statistics file (paper_numbers_v4.json) from cache
+PYTHONPATH=src SMS_VERSION=v4 python scripts/compute_rq2_v4_mp5.py
 PYTHONPATH=src SMS_VERSION=v4 P2_PRIMARY_VERSION=v3b \
   python scripts/build_paper_numbers.py
 
@@ -41,6 +42,7 @@ SMS cache:
 
 ```bash
 PYTHONPATH=src python scripts/compute_rq2.py
+PYTHONPATH=src SMS_VERSION=v4 python scripts/compute_rq2_v4_mp5.py
 PYTHONPATH=src python scripts/compute_rq2_power.py
 PYTHONPATH=src python scripts/compute_rq3.py
 PYTHONPATH=src python scripts/compute_rq3_friedman.py
@@ -53,18 +55,20 @@ PYTHONPATH=src python scripts/permutation_c_class_inflation.py
 
 ## 2. Expected outputs and headline numbers
 
-After step 2 above, `data/results/paper_numbers_v4.json` should
-contain (verify with `python -c "import json; print(json.load(open('data/results/paper_numbers_v4.json'))['rq2']['cliffs_delta'])"`):
+After step 2 above, `data/results/paper_numbers_v4.json` should contain
+both the frozen-primary MP5 H2 result and the MP1 sensitivity result
+(verify the primary result with `python -c "import json; print(json.load(open('data/results/paper_numbers_v4.json'))['rq2_primary_mp5']['cliffs_delta'])"`):
 
 | Section | Number | Expected value | Source field |
 |---|---|---|---|
 | §5.6 (RQ1 H1) | mean SMS | `0.104` | `rq1.mean_sms` |
 | §5.6 (RQ1 H1) | median SMS | `0.000` | `rq1.median_sms` |
-| §5.7 (RQ2 H2) | Cliff's δ (aligned vs cross) | `0.4392` | `rq2.cliffs_delta` |
-| §5.7 (RQ2 H2) | δ 95% bootstrap CI | `[0.1267, 0.7396]` | `rq2.delta_ci_95_{lo,hi}` |
-| §5.7.2 stipulated power | power at δ_truth=0.474 | `0.491` | `rq2_power_stipulated_v4.json` |
-| §5.8 (RQ3 H4) | Friedman χ² | `15.3028` | `rq3.friedman_chi2` |
-| §5.8 (RQ3 H4) | Friedman p | `0.0041` | `rq3.friedman_p` |
+| §5.7 (RQ2 H2 primary) | Cliff's δ (frozen MP5 aligned vs cross) | `0.3142` | `rq2_primary_mp5.cliffs_delta` |
+| §5.7 (RQ2 H2 primary) | δ 95% bootstrap CI | `[0.0138, 0.6215]` | `rq2_primary_mp5.delta_ci_95_{lo,hi}` |
+| §5.7 sensitivity | Cliff's δ (MP1 data-driven contrast) | `0.4392` | `rq2.cliffs_delta` |
+| §5.7.2 stipulated power | MP1 sensitivity power at δ_truth=0.474 | `0.499` | `rq2_power_stipulated_v4.json` |
+| §5.8 (RQ3/RQ5 MP-rank analysis) | Friedman χ² | `16.7586` | `rq3.friedman_chi2` |
+| §5.8 (RQ3/RQ5 MP-rank analysis) | Friedman p | `0.0022` | `rq3.friedman_p` |
 | §5.9 (RQ4 H3) | Spearman ρ | `0.1628` | `rq4.spearman_rho` |
 | §5.9 (RQ4 H3) | Spearman p | `0.6133` | `rq4.spearman_p` |
 | §3.2.6.3 (AST diff) | mean overlap_ratio | `0.0514` | `cosmic_ray_12put_ast_diff.json` |
@@ -106,11 +110,14 @@ replication/
 
 ## 4. Reproducibility caveats
 
-- **Environment variables.** Two are load-bearing for the analysis:
+- **Environment variables.** The final manuscript separates the frozen
+  MP5 primary H2 contrast from the MP1 sensitivity contrast:
   - `SMS_VERSION=v4` — selects the v4 cross-source pool as primary
     (paper §5.6).
-  - `P2_PRIMARY_VERSION=v3b` — selects the v3b data-driven primary MP
-    for the c-class (paper §3.5.1).
+  - `scripts/compute_rq2_v4_mp5.py` produces the H2 primary contrast
+    with c-class held at MP5.
+  - `P2_PRIMARY_VERSION=v3b` selects the MP1/data-driven c-class
+    grouping used only for the sensitivity numbers in `rq2`.
 - **LLM API non-determinism.** If you set
   `temperature > 0` and re-call Claude / GPT / DeepSeek, the mutant
   pool will differ at the trial level. The committed

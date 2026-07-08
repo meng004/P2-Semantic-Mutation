@@ -127,7 +127,8 @@ report = {
         "achieved_power_at_delta_gt_0.330 = probability of detecting a "
         "medium-or-larger effect; "
         "achieved_power_at_delta_gt_0.474 = probability of detecting a "
-        "large effect at the Romano (2006) threshold (this is the H2 power)."
+        "large effect at the Romano (2006) threshold for the MP1/data-driven "
+        "sensitivity contrast; this is not the frozen-primary MP5 H2 power."
     ),
     "sample_size_curve_for_delta_gt_0": sample_size_curve,
     "n_required_for_80pct_power": n_for_80_pct,

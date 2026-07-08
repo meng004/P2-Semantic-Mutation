@@ -1,11 +1,12 @@
-"""Friedman test for RQ3 cross-class comparison.
+"""Friedman test for MP-rank variation across PUTs.
 
 Block: PUT (12 levels: a1..d3)
 Treatment: MP (5 levels: MP1..MP5)
 Value: SMS
 
-Friedman χ² tests whether MP-effect is consistent across PUTs.
-Complements §5.8.2 sign test by providing a formal non-parametric p-value.
+Friedman χ² tests whether SMS ranks differ across MP treatments within
+the 12 PUT blocks. In the paper this is an exploratory MP-rank analysis,
+not the H4/cross-class-consistency verdict.
 
 Reads data/results/sms_track2_v3.json by default; pass --v2 to read v2.
 """
@@ -85,9 +86,9 @@ def main():
         "rank_means_mp1_to_mp5": [round(r, 3) for r in rank_means],
         "per_class": per_class,
         "interpretation": (
-            "p < 0.05 ⇒ MP-effect varies across PUTs (cross-class consistency rejected)"
+            "p < 0.05 ⇒ MP ranks differ across PUT blocks; exploratory MP-rank effect, not an H4 verdict"
             if p_main < 0.05 else
-            "p ≥ 0.05 ⇒ no significant MP × PUT effect; consistent with §5.8.2 sign test direction"
+            "p ≥ 0.05 ⇒ no significant MP-rank difference detected across PUT blocks"
         ),
     }
     out_path = ROOT / "data/results" / out_name

@@ -14,7 +14,9 @@
 | 元模式 | meta pattern (MP) | |
 | 变异测试 | mutation testing | |
 | 变异算子 | mutation operator | |
-| 领域语义变异算子 | domain-semantic mutation operator | bridge term to P4 |
+| 语义效应故障 | semantic-effect fault | preferred reader-facing term; do not use CE/OS/HP/TF/SI as concept names |
+| MR 元模式 | MR MetaPattern (MP) | NOETHER-aligned term |
+| 算子块 | operator block | NOETHER structural source of an MP |
 | 变异体 | mutant | |
 | 等价变异体 | equivalent mutant | |
 | 等价检测 | equivalence detection | |
@@ -42,6 +44,19 @@
 | 单元格 | cell | (PUT, MP) pair |
 | 被测程序 | program under test (PUT) | |
 
+## B1. NOETHER-aligned MR MetaPatterns
+
+| Chinese | English | Notes |
+|---|---|---|
+| 不变性 / 等变性元模式 | invariance / equivariance MetaPattern (`m_inv`, `inv`) | from the `G` symmetry block; conservation is an instance of this block |
+| 单调 / 次序元模式 | monotonicity / order MetaPattern (`m_mono`, `mono`) | from the `O_le` order block |
+| 收敛 / 极限元模式 | convergence / limit MetaPattern (`m_conv`, `conv`) | from the `L_lim` limit block |
+| 定性动力学元模式 | qualitative-dynamics MetaPattern (`m_dyn`, `dyn`) | from the `D_dyn` block; use for trajectory-shape MRs |
+| 方法比较元模式 | method-comparison MetaPattern (`m_cmp`, `cmp`) | from the `E_cmp` block; use for partial-order / no-worse-than MRs |
+| 伴随互易元模式 | self-adjoint / adjoint-reciprocity MetaPattern (`m_adj`, `adj`) | from the `T_adj` self-adjoint block |
+| 时间反演元模式 | time-reversal MetaPattern (`m_rev`, `rev`) | from the `T_rev` time-reversal block; not a synonym for general trajectory |
+| 关系等价元模式 | relational-equivalence MetaPattern (`m_rel`, `rel`) | from the `B_rel` relational-equivalence block |
+
 ## C. Paper-stage / methodology
 
 | Chinese | English | Notes |
@@ -55,7 +70,7 @@
 | 仲裁 | arbitration | DeepSeek role |
 | LLM 多样性 | LLM source diversity | paper title |
 | 预防性防御 | preventive defense | §3.2.6 |
-| 语法变异算子 vs 语义变异算子 | syntactic vs semantic mutation operators | §3.2.6 contrast |
+| 语法编辑 vs 语义效应故障 | syntactic edits vs semantic-effect faults | avoids treating semantic mutation as a syntactic-operator subclass |
 
 ## D. Hypotheses & RQs (NEVER translate IDs themselves)
 

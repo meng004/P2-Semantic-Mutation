@@ -25,7 +25,9 @@ _suffix = f"_{VERSION}" if VERSION != "v2" else ""
 SMS_FILE = f"sms_track2{_suffix}.json" if VERSION != "v2" else "sms_track2_v2.json"
 LRCA_FILE = f"lrca_60cell{_suffix}.json" if VERSION != "v2" else "lrca_60cell.json"
 RQ2_FILE = f"rq2_cliffs_delta{_suffix}.json" if VERSION != "v2" else "rq2_cliffs_delta.json"
+RQ2_PRIMARY_MP5_FILE = "rq2_cliffs_delta_v4_mp5.json" if VERSION == "v4" else None
 RQ3_FILE = f"rq3_mixed_effects{_suffix}.json" if VERSION != "v2" else "rq3_mixed_effects.json"
+RQ3_FRIEDMAN_FILE = f"rq3_friedman{_suffix}.json" if VERSION != "v2" else "rq3_friedman.json"
 RQ4_FILE = f"rq4_pattern_coverage{_suffix}.json" if VERSION != "v2" else "rq4_pattern_coverage.json"
 OUT_FILE = f"paper_numbers{_suffix}.json" if VERSION != "v2" else "paper_numbers.json"
 print(f"build_paper_numbers: VERSION={VERSION} writing {OUT_FILE}")
@@ -50,9 +52,10 @@ def main() -> None:
     rq3 = _load(RQ3_FILE)
     rq4 = _load(RQ4_FILE)
     try:
-        friedman = _load("rq3_friedman.json")
+        friedman = _load(RQ3_FRIEDMAN_FILE)
     except FileNotFoundError:
         friedman = None
+    rq2_primary_mp5 = _load(RQ2_PRIMARY_MP5_FILE) if RQ2_PRIMARY_MP5_FILE else None
 
     aligned, cross = [], []
     per_class_aligned = {"a": [], "b": [], "c": [], "d": []}
@@ -112,6 +115,23 @@ def main() -> None:
             "h2_ratio_pass": rq2["h2_ratio_pass"],
             "odds_ratio_inf": _is_inf(odds),
         },
+        "rq2_primary_mp5": (
+            {
+                "n_aligned": rq2_primary_mp5["n_aligned"],
+                "n_cross": rq2_primary_mp5["n_cross"],
+                "mean_aligned": round(rq2_primary_mp5["mean_aligned"], 4),
+                "mean_cross": round(rq2_primary_mp5["mean_cross"], 4),
+                "median_aligned": round(rq2_primary_mp5["median_aligned"], 4),
+                "median_cross": round(rq2_primary_mp5["median_cross"], 4),
+                "cliffs_delta": round(rq2_primary_mp5["cliffs_delta"], 4),
+                "delta_ci_95_lo": round(rq2_primary_mp5["delta_ci_95"][0], 4),
+                "delta_ci_95_hi": round(rq2_primary_mp5["delta_ci_95"][1], 4),
+                "h2_threshold_delta": rq2_primary_mp5["h2_threshold_delta"],
+                "h2_delta_pass": rq2_primary_mp5["h2_delta_pass"],
+                "source_file": RQ2_PRIMARY_MP5_FILE,
+            }
+            if rq2_primary_mp5 else None
+        ),
         "rq3": {
             "n_observations": rq3["n_observations"],
             "class_mean_a": round(rq3["class_means"]["a"], 4),

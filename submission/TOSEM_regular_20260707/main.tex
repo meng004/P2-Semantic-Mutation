@@ -9,6 +9,7 @@
 \settopmatter{printacmref=true, printccs=true, printfolios=true}
 \setcitestyle{numbers,sort&compress,square}
 
+\let\Bbbk\relax
 \usepackage{amssymb,amsthm}
 \usepackage{mathtools}
 \usepackage{calc}
@@ -98,7 +99,7 @@
 \begin{document}
 
 \begin{abstract}
-Metamorphic testing mitigates the test-oracle problem by checking relations among executions, but classical mutation score is defined over syntactic edits and does not say whether a metamorphic-relation set observes declared domain-semantic effects. This paper introduces Semantic Mutation Score (SMS), an MR-relative adequacy metric over an admitted universe of nonequivalent semantic mutants with explicit certificates and a degeneration path back to classical mutation score. We instantiate five semantic operator families on 12 single-output scientific-computing programs and audit the resulting 60-cell design with an SMS-to-MS proof, an AST-normalized syntactic comparison, aligned-versus-cross relation analysis, and boundary and adjoint studies. The semantic pool has 5.14% AST-normalized overlap with default first-order syntactic mutants. Several pre-registered empirical thresholds are not met; we use these failures to delimit operator applicability, MR-design adequacy, and kill attribution rather than to claim universal dominance. An industrial real-defect arm of reproduced, MR-detectable defects from widely used scientific-computing libraries then tests the central construct claim: a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs. SMS is therefore a construct-level diagnostic for declared semantic strata, with its construct separation supported on industrial code.
+Metamorphic testing mitigates the test-oracle problem by checking relations among executions, but classical mutation score is defined over syntactic edits and does not say whether a metamorphic-relation set observes declared domain-semantic effects. This paper introduces Semantic Mutation Score (SMS), an MR-relative adequacy metric over an admitted universe of nonequivalent semantic mutants with explicit evidence records and a degeneration path back to classical mutation score. We instantiate five semantic operator families on 12 single-output scientific-computing programs and audit the resulting 60-cell design with an SMS-to-MS proof, an AST-normalized syntactic comparison, aligned-versus-cross relation analysis, and boundary and adjoint studies. The semantic pool has 5.14% AST-normalized overlap with default first-order syntactic mutants. Several pre-registered empirical thresholds are not met: 45 of 60 PUT--MP cells have zero SMS, H1 and H4 fail, and the frozen-primary H2 contrast is directionally positive but below the large-effect threshold. We use these results to delimit operator applicability, MR-design adequacy, and kill attribution rather than to claim universal dominance. An industrial real-defect arm of reproduced, MR-detectable defects from widely used scientific-computing libraries then provides a selection-conditioned external sanity check: a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show why aggregate kill-rate, semantic alignment, and real-defect detection should not be collapsed into a single construct. SMS is therefore a construct-level diagnostic for declared semantic strata in the controlled-kernel setting.
 \end{abstract}
 
 \maketitle
@@ -137,8 +138,8 @@ An industrial real-defect arm then tests the same semantic
 distinction developed here on reproduced defects from widely used
 scientific-computing libraries: mutation kill-rate, semantic stratum
 alignment, and real-defect detection are related but different
-constructs. The arm strengthens the semantic-mutant argument at result
-level; it is not presented as a reusable benchmark artifact. Its cases
+constructs. The arm is used as a selection-conditioned external sanity
+check; it is not presented as industrial validation or as a reusable benchmark artifact. Its cases
 were admitted only after defect/MR detectability verification and are
 reported here at result level. Candidate mining, rejected cases,
 repository tooling, and benchmark release are outside this manuscript
@@ -226,11 +227,11 @@ three structurally non-local semantic-effect families are absent from
 the default first-order pool & Default
 syntactic mutation tools can never generate higher-order semantic
 mutants \\
-MR alignment is visible but bounded & Aligned mean SMS 0.275 vs
-cross mean SMS 0.061; Cliff's \(\delta\) is positive but below the
+MR alignment is visible but bounded & Frozen-primary aligned mean SMS
+0.213 vs cross mean SMS 0.077; Cliff's \(\delta\) is positive but below the
 pre-registered large-effect threshold & The current 12-PUT audit proves
 a large universal aligned-vs-cross effect \\
-SMS exposes adequacy boundaries & H1--H4 failures, zero-mass cells,
+SMS exposes adequacy boundaries & H1/H4 failures, 45 of 60 zero-SMS cells,
 root-cause labels, and strong-boundary false-positive / false-negative
 cases & Failed thresholds are treated as empirical success criteria \\
 Real-defect behaviour is distinct from aggregate kill-rate & The
@@ -689,7 +690,8 @@ truly non-equivalent mutant admitted as equivalent) requires \emph{both}
 AVP coherence and numerical agreement on K\_eq samples to hold despite the
 non-equivalence (both mis-pass simultaneously), which is rare;
 false-non-equiv requires only one of E1, E2 to fail for a truly equivalent
-mutant, biasing SMS slightly high. The trade-off table against
+mutant, admitting that mutant into the denominator as a survivor and
+biasing SMS slightly low. The trade-off table against
 E1-alone and E2-alone is in Appendix A.3. Under the Section~\ref{sms-ms-degeneration-formal-statement} degenerate
 limit \texttt{L}, E1 $\wedge$ E2 reduces almost everywhere to classical bitwise
 equivalence (Lemma G.1, supplementary Appendix G).
@@ -904,7 +906,7 @@ informal Layer-1 necessary conditions of Section~\ref{necessary-conditions-for-s
 
 \textbf{Definition (semantic mutant).} Given $(P, \psi)$ with
 $\mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} \models \psi$, a program $P'$ is a
-\emph{semantic mutant of $P$ at stratum $\psi$} iff: (S1)
+\emph{semantic mutant of $P$ at intended stratum $\psi$} iff: (S1)
 \emph{realizability}, $P' = e(P)$ for a finite AST edit $e$; (S2)
 \emph{baseline}, $\mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} \models \psi$; (S3)
 \emph{violation with witness},
@@ -912,14 +914,18 @@ $\mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack} \not\models \psi$, 
 $x \in \mathcal{X}_{\mathrm{adm}}$ observable through $\alpha$; (S4)
 \emph{latency}, $P'$ compiles, terminates on $\mathcal{X}_{\mathrm{adm}}$,
 and is type-correct, so the defect is observable only at the semantic
-layer, never by a crash oracle; (S5) \emph{stratum purity} (required
-where stratum labels feed downstream),
+layer, never by a crash oracle; (S5) \emph{stratum-purity assumption}
+(reported when stratum labels feed downstream),
 $\mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack} \models \psi'$ for all
 $\psi' \in I \setminus \{\psi\}$.
 
-A semantic mutation class is therefore defined by which invariant must
-break and how (S2--S5) and realized by whichever syntactic edits achieve
-it (S1). The operators $\mathrm{mut}_{\mathrm{inv}}, \dots, \mathrm{mut}_{\mathrm{cmp}}$ of Section~\ref{operator-signatures}
+A semantic mutation class is therefore defined by which invariant is
+intended to break and how (S2--S5) and realized by whichever syntactic
+edits achieve it (S1). In this study S5 is an audited labelling
+assumption rather than an all-invariant proof obligation; wherever S5 has
+not been exhaustively checked, aligned-versus-cross results are read as
+intended-stratum diagnostics rather than verified pure-stratum effects.
+The operators $\mathrm{mut}_{\mathrm{inv}}, \dots, \mathrm{mut}_{\mathrm{cmp}}$ of Section~\ref{operator-signatures}
 are the constructive templates for strata $\psi_1, \dots, \psi_5$.
 
 \textbf{Definition (latency window).} For a violation-magnitude
@@ -2005,12 +2011,12 @@ Slice & n & Mean SMS & Median SMS \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-aligned (j = k) & 12 & 0.275 & 0.267 \\
-cross (j $\neq$ k) & 48 & 0.061 & 0.000 \\
+aligned (j = k) & 12 & 0.213 & 0.100 \\
+cross (j $\neq$ k) & 48 & 0.077 & 0.000 \\
 \end{longtable}
 }
 
-Two delta point-estimates under the pre-registered primary-MP
+Two delta point-estimates under the frozen primary-MP
 convention:
 
 \begin{itemize}
@@ -2029,6 +2035,13 @@ convention:
   source-axis reading is qualified by the protocol-asymmetry analysis in
   Section~\ref{r13-protocol-asymmetry-magnitude-estimate}.
 \end{itemize}
+
+For auditability, this subsection uses the frozen MP5 c-class convention
+recorded in \path{data/results/rq2\_cliffs\_delta\_v4\_mp5.json}. The
+post-hoc MP1 c-class sensitivity reported in
+\path{data/results/paper\_numbers\_v4.json} has a larger point estimate
+(\(\delta=0.439\), mean aligned/cross SMS \(0.275/0.061\)), but it is
+not the primary H2 estimand and is not used for the verdict.
 
 \textbf{H2 verdict: not met.} H2 carries two pre-registered criteria,
 Cliff's $\delta \geq 0.474$ and an aligned-to-cross odds ratio
@@ -2067,18 +2080,24 @@ traditional mutants on fault detection'', ours compares ``aligned vs
 cross MP slice within one pool''; the numerical similarity is not
 substantive support).
 
-\subsection{RQ4: Stipulated-Alternative Power Analysis}\label{rq2-stipulated-alternative-power}
+\subsection{RQ2 sensitivity: Stipulated-Alternative Power Analysis}\label{rq2-stipulated-alternative-power}
 
-The Section~\ref{rq1-60-cell-distribution} effective-n constraint motivates an explicit power analysis. A
-plug-in bootstrap (5,000 replications, seed = 42) samples with
-replacement from the observed (n = 12, n = 48) v4 SMS distributions. The
-bootstrap exceedance-probability table (probability that the resampled
+The Section~\ref{rq1-60-cell-distribution} effective-n constraint motivates an explicit sensitivity power analysis. The existing power files
+(\path{data/results/rq2\_power\_v4.json} and
+\path{data/results/rq2\_power\_stipulated\_v4.json}) were computed under
+the post-hoc MP1 c-class sensitivity, not under the frozen MP5 primary
+estimand used for the H2 verdict above. We therefore report them only as
+a sensitivity diagnostic for zero-inflated sample size, not as support
+for the primary H2 point estimate. A plug-in bootstrap (5,000
+replications, seed = 42) samples with replacement from the observed
+(n = 12, n = 48) v4 MP1 SMS distributions. The bootstrap
+exceedance-probability table (probability that the resampled
 $\hat\delta$ exceeds each threshold under the observed distribution, not
 power against a stipulated alternative) is:
 
 {%
 \begin{longtable}[]{@{}lll@{}}
-\caption{RQ4: Bootstrap exceedance probability under the observed
+\caption{RQ2 sensitivity: bootstrap exceedance probability under the observed
 distribution.}\\
 \toprule\noalign{}
 Threshold & Interpretation & Exceedance prob.\ at (12, 48) \\
@@ -2089,7 +2108,7 @@ Threshold & Interpretation & Exceedance prob.\ at (12, 48) \\
 $\delta$ \textgreater{} 0.000 & Any effect & \textbf{0.997} \\
 $\delta$ \textgreater{} 0.147 & Small & 0.966 \\
 $\delta$ \textgreater{} 0.330 & Medium & 0.759 \\
-\textbf{$\delta$ \textgreater{} 0.474} & \textbf{Large (H2)} &
+\textbf{$\delta$ \textgreater{} 0.474} & \textbf{Large-effect sensitivity threshold} &
 \textbf{0.423} \\
 \end{longtable}
 }
@@ -2097,17 +2116,18 @@ $\delta$ \textgreater{} 0.330 & Medium & 0.759 \\
 The plug-in result answers the question ``given the \emph{observed}
 distribution, how often do we exceed the threshold?'' A
 stipulated-alternative simulation answers a more pointed question: ``if
-the \emph{truth} equals the H2 boundary 0.474, how often does the (12,
+the MP1 sensitivity truth equals the large-effect boundary 0.474, how often does the (12,
 48) design return $\delta \geq 0.474$?'' SMS distributions have heavy ties at zero
-(45 of 60 cells), so a raw shift is discontinuous: any $\varepsilon$ \textgreater{}
-0 jumps $\delta$ from 0.314 to 0.74. We therefore use a mixture, drawing the
+(45 of 60 cells), so a raw shift is discontinuous under the MP1
+sensitivity: any $\varepsilon$ \textgreater{}
+0 jumps $\delta$ from 0.439 to 0.74. We therefore use a mixture, drawing the
 aligned sample with probability w from (observed\_aligned + 0.001) and
 with probability 1 $-$ w from observed\_aligned, calibrating w = 0.094 to
 realise $E[\delta] = 0.4746$.
 
 {%
 \begin{longtable}[]{@{}lll@{}}
-\caption{RQ4: Stipulated-alternative power.}\label{tab:p2-11}\\
+\caption{RQ2 sensitivity: stipulated-alternative power.}\label{tab:p2-11}\\
 \toprule\noalign{}
 Stipulated truth & Criterion & Power \\
 \midrule\noalign{}
@@ -2115,34 +2135,40 @@ Stipulated truth & Criterion & Power \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.474 & $\hat{\delta} \geq 0.474$ (point estimate) & \textbf{0.491} \\
+0.474 & $\hat{\delta} \geq 0.474$ (point estimate) & \textbf{0.499} \\
 0.474 & Lower 95\% CI bound \textgreater{} 0 (any effect) & 0.868 \\
 \end{longtable}
 }
 
-Even when the truth equals the H2 boundary, the point-estimate
+Even when the MP1 sensitivity truth equals the large-effect boundary, the point-estimate
 decision rule returns ``not met'' in roughly half of replications; a
 pass probability near one half at the boundary is intrinsic to a
 threshold rule applied to an approximately median-unbiased estimator
-at any sample size, so the 49.1\% figure characterises the
-pre-registered decision rule, not a deficiency specific to the (12,
+at any sample size, so the 49.9\% figure characterises this
+sensitivity threshold rule, not a deficiency specific to the (12,
 48) design, and its exact value depends on the stipulated alternative
 (the mixture with E[$\delta$] = 0.4746 is one of many alternatives
 with that mean). This supports the
-framing in Section~\ref{rq2-aligned-vs-cross-cliffs-delta}: the H2 verdict is a factual statement about the point
-estimate failing to clear the threshold, not a claim that the effect is
-necessarily smaller than 0.474. Increasing the sample size narrows the
-confidence interval but cannot lift the point estimate. The plug-in
+framing in Section~\ref{rq2-aligned-vs-cross-cliffs-delta}: the sensitivity
+contrast near the large-effect threshold is unstable at this sample size,
+and the frozen-primary H2 verdict remains a factual statement that the
+MP5 point estimate does not clear the threshold. Increasing the sample
+size narrows the confidence interval but cannot lift a fixed point estimate. The plug-in
 sample-size sweep (n\_aligned $\in$ \{6, 12, \ldots, 60\}; n\_cross = 4 $\times$
 n\_aligned; power for $\delta$ \textgreater{} 0 reaches 0.974 at n\_aligned = 6
 and 0.996 at 12, then plateaus; the small discrepancy with the 0.997
 exceedance entry above reflects independent simulation runs) is in
 Appendix D.3.
 
+\textbf{Caveat.} This paragraph is retained because it exposes the
+instability of the H2 decision rule under a zero-inflated 12-PUT design;
+it does not change the H2 verdict and it should not be read as evidence
+that the frozen MP5 primary contrast has been adequately powered.
+
 \textbf{The source-axis contrast is underpowered too.} We did not run a
 separate power simulation for the source-axis contrast $\Delta\delta$ =
 $-$0.009 (paired-role bootstrap 95\% CI {[}-0.238, 0.207{]}); its estimand and dependence structure differ
-from the aligned-vs-cross $\delta$, so the 49.1\% figure above does not
+from the aligned-vs-cross $\delta$, so the 49.9\% figure above does not
 transfer to it. The small design (n = 12 PUTs) leaves the $-$0.009 null
 consistent with a wide range of true source-diversity effects, so we
 explicitly do not read it as evidence that source diversity is inert. A
@@ -2531,11 +2557,11 @@ the reflection relation matches. Whether an identity relation is blind or
 decisive on a real defect thus depends on whether its algebra coincides
 with the defect's, not on its mutant-face kill rate.
 
-Thus semantic mutation should be read as a certificate-bearing diagnostic
+Thus semantic mutation should be read as an evidence-record diagnostic
 for a declared semantic stratum, not as a scalar hierarchy in which one
 mutation family simply dominates another. This evidence therefore
-strengthens the paper's main argument while keeping benchmark construction
-outside the manuscript's contribution boundary.
+provides a selection-conditioned external sanity check while keeping
+benchmark construction outside the manuscript's contribution boundary.
 
 \subsection{RQ5: Cross-Class Consistency}\label{rq3-cross-class-consistency-and-friedman}
 
@@ -2557,17 +2583,18 @@ d (ML) & 0.081 & 0.112 (+38.3\%) \\
 }
 
 Sign test (within-class aligned mean $-$ cross mean, sign = +): \textbf{3
-/ 4 (partial) under both v3 (same-source) and v4 (cross-source)}; the
-b-class is the inverted cell.
+/ 4 (partial) under v3 (same-source) and 4 / 4 under the v4 MP1
+sensitivity}. Under the frozen MP5 primary convention used for the H2
+verdict, the b-class remains the key inverted cell and the dispersion
+criterion below still fails.
 
 \textbf{H3 verdict: not met.} H3 carries two pre-registered criteria, a
-within-class sign test of 4/4 and CV($\Delta$SMS) $<$ 0.5. The sign test
-is 3/4 (partial) under both v3 and v4, cross-source pooling does not
-flip the b-class inversion, so the consistency criterion fails. The
+within-class sign test of 4/4 and CV($\Delta$SMS) $<$ 0.5. The v3 sign
+test is 3/4, while the v4 MP1 sensitivity reaches 4/4. The
 per-class effects $\Delta$SMS\_c (aligned mean $-$ cross mean) span from
 negative in the inverted class to large positive elsewhere, giving
 CV($\Delta$SMS) well above 1, far exceeding the 0.5 dispersion threshold,
-so the dispersion criterion also fails.
+so the dispersion criterion fails and H3 is not met.
 
 The mixed-effects primary model
 \texttt{sms\ \textasciitilde{}\ C(class)\ *\ C(operator)\ +\ (1\ \textbar{}\ put)}
@@ -2579,15 +2606,15 @@ therefore use Friedman as the non-parametric formal alternative:
 \begin{itemize}
 
 \item
-  \textbf{PUT (n=12) $\times$ MP (k=5): chi\^{}2 = 15.30, p = 0.0041}
+  \textbf{PUT (n=12) $\times$ MP (k=5): chi\^{}2 = 16.76, p = 0.0022}
   (significant; exploratory inferential per Table~\ref{tab:inference-permissions}).
 \item
-  MP rank means: 2.92, 2.58, 2.08, 3.08, 4.33.
+  MP rank means: 3.08, 2.58, 2.00, 3.00, 4.33.
 \item
   Per-class Friedman with \textbf{Bonferroni $\times$ 4 correction}: a
-  1.000 / b \textbf{0.116} / c 1.000 / d 1.000, no per-class
+  1.000 / b \textbf{0.140} / c 0.924 / d 1.000, no per-class
   result remains significant after correction. Kendall's W effect sizes:
-  a 0.333 (small) / b 0.898 (large concordance, but caveat: N=3 per
+  a 0.333 (small) / b 0.862 (large concordance, but caveat: N=3 per
   class makes this label nominal only) / c 0.333 / d 0.417.
 \end{itemize}
 
@@ -2607,7 +2634,7 @@ are recorded so that a future study (n $\geq$ 30 PUTs) can pre-register a direct
 hypothesis.
 
 Pattern Coverage (PC) per PUT = \#triggered (MP\_k, R\_outcome) cells /
-10. Range {[}0.500, 1.000{]}, mean 0.733. Pairing with mean SMS over 5
+10. Range {[}0.500, 1.000{]}, mean 0.750. Pairing with mean SMS over 5
 MPs: Spearman rho = \textbf{0.163}; Kendall tau = 0.136; n = 12
 (descriptive; no inferential reading attaches).
 
@@ -2671,7 +2698,8 @@ semantic-effect fiber, not as domination by one MR family \\
 }
 
 \textbf{Test engineers} can read SMS as a per-MR scalar adequacy score.
-When SMS sits well below the aligned baseline of about 0.275 (Section~\ref{rq2-aligned-vs-cross-cliffs-delta}), the
+When SMS sits well below the frozen-primary aligned baseline of about
+0.213 (Section~\ref{rq2-aligned-vs-cross-cliffs-delta}), the
 LRCA labels, C2 tolerance, C3 OOD, C4 statistical, point to specific
 repair paths. Air-gap incompatibility is a hard limitation: the workflow
 depends on external LLM API calls and is incompatible with most
@@ -2700,8 +2728,10 @@ normative backing and could be misread as enforcement-ready. Appendix
 E.3 records the conceptual complementarity with the code-verification
 scope of ASME V\&V 20-2009 §3.
 
-All three stakeholder classes consume the same single source of truth
-(\texttt{paper\_numbers\_v4.json} and \texttt{lrca\_60cell\_v4.json}) to
+All three stakeholder classes consume the same result ledger family:
+\texttt{rq2\_cliffs\_delta\_v4\_mp5.json} for the frozen H2 contrast,
+and \texttt{paper\_numbers\_v4.json} plus \texttt{lrca\_60cell\_v4.json}
+for the broader v4 descriptive summaries. This split is explicit to
 avoid documentation fragmentation.
 
 \textbf{Example MR-design use.} If a surrogate-model PUT has
@@ -2844,7 +2874,7 @@ construction deferred outside this manuscript & Section~\ref{rq4-industrial-cons
   a certificate-bearing semantic mutation framework.
 \item
   \textbf{Real-defect evidence is used narrowly.} The industrial
-  real-defect arm strengthens this paper's construct argument by showing
+  real-defect arm provides a selection-conditioned sanity check showing
   that mutant
   kill-rate, semantic alignment, and real-defect detection can separate
   in practice on reproduced library defects. We do not claim benchmark
@@ -2947,9 +2977,10 @@ Seven directions follow from this study.
 
 \subsection{Findings summary}\label{findings-summary}
 
-The empirical study supports the semantic-mutation construct in seven
-ways. The pre-registered thresholds are treated as stress tests of this
-instantiation, not as prerequisites for the SMS definition.
+The empirical study stress-tests the semantic-mutation construct in seven
+ways. The pre-registered thresholds are treated as failure-sensitive
+checks of this instantiation, not as prerequisites for the SMS
+definition and not as universal validation claims.
 
 \begin{enumerate}
 \item
@@ -2969,10 +3000,9 @@ instantiation, not as prerequisites for the SMS definition.
   design. The H2 large-effect threshold is \textbf{not met under the
   pre-registered point-estimate criterion}: \(\delta_{\mathrm{v3}} =
   0.323\), just below the \citet{romano2006cliff} medium threshold of
-  0.330. The stipulated-alternative analysis shows the point-estimate rule
-  itself passes with probability near one half when the truth sits at
-  the boundary, so the verdict is a point-estimate result, not a proof
-  that the true effect is below the large-effect threshold.
+  0.330. The MP1 sensitivity power analysis shows how zero-inflation can
+  make threshold decisions unstable, but it does not change the frozen
+  MP5 H2 verdict.
 \item
   Cross-source pooling changes mutant quality more than aligned-versus-
   cross separation. Holding the c-class primary metamorphic relation at
@@ -2985,22 +3015,21 @@ instantiation, not as prerequisites for the SMS definition.
 \item
   The MP structure is visible, but cross-class consistency is not yet
   stable. The Friedman main effect on MP differentiation is
-  \(\chi^2 = 15.30\), \(p = 0.0041\), whereas the pre-registered H3
-  criteria are not met: the class-level sign test is 3/4 and
+  \(\chi^2 = 16.76\), \(p = 0.0022\), whereas the pre-registered H3
+  criteria are not met because the dispersion criterion
   CV(\(\Delta\)SMS) exceeds 0.5. The Spearman correlation between SMS
   and Pattern Coverage is 0.163 at \(n = 12\), so orthogonality remains
   a future hypothesis.
 \item
-  The industrial real-defect arm supports construct separation beyond
-  the small PUT audit. Pattern-derived relations detect all 34 tabled
-  real defects
-  in the reported face, while the pre-registered four-group comparison
-  shows only a modest aggregate kill-rate advantage
-  over literature-generic baselines, and non-nesting
-  cases remain in both directions. Thus kill-rate, semantic-stratum
-  alignment, and
-  real-defect detection should be interpreted as related but distinct
-  constructs, on industrial code and not only on the controlled kernels.
+  The industrial real-defect arm is a selection-conditioned external
+  sanity check, not an industrial validation of SMS itself. Pattern-
+  derived relations detect all 34 tabled real defects in the reported
+  face by construction of the admission rule, while the pre-registered
+  four-group comparison shows only a modest aggregate kill-rate
+  advantage over literature-generic baselines, and non-nesting cases
+  remain in both directions. Thus kill-rate, semantic-stratum alignment,
+  and real-defect detection should be interpreted as related but distinct
+  constructs, with industrial-code evidence used only at result level.
 \item
   The remaining failed thresholds delimit the current instantiation.
   Implementability H1 is not met because only the parameter/control
@@ -3059,9 +3088,9 @@ benchmark construction and governance are contributions of that dataset,
 not of this paper.
 An earlier version of this work is available on arXiv:
 \href{https://arxiv.org/abs/2605.17437}{arXiv:2605.17437} [cs.SE].
-For peer review, a read-only mirror of the repository can
-be provided by the corresponding author upon Editor request, per journal
-guidelines. The repository structure follows
+For peer review, the corresponding author will provide a read-only
+repository mirror and artifact checksums through the journal workflow.
+The repository structure follows
 \texttt{REPRODUCIBILITY.md} in the source tree. The cosmic-ray and
 mutmut operator versions referenced in Section~\ref{p2-vs-syntactic-mutants-12-put-empirical-layer-3}, Section~\ref{preventive-defence-framing}, and Appendix B.6 are
 pinned in \texttt{requirements-frozen.txt}.

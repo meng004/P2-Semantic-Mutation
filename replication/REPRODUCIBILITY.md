@@ -100,18 +100,21 @@ quickstart finishes in < 5 minutes.
 
 Each snippet below should print the cited number ± rounding.
 
-### 5.1 Cliff's δ = 0.4392 (RQ2 H2, paper §5.7)
+### 5.1 Cliff's δ = 0.3142 (RQ2 H2 primary, paper §5.7)
 
 ```bash
-python -c "import json; d = json.load(open('data/results/paper_numbers_v4.json'))['rq2']; print(f\"Cliff's delta = {d['cliffs_delta']:.4f}, 95% CI = [{d['delta_ci_95_lo']:.4f}, {d['delta_ci_95_hi']:.4f}]\")"
-# Expected: Cliff's delta = 0.4392, 95% CI = [0.1267, 0.7396]
+python -c "import json; d = json.load(open('data/results/paper_numbers_v4.json'))['rq2_primary_mp5']; print(f\"Cliff's delta = {d['cliffs_delta']:.4f}, 95% CI = [{d['delta_ci_95_lo']:.4f}, {d['delta_ci_95_hi']:.4f}]\")"
+# Expected: Cliff's delta = 0.3142, 95% CI = [0.0138, 0.6215]
 ```
 
-### 5.2 Friedman χ² = 15.30, p = 0.0041 (RQ3 H4, paper §5.8)
+MP1/data-driven sensitivity remains available under `rq2.cliffs_delta`
+and should print approximately `0.4392`.
+
+### 5.2 Friedman χ² = 16.76, p = 0.0022 (MP-rank analysis, paper §5.8)
 
 ```bash
 python -c "import json; d = json.load(open('data/results/paper_numbers_v4.json'))['rq3']; print(f'Friedman chi^2 = {d[\"friedman_chi2\"]:.4f}, p = {d[\"friedman_p\"]:.4f}')"
-# Expected: Friedman chi^2 = 15.3028, p = 0.0041
+# Expected: Friedman chi^2 = 16.7586, p = 0.0022
 ```
 
 ### 5.3 Mean SMS = 0.104, median = 0.000 (RQ1 H1, paper §5.6)
@@ -128,31 +131,33 @@ python -c "import json; d = json.load(open('data/results/cosmic_ray_12put_ast_di
 # Expected: mean AST overlap ≈ 5.14% across 12 PUTs
 ```
 
-### 5.5 Stipulated-alternative power = 49.1% at δ_truth = 0.474 (paper §5.7.2)
+### 5.5 Stipulated-alternative sensitivity power = 49.9% at δ_truth = 0.474 (paper §5.7.2)
 
 ```bash
-python -c "import json; d = json.load(open('data/results/rq2_power_stipulated_v4.json')); print(f'power at delta_truth=0.474 = {d.get(\"power_at_delta_0_474\", d.get(\"power\", \"see file\"))}')"
-# Expected: power ≈ 0.491 (key may be 'power' depending on regeneration)
+python -c "import json; d = json.load(open('data/results/rq2_power_stipulated_v4.json')); print(f'power at delta_truth=0.474 = {d[\"stipulated_alternative_power\"][\"power_point_estimate_meets_large_effect_sensitivity\"]}')"
+# Expected: power ≈ 0.499
 ```
 
-(If §5.5 prints "see file", open the JSON — the stipulated-power
-metric is recorded under various keys across versions; the paper
-cites 49.1%.)
+(The stipulated-power metric is recorded under the sensitivity-power key
+shown above. The paper cites 49.9%.)
 
 ---
 
 ## 6. Cross-version environment-variable contract
 
-Two env vars together select the paper's analysis configuration:
+The final manuscript uses `SMS_VERSION=v4` plus an explicit frozen-MP5
+H2 primary computation. The data-driven c-class primary assignment is
+retained only for MP1 sensitivity numbers.
 
 ```bash
-export SMS_VERSION=v4         # selects v4 cross-source pool (PRIMARY)
-export P2_PRIMARY_VERSION=v3b # selects v3b data-driven primary MP for c-class (§3.5.1)
+export SMS_VERSION=v4
+PYTHONPATH=src python scripts/compute_rq2_v4_mp5.py
+export P2_PRIMARY_VERSION=v3b # sensitivity grouping only
 ```
 
 These are read by `scripts/build_paper_numbers.py` and
-`src/p2/stats/`. They MUST be set together; the paper's numbers are
-specifically the `(v4, v3b)` pair.
+`src/p2/stats/`. The paper's H2 verdict uses `rq2_primary_mp5`;
+`rq2` is retained as the MP1/data-driven sensitivity contrast.
 
 ---
 

@@ -20,9 +20,10 @@ abstract: >-
   Metamorphic Testing addresses the test-oracle problem in scientific
   computing, but classical Mutation Score (MS) operates on syntactic AST
   mutations and misses domain semantics. We propose the Semantic Mutation
-  Score (SMS), built on five domain-semantic operators (Conservation
-  Erosion, Operator Substitution, Hyperparameter, Trajectory Flip,
-  Structural Injection). SMS degenerates almost everywhere to MS in a
+  Score (SMS), organized around NOETHER-aligned MR MetaPattern axes:
+  invariance/equivariance, monotonicity/order, convergence/limit,
+  qualitative dynamics, and method comparison. SMS degenerates almost
+  everywhere to MS in a
   characterised limit, preserving backward compatibility with the
   classical mutation-testing lineage. A 12-PUT x 5-MP design over four
   single-output float-to-float classes (numeric, probabilistic,
@@ -33,13 +34,13 @@ abstract: >-
   observed effect lies in the medium-effect range. Cross-source pooling
   under an identical prompt does not appreciably shift delta. AST-level
   overlap between LLM-generated and default cosmic-ray syntactic mutants
-  is small; the Hyperparameter, Structural Injection, and Trajectory
-  Flip classes are unreachable under default first-order syntactic
+  is small; structurally non-local semantic-effect faults are
+  unreachable under default first-order syntactic
   configurations.
 keywords:
   - metamorphic testing
   - mutation testing
-  - semantic mutation operators
+  - semantic-effect faults
   - metamorphic relation adequacy
   - LLM-generated mutants
   - Cliff's delta
