@@ -1,0 +1,350 @@
+{
+  "meta": {
+    "purpose": "Study-2 pre-registration AMENDMENT v1.1 power/feasibility analysis; frozen before any Study-2 data generation.",
+    "amends": "data/results/power_study2.json (v1.0)",
+    "master_seed": 20260708,
+    "n_sim": 20000,
+    "alpha": 0.05,
+    "dgp_source": "data/results/sms_track2_v4.json (MP5-held pool)",
+    "leakage_source": "data/results/s5_purity_v4.json",
+    "coverage_source": "src/p2/mutators/operator_registry.py (blind-authored spec)",
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "coverage": {
+    "n_puts_total": 30,
+    "n_puts_confirmatory": 28,
+    "confirmatory_puts": [
+      "a1",
+      "a3",
+      "a4",
+      "a5",
+      "a6",
+      "a7",
+      "a8",
+      "b1",
+      "b2",
+      "b3",
+      "b5",
+      "b6",
+      "b7",
+      "c1",
+      "c2",
+      "c3",
+      "c4",
+      "c5",
+      "c6",
+      "c7",
+      "d1",
+      "d2",
+      "d3",
+      "d4",
+      "d5",
+      "d6",
+      "d7",
+      "d8"
+    ],
+    "coverage_all30": {
+      "CE": 25,
+      "OS": 16,
+      "HP": 21,
+      "TF": 16,
+      "SI": 11
+    },
+    "coverage_confirmatory28": {
+      "CE": 23,
+      "OS": 14,
+      "HP": 21,
+      "TF": 15,
+      "SI": 10
+    }
+  },
+  "h1_instantiability": {
+    "criterion_shape": ">=4 of 5 operator families produce >=5 non-equivalent mutants on >=M of 28 confirmatory PUTs",
+    "coverage_ceiling_confirmatory28": {
+      "CE": 23,
+      "OS": 14,
+      "HP": 21,
+      "TF": 15,
+      "SI": 10
+    },
+    "study1_per_applicable_success_raw": {
+      "CE": 0.5,
+      "OS": 0.7143,
+      "HP": 1.0,
+      "TF": 0.8333,
+      "SI": 0.1667
+    },
+    "per_family_success_rate_jeffreys": {
+      "CE": 0.5,
+      "OS": 0.6875,
+      "HP": 0.95,
+      "TF": 0.7857,
+      "SI": 0.2143
+    },
+    "expected_puts_cleared_per_family": {
+      "CE": 11.5,
+      "OS": 9.625,
+      "HP": 19.95,
+      "TF": 11.786,
+      "SI": 2.143
+    },
+    "per_family_P_clear_M": {
+      "CE": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 0.99995,
+        "5": 0.9984,
+        "6": 0.9942,
+        "7": 0.98195,
+        "8": 0.9537,
+        "9": 0.89345,
+        "10": 0.7932,
+        "11": 0.6578,
+        "12": 0.4976
+      },
+      "OS": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 0.99995,
+        "4": 0.9996,
+        "5": 0.9977,
+        "6": 0.98975,
+        "7": 0.96165,
+        "8": 0.8892,
+        "9": 0.75015,
+        "10": 0.5462,
+        "11": 0.3187,
+        "12": 0.13765
+      },
+      "HP": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "8": 1.0,
+        "9": 1.0,
+        "10": 1.0,
+        "11": 1.0,
+        "12": 1.0
+      },
+      "TF": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 0.9998,
+        "7": 0.99875,
+        "8": 0.9931,
+        "9": 0.97265,
+        "10": 0.91925,
+        "11": 0.79795,
+        "12": 0.59175
+      },
+      "SI": {
+        "1": 0.9134,
+        "2": 0.66575,
+        "3": 0.3622,
+        "4": 0.1445,
+        "5": 0.04265,
+        "6": 0.00905,
+        "7": 0.00165,
+        "8": 0.0001,
+        "9": 0.0,
+        "10": 0.0,
+        "11": 0.0,
+        "12": 0.0
+      }
+    },
+    "feasibility_P_ge4of5_clear_M": {
+      "1": 1.0,
+      "2": 1.0,
+      "3": 0.99995,
+      "4": 0.99955,
+      "5": 0.9962,
+      "6": 0.9839,
+      "7": 0.9432,
+      "8": 0.843,
+      "9": 0.65445,
+      "10": 0.39805,
+      "11": 0.16725,
+      "12": 0.04205
+    },
+    "registered_X": 4,
+    "registered_M": 8,
+    "registered_feasibility": 0.843,
+    "note": "SI (narrow high-risk family, Study-1 1/6) is expected to stay below the bar, as in Study 1; the other four clear >=M."
+  },
+  "h3_class_consistency": {
+    "criterion": ">=3 of 4 classes show positive class-level aligned>cross direction",
+    "confirmatory_class_sizes": {
+      "a": 7,
+      "b": 6,
+      "c": 7,
+      "d": 8
+    },
+    "power_P_ge3of4_positive": 0.9493,
+    "power_P_4of4_positive": 0.66085,
+    "per_class_signtest_power": {
+      "a": 0.0554,
+      "b": 0.04895,
+      "c": 0.0529,
+      "d": 0.0642
+    },
+    "note": "The confirmatory criterion is the >=3/4 direction-consistency test (powered >=0.8 below). Per-class binomial sign tests are under-powered at 6-8 PUTs/class (many SMS ties) and are reported descriptively; Friedman chi^2 stays exploratory as in Study 1."
+  },
+  "h4_attribution": {
+    "metric": "mean suspect_share (LRCA multi-stratum leakage) over the 140 confirmatory cells (28 PUTs x 5 MP); LRCA machinery identical to Study 1",
+    "study1_multistratum_total": 29,
+    "study1_n_mutants": 292,
+    "study1_overall_multistratum_fraction": 0.0993,
+    "study1_multistratum_by_family": {
+      "CE": 0,
+      "CF": 9,
+      "HP": 0,
+      "OS": 0,
+      "SI": 0,
+      "TF": 20
+    },
+    "study1_multistratum_from_CF_TF": 29,
+    "single_stratum_families": [
+      "CE",
+      "HP",
+      "OS",
+      "SI"
+    ],
+    "single_stratum_family_n_mutants": 229,
+    "single_stratum_family_multistratum": 0,
+    "single_stratum_leakage_rate": 0.0,
+    "projected_post_constraint_upper_95_rule_of_three": 0.0131,
+    "registered_threshold": 0.05,
+    "margin_above_projected_upper": 0.0369,
+    "note": "CF+TF supplied 29/29 multi-stratum mutants in Study 1; a single-stratum re-spec pushes their incidental leakage to the CE/OS/HP/SI regime (0/229 observed). Threshold 0.05 sits 0.037 above the rule-of-three upper bound."
+  },
+  "sms_legs_pilot_adjusted_n28": {
+    "note": "Confirmatory n drops 30->28 after removing the two pilot PUTs; these recompute H2-1' (delta>0) and H2-2 (Delta-delta) power at n=28.",
+    "a_cliffs_delta_power": {
+      "design": "n_aligned=n_PUT, n_cross=4*n_PUT; one-sided 95% bootstrap lower bound on Cliff's delta > delta_ref",
+      "dgp": {
+        "aligned_nonzero_mag": [
+          1.0,
+          0.3333,
+          0.3333,
+          0.2,
+          0.3333,
+          0.36
+        ],
+        "cross_nonzero_mag": [
+          0.6667,
+          0.3333,
+          0.55,
+          0.2,
+          0.2,
+          0.7407,
+          0.3333,
+          0.2963,
+          0.36
+        ],
+        "p_nonzero_aligned": 0.5,
+        "p_nonzero_cross": 0.1875,
+        "mean_aligned": 0.213325,
+        "mean_cross": 0.07667291666666666
+      },
+      "true_delta_dgp": 0.3208,
+      "n_sim": 2000,
+      "n_boot": 400,
+      "power_by_threshold": {
+        "delta_ref_0.0": {
+          "12": 0.661,
+          "18": 0.813,
+          "24": 0.8855,
+          "28": 0.9285,
+          "30": 0.9415,
+          "36": 0.975
+        },
+        "delta_ref_0.147": {
+          "12": 0.2795,
+          "18": 0.3805,
+          "24": 0.4465,
+          "28": 0.4795,
+          "30": 0.518,
+          "36": 0.5985
+        },
+        "delta_ref_0.33": {
+          "12": 0.047,
+          "18": 0.039,
+          "24": 0.0465,
+          "28": 0.0405,
+          "30": 0.0345,
+          "36": 0.045
+        }
+      },
+      "min_n_80pct": {
+        "delta_ref_0.0": 18,
+        "delta_ref_0.147": null,
+        "delta_ref_0.33": null
+      }
+    },
+    "b_dual_blind_delta_delta": {
+      "contrast": "Delta-delta = delta(cross-source) - delta(same-source), paired on PUTs",
+      "target_paired_se_n12": 0.1135,
+      "per_arm_delta_sd": {
+        "12": 0.1634,
+        "18": 0.1281,
+        "24": 0.1109,
+        "28": 0.1037,
+        "30": 0.0994,
+        "36": 0.0909
+      },
+      "calibrated_paired_rho": 0.7587,
+      "paired_se_by_n": {
+        "12": 0.1135,
+        "18": 0.089,
+        "24": 0.0771,
+        "28": 0.072,
+        "30": 0.0691,
+        "36": 0.0631
+      },
+      "power": {
+        "dd_0.1": {
+          "12": 0.1426,
+          "18": 0.202525,
+          "24": 0.256725,
+          "28": 0.2845,
+          "30": 0.30765,
+          "36": 0.3516
+        },
+        "dd_0.15": {
+          "12": 0.25985,
+          "18": 0.3924,
+          "24": 0.494775,
+          "28": 0.547075,
+          "30": 0.5833,
+          "36": 0.659175
+        },
+        "dd_0.2": {
+          "12": 0.417075,
+          "18": 0.6133,
+          "24": 0.73825,
+          "28": 0.792775,
+          "30": 0.825825,
+          "36": 0.884725
+        }
+      },
+      "min_n_80pct": {
+        "dd_0.1": null,
+        "dd_0.15": null,
+        "dd_0.2": 30
+      }
+    }
+  }
+}
