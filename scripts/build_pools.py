@@ -17,6 +17,7 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from p2.mutators.pool_builder import select_mutants_for_put
+from p2.config.campaign import single_stratum_filter_enabled
 
 PUTS = ["a1","a2","a3","b1","b2","b3","c1","c2","c3","d1","d2","d3"]
 POOL_VERSION = os.environ.get("POOL_VERSION", "v3")
@@ -26,15 +27,27 @@ N_PER_PUT = _N_MAP.get(POOL_VERSION, 12)
 SUFFIX = _SUFFIX_MAP.get(POOL_VERSION, "_pool")
 CACHE = (ROOT / "data/operator_campaign/cache_cross"
          if POOL_VERSION == "v4" else ROOT / "data/operator_campaign/cache")
+
+# Study-2 CF/TF single-stratum admission filter (docs/prereg_v2/CFTF_CONSTRAINT.md).
+# Pre-registered default ON; applied identically to both arms. Study-1 frozen
+# pools (v2/v3) must NOT be rebuilt with the filter — history is immutable — so
+# the screen is wired only for the Study-2 pool versions (v4/v5).
+SCREEN_FN = None
+if single_stratum_filter_enabled() and POOL_VERSION in ("v4", "v5"):
+    from p2.mutators.stratum_filter import make_screen_fn
+    SCREEN_FN = make_screen_fn(repeats=20)
+
 print(f"Building POOL_VERSION={POOL_VERSION} N_PER_PUT={N_PER_PUT} "
-      f"SUFFIX={SUFFIX} CACHE={CACHE.name}")
+      f"SUFFIX={SUFFIX} CACHE={CACHE.name} "
+      f"single_stratum_filter={'ON' if SCREEN_FN else 'OFF'}")
 
 for put_id in PUTS:
     pool_dir = ROOT / f"data/mutants/{put_id}{SUFFIX}"
     if pool_dir.exists():
         shutil.rmtree(pool_dir)
     pool_dir.mkdir(parents=True)
-    selected = select_mutants_for_put(put_id, N_PER_PUT, CACHE, seed=42)
+    selected = select_mutants_for_put(put_id, N_PER_PUT, CACHE, seed=42,
+                                      screen_fn=SCREEN_FN)
     manifest = []
     for idx, (src_path, op_id) in enumerate(selected, 1):
         attempt = src_path.stem.split("_attempt")[1]

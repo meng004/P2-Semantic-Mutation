@@ -12,8 +12,9 @@ command sequence for Study-2 data generation.
 - Operator registry expanded 37→91 specs
   (`src/p2/mutators/operator_registry.py`): 37 original + 54 new (18 PUTs ×
   3 ops), authored blind to mutation outcomes.
-- Full suite green: `PYTHONPATH=src python3 -m pytest tests/ -q` → 348 passed
-  (324 baseline + 24 pre-frozen analysis-script tests, `tests/analysis/`).
+- Full suite green: `PYTHONPATH=src python3 -m pytest tests/ -q` → 371 passed
+  (324 baseline + 24 pre-frozen analysis-script tests `tests/analysis/` + 23
+  CF/TF single-stratum filter tests `tests/mutators/test_stratum_filter.py`).
 - Offline dry-run proves the pipeline end-to-end minus the API (see §5).
 
 ---
@@ -75,7 +76,7 @@ PYTHONPATH=src python3 scripts/cross_source_campaign.py --arm same --review
 > `data/operator_campaign/cache_cross/` **before** any SMS is computed (§5
 > "freeze then score"; analyst blindness).
 
-### 2.3 Build per-PUT mutant pools (dedup / proportional selection)
+### 2.3 Build per-PUT mutant pools (dedup / proportional selection + CF/TF filter)
 
 ```bash
 POOL_VERSION=v4 PYTHONPATH=src python3 scripts/build_pools.py   # cross arm  → data/mutants/{put}_pool_v4/
@@ -86,6 +87,19 @@ POOL_VERSION=v3 PYTHONPATH=src python3 scripts/build_pools.py   # same arm   →
 calls `p2.mutators.pool_builder.select_mutants_for_put` (seed `20260708`) to
 select the registered N valid mutants per PUT (v4 = 12, v3 = 30) proportionally
 across the operators.
+
+**CF/TF single-stratum admission filter (Study-2, default ON).** When
+`single_stratum_filter_enabled()` is true (env `P2_SINGLE_STRATUM_FILTER`,
+default `1`) **and** `POOL_VERSION` is a Study-2 version (`v4`/`v5`), each CF/TF
+candidate is screened against all five offline AVP checkers **before any SMS is
+computed** and admitted iff its invariant-flip count ≤ 1; CE/OS/HP/SI are
+admitted unconditionally. The screen is deterministic and identical for both
+arms and every PUT. This closes the Study-1 H4 attribution leakage (multi-valued
+`sigma`, 35.2% of the off-diagonal kill mass). Full spec, contract, and
+audit-mode validation (29/29 recall on Study-1): `docs/prereg_v2/CFTF_CONSTRAINT.md`.
+The `build_pools.py` banner prints `single_stratum_filter=ON|OFF`. Study-1
+frozen pools (`v2`/`v3`) are never re-screened. To disable (a **disclosed
+deviation** from registration): prepend `P2_SINGLE_STRATUM_FILTER=0`.
 
 ### 2.4 SMS scoring — Track-2 full 30×5 = 150-cell matrix
 
@@ -201,3 +215,8 @@ removes its scratch cache (`data/operator_campaign/cache_dryrun/`) on exit.
   see kills; the analyst does not alter review labels.
 - Primary-MP is the deterministic class rule (A→MP1, B→MP2, C→MP5, D→MP2);
   run with `P2_PRIMARY_VERSION=v3`. No outcome-conditioned reselection.
+- CF/TF single-stratum filter (§2.3) is keyed on the **Study-1** S5 audit only
+  (`data/results/s5_purity_v4.json`); no Study-2 data is peeked. It is a
+  campaign-config flag, not a registry edit — the 37 Study-1 specs stay
+  byte-unchanged and Study-1 pools are never re-screened. See
+  `docs/prereg_v2/CFTF_CONSTRAINT.md`.

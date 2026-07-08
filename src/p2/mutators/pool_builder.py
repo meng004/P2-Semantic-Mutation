@@ -4,7 +4,7 @@ import importlib.util
 import random
 import sys
 from pathlib import Path
-from typing import List, Tuple
+from typing import Callable, List, Optional, Tuple
 
 
 # Module-level dedupe set: log only the first rejection of each exception type
@@ -42,10 +42,19 @@ def _is_valid_program(path: Path) -> bool:
 
 def select_mutants_for_put(
     put_id: str, n_target: int, cache_dir: Path, seed: int = 42,
+    screen_fn: Optional[Callable[[Path, str], bool]] = None,
 ) -> List[Tuple[Path, str]]:
     """Return up to n_target (path, op_id) pairs, proportional across operators
     that target this PUT. Filters out mutants that cannot be loaded or do not
     return a finite scalar.
+
+    ``screen_fn(path, op_id) -> bool`` is an optional admission gate applied at
+    selection time, BEFORE any SMS is computed. When supplied, a candidate must
+    pass BOTH the validity check and ``screen_fn`` to be eligible. This is the
+    hook for the Study-2 CF/TF single-stratum filter
+    (``p2.mutators.stratum_filter.make_screen_fn``); default ``None`` preserves
+    the legacy behaviour byte-for-byte. The gate is deterministic and identical
+    across arms/cells, so it cannot bias the proportional selection.
 
     Distribution proceeds in two passes:
 
@@ -68,7 +77,10 @@ def select_mutants_for_put(
         by_op.setdefault(op_id, []).append(fp)
     valid_by_op: dict = {}
     for op_id, paths in by_op.items():
-        valid_by_op[op_id] = [p for p in paths if _is_valid_program(p)]
+        eligible = [p for p in paths if _is_valid_program(p)]
+        if screen_fn is not None:
+            eligible = [p for p in eligible if screen_fn(p, op_id)]
+        valid_by_op[op_id] = eligible
     valid_by_op = {k: v for k, v in valid_by_op.items() if v}
     if not valid_by_op:
         return []
