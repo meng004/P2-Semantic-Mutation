@@ -4,9 +4,8 @@ Dear Editor,
 
 We submit "A Semantic Mutation Metric for Metamorphic-Relation Adequacy in
 Scientific Computing Programs" as a Journal-First Paper for ACM Transactions on
-Software Engineering and Methodology (TOSEM). The manuscript is intended for
-Fast-Impact Track handling if it satisfies TOSEM's page-length eligibility
-condition.
+Software Engineering and Methodology (TOSEM). The manuscript is submitted to
+the Regular Track, which imposes no page-length limit.
 
 The manuscript contributes Semantic Mutation Score (SMS), a
 backward-compatible adequacy metric that preserves the denominator logic of
@@ -62,10 +61,9 @@ dataset protocol over reproduced library defects. Fifth, it narrows the claim fr
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
-Length statement. The main manuscript is 45 pages including references in the
-ACM manuscript-review format; the text before the bibliography (42 pages)
-remains below the 45-page Fast-Impact threshold stated in the TOSEM author
-guidance.
+Length statement. The main manuscript is 51 pages including references in the
+ACM manuscript-review format, and the online supplementary material is 24
+pages. We submit to the Regular Track, which imposes no page-length cap.
 
 Sincerely,
 

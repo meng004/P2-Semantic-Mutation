@@ -1656,6 +1656,13 @@ freeze-then-score step in which SMS is computed only after review labels
 are frozen. The harness spawns each reviewer and the arbiter as separate,
 role-isolated Claude instances, so generator, reviewer, and arbiter
 differ on every item; all instances share one model family (same-vendor).
+The confirmatory pools' per-mutant source tokens
+\texttt{claude}/\texttt{gpt}/\texttt{deepseek} are nominal slot labels
+inherited from the Study-1 slot layout, all served by the same
+Claude-family generator, not real GPT or DeepSeek outputs; the
+aligned-versus-cross split is meta-pattern-based and independent of these
+slot labels, so no confirmatory statistic partitions by the vendor-named
+slot.
 In the confirmatory run, 18 independent reviewer instances returned 747
 verdicts, 4 mutants were rejected at the first round, and 6 uncertain
 cases were arbitrated by a third instance and all resolved as confirmed
