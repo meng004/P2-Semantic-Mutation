@@ -150,3 +150,19 @@ tooling above. Confirmatory generation has **not** begun.
 - `tests/mutators/test_sms_campaign_v5.py` (9) — strict v4/v5 resolution (no
   Study-1 fallback), new PUT ids `a4..d8`, `--puts` 10-cell pilot restriction.
 - Full suite: **443 passed** (422 baseline + 21 new).
+
+## Defects P4-P5: review-packet content gaps (found by pilot review round)
+
+Both blinded reviewer instances completed all 54 verdicts (54 CONFIRMED /
+0 REJECTED / 0 UNCERTAIN; ingest-review: 54 accepted, 0 schema-err,
+0 arbitration). Two packet-content defects surfaced from their reports:
+
+| # | Defect | Root cause | Fix (code-level) |
+|---|---|---|---|
+| P4 | Response filename convention not stated in any packet; both reviewers had to infer `<blind_id>_response.json` from the generation-side pattern (they converged, so ingestion succeeded) | `--export-packets` / `--export-review-packets` omitted an explicit `response_filename` field | Added `response_filename` to generation, review, and arbitration packets; instructions now point to it explicitly |
+| P5 | E1∧E2 protocol referenced but not defined in-packet; reviewers had to guess the conjunct semantics (their reading — equivalent=true iff both E1 and E2 hold — matches the registered protocol, so no verdict is invalidated) | Review-packet instructions assumed protocol knowledge the blinded role cannot have | E1/E2 operational definitions embedded verbatim in review + arbitration packet instructions |
+
+Both fixes change packet *presentation* only: schemas, admission gates,
+blinding guarantees, and verdict semantics are untouched. Classified
+code-level under §2b. The 54 pilot verdicts remain valid (reviewer
+inference matched the registered semantics; filenames converged).

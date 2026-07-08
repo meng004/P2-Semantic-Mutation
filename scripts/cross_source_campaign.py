@@ -706,12 +706,15 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
             },
             "required_slots": slots,
             "response_schema": GENERATION_RESPONSE_SCHEMA,
+            "response_filename": f"gen_{put}_response.json",
             "instructions": (
                 "Act as the mutant generator. For EACH required slot, follow the "
                 "operator's rendered prompt (operators[].prompts_by_attempt[attempt]) "
                 "and return the complete mutant program in the 'code' field. Return "
                 "exactly one mutants[] entry per required_slots item. Do NOT include "
-                "any SMS/kill/survive/outcome field."),
+                "any SMS/kill/survive/outcome field. Write the JSON response to the "
+                "file named in response_filename, in the same directory as this "
+                "packet."),
         }
         _assert_no_outcome_fields(packet)
         text = json.dumps(packet, indent=2, ensure_ascii=False)
@@ -920,11 +923,19 @@ def export_review_packets(cache_dir=None, out_dir=None) -> dict:
                 transformation=op.transformation,
                 put_source=put_source, mutant_code=code),
             "response_schema": REVIEW_RESPONSE_SCHEMA,
+            "response_filename": f"{blind}_response.json",
             "instructions": (
                 "Act as a BLIND reviewer. You are given only the original PUT, "
                 "the candidate mutant, and the operator spec. Judge the V-checks "
-                "and give an equivalence opinion under the E1∧E2 protocol. Return "
-                "the JSON verdict; do not guess who generated it."),
+                "and give an equivalence opinion under the E1∧E2 protocol: "
+                "E1 = the mutant is output-equivalent to the original PUT on the "
+                "declared input domain (same output within numerical tolerance "
+                "for every admissible input); E2 = a behavioural classifier over "
+                "sampled executions cannot distinguish mutant from original. "
+                "Report equivalent=true only if BOTH E1 and E2 hold in your "
+                "judgment. Write the JSON verdict to the file named in "
+                "response_filename, in the same directory as this packet; do not "
+                "guess who generated the mutant."),
         })
         # Blinding guarantees (§5): no source/arm/cell-aggregate leak.
         _assert_no_outcome_fields(packet)
@@ -1005,9 +1016,15 @@ def ingest_review(in_dir, packets_dir=None) -> dict:
                 pk = json.loads(src_packet.read_text())
                 pk["packet_type"] = "review"
                 pk["arbitration"] = True
+                pk["response_filename"] = f"{blind}_response.json"
                 pk["instructions"] = (
                     "ARBITRATION: generator/reviewer disagreed. Re-judge this "
-                    "blinded mutant independently under the same E1∧E2 protocol.")
+                    "blinded mutant independently under the same E1∧E2 protocol "
+                    "(E1 = output-equivalence on the declared domain within "
+                    "tolerance; E2 = behavioural classifier cannot distinguish; "
+                    "equivalent=true only if BOTH hold). Write the JSON verdict "
+                    "to the file named in response_filename, in the same "
+                    "directory as this packet.")
                 (arb_dir / f"{blind}.json").write_text(
                     json.dumps(pk, indent=2, ensure_ascii=False))
     manifest["review_verdicts"] = verdicts
