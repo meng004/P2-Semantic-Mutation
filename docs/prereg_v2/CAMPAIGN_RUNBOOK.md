@@ -12,7 +12,8 @@ command sequence for Study-2 data generation.
 - Operator registry expanded 37→91 specs
   (`src/p2/mutators/operator_registry.py`): 37 original + 54 new (18 PUTs ×
   3 ops), authored blind to mutation outcomes.
-- Full suite green: `PYTHONPATH=src python3 -m pytest tests/ -q` → 324 passed.
+- Full suite green: `PYTHONPATH=src python3 -m pytest tests/ -q` → 348 passed
+  (324 baseline + 24 pre-frozen analysis-script tests, `tests/analysis/`).
 - Offline dry-run proves the pipeline end-to-end minus the API (see §5).
 
 ---
@@ -134,19 +135,32 @@ backoff).
 Registered analysis scripts that consume the SSOTs (run after generation):
 
 ```bash
-# H2-1 aligned-vs-cross δ (bootstrap lower bound, seed 20260708)
-PYTHONPATH=src python3 scripts/compute_rq2.py --in data/results/sms_track2_v5.json \
-    --out data/results/rq2_cliffs_delta_v5.json
-# H2-2 dual-blind Δδ (paired-role bootstrap) — registered script to author:
-PYTHONPATH=src python3 scripts/compute_dualblind_delta.py     # §7: new script
-# H2-3/H2-4 industrial (Wilcoxon Holm-3 + Fisher incidence) on frozen census:
-PYTHONPATH=src python3 scripts/compute_industrial_stats.py    # §7: on industrial_percase_v2
+# H2-1 aligned-vs-cross δ + H2-2 dual-blind Δδ (Families A, B).
+# H2-1: one-sided 95% bootstrap lower bound > 0 (seed 20260708).
+# H2-2: paired-role bootstrap Δδ = δ(cross-source) − δ(same-source), the two
+#       arms block-resampled on the SAME 30 PUTs. Reads both arms' SMS pools.
+PYTHONPATH=src python3 scripts/compute_dualblind_delta.py \
+    --cross data/results/sms_track2_v5.json \
+    --same  data/results/sms_track2_v5_same.json \
+    --out   data/results/dualblind_delta_delta_v5.json
+# H2-3/H2-4 industrial (Tier-A Wilcoxon Holm-3 + Fisher incidence, Tier-B
+#           sensitivity kept separate) on the frozen two-tier census:
+PYTHONPATH=src python3 scripts/compute_industrial_stats.py \
+    --percase data/results/industrial_percase_v2.json \
+    --power   data/results/power_study2.json \
+    --out     data/results/industrial_stats_v2.json
 PYTHONPATH=src python3 scripts/compute_h2_incidence.py
 ```
 
-`compute_dualblind_delta.py` and `compute_industrial_stats.py` are registered
-in §7 but not yet in `scripts/` — they are the only remaining author-time gaps
-and must be written before the analysis leg (not before generation).
+Both `compute_dualblind_delta.py` and `compute_industrial_stats.py` are now
+present in `scripts/`, **pre-frozen before any Study-2 data exists** (the
+gold-standard ordering: analysis code frozen pre-data). Each carries the header
+"Pre-frozen under PREREGISTRATION_STUDY2.md before Study-2 data generation; any
+post-data modification must be disclosed as a deviation", encodes the registered
+decision rules (printing the licensed verdict per hypothesis, not just numbers),
+and is covered by offline synthetic-fixture tests in `tests/analysis/` that
+exercise every branch (confirm / not-confirmed / under-recruited / bounded-null /
+inconclusive). No author-time analysis-script gaps remain.
 
 ---
 
