@@ -70,6 +70,36 @@ def _load_mutants(cell_dir: Path) -> List[tuple]:
     return mutants
 
 
+def resolve_pool_dir(put_id: str, pool_version: Optional[str] = None) -> Path:
+    """Resolve the mutant-pool directory for ``put_id``.
+
+    ``pool_version`` (or the ``POOL_VERSION`` env when None) selects the pool:
+
+      * ``v4``/``v5`` (Study-2): STRICT — always the version-specific dir
+        ``{put}_pool_{version}``. It never silently falls back to a Study-1
+        pool; if the dir is absent, ``_load_mutants`` returns empty and the
+        cell reports inst=0 (a visible failure, not a wrong-pool score). This
+        is the fix for the pilot bug where POOL_VERSION=v5 scored the frozen
+        Study-1 ``_pool_v3`` mutants.
+      * ``v3``: the Study-1 enriched pool ``{put}_pool_v3``.
+      * unset: legacy auto-resolution (v3 → v2 → primary-MP llm pool).
+    """
+    import os as _os
+    pv = pool_version if pool_version is not None else _os.environ.get("POOL_VERSION", "")
+    if pv in ("v4", "v5"):
+        return MUTANTS_DIR / f"{put_id}_pool_{pv}"
+    pool_v3 = MUTANTS_DIR / f"{put_id}_pool_v3"
+    pool_v2 = MUTANTS_DIR / f"{put_id}_pool"
+    if pv == "v3":
+        return pool_v3
+    if pool_v3.exists():
+        return pool_v3
+    if pool_v2.exists():
+        return pool_v2
+    primary_mp = PRIMARY_CELLS[put_id]
+    return MUTANTS_DIR / f"{put_id}_MP{primary_mp}_llm"
+
+
 def _build_mr(put_id: str, mp_k: int) -> MR:
     """Build MR for a (PUT, MP) cell. Post-Track-2 each PUT exposes r/R for
     all 5 MPs; raises if the requested mp_k is missing."""
@@ -108,22 +138,7 @@ def evaluate_cell(
                  Default 1 = legacy single-shot. Use 20 for stochastic PUTs.
     """
     if mutant_dir is None:
-        import os as _os
-        pv = _os.environ.get("POOL_VERSION", "")
-        pool_v4 = MUTANTS_DIR / f"{put_id}_pool_v4"
-        pool_v3 = MUTANTS_DIR / f"{put_id}_pool_v3"
-        pool_v2 = MUTANTS_DIR / f"{put_id}_pool"
-        if pv == "v4" and pool_v4.exists():
-            mutant_dir = pool_v4
-        elif pv == "v3" and pool_v3.exists():
-            mutant_dir = pool_v3
-        elif pool_v3.exists():
-            mutant_dir = pool_v3
-        elif pool_v2.exists():
-            mutant_dir = pool_v2
-        else:
-            primary_mp = PRIMARY_CELLS[put_id]
-            mutant_dir = MUTANTS_DIR / f"{put_id}_MP{primary_mp}_llm"
+        mutant_dir = resolve_pool_dir(put_id)
 
     cell_label = f"{put_id.upper()}_MP{mp_k}"
 
@@ -190,16 +205,22 @@ def _worker(put_id: str, mp_k: int, repeats: int = 1) -> dict:
     return evaluate_cell(put_id, mp_k, repeats=repeats)
 
 
-def _build_cell_list(track: int, cell: Optional[str], mp: Optional[int]) -> list:
-    """Return a list of (put_id, mp_k) cells to evaluate."""
+def _build_cell_list(track: int, cell: Optional[str], mp: Optional[int],
+                     puts: Optional[list] = None) -> list:
+    """Return a list of (put_id, mp_k) cells to evaluate.
+
+    ``puts`` optionally restricts a track run to a subset of PUT ids (e.g. the
+    calibration pilot ``[a2, b4]`` → 10 Track-2 cells). Ignored for --cell.
+    """
     if cell is not None:
         if mp is not None:
             return [(cell, mp)]
         return [(cell, PRIMARY_CELLS[cell])]
+    selected_puts = [p for p in PRIMARY_CELLS if (puts is None or p in puts)]
     if track == 1:
-        return [(p, mp) for p, mp in PRIMARY_CELLS.items()]
-    # track == 2: full 12 × 5 = 60 matrix
-    return [(p, k) for p in PRIMARY_CELLS for k in (1, 2, 3, 4, 5)]
+        return [(p, PRIMARY_CELLS[p]) for p in selected_puts]
+    # track == 2: full 5-MP matrix over the selected PUTs
+    return [(p, k) for p in selected_puts for k in (1, 2, 3, 4, 5)]
 
 
 def main():
@@ -218,9 +239,21 @@ def main():
     parser.add_argument("--out", type=str, default=None,
                         help="Override output JSON path (default "
                              "data/results/sms_track{N}.json)")
+    parser.add_argument("--puts", default=None,
+                        help="comma-separated PUT ids to restrict a track run "
+                             "(e.g. a2,b4 for the calibration pilot)")
+    parser.add_argument("--pool-version", "--pool_version", dest="pool_version",
+                        default=None,
+                        help="pool version for auto-resolution (v3/v4/v5); "
+                             "overrides $POOL_VERSION for this run")
     args = parser.parse_args()
 
-    cells = _build_cell_list(args.track, args.cell, args.mp)
+    if args.pool_version:
+        import os as _os
+        _os.environ["POOL_VERSION"] = args.pool_version
+
+    puts = [s.strip() for s in args.puts.split(",")] if args.puts else None
+    cells = _build_cell_list(args.track, args.cell, args.mp, puts=puts)
 
     print(f"\n{'='*60}")
     print(f"P2 TRACK-{args.track} SMS CAMPAIGN — {len(cells)} cells")

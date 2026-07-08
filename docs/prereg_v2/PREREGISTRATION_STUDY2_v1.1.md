@@ -125,7 +125,11 @@ A **2-PUT calibration pilot** `{a2, b4}` is declared for pipeline debugging with
   **code defects only** (harness bugs, fence-stripping, review-packet blinding,
   determinism) — **never** thresholds, estimands, DGP calibration, primary-MP
   assignment, or the roster. Any pilot-triggered change is logged in the §10
-  amendment appendix **before** the confirmatory run begins.
+  amendment appendix **before** the confirmatory run begins. **Pilot amendment
+  appendix: `docs/prereg_v2/PILOT_LOG.md`** — the append-only log of every
+  pilot-triggered code defect + fix (all verified code-level, not
+  protocol-level) and the Incident-#1 near-miss (Study-1 v3-pool wipe + git
+  restore).
 
 ### 2c. Confirmatory roster finalized — 28 PUTs (new; amendment item 3)
 
