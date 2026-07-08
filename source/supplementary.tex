@@ -1508,6 +1508,163 @@ separation: a relation family can score similarly on aggregate mutant
 kill-rate while differing sharply on real-defect detection, and different
 relation families can observe non-nested semantic-effect fibers.
 
+\section{Study 2 Confirmatory Audit: Per-Family, Per-Class, and Incident Detail}\label{j.-study2-confirmatory-detail}
+
+This appendix records the per-family and per-class detail behind the
+Study-2 confirmatory scoreboard in the main text, the calibration and
+confirmatory incident log, and the review-packet protocol. The
+registration of record is
+\texttt{PREREGISTRATION\_STUDY2\_v1.1.md} and the append-only pilot log is
+\texttt{PILOT\_LOG.md}; both are archived with the reproducibility
+package. Every number below traces to a pre-frozen SSOT.
+
+\subsection{Operator instantiability (H1\('\))}\label{j.1-h1-instantiability}
+
+For each operator family, Table~\ref{tab:study2-h1} gives the count of
+the 28 confirmatory PUTs on which the family produced \(\geq 5\)
+non-equivalent admitted mutants, against the outcome-independent coverage
+ceiling from the operator registry. The registered bar is \(\geq 4\) of 5
+families clearing \(\geq 8\) of 28 PUTs; all five clear. Source SSOT
+\texttt{h1\_instantiability\_v5.json}. Pilot PUTs \(\{a2, b4\}\) are
+excluded.
+
+{\def\LTcaptype{table} % do not increment counter
+\small
+\begin{longtable}[]{@{}p{0.16\linewidth}p{0.20\linewidth}p{0.16\linewidth}p{0.16\linewidth}p{0.20\linewidth}@{}}
+\caption{Study-2 H1\('\) per-family instantiability on the 28
+confirmatory PUTs.}\label{tab:study2-h1}\\
+\toprule\noalign{}
+Family & Coverage ceiling & PUTs cleared & Clears $\geq 8$? & Note \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+CE & 23 & 23 & yes & clears every applicable PUT \\
+OS & 14 & 14 & yes & clears every applicable PUT \\
+HP & 21 & 21 & yes & clears every applicable PUT \\
+TF & 15 & 15 & yes & clears every applicable PUT \\
+SI & 10 & 8 & yes & narrow family; registration expected a possible miss, clears at 8 \\
+\midrule
+Total & --- & 5/5 & --- & bar is 4/5; verdict CONFIRM \\
+\end{longtable}
+\normalsize
+}
+
+\subsection{Cross-class direction consistency (H3\('\))}\label{j.2-h3-class}
+
+Table~\ref{tab:study2-h3} gives the class-mean aligned and cross SMS and
+the resulting direction for each of the four design classes, with the
+descriptive (under-powered, non-confirmatory) per-class binomial
+sign-test \(p\). Three of four classes are positive; class C (surrogate
+models) is negative and reported as such. Source SSOT
+\texttt{h3\_class\_consistency\_v5.json}. The across-meta-pattern Friedman
+statistic is \(\chi^2 = 26.23\) over 28 blocks and 5 treatments,
+exploratory only.
+
+{\def\LTcaptype{table} % do not increment counter
+\small
+\begin{longtable}[]{@{}p{0.10\linewidth}p{0.08\linewidth}p{0.20\linewidth}p{0.20\linewidth}p{0.14\linewidth}p{0.14\linewidth}@{}}
+\caption{Study-2 H3\('\) per-class direction.}\label{tab:study2-h3}\\
+\toprule\noalign{}
+Class & $n$ PUTs & Mean aligned SMS & Mean cross SMS & Direction & Sign-test $p$ (desc.) \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A & 7 & 0.3333 & 0.0119 & positive & 0.0312 \\
+B & 6 & 0.2222 & 0.0903 & positive & 0.1875 \\
+C & 7 & 0.0476 & 0.0714 & negative & 0.9688 \\
+D & 8 & 0.3333 & 0.0937 & positive & 0.0352 \\
+\midrule
+\multicolumn{6}{@{}p{0.95\linewidth}@{}}{3/4 classes positive; bar is $\geq 3/4$; verdict CONFIRM. Per-class $p$ values are descriptive only.} \\
+\end{longtable}
+\normalsize
+}
+
+\subsection{Attribution purity (H4\('\))}\label{j.3-h4-attribution}
+
+Table~\ref{tab:study2-h4} gives the per-family multi-stratum leakage
+underlying the H4\('\) miss. The mean \texttt{suspect\_share} over the
+140 confirmatory cells is 0.1714, above the registered 0.05 bar. CE and
+HP stay clean; the leakage concentrates in TF and OS, with CF and SI
+contributing the remainder. Source SSOT \texttt{s5\_purity\_v5.json};
+LRCA machinery is imported unchanged from the Study-1 S5 audit.
+
+{\def\LTcaptype{table} % do not increment counter
+\small
+\begin{longtable}[]{@{}p{0.14\linewidth}p{0.22\linewidth}p{0.24\linewidth}p{0.30\linewidth}@{}}
+\caption{Study-2 H4\('\) per-family multi-stratum leakage.}\label{tab:study2-h4}\\
+\toprule\noalign{}
+Family & Mutants scored & Multi-stratum & Note \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+CE & 207 & 0 & clean \\
+HP & 189 & 0 & clean \\
+OS & 123 & 27 & newly leaks (0 in Study 1) \\
+TF & 135 & 72 & leaks most; single-stratum spec not contained on widened grid \\
+CF & 18 & 9 & residual leakage \\
+SI & 69 & 9 & residual leakage \\
+\midrule
+\multicolumn{4}{@{}p{0.95\linewidth}@{}}{Mean \texttt{suspect\_share} 0.1714 $>$ 0.05 bar; verdict NOT\_CONFIRMED; offending families CF/OS/SI/TF.} \\
+\end{longtable}
+\normalsize
+}
+
+\subsection{Incident and deviation log}\label{j.4-incident-log}
+
+Table~\ref{tab:study2-incidents} summarises the calibration-pilot and
+confirmatory incidents. The pilot phase (P1--P5) fixed code defects only,
+under the registration firewall (no threshold, estimand, DGP,
+primary-meta-pattern, or roster change). The confirmatory phase carried
+two tooling incidents (P6, P7) with no protocol impact and one disclosed
+script-interface deviation (D-A1).
+
+{\def\LTcaptype{table} % do not increment counter
+\small
+\begin{longtable}[]{@{}p{0.08\linewidth}p{0.20\linewidth}p{0.66\linewidth}@{}}
+\caption{Study-2 incident and deviation log.}\label{tab:study2-incidents}\\
+\toprule\noalign{}
+\# & Class & Summary \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+P1 & Near-miss (recovered) & Pool-build tool ignored CLI arguments and wiped the frozen Study-1 v3 pools from an empty cache; recovered by \texttt{git restore}; no artefact lost, no commit reached. \\
+P2--P3 & Code defect (pilot) & Pool builder gained argument parsing, a v5 version map (N=30, cross-source cache), and four delete-safety guards (empty-cache refusal, no empty-overwrite, wrong-version and frozen-version deletion guards). \\
+P4 & Code defect (pilot) & Response filename convention not stated in packets; an explicit \texttt{response\_filename} field added to generation/review/arbitration packets. \\
+P5 & Code defect (pilot) & E1$\wedge$E2 equivalence semantics not defined in-packet; operational definitions embedded verbatim in the blinded review and arbitration instructions. \\
+P6 & Tooling incident & Scoring tool defaulted to the Study-1 track and overwrote \texttt{sms\_track1.json}; restored before use and rerun with an explicit track-2 target. Deterministic re-measurement of frozen pools, not regeneration. \\
+P7 & Blinding guard fired & One PUT's mutants carried a source-family token in docstrings; presentation-layer redaction added at export (displayed code only), affected packets re-exported, assertion retained as the final guard. \\
+D-A1 & Disclosed deviation & Pre-frozen $\delta$ script gained a post-data mode that skips only the gated H2-2 computation and emits its registered not-run verdict; H2-1\('\) logic byte-unchanged; recorded in the output SSOT. \\
+\end{longtable}
+\normalsize
+}
+
+\subsection{Review-packet protocol}\label{j.5-packet-protocol}
+
+Confirmatory review used the same dual-blind pipeline as the registered
+protocol: generation, then blind review on packets that expose only the
+mutant code, the operator spec, and the PUT source (generator identity,
+arm label, and SMS withheld), then arbitration on disagreement, then a
+freeze-then-score step in which SMS is computed only after review labels
+are frozen. The harness spawns each reviewer and the arbiter as separate,
+role-isolated Claude instances, so generator, reviewer, and arbiter
+differ on every item; all instances share one model family (same-vendor).
+In the confirmatory run, 18 independent reviewer instances returned 747
+verdicts, 4 mutants were rejected at the first round, and 6 uncertain
+cases were arbitrated by a third instance and all resolved as confirmed
+under one uniform rationale (pinning the Gaussian-process hyperparameters
+before comparison). Mechanical admission gates V1--V4 admitted 756 of 774
+valid mutants, yielding 140 confirmatory cells (36 with nonzero killed
+mass). Because the harness is same-vendor, the cross-vendor dual-blind
+hypothesis H2-2 is gated not-run, with no same-vendor proxy substituted.
+
 \bibliographystyle{plainnat}
 \bibliography{references}
 

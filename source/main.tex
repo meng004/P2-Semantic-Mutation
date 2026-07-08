@@ -135,7 +135,7 @@
 \noindent\textbf{Context.} Metamorphic Testing (MT) helps software engineers test scientific programs without full test oracles, but classical Mutation Score (MS) remains syntactic. It does not say whether a metamorphic-relation set observes domain-semantic effects such as conservation, monotonicity, convergence, trajectory, or fidelity-order violations.
 \textbf{Objective.} We introduce Semantic Mutation Score (SMS), a backward-compatible adequacy metric for declared semantic strata. The contribution is a metric and certificate model, not a new LLM mutator or benchmark release.
 \textbf{Method.} We define five semantic operator families and instantiate them on 12 Programs Under Test (PUTs) across five meta-patterns. Validation combines an analytical SMS-to-MS degeneration result, a 60-cell empirical audit, an Abstract Syntax Tree (AST)-normalised comparison with default first-order syntactic mutation, a diagnostic root-cause layer, a strong/weak metamorphic-relation boundary study, and an industrial real-defect arm built on reproduced defects from widely used scientific-computing libraries. The SMS instantiation is scoped to single-output scientific-computing kernels.
-\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered instantiability, effect-size, cross-class-consistency, and attribution thresholds are not met, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. A direct stratum-purity audit confirms the semantic-effect map is single-valued on the large majority of admitted mutants, and a post-hoc detection-incidence sensitivity finds aligned meta-patterns detect a nonzero effect more often than cross patterns, while the effect-size gap itself stays below the pre-registered large-effect threshold. On the industrial arm, a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs, supporting the paper's construct separation on real defects; the pattern-derived advantage holds under exact distribution-free re-analysis.
+\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered instantiability, effect-size, cross-class-consistency, and attribution thresholds are not met, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. A direct stratum-purity audit confirms the semantic-effect map is single-valued on the large majority of admitted mutants, and a post-hoc detection-incidence sensitivity finds aligned meta-patterns detect a nonzero effect more often than cross patterns, while the effect-size gap itself stays below the pre-registered large-effect threshold. On the industrial arm, a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs, supporting the paper's construct separation on real defects; the pattern-derived advantage holds under exact distribution-free re-analysis. A second, pre-registered confirmatory study then converts the first study's unpowered boundary misses into powered successors on a blind-authored 28-PUT grid: three of four executable hypotheses confirm (operators instantiate adequately; the aligned slice dominates the cross slice as a directional, medium-magnitude claim; the aligned-over-cross direction holds in three of four classes), while attribution purity is not confirmed (multi-stratum leakage generalises beyond the earlier diagnosis once the operator grid widens), and the cross-vendor dual-blind hypothesis is gated not-run because the harness is same-vendor.
 \textbf{Conclusion.} SMS gives software-testing researchers a reproducible way to report which declared semantic effects an MR set observes, misses, or kills for non-semantic reasons. Its value is diagnostic and construct-level, not a claim of universal dominance.
 \end{abstract}
 
@@ -191,6 +191,25 @@ were admitted only after defect/MR detectability verification and are
 reported here at result level. Candidate mining, rejected cases,
 repository tooling, and benchmark release are outside this manuscript
 and remain contributions of the archived dataset it draws on.
+
+The paper is organised as two studies. Study 1 is the 12-PUT audit,
+its structural and industrial arms, and the four threshold misses just
+described; it \emph{delimits} the construct. Study 2
+(Section~\ref{study2-confirmatory-audit}) is a separate, pre-registered
+confirmatory study that re-registers those four misses as powered or
+feasibility-bounded successors on a blind-authored 28-PUT grid and runs
+the campaign once. Three of the four executable successors confirm:
+operators instantiate adequately (H1\('\)), the aligned slice dominates
+the cross slice as a directional, medium-magnitude claim (H2-1\('\)), and
+the aligned-over-cross direction holds in three of four design classes
+(H3\('\)). The fourth, attribution purity (H4\('\)), is \emph{not}
+confirmed: multi-stratum kill leakage generalises beyond Study 1's
+CF/TF diagnosis once the operator grid widens. A fifth, cross-vendor
+question is gated not-run because the review harness is same-vendor.
+The claim ladder across the two studies is therefore narrow and
+explicit: Study 1 delimits the construct, and Study 2 confirms the
+delimited construct directionally, without upgrading the medium effect
+into a large-effect claim.
 
 The intended reader is a software-testing researcher or practitioner who
 needs to decide whether a set of MRs is adequate for a declared semantic
@@ -1958,6 +1977,19 @@ the dataset protocol & case (n = 34, paired) & inferential within the
 34-case pool; no corpus-level claim \\
 Industrial arm: 34/34 real-defect face & none (descriptive; selection-conditioned) & case &
 face-level count; not a coverage rate \\
+H2-1\('\) Cliff's $\delta$ (Study 2) & pre-registered confirmatory (Family A) &
+cell (28 aligned vs 112 cross; non-independent within PUT) & one-sided
+lower bound $>0$ licenses directional dominance; Romano band descriptive
+only \\
+H1\('\) family counts (Study 2) & pre-registered confirmatory (Family E) &
+PUT $\times$ family & deterministic count; verdict factual on this pool \\
+H3\('\) class direction (Study 2) & pre-registered confirmatory (Family E) &
+class (n = 4) & direction count; verdict factual on these four classes \\
+H4\('\) mean suspect\_share (Study 2) & pre-registered confirmatory (Family E) &
+cell (n = 140) & descriptive mean; verdict factual (threshold not met) \\
+H2-2 cross-vendor $\Delta\delta$ (Study 2) & registered, gated (Family B) &
+n/a (not run) & not-run under same-vendor freeze; cross-vendor question
+open, not a null \\
 \end{longtable}
 }
 
@@ -2785,6 +2817,227 @@ claiming adequacy for the hyperparameter stratum.
 
 % [thematic break removed]
 
+\section{Study 2: A Pre-registered Confirmatory Audit at \texorpdfstring{$n = 28$}{n=28}}\label{study2-confirmatory-audit}
+
+The 12-PUT audit above (Study 1) delimits the semantic-mutation construct
+through four threshold misses, H1--H4. Those misses are honest, but they
+are also \emph{unpowered} in ways that make them weak evidence either for
+or against the construct. The operator-implementability bar assumed
+uniform applicability (\(\geq 9/12\) PUTs for every family), which
+class-targeted operators cannot meet by design. The aligned-versus-cross
+verdict rests on a point-estimate rule whose pass probability sits near
+one half when the truth is at the Romano boundary
+(Section~\ref{rq2-stipulated-alternative-power}). The cross-class sign
+test is a 4/4 criterion at \(n = 4\) classes with heavy ties. The
+attribution bar averages \texttt{suspect\_share} over 60 non-independent
+cells. Study 1 also carried two further temptations that a confirmatory
+design must foreclose: a data-dependent primary-meta-pattern choice (the
+prohibited v3b path) and a protocol asymmetry between the same-source and
+cross-source arms. Study 2 re-registers powered or feasibility-bounded
+successors to these four questions, fixes the primary-meta-pattern rule
+deterministically before any generation, and executes the campaign once
+under a frozen registration. It is a confirmatory study, not a second
+exploratory pass; everything discovered after the freeze is exploratory
+by definition.
+
+\subsection{Design and registration}\label{study2-design}
+
+The registration of record is
+\texttt{docs/prereg\_v2/PREREGISTRATION\_STUDY2\_v1.1.md}, frozen (with a
+pre-data attestation) before any Study-2 mutant, review label, or SMS
+cell existed. It amends an earlier un-minted v1.0 registration and
+strengthens, rather than weakens, its integrity machinery. The design
+has four fixed elements.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Blind-authored 30-PUT pool.} An 18-PUT expansion (roster in
+  \texttt{PUT\_EXPANSION\_ROSTER.md}) was authored from domain knowledge
+  only, with no mutation-outcome file read during authoring, and added
+  to the original 12. A 2-PUT calibration pilot \(\{a2, b4\}\) is carved
+  out for pipeline debugging with outcomes visible, and is
+  \emph{excluded from every confirmatory analysis}; the confirmatory
+  grid is therefore \textbf{28 PUTs} at class balance A7/B6/C7/D8.
+\item
+  \textbf{Powered successor hypotheses.} H2-1\('\) (aligned slice
+  dominates cross, one-sided Cliff's \(\delta > 0\), power 0.9285 at
+  \(n = 28\)); H1\('\) (\(\geq 4\) of 5 operator families produce
+  \(\geq 5\) non-equivalent mutants on \(\geq 8\) of 28 PUTs, feasibility
+  0.843); H3\('\) (positive aligned\(>\)cross direction in \(\geq 3\) of
+  4 classes, power 0.949); H4\('\) (mean \texttt{suspect\_share}
+  \(\leq 0.05\) over the 140 confirmatory cells, tightened from Study
+  1's 0.20 under a single-stratum spec constraint). All thresholds trace
+  to the power SSOT \texttt{power\_study2\_v11.json} (seed 20260708).
+\item
+  \textbf{Deterministic primary-meta-pattern rule.} The class rule
+  (A\(\to\)MP1, B\(\to\)MP2, C\(\to\)MP5-held, D\(\to\)MP2) is fixed at
+  authoring, blind to mutation results; the Study-1 v3b
+  selection-on-the-response path is prohibited.
+\item
+  \textbf{One-shot rule.} Confirmatory generation runs once per the
+  registered budget with seeds and prompt-template hashes pinned;
+  regeneration, cell cherry-picking, or moving any threshold after a
+  confirmatory outcome is visible is a protocol violation to be reported
+  as such.
+\end{itemize}
+
+\subsection{Harness instantiation and the gated cross-vendor
+question}\label{study2-harness}
+
+We disclose the harness plainly rather than in a footnote, because it
+bounds one hypothesis. Study-2 generation and review run through the
+Claude Code Agent harness: an Opus-tier generator role, separately
+spawned and role-isolated Claude reviewer instances that receive
+\emph{blinded} packets (no generator identity, no arm label, no SMS or
+kill outcome), and a third separately spawned Claude instance for
+arbitration. Role isolation and packet blinding are enforced across
+instances, but all instances share one model family. This is a
+\textbf{same-vendor} instantiation. It can test the same-source
+questions H2-1\('\), H1\('\), H3\('\), and H4\('\), but it
+\emph{cannot} instantiate the cross-vendor dual-blind contrast. The
+source-diversity hypothesis H2-2 is therefore \textbf{registered but
+gated: reported not-run, with no same-vendor proxy substituted for a
+cross-vendor arm}. The cross-vendor question is left open, not reported
+as a null. The exact Opus-tier model id resolved at generation time is
+recorded in the campaign SSOT.
+
+\subsection{Execution}\label{study2-execution}
+
+The confirmatory campaign ran once. Generation produced 774 valid
+mutants across the 28 PUTs; mechanical admission gates V1--V4 admitted
+756, giving pools of 756 mutants over 28 PUTs and 140 confirmatory cells
+(28 PUTs \(\times\) 5 meta-patterns), of which 36 carry nonzero killed
+mass. Blind review produced 747 verdicts from 18 independent reviewer
+instances; 4 mutants were rejected at the first round, and 6 uncertain
+cases went to third-instance arbitration, all 6 resolved as confirmed
+under a single uniform rationale (pinning the Gaussian-process
+hyperparameters before comparison). SMS was computed only after the
+review labels were frozen.
+
+Three items are disclosed from the confirmatory phase (full log in
+Appendix J). Incident P6: the scoring
+tool defaulted to the Study-1 track and wrote over
+\texttt{sms\_track1.json}; the file was restored from the tracked tree
+before any use and the run repeated with an explicit track-2 target.
+Because SMS scoring is a deterministic mechanical measurement of the
+frozen pools, this is re-execution, not regeneration. Incident P7: a
+blinding assertion fired when one PUT's mutants carried a source-family
+token in their docstrings; a presentation-layer redaction was added at
+export (displayed code only; on-disk artefacts untouched; the assertion
+retained as the final guard) and the affected packets were re-exported.
+Deviation D-A1 (disclosed): the pre-frozen \(\delta\) script gained a
+post-data command-line mode that skips only the gated H2-2 computation
+and emits its registered not-run verdict; the H2-1\('\) statistical
+logic is byte-unchanged, and the deviation is recorded both here and in
+the output SSOT.
+
+\subsection{Results: the confirmatory scoreboard}\label{study2-scoreboard}
+
+We lead with the full scoreboard, including the miss. Three of the four
+executable successor hypotheses confirm; the attribution-purity
+hypothesis H4\('\) does \emph{not}; the cross-vendor hypothesis H2-2 is
+gated not-run.
+
+\begin{table}[t]
+\caption{Study-2 confirmatory scoreboard. All verdicts follow the
+registered decision rules through pre-frozen scripts; H4\('\) is a
+genuine miss and H2-2 is gated, not a failure.}
+\label{tab:study2-scoreboard}
+\centering
+\small
+\begin{tabular}{p{0.11\linewidth}p{0.30\linewidth}p{0.16\linewidth}p{0.31\linewidth}}
+\toprule
+Hypothesis & Registered threshold & Verdict & Key statistic \\
+\midrule
+H2-1\('\) & one-sided Cliff's \(\delta > 0\) (95\% lower bound) &
+\textbf{CONFIRM} & \(\delta = +0.4295\); one-sided 95\% lower \(+0.2653\)
+\\
+H1\('\) & \(\geq 4/5\) families clear \(\geq 8/28\) PUTs &
+\textbf{CONFIRM} & 5/5 families clear (CE 23, OS 14, HP 21, TF 15, SI 8)
+\\
+H3\('\) & \(\geq 3/4\) classes positive direction & \textbf{CONFIRM} &
+3/4 positive (class C negative) \\
+H4\('\) & mean \texttt{suspect\_share} \(\leq 0.05\) &
+\textbf{NOT\_CONFIRMED} & mean 0.1714; leakage in CF/OS/SI/TF \\
+H2-2 & cross-vendor \(\Delta\delta\) & \textbf{NOT-RUN} & gated
+(same-vendor harness; no substitution) \\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table}
+
+\textbf{H2-1\('\) (confirm).} On the 28 aligned versus 112 cross
+primary-cell SMS values, Cliff's \(\delta = +0.4295\) with a one-sided
+95\% percentile-bootstrap lower bound of \(+0.2653\) (\(B = 10{,}000\),
+seed 20260708), clearing the registered \(>0\) rule. The licensed claim
+is \emph{directional}: the aligned slice stochastically dominates the
+cross slice. The two-sided 95\% CI \([0.2328, 0.6193]\) and the
+descriptive Romano medium band (\(\geq 0.330\)) are reported for context
+only and are never promoted to a large-effect pass; the study
+deliberately does not re-assert Study 1's 0.474 large-effect bar.
+
+\textbf{H1\('\) (confirm).} All five families clear the \(\geq 8/28\)
+bar: CE on 23, OS on 14, HP on 21, TF on 15, and SI on 8 PUTs (against
+outcome-independent coverage ceilings of 23/14/21/15/10). Notably SI,
+which the registration expected to remain below the bar (feasibility
+0.843, not a rubber stamp), clears at exactly 8, so the pass is
+\(5/5\), stronger than the \(4/5\) required. This converts Study 1's
+non-uniform applicability finding into a powered adequacy result on the
+wider grid.
+
+\textbf{H3\('\) (confirm, with one negative class).} Class-mean aligned
+minus cross SMS is positive in three of four classes: A
+(\(0.3333\) vs \(0.0119\)), B (\(0.2222\) vs \(0.0903\)), and D
+(\(0.3333\) vs \(0.0937\)); class C is \emph{negative}
+(\(0.0476\) vs \(0.0714\)) and is reported as such. The descriptive
+per-class binomial sign tests (under-powered, reported only for context)
+give one-sided \(p\) of 0.0312 (A), 0.1875 (B), 0.9688 (C), and 0.0352
+(D). The across-meta-pattern Friedman test
+(\(\chi^2 = 26.23\) over 28 blocks and 5 treatments) stays exploratory,
+exactly as in Study 1.
+
+\textbf{H4\('\) (not confirmed).} The mean \texttt{suspect\_share} over
+the 140 confirmatory cells is \(0.1714\), above the registered \(0.05\)
+bar and far above the projected rule-of-three upper bound of \(0.0131\).
+The per-family multi-stratum breakdown locates the leakage: CE
+(0/207) and HP (0/189) stay clean, but TF (72/135) and OS (27/123) leak
+heavily, with CF (9/18) and SI (9/69) contributing the remainder. The
+single-stratum spec constraint did not contain the leakage on the widened
+grid, and OS, which showed no incidental multi-stratum leakage in Study
+1, now does.
+
+\subsection{Interpretation}\label{study2-interpretation}
+
+The three confirms turn Study 1's boundary-delimiting misses into
+powered, positive statements about the same construct. Operators
+instantiate adequately on a blind-authored grid (H1\('\)); the aligned
+slice dominates the cross slice as a \emph{directional} claim at medium
+descriptive magnitude (H2-1\('\)); and the aligned\(>\)cross direction
+holds across most design classes (H3\('\)). The claim ladder is precise:
+Study 1 delimits the construct, and Study 2 confirms the delimited
+construct \emph{directionally}. We do not upgrade the medium descriptive
+band into a large-effect claim, and we do not read the single negative
+class (C, surrogate models) as noise: it is a registered-a-priori signal
+that cross-class consistency, though now confirmed at the \(\geq 3/4\)
+threshold, is not uniform.
+
+The H4\('\) miss is a genuine finding, not a nuisance. In Study 1 the
+multi-stratum leakage was confined to the CF and TF families; the
+registration projected that a single-stratum spec constraint would push
+residual leakage down to the clean-family regime. Instead, once the
+operator grid widens, attribution leakage \emph{generalises} beyond the
+CF/TF diagnosis: TF still leaks the most (72/135) and OS leaks newly
+(27/123). LRCA-based single-stratum attribution therefore remains an
+open construct boundary rather than a solved problem. Closing it is an
+open problem, not a promised third study: it would require either a
+per-family single-stratum re-specification validated on the widened grid
+(so that the scoring filter and the admission filter agree cell by cell),
+or a richer stratum model that admits declared multi-stratum operators
+and scores them accordingly. Until then, the honest reading is that
+aligned\(>\)cross magnitude and direction survive a powered confirmatory
+test, while clean semantic-effect attribution does not.
+
 \section{Threats to Validity}\label{threats-to-validity}
 
 {\def\LTcaptype{table} % do not increment counter
@@ -2845,6 +3098,17 @@ shared with the Section~\ref{rq4-strong-boundary} boundary study & Section~\ref{
 Real-defect evidence & Industrial real-defect arm boundary & External & Used at result
 level to confirm construct separation; reusable benchmark
 construction deferred outside this manuscript & Section~\ref{rq4-industrial-construct-separation} \\
+Same-vendor mono-culture (Study 2) & Generator and reviewer instances share one
+LLM family & Construct & Role isolation + packet blinding enforced across instances,
+but diversity of judgment is single-vendor; disclosed, and H2-2 gated not-run rather
+than proxied & Section~\ref{study2-harness} \\
+Harness-agent instantiation (Study 2) & Confirmatory generation/review run through the
+Claude Code Agent harness & Internal & Blinded packets, role-isolated instances, third-instance
+arbitration, one-shot rule; resolved model id recorded in the campaign SSOT & Section~\ref{study2-harness} \\
+Attribution scoring/admission gap (Study 2) & H4\('\) leakage (mean 0.1714) exceeds the
+0.05 bar on the widened grid & Construct & Reported as a genuine miss; single-stratum
+scoring filter and admission filter disagree cell-by-cell; closing it is an open problem,
+not a promised study & Section~\ref{study2-interpretation} \\
 \end{longtable}
 }
 
@@ -3020,9 +3284,11 @@ Seven directions follow from this study.
 
 \subsection{Findings summary}\label{findings-summary}
 
-The empirical study supports the semantic-mutation construct in seven
-ways. The pre-registered thresholds are treated as stress tests of this
-instantiation, not as prerequisites for the SMS definition.
+The empirical work supports the semantic-mutation construct in eight
+ways, the first seven from Study 1 and the eighth from the Study-2
+confirmatory audit. The Study-1 pre-registered thresholds are treated as
+stress tests of this instantiation, not as prerequisites for the SMS
+definition.
 
 \begin{enumerate}
 \item
@@ -3082,6 +3348,23 @@ instantiation, not as prerequisites for the SMS definition.
   results identify where MR design and attribution need refinement; they
   do not change the degeneration theorem or the strong-boundary
   analysis.
+\item
+  A second, pre-registered confirmatory study
+  (Section~\ref{study2-confirmatory-audit}) re-runs the four threshold
+  questions with powered successors on a blind-authored 28-PUT grid,
+  executed once. Three confirm: operators instantiate adequately (H1\('\),
+  5/5 families clearing \(\geq 8/28\)); the aligned slice dominates the
+  cross slice as a directional claim (H2-1\('\), \(\delta = +0.4295\),
+  one-sided 95\% lower bound \(+0.2653\), medium descriptive band, not a
+  large-effect claim); and the aligned-over-cross direction holds in three
+  of four classes (H3\('\), class C negative). Attribution purity is
+  \emph{not} confirmed (H4\('\), mean \texttt{suspect\_share} 0.1714
+  against a 0.05 bar): multi-stratum leakage generalises beyond the
+  Study-1 CF/TF diagnosis (TF 72/135, OS 27/123) once the operator grid
+  widens, so clean semantic-effect attribution remains an open boundary.
+  The cross-vendor dual-blind hypothesis is gated not-run under the
+  same-vendor harness. The two studies together read as: Study 1 delimits
+  the construct, Study 2 confirms the delimited construct directionally.
 \end{enumerate}
 
 \subsection{Methodological contributions}\label{methodological-contributions}
@@ -3137,6 +3420,17 @@ from which \texttt{scripts/build\_industrial\_ssot.py} re-derives all
 group kill rates, the paired-comparison family, the real-defect face
 counts, and the robustness battery, failing the build on any mismatch
 with the manuscript.
+The Study-2 confirmatory audit
+(Section~\ref{study2-confirmatory-audit}) is backed by the frozen
+registration \texttt{docs/prereg\_v2/PREREGISTRATION\_STUDY2\_v1.1.md}
+and its calibration-pilot appendix \texttt{docs/prereg\_v2/PILOT\_LOG.md}
+(incidents P1--P7 and deviation D-A1). Every Study-2 number in this paper
+traces to a pre-frozen SSOT: \texttt{sms\_track2\_v5.json} (140 cells),
+\texttt{dualblind\_delta\_delta\_v5.json} (H2-1\('\); H2-2 not-run),
+\texttt{h1\_instantiability\_v5.json} (H1\('\)),
+\texttt{h3\_class\_consistency\_v5.json} (H3\('\)), and
+\texttt{s5\_purity\_v5.json} (H4\('\)), with registered powers in
+\texttt{power\_study2\_v11.json} (seed 20260708).
 An earlier version of this work is available on arXiv:
 \href{https://arxiv.org/abs/2605.17437}{arXiv:2605.17437} [cs.SE].
 For peer review, a read-only mirror of the repository can
