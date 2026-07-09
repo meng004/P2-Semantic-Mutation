@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_457d790150ff",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Kernel changed tps->linear via equivalent kwargs dict; small but consistent deviation (max 1.7e-3) on grid."
+}

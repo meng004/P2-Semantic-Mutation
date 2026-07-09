@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4c6a5e1aed7f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Mutant adds length_scale_bounds='fixed', disabling the kernel hyperparameter optimisation the original performs; extra semantic change beyond the registered length-scale x10."
+}

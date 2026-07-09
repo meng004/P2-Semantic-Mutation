@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4fdff77551f8",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "sum(X**2)>1.0 is exactly the registered <1.0 -> >1.0 flip; outputs invert."
+}

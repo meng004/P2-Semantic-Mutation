@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_50419cf3ba79",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Mutant adds length_scale_bounds='fixed' to the GPC RBF kernel, disabling hyperparameter optimisation; extra semantic change beyond the registered length_scale 1->10."
+}

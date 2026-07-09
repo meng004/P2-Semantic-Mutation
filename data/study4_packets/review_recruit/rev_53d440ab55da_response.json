@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_53d440ab55da",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "2*random(300)-1 is uniform on [-1,1], the registered narrowed range; clear deviation."
+}
