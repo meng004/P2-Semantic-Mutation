@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_293abe030fe6",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "SVR C changed 10.0 to 0.01 exactly (constant hoist and kwarg reorder are non-semantic); deviates up to 0.31."
+}

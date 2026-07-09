@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_288de27f2fe6",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Kernel (props-mu) changed to (props+mu) exactly; renames and boolean-index refactor are non-semantic; deviates up to 3.4."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_342709d5f086",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Sign flip matches the operator, but the resulting anti-diffusion scheme is unstable: NaN at x=0 and overflow (~1e34+) for small x, failing V2 on admissible inputs."
+}

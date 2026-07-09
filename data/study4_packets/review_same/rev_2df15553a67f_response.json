@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_2df15553a67f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Proposal count 6000 changed to 50 exactly; np.compress equals boolean indexing; deviates up to 0.24."
+}

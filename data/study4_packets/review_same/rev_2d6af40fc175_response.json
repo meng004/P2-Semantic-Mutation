@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_2d6af40fc175",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "RHS return -u changed to return u exactly; RK4 weighted-sum refactor reproduces k1+2k2+2k3+k4; deviates up to 2.35."
+}

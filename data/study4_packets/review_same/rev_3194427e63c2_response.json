@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3194427e63c2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Integrand x+t**2 changed to x*t**2 exactly; loop accumulation equals the mean; deviates up to 1.0."
+}

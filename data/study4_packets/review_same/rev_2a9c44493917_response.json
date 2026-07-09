@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_2a9c44493917",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Main diagonal 2.0 changed to 3.0 exactly; per-call matrix rebuild is value-identical; deviates up to 23.2."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_2b4c780966f2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Training range narrowed [-3,3] to [-1,1] exactly via _HALF_WIDTH=1.0; deviates up to 1.24."
+}

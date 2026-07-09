@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_252a2e0ad277",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact off-by-one with floor via max(n_succ-1,0); deviates up to 0.0097 on 99% of the grid."
+}

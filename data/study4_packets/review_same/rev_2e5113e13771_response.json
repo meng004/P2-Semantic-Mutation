@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_2e5113e13771",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Integrand x+t**2 changed to x*t**2 exactly; fsum-based mean is numerically equivalent; deviates up to 1.0."
+}

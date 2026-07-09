@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3419552f8f79",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Off-by-one with floor via (d+|d|)/2 = max(d,0), matching the registered change exactly; deviates up to 0.0097."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_31e152d33572",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "SVR C changed 10.0 to 0.01 exactly; lazy singleton fit is non-semantic (matches direct variant exactly); deviates up to 0.31."
+}
