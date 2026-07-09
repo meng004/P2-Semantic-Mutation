@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_971968693400",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "minus dropped from -log(U); refactor into locals is non-semantic (deviation identical to minimal twin); runs finite on [0,1] grid, max deviation 4.04 (101/101 points >1e-6), clearly non-equivalent."
+}

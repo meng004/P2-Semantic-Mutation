@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_a5185fae7a5c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "gamma 'scale'->0.001 (=1e-3) applied; __SEMI__/__LT__ tokens are docstring-only corruption, non-semantic; runs finite on [0,1] grid, max deviation 0.361 (101/101 points >1e-6), clearly non-equivalent."
+}

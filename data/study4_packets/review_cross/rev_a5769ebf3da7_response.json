@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_a5769ebf3da7",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "coefficient 2.0->1.0 via inert local rate_slope; semantics exactly the registered change; runs finite on [0,1] grid, max deviation 1.35 (100/101 points >1e-6), clearly non-equivalent."
+}

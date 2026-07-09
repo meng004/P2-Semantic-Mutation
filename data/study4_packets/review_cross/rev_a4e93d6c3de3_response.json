@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_a4e93d6c3de3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "feature slots swapped to [0.0, 2x-1] via np.array; exact registered change; runs finite on [0,1] grid, max deviation 0.963 (100/101 points >1e-6), clearly non-equivalent."
+}

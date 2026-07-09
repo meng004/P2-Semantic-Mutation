@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_a47257c2091f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "offset 3.0->2.0 inside extracted helper _test_point; no other semantic change; runs finite on [0,1] grid, max deviation 1.04 (101/101 points >1e-6), clearly non-equivalent."
+}
