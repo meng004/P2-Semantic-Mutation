@@ -79,8 +79,8 @@ n=34,Wilcoxon V=279.5(精确 p=0.01423 / 正态 p=0.0153,scipy 复算 p=0.0148
 - [x] pytest 全套 — **545 passed**, 19 warnings(评审波次收敛后重跑,87s)
 - [x] cross/recruit/C 评审回包完整性终扫 — 2036/2036 schema 合规、blind-map 1:1、
       零坏件;终分布 1973 CONFIRMED / 63 REJECTED(含 2 例 gpt-5.5 仲裁 REJECT)/ 0 UNCERTAIN
-- [ ] Study-4 三个判定 SSOT 生成后,以同法重算验证(SMS 评分完成后执行)
+- [x] Study-4 三个判定 SSOT(dualblind_delta_delta_v7 / h4_graded_v7 / hlang_delta_v7c)重算 **IDENTICAL**(固定 seed 20260708,B=10,000)
 
-**中期结论**:所有已完结研究(Study 1–3 + 工业臂)的 paper-cited 数字均可
+**终版结论**:所有已完结研究(Study 1–3 + 工业臂)的 paper-cited 数字均可
 从仓库内已提交原始数据 + 冻结脚本零差异重算;预注册均先于数据;缓存与
 日志逐笔闭合。未发现任何不可追溯或不可重算的结果。
