@@ -87,6 +87,10 @@ INSTRUCTIONS:
 # as ML-library kernels).
 # ══════════════════════════════════════════════════════════════════════════
 C_GRID_PUTS = ("a1", "a2", "a3", "b1", "b2", "b3", "c2")
+# P14 (C-arm pilot): a self-contained C mutant (includes + program + REPL main)
+# is 2-4x the token length of a Python mutant body; 800 (the Python default)
+# truncated the longer kernels. 2048 fits every C_GRID kernel with headroom.
+C_GEN_MAX_TOKENS = 2048
 CACHE_DIR_CLANG = ROOT / "data/operator_campaign/cache_clang"
 CACHE_DIR_CLANG.mkdir(parents=True, exist_ok=True)
 
@@ -1290,21 +1294,37 @@ def _study4_call(factory, prompt: str, *, kind: str, slot_tag: str,
 
 
 def study4_generate_slot(op, original_code, original_fn, slot_tag, factory,
-                         attempts, cache_dir, log_path):
-    """Generate + admit ``attempts`` mutants for one (operator, slot) on the gateway."""
+                         attempts, cache_dir, log_path, lang="py"):
+    """Generate + admit ``attempts`` mutants for one (operator, slot) on the gateway.
+
+    ``lang`` selects the grid: 'py' (default, Study-4 Python arms — byte-unchanged)
+    or 'c' (Study-4 H-LANG C-arm pilot: PROMPT_TEMPLATE_C prompt, gcc-compile
+    admission via ``admit_c_mutant``, tag-agnostic fence stripping). The gateway
+    call, cost accounting, served-id echo, and per-call log are IDENTICAL across
+    languages."""
+    is_c = (lang == "c")
+    tmpl = PROMPT_TEMPLATE_C if is_c else PROMPT_TEMPLATE
+    strip = _strip_code_fences if is_c else _strip_fences
+    # P14 (C-arm pilot): a C mutant carries the FULL self-contained program
+    # (includes + program(x) + the REPL main), which is 2-4x the token length of
+    # a Python mutant body. The Python-inherited 800-token budget truncated the
+    # longer C kernels (esp. a3 heat-FDM) mid-program -> gcc V1 fails / empty
+    # bodies. Raise the C-generation budget so the completion is not truncated by
+    # the harness config (the per-model min_max_tokens floor still applies on top).
+    gen_max_tokens = C_GEN_MAX_TOKENS if is_c else 800
     results = []
     for attempt in range(1, attempts + 1):
-        prompt = PROMPT_TEMPLATE.format(
+        prompt = tmpl.format(
             put_name=op.put.upper(), op_id=op.id, op_label=op.label,
             target_locator=op.target_locator, transformation=op.transformation,
             rationale=op.rationale, attempt_idx=attempt, n_attempts=attempts,
             original_code=original_code)
-        if single_stratum_filter_enabled():
+        if not is_c and single_stratum_filter_enabled():
             prompt += single_stratum_prompt_clause(op.category)
         try:
             code, meta = _study4_call(factory, prompt, kind="generate",
                                       slot_tag=slot_tag, op_id=op.id,
-                                      log_path=log_path)
+                                      log_path=log_path, max_tokens=gen_max_tokens)
         except Exception as e:
             rec = {"op": op.id, "put": op.put, "source": slot_tag,
                    "attempt": attempt, "v_passed": False,
@@ -1314,17 +1334,26 @@ def study4_generate_slot(op, original_code, original_fn, slot_tag, factory,
                                           "op_id": op.id, "slot": slot_tag,
                                           "error": rec["error"]})
             continue
-        rec = admit_mutant(op, code, original_fn, slot_tag, attempt,
-                           cache_dir=cache_dir, meta=meta)
+        if is_c:
+            rec = admit_c_mutant(op, code, original_fn, slot_tag, attempt,
+                                 cache_dir=cache_dir)
+            rec["latency_s"] = meta.get("latency_s")
+            rec["prompt_tokens"] = meta.get("prompt_tokens")
+            rec["completion_tokens"] = meta.get("completion_tokens")
+        else:
+            rec = admit_mutant(op, code, original_fn, slot_tag, attempt,
+                               cache_dir=cache_dir, meta=meta)
         rec["model"] = meta.get("requested_model")
         rec["served_model"] = meta.get("served_model")
         rec["cost_usd"] = meta.get("cost_usd")
-        rec["malformed"] = not bool(_strip_fences(code))
+        rec["malformed"] = not bool(strip(code))
         results.append(rec)
-        print(f"  [{op.id} {slot_tag} a{attempt:02d}] "
+        print(f"  [{op.id} {slot_tag} a{attempt:02d}] lang={lang} "
               f"{'PASS' if rec['v_passed'] else 'FAIL'} "
               f"{meta['latency_s']}s ct={meta.get('completion_tokens')} "
-              f"served={meta.get('served_model')}", flush=True)
+              f"served={meta.get('served_model')}"
+              + ("" if rec["v_passed"] else f" v_err={rec.get('v_error','')[:60]}"),
+              flush=True)
     return results
 
 
@@ -1336,13 +1365,16 @@ def _study4_blind_code(code: str) -> str:
 
 
 def run_study4_blind_review(op, put_source, mutant_code, log_path,
-                            reviewer_factory=None, arbiter_factory=None) -> dict:
+                            reviewer_factory=None, arbiter_factory=None,
+                            lang="py") -> dict:
     """Blinded review (claude-fable-5) + arbitration (gpt-5.5) over one mutant.
 
     Blinding is IDENTICAL to harness mode: the packet is built by
     ``build_blind_review_packet`` (no generator identity, no arm, no SMS) and
     the displayed code is vendor-token-redacted. Arbitration fires only when the
-    reviewer returns UNCERTAIN (classify_mutant -> ARBITRATED).
+    reviewer returns UNCERTAIN (classify_mutant -> ARBITRATED). ``lang`` only
+    swaps the displayed code-fence language (```python -> ```c) so the C reviewer
+    sees a correctly-tagged C block; the blinding + verdict semantics are unchanged.
     """
     from types import SimpleNamespace
     from p2.mutators.dual_blind import classify_mutant, MutantStatus
@@ -1360,6 +1392,8 @@ def run_study4_blind_review(op, put_source, mutant_code, log_path,
         target_locator=packet["operator"]["target_locator"],
         transformation=packet["operator"]["transformation"],
         put_source=packet["put_source"], mutant_code=packet["mutant_code"])
+    if lang == "c":
+        prompt = prompt.replace("```python", "```c")
 
     raw, _m = _study4_call(reviewer_factory, prompt, kind="review",
                            slot_tag="reviewer", op_id=op.id, log_path=log_path,
@@ -1379,33 +1413,38 @@ def run_study4_blind_review(op, put_source, mutant_code, log_path,
 
 
 def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
-                    review=False):
+                    review=False, lang="py"):
     """Live Study-4 generation (+ optional blinded review) over the given PUTs.
 
     Returns {records, reviews, cache_dir}. All four vendors run on the gateway;
     the slot->model mapping is read from the pinned config via
-    ``study4_slot_factories(arm)``.
+    ``study4_slot_factories(arm)``. ``lang`` selects the grid: 'py' (default, the
+    Python H2-2 arms) or 'c' (the Study-4 H-LANG C-arm pilot: the PUT is loaded
+    as its C99 source + compiled ``CPutProgram`` original, admission is gcc-based).
     """
     cache_dir = Path(cache_dir) if cache_dir else STUDY4_CACHE
     cache_dir.mkdir(parents=True, exist_ok=True)
+    is_c = (lang == "c")
     slots = study4_slot_factories(arm)
     ops = sorted((o for o in OPERATORS if o.put in set(puts)), key=lambda o: o.id)
     records, reviews = [], []
     put_cache: dict = {}
     for op in ops:
         if op.put not in put_cache:
-            put_cache[op.put] = _load_put_program(op.put)
+            put_cache[op.put] = (_load_c_put_program(op.put) if is_c
+                                 else _load_put_program(op.put))
         original_code, original_fn = put_cache[op.put]
         for slot_tag, factory in slots:
             recs = study4_generate_slot(op, original_code, original_fn, slot_tag,
-                                        factory, attempts, cache_dir, log_path)
+                                        factory, attempts, cache_dir, log_path,
+                                        lang=lang)
             records.extend(recs)
             if review:
                 for r in recs:
                     if r.get("v_passed") and r.get("filename"):
                         code = (cache_dir / r["filename"]).read_text()
                         rev = run_study4_blind_review(op, original_code, code,
-                                                      log_path)
+                                                      log_path, lang=lang)
                         r["review"] = rev
                         reviews.append(rev)
     return {"records": records, "reviews": reviews, "cache_dir": str(cache_dir)}
@@ -1478,10 +1517,10 @@ def main():
         cache = Path(args.cache_dir) if args.cache_dir else STUDY4_CACHE
         log_path = Path(args.study4_log) if args.study4_log else (cache / "campaign_log.jsonl")
         print(f"== Study-4 LIVE (arm={args.arm}, attempts={attempts}, "
-              f"review={'on' if args.review else 'off'}) — slots "
+              f"lang={args.lang}, review={'on' if args.review else 'off'}) — slots "
               f"{study4_cfg.arm_slots(args.arm)} ==")
         out = study4_campaign(puts, args.arm, attempts, cache_dir=cache,
-                              log_path=log_path, review=args.review)
+                              log_path=log_path, review=args.review, lang=args.lang)
         n_pass = sum(1 for r in out["records"] if r.get("v_passed"))
         print(f"== Study-4 done: {len(out['records'])} gen, {n_pass} admitted, "
               f"{len(out['reviews'])} reviewed; log={log_path} ==")

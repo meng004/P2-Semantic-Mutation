@@ -72,9 +72,19 @@ CONFIRMATORY_PUTS = [
     "c1", "c2", "c3", "c4", "c5", "c6", "c7",
     "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8",
 ]
-# 12 original Study-1 PUTs (the C-port grid for H-LANG).
+# 12 original Study-1 PUTs (the ASPIRATIONAL C-port grid registered in v1.0).
 ORIGINAL_12 = ["a1", "a2", "a3", "b1", "b2", "b3",
                "c1", "c2", "c3", "d1", "d2", "d3"]
+# ACHIEVED C-port grid (amendment v1.1). The port landed at 7/12 PUTs; the five
+# sklearn/ML-library kernels (c1, c3, d1, d2, d3) could not be faithfully ported
+# to pure C99 and are disclosed as excluded (docs/prereg_v2/C_PORT_SPEC.md §3).
+# a2 is RETAINED confirmatory in the C grid (amendment v1.1 decision): the C-side
+# data is fresh and no C outcome was ever seen at freeze; the Python {a2,b4}
+# pilot firewall is a CODE-level firewall over the PYTHON confirmatory pools, and
+# H-LANG is a DISTINCT C-port estimand (already argued in v1.0 §2c). Keeping a2
+# maximises the achieved C grid at n=7 (vs n=6 if excluded).
+C_GRID_7 = ["a1", "a2", "a3", "b1", "b2", "b3", "c2"]
+C_GRID_N = 7                          # amendment v1.1 registered H-LANG n
 RICH_CLASSES = ("c", "d")
 PRIMARY_BY_CLASS = {"a": 1, "b": 2, "c": 5, "d": 2}  # PRIMARY_CELLS_V3
 
@@ -223,21 +233,49 @@ def recruitment_multiplier() -> dict:
 # (C) H-LANG — cross-language invariance power at n=12 (v5 DGP, delta ~ 0.43)
 # --------------------------------------------------------------------------- #
 def power_hlang(s2mod) -> dict:
-    """delta_C > 0 one-sided at n = 12, DGP calibrated from the Study-2 v5 pool
-    (observed aligned>cross delta = 0.4295). Reuses power_analysis_study2.
-    power_cliffs verbatim (same estimand as H2-1'), evaluated at n=12 (and n=28
-    for context)."""
+    """delta_C > 0 one-sided, DGP calibrated from the Study-2 v5 pool (observed
+    aligned>cross delta = 0.4295). Reuses power_analysis_study2.power_cliffs
+    verbatim (same estimand as H2-1').
+
+    AMENDMENT v1.1. v1.0 registered n = 12 (the full original grid). The C port
+    landed at 7/12 PUTs (C_PORT_SPEC §3: 5 sklearn kernels unportable), so the
+    ACHIEVED confirmatory C grid is n = 7 (a2 retained; see C_GRID_7). Power is
+    recomputed HONESTLY at the achieved n=7 (and n=6 as an a2-excluded
+    sensitivity). The n=12/18/24/28 curve is preserved byte-for-byte from v1.0
+    (same seed 20260708, same v5 DGP) by appending 6/7 to the end of the grid, so
+    the amendment adds the achieved points without perturbing the prior ones."""
     dgp_v5 = calibrate_hurdle(V5_MATRIX, CONFIRMATORY_PUTS)
-    cliffs = s2mod.power_cliffs(dgp_v5, n_puts=(12, 18, 24, 28),
+    # Grid order (12,18,24,28,6,7) preserves the v1.0 draws for 12..28 and
+    # appends the achieved C-grid points 6,7 (RNG stream unchanged for 12..28).
+    cliffs = s2mod.power_cliffs(dgp_v5, n_puts=(12, 18, 24, 28, 6, 7),
                                 thresholds=(0.0, 0.147))
-    p12 = cliffs["power_by_threshold"]["delta_ref_0.0"][12]
+    pw = cliffs["power_by_threshold"]["delta_ref_0.0"]
+    p7 = pw[C_GRID_N]                 # achieved C grid (a2 IN)
+    p6 = pw[6]                        # a2-excluded sensitivity
+    p12 = pw[12]                      # v1.0 registered (superseded)
     return {
-        "hypothesis": "H-LANG: on a C port of the 12 original Study-1 PUTs the "
+        "hypothesis": "H-LANG: on the ACHIEVED C port of the original Study-1 grid "
+                      "(n=7; 5 sklearn PUTs unportable, C_PORT_SPEC §3) the "
                       "aligned>cross direction replicates (delta_C > 0)",
         "estimand": "one-sided 95% percentile-bootstrap lower bound on Cliff's "
                     "delta (aligned j=k vs cross j!=k) > 0 — SAME estimand as "
                     "H2-1', primary-MP rule (PRIMARY_CELLS_V3) mapped to the C cells",
-        "n_puts": 12,
+        "amendment": "v1.1 (2026-07-09): registered n 12 -> 7 (achieved C-port "
+                     "intersection); a2 RETAINED confirmatory (fresh C data, no C "
+                     "outcome seen; Python pilot firewall is code-level over "
+                     "Python pools; H-LANG is a distinct C-port estimand, v1.0 "
+                     "§2c). Power recomputed honestly at n=7.",
+        "c_grid_roster": C_GRID_7,
+        "c_grid_excluded": ["c1", "c3", "d1", "d2", "d3"],
+        "c_grid_excluded_reason": "sklearn/ML-library kernels; no faithful pure-"
+                                  "C99 port (optimiser non-portability + "
+                                  "numpy-PCG64 training-design non-reproducibility"
+                                  "), C_PORT_SPEC §3",
+        "n_puts": C_GRID_N,
+        "primary_mp_rule_c": {"a": 1, "b": 2, "c": 5},   # PRIMARY_CELLS_V3, C cells present
+        "c_cells_total": C_GRID_N * 5,                    # 7 PUTs x 5 MP = 35 cells
+        "c_cells_aligned": C_GRID_N,                      # 1 primary MP per PUT
+        "c_cells_cross": C_GRID_N * 4,                    # 4 non-primary MP per PUT
         "dgp_source": "data/results/sms_track2_v5.json (Study-2 v5 aligned/cross "
                       "hurdle; observed delta = 0.4295, design-from-prior-study)",
         "v5_calibrated_true_delta": cliffs["true_delta_dgp"],
@@ -245,16 +283,24 @@ def power_hlang(s2mod) -> dict:
                    for k, v in dgp_v5.items()
                    if k in ("p_nonzero_aligned", "p_nonzero_cross",
                             "mean_aligned", "mean_cross")},
-        "power_delta_gt0_at_n12": p12,
-        "power_by_n": cliffs["power_by_threshold"]["delta_ref_0.0"],
-        "well_powered_at_n12": bool(p12 >= 0.80),
-        "note": "n=12 gives LESS power than the n=28 grid; reported honestly. The "
-                "direction claim at the v5-calibrated delta~0.43 DGP is "
-                "%s at n=12 (power %.4f). Registered as confirmatory regardless; "
-                "if power < 0.80 the achieved value is disclosed and the leg stays "
-                "confirmatory with that disclosure." % (
-                    "well-powered" if p12 >= 0.80 else "under 0.80",
-                    p12),
+        "power_delta_gt0_at_n7": p7,
+        "power_delta_gt0_at_n6_a2excluded": p6,
+        "power_delta_gt0_at_n12_v1_0_superseded": p12,
+        "power_by_n": {str(k): pw[k] for k in sorted(pw)},
+        "well_powered_at_n7": bool(p7 >= 0.80),
+        "note": "AMENDMENT v1.1: the achieved C grid is n=7, which gives LESS "
+                "power than the n=12 v1.0 registration and than the Python n=28 "
+                "grid — reported honestly, NO threshold moved. At the "
+                "v5-calibrated delta~0.43 DGP the one-sided directional claim is "
+                "%s at n=7 (power %.4f; a2-excluded n=6 sensitivity %.4f). This is "
+                "BELOW the 0.80 target; H-LANG stays registered as confirmatory "
+                "with the achieved power disclosed (the estimand is a DIRECTION "
+                "claim, not a magnitude claim, and the true delta~0.43 keeps it "
+                "decently powered). Had we wished to hit 0.80 we would have needed "
+                "the unportable ML PUTs; we do not fabricate them." % (
+                    "well-powered" if p7 >= 0.80 else "under-powered vs 0.80 "
+                    "(decently powered for a direction claim)",
+                    p7, p6),
     }
 
 
@@ -272,6 +318,10 @@ def main():
                 "h4ppp": "data/results/h4_graded_v6.json (v6 rich detection rate)",
                 "hlang": "data/results/sms_track2_v5.json (v5 delta~0.43)",
             },
+            "amendment_v1_1": "2026-07-09: H-LANG registered n 12 -> 7 (achieved "
+                              "C-port intersection; 5 sklearn PUTs unportable, "
+                              "C_PORT_SPEC §3). a2 retained confirmatory. Power "
+                              "recomputed honestly at n=7 (below 0.80, disclosed).",
             "numpy": np.__version__, "scipy": stats.__name__.split(".")[0],
             "no_llm_calls": True,
         },
@@ -296,9 +346,11 @@ def main():
             m, row["per_put_detect_p_m"], row["expected_pooled_n_rich"],
             row["P_n_rich_ge_24"], row["meets_gate"]))
     c = result["c_hlang_cross_language"]
-    print("[H-LANG] v5 true delta = %s | power(delta>0) @n12 = %.4f | well-powered=%s" % (
-        c["v5_calibrated_true_delta"], c["power_delta_gt0_at_n12"],
-        c["well_powered_at_n12"]))
+    print("[H-LANG] v5 true delta = %s | ACHIEVED C grid n=%d %s | "
+          "power(delta>0) @n7 = %.4f (a2-excl n6 = %.4f) | well-powered@0.80=%s" % (
+              c["v5_calibrated_true_delta"], c["n_puts"], c["c_grid_roster"],
+              c["power_delta_gt0_at_n7"], c["power_delta_gt0_at_n6_a2excluded"],
+              c["well_powered_at_n7"]))
 
 
 if __name__ == "__main__":

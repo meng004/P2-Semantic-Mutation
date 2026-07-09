@@ -318,3 +318,99 @@ SSOT: `data/results/study4/pilot_report.json`,
   non-retryable-not-retried), per-call cost accounting + log, blind-code vendor
   redaction, review CONFIRMED-no-arbitration vs UNCERTAIN-triggers-arbitration,
   and a full offline `study4_campaign` wiring test. No live calls in pytest.
+
+---
+
+# Study-4 C-arm (H-LANG) calibration pilot — `{a3, b2}` LIVE gateway, `--lang c` (2026-07-09)
+
+REDUCED pilot (1 attempt per operator x slot, BOTH arms -> 18 + 18 = 36 live
+generations) over the four-vendor gateway through the NEW C-language path
+(`--lang c`). Driver: `scripts/pilot_smoke_study4_cport.py`. Wiring:
+`scripts/cross_source_campaign.py` (`study4_campaign(..., lang="c")` ->
+`PROMPT_TEMPLATE_C`, `admit_c_mutant` gcc admission), `src/p2/cport/{adapter,
+validation}.py`, `scripts/sms_campaign.py` (`evaluate_cell(..., lang="c")`).
+
+**Firewall (registration §0.3 A2, §2b′).** a2 is CONFIRMATORY in the C grid, so
+the C-arm pilot uses **`{a3, b2}`** (a3 deterministic heat-FDM; b2 stochastic
+Metropolis–Hastings) — NOT a2. All outputs are `v7c_pilot`-tagged
+(`{a3,b2}_pool_v7c_pilot_{same,cross}`, `data/results/study4/sms_v7c_pilot_*.json`);
+the confirmatory `data/results/sms_track2_v7c.json` and `{put}_pool_v7c` pools are
+**verified absent** (asserted by the driver). Confirmatory C run NOT started. Only
+CODE-level fixes below; no threshold, estimand, DGP, primary-MP, or roster changed.
+
+## Defect P13 — `p2.cport.adapter._resolve_source` crash on an empty LLM body
+
+- **Defect.** `_resolve_source("")` executed `Path("")`, which resolves to the
+  **cwd directory** (`.`). `Path("").exists()` is True (a directory exists), so
+  the adapter called `.read_text()` on `.` and raised
+  `IsADirectoryError: [Errno 21] Is a directory: '.'`, crashing the whole
+  campaign the first time any model returned an empty/whitespace body (a
+  truncated or fence-only response). Surfaced live at `b2_HP1` in the same arm.
+- **Root cause.** The path-vs-raw-code heuristic used `p.exists()` (true for a
+  directory) and did not special-case the empty string; `Path("") == Path(".")`.
+- **Fix (code-level).** Treat a `str` as a file path ONLY when it is non-empty,
+  single-line, and `Path(s).is_file()` (false for `.`); otherwise return it as
+  raw code (so an empty body falls through to gcc and fails as a normal V1 miss).
+  A `Path` argument is still always read. Guarded `OSError/ValueError` for
+  over-long strings.
+- **Why code-level.** Adapter robustness against malformed LLM output; it changes
+  how a body is routed to gcc, never any measured quantity. Regression:
+  `tests/cport/test_adapter.py::test_empty_or_blank_body_is_raw_not_path`
+  (parametrised over `"", "   ", ".", "  \n  "`).
+
+## Defect P14 — C generation truncated at the Python-inherited `max_tokens=800`
+
+- **Defect.** `study4_generate_slot` issued the C generation call with the
+  Python default `max_tokens=800`. A self-contained C mutant carries the FULL
+  program (includes + `double program(double)` + the REPL `main`), 2–4x the
+  token length of a Python mutant body, so the longer kernels (especially `a3`
+  heat-FDM) were **truncated mid-program** -> incomplete source -> `gcc` V1 fail
+  (and the empty-tail bodies that tripped P13). Baseline (pre-fix) same-arm
+  claude C: **7 PASS / 8 FAIL**, and **7 of the 8 FAILs were at the `ct=800`
+  cap** (5 gcc-compile fails, 3 V3-triviality); the PASSes needed ct 1179–1543.
+- **Root cause.** The 800-token budget is correct for a Python mutant body but
+  too small for a whole C program; the C path inherited it unchanged.
+- **Fix (code-level).** `C_GEN_MAX_TOKENS = 2048` passed to `_study4_call` when
+  `lang == "c"` (the per-model `min_max_tokens` floor still applies on top).
+  Post-fix, the same a3 slots that truncated at ct=800 completed at ct
+  1561/1901/1891 and compiled.
+- **Why code-level.** A token budget sized to the output language; no threshold,
+  estimand, DGP, primary-MP, or roster is touched.
+
+## Pilot run record (post-fix, LIVE) — per-vendor C-code quality (NEW territory)
+
+36 live generations (same 18 + cross 18), 1 attempt/op/slot. Ops: a3
+(CE1/OS1/SI1), b2 (HP1/CF1/CE1). Admission = gcc `-std=c99 -O0 -Wall` compile
+(V1) + adapter finite-probe (V2) + non-triviality vs the C original (V3).
+
+| Vendor (role) | n | compile-fail (V1) | V3-trivial | admitted | admit rate | served | mean lat |
+|---|---|---|---|---|---|---|---|
+| `gpt-5.5` (cross src1) | 6 | **0/6 (0.00)** | 1 | 5 | 0.83 | gpt-5.5 | 21.5 s |
+| `gemini-3.5-flash` (cross src2) | 6 | 1/6 (0.17) | 0 | 5 | 0.83 | gemini-3.5-flash | 7.1 s |
+| `claude-fable-5` (same, all 3 slots) | 18 | 1/18 (0.06) | 3 | 14 | 0.78 | claude-fable-5 | 16.3 s |
+| `grok-4.1` (cross src3) | 6 | **5/6 (0.83)** | 1 | **0/6 (0.00)** | 0.00 | **grok-4.3** | 15.1 s |
+
+**Headline (honest, NEW territory — LLMs writing C).** After the P14 budget fix,
+`gpt-5.5` (0/6 compile-fail), `gemini-3.5-flash` (1/6), and `claude-fable-5`
+(1/18) write compilable C99 reliably. **`grok-4.1` (served `grok-4.3`) does NOT**:
+5/6 of its C bodies failed `gcc -std=c99 -O0 -Wall` and **0/6 were admitted** —
+a genuine cross-vendor capability gap in generating compilable C, recorded
+without spin. Pilot totals: **36 generated, 24 admitted (0.667)** (same 14/18,
+cross 10/18); **24 blinded reviews** (claude-fable-5), **0 arbitrations** (no
+reviewer-UNCERTAIN); SMS ran on all 10 pilot cells per arm (2 nonzero-kill cells
+each). The grok C-compile gap is a live cost/feasibility signal for the
+confirmatory C run (the cross arm's src3 slot will admit far fewer C mutants than
+its Python counterpart); it is recorded here as a pilot observation, NOT a
+protocol change.
+
+SSOT: `data/results/study4/cport_pilot_report.json`,
+`data/results/study4/sms_v7c_pilot_{same,cross}.json`.
+
+## Regression tests added
+
+- `tests/cport/test_adapter.py::test_empty_or_blank_body_is_raw_not_path` (P13
+  empty/blank/`.` body -> raw code -> clean `CCompileError`, never
+  `IsADirectoryError`).
+- The `--lang c` Study-4 wiring (`study4_campaign`/`study4_generate_slot`/
+  `run_study4_blind_review` `lang` params) is additive; the Python arms are
+  byte-unchanged (existing `tests/mutators/test_study4_client.py` stays green).

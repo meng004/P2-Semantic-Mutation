@@ -65,3 +65,15 @@ def test_load_c_put_a2_matches_formula():
     for x in (0.0, 0.5, 1.0):
         assert prog(x) == pytest.approx(6.0 + 3.0 * x, rel=1e-12)
     prog.close()
+
+
+@pytest.mark.parametrize("body", ["", "   ", ".", "  \n  "])
+def test_empty_or_blank_body_is_raw_not_path(body, tmp_path):
+    """P13 (C-arm pilot): an empty/whitespace LLM body must be treated as raw
+    code (-> a clean gcc V1 failure), NOT as Path("") == the cwd directory
+    (which raised IsADirectoryError and crashed admission)."""
+    from p2.cport.adapter import _resolve_source
+    text, stem = _resolve_source(body)
+    assert text == body and stem == "inline"
+    with pytest.raises(CCompileError):          # never IsADirectoryError
+        compile_c_source(body, tmp_path)

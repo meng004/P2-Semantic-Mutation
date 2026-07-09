@@ -1,4 +1,17 @@
-# Pre-Registration — Study 4 (Confirmatory) — v1.0
+# Pre-Registration — Study 4 (Confirmatory) — v1.0 (+ Amendment v1.1, 2026-07-09)
+
+> **AMENDMENT v1.1 (2026-07-09) — H-LANG grid narrowed to the ACHIEVED C port.**
+> The C port landed at **7/12 PUTs** (`a1, a2, a3, b1, b2, b3, c2`); the five
+> sklearn/ML-library kernels (`c1, c3, d1, d2, d3`) could not be faithfully
+> ported to pure C99 and are disclosed as excluded (`docs/prereg_v2/C_PORT_SPEC.md`
+> §3). The H-LANG registered n therefore drops **12 → 7**; **a2 is RETAINED
+> confirmatory** in the C grid (decision + argument in §0.3 and §2c). H-LANG power
+> is **recomputed honestly at n=7 = 0.6865** (below the 0.80 target, disclosed;
+> a2-excluded n=6 sensitivity 0.6085) on the SAME seed 20260708 and v5-calibrated
+> DGP. The C-arm primary-MP mapping and C-cell count are registered in §0.3/§2c.
+> All other families (H2-2, H4''') are UNCHANGED. Full amendment: §0.3 + §10.
+> This amendment is pre-any-C-confirmatory-data: no C mutant/SMS/delta_C outcome
+> was seen (the C-arm calibration pilot on `{a3, b2}`, §2b′, fixes CODE only).
 
 **Paper**: *When Same-Prompt LLM Source Diversity Doesn't Help — Semantic
 Mutation Operator Ablation in Metamorphic Testing for Single-Output Scientific
@@ -79,6 +92,28 @@ convention retained). Any change after this freeze is a logged, dated entry in
 Attestation applies to **every** row: *frozen before any Study-4 data
 generation; no Study-4 outcome was visible; v4/v5/v6 used for calibration only.*
 
+### 0.3 Amendment v1.1 (2026-07-09) — achieved C-port grid + honest H-LANG re-power
+
+Dated, disclosed amendment to the H-LANG (Family L) leg **only**. Made **before
+any C confirmatory data exists** (verified: no `data/results/hlang_delta_v7c.json`,
+no `data/results/sms_track2_v7c.json`, no `{put}_pool_v7c` confirmatory pool). H2-2
+and H4''' are byte-unchanged. Every change below is either a **mechanical
+port-feasibility fact** (which PUTs compile in C99) or an **honest re-computation
+of power at the achieved n** — neither is a selection on any C outcome.
+
+| # | Clause | v1.0 | v1.1 | Why (outcome-independent) |
+|---|---|---|---|---|
+| A1 | H-LANG grid | 12 original PUTs | **7 ported PUTs** `a1,a2,a3,b1,b2,b3,c2` | the port achieved 7/12; the 5 sklearn kernels `c1,c3,d1,d2,d3` are unportable to pure C99 (optimiser non-portability + numpy-PCG64 training-design non-reproducibility, `C_PORT_SPEC.md` §3). A partial disclosed grid beats a fabricated 12-PUT grid |
+| A2 | **a2 disposition** | in the 12-grid (v1.0 §2c argued it in "at the language level") | **RETAINED confirmatory (n=7)** | *Decision + argument*: (i) the C-side data is FRESH and no C `delta_C`/SMS outcome was ever seen at freeze; (ii) the Python `{a2,b4}` firewall is a **code-level** firewall over the **Python** confirmatory pools (§2b), whereas H-LANG is a **distinct C-port estimand** — v1.0 §2c already registered exactly this; (iii) retaining a2 maximises the achieved grid (n=7 vs n=6). To keep the pilot/confirmatory firewall airtight the C-arm calibration pilot uses `{a3, b2}`, **not** a2 (§2b′), so a2's confirmatory C cells are never previewed. *(a2-excluded n=6 is registered as a disclosed sensitivity, not the primary.)* |
+| A3 | H-LANG power | 0.8735 @ n=12 | **0.6865 @ n=7** (a2-excl n=6 = 0.6085) | recomputed on the SAME seed 20260708 + v5 DGP (true delta 0.4385); the n=12/18/24/28 curve is byte-preserved. **Below the 0.80 target — disclosed, NO threshold moved.** The estimand is a *direction* claim at delta~0.43, which stays decently powered; the only way to reach 0.80 would be the unportable ML PUTs, which we do not fabricate (`power_study4.json::c…power_delta_gt0_at_n7`) |
+| A4 | C-arm primary-MP map | (implicit) | **A→MP1, B→MP2, C→MP5** (PRIMARY_CELLS_V3), mapped cell-for-cell onto the 7 C PUTs: `a1,a2,a3→MP1; b1,b2,b3→MP2; c2→MP5` | SAME deterministic class rule as Studies 2–3 (§4a); class membership of the original PUTs is frozen; the port preserves class, not code |
+| A5 | C-cell count | (implicit) | **35 cells** (7 PUTs × 5 MP); **aligned = 7** (1 primary MP/PUT), **cross = 28** (4 non-primary MP/PUT) | mechanical from A1 + A4 |
+| A6 | SSOT paths | `sms_track2_vC.json`, `hlang_delta_vC.json` | **`sms_track2_v7c.json`, `hlang_delta_v7c.json`** | align to the **v7c** pool-tag convention (`C_PORT_SPEC.md` §4 pool tag `v7c`, `sms_campaign.resolve_pool_dir("v7c")`); a code-level path rename, no estimand change |
+
+**Decision rule, estimand, test, α, and DGP for H-LANG are UNCHANGED** (delta_C > 0;
+one-sided 95% percentile-bootstrap lower bound; B = 10,000; seed 20260708). Only
+the roster (12 → 7, port feasibility) and the resulting achieved power change.
+
 ---
 
 ## 1. Confirmatory research questions (three families)
@@ -114,7 +149,7 @@ Study 4 registers exactly three confirmatory verdicts: **H2-2** (Family B),
 |---|---|---|---|---|
 | **H2-2** cross-vendor Delta-delta | **28 PUTs** paired (per arm n_aligned=28, n_cross=112) | \|Delta-delta\| >= 0.20 two-sided | **0.793** @28 | `power_study4.json::a…power_by_delta_delta.dd_0.2[28]` |
 | **H4'''-graded** (pooled rich C+D) | **pooled n_rich >= 24** target (2 arms x 15 rich PUTs, x4 slots) | mean share >= 0.15 | recruitment: **P(n_rich>=24) = 0.92** @ x4 | `power_study4.json::b…multiplier_curve.4` |
-| **H-LANG** delta_C > 0 | **12 PUTs** (C port of the original 12) | delta_C > 0 one-sided | **0.8735** @ n=12 | `power_study4.json::c…power_delta_gt0_at_n12` |
+| **H-LANG** delta_C > 0 *(v1.1)* | **7 PUTs** (achieved C port: `a1,a2,a3,b1,b2,b3,c2`; a2 retained) | delta_C > 0 one-sided | **0.6865** @ n=7 *(a2-excl n=6 = 0.6085)* — below 0.80, disclosed | `power_study4.json::c…power_delta_gt0_at_n7` |
 
 **H2-2 n note.** The paired Delta-delta = 0.20 leg reaches **0.793** at n = 28
 (paired SE 0.072, calibrated rho 0.759) — marginally below the 0.80 target,
@@ -145,12 +180,19 @@ detected pooled n_rich ~ Binomial(30, p_m). The multiplier sweep
 multiplier is x4** (expected pooled n_rich 26.1, P(>=24) = 0.92). Cost: x4
 roughly quadruples the C/D mutant-generation + blinded-review budget on the 15
 rich PUTs across both arms; A/B slots are unchanged, so whole-campaign cost rises
-well below 4x. **H-LANG power note.** The C-port grid is the 12 original PUTs
-(n = 12), which gives less power than the n = 28 grid; the v5-calibrated DGP
-(true delta = 0.4385, matching the observed v5 delta = 0.4295) keeps the
-one-sided direction claim **well-powered at 0.8735**, so H-LANG is registered as
-confirmatory with power > 0.80 disclosed; had it fallen below 0.80 it would
-still be registered confirmatory with the achieved value disclosed.
+well below 4x. **H-LANG power note (AMENDED v1.1).** The C-port grid landed at the
+**7 ported PUTs** (n = 7; the 5 sklearn kernels are unportable, `C_PORT_SPEC.md`
+§3), which gives less power than the v1.0 n = 12 registration and than the n = 28
+Python grid. On the SAME seed 20260708 and the v5-calibrated DGP (true delta =
+0.4385, matching the observed v5 delta = 0.4295) the one-sided direction claim is
+powered at **0.6865 @ n=7** (a2-excluded n=6 sensitivity 0.6085). This is **below
+the 0.80 target and is disclosed exactly as pre-committed — no threshold is moved
+and the leg stays registered as confirmatory**, because (i) the estimand is a
+*direction* claim (not a magnitude claim), (ii) the true delta~0.43 keeps it
+decently powered, and (iii) the only route to 0.80 would be fabricating the
+unportable ML PUTs, which we refuse. *(v1.0's original text: "well-powered at
+0.8735 @ n=12"; superseded by this amendment, which the frozen body annotates
+rather than deletes.)*
 
 ### 2b. Calibration pilot — reuse the `{a2, b4}` protocol verbatim
 
@@ -185,16 +227,40 @@ The Study-2/3 **2-PUT calibration pilot `{a2, b4}`** protocol is reused verbatim
   C c1,c2,c3,c4,c5,c6,c7; D d1,d2,d3,d4,d5,d6,d7,d8), identical IDs to Studies
   2–3. **Rich-class subset for H4'''-graded = C7 + D8 = 15 PUTs**, each generated
   in BOTH arms at the **x4** per-operator slot multiplier.
-- **H-LANG roster** = the **12 original Study-1 PUTs** (a1,a2,a3,b1,b2,b3,c1,c2,
-  c3,d1,d2,d3) **ported to C**. A sibling agent is building the port **blind to
-  outcomes**; the C-port specification is referenced as forthcoming
-  `docs/prereg_v2/C_PORT_SPEC.md` (frozen hypothesis NOW, before any port kill is
-  visible). The C mutants are produced through the same four-vendor cross-vendor
-  slots (§5); review blinded as below. Note the H-LANG grid deliberately includes
-  the pilot PUTs `a2`/`b4`-analogues at the *language* level — the `{a2,b4}`
-  code-firewall applies to the Python confirmatory pools, whereas H-LANG is a
-  distinct C-port estimand on the original 12; no Python pilot outcome enters the
-  C-port delta.
+- **H-LANG roster** *(AMENDED v1.1)* = the **7 ported Study-1 PUTs**
+  (`a1, a2, a3, b1, b2, b3, c2`) **ported to C** (`docs/prereg_v2/C_PORT_SPEC.md`,
+  authored blind to mutation outcomes). v1.0 registered the full 12; the 5
+  sklearn/ML-library kernels (`c1, c3, d1, d2, d3`) are **unportable** to pure
+  C99 (§0.3 A1) and are disclosed as excluded. **a2 is RETAINED confirmatory**
+  (§0.3 A2): the H-LANG grid deliberately keeps the `a2` pilot analogue at the
+  *language* level — the `{a2,b4}` code-firewall applies to the **Python**
+  confirmatory pools, whereas H-LANG is a **distinct C-port estimand**; no Python
+  pilot outcome enters the C-port delta, and the C-side data is fresh (no C
+  outcome seen at freeze). **C-arm primary-MP mapping** (same class rule,
+  PRIMARY_CELLS_V3): `a1,a2,a3 → MP1`, `b1,b2,b3 → MP2`, `c2 → MP5`; **C-cell
+  count = 35** (7 × 5), aligned = 7, cross = 28. The C mutants are produced
+  through the same four-vendor cross-vendor slots (§5); review blinded as below.
+
+- **§2b′ C-arm calibration pilot (AMENDED v1.1).** Because a2 is CONFIRMATORY in
+  the C grid, the C-arm pilot must NOT touch it. The C-arm pilot roster is
+  **`{a3, b2}`** — `a3` (explicit-Euler heat FDM, deterministic; exercises the
+  gcc-admission + `CPutProgram` path on a deterministic kernel) and `b2`
+  (Metropolis–Hastings, stochastic; exercises the embedded-LCG/Box-Muller RNG
+  contract, `C_PORT_SPEC.md` §1). It runs 1 attempt per operator × cross-vendor
+  slot (reduced, vs confirmatory K=3), generates C mutants → gcc admission (V1 =
+  compile) → v7c-**pilot**-tagged pool → SMS via the cport adapter → blinded
+  review → ingest. **Firewall.** Pilot outputs are `v7c_pilot`-tagged and never
+  the confirmatory `sms_track2_v7c.json`; the confirmatory H-LANG pool is
+  regenerated FRESH, one-shot, full-budget through the pre-frozen scorer, with
+  the delta_C > 0 rule / estimand / DGP already frozen blind to all C outcomes.
+  The pilot may fix **code defects only** (LLM→C generation wiring, fence
+  stripping, gcc admission, cport SMS adapter), logged as **P13+** in `PILOT_LOG.md`
+  and §10 before any confirmatory C run. `a3`/`b2` are confirmatory PUTs previewed
+  only at reduced scale for machinery smoke; the aggregate delta_C over the 7 C
+  PUTs has no per-PUT threshold to game, and the frozen decision rule predates
+  every C outcome (honest disclosure; the only fully-excluded firewall option
+  would drop the grid to n=5, which we judge worse than an n=7 grid with a
+  code-only pilot preview).
 
 **Fresh generation is required.** Study 4 generates **all** mutants fresh (fresh
 seeds, fresh validated pools: `sms_track2_v7.json` cross-source arm,
@@ -295,17 +361,22 @@ licensed verdict.
   mathematics*, which a language port preserves. **Prediction: the construct is
   LANGUAGE-INVARIANT** — the aligned-dominates-cross direction that held in
   Python must replicate in C.
-- **Registered prediction / statistic**: on a C port of the 12 original Study-1
-  PUTs, Cliff's delta between the aligned (j = k, primary MP per PRIMARY_CELLS_V3
-  mapped to the C cells) and cross (j != k) SMS slices, delta_C.
-- **Threshold / power**: **delta_C > 0** (one-sided stochastic dominance). Power
-  simulated at **n = 12** from the Study-2 v5 DGP (true delta = 0.4385, matching
-  the observed v5 delta = 0.4295): **0.8735**
-  (`power_study4.json::c…power_delta_gt0_at_n12`). n = 12 gives less power than
-  the n = 28 grid — reported honestly — but the delta~0.43-calibrated DGP keeps
-  the one-sided direction claim **well-powered (> 0.80)**. Had it fallen below
-  0.80, H-LANG would remain registered as confirmatory with the achieved power
-  disclosed (the direction claim, not a magnitude claim, is the estimand).
+- **Registered prediction / statistic** *(AMENDED v1.1)*: on the achieved C port
+  of **7** original Study-1 PUTs (`a1,a2,a3,b1,b2,b3,c2`), Cliff's delta between
+  the aligned (j = k, primary MP per PRIMARY_CELLS_V3 mapped cell-for-cell to the
+  C cells: `a→MP1, b→MP2, c→MP5`) and cross (j != k) SMS slices, delta_C. C-cell
+  count = 35 (7 × 5); aligned = 7, cross = 28.
+- **Threshold / power** *(AMENDED v1.1)*: **delta_C > 0** (one-sided stochastic
+  dominance — UNCHANGED). Power simulated at the achieved **n = 7** from the
+  Study-2 v5 DGP (true delta = 0.4385, matching observed v5 delta = 0.4295):
+  **0.6865** (`power_study4.json::c…power_delta_gt0_at_n7`; a2-excluded n=6
+  sensitivity 0.6085). This is **below the 0.80 target — reported honestly, no
+  threshold moved**. The delta~0.43-calibrated DGP keeps the one-sided *direction*
+  claim decently powered, and H-LANG **remains registered as confirmatory with
+  the achieved power disclosed** exactly as v1.0 pre-committed ("had it fallen
+  below 0.80 it would still be registered confirmatory with the achieved value
+  disclosed"). The estimand is a direction claim, not a magnitude claim. *(v1.0:
+  0.8735 @ n=12; superseded by this amendment — port feasibility, not outcome.)*
 - **Test**: one-sided 95% percentile-bootstrap lower bound on delta_C > 0
   (multinomial two-sample bootstrap, B = 10,000, seed 20260708) — the SAME
   estimand and bootstrap as H2-1'. α 0.05, one-sided. Family L (single test).
@@ -428,8 +499,10 @@ the Tier-A/B firewall — all closed under Study 2 v1.1 §6 and unchanged.
 **SSOT paths (Study 4)**: `sms_track2_v7.json` (cross-source arm),
 `sms_track2_v7_same.json` (same-source arm), `dualblind_delta_delta_v7.json`
 (H2-2 verdict), `h4_graded_v7.json` (pooled H4'''-graded verdict),
-`sms_track2_vC.json` (C-port pool) + `hlang_delta_vC.json` (H-LANG verdict);
-power reference `power_study4.json`.
+`sms_track2_v7c.json` (C-port pool) + `hlang_delta_v7c.json` (H-LANG verdict)
+*(AMENDED v1.1: `vC` → `v7c` to match the `C_PORT_SPEC.md` §4 pool tag and
+`sms_campaign.resolve_pool_dir("v7c")`; a code-level path rename)*; power
+reference `power_study4.json`.
 
 ### 7b. Analysis-script contracts (sibling MUST pre-freeze before generation)
 
@@ -444,19 +517,22 @@ power reference `power_study4.json`.
   `sms_track2_v7_same.json`, `--out data/results/dualblind_delta_delta_v7.json`.
   Its `STUDY1_DD = -0.009` sign-reversal flag is retained for the §8 construct
   check. (The `--gated-h2-2` path is simply not used.)
-- **`scripts/compute_hlang_delta.py`** (NEW — pre-freeze required).
-  - **Input**: the frozen C-port validated pool `sms_track2_vC.json` (per-cell
+- **`scripts/compute_hlang_delta.py`** (NEW — pre-freeze required; *AMENDED v1.1:
+  n 12 → 7, `vC` → `v7c`*).
+  - **Input**: the frozen C-port validated pool `sms_track2_v7c.json` (per-cell
     `outcomes` = {file, label}); `PRIMARY_CELLS_V3` mapped to the C cells of the
-    12 original PUTs.
-  - **Computation**: split aligned (j = k) / cross (j != k) SMS over the 12 C
+    **7** ported PUTs (`a1,a2,a3,b1,b2,b3,c2`).
+  - **Computation**: split aligned (j = k) / cross (j != k) SMS over the **7** C
     PUTs by the primary-MP rule; two-sample Cliff's delta_C; one-sided 95%
     percentile-bootstrap lower bound (multinomial two-sample bootstrap,
     B = 10,000, seed 20260708) — byte-identical bootstrap to
     `compute_dualblind_delta.analyze_h2_1`.
-  - **Output**: `data/results/hlang_delta_vC.json` with `cliffs_delta_C`,
-    `one_sided_95_lower_bound`, `n_aligned`, `n_cross`, `n_puts = 12`, and
+  - **Output**: `data/results/hlang_delta_v7c.json` with `cliffs_delta_C`,
+    `one_sided_95_lower_bound`, `n_aligned`, `n_cross`, `n_puts = 7`, and
     `verdict = (one_sided_95_lower_bound > 0)`. Prints the licensed verdict string.
   - **Decision rule (frozen)**: confirm iff `one_sided_95_lower_bound > 0`.
+  - **Exit-2 no-data**: prints the analysis-leg error to stderr and returns 2 if
+    the C-port pool SSOT is absent (no C confirmatory data exists at freeze).
 - **`scripts/compute_h4_graded.py --pooled`** (flag contract — pre-freeze
   required).
   - **New flag**: `--pooled A.json B.json` (or repeated `--matrix`) admits the
@@ -559,6 +635,42 @@ formats, `grok-4.1`→`grok-4.3` id remap logging, slot-multiplier / `--pooled`
 wiring, review-packet vendor-tag stripping). Each P10+ entry is appended here and
 in `docs/prereg_v2/PILOT_LOG.md` **before** the confirmatory run, verified
 code-level (never protocol-level).
+
+**Amendment v1.1 — 2026-07-09 (H-LANG / Family L only; §0.3).** The C port
+achieved **7/12 PUTs** (`a1,a2,a3,b1,b2,b3,c2`); the 5 sklearn kernels
+(`c1,c3,d1,d2,d3`) are unportable to pure C99 (`C_PORT_SPEC.md` §3). Registered
+H-LANG **n 12 → 7**; **a2 RETAINED confirmatory** (fresh C data, no C outcome
+seen; the Python `{a2,b4}` firewall is code-level over the Python pools; H-LANG
+is a distinct C-port estimand — v1.0 §2c). Power **recomputed honestly at n=7 =
+0.6865** (below 0.80, disclosed; a2-excluded n=6 sensitivity 0.6085), SAME seed
+20260708 + v5 DGP; the n=12/18/24/28 curve is byte-preserved. Registered the
+**C-arm primary-MP map** (A→MP1, B→MP2, C→MP5) and **C-cell count 35** (7×5;
+aligned 7, cross 28). SSOT paths `vC`→`v7c` (pool-tag convention). The
+`compute_hlang_delta.py` §7b contract updated (n=7, `v7c` I/O). The **C-arm
+calibration pilot** uses `{a3, b2}` (NOT a2, which is confirmatory), 1
+attempt/op/slot, v7c-pilot-tagged, code-fixes-only firewall (§2b′); pilot-forced
+code fixes are logged as **P13+** below and in `PILOT_LOG.md` before any C
+confirmatory run. **Decision rule / estimand / test / α / DGP for H-LANG are
+UNCHANGED**; only roster (port feasibility) and achieved power changed. H2-2 and
+H4''' are byte-unchanged. Made before any C confirmatory data existed.
+
+**Incident ledger P13+ (Study-4 C-arm pilot, {a3,b2}, LIVE, 2026-07-09).** The
+C-arm calibration pilot opened the ledger with two code-level fixes, both logged
+in `PILOT_LOG.md` **before** any confirmatory C run:
+- **P13** — `p2.cport.adapter._resolve_source` crashed on an empty LLM body
+  (`Path("")` resolves to the cwd directory `.` -> `IsADirectoryError`). Fixed to
+  route empty/non-file strings as raw code (gcc then fails them as a normal V1
+  miss). Regression test added.
+- **P14** — C generation was truncated at the Python-inherited `max_tokens=800`
+  (a whole C program is 2–4x a Python mutant body), causing systematic `gcc` V1
+  fails on the longer kernels; raised the C-generation budget to 2048.
+Post-fix per-vendor C-code quality (36 gens): `gpt-5.5` 0/6 compile-fail,
+`gemini-3.5-flash` 1/6, `claude-fable-5` 1/18 — all reliable; **`grok-4.1`
+(served `grok-4.3`) 5/6 compile-fail, 0/6 admitted** — a genuine cross-vendor gap
+in writing compilable C99, recorded honestly (NEW territory: LLMs writing C).
+24/36 admitted, 24 blinded reviews, 0 arbitrations. All code-level (no threshold,
+estimand, DGP, primary-MP, or roster changed); the confirmatory C run is NOT
+started. Full record: `PILOT_LOG.md` "Study-4 C-arm pilot" section.
 
 *(No further amendments. Any post-freeze change — a pilot-triggered code fix, a
 vendor id remap, a seed correction — is appended here with date and rationale

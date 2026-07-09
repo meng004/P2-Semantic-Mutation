@@ -14,6 +14,7 @@
       "h4ppp": "data/results/h4_graded_v6.json (v6 rich detection rate)",
       "hlang": "data/results/sms_track2_v5.json (v5 delta~0.43)"
     },
+    "amendment_v1_1": "2026-07-09: H-LANG registered n 12 -> 7 (achieved C-port intersection; 5 sklearn PUTs unportable, C_PORT_SPEC \u00a73). a2 retained confirmatory. Power recomputed honestly at n=7 (below 0.80, disclosed).",
     "numpy": "2.4.6",
     "scipy": "scipy",
     "no_llm_calls": true
@@ -127,9 +128,35 @@
     "cost_note": "x2 is INSUFFICIENT (expected pooled n_rich 19.2, P(>=24) 0.05). The registered multiplier is x4, which roughly 4x-es the C/D mutant-generation + blinded-review budget on the 15 rich PUTs across both arms; A/B slots are unchanged, so the whole-campaign cost rises well below 4x."
   },
   "c_hlang_cross_language": {
-    "hypothesis": "H-LANG: on a C port of the 12 original Study-1 PUTs the aligned>cross direction replicates (delta_C > 0)",
+    "hypothesis": "H-LANG: on the ACHIEVED C port of the original Study-1 grid (n=7; 5 sklearn PUTs unportable, C_PORT_SPEC \u00a73) the aligned>cross direction replicates (delta_C > 0)",
     "estimand": "one-sided 95% percentile-bootstrap lower bound on Cliff's delta (aligned j=k vs cross j!=k) > 0 \u2014 SAME estimand as H2-1', primary-MP rule (PRIMARY_CELLS_V3) mapped to the C cells",
-    "n_puts": 12,
+    "amendment": "v1.1 (2026-07-09): registered n 12 -> 7 (achieved C-port intersection); a2 RETAINED confirmatory (fresh C data, no C outcome seen; Python pilot firewall is code-level over Python pools; H-LANG is a distinct C-port estimand, v1.0 \u00a72c). Power recomputed honestly at n=7.",
+    "c_grid_roster": [
+      "a1",
+      "a2",
+      "a3",
+      "b1",
+      "b2",
+      "b3",
+      "c2"
+    ],
+    "c_grid_excluded": [
+      "c1",
+      "c3",
+      "d1",
+      "d2",
+      "d3"
+    ],
+    "c_grid_excluded_reason": "sklearn/ML-library kernels; no faithful pure-C99 port (optimiser non-portability + numpy-PCG64 training-design non-reproducibility), C_PORT_SPEC \u00a73",
+    "n_puts": 7,
+    "primary_mp_rule_c": {
+      "a": 1,
+      "b": 2,
+      "c": 5
+    },
+    "c_cells_total": 35,
+    "c_cells_aligned": 7,
+    "c_cells_cross": 28,
     "dgp_source": "data/results/sms_track2_v5.json (Study-2 v5 aligned/cross hurdle; observed delta = 0.4295, design-from-prior-study)",
     "v5_calibrated_true_delta": 0.4385,
     "v5_dgp": {
@@ -138,14 +165,18 @@
       "mean_aligned": 0.2381,
       "mean_cross": 0.067
     },
-    "power_delta_gt0_at_n12": 0.8735,
+    "power_delta_gt0_at_n7": 0.6865,
+    "power_delta_gt0_at_n6_a2excluded": 0.6085,
+    "power_delta_gt0_at_n12_v1_0_superseded": 0.8735,
     "power_by_n": {
+      "6": 0.6085,
+      "7": 0.6865,
       "12": 0.8735,
       "18": 0.959,
       "24": 0.991,
       "28": 0.995
     },
-    "well_powered_at_n12": true,
-    "note": "n=12 gives LESS power than the n=28 grid; reported honestly. The direction claim at the v5-calibrated delta~0.43 DGP is well-powered at n=12 (power 0.8735). Registered as confirmatory regardless; if power < 0.80 the achieved value is disclosed and the leg stays confirmatory with that disclosure."
+    "well_powered_at_n7": false,
+    "note": "AMENDMENT v1.1: the achieved C grid is n=7, which gives LESS power than the n=12 v1.0 registration and than the Python n=28 grid \u2014 reported honestly, NO threshold moved. At the v5-calibrated delta~0.43 DGP the one-sided directional claim is under-powered vs 0.80 (decently powered for a direction claim) at n=7 (power 0.6865; a2-excluded n=6 sensitivity 0.6085). This is BELOW the 0.80 target; H-LANG stays registered as confirmatory with the achieved power disclosed (the estimand is a DIRECTION claim, not a magnitude claim, and the true delta~0.43 keeps it decently powered). Had we wished to hit 0.80 we would have needed the unportable ML PUTs; we do not fabricate them."
   }
 }

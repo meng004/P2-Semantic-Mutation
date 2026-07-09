@@ -40,12 +40,25 @@ class CCompileError(RuntimeError):
 
 
 def _resolve_source(source: Union[str, Path]) -> tuple[str, str]:
-    """Return (code_text, stem) for a path or a raw code string."""
-    p = Path(source) if not isinstance(source, str) or "\n" not in str(source) else None
-    if p is not None and p.exists():
-        return p.read_text(), p.stem
-    # treat as raw code
-    return str(source), "inline"
+    """Return (code_text, stem) for a path or a raw code string.
+
+    A ``Path`` is always read as a file. A ``str`` is treated as a file path
+    ONLY when it is non-empty, single-line, and points at an existing regular
+    FILE; otherwise it is raw code. This guards the P13 pilot defect where an
+    empty/whitespace LLM body ``""`` made ``Path("")`` resolve to the cwd
+    directory (``.``) and ``read_text()`` raised ``IsADirectoryError`` — an empty
+    body must fall through as raw code so gcc fails it as a normal V1 miss."""
+    if isinstance(source, Path):
+        return source.read_text(), source.stem
+    s = str(source)
+    if s and "\n" not in s:
+        try:
+            p = Path(s)
+            if p.is_file():                     # is_file() is False for "." (a dir)
+                return p.read_text(), p.stem
+        except (OSError, ValueError):           # path too long / invalid -> raw code
+            pass
+    return s, "inline"
 
 
 def compile_c_source(

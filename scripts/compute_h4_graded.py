@@ -106,6 +106,7 @@ N_BOOT = 10000                         # graded percentile-bootstrap resamples (
 ALPHA = 0.05                           # one-sided (§3.1, §3.2)
 GRADED_THRESHOLD = 0.15                # rich-class mean primary-stratum share bar (§3.1)
 STRICT_THRESHOLD = 0.90               # single-stratum purity bar (§3.2)
+POOLED_GATE = 24                       # Study-4 §3.2 recruitment gate (pooled n_rich)
 RICH_CLASSES = ("c", "d")              # surrogate-regression + ML-classifier (§3.1)
 CLEAN_FAMILIES = ("CE", "HP", "CF")    # 0-leakage + stable/screenable (§3.2)
 PILOT_PUTS = frozenset({"a2", "b4"})   # calibration pilot (§2b) — excluded
@@ -118,6 +119,7 @@ CONFIRMATORY_PUTS = [                   # 28-PUT roster (§2c), pilots removed
 
 MATRIX = RESULTS / "sms_track2_v6.json"
 OUT = RESULTS / "h4_graded_v6.json"
+POOLED_OUT = RESULTS / "h4_graded_v7.json"   # Study-4 pooled two-arm output (§7b)
 
 _CELL_RE = re.compile(r"^([A-Da-d]\d+)_MP([1-5])$")
 
@@ -292,6 +294,150 @@ def analyze_graded(matrix: dict, per_mutant: dict, exclude_pilots: bool = True) 
 
 
 # --------------------------------------------------------------------------- #
+# H4'''-graded POOLED (Study-4 §3.2, §7b --pooled flag). ADDITIVE: this path is
+# reached ONLY via --pooled; the frozen v6 default (run/analyze_graded) is
+# byte-unchanged. Contract (§7b): admit the two Study-4 arm SMS pools; form the
+# graded aggregate over the UNION of rich PUT-arm units (each arm's rich PUT
+# contributes its own PUT-mean; a rich PUT detected in both arms contributes two
+# units). All per-mutant logic (s_m, detected-only, pilot exclusion, B=10,000,
+# seed 20260708) is IDENTICAL to analyze_graded; only the aggregation pools the
+# arms and the verdict layer applies the recruitment gate.
+# --------------------------------------------------------------------------- #
+def _rich_put_means_one_arm(matrix: dict, exclude_pilots: bool = True) -> dict:
+    """{PUT: mean s_m over detected rich-class mutants} for ONE arm's pool.
+
+    Reuses the frozen flip machinery + the s_m definition of analyze_graded
+    verbatim (per (put, file) uniqueness, silent-mutant drop, pilot firewall)."""
+    puts_upper = _confirmatory_puts_present(matrix)
+    per_mutant, _audit = flip_map(matrix, puts_upper)
+    per_put_shares: dict = {}
+    for (put, fname), (fc, fl, cat) in per_mutant.items():
+        put_l = put.lower()
+        if exclude_pilots and put_l in PILOT_PUTS:      # §2b firewall
+            continue
+        if fc < 1:                                      # silent -> undetected
+            continue
+        if put_l[0] not in RICH_CLASSES:                # rich (C, D) only
+            continue
+        primary = PRIMARY_CELLS_V3[put_l]
+        s_m = (1.0 if primary in fl else 0.0) / fc
+        per_put_shares.setdefault(put, []).append(s_m)
+    return {p: float(np.mean(v)) for p, v in per_put_shares.items()}
+
+
+def analyze_graded_pooled(matrix_paths: list, exclude_pilots: bool = True) -> dict:
+    """Pooled two-arm rich-class graded aggregate + recruitment-gated verdict."""
+    pooled_means: list = []
+    pooled_units: list = []
+    per_arm: dict = {}
+    for path in matrix_paths:
+        arm_label = _rel(path)
+        matrix = load_matrix(path)
+        rich_means = _rich_put_means_one_arm(matrix, exclude_pilots=exclude_pilots)
+        for put, m in sorted(rich_means.items()):
+            pooled_means.append(m)
+            pooled_units.append({"arm": arm_label, "put": put,
+                                 "put_mean_share": round(m, 4)})
+        per_arm[arm_label] = {"n_rich_detected": len(rich_means),
+                              "rich_puts": sorted(rich_means)}
+
+    pooled_n_rich = len(pooled_means)                   # detected rich PUT-arm units
+    rich_mean = round(float(np.mean(pooled_means)), 4) if pooled_n_rich else 0.0
+    lower = round(boot_lower_95(pooled_means), 4)
+
+    gate_ok = pooled_n_rich >= POOLED_GATE
+    if not gate_ok:
+        verdict = "UNDER_RECRUITED"
+        licensed = ("UNDER-RECRUITED (registration §3.2 gate): detected pooled "
+                    f"n_rich = {pooled_n_rich} < {POOLED_GATE}. Achieved pooled "
+                    f"rich-class mean share {rich_mean} (one-sided 95% lower bound "
+                    f"{lower}) reported FACTUALLY; no threshold moved, no "
+                    "confirmatory verdict licensed")
+    elif lower > GRADED_THRESHOLD:
+        verdict = "CONFIRM"
+        licensed = ("at adequate rich-class n (pooled n_rich "
+                    f"{pooled_n_rich} >= {POOLED_GATE}) the declared MetaPattern "
+                    f"carries GRADED attribution (pooled mean share {rich_mean}, "
+                    f"one-sided 95% lower bound {lower} > {GRADED_THRESHOLD}); "
+                    "dominant-but-co-firing, NOT a single-stratum purity claim")
+    else:
+        verdict = "MISATTRIBUTION_CONFIRMED"
+        licensed = ("MISATTRIBUTION CONFIRMED as a construct property: at an "
+                    f"adequate rich-class sample (pooled n_rich {pooled_n_rich} "
+                    f">= {POOLED_GATE}) the attribution share is genuinely low "
+                    f"(pooled mean {rich_mean}, one-sided 95% lower bound {lower} "
+                    f"<= {GRADED_THRESHOLD}); the Study-3 finding is NOT a "
+                    "small-sample artifact (sharp pre-declared interpretation, "
+                    "§3.2 — a substantive confirmatory result about the construct)")
+
+    per_class = {}
+    for cls in RICH_CLASSES:
+        vals = [u["put_mean_share"] for u in pooled_units
+                if u["put"][0].lower() == cls]
+        per_class[cls.upper()] = {
+            "n_units": len(vals),
+            "share_mean": round(float(np.mean(vals)), 4) if vals else None,
+        }
+
+    return {
+        "hypothesis": "H4'''-graded POOLED (Study-4 §3.2; two-arm rich-class mean "
+                      "primary-stratum kill share, recruitment-gated)",
+        "measure": "s_m = 1[primary in flipset]/|flipset| per detected mutant; "
+                   "PUT mean; POOLED over the union of rich (C,D) PUT-arm units",
+        "flip_machinery": "IMPORTED from p2.mutators.stratum_filter.audit_matrix "
+                          "(constrained=ALL_FAMILIES; identical to the S5 audit)",
+        "pooling": "UNION of rich PUT-arm units across the two Study-4 arms "
+                   "(a rich PUT detected in both arms contributes two units)",
+        "threshold": GRADED_THRESHOLD,
+        "recruitment_gate_n_rich": POOLED_GATE,
+        "n_boot": N_BOOT, "boot_seed": MASTER_SEED, "alpha": ALPHA,
+        "pooled_n_rich": pooled_n_rich,
+        "recruitment_gate_met": bool(gate_ok),
+        "pooled_rich_mean_share": rich_mean,
+        "boot_lower_95": lower,
+        "per_class_share_mean": per_class,
+        "per_arm": per_arm,
+        "pooled_units": pooled_units,
+        "pilot_puts_excluded": sorted(PILOT_PUTS),
+        "verdict": verdict,
+        "licensed_claim": licensed,
+    }
+
+
+def run_pooled(matrix_paths: list, out_path=POOLED_OUT) -> dict:
+    graded = analyze_graded_pooled(matrix_paths)
+    report = {
+        "artefact": "h4_graded_v7",
+        "generated_by": "scripts/compute_h4_graded.py --pooled",
+        "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY4_v1.md "
+                            "(§3.2 H4'''-graded pooled; §7b --pooled contract; "
+                            "§4b pre-declared pooling; §2a x4 multiplier)",
+        "integrity": "Pre-frozen before Study-4 data generation; ADDITIVE --pooled "
+                     "path (the frozen v6 default is byte-unchanged). Any post-data "
+                     "modification must be disclosed as a deviation (§5d, §8).",
+        "inputs": {"arm_sms_pools": [_rel(p) for p in matrix_paths]},
+        "master_seed": MASTER_SEED,
+        "H4ppp_graded_pooled": graded,
+    }
+    if out_path is not None:
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(out_path).write_text(json.dumps(report, indent=2, ensure_ascii=False))
+    return report
+
+
+def _print_pooled_verdict(report: dict) -> None:
+    g = report["H4ppp_graded_pooled"]
+    print("=== Study-4 H4'''-graded POOLED verdict (Family H, §3.2) ===")
+    print(f"[H4'''-graded pooled] pooled_n_rich={g['pooled_n_rich']} "
+          f"(gate >= {POOLED_GATE}, met={g['recruitment_gate_met']})  "
+          f"pooled_mean_share={g['pooled_rich_mean_share']:.4f}  "
+          f"boot_lower_95={g['boot_lower_95']:.4f} (bar > {GRADED_THRESHOLD})")
+    print(f"    per-class: C={g['per_class_share_mean']['C']['share_mean']} "
+          f"D={g['per_class_share_mean']['D']['share_mean']}")
+    print(f"    VERDICT: {g['verdict']} — {g['licensed_claim']}")
+
+
+# --------------------------------------------------------------------------- #
 # H4''-strict (§3.2)
 # --------------------------------------------------------------------------- #
 def analyze_strict(matrix: dict, per_mutant: dict, audit: dict,
@@ -457,7 +603,33 @@ def main() -> int:
                          "matrix end-to-end (NOT a confirmatory verdict; §2b "
                          "firewall). Marks the artefact and refuses to overwrite "
                          "the confirmatory SSOT.")
+    ap.add_argument("--pooled", nargs="+", default=None, metavar="ARM_SMS",
+                    help="Study-4 §7b: pool >=2 arm SMS pool SSOTs and compute the "
+                         "recruitment-gated H4'''-graded verdict (pooled n_rich "
+                         ">= 24 gate, then boot_lower_95 > 0.15). Writes "
+                         "data/results/h4_graded_v7.json by default. ADDITIVE: "
+                         "does not touch the frozen v6 default path.")
     args = ap.parse_args()
+
+    if args.pooled is not None:
+        if len(args.pooled) < 2:
+            print("ERROR: --pooled requires >= 2 arm SMS pool SSOTs "
+                  "(same-source + cross-source).", file=sys.stderr)
+            return 2
+        missing = [p for p in args.pooled if not Path(p).exists()]
+        if missing:
+            print("ERROR: pooled arm SMS pool SSOT(s) missing: "
+                  f"{missing}\nThis runs on the ANALYSIS leg, AFTER Study-4 SMS "
+                  "scoring of the fresh v7 arm pools. No Study-4 confirmatory data "
+                  "exists yet at freeze time (registration §0.1).", file=sys.stderr)
+            return 2
+        out_path = None if args.out == "-" else (
+            str(POOLED_OUT) if args.out == str(OUT) else args.out)
+        report = run_pooled(args.pooled, out_path)
+        _print_pooled_verdict(report)
+        if out_path is not None:
+            print(f"\nwrote {out_path}")
+        return 0
     if not Path(args.matrix).exists():
         print(f"ERROR: per-cell SMS matrix SSOT missing: {args.matrix}\n"
               "This script runs on the ANALYSIS leg, AFTER Study-3 SMS scoring "
