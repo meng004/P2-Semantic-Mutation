@@ -1659,6 +1659,7 @@ P6 & Tooling incident & Scoring tool defaulted to the Study-1 track and overwrot
 P7 & Blinding guard fired & One PUT's mutants carried a source-family token in docstrings; presentation-layer redaction added at export (displayed code only), affected packets re-exported, assertion retained as the final guard. \\
 D-A1 & Disclosed deviation & Pre-frozen $\delta$ script gained a post-data mode that skips only the gated H2-2 computation and emits its registered not-run verdict; H2-1\('\) logic byte-unchanged; recorded in the output SSOT. \\
 P8 & Disclosed design-intent defect & The CF/TF single-stratum admission screen was wired but a silent no-op for the whole v5 campaign: the pool builder tagged op-ids with a model-source suffix (e.g.\ \texttt{c7\_TF1\_claude}) that the screen's category regex rejects, so category lookup returned \texttt{None} and every candidate was admitted without a flip-count check (81/81 CF/TF null-pass; the pilot's ``9/9 pass'' was the same false negative). H4\('\) thus evaluated the \emph{unscreened} pool. The registered decision rule scores \texttt{suspect\_share} on the admitted pool and does not condition on the screen, so the frozen NOT\_CONFIRMED verdict is valid; only the design intent (CF/TF entering single-stratum) was not realised. The filter code is deliberately \emph{not} fixed here; correcting it belongs to the Study-3 registration wave. See the post-hoc diagnosis in the main text. \\
+P9 & Code defect (Study-3 wiring) & The build/score tooling (\texttt{build\_pools}, \texttt{sms\_campaign}) knew only pool versions v2--v5, so a v6 request had no suffix/cache/N mapping and no strict pool resolution (the same omission class as v5's D2/D4, on the Study-3 side). The fix mirrors the D2/D4 wiring: it adds \texttt{v6} (\texttt{\_pool\_v6}, cross-source cache, N = 30, strict resolution) and builds v6 under the live all-family screen, with a wrong-version deletion guard so a v6 build can only ever remove a \texttt{\_pool\_v6} directory and the frozen v5 pools are never touched. This is the only post-freeze code change: it encodes the registered N for a new pool version and points scoring at the correct strict directory, changing no threshold, estimand, primary-meta-pattern assignment, or roster, and reading no Study-3 outcome. \\
 \end{longtable}
 \normalsize
 }
@@ -1719,6 +1720,10 @@ Stage & Value \\
 Valid generation records & 765 \\
 Admitted (gates V1--V4, live all-family screen) & 720 \\
 Rejected at admission & 45 (families a3, b3, c1, d8) \\
+Removed at pool assembly (720 \(\to\) 633) & 87: 81 by the single-stratum screen
+(nine PUTs each shed one full multi-stratum operator family of nine, e.g.\ d8
+\(18 \to 9\)), 6 by the registered per-PUT cap of 30 (a1 only, \(36 \to 30\),
+OS/SI \(-3\) each) \\
 v6 confirmatory pool & 633 mutants over 28 PUTs \\
 v6 pool including \(\{a2, b4\}\) pilot & 678 files over 30 directories \\
 Confirmatory cells & 140 (20 with nonzero killed mass) \\

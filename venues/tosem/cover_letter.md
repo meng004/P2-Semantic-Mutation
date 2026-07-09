@@ -75,7 +75,7 @@ validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
 Length statement. The main manuscript is 52 pages including references in the
-ACM manuscript-review format, and the online supplementary material is 24
+ACM manuscript-review format, and the online supplementary material is 25
 pages. We submit to the Regular Track, which imposes no page-length cap.
 
 Sincerely,
