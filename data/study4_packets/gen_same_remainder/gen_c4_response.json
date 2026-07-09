@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_c4",
+  "put_id": "c4",
+  "mutants": [
+    {
+      "op_id": "c4_CE1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 1.5\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n_T_OFFSET = 1.5\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - _T_OFFSET\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef _query_point(x: float) -> float:\n    return 6.0 * x - 1.5\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = _query_point(x)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict([[6.0 * x - 1.5]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * (x - 0.25)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = (12.0 * x - 3.0) / 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    query = np.array([[6.0 * x - 1.5]])\n    return float(_model.predict(query)[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n_to_t = lambda u: 6.0 * u - 1.5\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = _to_t(x)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x\n    t -= 1.5\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_K = 1\n_model = KNeighborsRegressor(n_neighbors=_K)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_params = {\"n_neighbors\": 1}\n_model = KNeighborsRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor()\n_model.set_params(n_neighbors=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n\ndef _fit_surrogate(k: int) -> KNeighborsRegressor:\n    m = KNeighborsRegressor(n_neighbors=k)\n    m.fit(_t_train, _y_train)\n    return m\n\n\n_model = _fit_surrogate(1)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=1, weights=\"uniform\")\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor as _KNR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = _KNR(n_neighbors=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_N_NEIGHBORS = int(1)\n_model = KNeighborsRegressor(n_neighbors=_N_NEIGHBORS).fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.0, high=1.0, size=300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_LO, _HI = -1.0, 1.0\n_t_train = np.sort(_rng.uniform(_LO, _HI, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300) / 3.0).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(0.0, 2.0, 300) - 1.0).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n\n\ndef _sample_training_points() -> np.ndarray:\n    return np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n\n\n_t_train = _sample_training_points()\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, size=(300,))).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300))[:, None]\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C4: k-Nearest-Neighbours regressor surrogate \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.neighbors.KNeighborsRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nx \u2192 test point t = 6x-3 \u2208 [-3,3]. Training: arctan(3t) (monotone, odd).\n7-neighbour instance-based surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_HALF_WIDTH = 1.0\n_t_train = np.sort(_rng.uniform(-_HALF_WIDTH, _HALF_WIDTH, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

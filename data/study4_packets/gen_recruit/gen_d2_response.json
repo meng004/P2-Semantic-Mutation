@@ -1,0 +1,222 @@
+{
+  "packet_id": "gen_d2",
+  "put_id": "d2",
+  "mutants": [
+    {
+      "op_id": "d2_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=1e-3, probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=0.001, probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_GAMMA = 1e-3\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=_GAMMA, probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_cfg = dict(kernel=\"rbf\", C=1.0, gamma=1e-3, probability=True, random_state=42)\n_model = SVC(**_cfg)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.set_params(gamma=1e-3)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(C=1.0, kernel=\"rbf\", probability=True, random_state=42, gamma=1e-3)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=float(\"1e-3\"), probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\ndef _build_model():\n    return SVC(kernel=\"rbf\", C=1.0, gamma=1e-3, probability=True, random_state=42)\n\n_model = _build_model()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=1 / 1000, probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.gamma = 1e-3\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, probability=True, random_state=42).set_params(gamma=1e-3)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_HP1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\ndef _train():\n    m = SVC(kernel=\"rbf\", C=1.0, gamma=1e-3, probability=True, random_state=42)\n    m.fit(_X_train, _y_train)\n    return m\n\n_model = _train()\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.decision_function([[2.0 - 2.0 * x, 0.0]])[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    feat = [[2.0 - 2.0 * x, 0.0]]\n    return float(_model.decision_function(feat)[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    _f = np.array([[2.0 - 2.0 * x, 0.0]])\n    return float(_model.decision_function(_f).item())\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.decision_function([[2.0 - 2.0 * x, 0.0]]).ravel()[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef _score(feat):\n    return _model.decision_function(feat)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_score([[2.0 - 2.0 * x, 0.0]])[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    _fn = getattr(_model, \"decision_function\")\n    return float(_fn([[2.0 - 2.0 * x, 0.0]])[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    (val,) = _model.decision_function([[2.0 - 2.0 * x, 0.0]])\n    return float(val)\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    _f = np.asarray([2.0 - 2.0 * x, 0.0]).reshape(1, -1)\n    return float(_model.decision_function(_f)[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\n_decision = _model.decision_function\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_decision([[2.0 - 2.0 * x, 0.0]])[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(np.squeeze(_model.decision_function([[2.0 - 2.0 * x, 0.0]])))\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\n_feat = lambda v: [[2.0 - 2.0 * v, 0.0]]\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.decision_function(_feat(x))[0])\n"
+    },
+    {
+      "op_id": "d2_OS1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.decision_function([[2.0 - 2.0 * x, 0.0]]).tolist()[0])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_perm_rng = np.random.default_rng(7)\n_y_train[:80] = _perm_rng.permutation(_y_train[:80])\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_perm_rng = np.random.default_rng(11)\n_idx = _perm_rng.permutation(80)\n_y_train[:80] = _y_train[:80][_idx]\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_rs = np.random.RandomState(13)\n_y_train[:80] = _rs.permutation(_y_train[:80])\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_head = _y_train[:80].copy()\nnp.random.default_rng(17).shuffle(_head)\n_y_train[:80] = _head\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_n_perm = int(0.2 * _y_train.shape[0])\n_y_train[:_n_perm] = np.random.default_rng(19).permutation(_y_train[:_n_perm])\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_g = np.random.default_rng(23)\n_y_train = np.concatenate([_g.permutation(_y_train[:80]), _y_train[80:]])\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\nimport random\n_pyr = random.Random(29)\n_order = list(range(80))\n_pyr.shuffle(_order)\n_y_train[:80] = _y_train[_order]\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_gen = np.random.default_rng(31)\n_y_train[:80] = np.take(_y_train[:80], _gen.permutation(80))\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_y_train[:80] = _rng.permutation(_y_train[:80])\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_prm = np.random.default_rng(37).permutation(np.arange(80))\n_y_train[np.arange(80)] = _y_train[_prm]\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n_keys = np.random.default_rng(41).random(80)\n_y_train[:80] = _y_train[:80][np.argsort(_keys)]\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d2_TF1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "import numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\nimport random as _random\n_r = _random.Random(43)\n_lab = _y_train[:80].tolist()\nfor _i in range(79, 0, -1):\n    _j = _r.randint(0, _i)\n    _lab[_i], _lab[_j] = _lab[_j], _lab[_i]\n_y_train[:80] = _lab\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n"
+    }
+  ]
+}

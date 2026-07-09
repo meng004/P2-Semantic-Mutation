@@ -1,0 +1,259 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_b6",
+  "put_id": "b6",
+  "lang": "py",
+  "arm": "same",
+  "stratum": null,
+  "seed": 20260708,
+  "k_per_source": 3,
+  "sources": [
+    "src1",
+    "src2",
+    "src3"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/b6.py",
+    "sha256": "c88d4e8f59ff013e18d1e714e03e563106320c54521b345ee6ec62306fd97882",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for B6 inverse-transform sampling, E[·]=1/λ(x), λ=2.5-2x.\n\n§3.3 grid: b6 = mp1○ mp2●● mp3● mp4○ mp5●\n\nMP1 (Conservation, ○): 1/λ(x)+1/λ(1-x) is not constant; ○ baseline.\nMP2 (Monotonicity, ●●): r_mp2(x)=min(x+0.1,0.9); R_mp2: y_new >= y_orig - 0.1\n  (mean 1/λ increases as λ decreases with x; slack absorbs sampling noise).\nMP3 (Convergence, ●): r_mp3(x)=x; R_mp3: 0 <= y <= 3 (positive exponential mean,\n  bounded since λ ∈ [0.5, 2.5] → mean ∈ [0.4, 2]).\nMP4 (Trajectory, ○): scalar estimator, no trajectory; ○ baseline.\nMP5 (Asymptotic, ●): r_mp5(x)=min(x+0.1,0.9); R_mp5: y_new >= y_orig - 0.1\n  (asymptotic ordering at the input-domain endpoints).\n\"\"\"\nimport math\n\n\ndef r_mp1(x) -> float:\n    return float(x)\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp2(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 0.1\n\n\ndef r_mp3(x) -> float:\n    return float(x)\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    y = float(y_orig)\n    return math.isfinite(y) and 0.0 <= y <= 3.0\n\n\ndef r_mp4(x) -> float:\n    return float(x)\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp5(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 0.1\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "b6_CE1",
+        "put": "b6",
+        "category": "CE",
+        "label": "rate coeff 2→1",
+        "target_locator": "rate `lam = 2.5 - 2.0*x`",
+        "transformation": "change the coefficient in `2.5 - 2.0*x` from 2.0 to 1.0",
+        "rationale": "wrong rate-slope coefficient in the exponential parameter",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_CE1\nOPERATOR LABEL: rate coeff 2→1\nTARGET LOCATOR: rate `lam = 2.5 - 2.0*x`\nEXACT CHANGE: change the coefficient in `2.5 - 2.0*x` from 2.0 to 1.0\nRATIONALE: wrong rate-slope coefficient in the exponential parameter\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_CE1\nOPERATOR LABEL: rate coeff 2→1\nTARGET LOCATOR: rate `lam = 2.5 - 2.0*x`\nEXACT CHANGE: change the coefficient in `2.5 - 2.0*x` from 2.0 to 1.0\nRATIONALE: wrong rate-slope coefficient in the exponential parameter\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_CE1\nOPERATOR LABEL: rate coeff 2→1\nTARGET LOCATOR: rate `lam = 2.5 - 2.0*x`\nEXACT CHANGE: change the coefficient in `2.5 - 2.0*x` from 2.0 to 1.0\nRATIONALE: wrong rate-slope coefficient in the exponential parameter\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "b6_HP1",
+        "put": "b6",
+        "category": "HP",
+        "label": "n 6000→30",
+        "target_locator": "sample count `_N = 6000`",
+        "transformation": "change _N from 6000 to 30",
+        "rationale": "tiny sample size destabilises the estimated mean",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_HP1\nOPERATOR LABEL: n 6000→30\nTARGET LOCATOR: sample count `_N = 6000`\nEXACT CHANGE: change _N from 6000 to 30\nRATIONALE: tiny sample size destabilises the estimated mean\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_HP1\nOPERATOR LABEL: n 6000→30\nTARGET LOCATOR: sample count `_N = 6000`\nEXACT CHANGE: change _N from 6000 to 30\nRATIONALE: tiny sample size destabilises the estimated mean\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_HP1\nOPERATOR LABEL: n 6000→30\nTARGET LOCATOR: sample count `_N = 6000`\nEXACT CHANGE: change _N from 6000 to 30\nRATIONALE: tiny sample size destabilises the estimated mean\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "b6_OS1",
+        "put": "b6",
+        "category": "OS",
+        "label": "draw sign flip",
+        "target_locator": "inverse-CDF draw `-np.log(_U) / lam`",
+        "transformation": "change `-np.log(_U)` to `np.log(_U)` (drop the minus)",
+        "rationale": "sign error in the inverse-transform yields negative draws",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_OS1\nOPERATOR LABEL: draw sign flip\nTARGET LOCATOR: inverse-CDF draw `-np.log(_U) / lam`\nEXACT CHANGE: change `-np.log(_U)` to `np.log(_U)` (drop the minus)\nRATIONALE: sign error in the inverse-transform yields negative draws\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_OS1\nOPERATOR LABEL: draw sign flip\nTARGET LOCATOR: inverse-CDF draw `-np.log(_U) / lam`\nEXACT CHANGE: change `-np.log(_U)` to `np.log(_U)` (drop the minus)\nRATIONALE: sign error in the inverse-transform yields negative draws\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B6\nOPERATOR ID: b6_OS1\nOPERATOR LABEL: draw sign flip\nTARGET LOCATOR: inverse-CDF draw `-np.log(_U) / lam`\nEXACT CHANGE: change `-np.log(_U)` to `np.log(_U)` (drop the minus)\nRATIONALE: sign error in the inverse-transform yields negative draws\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 9,
+    "n_operators": 3,
+    "packet_total": 27
+  },
+  "required_slots": [
+    {
+      "op_id": "b6_CE1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_CE1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_HP1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b6_OS1",
+      "source": "src3",
+      "attempt": 3
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_b6_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}

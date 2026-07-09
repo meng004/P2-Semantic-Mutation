@@ -1,0 +1,259 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_b7",
+  "put_id": "b7",
+  "lang": "py",
+  "arm": "same",
+  "stratum": null,
+  "seed": 20260708,
+  "k_per_source": 3,
+  "sources": [
+    "src1",
+    "src2",
+    "src3"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/b7.py",
+    "sha256": "5e3f1249989abbb9a01f2caf83e485f6aa7273c0b50ebcb08377864b0a86af10",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for B7 importance sampling, E[·]≈4x-2.\n\n§3.3 grid: b7 = mp1○ mp2●● mp3● mp4○ mp5●\n\nMP1 (Conservation, ○): no complement invariance for the IS mean; ○ baseline.\nMP2 (Monotonicity, ●●): r_mp2(x)=min(x+0.1,0.9); R_mp2: y_new >= y_orig - 0.1\n  (weighted mean tracks the target mean; slack absorbs importance-weight noise).\nMP3 (Convergence, ●): r_mp3(x)=x; R_mp3: y ∈ [-4, 4] (bounded estimator range).\nMP4 (Trajectory, ○): scalar estimator, no trajectory; ○ baseline.\nMP5 (Asymptotic, ●): r_mp5(x)=min(x+0.1,0.9); R_mp5: y_new >= y_orig - 0.1\n  (asymptotic ordering at the input-domain endpoints).\n\"\"\"\nimport math\n\n\ndef r_mp1(x) -> float:\n    return float(x)\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp2(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 0.1\n\n\ndef r_mp3(x) -> float:\n    return float(x)\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    y = float(y_orig)\n    return math.isfinite(y) and -4.0 <= y <= 4.0\n\n\ndef r_mp4(x) -> float:\n    return float(x)\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp5(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 0.1\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "b7_CE1",
+        "put": "b7",
+        "category": "CE",
+        "label": "target const 2→1",
+        "target_locator": "target mean `mu = 4.0*x - 2.0`",
+        "transformation": "change the constant in `4.0*x - 2.0` from 2.0 to 1.0",
+        "rationale": "off-by-one target-mean offset in the importance weights",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_CE1\nOPERATOR LABEL: target const 2→1\nTARGET LOCATOR: target mean `mu = 4.0*x - 2.0`\nEXACT CHANGE: change the constant in `4.0*x - 2.0` from 2.0 to 1.0\nRATIONALE: off-by-one target-mean offset in the importance weights\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_CE1\nOPERATOR LABEL: target const 2→1\nTARGET LOCATOR: target mean `mu = 4.0*x - 2.0`\nEXACT CHANGE: change the constant in `4.0*x - 2.0` from 2.0 to 1.0\nRATIONALE: off-by-one target-mean offset in the importance weights\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_CE1\nOPERATOR LABEL: target const 2→1\nTARGET LOCATOR: target mean `mu = 4.0*x - 2.0`\nEXACT CHANGE: change the constant in `4.0*x - 2.0` from 2.0 to 1.0\nRATIONALE: off-by-one target-mean offset in the importance weights\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "b7_HP1",
+        "put": "b7",
+        "category": "HP",
+        "label": "target std 1→2",
+        "target_locator": "target density `norm.pdf(_SAMPLES, mu, 1.0)`",
+        "transformation": "change the target std in norm.pdf from 1.0 to 2.0",
+        "rationale": "wrong target variance distorts the importance weights",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_HP1\nOPERATOR LABEL: target std 1→2\nTARGET LOCATOR: target density `norm.pdf(_SAMPLES, mu, 1.0)`\nEXACT CHANGE: change the target std in norm.pdf from 1.0 to 2.0\nRATIONALE: wrong target variance distorts the importance weights\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_HP1\nOPERATOR LABEL: target std 1→2\nTARGET LOCATOR: target density `norm.pdf(_SAMPLES, mu, 1.0)`\nEXACT CHANGE: change the target std in norm.pdf from 1.0 to 2.0\nRATIONALE: wrong target variance distorts the importance weights\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_HP1\nOPERATOR LABEL: target std 1→2\nTARGET LOCATOR: target density `norm.pdf(_SAMPLES, mu, 1.0)`\nEXACT CHANGE: change the target std in norm.pdf from 1.0 to 2.0\nRATIONALE: wrong target variance distorts the importance weights\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "b7_OS1",
+        "put": "b7",
+        "category": "OS",
+        "label": "normaliser sum(w)→N",
+        "target_locator": "self-normalisation `np.sum(w*_SAMPLES)/np.sum(w)`",
+        "transformation": "replace the denominator np.sum(w) with _N",
+        "rationale": "drops self-normalisation — a classic IS estimator bug",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_OS1\nOPERATOR LABEL: normaliser sum(w)→N\nTARGET LOCATOR: self-normalisation `np.sum(w*_SAMPLES)/np.sum(w)`\nEXACT CHANGE: replace the denominator np.sum(w) with _N\nRATIONALE: drops self-normalisation — a classic IS estimator bug\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_OS1\nOPERATOR LABEL: normaliser sum(w)→N\nTARGET LOCATOR: self-normalisation `np.sum(w*_SAMPLES)/np.sum(w)`\nEXACT CHANGE: replace the denominator np.sum(w) with _N\nRATIONALE: drops self-normalisation — a classic IS estimator bug\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B7\nOPERATOR ID: b7_OS1\nOPERATOR LABEL: normaliser sum(w)→N\nTARGET LOCATOR: self-normalisation `np.sum(w*_SAMPLES)/np.sum(w)`\nEXACT CHANGE: replace the denominator np.sum(w) with _N\nRATIONALE: drops self-normalisation — a classic IS estimator bug\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 9,
+    "n_operators": 3,
+    "packet_total": 27
+  },
+  "required_slots": [
+    {
+      "op_id": "b7_CE1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_CE1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_HP1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b7_OS1",
+      "source": "src3",
+      "attempt": 3
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_b7_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}

@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_c7",
+  "put_id": "c7",
+  "mutants": [
+    {
+      "op_id": "c7_CE1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=1.0)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_EPSILON = 1.0\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=_EPSILON)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\")\n_model.set_params(epsilon=1.0)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_svr_config = dict(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=1.0)\n_model = SVR(**_svr_config)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\")\n_model.epsilon = 1.0\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\ndef _build_surrogate():\n    est = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=1.0)\n    est.fit(_t_train, _y_train)\n    return est\n\n\n_model = _build_surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.5 * 2.0)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(epsilon=1.0, gamma=\"scale\", C=10.0, kernel=\"rbf\")\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_CE1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = None\n\n\ndef _get_model():\n    global _model\n    if _model is None:\n        _model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=1.0)\n        _model.fit(_t_train, _y_train)\n    return _model\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_get_model().predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\", C=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_C_REG = 0.01\n_model = SVR(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\", C=_C_REG)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\")\n_model.set_params(C=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_svr_config = dict(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\", C=0.01)\n_model = SVR(**_svr_config)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\")\n_model.C = 0.01\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\ndef _build_surrogate():\n    est = SVR(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\", C=0.01)\n    est.fit(_t_train, _y_train)\n    return est\n\n\n_model = _build_surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\", C=1.0 / 100.0)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(C=0.01, gamma=\"scale\", epsilon=0.01, kernel=\"rbf\")\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = None\n\n\ndef _get_model():\n    global _model\n    if _model is None:\n        _model = SVR(kernel=\"rbf\", epsilon=0.01, gamma=\"scale\", C=0.01)\n        _model.fit(_t_train, _y_train)\n    return _model\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_get_model().predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_T_LO, _T_HI = -1.0, 1.0\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(_T_LO, _T_HI, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300) / 3.0).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.0, high=1.0, size=300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(0.0, 2.0, 300) - 1.0).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n\n\ndef _sample_training_points(n=300):\n    return np.sort(_rng.uniform(-1.0, 1.0, n)).reshape(-1, 1)\n\n\n_t_train = _sample_training_points()\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_HALF_WIDTH = 1.0\n_rng = np.random.default_rng(42)\n_t_train = np.sort(\n    _rng.uniform(-_HALF_WIDTH, _HALF_WIDTH, 300)\n).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_u = _rng.uniform(-1.0, 1.0, 300)\n_t_train = np.sort(_u)[:, None]\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c7_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_model = None\n\n\ndef _get_model():\n    global _model\n    if _model is None:\n        rng = np.random.default_rng(42)\n        t_train = np.sort(rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n        y_train = np.tanh(1.5 * t_train.ravel())\n        _model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n        _model.fit(t_train, y_train)\n    return _model\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_get_model().predict([[t]])[0])\n"
+    }
+  ]
+}

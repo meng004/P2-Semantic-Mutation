@@ -1,0 +1,222 @@
+{
+  "packet_id": "gen_d5",
+  "put_id": "d5",
+  "mutants": [
+    {
+      "op_id": "d5_CE1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 0.5, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    feat = 2.0 * x - 0.5\n    return float(_model.predict_proba([[feat, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef _feature(x):\n    return [2.0 * x - 0.5, 0.0]\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([_feature(x)])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    vec = np.array([[2.0 * x - 0.5, 0.0]])\n    return float(_model.predict_proba(vec)[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[-0.5 + 2.0 * x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    scaled = x * 2.0\n    return float(_model.predict_proba([[scaled - 0.5, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * (x - 0.25), 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[(4.0 * x - 1.0) / 2.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\n_feat = lambda t: [2.0 * t - 0.5, 0.0]\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([_feat(x)])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    row = [0.0, 0.0]\n    row[0] = 2.0 * x - 0.5\n    proba = _model.predict_proba([row])\n    return float(proba[0][1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    f0 = float(np.polyval([2.0, -0.5], x))\n    return float(_model.predict_proba([[f0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_CE1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    first = np.float64(2.0) * x - np.float64(0.5)\n    return float(_model.predict_proba([[first, 0.0]])[0][1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[0.0, 2.0 * x - 1.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    feat = 2.0 * x - 1.0\n    return float(_model.predict_proba([[0.0, feat]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    row = list(reversed([2.0 * x - 1.0, 0.0]))\n    return float(_model.predict_proba([row])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    row = [2.0 * x - 1.0, 0.0][::-1]\n    return float(_model.predict_proba([row])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef _swapped_feature(x):\n    return [0.0, 2.0 * x - 1.0]\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([_swapped_feature(x)])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    row = [2.0 * x - 1.0, 0.0]\n    row[0], row[1] = row[1], row[0]\n    return float(_model.predict_proba([row])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    vec = np.array([[0.0, 2.0 * x - 1.0]])\n    return float(_model.predict_proba(vec)[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    vec = np.zeros((1, 2))\n    vec[0, 1] = 2.0 * x - 1.0\n    return float(_model.predict_proba(vec)[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\n_feat = lambda t: [0.0, 2.0 * t - 1.0]\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([_feat(x)])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    row = list((0.0, 2.0 * x - 1.0))\n    return float(_model.predict_proba([row])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    vec = np.flip(np.array([[2.0 * x - 1.0, 0.0]]), axis=1)\n    return float(_model.predict_proba(vec)[0, 1])\n"
+    },
+    {
+      "op_id": "d5_SI1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    row = [2.0 * x - 1.0]\n    row.insert(0, 0.0)\n    return float(_model.predict_proba([row])[0][1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] < 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0 > 0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1]).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_margin = 0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1]\n_y_train = (_margin < 0.0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = np.less(0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1], 0.0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (-(0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1]) > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.6 * _X_train[:, 1] - 0.8 * _X_train[:, 0] > 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = np.where(0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] < 0, 1, 0)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_margin = 0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1]\n_y_train = np.array([1 if m < 0 else 0 for m in _margin])\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_margin = 0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1]\n_y_train = (np.sign(_margin) < 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = np.asarray(0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] < 0, dtype=int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = 1 - (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] >= 0).astype(int)\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d5_TF1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"D5: Linear Discriminant Analysis classifier \u2014 scalar x\u2208[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.LinearDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html\n\nprogram(x) where x \u2208 [0,1] scalar.\nFeature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 \u2192 positive when x>0.5.\nP(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import LinearDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_margin = _X_train[:, 0] * 0.8 - _X_train[:, 1] * 0.6\n_y_train = np.where(0.0 > _margin, np.int64(1), np.int64(0))\n\n_model = LinearDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])\n"
+    }
+  ]
+}

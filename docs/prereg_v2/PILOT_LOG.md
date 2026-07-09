@@ -414,3 +414,49 @@ SSOT: `data/results/study4/cport_pilot_report.json`,
 - The `--lang c` Study-4 wiring (`study4_campaign`/`study4_generate_slot`/
   `run_study4_blind_review` `lang` params) is additive; the Python arms are
   byte-unchanged (existing `tests/mutators/test_study4_client.py` stays green).
+
+## Defect P15 — Study-4 relaunch silently REDREW already-drawn gateway slots
+
+**What happened.** After the quota top-up, the cross-arm gateway relaunch
+(2026-07-09 11:23 UTC, `--resume`) started regenerating from the FIRST slot
+(`a1_CE1 src1 a01`) instead of resuming: the legacy `--resume` filter matches
+the Study-2 filename scheme `(claude|gpt|deepseek)` and never matches Study-4's
+`src1/src2/src3` cache names, and `study4_campaign()` itself had NO resume
+logic at all. An earlier runaway process (the pkill survivor noted under the
+v1.2 amendment) had likewise overwritten same-arm and C-arm files. Damage at
+detection (12:28 UTC, process killed): 55 cross + 24 same + 6 C cached mutant
+files overwritten and 10 new files written for previously FAILED attempts.
+
+**Why this is a one-shot violation if left in place.** The registration's
+one-shot rule (a resume fills only undrawn slots; drawn slots — including
+validity-FAILED attempts — are never redrawn) makes the FIRST draw canonical.
+Keeping any second draw would be a redraw with post-hoc choice between two
+realisations of the same slot.
+
+**Remediation (first-draw-canonical, applied before ANY outcome was computed).**
+1. All redraw content archived unread to
+   `archive/study4_redraw_quarantine_2026-07-09/{cross,same,clang}/`
+   (59 + 27 + 7 files) — none of it enters any pool. (Diagnosis involved one
+   structural diff of `cross/a1_HP1_src1_attempt01.py`; no execution, no SMS.)
+2. Overwritten cache files restored byte-identical to the committed run-1
+   checkpoint (`git restore`); redraws of run-1 FAILED attempts deleted from
+   the cache (those attempts remain consumed-and-failed).
+3. Campaign logs kept append-only: the redundant run-2 rows remain in
+   `campaign_log.jsonl` as cost/provenance records (~143 cross + 88 same +
+   31 C rows), explicitly flagged here as discarded redraws.
+4. Fix: `study4_campaign()` now counts `kind=="generate"` rows per
+   (op_id, slot) in the campaign log and starts each slot at attempt
+   drawn+1; a transport/quota `study4-generate-error` row is NOT a draw
+   (the model returned nothing), a validity-FAIL row IS. Verified offline:
+   77/77 drawn (op,slot) pairs skipped, 0 partial pairs, undrawn set =
+   {b2: 4 pairs} + {b3,b5,b6,b7,c1..c7,d1..d8}.
+5. Relaunched 12:5x UTC with the fixed resume; log header now prints the
+   skip count (`[resume] 359 attempts already drawn across 77 pairs`).
+
+**Blast radius on inference: none.** No SMS, review, or verdict had been
+computed on any Study-4 arm at any point in this window; the selection risk
+of "choosing between draws" never materialised because the redraws were
+quarantined unread and the first draws restored from the committed
+checkpoint. Cost of the defect: ~143 redundant gateway generation calls
+(logged), plus 534 zero-cost transport-error rows from one relaunch attempt
+that ran without `.env` loaded (also logged, not draws).

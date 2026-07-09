@@ -1,0 +1,222 @@
+{
+  "packet_id": "gen_c3",
+  "put_id": "c3",
+  "mutants": [
+    {
+      "op_id": "c3_CE1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 2), activation=\"relu\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_HIDDEN = (64, 2)\n_ACTIVATION = \"relu\"\n_MAX_ITER = 1000\n\n_model = MLPRegressor(\n    hidden_layer_sizes=_HIDDEN,\n    activation=_ACTIVATION,\n    solver=\"adam\",\n    max_iter=_MAX_ITER,\n    random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_params = {\n    \"hidden_layer_sizes\": (64, 2),\n    \"activation\": \"relu\",\n    \"solver\": \"adam\",\n    \"max_iter\": 1000,\n    \"random_state\": 42,\n}\n_model = MLPRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _build_model():\n    return MLPRegressor(\n        hidden_layer_sizes=(64, 2),\n        activation=\"relu\",\n        solver=\"adam\",\n        max_iter=1000,\n        random_state=42,\n    )\n\n\n_model = _build_model()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"relu\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.set_params(hidden_layer_sizes=(64, 2))\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\nfrom functools import partial\n\n_make = partial(\n    MLPRegressor,\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n)\n_model = _make(hidden_layer_sizes=(64, 2), activation=\"relu\")\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _fit(estimator):\n    estimator.fit(_t_train, _y_train)\n    return estimator\n\n\n_model = _fit(\n    MLPRegressor(\n        hidden_layer_sizes=(64, 2),\n        activation=\"relu\",\n        solver=\"adam\",\n        max_iter=1000,\n        random_state=42,\n    )\n)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _make_model(hidden=(64, 2), act=\"relu\", iters=1000):\n    return MLPRegressor(\n        hidden_layer_sizes=hidden,\n        activation=act,\n        solver=\"adam\",\n        max_iter=iters,\n        random_state=42,\n    )\n\n\n_model = _make_model()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 4 // 2),\n    activation=\"relu\",\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_cfg = dict(\n    hidden_layer_sizes=(64, 32),\n    activation=\"relu\",\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n)\n_cfg[\"hidden_layer_sizes\"] = (64, 2)\n_model = MLPRegressor(**_cfg)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\nclass _Surrogate:\n    def __init__(self):\n        self._est = MLPRegressor(\n            hidden_layer_sizes=(64, 2),\n            activation=\"relu\",\n            solver=\"adam\",\n            max_iter=1000,\n            random_state=42,\n        )\n        self._est.fit(_t_train, _y_train)\n\n    def predict(self, X):\n        return self._est.predict(X)\n\n\n_model = _Surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_kw_pairs = [\n    (\"solver\", \"adam\"),\n    (\"random_state\", 42),\n    (\"max_iter\", 1000),\n    (\"activation\", \"relu\"),\n    (\"hidden_layer_sizes\", (64, 2)),\n]\n_model = MLPRegressor(**dict(_kw_pairs))\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"tanh\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_HIDDEN = (64, 32)\n_ACTIVATION = \"tanh\"\n_MAX_ITER = 1000\n\n_model = MLPRegressor(\n    hidden_layer_sizes=_HIDDEN,\n    activation=_ACTIVATION,\n    solver=\"adam\",\n    max_iter=_MAX_ITER,\n    random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_params = {\n    \"hidden_layer_sizes\": (64, 32),\n    \"activation\": \"tanh\",\n    \"solver\": \"adam\",\n    \"max_iter\": 1000,\n    \"random_state\": 42,\n}\n_model = MLPRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _build_model():\n    return MLPRegressor(\n        hidden_layer_sizes=(64, 32),\n        activation=\"tanh\",\n        solver=\"adam\",\n        max_iter=1000,\n        random_state=42,\n    )\n\n\n_model = _build_model()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"relu\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.set_params(activation=\"tanh\")\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\nfrom functools import partial\n\n_make = partial(\n    MLPRegressor,\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n)\n_model = _make(hidden_layer_sizes=(64, 32), activation=\"tanh\")\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _fit(estimator):\n    estimator.fit(_t_train, _y_train)\n    return estimator\n\n\n_model = _fit(\n    MLPRegressor(\n        hidden_layer_sizes=(64, 32),\n        activation=\"tanh\",\n        solver=\"adam\",\n        max_iter=1000,\n        random_state=42,\n    )\n)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _make_model(hidden=(64, 32), act=\"tanh\", iters=1000):\n    return MLPRegressor(\n        hidden_layer_sizes=hidden,\n        activation=act,\n        solver=\"adam\",\n        max_iter=iters,\n        random_state=42,\n    )\n\n\n_model = _make_model()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32),\n    activation=\"\".join([\"ta\", \"nh\"]),\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_cfg = dict(\n    hidden_layer_sizes=(64, 32),\n    activation=\"relu\",\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n)\n_cfg[\"activation\"] = \"tanh\"\n_model = MLPRegressor(**_cfg)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\nclass _Surrogate:\n    def __init__(self):\n        self._est = MLPRegressor(\n            hidden_layer_sizes=(64, 32),\n            activation=\"tanh\",\n            solver=\"adam\",\n            max_iter=1000,\n            random_state=42,\n        )\n        self._est.fit(_t_train, _y_train)\n\n    def predict(self, X):\n        return self._est.predict(X)\n\n\n_model = _Surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_kw_pairs = [\n    (\"solver\", \"adam\"),\n    (\"random_state\", 42),\n    (\"max_iter\", 1000),\n    (\"activation\", \"tanh\"),\n    (\"hidden_layer_sizes\", (64, 32)),\n]\n_model = MLPRegressor(**dict(_kw_pairs))\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"relu\",\n    solver=\"adam\", max_iter=5, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_HIDDEN = (64, 32)\n_ACTIVATION = \"relu\"\n_MAX_ITER = 5\n\n_model = MLPRegressor(\n    hidden_layer_sizes=_HIDDEN,\n    activation=_ACTIVATION,\n    solver=\"adam\",\n    max_iter=_MAX_ITER,\n    random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_params = {\n    \"hidden_layer_sizes\": (64, 32),\n    \"activation\": \"relu\",\n    \"solver\": \"adam\",\n    \"max_iter\": 5,\n    \"random_state\": 42,\n}\n_model = MLPRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _build_model():\n    return MLPRegressor(\n        hidden_layer_sizes=(64, 32),\n        activation=\"relu\",\n        solver=\"adam\",\n        max_iter=5,\n        random_state=42,\n    )\n\n\n_model = _build_model()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"relu\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.set_params(max_iter=5)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\nfrom functools import partial\n\n_make = partial(\n    MLPRegressor,\n    solver=\"adam\",\n    max_iter=5,\n    random_state=42,\n)\n_model = _make(hidden_layer_sizes=(64, 32), activation=\"relu\")\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _fit(estimator):\n    estimator.fit(_t_train, _y_train)\n    return estimator\n\n\n_model = _fit(\n    MLPRegressor(\n        hidden_layer_sizes=(64, 32),\n        activation=\"relu\",\n        solver=\"adam\",\n        max_iter=5,\n        random_state=42,\n    )\n)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _make_model(hidden=(64, 32), act=\"relu\", iters=5):\n    return MLPRegressor(\n        hidden_layer_sizes=hidden,\n        activation=act,\n        solver=\"adam\",\n        max_iter=iters,\n        random_state=42,\n    )\n\n\n_model = _make_model()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32),\n    activation=\"relu\",\n    solver=\"adam\",\n    max_iter=int(\"5\"),\n    random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_cfg = dict(\n    hidden_layer_sizes=(64, 32),\n    activation=\"relu\",\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n)\n_cfg[\"max_iter\"] = 5\n_model = MLPRegressor(**_cfg)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\nclass _Surrogate:\n    def __init__(self):\n        self._est = MLPRegressor(\n            hidden_layer_sizes=(64, 32),\n            activation=\"relu\",\n            solver=\"adam\",\n            max_iter=5,\n            random_state=42,\n        )\n        self._est.fit(_t_train, _y_train)\n\n    def predict(self, X):\n        return self._est.predict(X)\n\n\n_model = _Surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_kw_pairs = [\n    (\"solver\", \"adam\"),\n    (\"random_state\", 42),\n    (\"max_iter\", 5),\n    (\"activation\", \"relu\"),\n    (\"hidden_layer_sizes\", (64, 32)),\n]\n_model = MLPRegressor(**dict(_kw_pairs))\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

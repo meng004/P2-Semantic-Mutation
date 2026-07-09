@@ -1,0 +1,222 @@
+{
+  "packet_id": "gen_c2",
+  "put_id": "c2",
+  "mutants": [
+    {
+      "op_id": "c2_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(1, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_PCE_DEGREE = 1\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline(steps=[\n    (\"poly\", PolynomialFeatures(degree=_PCE_DEGREE, include_bias=True)),\n    (\"reg\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_basis = PolynomialFeatures(degree=1, include_bias=True)\n_features = _basis.fit_transform(_t_train)\n_regressor = LinearRegression()\n_regressor.fit(_features, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    row = _basis.transform(np.array([[t]]))\n    return float(_regressor.predict(row)[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n# Degree-1 least-squares polynomial fit (equivalent to the linear-basis PCE).\n_coeffs = np.polyfit(_t_train.ravel(), _y_train, deg=1)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(np.polyval(_coeffs, t))\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(1, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_PCE_DEGREE = 1\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline(steps=[\n    (\"poly\", PolynomialFeatures(degree=_PCE_DEGREE, include_bias=True)),\n    (\"reg\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_basis = PolynomialFeatures(degree=1, include_bias=True)\n_features = _basis.fit_transform(_t_train)\n_regressor = LinearRegression()\n_regressor.fit(_features, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    row = _basis.transform(np.array([[t]]))\n    return float(_regressor.predict(row)[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n# Degree-1 least-squares polynomial fit (equivalent to the linear-basis PCE).\n_coeffs = np.polyfit(_t_train.ravel(), _y_train, deg=1)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(np.polyval(_coeffs, t))\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(1, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_PCE_DEGREE = 1\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline(steps=[\n    (\"poly\", PolynomialFeatures(degree=_PCE_DEGREE, include_bias=True)),\n    (\"reg\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_basis = PolynomialFeatures(degree=1, include_bias=True)\n_features = _basis.fit_transform(_t_train)\n_regressor = LinearRegression()\n_regressor.fit(_features, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    row = _basis.transform(np.array([[t]]))\n    return float(_regressor.predict(row)[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n# Degree-1 least-squares polynomial fit (equivalent to the linear-basis PCE).\n_coeffs = np.polyfit(_t_train.ravel(), _y_train, deg=1)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(np.polyval(_coeffs, t))\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(SplineTransformer(n_knots=6, degree=3), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline(steps=[\n    (\"basis\", SplineTransformer(n_knots=6, degree=3)),\n    (\"reg\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_basis = SplineTransformer(n_knots=6, degree=3)\n_features = _basis.fit_transform(_t_train)\n_regressor = LinearRegression()\n_regressor.fit(_features, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    row = _basis.transform(np.array([[t]]))\n    return float(_regressor.predict(row)[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n\ndef _build_surrogate():\n    rng = np.random.default_rng(42)\n    t_train = np.sort(rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n    y_train = np.tanh(t_train.ravel())\n    basis = SplineTransformer(n_knots=6, degree=3)\n    surrogate = make_pipeline(basis, LinearRegression())\n    surrogate.fit(t_train, y_train)\n    return surrogate\n\n\n_model = _build_surrogate()\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(SplineTransformer(n_knots=6, degree=3), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline(steps=[\n    (\"basis\", SplineTransformer(n_knots=6, degree=3)),\n    (\"reg\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_basis = SplineTransformer(n_knots=6, degree=3)\n_features = _basis.fit_transform(_t_train)\n_regressor = LinearRegression()\n_regressor.fit(_features, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    row = _basis.transform(np.array([[t]]))\n    return float(_regressor.predict(row)[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n\ndef _build_surrogate():\n    rng = np.random.default_rng(42)\n    t_train = np.sort(rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n    y_train = np.tanh(t_train.ravel())\n    basis = SplineTransformer(n_knots=6, degree=3)\n    surrogate = make_pipeline(basis, LinearRegression())\n    surrogate.fit(t_train, y_train)\n    return surrogate\n\n\n_model = _build_surrogate()\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(SplineTransformer(n_knots=6, degree=3), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline(steps=[\n    (\"basis\", SplineTransformer(n_knots=6, degree=3)),\n    (\"reg\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_basis = SplineTransformer(n_knots=6, degree=3)\n_features = _basis.fit_transform(_t_train)\n_regressor = LinearRegression()\n_regressor.fit(_features, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    row = _basis.transform(np.array([[t]]))\n    return float(_regressor.predict(row)[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n\ndef _build_surrogate():\n    rng = np.random.default_rng(42)\n    t_train = np.sort(rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n    y_train = np.tanh(t_train.ravel())\n    basis = SplineTransformer(n_knots=6, degree=3)\n    surrogate = make_pipeline(basis, LinearRegression())\n    surrogate.fit(t_train, y_train)\n    return surrogate\n\n\n_model = _build_surrogate()\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 40)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_N_COLLOCATION = 80 // 2  # halved collocation budget\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _N_COLLOCATION)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n\ndef _collocation_points(n_points):\n    rng = np.random.default_rng(42)\n    pts = rng.uniform(low=-2.0, high=2.0, size=n_points)\n    return np.sort(pts).reshape(-1, 1)\n\n\n_t_train = _collocation_points(int(80 / 2))\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_FULL_BUDGET = 80\n_HALVING_FACTOR = 2\n\n_rng = np.random.default_rng(42)\n_samples = _rng.uniform(-2.0, 2.0, _FULL_BUDGET // _HALVING_FACTOR)\n_t_train = np.sort(_samples)[:, np.newaxis]\n_y_train = np.tanh(_t_train[:, 0])\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 40)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_N_COLLOCATION = 80 // 2  # halved collocation budget\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _N_COLLOCATION)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n\ndef _collocation_points(n_points):\n    rng = np.random.default_rng(42)\n    pts = rng.uniform(low=-2.0, high=2.0, size=n_points)\n    return np.sort(pts).reshape(-1, 1)\n\n\n_t_train = _collocation_points(int(80 / 2))\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_FULL_BUDGET = 80\n_HALVING_FACTOR = 2\n\n_rng = np.random.default_rng(42)\n_samples = _rng.uniform(-2.0, 2.0, _FULL_BUDGET // _HALVING_FACTOR)\n_t_train = np.sort(_samples)[:, np.newaxis]\n_y_train = np.tanh(_t_train[:, 0])\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 40)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_N_COLLOCATION = 80 // 2  # halved collocation budget\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _N_COLLOCATION)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n\ndef _collocation_points(n_points):\n    rng = np.random.default_rng(42)\n    pts = rng.uniform(low=-2.0, high=2.0, size=n_points)\n    return np.sort(pts).reshape(-1, 1)\n\n\n_t_train = _collocation_points(int(80 / 2))\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C2: Polynomial Chaos Expansion surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn PolynomialFeatures + LinearRegression (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 4x − 2 ∈ [−2, 2]. Training: tanh(t) (monotone increasing).\nDegree-5 polynomial PCE. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_FULL_BUDGET = 80\n_HALVING_FACTOR = 2\n\n_rng = np.random.default_rng(42)\n_samples = _rng.uniform(-2.0, 2.0, _FULL_BUDGET // _HALVING_FACTOR)\n_t_train = np.sort(_samples)[:, np.newaxis]\n_y_train = np.tanh(_t_train[:, 0])\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

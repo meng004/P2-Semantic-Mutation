@@ -1,0 +1,308 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_c6",
+  "put_id": "c6",
+  "lang": "py",
+  "arm": "same",
+  "stratum": "recruit",
+  "seed": 20260708,
+  "k_per_source": 4,
+  "sources": [
+    "src1",
+    "src2",
+    "src3"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/c6.py",
+    "sha256": "0c304e4e6baa2b2913efa67d71f085383447ef3312ac858a6cbd1e071f58ada4",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for C6 RBF surrogate of erf(t), t = 6x − 3.\n\n§3.3 grid: c6 = mp1● mp2●● mp3●● mp4● mp5●●\n\ntarget erf(t) is odd on [−3,3], monotone increasing, bounded ∈ (−1, 1).\n\nMP1 (Conservation, ●): r_mp1(x)=1-x; R_mp1: |y_o + y_n| < 0.2 (erf(-t)+erf(t)=0;\n  smooth-RBF interpolation tolerance).\nMP2 (Monotonicity, ●●): r_mp2(x)=min(x+0.1,0.9); R_mp2: y_new >= y_orig - 0.1.\nMP3 (Convergence, ●●): r_mp3(x)=x; R_mp3: y ∈ [-1.2, 1.2] (bounded within the\n  erf target range plus interpolation margin).\nMP4 (Trajectory, ●): r_mp4(x)=1-x; R_mp4: |y_o + y_n| < 0.4 (loose odd symmetry).\nMP5 (Asymptotic, ●●): r_mp5(x)=min(x+0.1,0.9); R_mp5: y_new >= y_orig - 0.1\n  (asymptotic ordering at the input-domain endpoints).\n\"\"\"\nimport math\n\n\ndef r_mp1(x) -> float:\n    return 1.0 - float(x)\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_o + y_n) < 0.2\n\n\ndef r_mp2(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 0.1\n\n\ndef r_mp3(x) -> float:\n    return float(x)\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    y = float(y_orig)\n    return math.isfinite(y) and -1.2 <= y <= 1.2\n\n\ndef r_mp4(x) -> float:\n    return 1.0 - float(x)\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_o + y_n) < 0.4\n\n\ndef r_mp5(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 0.1\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "c6_CE1",
+        "put": "c6",
+        "category": "CE",
+        "label": "test map 3→2",
+        "target_locator": "test-point mapping `t = 6.0*x - 3.0`",
+        "transformation": "change the offset in `6.0*x - 3.0` from 3.0 to 2.0",
+        "rationale": "mis-scaled query mapping shifts the evaluation point",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_CE1\nOPERATOR LABEL: test map 3→2\nTARGET LOCATOR: test-point mapping `t = 6.0*x - 3.0`\nEXACT CHANGE: change the offset in `6.0*x - 3.0` from 3.0 to 2.0\nRATIONALE: mis-scaled query mapping shifts the evaluation point\n\nATTEMPT INDEX: 1 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_CE1\nOPERATOR LABEL: test map 3→2\nTARGET LOCATOR: test-point mapping `t = 6.0*x - 3.0`\nEXACT CHANGE: change the offset in `6.0*x - 3.0` from 3.0 to 2.0\nRATIONALE: mis-scaled query mapping shifts the evaluation point\n\nATTEMPT INDEX: 2 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_CE1\nOPERATOR LABEL: test map 3→2\nTARGET LOCATOR: test-point mapping `t = 6.0*x - 3.0`\nEXACT CHANGE: change the offset in `6.0*x - 3.0` from 3.0 to 2.0\nRATIONALE: mis-scaled query mapping shifts the evaluation point\n\nATTEMPT INDEX: 3 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "4": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_CE1\nOPERATOR LABEL: test map 3→2\nTARGET LOCATOR: test-point mapping `t = 6.0*x - 3.0`\nEXACT CHANGE: change the offset in `6.0*x - 3.0` from 3.0 to 2.0\nRATIONALE: mis-scaled query mapping shifts the evaluation point\n\nATTEMPT INDEX: 4 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "c6_HP1",
+        "put": "c6",
+        "category": "HP",
+        "label": "kernel tps→linear",
+        "target_locator": "RBFInterpolator kernel parameter",
+        "transformation": "change kernel from 'thin_plate_spline' to 'linear'",
+        "rationale": "wrong RBF kernel family changes the interpolation basis",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_HP1\nOPERATOR LABEL: kernel tps→linear\nTARGET LOCATOR: RBFInterpolator kernel parameter\nEXACT CHANGE: change kernel from 'thin_plate_spline' to 'linear'\nRATIONALE: wrong RBF kernel family changes the interpolation basis\n\nATTEMPT INDEX: 1 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_HP1\nOPERATOR LABEL: kernel tps→linear\nTARGET LOCATOR: RBFInterpolator kernel parameter\nEXACT CHANGE: change kernel from 'thin_plate_spline' to 'linear'\nRATIONALE: wrong RBF kernel family changes the interpolation basis\n\nATTEMPT INDEX: 2 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_HP1\nOPERATOR LABEL: kernel tps→linear\nTARGET LOCATOR: RBFInterpolator kernel parameter\nEXACT CHANGE: change kernel from 'thin_plate_spline' to 'linear'\nRATIONALE: wrong RBF kernel family changes the interpolation basis\n\nATTEMPT INDEX: 3 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "4": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_HP1\nOPERATOR LABEL: kernel tps→linear\nTARGET LOCATOR: RBFInterpolator kernel parameter\nEXACT CHANGE: change kernel from 'thin_plate_spline' to 'linear'\nRATIONALE: wrong RBF kernel family changes the interpolation basis\n\nATTEMPT INDEX: 4 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "c6_TF1",
+        "put": "c6",
+        "category": "TF",
+        "label": "train range narrowed",
+        "target_locator": "training-point generation `_rng.uniform(-3.0, 3.0, 300)`",
+        "transformation": "restrict the training range from [-3,3] to [-1,1]",
+        "rationale": "narrowed support forces extrapolation of the erf target",
+        "is_key": false,
+        "constraint_flag": null,
+        "constraint_flag_integration_point": "MutationOperator exposes no constraint_flag yet; when F2's registry change merges a per-operator flag, it is read via getattr(op,'constraint_flag') with no packet-code change. The load-bearing CF/TF enforcement is the single-stratum admission screen in build_pools.py."
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_TF1\nOPERATOR LABEL: train range narrowed\nTARGET LOCATOR: training-point generation `_rng.uniform(-3.0, 3.0, 300)`\nEXACT CHANGE: restrict the training range from [-3,3] to [-1,1]\nRATIONALE: narrowed support forces extrapolation of the erf target\n\nATTEMPT INDEX: 1 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n\nSINGLE-STRATUM CONSTRAINT (Study-2): this operator must perturb EXACTLY ONE behavioural invariant. Localise the defect to the single specified site; do not additionally corrupt shared upstream state (the chain/target for control-flow ops, or the training data/labels for fit-data ops) in a way that would break more than one invariant. Candidates that perturb two or more invariants are rejected at admission.",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_TF1\nOPERATOR LABEL: train range narrowed\nTARGET LOCATOR: training-point generation `_rng.uniform(-3.0, 3.0, 300)`\nEXACT CHANGE: restrict the training range from [-3,3] to [-1,1]\nRATIONALE: narrowed support forces extrapolation of the erf target\n\nATTEMPT INDEX: 2 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n\nSINGLE-STRATUM CONSTRAINT (Study-2): this operator must perturb EXACTLY ONE behavioural invariant. Localise the defect to the single specified site; do not additionally corrupt shared upstream state (the chain/target for control-flow ops, or the training data/labels for fit-data ops) in a way that would break more than one invariant. Candidates that perturb two or more invariants are rejected at admission.",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_TF1\nOPERATOR LABEL: train range narrowed\nTARGET LOCATOR: training-point generation `_rng.uniform(-3.0, 3.0, 300)`\nEXACT CHANGE: restrict the training range from [-3,3] to [-1,1]\nRATIONALE: narrowed support forces extrapolation of the erf target\n\nATTEMPT INDEX: 3 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n\nSINGLE-STRATUM CONSTRAINT (Study-2): this operator must perturb EXACTLY ONE behavioural invariant. Localise the defect to the single specified site; do not additionally corrupt shared upstream state (the chain/target for control-flow ops, or the training data/labels for fit-data ops) in a way that would break more than one invariant. Candidates that perturb two or more invariants are rejected at admission.",
+        "4": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: C6\nOPERATOR ID: c6_TF1\nOPERATOR LABEL: train range narrowed\nTARGET LOCATOR: training-point generation `_rng.uniform(-3.0, 3.0, 300)`\nEXACT CHANGE: restrict the training range from [-3,3] to [-1,1]\nRATIONALE: narrowed support forces extrapolation of the erf target\n\nATTEMPT INDEX: 4 of 4  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n\nSINGLE-STRATUM CONSTRAINT (Study-2): this operator must perturb EXACTLY ONE behavioural invariant. Localise the defect to the single specified site; do not additionally corrupt shared upstream state (the chain/target for control-flow ops, or the training data/labels for fit-data ops) in a way that would break more than one invariant. Candidates that perturb two or more invariants are rejected at admission."
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 12,
+    "n_operators": 3,
+    "packet_total": 36
+  },
+  "required_slots": [
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 4
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 4
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_c6_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}

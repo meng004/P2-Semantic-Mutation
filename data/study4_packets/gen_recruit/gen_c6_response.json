@@ -1,0 +1,222 @@
+{
+  "packet_id": "gen_c6",
+  "put_id": "c6",
+  "mutants": [
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef _to_test_point(x_scalar):\n    return 2.0 * (3.0 * x_scalar - 1.0)\n\n\ndef program(x) -> float:\n    t = _to_test_point(float(x))\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n_SLOPE, _OFFSET = 6.0, -2.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    query = np.array([[_SLOPE * x + _OFFSET]])\n    return float(_model(query)[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    t = float(np.polyval([6.0, -2.0], float(x)))\n    result = _model(np.reshape(t, (1, 1)))\n    return float(result[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef _to_test_point(x_scalar):\n    return 2.0 * (3.0 * x_scalar - 1.0)\n\n\ndef program(x) -> float:\n    t = _to_test_point(float(x))\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n_SLOPE, _OFFSET = 6.0, -2.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    query = np.array([[_SLOPE * x + _OFFSET]])\n    return float(_model(query)[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    t = float(np.polyval([6.0, -2.0], float(x)))\n    result = _model(np.reshape(t, (1, 1)))\n    return float(result[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef _to_test_point(x_scalar):\n    return 2.0 * (3.0 * x_scalar - 1.0)\n\n\ndef program(x) -> float:\n    t = _to_test_point(float(x))\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n_SLOPE, _OFFSET = 6.0, -2.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    query = np.array([[_SLOPE * x + _OFFSET]])\n    return float(_model(query)[0])\n"
+    },
+    {
+      "op_id": "c6_CE1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    t = float(np.polyval([6.0, -2.0], float(x)))\n    result = _model(np.reshape(t, (1, 1)))\n    return float(result[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"linear\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_KERNEL = \"linear\"\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=_KERNEL)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_rbf_options = {\"kernel\": \"linear\"}\n_model = RBFInterpolator(_t_train, _y_train, **_rbf_options)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n\ndef _fit_surrogate():\n    rng = np.random.default_rng(42)\n    t_train = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n    y_train = erf(t_train.ravel())\n    return RBFInterpolator(t_train, y_train, kernel=\"linear\")\n\n\n_model = _fit_surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"linear\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_KERNEL = \"linear\"\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=_KERNEL)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_rbf_options = {\"kernel\": \"linear\"}\n_model = RBFInterpolator(_t_train, _y_train, **_rbf_options)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n\ndef _fit_surrogate():\n    rng = np.random.default_rng(42)\n    t_train = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n    y_train = erf(t_train.ravel())\n    return RBFInterpolator(t_train, y_train, kernel=\"linear\")\n\n\n_model = _fit_surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"linear\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_KERNEL = \"linear\"\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=_KERNEL)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_rbf_options = {\"kernel\": \"linear\"}\n_model = RBFInterpolator(_t_train, _y_train, **_rbf_options)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_HP1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n\ndef _fit_surrogate():\n    rng = np.random.default_rng(42)\n    t_train = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n    y_train = erf(t_train.ravel())\n    return RBFInterpolator(t_train, y_train, kernel=\"linear\")\n\n\n_model = _fit_surrogate()\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_TRAIN_LO, _TRAIN_HI = -1.0, 1.0\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(_TRAIN_LO, _TRAIN_HI, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(2.0 * _rng.random(300) - 1.0).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n\ndef _make_training_set():\n    rng = np.random.default_rng(42)\n    pts = np.sort(rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n    return pts, erf(pts.ravel())\n\n\n_t_train, _y_train = _make_training_set()\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_TRAIN_LO, _TRAIN_HI = -1.0, 1.0\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(_TRAIN_LO, _TRAIN_HI, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(2.0 * _rng.random(300) - 1.0).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n\ndef _make_training_set():\n    rng = np.random.default_rng(42)\n    pts = np.sort(rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n    return pts, erf(pts.ravel())\n\n\n_t_train, _y_train = _make_training_set()\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_TRAIN_LO, _TRAIN_HI = -1.0, 1.0\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(_TRAIN_LO, _TRAIN_HI, 300)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(2.0 * _rng.random(300) - 1.0).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    },
+    {
+      "op_id": "c6_TF1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C6: Radial-basis-function interpolation surrogate — scalar x∈[0,1] interface.\n\nLibrary: scipy.interpolate.RBFInterpolator (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RBFInterpolator.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: erf(t) (monotone, odd, bounded).\nThin-plate-spline RBF surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import RBFInterpolator\nfrom scipy.special import erf\n\n\ndef _make_training_set():\n    rng = np.random.default_rng(42)\n    pts = np.sort(rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n    return pts, erf(pts.ravel())\n\n\n_t_train, _y_train = _make_training_set()\n\n_model = RBFInterpolator(_t_train, _y_train, kernel=\"thin_plate_spline\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model([[t]])[0])\n"
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_b1",
+  "put_id": "b1",
+  "lang": "py",
+  "arm": "same",
+  "stratum": null,
+  "seed": 20260708,
+  "k_per_source": 3,
+  "sources": [
+    "src1",
+    "src2",
+    "src3"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/b1.py",
+    "sha256": "24963137a0dc77959a9a039506dd7dd1368d6bf8428f01202f2f945d1278c3a4",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for B1 Beta-Binomial conjugate.\n\n§3.3 grid: b1 = mp1●● mp2● mp3○ mp4○ mp5●\n\nPUT: posterior_mean(x) = (1+round(100x)) / 102, monotone in x.\n\nMP1 (Conservation, ●●): r_mp1(x)=1-x; R_mp1: |y_o + y_n − 1| < 1e-3\n  (probability complement: posterior(x) + posterior(1-x) = 1 exactly).\nMP2 (Monotonicity, ●): existing — small x increment → posterior increases.\nMP3 (Convergence, ○): no externally tunable refinement; ○ baseline.\nMP4 (Trajectory, ○): scalar in/out, no trajectory; ○ baseline.\nMP5 (Asymptotic, ●): r_mp5(x)=x; R_mp5: y ∈ [1/102, 101/102] (bounded\n  posterior over the input domain).\n\"\"\"\nimport math\n\n\ndef r_mp1(x) -> float:\n    return float(1.0 - float(x))\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_o + y_n - 1.0) < 1e-3\n\n\ndef r_mp2(x) -> float:\n    return float(min(float(x) + 0.01, 0.99))\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    return float(y_new) > float(y_orig)\n\n\ndef r_mp3(x) -> float:\n    return float(x)\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp4(x) -> float:\n    return float(x)\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp5(x) -> float:\n    return float(x)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    y = float(y_orig)\n    if not math.isfinite(y):\n        return False\n    return 1.0 / 102.0 - 1e-6 <= y <= 101.0 / 102.0 + 1e-6\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "b1_CE1",
+        "put": "b1",
+        "category": "CE",
+        "label": "successes off-by-one",
+        "target_locator": "alpha_post = prior_alpha + successes",
+        "transformation": "change successes to (successes - 1) with floor at 0",
+        "rationale": "off-by-one in success-count accumulation",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_CE1\nOPERATOR LABEL: successes off-by-one\nTARGET LOCATOR: alpha_post = prior_alpha + successes\nEXACT CHANGE: change successes to (successes - 1) with floor at 0\nRATIONALE: off-by-one in success-count accumulation\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_CE1\nOPERATOR LABEL: successes off-by-one\nTARGET LOCATOR: alpha_post = prior_alpha + successes\nEXACT CHANGE: change successes to (successes - 1) with floor at 0\nRATIONALE: off-by-one in success-count accumulation\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_CE1\nOPERATOR LABEL: successes off-by-one\nTARGET LOCATOR: alpha_post = prior_alpha + successes\nEXACT CHANGE: change successes to (successes - 1) with floor at 0\nRATIONALE: off-by-one in success-count accumulation\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "b1_HP1",
+        "put": "b1",
+        "category": "HP",
+        "label": "prior alpha 1→3",
+        "target_locator": "prior_alpha definition",
+        "transformation": "change prior_alpha from 1.0 to 3.0",
+        "rationale": "incorrect informative prior — silent specification error",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_HP1\nOPERATOR LABEL: prior alpha 1→3\nTARGET LOCATOR: prior_alpha definition\nEXACT CHANGE: change prior_alpha from 1.0 to 3.0\nRATIONALE: incorrect informative prior — silent specification error\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_HP1\nOPERATOR LABEL: prior alpha 1→3\nTARGET LOCATOR: prior_alpha definition\nEXACT CHANGE: change prior_alpha from 1.0 to 3.0\nRATIONALE: incorrect informative prior — silent specification error\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_HP1\nOPERATOR LABEL: prior alpha 1→3\nTARGET LOCATOR: prior_alpha definition\nEXACT CHANGE: change prior_alpha from 1.0 to 3.0\nRATIONALE: incorrect informative prior — silent specification error\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "b1_OS1",
+        "put": "b1",
+        "category": "OS",
+        "label": "alpha/beta swap",
+        "target_locator": "posterior mean computation alpha_post / (alpha_post + beta_post)",
+        "transformation": "swap roles of alpha_post and beta_post in mean formula",
+        "rationale": "parameter naming confusion in conjugate update",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_OS1\nOPERATOR LABEL: alpha/beta swap\nTARGET LOCATOR: posterior mean computation alpha_post / (alpha_post + beta_post)\nEXACT CHANGE: swap roles of alpha_post and beta_post in mean formula\nRATIONALE: parameter naming confusion in conjugate update\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_OS1\nOPERATOR LABEL: alpha/beta swap\nTARGET LOCATOR: posterior mean computation alpha_post / (alpha_post + beta_post)\nEXACT CHANGE: swap roles of alpha_post and beta_post in mean formula\nRATIONALE: parameter naming confusion in conjugate update\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: B1\nOPERATOR ID: b1_OS1\nOPERATOR LABEL: alpha/beta swap\nTARGET LOCATOR: posterior mean computation alpha_post / (alpha_post + beta_post)\nEXACT CHANGE: swap roles of alpha_post and beta_post in mean formula\nRATIONALE: parameter naming confusion in conjugate update\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B1: Beta-Binomial conjugate — posterior mean (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.beta (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.beta.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → n_succ = round(100*x), n_trials = 100.\nPrior: Beta(1, 1) (uniform). Returns posterior mean = (1+n_succ)/(2+100).\nMonotone: larger x → more successes → higher posterior mean.\n\"\"\"\nimport numpy as np\n\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 9,
+    "n_operators": 3,
+    "packet_total": 27
+  },
+  "required_slots": [
+    {
+      "op_id": "b1_CE1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "src3",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src1",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src1",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src1",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src2",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src2",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src2",
+      "attempt": 3
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src3",
+      "attempt": 1
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src3",
+      "attempt": 2
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "src3",
+      "attempt": 3
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_b1_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}

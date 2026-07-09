@@ -1,0 +1,21 @@
+[
+  {
+    "event": "export-generation",
+    "ts": "2026-07-09T12:15:46Z",
+    "arm": "cross",
+    "stratum": null,
+    "k": 3,
+    "seed": 20260708,
+    "sources": [
+      "src1",
+      "src2",
+      "src3"
+    ],
+    "n_packets": 1,
+    "resume_from": "data/operator_campaign/cache_clang",
+    "n_resume_skipped_slots": 192,
+    "puts": [
+      "c2"
+    ]
+  }
+]

@@ -1432,7 +1432,8 @@ def _study4_call(factory, prompt: str, *, kind: str, slot_tag: str,
 
 
 def study4_generate_slot(op, original_code, original_fn, slot_tag, factory,
-                         attempts, cache_dir, log_path, lang="py"):
+                         attempts, cache_dir, log_path, lang="py",
+                         start_attempt=1):
     """Generate + admit ``attempts`` mutants for one (operator, slot) on the gateway.
 
     ``lang`` selects the grid: 'py' (default, Study-4 Python arms — byte-unchanged)
@@ -1443,6 +1444,7 @@ def study4_generate_slot(op, original_code, original_fn, slot_tag, factory,
     is_c = (lang == "c")
     tmpl = PROMPT_TEMPLATE_C if is_c else PROMPT_TEMPLATE
     strip = _strip_code_fences if is_c else _strip_fences
+    start_attempt = int(start_attempt) if start_attempt else 1
     # P14 (C-arm pilot): a C mutant carries the FULL self-contained program
     # (includes + program(x) + the REPL main), which is 2-4x the token length of
     # a Python mutant body. The Python-inherited 800-token budget truncated the
@@ -1451,7 +1453,7 @@ def study4_generate_slot(op, original_code, original_fn, slot_tag, factory,
     # the harness config (the per-model min_max_tokens floor still applies on top).
     gen_max_tokens = C_GEN_MAX_TOKENS if is_c else 800
     results = []
-    for attempt in range(1, attempts + 1):
+    for attempt in range(start_attempt, attempts + 1):
         prompt = tmpl.format(
             put_name=op.put.upper(), op_id=op.id, op_label=op.label,
             target_locator=op.target_locator, transformation=op.transformation,
@@ -1587,6 +1589,27 @@ def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
         print(f"  [rich-x{mult}] {len(rich)} rich (C/D) PUTs at {attempts}x{mult}"
               f"={attempts * mult} attempts/slot; A/B at {attempts}: rich={rich}",
               flush=True)
+    # One-shot resume (incident P15): the legacy ``--resume`` filter matched the
+    # Study-2 filename scheme ``(claude|gpt|deepseek)`` and NEVER matched Study-4's
+    # ``src1/src2/src3`` caches, so a relaunch silently REDREW already-drawn slots.
+    # The draw record is the campaign log, not the cache dir: a validity-FAIL
+    # attempt is a consumed draw (no cache file), while a transport/quota error
+    # (``study4-generate-error``) is not a draw. Count ``kind=="generate"`` rows
+    # per (op_id, slot) and start each slot at attempt drawn+1.
+    drawn_counts: dict = {}
+    if log_path and Path(log_path).exists():
+        for _line in Path(log_path).read_text().splitlines():
+            try:
+                _r = json.loads(_line)
+            except (ValueError, TypeError):
+                continue
+            if _r.get("kind") == "generate":
+                _k = (_r.get("op_id"), _r.get("slot"))
+                drawn_counts[_k] = drawn_counts.get(_k, 0) + 1
+    if drawn_counts:
+        print(f"  [resume] {sum(drawn_counts.values())} attempts already drawn "
+              f"across {len(drawn_counts)} (op,slot) pairs — skipping those",
+              flush=True)
     records, reviews = [], []
     put_cache: dict = {}
     for op in ops:
@@ -1596,9 +1619,12 @@ def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
         original_code, original_fn = put_cache[op.put]
         eff_attempts = study4_cfg.attempts_for_put(attempts, op.put, lang=lang, cfg=cfg)
         for slot_tag, factory in slots:
+            already = min(drawn_counts.get((op.id, slot_tag), 0), eff_attempts)
+            if already >= eff_attempts:
+                continue                      # slot fully drawn — one-shot rule
             recs = study4_generate_slot(op, original_code, original_fn, slot_tag,
                                         factory, eff_attempts, cache_dir, log_path,
-                                        lang=lang)
+                                        lang=lang, start_attempt=already + 1)
             records.extend(recs)
             if review:
                 for r in recs:

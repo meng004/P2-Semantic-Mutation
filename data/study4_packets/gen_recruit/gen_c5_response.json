@@ -1,0 +1,222 @@
+{
+  "packet_id": "gen_c5",
+  "put_id": "c5",
+  "mutants": [
+    {
+      "op_id": "c5_CE1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 2.0 * (3.0 * x - 1.0)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\n_OFFSET = 2.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - _OFFSET\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef _to_test_point(u):\n    return 6.0 * u - 2.0\n\n\ndef program(x) -> float:\n    t = _to_test_point(float(x))\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 2.0 * (3.0 * x - 1.0)\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\n_OFFSET = 2.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - _OFFSET\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef _to_test_point(u):\n    return 6.0 * u - 2.0\n\n\ndef program(x) -> float:\n    t = _to_test_point(float(x))\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 2.0 * (3.0 * x - 1.0)\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\n_OFFSET = 2.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - _OFFSET\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef _to_test_point(u):\n    return 6.0 * u - 2.0\n\n\ndef program(x) -> float:\n    t = _to_test_point(float(x))\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=1, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(**{\"n_estimators\": 1, \"random_state\": 42})\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_N_TREES = 1\n_model = RandomForestRegressor(n_estimators=_N_TREES, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(random_state=42)\n_model.set_params(n_estimators=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=1, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(**{\"n_estimators\": 1, \"random_state\": 42})\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_N_TREES = 1\n_model = RandomForestRegressor(n_estimators=_N_TREES, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(random_state=42)\n_model.set_params(n_estimators=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=1, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(**{\"n_estimators\": 1, \"random_state\": 42})\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_N_TREES = 1\n_model = RandomForestRegressor(n_estimators=_N_TREES, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(random_state=42)\n_model.set_params(n_estimators=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.0, high=1.0, size=300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_LO, _HI = -1.0, 1.0\n_t_train = np.sort(_rng.uniform(_LO, _HI, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src1",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300))[:, np.newaxis]\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel() * 2.0)\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.0, high=1.0, size=300)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel() * 2.0)\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_LO, _HI = -1.0, 1.0\n_t_train = np.sort(_rng.uniform(_LO, _HI, 300)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel() * 2.0)\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src2",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300))[:, np.newaxis]\n_y_train = np.tanh(_t_train.ravel() * 2.0)\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train[:, 0])\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.0, high=1.0, size=300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train[:, 0])\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_LO, _HI = -1.0, 1.0\n_t_train = np.sort(_rng.uniform(_LO, _HI, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train[:, 0])\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "src3",
+      "attempt": 4,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.ensemble.RandomForestRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(2t) (monotone increasing).\n100-tree ensemble surrogate (seed 42). Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300))[:, np.newaxis]\n_y_train = np.tanh(2.0 * _t_train[:, 0])\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

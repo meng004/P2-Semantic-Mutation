@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_b2",
+  "put_id": "b2",
+  "mutants": [
+    {
+      "op_id": "b2_CE1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0 + 0.3\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 1.7\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n_MU_SHIFT = 0.3\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0 + _MU_SHIFT\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    mu = mu + 0.3\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\ndef _target_mean(x):\n    return 4.0 * x - 2.0 + 0.3\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = _target_mean(x)\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    base = 4.0 * x - 2.0\n    mu = base + 3.0 / 10.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        shifted = mu + 0.3\n        log_ratio = -0.5*((proposal-shifted)**2 - (current-shifted)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * (x + 0.075) - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    target_mean = lambda t: 4.0 * t - 1.7\n    mu = target_mean(x)\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) > log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        u = rng.uniform()\n        if np.log(u) > log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if log_ratio < np.log(rng.uniform()):\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        accept = np.log(rng.uniform()) > log_ratio\n        if accept:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        accept_ratio = np.exp(log_ratio)\n        if rng.uniform() > accept_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        accept_ratio = min(1.0, float(np.exp(log_ratio)))\n        if rng.uniform() > accept_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        current = proposal if np.log(rng.uniform()) > log_ratio else current\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\ndef _accept(log_u, log_r):\n    return log_u > log_r\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if _accept(np.log(rng.uniform()), log_ratio):\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        log_u = float(np.log(rng.uniform()))\n        if log_u - log_ratio > 0.0:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src1",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + (_PROPOSAL_STD * 0.1) * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src1",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.05\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src1",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    sigma = _PROPOSAL_STD / 10.0\n    for i in range(_N_STEPS):\n        proposal = current + sigma * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src2",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal() / 10.0\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src2",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + rng.normal(0.0, _PROPOSAL_STD * 0.1)\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src2",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n_STD_SCALE = 0.1\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _STD_SCALE * _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src3",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        step = rng.standard_normal() * (0.1 * _PROPOSAL_STD)\n        proposal = current + step\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src3",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = rng.normal(loc=current, scale=_PROPOSAL_STD * 0.1)\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "src3",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\ndef _propose(rng, current):\n    return current + _PROPOSAL_STD * 0.1 * rng.standard_normal()\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = _propose(rng, current)\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    }
+  ]
+}
