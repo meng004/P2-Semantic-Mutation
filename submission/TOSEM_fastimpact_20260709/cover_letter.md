@@ -6,7 +6,7 @@ We submit "A Semantic Mutation Metric for Metamorphic-Relation Adequacy in
 Scientific Computing Programs" as a Journal-First Paper for ACM Transactions on
 Software Engineering and Methodology (TOSEM). The manuscript is submitted to
 the Fast-Impact Track, whose 45-page text limit (excluding the bibliography)
-the manuscript satisfies: the body text runs to 42 pages before the References
+the manuscript satisfies: the narrative body runs to 45 pages, followed by the required statements and the References
 section, leaving headroom within the cap.
 
 The manuscript contributes Semantic Mutation Score (SMS), a
@@ -76,10 +76,12 @@ dataset protocol over reproduced library defects. Fifth, it narrows the claim fr
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
-Length statement. In the ACM manuscript-review format, the body text is 42
-pages excluding the bibliography (the References section begins on page 43),
-so the manuscript is within the Fast-Impact Track 45-page text limit. The full
-PDF is 45 pages including references, and the online supplementary material is
+Length statement. In the ACM manuscript-review format, the narrative body
+(Introduction through Conclusion, now four studies) ends on page 45, within
+the Fast-Impact Track 45-page text limit; pages 46-47 carry the required
+declarations (data availability, funding, CRediT, generative-AI disclosure)
+and the References begin on page 47. The full PDF is 48 pages including
+references, and the online supplementary material is
 34 pages. Length was reduced from an earlier 52-page draft by demoting extended
 protocol prose, theorem proofs, the higher-order-mutation analysis, and the
 full threats and program-selection tables to the supplementary appendices

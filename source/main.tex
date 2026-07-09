@@ -135,7 +135,7 @@
 \noindent\textbf{Context.} Metamorphic Testing (MT) helps software engineers test scientific programs without full test oracles, but classical Mutation Score (MS) remains syntactic. It does not say whether a metamorphic-relation set observes domain-semantic effects such as conservation, monotonicity, convergence, trajectory, or fidelity-order violations.
 \textbf{Objective.} We introduce Semantic Mutation Score (SMS), a backward-compatible adequacy metric for declared semantic strata. The contribution is a metric and certificate model, not a new LLM mutator or benchmark release.
 \textbf{Method.} We define five semantic operator families and instantiate them on 12 Programs Under Test (PUTs) across five meta-patterns. Validation combines an analytical SMS-to-MS degeneration result, a 60-cell empirical audit, an Abstract Syntax Tree (AST)-normalised comparison with default first-order syntactic mutation, a diagnostic root-cause layer, a strong/weak metamorphic-relation boundary study, and an industrial real-defect arm built on reproduced defects from widely used scientific-computing libraries. The SMS instantiation is scoped to single-output scientific-computing kernels.
-\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered instantiability, effect-size, cross-class-consistency, and attribution thresholds are not met, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. A direct stratum-purity audit confirms the semantic-effect map is single-valued on the large majority of admitted mutants, and a post-hoc detection-incidence sensitivity finds aligned meta-patterns detect a nonzero effect more often than cross patterns, while the effect-size gap itself stays below the pre-registered large-effect threshold. On the industrial arm, a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs, supporting the paper's construct separation on real defects; the pattern-derived advantage holds under exact distribution-free re-analysis. A second, pre-registered confirmatory study then converts the first study's unpowered boundary misses into powered successors on a blind-authored 28-PUT grid: three of four executable hypotheses confirm (operators instantiate adequately; the aligned slice dominates the cross slice as a directional, medium-magnitude claim; the aligned-over-cross direction holds in three of four classes), while attribution purity is not confirmed (multi-stratum leakage generalises beyond the earlier diagnosis once the operator grid widens), and the cross-vendor dual-blind hypothesis is gated not-run because the harness is same-vendor. A third, pre-registered study then re-registers the attribution construct on freshly generated mutants with the repaired admission screen verified live, and returns a two-sided boundary: single-stratum attribution is confirmed where coupling is absent or screenable, and graded declared-stratum attribution is refuted on the structurally rich classes, where a single fault perturbs several invariants at once.
+\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered instantiability, effect-size, cross-class-consistency, and attribution thresholds are not met, but these failures expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. A direct stratum-purity audit confirms the semantic-effect map is single-valued on the large majority of admitted mutants, and a post-hoc detection-incidence sensitivity finds aligned meta-patterns detect a nonzero effect more often than cross patterns, while the effect-size gap itself stays below the pre-registered large-effect threshold. On the industrial arm, a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs, supporting the paper's construct separation on real defects; the pattern-derived advantage holds under exact distribution-free re-analysis. A second, pre-registered confirmatory study then converts the first study's unpowered boundary misses into powered successors on a blind-authored 28-PUT grid: three of four executable hypotheses confirm (operators instantiate adequately; the aligned slice dominates the cross slice as a directional, medium-magnitude claim; the aligned-over-cross direction holds in three of four classes), while attribution purity is not confirmed (multi-stratum leakage generalises beyond the earlier diagnosis once the operator grid widens), and the cross-vendor dual-blind hypothesis is gated not-run because the harness is same-vendor. A third, pre-registered study then re-registers the attribution construct on freshly generated mutants with the repaired admission screen verified live, and returns a two-sided boundary: single-stratum attribution is confirmed where coupling is absent or screenable, and graded declared-stratum attribution is refuted on the structurally rich classes, where a single fault perturbs several invariants at once. A fourth, pre-registered study then executes the previously gated cross-vendor question under a matched four-vendor dual-blind protocol and returns a bounded null: no source-diversity effect of the registered magnitude is detectable, which removes the remaining protocol-asymmetry confound and supports metamorphic-relation design, not generator diversity, as the operative lever. The same study confirms graded declared-stratum attribution on the rich classes once recruitment is adequate, showing the third study's refutation reflected under-recruitment, and does not confirm cross-language invariance of the aligned-over-cross direction on a C port, a non-replication reported plainly.
 \textbf{Conclusion.} SMS gives software-testing researchers a reproducible way to report which declared semantic effects an MR set observes, misses, or kills for non-semantic reasons. Its value is diagnostic and construct-level, not a claim of universal dominance.
 \end{abstract}
 
@@ -192,7 +192,7 @@ reported here at result level. Candidate mining, rejected cases,
 repository tooling, and benchmark release are outside this manuscript
 and remain contributions of the archived dataset it draws on.
 
-The paper is organised as three studies with a narrow, explicit claim ladder.
+The paper is organised as four studies with a narrow, explicit claim ladder.
 \emph{Study 1} is the 12-PUT audit, its structural and industrial arms, and the
 four threshold misses just described; it \emph{delimits} the construct.
 \emph{Study 2} (Section~\ref{study2-confirmatory-audit}) re-registers those
@@ -207,9 +207,18 @@ attribution alone on fresh mutants with the repaired screen verified live, and
 splits it into a strict and a graded verdict: single-stratum attribution is
 \emph{confirmed} where coupling is absent or screenable (CE, HP, CF), while
 graded declared-stratum attribution is \emph{refuted} on the rich surrogate and
-ML classes. Study 1 delimits, Study 2 confirms directionally (without upgrading
-the medium effect into a large-effect claim), and Study 3 bounds the attribution
-boundary on both sides.
+ML classes. \emph{Study 4} (Section~\ref{study4-closure}) closes the three
+remaining open questions on fresh data through a four-vendor gateway: the
+previously gated cross-vendor contrast executes under a matched dual-blind
+protocol and returns a \emph{bounded null} (no source-diversity effect of the
+registered magnitude, resolving Study 1's protocol-asymmetry confound); graded
+declared-stratum attribution \emph{confirms} at adequate recruitment (Study
+3's refutation reflected under-recruitment, not absence); and the registered
+language-invariance hypothesis is \emph{not confirmed} on a C99 port. Study 1
+delimits, Study 2 confirms directionally (without upgrading the medium effect
+into a large-effect claim), Study 3 bounds the attribution boundary on both
+sides, and Study 4 clears the confound ledger and registers the construct's
+first cross-language non-replication.
 
 The intended reader is a software-testing researcher or practitioner who
 needs to decide whether a set of MRs is adequate for a declared semantic
@@ -1704,10 +1713,11 @@ Because the 60 cells share 12 PUTs and are not independent, each reported
 statistic carries an explicit inference permission; no number in this paper
 should be read above its row. Table~\ref{tab:inference-permissions} is the
 single cross-study verdict-and-permission ledger: it lists every hypothesis
-across the three studies with its pre-registration status, sampling unit,
+across the four studies with its pre-registration status, sampling unit,
 verdict, and licensed reading, and \emph{subsumes} the per-study scoreboards
-(the Study-2 and Study-3 key statistics are reported in the prose of
-Sections~\ref{study2-scoreboard} and~\ref{study3-scoreboard}).
+(the Study-2, Study-3, and Study-4 key statistics are reported in the prose of
+Sections~\ref{study2-scoreboard}, \ref{study3-scoreboard},
+and~\ref{study4-scoreboard}).
 
 {\def\LTcaptype{table} % do not increment counter
 \scriptsize
@@ -1717,8 +1727,8 @@ Sections~\ref{study2-scoreboard} and~\ref{study3-scoreboard}).
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.15}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.12}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.28}}@{}}
-\caption{Cross-study inference-permission and verdict ledger (all 11 hypotheses
-plus the descriptive statistics), spanning Study 1, Study 2, and Study 3. This
+\caption{Cross-study inference-permission and verdict ledger (all 14 hypotheses
+plus the descriptive statistics), spanning Studies 1--4. This
 table subsumes the per-study scoreboards.}\label{tab:inference-permissions}\\
 \toprule\noalign{}
 Statistic & Pre-registration status & Sampling unit (n) & Verdict & Licensed reading \\
@@ -1769,6 +1779,19 @@ H4\('' \)-strict single-stratum purity (S3) & pre-registered confirmatory
 (Family G, Holm 2) & detected clean-family mutant ($n = 90$) & CONFIRM & one-sided lower
 CP bound $\geq 0.90$ licenses single-stratum validity on \{CE, HP,
 CF-with-screen\} only \\
+H2-2 cross-vendor $\Delta\delta$ (S4) & pre-registered confirmatory (Family B,
+three-way rule) & PUT pairs ($n = 28$, arms paired) & BOUNDED\_NULL & no
+source-diversity effect of magnitude $\geq 0.20$ under matched protocol; not
+an exact-zero claim \\
+H4\('''\)-graded pooled rich-class mean share (S4) & pre-registered
+confirmatory (Family H, recruitment-gated) & rich PUT-arm unit
+($n_{\mathrm{rich}} = 32$, pooled) & CONFIRM & graded, dominant-but-co-firing
+attribution at adequate $n$; never a purity claim; class C alone below the
+bar \\
+H-LANG $\delta_C$ (S4) & pre-registered confirmatory (Family L; power 0.6865
+disclosed) & C cell (7 aligned vs 28 cross; $n = 7$ PUTs) &
+NOT\_CONF. & language-invariance direction does not replicate; the positive
+point estimate carries no confirmatory weight \\
 \end{longtable}
 \normalsize}
 
@@ -2558,7 +2581,8 @@ packet blinding are enforced, but all instances share one model family, a
 H2-1\('\), H1\('\), H3\('\), H4\('\), but \emph{cannot} instantiate the
 cross-vendor dual-blind contrast, so H2-2 is \textbf{registered but gated:
 reported not-run, with no same-vendor proxy substituted}, left open rather than
-reported as a null (resolved model id recorded in the campaign SSOT). The v5
+reported as a null (resolved model id recorded in the campaign SSOT); the
+contrast is eventually executed by Study 4 (Section~\ref{study4-closure}). The v5
 pools carry per-mutant source tokens \texttt{claude}, \texttt{gpt},
 \texttt{deepseek} inherited from Study 1's three-slot layout; under this harness
 these are nominal \emph{slot labels}, all served by the same Claude-family
@@ -2884,13 +2908,201 @@ confirms directionally, Study 3 bounds the attribution boundary). We do not read
 the rich-class refutation as a defect to patch away: a screen forcing those
 mutants single-stratum would discard the multi-invariant structure trained
 models exhibit. Whether a richer multi-valued attribution model can score that
-structure is left open; Study 3 registers no fourth study.
+structure is left open; Study 3 itself registers no follow-up. The recruitment
+question it exposes is taken up by a separate, later registration (Study 4,
+Section~\ref{study4-closure}).
+
+\section{Study 4: A Pre-registered Cross-Vendor, Graded-Attribution, and Cross-Language Closure}\label{study4-closure}
+
+Three questions survived Studies 1--3: the cross-vendor dual-blind hypothesis
+H2-2, registered in Study 2 but gated not-run for two studies under the
+same-vendor harness (Section~\ref{study2-harness}); the Study-3 graded verdict,
+honest but thin at \(n_{\mathrm{rich}} = 6\) of a registered 15, which could
+not separate a construct property from under-recruitment; and the language
+invariance predicted by the NOETHER derivation \citep{noether2026}, which
+grounds MetaPatterns in the operator algebra of the governing equations rather
+than in surface syntax, and which no study had tested. Study 4 registers
+exactly three confirmatory families on fresh data, made executable by a live
+four-vendor gateway, and returns one bounded null, one confirmation, and one
+falsification, each reported with equal prominence in
+Section~\ref{study4-scoreboard}.
+
+\subsection{Design and registration}\label{study4-design}
+
+The registration of record is
+\texttt{docs/prereg\_v2/PREREGISTRATION\_STUDY4\_v1.md}, frozen with a pre-data
+attestation before any Study-4 mutant, review label, SMS cell, or C-port kill
+existed, plus two dated amendments (v1.1 and v1.2), both made before any
+Study-4 outcome was computed or seen. It re-opens no frozen verdict: Studies 2
+and 3 stand unchanged, and prior-study data enter only as design calibration
+(the v5 pool calibrates the H-LANG data-generating process, the v6 outcome the
+recruitment multiplier), stated openly in the registration. The design has four
+fixed elements.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Three registered families, no more.} \emph{H2-2} (Family B): the
+  paired contrast \(\Delta\delta = \delta_{\mathrm{cross}} -
+  \delta_{\mathrm{same}}\) over the 28 confirmatory PUTs, both arms under one
+  identical dual-blind protocol, with a three-way rule frozen in advance:
+  CONFIRM (two-sided 95\% CI excludes 0), BOUNDED NULL (CI includes 0 with
+  half-width \(\leq 0.14\), so no effect at the registered magnitude of
+  interest \(\geq 0.20\) is detectable), or UNDER-RECRUITED; power 0.793 at
+  \(n = 28\), marginally below the 0.80 target, disclosed.
+  \emph{H4\('''\)-graded} (Family H): the Study-3 graded measure with
+  byte-identical flip machinery, re-posed as the pooled rich-class (C, D) mean
+  primary-stratum kill share against the same \(\geq 0.15\) bar, behind a
+  registered recruitment gate (pooled \(n_{\mathrm{rich}} \geq 24\), else
+  UNDER-RECRUITED; no threshold moved); the registration pre-commits to the
+  sharp reading in both directions, misattribution as a construct property if
+  the share stays low at adequate \(n\), graded dominant-but-co-firing
+  attribution (never purity) if it passes. \emph{H-LANG} (Family L): on a C99
+  port of the original 12-PUT grid, Cliff's \(\delta_C\) between aligned and
+  cross C cells under the one-sided lower-bound \(> 0\) rule, the same
+  estimand and bootstrap as H2-1\('\). H2-1\('\), H1\('\), H3\('\), and
+  H4\('' \)-strict are not re-registered (multiplicity restraint, as in
+  Study 3).
+\item
+  \textbf{A four-vendor slot design.} The same-source arm generates all three
+  slots with the Claude family; the cross-source arm maps the identical
+  three-slot structure to three non-Anthropic lineages, \texttt{gpt-5.5},
+  \texttt{gemini-3.5-flash}, and \texttt{grok-4.1} (served by
+  \texttt{grok-4.3}), one lineage per slot through a live gateway. The arms
+  differ only in the generator-vendor mapping; review, admission, and scoring
+  are identical.
+\item
+  \textbf{Amendments, both pre-outcome.} \emph{v1.1}: the C port landed at 7
+  of 12 PUTs (five sklearn/ML-library kernels cannot be faithfully ported to
+  pure C99; excluded and disclosed), so the H-LANG \(n\) drops from 12 to 7
+  and its power is recomputed honestly at 0.6865, below the 0.80 target; no
+  threshold moves and the leg stays confirmatory with the achieved power
+  disclosed. \emph{v1.2}: after a gateway quota event paused generation
+  mid-draw, the Claude-family roles (same-arm remainder, blinded review of
+  both arms, the recruitment stratum, the C-arm remainder) moved to the
+  session harness, while non-Anthropic generation and the arbiter stayed on
+  the gateway; the change is arm-symmetric (one reviewer sees both arms'
+  blinded packets), so it cannot bias \(\Delta\delta\), and the registered
+  extra rich-class slots relocated into a dedicated harness recruitment
+  stratum (15 rich PUTs \(\times\) 36 slots) with pooling pre-declared. No
+  threshold, estimand, decision rule, or seed changed; both amendments precede
+  any outcome, so neither can be selection on the response.
+\item
+  \textbf{One-shot and freeze-then-score.} Generation runs once per the
+  registered budget (a resume fills only undrawn slots; drawn slots, including
+  validity-failed attempts, are never redrawn); every review label is
+  committed before any SMS exists.
+\end{itemize}
+
+\subsection{Execution}\label{study4-execution}
+
+The campaign admitted 2{,}036 mutants across four pools: 730 same-source, 638
+cross-source, 540 recruitment-stratum, and 128 C-port. Every admitted mutant
+went through blinded review: packets carry the mutant code, operator spec, and
+PUT source only, with vendor tokens redacted and no arm, generator, or outcome
+identity; the reviewer is arm-symmetric Claude-family, and the arbiter
+\texttt{gpt-5.5} (a different vendor) fired on exactly the two
+reviewer-UNCERTAIN packets, rejecting both. The frozen tally is 1{,}973
+confirmed and 63 rejected labels; SMS was computed only after the labels were
+committed (freeze-then-score). The one-shot rule held: all 255 cross-arm
+operator-slot pairs completed at exactly the registered 3 attempts, and the
+nine d8 same-arm HP1 slots whose literal renderings the V3 gate rejected as
+equivalent were recorded as consumed, not redrawn.
+
+Three disclosures. \emph{Incident P15}: after a quota top-up, a resume defect
+redrew already-drawn gateway slots; the redraws were quarantined unread, the
+first draws restored byte-identical from the committed checkpoint, and the
+resume logic fixed, all before any Study-4 outcome existed, so the first draw
+remains canonical (incident ledger, \texttt{PILOT\_LOG.md} P15).
+\emph{Inter-reviewer reliability}: the GP \texttt{bounds="fixed"}
+hyperparameter realization split independent blind reviewers 28 CONFIRMED to
+22 REJECTED over 50 mutants, one same-content mutant pair received opposite
+labels from two reviewers, and the a3 anti-diffusive blow-up pattern drew
+opposite V2 judgements; both inconsistencies are recorded as
+reviewer-reliability data, review labels being recorded conformance opinions
+while the mechanical AVP/equivalence pipeline stays authoritative for SMS.
+\emph{Generation-defect tally}: blind review caught cross-vendor generation
+defects (silent RNG-seed changes, wrong target locators with unregistered
+extra edits, C-side undefined behaviour such as an overflowing loop bound), a
+finding about LLM generation quality in its own right and an argument for
+keeping the review layer even where it does not gate SMS.
+
+\subsection{Results: one bounded null, one confirmation, one falsification}\label{study4-scoreboard}
+
+The three verdicts (H2-2 BOUNDED\_NULL, H4\('''\)-graded CONFIRM, H-LANG
+NOT\_CONFIRMED) and their permissions are the Study-4 rows of the cross-study
+ledger (Table~\ref{tab:inference-permissions}); the registered thresholds and
+key statistics follow per hypothesis.
+
+\textbf{H2-2 (bounded null).} \(\Delta\delta = +0.0147\) over the 28 paired
+PUTs, with a paired-role bootstrap two-sided 95\% CI of \([-0.021, +0.0686]\)
+(\(B = 10{,}000\), seed 20260708). The CI includes 0 with half-width 0.0448,
+well inside the registered 0.14 bound, so the three-way rule returns its
+BOUNDED NULL branch: no source-diversity effect of magnitude \(\geq 0.20\) is
+detectable under the matched protocol. The claim is bounded, not an
+exact-zero claim. As a replication datum, the pre-frozen Study-2 scorer also
+re-evaluates the H2-1\('\) rule on the fresh cross arm and confirms again
+(\(\delta = +0.4445\), one-sided 95\% lower \(+0.2771\); same arm
+\(\delta = +0.4298\)); we report this as a fresh directional replication, not
+as a new registered family.
+
+\textbf{H4\('''\)-graded (confirm, with disclosed heterogeneity).} The pooled
+rich-class sample clears the recruitment gate
+(\(n_{\mathrm{rich}} = 32 \geq 24\)); the pooled mean primary-stratum kill
+share is \(0.2917\) with a one-sided 95\% percentile-bootstrap lower bound of
+\(0.2188\), above the registered \(0.15\) bar. At adequate \(n\) the declared
+MetaPattern therefore carries graded attribution: Study 3's refutation at
+\(n_{\mathrm{rich}} = 6\) reflected under-recruitment, not absence. The
+licensed claim is the registered one, dominant-but-co-firing, never
+single-stratum purity, and it is class-heterogeneous: class D carries the
+verdict (mean share \(0.4211\) over 19 units), while class C on its own sits
+below the bar (\(0.1026\) over 13 units). The frozen Study-3 verdict stands on
+its pool; Study 4 supersedes its reading, not its record.
+
+\textbf{H-LANG (not confirmed).} On the 7-PUT C grid (7 aligned versus 28
+cross cells), \(\delta_C = +0.2449\) with a one-sided 95\%
+percentile-bootstrap lower bound of \(-0.0357\), failing the registered
+\(> 0\) rule; the verdict is NOT\_CONFIRMED. The two-sided CI
+\([-0.0357, 0.5714]\) is exploratory context only. The registered power was
+0.6865, disclosed at registration, and we do not use it to soften the verdict
+after the fact: the language-invariance direction did not replicate under the
+rule this study froze for it. Equally, we do not oversell the miss: a positive
+point estimate with an interval reaching past \(+0.57\) is not a demonstration
+of language dependence; it is insufficient evidence, reported as such.
+
+\subsection{Interpretation}\label{study4-interpretation}
+
+The bounded null is the study's most consequential result precisely because it
+is a null. Since Study 1, the thesis that MR design rather than LLM source
+diversity moves semantic detection has carried one declared confound: the
+same-source and cross-source arms were compared under asymmetric protocols,
+with an estimated asymmetry bound exceeding the observed contrast
+(Section~\ref{r13-protocol-asymmetry-magnitude-estimate}). H2-2 removes the
+confound by construction (four vendors, one matched dual-blind protocol,
+paired arms) and returns a \(\Delta\delta\) bounded well below the registered
+magnitude of interest while the aligned-over-cross direction replicates in
+both arms. The lever is the MR design.
+
+The attribution arc closes at four rungs: Study 2 refuted purity, Study 3
+refuted graded attribution at thin recruitment, Study 4 confirms it at
+adequate recruitment; the residual open edge is the class heterogeneity
+(class D carries the pooled verdict, class C sits below the bar, consistent
+with Study 3's finding that the C-class kill signal fires off the declared
+MetaPattern), and a per-class graded verdict would need a registration of its
+own. H-LANG shows the registered machinery cuts both ways: the boldest
+hypothesis, derived from NOETHER's syntax-independence argument, failed its
+one-shot test despite a positive point estimate, and the honest route to power
+is a richer C-portable grid (the five unportable ML kernels cap \(n\) at 7),
+not a threshold change. The claim ladder ends at four rungs: Study 1 delimits
+the construct, Study 2 confirms it directionally, Study 3 bounds the
+attribution boundary, and Study 4 clears the source-diversity confound and
+registers the construct's first cross-language non-replication.
 
 \section{Threats to Validity}\label{threats-to-validity}
 
 Table~\ref{tab:p2-14} summarises the threat areas by class; the complete
-per-threat table, including all Study-2 and Study-3 harness,
-screen-remediation, and attribution disclosures, is reproduced in full in
+per-threat table, including all Study-2, Study-3, and Study-4 harness,
+screen-remediation, serving-stack, and attribution disclosures, is reproduced in full in
 supplementary Appendix K.1. No threat is dropped:
 the summary rows below name the area, and every mitigation and disclosure is
 carried verbatim in the appendix table.
@@ -2923,6 +3135,13 @@ Screen remediation and rich-class attribution (Study 3) & Internal / Construct &
 P8 fix verified in production (633 matched, 36 flagged vs zero under v5); graded
 rich-class attribution refuted (mean share 0.0833, $n_{\mathrm{rich}}=6$)
 (Sections~\ref{study3-execution}, \ref{study3-interpretation}) \\
+Serving-stack change, reviewer reliability, and H-LANG power (Study 4) &
+Internal / Construct & Amendment v1.2 pre-outcome and arm-symmetric
+(Claude-family roles harness-served after a gateway quota event); incident P15
+remediated first-draw-canonical before any outcome existed; inter-reviewer
+label inconsistency quantified and disclosed, with the mechanical AVP/equiv
+pipeline authoritative for SMS; H-LANG power 0.6865 disclosed at registration
+(Sections~\ref{study4-execution}, \ref{study4-scoreboard}) \\
 \bottomrule
 \end{tabular}
 \normalsize
@@ -2939,8 +3158,12 @@ rich-class attribution refuted (mean share 0.0833, $n_{\mathrm{rich}}=6$)
 \item
   \textbf{LLM generation homogeneity bias.} Training-data overlap across Claude,
   GPT, and DeepSeek may share blind spots; three-LLM rotation and 20\% manual
-  sampling reduce but do not eliminate it, and a fourth independently trained
-  (self-hosted open-weight) family is the natural strengthening.
+  sampling reduce but do not eliminate it. Study 4's four-vendor arm addresses
+  the generation side empirically (a bounded null under a matched protocol,
+  Section~\ref{study4-scoreboard}), but a bounded null cannot distinguish
+  ``diversity does not matter'' from ``all four vendors share the relevant
+  blind spots'', and the review side remains single-family; a self-hosted
+  open-weight family is still the natural strengthening.
 \item
   \textbf{Limited power for cross-class consistency.} The four-class sign test
   has df = 3 and the mixed-effects model is singular at $N = 60$; H3 is
@@ -3028,12 +3251,16 @@ removing the reviewer step is bounded above by approximately
 \textbf{±0.03 to ±0.05 on Cliff's $\delta$} at n\_aligned = 12. This bound is
 an order of magnitude larger than the observed −0.009 source-axis shift
 and therefore prevents reading the source-axis contrast as evidence of
-LLM-source-diversity inertness; a direct dual-blind v4 rerun (deferred
-to a follow-up study) would give a tighter quantification. Such a rerun
-on the same 12 PUTs only removes the protocol-asymmetry confound: at
+LLM-source-diversity inertness; a direct dual-blind rerun was needed for
+a tighter quantification. Such a rerun on the same 12 PUTs would only
+remove the protocol-asymmetry confound: at
 $n = 12$ the $\Delta\delta$ CI stays $\approx 0.44$ wide, so detecting a
-$\Delta\delta = 0.20$ effect at 80\% power requires $\approx 30$ PUTs,
-and the follow-up is planned at $n \geq 30$.
+$\Delta\delta = 0.20$ effect at 80\% power requires $\approx 30$ PUTs.
+That rerun has now been executed: Study 4's H2-2 runs both arms under one
+matched dual-blind protocol on the 28-PUT grid and returns a bounded null
+(Section~\ref{study4-scoreboard}), so the asymmetry confound no longer caps
+the source-diversity reading. The estimate above is retained to document why
+Study 1 alone could not license that reading.
 
 % [thematic break removed]
 
@@ -3045,9 +3272,11 @@ V\_cot; Appendix C.1.1); (3) a scaling study at $n \geq 30$ PUTs for
 SMS-vs-Pattern-Coverage orthogonality and HOM-equivalence empirics; (4) an
 abstract-semantics certificate layer defining the abstraction $\alpha$ to
 invariant domains and attaching per-mutant proof/error-expression certificates;
-(5) a dual-blind rerun on the full v4 grid to separate protocol asymmetry from
-source diversity; (6) cross-language portability (Python $\to$ JavaScript, Julia)
-building on \citet{tip2025llmorpheus}; and (7) a self-hosted open-weight LLM
+(5) a re-posed H-LANG at higher power: the C99 port of Study 4 capped $n$ at 7
+because five ML kernels are unportable, so a richer C-portable grid is the only
+honest route past the 0.6865 power disclosed there; (6) cross-language
+portability beyond C99 (Python $\to$ JavaScript, Julia) building on
+\citet{tip2025llmorpheus}; and (7) a self-hosted open-weight LLM
 pilot for air-gapped deployment.
 
 % [thematic break removed]
@@ -3057,10 +3286,11 @@ pilot for air-gapped deployment.
 
 \subsection{Findings summary}\label{findings-summary}
 
-The empirical work supports the semantic-mutation construct in nine
+The empirical work supports the semantic-mutation construct in ten
 ways: the first seven from Study 1, the eighth from the Study-2
-confirmatory audit, and the ninth from the Study-3 graded-attribution
-follow-up. The Study-1 pre-registered thresholds are treated as
+confirmatory audit, the ninth from the Study-3 graded-attribution
+follow-up, and the tenth from the Study-4 cross-vendor, graded-attribution,
+and cross-language closure. The Study-1 pre-registered thresholds are treated as
 stress tests of this instantiation, not as prerequisites for the SMS
 definition.
 
@@ -3123,9 +3353,25 @@ definition.
   \{CE, HP, CF-with-screen\}, while graded declared-stratum attribution is
   \emph{refuted} (H4\('' \)-graded: rich-class mean share \(0.0833\), lower
   \(0.0 \leq 0.15\)) on the rich surrogate and ML classes, where the kill signal
-  fires off the declared MetaPattern. The three studies read as: Study 1 delimits
-  the construct, Study 2 confirms it directionally, Study 3 characterises the
-  attribution boundary on both sides.
+  fires off the declared MetaPattern.
+\item
+  A fourth, pre-registered study (Section~\ref{study4-closure}) registers three
+  families on fresh data through a four-vendor gateway and returns one bounded
+  null, one confirmation, and one falsification. H2-2, gated for two studies,
+  finally executes under a matched dual-blind protocol:
+  \(\Delta\delta = +0.0147\), 95\% CI \([-0.021, +0.0686]\), half-width 0.0448
+  within the registered 0.14 bound, so no source-diversity effect of magnitude
+  \(\geq 0.20\) is detectable and the Study-1 protocol-asymmetry confound is
+  resolved. H4\('''\)-graded \emph{confirms} at adequate recruitment (pooled
+  \(n_{\mathrm{rich}} = 32\); mean share \(0.2917\), one-sided lower
+  \(0.2188 > 0.15\)): the declared MetaPattern is dominant-but-co-firing on the
+  rich classes, with class C (\(0.1026\)) below the bar on its own. H-LANG is
+  \emph{not} confirmed on the 7-PUT C port (\(\delta_C = +0.2449\), one-sided
+  lower \(-0.0357\)): the language-invariance direction does not replicate
+  under the registered rule. The four studies read as: delimit, confirm
+  directionally, bound the attribution boundary, and clear the
+  source-diversity confound while registering the construct's first
+  cross-language non-replication.
 \end{enumerate}
 
 \subsection{Methodological contributions}\label{methodological-contributions}
@@ -3181,7 +3427,9 @@ P1--P7, deviation D-A1), with every Study-2 number tracing to a pre-frozen SSOT
 (\texttt{sms\_track2\_v5.json}, \texttt{dualblind\_delta\_delta\_v5.json},
 \texttt{h1\_instantiability\_v5.json}, \texttt{h3\_class\_consistency\_v5.json},
 \texttt{s5\_purity\_v5.json}; powers in \texttt{power\_study2\_v11.json}, seed
-20260708). An earlier version is on arXiv:
+20260708); Studies 3--4 follow the same discipline (frozen registrations
+with amendments, incidents P8--P15, frozen review labels, pre-frozen v6/v7
+SSOTs, same seed). An earlier version is on arXiv:
 \href{https://arxiv.org/abs/2605.17437}{arXiv:2605.17437} [cs.SE]. A read-only
 repository mirror is available to the Editor on request; structure follows
 \texttt{REPRODUCIBILITY.md}, and the cosmic-ray/mutmut operator versions are
@@ -3221,14 +3469,21 @@ The authors declare that they have no known competing financial interests or per
 
 The authors used AI tools under human direction for editorial proofreading,
 LaTeX maintenance, and consistency checks. Beyond this editorial support,
-Study 2's experimental data were generated by AI: the mutant generation
+the experimental data of Studies 2--4 were generated by AI. Study 2: the mutant generation
 (774 valid responses), the blinded review verdicts (747), and the
 third-instance arbitration were produced by Claude-family agent instances
 under the registered packet protocol (\texttt{PREREGISTRATION\_STUDY2\_v1.1},
 Section 5b), with deterministic offline admission and scoring machinery
-applied by the authors. Study 1's data provenance is unchanged: its mutants
-derive from the disclosed multi-LLM cross-source campaign. All research
-claims, methods, statistical analyses, and conclusions in both studies were
-authored, verified, and approved by the human authors.
+applied by the authors. Study 3's fresh v6 generation and review ran under
+the same harness protocol (\texttt{PREREGISTRATION\_STUDY3\_v2}). Study 4's
+data were produced by four-vendor generation (OpenAI \texttt{gpt-5.5},
+Google \texttt{gemini-3.5-flash}, xAI \texttt{grok-4.3}, and Claude-family
+instances; 2{,}036 admitted mutants), arm-symmetric Claude-family blinded
+review (2{,}036 verdicts), and cross-vendor \texttt{gpt-5.5} arbitration
+(\texttt{PREREGISTRATION\_STUDY4\_v1}, amendments v1.1/v1.2). Study 1's
+data provenance is unchanged: its mutants derive from the disclosed
+multi-LLM cross-source campaign. All research claims, methods, statistical
+analyses, and conclusions in all four studies were authored, verified, and
+approved by the human authors.
 
 \end{document}
