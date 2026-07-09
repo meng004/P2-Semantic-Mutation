@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_933ebe743274",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "polyval([-1,2],x)=2-x changes the x-coefficient 2 to 1 as registered; deviates up to 0.38."
+}

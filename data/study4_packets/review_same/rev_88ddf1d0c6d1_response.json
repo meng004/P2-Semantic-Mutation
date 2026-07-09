@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_88ddf1d0c6d1",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Sub-diagonal band zeroed; _AB[2,:]=0.0 equals minimal edit since the banded matrix is zero-initialised; deviates up to 23.0."
+}

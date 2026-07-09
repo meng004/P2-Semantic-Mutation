@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_87fe017af5b6",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "RHS -u becomes _RHS_SIGN*u with _RHS_SIGN=1.0, i.e. exactly return u; deviates up to 2.35."
+}

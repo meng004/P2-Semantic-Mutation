@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_862762ea87ad",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "scales/offsets vectors reproduce [10x-10, 20x-10, 30x+5], i.e. only ic[0] coefficient halved; deviates up to 33.8."
+}

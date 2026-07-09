@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_878c9dfae93b",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Label rule >0 to <0 via np.where(...,1,0), output-identical to (<0).astype(int); deviates up to 1.0."
+}

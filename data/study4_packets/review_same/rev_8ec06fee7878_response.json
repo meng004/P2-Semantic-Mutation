@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_8ec06fee7878",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "alpha_post uses successes-1 floored at 0, beta side untouched, exactly per spec; deviates up to 0.0097 on 199/201 points."
+}

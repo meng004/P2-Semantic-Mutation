@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_942dbad573c8",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "activation tanh with kwargs reordered and array-wrapped test point, both non-semantic; deviates up to 0.092."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_8e466582c6c2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Feature offset 1.0 to 0.5 (-0.5+2x); tuple unpack of predict_proba non-semantic; deviates up to 0.61."
+}

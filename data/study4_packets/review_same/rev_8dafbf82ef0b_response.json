@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_8dafbf82ef0b",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "np.subtract(x, 0.5*NODES**2) implements the registered + to - flip exactly; deviates 2/3 everywhere."
+}

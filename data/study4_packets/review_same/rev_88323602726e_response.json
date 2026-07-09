@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_88323602726e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "mu constant 2.0 to 1.0 only; scalar accept loop reproduces vectorised kernel bit-identically on grid; deviates up to 0.95."
+}

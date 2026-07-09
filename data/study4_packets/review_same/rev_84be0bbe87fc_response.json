@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_84be0bbe87fc",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "leggauss(16) to leggauss(1); relocation into program() is deterministic and output-identical; deviates 1/3 everywhere."
+}
