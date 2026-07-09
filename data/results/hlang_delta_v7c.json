@@ -1,0 +1,44 @@
+{
+  "artefact": "hlang_delta_v7c",
+  "generated_by": "scripts/compute_hlang_delta.py",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY4_v1.md (§3.3 H-LANG; §7b contract; Amendment v1.1: n=7, v7c)",
+  "integrity": "Pre-frozen before Study-4 C-port data generation; any post-data modification must be disclosed as a deviation (§5d, §8). Bootstrap byte-identical to H2-1'.",
+  "inputs": {
+    "c_port_sms_pool": "data/results/sms_track2_v7c.json"
+  },
+  "master_seed": 20260708,
+  "bootstrap_B": 10000,
+  "primary_mp_rule": "PRIMARY_CELLS_V3 (A->MP1, B->MP2, C->MP5) mapped cell-for-cell to the C cells; v3b prohibited",
+  "registered_power": "0.6865 @ n=7 (v5 DGP, true delta 0.4385); below 0.80, disclosed (power_study4.json::c...power_delta_gt0_at_n7)",
+  "H_LANG_cross_language_invariance": {
+    "family": "L — Cross-language invariance (single test, confirmatory)",
+    "statistic": "two-sample Cliff's delta_C, aligned (j=k) vs cross (j!=k), on the 7 C PUTs (PRIMARY_CELLS_V3 mapped to the C cells)",
+    "c_grid_puts": [
+      "a1",
+      "a2",
+      "a3",
+      "b1",
+      "b2",
+      "b3",
+      "c2"
+    ],
+    "n_puts": 7,
+    "n_aligned": 7,
+    "n_cross": 28,
+    "cliffs_delta_C": 0.2449,
+    "bootstrap_B": 10000,
+    "bootstrap_seed": 20260708,
+    "one_sided_95_lower_bound": -0.0357,
+    "registered_test": "one-sided 95% percentile-bootstrap lower bound > 0 (byte-identical bootstrap to H2-1')",
+    "verdict": "NOT_CONFIRMED",
+    "verdict_bool": false,
+    "licensed_claim": "language-invariance does NOT replicate: the C-port delta_C one-sided 95% lower bound does not exceed 0 — reported as a genuine falsification of the language-invariance claim, not hedged away",
+    "descriptive_only": {
+      "two_sided_ci95": [
+        -0.0357,
+        0.5714
+      ],
+      "note": "two-sided CI is EXPLORATORY (§3.3); the confirmatory verdict is the one-sided lower bound > 0 direction test."
+    }
+  }
+}

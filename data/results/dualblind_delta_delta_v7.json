@@ -1,0 +1,54 @@
+{
+  "artefact": "dualblind_delta_delta_v5",
+  "generated_by": "scripts/compute_dualblind_delta.py",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY2.md (§3 H2-1, H2-2; §4 primary-MP rule; §7 SSOT/seeds)",
+  "integrity": "Pre-frozen before Study-2 data generation; any post-data modification must be disclosed as a deviation.",
+  "inputs": {
+    "cross_source_arm_sms": "data/results/sms_track2_v7.json",
+    "same_source_arm_sms": "data/results/sms_track2_v7_same.json"
+  },
+  "master_seed": 20260708,
+  "bootstrap_B": 10000,
+  "primary_mp_rule": "PRIMARY_CELLS_V3 (§4 deterministic class rule; v3b prohibited)",
+  "H2_1_aligned_dominates_cross": {
+    "family": "A — SMS magnitude (single test, confirmatory)",
+    "statistic": "two-sample Cliff's delta, aligned (j=k) vs cross (j!=k)",
+    "n_aligned": 28,
+    "n_cross": 112,
+    "cliffs_delta": 0.4445,
+    "bootstrap_B": 10000,
+    "bootstrap_seed": 20260708,
+    "one_sided_95_lower_bound": 0.2771,
+    "registered_test": "one-sided 95% percentile-bootstrap lower bound > 0",
+    "verdict": "CONFIRM",
+    "licensed_claim": "aligned slice dominates cross (directional construct claim; NOT a large-effect claim)",
+    "descriptive_only": {
+      "two_sided_ci95": [
+        0.2414,
+        0.6342
+      ],
+      "romano_band": "medium (>=0.330)",
+      "note": "Romano band + two-sided CI are EXPLORATORY (§3, §7); never promoted to a confirmatory large-effect pass."
+    }
+  },
+  "H2_2_source_diversity_dual_blind": {
+    "family": "B — Source diversity (single test, confirmatory)",
+    "statistic": "Delta-delta = delta(cross-source) - delta(same-source), paired on PUTs under the identical §5 dual-blind protocol",
+    "n_puts_paired": 28,
+    "delta_cross_source_arm": 0.4445,
+    "delta_same_source_arm": 0.4298,
+    "delta_delta_point": 0.0147,
+    "bootstrap_B": 10000,
+    "bootstrap_seed": 20260708,
+    "ci95_two_sided": [
+      -0.021,
+      0.0686
+    ],
+    "ci95_half_width": 0.0448,
+    "registered_magnitude_of_interest": 0.2,
+    "registered_halfwidth_bound": 0.14,
+    "verdict": "BOUNDED_NULL",
+    "licensed_claim": "no source-diversity effect of magnitude >=0.20 is detectable under matched protocol; supports the MR-design-is-the-lever thesis as CONFIRMED (not confounded)",
+    "reverses_study1_direction": false
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "artefact": "h4_graded_v7",
+  "generated_by": "scripts/compute_h4_graded.py --pooled",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY4_v1.md (§3.2 H4'''-graded pooled; §7b --pooled contract; §4b pre-declared pooling; §2a x4 multiplier)",
+  "integrity": "Pre-frozen before Study-4 data generation; ADDITIVE --pooled path (the frozen v6 default is byte-unchanged). Any post-data modification must be disclosed as a deviation (§5d, §8).",
+  "inputs": {
+    "arm_sms_pools": [
+      "data/results/sms_track2_v7.json",
+      "data/results/sms_track2_v7_same.json",
+      "data/results/sms_track2_v7_recruit.json"
+    ]
+  },
+  "master_seed": 20260708,
+  "H4ppp_graded_pooled": {
+    "hypothesis": "H4'''-graded POOLED (Study-4 §3.2; two-arm rich-class mean primary-stratum kill share, recruitment-gated)",
+    "measure": "s_m = 1[primary in flipset]/|flipset| per detected mutant; PUT mean; POOLED over the union of rich (C,D) PUT-arm units",
+    "flip_machinery": "IMPORTED from p2.mutators.stratum_filter.audit_matrix (constrained=ALL_FAMILIES; identical to the S5 audit)",
+    "pooling": "UNION of rich PUT-arm units across the two Study-4 arms (a rich PUT detected in both arms contributes two units)",
+    "threshold": 0.15,
+    "recruitment_gate_n_rich": 24,
+    "n_boot": 10000,
+    "boot_seed": 20260708,
+    "alpha": 0.05,
+    "pooled_n_rich": 32,
+    "recruitment_gate_met": true,
+    "pooled_rich_mean_share": 0.2917,
+    "boot_lower_95": 0.2188,
+    "per_class_share_mean": {
+      "C": {
+        "n_units": 13,
+        "share_mean": 0.1026
+      },
+      "D": {
+        "n_units": 19,
+        "share_mean": 0.4211
+      }
+    },
+    "per_arm": {
+      "data/results/sms_track2_v7.json": {
+        "n_rich_detected": 15,
+        "rich_puts": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "C7",
+          "D1",
+          "D2",
+          "D3",
+          "D4",
+          "D5",
+          "D6",
+          "D7",
+          "D8"
+        ]
+      },
+      "data/results/sms_track2_v7_same.json": {
+        "n_rich_detected": 13,
+        "rich_puts": [
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "C7",
+          "D1",
+          "D2",
+          "D3",
+          "D4",
+          "D5",
+          "D6",
+          "D7",
+          "D8"
+        ]
+      },
+      "data/results/sms_track2_v7_recruit.json": {
+        "n_rich_detected": 4,
+        "rich_puts": [
+          "C3",
+          "D1",
+          "D2",
+          "D3"
+        ]
+      }
+    },
+    "pooled_units": [
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "C1",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "C2",
+        "put_mean_share": 0.3333
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "C3",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "C4",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "C5",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "C6",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "C7",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D1",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D2",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D3",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D4",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D5",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D6",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D7",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7.json",
+        "put": "D8",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "C3",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "C4",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "C5",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "C6",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "C7",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D1",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D2",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D3",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D4",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D5",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D6",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D7",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_same.json",
+        "put": "D8",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_recruit.json",
+        "put": "C3",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7_recruit.json",
+        "put": "D1",
+        "put_mean_share": 0.5
+      },
+      {
+        "arm": "data/results/sms_track2_v7_recruit.json",
+        "put": "D2",
+        "put_mean_share": 0.0
+      },
+      {
+        "arm": "data/results/sms_track2_v7_recruit.json",
+        "put": "D3",
+        "put_mean_share": 0.5
+      }
+    ],
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "verdict": "CONFIRM",
+    "licensed_claim": "at adequate rich-class n (pooled n_rich 32 >= 24) the declared MetaPattern carries GRADED attribution (pooled mean share 0.2917, one-sided 95% lower bound 0.2188 > 0.15); dominant-but-co-firing, NOT a single-stratum purity claim"
+  }
+}
