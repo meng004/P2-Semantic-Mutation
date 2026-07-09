@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"A4: Gauss-Legendre quadrature — deterministic numerical integration (scalar x∈[0,1] interface).\n\nLibrary: numpy.polynomial.legendre.leggauss (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/generated/numpy.polynomial.legendre.leggauss.html\n\nprogram(x) where x ∈ [0,1] scalar (additive constant in the integrand).\n16-node Gauss-Legendre estimate of I(x) = ∫₋₁¹ (x + ½ t²) dt = 2x + 1/3.\nExact for the degree-2 integrand. Conservation: I(x) + I(1-x) = 8/3.\n\"\"\"\nimport numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n",
+  "mutant_code": "\"\"\"A4: Gauss-Legendre quadrature — deterministic numerical integration (scalar x∈[0,1] interface).\n\nLibrary: numpy.polynomial.legendre.leggauss (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/generated/numpy.polynomial.legendre.leggauss.html\n\nprogram(x) where x ∈ [0,1] scalar (additive constant in the integrand).\n16-node Gauss-Legendre estimate of I(x) = ∫₋₁¹ (x + ½ t²) dt = 2x + 1/3.\nExact for the degree-2 integrand. Conservation: I(x) + I(1-x) = 8/3.\n\"\"\"\nimport numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 1.0 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))",
+  "operator": {
+    "id": "a4_CE1",
+    "label": "half-coeff 0.5→1.0",
+    "target_locator": "quadratic coefficient in `0.5*_NODES**2`",
+    "transformation": "change 0.5 to 1.0 in the integrand"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_7f3c0efb3990",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: a4_CE1\nOPERATOR LABEL: half-coeff 0.5→1.0\nTARGET LOCATOR: quadratic coefficient in `0.5*_NODES**2`\nEXACT CHANGE: change 0.5 to 1.0 in the integrand\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A4: Gauss-Legendre quadrature — deterministic numerical integration (scalar x∈[0,1] interface).\n\nLibrary: numpy.polynomial.legendre.leggauss (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/generated/numpy.polynomial.legendre.leggauss.html\n\nprogram(x) where x ∈ [0,1] scalar (additive constant in the integrand).\n16-node Gauss-Legendre estimate of I(x) = ∫₋₁¹ (x + ½ t²) dt = 2x + 1/3.\nExact for the degree-2 integrand. Conservation: I(x) + I(1-x) = 8/3.\n\"\"\"\nimport numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"A4: Gauss-Legendre quadrature — deterministic numerical integration (scalar x∈[0,1] interface).\n\nLibrary: numpy.polynomial.legendre.leggauss (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/generated/numpy.polynomial.legendre.leggauss.html\n\nprogram(x) where x ∈ [0,1] scalar (additive constant in the integrand).\n16-node Gauss-Legendre estimate of I(x) = ∫₋₁¹ (x + ½ t²) dt = 2x + 1/3.\nExact for the degree-2 integrand. Conservation: I(x) + I(1-x) = 8/3.\n\"\"\"\nimport numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 1.0 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_7f3c0efb3990_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

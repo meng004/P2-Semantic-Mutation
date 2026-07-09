@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"relu\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n",
+  "mutant_code": "\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_kw_pairs = [\n    (\"solver\", \"adam\"),\n    (\"random_state\", 42),\n    (\"max_iter\", 5),\n    (\"activation\", \"relu\"),\n    (\"hidden_layer_sizes\", (64, 32)),\n]\n_model = MLPRegressor(**dict(_kw_pairs))\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])",
+  "operator": {
+    "id": "c3_TF1",
+    "label": "max_iter 1000→5",
+    "target_locator": "MLPRegressor max_iter parameter",
+    "transformation": "change max_iter from 1000 to 5"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_f10f5f1c733f",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: c3_TF1\nOPERATOR LABEL: max_iter 1000→5\nTARGET LOCATOR: MLPRegressor max_iter parameter\nEXACT CHANGE: change max_iter from 1000 to 5\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"relu\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"C3: Neural Network surrogate regressor — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPRegressor (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x − 3 ∈ [−3, 3]. Training: sigmoid(2t) (monotone increasing).\nMLP (64, 32), ReLU, Adam. Returns scalar prediction. Monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_kw_pairs = [\n    (\"solver\", \"adam\"),\n    (\"random_state\", 42),\n    (\"max_iter\", 5),\n    (\"activation\", \"relu\"),\n    (\"hidden_layer_sizes\", (64, 32)),\n]\n_model = MLPRegressor(**dict(_kw_pairs))\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_f10f5f1c733f_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

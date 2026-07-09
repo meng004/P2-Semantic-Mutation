@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n",
+  "mutant_code": "\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + (_PROPOSAL_STD * 0.1) * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))",
+  "operator": {
+    "id": "b2_HP1",
+    "label": "proposal width ×0.1",
+    "target_locator": "proposal step size sigma in the MH loop",
+    "transformation": "multiply proposal sigma by 0.1"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_4c8049ebe763",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: b2_HP1\nOPERATOR LABEL: proposal width ×0.1\nTARGET LOCATOR: proposal step size sigma in the MH loop\nEXACT CHANGE: multiply proposal sigma by 0.1\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"B2: MCMC Metropolis-Hastings — chain mean tracking target (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → target mean μ = 4x − 2 (range [−2, 2]).\nRuns MH targeting N(μ,1) from x0=0, n_steps=2000, warmup=500, proposal_std=0.5.\nReturns post-warmup chain mean. Monotone: x↑ → μ↑ → chain mean↑.\n\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + (_PROPOSAL_STD * 0.1) * rng.standard_normal()\n        log_ratio = -0.5*((proposal-mu)**2 - (current-mu)**2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_4c8049ebe763_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

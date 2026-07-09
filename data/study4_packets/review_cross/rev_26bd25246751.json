@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n",
+  "mutant_code": "\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 1.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    weighted_total = np.sum(w * _SAMPLES)\n    normalizer = np.sum(w)\n    return float(weighted_total / normalizer)",
+  "operator": {
+    "id": "b7_CE1",
+    "label": "target const 2→1",
+    "target_locator": "target mean `mu = 4.0*x - 2.0`",
+    "transformation": "change the constant in `4.0*x - 2.0` from 2.0 to 1.0"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_26bd25246751",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: b7_CE1\nOPERATOR LABEL: target const 2→1\nTARGET LOCATOR: target mean `mu = 4.0*x - 2.0`\nEXACT CHANGE: change the constant in `4.0*x - 2.0` from 2.0 to 1.0\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    return float(np.sum(w * _SAMPLES) / np.sum(w))\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"B7: Importance sampling — self-normalised weighted expectation (scalar x∈[0,1] interface).\n\nLibrary: scipy.stats.norm (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSelf-normalised IS estimate of E_p[t], target p=N(4x-2, 1), proposal q=N(0, 2²).\nReturns weighted mean ≈ 4x-2, monotone increasing. seed=42, n=6000.\n\"\"\"\nimport numpy as np\nfrom scipy.stats import norm\n\n_SEED = 42\n_N = 6000\n_PROP_STD = 2.0\n_SAMPLES = np.random.default_rng(_SEED).normal(0.0, _PROP_STD, _N)\n_Q = norm.pdf(_SAMPLES, 0.0, _PROP_STD)\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 1.0\n    w = norm.pdf(_SAMPLES, mu, 1.0) / _Q\n    weighted_total = np.sum(w * _SAMPLES)\n    normalizer = np.sum(w)\n    return float(weighted_total / normalizer)\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_26bd25246751_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

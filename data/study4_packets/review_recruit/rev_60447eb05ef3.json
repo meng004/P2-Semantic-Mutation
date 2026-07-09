@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"D8: Gaussian Process classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.gaussian_process.GaussianProcessClassifier (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessClassifier.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [1.6x-0.8, 1.6x-0.8]. Boundary: x1+x2=0 → positive when x>0.5.\nRBF-kernel Bayesian classifier; predict_proba monotone increasing over the\nscaled feature band. Training: 400 pts from [-1.5,1.5]², label = (x1+x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n",
+  "mutant_code": "import numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1e1, length_scale_bounds=\"fixed\"), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    f = 1.6 * float(x) - 0.8\n    return float(_model.predict_proba([[f, f]])[0, 1])",
+  "operator": {
+    "id": "d8_HP1",
+    "label": "length_scale 1→10",
+    "target_locator": "RBF kernel length_scale parameter",
+    "transformation": "change RBF length_scale from 1.0 to 10.0"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_60447eb05ef3",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: d8_HP1\nOPERATOR LABEL: length_scale 1→10\nTARGET LOCATOR: RBF kernel length_scale parameter\nEXACT CHANGE: change RBF length_scale from 1.0 to 10.0\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"D8: Gaussian Process classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.gaussian_process.GaussianProcessClassifier (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessClassifier.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [1.6x-0.8, 1.6x-0.8]. Boundary: x1+x2=0 → positive when x>0.5.\nRBF-kernel Bayesian classifier; predict_proba monotone increasing over the\nscaled feature band. Training: 400 pts from [-1.5,1.5]², label = (x1+x2 > 0).\n\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1e1, length_scale_bounds=\"fixed\"), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    f = 1.6 * float(x) - 0.8\n    return float(_model.predict_proba([[f, f]])[0, 1])\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_60447eb05ef3_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

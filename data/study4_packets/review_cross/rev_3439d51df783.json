@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n",
+  "mutant_code": "\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 30\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))",
+  "operator": {
+    "id": "b6_HP1",
+    "label": "n 6000→30",
+    "target_locator": "sample count `_N = 6000`",
+    "transformation": "change _N from 6000 to 30"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_3439d51df783",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: b6_HP1\nOPERATOR LABEL: n 6000→30\nTARGET LOCATOR: sample count `_N = 6000`\nEXACT CHANGE: change _N from 6000 to 30\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 6000\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"B6: Inverse-transform sampling — inverse-CDF (quantile) draws (scalar x∈[0,1] interface).\n\nLibrary: numpy.random (numpy 2.4.4)\nURL: https://numpy.org/doc/stable/reference/random/index.html\n\nprogram(x) where x ∈ [0,1] scalar.\nExponential draws t = -ln(U)/λ(x), λ(x)=2.5-2x. Returns sample mean ≈ 1/λ(x),\nmonotone increasing in x. seed=42, n=6000.\n\"\"\"\nimport numpy as np\n\n_SEED = 42\n_N = 30\n_U = np.random.default_rng(_SEED).uniform(1e-12, 1.0, _N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    lam = 2.5 - 2.0 * x\n    samples = -np.log(_U) / lam\n    return float(np.mean(samples))\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_3439d51df783_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

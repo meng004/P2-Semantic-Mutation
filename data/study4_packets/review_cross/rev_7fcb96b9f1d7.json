@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n",
+  "mutant_code": "\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 27.5\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x):\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))",
+  "operator": {
+    "id": "a1_CE1",
+    "label": "rho 28→27.5",
+    "target_locator": "module-level constant _RHO",
+    "transformation": "change _RHO from 28.0 to 27.5"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_7fcb96b9f1d7",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: a1_CE1\nOPERATOR LABEL: rho 28→27.5\nTARGET LOCATOR: module-level constant _RHO\nEXACT CHANGE: change _RHO from 28.0 to 27.5\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 27.5\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x):\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_7fcb96b9f1d7_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

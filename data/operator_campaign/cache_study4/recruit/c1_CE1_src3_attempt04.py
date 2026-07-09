@@ -1,0 +1,27 @@
+"""Surrogate program(x): GPR fit to erf over the mapped test point t = 6x - 3."""
+import numpy as np
+from scipy.special import erf
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF, WhiteKernel
+
+
+class _GPWrap:
+    def __init__(self):
+        rng = np.random.default_rng(42)
+        t_col = np.sort(rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)
+        y = erf(t_col.ravel())
+        kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0 / 10.0, noise_level_bounds="fixed")
+        self.gp = GaussianProcessRegressor(
+            kernel=kernel, random_state=42, normalize_y=True
+        ).fit(t_col, y)
+
+    def predict_scalar(self, x):
+        t = 6.0 * float(x) - 3.0
+        return float(self.gp.predict([[t]])[0])
+
+
+_w = _GPWrap()
+
+
+def program(x) -> float:
+    return _w.predict_scalar(x)

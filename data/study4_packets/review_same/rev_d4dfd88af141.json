@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"D1: MLP Classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPClassifier (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [x, x]. Boundary: x1+x2=0 → positive class when x>0.\nP(y=1) monotone increasing with x. Training: 400 pts from R², label = (x1+x2 > 0).\n\"\"\"\nimport warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)  # type: ignore[call-overload]\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])  # type: ignore[index]\n",
+  "mutant_code": "\"\"\"D1: MLP Classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPClassifier (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [x, x]. Boundary: x1+x2=0 → positive class when x>0.\nP(y=1) monotone increasing with x. Training: 400 pts from R², label = (x1+x2 > 0).\n\"\"\"\nimport warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)  # type: ignore[call-overload]\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x * 0.0]])[0, 1])  # type: ignore[index]",
+  "operator": {
+    "id": "d1_SI1",
+    "label": "feature index dropped",
+    "target_locator": "feature-vector construction in program(x)",
+    "transformation": "set the second feature to 0 always"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_d4dfd88af141",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: d1_SI1\nOPERATOR LABEL: feature index dropped\nTARGET LOCATOR: feature-vector construction in program(x)\nEXACT CHANGE: set the second feature to 0 always\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"D1: MLP Classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPClassifier (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [x, x]. Boundary: x1+x2=0 → positive class when x>0.\nP(y=1) monotone increasing with x. Training: 400 pts from R², label = (x1+x2 > 0).\n\"\"\"\nimport warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)  # type: ignore[call-overload]\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])  # type: ignore[index]\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"D1: MLP Classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.neural_network.MLPClassifier (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [x, x]. Boundary: x1+x2=0 → positive class when x>0.\nP(y=1) monotone increasing with x. Training: 400 pts from R², label = (x1+x2 > 0).\n\"\"\"\nimport warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)  # type: ignore[call-overload]\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x * 0.0]])[0, 1])  # type: ignore[index]\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_d4dfd88af141_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"A8: RK4 ODE stepper — explicit fixed-step integrator (scalar x∈[0,1] interface).\n\nLibrary: numpy (hand-rolled RK4, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x ∈ [0,1] scalar (initial condition).\nIntegrates u' = -u, u(0) = 2x-1, to T=1 with 20 fixed RK4 steps.\nu(T) = (2x-1)·ρ, ρ = RK4 amplification ≈ e⁻¹. Antisymmetric: u(T;x)+u(T;1-x)=0.\n\"\"\"\n_T_END = 1.0\n_N_STEPS = 20\n\n\ndef _rhs(u):\n    return -u\n\n\ndef program(x) -> float:\n    u = 2.0 * float(x) - 1.0\n    h = _T_END / _N_STEPS\n    for _ in range(_N_STEPS):\n        k1 = _rhs(u)\n        k2 = _rhs(u + 0.5 * h * k1)\n        k3 = _rhs(u + 0.5 * h * k2)\n        k4 = _rhs(u + h * k3)\n        u = u + h / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4)\n    return float(u)\n",
+  "mutant_code": "\"\"\"A8: RK4 ODE stepper — explicit fixed-step integrator (scalar x∈[0,1] interface).\n\nLibrary: numpy (hand-rolled RK4, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x ∈ [0,1] scalar (initial condition).\nIntegrates u' = -u, u(0) = 2x-1, to T=1 with 20 fixed RK4 steps.\nu(T) = (2x-1)·ρ, ρ = RK4 amplification ≈ e⁻¹. Antisymmetric: u(T;x)+u(T;1-x)=0.\n\"\"\"\n_T_END = 1.0\n_N_STEPS = 20\n\n\ndef _rhs(u):\n    return u\n\n\ndef program(x) -> float:\n    u = 2.0 * float(x) - 1.0\n    h = _T_END / _N_STEPS\n    for _ in range(_N_STEPS):\n        k1 = _rhs(u)\n        k2 = _rhs(u + 0.5 * h * k1)\n        k3 = _rhs(u + 0.5 * h * k2)\n        k4 = _rhs(u + h * k3)\n        u = u + h / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4)\n    return float(u)",
+  "operator": {
+    "id": "a8_OS1",
+    "label": "rhs −u→+u",
+    "target_locator": "RHS function `_rhs`: `return -u`",
+    "transformation": "change `return -u` to `return u`"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_f0baded2a5af",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: a8_OS1\nOPERATOR LABEL: rhs −u→+u\nTARGET LOCATOR: RHS function `_rhs`: `return -u`\nEXACT CHANGE: change `return -u` to `return u`\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A8: RK4 ODE stepper — explicit fixed-step integrator (scalar x∈[0,1] interface).\n\nLibrary: numpy (hand-rolled RK4, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x ∈ [0,1] scalar (initial condition).\nIntegrates u' = -u, u(0) = 2x-1, to T=1 with 20 fixed RK4 steps.\nu(T) = (2x-1)·ρ, ρ = RK4 amplification ≈ e⁻¹. Antisymmetric: u(T;x)+u(T;1-x)=0.\n\"\"\"\n_T_END = 1.0\n_N_STEPS = 20\n\n\ndef _rhs(u):\n    return -u\n\n\ndef program(x) -> float:\n    u = 2.0 * float(x) - 1.0\n    h = _T_END / _N_STEPS\n    for _ in range(_N_STEPS):\n        k1 = _rhs(u)\n        k2 = _rhs(u + 0.5 * h * k1)\n        k3 = _rhs(u + 0.5 * h * k2)\n        k4 = _rhs(u + h * k3)\n        u = u + h / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4)\n    return float(u)\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"A8: RK4 ODE stepper — explicit fixed-step integrator (scalar x∈[0,1] interface).\n\nLibrary: numpy (hand-rolled RK4, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x ∈ [0,1] scalar (initial condition).\nIntegrates u' = -u, u(0) = 2x-1, to T=1 with 20 fixed RK4 steps.\nu(T) = (2x-1)·ρ, ρ = RK4 amplification ≈ e⁻¹. Antisymmetric: u(T;x)+u(T;1-x)=0.\n\"\"\"\n_T_END = 1.0\n_N_STEPS = 20\n\n\ndef _rhs(u):\n    return u\n\n\ndef program(x) -> float:\n    u = 2.0 * float(x) - 1.0\n    h = _T_END / _N_STEPS\n    for _ in range(_N_STEPS):\n        k1 = _rhs(u)\n        k2 = _rhs(u + 0.5 * h * k1)\n        k3 = _rhs(u + 0.5 * h * k2)\n        k4 = _rhs(u + h * k3)\n        u = u + h / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4)\n    return float(u)\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_f0baded2a5af_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

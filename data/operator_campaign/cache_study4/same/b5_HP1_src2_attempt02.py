@@ -1,0 +1,19 @@
+import math
+
+import numpy as np
+
+_SEED = 42
+_N_PROP = 50
+_LO, _HI = -3.0, 3.0
+
+
+def program(x) -> float:
+    mu = 4.0 * float(x) - 2.0
+    rng = np.random.default_rng(_SEED)
+    props = rng.uniform(_LO, _HI, _N_PROP)
+    us = rng.uniform(0.0, 1.0, _N_PROP)
+    kept = []
+    for t, u in zip(props, us):
+        if u < math.exp(-0.5 * (t - mu) ** 2):
+            kept.append(t)
+    return float(np.mean(np.asarray(kept)))

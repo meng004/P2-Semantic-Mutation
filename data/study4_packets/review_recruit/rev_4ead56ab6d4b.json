@@ -1,0 +1,38 @@
+{
+  "put_source": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n",
+  "mutant_code": "\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_svr_params = {\"kernel\": \"rbf\", \"C\": 10.0, \"gamma\": \"scale\", \"epsilon\": 1.0}\n_model = SVR(**_svr_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(_model.predict(np.array([[t]]))[0])",
+  "operator": {
+    "id": "c7_CE1",
+    "label": "epsilon 0.01→1.0",
+    "target_locator": "SVR epsilon-insensitive tube parameter",
+    "transformation": "change epsilon from 0.01 to 1.0"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_4ead56ab6d4b",
+  "lang": "py",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: c7_CE1\nOPERATOR LABEL: epsilon 0.01→1.0\nTARGET LOCATOR: SVR epsilon-insensitive tube parameter\nEXACT CHANGE: change epsilon from 0.01 to 1.0\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_model = SVR(kernel=\"rbf\", C=10.0, gamma=\"scale\", epsilon=0.01)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"C7: Support-Vector regression surrogate — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVR (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n\nprogram(x) where x ∈ [0,1] scalar.\nx → test point t = 6x-3 ∈ [-3,3]. Training: tanh(1.5t) (monotone, odd, bounded).\nRBF-kernel epsilon-SVR surrogate. Returns scalar prediction, monotone in x.\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVR\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(1.5 * _t_train.ravel())\n\n_svr_params = {\"kernel\": \"rbf\", \"C\": 10.0, \"gamma\": \"scale\", \"epsilon\": 1.0}\n_model = SVR(**_svr_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(_model.predict(np.array([[t]]))[0])\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_4ead56ab6d4b_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}
