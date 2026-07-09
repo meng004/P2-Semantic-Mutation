@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_dabaaa6524dc",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "uniform(-3,3,300)/3.0 equals uniform(-1,1,300) under the same RNG stream, exactly restricting the training range; nothing else semantic changed."
+}

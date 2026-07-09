@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e65f3818d4c1",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Training draws restricted to t in [-1.2,1.2], exactly x in [0.3,0.7] under t=6x-3; .item() refactor cosmetic; deviation ~0.30."
+}

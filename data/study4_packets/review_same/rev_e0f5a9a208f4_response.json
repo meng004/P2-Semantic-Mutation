@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e0f5a9a208f4",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Second feature [1.6x-0.8]->0.0 exactly as specified; GPC fit is slow (~minutes) in both original and mutant equally; retrained-free predict deviation confirmed on reduced grid."
+}

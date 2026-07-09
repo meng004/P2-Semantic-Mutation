@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e8b337d18baa",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Interpolation samples 17->5 exactly; deviation up to 1.1e-3 >1e-6 on 99% of grid, so not equivalent."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e0809b18eb4a",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "_AB starts as zeros so _AB[2,:]=0.0 exactly zeroes the sub-diagonal band (last slot is unused padding); deviation up to 23."
+}

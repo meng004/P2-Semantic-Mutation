@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_ea8aff11d5aa",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "IC constant 1.0->0.5 via _ic helper; while-loop refactor preserves step count and update formula; deviation ~0.18."
+}

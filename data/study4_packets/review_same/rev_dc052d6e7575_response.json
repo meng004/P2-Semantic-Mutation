@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_dc052d6e7575",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "IC constant 1.0->0.5 via ic_offset variable, semantically identical to the registered change; deviation matches direct implementation."
+}

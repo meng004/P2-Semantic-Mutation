@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e9645c525aea",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "uniform(6*0.3-3, 6*0.7-3) is exactly the [0.3,0.7] training restriction mapped to t-space; deviation ~0.30."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e605fce08f9d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Integrand changed to x - 0.5*nodes**2 exactly (np.subtract/np.dot are value-identical); deviation 2/3."
+}

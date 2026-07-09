@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e690e92a67e7",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "0.4*uniform(-3,3) equals uniform(-1.2,1.2) under the same stream, exactly the registered [0.3,0.7] restriction in t-space; deviation ~0.30."
+}

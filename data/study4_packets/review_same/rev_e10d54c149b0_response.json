@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e10d54c149b0",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Besides length_scale 10.0, mutant fixes length_scale_bounds ('fixed'), disabling GPR hyperparameter re-optimisation, an extra semantic change beyond the registered x10 transformation."
+}
