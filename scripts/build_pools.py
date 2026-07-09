@@ -40,7 +40,8 @@ warnings.filterwarnings("ignore")
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from p2.mutators.pool_builder import select_mutants_for_put
+from p2.mutators.pool_builder import (
+    select_mutants_for_put, select_c_mutants_for_put)
 from p2.config.campaign import single_stratum_filter_enabled
 
 # Registration master seed (PREREGISTRATION_STUDY2_v1.1.md §Status). Immaterial
@@ -58,11 +59,21 @@ _VERSION_SPEC = {
     # all-family screen (P2_SCREEN_ALL_FAMILIES=1). Same N/cache as v4/v5; v5 is
     # a frozen artefact and is never touched by a v6 build.
     "v6": {"suffix": "_pool_v6", "cache": "cache_cross", "n": 30, "frozen": False},
+    # Study-4 (PREREGISTRATION_STUDY4 §7 SSOT). Two Python arms + one C-port arm.
+    # Caches are the per-arm study-4 gateway caches (pass --cache-dir explicitly).
+    "v7": {"suffix": "_pool_v7", "cache": "cache_study4/cross",
+           "n": 30, "frozen": False, "lang": "py"},
+    "v7_same": {"suffix": "_pool_v7_same", "cache": "cache_study4/same",
+                "n": 30, "frozen": False, "lang": "py"},
+    "v7c": {"suffix": "_pool_v7c", "cache": "cache_clang",
+            "n": 30, "frozen": False, "lang": "c"},
 }
 # Study-2/3 pool versions the single-stratum filter applies to.
 _STUDY2_VERSIONS = frozenset({"v4", "v5", "v6"})
 
-_ATTEMPT_RE = re.compile(r"^([a-d]\d+)_[A-Z]+\d+_[a-z]+_attempt\d+\.py$")
+# Source tag may carry a digit (Study-4 vendor-neutral src1/src2/src3) and the
+# grid may be C (.c). Anchors auto-detection only; explicit --puts bypasses it.
+_ATTEMPT_RE = re.compile(r"^([a-d]\d+)_[A-Z]+\d+_[a-z0-9]+_attempt\d+\.(py|c)$")
 
 
 def version_spec(version: str) -> dict:
@@ -73,10 +84,11 @@ def version_spec(version: str) -> dict:
     return _VERSION_SPEC[version]
 
 
-def puts_in_cache(cache_dir: Path) -> list:
+def puts_in_cache(cache_dir: Path, lang: str = "py") -> list:
     """Auto-detect PUT ids present in a cache directory (sorted, unique)."""
+    ext = "c" if lang == "c" else "py"
     puts = set()
-    for fp in cache_dir.glob("*_attempt*.py"):
+    for fp in cache_dir.glob(f"*_attempt*.{ext}"):
         m = _ATTEMPT_RE.match(fp.name)
         if m:
             puts.add(m.group(1))
@@ -113,6 +125,8 @@ def build_pools(puts, version, cache_dir, mutants_dir=None, seed=REGISTERED_SEED
     """
     spec = version_spec(version)
     suffix, n_per_put, frozen = spec["suffix"], spec["n"], spec["frozen"]
+    lang = spec.get("lang", "py")
+    ext = "c" if lang == "c" else "py"
     mutants_dir = Path(mutants_dir) if mutants_dir else ROOT / "data/mutants"
     cache_dir = Path(cache_dir)
 
@@ -122,7 +136,7 @@ def build_pools(puts, version, cache_dir, mutants_dir=None, seed=REGISTERED_SEED
             f"rebuild it. Pass allow_frozen=True (CLI: --allow-frozen) only if "
             f"you really intend to touch immutable Study-1 artefacts.")
 
-    if not cache_dir.exists() or not any(cache_dir.glob("*_attempt*.py")):
+    if not cache_dir.exists() or not any(cache_dir.glob(f"*_attempt*.{ext}")):
         if not allow_empty:
             raise RuntimeError(
                 f"SAFETY: cache {cache_dir} is empty/absent — refusing to build "
@@ -134,8 +148,8 @@ def build_pools(puts, version, cache_dir, mutants_dir=None, seed=REGISTERED_SEED
         screen_fn = make_screen_fn(repeats=20)
 
     if verbose:
-        print(f"Building version={version} suffix={suffix} N={n_per_put} "
-              f"cache={cache_dir.name} seed={seed} "
+        print(f"Building version={version} lang={lang} suffix={suffix} "
+              f"N={n_per_put} cache={cache_dir.name} seed={seed} "
               f"puts={puts} "
               f"single_stratum_filter={'ON' if screen_fn else 'OFF'}")
 
@@ -143,9 +157,14 @@ def build_pools(puts, version, cache_dir, mutants_dir=None, seed=REGISTERED_SEED
     for put_id in puts:
         pool_dir = mutants_dir / f"{put_id}{suffix}"
         # Select FIRST (no deletion yet) so an empty result cannot destroy an
-        # existing populated pool.
-        selected = select_mutants_for_put(put_id, n_per_put, cache_dir, seed=seed,
-                                          screen_fn=screen_fn)
+        # existing populated pool. C grid uses the gcc-admitted .c selector
+        # (no Python re-validation); the single-stratum screen is Python-only.
+        if lang == "c":
+            selected = select_c_mutants_for_put(put_id, n_per_put, cache_dir,
+                                                seed=seed)
+        else:
+            selected = select_mutants_for_put(put_id, n_per_put, cache_dir,
+                                              seed=seed, screen_fn=screen_fn)
         if not selected and not allow_empty:
             if verbose:
                 print(f"{put_id}: 0 eligible mutants — SKIP (existing pool left "
@@ -160,7 +179,7 @@ def build_pools(puts, version, cache_dir, mutants_dir=None, seed=REGISTERED_SEED
         manifest = []
         for idx, (src_path, op_id) in enumerate(selected, 1):
             attempt = src_path.stem.split("_attempt")[1]
-            dest_name = f"m{idx:02d}_{op_id}_a{attempt}.py"
+            dest_name = f"m{idx:02d}_{op_id}_a{attempt}.{ext}"
             shutil.copy(src_path, pool_dir / dest_name)
             try:
                 relpath = str(src_path.relative_to(ROOT))
@@ -222,10 +241,11 @@ def main(argv=None):
 
     cache_dir = (Path(args.cache_dir) if args.cache_dir
                  else ROOT / "data/operator_campaign" / spec["cache"])
+    lang = spec.get("lang", "py")
     if args.puts:
         puts = [s.strip() for s in args.puts.split(",") if s.strip()]
     else:
-        puts = puts_in_cache(cache_dir)
+        puts = puts_in_cache(cache_dir, lang=lang)
         if not puts:
             p.error(f"no PUTs given and none auto-detected in {cache_dir}")
 

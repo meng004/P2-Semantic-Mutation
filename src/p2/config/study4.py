@@ -58,6 +58,8 @@ _DEFAULT: dict = {
     "roles": {"reviewer": "claude-fable-5", "arbiter": "gpt-5.5"},
     "registered_k": 3,
     "confirmatory_puts": 28,
+    "rich_multiplier": 4,
+    "rich_classes": ["c", "d"],
 }
 
 
@@ -111,6 +113,49 @@ def model_quirks(model_id: str, cfg: dict | None = None) -> dict:
 
 def min_max_tokens(model_id: str, cfg: dict | None = None) -> int:
     return int(model_quirks(model_id, cfg).get("min_max_tokens", 0) or 0)
+
+
+def rich_multiplier(cfg: dict | None = None) -> int:
+    """Registered rich-class per-slot attempt multiplier (§2a/§4b).
+
+    Default 1 (OFF) when the config omits ``rich_multiplier`` — so the key is
+    purely additive and a legacy config never silently inflates the budget.
+    PREREGISTRATION_STUDY4 pins x4 for the two Python confirmatory arms.
+    """
+    cfg = cfg or load_study4_config()
+    return int(cfg.get("rich_multiplier", 1) or 1)
+
+
+def rich_classes(cfg: dict | None = None) -> tuple[str, ...]:
+    """PUT-id first-letter classes that get the rich multiplier (default C, D)."""
+    cfg = cfg or load_study4_config()
+    return tuple(str(c).lower() for c in cfg.get("rich_classes", ("c", "d")))
+
+
+def is_rich_put(put_id: str, cfg: dict | None = None) -> bool:
+    """True iff ``put_id`` belongs to a rich class (its first letter is in
+    ``rich_classes``). e.g. c2/c7/d8 -> True; a1/b3 -> False."""
+    return bool(put_id) and put_id[0].lower() in rich_classes(cfg)
+
+
+def attempts_for_put(base_attempts: int, put_id: str, lang: str = "py",
+                     cfg: dict | None = None) -> int:
+    """Per-class confirmatory attempts for one (PUT) at a given base budget.
+
+    Registered rule (§2a, §3.2, §4b): the rich (C, D) confirmatory PUTs generate
+    at ``base * rich_multiplier`` per (operator, slot) in the Python arms; A/B
+    PUTs stay at ``base``. The H-LANG **C arm has NO multiplier** (§2c): when
+    ``lang == 'c'`` the baseline is returned for every PUT. When the config
+    omits ``rich_multiplier`` (default 1) the baseline is returned everywhere,
+    so the behaviour is additive and off unless the study-4 roster pins it.
+    """
+    cfg = cfg or load_study4_config()
+    if lang == "c":                       # C arm: registered baseline, no x4 (§2c)
+        return int(base_attempts)
+    mult = rich_multiplier(cfg)
+    if mult <= 1:
+        return int(base_attempts)
+    return int(base_attempts) * mult if is_rich_put(put_id, cfg) else int(base_attempts)
 
 
 def estimate_cost_usd(model_id: str, prompt_tokens: int | None,

@@ -40,6 +40,70 @@ def _is_valid_program(path: Path) -> bool:
         return False
 
 
+def _select_by_glob(
+    put_id: str, n_target: int, cache_dir: Path, pattern: str, seed: int,
+    validate: bool, screen_fn: Optional[Callable[[Path, str], bool]] = None,
+) -> List[Tuple[Path, str]]:
+    """Proportional per-operator selection over ``cache_dir`` files matching
+    ``pattern``. Shared core for the Python (``validate=True``, AST/exec check)
+    and C (``validate=False``, gcc already admitted at generation) grids."""
+    rng = random.Random(seed)
+    by_op: dict = {}
+    for fp in sorted(cache_dir.glob(pattern)):
+        op_id = fp.name.split("_attempt")[0]
+        by_op.setdefault(op_id, []).append(fp)
+    valid_by_op: dict = {}
+    for op_id, paths in by_op.items():
+        eligible = [p for p in paths if (not validate or _is_valid_program(p))]
+        if screen_fn is not None:
+            eligible = [p for p in eligible if screen_fn(p, op_id)]
+        valid_by_op[op_id] = eligible
+    valid_by_op = {k: v for k, v in valid_by_op.items() if v}
+    if not valid_by_op:
+        return []
+    n_ops = len(valid_by_op)
+    base, rem = divmod(n_target, n_ops)
+    quotas = {op: base for op in valid_by_op}
+    extras = sorted(valid_by_op, key=lambda o: -len(valid_by_op[o]))[:rem]
+    for op in extras:
+        quotas[op] += 1
+    shuffled_by_op: dict = {}
+    selected: List[Tuple[Path, str]] = []
+    taken_count: dict = {}
+    for op_id, q in quotas.items():
+        candidates = list(valid_by_op[op_id])
+        rng.shuffle(candidates)
+        shuffled_by_op[op_id] = candidates
+        take = min(q, len(candidates))
+        taken_count[op_id] = take
+        for p in candidates[:take]:
+            selected.append((p, op_id))
+    needed = n_target - len(selected)
+    if needed > 0:
+        spare_pool: List[Tuple[Path, str]] = []
+        for op_id, candidates in shuffled_by_op.items():
+            for p in candidates[taken_count[op_id]:]:
+                spare_pool.append((p, op_id))
+        rng.shuffle(spare_pool)
+        selected.extend(spare_pool[:needed])
+    return selected
+
+
+def select_c_mutants_for_put(
+    put_id: str, n_target: int, cache_dir: Path, seed: int = 42,
+) -> List[Tuple[Path, str]]:
+    """C analogue of :func:`select_mutants_for_put` (Study-4 H-LANG v7c pool).
+
+    Globs ``{put}_*_attempt*.c``. Skips the Python AST/exec validity check —
+    the C mutants were already gcc-admitted (V1 compile + V2/V3 via the cport
+    adapter) at generation time, so re-validating here is neither possible nor
+    needed. Proportional per-operator distribution is byte-identical to the
+    Python path."""
+    return _select_by_glob(put_id, n_target, cache_dir,
+                           pattern=f"{put_id}_*_attempt*.c", seed=seed,
+                           validate=False)
+
+
 def select_mutants_for_put(
     put_id: str, n_target: int, cache_dir: Path, seed: int = 42,
     screen_fn: Optional[Callable[[Path, str], bool]] = None,

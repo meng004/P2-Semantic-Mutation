@@ -56,5 +56,8 @@
     "arbiter": "gpt-5.5"
   },
   "registered_k": 3,
-  "confirmatory_puts": 28
+  "confirmatory_puts": 28,
+  "rich_multiplier": 4,
+  "rich_classes": ["c", "d"],
+  "_rich_note": "PREREGISTRATION_STUDY4 §2a/§3.2/§4b: the C/D (rich) confirmatory PUTs generate at x4 the baseline per-(operator,slot) attempts in BOTH Python arms; A/B PUTs stay at baseline. The multiplier is Python-arm only — the H-LANG C arm (§2c) has NO rich multiplier and is served at baseline regardless of this key (enforced by lang=='c' in cross_source_campaign.study4_campaign / p2.config.study4.attempts_for_put). Default 1 (off) when the key is absent."
 }

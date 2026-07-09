@@ -100,7 +100,10 @@ def resolve_pool_dir(put_id: str, pool_version: Optional[str] = None) -> Path:
     """
     import os as _os
     pv = pool_version if pool_version is not None else _os.environ.get("POOL_VERSION", "")
-    if pv in ("v4", "v5", "v6", "v7c"):
+    # Study-4 pools (§7 SSOT): v7 = cross-source Python arm, v7_same = same-source
+    # Python arm, v7c = C-port (H-LANG). STRICT like v4/v5/v6 — never falls back
+    # to a Study-1 pool; a missing dir yields inst=0 (a visible failure).
+    if pv in ("v4", "v5", "v6", "v7", "v7_same", "v7c"):
         return MUTANTS_DIR / f"{put_id}_pool_{pv}"
     pool_v3 = MUTANTS_DIR / f"{put_id}_pool_v3"
     pool_v2 = MUTANTS_DIR / f"{put_id}_pool"

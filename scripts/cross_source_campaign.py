@@ -1425,8 +1425,23 @@ def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
     cache_dir = Path(cache_dir) if cache_dir else STUDY4_CACHE
     cache_dir.mkdir(parents=True, exist_ok=True)
     is_c = (lang == "c")
+    # C arm is registered on the 7 ported PUTs only (§2c); guard against loading
+    # a non-ported PUT's (absent) .c source when the caller passes a wider roster.
+    put_set = set(puts)
+    if is_c:
+        put_set &= set(C_GRID_PUTS)
+    cfg = study4_cfg.load_study4_config()
+    # Registered rich-class x4 slot multiplier (§2a/§4b): C/D PUTs generate at
+    # base*mult per (operator, slot) in the Python arms; A/B at baseline; the C
+    # arm gets NO multiplier (§2c). Config-driven, default 1 (off) when absent.
+    mult = study4_cfg.rich_multiplier(cfg) if not is_c else 1
     slots = study4_slot_factories(arm)
-    ops = sorted((o for o in OPERATORS if o.put in set(puts)), key=lambda o: o.id)
+    ops = sorted((o for o in OPERATORS if o.put in put_set), key=lambda o: o.id)
+    if mult > 1:
+        rich = sorted({o.put for o in ops if study4_cfg.is_rich_put(o.put, cfg)})
+        print(f"  [rich-x{mult}] {len(rich)} rich (C/D) PUTs at {attempts}x{mult}"
+              f"={attempts * mult} attempts/slot; A/B at {attempts}: rich={rich}",
+              flush=True)
     records, reviews = [], []
     put_cache: dict = {}
     for op in ops:
@@ -1434,9 +1449,10 @@ def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
             put_cache[op.put] = (_load_c_put_program(op.put) if is_c
                                  else _load_put_program(op.put))
         original_code, original_fn = put_cache[op.put]
+        eff_attempts = study4_cfg.attempts_for_put(attempts, op.put, lang=lang, cfg=cfg)
         for slot_tag, factory in slots:
             recs = study4_generate_slot(op, original_code, original_fn, slot_tag,
-                                        factory, attempts, cache_dir, log_path,
+                                        factory, eff_attempts, cache_dir, log_path,
                                         lang=lang)
             records.extend(recs)
             if review:
