@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4e4e8fd7e235",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Integrand changed to x*t**2; in-function redraw with same seed reproduces module samples, mutant bit-identical to pure operator application; max dev 1.0."
+}

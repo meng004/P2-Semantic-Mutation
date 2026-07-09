@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4e604daf80cd",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Kernel argument changed to mu+props, commutatively identical to registered props+mu; compress/mask refactor inert; max dev 3.4."
+}

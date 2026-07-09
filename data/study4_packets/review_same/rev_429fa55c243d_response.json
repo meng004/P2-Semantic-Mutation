@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_429fa55c243d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Sign flip on the inverse-CDF draw implemented exactly (mean rewritten as sum/size is semantically inert); output negated, max dev 4.04."
+}
