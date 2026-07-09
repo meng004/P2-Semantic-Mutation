@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_9ade7e5590fd",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "np.full((1,2),2-2x) duplicates the first feature into the second slot exactly as registered."
+}

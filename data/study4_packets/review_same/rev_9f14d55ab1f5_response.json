@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_9f14d55ab1f5",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "alpha_post uses max(0,successes-1) while beta_post keeps original successes, matching the registered locator scope."
+}

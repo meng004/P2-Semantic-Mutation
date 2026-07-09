@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_a1e81fa698b9",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Per-step growth factor 1+h+h^2/2+h^3/6+h^4/24 is exactly RK4 applied to u'=+u; matches the faithful realisation to 2e-15."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_98ebe65559f7",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "RHS -u changed to +u; RK4 loop refactor into _rk4_step is semantically identical."
+}
