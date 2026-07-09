@@ -1,0 +1,16 @@
+import numpy as np
+from scipy.linalg import solve_banded
+
+_N = 6
+_AB = np.zeros((3, _N))
+_AB[0, 1:] = -1.0
+_AB[1, :] = 2.0
+_AB[2, :-1] = -1.0
+
+
+def program(x):
+    x = float(x)
+    s = 2.0 * x + 1.0
+    b = np.array([s for _ in range(_N)])
+    u = solve_banded((1, 1), _AB, b)
+    return float(np.sum(u))

@@ -1,0 +1,199 @@
+{
+  "put": "a4",
+  "version": "v6",
+  "n_target": 30,
+  "n_actual": 27,
+  "seed": 20260708,
+  "single_stratum_filter": true,
+  "mutants": [
+    {
+      "rank": 1,
+      "filename": "m01_a4_CE1_claude_a02.py",
+      "operator": "a4_CE1_claude",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_claude_attempt02.py"
+    },
+    {
+      "rank": 2,
+      "filename": "m02_a4_CE1_claude_a03.py",
+      "operator": "a4_CE1_claude",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_claude_attempt03.py"
+    },
+    {
+      "rank": 3,
+      "filename": "m03_a4_CE1_claude_a01.py",
+      "operator": "a4_CE1_claude",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_claude_attempt01.py"
+    },
+    {
+      "rank": 4,
+      "filename": "m04_a4_CE1_deepseek_a03.py",
+      "operator": "a4_CE1_deepseek",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_deepseek_attempt03.py"
+    },
+    {
+      "rank": 5,
+      "filename": "m05_a4_CE1_deepseek_a01.py",
+      "operator": "a4_CE1_deepseek",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_deepseek_attempt01.py"
+    },
+    {
+      "rank": 6,
+      "filename": "m06_a4_CE1_deepseek_a02.py",
+      "operator": "a4_CE1_deepseek",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_deepseek_attempt02.py"
+    },
+    {
+      "rank": 7,
+      "filename": "m07_a4_CE1_gpt_a01.py",
+      "operator": "a4_CE1_gpt",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_gpt_attempt01.py"
+    },
+    {
+      "rank": 8,
+      "filename": "m08_a4_CE1_gpt_a03.py",
+      "operator": "a4_CE1_gpt",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_gpt_attempt03.py"
+    },
+    {
+      "rank": 9,
+      "filename": "m09_a4_CE1_gpt_a02.py",
+      "operator": "a4_CE1_gpt",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_CE1_gpt_attempt02.py"
+    },
+    {
+      "rank": 10,
+      "filename": "m10_a4_HP1_claude_a02.py",
+      "operator": "a4_HP1_claude",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_claude_attempt02.py"
+    },
+    {
+      "rank": 11,
+      "filename": "m11_a4_HP1_claude_a03.py",
+      "operator": "a4_HP1_claude",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_claude_attempt03.py"
+    },
+    {
+      "rank": 12,
+      "filename": "m12_a4_HP1_claude_a01.py",
+      "operator": "a4_HP1_claude",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_claude_attempt01.py"
+    },
+    {
+      "rank": 13,
+      "filename": "m13_a4_HP1_deepseek_a02.py",
+      "operator": "a4_HP1_deepseek",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_deepseek_attempt02.py"
+    },
+    {
+      "rank": 14,
+      "filename": "m14_a4_HP1_deepseek_a01.py",
+      "operator": "a4_HP1_deepseek",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_deepseek_attempt01.py"
+    },
+    {
+      "rank": 15,
+      "filename": "m15_a4_HP1_deepseek_a03.py",
+      "operator": "a4_HP1_deepseek",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_deepseek_attempt03.py"
+    },
+    {
+      "rank": 16,
+      "filename": "m16_a4_HP1_gpt_a01.py",
+      "operator": "a4_HP1_gpt",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_gpt_attempt01.py"
+    },
+    {
+      "rank": 17,
+      "filename": "m17_a4_HP1_gpt_a02.py",
+      "operator": "a4_HP1_gpt",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_gpt_attempt02.py"
+    },
+    {
+      "rank": 18,
+      "filename": "m18_a4_HP1_gpt_a03.py",
+      "operator": "a4_HP1_gpt",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_HP1_gpt_attempt03.py"
+    },
+    {
+      "rank": 19,
+      "filename": "m19_a4_OS1_claude_a03.py",
+      "operator": "a4_OS1_claude",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_claude_attempt03.py"
+    },
+    {
+      "rank": 20,
+      "filename": "m20_a4_OS1_claude_a02.py",
+      "operator": "a4_OS1_claude",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_claude_attempt02.py"
+    },
+    {
+      "rank": 21,
+      "filename": "m21_a4_OS1_claude_a01.py",
+      "operator": "a4_OS1_claude",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_claude_attempt01.py"
+    },
+    {
+      "rank": 22,
+      "filename": "m22_a4_OS1_deepseek_a01.py",
+      "operator": "a4_OS1_deepseek",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_deepseek_attempt01.py"
+    },
+    {
+      "rank": 23,
+      "filename": "m23_a4_OS1_deepseek_a02.py",
+      "operator": "a4_OS1_deepseek",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_deepseek_attempt02.py"
+    },
+    {
+      "rank": 24,
+      "filename": "m24_a4_OS1_deepseek_a03.py",
+      "operator": "a4_OS1_deepseek",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_deepseek_attempt03.py"
+    },
+    {
+      "rank": 25,
+      "filename": "m25_a4_OS1_gpt_a03.py",
+      "operator": "a4_OS1_gpt",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_gpt_attempt03.py"
+    },
+    {
+      "rank": 26,
+      "filename": "m26_a4_OS1_gpt_a02.py",
+      "operator": "a4_OS1_gpt",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_gpt_attempt02.py"
+    },
+    {
+      "rank": 27,
+      "filename": "m27_a4_OS1_gpt_a01.py",
+      "operator": "a4_OS1_gpt",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study3/a4_OS1_gpt_attempt01.py"
+    }
+  ]
+}

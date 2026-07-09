@@ -1,0 +1,1982 @@
+{
+  "artefact": "h4_graded_v6",
+  "generated_by": "scripts/compute_h4_graded.py",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY3_v2.md (§3.1 H4''-graded; §3.2 H4''-strict; §7b contract; §2b/§2c pilot exclusion)",
+  "integrity": "Pre-frozen before Study-3 data generation; any post-data modification must be disclosed as a deviation (§5c, §8).",
+  "run_mode": "confirmatory",
+  "inputs": {
+    "per_cell_sms_matrix": "data/results/sms_track2_v6.json"
+  },
+  "master_seed": 20260708,
+  "n_confirmatory_puts_present": 28,
+  "H4pp_graded": {
+    "hypothesis": "H4''-graded (rich-class mean primary-stratum kill share)",
+    "measure": "s_m = 1[primary in flipset]/|flipset| per detected mutant; PUT mean; rich-class (C,D) mean aggregate",
+    "flip_machinery": "IMPORTED from p2.mutators.stratum_filter.audit_matrix (constrained=ALL_FAMILIES; identical to the S5 audit)",
+    "threshold": 0.15,
+    "n_boot": 10000,
+    "boot_seed": 20260708,
+    "alpha": 0.05,
+    "n_rich": 6,
+    "rich_puts": [
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "D2",
+      "D5"
+    ],
+    "rich_mean_share": 0.0833,
+    "boot_lower_95": 0.0,
+    "per_class_share_mean": {
+      "C": {
+        "n_puts": 4,
+        "share_mean": 0.0
+      },
+      "D": {
+        "n_puts": 2,
+        "share_mean": 0.25
+      }
+    },
+    "per_put_share": {
+      "A4": 1.0,
+      "A5": 0.5,
+      "A6": 1.0,
+      "A7": 1.0,
+      "A8": 1.0,
+      "B1": 0.3333,
+      "B3": 0.0,
+      "B5": 0.5,
+      "B6": 0.5,
+      "C3": 0.0,
+      "C4": 0.0,
+      "C5": 0.0,
+      "C6": 0.0,
+      "D2": 0.0,
+      "D5": 0.5
+    },
+    "per_put_detail": {
+      "A4": [
+        {
+          "file": "m01_a4_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m02_a4_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m03_a4_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m04_a4_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m05_a4_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m06_a4_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m07_a4_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m08_a4_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m09_a4_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m10_a4_HP1_claude_a02.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m11_a4_HP1_claude_a03.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m12_a4_HP1_claude_a01.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m13_a4_HP1_deepseek_a02.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m14_a4_HP1_deepseek_a01.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m15_a4_HP1_deepseek_a03.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m16_a4_HP1_gpt_a01.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m17_a4_HP1_gpt_a02.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m18_a4_HP1_gpt_a03.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m19_a4_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m20_a4_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m21_a4_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m22_a4_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m23_a4_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m24_a4_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m25_a4_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m26_a4_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m27_a4_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        }
+      ],
+      "A5": [
+        {
+          "file": "m19_a5_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m20_a5_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m21_a5_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m22_a5_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m23_a5_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m24_a5_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m25_a5_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m26_a5_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        },
+        {
+          "file": "m27_a5_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            1,
+            4
+          ],
+          "primary_mp": 1,
+          "s_m": 0.5
+        }
+      ],
+      "A6": [
+        {
+          "file": "m01_a6_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m02_a6_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m03_a6_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m04_a6_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m05_a6_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m06_a6_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m07_a6_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m08_a6_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m09_a6_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        }
+      ],
+      "A7": [
+        {
+          "file": "m10_a7_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m11_a7_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m12_a7_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m13_a7_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m14_a7_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m15_a7_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m16_a7_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m17_a7_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m18_a7_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        }
+      ],
+      "A8": [
+        {
+          "file": "m01_a8_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m02_a8_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m03_a8_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m04_a8_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m05_a8_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m06_a8_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m07_a8_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m08_a8_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m09_a8_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        }
+      ],
+      "B1": [
+        {
+          "file": "m01_b1_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m02_b1_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m03_b1_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m04_b1_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m05_b1_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m06_b1_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m07_b1_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m08_b1_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m09_b1_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m10_b1_HP1_claude_a02.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m11_b1_HP1_claude_a03.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m12_b1_HP1_claude_a01.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m13_b1_HP1_deepseek_a02.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m14_b1_HP1_deepseek_a01.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m15_b1_HP1_deepseek_a03.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m16_b1_HP1_gpt_a01.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m17_b1_HP1_gpt_a02.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m18_b1_HP1_gpt_a03.py",
+          "category": "HP",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m19_b1_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m20_b1_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m21_b1_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m22_b1_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m23_b1_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m24_b1_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m25_b1_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m26_b1_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        },
+        {
+          "file": "m27_b1_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            2
+          ],
+          "primary_mp": 2,
+          "s_m": 1.0
+        }
+      ],
+      "B3": [
+        {
+          "file": "m10_b3_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m11_b3_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m12_b3_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m13_b3_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m14_b3_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m15_b3_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m16_b3_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m17_b3_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m18_b3_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        }
+      ],
+      "B5": [
+        {
+          "file": "m19_b5_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m20_b5_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m21_b5_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m22_b5_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m23_b5_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m24_b5_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m25_b5_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m26_b5_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m27_b5_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        }
+      ],
+      "B6": [
+        {
+          "file": "m19_b6_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m20_b6_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m21_b6_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m22_b6_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m23_b6_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m24_b6_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m25_b6_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m26_b6_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m27_b6_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        }
+      ],
+      "C3": [
+        {
+          "file": "m01_c3_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m02_c3_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m03_c3_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m04_c3_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m05_c3_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m06_c3_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m07_c3_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m08_c3_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m09_c3_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m19_c3_TF1_claude_a03.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m20_c3_TF1_claude_a02.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m21_c3_TF1_claude_a01.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m22_c3_TF1_deepseek_a01.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m23_c3_TF1_deepseek_a02.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m24_c3_TF1_deepseek_a03.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m25_c3_TF1_gpt_a03.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m26_c3_TF1_gpt_a02.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m27_c3_TF1_gpt_a01.py",
+          "category": "TF",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        }
+      ],
+      "C4": [
+        {
+          "file": "m01_c4_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m02_c4_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m03_c4_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m04_c4_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m05_c4_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m06_c4_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m07_c4_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m08_c4_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m09_c4_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        }
+      ],
+      "C5": [
+        {
+          "file": "m01_c5_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m02_c5_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m03_c5_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m04_c5_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m05_c5_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m06_c5_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m07_c5_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m08_c5_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m09_c5_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        }
+      ],
+      "C6": [
+        {
+          "file": "m01_c6_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m02_c6_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m03_c6_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m04_c6_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m05_c6_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m06_c6_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m07_c6_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m08_c6_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        },
+        {
+          "file": "m09_c6_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 5,
+          "s_m": 0.0
+        }
+      ],
+      "D2": [
+        {
+          "file": "m10_d2_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m11_d2_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m12_d2_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m13_d2_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m14_d2_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m15_d2_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m16_d2_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m17_d2_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        },
+        {
+          "file": "m18_d2_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 2,
+          "s_m": 0.0
+        }
+      ],
+      "D5": [
+        {
+          "file": "m10_d5_SI1_claude_a02.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m11_d5_SI1_claude_a03.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m12_d5_SI1_claude_a01.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m13_d5_SI1_deepseek_a02.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m14_d5_SI1_deepseek_a01.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m15_d5_SI1_deepseek_a03.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m16_d5_SI1_gpt_a01.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m17_d5_SI1_gpt_a02.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        },
+        {
+          "file": "m18_d5_SI1_gpt_a03.py",
+          "category": "SI",
+          "flip_count": 2,
+          "flipped_invariants": [
+            2,
+            5
+          ],
+          "primary_mp": 2,
+          "s_m": 0.5
+        }
+      ]
+    },
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "verdict": "NOT_CONFIRMED",
+    "licensed_claim": "graded attribution NOT confirmed: rich-class mean share 0.0833 (one-sided 95% lower bound 0.0 <= 0.15); achieved share + per-class breakdown reported factually (C=0.0, D=0.25)"
+  },
+  "H4pp_strict": {
+    "hypothesis": "H4''-strict (single-stratum purity on clean families)",
+    "measure": "fraction of DETECTED clean-family {CE,HP,CF-with-screen} mutants that are single-stratum (flip == 1)",
+    "clean_families": [
+      "CE",
+      "HP",
+      "CF"
+    ],
+    "threshold": 0.9,
+    "alpha": 0.05,
+    "n_clean_detected": 90,
+    "n_single_stratum": 90,
+    "purity": 1.0,
+    "cp_lower_95": 0.9673,
+    "cf_screened_out": 0,
+    "per_family": {
+      "CE": {
+        "n_detected": 72,
+        "n_single_stratum": 72,
+        "n_multistratum": 0
+      },
+      "HP": {
+        "n_detected": 18,
+        "n_single_stratum": 18,
+        "n_multistratum": 0
+      },
+      "CF": {
+        "n_detected": 0,
+        "n_single_stratum": 0,
+        "n_multistratum": 0
+      }
+    },
+    "n_screened_candidates": 633,
+    "n_multistratum_flagged": 36,
+    "screen_matched_gt_zero": true,
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "verdict": "CONFIRM",
+    "licensed_claim": "single-stratum purity holds where coupling is absent or screenable (CE/HP/CF-with-screen, purity 1.0, one-sided 95% lower CP bound 0.9673 >= 0.9); the single-stratum σ model is valid for {CE,HP,CF-with-screen}, NOT claimed for OS/SI/TF on rich PUTs"
+  },
+  "family_g": {
+    "family": "G — Attribution (H4''-graded, H4''-strict)",
+    "correction": "Holm(2) within family G; both tests one-sided at alpha=0.05",
+    "note": "The frozen per-hypothesis decision rules (graded: boot_lower_95 > 0.15; strict: cp_lower_95 >= 0.90 AND screen matched > 0) are the registered verdicts (§7b). Holm(2) is recorded as the family control; no study-wide cross-family correction (Study-2 families are closed).",
+    "graded_verdict": "NOT_CONFIRMED",
+    "strict_verdict": "CONFIRM"
+  }
+}
