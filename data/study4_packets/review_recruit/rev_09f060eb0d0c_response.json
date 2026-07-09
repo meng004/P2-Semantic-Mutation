@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_09f060eb0d0c",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant implements 'test map 3\u21922' at the target locator; parses, runs finite on [0,1], and deviates from the original (max dev 1.04) \u2014 valid non-equivalent operator-conforming mutant."
+}

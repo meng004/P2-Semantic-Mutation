@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_0846b70f9a1f",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "No",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "REJECTED",
+  "reason": "Changes WhiteKernel noise_level to 1e-1 but also adds noise_level_bounds='fixed', an extra semantic change (original leaves noise optimizable) beyond the registered operator."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_0a1aa91fbf06",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant implements 'labels flipped' at the target locator; parses, runs finite on [0,1], and deviates from the original (max dev 1) \u2014 valid non-equivalent operator-conforming mutant."
+}

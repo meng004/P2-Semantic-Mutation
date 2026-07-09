@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_0c67d1cb44a6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant implements 'MLP alpha 1e-4\u21921.0' at the target locator; parses, runs finite on [0,1], and deviates from the original (max dev 0.146) \u2014 valid non-equivalent operator-conforming mutant."
+}
