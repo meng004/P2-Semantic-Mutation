@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_620d41a82a0c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Constant 2.0->1.0 applied as algebraically identical `-1.0 + 4.0*x`; output shifts everywhere (max dev 0.85)."
+}

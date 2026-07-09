@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_37871bbea4b2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "n_estimators 100 changed to 1 via factory, exactly the registered change; docstring edits non-semantic; deviates up to 0.16."
+}

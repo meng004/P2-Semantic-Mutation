@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3c1bde4e912f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Model retrained and queried on first feature only, exactly the registered single-feature reduction; deviates up to 0.15."
+}

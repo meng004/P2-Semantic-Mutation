@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_69d0f62b966b",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Adds length_scale_bounds='fixed' beyond spec; the spec-only x10 change is output-equivalent (dev ~1e-9), so the deviation stems from the extra change."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_626c88033877",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Activation relu->tanh; refactor is output-identical to the spec-only edit (dev 0 vs reference), deviates from original."
+}

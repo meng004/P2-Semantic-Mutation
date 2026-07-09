@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_382c1452f54b",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "IC constant 1.0 replaced by 0.5 via local _ic_offset, exactly the registered change; deviates up to 0.18."
+}

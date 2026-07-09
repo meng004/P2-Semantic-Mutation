@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_385c4a4e4224",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Sub-diagonal band zeroed; _AB row 2 was zero-initialised and its last slot unused, so _AB[2,:]=0 equals the registered change exactly; deviates up to 23.0."
+}

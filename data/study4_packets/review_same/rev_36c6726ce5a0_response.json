@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_36c6726ce5a0",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "_N changed 6000 to 30; per-call seeded re-draw reproduces the same 30-sample array, no extra semantic change; deviates up to 0.36."
+}

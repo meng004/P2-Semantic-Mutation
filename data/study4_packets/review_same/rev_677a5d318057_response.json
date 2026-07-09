@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_677a5d318057",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Loop bound N-1 via temp variable, same semantics as spec; deviates ~0.019."
+}

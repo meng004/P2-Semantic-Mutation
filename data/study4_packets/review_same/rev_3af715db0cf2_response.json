@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3af715db0cf2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Loop accumulation of x + t**3 over the same seeded samples equals the registered exponent change within FP tolerance; deviates up to 0.083."
+}

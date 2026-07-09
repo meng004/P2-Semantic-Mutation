@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_6c7b9c181c65",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "dt halved exactly per spec; deviates ~0.026; slow x=0 probe returns finite 1.025."
+}

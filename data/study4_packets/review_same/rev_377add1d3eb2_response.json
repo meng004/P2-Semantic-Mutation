@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_377add1d3eb2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "log_u - log_ratio > 0 is exactly the reversed acceptance comparison u > ratio; deviates up to 254."
+}

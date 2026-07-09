@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_35700a2c08a3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "np.log(_U)*(1/rate) drops the minus sign exactly as registered; renames cosmetic; deviates up to 4.04."
+}

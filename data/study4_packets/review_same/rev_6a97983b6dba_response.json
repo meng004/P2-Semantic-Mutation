@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_6a97983b6dba",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "dt halved exactly (0.5*_T_END/n_steps); integrates to T/2, ratio deviates ~0.026; slow x=0 probe returns finite 1.025."
+}

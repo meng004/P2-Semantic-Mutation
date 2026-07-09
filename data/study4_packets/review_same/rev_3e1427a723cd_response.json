@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3e1427a723cd",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Training draws narrowed to t in [-1.2,1.2], i.e. x in [0.3,0.7], exactly the registered range restriction; deviates up to 0.30."
+}

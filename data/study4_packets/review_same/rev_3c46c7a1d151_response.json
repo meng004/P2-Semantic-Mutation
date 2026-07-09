@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3c46c7a1d151",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "_N changed 6000 to 30; *(1/lam) and .mean() rewrites are semantically identical; deviates up to 0.36."
+}

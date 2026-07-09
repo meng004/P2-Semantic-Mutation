@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3f5ba1e8ce4e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Residual changed r**3+r-rhs to r**3-r-rhs literally as registered; deviates up to 0.99."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_34f54423e47e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "length_scale set to 10 (fixed bounds realise the hyperparameter change under GPR refit); factory/.item() refactors are cosmetic; deviates up to 0.41."
+}
