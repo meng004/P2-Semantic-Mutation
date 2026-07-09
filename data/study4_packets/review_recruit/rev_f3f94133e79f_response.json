@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f3f94133e79f",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'multiply length_scale by 10' at GP kernel length_scale parameter; parses, runs finite on grid, deviates from original (max_dev=0.4101, n_dev=101); operator-conforming and non-equivalent."
+}

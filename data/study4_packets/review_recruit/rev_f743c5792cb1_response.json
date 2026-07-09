@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f743c5792cb1",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'replace y with 1-y' at training label vector y; parses, runs finite on grid, deviates from original (max_dev=1, n_dev=101); operator-conforming and non-equivalent."
+}

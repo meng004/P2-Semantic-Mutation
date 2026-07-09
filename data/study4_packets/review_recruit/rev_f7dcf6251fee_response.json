@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f7dcf6251fee",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change C from 10.0 to 0.01' at SVR regularisation C parameter; parses, runs finite on grid, deviates from original (max_dev=0.3131, n_dev=101); operator-conforming and non-equivalent."
+}

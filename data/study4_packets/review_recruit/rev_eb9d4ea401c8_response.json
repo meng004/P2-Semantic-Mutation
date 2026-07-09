@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_eb9d4ea401c8",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'use decision_function output instead of predict_proba' at prediction call in program(x); parses, runs finite on grid, deviates from original (max_dev=3.024, n_dev=101); operator-conforming and non-equivalent."
+}

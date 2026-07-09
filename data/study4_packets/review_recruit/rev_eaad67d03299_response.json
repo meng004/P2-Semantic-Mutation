@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_eaad67d03299",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change n_neighbors from 7 to 1' at KNeighborsRegressor n_neighbors parameter; parses, runs finite on grid, deviates from original (max_dev=0.178, n_dev=101); operator-conforming and non-equivalent."
+}

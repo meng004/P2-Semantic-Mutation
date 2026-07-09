@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f10f5f1c733f",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change max_iter from 1000 to 5' at MLPRegressor max_iter parameter; parses, runs finite on grid, deviates from original (max_dev=0.1922, n_dev=101); operator-conforming and non-equivalent."
+}

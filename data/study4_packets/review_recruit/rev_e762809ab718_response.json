@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e762809ab718",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'set the second feature to 0 always' at feature-vector construction in program(x); parses, runs finite on grid, deviates from original (max_dev=0.2342, n_dev=95); operator-conforming and non-equivalent."
+}

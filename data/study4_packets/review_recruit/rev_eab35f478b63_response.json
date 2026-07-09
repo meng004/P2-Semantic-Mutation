@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_eab35f478b63",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'replace PolynomialFeatures(5, include_bias=True) with SplineTransformer(n_knots=6, degree=3)' at feature transformer in the regression pipeline; parses, runs finite on grid, deviates from original (max_dev=0.03802, n_dev=101); operator-conforming and non-equivalent."
+}

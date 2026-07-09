@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f0ad56813b42",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change the offset in `6.0*x - 3.0` from 3.0 to 1.5' at test-point mapping `t = 6.0*x - 3.0`; parses, runs finite on grid, deviates from original (max_dev=2.329, n_dev=98); operator-conforming and non-equivalent."
+}

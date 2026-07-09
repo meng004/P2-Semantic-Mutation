@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e82d11323db2",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change epsilon from 0.01 to 1.0' at SVR epsilon-insensitive tube parameter; parses, runs finite on grid, deviates from original (max_dev=1.009, n_dev=101); operator-conforming and non-equivalent."
+}

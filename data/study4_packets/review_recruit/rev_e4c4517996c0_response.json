@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e4c4517996c0",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'randomly permute first 20% of training labels' at training labels assignment; parses, runs finite on grid, deviates from original (max_dev=0.2781, n_dev=101); operator-conforming and non-equivalent."
+}

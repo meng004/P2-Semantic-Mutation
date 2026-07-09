@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f71196db06c2",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'set gamma=1e-3 instead of 'scale'' at RBF kernel gamma parameter; parses, runs finite on grid, deviates from original (max_dev=0.3606, n_dev=101); operator-conforming and non-equivalent."
+}

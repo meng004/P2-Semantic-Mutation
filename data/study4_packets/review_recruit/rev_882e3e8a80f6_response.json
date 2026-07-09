@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_882e3e8a80f6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "n_estimators set to 1 (dict-splat); .item() vs [0] is benign; exact HP1."
+}

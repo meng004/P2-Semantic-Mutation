@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f554e7103e53",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change the radial label comparison `< 1.0` to `> 1.0`' at training label `(x1**2 + x2**2 < 1.0)`; parses, runs finite on grid, deviates from original (max_dev=0.9732, n_dev=101); operator-conforming and non-equivalent."
+}

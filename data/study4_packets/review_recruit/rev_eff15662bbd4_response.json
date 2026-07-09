@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_eff15662bbd4",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'set the second feature to 0.0' at feature vector `[2.0*x - 1.0, 2.0*x - 1.0]`; parses, runs finite on grid, deviates from original (max_dev=0.1656, n_dev=100); operator-conforming and non-equivalent."
+}

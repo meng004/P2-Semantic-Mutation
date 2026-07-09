@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e4ebff033a93",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change kernel from 'thin_plate_spline' to 'linear'' at RBFInterpolator kernel parameter; parses, runs finite on grid, deviates from original (max_dev=0.001706, n_dev=84); operator-conforming and non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_edde34d1e66f",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'change the offset in `2.0*x - 1.0` from 1.0 to 0.5' at feature map `2.0*x - 1.0`; parses, runs finite on grid, deviates from original (max_dev=0.9772, n_dev=92); operator-conforming and non-equivalent."
+}
