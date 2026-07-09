@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_af82988304d4",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'label flip' exactly at training label `(0.8*X0 - 0.6*X1 > 0)`; parses, runs finite on x in [0,1], deviates from original (max_dev=0.995) so non-equivalent."
+}

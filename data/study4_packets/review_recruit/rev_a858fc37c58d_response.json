@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a858fc37c58d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'degree 5\u21921' exactly at polynomial degree in PCE construction; parses, runs finite on x in [0,1], deviates from original (max_dev=0.297) so non-equivalent."
+}

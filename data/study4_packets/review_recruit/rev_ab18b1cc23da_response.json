@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ab18b1cc23da",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'train range narrowed' exactly at training-point generation `_rng.uniform(-3.0, 3.0, 300)`; parses, runs finite on x in [0,1], deviates from original (max_dev=1.01) so non-equivalent."
+}

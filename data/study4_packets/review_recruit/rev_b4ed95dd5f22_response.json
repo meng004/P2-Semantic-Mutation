@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b4ed95dd5f22",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'C 10\u21920.01' exactly at SVR regularisation C parameter; parses, runs finite on x in [0,1], deviates from original (max_dev=0.313) so non-equivalent."
+}

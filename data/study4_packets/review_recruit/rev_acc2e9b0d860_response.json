@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_acc2e9b0d860",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'test map 3\u21922' exactly at test-point mapping `t = 6.0*x - 3.0`; parses, runs finite on x in [0,1], deviates from original (max_dev=1.52) so non-equivalent."
+}

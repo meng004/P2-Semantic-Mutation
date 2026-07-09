@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a8b6751f5d65",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'feat offset 1\u21920.5' exactly at feature map `2.0*x - 1.0`; parses, runs finite on x in [0,1], deviates from original (max_dev=0.495) so non-equivalent."
+}

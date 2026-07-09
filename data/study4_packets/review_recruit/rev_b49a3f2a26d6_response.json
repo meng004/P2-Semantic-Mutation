@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b49a3f2a26d6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'train labels swapped' exactly at training labels y; parses, runs finite on x in [0,1], deviates from original (max_dev=0.99) so non-equivalent."
+}

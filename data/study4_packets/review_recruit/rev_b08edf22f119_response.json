@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b08edf22f119",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'LR C 1.0\u21921e-4' exactly at LogisticRegression C parameter; parses, runs finite on x in [0,1], deviates from original (max_dev=0.502) so non-equivalent."
+}

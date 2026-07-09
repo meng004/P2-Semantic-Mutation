@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a8e4209c5d33",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'hidden width 32\u21922' exactly at hidden layer width; parses, runs finite on x in [0,1], deviates from original (max_dev=0.165) so non-equivalent."
+}

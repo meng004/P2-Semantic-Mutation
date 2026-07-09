@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a828478bf03d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'train labels permuted' exactly at training labels assignment; parses, runs finite on x in [0,1], deviates from original (max_dev=0.292) so non-equivalent."
+}

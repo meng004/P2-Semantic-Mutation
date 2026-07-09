@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b2e08d54bd53",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'single-feature input' exactly at feature vector construction; parses, runs finite on x in [0,1], deviates from original (max_dev=0.151) so non-equivalent."
+}

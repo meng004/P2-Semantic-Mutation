@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a95786e15f03",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'drop 2nd feature' exactly at feature vector `[1.6*x - 0.8, 1.6*x - 0.8]`; parses, runs finite on x in [0,1], deviates from original (max_dev=0.161) so non-equivalent."
+}

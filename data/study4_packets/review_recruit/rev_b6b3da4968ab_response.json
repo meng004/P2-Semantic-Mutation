@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b6b3da4968ab",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'label flip' exactly at training label `(_X_train[:,0] > 0)`; parses, runs finite on x in [0,1], deviates from original (max_dev=1) so non-equivalent."
+}

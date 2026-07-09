@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b3e7a4419f02",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'feature index dropped' exactly at feature-vector construction in program(x); parses, runs finite on x in [0,1], deviates from original (max_dev=0.234) so non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b3d74e742a32",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies 'feature index swap' exactly at feature vector `[2.0*x - 1.0, 0.0]`; parses, runs finite on x in [0,1], deviates from original (max_dev=0.963) so non-equivalent."
+}
