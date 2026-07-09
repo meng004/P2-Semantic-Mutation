@@ -39,6 +39,7 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -47,9 +48,26 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from p2.mutators.stratum_filter import (  # noqa: E402
-    audit_matrix, category_from_filename, category_from_op_id,
+    audit_matrix, category_from_filename,
     evaluate_mutant_labels, classify_flips, CONSTRAINED_CATEGORIES, KILLED,
 )
+
+# --- FROZEN historical parser (incident P8) -------------------------------- #
+# This diagnosis documents the EXACT pre-remediation behaviour of
+# ``category_from_op_id``: the anchor ``...\d+$`` rejected the cross-source
+# suffix and returned None, silently disabling the v5 CF/TF screen. The library
+# parser has since been fixed (P8 remediation, 2026-07-09) to tolerate the
+# suffix, so importing it here would no longer reproduce the committed no-op
+# evidence. We pin the buggy regex locally so this post-hoc SSOT
+# (h4_leakage_diagnosis_v5.json) stays byte-reproducible; the fix is
+# forward-looking and does not alter this frozen artefact.
+_OPID_CAT_RE_V5_BUGGY = re.compile(r"^[a-d][1-8]_([A-Z]{2})\d+$")
+
+
+def category_from_op_id(op_id: str):
+    """P8-historical parser: reproduces the null returned for v5-suffixed ids."""
+    m = _OPID_CAT_RE_V5_BUGGY.match(op_id)
+    return m.group(1) if m else None
 
 RESULTS = ROOT / "data" / "results"
 MUTANTS = ROOT / "data" / "mutants"

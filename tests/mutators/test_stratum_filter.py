@@ -57,13 +57,33 @@ def test_category_parsers():
     assert sf.category_from_op_id("not-an-id") is None
 
 
+def test_category_from_op_id_tolerates_source_suffix():
+    # P8 remediation: the cross-source suffix introduced in Study-2 must NOT make
+    # the parser return None (that was the silent-no-op root cause).
+    assert sf.category_from_op_id("c7_TF1_claude") == "TF"
+    assert sf.category_from_op_id("a5_OS1_deepseek") == "OS"
+    assert sf.category_from_op_id("b2_CF1_gpt") == "CF"
+    assert sf.category_from_op_id("d1_SI1_claude") == "SI"
+    # legacy suffix-free ids still resolve identically
+    assert sf.category_from_op_id("b2_CF1") == "CF"
+
+
 # ---------------------------------------------------------------------------
 # admission decision
 # ---------------------------------------------------------------------------
-@pytest.mark.parametrize("cat", ["CE", "OS", "HP", "SI", None])
+@pytest.mark.parametrize("cat", ["CE", "OS", "HP", "SI"])
 def test_unconstrained_admitted_without_labels(cat):
     d = sf.decide(cat)  # no labels required
     assert d.admitted and not d.constrained and d.flip_count is None
+
+
+def test_null_category_raises_loudly():
+    # P8 remediation regression (c): a None category is a parse failure and MUST
+    # raise, never silently pass as "unconstrained" (the v5 screen no-op bug).
+    with pytest.raises(ValueError, match="null operator category"):
+        sf.decide(None)
+    with pytest.raises(ValueError, match="null operator category"):
+        sf.decide(None, _labels(2, 5))
 
 
 def test_constrained_requires_labels():
@@ -192,3 +212,78 @@ def test_audit_admission_matches_flip_rule():
     assert len(rejected) == 29
     assert all(r["category"] in ("CF", "TF") and r["flip_count"] >= 2
                for r in rejected)
+
+
+# ---------------------------------------------------------------------------
+# ALL-FAMILY SCREEN SCOPE (Study-3 P8 remediation)
+# ---------------------------------------------------------------------------
+def test_all_family_scope_screens_os_and_si():
+    # Under the all-family scope, previously-unconstrained OS/SI become
+    # screenable: a multi-stratum OS/SI mutant is rejected; a single one admitted.
+    for cat in ("OS", "SI"):
+        rej = sf.decide(cat, _labels(2, 5), constrained=sf.ALL_FAMILIES)
+        assert not rej.admitted and rej.constrained and rej.flip_count == 2
+        ok = sf.decide(cat, _labels(2), constrained=sf.ALL_FAMILIES)
+        assert ok.admitted and ok.constrained
+    # default scope still admits OS/SI unconditionally (Study-2 behaviour)
+    assert sf.decide("OS", _labels(2, 5)).admitted
+
+
+def test_active_constrained_categories_config(monkeypatch):
+    monkeypatch.delenv("P2_SCREEN_ALL_FAMILIES", raising=False)
+    assert sf.active_constrained_categories() == sf.CONSTRAINED_CATEGORIES
+    monkeypatch.setenv("P2_SCREEN_ALL_FAMILIES", "1")
+    assert sf.active_constrained_categories() == sf.ALL_FAMILIES
+    assert sf.ALL_FAMILIES == frozenset({"CE", "OS", "HP", "TF", "SI", "CF"})
+
+
+# ---------------------------------------------------------------------------
+# AUDIT-MODE VALIDATION — Study-2 v5: all-family screen flags the known 117
+# ---------------------------------------------------------------------------
+def test_all_family_audit_flags_study2_v5_117():
+    """Regression (a): the 117 committed multi-stratum v5 mutants are correctly
+    categorised (op_id parser fixed) AND would be flagged/rejected by an
+    all-family screen in audit mode. Validated against the frozen SSOT
+    data/results/h4_leakage_diagnosis_v5.json (which this must NOT alter)."""
+    matrix = json.loads((ROOT / "data/results/sms_track2_v5.json").read_text())
+    diag = json.loads(
+        (ROOT / "data/results/h4_leakage_diagnosis_v5.json").read_text())
+    puts = sorted({k.split("_MP")[0] for k in matrix})
+    assert len(puts) == 28
+
+    audit = sf.audit_matrix(matrix, puts, constrained=sf.ALL_FAMILIES)
+
+    # the all-family screen actually matched candidates (no silent no-op)
+    assert audit["n_screened_candidates"] > 0
+
+    # exactly the 117 known double-flips are flagged, byte-identical file set
+    diag_files = {(r["put"], r["file"]) for r in diag["per_mutant"]}
+    audit_files = {(p, f) for p, f, _ in audit["multistratum"]}
+    assert len(diag_files) == 117
+    assert audit_files == diag_files
+
+    # every one is rejected (not admitted) under the all-family scope
+    flagged = {(r["put"], r["file"]) for r in audit["per_mutant"]
+               if not r["admitted"]}
+    assert flagged == diag_files
+
+    # family breakdown matches the diagnosis (OS 27, CF 9, TF 72, SI 9)
+    from collections import Counter
+    fam = Counter(sf.category_from_filename(f) for _, f, _ in audit["multistratum"])
+    assert dict(fam) == {"OS": 27, "CF": 9, "TF": 72, "SI": 9}
+
+    # the fixed op_id parser now resolves every v5-style build id (was all None)
+    opids = {r["build_op_id"] for r in diag["per_mutant"]}
+    assert all(sf.category_from_op_id(o) is not None for o in opids)
+
+
+def test_default_scope_audit_v5_only_flags_cf_tf_screenable():
+    # Under the Study-2 DEFAULT {CF,TF} scope, the audit rejects only the CF/TF
+    # double-flips (81), leaving OS/SI (36) admitted — the by-design coverage gap
+    # the all-family scope closes. Confirms the two scopes are distinct.
+    matrix = json.loads((ROOT / "data/results/sms_track2_v5.json").read_text())
+    puts = sorted({k.split("_MP")[0] for k in matrix})
+    audit = sf.audit_matrix(matrix, puts)  # default {CF,TF}
+    rejected = [r for r in audit["per_mutant"] if not r["admitted"]]
+    assert all(r["category"] in ("CF", "TF") for r in rejected)
+    assert len(rejected) == 81

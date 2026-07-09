@@ -21,3 +21,17 @@ _OFF = {"0", "off", "false", "no", ""}
 
 def single_stratum_filter_enabled() -> bool:
     return os.environ.get("P2_SINGLE_STRATUM_FILTER", "1").strip().lower() not in _OFF
+
+
+def screen_all_families_enabled() -> bool:
+    """All-family single-stratum screen scope (Study-3 P8 remediation).
+
+    OFF by default => the Study-2 registered scope
+    (``p2.mutators.stratum_filter.CONSTRAINED_CATEGORIES`` = {CF, TF}). A
+    Study-3 registration turns it ON (all six known families screened at
+    admission) via ``P2_SCREEN_ALL_FAMILIES=1``. The screen scope is a
+    per-registration choice and is never silently widened. See
+    docs/prereg_v2/H4_DIAGNOSIS.md §2 (incident P8) and
+    docs/prereg_v2/PREREGISTRATION_STUDY3_v2.md (H4''-strict).
+    """
+    return os.environ.get("P2_SCREEN_ALL_FAMILIES", "0").strip().lower() not in _OFF

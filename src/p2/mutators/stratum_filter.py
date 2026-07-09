@@ -47,6 +47,23 @@ Study-2 data exists to peek at. Study-1 pool artefacts are immutable and are
 never re-screened; the filter runs on the Study-2 campaign path only, gated by
 the pre-registered flag `p2.config.campaign.single_stratum_filter_enabled()`
 (default ON).
+
+P8 remediation (2026-07-09, forward-looking apparatus for Study 3)
+------------------------------------------------------------------------------
+Incident P8 (docs/prereg_v2/H4_DIAGNOSIS.md §2): `_OPID_CAT_RE` anchored after
+the operator digits, so the Study-2 cross-source op-id suffix (`c7_TF1_claude`)
+made `category_from_op_id` return None; `decide` then treated None as
+"unconstrained" and admitted the candidate WITHOUT evaluating its flip count —
+a silent no-op for the entire v5 CF/TF screen. Three forward-looking fixes,
+disclosed as the Study-3 remediation and touching NO committed v5 artefact or
+verdict:
+  1. `_OPID_CAT_RE` tolerates the source suffix (categories resolve for every
+     v5-style id).
+  2. `ALL_FAMILIES` + `active_constrained_categories()` add an all-family screen
+     scope selectable per-registration (`screen_all_families_enabled()`); the
+     Study-2 default stays {CF,TF}.
+  3. `decide` raises loudly on a None category instead of admitting it, so a
+     parse failure can never again masquerade as an unconstrained pass.
 """
 from __future__ import annotations
 
@@ -58,16 +75,45 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Sequence
 
+# All operator families the campaign knows. A parsed category MUST be one of
+# these; anything else (or None) is a wiring defect, not an "unconstrained" pass.
+KNOWN_CATEGORIES = frozenset({"CE", "OS", "HP", "TF", "SI", "CF"})
+
 # Operator families that mutate shared upstream state and straddle >= 2 strata
-# (Study-1 S5 audit). Only these are screened; everything else is admitted
-# unconditionally.
+# (Study-1 S5 audit). Under the Study-2 registration only these are screened;
+# every other KNOWN family is admitted unconditionally.
 CONSTRAINED_CATEGORIES = frozenset({"CF", "TF"})
+
+# All-family screening scope (Study-3 P8 remediation): screen every known family,
+# not just {CF,TF}. Selected per-registration via the config flag below; it is
+# NEVER the silent default (Study-2 default stays {CF,TF}).
+ALL_FAMILIES = KNOWN_CATEGORIES
 
 MP_INDICES = (1, 2, 3, 4, 5)
 KILLED = "KILLED"
 
 _FNAME_CAT_RE = re.compile(r"^m\d+_[a-d]\d_([A-Z]{2})\d")   # pool filename form
-_OPID_CAT_RE = re.compile(r"^[a-d][1-8]_([A-Z]{2})\d+$")     # registry op-id form
+# Registry op-id form. P8 remediation (2026-07-09): the original anchor
+# ``^[a-d][1-8]_([A-Z]{2})\d+$`` rejected the cross-source suffix introduced in
+# Study-2 (e.g. ``c7_TF1_claude``), returning None and silently disabling the
+# screen for the entire v5 campaign (see docs/prereg_v2/H4_DIAGNOSIS.md §2).
+# The trailing ``(?:_[a-z0-9]+)*`` tolerates any ``_claude`` / ``_deepseek`` /
+# ``_gpt`` source suffix so categories resolve for all v5-style ids.
+_OPID_CAT_RE = re.compile(r"^[a-d][1-8]_([A-Z]{2})\d+(?:_[a-z0-9]+)*$")
+
+
+def active_constrained_categories() -> frozenset:
+    """Categories subject to screening under the ACTIVE registration.
+
+    Study-2 registration screens only {CF, TF} (``CONSTRAINED_CATEGORIES``).
+    A Study-3 registration may register an all-family screen (the P8
+    remediation); selected via the pre-registered flag
+    ``p2.config.campaign.screen_all_families_enabled()`` (default OFF => the
+    Study-2 {CF,TF} scope). The scope is a per-registration choice, never
+    silently widened.
+    """
+    from p2.config import campaign  # local import avoids any import cycle
+    return ALL_FAMILIES if campaign.screen_all_families_enabled() else CONSTRAINED_CATEGORIES
 
 
 # ---------------------------------------------------------------------------
@@ -115,15 +161,29 @@ class AdmissionDecision:
 
 
 def decide(category: Optional[str],
-           labels: Optional[Dict[int, str]] = None) -> AdmissionDecision:
+           labels: Optional[Dict[int, str]] = None,
+           *, constrained: Optional[frozenset] = None) -> AdmissionDecision:
     """Pure admission decision.
 
-    Unconstrained categories (CE/OS/HP/SI, or unknown) are admitted without
-    evaluation. Constrained categories (CF/TF) require per-MP labels and are
+    ``constrained`` is the set of categories subject to screening (defaults to
+    the Study-2 ``CONSTRAINED_CATEGORIES`` = {CF,TF}; pass ``ALL_FAMILIES`` for
+    an all-family screen). Known-but-unconstrained categories are admitted
+    without evaluation. Constrained categories require per-MP labels and are
     admitted iff single-stratum (flip <= 1).
+
+    P8 remediation: a ``None`` category is a *parse failure* (op_id / filename
+    did not resolve), NOT an "unconstrained" pass. It raises loudly rather than
+    admitting silently — the exact defect that disabled the v5 screen.
     """
-    constrained = category in CONSTRAINED_CATEGORIES
-    if not constrained:
+    constrained_set = CONSTRAINED_CATEGORIES if constrained is None else constrained
+    if category is None:
+        raise ValueError(
+            "null operator category: op_id / filename failed to parse. A "
+            "category that cannot be resolved must NEVER be silently admitted "
+            "(incident P8: the v5 single-stratum screen no-op). Fix the id "
+            "parsing or exclude the candidate explicitly.")
+    is_constrained = category in constrained_set
+    if not is_constrained:
         return AdmissionDecision(
             admitted=True, category=category, constrained=False,
             flip_count=None, flipped_invariants=[],
@@ -183,21 +243,26 @@ def evaluate_mutant_labels(put_id: str, mutant_path: Path,
 
 def screen_mutant(put_id: str, mutant_path: Path,
                   category: Optional[str] = None, repeats: int = 20,
-                  evaluator: Optional[Callable[[], Dict[int, str]]] = None
+                  evaluator: Optional[Callable[[], Dict[int, str]]] = None,
+                  constrained: Optional[frozenset] = None
                   ) -> AdmissionDecision:
     """Admission gate for one mutant file.
 
     `evaluator` (a no-arg callable returning {mp: label}) is injectable for
-    tests; when omitted the live AVP dispatcher is used. Unconstrained
-    categories short-circuit and never trigger evaluation.
+    tests; when omitted the live AVP dispatcher is used. Known-but-unconstrained
+    categories short-circuit and never trigger evaluation. ``constrained``
+    defaults to the active registration scope
+    (``active_constrained_categories()``). A category that fails to parse (None)
+    raises loudly via ``decide`` (P8 remediation).
     """
     mutant_path = Path(mutant_path)
     if category is None:
         category = category_from_filename(mutant_path.name)
-    if category not in CONSTRAINED_CATEGORIES:
-        return decide(category)
+    constrained_set = active_constrained_categories() if constrained is None else constrained
+    if category not in constrained_set:
+        return decide(category, constrained=constrained_set)
     ev = evaluator or (lambda: evaluate_mutant_labels(put_id, mutant_path, repeats))
-    return decide(category, ev())
+    return decide(category, ev(), constrained=constrained_set)
 
 
 def make_screen_fn(repeats: int = 20) -> Callable[[Path, str], bool]:
@@ -236,15 +301,25 @@ def single_stratum_prompt_clause(category: Optional[str]) -> str:
 # ---------------------------------------------------------------------------
 # audit mode over a frozen sms_track2-style matrix (validation)
 # ---------------------------------------------------------------------------
-def audit_matrix(matrix: dict, puts: Sequence[str]) -> dict:
+def audit_matrix(matrix: dict, puts: Sequence[str],
+                 constrained: Optional[frozenset] = None) -> dict:
     """Classify every mutant in an ``sms_track2``-style JSON matrix.
 
     ``matrix`` maps ``"{PUT}_MP{k}"`` -> cell with an ``"outcomes"`` list of
     ``{"file", "label"}``. Returns per-mutant classifications plus the set of
     multi-stratum detections (flip >= 2). Used to validate the admission logic
-    against the frozen Study-1 corpus (must reproduce the known 29).
+    against the frozen Study-1 corpus (must reproduce the known 29) and, with
+    ``constrained=ALL_FAMILIES``, the frozen Study-2 v5 corpus (must flag all
+    117 construct-level double-flips — the P8 all-family audit).
+
+    ``constrained`` is the screening scope (defaults to the Study-2
+    ``CONSTRAINED_CATEGORIES``). ``n_screened_candidates`` counts mutants whose
+    category is in scope (the basis for the registered no-op smoke assertion:
+    an all-family screen that matches ZERO candidates is a wiring failure).
     """
     from collections import defaultdict
+
+    constrained_set = CONSTRAINED_CATEGORIES if constrained is None else constrained
 
     per: dict = defaultdict(dict)  # (put, file) -> {mp: label}
     for put in puts:
@@ -257,13 +332,17 @@ def audit_matrix(matrix: dict, puts: Sequence[str]) -> dict:
 
     per_mutant = []
     multistratum = []
+    n_screened_candidates = 0
     for (put, fname), labels in sorted(per.items()):
         n, flipped = classify_flips(labels)
         category = category_from_filename(fname)
+        in_scope = category in constrained_set
+        if in_scope:
+            n_screened_candidates += 1
         rec = {
             "put": put, "file": fname, "category": category,
             "flip_count": n, "flipped_invariants": flipped,
-            "admitted": (n <= 1) or (category not in CONSTRAINED_CATEGORIES),
+            "admitted": (n <= 1) or (not in_scope),
             "multistratum": n >= 2,
         }
         per_mutant.append(rec)
@@ -273,6 +352,7 @@ def audit_matrix(matrix: dict, puts: Sequence[str]) -> dict:
     return {
         "n_mutants": len(per_mutant),
         "n_multistratum": len(multistratum),
+        "n_screened_candidates": n_screened_candidates,
         "multistratum": multistratum,
         "per_mutant": per_mutant,
     }
