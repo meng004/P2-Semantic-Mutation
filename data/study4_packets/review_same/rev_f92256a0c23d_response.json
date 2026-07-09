@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_f92256a0c23d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly the registered 'activation relu\u2192tanh'; max deviation 0.0917 on probe grid; non-equivalent."
+}

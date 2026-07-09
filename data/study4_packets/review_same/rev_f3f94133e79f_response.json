@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_f3f94133e79f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Adds length_scale_bounds='fixed' beyond the registered length_scale x10 change, disabling GPR hyperparameter optimisation (extra semantic change)."
+}

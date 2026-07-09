@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_eee23b2cd2e2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Adds noise_level_bounds='fixed' beyond the registered noise 1e-4->1e-1 change, disabling GPR hyperparameter optimisation (extra semantic change)."
+}
