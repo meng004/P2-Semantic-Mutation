@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_af9601a71ea5",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Mutant applies exactly the registered change (MLP alpha 1e-4\u21921.0) at the target locator; runs finite on [0,1] grid and deviates from the original (max |diff| 0.146 > 1e-6), so not equivalent."
+}

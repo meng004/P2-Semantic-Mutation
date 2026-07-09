@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_a68fc1b64ed3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Label comparison >0 flipped to <0 as specified (sum(axis=1) refactor is semantics-preserving); prediction curve inverts, max dev 0.97."
+}

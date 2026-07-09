@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_b56fa70478dc",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Mutant applies exactly the registered change (train labels swapped) at the target locator; runs finite on [0,1] grid and deviates from the original (max |diff| 0.99 > 1e-6), so not equivalent."
+}
