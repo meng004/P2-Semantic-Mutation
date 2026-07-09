@@ -1,0 +1,18 @@
+"""C4: k-Nearest-Neighbours regressor surrogate — scalar x∈[0,1] interface."""
+import numpy as np
+from sklearn.neighbors import KNeighborsRegressor
+
+_rng = np.random.default_rng(42)
+_t_samples = _rng.uniform(-3.0, 3.0, 300)
+_t_train = np.sort(_t_samples).reshape(-1, 1)
+_y_train = np.arctan(3.0 * _t_train[:, 0])
+
+_model = KNeighborsRegressor(n_neighbors=1)
+_model.fit(_t_train, _y_train)
+
+
+def program(x) -> float:
+    x = float(x)
+    t = (6.0 * x) - 3.0
+    prediction = _model.predict(np.array([[t]], dtype=float))
+    return float(prediction[0])
