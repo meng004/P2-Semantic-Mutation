@@ -98,7 +98,7 @@
 \begin{document}
 
 \begin{abstract}
-Metamorphic testing mitigates the test-oracle problem by checking relations among executions, but classical mutation score is defined over syntactic edits and does not say whether a metamorphic-relation set observes declared domain-semantic effects. This paper introduces Semantic Mutation Score (SMS), an MR-relative adequacy metric over an admitted universe of nonequivalent semantic mutants with explicit certificates and a degeneration path back to classical mutation score. We instantiate five semantic operator families on 12 single-output scientific-computing programs and audit the resulting 60-cell design with an SMS-to-MS proof, an AST-normalized syntactic comparison, aligned-versus-cross relation analysis, and boundary and adjoint studies. The semantic pool has 5.14% AST-normalized overlap with default first-order syntactic mutants. Several pre-registered empirical thresholds are not met; we use these failures to delimit operator applicability, MR-design adequacy, and kill attribution rather than to claim universal dominance. A direct stratum-purity audit confirms the semantic-effect map is single-valued on the large majority of admitted mutants, with the multi-stratum exceptions characterized, and a post-hoc detection-incidence sensitivity finds aligned meta-patterns detect a nonzero effect more often than cross patterns while the effect-size gap itself stays below the pre-registered large-effect threshold. An industrial real-defect arm of reproduced, MR-detectable defects from widely used scientific-computing libraries then tests the central construct claim: a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs. A second, pre-registered confirmatory study re-registers the first study's unpowered threshold misses as powered successors on a blind-authored 28-program grid and executes them once: three of four executable hypotheses confirm (operators instantiate adequately; the aligned slice dominates the cross slice as a directional, medium-magnitude claim; the aligned-over-cross direction holds in three of four classes), attribution purity is not confirmed as multi-stratum leakage generalises beyond the earlier diagnosis once the operator grid widens, and the cross-vendor dual-blind hypothesis is gated not-run under a same-vendor harness. SMS is therefore a construct-level diagnostic for declared semantic strata, delimited by the first study and confirmed directionally by the second, with its construct separation supported on industrial code.
+Metamorphic testing mitigates the test-oracle problem by checking relations among executions, but classical mutation score is defined over syntactic edits and does not say whether a metamorphic-relation set observes declared domain-semantic effects. This paper introduces Semantic Mutation Score (SMS), an MR-relative adequacy metric over an admitted universe of nonequivalent semantic mutants with explicit certificates and a degeneration path back to classical mutation score. We instantiate five semantic operator families on 12 single-output scientific-computing programs and audit the resulting 60-cell design with an SMS-to-MS proof, an AST-normalized syntactic comparison, aligned-versus-cross relation analysis, and boundary and adjoint studies. The semantic pool has 5.14% AST-normalized overlap with default first-order syntactic mutants. Several pre-registered empirical thresholds are not met; we use these failures to delimit operator applicability, MR-design adequacy, and kill attribution rather than to claim universal dominance. A direct stratum-purity audit confirms the semantic-effect map is single-valued on the large majority of admitted mutants, with the multi-stratum exceptions characterized, and a post-hoc detection-incidence sensitivity finds aligned meta-patterns detect a nonzero effect more often than cross patterns while the effect-size gap itself stays below the pre-registered large-effect threshold. An industrial real-defect arm of reproduced, MR-detectable defects from widely used scientific-computing libraries then tests the central construct claim: a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs. A second, pre-registered confirmatory study re-registers the first study's unpowered threshold misses as powered successors on a blind-authored 28-program grid and executes them once: three of four executable hypotheses confirm (operators instantiate adequately; the aligned slice dominates the cross slice as a directional, medium-magnitude claim; the aligned-over-cross direction holds in three of four classes), attribution purity is not confirmed as multi-stratum leakage generalises beyond the earlier diagnosis once the operator grid widens, and the cross-vendor dual-blind hypothesis is gated not-run under a same-vendor harness. A third, pre-registered study re-registers the attribution construct on freshly generated mutants with the repaired admission screen verified live, and returns a two-sided boundary: single-stratum attribution is confirmed where coupling is absent or screenable, while graded declared-stratum attribution is refuted on the structurally rich classes, where a single fault perturbs several invariants at once. SMS is therefore a construct-level diagnostic for declared semantic strata, delimited by the first study, confirmed directionally by the second, and bounded on both sides by the third, with its construct separation supported on industrial code.
 \end{abstract}
 
 \maketitle
@@ -150,7 +150,7 @@ reported here at result level. Candidate mining, rejected cases,
 repository tooling, and benchmark release are outside this manuscript
 and remain contributions of the archived dataset it draws on.
 
-The paper is organised as two studies. Study 1 is the 12-PUT audit,
+The paper is organised as three studies. Study 1 is the 12-PUT audit,
 its structural and industrial arms, and the four threshold misses just
 described; it \emph{delimits} the construct. Study 2
 (Section~\ref{study2-confirmatory-audit}) is a separate, pre-registered
@@ -164,10 +164,17 @@ the aligned-over-cross direction holds in three of four design classes
 confirmed: multi-stratum kill leakage generalises beyond Study 1's
 CF/TF diagnosis once the operator grid widens. A fifth, cross-vendor
 question is gated not-run because the review harness is same-vendor.
-The claim ladder across the two studies is therefore narrow and
-explicit: Study 1 delimits the construct, and Study 2 confirms the
-delimited construct directionally, without upgrading the medium effect
-into a large-effect claim.
+Study 3 (Section~\ref{study3-attribution-boundary}) then re-registers the
+attribution construct alone, on freshly generated mutants with the repaired
+admission screen verified live, and splits it into a graded and a strict
+verdict: single-stratum attribution is \emph{confirmed} where coupling is
+absent or screenable (CE, HP, CF), while graded declared-stratum attribution
+is \emph{refuted} on the structurally rich surrogate and ML classes.
+The claim ladder across the three studies is therefore narrow and
+explicit: Study 1 delimits the construct, Study 2 confirms the delimited
+construct directionally (without upgrading the medium effect into a
+large-effect claim), and Study 3 characterises the attribution boundary on
+both sides.
 
 The intended reader is a software-testing researcher or practitioner who
 needs to decide whether a set of MRs is adequate for a declared semantic
@@ -1980,6 +1987,14 @@ cell (n = 140) & descriptive mean; verdict factual (threshold not met) \\
 H2-2 cross-vendor $\Delta\delta$ (Study 2) & registered, gated (Family B) &
 n/a (not run) & not-run under same-vendor freeze; cross-vendor question
 open, not a null \\
+H4\('' \)-graded rich-class mean share (Study 3) & pre-registered confirmatory
+(Family G, Holm 2) & detected mutant, aggregated over rich C/D PUTs
+($n_{\mathrm{rich}} = 6$) & one-sided lower bound $\leq 0.15$; verdict factual
+(NOT\_CONFIRMED); no purity claim on rich classes \\
+H4\('' \)-strict single-stratum purity (Study 3) & pre-registered confirmatory
+(Family G, Holm 2) & detected clean-family mutant ($n = 90$) & one-sided lower
+CP bound $\geq 0.90$ licenses single-stratum validity on \{CE, HP,
+CF-with-screen\} only \\
 \end{longtable}
 }
 
@@ -3143,8 +3158,9 @@ classes, so strict single-stratum purity is the wrong construct shape for
 these subjects and a single-valued effect map \(\sigma\) is the wrong model
 for those families. A graded, multi-valued attribution construct (scoring
 attribution quality against a known co-flip signature rather than enforcing a
-purity threshold) is the registered path forward; it is deferred to the
-forthcoming Study-3 registration, which we flag without promising any outcome.
+purity threshold) is the registered path taken by Study 3
+(Section~\ref{study3-attribution-boundary}), which characterises this boundary
+on both sides rather than rescuing the miss.
 
 \textbf{An MR-sensitivity coverage boundary.} The same artifacts expose a
 separate, orthogonal boundary: two of the six exercised meta-patterns almost
@@ -3159,6 +3175,175 @@ strata therefore mark an MR-sensitivity boundary, meta-patterns that are
 declared and instantiated but that the current operator families and AVP
 checkers do not empirically stress, distinct from and additional to the
 attribution-purity boundary above.
+
+\section{Study 3: A Pre-registered Graded-Attribution Follow-up}\label{study3-attribution-boundary}
+
+Study 2's attribution verdict (H4\('\), NOT\_CONFIRMED) and its post-hoc
+diagnosis (Section~\ref{study2-h4-diagnosis}) left one question sharply posed
+but unsettled. The diagnosis showed the multi-stratum leakage is
+construct-level and reproducible (bucket split B \(=117/117\)), not a scoring
+artifact, and it exposed a design-intent defect (incident P8): the
+single-stratum admission screen was a silent no-op for the whole v5 campaign,
+so H4\('\) scored an unscreened pool. Two consequences followed. A single-valued
+effect map \(\sigma\) is the wrong model where a single fault inherently
+perturbs several strata, so the purity bar tested the wrong construct on rich
+PUTs; and the screen itself had to be repaired and its effect \emph{verified in
+production} before any purity claim could be trusted anywhere. Study 3
+re-registers the attribution construct alone to settle both, on fresh data,
+without re-opening any other Study-2 verdict.
+
+\subsection{Design and registration}\label{study3-design}
+
+The registration of record is
+\texttt{docs/prereg\_v2/PREREGISTRATION\_STUDY3\_v2.md} (v2.0), frozen with a
+pre-data attestation before any Study-3 mutant, cell, or verdict existed; it
+supersedes only the frozen Study-2 H4\('\) and leaves every other Study-2
+verdict untouched. Study 2's v5 data is used for a single purpose, calibration
+of the graded data-generating process and thresholds (power SSOT
+\texttt{power\_study3.json}, seed 20260708), stated openly. The design has four
+fixed elements.
+
+\begin{itemize}
+
+\item
+  \textbf{A split estimand.} The single purity bar is replaced by two
+  confirmatory verdicts in one Holm(2) family (Family G). \emph{H4\('' \)-graded}
+  (primary) asks whether the declared MetaPattern still carries substantial
+  \emph{graded} attribution on the structurally rich classes: for each detected
+  mutant \(m\) declared to primary stratum \(m^{*}\),
+  \(s_m = \mathbb{1}[m^{*}\in\mathrm{flipset}(m)]/|\mathrm{flipset}(m)|\),
+  aggregated as the rich-class (C, D) mean, with a registered bar of mean share
+  \(\geq 0.15\) (power 0.82 at \(n_{\mathrm{rich}}=15\)). \emph{H4\('' \)-strict}
+  asks whether single-stratum purity holds where coupling is absent or
+  screenable, over \{CE, HP, CF-with-screen\}, with a bar of purity \(\geq 0.90\)
+  (one-sided 95\% lower Clopper--Pearson). The declared strata are the frozen
+  class-primaries, in NOETHER's names C\(\to m_{\mathrm{cmp}}\) and
+  D\(\to m_{\mathrm{mono}}\) (registered labels MP5-held and MP2); the graded
+  measure \emph{reports} rather than repairs the C\(\to\)MP5 mismatch.
+\item
+  \textbf{A repaired, live screen.} The P8 defect is fixed forward for the
+  Study-3 path only, altering no committed v5 artifact: the op-id parser
+  tolerates the model-source suffix, the screen covers all families
+  (\(\texttt{P2\_SCREEN\_ALL\_FAMILIES}=1\)), and a null category raises loudly
+  instead of admitting silently. A registered screen-smoke gate makes the
+  campaign fail loudly if the wired screen matches zero candidates, so the P8
+  no-op can never recur undetected.
+\item
+  \textbf{Fresh generation, one shot.} A hypothesis about attribution formed
+  after seeing v5 cannot be confirmed on v5, so Study 3 regenerates all mutants
+  with fresh seeds into a fresh validated pool (SSOT
+  \texttt{sms\_track2\_v6.json}); the confirmatory grid is the same
+  blind-authored 28 PUTs, and generation runs once per the registered budget.
+  The \(\{a2, b4\}\) calibration pilot is reused verbatim and excluded from
+  every confirmatory statistic; the only pilot-triggered change was code-level
+  v6 tooling wiring (defect P9), which touches no threshold, estimand, or
+  roster.
+\item
+  \textbf{Multiplicity restraint.} The settled Study-2 successors H1\('\),
+  H2-1\('\), H3\('\) are \emph{not} re-registered; re-testing them on fresh data
+  would inflate family multiplicity without posing a new question. Study 3
+  registers exactly the two attribution verdicts plus the screen-smoke
+  assertion.
+\end{itemize}
+
+\subsection{Execution}\label{study3-execution}
+
+The confirmatory campaign ran once through the same same-vendor Claude harness
+as Study 2 (an Opus-tier generator; separately spawned, role-isolated, blinded
+reviewer instances). Generation produced 765 valid records; mechanical
+admission gates V1--V4, now including the live all-family screen, admitted 720
+and rejected 45 (on families a3, b3, c1, d8), giving v6 pools of 633 mutants
+over the 28 confirmatory PUTs (678 including the \(\{a2, b4\}\) pilot) and 140
+cells (28 PUTs \(\times\) 5 meta-patterns), of which 20 carry nonzero killed
+mass. Blind review returned 720 verdicts with zero schema errors and zero
+arbitrations. SMS was computed only after the review labels were frozen.
+
+The screen now does real work. On the confirmatory pool the all-family re-audit
+matched all 633 mutants and flagged 36 as multi-stratum, where the
+byte-identical v5 screen had matched \emph{zero} candidates (the P8 silent
+no-op); the registered smoke gate therefore passes loudly rather than
+masquerading as an unconstrained pass. The P8 remediation is thus verified in
+production, not merely in a unit test. The single post-freeze code change is the
+v6 tooling wiring (defect P9, supplementary Appendix J.6); the pre-frozen scorer
+\texttt{compute\_h4\_graded.py} produced both verdicts without modification.
+
+\subsection{Results: a two-sided attribution boundary}\label{study3-scoreboard}
+
+Both registered verdicts are front-loaded. Attribution is now \emph{positively
+validated} where coupling is absent or screenable, and \emph{positively refuted}
+on the rich classes; the two together characterise a boundary rather than rescue
+the Study-2 miss.
+
+\begin{table}[t]
+\caption{Study-3 confirmatory scoreboard (Family G, Holm(2)). Both verdicts
+follow the registered decision rules through the pre-frozen scorer; the graded
+miss and the strict confirm are reported together.}
+\label{tab:study3-scoreboard}
+\centering
+\small
+\begin{tabular}{p{0.13\linewidth}p{0.31\linewidth}p{0.16\linewidth}p{0.28\linewidth}}
+\toprule
+Hypothesis & Registered threshold & Verdict & Key statistic \\
+\midrule
+H4\('' \)-strict & single-stratum purity \(\geq 0.90\) (95\% lower CP) on
+\{CE, HP, CF-with-screen\} & \textbf{CONFIRM} & purity \(1.0\); lower CP
+\(0.9673\); \(n = 90\) (CE 72, HP 18) \\
+H4\('' \)-graded & rich-class mean primary-stratum share \(\geq 0.15\) (95\%
+lower bootstrap) & \textbf{NOT\_CONFIRMED} & mean \(0.0833\); lower \(0.0\);
+\(n_{\mathrm{rich}} = 6\) (C \(0.0\), D \(0.25\)) \\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table}
+
+\textbf{H4\('' \)-strict (confirm).} Over the 90 detected clean-family mutants
+(CE 72, HP 18; no CF mutant was detected on this pool), every one is
+single-stratum, so purity is \(1.0\) with a one-sided 95\% lower
+Clopper--Pearson bound of \(0.9673\), clearing the registered \(0.90\) bar; the
+screen matched \(>0\) candidates, so the smoke gate does not force a loud fail.
+The licensed claim is exactly the registered one: the single-valued \(\sigma\)
+model is valid for \{CE, HP, CF-with-screen\}, and is \emph{not} claimed for
+OS, SI, or TF on rich PUTs.
+
+\textbf{H4\('' \)-graded (not confirmed).} The rich-class mean primary-stratum
+kill share is \(0.0833\), with a one-sided 95\% percentile-bootstrap lower bound
+of \(0.0\) (\(B = 10{,}000\), seed 20260708), below the registered \(0.15\) bar;
+the point estimate itself misses the bar, so the verdict does not rest on power
+alone. The achieved \(n_{\mathrm{rich}} = 6\) (the rich-class PUTs that produced
+any detected mutant: C3--C6, D2, D5) is below the registered target of 15
+because most rich cells detect nothing, and it is reported as such. The
+per-class breakdown is stark: class C (declared \(m_{\mathrm{cmp}}\)) has mean
+share \(0.0\) across its four contributing PUTs, and class D (declared
+\(m_{\mathrm{mono}}\)) has \(0.25\) across two. Mechanistically, the detected
+rich-class kills fire on a MetaPattern \emph{other than} the declared stratum:
+on C, the CE and TF kills flip conservation (\(m_{\mathrm{inv}}\)), not
+method-comparison; on D, the OS kills flip \(m_{\mathrm{inv}}\) and only the SI
+co-flip touches the declared \(m_{\mathrm{mono}}\), as half of an
+\(\{m_{\mathrm{mono}}, m_{\mathrm{cmp}}\}\) pair. The declared stratum is not
+where the rich-class signal lands.
+
+\subsection{Interpretation}\label{study3-interpretation}
+
+Study 3 turns the Study-2 attribution miss into a two-sided characterisation. On
+the families where a fault touches a single stratum, or where a stable coupling
+can be screened out deterministically (CE, HP, CF), single-stratum attribution
+is now \emph{positively validated}, with the screen verified live rather than
+assumed. On the structurally rich classes (surrogate regression and ML
+classifiers), declared-stratum attribution is \emph{positively refuted} even in
+graded form: a single semantic fault perturbs several invariants at once, and
+the kill signal concentrates off the declared MetaPattern. This sharpens the
+Study-2 finding rather than reversing it. Study 2 showed that clean
+single-valued attribution fails once the grid widens; Study 3 says precisely
+where it fails and where it holds, and confirms that the earlier failure was
+construct shape, not a wiring artifact, because the repaired screen changes the
+clean-family picture (purity \(1.0\)) without touching the rich-class
+refutation. The claim ladder is now three rungs: Study 1 delimits the construct,
+Study 2 confirms it directionally, and Study 3 characterises the attribution
+boundary on both sides. We do not read the rich-class refutation as a defect to
+be patched away; a screen that forced those mutants single-stratum would discard
+exactly the multi-invariant structure that trained models exhibit. Whether a
+richer multi-valued attribution model can score that structure without a purity
+threshold is left open; Study 3 registers no fourth study and promises none.
 
 \section{Threats to Validity}\label{threats-to-validity}
 
@@ -3237,6 +3422,16 @@ correlated & Construct & Equivalence verdicts feed admission, but the
 deterministic AVP and equivalence machinery remains the authoritative SMS
 gate, which bounds the threat; the cross-vendor arm H2-2 is gated not-run
 & Section~\ref{study2-harness} \\
+Screen remediation verified in production (Study 3) & The P8 admission-screen
+no-op could recur silently & Internal & The Study-3 all-family screen is wired
+live with a loud-fail smoke gate; on the v6 campaign it matched 633 candidates
+and flagged 36 multi-stratum where the v5 screen matched zero, so the P8 fix is
+verified in production, not only in unit tests & Section~\ref{study3-execution} \\
+Rich-class attribution remains open (Study 3) & Graded declared-stratum
+attribution is refuted on rich (surrogate/ML) classes & Construct & Reported as
+a registered NOT\_CONFIRMED (rich-class mean share 0.0833 $<$ 0.15 bar) with
+$n_{\mathrm{rich}} = 6$; a richer multi-valued attribution model is an open
+construct question, not a promised study & Section~\ref{study3-interpretation} \\
 \end{longtable}
 }
 
@@ -3412,9 +3607,10 @@ Seven directions follow from this study.
 
 \subsection{Findings summary}\label{findings-summary}
 
-The empirical work supports the semantic-mutation construct in eight
-ways, the first seven from Study 1 and the eighth from the Study-2
-confirmatory audit. The Study-1 pre-registered thresholds are treated as
+The empirical work supports the semantic-mutation construct in nine
+ways: the first seven from Study 1, the eighth from the Study-2
+confirmatory audit, and the ninth from the Study-3 graded-attribution
+follow-up. The Study-1 pre-registered thresholds are treated as
 stress tests of this instantiation, not as prerequisites for the SMS
 definition.
 
@@ -3491,8 +3687,23 @@ definition.
   Study-1 CF/TF diagnosis (TF 72/135, OS 27/123) once the operator grid
   widens, so clean semantic-effect attribution remains an open boundary.
   The cross-vendor dual-blind hypothesis is gated not-run under the
-  same-vendor harness. The two studies together read as: Study 1 delimits
-  the construct, Study 2 confirms the delimited construct directionally.
+  same-vendor harness.
+\item
+  A third, pre-registered study (Section~\ref{study3-attribution-boundary})
+  re-registers the attribution construct alone on freshly generated mutants,
+  with the P8 admission screen repaired and verified live (633 candidates
+  matched, 36 flagged, against zero under the v5 no-op), and splits it into two
+  Holm-corrected verdicts. Single-stratum purity is \emph{confirmed}
+  (H4\('' \)-strict: purity \(1.0\), one-sided 95\% lower Clopper--Pearson
+  \(0.9673 \geq 0.90\)) where coupling is absent or screenable
+  (\{CE, HP, CF-with-screen\}), while graded declared-stratum attribution is
+  \emph{not confirmed} (H4\('' \)-graded: rich-class mean share \(0.0833\),
+  one-sided 95\% lower bound \(0.0 \leq 0.15\)) on the structurally rich
+  surrogate and ML classes, where the detected kill signal fires off the
+  declared MetaPattern. This is a two-sided boundary, not a rescue of the
+  Study-2 miss. The three studies together read as: Study 1 delimits the
+  construct, Study 2 confirms the delimited construct directionally, and Study 3
+  characterises the attribution boundary on both sides.
 \end{enumerate}
 
 \subsection{Methodological contributions}\label{methodological-contributions}

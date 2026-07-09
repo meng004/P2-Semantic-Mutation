@@ -1689,6 +1689,88 @@ valid mutants, yielding 140 confirmatory cells (36 with nonzero killed
 mass). Because the harness is same-vendor, the cross-vendor dual-blind
 hypothesis H2-2 is gated not-run, with no same-vendor proxy substituted.
 
+\subsection{Study-3 graded-attribution follow-up}\label{j.6-study3-detail}
+
+Study 3 re-registers the attribution construct alone under
+\texttt{PREREGISTRATION\_STUDY3\_v2.md} (v2.0); the append-only pilot log is
+extended in the Study-3 section of \texttt{PILOT\_LOG.md}. It replaces the
+single Study-2 purity bar with two Holm(2) verdicts in Family G and re-opens no
+other Study-2 verdict. The confirmatory statistics trace to the pre-frozen SSOTs
+\texttt{sms\_track2\_v6.json} (fresh validated pool) and
+\texttt{h4\_graded\_v6.json} (both verdicts); the power reference is
+\texttt{power\_study3.json}. Pilot PUTs \(\{a2, b4\}\) are excluded from every
+confirmatory statistic.
+
+Table~\ref{tab:study3-exec} records the one-shot execution, and
+Table~\ref{tab:study3-verdicts} the two registered verdicts with their per-class
+and per-family breakdowns.
+
+{\def\LTcaptype{table} % do not increment counter
+\small
+\begin{longtable}[]{@{}p{0.46\linewidth}p{0.48\linewidth}@{}}
+\caption{Study-3 confirmatory execution (one shot, seed 20260708).}\label{tab:study3-exec}\\
+\toprule\noalign{}
+Stage & Value \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Valid generation records & 765 \\
+Admitted (gates V1--V4, live all-family screen) & 720 \\
+Rejected at admission & 45 (families a3, b3, c1, d8) \\
+v6 confirmatory pool & 633 mutants over 28 PUTs \\
+v6 pool including \(\{a2, b4\}\) pilot & 678 files over 30 directories \\
+Confirmatory cells & 140 (20 with nonzero killed mass) \\
+Blind-review verdicts & 720 (0 schema errors, 0 arbitrations) \\
+Live-screen re-audit & 633 candidates matched, 36 flagged multi-stratum
+(v5 no-op matched 0) \\
+\end{longtable}
+\normalsize
+}
+
+{\def\LTcaptype{table} % do not increment counter
+\small
+\begin{longtable}[]{@{}p{0.13\linewidth}p{0.20\linewidth}p{0.14\linewidth}p{0.45\linewidth}@{}}
+\caption{Study-3 Family-G verdicts (Holm 2).}\label{tab:study3-verdicts}\\
+\toprule\noalign{}
+Hypothesis & Threshold & Verdict & Breakdown \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+H4\('' \)-strict & purity $\geq 0.90$ (95\% lower CP) & CONFIRM & purity 1.0,
+CP-lower 0.9673 over $n = 90$ detected clean-family mutants (CE 72, HP 18, CF 0);
+screen matched $>0$, gate passes \\
+H4\('' \)-graded & rich share $\geq 0.15$ (95\% lower boot) & NOT\_CONFIRMED &
+rich-class mean share 0.0833, lower bound 0.0, $n_{\mathrm{rich}} = 6$
+(C3--C6, D2, D5); per-class C 0.0 (4 PUTs), D 0.25 (2 PUTs) \\
+\end{longtable}
+\normalsize
+}
+
+\textbf{Live screen, P8 remediation verified.} The P8 fix (op-id parser
+tolerant of the model-source suffix, all-family scope, loud-fail on a null
+category) is exercised in the confirmatory campaign, not only in regression
+tests. The all-family re-audit over the 633-mutant pool matched all 633
+candidates and flagged 36 as multi-stratum
+(\texttt{n\_screened\_candidates} 633, \texttt{n\_multistratum\_flagged} 36 in
+\texttt{h4\_graded\_v6.json}); the byte-identical v5 screen matched zero, so the
+registered screen-smoke gate, which requires a positive match, passes loudly
+rather than admitting an unconstrained pass.
+
+\textbf{Defect P9 (only post-freeze code change).} The pilot surfaced one
+code-level defect: \texttt{build\_pools} and \texttt{sms\_campaign} knew only
+pool versions v2--v5. The fix, mirroring the v5 D2/D4 wiring, adds a \texttt{v6}
+version (suffix \texttt{\_pool\_v6}, cross-source cache, N = 30, strict pool
+resolution) and builds v6 under the live all-family screen; a wrong-version
+deletion guard means a v6 build can only ever remove a \texttt{\_pool\_v6}
+directory, so the frozen v5 pools are never touched. It encodes the registered N
+for a new pool version and points scoring at the correct strict directory; it
+changes no threshold, estimand, primary-meta-pattern assignment, or roster, and
+reads no Study-3 outcome.
+
 \bibliographystyle{plainnat}
 \bibliography{references}
 

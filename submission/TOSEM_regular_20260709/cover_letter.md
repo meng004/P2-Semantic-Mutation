@@ -74,7 +74,7 @@ dataset protocol over reproduced library defects. Fifth, it narrows the claim fr
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
-Length statement. The main manuscript is 51 pages including references in the
+Length statement. The main manuscript is 52 pages including references in the
 ACM manuscript-review format, and the online supplementary material is 24
 pages. We submit to the Regular Track, which imposes no page-length cap.
 
