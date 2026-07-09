@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_5ee700cdbf57",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Exact sign flip of stencil, but the anti-diffusive scheme blows up: non-finite (NaN) outputs on probe grid, failing V2."
+}

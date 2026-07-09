@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3b08180b6c5c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "max_iter 1000->2 applied; surrounding kwargs/refactor verified behaviour-identical to the minimal edit; deviates up to 0.084."
+}

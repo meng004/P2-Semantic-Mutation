@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_44a0e2f10827",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Loop bound range(_N_STEPS)->range(_N_STEPS-1) exactly as registered (docstring typo cosmetic); deviates up to 0.019."
+}
