@@ -65,6 +65,10 @@ _VERSION_SPEC = {
            "n": 30, "frozen": False, "lang": "py"},
     "v7_same": {"suffix": "_pool_v7_same", "cache": "cache_study4/same",
                 "n": 30, "frozen": False, "lang": "py"},
+    # Amendment v1.2: dedicated harness recruitment stratum (15 rich C/D PUTs,
+    # 36 admitted slots/PUT) pooled into H4''' beside the two arms' baselines.
+    "v7_recruit": {"suffix": "_pool_v7_recruit", "cache": "cache_study4/recruit",
+                   "n": 36, "frozen": False, "lang": "py"},
     "v7c": {"suffix": "_pool_v7c", "cache": "cache_clang",
             "n": 30, "frozen": False, "lang": "c"},
 }
