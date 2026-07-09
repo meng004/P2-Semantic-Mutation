@@ -1,0 +1,17 @@
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+
+_rng = np.random.default_rng(42)
+_samples = _rng.uniform(-3.0, 3.0, 300)
+_t_train = np.sort(_samples)[:, np.newaxis]
+_y_train = np.tanh(2.0 * _t_train[:, 0])
+
+_model = RandomForestRegressor(random_state=42, n_estimators=1)
+_model.fit(_t_train, _y_train)
+
+
+def program(x) -> float:
+    x = float(x)
+    t = (6.0 * x) - 3.0
+    prediction = _model.predict([[t]])
+    return float(prediction[0])

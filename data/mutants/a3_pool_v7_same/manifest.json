@@ -1,0 +1,80 @@
+{
+  "put": "a3",
+  "version": "v7_same",
+  "n_target": 30,
+  "n_actual": 10,
+  "seed": 20260708,
+  "single_stratum_filter": false,
+  "mutants": [
+    {
+      "rank": 1,
+      "filename": "m01_a3_CE1_src1_a01.py",
+      "operator": "a3_CE1_src1",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_CE1_src1_attempt01.py"
+    },
+    {
+      "rank": 2,
+      "filename": "m02_a3_CE1_src2_a02.py",
+      "operator": "a3_CE1_src2",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_CE1_src2_attempt02.py"
+    },
+    {
+      "rank": 3,
+      "filename": "m03_a3_CE1_src3_a02.py",
+      "operator": "a3_CE1_src3",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_CE1_src3_attempt02.py"
+    },
+    {
+      "rank": 4,
+      "filename": "m04_a3_CE1_src3_a03.py",
+      "operator": "a3_CE1_src3",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_CE1_src3_attempt03.py"
+    },
+    {
+      "rank": 5,
+      "filename": "m05_a3_CE1_src3_a01.py",
+      "operator": "a3_CE1_src3",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_CE1_src3_attempt01.py"
+    },
+    {
+      "rank": 6,
+      "filename": "m06_a3_OS1_src1_a02.py",
+      "operator": "a3_OS1_src1",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_OS1_src1_attempt02.py"
+    },
+    {
+      "rank": 7,
+      "filename": "m07_a3_OS1_src1_a03.py",
+      "operator": "a3_OS1_src1",
+      "attempt_idx": 3,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_OS1_src1_attempt03.py"
+    },
+    {
+      "rank": 8,
+      "filename": "m08_a3_OS1_src2_a02.py",
+      "operator": "a3_OS1_src2",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_OS1_src2_attempt02.py"
+    },
+    {
+      "rank": 9,
+      "filename": "m09_a3_OS1_src2_a01.py",
+      "operator": "a3_OS1_src2",
+      "attempt_idx": 1,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_OS1_src2_attempt01.py"
+    },
+    {
+      "rank": 10,
+      "filename": "m10_a3_OS1_src3_a02.py",
+      "operator": "a3_OS1_src3",
+      "attempt_idx": 2,
+      "source_relpath": "data/operator_campaign/cache_study4/same/a3_OS1_src3_attempt02.py"
+    }
+  ]
+}

@@ -1,0 +1,1564 @@
+{
+  "A1_MP3": {
+    "cell": "A1_MP3",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m01_a1_CE1_src1_a02_cac22436590a4bbb.bin'"
+  },
+  "A1_MP2": {
+    "cell": "A1_MP2",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m01_a1_CE1_src1_a02_cac22436590a4bbb.bin'"
+  },
+  "A1_MP1": {
+    "cell": "A1_MP1",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m01_a1_CE1_src1_a02_cac22436590a4bbb.bin'"
+  },
+  "A2_MP1": {
+    "cell": "A2_MP1",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m02_a2_CE1_src1_a03_a43599d5321736cc.bin'"
+  },
+  "A2_MP3": {
+    "cell": "A2_MP3",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m03_a2_CE1_src1_a01_2e63b2f8cdee1eee.bin'"
+  },
+  "A2_MP2": {
+    "cell": "A2_MP2",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m04_a2_CE1_src2_a03_9cc5abaaa6db91d7.bin'"
+  },
+  "A2_MP4": {
+    "cell": "A2_MP4",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m05_a2_CE1_src2_a01_9cc5abaaa6db91d7.bin'"
+  },
+  "A3_MP1": {
+    "cell": "A3_MP1",
+    "mutant_dir": "data/mutants/a3_pool_v7c",
+    "repeats": 1,
+    "inst": 12,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 12,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_src3_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A2_MP5": {
+    "cell": "A2_MP5",
+    "mutant_dir": "data/mutants/a2_pool_v7c",
+    "repeats": 1,
+    "inst": 18,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 18,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a2_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a2_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a2_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a2_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a2_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a2_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a2_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a2_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a2_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a2_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a2_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a2_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a2_SI1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a2_SI1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a2_SI1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a2_SI1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a2_SI1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a2_SI1_src2_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP3": {
+    "cell": "A3_MP3",
+    "mutant_dir": "data/mutants/a3_pool_v7c",
+    "repeats": 1,
+    "inst": 12,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 12,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_src3_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP2": {
+    "cell": "A3_MP2",
+    "mutant_dir": "data/mutants/a3_pool_v7c",
+    "repeats": 1,
+    "inst": 12,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 12,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_src3_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP4": {
+    "cell": "A3_MP4",
+    "mutant_dir": "data/mutants/a3_pool_v7c",
+    "repeats": 1,
+    "inst": 12,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 12,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_src3_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A3_MP5": {
+    "cell": "A3_MP5",
+    "mutant_dir": "data/mutants/a3_pool_v7c",
+    "repeats": 1,
+    "inst": 12,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 12,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a3_OS1_src3_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B1_MP2": {
+    "cell": "B1_MP2",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 13] Permission denied: '/tmp/p2_cport_build/m01_b1_CE1_src1_a02_8deb2a0efbc8192f.bin'"
+  },
+  "B1_MP3": {
+    "cell": "B1_MP3",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 13] Permission denied: '/tmp/p2_cport_build/m01_b1_CE1_src1_a02_8deb2a0efbc8192f.bin'"
+  },
+  "B1_MP1": {
+    "cell": "B1_MP1",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m04_b1_CE1_src2_a03_f1aacda490c5b38d.bin'"
+  },
+  "B1_MP5": {
+    "cell": "B1_MP5",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 13] Permission denied: '/tmp/p2_cport_build/m07_b1_CE1_src3_a02_f88d60395ea98c68.bin'"
+  },
+  "B1_MP4": {
+    "cell": "B1_MP4",
+    "mutant_dir": "data/mutants/b1_pool_v7c",
+    "repeats": 1,
+    "inst": 24,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 24,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b1_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b1_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b1_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b1_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b1_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b1_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b1_CE1_src3_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b1_CE1_src3_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b1_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b1_HP1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b1_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b1_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b1_HP1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b1_HP1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b1_HP1_src3_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b1_HP1_src3_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_b1_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_b1_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_b1_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_b1_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_b1_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_b1_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m23_b1_OS1_src3_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m24_b1_OS1_src3_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP1": {
+    "cell": "B2_MP1",
+    "mutant_dir": "data/mutants/b2_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 5,
+    "survive": 11,
+    "sms": 0.3125,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CF1_src1_a03.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_b2_CF1_src1_a02.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_b2_CF1_src1_a01.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m09_b2_CF1_src2_a02.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m10_b2_CF1_src2_a03.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_b2_HP1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_HP1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_HP1_src2_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP3": {
+    "cell": "B2_MP3",
+    "mutant_dir": "data/mutants/b2_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 16,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CF1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CF1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CF1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CF1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b2_HP1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_HP1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_HP1_src2_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP4": {
+    "cell": "B2_MP4",
+    "mutant_dir": "data/mutants/b2_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 16,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CF1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CF1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CF1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CF1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b2_HP1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_HP1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_HP1_src2_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP2": {
+    "cell": "B2_MP2",
+    "mutant_dir": "data/mutants/b2_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 5,
+    "survive": 11,
+    "sms": 0.3125,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CF1_src1_a03.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m07_b2_CF1_src1_a02.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m08_b2_CF1_src1_a01.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m09_b2_CF1_src2_a02.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m10_b2_CF1_src2_a03.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_b2_HP1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_HP1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_HP1_src2_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B2_MP5": {
+    "cell": "B2_MP5",
+    "mutant_dir": "data/mutants/b2_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 16,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b2_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b2_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b2_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b2_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b2_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b2_CF1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b2_CF1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b2_CF1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b2_CF1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b2_CF1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b2_HP1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b2_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b2_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b2_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b2_HP1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b2_HP1_src2_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B3_MP2": {
+    "cell": "B3_MP2",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 13] Permission denied: '/tmp/p2_cport_build/m07_b3_CE1_src3_a01_1114374faf1b8455.bin'"
+  },
+  "B3_MP1": {
+    "cell": "B3_MP1",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 13] Permission denied: '/tmp/p2_cport_build/m10_b3_OS1_src1_a02_4b31d6d911deab2a.bin'"
+  },
+  "B3_MP3": {
+    "cell": "B3_MP3",
+    "mutant_dir": "data/mutants/b3_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 16,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_src3_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b3_OS1_src3_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b3_SI1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b3_SI1_src1_a02.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "B3_MP4": {
+    "cell": "B3_MP4",
+    "mutant_dir": "data/mutants/b3_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 16,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_src3_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b3_OS1_src3_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b3_SI1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b3_SI1_src1_a02.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A1_MP4": {
+    "cell": "A1_MP4",
+    "mutant_dir": "data/mutants/a1_pool_v7c",
+    "repeats": 1,
+    "inst": 22,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 22,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a1_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a1_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a1_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a1_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a1_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a1_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a1_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a1_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a1_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a1_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a1_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a1_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a1_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a1_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a1_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a1_SI1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a1_SI1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a1_SI1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a1_SI1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a1_SI1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a1_SI1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a1_SI1_src3_a01.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C2_MP1": {
+    "cell": "C2_MP1",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m01_c2_HP1_src1_a02_c52537452d5bcec8.bin'"
+  },
+  "C2_MP3": {
+    "cell": "C2_MP3",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m01_c2_HP1_src1_a02_c52537452d5bcec8.bin'"
+  },
+  "C2_MP4": {
+    "cell": "C2_MP4",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m01_c2_HP1_src1_a02_c52537452d5bcec8.bin'"
+  },
+  "B3_MP5": {
+    "cell": "B3_MP5",
+    "mutant_dir": "data/mutants/b3_pool_v7c",
+    "repeats": 1,
+    "inst": 16,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 16,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_b3_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_b3_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_b3_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_b3_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_b3_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_b3_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_b3_CE1_src3_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_b3_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_b3_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_b3_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_b3_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_b3_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_b3_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_b3_OS1_src3_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_b3_SI1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_b3_SI1_src1_a02.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "C2_MP2": {
+    "cell": "C2_MP2",
+    "inst": 0,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 0,
+    "sms": 0.0,
+    "outcomes": [],
+    "error": "[Errno 26] Text file busy: '/tmp/p2_cport_build/m02_c2_HP1_src1_a03_c7b5bf2d928a2e1b.bin'"
+  },
+  "C2_MP5": {
+    "cell": "C2_MP5",
+    "mutant_dir": "data/mutants/c2_pool_v7c",
+    "repeats": 1,
+    "inst": 20,
+    "equiv": 0,
+    "killed": 1,
+    "survive": 19,
+    "sms": 0.05,
+    "outcomes": [
+      {
+        "file": "m01_c2_HP1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_c2_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_c2_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_c2_HP1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_c2_HP1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_c2_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_c2_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_c2_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_c2_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_c2_OS1_src2_a02.c",
+        "label": "KILLED"
+      },
+      {
+        "file": "m11_c2_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_c2_TF1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_c2_TF1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_c2_TF1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_c2_TF1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_c2_TF1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_c2_TF1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_c2_TF1_src3_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_c2_TF1_src3_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_c2_TF1_src3_a03.c",
+        "label": "SURVIVE"
+      }
+    ]
+  },
+  "A1_MP5": {
+    "cell": "A1_MP5",
+    "mutant_dir": "data/mutants/a1_pool_v7c",
+    "repeats": 1,
+    "inst": 22,
+    "equiv": 0,
+    "killed": 0,
+    "survive": 22,
+    "sms": 0.0,
+    "outcomes": [
+      {
+        "file": "m01_a1_CE1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m02_a1_CE1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m03_a1_CE1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m04_a1_CE1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m05_a1_CE1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m06_a1_CE1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m07_a1_HP1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m08_a1_HP1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m09_a1_HP1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m10_a1_OS1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m11_a1_OS1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m12_a1_OS1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m13_a1_OS1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m14_a1_OS1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m15_a1_OS1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m16_a1_SI1_src1_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m17_a1_SI1_src1_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m18_a1_SI1_src1_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m19_a1_SI1_src2_a01.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m20_a1_SI1_src2_a02.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m21_a1_SI1_src2_a03.c",
+        "label": "SURVIVE"
+      },
+      {
+        "file": "m22_a1_SI1_src3_a01.c",
+        "label": "SURVIVE"
+      }
+    ]
+  }
+}
