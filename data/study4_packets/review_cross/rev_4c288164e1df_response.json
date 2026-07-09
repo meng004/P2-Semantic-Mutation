@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4c288164e1df",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Target std 1.0->2.0 applied; RNG/locals refactor verified behaviour-identical to the minimal edit; deviates up to 0.063."
+}

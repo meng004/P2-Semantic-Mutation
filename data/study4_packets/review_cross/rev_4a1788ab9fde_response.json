@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4a1788ab9fde",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Implements the training-range narrowing but also changes the RNG seed 42->109, an extra semantic change beyond the registered operator."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_0a1c55aaef46",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Registered change sets the SECOND feature to 0.0 ([1.6x-0.8, 0.0]) but the mutant zeroes the FIRST ([0.0, 1.6x-0.8]); wrong transformation."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_11a49e45d0c3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact Laplacian sign flip via np.negative; anti-diffusive scheme blows up (huge deviations, one overflow point), clearly non-equivalent."
+}

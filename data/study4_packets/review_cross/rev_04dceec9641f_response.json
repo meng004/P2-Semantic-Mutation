@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_04dceec9641f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Mutant changes the feature map to 1.0*x-0.5, altering the coefficient (2.0->1.0) in addition to the registered offset-only change (1.0->0.5)."
+}

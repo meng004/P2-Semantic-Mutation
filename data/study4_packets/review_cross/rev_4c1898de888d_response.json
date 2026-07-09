@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4c1898de888d",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Sign flip matches the operator, but the anti-diffusion scheme overflows to nan for small admissible h (e.g. x<=0.002), failing the finite-output executability check."
+}
