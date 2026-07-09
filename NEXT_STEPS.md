@@ -240,3 +240,19 @@ ancillary file（可选）：`replication/replication.zip` 一并上传
 - 项目级规则：`CLAUDE.md` §8 + §9
 - 当前会话状态：`docs/STATE.md`
 - 发布前 sanity 日志：`docs/release_2026-05-03/sanity_check.log`
+
+---
+
+## 2026-07-09 Study-4 (H2-2 cross-vendor) 模型配置(用户指定,方案 A)
+
+网关:OpenAI 兼容,`BLTCY_BASE_URL` / `BLTCY_API_KEY` 存 `.env`(gitignored,不入库)。
+实测可用模型 id(2026-07-09 smoke test,全部返回 200 + 正常补全):
+
+| 角色候选 | 网关 model id | 厂商谱系 | 备注 |
+|---|---|---|---|
+| Anthropic 臂 | `claude-fable-5` | Anthropic | same-source 臂基线 |
+| OpenAI 臂 | `gpt-5.5` | OpenAI | |
+| Google 臂 | `gemini-3.5-flash` | Google | 需 max_tokens ≥ 2000(reasoning 消耗) |
+| xAI 臂 | `grok-4.1` | xAI | 网关将该 id 映射到 grok-4.3(响应体自报) |
+
+角色-厂商矩阵(生成/评审/仲裁)以 PREREGISTRATION_STUDY4 v1.2 修订为准。
