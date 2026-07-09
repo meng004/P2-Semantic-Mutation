@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_267fb8c7e4a4",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator b2_CF1 (acceptance reversed) exactly at the specified locator as a single fault; renaming/refactor is cosmetic. Executes cleanly; output diverges from PUT across the [0,1] domain (max abs diff 253.8), so not equivalent."
+}

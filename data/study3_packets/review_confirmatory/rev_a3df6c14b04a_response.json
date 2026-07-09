@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a3df6c14b04a",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "RHS constant 2.0->1.0 in 4x-2; root shifts; refactor of opts is semantics-preserving."
+}

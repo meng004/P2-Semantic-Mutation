@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a2904dd7272b",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Training range narrowed uniform(-3,3)->(-1,1); seed/count/kernel unchanged; test map still 6x-3, extrapolation changes output."
+}

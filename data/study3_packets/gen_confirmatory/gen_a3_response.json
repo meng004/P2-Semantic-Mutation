@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_a3",
+  "put_id": "a3",
+  "mutants": [
+    {
+      "op_id": "a3_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=claude attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = 0.5 * _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=claude attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\n_DT_HALVE = 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _DT_HALVE * (_T_END / n_steps)\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=claude attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    dt *= 0.5\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=gpt attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / (n_steps * 2.0)\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=gpt attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt_full = _T_END / n_steps\n    dt = dt_full / 2.0\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=gpt attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef _choose_dt(t_end, n_steps):\n    return (t_end / n_steps) * 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _choose_dt(_T_END, n_steps)\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=deepseek attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    dt = dt / 2.0\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=deepseek attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    half = 0.5\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = half * _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=deepseek attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps * (1.0 / 2.0)\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=claude attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (-(u[2:] - 2.0*u[1:-1] + u[:-2]))\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=claude attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] - r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=claude attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        lap = u[2:] - 2.0*u[1:-1] + u[:-2]\n        u[1:-1] = u[1:-1] + r * (-lap)\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=gpt attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (2.0*u[1:-1] - u[2:] - u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=gpt attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        stencil = u[2:] - 2.0*u[1:-1] + u[:-2]\n        stencil = -stencil\n        u[1:-1] = u[1:-1] + r * stencil\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=gpt attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    sign = -1.0\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + sign * r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=deepseek attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] - r * (u[2:] + u[:-2] - 2.0*u[1:-1])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=deepseek attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef _neg_laplacian(u):\n    return -(u[2:] - 2.0*u[1:-1] + u[:-2])\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * _neg_laplacian(u)\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_OS1 (laplacian sign flip); source=deepseek attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        d2 = u[2:] - 2.0*u[1:-1] + u[:-2]\n        u[1:-1] = u[1:-1] + r * (0.0 - d2)\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=claude attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = u[1]\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=claude attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[-1] = 0.0\n        u[0] = u[1]\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=claude attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        left_neighbor = u[1]\n        u[0] = left_neighbor\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=gpt attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0:1] = u[1:2]\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=gpt attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[-1] = 0.0\n        u[0] = float(u[1])\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=gpt attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        bc_vals = [u[1], 0.0]\n        u[0] = bc_vals[0]\n        u[-1] = bc_vals[1]\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=deepseek attempt=1.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[-1] = 0.0\n        u[0] = u[1]\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=deepseek attempt=2.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = np.copy(u[1])\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_SI1 (boundary u[0] copy); source=deepseek attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for step in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[-1] = 0.0\n        u[0] = u.take(1)\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n"
+    }
+  ]
+}

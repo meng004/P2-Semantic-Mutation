@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_65dcaf88f5b5",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator a7_CE1 (diag 2→3); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=23.23 so distinguishable from original (fill(3.0) sets main diagonal)."
+}

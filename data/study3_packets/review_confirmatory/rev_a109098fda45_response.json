@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a109098fda45",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "target-mean constant 4x-2 -> 4x-1; renamed vars/np.less equivalent. Runs on x in [0,1]; original vs mutant max|diff|=0.944 over 43-pt grid (E1 fails, distinguishable so E2 fails); valid single-fault mutant."
+}

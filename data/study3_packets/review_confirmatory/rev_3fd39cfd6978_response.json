@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_3fd39cfd6978",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "first 20% (80) training labels permuted; PUT vs mutant maxdiff=0.2591 over x-grid -> non-equivalent"
+}

@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_b2",
+  "put_id": "b2",
+  "mutants": [
+    {
+      "op_id": "b2_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0 + 0.3\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 1.7\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n_MEAN_SHIFT = 0.3\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0 + _MEAN_SHIFT\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef _target_mean(x):\n    return 4.0 * x - 2.0 + 0.3\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = _target_mean(x)\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    bias = 0.3\n    mu = 4.0 * x - 2.0\n    mu += bias\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n_TARGET_OFFSET = -2.0 + 0.3\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x + _TARGET_OFFSET\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    mu = mu + 3e-1\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    slope, intercept = 4.0, -2.0 + 0.3\n    mu = slope * x + intercept\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    drift = 0.3\n    target = mu + drift\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - target) ** 2 - (current - target) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) > log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        u = rng.uniform()\n        if np.log(u) > log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if log_ratio < np.log(rng.uniform()):\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        accept = np.log(rng.uniform()) > log_ratio\n        if accept:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        log_u = np.log(rng.uniform())\n        if log_u > log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if not (np.log(rng.uniform()) <= log_ratio):\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) - log_ratio > 0.0:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef _accept(log_u, log_ratio):\n    return log_u > log_ratio\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if _accept(np.log(rng.uniform()), log_ratio):\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_CF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        reject = np.log(rng.uniform()) < log_ratio\n        if not reject:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.05\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5 * 0.1\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 5e-2\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5 / 10.0\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + (_PROPOSAL_STD * 0.1) * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    sigma = _PROPOSAL_STD * 0.1\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + sigma * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n_TUNE = 0.1\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * _TUNE * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_PROPOSAL_STD *= 0.1\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + _PROPOSAL_STD * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    },
+    {
+      "op_id": "b2_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"B2: MCMC Metropolis-Hastings \u2014 chain mean tracking target (scalar x in [0,1] interface).\"\"\"\nimport numpy as np\n\n_N_STEPS = 2000\n_WARMUP = 500\n_PROPOSAL_STD = 0.5\n_SEED = 42\n\n\ndef program(x) -> float:\n    x = float(x)\n    mu = 4.0 * x - 2.0\n    step = _PROPOSAL_STD / 10.0\n    rng = np.random.default_rng(_SEED)\n    current = 0.0\n    samples = []\n    for i in range(_N_STEPS):\n        proposal = current + step * rng.standard_normal()\n        log_ratio = -0.5 * ((proposal - mu) ** 2 - (current - mu) ** 2)\n        if np.log(rng.uniform()) < log_ratio:\n            current = proposal\n        if i >= _WARMUP:\n            samples.append(current)\n    return float(np.mean(samples))\n"
+    }
+  ]
+}

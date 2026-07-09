@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_4ada90bc057c",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "RF n_estimators 100->1 exactly; single-tree prediction differs (maxdiff~0.0037)."
+}

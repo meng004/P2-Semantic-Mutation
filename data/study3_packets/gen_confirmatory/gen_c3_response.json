@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_c3",
+  "put_id": "c3",
+  "mutants": [
+    {
+      "op_id": "c3_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 2), activation=\"relu\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_hidden = (64, 2)\n_act = \"relu\"\n_max_iter = 1000\n_model = MLPRegressor(\n    hidden_layer_sizes=_hidden, activation=_act,\n    solver=\"adam\", max_iter=_max_iter, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_params = {\n    \"hidden_layer_sizes\": (64, 2),\n    \"activation\": \"relu\",\n    \"solver\": \"adam\",\n    \"max_iter\": 1000,\n    \"random_state\": 42,\n}\n_model = MLPRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    random_state=42,\n    solver=\"adam\",\n    max_iter=1000,\n    activation=\"relu\",\n    hidden_layer_sizes=(64, 2),\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(solver=\"adam\", random_state=42)\n_model.set_params(\n    hidden_layer_sizes=tuple([64, 2]),\n    activation=\"relu\",\n    max_iter=1000,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _build():\n    return MLPRegressor(\n        hidden_layer_sizes=(64, 2), activation=\"relu\",\n        solver=\"adam\", max_iter=1000, random_state=42,\n    )\n\n\n_model = _build()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_w1, _w2 = 64, 2\n_model = MLPRegressor(\n    hidden_layer_sizes=(_w1, _w2),\n    activation=\"relu\", solver=\"adam\",\n    max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_cfg_activation = \"relu\"\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 2),\n    activation=_cfg_activation,\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n).fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_layers = [64]\n_layers.append(2)\n_model = MLPRegressor(\n    hidden_layer_sizes=tuple(_layers),\n    activation=\"relu\", solver=\"adam\",\n    max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"tanh\",\n    solver=\"adam\", max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_hidden = (64, 32)\n_act = \"tanh\"\n_max_iter = 1000\n_model = MLPRegressor(\n    hidden_layer_sizes=_hidden, activation=_act,\n    solver=\"adam\", max_iter=_max_iter, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_params = {\n    \"hidden_layer_sizes\": (64, 32),\n    \"activation\": \"tanh\",\n    \"solver\": \"adam\",\n    \"max_iter\": 1000,\n    \"random_state\": 42,\n}\n_model = MLPRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    random_state=42,\n    solver=\"adam\",\n    max_iter=1000,\n    activation=\"tanh\",\n    hidden_layer_sizes=(64, 32),\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(solver=\"adam\", random_state=42)\n_model.set_params(\n    hidden_layer_sizes=tuple([64, 32]),\n    activation=\"tanh\",\n    max_iter=1000,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _build():\n    return MLPRegressor(\n        hidden_layer_sizes=(64, 32), activation=\"tanh\",\n        solver=\"adam\", max_iter=1000, random_state=42,\n    )\n\n\n_model = _build()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_w1, _w2 = 64, 32\n_model = MLPRegressor(\n    hidden_layer_sizes=(_w1, _w2),\n    activation=\"tanh\", solver=\"adam\",\n    max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_cfg_activation = \"tanh\"\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32),\n    activation=_cfg_activation,\n    solver=\"adam\",\n    max_iter=1000,\n    random_state=42,\n).fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_layers = [64]\n_layers.append(32)\n_model = MLPRegressor(\n    hidden_layer_sizes=tuple(_layers),\n    activation=\"tanh\", solver=\"adam\",\n    max_iter=1000, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32), activation=\"relu\",\n    solver=\"adam\", max_iter=5, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_hidden = (64, 32)\n_act = \"relu\"\n_max_iter = 5\n_model = MLPRegressor(\n    hidden_layer_sizes=_hidden, activation=_act,\n    solver=\"adam\", max_iter=_max_iter, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_params = {\n    \"hidden_layer_sizes\": (64, 32),\n    \"activation\": \"relu\",\n    \"solver\": \"adam\",\n    \"max_iter\": 5,\n    \"random_state\": 42,\n}\n_model = MLPRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(\n    random_state=42,\n    solver=\"adam\",\n    max_iter=5,\n    activation=\"relu\",\n    hidden_layer_sizes=(64, 32),\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_model = MLPRegressor(solver=\"adam\", random_state=42)\n_model.set_params(\n    hidden_layer_sizes=tuple([64, 32]),\n    activation=\"relu\",\n    max_iter=5,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\ndef _build():\n    return MLPRegressor(\n        hidden_layer_sizes=(64, 32), activation=\"relu\",\n        solver=\"adam\", max_iter=5, random_state=42,\n    )\n\n\n_model = _build()\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_w1, _w2 = 64, 32\n_model = MLPRegressor(\n    hidden_layer_sizes=(_w1, _w2),\n    activation=\"relu\", solver=\"adam\",\n    max_iter=5, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_cfg_activation = \"relu\"\n_model = MLPRegressor(\n    hidden_layer_sizes=(64, 32),\n    activation=_cfg_activation,\n    solver=\"adam\",\n    max_iter=5,\n    random_state=42,\n).fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c3_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neural_network import MLPRegressor\n\n\ndef _sigmoid(t):\n    return 1.0 / (1.0 + np.exp(-2.0 * t))\n\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 100)).reshape(-1, 1)\n_y_train = _sigmoid(_t_train.ravel())\n\n_layers = [64]\n_layers.append(32)\n_model = MLPRegressor(\n    hidden_layer_sizes=tuple(_layers),\n    activation=\"relu\", solver=\"adam\",\n    max_iter=5, random_state=42,\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

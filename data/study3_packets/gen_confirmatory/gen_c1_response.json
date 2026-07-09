@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_c1",
+  "put_id": "c1",
+  "mutants": [
+    {
+      "op_id": "c1_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-1)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_noise = 1e-1\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=_noise)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n# over-noisy kernel: WhiteKernel term listed first\n_kernel = WhiteKernel(noise_level=0.1) + RBF(length_scale=1.0)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=10 ** -1)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_rbf = RBF(length_scale=1.0)\n_white = WhiteKernel(noise_level=0.1)\n_kernel = _rbf + _white\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0e-1)  # noise inflated x1000\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0 / 10.0)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_white = WhiteKernel(noise_level=100e-3)\n_kernel = RBF(length_scale=1.0) + _white\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_noise_level = float(1e-1)\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=_noise_level)\n_model = GaussianProcessRegressor(kernel=_kernel, normalize_y=True, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=10.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_ls = 1.0 * 10\n_kernel = RBF(length_scale=_ls) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n# over-smoothed RBF (length_scale scaled by 10)\n_rbf = RBF(length_scale=10.0)\n_kernel = _rbf + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1e1) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_base_length = 1.0\n_kernel = RBF(length_scale=_base_length * 10) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = WhiteKernel(noise_level=1e-4) + RBF(length_scale=10)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=10.00) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_length_scale = 10.0\n_rbf_term = RBF(length_scale=_length_scale)\n_kernel = _rbf_term + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, normalize_y=True, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_ls_factor = 10\n_kernel = RBF(length_scale=float(_ls_factor)) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.2, 1.2, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_x_lo, _x_hi = 0.3, 0.7\n_t_lo, _t_hi = 6.0 * _x_lo - 3.0, 6.0 * _x_hi - 3.0\n_t_train = np.sort(_rng.uniform(_t_lo, _t_hi, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n# training x narrowed to [0.3, 0.7] -> t in [-1.2, 1.2]\n_t_samples = _rng.uniform(-1.2, 1.2, 60)\n_t_train = np.sort(_t_samples).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(6 * 0.3 - 3, 6 * 0.7 - 3, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_low = -1.2\n_t_high = 1.2\n_t_train = np.sort(_rng.uniform(_t_low, _t_high, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.2, high=1.2, size=60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-6.0 / 5.0, 6.0 / 5.0, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_center = 0.0\n_halfwidth = 1.2\n_t_train = np.sort(_rng.uniform(_center - _halfwidth, _center + _halfwidth, 60)).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, normalize_y=True, random_state=42)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c1_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"C1: Gaussian Process Regression surrogate \u2014 scalar x in [0,1] interface (mutant).\"\"\"\nimport numpy as np\nfrom scipy.special import erf\nfrom sklearn.gaussian_process import GaussianProcessRegressor\nfrom sklearn.gaussian_process.kernels import RBF, WhiteKernel\n\n_rng = np.random.default_rng(42)\n_n_train = 60\n_raw_t = _rng.uniform(-1.2, 1.2, _n_train)\n_t_train = np.sort(_raw_t).reshape(-1, 1)\n_y_train = erf(_t_train.ravel())\n\n_kernel = RBF(length_scale=1.0) + WhiteKernel(noise_level=1e-4)\n_model = GaussianProcessRegressor(kernel=_kernel, random_state=42, normalize_y=True)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2786b2c7fc0e",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d6_SI1 (duplicate into 2nd feat) exactly at the specified locator as a single fault; renaming/refactor is cosmetic. Executes cleanly; output diverges from PUT across the [0,1] domain (max abs diff 0.2712), so not equivalent."
+}

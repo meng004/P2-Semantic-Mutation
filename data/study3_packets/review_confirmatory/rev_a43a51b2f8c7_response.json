@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a43a51b2f8c7",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "sigma<->beta swapped in Lorenz RHS (beta*(y-x), -sigma*z); vars renamed only; trajectory norm differs."
+}

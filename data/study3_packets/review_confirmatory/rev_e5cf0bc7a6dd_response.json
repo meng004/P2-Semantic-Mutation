@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e5cf0bc7a6dd",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d6_CE1 (feat coeff 2→1): change the coefficient in `2.0 - 2.0*x` from 2.0 to 1.0. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=3.78e-01 over sampled inputs), so non-equivalent."
+}

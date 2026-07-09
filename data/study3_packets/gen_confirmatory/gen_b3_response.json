@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_b3",
+  "put_id": "b3",
+  "mutants": [
+    {
+      "op_id": "b3_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(np.mean(x + _rng_samples**3))\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + np.power(_rng_samples, 3)\n    return float(np.mean(integrand))\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = _rng_samples\n    cubed = t * t * t\n    return float(np.mean(x + cubed))\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    total = np.sum(x + _rng_samples ** 3)\n    return float(total / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n_EXP = 3\n\n\ndef program(x):\n    x = float(x)\n    return float(np.mean(x + _rng_samples ** _EXP))\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    sq = np.square(_rng_samples)\n    return float(np.mean(x + sq * _rng_samples))\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    vals = [x + s**3 for s in _rng_samples]\n    return float(np.mean(vals))\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float((x * _N_SAMPLES + np.power(_rng_samples, 3.0).sum()) / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = _rng_samples\n    return float(np.mean(x + t**2 * t))\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(np.mean(x * _rng_samples**2))\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x * np.power(_rng_samples, 2)\n    return float(np.mean(integrand))\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = _rng_samples\n    return float(np.mean(x * (t * t)))\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    total = np.sum(x * _rng_samples ** 2)\n    return float(total / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    sq = np.square(_rng_samples)\n    return float(x * np.mean(sq))\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    return float(np.mean([x * s**2 for s in _rng_samples]))\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float((x * np.square(_rng_samples)).mean())\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    weighted = x * _rng_samples * _rng_samples\n    return float(np.sum(weighted) / len(_rng_samples))\n"
+    },
+    {
+      "op_id": "b3_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t2 = _rng_samples ** 2\n    acc = 0.0\n    for v in t2:\n        acc += x * v\n    return float(acc / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(np.prod(x + _rng_samples**2) / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + np.power(_rng_samples, 2)\n    return float(np.prod(integrand) / len(integrand))\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nimport math\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + _rng_samples**2\n    return float(math.prod(integrand) / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    p = np.prod(x + _rng_samples ** 2)\n    return float(p / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nimport functools\nimport operator\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    integrand = x + _rng_samples ** 2\n    prod = functools.reduce(operator.mul, integrand, 1.0)\n    return float(prod / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x):\n    x = float(x)\n    acc = 1.0\n    for v in (x + _rng_samples ** 2):\n        acc *= float(v)\n    return float(acc / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float((x + _rng_samples**2).prod() / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + np.square(_rng_samples)\n    return float(np.multiply.reduce(integrand) / _N_SAMPLES)\n"
+    },
+    {
+      "op_id": "b3_SI1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\n\n_N_SAMPLES = 5000\n_SEED = 42\n_rng_samples = np.random.default_rng(_SEED).uniform(0.0, 1.0, _N_SAMPLES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + _rng_samples**2\n    return float(np.cumprod(integrand)[-1] / _N_SAMPLES)\n"
+    }
+  ]
+}

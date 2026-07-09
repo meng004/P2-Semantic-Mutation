@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_570636f9d2f6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant faithfully applies operator a4_HP1 (nodes 16→1); single semantic fault, rest is cosmetic refactor. Executed PUT vs mutant on 7 domain points in [0,1]; outputs differ (maxdiff=0.3333), so not output-equivalent."
+}

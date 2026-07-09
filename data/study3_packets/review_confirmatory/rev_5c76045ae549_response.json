@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_5c76045ae549",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator d1_HP1 (MLP alpha 1e-4→1.0); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=0.146 so distinguishable from original."
+}

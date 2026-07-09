@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_240040683c91",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator a4_CE1 (half-coeff 0.5→1.0) exactly at the specified locator as a single fault; renaming/refactor is cosmetic. Executes cleanly; output diverges from PUT across the [0,1] domain (max abs diff 0.3333), so not equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_5e9630563292",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator c2_TF1 (train points halved); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=0.0245 so distinguishable from original."
+}

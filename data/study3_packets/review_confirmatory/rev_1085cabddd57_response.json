@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_1085cabddd57",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "labels flipped y->1-y via logical_not(sum>0); exact operator, outputs differ."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b8945b0d8183",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "prior_alpha 1.0->3.0; exactly the named operator, single fault; PUT vs mutant max|diff|=1.904e-02 over x=0..1 (21 pts) so not equivalent."
+}

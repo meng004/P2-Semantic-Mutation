@@ -1,0 +1,37 @@
+{
+  "put_source": "\"\"\"D2: SVM classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVC (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [2-2x, 0]. Boundary: x1²+x2²=1; positive inside circle.\nx=0 → feature [2,0] (outside circle, P low); x=1 → feature [0,0] (center, P high).\nAs x↑: feature moves toward center → P(y=1)↑ monotonically.\nTraining: 400 pts from [−1.5,1.5]², label = (x1²+x2² < 1).\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n",
+  "mutant_code": "\"\"\"D2 SVM classifier mutant.\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.decision_function([[2.0 - 2.0 * x, 0.0]])[0])",
+  "operator": {
+    "id": "d2_OS1",
+    "label": "predict_proba→decision_function",
+    "target_locator": "prediction call in program(x)",
+    "transformation": "use decision_function output instead of predict_proba"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_cc7dcd8d854b",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: d2_OS1\nOPERATOR LABEL: predict_proba→decision_function\nTARGET LOCATOR: prediction call in program(x)\nEXACT CHANGE: use decision_function output instead of predict_proba\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"D2: SVM classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.svm.SVC (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [2-2x, 0]. Boundary: x1²+x2²=1; positive inside circle.\nx=0 → feature [2,0] (outside circle, P low); x=1 → feature [0,0] (center, P high).\nAs x↑: feature moves toward center → P(y=1)↑ monotonically.\nTraining: 400 pts from [−1.5,1.5]², label = (x1²+x2² < 1).\n\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"D2 SVM classifier mutant.\"\"\"\nimport numpy as np\nfrom sklearn.svm import SVC\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0]**2 + _X_train[:, 1]**2 < 1.0).astype(int)\n\n_model = SVC(kernel=\"rbf\", C=1.0, gamma=\"scale\", probability=True, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.decision_function([[2.0 - 2.0 * x, 0.0]])[0])\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_cc7dcd8d854b_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

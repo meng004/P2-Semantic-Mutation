@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_83ef862d8f7d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "feature offset 1.0->0.5 via 2*(x-0.25)=2x-0.5; exact d7_CE1, boundary shifts."
+}

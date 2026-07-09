@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_fd9c88e08d75",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Interpolation samples 17 -> 5 (0.25*arange(5)==linspace(0,1,5)); exact a5_CE1."
+}

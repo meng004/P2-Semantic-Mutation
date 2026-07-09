@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_9b9b9f504824",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "brentq xtol 1e-12->1e-1; SLOPE/OFFSET consts equivalent. Runs on x in [0,1]; original vs mutant max|diff|=0.0237 over 43-pt grid (E1 fails, distinguishable so E2 fails); valid single-fault mutant."
+}

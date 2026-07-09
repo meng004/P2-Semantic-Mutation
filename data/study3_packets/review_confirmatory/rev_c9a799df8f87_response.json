@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c9a799df8f87",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator c4_TF1 (train range narrowed): restrict the training range from [-3,3] to [-1,1]. Single-fault edit at target (training-point generation `_rng.uniform(-3.0, 3.0, 300)`); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=0.221), so E1 and E2 both fail -> not equivalent."
+}

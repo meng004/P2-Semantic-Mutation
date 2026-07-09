@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c871a537273e",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator c7_CE1 (epsilon 0.01→1.0): change epsilon from 0.01 to 1.0. Single-fault edit at target (SVR epsilon-insensitive tube parameter); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=1.009), so E1 and E2 both fail -> not equivalent."
+}

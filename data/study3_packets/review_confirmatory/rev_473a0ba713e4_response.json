@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_473a0ba713e4",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "RHS (2x-1)->(2x+1) exactly; b rebuilt as s*ones equivalent, _AB intact; differs (maxdiff 56)."
+}

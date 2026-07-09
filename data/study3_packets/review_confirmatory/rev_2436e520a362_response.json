@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2436e520a362",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator a8_CF1 (loop off-by-one) exactly at the specified locator as a single fault; renaming/refactor is cosmetic. Executes cleanly; output diverges from PUT across the [0,1] domain (max abs diff 0.01886), so not equivalent."
+}

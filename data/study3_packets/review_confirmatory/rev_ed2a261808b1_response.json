@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ed2a261808b1",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "dt halved (0.5*T_END/n_steps); integrates half time, ratio differs"
+}

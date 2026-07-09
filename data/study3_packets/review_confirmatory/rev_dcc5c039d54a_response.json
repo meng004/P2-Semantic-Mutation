@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_dcc5c039d54a",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator a3_OS1 (laplacian sign flip): change u[i+1] - 2*u[i] + u[i-1] sign to -(u[i+1] - 2*u[i] + u[i-1]). Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=1.03e-01 over sampled inputs), so non-equivalent."
+}

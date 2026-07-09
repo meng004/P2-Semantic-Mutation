@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_dc3a3ce27e4f",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator a5_CE1 (knots 17→5): change the number of interpolation samples from 17 to 5. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=9.58e-04 over sampled inputs), so non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_def3513f81ee",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator a1_HP1 (rtol 1e-8→1e-3): change rtol from 1e-8 to 1e-3. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=3.95e-01 over sampled inputs), so non-equivalent."
+}

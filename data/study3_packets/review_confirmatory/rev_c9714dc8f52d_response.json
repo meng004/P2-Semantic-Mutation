@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c9714dc8f52d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator d1_SI1 (feature index dropped): set the second feature to 0 always. Single-fault edit at target (feature-vector construction in program(x)); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 12/13 sampled inputs (max|delta|=0.2342), so E1 and E2 both fail -> not equivalent."
+}

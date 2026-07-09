@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c1314560f195",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator a8_OS1 (rhs −u→+u): change `return -u` to `return u`. Single-fault edit at target (RHS function `_rhs`: `return -u`); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 12/13 sampled inputs (max|delta|=2.35), so E1 and E2 both fail -> not equivalent."
+}

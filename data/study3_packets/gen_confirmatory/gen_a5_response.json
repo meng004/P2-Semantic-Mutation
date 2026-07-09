@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_a5",
+  "put_id": "a5",
+  "mutants": [
+    {
+      "op_id": "a5_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 5)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.array([0.0, 0.25, 0.5, 0.75, 1.0])\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.arange(0.0, 1.0 + 1e-9, 0.25)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0, 1, num=5)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.array([i / 4.0 for i in range(5)])\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_N = 5\n_TI = np.linspace(0.0, 1.0, _N)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 5, endpoint=True)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = 0.25 * np.arange(5)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.array(np.linspace(0.0, 1.0, 5), dtype=float)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"clamped\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=((1, 0.0), (1, 0.0)))\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_BC = \"clamped\"\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=_BC)\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_Y = np.sin(np.pi * _TI)\n_SPLINE = CubicSpline(_TI, _Y, bc_type='clamped')\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=((1, 0), (1, 0)))\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_ARG = np.pi * _TI\n_SPLINE = CubicSpline(_TI, np.sin(_ARG), bc_type=\"clamped\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(x=_TI, y=np.sin(np.pi * _TI), bc_type=\"clamped\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_Y = np.sin(np.pi * _TI)\n_SPLINE = CubicSpline(_TI, _Y, bc_type=((1, 0.0), (1, 0.0)))\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_BC_TYPE = 'clamped'\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=_BC_TYPE)\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.cos(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_Y = np.cos(np.pi * _TI)\n_SPLINE = CubicSpline(_TI, _Y, bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.cos(_TI * np.pi), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, y=np.cos(np.pi * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.cos(np.multiply(np.pi, _TI)), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_ARG = np.pi * _TI\n_SPLINE = CubicSpline(_TI, np.cos(_ARG), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.cos(np.pi * _TI), bc_type='natural')\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.cos((np.pi) * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_PI = np.pi\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.cos(_PI * _TI), bc_type=\"natural\")\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_69ea94dcfdeb",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator b3_CE1 (exponent 2→3); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=0.083 so distinguishable from original."
+}

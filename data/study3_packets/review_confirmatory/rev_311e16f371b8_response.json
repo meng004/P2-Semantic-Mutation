@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_311e16f371b8",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "target mean constant changed 2.0->1.0 (mu=4x-1); rest semantics-preserving; PUT vs mutant maxdiff=0.93 over x-grid -> non-equivalent"
+}

@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_d8",
+  "put_id": "d8",
+  "mutants": [
+    {
+      "op_id": "d8_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=10.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_kernel = RBF(10.0)\n_model = GaussianProcessClassifier(kernel=_kernel, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_LENGTH_SCALE = 10.0\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=_LENGTH_SCALE), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1e1), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    row = [[1.6 * x - 0.8, 1.6 * x - 0.8]]\n    return float(_model.predict_proba(row)[0, 1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\ndef _build():\n    rng = np.random.default_rng(42)\n    X = rng.uniform(-1.5, 1.5, (400, 2))\n    y = (X[:, 0] + X[:, 1] > 0).astype(int)\n    m = GaussianProcessClassifier(kernel=RBF(length_scale=10.0), random_state=42)\n    m.fit(X, y)\n    return m\n\n_model = _build()\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=float(20.0 / 2.0)), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    feat = 1.6 * x - 0.8\n    return float(_model.predict_proba([[feat, feat]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_kernel = RBF(length_scale=10.0)\n_clf = GaussianProcessClassifier(kernel=_kernel, random_state=42).fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_clf.predict_proba(np.array([[1.6 * x - 0.8, 1.6 * x - 0.8]]))[0, 1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_ls = 10.0\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=_ls), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    val = 1.6 * float(x) - 0.8\n    proba = _model.predict_proba([[val, val]])\n    return float(proba[0][1])\n"
+    },
+    {
+      "op_id": "d8_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=10.0), random_state=42)\n_model = _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    scaled = 1.6 * x - 0.8\n    point = [[scaled, scaled]]\n    return float(_model.predict_proba(point)[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    feat = 1.6 * x - 0.8\n    return float(_model.predict_proba([[feat, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    point = np.array([[1.6 * x - 0.8, 0.0]])\n    return float(_model.predict_proba(point)[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    f1 = 1.6 * x - 0.8\n    f2 = 0.0\n    row = [f1, f2]\n    return float(_model.predict_proba([row])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    features = [1.6 * x - 0.8, 0.0]\n    return float(_model.predict_proba([features])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    vec = np.zeros((1, 2))\n    vec[0, 0] = 1.6 * x - 0.8\n    return float(_model.predict_proba(vec)[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef _featurize(x):\n    return [1.6 * x - 0.8, 0.0]\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([_featurize(x)])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_SI1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    first = 1.6 * x - 0.8\n    X = [[first, 0.0 * first]]\n    return float(_model.predict_proba(X)[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] < 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_sum = _X_train[:, 0] + _X_train[:, 1]\n_y_train = (_sum < 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = np.less(_X_train[:, 0] + _X_train[:, 1], 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0 > _X_train[:, 0] + _X_train[:, 1]).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train.sum(axis=1) < 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = np.where(_X_train[:, 0] + _X_train[:, 1] < 0, 1, 0)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (-(_X_train[:, 0] + _X_train[:, 1]) > 0).astype(int)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\ndef _labels(X):\n    return (X[:, 0] + X[:, 1] < 0.0).astype(int)\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = _labels(_X_train)\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    },
+    {
+      "op_id": "d8_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"D8: Gaussian Process classifier \u2014 scalar x in [0,1] interface (MUTANT).\"\"\"\nimport numpy as np\nfrom sklearn.gaussian_process import GaussianProcessClassifier\nfrom sklearn.gaussian_process.kernels import RBF\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_boundary = _X_train[:, 0] + _X_train[:, 1]\n_y_train = np.array([1 if s < 0 else 0 for s in _boundary])\n\n_model = GaussianProcessClassifier(kernel=RBF(length_scale=1.0), random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[1.6 * x - 0.8, 1.6 * x - 0.8]])[0, 1])\n"
+    }
+  ]
+}

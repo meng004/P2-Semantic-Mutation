@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_aaa992381ee4",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Label >0 -> <0 (where x0<0); labels flip, SGD proba differs."
+}

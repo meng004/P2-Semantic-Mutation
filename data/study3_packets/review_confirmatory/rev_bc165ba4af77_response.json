@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bc165ba4af77",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "LogisticRegression C 1.0->1e-4; exactly the named operator, single fault; PUT vs mutant max|diff|=5.016e-01 over x=0..1 (21 pts) so not equivalent."
+}

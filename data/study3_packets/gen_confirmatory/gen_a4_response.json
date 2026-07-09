@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_a4",
+  "put_id": "a4",
+  "mutants": [
+    {
+      "op_id": "a4_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 1.0 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n_QUAD_COEFF = 1.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + _QUAD_COEFF * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_WEIGHTS @ (x + 1.0 * _NODES**2))\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n_NSQ = _NODES ** 2\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 1.0 * _NSQ\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 1.0 * np.power(_NODES, 2)\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    total = 0.0\n    for node, weight in zip(_NODES, _WEIGHTS):\n        total += weight * (x + 1.0 * node ** 2)\n    return float(total)\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    quad = 1.0 * _NODES ** 2\n    integrand = x + quad\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = np.add(x, np.multiply(1.0, _NODES ** 2))\n    return float(np.dot(_WEIGHTS, integrand))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(1)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_N_NODES = 1\n_NODES, _WEIGHTS = leggauss(_N_NODES)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n\ndef program(x) -> float:\n    x = float(x)\n    nodes, weights = leggauss(1)\n    integrand = x + 0.5 * nodes**2\n    return float(np.sum(weights * integrand))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(1)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_WEIGHTS @ (x + 0.5 * _NODES**2))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nimport numpy.polynomial.legendre as _leg\n\n_NODES, _WEIGHTS = _leg.leggauss(1)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(1)\n_NSQ = _NODES ** 2\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 0.5 * _NSQ\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(1)\n\n\ndef program(x) -> float:\n    x = float(x)\n    total = 0.0\n    for node, weight in zip(_NODES, _WEIGHTS):\n        total += weight * (x + 0.5 * node ** 2)\n    return float(total)\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_ORDER = 4 - 3\n_NODES, _WEIGHTS = leggauss(_ORDER)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(1)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = np.add(x, 0.5 * _NODES ** 2)\n    return float(np.dot(_WEIGHTS, integrand))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x - 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_WEIGHTS @ (x - 0.5 * _NODES**2))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    quad = 0.5 * _NODES ** 2\n    integrand = x - quad\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + (-0.5) * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n_NSQ = _NODES ** 2\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x - 0.5 * _NSQ\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = np.subtract(x, 0.5 * np.power(_NODES, 2))\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    total = 0.0\n    for node, weight in zip(_NODES, _WEIGHTS):\n        total += weight * (x - 0.5 * node ** 2)\n    return float(total)\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n_SIGN = -1.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x + _SIGN * 0.5 * _NODES**2\n    return float(np.sum(_WEIGHTS * integrand))\n"
+    },
+    {
+      "op_id": "a4_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom numpy.polynomial.legendre import leggauss\n\n_NODES, _WEIGHTS = leggauss(16)\n\n\ndef program(x) -> float:\n    x = float(x)\n    integrand = x - 0.5 * _NODES ** 2\n    return float(np.dot(_WEIGHTS, integrand))\n"
+    }
+  ]
+}

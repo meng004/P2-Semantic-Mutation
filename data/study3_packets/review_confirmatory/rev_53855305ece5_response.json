@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_53855305ece5",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant faithfully applies operator b5_OS1 (kernel props−mu→props+mu); single semantic fault, rest is cosmetic refactor. Executed PUT vs mutant on 7 domain points in [0,1]; outputs differ (maxdiff=3.414), so not output-equivalent."
+}

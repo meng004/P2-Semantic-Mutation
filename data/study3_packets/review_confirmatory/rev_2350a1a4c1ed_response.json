@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2350a1a4c1ed",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c6_HP1 (kernel tps→linear) exactly at the specified locator as a single fault; renaming/refactor is cosmetic. Executes cleanly; output diverges from PUT across the [0,1] domain (max abs diff 0.001594), so not equivalent."
+}

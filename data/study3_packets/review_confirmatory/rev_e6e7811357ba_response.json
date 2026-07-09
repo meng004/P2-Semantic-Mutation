@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e6e7811357ba",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c2_HP1 (degree 5→1): change degree from 5 to 1. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=2.97e-01 over sampled inputs), so non-equivalent."
+}

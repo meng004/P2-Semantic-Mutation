@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_a91bcaffb6b7",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Training range restricted to x in [0.3,0.7] i.e. t in [-1.2,1.2] (-6/5,6/5); extrapolation changes GPR output."
+}

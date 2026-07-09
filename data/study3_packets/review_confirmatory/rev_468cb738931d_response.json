@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_468cb738931d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "successes->max(successes-1,0) in alpha_post exactly; beta_post unchanged per spec; differs for n_succ>=1 (maxdiff~0.0088)."
+}

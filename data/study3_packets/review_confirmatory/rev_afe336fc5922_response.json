@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_afe336fc5922",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "offset 3.0->2.0 via 6*(x-1/3)=6x-2; exactly the named operator, single fault; PUT vs mutant max|diff|=1.504e+00 over x=0..1 (21 pts) so not equivalent."
+}

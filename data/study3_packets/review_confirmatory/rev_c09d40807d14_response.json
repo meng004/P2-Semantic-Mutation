@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c09d40807d14",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator a1_SI1 (ic[0] 20x→10x): change ic[0] coefficient from 20*x-10 to 10*x-10. Single-fault edit at target (initial condition vector ic in program(x)); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 12/13 sampled inputs (max|delta|=17.82), so E1 and E2 both fail -> not equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bf4d3e9667bf",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator b1_OS1 (alpha/beta swap): swap roles of alpha_post and beta_post in mean formula. Single-fault edit at target (posterior mean computation alpha_post / (alpha_post + beta_post)); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 12/13 sampled inputs (max|delta|=0.9804), so E1 and E2 both fail -> not equivalent."
+}

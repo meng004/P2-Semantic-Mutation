@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_c2",
+  "put_id": "c2",
+  "mutants": [
+    {
+      "op_id": "c2_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(1, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline([\n    (\"poly\", PolynomialFeatures(degree=1, include_bias=True)),\n    (\"lin\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_DEGREE = 1\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_poly = PolynomialFeatures(_DEGREE, include_bias=True)\n_Phi = _poly.fit_transform(_t_train)\n_reg = LinearRegression().fit(_Phi, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    feats = _poly.transform([[t]])\n    return float(_reg.predict(feats)[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\nrng = np.random.default_rng(42)\nt_grid = np.sort(rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\ny_grid = np.tanh(t_grid.ravel())\n\npce = make_pipeline(PolynomialFeatures(1, include_bias=True), LinearRegression())\npce.fit(t_grid, y_grid)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(pce.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_features = PolynomialFeatures(include_bias=True, degree=1)\n_model = make_pipeline(_features, LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\nMAX_DEGREE = 1\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_steps = [(\"expand\", PolynomialFeatures(MAX_DEGREE, include_bias=True)),\n          (\"fit\", LinearRegression())]\n_model = Pipeline(_steps)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_samples = _rng.uniform(-2.0, 2.0, 80)\n_t_train = np.sort(_samples).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(1, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    query = np.array([[t]], dtype=float)\n    return float(_model.predict(query)[0])\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_transformer = PolynomialFeatures(degree=1, include_bias=True)\n_design = _transformer.fit_transform(_t_train)\n_estimator = LinearRegression()\n_estimator.fit(_design, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    row = _transformer.transform([[t]])\n    return float(_estimator.predict(row).item())\n"
+    },
+    {
+      "op_id": "c2_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_PCE_ORDER = 1\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(\n    PolynomialFeatures(_PCE_ORDER, include_bias=True),\n    LinearRegression(),\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = -2.0 + 4.0 * x\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(SplineTransformer(n_knots=6, degree=3), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline([\n    (\"spline\", SplineTransformer(n_knots=6, degree=3)),\n    (\"lin\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_basis = SplineTransformer(n_knots=6, degree=3)\n_Phi = _basis.fit_transform(_t_train)\n_reg = LinearRegression().fit(_Phi, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_reg.predict(_basis.transform([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\nrng = np.random.default_rng(42)\nt_grid = np.sort(rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\ny_grid = np.tanh(t_grid.ravel())\n\nsurrogate = make_pipeline(SplineTransformer(n_knots=6, degree=3), LinearRegression())\nsurrogate.fit(t_grid, y_grid)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(surrogate.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_spline = SplineTransformer(degree=3, n_knots=6)\n_model = make_pipeline(_spline, LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_N_KNOTS = 6\n_DEGREE = 3\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_steps = [(\"basis\", SplineTransformer(n_knots=_N_KNOTS, degree=_DEGREE)),\n          (\"reg\", LinearRegression())]\n_model = Pipeline(_steps)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_samples = _rng.uniform(-2.0, 2.0, 80)\n_t_train = np.sort(_samples).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(SplineTransformer(n_knots=6, degree=3), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    query = np.array([[t]], dtype=float)\n    return float(_model.predict(query)[0])\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import SplineTransformer\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_transformer = SplineTransformer(n_knots=6, degree=3)\n_design = _transformer.fit_transform(_t_train)\n_estimator = LinearRegression()\n_estimator.fit(_design, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    row = _transformer.transform([[t]])\n    return float(_estimator.predict(row).item())\n"
+    },
+    {
+      "op_id": "c2_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import SplineTransformer\n\n_KNOTS = 6\n_SPLINE_DEGREE = 3\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 80)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(\n    SplineTransformer(n_knots=_KNOTS, degree=_SPLINE_DEGREE),\n    LinearRegression(),\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = -2.0 + 4.0 * x\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, 40)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_N_POINTS = 40\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _N_POINTS)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_n = 80 // 2\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _n)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\nrng = np.random.default_rng(42)\nt_grid = np.sort(rng.uniform(-2.0, 2.0, size=40)).reshape(-1, 1)\ny_grid = np.tanh(t_grid.ravel())\n\npce = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\npce.fit(t_grid, y_grid)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(pce.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_num_points = int(80 * 0.5)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _num_points)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_features = PolynomialFeatures(5, include_bias=True)\n_model = make_pipeline(_features, LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_N_FULL = 80\n_N_COLLOCATION = _N_FULL // 2\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _N_COLLOCATION)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = Pipeline([\n    (\"poly\", PolynomialFeatures(5, include_bias=True)),\n    (\"lin\", LinearRegression()),\n])\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 4.0 * float(x) - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_samples = _rng.uniform(-2.0, 2.0, 40)\n_t_train = np.sort(_samples).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(PolynomialFeatures(5, include_bias=True), LinearRegression())\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    query = np.array([[t]], dtype=float)\n    return float(_model.predict(query)[0])\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_rng = np.random.default_rng(42)\n_n_points = round(80 / 2)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _n_points)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_poly = PolynomialFeatures(5, include_bias=True)\n_design = _poly.fit_transform(_t_train)\n_estimator = LinearRegression().fit(_design, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 4.0 * x - 2.0\n    return float(_estimator.predict(_poly.transform([[t]])).item())\n"
+    },
+    {
+      "op_id": "c2_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures\n\n_HALF_GRID = 40\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-2.0, 2.0, _HALF_GRID)).reshape(-1, 1)\n_y_train = np.tanh(_t_train.ravel())\n\n_model = make_pipeline(\n    PolynomialFeatures(5, include_bias=True),\n    LinearRegression(),\n)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = -2.0 + 4.0 * x\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b2d2d9810fff",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "SGDClassifier max_iter 1000->2; exactly the named operator, single fault; PUT vs mutant max|diff|=8.175e-02 over x=0..1 (21 pts) so not equivalent."
+}

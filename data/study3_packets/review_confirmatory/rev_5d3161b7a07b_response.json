@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_5d3161b7a07b",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator a1_SI1 (ic[0] 20x→10x); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=20.47 so distinguishable from original (chaotic ODE, large divergence)."
+}

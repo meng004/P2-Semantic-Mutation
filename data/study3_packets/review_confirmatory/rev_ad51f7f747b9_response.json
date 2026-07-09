@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ad51f7f747b9",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "training range -3..3 -> -1..1; exactly the named operator, single fault; PUT vs mutant max|diff|=2.210e-01 over x=0..1 (21 pts) so not equivalent."
+}

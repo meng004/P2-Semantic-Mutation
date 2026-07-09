@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_1e328dc6b5e4",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies exactly the operator 'c2_TF1' (train points halved); single-fault, remaining edits are behaviour-neutral refactors. Syntax valid, executes on x in [0,1] with no errors, and output diverges from the original (max |Δ|=0.02451 over sampled domain), so not equivalent (E1 and E2 both fail)."
+}

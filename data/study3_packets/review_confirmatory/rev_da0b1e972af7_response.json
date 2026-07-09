@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_da0b1e972af7",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator a7_CE1 (diag 2→3): change the main-diagonal value from 2.0 to 3.0. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=2.32e+01 over sampled inputs), so non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bd24d5432b43",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "rate coefficient 2.0->1.0 in lam=2.5-c*x; exactly the named operator, single fault; PUT vs mutant max|diff|=1.346e+00 over x=0..1 (21 pts) so not equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e21ecf406206",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c4_CE1 (test map 3→1.5): change the offset in `6.0*x - 3.0` from 3.0 to 1.5. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=2.27e+00 over sampled inputs), so non-equivalent."
+}

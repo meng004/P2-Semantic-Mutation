@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ba37482f57a8",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "labels replaced by 1-y (|y-1|); classes swapped; exactly the named operator, single fault; PUT vs mutant max|diff|=9.902e-01 over x=0..1 (21 pts) so not equivalent."
+}

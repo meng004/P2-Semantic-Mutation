@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e730a8d805db",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "hidden_layer_sizes 2nd layer 32->2; activation refactor keeps 'relu'; single fault, changes NN output"
+}

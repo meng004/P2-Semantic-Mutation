@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bf1ed1418f72",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator b5_OS1 (kernel props−mu→props+mu): change `(props - mu)` to `(props + mu)` in the kernel. Single-fault edit at target (acceptance kernel `np.exp(-0.5*(props - mu)**2)`); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 12/13 sampled inputs (max|delta|=3.414), so E1 and E2 both fail -> not equivalent."
+}

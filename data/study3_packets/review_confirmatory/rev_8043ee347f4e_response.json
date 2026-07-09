@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_8043ee347f4e",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "decision_function used instead of predict_proba; different output scale"
+}

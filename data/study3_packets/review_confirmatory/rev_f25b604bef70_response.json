@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f25b604bef70",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Second feature forced to constant 0.0 (x2=0.0) in predict_proba input; exact d1_SI1 feature-drop."
+}

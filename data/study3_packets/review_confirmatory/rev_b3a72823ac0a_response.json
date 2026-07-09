@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b3a72823ac0a",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "radial label < 1.0 changed to > 1.0 (inside/outside swap); exactly the named operator, single fault; PUT vs mutant max|diff|=9.732e-01 over x=0..1 (21 pts) so not equivalent."
+}

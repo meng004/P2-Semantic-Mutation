@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_5e6cf8dba68b",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator c4_CE1 (test map 3→1.5); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=2.336 so distinguishable from original."
+}

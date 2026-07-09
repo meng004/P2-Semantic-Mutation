@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2049984db62a",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies exactly the operator 'd2_TF1' (train labels permuted); single-fault, remaining edits are behaviour-neutral refactors. Syntax valid, executes on x in [0,1] with no errors, and output diverges from the original (max |Δ|=0.2278 over sampled domain), so not equivalent (E1 and E2 both fail)."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_4db2a5c9cae0",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Label >0 -> <0 (np.where) exactly; GPC proba flips (maxdiff~0.97)."
+}

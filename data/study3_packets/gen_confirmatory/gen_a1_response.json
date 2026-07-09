@@ -1,0 +1,222 @@
+{
+  "packet_id": "gen_a1",
+  "put_id": "a1",
+  "mutants": [
+    {
+      "op_id": "a1_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 27.5\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_PARAMS = {\"sigma\": 10.0, \"rho\": 55.0 / 2.0, \"beta\": 8.0 / 3.0}\n\n\ndef _lorenz(t, y, p):\n    x, yy, z = y\n    return [p['sigma'] * (yy - x), x * (p['rho'] - z) - yy, x * yy - p['beta'] * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20.0*x - 10.0, 30.0*x + 5.0])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_PARAMS,),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\nSIGMA, RHO, BETA = 10.0, 28.0 - 0.5, 8.0 / 3.0\n\n\ndef _lorenz(t, state, sigma, rho, beta):\n    x, yy, z = state[0], state[1], state[2]\n    return np.array([sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z])\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5], dtype=float)\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(SIGMA, RHO, BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 27.0 + 0.5\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    u, v, w = y\n    return [sigma * (v - u), u * (rho - w) - v, u * v - beta * w]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    state = sol.y[:, -1]\n    return float(np.sqrt(np.dot(state, state)))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef _lorenz(t, y):\n    x, yy, z = y\n    return [10.0 * (yy - x), x * (110.0 / 4.0 - z) - yy, x * yy - (8.0 / 3.0) * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport math\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 27.5\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y[0], y[1], y[2]\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = [20*x - 10, 20*x - 10, 30*x + 5]\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), np.asarray(ic, dtype=float),\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    a, b, cc = sol.y[:, -1].tolist()\n    return float(math.sqrt(a*a + b*b + cc*cc))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef program(x) -> float:\n    x = float(x)\n    sigma, rho, beta = 10.0, 28.0 - 0.5, 8.0 / 3.0\n\n    def rhs(t, y):\n        x_, yy, z = y\n        return [sigma * (yy - x_), x_ * (rho - z) - yy, x_ * yy - beta * z]\n\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        rhs, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 55.0 / 2.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    dx = sigma * (yy - x)\n    dy = x * (rho - z) - yy\n    dz = x * yy - beta * z\n    return [dx, dy, dz]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    fs = sol.y[:, -1]\n    return float(np.linalg.norm(fs))\n"
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_BETA = 8.0 / 3.0\n_RHO = 27.0 + 0.5\n_SIGMA = 10.0\n\n\ndef _lorenz(t, y, sigma=_SIGMA, rho=_RHO, beta=_BETA):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(np.ravel(sol.y[:, -1])))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-3, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_PARAMS = {\"sigma\": 10.0, \"rho\": 28.0, \"beta\": 8.0 / 3.0}\n\n\ndef _lorenz(t, y, p):\n    x, yy, z = y\n    return [p['sigma'] * (yy - x), x * (p['rho'] - z) - yy, x * yy - p['beta'] * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20.0*x - 10.0, 30.0*x + 5.0])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_PARAMS,),\n        t_eval=[1.0], method=\"RK45\", rtol=0.001, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\nSIGMA, RHO, BETA = 10.0, 28.0, 8.0 / 3.0\n\n\ndef _lorenz(t, state, sigma, rho, beta):\n    x, yy, z = state[0], state[1], state[2]\n    return np.array([sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z])\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5], dtype=float)\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(SIGMA, RHO, BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1.0e-3, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    u, v, w = y\n    return [sigma * (v - u), u * (rho - w) - v, u * v - beta * w]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-3, atol=1e-10,\n    )\n    state = sol.y[:, -1]\n    return float(np.sqrt(np.dot(state, state)))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef _lorenz(t, y):\n    x, yy, z = y\n    return [10.0 * (yy - x), x * (28.0 - z) - yy, x * yy - (8.0 / 3.0) * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1.0 / 1000.0, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport math\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y[0], y[1], y[2]\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = [20*x - 10, 20*x - 10, 30*x + 5]\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), np.asarray(ic, dtype=float),\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=0.001, atol=1e-10,\n    )\n    a, b, cc = sol.y[:, -1].tolist()\n    return float(math.sqrt(a*a + b*b + cc*cc))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef program(x) -> float:\n    x = float(x)\n    sigma, rho, beta = 10.0, 28.0, 8.0 / 3.0\n\n    def rhs(t, y):\n        x_, yy, z = y\n        return [sigma * (yy - x_), x_ * (rho - z) - yy, x_ * yy - beta * z]\n\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        rhs, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-3, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    dx = sigma * (yy - x)\n    dy = x * (rho - z) - yy\n    dz = x * yy - beta * z\n    return [dx, dy, dz]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1.0e-3, atol=1e-10,\n    )\n    fs = sol.y[:, -1]\n    return float(np.linalg.norm(fs))\n"
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_BETA = 8.0 / 3.0\n_RHO = 28.0\n_SIGMA = 10.0\n\n\ndef _lorenz(t, y, sigma=_SIGMA, rho=_RHO, beta=_BETA):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=0.001, atol=1e-10,\n    )\n    return float(np.linalg.norm(np.ravel(sol.y[:, -1])))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [beta * (yy - x), x * (rho - z) - yy, x * yy - sigma * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_PARAMS = {\"sigma\": 10.0, \"rho\": 28.0, \"beta\": 8.0 / 3.0}\n\n\ndef _lorenz(t, y, p):\n    x, yy, z = y\n    return [p['beta'] * (yy - x), x * (p['rho'] - z) - yy, x * yy - p['sigma'] * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20.0*x - 10.0, 30.0*x + 5.0])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_PARAMS,),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\nSIGMA, RHO, BETA = 10.0, 28.0, 8.0 / 3.0\n\n\ndef _lorenz(t, state, sigma, rho, beta):\n    x, yy, z = state[0], state[1], state[2]\n    return np.array([beta * (yy - x), x * (rho - z) - yy, x * yy - sigma * z])\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5], dtype=float)\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(SIGMA, RHO, BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    u, v, w = y\n    return [beta * (v - u), u * (rho - w) - v, u * v - sigma * w]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    state = sol.y[:, -1]\n    return float(np.sqrt(np.dot(state, state)))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef _lorenz(t, y):\n    x, yy, z = y\n    return [(8.0 / 3.0) * (yy - x), x * (28.0 - z) - yy, x * yy - 10.0 * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport math\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y[0], y[1], y[2]\n    return [beta * (yy - x), x * (rho - z) - yy, x * yy - sigma * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = [20*x - 10, 20*x - 10, 30*x + 5]\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), np.asarray(ic, dtype=float),\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    a, b, cc = sol.y[:, -1].tolist()\n    return float(math.sqrt(a*a + b*b + cc*cc))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef program(x) -> float:\n    x = float(x)\n    sigma, rho, beta = 10.0, 28.0, 8.0 / 3.0\n\n    def rhs(t, y):\n        x_, yy, z = y\n        return [beta * (yy - x_), x_ * (rho - z) - yy, x_ * yy - sigma * z]\n\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        rhs, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    dx = beta * (yy - x)\n    dy = x * (rho - z) - yy\n    dz = x * yy - sigma * z\n    return [dx, dy, dz]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    fs = sol.y[:, -1]\n    return float(np.linalg.norm(fs))\n"
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_BETA = 8.0 / 3.0\n_RHO = 28.0\n_SIGMA = 10.0\n\n\ndef _lorenz(t, y, sigma=_SIGMA, rho=_RHO, beta=_BETA):\n    x, yy, z = y\n    return [beta * (yy - x), x * (rho - z) - yy, x * yy - sigma * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(np.ravel(sol.y[:, -1])))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([10*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_PARAMS = {\"sigma\": 10.0, \"rho\": 28.0, \"beta\": 8.0 / 3.0}\n\n\ndef _lorenz(t, y, p):\n    x, yy, z = y\n    return [p['sigma'] * (yy - x), x * (p['rho'] - z) - yy, x * yy - p['beta'] * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([10.0*x - 10, 20.0*x - 10.0, 30.0*x + 5.0])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_PARAMS,),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\nSIGMA, RHO, BETA = 10.0, 28.0, 8.0 / 3.0\n\n\ndef _lorenz(t, state, sigma, rho, beta):\n    x, yy, z = state[0], state[1], state[2]\n    return np.array([sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z])\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([x*10 - 10, 20*x - 10, 30*x + 5], dtype=float)\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(SIGMA, RHO, BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    u, v, w = y\n    return [sigma * (v - u), u * (rho - w) - v, u * v - beta * w]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([10*x - 10.0, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    state = sol.y[:, -1]\n    return float(np.sqrt(np.dot(state, state)))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef _lorenz(t, y):\n    x, yy, z = y\n    return [10.0 * (yy - x), x * (28.0 - z) - yy, x * yy - (8.0 / 3.0) * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([-10 + 10*x, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport math\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y[0], y[1], y[2]\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = [10.0*x - 10.0, 20*x - 10, 30*x + 5]\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), np.asarray(ic, dtype=float),\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    a, b, cc = sol.y[:, -1].tolist()\n    return float(math.sqrt(a*a + b*b + cc*cc))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n\ndef program(x) -> float:\n    x = float(x)\n    sigma, rho, beta = 10.0, 28.0, 8.0 / 3.0\n\n    def rhs(t, y):\n        x_, yy, z = y\n        return [sigma * (yy - x_), x_ * (rho - z) - yy, x_ * yy - beta * z]\n\n    ic = np.array([10*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        rhs, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(sol.y[:, -1]))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    dx = sigma * (yy - x)\n    dy = x * (rho - z) - yy\n    dz = x * yy - beta * z\n    return [dx, dy, dz]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([x*10.0 - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    fs = sol.y[:, -1]\n    return float(np.linalg.norm(fs))\n"
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"A1: Lorenz ODE mutant.\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_BETA = 8.0 / 3.0\n_RHO = 28.0\n_SIGMA = 10.0\n\n\ndef _lorenz(t, y, sigma=_SIGMA, rho=_RHO, beta=_BETA):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([10.0*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    return float(np.linalg.norm(np.ravel(sol.y[:, -1])))\n"
+    }
+  ]
+}

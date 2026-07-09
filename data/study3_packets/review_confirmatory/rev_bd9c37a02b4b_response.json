@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bd9c37a02b4b",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator d8_SI1 (drop 2nd feature): set the second feature to 0.0. Single-fault edit at target (feature vector `[1.6*x - 0.8, 1.6*x - 0.8]`); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 12/13 sampled inputs (max|delta|=0.1484), so E1 and E2 both fail -> not equivalent."
+}

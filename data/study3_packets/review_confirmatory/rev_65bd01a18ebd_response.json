@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_65bd01a18ebd",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator a8_CF1 (loop off-by-one); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=0.019 so distinguishable from original (rhs nested, u-init preserved; only loop bound N-1)."
+}

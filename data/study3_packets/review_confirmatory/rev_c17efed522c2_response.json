@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c17efed522c2",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator d7_TF1 (label flip): change the label comparison `> 0` to `< 0`. Single-fault edit at target (training label `(_X_train[:,0] > 0)`); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=1), so E1 and E2 both fail -> not equivalent."
+}

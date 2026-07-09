@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_9d701d613a12",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "training labels y->1-y (swap). Runs on x in [0,1]; original vs mutant max|diff|=0.99 over 43-pt grid (E1 fails, distinguishable so E2 fails); valid single-fault mutant."
+}

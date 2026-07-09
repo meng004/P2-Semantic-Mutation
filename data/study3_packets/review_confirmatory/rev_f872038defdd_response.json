@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_f872038defdd",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Training range narrowed to central 40% (-3..3 -> -1.2..1.2), the proportional map of spec [0,1]->[0.3,0.7]; matches c1_TF1 intent/label; non-trivial."
+}

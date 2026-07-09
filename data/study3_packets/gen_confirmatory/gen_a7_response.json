@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_a7",
+  "put_id": "a7",
+  "mutants": [
+    {
+      "op_id": "a7_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 3.0\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = np.full(_N, 3.0)\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = (2.0 * x - 1.0) * _D\n    sol = solve_banded((1, 1), _AB, rhs)\n    return float(sol.sum())\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n\n\ndef _band():\n    ab = np.zeros((3, _N))\n    ab[0, 1:] = -1.0\n    ab[1, :] = 2.0 + 1.0\n    ab[2, :-1] = -1.0\n    return ab\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * np.ones(_N)\n    u = solve_banded((1, 1), _band(), b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_MAIN = 3.0\n_AB = np.array([\n    [0.0] + [-1.0] * (_N - 1),\n    [_MAIN] * _N,\n    [-1.0] * (_N - 1) + [0.0],\n])\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\nfor _i in range(_N):\n    _AB[1, _i] = 3.0\n    if _i > 0:\n        _AB[0, _i] = -1.0\n    if _i < _N - 1:\n        _AB[2, _i] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 3.0 * np.ones(_N)\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x):\n    xv = float(x)\n    forcing = (2.0 * xv - 1.0) * _D\n    solution = solve_banded((1, 1), _AB, forcing)\n    return float(np.add.reduce(solution))\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1].fill(3.0)\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_DIAG = 3.0\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = _DIAG\n_AB[2, :-1] = -1.0\n_RHS_VEC = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _RHS_VEC\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[2, :-1] = -1.0\n_AB[1, 0:_N] = 3.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    val = float(x)\n    b = (2.0 * val - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    total = float(np.sum(u))\n    return total\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x + 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = 2.0 * x * _D + _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    coeff = 2.0 * x + 1.0\n    b = coeff * np.ones(_N)\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x):\n    xv = float(x)\n    forcing = (2.0 * xv + 1.0) * _D\n    sol = solve_banded((1, 1), _AB, forcing)\n    return float(sol.sum())\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n\n\ndef program(x):\n    x = float(x)\n    s = 2.0 * x + 1.0\n    b = np.array([s for _ in range(_N)])\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n\n\ndef program(x):\n    x = float(x)\n    b = np.full(_N, 2.0 * x + 1.0)\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.add.reduce(u))\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    val = float(x)\n    b = (1.0 + 2.0 * val) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    scale = 2.0 * x + 1.0\n    b = _D * scale\n    u = solve_banded((1, 1), _AB, b)\n    return float(u.sum())\n"
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = np.ones(_N) * (2.0 * x + 1.0)\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = 0.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :] = 0.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.array([\n    [0.0] + [-1.0] * (_N - 1),\n    [2.0] * _N,\n    [0.0] * _N,\n])\n_D = np.ones(_N)\n\n\ndef program(x):\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\nfor _i in range(_N):\n    _AB[1, _i] = 2.0\n    if _i > 0:\n        _AB[0, _i] = -1.0\n_D = np.ones(_N)\n\n\ndef program(x):\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = np.zeros(_N - 1)\n_D = np.ones(_N)\n\n\ndef program(x):\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.add.reduce(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2].fill(0.0)\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = -1.0 * 0.0\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(u.sum())\n"
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_SUB = 0.0\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0\n_AB[1, :] = 2.0\n_AB[2, :-1] = _SUB\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    val = float(x)\n    b = (2.0 * val - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n"
+    }
+  ]
+}

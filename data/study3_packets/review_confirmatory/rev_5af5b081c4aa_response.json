@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_5af5b081c4aa",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant faithfully applies operator b2_CE1 (target mean shift +0.3); single semantic fault, rest is cosmetic refactor. Executed PUT vs mutant on 7 domain points in [0,1]; outputs differ (maxdiff=0.3536), so not output-equivalent."
+}

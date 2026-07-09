@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_cccc428f380c",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator a1_HP1 (rtol 1e-8→1e-3): change rtol from 1e-8 to 1e-3. Single-fault edit at target (solve_ivp call rtol parameter); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=0.6375), so E1 and E2 both fail -> not equivalent."
+}

@@ -1,0 +1,37 @@
+{
+  "put_source": "\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n",
+  "mutant_code": "\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=src attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps * (1.0 / 2.0)\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)",
+  "operator": {
+    "id": "a3_CE1",
+    "label": "dt coefficient ×0.5",
+    "target_locator": "time-step computation involving dx and alpha",
+    "transformation": "halve the chosen dt value"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_5af662258be5",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: a3_CE1\nOPERATOR LABEL: dt coefficient ×0.5\nTARGET LOCATOR: time-step computation involving dx and alpha\nEXACT CHANGE: halve the chosen dt value\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"A3: FDM Heat Equation - convergence of numerical solution.\n\nMutant for operator a3_CE1 (dt coefficient x0.5); source=src attempt=3.\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = alpha*dt/h^2 < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps * (1.0 / 2.0)\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_5af662258be5_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

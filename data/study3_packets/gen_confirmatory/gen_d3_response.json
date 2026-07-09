@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_d3",
+  "put_id": "d3",
+  "mutants": [
+    {
+      "op_id": "d3_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LogisticRegression(C=1e-4, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_C = 0.0001\n_model = LogisticRegression(C=_C, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LogisticRegression(C=10 ** -4, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_params = {\"C\": 1e-4, \"solver\": \"lbfgs\", \"max_iter\": 1000, \"random_state\": 42}\n_model = LogisticRegression(**_params)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LogisticRegression(C=float(\"1e-4\"), solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LogisticRegression(solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.set_params(C=1e-4)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LogisticRegression(C=1 / 10000, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_model = LogisticRegression(solver=\"lbfgs\", random_state=42, max_iter=1000, C=1e-4)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_C_VALUE = 1e-4\n_model = LogisticRegression(C=_C_VALUE, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = _X_train[:, [0]]\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = _X_train[:, 0].reshape(-1, 1)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = _X_train[:, :1]\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = np.delete(_X_train, 1, axis=1)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = _X_train[:, 0:1]\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = np.array([[row[0]] for row in _X_train])\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = _X_train[:, [0]].copy()\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = _X_train[:, 0].reshape(400, 1)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_SI1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_X1 = np.expand_dims(_X_train[:, 0], axis=1)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X1, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = 1 - _y_train\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] <= 0).astype(int)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = np.where(_y_train == 1, 0, 1)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = np.logical_not(_y_train).astype(int)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = np.abs(_y_train - 1)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = (0.6 * _X_train[:, 1] - 0.8 * _X_train[:, 0] > 0).astype(int)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = _y_train ^ 1\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = np.array([1 - v for v in _y_train])\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d3_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (0.8 * _X_train[:, 0] - 0.6 * _X_train[:, 1] > 0).astype(int)\n\n_y_train = (~_y_train.astype(bool)).astype(int)\n_model = LogisticRegression(C=1.0, solver=\"lbfgs\", max_iter=1000, random_state=42)\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    }
+  ]
+}

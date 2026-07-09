@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_3236bd059e75",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "xtol 1e-12->1e-1 only; looser tolerance yields less precise root; PUT vs mutant maxdiff=0.02367 over x-grid -> non-equivalent"
+}

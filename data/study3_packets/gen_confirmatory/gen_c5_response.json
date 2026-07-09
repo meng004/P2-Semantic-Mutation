@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_c5",
+  "put_id": "c5",
+  "mutants": [
+    {
+      "op_id": "c5_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * (x - 1.0 / 3.0)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    offset = 2.0\n    t = 6.0 * x - offset\n    return float(_model.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    slope, intercept = 6.0, -2.0\n    t = slope * x + intercept\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 2.0 * (3.0 * x - 1.0)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef _map_point(v):\n    return 6.0 * float(v) - 2.0\n\ndef program(x) -> float:\n    t = _map_point(x)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 2.0\n    pred = _model.predict([[t]])\n    return float(pred[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = -2.0 + 6.0 * x\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    xx = float(x)\n    t = 6.0 * xx - 2.0\n    return float(_model.predict([[t]]).item())\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=1, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_n_trees = 1\n_model = RandomForestRegressor(n_estimators=_n_trees, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(random_state=42, n_estimators=1)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_params = {\"n_estimators\": 1, \"random_state\": 42}\n_model = RandomForestRegressor(**_params)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\ndef _make_model():\n    return RandomForestRegressor(n_estimators=1, random_state=42)\n\n_model = _make_model()\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(random_state=42)\n_model.set_params(n_estimators=1)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=int(1), random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_NUM_TREES = 1\n_rf = RandomForestRegressor(n_estimators=_NUM_TREES, random_state=42)\n_model = _rf.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_tree_count = 100 // 100\n_model = RandomForestRegressor(n_estimators=_tree_count, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_low, _high = -1.0, 1.0\n_t_train = np.sort(_rng.uniform(_low, _high, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.0, high=1.0, size=300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_raw = _rng.uniform(-1.0, 1.0, 300)\n_t_train = np.sort(_raw).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_half_width = 1.0\n_t_train = np.sort(_rng.uniform(-_half_width, _half_width, 300)).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300) / 3.0).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, size=300)).reshape((-1, 1))\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_bound = 1.0\n_samples = _rng.uniform(-_bound, _bound, 300)\n_t_train = np.sort(_samples).reshape(-1, 1)\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c5_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"C5: Random-Forest regressor surrogate mutant.\"\"\"\nimport numpy as np\nfrom sklearn.ensemble import RandomForestRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300))[:, None]\n_y_train = np.tanh(2.0 * _t_train.ravel())\n\n_model = RandomForestRegressor(n_estimators=100, random_state=42)\n_model.fit(_t_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

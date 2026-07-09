@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_eda64bda3ab3",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "_rhs -u->u; RK4 grows instead of decays; output differs"
+}

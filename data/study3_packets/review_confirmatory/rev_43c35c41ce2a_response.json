@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_43c35c41ce2a",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "RK4 loop range(N)->range(N-1), 20->19 steps exactly; amplification differs (maxdiff~0.019)."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bd44fac13f35",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator d3_HP1 (LR C 1.0→1e-4): change C from 1.0 to 1e-4. Single-fault edit at target (LogisticRegression C parameter); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=0.5016), so E1 and E2 both fail -> not equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_6a021d58f0bf",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator b7_OS1 (normaliser sum(w)→N); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=0.041 so distinguishable from original."
+}

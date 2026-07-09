@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_4075d762bce2",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "SVR C changed 10.0->0.01 exactly; cosmetic refactor (params dict) preserves semantics; underfit shifts predictions (maxdiff~0.31), distinguishable."
+}

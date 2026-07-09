@@ -1,0 +1,21 @@
+"""D5: Linear Discriminant Analysis classifier - scalar x in [0,1] interface.
+
+Feature: [2x-1, 0]. Boundary: 0.8x1 - 0.6x2 = 0 -> positive when x>0.5.
+P(y=1) monotone increasing with x. Training: 400 pts, label = (0.8x1 - 0.6x2 > 0).
+"""
+import numpy as np
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+_rng = np.random.default_rng(42)
+_X_train = _rng.uniform(-1.5, 1.5, (400, 2))
+_x0 = _X_train[:, 0]
+_x1 = _X_train[:, 1]
+_y_train = (0.8 * _x0 - 0.6 * _x1 < 0).astype(int)
+
+_model = LinearDiscriminantAnalysis()
+_model.fit(_X_train, _y_train)
+
+
+def program(x) -> float:
+    x = float(x)
+    return float(_model.predict_proba([[2.0 * x - 1.0, 0.0]])[0, 1])

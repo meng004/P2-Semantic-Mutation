@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_9fe938837ae9",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "activation relu->tanh; set_params refactor equivalent. Runs on x in [0,1]; original vs mutant max|diff|=0.0899 over 43-pt grid (E1 fails, distinguishable so E2 fails); valid single-fault mutant."
+}

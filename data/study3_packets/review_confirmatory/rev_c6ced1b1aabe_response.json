@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c6ced1b1aabe",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator b2_CE1 (target mean shift +0.3): add 0.3 to the target mean expression. Single-fault edit at target (target distribution mean parameter); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=0.3536), so E1 and E2 both fail -> not equivalent."
+}

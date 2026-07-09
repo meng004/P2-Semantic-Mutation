@@ -253,7 +253,316 @@
       "created": "2026-07-09T01:23:06Z"
     }
   ],
-  "generation_responses": [],
+  "generation_responses": [
+    {
+      "file": "gen_a1_response.json",
+      "packet_id": "gen_a1",
+      "put": "a1",
+      "sha256": "8ca4497c799c0b55225c3ff19f8099679a0ddb94344a6f988f7cb8b971ab681d",
+      "n_valid": 36,
+      "n_admitted": 36,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_a3_response.json",
+      "packet_id": "gen_a3",
+      "put": "a3",
+      "sha256": "d8f57f67b14efa131ac4533d81ca90773c37b0da923da14309bba7694d349232",
+      "n_valid": 27,
+      "n_admitted": 18,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_a4_response.json",
+      "packet_id": "gen_a4",
+      "put": "a4",
+      "sha256": "3f88d4a895e54c2b34735de6f1aec49ceb35d65c442d556097d396c104dbbcc1",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_a5_response.json",
+      "packet_id": "gen_a5",
+      "put": "a5",
+      "sha256": "911fea613b4a92842a0c535ce0246410f774f0da27157650dd51b7fac8f3dc95",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_a6_response.json",
+      "packet_id": "gen_a6",
+      "put": "a6",
+      "sha256": "9dc443f271ae60a5dc10e0984be427d1cd9c35f1ba42bdf5a39389a2aa5cd25e",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_a7_response.json",
+      "packet_id": "gen_a7",
+      "put": "a7",
+      "sha256": "9a8626cb9068380c81350b7c5c9fdad3a0758b98b69fac4e8ab6c00fdc5fe4bb",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_a8_response.json",
+      "packet_id": "gen_a8",
+      "put": "a8",
+      "sha256": "d6bf5bb6d42780316dc74f9c7dd4132b3f4474954fe645704ac3977672708525",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_b1_response.json",
+      "packet_id": "gen_b1",
+      "put": "b1",
+      "sha256": "3044c8118afeea230d81b92be88de765a835a14d72d036bb382728270c55c36b",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:01Z"
+    },
+    {
+      "file": "gen_b2_response.json",
+      "packet_id": "gen_b2",
+      "put": "b2",
+      "sha256": "d6fff00b418675b0ece3ce634025daa7667507a6ad85c1ecf892314fa2168a31",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:02Z"
+    },
+    {
+      "file": "gen_b3_response.json",
+      "packet_id": "gen_b3",
+      "put": "b3",
+      "sha256": "6cefe910ccdb2ac8b1d67498ed88e70eff5bafa0899973a94b07921c1ae34f2a",
+      "n_valid": 27,
+      "n_admitted": 18,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:02Z"
+    },
+    {
+      "file": "gen_b5_response.json",
+      "packet_id": "gen_b5",
+      "put": "b5",
+      "sha256": "f84ff5490eb77dd9ffe61d59171e465893f4ca5c73f263e27af576c8bcd6e3f2",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:02Z"
+    },
+    {
+      "file": "gen_b6_response.json",
+      "packet_id": "gen_b6",
+      "put": "b6",
+      "sha256": "f76ee94118f911ef5196ac90d94f1ba25e06ca42958ae6965d06337cdbc936fa",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:02Z"
+    },
+    {
+      "file": "gen_b7_response.json",
+      "packet_id": "gen_b7",
+      "put": "b7",
+      "sha256": "b783f20839bf9f22eb78db2372321722e16b8f7d60cd2acf850c2892a694d6f0",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:03Z"
+    },
+    {
+      "file": "gen_c1_response.json",
+      "packet_id": "gen_c1",
+      "put": "c1",
+      "sha256": "c8b3b23f8e65b467fa25619e49960893ab9a9f696e0e3a71c4ab9fe766c1b8ce",
+      "n_valid": 27,
+      "n_admitted": 9,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:03Z"
+    },
+    {
+      "file": "gen_c2_response.json",
+      "packet_id": "gen_c2",
+      "put": "c2",
+      "sha256": "592fd75e04bc51a89a36a9cb5b456d6ab87f8a1986dd6235f9b18032a4d8636a",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:03Z"
+    },
+    {
+      "file": "gen_c3_response.json",
+      "packet_id": "gen_c3",
+      "put": "c3",
+      "sha256": "61fca1603f05136e978c5ceeee943b75ebbacdd54ad73502a1b233728c3603ce",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:04Z"
+    },
+    {
+      "file": "gen_c4_response.json",
+      "packet_id": "gen_c4",
+      "put": "c4",
+      "sha256": "d794f899bd882d3367e5e6d4c61773fb9ab0953949b2dde4a7d2241ea00689c7",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:04Z"
+    },
+    {
+      "file": "gen_c5_response.json",
+      "packet_id": "gen_c5",
+      "put": "c5",
+      "sha256": "ce472eabb500999176237994159ab0233c1671259b339c5ea3cf49654b32affc",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:07Z"
+    },
+    {
+      "file": "gen_c6_response.json",
+      "packet_id": "gen_c6",
+      "put": "c6",
+      "sha256": "870bc5629c14a10302a026e0c2b403f1f7fcc625e3ec445f8196387f403489f3",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:07Z"
+    },
+    {
+      "file": "gen_c7_response.json",
+      "packet_id": "gen_c7",
+      "put": "c7",
+      "sha256": "5daf145dcda05b988b72bfdcadfceb95dc1ad6aed3eae788e74e7458ee8cb82d",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:07Z"
+    },
+    {
+      "file": "gen_d1_response.json",
+      "packet_id": "gen_d1",
+      "put": "d1",
+      "sha256": "0888ef011e9c7bd70158af97539e97f81e4a6db7befc2099c10f5c4df66b445c",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:19Z"
+    },
+    {
+      "file": "gen_d2_response.json",
+      "packet_id": "gen_d2",
+      "put": "d2",
+      "sha256": "0df1451d90352fc271e997e2b8dc893f6d2b47fea2702fc07232554c27f5ddb4",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:19Z"
+    },
+    {
+      "file": "gen_d3_response.json",
+      "packet_id": "gen_d3",
+      "put": "d3",
+      "sha256": "aa7226956c77e8fb4b7f86950799677376bf8c3fcc4be0c9eb6d5531c11dacfa",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:19Z"
+    },
+    {
+      "file": "gen_d4_response.json",
+      "packet_id": "gen_d4",
+      "put": "d4",
+      "sha256": "5db13d5634deb3dd3d5e7b5ed0030b7d3a8733811d9410e4e9d9e9b2c5484643",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:19Z"
+    },
+    {
+      "file": "gen_d5_response.json",
+      "packet_id": "gen_d5",
+      "put": "d5",
+      "sha256": "fc53074986c56b6000827526a7af1eebea3104e0db46d514f4704b694cd3b8ae",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:19Z"
+    },
+    {
+      "file": "gen_d6_response.json",
+      "packet_id": "gen_d6",
+      "put": "d6",
+      "sha256": "6fb836df6a30bc776f2ef151e691e9ab5eb9eea1fa6532ef2c140327379046f1",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:19Z"
+    },
+    {
+      "file": "gen_d7_response.json",
+      "packet_id": "gen_d7",
+      "put": "d7",
+      "sha256": "9d2f1bb9a1b93c8f98be3ea5983529573df16a69190e0ab25733a3e3e933270f",
+      "n_valid": 27,
+      "n_admitted": 27,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:19Z"
+    },
+    {
+      "file": "gen_d8_response.json",
+      "packet_id": "gen_d8",
+      "put": "d8",
+      "sha256": "739ee56cec2b70345a56bc0f01a80957355a65754965fa930488463458b2e1d9",
+      "n_valid": 27,
+      "n_admitted": 18,
+      "n_gaps": 0,
+      "n_schema_errors": 0,
+      "ingested": "2026-07-09T01:39:40Z"
+    }
+  ],
   "review_packets": [],
   "review_verdicts": []
 }

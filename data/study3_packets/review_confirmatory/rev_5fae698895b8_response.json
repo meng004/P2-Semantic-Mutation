@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_5fae698895b8",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator d7_HP1 (max_iter 1000→2); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=0.082 so distinguishable from original (set_params(max_iter=2) applied before fit)."
+}

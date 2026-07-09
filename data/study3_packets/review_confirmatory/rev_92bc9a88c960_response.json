@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_92bc9a88c960",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "IC constant 1.0->0.5 in u=2x-1; nested rhs is equivalent refactor. Runs on x in [0,1]; original vs mutant max|diff|=0.184 over 43-pt grid (E1 fails, distinguishable so E2 fails); valid single-fault mutant."
+}

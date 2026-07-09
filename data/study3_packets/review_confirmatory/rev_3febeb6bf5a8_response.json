@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_3febeb6bf5a8",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "dt halved (dt=0.5*T_END/n_steps); PUT vs mutant maxdiff=0.02498 over x-grid -> non-equivalent"
+}

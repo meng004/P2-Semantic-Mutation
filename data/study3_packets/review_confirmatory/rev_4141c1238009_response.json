@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_4141c1238009",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "MLP max_iter 1000->5 exactly; hidden_layer_sizes list build yields identical (64,32); underconverged model differs (maxdiff~0.19)."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e11d2ef9b3c3",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator b2_CE1 (target mean shift +0.3): add 0.3 to the target mean expression. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=3.54e-01 over sampled inputs), so non-equivalent."
+}

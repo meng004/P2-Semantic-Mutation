@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_dd83afa6c9f3",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d5_SI1 (feature index swap): swap the feature slots to `[0.0, 2.0*x - 1.0]`. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=9.63e-01 over sampled inputs), so non-equivalent."
+}

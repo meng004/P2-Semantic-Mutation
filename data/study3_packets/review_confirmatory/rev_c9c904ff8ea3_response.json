@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c9c904ff8ea3",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator b3_CE1 (exponent 2→3): change t**2 to t**3. Single-fault edit at target (t**2 inside integrand); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=0.08262), so E1 and E2 both fail -> not equivalent."
+}

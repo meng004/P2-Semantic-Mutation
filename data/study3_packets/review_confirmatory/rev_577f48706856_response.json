@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_577f48706856",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant faithfully applies operator c3_TF1 (max_iter 1000→5); single semantic fault, rest is cosmetic refactor. Executed PUT vs mutant on 7 domain points in [0,1]; outputs differ (maxdiff=0.1922), so not output-equivalent."
+}

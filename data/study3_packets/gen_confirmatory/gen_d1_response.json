@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_d1",
+  "put_id": "d1",
+  "mutants": [
+    {
+      "op_id": "d1_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n    alpha=1.0,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_ALPHA = 1.0\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42, alpha=_ALPHA,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    alpha=1.0,\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\n_model.set_params(alpha=1.0)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_params = dict(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42, alpha=1.0,\n)\n_model = MLPClassifier(**_params)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42, alpha=1e0,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(hidden_layer_sizes=(32, 16), activation=\"relu\", solver=\"adam\", max_iter=500, random_state=42, alpha=1.0)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_reg_strength = float(1)\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n    alpha=_reg_strength,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16),\n    activation=\"relu\",\n    solver=\"adam\",\n    max_iter=500,\n    random_state=42,\n    alpha=1.00,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    feat = [x, x]\n    feat[1] = 0.0\n    return float(_model.predict_proba([feat])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    x2 = 0.0\n    return float(_model.predict_proba([[x, x2]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    features = np.array([[x, 0.0]])\n    return float(_model.predict_proba(features)[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, 0.]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    features = [x, 0.0]\n    return float(_model.predict_proba([features])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    second_feature = 0\n    return float(_model.predict_proba([[x, second_feature]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_SI1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    return float(_model.predict_proba([[float(x), 0.0]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = 1 - (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n_y_train = 1 - _y_train\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] + _X_train[:, 1] <= 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = np.where(_X_train[:, 0] + _X_train[:, 1] > 0, 0, 1)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_labels = (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n_y_train = 1 - _labels\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (~(_X_train[:, 0] + _X_train[:, 1] > 0)).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (1 - (_X_train[:, 0] + _X_train[:, 1] > 0).astype(int))\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_base = (_X_train[:, 0] + _X_train[:, 1] > 0)\n_y_train = (1 - _base.astype(int))\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    },
+    {
+      "op_id": "d1_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import warnings\n\nimport numpy as np\nfrom sklearn.exceptions import ConvergenceWarning\nfrom sklearn.neural_network import MLPClassifier\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = np.logical_not(_X_train[:, 0] + _X_train[:, 1] > 0).astype(int)\n\n_model = MLPClassifier(\n    hidden_layer_sizes=(32, 16), activation=\"relu\",\n    solver=\"adam\", max_iter=500, random_state=42,\n)\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\", ConvergenceWarning)\n    _model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[x, x]])[0, 1])\n"
+    }
+  ]
+}

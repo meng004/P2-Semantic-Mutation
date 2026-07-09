@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_312881cc45ee",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "loop bound range(_N_STEPS-1)=19 steps; _rhs inlined equivalently; PUT vs mutant maxdiff=0.01886 over x-grid -> non-equivalent"
+}

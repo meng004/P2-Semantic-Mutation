@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_80476b82a605",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "successes replaced by max(n_succ-1,0) via dec-guard; exact b1_CE1 off-by-one floored at 0, executes, output differs (except x=0)."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ab9b945760b5",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "label comparison >0 changed to <0 via np.less(_disc,0); classes flipped; exactly the named operator, single fault; PUT vs mutant max|diff|=9.949e-01 over x=0..1 (21 pts) so not equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_7603ebd9728b",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "MLPRegressor activation 'relu'->'tanh' exactly; predictions differ."
+}

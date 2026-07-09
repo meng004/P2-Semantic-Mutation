@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_db339ed47a38",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d7_HP1 (max_iter 1000→2): change max_iter from 1000 to 2. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=4.37e-02 over sampled inputs), so non-equivalent."
+}

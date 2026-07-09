@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_0b127733f35d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "loop bound N->N-1 (while i<N_STEPS-1, 19 iters); exact operator, outputs differ."
+}

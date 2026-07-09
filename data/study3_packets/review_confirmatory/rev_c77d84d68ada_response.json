@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c77d84d68ada",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator c2_HP1 (degree 5→1): change degree from 5 to 1. Single-fault edit at target (polynomial degree in PCE construction); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=0.2967), so E1 and E2 both fail -> not equivalent."
+}

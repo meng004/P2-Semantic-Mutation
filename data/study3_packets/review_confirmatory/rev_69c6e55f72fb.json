@@ -1,0 +1,37 @@
+{
+  "put_source": "\"\"\"D6: Quadratic Discriminant Analysis classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [2-2x, 0]. Boundary: x1²+x2²=1; positive inside the circle.\nx=0 → feature [2,0] (outside, P low); x=1 → feature [0,0] (centre, P high).\nAs x↑: feature moves toward centre → P(y=1)↑ monotonically.\nTraining: 400 pts from [-1.5,1.5]², label = (x1²+x2² < 1).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] ** 2 + _X_train[:, 1] ** 2 < 1.0).astype(int)\n\n_model = QuadraticDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n",
+  "mutant_code": "\"\"\"D6: Quadratic Discriminant Analysis classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [2-2x, 0]. Boundary: x1²+x2²=1; positive inside the circle.\nx=0 → feature [2,0] (outside, P low); x=1 → feature [0,0] (centre, P high).\nAs x↑: feature moves toward centre → P(y=1)↑ monotonically.\nTraining: 400 pts from [-1.5,1.5]², label = (x1²+x2² < 1).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] ** 2 + _X_train[:, 1] ** 2 < 1.0).astype(int)\n\n_model = QuadraticDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    v = 2.0 - 2.0 * x\n    feat = np.tile(v, (1, 2))\n    return float(_model.predict_proba(feat)[0, 1])",
+  "operator": {
+    "id": "d6_SI1",
+    "label": "duplicate into 2nd feat",
+    "target_locator": "feature vector `[2.0 - 2.0*x, 0.0]`",
+    "transformation": "set the second feature equal to the first (`[2-2x, 2-2x]`)"
+  },
+  "packet_type": "review",
+  "blind_id": "rev_69c6e55f72fb",
+  "review_prompt": "You are reviewing a candidate semantic mutant for validity against a named operator specification. You are given ONLY the original program, the mutant, and the operator spec. Decide whether the mutant implements EXACTLY the specified operator and is a valid single-fault mutant.\n\nOPERATOR ID: d6_SI1\nOPERATOR LABEL: duplicate into 2nd feat\nTARGET LOCATOR: feature vector `[2.0 - 2.0*x, 0.0]`\nEXACT CHANGE: set the second feature equal to the first (`[2-2x, 2-2x]`)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"D6: Quadratic Discriminant Analysis classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [2-2x, 0]. Boundary: x1²+x2²=1; positive inside the circle.\nx=0 → feature [2,0] (outside, P low); x=1 → feature [0,0] (centre, P high).\nAs x↑: feature moves toward centre → P(y=1)↑ monotonically.\nTraining: 400 pts from [-1.5,1.5]², label = (x1²+x2² < 1).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] ** 2 + _X_train[:, 1] ** 2 < 1.0).astype(int)\n\n_model = QuadraticDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_model.predict_proba([[2.0 - 2.0 * x, 0.0]])[0, 1])\n\n```\n\n━━━ CANDIDATE MUTANT ━━━\n```python\n\"\"\"D6: Quadratic Discriminant Analysis classifier — scalar x∈[0,1] interface.\n\nLibrary: sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis (scikit-learn 1.8.0)\nURL: https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis.html\n\nprogram(x) where x ∈ [0,1] scalar.\nFeature: [2-2x, 0]. Boundary: x1²+x2²=1; positive inside the circle.\nx=0 → feature [2,0] (outside, P low); x=1 → feature [0,0] (centre, P high).\nAs x↑: feature moves toward centre → P(y=1)↑ monotonically.\nTraining: 400 pts from [-1.5,1.5]², label = (x1²+x2² < 1).\n\"\"\"\nimport numpy as np\nfrom sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis\n\n_rng = np.random.default_rng(42)\n_X_train = _rng.uniform(-1.5, 1.5, (400, 2))\n_y_train = (_X_train[:, 0] ** 2 + _X_train[:, 1] ** 2 < 1.0).astype(int)\n\n_model = QuadraticDiscriminantAnalysis()\n_model.fit(_X_train, _y_train)\n\ndef program(x) -> float:\n    x = float(x)\n    v = 2.0 - 2.0 * x\n    feat = np.tile(v, (1, 2))\n    return float(_model.predict_proba(feat)[0, 1])\n```\n\nRespond with ONLY a JSON object:\n{\"operator_match\": \"Yes\"|\"No\", \"overall\": \"CONFIRMED\"|\"REJECTED\", \"reason\": \"<short>\"}\n",
+  "response_schema": {
+    "description": "Return ONE JSON verdict object per review packet. No prose.",
+    "required_top_level": [
+      "blind_id",
+      "V1_syntax_ok",
+      "V2_executable",
+      "V3_nontrivial",
+      "operator_match",
+      "equivalence",
+      "overall",
+      "reason"
+    ],
+    "field_domains": {
+      "V1_syntax_ok": "true|false",
+      "V2_executable": "Yes|No|Uncertain",
+      "V3_nontrivial": "Yes|No|Uncertain",
+      "operator_match": "Yes|No|Uncertain",
+      "equivalence": "object {E1: Yes|No, E2: Yes|No, equivalent: true|false} per the registered E1∧E2 equivalence protocol",
+      "overall": "CONFIRMED|REJECTED|UNCERTAIN"
+    },
+    "note": "The mechanical AVP/equiv pipeline remains authoritative for SMS; the equivalence opinion is recorded, not used to alter the pool."
+  },
+  "response_filename": "rev_69c6e55f72fb_response.json",
+  "instructions": "Act as a BLIND reviewer. You are given only the original PUT, the candidate mutant, and the operator spec. Judge the V-checks and give an equivalence opinion under the E1∧E2 protocol: E1 = the mutant is output-equivalent to the original PUT on the declared input domain (same output within numerical tolerance for every admissible input); E2 = a behavioural classifier over sampled executions cannot distinguish mutant from original. Report equivalent=true only if BOTH E1 and E2 hold in your judgment. Write the JSON verdict to the file named in response_filename, in the same directory as this packet; do not guess who generated the mutant."
+}

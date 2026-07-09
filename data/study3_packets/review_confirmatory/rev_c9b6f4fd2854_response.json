@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c9b6f4fd2854",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant realises operator d4_CE1 (feat offset 1→0.5): change the offset in `2.0*x - 1.0` from 1.0 to 0.5. Single-fault edit at target (feature map `2.0*x - 1.0`); no unrelated logic changed. Parses and executes over x in [0,1]; output differs from PUT on 13/13 sampled inputs (max|delta|=0.4907), so E1 and E2 both fail -> not equivalent."
+}

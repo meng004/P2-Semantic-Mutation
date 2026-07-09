@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_c4",
+  "put_id": "c4",
+  "mutants": [
+    {
+      "op_id": "c4_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 1.5\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n_SCALE = 6.0\n_OFFSET = 1.5\n\n\ndef program(x) -> float:\n    t = _SCALE * float(x) - _OFFSET\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef _to_test_point(x):\n    return 6.0 * float(x) - 1.5\n\n\ndef program(x) -> float:\n    t = _to_test_point(x)\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\nt_train = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\ny_train = np.arctan(3.0 * t_train.ravel())\n\nknn = KNeighborsRegressor(n_neighbors=7)\nknn.fit(t_train, y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = -1.5 + 6.0 * x\n    return float(knn.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\ntrain_t = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\ntrain_y = np.arctan(3.0 * train_t.ravel())\n\nreg = KNeighborsRegressor(n_neighbors=7)\nreg.fit(train_t, train_y)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * (x - 0.25)\n    return float(reg.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\nxs = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\nys = np.arctan(3.0 * xs.ravel())\n\nmodel = KNeighborsRegressor(n_neighbors=7).fit(xs, ys)\n\nshift = 1.5\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - shift\n    q = np.array([[t]])\n    return float(model.predict(q)[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\ngenerator = np.random.default_rng(42)\ngrid = np.sort(generator.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\ntargets = np.arctan(3.0 * grid.ravel())\n\nsurrogate = KNeighborsRegressor(n_neighbors=7)\nsurrogate.fit(grid, targets)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 1.5\n    return float(surrogate.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_pts = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_lab = np.arctan(3.0 * _pts.ravel())\n\n_knn = KNeighborsRegressor(n_neighbors=7)\n_knn.fit(_pts, _lab)\n\n_map_params = {\"a\": 6.0, \"b\": 1.5}\n\n\ndef program(x) -> float:\n    t = _map_params[\"a\"] * float(x) - _map_params[\"b\"]\n    return float(_knn.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n_project = lambda v: 6.0 * v - 1.5\n\n\ndef program(x) -> float:\n    t = _project(float(x))\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_K = 1\n_model = KNeighborsRegressor(n_neighbors=_K)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor()\n_model.set_params(n_neighbors=1)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\nt_train = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\ny_train = np.arctan(3.0 * t_train.ravel())\n\nknn = KNeighborsRegressor(1)\nknn.fit(t_train, y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(knn.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\ntrain_t = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\ntrain_y = np.arctan(3.0 * train_t.ravel())\n\n_cfg = {\"n_neighbors\": 1}\nreg = KNeighborsRegressor(**_cfg)\nreg.fit(train_t, train_y)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(reg.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\nxs = np.sort(rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\nys = np.arctan(3.0 * xs.ravel())\n\nk = 7 - 6\nmodel = KNeighborsRegressor(n_neighbors=k).fit(xs, ys)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\ngenerator = np.random.default_rng(42)\ngrid = np.sort(generator.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\ntargets = np.arctan(3.0 * grid.ravel())\n\nsurrogate = KNeighborsRegressor(n_neighbors=1)\nsurrogate.fit(grid, targets)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(surrogate.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_pts = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_lab = np.arctan(3.0 * _pts.ravel())\n\n_knn = KNeighborsRegressor(n_neighbors=1, weights=\"uniform\")\n_knn.fit(_pts, _lab)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(_knn.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-3.0, 3.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_num_neighbours = 1\n_model = KNeighborsRegressor(n_neighbors=_num_neighbours)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_LO, _HI = -1.0, 1.0\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(_LO, _HI, 300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_t_train = np.sort(_rng.uniform(low=-1.0, high=1.0, size=300)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\nt_train = np.sort(rng.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\ny_train = np.arctan(3.0 * t_train.ravel())\n\nknn = KNeighborsRegressor(n_neighbors=7)\nknn.fit(t_train, y_train)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(knn.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\n_half_width = 1.0\ntrain_t = np.sort(_half_width * (2.0 * rng.random(300) - 1.0)).reshape(-1, 1)\ntrain_y = np.arctan(3.0 * train_t.ravel())\n\nreg = KNeighborsRegressor(n_neighbors=7)\nreg.fit(train_t, train_y)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(reg.predict(np.array([[t]]))[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\nrng = np.random.default_rng(42)\n_bound = 1.0\nxs = np.sort(rng.uniform(-_bound, _bound, 300)).reshape(-1, 1)\nys = np.arctan(3.0 * xs.ravel())\n\nmodel = KNeighborsRegressor(n_neighbors=7).fit(xs, ys)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(model.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\ngenerator = np.random.default_rng(42)\ngrid = np.sort(generator.uniform(-1.0, 1.0, 300)).reshape(-1, 1)\ntargets = np.arctan(3.0 * grid.ravel())\n\nsurrogate = KNeighborsRegressor(n_neighbors=7)\nsurrogate.fit(grid, targets)\n\n\ndef program(x) -> float:\n    x = float(x)\n    t = 6.0 * x - 3.0\n    return float(surrogate.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_range = (-1.0, 1.0)\n_pts = np.sort(_rng.uniform(_range[0], _range[1], 300)).reshape(-1, 1)\n_lab = np.arctan(3.0 * _pts.ravel())\n\n_knn = KNeighborsRegressor(n_neighbors=7)\n_knn.fit(_pts, _lab)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(_knn.predict([[t]])[0])\n"
+    },
+    {
+      "op_id": "c4_TF1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "import numpy as np\nfrom sklearn.neighbors import KNeighborsRegressor\n\n_rng = np.random.default_rng(42)\n_n_train = 300\n_t_train = np.sort(_rng.uniform(-1.0, 1.0, _n_train)).reshape(-1, 1)\n_y_train = np.arctan(3.0 * _t_train.ravel())\n\n_model = KNeighborsRegressor(n_neighbors=7)\n_model.fit(_t_train, _y_train)\n\n\ndef program(x) -> float:\n    t = 6.0 * float(x) - 3.0\n    return float(_model.predict([[t]])[0])\n"
+    }
+  ]
+}

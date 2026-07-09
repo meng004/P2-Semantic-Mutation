@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bad330d54679",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "solve_ivp rtol 1e-8->1e-3; param inlining cosmetic; exactly the named operator, single fault; PUT vs mutant max|diff|=6.375e-01 over x=0..1 (21 pts) so not equivalent."
+}

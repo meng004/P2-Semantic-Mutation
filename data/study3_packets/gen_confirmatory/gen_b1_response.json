@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_b1",
+  "put_id": "b1",
+  "mutants": [
+    {
+      "op_id": "b1_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    successes = max(n_succ - 1, 0)\n    alpha_post = _ALPHA_PRIOR + successes\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + (n_succ - 1 if n_succ - 1 > 0 else 0)\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    adj = n_succ - 1\n    if adj < 0:\n        adj = 0\n    alpha_post = _ALPHA_PRIOR + adj\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    floored = int(np.maximum(n_succ - 1, 0))\n    alpha_post = _ALPHA_PRIOR + floored\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef _decrement(c):\n    d = c - 1\n    return d if d >= 0 else 0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + _decrement(n_succ)\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    eff_succ = max(0, n_succ - 1)\n    alpha_post = _ALPHA_PRIOR + float(eff_succ)\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + max(n_succ - 1, 0)\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    dec = n_succ - 1\n    dec = dec if dec > 0 else 0\n    alpha_post = _ALPHA_PRIOR + dec\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    adjusted = int(np.clip(n_succ - 1, 0, None))\n    alpha_post = _ALPHA_PRIOR + adjusted\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 3.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    prior_alpha = 3.0\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = prior_alpha + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0 + 2.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = float(3)\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = 3.0 + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    a0 = 3.0\n    alpha_post = a0 + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_PRIOR = {\"alpha\": 3.0, \"beta\": 1.0}\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _PRIOR[\"alpha\"] + n_succ\n    beta_post = _PRIOR[\"beta\"] + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 3.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    n_fail = _N_TRIALS - n_succ\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + n_fail\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n\n\ndef program(x) -> float:\n    alpha_prior, beta_prior = 3.0, 1.0\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = alpha_prior + n_succ\n    beta_post = beta_prior + (_N_TRIALS - n_succ)\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(beta_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(beta_post / (beta_post + alpha_post))\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    beta_post = _ALPHA_PRIOR + n_succ\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    mean = beta_post / (alpha_post + beta_post)\n    return float(mean)\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    numerator = beta_post\n    denom = alpha_post + beta_post\n    return float(numerator / denom)\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    return float(1.0 - alpha_post / (alpha_post + beta_post))\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    a, b = alpha_post, beta_post\n    return float(b / (a + b))\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    total = alpha_post + beta_post\n    return float(beta_post / total)\n"
+    },
+    {
+      "op_id": "b1_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "\"\"\"B1 mutant.\"\"\"\nimport numpy as np\n\n_N_TRIALS = 100\n_ALPHA_PRIOR = 1.0\n_BETA_PRIOR = 1.0\n\n\ndef program(x) -> float:\n    x = float(np.clip(x, 0.0, 1.0))\n    n_succ = round(_N_TRIALS * x)\n    alpha_post = _ALPHA_PRIOR + n_succ\n    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)\n    alpha_post, beta_post = beta_post, alpha_post\n    return float(alpha_post / (alpha_post + beta_post))\n"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_493a7092bfde",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Spline knots 17->5 exactly ([i/4 for range(5)]=linspace(0,1,5)); differs (maxdiff~0.00096)."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_86423083e5b4",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "_rhs return -u -> return u; exact a8_OS1, u'=u grows instead of decays."
+}

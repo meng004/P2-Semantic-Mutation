@@ -1,0 +1,168 @@
+{
+  "packet_id": "gen_a6",
+  "put_id": "a6",
+  "mutants": [
+    {
+      "op_id": "a6_CE1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 1.0\n    return float(brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 1.0\n    f = lambda r, q: r**3 + r - q\n    return float(brentq(f, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\nSLOPE = 4.0\nOFFSET = 1.0\n\n\ndef _residual(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = SLOPE * x - OFFSET\n    return float(brentq(_residual, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "from functools import partial\nfrom scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 1.0\n    f = partial(_g, rhs=rhs)\n    return float(brentq(f, -5.0, 5.0, xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 1.0\n\n    def g(r):\n        return r**3 + r - rhs\n\n    return float(brentq(g, -5.0, 5.0, xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    cubic = r ** 3\n    linear = r\n    return cubic + linear - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 1.0\n    return float(brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "from scipy.optimize import brentq\n\n\ndef _target(x):\n    return 4.0 * x - 1.0\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(brentq(_g, -5.0, 5.0, args=(_target(x),), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 1.0\n    lo, hi = -5.0, 5.0\n    opts = {\"xtol\": 1e-12, \"rtol\": 8.9e-16}\n    return float(brentq(_g, lo, hi, args=(rhs,), **opts))\n"
+    },
+    {
+      "op_id": "a6_CE1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return pow(r, 3) + r - rhs\n\n\ndef program(x) -> float:\n    rhs = 4.0 * float(x) - 1.0\n    root = brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16)\n    return float(root)\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    return float(brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-1, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    f = lambda r, q: r**3 + r - q\n    return float(brentq(f, -5.0, 5.0, args=(rhs,), xtol=1e-1, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\nSLOPE = 4.0\nOFFSET = 2.0\n\n\ndef _residual(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = SLOPE * x - OFFSET\n    return float(brentq(_residual, -5.0, 5.0, args=(rhs,), xtol=1e-1, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "from functools import partial\nfrom scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    f = partial(_g, rhs=rhs)\n    return float(brentq(f, -5.0, 5.0, xtol=1e-1, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n\n    def g(r):\n        return r**3 + r - rhs\n\n    return float(brentq(g, -5.0, 5.0, xtol=1e-1, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    cubic = r ** 3\n    linear = r\n    return cubic + linear - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    return float(brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-1, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "from scipy.optimize import brentq\n\n\ndef _target(x):\n    return 4.0 * x - 2.0\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(brentq(_g, -5.0, 5.0, args=(_target(x),), xtol=1e-1, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 + r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    lo, hi = -5.0, 5.0\n    opts = {\"xtol\": 1e-1, \"rtol\": 8.9e-16}\n    return float(brentq(_g, lo, hi, args=(rhs,), **opts))\n"
+    },
+    {
+      "op_id": "a6_HP1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return pow(r, 3) + r - rhs\n\n\ndef program(x) -> float:\n    rhs = 4.0 * float(x) - 2.0\n    root = brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-1, rtol=8.9e-16)\n    return float(root)\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "claude",
+      "attempt": 1,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 - r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    return float(brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "claude",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    f = lambda r, q: r**3 - r - q\n    return float(brentq(f, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "claude",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\nSLOPE = 4.0\nOFFSET = 2.0\n\n\ndef _residual(r, rhs):\n    return r**3 - r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = SLOPE * x - OFFSET\n    return float(brentq(_residual, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "gpt",
+      "attempt": 1,
+      "code": "from functools import partial\nfrom scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 - r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    f = partial(_g, rhs=rhs)\n    return float(brentq(f, -5.0, 5.0, xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "gpt",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n\n    def g(r):\n        return r**3 - r - rhs\n\n    return float(brentq(g, -5.0, 5.0, xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "gpt",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    cubic = r ** 3\n    linear = r\n    return cubic - linear - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    return float(brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "deepseek",
+      "attempt": 1,
+      "code": "from scipy.optimize import brentq\n\n\ndef _target(x):\n    return 4.0 * x - 2.0\n\n\ndef _g(r, rhs):\n    return r**3 - r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(brentq(_g, -5.0, 5.0, args=(_target(x),), xtol=1e-12, rtol=8.9e-16))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "deepseek",
+      "attempt": 2,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return r**3 - r - rhs\n\n\ndef program(x) -> float:\n    x = float(x)\n    rhs = 4.0 * x - 2.0\n    lo, hi = -5.0, 5.0\n    opts = {\"xtol\": 1e-12, \"rtol\": 8.9e-16}\n    return float(brentq(_g, lo, hi, args=(rhs,), **opts))\n"
+    },
+    {
+      "op_id": "a6_OS1",
+      "source": "deepseek",
+      "attempt": 3,
+      "code": "from scipy.optimize import brentq\n\n\ndef _g(r, rhs):\n    return pow(r, 3) - r - rhs\n\n\ndef program(x) -> float:\n    rhs = 4.0 * float(x) - 2.0\n    root = brentq(_g, -5.0, 5.0, args=(rhs,), xtol=1e-12, rtol=8.9e-16)\n    return float(root)\n"
+    }
+  ]
+}

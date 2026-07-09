@@ -1,0 +1,5762 @@
+{
+  "rev_3dcd4820c6c7": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a1_CE1_claude_attempt01.py",
+    "packet_sha256": "43a5ce2dec87c8d52f49c0834c0c5b9ac4b2c1c150cde0523bc7dd0076097e7b"
+  },
+  "rev_e027e517bb3a": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a1_CE1_claude_attempt02.py",
+    "packet_sha256": "a596018f8413c2c9183d147fe18052877e82eb9a745d0350bac3311c61b4088f"
+  },
+  "rev_38ff599a3784": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a1_CE1_claude_attempt03.py",
+    "packet_sha256": "5c49e5f7a8bd0e0787c5cd54c1d0e1faca81afecd42c8e8ffcba055eb6c2fa7c"
+  },
+  "rev_a9983f97dee4": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a1_CE1_deepseek_attempt01.py",
+    "packet_sha256": "f2c9807d68f136d4c5a7d2d0875d3f8b9c25eba67158cbc19859015b60e08d0a"
+  },
+  "rev_35e6b539d432": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a1_CE1_deepseek_attempt02.py",
+    "packet_sha256": "460a80200924b5850854d913ac3b72907c46248d0678614db0c025ad1a6e59c8"
+  },
+  "rev_2d45a119ddaf": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a1_CE1_deepseek_attempt03.py",
+    "packet_sha256": "1c97578aa10c89437ab2a9bca30d88505378c357df385a7187dbdfbb853104e2"
+  },
+  "rev_c3b6d65d2d0a": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a1_CE1_gpt_attempt01.py",
+    "packet_sha256": "b493e47dae0b2b06a8511ec3abbd108d9d7af7b21505240895c1465c858b5965"
+  },
+  "rev_5bcda2599810": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a1_CE1_gpt_attempt02.py",
+    "packet_sha256": "f0d49554d269c88b4b0f3e679eb54356ef4560821f836bbfe3d04390dd39b430"
+  },
+  "rev_a9c95ce169e2": {
+    "op_id": "a1_CE1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a1_CE1_gpt_attempt03.py",
+    "packet_sha256": "e231760989e137cbfb030fc7ad4a74f59e11ca26f6e9b3ca43ac0e78798c80f7"
+  },
+  "rev_a4eb838de081": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a1_HP1_claude_attempt01.py",
+    "packet_sha256": "9b0894e4d4baa652a4ef33a0783f7bfd364240b22acff05f3483d122c5adb9b1"
+  },
+  "rev_cccc428f380c": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a1_HP1_claude_attempt02.py",
+    "packet_sha256": "d50d7123c5d47d0447db375b7b14de2f09964c197f06386e1ab533e3ba3ad7ea"
+  },
+  "rev_f440f8a93aa0": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a1_HP1_claude_attempt03.py",
+    "packet_sha256": "018c8bc30fee9a232267afcddfa47ac71f20699cdfcb4a923253c288cc42fd1b"
+  },
+  "rev_17ad08373b81": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a1_HP1_deepseek_attempt01.py",
+    "packet_sha256": "0d5f74fd136cca1e1cb630a4782756245e4e8646138bc141ead768420131f6a8"
+  },
+  "rev_def3513f81ee": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a1_HP1_deepseek_attempt02.py",
+    "packet_sha256": "15eaa9a46f91b4b69bc55116c29adfc96797645452ea3114045073192c831b71"
+  },
+  "rev_7c0df5aac1cb": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a1_HP1_deepseek_attempt03.py",
+    "packet_sha256": "c99572478e42ad3ffc50d88d76d78dbbc3acb84ec23b0bf2fd91ceaac3c96b25"
+  },
+  "rev_7a01e47d602e": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a1_HP1_gpt_attempt01.py",
+    "packet_sha256": "89548c5352330c6a905cff80810ae11487c9397f6d0beaa6c9de1b470a16e56b"
+  },
+  "rev_bad330d54679": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a1_HP1_gpt_attempt02.py",
+    "packet_sha256": "757765eed1d5e1bd2e5824a7f22a91653a4647e2d749477d18cee0a03518c3c8"
+  },
+  "rev_1d96876993b7": {
+    "op_id": "a1_HP1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a1_HP1_gpt_attempt03.py",
+    "packet_sha256": "b7eb097011fef88f05eb520c02173e4f50a19d590c0c41af74fe8c746250f7c6"
+  },
+  "rev_ba3844061dac": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a1_OS1_claude_attempt01.py",
+    "packet_sha256": "6df1cc5fca5f155694c77f5c3cba71719b35ebb6495a966b7afc96ed5336a974"
+  },
+  "rev_9f5787e139a0": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a1_OS1_claude_attempt02.py",
+    "packet_sha256": "341df1bc827af34e12a1cad8b5feea265cb698a64d434c8b25428212d1c081a8"
+  },
+  "rev_a43a51b2f8c7": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a1_OS1_claude_attempt03.py",
+    "packet_sha256": "0b38ef35b3d06a397b615cb573d86169d0087afc635731ba75d013a3774108b0"
+  },
+  "rev_5b66e7ecdeeb": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a1_OS1_deepseek_attempt01.py",
+    "packet_sha256": "e7d9e3aed274e94408676f73a6370b939bb3c9e87b7be195c55a385d4d1f0642"
+  },
+  "rev_6e9a7245b3ae": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a1_OS1_deepseek_attempt02.py",
+    "packet_sha256": "cef2ff748f1c60db024b223840c931bf7162650bf6e2202858b4ee99cc2f0bfd"
+  },
+  "rev_f9c748971f6a": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a1_OS1_deepseek_attempt03.py",
+    "packet_sha256": "fc9896b2f21eb5a8044dea2171ec4d848b59b18d36979fdea1e731aa35527099"
+  },
+  "rev_a69b0ed722e3": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a1_OS1_gpt_attempt01.py",
+    "packet_sha256": "f61a247c4ebb5ff2d9611fca671c3cec801623fbc9517f6648ee1bf1477dd3d5"
+  },
+  "rev_363b44116937": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a1_OS1_gpt_attempt02.py",
+    "packet_sha256": "c4263b5e785ed7374e2ccbc26e1cb7aeb7285acdac120c33e4e50513f89b3e64"
+  },
+  "rev_7c9aa542d927": {
+    "op_id": "a1_OS1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a1_OS1_gpt_attempt03.py",
+    "packet_sha256": "e0896be5e7715bce0452de9c9f6db013050bbf1086f9471bed51c637ff4dbc3a"
+  },
+  "rev_b3c5ae42dfc7": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a1_SI1_claude_attempt01.py",
+    "packet_sha256": "2440707c1e36a9c3a3030d961c64a32a52a2f57557c60ff686053252d46b4476"
+  },
+  "rev_96b62e5d91a3": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a1_SI1_claude_attempt02.py",
+    "packet_sha256": "e95322921a3f69b6196da64d8c22247231192aba7b877be00cfb824a53067098"
+  },
+  "rev_bb3b9f196000": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a1_SI1_claude_attempt03.py",
+    "packet_sha256": "bb0096470c04071352eeaa2ac49f89f4e1d81a1f8ddc6328af0508284f138eb3"
+  },
+  "rev_fea4b39a49cc": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a1_SI1_deepseek_attempt01.py",
+    "packet_sha256": "a988000d821cefd773f57e45fc697b813ac2a9ad0f399c50b9c747daee511392"
+  },
+  "rev_f25f9dc2a6d6": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a1_SI1_deepseek_attempt02.py",
+    "packet_sha256": "fb037902ef59c85fd6baa11da4409f0991b17d13ddaa28d7c08dacd6c501173e"
+  },
+  "rev_8ed8076fc12a": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a1_SI1_deepseek_attempt03.py",
+    "packet_sha256": "52a2ede4e22d2fad39f3c7b7cfa26f32f1a7051a5db3f04dd07eb79218d5f50c"
+  },
+  "rev_c09d40807d14": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a1_SI1_gpt_attempt01.py",
+    "packet_sha256": "565cca728b87f29db0c2385333c3319e194eda6aaf1c465f54cb147bd6b799f8"
+  },
+  "rev_5d3161b7a07b": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a1_SI1_gpt_attempt02.py",
+    "packet_sha256": "09d42b1115248a6e58e0a3ddcacd90eb4b48b46cf1db4dc4d4938f2c70414db0"
+  },
+  "rev_e1f414491b46": {
+    "op_id": "a1_SI1",
+    "put": "a1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a1_SI1_gpt_attempt03.py",
+    "packet_sha256": "b6dc0a5dbd0a0632ee5b75e6a33574bf7aa7ad673b5fb8672f1f5c10d30894e8"
+  },
+  "rev_ed2a261808b1": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a3_CE1_claude_attempt01.py",
+    "packet_sha256": "71672ab49bfb2da9f8892714f7dd67bd23551a5dff1e9667a0a23465ec49e07f"
+  },
+  "rev_2b345519912b": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a3_CE1_claude_attempt02.py",
+    "packet_sha256": "d81779a12ac4f7baacdd88890eda5835589d9ee9a5292984809666faa8eeb559"
+  },
+  "rev_c81af16a2300": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a3_CE1_claude_attempt03.py",
+    "packet_sha256": "c392dcf8619c4d28cbc845af8f0df9ebd059314d9fd5acd7d3c69b5b40925822"
+  },
+  "rev_9f893c1ac034": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a3_CE1_deepseek_attempt01.py",
+    "packet_sha256": "1fa6710e2dc7544bb8510fc2bbaacca2657d247c4d298483289826fb4c7ad775"
+  },
+  "rev_3febeb6bf5a8": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a3_CE1_deepseek_attempt02.py",
+    "packet_sha256": "c2ae0d4da16b3d589fe74b8b24630dd1411108e794e66ebe3b446ad71aa5c57b"
+  },
+  "rev_5af662258be5": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a3_CE1_deepseek_attempt03.py",
+    "packet_sha256": "7d0df0da20542f5c7c7e903bd493e8a9382341e4d2bc1f55c6e0898634c5a0d1"
+  },
+  "rev_790c9dfc983b": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a3_CE1_gpt_attempt01.py",
+    "packet_sha256": "e0d9e74face4e6180f3e2cd74bb3a7864d3554b9489a4517e6458530766c3305"
+  },
+  "rev_5bf50d2b2e08": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a3_CE1_gpt_attempt02.py",
+    "packet_sha256": "26ccf09db02d98b06f0ae4b9f0219941910f087c02fd56b20421e294ab6f6925"
+  },
+  "rev_2f107ca99e1a": {
+    "op_id": "a3_CE1",
+    "put": "a3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a3_CE1_gpt_attempt03.py",
+    "packet_sha256": "4596c97e93a1f4263b8a9af8af97fb8d624b8d4370e30adcef630df29dab5b99"
+  },
+  "rev_7c63ecdb4d95": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a3_OS1_claude_attempt01.py",
+    "packet_sha256": "2e6cf509df168486390182c90333217bcebe8d50603a03272c14b9c8d45f170c"
+  },
+  "rev_ed3662977426": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a3_OS1_claude_attempt02.py",
+    "packet_sha256": "0a1c30eede7f2b93094d66b46ce0f02abf6cd14a8506e6ab180dc49f456376bc"
+  },
+  "rev_445eb549ce79": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a3_OS1_claude_attempt03.py",
+    "packet_sha256": "d2a0ff8304e00f889cfac5c7d7466e7dbe27ef4a486505762ebe8a9a0429a6d4"
+  },
+  "rev_969f644a2afc": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a3_OS1_deepseek_attempt01.py",
+    "packet_sha256": "16157a5ebb12b76935e62f61839bc7bb05828ee1fd6a8b59611d5f2e09af3887"
+  },
+  "rev_80ef02a1aa7e": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a3_OS1_deepseek_attempt02.py",
+    "packet_sha256": "73ef9d6de637beddcf73338dc33071ebdc19c3357f4f75b25ce0e1e21f0467f3"
+  },
+  "rev_9b7ca81fc439": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a3_OS1_deepseek_attempt03.py",
+    "packet_sha256": "998dcf3de865c00d09013190992215b14c44458460d999f4b259c90b859cd143"
+  },
+  "rev_dcc5c039d54a": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a3_OS1_gpt_attempt01.py",
+    "packet_sha256": "bf2200c8c0be557b523515f690a1d2b725cea9221a1caa9d1721685c270501fa"
+  },
+  "rev_1e89a24115f4": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a3_OS1_gpt_attempt02.py",
+    "packet_sha256": "2e4545d12adf33cf71ff47c6cf1166137b26e0728772b7d956103da0eabbbc24"
+  },
+  "rev_6420cb801038": {
+    "op_id": "a3_OS1",
+    "put": "a3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a3_OS1_gpt_attempt03.py",
+    "packet_sha256": "125c72241843845a67aea466b9f568d3cd9b01a44e982e2feda6e870406fe362"
+  },
+  "rev_240040683c91": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a4_CE1_claude_attempt01.py",
+    "packet_sha256": "d38b61f96e9813c1d2bd6320e2cab9863ed9ae4f3dea1966c52f688295f9c766"
+  },
+  "rev_8866baab2b55": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a4_CE1_claude_attempt02.py",
+    "packet_sha256": "b26fe1cad886179aa25731dc98e7219ab7af7fb19a08a7f44fb6b4ec4aeca852"
+  },
+  "rev_fe5cc291d995": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a4_CE1_claude_attempt03.py",
+    "packet_sha256": "a20e88373510c05cebbd6943485af5a7cc0056317aeab7b54e7a93cfa482edbc"
+  },
+  "rev_84608f5b0fe7": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a4_CE1_deepseek_attempt01.py",
+    "packet_sha256": "3cdac501aa312138909114432b9cf7b48a88d45e2ba1f04ed16f431545a9dfca"
+  },
+  "rev_93bd467c874c": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a4_CE1_deepseek_attempt02.py",
+    "packet_sha256": "5e3a63fb61a4b77f5a5e509f95598a58cc277f8a96cb43722f37891c99c76a51"
+  },
+  "rev_75d733222780": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a4_CE1_deepseek_attempt03.py",
+    "packet_sha256": "4eb83163e565df8fdb7fb8f7684af6fcff4bf45d6d31739c5a25f9a542363995"
+  },
+  "rev_79a0bc64b3d2": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a4_CE1_gpt_attempt01.py",
+    "packet_sha256": "c60bf7a1e57629e79c77657c1ba81af9a77acc2050894292d08714d60c148b25"
+  },
+  "rev_cd51ade12a70": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a4_CE1_gpt_attempt02.py",
+    "packet_sha256": "e428b18aa0887022b2139e6a6a4b97c766b59667cfe75fd179082af20b78f471"
+  },
+  "rev_6cd05220fbb4": {
+    "op_id": "a4_CE1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a4_CE1_gpt_attempt03.py",
+    "packet_sha256": "d8ae6606a66a38c4378f9e454718d7ae50a8f277b39f43dc4f5ec11c92d68390"
+  },
+  "rev_c3a4372f0f9c": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a4_HP1_claude_attempt01.py",
+    "packet_sha256": "a959a4c300c780bb2a38971526d70529a76401bbd67cb7f6505e9b82c6618c14"
+  },
+  "rev_1382bae24e22": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a4_HP1_claude_attempt02.py",
+    "packet_sha256": "9b18eb650314c6591fed521ccd2c6b4d986d7849513b47803024c07b31777abf"
+  },
+  "rev_889fe1579276": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a4_HP1_claude_attempt03.py",
+    "packet_sha256": "b87025fbe8ad838ec25e807ce91090740586f87a37c668a68339a553201d007d"
+  },
+  "rev_570636f9d2f6": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a4_HP1_deepseek_attempt01.py",
+    "packet_sha256": "63d0448fd8c09ff9b496577de72dc8110da5cbc23e967bf724f8a334f579af32"
+  },
+  "rev_051fee311b90": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a4_HP1_deepseek_attempt02.py",
+    "packet_sha256": "95c7a9ac6c33b29787f4b4fb8466bec10b14c07ab13083134757b710c46cb8c7"
+  },
+  "rev_b70e312c8c7c": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a4_HP1_deepseek_attempt03.py",
+    "packet_sha256": "16659ccd730d71ebdf3bbe5bea9ed5239c7cde210e96e27ef9ddecd7b81446c2"
+  },
+  "rev_d45d1464f26f": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a4_HP1_gpt_attempt01.py",
+    "packet_sha256": "6fac65d18f6d884b23fcd2e0a0315b040a6f5c192abcf2207412c6881d7ecf52"
+  },
+  "rev_a9fb1ff6ecea": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a4_HP1_gpt_attempt02.py",
+    "packet_sha256": "b910c5829fe008d30d564ee7331fd19a17173cc588c5420b1350fa3273ba97b7"
+  },
+  "rev_17409d878da9": {
+    "op_id": "a4_HP1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a4_HP1_gpt_attempt03.py",
+    "packet_sha256": "d0ea1bc6f7e4e4a97fcf05eeb869855da252f144dba5f9a9f36daede83f0f231"
+  },
+  "rev_728f4fddbef4": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a4_OS1_claude_attempt01.py",
+    "packet_sha256": "5f29279ac58adb8e5a6c83abdd0da3e9e3a4994911704bc77f0737a615c7cf27"
+  },
+  "rev_b5543bf0a8ee": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a4_OS1_claude_attempt02.py",
+    "packet_sha256": "c6b27840893dd9c02e61a91fa52396c1da28526842633619fe6b0b163f173262"
+  },
+  "rev_765929ad1855": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a4_OS1_claude_attempt03.py",
+    "packet_sha256": "11416bf083bf7cbeafd41a5fee567bc74eb7a33d5618a2728da649ecfc85f315"
+  },
+  "rev_f9a1ecf79631": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a4_OS1_deepseek_attempt01.py",
+    "packet_sha256": "55e0137c39587d294b146a2c269d95bf11377c0b917237f93ce21e27c81633d6"
+  },
+  "rev_4665f3c10b88": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a4_OS1_deepseek_attempt02.py",
+    "packet_sha256": "89fe197a0355af44e37d7b4d82329390b9d9612be5db721eebf0cb8c6801749e"
+  },
+  "rev_06cb1549cc0c": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a4_OS1_deepseek_attempt03.py",
+    "packet_sha256": "4d156077cdbfafcc509f9dea52a42bf4ebd615a39a9b845cbca74629286c5deb"
+  },
+  "rev_5c8aaa2c23ef": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a4_OS1_gpt_attempt01.py",
+    "packet_sha256": "01868b69662ac7cac1f48451a67d4b424601160f4d9d187487404c7204f6fc0d"
+  },
+  "rev_a1c1afa0a3ea": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a4_OS1_gpt_attempt02.py",
+    "packet_sha256": "5d8e44d7b7aa1d47ef847d723e48cce7d8e6dc89b706be7c737fd5a501d41582"
+  },
+  "rev_5a89072477e2": {
+    "op_id": "a4_OS1",
+    "put": "a4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a4_OS1_gpt_attempt03.py",
+    "packet_sha256": "1549bcada9dc4611f6af17c1cae203c40c4a6e8792e8e10e1b6da01b42ad5a24"
+  },
+  "rev_b0d9f18ac94d": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a5_CE1_claude_attempt01.py",
+    "packet_sha256": "5dcb226fb6be192888bb7ab510ca2facb3084f37d0ab3405bfda22e93692872f"
+  },
+  "rev_610f8b0c2c9b": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a5_CE1_claude_attempt02.py",
+    "packet_sha256": "50107c217414a114d399b3c5cc461c874eb6cba68361bc9fede5580f8c4cb833"
+  },
+  "rev_dc3a3ce27e4f": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a5_CE1_claude_attempt03.py",
+    "packet_sha256": "f24bcc404e4dc39be69047ea97771e8a40bc958da87de28893897ee876b616bc"
+  },
+  "rev_62b5749ffdc4": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a5_CE1_deepseek_attempt01.py",
+    "packet_sha256": "699300a387d23f91419ca0639b558ec905d5b2bd4a58bc4e12ff8d52c75db71a"
+  },
+  "rev_fd9c88e08d75": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a5_CE1_deepseek_attempt02.py",
+    "packet_sha256": "87d94d7db2b5eb502976e84047a75ea215b6d0a41d84f9597e23c33c7f166c1d"
+  },
+  "rev_dce7e01e49e7": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a5_CE1_deepseek_attempt03.py",
+    "packet_sha256": "e6d9379ac7ee2d5a16cad7685e509163e459b6fe1db46729ce70ebe561d9d0c2"
+  },
+  "rev_1a2c0f537b8f": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a5_CE1_gpt_attempt01.py",
+    "packet_sha256": "35d5e389f484fce03d1f5b738858d9435ad3e2c290804e2f8bb19dffd1977028"
+  },
+  "rev_493a7092bfde": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a5_CE1_gpt_attempt02.py",
+    "packet_sha256": "319c002a5acc07c46d079102aac3bde1eabb46169fadc4229b9b1fe898bdc07a"
+  },
+  "rev_daee373a27c8": {
+    "op_id": "a5_CE1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a5_CE1_gpt_attempt03.py",
+    "packet_sha256": "2617759f19c69aa6bf94ad2ac7b2a7fc558d79aac67e5bf63103bd8273439050"
+  },
+  "rev_a600923ccf91": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a5_HP1_claude_attempt01.py",
+    "packet_sha256": "0b99441d37f36d0584f225a1fbd5a19d617b5cc8009a0e3325f230f9d5e2e0d8"
+  },
+  "rev_d2dca2ba85c0": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a5_HP1_claude_attempt02.py",
+    "packet_sha256": "e43aef815bb2cf6e2fc10d03ae6fad88383b94e9c314bc77064905817aac416a"
+  },
+  "rev_4f9ddb961222": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a5_HP1_claude_attempt03.py",
+    "packet_sha256": "085e739e22dc11822e8651d03afd3106f4784ee1332102acf8ad2c4446102b16"
+  },
+  "rev_312fb07851aa": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a5_HP1_deepseek_attempt01.py",
+    "packet_sha256": "aec716c77eac9f30c9b6ad4df5e32858cbb99de4e3924aa9c6e2f585d97aabc2"
+  },
+  "rev_9e7f2941c434": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a5_HP1_deepseek_attempt02.py",
+    "packet_sha256": "1a5786c7f7b26fff6d6f65357da1a71833588927a32039397657c1090f91fd4e"
+  },
+  "rev_6e0723e569dd": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a5_HP1_deepseek_attempt03.py",
+    "packet_sha256": "3d57691e9ecb1b2b16949616ec16b45259cbc0cfd08a5f5ba4f9aea11b1d1d19"
+  },
+  "rev_9baef3fcb125": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a5_HP1_gpt_attempt01.py",
+    "packet_sha256": "5d1c5f6a8199bb7c3282dc354ea5505b02fee11a261c20c281ae679e1ea801c6"
+  },
+  "rev_763278042e9c": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a5_HP1_gpt_attempt02.py",
+    "packet_sha256": "2b2ef07e59f690e03822904e13e2159f0cf7fcd2343bd4680f40b81d59f977e8"
+  },
+  "rev_a36daa58da22": {
+    "op_id": "a5_HP1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a5_HP1_gpt_attempt03.py",
+    "packet_sha256": "5a8f7f25ac5e489c1a54bf533ef83f5db6becee63cbd2415a85a598ccc1c64c4"
+  },
+  "rev_c0cb7ac8a78f": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a5_OS1_claude_attempt01.py",
+    "packet_sha256": "8aee4a35391ad0c381ce2cccaa933a06604f851edbcff565b475933835f9f389"
+  },
+  "rev_01774121cb8e": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a5_OS1_claude_attempt02.py",
+    "packet_sha256": "9a22f1652373158495479607e16bab9e04d9c95ea4acbcff616d016a146eb96e"
+  },
+  "rev_87f9d4434b20": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a5_OS1_claude_attempt03.py",
+    "packet_sha256": "f80b047464d8e7ca7d45f3ae2f63f6d10170e1c343bbbeb3b3341ef2da297620"
+  },
+  "rev_aff6d65e89d6": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a5_OS1_deepseek_attempt01.py",
+    "packet_sha256": "d104bda6762fcb20e6c71305ba691d3525c5d7654c6c03891b99eea36e38426d"
+  },
+  "rev_e84264cd8a39": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a5_OS1_deepseek_attempt02.py",
+    "packet_sha256": "df015fc36fb0299a3cfcd27c919827007c11e04a4b154a8397fd63b6235b2b89"
+  },
+  "rev_838726c5b9f5": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a5_OS1_deepseek_attempt03.py",
+    "packet_sha256": "8e02f4ed090c8300ec70e6541e0580af2576b6169d8e4ac268737fd4fd47222a"
+  },
+  "rev_09634a53fbb2": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a5_OS1_gpt_attempt01.py",
+    "packet_sha256": "07727fc0a8bb15ef1ab5d9918a473b9b9c9820b69b21ca6d17240bb59b60d9ec"
+  },
+  "rev_3470fb0b8da8": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a5_OS1_gpt_attempt02.py",
+    "packet_sha256": "7cbe552dca63b00497553a9ebb6e2ecaaa6a22046d936fde91ca06cda467eb43"
+  },
+  "rev_52c73dbf58de": {
+    "op_id": "a5_OS1",
+    "put": "a5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a5_OS1_gpt_attempt03.py",
+    "packet_sha256": "a8c204ec2bf47d74568b42a5354696093c3033e8466b8acf3a7e240fa260eb5a"
+  },
+  "rev_f12d1c6a13dc": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a6_CE1_claude_attempt01.py",
+    "packet_sha256": "63aa23ddfcfb158ee532eeca6618339182ca7c8061577077d5d00e4889febac5"
+  },
+  "rev_cfe83f285e1e": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a6_CE1_claude_attempt02.py",
+    "packet_sha256": "0c2ed0ccefb322d88337d95acf40001b1cb96e6794b2842ad26caeddbfc9caeb"
+  },
+  "rev_394b9221d3e9": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a6_CE1_claude_attempt03.py",
+    "packet_sha256": "1e70447de5732e79a49dac498b18069a92b1536ebde4908393146cc38d7c3b18"
+  },
+  "rev_1be7020fbb85": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a6_CE1_deepseek_attempt01.py",
+    "packet_sha256": "f95d48d043f4655888a36dbd520dcd3d920a6f944be97a5e25b5d85caa7328a0"
+  },
+  "rev_a3df6c14b04a": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a6_CE1_deepseek_attempt02.py",
+    "packet_sha256": "556abde703f5b2e1e8cf786125a2c027211fff22057498f921f653763fb71c5b"
+  },
+  "rev_fbc47c2020f7": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a6_CE1_deepseek_attempt03.py",
+    "packet_sha256": "6fe26c28b3ce3eb040d7b53e53bde609ce90c489c855be687eff632d80290018"
+  },
+  "rev_870a29196349": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a6_CE1_gpt_attempt01.py",
+    "packet_sha256": "667c3432f63852ea791ef5b920c36b1ab94a14d90d23095ae366d86e38250e7f"
+  },
+  "rev_058207fea0bd": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a6_CE1_gpt_attempt02.py",
+    "packet_sha256": "de880ef7f1f4ab7a6be2e97961dbef617e1fb4f1baa5b4e9559ce632380a9821"
+  },
+  "rev_6c706415fe60": {
+    "op_id": "a6_CE1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a6_CE1_gpt_attempt03.py",
+    "packet_sha256": "1d3af4a7012203122a856e410074e289dc3d0abe2f57fa16ea6ceb276f5c6349"
+  },
+  "rev_3236bd059e75": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a6_HP1_claude_attempt01.py",
+    "packet_sha256": "4223f8ca1f772dd7adbcf4710398605c3714f8753b6cfc9cf4899ee69c917666"
+  },
+  "rev_21a92b0c8702": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a6_HP1_claude_attempt02.py",
+    "packet_sha256": "55bfef9e818f2e9c65d51ba2899ee41041f9c2ba12ac4bd025a4117eb033d659"
+  },
+  "rev_9b9b9f504824": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a6_HP1_claude_attempt03.py",
+    "packet_sha256": "a5a94b235962ca9850584b31de4b809ec1df4f80be5a3a07c4eb949de35e2464"
+  },
+  "rev_27f089e62af3": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a6_HP1_deepseek_attempt01.py",
+    "packet_sha256": "1480da393848a78ae444e4f9d8c840db4642229cb74682213e32db0958186e09"
+  },
+  "rev_0bdfdfcbefba": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a6_HP1_deepseek_attempt02.py",
+    "packet_sha256": "c7dec821216c61dccb7931e45ff22049346d2068d102baad7538903c630faa2d"
+  },
+  "rev_35532ce73c1c": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a6_HP1_deepseek_attempt03.py",
+    "packet_sha256": "e4b0f5263795b47410a1fa4b3512152603ff4149f39413175a193bd4a64473bc"
+  },
+  "rev_1834e75b273c": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a6_HP1_gpt_attempt01.py",
+    "packet_sha256": "24b98b126b20afae5a90b8967b36f7de49da39527a6e00be9d06a0dcf697a8d0"
+  },
+  "rev_c7cee0a496f4": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a6_HP1_gpt_attempt02.py",
+    "packet_sha256": "88bd97512d7f730a7982d0936674ac5c16d3d23a58dbd562fd3c4947f65509b7"
+  },
+  "rev_601cd0da0764": {
+    "op_id": "a6_HP1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a6_HP1_gpt_attempt03.py",
+    "packet_sha256": "8475a3a86f48861de13c27c1f3a51723afeac55da93b2dc824f665bee28237b7"
+  },
+  "rev_25cd52099666": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a6_OS1_claude_attempt01.py",
+    "packet_sha256": "c2e22bc5c6d690385cb1eeffbd15be18aca5c18cb71c2074a3ab7cc11843ad9f"
+  },
+  "rev_b4d0e281938a": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a6_OS1_claude_attempt02.py",
+    "packet_sha256": "e487b2698835d76e52a06091fceeedcc6855354db9f20cb6f0762012f31fedf8"
+  },
+  "rev_2c342a54e7fe": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a6_OS1_claude_attempt03.py",
+    "packet_sha256": "a51c26fe611d465421ce12f81be186c7491f2ee4a94cd22384e8755e139d706d"
+  },
+  "rev_49def2327269": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a6_OS1_deepseek_attempt01.py",
+    "packet_sha256": "a9a082b76088a96ae98f7053df6467b0305618b242b9f02936396c7de6550c09"
+  },
+  "rev_a97170ca674e": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a6_OS1_deepseek_attempt02.py",
+    "packet_sha256": "8af76f7f4d97fa1c22bcfe4abbc1a1e65c99a1b7891d98cc2532bac4bdd12794"
+  },
+  "rev_dfacc4bd3866": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a6_OS1_deepseek_attempt03.py",
+    "packet_sha256": "be0cb2689cbefde32d999f0075f9d99a88ddee04c168e090cbca3d3bdabd39f1"
+  },
+  "rev_cc2bde750691": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a6_OS1_gpt_attempt01.py",
+    "packet_sha256": "b39c85d134c5208ceef04ef4826899c59aac336a90f5641100b565ada05a7b8a"
+  },
+  "rev_ec14ec08cee1": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a6_OS1_gpt_attempt02.py",
+    "packet_sha256": "f4e2b8ff4c09f4e8fa76b5566242cb024f2c622ab9574253079272a240e737bf"
+  },
+  "rev_66b9992e065f": {
+    "op_id": "a6_OS1",
+    "put": "a6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a6_OS1_gpt_attempt03.py",
+    "packet_sha256": "2e498ad0019143d0fd536be14586b981fa17736dffde148eaaaa0fb74f702c39"
+  },
+  "rev_720f09d0efa2": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a7_CE1_claude_attempt01.py",
+    "packet_sha256": "fa738f61965f630193ddc53099d525f8bd60fc55844a1a4d80e51e59d7190a88"
+  },
+  "rev_562816ef6d5e": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a7_CE1_claude_attempt02.py",
+    "packet_sha256": "8a118dc1c9881ba032d7c46bfb3d460ec63957dde5dc3ca589559a5d2ba3a4aa"
+  },
+  "rev_f4dc64ce6e46": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a7_CE1_claude_attempt03.py",
+    "packet_sha256": "70529d946ef3d4c2ec44850752b4b5c3807627dda25ebe610a15e09845a307e3"
+  },
+  "rev_65dcaf88f5b5": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a7_CE1_deepseek_attempt01.py",
+    "packet_sha256": "1518a1efa4ae61458b02f3238125794c246fca03f0027ef92a7d2a254e2a8101"
+  },
+  "rev_cc7f8c3f9509": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a7_CE1_deepseek_attempt02.py",
+    "packet_sha256": "1e50b56f667ff2c19d45dc15f0dac164a2fef858430c5d05de33bc8246741984"
+  },
+  "rev_bd4e2b1e1bca": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a7_CE1_deepseek_attempt03.py",
+    "packet_sha256": "6afcb0e3df9bf1538c72b4e2c3e36897a78e9f92bd7b84d856f58224ff83b8b8"
+  },
+  "rev_f18d3f5bdae8": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a7_CE1_gpt_attempt01.py",
+    "packet_sha256": "ac15892949de9bd9f8044e6be09a32b8ce637f0fb5694a350761e2b2d49f3fc0"
+  },
+  "rev_79f355dc5a19": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a7_CE1_gpt_attempt02.py",
+    "packet_sha256": "365da54a7a230841c5fca431f8990002b89dc66b5059563ee29971f7595a7432"
+  },
+  "rev_da0b1e972af7": {
+    "op_id": "a7_CE1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a7_CE1_gpt_attempt03.py",
+    "packet_sha256": "7c1caaf2c37091ead2a98580b02c772fee5477dbdb070ee7719a0b255fe1425a"
+  },
+  "rev_42472656c6f5": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a7_OS1_claude_attempt01.py",
+    "packet_sha256": "e1eaad467777dbdfb0e41233365a5418d74484191af95363ceb45663ab4cfcdc"
+  },
+  "rev_3115efd4217b": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a7_OS1_claude_attempt02.py",
+    "packet_sha256": "a032b5724af7e3ccefea2883e6f97788602397cc627f0e2f3eac8e7761af3f4c"
+  },
+  "rev_cb7bcfebdd4e": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a7_OS1_claude_attempt03.py",
+    "packet_sha256": "324ef9be4fdfad137daa1696169a3095f83d068cfeebb7b15869bba170776e12"
+  },
+  "rev_b93184da90e7": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a7_OS1_deepseek_attempt01.py",
+    "packet_sha256": "265b6a99d0f6ee4e99e5749ee6bd764264fa3a348c29198be4ada6ed6f4304b9"
+  },
+  "rev_43624e4f886a": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a7_OS1_deepseek_attempt02.py",
+    "packet_sha256": "d647475929a58d1cadd293277c8b6203c72cd9f071f4fb3e7dd7f72b20e5dd69"
+  },
+  "rev_28315dd3b5af": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a7_OS1_deepseek_attempt03.py",
+    "packet_sha256": "80b29f722e2da0dccefc6a75f0da603f51dc1950a79cac01fbe971fa6ff0ff4e"
+  },
+  "rev_01bb13d2c3fc": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a7_OS1_gpt_attempt01.py",
+    "packet_sha256": "1d07ba643a32ae0406deed7b4455c3f5aca099181cac823e3c7fafadf4b1bd8f"
+  },
+  "rev_473a0ba713e4": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a7_OS1_gpt_attempt02.py",
+    "packet_sha256": "6303adbebfc559fe1c06a5d8a02c9c3e350392a2643eb797bd6abc6f63bef858"
+  },
+  "rev_78076c8f6ba3": {
+    "op_id": "a7_OS1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a7_OS1_gpt_attempt03.py",
+    "packet_sha256": "eee295f3b51b56fbaf335e4ac1b394b9d7c94f170fa29b42b3ba93a57c908897"
+  },
+  "rev_986b603512eb": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a7_SI1_claude_attempt01.py",
+    "packet_sha256": "4a9283e22d4c7ff82977adf9c1b339e7a68bd08b0d42373169ae8f309063bfa8"
+  },
+  "rev_7bd1b0c7eab7": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a7_SI1_claude_attempt02.py",
+    "packet_sha256": "f6a22b8ea015634eefdaeac42a096ba3e2d70d5a022077341c7a7e8284df7559"
+  },
+  "rev_c1427a99783c": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a7_SI1_claude_attempt03.py",
+    "packet_sha256": "8989e4c786f12940b378bb5dc7102cf340a2f2583d9b3f0b68db81b814e3dc4a"
+  },
+  "rev_aaaf2d5a8090": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a7_SI1_deepseek_attempt01.py",
+    "packet_sha256": "dfebc3b234112ec3bc2f8143eb967fb41f8296f068ac06384799039d25a61c4e"
+  },
+  "rev_cd22772cf8f7": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a7_SI1_deepseek_attempt02.py",
+    "packet_sha256": "4d75c7030fd240b2e920d514b49652bc21e3390b1a159c765a8aeb3c9b3332e0"
+  },
+  "rev_d5da67a2ec56": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a7_SI1_deepseek_attempt03.py",
+    "packet_sha256": "87fbc63e43c7c36d22d679657f01a196982d2fcaa0da3faba29d2777b7437267"
+  },
+  "rev_dc76308b405a": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a7_SI1_gpt_attempt01.py",
+    "packet_sha256": "d629915845d5f66cb686d1e232d0886d94bf923923dc84af3d816890c9273391"
+  },
+  "rev_17792828c83d": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a7_SI1_gpt_attempt02.py",
+    "packet_sha256": "1ed64ce0ad37bebba4a9ee5cfb7e8b5dbc5c66c80b68d7da3ffcc4a1788f8265"
+  },
+  "rev_a62b585755db": {
+    "op_id": "a7_SI1",
+    "put": "a7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a7_SI1_gpt_attempt03.py",
+    "packet_sha256": "63ddd7f588fd50d8b7c9a469ab2c06692554db059a4861f2f48997c9de65c53b"
+  },
+  "rev_5d0ddf80ef41": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a8_CE1_claude_attempt01.py",
+    "packet_sha256": "cec8e6867f30fd62db05c048210940140483abe2191a0605a52509d3a6888815"
+  },
+  "rev_e6d313c39c8b": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a8_CE1_claude_attempt02.py",
+    "packet_sha256": "5e905bb141bd7a4cd03f8b6f84e9f8ea000b3d83b20359b15d548010499c41f9"
+  },
+  "rev_aee41cc34bfa": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a8_CE1_claude_attempt03.py",
+    "packet_sha256": "e0ae9fdd4116e9994cd9b18c27dd22a43ba89498b5ef77b5f15c40ef245d3a5b"
+  },
+  "rev_399feb09bf2c": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a8_CE1_deepseek_attempt01.py",
+    "packet_sha256": "fb276385975d10a0611c86d64dd1a7e8e6d53be47578bbfb432fbcec23cef7d4"
+  },
+  "rev_e2a338d19e99": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a8_CE1_deepseek_attempt02.py",
+    "packet_sha256": "5ed16f980cc2e0b371b61c392fe01461719022c9d6955cea06ea1d6ee1702163"
+  },
+  "rev_92bc9a88c960": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a8_CE1_deepseek_attempt03.py",
+    "packet_sha256": "89fc156a3f900712294d6bb133718f7a7ef47482a363850fb598499927a43610"
+  },
+  "rev_b38dbc807a30": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a8_CE1_gpt_attempt01.py",
+    "packet_sha256": "da78e242c649df541765d95a23e3ac7171c7dd164f68abadefe7d1dc366ccd2a"
+  },
+  "rev_d5221d013471": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a8_CE1_gpt_attempt02.py",
+    "packet_sha256": "6560d1cd9e4b8eb5e25bcc33ed5c9e70ede810303e9087100cc57b4c209b7674"
+  },
+  "rev_2a7bf033fc77": {
+    "op_id": "a8_CE1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a8_CE1_gpt_attempt03.py",
+    "packet_sha256": "cfb637ea65988945a2cfe4b6ad25415531146bb001dec54da551575099c45a46"
+  },
+  "rev_43c35c41ce2a": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a8_CF1_claude_attempt01.py",
+    "packet_sha256": "bfba0e05c6d2261bd7823b6fb1bcfdeffdc82e295e1c2dafe6da202f6febbf1c"
+  },
+  "rev_312881cc45ee": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a8_CF1_claude_attempt02.py",
+    "packet_sha256": "1283bfbd464b1442b2b1e6baf414a568702740d3121c9acd59f7e411a2e899ad"
+  },
+  "rev_0b127733f35d": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a8_CF1_claude_attempt03.py",
+    "packet_sha256": "c5d4bf90d62649f2e981ce75d884ffad49b28760c3356b553cf6001eb27323ac"
+  },
+  "rev_a11a5e5df991": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a8_CF1_deepseek_attempt01.py",
+    "packet_sha256": "835605e1c4cc6d881db976cf4a2f79f518d9c788968da9528d31818196a1cb50"
+  },
+  "rev_65bd01a18ebd": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a8_CF1_deepseek_attempt02.py",
+    "packet_sha256": "0a916604fe40fef25e2035ad094e664c6af326e52f8f155366a8311d0a23b2a1"
+  },
+  "rev_7c3a186c5020": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a8_CF1_deepseek_attempt03.py",
+    "packet_sha256": "5c7ed808862dee1a87060a8d3b84c2fa94522b8efe2afdfb41609a0c757960a6"
+  },
+  "rev_ef0b0895c30c": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a8_CF1_gpt_attempt01.py",
+    "packet_sha256": "29a1ac039a41e89652b6da9bb5aba8043ad0cf34851852429530307c663b5309"
+  },
+  "rev_2436e520a362": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a8_CF1_gpt_attempt02.py",
+    "packet_sha256": "5993ade49f7d31177c2e6e02cc4b3f1c76ef4abe7e275c315756e0571cbc4561"
+  },
+  "rev_2870d674160c": {
+    "op_id": "a8_CF1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a8_CF1_gpt_attempt03.py",
+    "packet_sha256": "9fcad66aafd99be03a8ffa176a72dd17d778e67f34ab92607a7b6d43eda0eb8b"
+  },
+  "rev_0e4aba55246f": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "a8_OS1_claude_attempt01.py",
+    "packet_sha256": "60b327ebf757d78487201eca3e0b73d90b8c60b7b9f98cde958dcbfd4ab35711"
+  },
+  "rev_ab7947ccd96c": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "a8_OS1_claude_attempt02.py",
+    "packet_sha256": "7e77496ae3d51f9adb9fad15701de23d1d325efe652e510108589e3954e743fb"
+  },
+  "rev_eda64bda3ab3": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "a8_OS1_claude_attempt03.py",
+    "packet_sha256": "ee25d84932d6cc7f9bdc94d29f4d8eca3aff095568462e366dbcb23f355eb6b1"
+  },
+  "rev_86423083e5b4": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "a8_OS1_deepseek_attempt01.py",
+    "packet_sha256": "6980fb35542855dc78795631a8b7a1abb226ae3122319fc64031cd75ad0d1a95"
+  },
+  "rev_c1314560f195": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "a8_OS1_deepseek_attempt02.py",
+    "packet_sha256": "5b341ca0e671ef3ddab625fe0726af3e8a931a9d2d01c528e4d1b7e508c77cfa"
+  },
+  "rev_2905e68c4f32": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "a8_OS1_deepseek_attempt03.py",
+    "packet_sha256": "e085f3e98c437fcec7b01b3055ec7ede62cc29fd4e2e4272dd937e6f0ce153a0"
+  },
+  "rev_2261ee34ed4b": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "a8_OS1_gpt_attempt01.py",
+    "packet_sha256": "0003f528d65976e9def1ad719e56dfea1503f3243dc175d9dc46c1788f273ab0"
+  },
+  "rev_b25583027802": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "a8_OS1_gpt_attempt02.py",
+    "packet_sha256": "dde3624ec1ee3a2b8d8562ab2f8981f158a28fa6215e51c8a227bf0bf3ebc21c"
+  },
+  "rev_8ab8c8bbdc92": {
+    "op_id": "a8_OS1",
+    "put": "a8",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "a8_OS1_gpt_attempt03.py",
+    "packet_sha256": "9d3c5e9c035cfe6f5b6618eaba84decf9a39fd2f8023306ec4df9a3ff97ef4ca"
+  },
+  "rev_806648e639fb": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b1_CE1_claude_attempt01.py",
+    "packet_sha256": "abd111d25fc8387badacf50c15d16c1b542e3c6b0b17c3a8f76f652e66d6fe04"
+  },
+  "rev_8de8b7f1d3fd": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b1_CE1_claude_attempt02.py",
+    "packet_sha256": "c08ac162e16de2ddaa721d399a0c1509899e76d41fcaff3f044ddf4ba7dd0d81"
+  },
+  "rev_6532a98a5abf": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b1_CE1_claude_attempt03.py",
+    "packet_sha256": "e194fa8c350b7f3112579b01667f2cd0ef02ef8cddf999f50cec514f4bccf96d"
+  },
+  "rev_75a7b2df6562": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b1_CE1_deepseek_attempt01.py",
+    "packet_sha256": "9623e215ae5835c917c798d26c04d853b2710188a34ea6732125e74ea67c38b6"
+  },
+  "rev_80476b82a605": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b1_CE1_deepseek_attempt02.py",
+    "packet_sha256": "479c8a87d138b33b430d801dcefeceb3b3b225b849acd9e4493d3936b2bc6eff"
+  },
+  "rev_13d4a1c321fb": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b1_CE1_deepseek_attempt03.py",
+    "packet_sha256": "980b52c5b27a58d9806a74a4895c7e428e8b902ec975a5ccb668f9ee3c919604"
+  },
+  "rev_468cb738931d": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b1_CE1_gpt_attempt01.py",
+    "packet_sha256": "7334929e5169e495a901fcddd581470389a6a23cec7d14bb526b1e5ec7d358e7"
+  },
+  "rev_faa1c8bbe6c9": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b1_CE1_gpt_attempt02.py",
+    "packet_sha256": "6e6887d3eff11cdb39fb5beeca6597e9d3a7a625315b911fe37ee0c6fa1ae01e"
+  },
+  "rev_47fba8a465a6": {
+    "op_id": "b1_CE1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b1_CE1_gpt_attempt03.py",
+    "packet_sha256": "b4c822a345107008efe553f7c36e64cd3b5906de43cf7eeb1b0d1ddd8c7edd2d"
+  },
+  "rev_a2caa632c789": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b1_HP1_claude_attempt01.py",
+    "packet_sha256": "5c35eb2bdff193ed077b6418c6d286b9cfcf1d6c5c7d8c3113858a9fb7993bdd"
+  },
+  "rev_3c5177f4f240": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b1_HP1_claude_attempt02.py",
+    "packet_sha256": "aefcefbcc84dd186e4ffacccbf1a6ff932e09d89e8c6e13e38d5742b236e0f57"
+  },
+  "rev_20f185db89b2": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b1_HP1_claude_attempt03.py",
+    "packet_sha256": "b0983070c9e5e5adfb0ab146a3d0e13ab6754a92d3d8992bebbfa13fda409115"
+  },
+  "rev_1d11176b7dbb": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b1_HP1_deepseek_attempt01.py",
+    "packet_sha256": "98f5857f2fda1c9cc08bd6185e66f9fc2887baae2bdd28e8472216b198a88852"
+  },
+  "rev_70420406d12e": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b1_HP1_deepseek_attempt02.py",
+    "packet_sha256": "495a2050b519b0cd330adab3cb3fe2339c0b2eaf3566c268ea7e6c7d99fce78f"
+  },
+  "rev_2aedda7d2afa": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b1_HP1_deepseek_attempt03.py",
+    "packet_sha256": "18e0b8fbadc5ac262826d82d09c252e6fc84a51e4a67a670e138a642f6d7a92c"
+  },
+  "rev_b8945b0d8183": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b1_HP1_gpt_attempt01.py",
+    "packet_sha256": "7c1b7ed79fd55c3e3060df3531650acc8b95e8497f64590a48260c2fd8126534"
+  },
+  "rev_1a3e76771135": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b1_HP1_gpt_attempt02.py",
+    "packet_sha256": "f269bb617f1ba5d395ba1669db3cf15401afbe8d2600756fc0a55cd9b6329b8e"
+  },
+  "rev_2b773eac6759": {
+    "op_id": "b1_HP1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b1_HP1_gpt_attempt03.py",
+    "packet_sha256": "50abdf6ed91aa6d1b156a98ae8bfc6e7c0d286eb5400ba8b18bf474cedc5ab29"
+  },
+  "rev_7728d6fe6668": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b1_OS1_claude_attempt01.py",
+    "packet_sha256": "0d4adf098fda09795bbd84d147c9b6d0f1d85d356f3ad0214ed6eabe27db5336"
+  },
+  "rev_30a9f6a05a67": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b1_OS1_claude_attempt02.py",
+    "packet_sha256": "ff48a14f99198d34941295127b24a04963e8f4ec721211f370b834bd106d546a"
+  },
+  "rev_883216e25153": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b1_OS1_claude_attempt03.py",
+    "packet_sha256": "96b25b7722993c62a1cf8d200e00844c3bb82d6bb7ae02eef0e55bbce0a57571"
+  },
+  "rev_09db44a468e9": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b1_OS1_deepseek_attempt01.py",
+    "packet_sha256": "185f55778461b4308c1af6c4dd8baa66986fa8872055fe4ad9a3d4fc8aeb1b21"
+  },
+  "rev_c7781b607fe4": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b1_OS1_deepseek_attempt02.py",
+    "packet_sha256": "c3a9349053fb5dd51d6785629381c333019de752a5a862e0173aedd5330e4749"
+  },
+  "rev_f16e7af2e90a": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b1_OS1_deepseek_attempt03.py",
+    "packet_sha256": "1e60c97fddf6cd0a10ee8ef947c730032849ecc0c7908614a248db872562e886"
+  },
+  "rev_d0634ed57be0": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b1_OS1_gpt_attempt01.py",
+    "packet_sha256": "f46ddd309183d57a1685aade92286f595fd03cc99367d342ef12a7c99ada63b3"
+  },
+  "rev_bf4d3e9667bf": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b1_OS1_gpt_attempt02.py",
+    "packet_sha256": "17e2f1e283727f57a2045dd3c867761977fb5fb0e7190015841f3458c7fd4ea1"
+  },
+  "rev_aab573ac36aa": {
+    "op_id": "b1_OS1",
+    "put": "b1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b1_OS1_gpt_attempt03.py",
+    "packet_sha256": "623d8e7e56ea12f28f6892a2d995db4900439e3d36508de4f893ff96d20d0a55"
+  },
+  "rev_70de2463211e": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b2_CE1_claude_attempt01.py",
+    "packet_sha256": "d80804f1684245a175b7be506071d3e2f90543eb1ba60584b4ca1dc50043f087"
+  },
+  "rev_5af5b081c4aa": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b2_CE1_claude_attempt02.py",
+    "packet_sha256": "8f38a03321fb9d1911ae8f29e2a1b297893f2fc28ddc70ea2df5284f37bc4466"
+  },
+  "rev_d5f3b5f80940": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b2_CE1_claude_attempt03.py",
+    "packet_sha256": "deb66d46b857132a3ff71ae4b317a990ab14bcde446d54a714822158d511c0e1"
+  },
+  "rev_97bb55938de8": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b2_CE1_deepseek_attempt01.py",
+    "packet_sha256": "396923fde9cc302e88226769657835cef3b87a5823725fd63feaa7e5d97b4864"
+  },
+  "rev_4d9368e0adc8": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b2_CE1_deepseek_attempt02.py",
+    "packet_sha256": "f8957f79a1ea7478efe20eb53fea30bc3403cdb0d35f22cc59431714a37a046d"
+  },
+  "rev_1f4eb66f3e7c": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b2_CE1_deepseek_attempt03.py",
+    "packet_sha256": "c008f4931e2a8b49d134683e0b5496860ee04b15dc9c2c9128b461e8bd79dc81"
+  },
+  "rev_c6ced1b1aabe": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b2_CE1_gpt_attempt01.py",
+    "packet_sha256": "61f1240eae6e3d09694f9a21f7727044d5ec8c85c8d4152102151c7dd72bb826"
+  },
+  "rev_0fa6e1bf1888": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b2_CE1_gpt_attempt02.py",
+    "packet_sha256": "ad88d2b62a99f341707bf3598be8988e58adae875d50c68eacb8275477e2c707"
+  },
+  "rev_e11d2ef9b3c3": {
+    "op_id": "b2_CE1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b2_CE1_gpt_attempt03.py",
+    "packet_sha256": "66e17212165f35b79a2d5f10e61ccff91fb8aad68c24fee01b6afede909e7477"
+  },
+  "rev_08d17a441ea4": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b2_CF1_claude_attempt01.py",
+    "packet_sha256": "4723c81beed758d43924bcb901fe192b0bc057e6f788659170d6ca0cbf71ba7e"
+  },
+  "rev_078a1cad8add": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b2_CF1_claude_attempt02.py",
+    "packet_sha256": "dfd2523eacfbcc8442da9677f74996af6d1f08c059fe40e86c6e09a5d3dea849"
+  },
+  "rev_a7b5e41dd93f": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b2_CF1_claude_attempt03.py",
+    "packet_sha256": "a0986157d8552eb4342363f9fce0e16c3d973c767897871fa0f18f32b923e6d1"
+  },
+  "rev_922e31dadcc3": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b2_CF1_deepseek_attempt01.py",
+    "packet_sha256": "6ed3b13b7ddba0487f6dd13f688fd07802e9f56a7000558db5c11564628793bd"
+  },
+  "rev_6c510768d7c5": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b2_CF1_deepseek_attempt02.py",
+    "packet_sha256": "ae30178f34d4371f4720855bd26bd2e39453f6e6a62f7517c88cadac0d9f2ae2"
+  },
+  "rev_78390ff7e096": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b2_CF1_deepseek_attempt03.py",
+    "packet_sha256": "530677efd13a5d88a9e2f62448afedcf2321831d7b9c452715e505558ad56263"
+  },
+  "rev_267fb8c7e4a4": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b2_CF1_gpt_attempt01.py",
+    "packet_sha256": "61c3a98ca9f1949e477930c1583421771488f82b9e82a6406c920be5b068c78d"
+  },
+  "rev_e77b66d3c7cb": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b2_CF1_gpt_attempt02.py",
+    "packet_sha256": "0b62eb466701f400cfe1074924c923f760496cce776c399fc2a7cb8e260480d5"
+  },
+  "rev_2d64d47a57ae": {
+    "op_id": "b2_CF1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b2_CF1_gpt_attempt03.py",
+    "packet_sha256": "60276b28a5878dce55d3a4ee1b3ab43d731e1866981db45b51e1f05de87b7d96"
+  },
+  "rev_302223610974": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b2_HP1_claude_attempt01.py",
+    "packet_sha256": "9de82bc56993244673b79aff4c3a6b251b1a1ec90b54a139df38b7978fd24b45"
+  },
+  "rev_7f8b7dcee8f5": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b2_HP1_claude_attempt02.py",
+    "packet_sha256": "12544e0c22b70adbf3a21f2923e25be3237ce657b17fbaff1ed220fae9fe963a"
+  },
+  "rev_968c68ba9686": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b2_HP1_claude_attempt03.py",
+    "packet_sha256": "6b07238c8a09ddcf81364731a25d22b1e40fca36d595641909bd2e8540549e41"
+  },
+  "rev_c3c9c1715916": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b2_HP1_deepseek_attempt01.py",
+    "packet_sha256": "9a3db35a79b0b80aa6a79a7ec9a37f8cc863bb2043957e1168a9e5a1c7f0f8a3"
+  },
+  "rev_f26b840ba9a2": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b2_HP1_deepseek_attempt02.py",
+    "packet_sha256": "8648146c3a756f94e67df3fa44e81bb070ee0883876c3f6dd22c4f1558318738"
+  },
+  "rev_5e2089da0fa9": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b2_HP1_deepseek_attempt03.py",
+    "packet_sha256": "4046bea629779e23949ac3b32a246b32239b3c9c9ffedf2957efca18a58019b7"
+  },
+  "rev_d46e8191b1ac": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b2_HP1_gpt_attempt01.py",
+    "packet_sha256": "2f4e8f268a335d13288a84f9a7f7feff59c4c1533a9bd4b001f7727102cc7d89"
+  },
+  "rev_5748e1a317ed": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b2_HP1_gpt_attempt02.py",
+    "packet_sha256": "62e35f28ca199ee70d3332c50f6b79de9d72bd00b8ba28564afa316b5881bdbe"
+  },
+  "rev_ec481e7db83f": {
+    "op_id": "b2_HP1",
+    "put": "b2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b2_HP1_gpt_attempt03.py",
+    "packet_sha256": "b7f13ed9dd81e06f306c5d98cbb53614bfe693b81924e6d81e54346061be919b"
+  },
+  "rev_69ea94dcfdeb": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b3_CE1_claude_attempt01.py",
+    "packet_sha256": "935c279aa78fe10b60aec6109243f6f919b795ca6da726c41fa57d55613758d5"
+  },
+  "rev_63e3311a1d41": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b3_CE1_claude_attempt02.py",
+    "packet_sha256": "81b8b06f5bbdf0829d97725715b8c74c2ff73d77fbc38326ca2d0ba751b7a8f7"
+  },
+  "rev_a7c4f0fae3d0": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b3_CE1_claude_attempt03.py",
+    "packet_sha256": "4fc9e7aafbdf46c18a3995776c7bafb38bfe223e34a1f513c952173e671ea277"
+  },
+  "rev_7fd6ad2d9b83": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b3_CE1_deepseek_attempt01.py",
+    "packet_sha256": "2c67dfd6f9a7948ef651ca444269249ce2454e2e638631f32e4b93e5c09ac614"
+  },
+  "rev_d16b94467d06": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b3_CE1_deepseek_attempt02.py",
+    "packet_sha256": "5bb46019269f72071a52252f076cc50d9a915166d710a961cc5de6a4596650d2"
+  },
+  "rev_7e84af3e3291": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b3_CE1_deepseek_attempt03.py",
+    "packet_sha256": "23ffdee859b61e8ce387423ec9423b7c94e021294df85c65432d3f5ef69f4361"
+  },
+  "rev_c9c904ff8ea3": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b3_CE1_gpt_attempt01.py",
+    "packet_sha256": "a985661615e16c00a467e9c2a1fb3229f966ba545dd4eadac6f1fe4a00e35d8d"
+  },
+  "rev_7d0c4230b0fc": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b3_CE1_gpt_attempt02.py",
+    "packet_sha256": "622acebb6d1b3376695386d3348fae127061b06c9a95206eab0f5921922b35b0"
+  },
+  "rev_dd0f270b9395": {
+    "op_id": "b3_CE1",
+    "put": "b3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b3_CE1_gpt_attempt03.py",
+    "packet_sha256": "9cd1ebb2ab9d304fa9d4ab7a78356680a21dbb527f3ac9b4f8a5c28b325a8a40"
+  },
+  "rev_21b92387f57b": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b3_OS1_claude_attempt01.py",
+    "packet_sha256": "7960dec001dcad9ddd20e9fdb729c64e8405da1f4c4b96216e5113551a1e4ddf"
+  },
+  "rev_d9f86d85e181": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b3_OS1_claude_attempt02.py",
+    "packet_sha256": "fe82f9085c9fab2f7797b7f5a39195cad620e9e0b6ddc955b2e63ccdff3ffc64"
+  },
+  "rev_6e76d18573e5": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b3_OS1_claude_attempt03.py",
+    "packet_sha256": "28c3f3828c437ad8a1d02fb0a80b4326029cb5f0eaf375df35d1b8afd70c2ec3"
+  },
+  "rev_e4a75852ad9f": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b3_OS1_deepseek_attempt01.py",
+    "packet_sha256": "5a7372b6d0a18e935a918bfc8d582e3e688ee500408c425f3ba7f1c2e2a7f55b"
+  },
+  "rev_f6e1112be5d9": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b3_OS1_deepseek_attempt02.py",
+    "packet_sha256": "bb3bef08a52440eb82362eda3969ec282853534e203e2abfbbe5c88b426b8acf"
+  },
+  "rev_38d8ca84398f": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b3_OS1_deepseek_attempt03.py",
+    "packet_sha256": "29ce53ba87bcb1e5fa50cb6ef4d2bfff376471f7965e3da586426afdaa7ee2d5"
+  },
+  "rev_6a8d53408714": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b3_OS1_gpt_attempt01.py",
+    "packet_sha256": "a4c7d05cbad5e805cc00dfb67b10b8e76174d7cb290a9f8e4681442ac918c09a"
+  },
+  "rev_22cbbc22bdb4": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b3_OS1_gpt_attempt02.py",
+    "packet_sha256": "9995f4a861b2fce823452307652550065e94734551c88d5d33702918f6fec366"
+  },
+  "rev_a2efc636477d": {
+    "op_id": "b3_OS1",
+    "put": "b3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b3_OS1_gpt_attempt03.py",
+    "packet_sha256": "4a643e1a2292c3208fe82bed6ee6c87db4e17fbd8d16c8612375e6ad38196eef"
+  },
+  "rev_0a88f0714c99": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b5_CE1_claude_attempt01.py",
+    "packet_sha256": "33377e7ea87ebfb31c8591bfa88f7200840d0898f46e9cff5c516a625082bb06"
+  },
+  "rev_5296b9a328f0": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b5_CE1_claude_attempt02.py",
+    "packet_sha256": "269a513e7324a85c35dcc89607a7ca3add3c92fcfc61237a7aaeefa71670de41"
+  },
+  "rev_311e16f371b8": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b5_CE1_claude_attempt03.py",
+    "packet_sha256": "3d7a1ea94e338771e2c258613bf369197d71425ff4c36fc88c7d31d799f10efb"
+  },
+  "rev_5fe63f24f46c": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b5_CE1_deepseek_attempt01.py",
+    "packet_sha256": "a6c415329068d35f6bef61e563a2e73a590fb4a39b2d6d7dc5caf1f554353ee5"
+  },
+  "rev_4ba8c2df819e": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b5_CE1_deepseek_attempt02.py",
+    "packet_sha256": "c184e870a29f5d901642bd0e8b530cef15124e577f7b143b951ba49f2009237a"
+  },
+  "rev_f35328903d5f": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b5_CE1_deepseek_attempt03.py",
+    "packet_sha256": "e230e26a1900e43d96ef430cbfd6d834b9459fa470991b946408ed8af3992677"
+  },
+  "rev_a109098fda45": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b5_CE1_gpt_attempt01.py",
+    "packet_sha256": "2c2ae95d49f5e323f65782df42887de23d423e93e58293154395d8fd8f1b1c30"
+  },
+  "rev_ef51e8c596bb": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b5_CE1_gpt_attempt02.py",
+    "packet_sha256": "b2ef68bc0344a190221f2086e151e93a8e7a070c2b7b9bbad73d1cb6dd37ea6a"
+  },
+  "rev_1652b46befef": {
+    "op_id": "b5_CE1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b5_CE1_gpt_attempt03.py",
+    "packet_sha256": "f99ca43a1bcb140150b2a58cc968e13a100176867b2a3675d94c584dda52a9ea"
+  },
+  "rev_1639cf1b2d52": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b5_HP1_claude_attempt01.py",
+    "packet_sha256": "0efd9ec18d54c22b7aacaff8128b26aabac85ea158ccb09abc748c255b2afbb9"
+  },
+  "rev_b63f1a9af73a": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b5_HP1_claude_attempt02.py",
+    "packet_sha256": "2693718765af71375c7e7df9eef791ae4430c9b778196d7f32e661c3f74b4e7e"
+  },
+  "rev_e7c923b6590f": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b5_HP1_claude_attempt03.py",
+    "packet_sha256": "b7629783e1e8a37c1acef73192dbace38844d1e0dfc6240e390325f1e107945c"
+  },
+  "rev_7e9665351da1": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b5_HP1_deepseek_attempt01.py",
+    "packet_sha256": "21e3a45b2af5ce443029032a54816cc6dd478d7a4dcda20de7436dae0aa1d361"
+  },
+  "rev_4ec1be675294": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b5_HP1_deepseek_attempt02.py",
+    "packet_sha256": "ee8006320e50e7c1abf4c0fc9baf9cb9ced73d3d5e67782ad56129d0533f97d4"
+  },
+  "rev_3238d8e9d2e4": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b5_HP1_deepseek_attempt03.py",
+    "packet_sha256": "d17688a5aaf215353e3c1d044019364cf7718a4967bc70aca9c633b88e8fdaae"
+  },
+  "rev_569a13235973": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b5_HP1_gpt_attempt01.py",
+    "packet_sha256": "ef10cc0b690189edc53c4a1d895a51f577de97df9a2e1825d373b6d17e779047"
+  },
+  "rev_72017e2e846a": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b5_HP1_gpt_attempt02.py",
+    "packet_sha256": "c08475b35f50d28dcfe65881b98c104f9606b1a1dd1a2848179f64856b048dea"
+  },
+  "rev_b3f97c95472c": {
+    "op_id": "b5_HP1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b5_HP1_gpt_attempt03.py",
+    "packet_sha256": "925563eeb2a44e10711e1bd63232b8ebc1c0a6f922899b16d15563f0433206e0"
+  },
+  "rev_e1b48c36d097": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b5_OS1_claude_attempt01.py",
+    "packet_sha256": "762b3f6713a5030b6c76dc1ccc7f1583f9c0b74390dd5f4c37b57a4447b5f8c1"
+  },
+  "rev_2ec11ef30beb": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b5_OS1_claude_attempt02.py",
+    "packet_sha256": "c2cff4ebffe23d1a4655c0c032313dd951020a80f89ec746c8d7c83d20bbd66c"
+  },
+  "rev_747f3b9f94cf": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b5_OS1_claude_attempt03.py",
+    "packet_sha256": "b9b65b424104c65e8d605caeda4e1531f5a6e85375fd8b075de7e321d0d57ecb"
+  },
+  "rev_8199995c3603": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b5_OS1_deepseek_attempt01.py",
+    "packet_sha256": "8d6e93a14b807ac552ab742aa915b0572f92b331605a8cd621f63c31ec15350a"
+  },
+  "rev_4747fe1c1fe9": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b5_OS1_deepseek_attempt02.py",
+    "packet_sha256": "73141fb0e7e0e5d734bb86f640060199be228242a624679d9c4d36d970128202"
+  },
+  "rev_bf1ed1418f72": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b5_OS1_deepseek_attempt03.py",
+    "packet_sha256": "884a68eb8517f1c9f709cca7bf135d40a8a2fa541af71edb34c6dd405da7057b"
+  },
+  "rev_6c5eb857db11": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b5_OS1_gpt_attempt01.py",
+    "packet_sha256": "85e22194d07dda1c6cc6007c8671e6643ec95ee20aed44645900aaca848fb07d"
+  },
+  "rev_53855305ece5": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b5_OS1_gpt_attempt02.py",
+    "packet_sha256": "0b69460b41c5fb752ed8afacdc92f2a35493c65384d33496d9f142aca4b9085c"
+  },
+  "rev_0fc49065b773": {
+    "op_id": "b5_OS1",
+    "put": "b5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b5_OS1_gpt_attempt03.py",
+    "packet_sha256": "f6c66be5ac811e6fa6ea8280113ce11886a0dfce664a7f7281892976e1551eb7"
+  },
+  "rev_99bf2580999a": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b6_CE1_claude_attempt01.py",
+    "packet_sha256": "72449723a9d79d5807dde6583453de274fe6e6d1bd06f15a48cd06bca1bfdc7b"
+  },
+  "rev_8cac9a7cd9b3": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b6_CE1_claude_attempt02.py",
+    "packet_sha256": "38d5ad134399624e15242ee47d63751123cfc732a9ac7c5554bce9e488ea8c3b"
+  },
+  "rev_355f80f2cada": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b6_CE1_claude_attempt03.py",
+    "packet_sha256": "f821a392009e50b2bd274a35ea5cb11c5da7d9e4064382d0461f3360047fb1ec"
+  },
+  "rev_2c50d323e6b5": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b6_CE1_deepseek_attempt01.py",
+    "packet_sha256": "3ada30e826c0ebf16d480a5cae8bcdf78e870fe9b801849dc640b14675d35b99"
+  },
+  "rev_d02dd743e535": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b6_CE1_deepseek_attempt02.py",
+    "packet_sha256": "23b78ec561865438f356a590278f307c25b0da92d7c4ed08338e70fbb727fc48"
+  },
+  "rev_4def97a91025": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b6_CE1_deepseek_attempt03.py",
+    "packet_sha256": "3933cd9c31ec1b920a7fb53d582532fef94778b536beee4df86a20cdf3b545a5"
+  },
+  "rev_bd24d5432b43": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b6_CE1_gpt_attempt01.py",
+    "packet_sha256": "ae4bc07da63c21eee77b2726754bdaa226d5de37dd0b9d5b51e8c0394f306f51"
+  },
+  "rev_3d9280090020": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b6_CE1_gpt_attempt02.py",
+    "packet_sha256": "d34242997a6cb5bc84205cff8b59748da0d476efa46f4a4a099119d651623f30"
+  },
+  "rev_a433c2b85573": {
+    "op_id": "b6_CE1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b6_CE1_gpt_attempt03.py",
+    "packet_sha256": "49d636bd77a4f9c16ad3d38db49dea0319cd192fa4afbc605b9a86e1e23c0952"
+  },
+  "rev_8be8f7388522": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b6_HP1_claude_attempt01.py",
+    "packet_sha256": "b5d4548e8fe4c7dd1fe5ba628a706f6ec2705d3e6376cc67cabcb97b402f66c3"
+  },
+  "rev_6b9a9f8dd6b2": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b6_HP1_claude_attempt02.py",
+    "packet_sha256": "76b266c4263d41cca506344c0049fcf74eb80537f2742aadc27a17d9095e00f2"
+  },
+  "rev_a81192c7fa4f": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b6_HP1_claude_attempt03.py",
+    "packet_sha256": "cb63212bf3669d89306bb9bad3ac3bfd562e20e447853fcdf7d402f0b7cebbac"
+  },
+  "rev_ef8e260f2418": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b6_HP1_deepseek_attempt01.py",
+    "packet_sha256": "d1b085228d4f347358992b8740436cb5d9cdb92eeb3ed5d38085faa988a561b9"
+  },
+  "rev_2d4b59d03bbe": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b6_HP1_deepseek_attempt02.py",
+    "packet_sha256": "8139d375e0091e6a800238864781abdd2aea3799542f4ded62eb12afe68729a5"
+  },
+  "rev_1aeac3a603cf": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b6_HP1_deepseek_attempt03.py",
+    "packet_sha256": "fd284c012adb1403c1ef7007863a4a3bf21c9578ed7e066a2d21607d7f72987d"
+  },
+  "rev_e6391fce1185": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b6_HP1_gpt_attempt01.py",
+    "packet_sha256": "6f4cfad728c6fb1077db1a760b890cc12874d5192cfd29ddbe01bbb9b623aa0f"
+  },
+  "rev_3a6843f8b31c": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b6_HP1_gpt_attempt02.py",
+    "packet_sha256": "60a923c4210a2c0bb5110e3e372ea327eb193ae599c911c4c2836ba0922be029"
+  },
+  "rev_f347987b15f8": {
+    "op_id": "b6_HP1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b6_HP1_gpt_attempt03.py",
+    "packet_sha256": "90f26044d0a6db40ce3bbf9fe7a423534c2802c6e62f5e7daf6f77ba812f4559"
+  },
+  "rev_a9a6ed908226": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b6_OS1_claude_attempt01.py",
+    "packet_sha256": "79d56836c22d26b3dd113373ce280d012ea1ebc9cd96d18fbe4fe264b30efb55"
+  },
+  "rev_5b6d7fbbc8b2": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b6_OS1_claude_attempt02.py",
+    "packet_sha256": "494e87e6ed52c4cae8b4bd5db5a0e9f60caa03eb344c5d5621973bdbaa5a5df7"
+  },
+  "rev_5a29ff6ff765": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b6_OS1_claude_attempt03.py",
+    "packet_sha256": "33a6d6d5497e67ce56a8041bdff7650e4a850de5adfc61fe39f9eff186cc6698"
+  },
+  "rev_5e6918164067": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b6_OS1_deepseek_attempt01.py",
+    "packet_sha256": "8db71ae833936de37acc3fd105eecd87d402928bf24312820a80a5e32db63516"
+  },
+  "rev_244e446627a3": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b6_OS1_deepseek_attempt02.py",
+    "packet_sha256": "48a86c518cfd94a0f2698011d1110416650e0e67b1b8c4900ba9d85da9f4ef8b"
+  },
+  "rev_83fcfc57e292": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b6_OS1_deepseek_attempt03.py",
+    "packet_sha256": "e10d062b37f78ea1ca9b3157c0ab1ba68e1e9ac3e4bdd154ce51f058c250fce4"
+  },
+  "rev_a3304c0a56aa": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b6_OS1_gpt_attempt01.py",
+    "packet_sha256": "29c739f6ea33b16aa4f177f08c62da1fb7d8b271c2ddb4c89d2fbe12758e721d"
+  },
+  "rev_53fa796f6a1f": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b6_OS1_gpt_attempt02.py",
+    "packet_sha256": "6e4c00c9a02ba16b89c76397a4c30a0086cd8ab316eda54ba2c0ee11294a5f73"
+  },
+  "rev_5dde611030c1": {
+    "op_id": "b6_OS1",
+    "put": "b6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b6_OS1_gpt_attempt03.py",
+    "packet_sha256": "737c0c58c2712ee0470d3cd604a277641b1c20c167de9af4be31209acb065a2c"
+  },
+  "rev_5031f29a9d55": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b7_CE1_claude_attempt01.py",
+    "packet_sha256": "03280405529224d8a90645c44324d7a2cb0071a4b21b963bea71e97fa1c4ee31"
+  },
+  "rev_765b3870496c": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b7_CE1_claude_attempt02.py",
+    "packet_sha256": "6c7b85ff422ad1ca7547ea3015ede617a8b23e70b49ccd11c43b392b4875765a"
+  },
+  "rev_59b9b4e74628": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b7_CE1_claude_attempt03.py",
+    "packet_sha256": "a249a2cb8968a155cd3f37a4a489c70454c61785628867471abea6f9624b637f"
+  },
+  "rev_18a7235f4979": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b7_CE1_deepseek_attempt01.py",
+    "packet_sha256": "2540c97aaf55ef03f4d3a22ae56641b674afb1c2b522197357c52ebdd9cec7b6"
+  },
+  "rev_97e226de0dbb": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b7_CE1_deepseek_attempt02.py",
+    "packet_sha256": "492f057f2f6c0954f7c30c828d4e123c869f4bf2942e7e2cb1ddffc901e807a9"
+  },
+  "rev_d0a35eb84c98": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b7_CE1_deepseek_attempt03.py",
+    "packet_sha256": "43ed581d2155a48322de11cc9b2dc7e4ea51c04ea9b1a73808455a426e7b6997"
+  },
+  "rev_d6eed850d17c": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b7_CE1_gpt_attempt01.py",
+    "packet_sha256": "d74c9ce7134fa002a0c538e1c1085c1aa372b9d3b4a602f3bc91ea5b308bd78d"
+  },
+  "rev_7199a5fb751b": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b7_CE1_gpt_attempt02.py",
+    "packet_sha256": "c88bbc3e2d2aa9de1fb7d5add714ccb73ee820ef2917d5fa102e4efbe5409c92"
+  },
+  "rev_dcf818dba3be": {
+    "op_id": "b7_CE1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b7_CE1_gpt_attempt03.py",
+    "packet_sha256": "d4f065567cfccc6ef6c1ae90433876deb34f220e311eccca9c55ef2a7a85e745"
+  },
+  "rev_9bdeac045d26": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b7_HP1_claude_attempt01.py",
+    "packet_sha256": "cc1f90529a952cee99ed14e03ab0985f4b1f192adff8bf40321d54c3a542fe6d"
+  },
+  "rev_67e0ed233170": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b7_HP1_claude_attempt02.py",
+    "packet_sha256": "5c6157a8570a7f5703a9e439b229b1b2ff8f9b11db39273411ae7d18c0a4118c"
+  },
+  "rev_89c2070d7305": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b7_HP1_claude_attempt03.py",
+    "packet_sha256": "a8641db78ca274e6762d5a45bdb7664658b9c3dd6b411de4d22a9e16e3ce43cc"
+  },
+  "rev_de80725d8d0a": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b7_HP1_deepseek_attempt01.py",
+    "packet_sha256": "24f069e4c2a2970f6fcaf463d0527165c60b693b09d5ecf7d4f82126f8c06544"
+  },
+  "rev_2fcfbed6ddb5": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b7_HP1_deepseek_attempt02.py",
+    "packet_sha256": "1eca1d4faa4bf89bda6447d5aa37dd6c165b2073088ab469e9980447683dc3b7"
+  },
+  "rev_78644e07522d": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b7_HP1_deepseek_attempt03.py",
+    "packet_sha256": "6b8e5c6db17d7515340fb4e7f0b17d2bb973f5ce1b2f881a53c40116b020407c"
+  },
+  "rev_7718beade9fe": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b7_HP1_gpt_attempt01.py",
+    "packet_sha256": "338a401b93640c33ee421c471a3acd3e24bd9d6bec8b780b9be2230f1f239aed"
+  },
+  "rev_51445f7bd017": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b7_HP1_gpt_attempt02.py",
+    "packet_sha256": "ae9d28af117fc4ec402d8981ca658073e9df766078cffcb6a56f25f276d8a2a3"
+  },
+  "rev_378a899b2eaa": {
+    "op_id": "b7_HP1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b7_HP1_gpt_attempt03.py",
+    "packet_sha256": "ab7da100cfbda2a7c4bb744939a6c166121feb1af4b4288d4ff6a84e6e35f3a3"
+  },
+  "rev_8d0dff6dae31": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "b7_OS1_claude_attempt01.py",
+    "packet_sha256": "21d510011bfabd09a1d739e0a7629791e861306a9b96e249f53d69c6e2942566"
+  },
+  "rev_6a021d58f0bf": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "b7_OS1_claude_attempt02.py",
+    "packet_sha256": "76f2a6ed9c5ce43b094e82eaa494bb16f231aee4e24d579a45698c47d4b932c7"
+  },
+  "rev_d6cb6012f6e8": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "b7_OS1_claude_attempt03.py",
+    "packet_sha256": "85e70362ec91cf5dacb501759965ca6290a1866e66f247ebdb30d927f6fdbc21"
+  },
+  "rev_a15e52e95e69": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "b7_OS1_deepseek_attempt01.py",
+    "packet_sha256": "fbfaa038d492d9cd05ffe418c67c04cf65c78e7172e33df1e1268576d6b69af0"
+  },
+  "rev_b7349b94c8a5": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "b7_OS1_deepseek_attempt02.py",
+    "packet_sha256": "89d8c45900e9a608030f0d36d1ec7af7b89ad0c98b24de9806a9434c5e381dcf"
+  },
+  "rev_47ce2e01e9b8": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "b7_OS1_deepseek_attempt03.py",
+    "packet_sha256": "01f0c5ef4a653201bd2a80a65b510fc271b85663c20e1c44a5f4ab77d6a6c39c"
+  },
+  "rev_7a9377aa035c": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "b7_OS1_gpt_attempt01.py",
+    "packet_sha256": "59e1ff8b19feaac4b5140dd8cf4ff8ded54c36c3523bd6212dd0509ae21c5f64"
+  },
+  "rev_b6013904e012": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "b7_OS1_gpt_attempt02.py",
+    "packet_sha256": "545fa8564c949f3dbcb05d73e50cc3b7db29d51bac8be00501cd26782d9ac6f8"
+  },
+  "rev_942e72820be7": {
+    "op_id": "b7_OS1",
+    "put": "b7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "b7_OS1_gpt_attempt03.py",
+    "packet_sha256": "65af1ed5f97fb5a1de1b0761ff28f17bb6ff36e428687b0ab6bd87791d3d5af8"
+  },
+  "rev_ac083361ca8b": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c1_TF1_claude_attempt01.py",
+    "packet_sha256": "fe9c5d3d3e238cfa7f66f5ef9804131f38ff4dfc557f2b66d7ac20ae1ed672a8"
+  },
+  "rev_cf0befc9c8be": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c1_TF1_claude_attempt02.py",
+    "packet_sha256": "3354570397554898dc8d8eab56ce33dd5d805ec82f5ac5a2b2d50c5b8534a22c"
+  },
+  "rev_eb3d7aacfd0e": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c1_TF1_claude_attempt03.py",
+    "packet_sha256": "3332fc5c41f3e610d5295a00b9578d381eb39b4f294dcf8ff2be6edd0a0685eb"
+  },
+  "rev_a91bcaffb6b7": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c1_TF1_deepseek_attempt01.py",
+    "packet_sha256": "dd4fe946f00f8b7e191143cdf458d67cd90694842ce44af1f139c42cc6d18f0c"
+  },
+  "rev_0bec50b25511": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c1_TF1_deepseek_attempt02.py",
+    "packet_sha256": "b39994e76ce384fa034cac31bca16ae5f46934ec5927e3893ecf68aa7adc6037"
+  },
+  "rev_f872038defdd": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c1_TF1_deepseek_attempt03.py",
+    "packet_sha256": "dfa2cd50110ce3eac6880b50b3f71fa70f7ed59e6db1d9011f608e5f6d1bd5e5"
+  },
+  "rev_13450fee5bf0": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c1_TF1_gpt_attempt01.py",
+    "packet_sha256": "cdb807951d7cb584786ff764aa7f7e1b84df98e45e2f0ae6bd692aebfdb1bc3e"
+  },
+  "rev_20c9db436218": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c1_TF1_gpt_attempt02.py",
+    "packet_sha256": "221b42c0f76c6e4c3571393d7cc5f8aff90003af964762b9ccc59039957c1704"
+  },
+  "rev_17ed3fe8621f": {
+    "op_id": "c1_TF1",
+    "put": "c1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c1_TF1_gpt_attempt03.py",
+    "packet_sha256": "a8c752520df85b3093fb47a27be798c4d0fdc0338bc60cf248d9f8898d499aa4"
+  },
+  "rev_e6e7811357ba": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c2_HP1_claude_attempt01.py",
+    "packet_sha256": "4d9a7dc607004c95e61128bf62ce4baf22b90443dbca83e654721d5377f645c2"
+  },
+  "rev_deb2e61f6693": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c2_HP1_claude_attempt02.py",
+    "packet_sha256": "c1440b39890f1ee41ff4422e34feccfa9b773ea2e0b3ed37394fb8271b0feab9"
+  },
+  "rev_c77d84d68ada": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c2_HP1_claude_attempt03.py",
+    "packet_sha256": "754fdb94855894ce82fac8f3c422b2baf0ce5f17e5a5530735857747ba8f1e49"
+  },
+  "rev_fbac4c2efb9e": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c2_HP1_deepseek_attempt01.py",
+    "packet_sha256": "bd420c798c22acd53d872dd370a8c28d92e0c321a45f02a3f4c46e96c7184a91"
+  },
+  "rev_6202c78ca063": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c2_HP1_deepseek_attempt02.py",
+    "packet_sha256": "33f6a2ca6421f0c04f227b84674bdc896d66f46fd6598b59d517a194f3339e4b"
+  },
+  "rev_ac3983dfe074": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c2_HP1_deepseek_attempt03.py",
+    "packet_sha256": "612eaf7006d092d41642bcdcd07360d78d23d80265814830a84e87592c8cc785"
+  },
+  "rev_b6711a07d33c": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c2_HP1_gpt_attempt01.py",
+    "packet_sha256": "cf2114afe588cd914733c3e37081ce6b515b5d0ac318cafd365e24963eb8c3ff"
+  },
+  "rev_ff6c73aa3a1e": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c2_HP1_gpt_attempt02.py",
+    "packet_sha256": "8aa6e811da23ab04ecba5b9710273e7c76c4b5803311789b3c6301659f1bc303"
+  },
+  "rev_86c72c134cd0": {
+    "op_id": "c2_HP1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c2_HP1_gpt_attempt03.py",
+    "packet_sha256": "bb3477df2049420be80fcfae26687f3323022e7c9ab3ea283b4d62eaff117659"
+  },
+  "rev_af030a72050e": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c2_OS1_claude_attempt01.py",
+    "packet_sha256": "6ae158f9d7db9a67a50b8e3fd227cf7e8c96ca130abcf2521a7f1c5435dbc369"
+  },
+  "rev_13524c6c5154": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c2_OS1_claude_attempt02.py",
+    "packet_sha256": "4f4aeeec3e6aee4d97360407245fb18f2aa4e13756dab1b64c95c46c5735a28f"
+  },
+  "rev_291c9dc887f7": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c2_OS1_claude_attempt03.py",
+    "packet_sha256": "a16198f5589bcf5ca2fe63b224e59327240ae0b3f67d711034a85b39885fade6"
+  },
+  "rev_ec31fe4ce088": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c2_OS1_deepseek_attempt01.py",
+    "packet_sha256": "2d82d8659fc7cfdee90302cfbe300cc47031771f684a267db5ecda8d8996087c"
+  },
+  "rev_114f74bb931b": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c2_OS1_deepseek_attempt02.py",
+    "packet_sha256": "57e5a04b8f0bc5621013fcdfb56845ffdc69bc635df5465c62414245fa3946b6"
+  },
+  "rev_3583d81af96a": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c2_OS1_deepseek_attempt03.py",
+    "packet_sha256": "f9a52f0658bd849b5b0192b183905d1f94cb17777b402bf63efd0df90a10b1db"
+  },
+  "rev_eaa63bc026b7": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c2_OS1_gpt_attempt01.py",
+    "packet_sha256": "ac61baf366571f41167978dbd422c167ef1b3e2dc46dd0e7aef41bb85f60dc1b"
+  },
+  "rev_308f31840372": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c2_OS1_gpt_attempt02.py",
+    "packet_sha256": "e9cb162632ee9497c1244244b92a9f9ee11291578502c554f336c11fd561e19e"
+  },
+  "rev_a867b15ff5a7": {
+    "op_id": "c2_OS1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c2_OS1_gpt_attempt03.py",
+    "packet_sha256": "32b92d32a2a337ea26fad07058244558ba1633e8dfa6db90fad1961d7246ca74"
+  },
+  "rev_1e328dc6b5e4": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c2_TF1_claude_attempt01.py",
+    "packet_sha256": "15b79bbf9b8c0fcacb3945df4a7779ead86549624631d3607f2e82f92c7418a0"
+  },
+  "rev_22bdec10f0d6": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c2_TF1_claude_attempt02.py",
+    "packet_sha256": "5cb0898993bd9c3237943405797e468cdda9db57faf7b25ad55feda13c33bbf3"
+  },
+  "rev_c982948fd26a": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c2_TF1_claude_attempt03.py",
+    "packet_sha256": "ad1dbc63db9a0b0ebb6adf1a7e21723991dd7d921ef82f8197ab277dc22f916f"
+  },
+  "rev_8c725adc5d5d": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c2_TF1_deepseek_attempt01.py",
+    "packet_sha256": "fbfe307a837efe7cef4ee57176434e5d99a4074ff919b62e93f361eb85739300"
+  },
+  "rev_5e9630563292": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c2_TF1_deepseek_attempt02.py",
+    "packet_sha256": "502179e3b69ffb3f59210d7a6f0a21b69a9bf223676de31634ffda7fbeab914f"
+  },
+  "rev_43e41ad98d73": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c2_TF1_deepseek_attempt03.py",
+    "packet_sha256": "552e171c3653063667b653e9bc0d5c59fc3fbd67ee71b3af3df06fd442777b7a"
+  },
+  "rev_003f32b61524": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c2_TF1_gpt_attempt01.py",
+    "packet_sha256": "cb5e4d9f4e42d5a125d938ef10abc39ac928d7b4c49b537a8c4c937935bc5c60"
+  },
+  "rev_5a6f04a4b175": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c2_TF1_gpt_attempt02.py",
+    "packet_sha256": "235b7358c94a13a2d11bd981ae5597607b4d6c5a00b365a283b2038943a3e239"
+  },
+  "rev_53c53fc22f44": {
+    "op_id": "c2_TF1",
+    "put": "c2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c2_TF1_gpt_attempt03.py",
+    "packet_sha256": "e42b41b8ad6f2c74b86dcf009ad94b08256bd4a13219286cb9da5b52f8d13686"
+  },
+  "rev_3ee04440c4f9": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c3_CE1_claude_attempt01.py",
+    "packet_sha256": "b557443e303f4666daa6455dcf839e27c093dcbcad7ee0098e9876e188dfd23d"
+  },
+  "rev_479511325ad7": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c3_CE1_claude_attempt02.py",
+    "packet_sha256": "107b8cad5f63b9d37cbc5c7b7500ac0afff526ba31c53545abfb9ce26dea39e7"
+  },
+  "rev_a1a600754ee0": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c3_CE1_claude_attempt03.py",
+    "packet_sha256": "ad45ef5318e497bbe2b7c8d61a6cd173cd02ff2580372edaa06ce8b0e92914a9"
+  },
+  "rev_38ea53a3ecba": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c3_CE1_deepseek_attempt01.py",
+    "packet_sha256": "e93e6e17738f34eeda6cc54d8a330b3da290fd71a1a18ca0e5a4df4fba241296"
+  },
+  "rev_e730a8d805db": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c3_CE1_deepseek_attempt02.py",
+    "packet_sha256": "a765a2ccf07db3464057d4994034c6739561551b3fabe8e0bf0145ce61b9f462"
+  },
+  "rev_5a63792e8e76": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c3_CE1_deepseek_attempt03.py",
+    "packet_sha256": "6775f5002165fae0a96fcff482ce4ba5e70247e24ae746207678cc3726f83f32"
+  },
+  "rev_d23cac8b6a88": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c3_CE1_gpt_attempt01.py",
+    "packet_sha256": "e491b525f40fdc04f411812986098a5bcf5b01a89a530bbae9b83c15ebaaae59"
+  },
+  "rev_979c41813499": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c3_CE1_gpt_attempt02.py",
+    "packet_sha256": "fbdb83eb9e35c697d4778056503cf8e36ab29eb9c6718f9b534c8625392a3639"
+  },
+  "rev_6b418aa74def": {
+    "op_id": "c3_CE1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c3_CE1_gpt_attempt03.py",
+    "packet_sha256": "fc4b2ecb417533d15e3757e914eb4cd5e364a0cc4082792f7a1acbbb31e65f1e"
+  },
+  "rev_528aa07c54dd": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c3_HP1_claude_attempt01.py",
+    "packet_sha256": "6f882b4a0549fa95cdf9d6a56493c6f51d2d1f7547da4fbf440900ed4852002c"
+  },
+  "rev_10730cdd515c": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c3_HP1_claude_attempt02.py",
+    "packet_sha256": "768de58bf8e619a8f3b8797424f0d8bf26fa93532177cbea0df86849b0019c57"
+  },
+  "rev_a71f91eb5552": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c3_HP1_claude_attempt03.py",
+    "packet_sha256": "5cc408c945e9cf5e22964ba05ad2497bc6c682179f294c4f1437b72b74e6884e"
+  },
+  "rev_ba0ab02b94e5": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c3_HP1_deepseek_attempt01.py",
+    "packet_sha256": "c2f21d3d13fcfe63b049a74d2c802fc3b8f975dd66cfe812d07ce3a73972a614"
+  },
+  "rev_7603ebd9728b": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c3_HP1_deepseek_attempt02.py",
+    "packet_sha256": "6472f9c2ef7da27ebc74e4c5dd21f83473752a4b58f28ce9c628620ee118b136"
+  },
+  "rev_50eaead443e1": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c3_HP1_deepseek_attempt03.py",
+    "packet_sha256": "dbf17604b2e5bcd085d66d62ab974a1b954937f3e9d06a09a83ab72e4cde5fb7"
+  },
+  "rev_a72e8fec1d1d": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c3_HP1_gpt_attempt01.py",
+    "packet_sha256": "0b7f57d2ee2cb0359c9d7bdb2befe00d5d396772cfe95f1f8549f0f1d36d9050"
+  },
+  "rev_9fe938837ae9": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c3_HP1_gpt_attempt02.py",
+    "packet_sha256": "bce775edf07672cb28a5094c5d4ec6766b26b7ede9dbc5cd69591b48dc597a2c"
+  },
+  "rev_b20cc7b1f7b6": {
+    "op_id": "c3_HP1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c3_HP1_gpt_attempt03.py",
+    "packet_sha256": "e80722998c68e5712daa82f978a75f405ec700d99727456a13d26ef16cb6aec0"
+  },
+  "rev_a6556832e386": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c3_TF1_claude_attempt01.py",
+    "packet_sha256": "48ac62658e03cc32fc75e126aac41cd89b0e7e6530ff410e0bfc168e23cbcf82"
+  },
+  "rev_c3c57088dcf7": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c3_TF1_claude_attempt02.py",
+    "packet_sha256": "63b18be3c6b58233d265b6b58b3f0564b6239149a53685fdd5dbcf85be3ff367"
+  },
+  "rev_d31f0e51dfaf": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c3_TF1_claude_attempt03.py",
+    "packet_sha256": "641ec48d2058b5aa2cedcae9f91e0669d7235d8b2806cb8a2e4450ac6de5f330"
+  },
+  "rev_d5854e1b8701": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c3_TF1_deepseek_attempt01.py",
+    "packet_sha256": "1075097e5cfc9ccc00886a93a79b3a332bf7d95abd8bf5aa9af6d3bbca6dde1a"
+  },
+  "rev_45a7a81838a9": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c3_TF1_deepseek_attempt02.py",
+    "packet_sha256": "fdb448edad838f3a6c17363a875949563957ffce943f8ee734385e45308b71ba"
+  },
+  "rev_4141c1238009": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c3_TF1_deepseek_attempt03.py",
+    "packet_sha256": "2b44add05a6e33c95365f909a003c28fc6ca1b56fd33e9cc8b6b9c330b257eb8"
+  },
+  "rev_39cebea502f9": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c3_TF1_gpt_attempt01.py",
+    "packet_sha256": "ba383991016ee3c863e18817a5a152b0a3ad45ca33c402d2a8e850e1289b7a2b"
+  },
+  "rev_34fd66a672b0": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c3_TF1_gpt_attempt02.py",
+    "packet_sha256": "58650911cf086cdd39667c38bc7622b2abe2cdc0763589438d5099dbe256c533"
+  },
+  "rev_577f48706856": {
+    "op_id": "c3_TF1",
+    "put": "c3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c3_TF1_gpt_attempt03.py",
+    "packet_sha256": "11654c8cd8d1d9c1423d6febe890b25cdfc8cd8c061637659e8b21384274707e"
+  },
+  "rev_d449c900f7a6": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c4_CE1_claude_attempt01.py",
+    "packet_sha256": "efd6c559c97a9d9edbbd411acd378dabd3036f66135511b6add3ffba1e784103"
+  },
+  "rev_e802665d18b9": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c4_CE1_claude_attempt02.py",
+    "packet_sha256": "5f5d811c68067ba7a0b35c3a85321a870e5b16afa4048539497ad692d2ad458d"
+  },
+  "rev_ecf37ec68b2a": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c4_CE1_claude_attempt03.py",
+    "packet_sha256": "8f60c807ef9b54e1e85fae344bf0fb70ff1cbd0137f9014e30d7fae2b16fe371"
+  },
+  "rev_e21ecf406206": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c4_CE1_deepseek_attempt01.py",
+    "packet_sha256": "817de7761e05f5969ae51f17a26a1ec0e7e37294a285704e9b9fb9deb0f25ba9"
+  },
+  "rev_5e6cf8dba68b": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c4_CE1_deepseek_attempt02.py",
+    "packet_sha256": "10dd2eeafad14f7df1e708e97629ebc77f71ebcf3f1cd1d649022a82a40c34cf"
+  },
+  "rev_0fa73d2b0cb6": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c4_CE1_deepseek_attempt03.py",
+    "packet_sha256": "a50abf8c015c59ce49df45d23d5665fd4b3b01d71f6a70e11cae00dac525fbdf"
+  },
+  "rev_3553c7d44dae": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c4_CE1_gpt_attempt01.py",
+    "packet_sha256": "86d2feea13bccdbdd9d2936eab71ec6eb95f27bd63112ba1946e506f98a6028d"
+  },
+  "rev_e83ace2bcec8": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c4_CE1_gpt_attempt02.py",
+    "packet_sha256": "5d1ec4d1961783ea9b467bdb1643eb44024654f41a0b91936cec0a5fb2c5e4a1"
+  },
+  "rev_391214e81eab": {
+    "op_id": "c4_CE1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c4_CE1_gpt_attempt03.py",
+    "packet_sha256": "17c16f9fb1a36067fac3c64167eb7376e03878aeb729980b58241b17246d4c4a"
+  },
+  "rev_3f542e55fdaa": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c4_HP1_claude_attempt01.py",
+    "packet_sha256": "c3d1d7ff2411e80efa0c1f43203679937ed5e3200375d728891c347dd803fffa"
+  },
+  "rev_34fd9aa67f74": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c4_HP1_claude_attempt02.py",
+    "packet_sha256": "6605d36f8fdd21c8a881dfd4f89edf52e51e6adc5c5720a95a026ba0a19edc5e"
+  },
+  "rev_d520e8feafe5": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c4_HP1_claude_attempt03.py",
+    "packet_sha256": "b99475bd501359d2e84d048e4061a12600ce0dd1331a7db5d15576379e50ed62"
+  },
+  "rev_d3872a2248dc": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c4_HP1_deepseek_attempt01.py",
+    "packet_sha256": "34f84b44192e1c5285838e0cf0757a96aacfe9a14e3a2e8f71f5c01ce78cf54c"
+  },
+  "rev_d693ff7b9388": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c4_HP1_deepseek_attempt02.py",
+    "packet_sha256": "ba7f4819643f16747f06ea4e5493a10702a6a2c9a92b364bdea5def7f108f816"
+  },
+  "rev_b4b34af57785": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c4_HP1_deepseek_attempt03.py",
+    "packet_sha256": "1e298887f89fe839e22229d2fabf8684e20bd5e2a55495804dc0072440677242"
+  },
+  "rev_436bb6f2295c": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c4_HP1_gpt_attempt01.py",
+    "packet_sha256": "e7a862023df836bd3c659a31e940eb0c858bb649b3172d9d8bf5f5939bdf315b"
+  },
+  "rev_888ce41f7f35": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c4_HP1_gpt_attempt02.py",
+    "packet_sha256": "b5ebd2825ef55ffede3298b67b8c44751012534756c8b6d009154eed9c76d824"
+  },
+  "rev_e0ebbac76c1e": {
+    "op_id": "c4_HP1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c4_HP1_gpt_attempt03.py",
+    "packet_sha256": "127ac922e5745b35fe06916af1306973902093f12be775eb7f74f6077cfd28cb"
+  },
+  "rev_c05d4115fe9a": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c4_TF1_claude_attempt01.py",
+    "packet_sha256": "0cfe677d0028c1aedabb131aeec03a5e0ce7d48b189a2f85e80f89d41d80ff0a"
+  },
+  "rev_c9a799df8f87": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c4_TF1_claude_attempt02.py",
+    "packet_sha256": "67994866284e98f1006408e24f9b011f7f02f8fed991ddd67c9fd2725a2f91d6"
+  },
+  "rev_ad51f7f747b9": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c4_TF1_claude_attempt03.py",
+    "packet_sha256": "8472de72f1c4a7e7179832e09b75c6277592b77286f2aa5915c205fc269e911d"
+  },
+  "rev_dee51921706d": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c4_TF1_deepseek_attempt01.py",
+    "packet_sha256": "1dac30bdbfe85b3b7d254dd7bbe7fad7af72fee92b9993e4210ba98ca647c56b"
+  },
+  "rev_bfa04d52337e": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c4_TF1_deepseek_attempt02.py",
+    "packet_sha256": "7852c4d455caa4613aae5107df953b319d2f7e652be546fcb2bf3716eabbfe61"
+  },
+  "rev_21ac85346246": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c4_TF1_deepseek_attempt03.py",
+    "packet_sha256": "7b0711324d0af1259679bfe29e91ed7d15abecbea7898e0a9466e8187d3c1a2f"
+  },
+  "rev_23277b6853e8": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c4_TF1_gpt_attempt01.py",
+    "packet_sha256": "2961b05ec0801a74584f2d9427883115286e261154f8dd07c4b7b160fc93323b"
+  },
+  "rev_5321126e80cb": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c4_TF1_gpt_attempt02.py",
+    "packet_sha256": "88c5bfe752657398027cb2595a91531c9597e8e547a2b0d55fdc6f9438464bab"
+  },
+  "rev_24921778dc5e": {
+    "op_id": "c4_TF1",
+    "put": "c4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c4_TF1_gpt_attempt03.py",
+    "packet_sha256": "111eb68d2e95c4bf006e84150cb5f682ecc8e079468a1565fbfeba8c600a0710"
+  },
+  "rev_3599cafccb20": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c5_CE1_claude_attempt01.py",
+    "packet_sha256": "ac2eb11825cb328ca1d039accba009f088f9db0691ff63087b0bc35288fe9b7d"
+  },
+  "rev_afe336fc5922": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c5_CE1_claude_attempt02.py",
+    "packet_sha256": "44a558e119f7e99fa03df4542ffbcff1dd5151cb86dd4b1c7833398ac9f7981e"
+  },
+  "rev_8c70bc765ee5": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c5_CE1_claude_attempt03.py",
+    "packet_sha256": "925f6ccb613b94652faff9d6229e084791b8f3e99e0c7d43527b1e4b2b489a8d"
+  },
+  "rev_1d5f478ecea2": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c5_CE1_deepseek_attempt01.py",
+    "packet_sha256": "031337fb7e1e05146c3534c7a3c615678ee2d4d36d76e800382a4dd7c041f65e"
+  },
+  "rev_d68d864bb805": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c5_CE1_deepseek_attempt02.py",
+    "packet_sha256": "9ec8c3cb1024c05496bbe870f063b33bf44887a246f370159d5d7951c48fa4b8"
+  },
+  "rev_93dcb50fd936": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c5_CE1_deepseek_attempt03.py",
+    "packet_sha256": "fb75d8d0dc05e144cafeeff3df96253f89bd718169f20e4fd76856165a7c4913"
+  },
+  "rev_335a78e44dd8": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c5_CE1_gpt_attempt01.py",
+    "packet_sha256": "e6caabc59f9609245d4ac1f9124786c1a719054ec7c52b0fdb28722fd55a10ae"
+  },
+  "rev_4537bac699b6": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c5_CE1_gpt_attempt02.py",
+    "packet_sha256": "400738ffe5f822eb62a0435bd76d32dae69b9b5b4fdcb07e189a880e41566822"
+  },
+  "rev_ed3ec965d6e8": {
+    "op_id": "c5_CE1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c5_CE1_gpt_attempt03.py",
+    "packet_sha256": "156e24bdcf291289ce3ca07f5a2962353bdc0395df56f7824a84e6b56c34222b"
+  },
+  "rev_fa88937cc395": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c5_HP1_claude_attempt01.py",
+    "packet_sha256": "084d16051fe630e5585c3b0bfb0586a13799dafd37b5fca0c79c474f5e63a907"
+  },
+  "rev_6779269bdb0d": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c5_HP1_claude_attempt02.py",
+    "packet_sha256": "7caab5be0fd184805ce0f8ce6ff58d48a20dfe64a75fd73ecba21ba9cf64d254"
+  },
+  "rev_ad21e04b0e3c": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c5_HP1_claude_attempt03.py",
+    "packet_sha256": "f97fe24835f87b52b4408e05c457e1e06936620f9ed8fc8b711f3df5d370734c"
+  },
+  "rev_1bcb6f250891": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c5_HP1_deepseek_attempt01.py",
+    "packet_sha256": "0373bd9d646f37a550ea91fd21172b732470b0d548459d3cd57ba8c43d7bbf1b"
+  },
+  "rev_587049ab9770": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c5_HP1_deepseek_attempt02.py",
+    "packet_sha256": "257ef6c008ddbec6dba4134bc0f7092277c51d84f9e8ffe6a23d0ddf7276441e"
+  },
+  "rev_9b25262443b7": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c5_HP1_deepseek_attempt03.py",
+    "packet_sha256": "7d56fb055d96e49e58a85085a21c4dab46ab02e1d85bfa76d8452d395a9e56ec"
+  },
+  "rev_4ada90bc057c": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c5_HP1_gpt_attempt01.py",
+    "packet_sha256": "622a4750b3a5431a6a2f7e8ce9aef3d5a96d2fe1b331e617431fdb0af4a83f9b"
+  },
+  "rev_3b562c0063cf": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c5_HP1_gpt_attempt02.py",
+    "packet_sha256": "a13213434d9e7b0362329a0fecf43b7a42e3361bcfebe777172d63e9e6094827"
+  },
+  "rev_d532d84691f1": {
+    "op_id": "c5_HP1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c5_HP1_gpt_attempt03.py",
+    "packet_sha256": "8bd1d4bc71f647547cfec29faa9aaeeac73bca44cfd9626452d1fe83f57ceee4"
+  },
+  "rev_360229984b5e": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c5_TF1_claude_attempt01.py",
+    "packet_sha256": "0050b60d3de60915e3c43234c017ef4294eeb43dcd199ec3568e0f28d45b0abd"
+  },
+  "rev_678ceef45b68": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c5_TF1_claude_attempt02.py",
+    "packet_sha256": "c3c178db0dc4f82e9fb347c27297e2bd7be9fc9d5f9f225dc5d15149643cd06e"
+  },
+  "rev_c818cc057d15": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c5_TF1_claude_attempt03.py",
+    "packet_sha256": "b01268c2e5422ededad8efa5008cea075c214c8935edf55c504d9532e39aae4f"
+  },
+  "rev_5311b8b06131": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c5_TF1_deepseek_attempt01.py",
+    "packet_sha256": "08251283f3f062ef4c1c71261ee2d97ae34ce5d8ae6424a2bbef7a340b3d6656"
+  },
+  "rev_8ca2ce23b66a": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c5_TF1_deepseek_attempt02.py",
+    "packet_sha256": "47f3b3e28434699ad8624cc479928e3a933f49e55f9cd9a5cbbea03c02f2112a"
+  },
+  "rev_1657b6fa429c": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c5_TF1_deepseek_attempt03.py",
+    "packet_sha256": "0ac36247ca2c34141cd2c37de06d8b04d9169c4cda65413226b1a0c2d9c2985d"
+  },
+  "rev_f5cce1dec3c5": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c5_TF1_gpt_attempt01.py",
+    "packet_sha256": "dd45bee74bc812563418875fc7f524f14fdde0f2afdac1b9cf336d1cc84b3fff"
+  },
+  "rev_502e1d296446": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c5_TF1_gpt_attempt02.py",
+    "packet_sha256": "38da6734a37e2b6d9a54a2d3c6cfed46d83fece702c52075d2359a187337059d"
+  },
+  "rev_28baea565fd5": {
+    "op_id": "c5_TF1",
+    "put": "c5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c5_TF1_gpt_attempt03.py",
+    "packet_sha256": "9d6931c4c25faf6e5103558cff444a16c41e2f381c4e7da141310b7d9ee30826"
+  },
+  "rev_fdb5ed8ff3be": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c6_CE1_claude_attempt01.py",
+    "packet_sha256": "7bb45c091ee467e1831022046633fb47142fcf4bf4cc8913f337806baf2c6c2e"
+  },
+  "rev_a610367d1a1d": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c6_CE1_claude_attempt02.py",
+    "packet_sha256": "345bbfaa104d8cc972f14ea80c036d92160bb481e9aa1aa971880700b2286b01"
+  },
+  "rev_7726c0f60d58": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c6_CE1_claude_attempt03.py",
+    "packet_sha256": "eed1da9a5129a5aeaaf1cabe2cca6ee018c88434a4c8ccf12bdf6fe5f38a61f2"
+  },
+  "rev_11c72a555498": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c6_CE1_deepseek_attempt01.py",
+    "packet_sha256": "91af327100a498dd095ee03183bfdb4e129749f826d9a1ec33a7cb277d7719c6"
+  },
+  "rev_a18105967100": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c6_CE1_deepseek_attempt02.py",
+    "packet_sha256": "389c690d6a1af06f5f48598b9a8423c297e22810b3e3df54c3aff5b7268fe35b"
+  },
+  "rev_4a30424929c8": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c6_CE1_deepseek_attempt03.py",
+    "packet_sha256": "44c5d48c7a3634ccebcadee11a76c0e83c095959ec0a43b2291c5ddf7b7aac9d"
+  },
+  "rev_0e1170c806df": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c6_CE1_gpt_attempt01.py",
+    "packet_sha256": "ef75828e916dcdf06361a05292da3a877e53c3247ef880b454e588e602e095f7"
+  },
+  "rev_175efbabeebc": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c6_CE1_gpt_attempt02.py",
+    "packet_sha256": "51ae830689bc9fa8cde69e7273d7fe8441a7feda40858e7ead3d8f6f20620f94"
+  },
+  "rev_e67ec2cf5c25": {
+    "op_id": "c6_CE1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c6_CE1_gpt_attempt03.py",
+    "packet_sha256": "49330d99c23d7091af8f8ca29d0e14156998ec4e1aa641c90158cbf5f6a79749"
+  },
+  "rev_ed5d099017bc": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c6_HP1_claude_attempt01.py",
+    "packet_sha256": "7fe3ba00e1331c39de1a45f631681925228867539a60133868afd37713a55fd3"
+  },
+  "rev_d80183e47b3c": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c6_HP1_claude_attempt02.py",
+    "packet_sha256": "e023c486f2a46a54101f3d1f9efeb3f47f9fa58ed224500743312fbffac8747d"
+  },
+  "rev_4a6c40371cde": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c6_HP1_claude_attempt03.py",
+    "packet_sha256": "50fba5ca6426b3c4ba01830e3f5cfaa9222e5eadbe8df54ed947bcef16ebf7de"
+  },
+  "rev_2350a1a4c1ed": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c6_HP1_deepseek_attempt01.py",
+    "packet_sha256": "57db823bd26c57bca4bace78d8a41b678a181d81645176e7469651f5d122371e"
+  },
+  "rev_cd67ec8469d7": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c6_HP1_deepseek_attempt02.py",
+    "packet_sha256": "2f21df929965137d2fe8ef8d3477739b8e392b1392c602890eac845b0b43e35f"
+  },
+  "rev_7111fa8ae8c7": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c6_HP1_deepseek_attempt03.py",
+    "packet_sha256": "778ff794543ca7a8e455b2294f3e91b55684aed0c68233d927995e209244d45e"
+  },
+  "rev_480a9a6c7246": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c6_HP1_gpt_attempt01.py",
+    "packet_sha256": "fb871a1dd4efcdf1edfeeb7a476d2a5d08c17a4431e1dbf37e79d65df51aa9cc"
+  },
+  "rev_b3a546f4f606": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c6_HP1_gpt_attempt02.py",
+    "packet_sha256": "39d7bf8d4446f67eb1a3a8e0c87b3f0d9891e12687162315d7450a4382888a06"
+  },
+  "rev_4baeb09e35a4": {
+    "op_id": "c6_HP1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c6_HP1_gpt_attempt03.py",
+    "packet_sha256": "d4ccb05b638cecc7f2f1f2f67da130a8cc3ac1178d802f7bb42f5083f1cf053f"
+  },
+  "rev_b412667d51f8": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c6_TF1_claude_attempt01.py",
+    "packet_sha256": "feebe84d25413e45765fd48cedbb49b867f0062769da03e4a77be18a4d7f90de"
+  },
+  "rev_3048d82adce3": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c6_TF1_claude_attempt02.py",
+    "packet_sha256": "ede199480b0eab7cdfd12b159a061664c408a0de478dfa8fd34a2e56266a75f6"
+  },
+  "rev_78bfcc20761a": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c6_TF1_claude_attempt03.py",
+    "packet_sha256": "9b800c3103d301a0acbfce8742a32bef678ee2c246f9c91df85af6ac1f743401"
+  },
+  "rev_f2f3b092cd67": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c6_TF1_deepseek_attempt01.py",
+    "packet_sha256": "22144fdafad3b2f1c80b1286a83ad7aaaaf1933c5d2c38ddfea926bab8d9b8df"
+  },
+  "rev_926fce8c88a6": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c6_TF1_deepseek_attempt02.py",
+    "packet_sha256": "0aaff66484048fbb5e1be565e7331fdc889327b7a4bb953322139958c2cfcdf5"
+  },
+  "rev_ffcac35f2814": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c6_TF1_deepseek_attempt03.py",
+    "packet_sha256": "89232f8479763d6d011ee35b3c10bd3b73ca3287f4634e720198aecfe2c0631e"
+  },
+  "rev_95b4206b5e75": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c6_TF1_gpt_attempt01.py",
+    "packet_sha256": "6819767ea348ab40dc69d4a36597cd8219cb37c4ddb334174b37edaad4834afc"
+  },
+  "rev_7b33de94b584": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c6_TF1_gpt_attempt02.py",
+    "packet_sha256": "64408bd350d31cc91187be48bee5016525f9c669649309ca056a4ad0c0b06b78"
+  },
+  "rev_77dadf1729f1": {
+    "op_id": "c6_TF1",
+    "put": "c6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c6_TF1_gpt_attempt03.py",
+    "packet_sha256": "8b6a04995c9cdbc6ce024f8b54176418dbcf2d95378d9e818869d9c7f7894fd6"
+  },
+  "rev_24c57359dc86": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c7_CE1_claude_attempt01.py",
+    "packet_sha256": "c8254a8af01de07610bb7761ddae158bba7e2cd1cc07398741f58b7eb7fc4693"
+  },
+  "rev_819f775e1c0f": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c7_CE1_claude_attempt02.py",
+    "packet_sha256": "7e44703b47b6484551d837d29bbf9c6961d039fa17701e4b16968295a40c6140"
+  },
+  "rev_87a4bc56fd5f": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c7_CE1_claude_attempt03.py",
+    "packet_sha256": "8a67e16dee00c70454249766bc6fe6243c15aec3b5465fca488e3585f1a12acd"
+  },
+  "rev_4dbd2e5b1c03": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c7_CE1_deepseek_attempt01.py",
+    "packet_sha256": "41dd0286f0d882efeb451a9011b4cecbce4f98a5c592532bcdb90abf431cbeaf"
+  },
+  "rev_253b35f7d3e7": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c7_CE1_deepseek_attempt02.py",
+    "packet_sha256": "b411d415e211ea3b34eb6a89156391701035632b3f62159df399c0d5ffe7a96e"
+  },
+  "rev_4a0510a94e00": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c7_CE1_deepseek_attempt03.py",
+    "packet_sha256": "5c4ef93ec7c94f46ff2db40b2492584a8cef9e6763ae0a3a44fe2d9f5eda7c17"
+  },
+  "rev_57400308ba7b": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c7_CE1_gpt_attempt01.py",
+    "packet_sha256": "af7b655cfaa77a9bad65c0febbd8255a9be7e1bb74a5c6d8493c536f8b4fd08a"
+  },
+  "rev_c871a537273e": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c7_CE1_gpt_attempt02.py",
+    "packet_sha256": "2309fd4014eedbe1c9e1cd7652fabba2d3a53c072da4411b64d5ee8c0b1743b2"
+  },
+  "rev_a8f21db1d84f": {
+    "op_id": "c7_CE1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c7_CE1_gpt_attempt03.py",
+    "packet_sha256": "33d1916ca38bb24b88cd5d5f30448c04fa7260d32edd094995125ec8990134de"
+  },
+  "rev_dc73a24f97f2": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c7_HP1_claude_attempt01.py",
+    "packet_sha256": "924bc74b58edfda03c5c05db2b5f7880236ddd95d69d6f728af0503323fabc1a"
+  },
+  "rev_3792042aaa62": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c7_HP1_claude_attempt02.py",
+    "packet_sha256": "c2f905af5112c63d5a243be7c2b5a7b4281afe46576b35f5f6cef65363f9739f"
+  },
+  "rev_08a0afa2559d": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c7_HP1_claude_attempt03.py",
+    "packet_sha256": "cae8a0f83659f66c73087a987658afd94ff550b62d0938d34ff4e0c76c2069a0"
+  },
+  "rev_a8beea1f0876": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c7_HP1_deepseek_attempt01.py",
+    "packet_sha256": "a37391dc2185abf1f3360441619bd827fd539f985c2b09b496ebb9af23931fdf"
+  },
+  "rev_4075d762bce2": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c7_HP1_deepseek_attempt02.py",
+    "packet_sha256": "16a5caa4a58c44678797ef80df6622d78008fc1d5c49e9f42fcab176d7b69eb0"
+  },
+  "rev_9a5ab4298c76": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c7_HP1_deepseek_attempt03.py",
+    "packet_sha256": "e543ca54a21ccad8ab0c60b53d2e94cef2d98fcaff0e4352d5cfdb84d5c30b12"
+  },
+  "rev_c2924eb948d7": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c7_HP1_gpt_attempt01.py",
+    "packet_sha256": "25744175b5e2fbf9ebcae80062f23b03f69702307109f2c4ea1fa484fbbf3b72"
+  },
+  "rev_db0c998e45f0": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c7_HP1_gpt_attempt02.py",
+    "packet_sha256": "56d0603bda1e4106571c5547ea9ab12100e0b7f89b61fd9d9835f6d649d98a2d"
+  },
+  "rev_f7b6ab013fbe": {
+    "op_id": "c7_HP1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c7_HP1_gpt_attempt03.py",
+    "packet_sha256": "8bfce8a29317aabb13d5a83c9d40cc1164586a164d3d36d57fa4693ea97b0ee1"
+  },
+  "rev_d8d2459637d9": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "c7_TF1_claude_attempt01.py",
+    "packet_sha256": "5e52134c1e2f85ea66016288d410b824a4d64baeb55661601b44124bdd3d22e4"
+  },
+  "rev_d450dc97e968": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "c7_TF1_claude_attempt02.py",
+    "packet_sha256": "7193bb5de6831f3056463917048bc75981fdf53c4cf93df809ac346b46bc8aa4"
+  },
+  "rev_a2904dd7272b": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "c7_TF1_claude_attempt03.py",
+    "packet_sha256": "bf1b3681975e8f4cc69f70d22a843a18c87d8a0ab33553643c41c53e73d5c543"
+  },
+  "rev_57bf55d2453f": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "c7_TF1_deepseek_attempt01.py",
+    "packet_sha256": "728e134772e9da8291dbaf7a96b16b95cd0aa23f88b6f501b1a0426745c99962"
+  },
+  "rev_1182f55ce4cb": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "c7_TF1_deepseek_attempt02.py",
+    "packet_sha256": "464fb60a65d3246b4f0f0dc560fb3f3e9b5bf3ae111487c1bbefcfd942cfa19a"
+  },
+  "rev_956015851659": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "c7_TF1_deepseek_attempt03.py",
+    "packet_sha256": "60ed19a61f6420e14f0acab6465cd0fe5ede8dbcde1e154e545c35cf46ba37bb"
+  },
+  "rev_76babf1b3cbb": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "c7_TF1_gpt_attempt01.py",
+    "packet_sha256": "08fccc1361c976777911a776cff7879cc6089a10849c9008f37d559652212831"
+  },
+  "rev_778ccc91ee3d": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "c7_TF1_gpt_attempt02.py",
+    "packet_sha256": "9195d5556737d4b667ceb8107943a13263ff60f275b86581e2821bbb0acf909f"
+  },
+  "rev_d33b3c66f742": {
+    "op_id": "c7_TF1",
+    "put": "c7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "c7_TF1_gpt_attempt03.py",
+    "packet_sha256": "42265ffccbe58ea7d10f0a4fb5eb8719449836506220b9e92db482f7a5ba5313"
+  },
+  "rev_5c76045ae549": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d1_HP1_claude_attempt01.py",
+    "packet_sha256": "6f581bfc6363625e352504c71b265b3ad9ac52ba7fa6fd7fddc71650955e3265"
+  },
+  "rev_95ce0b2ad813": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d1_HP1_claude_attempt02.py",
+    "packet_sha256": "1ce8156e7b33f696d8e7f4807b86b7429a4bf540c4f61c95da507866fdcd92fa"
+  },
+  "rev_c23c8eaecaf2": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d1_HP1_claude_attempt03.py",
+    "packet_sha256": "5f2dcec7fd104f5bc96083d8bbc9403bf36f27c3e269a65322af4f1eefcdd5e0"
+  },
+  "rev_6d6177c427e8": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d1_HP1_deepseek_attempt01.py",
+    "packet_sha256": "7c5520684aa8ce2aaf79d3f1428a8c55585f2c5e1032a52d3468588dbb3e307d"
+  },
+  "rev_ccbb10411677": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d1_HP1_deepseek_attempt02.py",
+    "packet_sha256": "213e09d4e4020765371394971f8d1de9bff15d62f277fd700797b1ddda54086a"
+  },
+  "rev_febef02715cb": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d1_HP1_deepseek_attempt03.py",
+    "packet_sha256": "bb22adf86e554a8a83158c982e08b50e89af73ea0e1f0c990becab37f3d8c295"
+  },
+  "rev_c883bea529ba": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d1_HP1_gpt_attempt01.py",
+    "packet_sha256": "686f14452ab274c50d9acebe3719ff5b8b591d56bd11bc3551fe46229f7e2de7"
+  },
+  "rev_6c1806cb91ae": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d1_HP1_gpt_attempt02.py",
+    "packet_sha256": "baf71b6146b32ed62b0d9af4b60b42f4543c445a0f9c524a2ec3e6f60aec18cc"
+  },
+  "rev_13ca971a29a8": {
+    "op_id": "d1_HP1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d1_HP1_gpt_attempt03.py",
+    "packet_sha256": "96d746ad29d20b282a32f60a5503fa46643bd255c24c92ad2071be8d49b7b1de"
+  },
+  "rev_aef80ff1e002": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d1_SI1_claude_attempt01.py",
+    "packet_sha256": "7f9c5f877a68d037bcda0fd33bb7cdfaf76a88cf8c2302fca4e0bf362d9ff409"
+  },
+  "rev_7bc8141e96a6": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d1_SI1_claude_attempt02.py",
+    "packet_sha256": "023c0c2da1b9c9abe169a0dd069fdfaccf6d06e2a687a468a72d5a131d6b9e4a"
+  },
+  "rev_0a7602ab2d75": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d1_SI1_claude_attempt03.py",
+    "packet_sha256": "541c49c333d4cdb3983f2791dfc0e2b22a4ab4cd6b22488e6564165e06b468bc"
+  },
+  "rev_c9714dc8f52d": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d1_SI1_deepseek_attempt01.py",
+    "packet_sha256": "855155c1cd6c743a2e259b08ac8248e528781e340d26c06f88b11fdda708620f"
+  },
+  "rev_975b1ad6dd16": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d1_SI1_deepseek_attempt02.py",
+    "packet_sha256": "7e504256c68390e45924cc82f19b61238a77a6b86ad59be0410122f62d6a7aff"
+  },
+  "rev_27bd45b52a23": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d1_SI1_deepseek_attempt03.py",
+    "packet_sha256": "0fb0b1a5a3457c382b5c2533d9c73ea26891779b678c203540f723b4599cb266"
+  },
+  "rev_f25b604bef70": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d1_SI1_gpt_attempt01.py",
+    "packet_sha256": "fe4cc9ee60036ce9e469d719b43514ca95d780bef52e9f6bd8c96254edbf90c3"
+  },
+  "rev_69e02fa97d21": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d1_SI1_gpt_attempt02.py",
+    "packet_sha256": "f45dcd70b0a409bc2c27ad00bb5cb0fbc6ccfc5930e017819db33e78f2ccdd52"
+  },
+  "rev_f38ca4fc8d4e": {
+    "op_id": "d1_SI1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d1_SI1_gpt_attempt03.py",
+    "packet_sha256": "05f0ff9d5d9bcd225dd187c5e3725c96db0d94ef47eecd9a8c7b4cdfe9f0d016"
+  },
+  "rev_cab2773a6d2d": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d1_TF1_claude_attempt01.py",
+    "packet_sha256": "4c4b37102d2fb16c8221f524d69a5fd37312af30b2febab39bc353db0a8bfc0a"
+  },
+  "rev_fd7cfd908847": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d1_TF1_claude_attempt02.py",
+    "packet_sha256": "01a83b3e07ee46b715de3589d8f14fcb20c3804fa4123a78c1ec11417b114ffc"
+  },
+  "rev_0d3e161b950e": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d1_TF1_claude_attempt03.py",
+    "packet_sha256": "3250467392571f1341ae74ea9caa9c98f8838c5f00cbf0ca003fbeeea23fba0a"
+  },
+  "rev_7e05dce1c20f": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d1_TF1_deepseek_attempt01.py",
+    "packet_sha256": "ed7d9b22310983cb59960e2ff1fd52e87b4420329c92b163267abf40fc66b410"
+  },
+  "rev_fa3d38d0d873": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d1_TF1_deepseek_attempt02.py",
+    "packet_sha256": "df9797857d668a715416240af3913c0a519f187a9b46ccfc104428a222cc8b64"
+  },
+  "rev_1085cabddd57": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d1_TF1_deepseek_attempt03.py",
+    "packet_sha256": "73a3f7e657bcfb56277087455e3d422fe58c747b671522df8be6375349adff7c"
+  },
+  "rev_695b87e00dbf": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d1_TF1_gpt_attempt01.py",
+    "packet_sha256": "d64b92d190f76da10c6901d7a084cfe886491a26fa49a7db7a54f0245ca0131b"
+  },
+  "rev_f918e9e40d66": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d1_TF1_gpt_attempt02.py",
+    "packet_sha256": "9e6188ef4086841170c576bddf5ec3b8cff41c52712b87ee417bd72e6423f53a"
+  },
+  "rev_88c502a8d16a": {
+    "op_id": "d1_TF1",
+    "put": "d1",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d1_TF1_gpt_attempt03.py",
+    "packet_sha256": "005dd3f86e63818f3a58b2fdfffb7ecfeccd4a0e5f48dcdc31cd24b5ee397be9"
+  },
+  "rev_410bb4dc4ac3": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d2_HP1_claude_attempt01.py",
+    "packet_sha256": "9baad4ae357535681526b60715a7736ab8663eb0bd11e1f8fa3e7086d865cdb9"
+  },
+  "rev_e93f8ca75f71": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d2_HP1_claude_attempt02.py",
+    "packet_sha256": "9d39049f809f23198b123f0856e9715684edc9fa09cc38d367a64eb9af68fad2"
+  },
+  "rev_fe410a57d21c": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d2_HP1_claude_attempt03.py",
+    "packet_sha256": "d10326f03792ad7dccff6b74e37047296ba724b9b0f73a645b54d4d6ea8f95b4"
+  },
+  "rev_094b29b92a70": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d2_HP1_deepseek_attempt01.py",
+    "packet_sha256": "bb47eee1e447251f70c30832557078b64658db8fe827f0c2aec39525b0449c65"
+  },
+  "rev_e62797b13efc": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d2_HP1_deepseek_attempt02.py",
+    "packet_sha256": "7c7aa65ab011e4c4e59cc466276e9656198170798d9e1413459e9cf301ee67cb"
+  },
+  "rev_5c8b4376d9c5": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d2_HP1_deepseek_attempt03.py",
+    "packet_sha256": "07042af1a9f07ebd57c6469ddea8e2829514e3f03749455811c083910eba2f6a"
+  },
+  "rev_9004a6c281da": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d2_HP1_gpt_attempt01.py",
+    "packet_sha256": "10cb6a36a25692656c8f428efc4404dc677450cf745a97b9d77f379b2353a43d"
+  },
+  "rev_6cf4d8b6b215": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d2_HP1_gpt_attempt02.py",
+    "packet_sha256": "c02b35480947e7ea9876127d31a93ca9d87e4d28c97226d89d0fc3dbdaf60bff"
+  },
+  "rev_b25e7cd42850": {
+    "op_id": "d2_HP1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d2_HP1_gpt_attempt03.py",
+    "packet_sha256": "234291913fdc2ca25956c914737a19f662a9b32e6ec59d76cd9c34d012116cc9"
+  },
+  "rev_cc7dcd8d854b": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d2_OS1_claude_attempt01.py",
+    "packet_sha256": "7e2b8e2a43c212524c05f92865842d154a7d13854224977d665105025afe67a4"
+  },
+  "rev_6f67d8f77235": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d2_OS1_claude_attempt02.py",
+    "packet_sha256": "980ffefddcf90bfc95a35168f827b227d90285ebd1adf562790b4ddf3cba0cb7"
+  },
+  "rev_625b926efc6a": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d2_OS1_claude_attempt03.py",
+    "packet_sha256": "69285c412515e08f09ba7e6058c2d650d6779e14d4414c69759c2bba4f0d8027"
+  },
+  "rev_d87f1bb790e5": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d2_OS1_deepseek_attempt01.py",
+    "packet_sha256": "ca954ba2d12e53431495240fe235d1947f209a0fff6b2b207f5b55a969f8e9f2"
+  },
+  "rev_fa0b62c9d062": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d2_OS1_deepseek_attempt02.py",
+    "packet_sha256": "648975c66093a6598b1f7a958ca380cfde1c24f6dbbfa8ee0fd7f8e5a0b31574"
+  },
+  "rev_0f54ee3bcb08": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d2_OS1_deepseek_attempt03.py",
+    "packet_sha256": "943365438516451b07035e4cba972fe50abfed21b99542e2bb1a32e829dbd024"
+  },
+  "rev_8043ee347f4e": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d2_OS1_gpt_attempt01.py",
+    "packet_sha256": "849f666dbc2e75e07f67c05ac3a3df4aa3e2afa151627e7257f5cd3ea8e5f788"
+  },
+  "rev_10b5e8d13649": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d2_OS1_gpt_attempt02.py",
+    "packet_sha256": "98aa34763112d9ba7dd952b026ad745ca889692c95cbea19ec8e463f246ffa5f"
+  },
+  "rev_08adeffc1b82": {
+    "op_id": "d2_OS1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d2_OS1_gpt_attempt03.py",
+    "packet_sha256": "c9b5355907c4890bfc978cf8ea69751c5c37bcbdac0a5180219328709aed36df"
+  },
+  "rev_7b1b4acd3ce0": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d2_TF1_claude_attempt01.py",
+    "packet_sha256": "3a4e7a4843f09f6407f1250f32c0098286c4110529b56537ecc487c6ce6f6fe5"
+  },
+  "rev_ea64c73c8a2f": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d2_TF1_claude_attempt02.py",
+    "packet_sha256": "54f77da68093bc06f1ca787ca54871b486a42ce6a31b74f15e1f1fa45c61460a"
+  },
+  "rev_52b4efb15e91": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d2_TF1_claude_attempt03.py",
+    "packet_sha256": "0251a2df55cd40c3df6e295949bcc1ddfb31e54be6a4707815f43b0f0ee6d084"
+  },
+  "rev_f1d0fae5ac36": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d2_TF1_deepseek_attempt01.py",
+    "packet_sha256": "cece528daa5a91c37196aa25cd918102023fad9b60d5b78fa8005851eaa5d178"
+  },
+  "rev_3fd39cfd6978": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d2_TF1_deepseek_attempt02.py",
+    "packet_sha256": "52c6e8de07d694774e8fd4c8717f698ab95041826a22cae25ca65060e3c87921"
+  },
+  "rev_8ebb52c8216a": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d2_TF1_deepseek_attempt03.py",
+    "packet_sha256": "8cbdea9bbebc4d1a36ff332b18a25ef7f306b729346893f2b981b1dd4de20c4c"
+  },
+  "rev_c6262c344112": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d2_TF1_gpt_attempt01.py",
+    "packet_sha256": "6b242472c68ad7962b65095d05bbff3a2f49d2e7f28cbe7e2be2664ac812b7d7"
+  },
+  "rev_2049984db62a": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d2_TF1_gpt_attempt02.py",
+    "packet_sha256": "d30436ba60000506120d981c399c50b85e8ac814b4f1a85141085503fe71e6e2"
+  },
+  "rev_138515596d83": {
+    "op_id": "d2_TF1",
+    "put": "d2",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d2_TF1_gpt_attempt03.py",
+    "packet_sha256": "7a1b55c7291c73d9469d75c8680726c9730a550c7895435bca3705713bdb39a1"
+  },
+  "rev_edc51356609a": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d3_HP1_claude_attempt01.py",
+    "packet_sha256": "dbcc36e4d5529fa4a0edbccea3a2e8f91063379e95d8292afc1836c7ba8fba07"
+  },
+  "rev_bc165ba4af77": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d3_HP1_claude_attempt02.py",
+    "packet_sha256": "401db5536839efd1b8272e8f9ab21214f9a27ab986645033d728690ee6cca320"
+  },
+  "rev_73805a707258": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d3_HP1_claude_attempt03.py",
+    "packet_sha256": "c72748d36c62b7765054e46a5c4e3ef73406ad7c7302f0e854ba58a1a5b79e25"
+  },
+  "rev_6b44ce4b561a": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d3_HP1_deepseek_attempt01.py",
+    "packet_sha256": "49cb350cfade2ba4449129486fa3b9f6564488066b15174d1564ebce7c635d6a"
+  },
+  "rev_e80ad5e4a2ce": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d3_HP1_deepseek_attempt02.py",
+    "packet_sha256": "23fa5cd3a6c6dfffb6127fe0e350123d12e3e1ffd7ed704f47d01a7dea186335"
+  },
+  "rev_7fe1219e13e0": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d3_HP1_deepseek_attempt03.py",
+    "packet_sha256": "59232236fbf8fa35718e569a9e7426c721615e15f9cde0efe04cf234173f232b"
+  },
+  "rev_7b5675c8cca9": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d3_HP1_gpt_attempt01.py",
+    "packet_sha256": "867ce372218e0517f79181f52488190d601dc637a7aa0c77dc2c85a8c0809dff"
+  },
+  "rev_bd44fac13f35": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d3_HP1_gpt_attempt02.py",
+    "packet_sha256": "0b0eb487530c32e6b326028898a781b12e6144947de38b7018d5ee8147c6d227"
+  },
+  "rev_d3180e2471d6": {
+    "op_id": "d3_HP1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d3_HP1_gpt_attempt03.py",
+    "packet_sha256": "adb10ef37aedbd4e0ea7a07b564bf912ea6756f4be188ad87bb37a40201cc365"
+  },
+  "rev_b1fffda2892d": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d3_SI1_claude_attempt01.py",
+    "packet_sha256": "db27b823121f87f9608bb9023b2d3b366ca542a0192e09aa10772a057f581baa"
+  },
+  "rev_89283ebe4d59": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d3_SI1_claude_attempt02.py",
+    "packet_sha256": "9dd940d6369a1decbba52390152f88e118d738380425eb04a7136e178f5cc306"
+  },
+  "rev_eb4bf99baa9c": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d3_SI1_claude_attempt03.py",
+    "packet_sha256": "b4c8086f89b3c8b64c2a4e3bb6d9bc49012c3fdbe866f5f6bb221457647910da"
+  },
+  "rev_8ea2f910b9e2": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d3_SI1_deepseek_attempt01.py",
+    "packet_sha256": "3fc4a812ecfad5760fff54130a3735b95bfcaa37592bc798efd9977bdd0a2d68"
+  },
+  "rev_6e7cf3d239f9": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d3_SI1_deepseek_attempt02.py",
+    "packet_sha256": "529aec2848b70ffee2aea6925288e41c8df8b22c798f870fb63eef757ab21cc9"
+  },
+  "rev_be4c7ee3e35c": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d3_SI1_deepseek_attempt03.py",
+    "packet_sha256": "c719484fd2e2cce866bc80fc43dd44014384e009388b1a09004e5b2967c730b7"
+  },
+  "rev_51731896e732": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d3_SI1_gpt_attempt01.py",
+    "packet_sha256": "182e58576ba1bd18f6f28c2e734f7eb86cbee51331fbd7ad6d7e658cae2132d3"
+  },
+  "rev_6ba12ee1b90f": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d3_SI1_gpt_attempt02.py",
+    "packet_sha256": "3d9391cf2ecd9f7f556b1f334b826fd0e085befede39ecca5042d16e119d8941"
+  },
+  "rev_a1b488c37a61": {
+    "op_id": "d3_SI1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d3_SI1_gpt_attempt03.py",
+    "packet_sha256": "877a32c47c4a271c6511d736b0389a3eff957b27bc124add767ff6d2b143cd7e"
+  },
+  "rev_9d701d613a12": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d3_TF1_claude_attempt01.py",
+    "packet_sha256": "67688fac62488ba86732717c583cc38131d94b6c816486f10446a842155940cc"
+  },
+  "rev_75ef61875de9": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d3_TF1_claude_attempt02.py",
+    "packet_sha256": "d5e76a69e938385b38658e29641a43743a09da8528b698da1bbfac953339c940"
+  },
+  "rev_fc10b7871659": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d3_TF1_claude_attempt03.py",
+    "packet_sha256": "3d45290155e09877ced037fdbd23c150caffbecba149517ed98cf8c83293e45c"
+  },
+  "rev_cd09dec61f26": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d3_TF1_deepseek_attempt01.py",
+    "packet_sha256": "5e5f1fbff13a50c4af19abbacb4002e60b76d79924cd4b415d898ae10c352b84"
+  },
+  "rev_5db29eda7daa": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d3_TF1_deepseek_attempt02.py",
+    "packet_sha256": "b18cf55072a10be6f627c0b90a2e9e34c1d872a3eef56a13bf7619e2d470f86c"
+  },
+  "rev_ee0f8b8ae9a3": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d3_TF1_deepseek_attempt03.py",
+    "packet_sha256": "39a3429e38328011cfd6c81dc45765bb5845a774e9156000a295123ae8b7ba9b"
+  },
+  "rev_f5ff6387a91c": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d3_TF1_gpt_attempt01.py",
+    "packet_sha256": "19900e2d199ab124f8dcbae63942745a5b8444b504d1738cd3192b88c637cc62"
+  },
+  "rev_ba37482f57a8": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d3_TF1_gpt_attempt02.py",
+    "packet_sha256": "98009fc292033304c7bcd96995d8479ee3d81dff97404bfd2a45e2e0d867205b"
+  },
+  "rev_5e9514e8a8c4": {
+    "op_id": "d3_TF1",
+    "put": "d3",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d3_TF1_gpt_attempt03.py",
+    "packet_sha256": "7feef9a74afd34ee7158be737580b1529c1198b58006103c5e4bffc3b956d3f9"
+  },
+  "rev_f2b1c970001e": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d4_CE1_claude_attempt01.py",
+    "packet_sha256": "4186be6aae020d73393ace458e6cba59db9c6cee386274d41e4ebd0daf673b75"
+  },
+  "rev_f5089cbb2b49": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d4_CE1_claude_attempt02.py",
+    "packet_sha256": "e50c46c9519ce21194ba3a8932d2c8ab9ffda635608d7dc61ca91973c25a117a"
+  },
+  "rev_ee7400ea3e0d": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d4_CE1_claude_attempt03.py",
+    "packet_sha256": "65e19cd4b27d97bab02bc132eca924abf8f78c43fc4bcd3b68a201f9243937ea"
+  },
+  "rev_dd22847eeedd": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d4_CE1_deepseek_attempt01.py",
+    "packet_sha256": "ba097df9ea219bd87466f4b244e30e4941d4afcc518384ef8d3d6e41ee5bf140"
+  },
+  "rev_c9b6f4fd2854": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d4_CE1_deepseek_attempt02.py",
+    "packet_sha256": "9b3e5c901f1145cba4f5c0df85590b1dbeb7dddcf61fb86a88d118072695bbcf"
+  },
+  "rev_ddb8142a3e1c": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d4_CE1_deepseek_attempt03.py",
+    "packet_sha256": "1e9bed13107fbd6593351808cd83953de32e9e0645cf3237f3ba136b2ab0cb79"
+  },
+  "rev_773b82f81b00": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d4_CE1_gpt_attempt01.py",
+    "packet_sha256": "6a4d7eed4dc110021b85a46897d7fce182eb64930e63ad571f09ae78d7e842c6"
+  },
+  "rev_a41d285f4516": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d4_CE1_gpt_attempt02.py",
+    "packet_sha256": "52574e280271506ced185198e564edd6e2aa6368a3f02ff7b98323a7583a9b72"
+  },
+  "rev_54d13cf10657": {
+    "op_id": "d4_CE1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d4_CE1_gpt_attempt03.py",
+    "packet_sha256": "8298a9f5f8b8d45f243d5fb4e8a81d88d1e83b388eb01b9a12c845bb16ebceb7"
+  },
+  "rev_005e52f2ddfd": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d4_SI1_claude_attempt01.py",
+    "packet_sha256": "733e369fb910de7b08674e486272e6082821d4a6bfd3c696d88e629b88ec215b"
+  },
+  "rev_555f8a4cf497": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d4_SI1_claude_attempt02.py",
+    "packet_sha256": "c79e164e93cda38838dc85169548bd5b65ad3b00eb4dd91c6e04402887e446b2"
+  },
+  "rev_189457747eb0": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d4_SI1_claude_attempt03.py",
+    "packet_sha256": "7d089b3551aa6c008e23e7684a67839b46998487a1614c971e37c889eb109945"
+  },
+  "rev_ee67c6136d53": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d4_SI1_deepseek_attempt01.py",
+    "packet_sha256": "7fba4bbda348129dc4025c129d72406dcccfc1eefd39ce43546e2a184ba86b14"
+  },
+  "rev_fb8af572ab6b": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d4_SI1_deepseek_attempt02.py",
+    "packet_sha256": "e8a5d3a23681c702d67b76095d72d23b766df87cc66788fd588e1916f55ef0f1"
+  },
+  "rev_323a507280d4": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d4_SI1_deepseek_attempt03.py",
+    "packet_sha256": "bf0780abcff6d7b40467c80441335a89b253e0cb950d0c8a97ffea7714dc2401"
+  },
+  "rev_0e807ab81583": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d4_SI1_gpt_attempt01.py",
+    "packet_sha256": "7637493ab5d32cc90d27f32c27c6a1bba81242595207f326ce40bab5b095ed88"
+  },
+  "rev_ce846baa0ee4": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d4_SI1_gpt_attempt02.py",
+    "packet_sha256": "1a42a5aa01261a81f42f5f79f68e8dbd3062152563d5a432c1bad6c5ce7c7564"
+  },
+  "rev_a4ad1a975b09": {
+    "op_id": "d4_SI1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d4_SI1_gpt_attempt03.py",
+    "packet_sha256": "6c0beeb1a62279330c1029000993ed8a32ac9d1ca3654f86f4493973caa754e1"
+  },
+  "rev_8de7a0f59601": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d4_TF1_claude_attempt01.py",
+    "packet_sha256": "a59b3081f02eb5504e6fc7e3070f37db56edcc4e20739169588e2f5d31f5980e"
+  },
+  "rev_a84a73c109c9": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d4_TF1_claude_attempt02.py",
+    "packet_sha256": "54c171884f688af4535228230d4025d7a4d5fd619d05b78f6c63d758c8701dcf"
+  },
+  "rev_7cfe89df9241": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d4_TF1_claude_attempt03.py",
+    "packet_sha256": "81907930f12f296ad28cf2d5370e327ec0ffe67bea19a588bbc0288804300720"
+  },
+  "rev_7e64e4dfe1e6": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d4_TF1_deepseek_attempt01.py",
+    "packet_sha256": "3d49a884a57e924136ff1a1ae4018c7426e1edce980badb27fa9dd965f0ea258"
+  },
+  "rev_97456d941114": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d4_TF1_deepseek_attempt02.py",
+    "packet_sha256": "7feb95f120a119386eb5e4f98419a20059eb2097ff2349e7257e21220facc773"
+  },
+  "rev_7397ab081df3": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d4_TF1_deepseek_attempt03.py",
+    "packet_sha256": "5ffcb4cea05861e2da3f60d59529655fd572c68f7b64aa565ed35a14d9f5fab1"
+  },
+  "rev_47dac602dc92": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d4_TF1_gpt_attempt01.py",
+    "packet_sha256": "d01c27ecfd9df52d8996aa86586b9fff9f2f0c0aa3a195a0565353c9619c428b"
+  },
+  "rev_96336e77b9cb": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d4_TF1_gpt_attempt02.py",
+    "packet_sha256": "5d55e6a28b9f5146ae5f7d60c7e61262f079e88cd2a3386b2889fd164769b47c"
+  },
+  "rev_cec4881dac70": {
+    "op_id": "d4_TF1",
+    "put": "d4",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d4_TF1_gpt_attempt03.py",
+    "packet_sha256": "4f7bff611c5ba6e0d14761fbaf9595b6c001711e277c72cb48746cad94c3d11b"
+  },
+  "rev_fe04dabaf121": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d5_CE1_claude_attempt01.py",
+    "packet_sha256": "63fd3f21bbe84d24e87102dbdce02b737bd2c2a21c4504dc66c8c474d4a65ebc"
+  },
+  "rev_9f729026d7d2": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d5_CE1_claude_attempt02.py",
+    "packet_sha256": "6f8b6e726603bd01639af9cf064873b645a663548af3e9fa3d9b37deef9a08d3"
+  },
+  "rev_ddafc354318f": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d5_CE1_claude_attempt03.py",
+    "packet_sha256": "682533fad2f5a6d9705010f802da4c47b36e1dc6c0ccdf38a50e0985bb7e9419"
+  },
+  "rev_0828c3fc300e": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d5_CE1_deepseek_attempt01.py",
+    "packet_sha256": "71f5028ca3273a6bc23ef62b0c72d3e7e84914f7e686aed49af0851fb513a7a2"
+  },
+  "rev_a4fcd8ecbbaf": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d5_CE1_deepseek_attempt02.py",
+    "packet_sha256": "93a5c1364d9eda25e7cb2769f3ee4c26f14cdd694902f7532e30406a95ebce01"
+  },
+  "rev_5f68b0eeea1b": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d5_CE1_deepseek_attempt03.py",
+    "packet_sha256": "c4e1f7943f9368bb7dec8aa940e122bfe13b021877c67470ae85bb044c26392d"
+  },
+  "rev_64ad11550091": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d5_CE1_gpt_attempt01.py",
+    "packet_sha256": "d22681912edddce3cadcf2fcb36174f25e841cb267c3d872608bf2da58ce0d9a"
+  },
+  "rev_4a34a1c35f63": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d5_CE1_gpt_attempt02.py",
+    "packet_sha256": "faa91429548568b83495fc8e8ea15327174ea5dff718332f54e2d29a13b6c986"
+  },
+  "rev_6fa8070235ba": {
+    "op_id": "d5_CE1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d5_CE1_gpt_attempt03.py",
+    "packet_sha256": "900b391e5d7a3e2ce51550118f50c5b45d7d97aca14959f3c4f6427c0949b32f"
+  },
+  "rev_4caabc0714ed": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d5_SI1_claude_attempt01.py",
+    "packet_sha256": "6efac8cfde8fda0f2b10843e2b055e945521f6c709e43eb81bfebde248399685"
+  },
+  "rev_82a5efbe1df0": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d5_SI1_claude_attempt02.py",
+    "packet_sha256": "7f65ab6e14702296b390e7f755a5dc94200b7d58bdd9b2bd5c3445cb8c9a38b2"
+  },
+  "rev_216ca895333b": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d5_SI1_claude_attempt03.py",
+    "packet_sha256": "cafff89c3ca45f2feae5c66c7241f2f40ea49f5ab37cc1d393c3dc17821d52e8"
+  },
+  "rev_52c660bc24dc": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d5_SI1_deepseek_attempt01.py",
+    "packet_sha256": "6cef8430b211cb7dbe1e96a4ba0d711c7365f7c4a3f1c434b1f1c4de32afd9bb"
+  },
+  "rev_dd83afa6c9f3": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d5_SI1_deepseek_attempt02.py",
+    "packet_sha256": "9ac985ad8c8bddf6a62779293d87a34ae97464e729d36c29b997d9aed2bdd2ca"
+  },
+  "rev_0b449011a024": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d5_SI1_deepseek_attempt03.py",
+    "packet_sha256": "c4096714010a71132631e8be337c07b958464200dee8570a8ca713ba72308112"
+  },
+  "rev_f91a28ab7fb1": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d5_SI1_gpt_attempt01.py",
+    "packet_sha256": "ecac88fbe90e35769452c3744454c26b614fdea51191a410e9f1072a02f3eb8e"
+  },
+  "rev_ebc60a84ff6b": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d5_SI1_gpt_attempt02.py",
+    "packet_sha256": "3b7d3e105eb0db8afccea5a5bd598d073596766fb9aec0478a85a6fdbc566ae4"
+  },
+  "rev_415e0d73b41e": {
+    "op_id": "d5_SI1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d5_SI1_gpt_attempt03.py",
+    "packet_sha256": "eea961c6266618cb41b9c17040437c93bfacff02031f536b51c92e891bf765c8"
+  },
+  "rev_5f22019aed58": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d5_TF1_claude_attempt01.py",
+    "packet_sha256": "6c8301e63f0d5b13b1133ca4af01067bec2478c85c7a6e70fc17ae0dc1794724"
+  },
+  "rev_629ffa5115f8": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d5_TF1_claude_attempt02.py",
+    "packet_sha256": "b66a1085f383ed60d4a4d0fd7171bbd020fc8d548f7b291fbffd32d74db1e0a3"
+  },
+  "rev_2d8aeb561eb6": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d5_TF1_claude_attempt03.py",
+    "packet_sha256": "6d078747ccea8f9ea5f75c6ce0c69b28f5e2a9c54e746d49e5394c7a23a30b29"
+  },
+  "rev_ab9b945760b5": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d5_TF1_deepseek_attempt01.py",
+    "packet_sha256": "aef16b1b34400ef45cf52b99705da06364b69801cac474c72f20dc3b08b5a330"
+  },
+  "rev_ddd0fda1da66": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d5_TF1_deepseek_attempt02.py",
+    "packet_sha256": "4a5a7f24e16f8535dcf2a5c22961876ed2d26f80fec777ec6192694c65cd02c1"
+  },
+  "rev_358006714e97": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d5_TF1_deepseek_attempt03.py",
+    "packet_sha256": "7abcec97a9712359c3ff67ed1a883dfe68cd7ed736958fbf224377773adbca7e"
+  },
+  "rev_a7720d152eeb": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d5_TF1_gpt_attempt01.py",
+    "packet_sha256": "93b9e71294e7bde930b83d1b1dbf173f0a4616db3c681eac194cee046fb88997"
+  },
+  "rev_46d89a7ef009": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d5_TF1_gpt_attempt02.py",
+    "packet_sha256": "9cefd625e672b0bc43b1639150ffa9194c70de704ab3115018c21d069fadf6a9"
+  },
+  "rev_9291ba6bf5a4": {
+    "op_id": "d5_TF1",
+    "put": "d5",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d5_TF1_gpt_attempt03.py",
+    "packet_sha256": "71dbaba78c6e388fc1a50ff07b32e398e65cfe6403bd93019ecb3482c866b43f"
+  },
+  "rev_55a5cd79e66f": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d6_CE1_claude_attempt01.py",
+    "packet_sha256": "05b2147a4b6b2bc81f793ee74a444ee7d9fe7891f1ccd21c4e38569b4070aa2b"
+  },
+  "rev_9be05d67fd06": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d6_CE1_claude_attempt02.py",
+    "packet_sha256": "50299e64ee0dfe34ac4bdec7b055f540f067bf4d00afb7fcd0b86fc19cc49ebf"
+  },
+  "rev_eb2fd8396d82": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d6_CE1_claude_attempt03.py",
+    "packet_sha256": "1f9997e1b50b80677f8b5c5a7b87224964544f44a5a4bd8b9a6fdfaa6788d18b"
+  },
+  "rev_d2c887983a61": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d6_CE1_deepseek_attempt01.py",
+    "packet_sha256": "a13bc3030aba49ad1c54048f78dedfce3a2c67b723115da6649ac2b89bc766e9"
+  },
+  "rev_12d6aeec66d4": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d6_CE1_deepseek_attempt02.py",
+    "packet_sha256": "831012924ce667370e1812b67b37c96c8f1b52a657f499fc349915f3c564cd28"
+  },
+  "rev_e5cf0bc7a6dd": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d6_CE1_deepseek_attempt03.py",
+    "packet_sha256": "693b48a2601ba4da5d7b8fe520579dab957e61f753f0425af2fc3b2ecaff5da1"
+  },
+  "rev_e06f0988758d": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d6_CE1_gpt_attempt01.py",
+    "packet_sha256": "f2bf534b6927bc570a851a30618026afde5557fd529f2d5130c31f8359157760"
+  },
+  "rev_01bd25ee1322": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d6_CE1_gpt_attempt02.py",
+    "packet_sha256": "9fd361179cc4ff80136c88393e9e15fa580f2e52a9d7c790b5f4ac3a2a55e5d6"
+  },
+  "rev_22a4f65113ad": {
+    "op_id": "d6_CE1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d6_CE1_gpt_attempt03.py",
+    "packet_sha256": "60c578c2bf51655f2d7390705946711f065f6d1174dcbff6a21ddba522a7f98c"
+  },
+  "rev_2786b2c7fc0e": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d6_SI1_claude_attempt01.py",
+    "packet_sha256": "2a7ba12f842d0e0d5fbda87ffd716fe3ff02a667f81e17fcf98bfa822dc41d73"
+  },
+  "rev_ea089c01d7c0": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d6_SI1_claude_attempt02.py",
+    "packet_sha256": "9a67b91733f5b081d00d465567022ba2a3693bcd33495452d4b09dcb1472e186"
+  },
+  "rev_6f34e1cd5c89": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d6_SI1_claude_attempt03.py",
+    "packet_sha256": "e092e9f2481593b9c27b1740b2c54a35b61da35d20fdb677c4a573bbb6390849"
+  },
+  "rev_7d5507aa1ce3": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d6_SI1_deepseek_attempt01.py",
+    "packet_sha256": "16431b5b58bc5fb39f82c68094be2c794c594c917203b44d72eddfe472ace29f"
+  },
+  "rev_2622dab698b7": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d6_SI1_deepseek_attempt02.py",
+    "packet_sha256": "444a2dbd58205a0dd990481f8bff439c3d85a645a3748122dedfdba3fe61dc04"
+  },
+  "rev_9fd2fb53a4b2": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d6_SI1_deepseek_attempt03.py",
+    "packet_sha256": "0bc9a4a0dde10dca61ef5849104319198836d0882e41649c640a48a144106809"
+  },
+  "rev_d7cf54b6a4b2": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d6_SI1_gpt_attempt01.py",
+    "packet_sha256": "e72d62d9e65ffee825e49ddeee0a050e58365eaa6146949e5a70ed585f4e5f90"
+  },
+  "rev_023106557c20": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d6_SI1_gpt_attempt02.py",
+    "packet_sha256": "6052956193b1fac91a41fe2d3961cec99d36338e0a08ee8c5b5095786b7eb43a"
+  },
+  "rev_69c6e55f72fb": {
+    "op_id": "d6_SI1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d6_SI1_gpt_attempt03.py",
+    "packet_sha256": "9ef223d0b9444a3590d945b51a47783ee811e3f9636f9e5bb424fb50a9d7b724"
+  },
+  "rev_73474ec7b07c": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d6_TF1_claude_attempt01.py",
+    "packet_sha256": "a3fb2d90de1a9939797e216a142e5c5232a6cd2faec77187424e730e0094f090"
+  },
+  "rev_89303dc9cf60": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d6_TF1_claude_attempt02.py",
+    "packet_sha256": "2c1a3c78e41b2e5343ca538e4103cff79600c193698dd098385e06013eef6a61"
+  },
+  "rev_e639b05023ca": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d6_TF1_claude_attempt03.py",
+    "packet_sha256": "ff4f728467f619d15ef80ce0bd79e1fd34473a186c9f417317c9ded93907f255"
+  },
+  "rev_ea0d77152f46": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d6_TF1_deepseek_attempt01.py",
+    "packet_sha256": "17216cb76e39bef3bd5aa82f5bba42c1230fc801eedf4df3fa57e8d4f5ad1c15"
+  },
+  "rev_524b0d1aaf26": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d6_TF1_deepseek_attempt02.py",
+    "packet_sha256": "4e2050b2bbc058136edf6ffa7758af13f9927880f573538b16d21f59a3839d44"
+  },
+  "rev_6e820f3aa9ed": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d6_TF1_deepseek_attempt03.py",
+    "packet_sha256": "a7667cdc46422a376a1e3dbeb01d65429c1dbfbb301389db29e3fa190f89cb83"
+  },
+  "rev_e883361d24d7": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d6_TF1_gpt_attempt01.py",
+    "packet_sha256": "195ab05a0047b04647de337ed5ed2dc2b4a3cf4a125b2222e04fbc461a5a5fc9"
+  },
+  "rev_578d23bd25b5": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d6_TF1_gpt_attempt02.py",
+    "packet_sha256": "ea0a9a9be340b6c4f627bb9c2e9d326e7a40489456a0990aa0ff6ec6e87e3308"
+  },
+  "rev_b3a72823ac0a": {
+    "op_id": "d6_TF1",
+    "put": "d6",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d6_TF1_gpt_attempt03.py",
+    "packet_sha256": "3f4f4e4014115a4ef263da07cb2420a2894680ce8e972144f9cf0ba136bd2dfb"
+  },
+  "rev_38f10219341d": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d7_CE1_claude_attempt01.py",
+    "packet_sha256": "38f9f355546e651ced3508e036757defffd57d3aac19ba4ae580665bff5661b0"
+  },
+  "rev_2c180334a3e5": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d7_CE1_claude_attempt02.py",
+    "packet_sha256": "7ad5f7a2e585b6442526ba2fb7ce86c29862fbed702b455fd6d21b9defa37509"
+  },
+  "rev_50bd40f4f5d3": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d7_CE1_claude_attempt03.py",
+    "packet_sha256": "8c0e36f683f360fc0f1683ccf222df77b58bedec35a1874cab048c21accca0ee"
+  },
+  "rev_58c4073ab9bd": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d7_CE1_deepseek_attempt01.py",
+    "packet_sha256": "09de982984e85c98cbb809f84f35cee3c5c637cf47c7d79ebf5da08925fc979f"
+  },
+  "rev_5e84c479904a": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d7_CE1_deepseek_attempt02.py",
+    "packet_sha256": "9079cba5e545af434c7ffecaf40fb900122db9c0e1bdefe3447909ac9272e2cc"
+  },
+  "rev_0b2a9276eae5": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d7_CE1_deepseek_attempt03.py",
+    "packet_sha256": "32754e16547019acc99b55bbbb7a0cc732ed0139716824e5ad935832b26c4dc7"
+  },
+  "rev_edbc68ef8b94": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d7_CE1_gpt_attempt01.py",
+    "packet_sha256": "0dc3d919b7313f89b19b7db0a03b83a5668adebeb08b261f8d8f635e4c6e24ee"
+  },
+  "rev_83ef862d8f7d": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d7_CE1_gpt_attempt02.py",
+    "packet_sha256": "35061833f8cc05290f9d3930e1720051107c7b8af995d390c734883af215f222"
+  },
+  "rev_e103b93bfd84": {
+    "op_id": "d7_CE1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d7_CE1_gpt_attempt03.py",
+    "packet_sha256": "98f468fd147913653264613448e49731912be183e50cefe16836d90b7f36b060"
+  },
+  "rev_864d9ed49d40": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d7_HP1_claude_attempt01.py",
+    "packet_sha256": "f1b3165b945efdd0345b1b59062991eda36bdcacee44a25c21eae17a8f3711b8"
+  },
+  "rev_eb13d331fe22": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d7_HP1_claude_attempt02.py",
+    "packet_sha256": "6e63b258553234e2bcc7f03a1c6634c958fd1bd4d52076befda772c23dcbb93b"
+  },
+  "rev_5fae698895b8": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d7_HP1_claude_attempt03.py",
+    "packet_sha256": "66f5ace9bf757743631eaa03723d556234a22bf9c615a6fa58405d05246880b3"
+  },
+  "rev_0bee58dbdadf": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d7_HP1_deepseek_attempt01.py",
+    "packet_sha256": "6d1e4ea5cad743f2844f9a1b0b52de35b3afcf3a87eb616ee1e3e36271da2e00"
+  },
+  "rev_cf849228f4a2": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d7_HP1_deepseek_attempt02.py",
+    "packet_sha256": "8a9bb6b2de055f3fbbd657e861f660cb4e36d24bf1e86ddbc9a5fbddfa8c4183"
+  },
+  "rev_db339ed47a38": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d7_HP1_deepseek_attempt03.py",
+    "packet_sha256": "05eecf7d8e8c055258de923a087489c87a3f645a9c09fa5c65482f83e2cbf20e"
+  },
+  "rev_6fd0a4dd8470": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d7_HP1_gpt_attempt01.py",
+    "packet_sha256": "6fbacd15b688300fcbac2fe87bdcb903026f98807403090ac835f9fb827d85ac"
+  },
+  "rev_b2d2d9810fff": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d7_HP1_gpt_attempt02.py",
+    "packet_sha256": "f8883e20bc1dc2beec86f3b3dec1d0ed3f6a0b393d76cf74d19c90b03c5982ab"
+  },
+  "rev_3c56011f680e": {
+    "op_id": "d7_HP1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d7_HP1_gpt_attempt03.py",
+    "packet_sha256": "04408ad11fc535bfb19102aaa198bf8af06f26b2815bd42628c921ceffa2ee4d"
+  },
+  "rev_7fdb6415d4fc": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d7_TF1_claude_attempt01.py",
+    "packet_sha256": "0b9adc944095552b404f90005c0f09e4c44b200c052d034f5e530a167a17ebcd"
+  },
+  "rev_7b403797a71b": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d7_TF1_claude_attempt02.py",
+    "packet_sha256": "094a5c9e84e8a6e4042e89707f379c2917d10035f9e1a7d65c08ee90acf160fd"
+  },
+  "rev_aa9133462b49": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d7_TF1_claude_attempt03.py",
+    "packet_sha256": "7308f067c7e395f1ad46bbf9fcd68114955f4f5c52c8a7009c36e48fecfb8058"
+  },
+  "rev_510e3896cf33": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d7_TF1_deepseek_attempt01.py",
+    "packet_sha256": "0ba6fbc214492a604dfcc878cd4b770938619dfc9bc1c9f482001869828eee48"
+  },
+  "rev_0221db3ceafa": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d7_TF1_deepseek_attempt02.py",
+    "packet_sha256": "f31a6f37044e256097ec2f97f9048a248a8f164b139743dbff188a7c04de95e7"
+  },
+  "rev_e00db6acd853": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d7_TF1_deepseek_attempt03.py",
+    "packet_sha256": "10042df0d3af045aa74e717b9c15b3bfdf901b9d687c365b1dbad84e533e080e"
+  },
+  "rev_305001585b0d": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d7_TF1_gpt_attempt01.py",
+    "packet_sha256": "5e971cbde084c2693f21f61e7706f79453000f1e1099ce63895dd3c8855a411b"
+  },
+  "rev_c17efed522c2": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d7_TF1_gpt_attempt02.py",
+    "packet_sha256": "a9ee0258f0157448235feab19df27f8d06baf715d710b9460229d49e425627fa"
+  },
+  "rev_aaa992381ee4": {
+    "op_id": "d7_TF1",
+    "put": "d7",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d7_TF1_gpt_attempt03.py",
+    "packet_sha256": "b3a682678e19c16eb955f71b7886440e80d3c4a70f57c47286cd1b677917cf55"
+  },
+  "rev_d445f4265a5a": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d8_SI1_claude_attempt01.py",
+    "packet_sha256": "9d3a85dd2795b96952a18b88c3d102aae012008a26f20cc7eac2367800fdf378"
+  },
+  "rev_bd9c37a02b4b": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d8_SI1_claude_attempt02.py",
+    "packet_sha256": "abef3e927a975c6a3476159c2590279b055e4271bbbc5ea55b39591f16a9e429"
+  },
+  "rev_edfc086f7e54": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d8_SI1_claude_attempt03.py",
+    "packet_sha256": "98e912d407c5bacd4f9dd87d49df0e0bfe065fe42074b240531f0a9db45a2108"
+  },
+  "rev_6b61b6ca1a4a": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d8_SI1_deepseek_attempt01.py",
+    "packet_sha256": "fe5f6a79659a9d543d718cdef8f7c1fc6513d6d48144c7da34797920ed72898e"
+  },
+  "rev_64d4ea7d07f9": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d8_SI1_deepseek_attempt02.py",
+    "packet_sha256": "392f01d33096f1efe61f2eb19b5a4b106946f7cfa8fed3e10343012f40430e45"
+  },
+  "rev_fa5fa819a6c3": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d8_SI1_deepseek_attempt03.py",
+    "packet_sha256": "d4ea6d04cedde05997fc47fccdea928b193c1b33a80050c54f742704e497a1e8"
+  },
+  "rev_b0eba88923f4": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d8_SI1_gpt_attempt01.py",
+    "packet_sha256": "e877b28590968f37a23647710acfb58c7ffe79122450cc1ba52ad0465d1b0cea"
+  },
+  "rev_e0a8f521d201": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d8_SI1_gpt_attempt02.py",
+    "packet_sha256": "388abdfc60f9291976ee63d7be4c21d02c05666de0d3f52772b3e8e0e6061ddd"
+  },
+  "rev_a64564f7da56": {
+    "op_id": "d8_SI1",
+    "put": "d8",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d8_SI1_gpt_attempt03.py",
+    "packet_sha256": "3624dcf9881a6b9ba4e13c353342d9d62dae443bb752029f5d668f13fd961d8f"
+  },
+  "rev_77055b018e41": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "claude",
+    "attempt": 1,
+    "mutant_file": "d8_TF1_claude_attempt01.py",
+    "packet_sha256": "2ee0881ffa2f25d37360dde0277b78b730d56cf8e72d1d410c13d003b0f46369"
+  },
+  "rev_6a631c8c59f8": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "claude",
+    "attempt": 2,
+    "mutant_file": "d8_TF1_claude_attempt02.py",
+    "packet_sha256": "c925158f8bd8d436c582bd21e69c0c5b7483557d40d266c00252cdfdf73bf240"
+  },
+  "rev_fbe2b7fe3060": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "claude",
+    "attempt": 3,
+    "mutant_file": "d8_TF1_claude_attempt03.py",
+    "packet_sha256": "4268eed87765d21ee75b8d18f991323dc30913814faee13c0a320831b3130b2f"
+  },
+  "rev_29b372fe0e12": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "deepseek",
+    "attempt": 1,
+    "mutant_file": "d8_TF1_deepseek_attempt01.py",
+    "packet_sha256": "94e215ad9b1d7efb45a90f93379ab9d06b8815a16d204763114d89229feb78a3"
+  },
+  "rev_7bf9fbc67719": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "deepseek",
+    "attempt": 2,
+    "mutant_file": "d8_TF1_deepseek_attempt02.py",
+    "packet_sha256": "211c1c8455946e0c2972264446d7ed85546d6360f3ead7335dd40737078f723c"
+  },
+  "rev_254484cdef79": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "deepseek",
+    "attempt": 3,
+    "mutant_file": "d8_TF1_deepseek_attempt03.py",
+    "packet_sha256": "752ace7a6107885c95d97c6d046a1988e5f0b18958d60cca04b52c418fbdc82e"
+  },
+  "rev_a0cef97c9339": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "gpt",
+    "attempt": 1,
+    "mutant_file": "d8_TF1_gpt_attempt01.py",
+    "packet_sha256": "3385edf1479c2bb6e2b7e21ceb5bb9ba5e1787fe09e25488270231a8feec1f8a"
+  },
+  "rev_8c96e1713f70": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "gpt",
+    "attempt": 2,
+    "mutant_file": "d8_TF1_gpt_attempt02.py",
+    "packet_sha256": "c4caed506f589e43cfd9ab828cc30af37791b5892fda319235043dad90bf582e"
+  },
+  "rev_4db2a5c9cae0": {
+    "op_id": "d8_TF1",
+    "put": "d8",
+    "source": "gpt",
+    "attempt": 3,
+    "mutant_file": "d8_TF1_gpt_attempt03.py",
+    "packet_sha256": "2120154bea7b4d96e97a769ce5e9117a4c419b57815f8202298bc484f0ea4c4f"
+  }
+}

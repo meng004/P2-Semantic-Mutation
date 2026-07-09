@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_8de8b7f1d3fd",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "alpha_post successes -> max(n_succ-1,0) inline; exact b1_CE1 off-by-one floored."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_dfacc4bd3866",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator a6_OS1 (LHS +r→−r): change `r**3 + r - rhs` to `r**3 - r - rhs`. Verified as the sole semantic change vs original PUT (remaining edits are behaviour-preserving refactors/renames). Loads and runs on x in [0,1]; differs from original (max|delta|=8.04e-01 over sampled inputs), so non-equivalent."
+}

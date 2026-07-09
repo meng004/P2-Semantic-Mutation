@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_625b926efc6a",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Diff implements exactly operator d2_OS1 (predict_proba→decision_function); only change beyond behavior-preserving refactor; executed over x-grid, max|Δ|=3.024 so distinguishable from original (decision_function scale differs from proba)."
+}
