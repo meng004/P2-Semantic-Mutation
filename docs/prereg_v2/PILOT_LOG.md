@@ -460,3 +460,45 @@ quarantined unread and the first draws restored from the committed
 checkpoint. Cost of the defect: ~143 redundant gateway generation calls
 (logged), plus 534 zero-cost transport-error rows from one relaunch attempt
 that ran without `.env` loaded (also logged, not draws).
+
+## Study-4 review-label freeze (freeze-then-score, §5)
+
+**Final blinded review labels (2036 mutants, frozen at this commit, BEFORE any
+SMS/verdict computation):**
+
+| Pool | CONFIRMED | REJECTED | UNCERTAIN → arbitrated |
+|---|---|---|---|
+| same (730) | 711 | 19 | 0 |
+| cross (638) | 614 | 22+2 | 2 (both REJECTED by gpt-5.5 arbiter) |
+| recruit (540) | 531 | 9 | 0 |
+| C (128) | 117 | 11 | 0 |
+| **Total (2036)** | **1973** | **63** | **2** |
+
+Reviewer = harness claude-family (arm-symmetric, per amendment v1.2);
+arbiter = gateway `gpt-5.5` (different vendor), fired only on the 2 reviewer-
+UNCERTAIN packets, both returned REJECTED (b1_CE1 locator-scope violation;
+d6_CE1 wrong-coefficient edit). Per the registered semantics, the review
+labels are RECORDED conformance opinions; the mechanical AVP/equiv pipeline
+remains authoritative for SMS (§5 note in the packet schema).
+
+**Honest inter-reviewer inconsistency, quantified.** The GP-hyperparameter
+realization pattern `*_bounds="fixed"` (50 mutants: c1_CE1/c1_HP1/d8_HP1
+families) split independent blind reviewers 28 CONFIRMED / 22 REJECTED
+(56%/44%). Both readings are defensible: REJECT reads the pin as an
+unregistered second semantic change (differential tests show the registered
+value edit alone is optimizer-absorbed, deviation ~1e-9); CONFIRM reads it as
+the instrumental realization required for the registered change to take
+effect at all. The disagreement is *between reviewers across packets*, never
+within one packet, so no arbitration fired; it is disclosed here as an
+inter-reviewer reliability datum and will be carried into the manuscript's
+Study-4 reliability reporting. A same-content mutant pair (same blind hash in
+the same and recruit pools) received opposite labels from two independent
+reviewers — the cleanest single exhibit of this ambiguity.
+
+**Cross-vendor generation-defect tally from the blind review** (REJECT causes,
+non-exhaustive): silent RNG-seed changes (6), wrong target locator / extra
+semantic edits (12), anti-diffusive a3_OS1 numerical blow-up judged V2-fail
+(reviewer-dependent: some reviewers CONFIRMED the same pattern as the fault
+manifesting; disclosed as a second inter-reviewer inconsistency), C-side UB
+(int-overflow loop bound, unregistered saturation clamps) (3), nonconforming
+spline ports (2).

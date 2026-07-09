@@ -1,0 +1,18 @@
+{
+  "blind_id": "rev_7fafa5dc0973",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "No",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "REJECTED",
+  "reason": "The mutant changes the leading constant 2.0 to 1.0, yielding 1.0 - 2.0*x, instead of changing the x coefficient to produce 2.0 - 1.0*x.",
+  "_arbiter": {
+    "served_model": "gpt-5.5",
+    "latency_s": 9.55
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "blind_id": "rev_3419552f8f79",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "No",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "REJECTED",
+  "reason": "Mutant decrements n_succ globally, so beta_post also uses reduced successes; specified change applies only to successes in alpha_post.",
+  "_arbiter": {
+    "served_model": "gpt-5.5",
+    "latency_s": 11.47
+  }
+}
