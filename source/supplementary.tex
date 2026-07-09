@@ -1776,6 +1776,403 @@ for a new pool version and points scoring at the correct strict directory; it
 changes no threshold, estimand, primary-meta-pattern assignment, or roster, and
 reads no Study-3 outcome.
 
+\section{Study 1 Extended Protocol and Derivations}\label{k.-study1-extended-protocol-and-derivations}
+
+This appendix carries protocol prose, formal derivations, and long tabular
+material demoted from the main text during length consolidation. Nothing here
+is new: each item is referenced from the corresponding main-text location, and
+every number cited in the main narrative is retained in place. The appendix
+collects the full threats-to-validity table (\ref{k.1-full-threats-table}),
+the complete semantic-mutation theory derivations and theorem proofs
+(\ref{k.2-theory-derivations}), the full higher-order-mutation reachability
+analysis (\ref{k.3-hom-reachability}), and the Study-1 stipulated-alternative
+power detail (\ref{k.4-power-detail}).
+
+\subsection{Full Threats-to-Validity Table}\label{k.1-full-threats-table}
+
+The main text (the main threats-to-validity section) gives a five-row summary of
+the threat areas; the complete per-threat table, including the Study-2 and
+Study-3 harness, screen-remediation, and attribution disclosures, is reproduced
+here in full.
+
+{\def\LTcaptype{table}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{Threats to Validity (full).}\label{tab:p2-14-full}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Threat area
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Threat
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Class
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mitigation summary
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Detail
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+LLM generation & LLM generation reproducibility & Internal & Archived raw responses
++ frozen mutant pools (no user-facing seed; reproducibility by archival) & Appendix F.1 \\
+Equivalence approximation & E2 probabilistic approximation & Construct & K\_eq = 1000 +
+Hoeffding bound; sweep deferred to future work & Appendix F.1 \\
+Shared infrastructure & Shared-infrastructure dependency & Internal & AVP version pinned to the upstream
+commit hash; embedded source & Appendix F.1 \\
+Root-cause diagnosis & LRCA multi-label boundary & Internal & Decision-tree priority +
+multi-label co-occurrence table & Appendix F.1 \\
+Representativeness & 12-PUT representativeness & External & shared infrastructure; Appendix B.1
+coverage argument; scaling to industrial PUTs & Appendix F.2 \\
+Statistical power & Cross-class statistical power & Conclusion & H3 framed exploratory;
+Friedman fallback; mixed-effects unavailable & Appendix F.2 \\
+LLM homogeneity & LLM homogeneity bias & Construct & 3-LLM rotation + 20\% manual
+sampling & Appendix F.2 \\
+LLM-source shift & LLM-source distributional shift & External & DeepSeek 11/15 of
+overlaps; argument is categorical, not frequency & Appendix F.2 \\
+Pool size & Mutant-pool size & Internal & v3 mean 17.4, v4 mean 24.3 per PUT; effect
+intrinsic, not pool-dilution & Appendix F.1 \\
+LLM non-determinism & LLM non-determinism & Internal & De-dup, K = 10/20 repeats,
+raw-response store & Appendix F.1 \\
+Higher-order mutation & HOM equivalence & External & Confined claim to first-order
+syntactic tools; HOM testing deferred & Appendix F.2 \\
+Protocol asymmetry & v3 vs v4 protocol asymmetry (dual-blind reviewer) & Internal &
+Quality not down (C1\_share 0.164 $\to$ 0.209); follow-up to rerun
+dual-blind on v4 & Appendix F.1 \\
+Adjoint reproduction & Adjoint-arm reproduction fidelity and by-construction pools &
+Internal & Real defects reproduced through extracted diffs (no
+\texttt{arm64} wheel); arm is confirmatory on hand-constructed,
+low-cardinality pools, not a high-adequacy discovery; scipy \#8900 is
+shared with the the strong-boundary section boundary study & the adjoint-extension section \\
+Real-defect evidence & Industrial real-defect arm boundary & External & Used at result
+level to confirm construct separation; reusable benchmark
+construction deferred outside this manuscript & the industrial-construct-separation section \\
+Same-vendor mono-culture (Study 2) & Generator and reviewer instances share one
+LLM family & Construct & Role isolation + packet blinding enforced across instances,
+but diversity of judgment is single-vendor; disclosed, and H2-2 gated not-run rather
+than proxied & the Study-2 harness section \\
+Harness-agent instantiation (Study 2) & Confirmatory generation/review run through the
+Claude Code Agent harness & Internal & Blinded packets, role-isolated instances, third-instance
+arbitration, one-shot rule; resolved model id recorded in the campaign SSOT & the Study-2 harness section \\
+Attribution scoring/admission gap (Study 2) & H4\('\) leakage (mean 0.1714) exceeds the
+0.05 bar on the widened grid & Construct & Reported as a genuine miss; single-stratum
+scoring filter and admission filter disagree cell-by-cell; closing it is an open problem,
+not a promised study & the Study-2 interpretation section \\
+Same-family equivalence correlation (Study 2) & Generator and reviewer
+instances share a model family, so equivalence (E1 and E2) opinions may be
+correlated & Construct & Equivalence verdicts feed admission, but the
+deterministic AVP and equivalence machinery remains the authoritative SMS
+gate, which bounds the threat; the cross-vendor arm H2-2 is gated not-run
+& the Study-2 harness section \\
+Screen remediation verified in production (Study 3) & The P8 admission-screen
+no-op could recur silently & Internal & The Study-3 all-family screen is wired
+live with a loud-fail smoke gate; on the v6 campaign it matched 633 candidates
+and flagged 36 multi-stratum where the v5 screen matched zero, so the P8 fix is
+verified in production, not only in unit tests & the Study-3 execution section \\
+Rich-class attribution remains open (Study 3) & Graded declared-stratum
+attribution is refuted on rich (surrogate/ML) classes & Construct & Reported as
+a registered NOT\_CONFIRMED (rich-class mean share 0.0833 $<$ 0.15 bar) with
+$n_{\mathrm{rich}} = 6$; a richer multi-valued attribution model is an open
+construct question, not a promised study & the Study-3 interpretation section \\
+\end{longtable}
+}
+
+\subsection{Semantic-Mutation Theory: Derivations and Proofs}\label{k.2-theory-derivations}
+
+This subsection carries the derivation prose and theorem proofs demoted from the
+main-text theory section (the main-text theory section); the theorem and
+proposition statements themselves remain in the main text.
+
+\paragraph{Undecidability (the undecidability theorem), proof.}
+S3 requires deciding $\llbracket P_e \rrbracket \not\models \psi$, a non-trivial
+semantic property, undecidable by Rice's theorem; the termination clause of S4
+is independently undecidable by reduction from the halting problem.
+Semantic-mutant status therefore cannot be read off the edit; it can only be
+certified on bounded fragments with recorded budgets, which is the formal reason
+the admission judgement (the equivalence-judgement section,
+the prescreen section) is gate-shaped
+rather than a decision procedure. The theorem is a routine consequence of Rice's
+theorem, in the same spirit as the classical undecidability of mutant
+equivalence; we state it to fix the formal reason admission is gate-shaped, not
+as a novel result.
+
+\paragraph{Fiber characterization (the fiber-characterization proposition), proof.}
+(i) holds because semantics changes only through syntax; (ii) and (iii) follow by
+unfolding the definitions. The SMS-to-MS degeneration of
+the SMS-to-MS degeneration theorem (the degeneration section)
+is the metric-level shadow of (ii): when the admitted fiber collapses to the
+syntactic default, the SMS denominator collapses to the MS denominator.
+
+\paragraph{Duality (the duality theorem), proof.}
+If $P_e \equiv_\alpha P$ and $r$'s violation predicate factors through $\alpha$,
+then $r$ flags $P_e$ iff it flags $P$; MR validity says $r$ does not flag $P$, so
+it does not flag $P_e$. The converse is the contrapositive. The duality
+identifies $\alpha$ as the single hinge connecting MR-side quality (strength) and
+mutant-side quality (activity). Classification is relative to
+$(I, \alpha, \text{budget})$: extending $I$ can only move a mutant from
+active-off-taxonomy to $\psi$-stratified, never the reverse, and bounded
+$\equiv_\alpha$ verdicts are search conclusions, not proofs, so every certificate
+carries its $(I, \alpha, \text{budget})$ stamp.
+
+\paragraph{Strong / weak MR and the strong boundary (full definitions).}
+the duality theorem reads off strength algebraically, assuming the
+invariant $\psi$ behind $r$ is satisfied by the correct program so that closure
+under $\equiv_\alpha$ makes a violation diagnostic. For a discrete program $P$
+approximating a continuous operator this assumption is \emph{contingent}: the
+correct $P$ reproduces the operator's algebraic invariant only up to a
+discretisation residual, so $\equiv_\alpha$ between $P$ and the ideal solution
+holds only within the tolerance $\varepsilon_{\mathrm{tol}}$ of the
+latency-window definition. Fixing $\varepsilon_{\mathrm{tol}}$, call $r$
+\emph{strong} on $P$ when the correct $P$ satisfies $r$ within
+$\varepsilon_{\mathrm{tol}}$ (its residual stays below $\varepsilon_{\mathrm{tol}}$
+under refinement), so that any violation beyond $\varepsilon_{\mathrm{tol}}$
+certifies a semantically active mutant and the duality theorem holds
+operationally; call $r$ \emph{weak} on $P$ when the correct $P$'s residual
+exceeds $\varepsilon_{\mathrm{tol}}$, so that the correct program is itself
+flagged because the discretisation, not a fault, breaks the invariant. The
+\emph{strong boundary} is the $(\varepsilon_{\mathrm{tol}}, \text{resolution})$
+locus separating the two regimes; tightening $\varepsilon_{\mathrm{tol}}$ or
+coarsening the discretisation carries a strong MR across it into the weak regime.
+A weak MR is exactly a non-strong (non-grounded) MR in the effective, discrete
+sense: its violation set is not closed under the program's
+$\varepsilon_{\mathrm{tol}}$-level $\equiv_\alpha$.
+
+\paragraph{Boundary failures (the boundary proposition), proof.}
+(i) and (ii) instantiate the Definition: weakness places the correct program's
+residual above $\varepsilon_{\mathrm{tol}}$, and coincidental satisfaction places
+the mutant's signature below it; monotonicity of both sets in
+$\varepsilon_{\mathrm{tol}}$ holds because both membership predicates are
+threshold comparisons against the same $\varepsilon_{\mathrm{tol}}$. Operationally,
+mode (i) does not inflate SMS: the killed predicate requires every counted MR to
+pass on the unmutated program, so a weak MR is rejected upstream at MR validation
+and contributes no kills. the boundary proposition(i) therefore manifests
+as MR-validation failure on the correct program, and only mode (ii) enters the
+SMS denominator-numerator arithmetic directly. The full reduction for
+the undecidability theorem follows Rice's theorem together with the standard
+halting reduction for the termination clause; the proof of
+the duality theorem is the $\equiv_\alpha$-closure argument above.
+
+\subsection{Higher-Order-Mutation Reachability, Full Analysis}\label{k.3-hom-reachability}
+
+The main text (the higher-order-mutation section) states the
+first-order scope of the unreachability claim and its conclusion; the full
+conceptual reachability analysis is reproduced here.
+
+\textbf{Conceptual analysis of HOM reachability.} Higher-order mutation
+(HOM; \citealp{jia2008subtle,jia2009hom,kintis2018effective}) composes multiple
+first-order operators on the same source location. A natural challenge to this
+paper's preventive-defence framing is whether HOM compositions of cosmic-ray's
+13 default operators or mutmut's 14 default operators can reach the
+the necessary-conditions section necessary
+conditions (a) cross-function-boundary, (b) domain-knowledge-dependent, or (c)
+algorithmic-class-change. We address this conceptually without empirical HOM
+testing.
+
+For (a): HOM compositions remain over first-order operators that are AST-local
+within their target node; chaining AOR $\circ$ Statement-Deletion within a single
+function does not introduce a cross-module substitution like
+\texttt{det(M)\ $\to$\ sum(np.diag(M))}, which presupposes that \texttt{np.diag}
+is in scope and semantically equivalent on diagonal matrices but not on general
+matrices. HOM can reach a kindred destination only if both operators happen to
+coincide with a meaningful cross-boundary swap, which is exponentially unlikely
+under the default operator menus.
+
+For (b): HOM has no awareness of which constants are load-bearing in the PUT
+class. A two-operator chain such as Number-Replacer (1e-4 $\to$ 1e-3) $\circ$
+Boolean-Swap on a Gaussian-process kernel does not ``know'' that 1e-4 is the
+regularization knob; it modifies the literal numerically without crossing the
+domain-semantics boundary. The Hyperparameter operator class (HP, mut\_G) is by
+construction parameter-aware and class-specific, a property HOM compositions do
+not exhibit by default.
+
+For (c): Algorithmic-class change (e.g.~polynomial $\to$ spline basis;
+Lorenz RK4 $\to$ 1.5-order hybrid) requires structural code rewrites at the level
+of function bodies, library imports, or iteration schemes. HOM compositions over
+default first-order operators are bounded above by AST-local edits and so cannot
+reach algorithmic-class change without being effectively equivalent to a manual
+rewrite.
+
+We therefore assert that the the AST-overlap section
+0/0/0 unreachability for HP / SI / TF, while strictly empirical only for
+first-order configurations, is unlikely to be refuted by default-operator HOM
+compositions on combinatorial grounds. A direct empirical HOM falsification
+(generating mutmut second-order mutants and re-running the AST overlap analysis)
+remains a residual higher-order mutation threat.
+
+A multi-syntactic-tool cross-comparison (mutmut and mutpy) was not run: mutpy is
+incompatible with Python 3.10+, and mutmut's operator set strongly overlaps
+cosmic-ray's. The full operator-class cross-reference between cosmic-ray (13
+default operators) and mutmut (14 default operators), including which
+the necessary-conditions section necessary
+conditions each operator family reaches, is in Appendix B.6. The aggregate of the
+two default sets (\textasciitilde21 distinct first-order AST-local operator
+classes) collectively fails all three
+the necessary-conditions section necessary
+conditions.
+
+\textbf{Source distributional shift.} The 15 cosmic-ray AST overlaps are not
+evenly distributed across the three LLMs (DeepSeek 11/15, Claude 4/15, GPT 0/15;
+see \texttt{cosmic\_ray\_12put\_ast\_diff.json}). DeepSeek tends to generate
+syntactically simpler mutations. This LLM-source bias is discussed as a
+distributional-shift threat (Appendix F.2) but does \textbf{not} affect the
+systematic-vs-incidental argument, which is based on \emph{categorical}
+AST-locality, not hit frequency: the HP / SI / TF zero-overlap result is 0/0/0
+across all three sources.
+
+\subsection{Study-1 Stipulated-Alternative Power Detail}\label{k.4-power-detail}
+
+The main text (the power-analysis section) states the H2
+power verdict and its two headline figures; the full bootstrap exceedance and
+stipulated-alternative tables are reproduced here (the plug-in sample-size sweep
+itself is in Appendix D.3).
+
+{\def\LTcaptype{table}
+\begin{longtable}[]{@{}lll@{}}
+\caption{Bootstrap exceedance probability under the observed distribution
+(plug-in, 5,000 replications, seed 42, over the unconditioned $n=12$/$n=48$ pool,
+$\delta=0.439$).}\label{tab:power-exceedance-full}\\
+\toprule\noalign{}
+Threshold & Interpretation & Exceedance prob.\ at (12, 48) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+$\delta$ \textgreater{} 0.000 & Any effect & \textbf{0.997} \\
+$\delta$ \textgreater{} 0.147 & Small & 0.966 \\
+$\delta$ \textgreater{} 0.330 & Medium & 0.759 \\
+\textbf{$\delta$ \textgreater{} 0.474} & \textbf{Large (H2)} & \textbf{0.423} \\
+\end{longtable}
+}
+
+The plug-in result answers ``given the \emph{observed} distribution, how often do
+we exceed the threshold?'' A stipulated-alternative simulation answers a more
+pointed question: ``if the \emph{truth} equals the H2 boundary 0.474, how often
+does the (12, 48) design return $\delta \geq 0.474$?'' SMS distributions have
+heavy ties at zero (45 of 60 cells), so a raw shift is discontinuous: any
+$\varepsilon$ \textgreater{} 0 jumps $\delta$ from 0.314 to 0.74. We therefore use
+a mixture, drawing the aligned sample with probability $w$ from
+(observed\_aligned + 0.001) and with probability $1-w$ from observed\_aligned,
+calibrating $w = 0.094$ to realise $E[\delta] = 0.4746$.
+
+{\def\LTcaptype{table}
+\begin{longtable}[]{@{}lll@{}}
+\caption{Stipulated-alternative power at the H2 boundary.}\label{tab:power-stipulated-full}\\
+\toprule\noalign{}
+Stipulated truth & Criterion & Power \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0.474 & $\hat{\delta} \geq 0.474$ (point estimate) & \textbf{0.491} \\
+0.474 & Lower 95\% CI bound \textgreater{} 0 (any effect) & 0.868 \\
+\end{longtable}
+}
+
+Even when the truth equals the H2 boundary, the point-estimate decision rule
+returns ``not met'' in roughly half of replications; a pass probability near one
+half at the boundary is intrinsic to a threshold rule applied to an approximately
+median-unbiased estimator at any sample size, so the 49.1\% figure characterises
+the pre-registered decision rule, not a deficiency specific to the (12, 48)
+design, and its exact value depends on the stipulated alternative (the mixture
+with $E[\delta] = 0.4746$ is one of many alternatives with that mean). Increasing
+the sample size narrows the confidence interval but cannot lift the point
+estimate. The plug-in sample-size sweep (n\_aligned $\in$ \{6, 12, \ldots, 60\};
+n\_cross = 4 $\times$ n\_aligned; power for $\delta$ \textgreater{} 0 reaches 0.974
+at n\_aligned = 6 and 0.996 at 12, then plateaus) is in Appendix D.3.
+
+\subsection{Per-Class Operator Specialisation Catalogue}\label{k.5-operator-specialisation-catalogue}
+
+The main text (the coverage-matrix section) gives illustrative
+examples; the complete per-family specialisation catalogue is reproduced here
+(the full PUT-class $\times$ operator grid is in Appendix B.2).
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{mut\_C Conservation-breaking:} A1 Lorenz adds $\varepsilon_{\mathrm{drift}}$ to RHS
+  (slow Hamiltonian drift); A2 LU decomposition omits the (k+1)-th row
+  multiplier; B1 Beta-Bin posterior omits normalisation; C1 GPR
+  covariance omits positive-definite diagonal term; D1 MLP backprop
+  omits one gradient term.
+\item
+  \textbf{mut\_M Monotonicity-breaking:} A3 FDM $\Delta$t occasionally
+  negative; B2 MCMC acceptance min(1, r) $\to$ min(0.95, r); C2 PCE
+  high-order coefficient sort inserts inversion; D2 SVM
+  decision-function sign flips near boundary.
+\item
+  \textbf{mut\_G Convergence-breaking:} A1 Lorenz RK4 $\to$ 1.5-order
+  hybrid; A3 FDM 2nd-order difference $\to$ 1st-order; B3 MC doubling sample
+  size does not 1/N-reduce variance; C3 NN-Surr training-epoch
+  truncation.
+\item
+  \textbf{mut\_T Trajectory-distorting:} A1 Lorenz state-vector y / z
+  swap; B2 MCMC inserts independent-sampling segment; C3 NN-Surr
+  training-target slow phase shift; D1 MLP hidden-layer periodic-mask
+  activation.
+\item
+  \textbf{mut\_F Fidelity-order-breaking:} A2 LU partial pivoting
+  degrades to no pivoting; C1 GPR length-scale switches to coarse prior;
+  C2 PCE high-order term randomly retains low-order; D3 LR
+  regularisation occasionally large.
+\end{itemize}
+
+The per-class HP / OS / TF substitution rules give similarly differentiated
+specialisations across PUT classes (e.g., HP on class a =
+tolerance / max\_iter, on class c = GPR \texttt{noise\_level} /
+\texttt{length\_scale}, on class d = MLP \texttt{hidden\_dim} / dropout;
+OS on class a = numerical-linalg API swap \texttt{det} $\leftrightarrow$
+\texttt{sum(diag)}, on class b = sampling-API swap, on class c =
+surrogate-class swap GPR $\leftrightarrow$ RBF $\leftrightarrow$ NN).
+
+\subsection{Full PUT Selection Table}\label{k.6-full-put-selection}
+
+The main text (the program-selection section) gives a class
+summary; the full per-PUT table is reproduced here.
+
+{\def\LTcaptype{table}
+\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{PUT selection (full).}\label{tab:p2-02-full}\\
+\toprule\noalign{}
+Class & PUT & Name & Mathematical structure & LOC \\
+\midrule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{A Numeric} & A1 & Lorenz ODE integration & Nonlinear ODE &
+\textasciitilde150 \\
+& A2 & LU decomposition & Linear algebra & \textasciitilde80 \\
+& A3 & FDM 1D heat conduction & Parabolic PDE & \textasciitilde200 \\
+\textbf{B Probabilistic} & B1 & Beta-Binomial conjugate & Analytic
+posterior & \textasciitilde60 \\
+& B2 & MCMC Metropolis-Hastings & Markov chain & \textasciitilde250 \\
+& B3 & Monte Carlo integration & Importance sampling &
+\textasciitilde100 \\
+\textbf{C Surrogate} & C1 & Gaussian Process Regression & Kernel methods
+& \textasciitilde300 \\
+& C2 & Polynomial Chaos Expansion & Orthogonal basis &
+\textasciitilde250 \\
+& C3 & Neural-net surrogate & MLP substitution & \textasciitilde400 \\
+\textbf{D ML} & D1 & Multi-Layer Perceptron & Backprop. &
+\textasciitilde350 \\
+& D2 & Support Vector Machine & Convex optimisation &
+\textasciitilde200 \\
+& D3 & Logistic Regression & Maximum likelihood & \textasciitilde120 \\
+\end{longtable}
+}
+
 \bibliographystyle{plainnat}
 \bibliography{references}
 
