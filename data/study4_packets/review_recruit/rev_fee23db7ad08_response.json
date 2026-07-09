@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_fee23db7ad08",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "No",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "REJECTED",
+  "reason": "Deviation stems from unregistered length_scale_bounds='fixed'; literal length_scale x10 alone is equivalent since optimizer re-tunes it, so extra semantic change."
+}
