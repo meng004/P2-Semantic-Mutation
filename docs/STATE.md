@@ -2,8 +2,19 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-07-08（study2 收官：双研究稿 submit-ready，TOSEM **Regular track**）
-**Stage:** **双研究稿 submit-ready（phase-K）**；终评 J1 7/10 + J2 8/10（minor 水平），六项 must-fix 全闭合
+**Last synced:** 2026-07-09（study3 收官：三研究稿 submit-ready，TOSEM Regular track，终评 8/10 SUBMIT NOW）
+**Stage:** **三研究稿 submit-ready（phase-Q）**；NOEther 术语全稿对齐；四项终评 minor 全闭合
+
+**Study-3（2026-07-09,注册 v2.0 分级归因研究）：**
+- 动机：H4' NOT_CONFIRMED + P8 事故（v5 滤器静默 no-op）+ L2 诊断（117/117 构念级耦合）
+- 执行：28 包一次性生成,765 valid → 720 admitted,v6 池 633（修复后全族筛真实生效：81 筛除 + 6 cap 裁剪）,720 盲评审零仲裁
+- **判定**：H4''-strict **CONFIRM**（纯度 1.0,CP 下界 0.9673,{CE,HP,CF-带筛}）| H4''-graded **NOT_CONFIRMED**（富类份额 0.0833）——归因构念有效域双面刻画
+- 主张阶梯：Study 1 划界 → Study 2 方向性确认 → Study 3 归因边界双面刻画
+- **NOEther 对齐**：MP1-5→m_inv/m_mono/m_conv/m_dyn/m_cmp,ψ6→m_adj;注册标签保留;匿名 companion 引用
+- 事故台账 P1-P9 + D-A1 全披露;主稿 56 页 + 附录 25 页,包 submission/TOSEM_regular_20260709
+- **用户门槛项**：(a) Zenodo 铸造三份预注册 + 复制包;(b) 实际投稿 TOSEM Regular;(c) 可选跨厂商 H2-2
+
+**（前史 phase-K 状态：）**
 
 **Study-2（2026-07-08 当日完成，预注册验证性研究）：**
 - 预注册 v1.1 冻结于数据前（commits 072a015/c904bba；**Zenodo 铸造待用户**，稿中已如实声明自证状态）
