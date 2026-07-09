@@ -94,6 +94,16 @@ C_GEN_MAX_TOKENS = 2048
 CACHE_DIR_CLANG = ROOT / "data/operator_campaign/cache_clang"
 CACHE_DIR_CLANG.mkdir(parents=True, exist_ok=True)
 
+# ── Study-4 confirmatory caches (amendment v1.2 routing targets) ────────────
+# The paused one-shot draw lives in cache_study4/{same,cross}; the C-arm in
+# cache_clang. Amendment v1.2 adds a dedicated harness recruitment stratum in a
+# NEW cache_study4/recruit. Packets carry an arm/stratum tag so `ingest-generation`
+# lands each response in the right cache without a manual --cache-dir.
+CACHE_DIR_STUDY4 = ROOT / "data/operator_campaign/cache_study4"
+CACHE_DIR_STUDY4_SAME = CACHE_DIR_STUDY4 / "same"
+CACHE_DIR_STUDY4_CROSS = CACHE_DIR_STUDY4 / "cross"
+CACHE_DIR_STUDY4_RECRUIT = CACHE_DIR_STUDY4 / "recruit"
+
 PROMPT_TEMPLATE_C = """You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the C program below that implements EXACTLY the named operator described.
 
 PUT NAME: {put_name}
@@ -187,6 +197,14 @@ ARMS = {
     # cross-source arm (v4-style): three generator families, K=3 each.
     "cross": list(FAMILIES),
 }
+
+# Vendor tokens redacted from the DISPLAYED mutant code in blinded review packets,
+# so a model that echoes its own family into a docstring cannot de-blind itself
+# (presentation-layer only; the admitted artifact on disk is untouched). Defined
+# here (above the review-packet machinery) so it is available to both the packet
+# path (`export_review_packets`) and the live Study-4 path (`run_study4_blind_review`).
+STUDY4_VENDOR_TOKENS = ("claude", "fable", "anthropic", "gpt", "openai",
+                        "gemini", "google", "grok", "xai", "deepseek")
 
 
 def assign_review_roles(generator_family: str) -> tuple[str, str]:
@@ -797,18 +815,73 @@ def _campaign_log_append(work_dir, event: str, payload: dict) -> None:
 
 # ── Phase 1: export GENERATION packets ─────────────────────────────────────
 
+_SLOT_FILE_RE = re.compile(
+    r"([a-d]\d+_[A-Z]+\d+)_([A-Za-z0-9]+)_attempt(\d+)\.(?:py|c)$")
+
+
+def _drawn_attempt_counts(resume_cache) -> dict:
+    """Per (op_id, slot) count of attempts ALREADY drawn in ``resume_cache``,
+    for a resume-aware export (amendment v1.2, one-shot rule: completed slots are
+    never re-drawn — only unfinished attempts are exported).
+
+    Primary ledger = the arm's ``campaign_log.jsonl`` generate rows (counts every
+    attempt, admitted OR failed, so a failed slot is not re-rolled). Falls back to
+    (and is unioned with) the highest admitted ``*_attemptNN`` index on disk when
+    a log row is missing. Returns {} when the cache is absent (fresh export)."""
+    counts: dict = {}
+    if resume_cache is None:
+        return counts
+    rc = Path(resume_cache)
+    log = rc / "campaign_log.jsonl"
+    if log.exists():
+        for line in log.read_text().splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if rec.get("kind") == "generate" and rec.get("op_id") and rec.get("slot"):
+                key = (rec["op_id"], rec["slot"])
+                counts[key] = counts.get(key, 0) + 1
+    if rc.exists():
+        seen: dict = {}
+        for f in rc.iterdir():
+            m = _SLOT_FILE_RE.match(f.name)
+            if m:
+                key = (m.group(1), m.group(2))
+                seen[key] = max(seen.get(key, 0), int(m.group(3)))
+        for key, hi in seen.items():
+            counts[key] = max(counts.get(key, 0), hi)
+    return counts
+
+
 def export_generation_packets(out_dir, puts=None, arm="cross",
                               k=REGISTERED_K, seed=REGISTERED_SEED,
-                              lang="py") -> dict:
+                              lang="py", sources=None, stratum=None,
+                              resume_cache=None) -> dict:
     """One GENERATION packet per selected PUT (its operators feed one per-PUT
     pool, reused across all 5 MPs). NO SMS/outcome fields anywhere.
 
     ``lang`` selects the grid: 'py' (default, all registry PUTs) or 'c'
     (Study-4 H-LANG; restricted to C_GRID_PUTS, C prompt + C schema, C PUT
     source). The operator specs and shared MR definitions are identical
-    across languages."""
+    across languages.
+
+    Amendment v1.2 harness parameters (all additive; defaults reproduce the
+    legacy Study-2 behaviour byte-for-byte):
+      * ``sources`` — override the per-slot role tags (default ``ARMS[arm]``).
+        Study-4 arms/stratum use the vendor-neutral ``src1/src2/src3`` tags so a
+        harness-filled remainder is named identically to the gateway-drawn cache.
+      * ``stratum`` — a routing tag written into the packet (e.g. ``"recruit"``)
+        so ``ingest_generation`` lands the response in the matching Study-4 cache.
+      * ``resume_cache`` — a cache dir whose already-drawn (op, slot, attempt)
+        triples are EXCLUDED, so only the unfinished remainder is exported (the
+        one-shot-rule resume; §5d)."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+    drawn_counts = _drawn_attempt_counts(resume_cache)
     is_c = (lang == "c")
     if is_c:
         template = PROMPT_TEMPLATE_C
@@ -823,9 +896,10 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
         schema = GENERATION_RESPONSE_SCHEMA
         tpl = _pin_template("cross_source_campaign.PROMPT_TEMPLATE", template)
         puts = sorted(puts) if puts else sorted({o.put for o in OPERATORS})
-    sources = list(ARMS[arm])
+    sources = list(sources) if sources is not None else list(ARMS[arm])
     manifest = _load_manifest(out_dir)
     written = []
+    n_resume_skipped = 0
     for put in puts:
         ops = sorted((o for o in OPERATORS if o.put == put), key=lambda o: o.id)
         if not ops:
@@ -849,8 +923,14 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
             op_blocks.append({"spec": _operator_spec(op),
                               "prompts_by_attempt": prompts})
             for source in sources:
+                already = drawn_counts.get((op.id, source), 0)
                 for a in range(1, k + 1):
+                    if a <= already:            # resume: attempt already drawn
+                        n_resume_skipped += 1
+                        continue
                     slots.append({"op_id": op.id, "source": source, "attempt": a})
+        if not slots:                            # nothing left for this PUT
+            continue
         pid = f"gen_c_{put}" if is_c else f"gen_{put}"
         packet = {
             "packet_type": "generation",
@@ -858,6 +938,7 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
             "put_id": put,
             "lang": lang,
             "arm": arm,
+            "stratum": stratum,
             "seed": seed,
             "k_per_source": k,
             "sources": sources,
@@ -897,10 +978,16 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
         written.append(entry)
     _save_manifest(out_dir, manifest)
     _campaign_log_append(out_dir, "export-generation",
-                         {"arm": arm, "k": k, "seed": seed,
-                          "n_packets": len(written),
+                         {"arm": arm, "stratum": stratum, "k": k, "seed": seed,
+                          "sources": sources, "n_packets": len(written),
+                          "resume_from": str(resume_cache) if resume_cache else None,
+                          "n_resume_skipped_slots": n_resume_skipped,
                           "puts": [e["put"] for e in written]})
-    print(f"[export-packets] wrote {len(written)} generation packet(s) → {out_dir}")
+    tag = f" stratum={stratum}" if stratum else ""
+    resume = (f" (resume: skipped {n_resume_skipped} drawn slot(s))"
+              if resume_cache else "")
+    print(f"[export-packets] wrote {len(written)} generation packet(s){tag} → "
+          f"{out_dir}{resume}")
     return manifest
 
 
@@ -979,6 +1066,31 @@ def _iter_response_files(in_dir):
         yield f, obj, None
 
 
+def _route_ingest_cache(packet: dict, is_c: bool) -> Path:
+    """Select the destination cache from a generation packet's own tags.
+
+    Priority: C lang -> cache_clang; stratum=='recruit' -> cache_study4/recruit;
+    arm=='same'/'cross' -> cache_study4/{same,cross}; else the legacy
+    cache_cross. An explicit --cache-dir override (handled by the caller) trumps
+    this."""
+    if is_c:
+        return CACHE_DIR_CLANG
+    stratum = (packet.get("stratum") or "").lower()
+    if stratum == "recruit":
+        return CACHE_DIR_STUDY4_RECRUIT
+    # Study-4 arms are identified by their vendor-NEUTRAL src1/src2/src3 slot
+    # tags; the legacy Study-2 packets use claude/gpt/deepseek and keep routing
+    # to cache_cross unchanged.
+    srcs = packet.get("sources") or []
+    is_study4 = bool(srcs) and all(str(s).startswith("src") for s in srcs)
+    arm = (packet.get("arm") or "").lower()
+    if is_study4 and arm == "same":
+        return CACHE_DIR_STUDY4_SAME
+    if is_study4 and arm == "cross":
+        return CACHE_DIR_STUDY4_CROSS
+    return CACHE_DIR
+
+
 def ingest_generation(in_dir, cache_dir=None, packets_dir=None, lang=None) -> dict:
     """Validate agent GENERATION responses (strict) and run each admitted
     mutant through the SAME admission path as the live/mock client.
@@ -1018,7 +1130,10 @@ def ingest_generation(in_dir, cache_dir=None, packets_dir=None, lang=None) -> di
         put = packet["put_id"]
         pkt_lang = packet.get("lang", lang or "py")
         is_c = (pkt_lang == "c")
-        cache_dir = cache_override or (CACHE_DIR_CLANG if is_c else CACHE_DIR)
+        # Routing (amendment v1.2): an explicit --cache-dir always wins; otherwise
+        # the packet's own lang/stratum/arm tag selects the Study-4 cache so a
+        # harness-filled response lands beside its gateway-drawn siblings.
+        cache_dir = cache_override or _route_ingest_cache(packet, is_c)
         cache_dir.mkdir(parents=True, exist_ok=True)
         cache_key = (put, pkt_lang)
         if cache_key not in put_fn_cache:
@@ -1072,9 +1187,20 @@ def _blind_id(op_id: str, source: str, attempt: int) -> str:
     return "rev_" + _sha256_text(f"{op_id}|{source}|{attempt}")[:12]
 
 
+_REVIEW_REDACT_TOKENS = tuple(dict.fromkeys(FAMILIES + STUDY4_VENDOR_TOKENS))
+
+
 def export_review_packets(cache_dir=None, out_dir=None) -> dict:
     """One BLINDED review packet per admitted mutant. Omits generator identity,
-    arm label, and cell aggregates; carries mutant code + PUT + operator only."""
+    arm label, and cell aggregates; carries mutant code + PUT + operator only.
+
+    Works per-arm on any cache (legacy `cache_cross`, the Study-4
+    `cache_study4/{same,cross,recruit}` with vendor-neutral `src1/src2/src3`
+    tags, and the C `cache_clang`). Both `.py` and `.c` admitted mutants are
+    exported; the C reviewer sees a correctly ```c-tagged block. Blinding
+    redaction (incident P7) strips BOTH the legacy families and the four-vendor
+    Study-4 tokens from the displayed code, and the post-redaction leak assertion
+    guards on that union."""
     cache_dir = Path(cache_dir) if cache_dir else CACHE_DIR
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1082,34 +1208,44 @@ def export_review_packets(cache_dir=None, out_dir=None) -> dict:
     manifest = _load_manifest(out_dir)
     blind_map = {}
     n = 0
-    for mut in sorted(cache_dir.glob("*_attempt*.py")):
-        m = re.match(r"([a-d]\d+_[A-Z]+\d+)_([a-z]+)_attempt(\d+)\.py$", mut.name)
+    mutants = sorted(list(cache_dir.glob("*_attempt*.py"))
+                     + list(cache_dir.glob("*_attempt*.c")))
+    for mut in mutants:
+        m = re.match(r"([a-d]\d+_[A-Z]+\d+)_([A-Za-z0-9]+)_attempt(\d+)\.(py|c)$",
+                     mut.name)
         if not m:
             continue
         op_id, source, attempt = m.group(1), m.group(2), int(m.group(3))
+        is_c = (m.group(4) == "c")
         op = op_by_id.get(op_id)
         if op is None:
             continue
-        put_source, _ = _load_put_program(op.put)
+        put_source = (_load_c_put_program(op.put)[0] if is_c
+                      else _load_put_program(op.put)[0])
         code = mut.read_text()
         # Blinding redaction (incident P7): some generators echo the slot's
         # source label into the mutant docstring. Redact source-family tokens
         # from the DISPLAYED code only (deterministic, case-insensitive,
         # presentation-layer; the admitted artifact on disk is untouched and
         # the docstring carries no program semantics). The leak assertion
-        # below remains the final guard post-redaction.
-        for fam in FAMILIES:
-            code = re.sub(fam, "src", code, flags=re.IGNORECASE)
+        # below remains the final guard post-redaction. The Study-4 four-vendor
+        # tokens are included so a gemini/grok/fable echo cannot de-blind.
+        for tok in _REVIEW_REDACT_TOKENS:
+            code = re.sub(tok, "src", code, flags=re.IGNORECASE)
         blind = _blind_id(op_id, source, attempt)
+        review_prompt = REVIEW_PROMPT_TEMPLATE.format(
+            op_id=op.id, op_label=op.label,
+            target_locator=op.target_locator,
+            transformation=op.transformation,
+            put_source=put_source, mutant_code=code)
+        if is_c:                              # show the reviewer a C-tagged block
+            review_prompt = review_prompt.replace("```python", "```c")
         packet = build_blind_review_packet(op, put_source, code)
         packet.update({
             "packet_type": "review",
             "blind_id": blind,
-            "review_prompt": REVIEW_PROMPT_TEMPLATE.format(
-                op_id=op.id, op_label=op.label,
-                target_locator=op.target_locator,
-                transformation=op.transformation,
-                put_source=put_source, mutant_code=code),
+            "lang": "c" if is_c else "py",
+            "review_prompt": review_prompt,
             "response_schema": REVIEW_RESPONSE_SCHEMA,
             "response_filename": f"{blind}_response.json",
             "instructions": (
@@ -1130,6 +1266,13 @@ def export_review_packets(cache_dir=None, out_dir=None) -> dict:
         flat = json.dumps(packet).lower()
         for fam in FAMILIES:
             assert fam not in flat, f"review packet leaks generator family {fam}"
+        # P7 (extended to the four-vendor Study-4 tokens): the generator-authored
+        # mutant code carries no vendor self-identification post-redaction. Guard
+        # the mutant_code field (the only generator-authored text; the fixed PUT
+        # source cannot leak the generator).
+        mcode = packet["mutant_code"].lower()
+        for tok in _REVIEW_REDACT_TOKENS:
+            assert tok not in mcode, f"review packet leaks vendor token {tok!r}"
         assert "arm" not in packet and source not in packet.get("blind_id", "")
         text = json.dumps(packet, indent=2, ensure_ascii=False)
         (out_dir / f"{blind}.json").write_text(text)
@@ -1246,12 +1389,7 @@ def ingest_review(in_dir, packets_dir=None) -> dict:
 # ══════════════════════════════════════════════════════════════════════════
 
 STUDY4_CACHE = ROOT / "data" / "operator_campaign" / "cache_study4_pilot"
-
-# Vendor tokens redacted from the DISPLAYED mutant code in review packets, so a
-# model that echoes its own family into a docstring cannot de-blind itself
-# (presentation-layer only; the admitted artifact on disk is untouched).
-STUDY4_VENDOR_TOKENS = ("claude", "fable", "anthropic", "gpt", "openai",
-                        "gemini", "google", "grok", "xai", "deepseek")
+# (STUDY4_VENDOR_TOKENS is defined near ARMS so the review-packet path can reuse it.)
 
 
 def _study4_log_append(log_path, record: dict) -> None:
@@ -1413,7 +1551,7 @@ def run_study4_blind_review(op, put_source, mutant_code, log_path,
 
 
 def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
-                    review=False, lang="py"):
+                    review=False, lang="py", rich_multiplier=None):
     """Live Study-4 generation (+ optional blinded review) over the given PUTs.
 
     Returns {records, reviews, cache_dir}. All four vendors run on the gateway;
@@ -1421,7 +1559,12 @@ def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
     ``study4_slot_factories(arm)``. ``lang`` selects the grid: 'py' (default, the
     Python H2-2 arms) or 'c' (the Study-4 H-LANG C-arm pilot: the PUT is loaded
     as its C99 source + compiled ``CPutProgram`` original, admission is gcc-based).
-    """
+
+    ``rich_multiplier`` (amendment v1.2) overrides the config's registered rich
+    multiplier for THIS run WITHOUT touching the frozen ``configs/study4_models.json``.
+    The gateway cross-arm resume passes ``rich_multiplier=1`` (BASELINE) because the
+    x4 rich slots have relocated to the harness recruitment stratum; the frozen
+    config file is never edited."""
     cache_dir = Path(cache_dir) if cache_dir else STUDY4_CACHE
     cache_dir.mkdir(parents=True, exist_ok=True)
     is_c = (lang == "c")
@@ -1431,6 +1574,8 @@ def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
     if is_c:
         put_set &= set(C_GRID_PUTS)
     cfg = study4_cfg.load_study4_config()
+    if rich_multiplier is not None:              # v1.2 in-memory override only
+        cfg = {**cfg, "rich_multiplier": int(rich_multiplier)}
     # Registered rich-class x4 slot multiplier (§2a/§4b): C/D PUTs generate at
     # base*mult per (operator, slot) in the Python arms; A/B at baseline; the C
     # arm gets NO multiplier (§2c). Config-driven, default 1 (off) when absent.
@@ -1501,6 +1646,21 @@ def main():
                         help="HARNESS: ingest agent review verdicts from DIR")
     parser.add_argument("--puts", default=None,
                         help="comma-separated PUT ids for --export-packets (default all)")
+    parser.add_argument("--sources", default=None,
+                        help="HARNESS: comma-separated per-slot role tags for "
+                             "--export-packets (default ARMS[arm]). Study-4 arms + "
+                             "recruitment stratum use src1,src2,src3 so a "
+                             "harness-filled remainder is named exactly like the "
+                             "gateway-drawn cache")
+    parser.add_argument("--stratum", default=None,
+                        help="HARNESS: routing tag stamped into each generation "
+                             "packet (e.g. 'recruit'); --ingest-generation lands "
+                             "the response in the matching Study-4 cache")
+    parser.add_argument("--resume-from", dest="resume_from", default=None,
+                        metavar="DIR",
+                        help="HARNESS: resume-aware export — EXCLUDE (op,slot,"
+                             "attempt) triples already drawn in DIR (one-shot rule; "
+                             "reads DIR/campaign_log.jsonl + admitted filenames)")
     parser.add_argument("--packets-dir", dest="packets_dir", default=None,
                         metavar="DIR",
                         help="where matching packets live for an ingest step "
@@ -1524,6 +1684,12 @@ def main():
     parser.add_argument("--study4-log", dest="study4_log", default=None,
                         metavar="FILE",
                         help="Study-4: JSONL per-call token/cost log path")
+    parser.add_argument("--rich-multiplier", dest="rich_multiplier", type=int,
+                        default=None,
+                        help="Study-4 (v1.2): override the config rich multiplier "
+                             "for THIS run without editing the frozen config. The "
+                             "gateway cross-arm resume uses 1 (BASELINE) because "
+                             "the x4 rich slots moved to the harness stratum")
     args = parser.parse_args()
 
     if args.study4:
@@ -1532,11 +1698,14 @@ def main():
         attempts = args.attempts if args.attempts is not None else int(cfg["registered_k"])
         cache = Path(args.cache_dir) if args.cache_dir else STUDY4_CACHE
         log_path = Path(args.study4_log) if args.study4_log else (cache / "campaign_log.jsonl")
+        rm = args.rich_multiplier
         print(f"== Study-4 LIVE (arm={args.arm}, attempts={attempts}, "
-              f"lang={args.lang}, review={'on' if args.review else 'off'}) — slots "
-              f"{study4_cfg.arm_slots(args.arm)} ==")
+              f"lang={args.lang}, review={'on' if args.review else 'off'}"
+              + (f", rich_multiplier={rm} [v1.2 override]" if rm is not None else "")
+              + f") — slots {study4_cfg.arm_slots(args.arm)} ==")
         out = study4_campaign(puts, args.arm, attempts, cache_dir=cache,
-                              log_path=log_path, review=args.review, lang=args.lang)
+                              log_path=log_path, review=args.review, lang=args.lang,
+                              rich_multiplier=rm)
         n_pass = sum(1 for r in out["records"] if r.get("v_passed"))
         print(f"== Study-4 done: {len(out['records'])} gen, {n_pass} admitted, "
               f"{len(out['reviews'])} reviewed; log={log_path} ==")
@@ -1545,8 +1714,11 @@ def main():
     # ── Harness (packet) dispatch — each is a terminal offline action ──────
     if args.export_packets:
         puts = args.puts.split(",") if args.puts else None
+        srcs = args.sources.split(",") if args.sources else None
         export_generation_packets(args.export_packets, puts=puts, arm=args.arm,
-                                  k=args.k, seed=REGISTERED_SEED, lang=args.lang)
+                                  k=args.k, seed=REGISTERED_SEED, lang=args.lang,
+                                  sources=srcs, stratum=args.stratum,
+                                  resume_cache=args.resume_from)
         raise SystemExit(0)
     if args.ingest_generation:
         ingest_generation(args.ingest_generation, cache_dir=args.cache_dir,

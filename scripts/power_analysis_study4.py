@@ -171,6 +171,105 @@ def power_h2_2(s2mod) -> dict:
 # --------------------------------------------------------------------------- #
 # (B) H4''' — rich-class recruitment slot multiplier (binomial projection)
 # --------------------------------------------------------------------------- #
+def recruitment_stratum_v1_2() -> dict:
+    """AMENDMENT v1.2 (2026-07-09): pooled binomial projection for the dedicated
+    harness-served RECRUITMENT STRATUM that lifts detected rich units to
+    n_rich >= 24 with >= 0.90 probability.
+
+    Serving-stack change (v1.2): the rich-class x4 EXTRA slots move OUT of the
+    two H2-2 arms and into a SEPARATE claude-family recruitment stratum served by
+    the session harness (no gateway quota). The two H2-2 arms therefore generate
+    their rich cells at BASELINE (multiplier 1). Pre-declared pooling redefinition
+    (before any Study-4 outcome exists):
+
+        pooled rich units = same-arm rich baseline (15 @ p0)
+                          + cross-arm rich baseline (15 @ p0)
+                          + recruitment stratum       (15 @ p_ms)
+
+    where p0 = 6/15 (v6 per-PUT-per-arm detect, unchanged calibration source),
+    p_ms = 1 - (1-p0)^m_s (m_s independent harness detection passes per rich PUT),
+    and the two arm baselines combine to Binomial(30, p0). n_rich is counted over
+    all three groups (up to 45 PUT-source units); register the smallest integer
+    m_s with P(pooled n_rich >= 24) >= 0.90. Because the arms are pinned at
+    baseline, the pool's attainable P(>=24) ceiling is ~0.905 (arm mean 12 + at
+    most 15 from a saturated stratum), so the gate is intrinsically tight and the
+    registered m_s is a floor — disclosed, not moved. Single-family (claude)
+    recruitment is disclosed: attribution structure (H4''') does not test vendor
+    diversity, so a single generator lineage introduces no confound to the
+    graded-share estimand."""
+    graded = json.loads(V6_GRADED.read_text())
+    n_rich_v6 = int(graded["H4pp_graded"]["n_rich"])          # 6 detected rich PUTs
+    n_rich_roster = 15                                        # C7 + D8 rich PUTs
+    p0 = n_rich_v6 / n_rich_roster                           # per-PUT-per-arm detect
+    N_ARM_BASELINE = 2 * n_rich_roster                        # 2 arms * 15 baseline units
+    N_POOLED = 3 * n_rich_roster                              # + stratum 15 -> 45 units
+    TARGET = 24
+    PROB_GATE = 0.90
+    arm_pmf = stats.binom.pmf(np.arange(N_ARM_BASELINE + 1), N_ARM_BASELINE, p0)
+    curve = {}
+    for m in range(1, 16):
+        p_ms = 1.0 - (1.0 - p0) ** m
+        str_pmf = stats.binom.pmf(np.arange(n_rich_roster + 1), n_rich_roster, p_ms)
+        pooled_pmf = np.convolve(arm_pmf, str_pmf)
+        exp = N_ARM_BASELINE * p0 + n_rich_roster * p_ms
+        p_ge = float(pooled_pmf[TARGET:].sum())
+        curve[m] = {"stratum_per_put_detect_p_ms": round(p_ms, 4),
+                    "expected_pooled_n_rich": round(exp, 2),
+                    "P_n_rich_ge_24": round(p_ge, 4),
+                    "meets_gate": bool(p_ge >= PROB_GATE)}
+    chosen = next((m for m in range(1, 16) if curve[m]["meets_gate"]), None)
+    ceiling = 15.0 + N_ARM_BASELINE * p0                      # saturated-stratum mean
+    return {
+        "amendment": "v1.2 (2026-07-09): recruitment-locus change only. The x4 "
+                     "rich slots move OUT of the two H2-2 arms into a dedicated "
+                     "harness-served claude-family recruitment stratum; arms "
+                     "generate rich cells at BASELINE. No threshold, estimand, "
+                     "decision rule, or seed changes.",
+        "calibration_source": "data/results/h4_graded_v6.json (Study-3 v6 detected "
+                              "n_rich; design-from-prior-study, Study-4 outcomes "
+                              "unseen)",
+        "serving_stack": "recruitment stratum = claude-family via session harness "
+                         "(no gateway quota); H2-2 arms unchanged (same=harness "
+                         "claude remainder, cross=gateway gpt-5.5/gemini-3.5-flash/"
+                         "grok-4.1). Single-family stratum disclosed: H4''' "
+                         "attribution does not test vendor diversity.",
+        "n_rich_detected_v6": n_rich_v6,
+        "n_rich_roster": n_rich_roster,
+        "per_put_per_arm_detect_p0": round(p0, 4),
+        "pooling": "PRE-DECLARED (v1.2): pooled = same-arm rich baseline (15@p0) + "
+                   "cross-arm rich baseline (15@p0) + recruitment stratum (15@p_ms); "
+                   "incl. any extra rich attempts already drawn in the caches "
+                   "(drawn is drawn, nothing discarded); N_pooled up to 45 units.",
+        "projection_model": "arms Binom(30,p0); stratum Binom(15, 1-(1-p0)^m_s); "
+                            "pooled = arms (*) stratum (convolution); target n_rich "
+                            ">= 24 at P >= 0.90",
+        "target_n_rich": TARGET,
+        "prob_gate": PROB_GATE,
+        "attainable_ceiling_expected_pooled": round(ceiling, 2),
+        "multiplier_curve": curve,
+        "x4_sufficient": curve[4]["meets_gate"],
+        "chosen_stratum_multiplier": chosen,
+        "chosen_expected_pooled_n_rich": curve[chosen]["expected_pooled_n_rich"]
+            if chosen else None,
+        "chosen_P_ge_24": curve[chosen]["P_n_rich_ge_24"] if chosen else None,
+        "operational_realization": (
+            "the stratum is exported as 3 vendor-neutral harness slots x the "
+            "registered attempts; the x4 that left the arms is the seed of the "
+            "stratum's attempt budget, iterated to >= the registered floor of m_s "
+            "independent detection passes per rich PUT. Harness-served, so the "
+            "multiplier carries no gateway-quota cost."),
+        "note": ("x4 alone is INSUFFICIENT under the v1.2 additive pooling "
+                 "(P(>=24)=%.3f) because the two arms sit at baseline; the "
+                 "registered stratum floor is m_s=x%s (P=%.3f, expected pooled "
+                 "n_rich %.1f). The gate is tight (ceiling ~%.3f) and disclosed; "
+                 "no threshold moved." % (
+                     curve[4]["P_n_rich_ge_24"], chosen,
+                     curve[chosen]["P_n_rich_ge_24"] if chosen else float("nan"),
+                     curve[chosen]["expected_pooled_n_rich"] if chosen else float("nan"),
+                     0.9054)) if chosen else "no multiplier <=15 meets the 0.90 gate",
+    }
+
+
 def recruitment_multiplier() -> dict:
     """Pooled-arm binomial projection for the slot multiplier that lifts detected
     rich PUT-arm units to n_rich >= 24 with >= 80% probability.
@@ -322,11 +421,24 @@ def main():
                               "C-port intersection; 5 sklearn PUTs unportable, "
                               "C_PORT_SPEC §3). a2 retained confirmatory. Power "
                               "recomputed honestly at n=7 (below 0.80, disclosed).",
+            "amendment_v1_2": "2026-07-09: serving-stack + recruitment-locus change "
+                              "only (pre-any-Study-4-outcome). Claude-family roles "
+                              "(same-arm remainder, blinded review both arms, "
+                              "H4''' recruitment stratum, C-arm remainder) served "
+                              "by the session harness; non-Anthropic generators "
+                              "(gpt-5.5/gemini-3.5-flash/grok-4.1) stay on the "
+                              "gateway at BASELINE (rich_multiplier=1). The x4 rich "
+                              "slots relocate from the two arms into a dedicated "
+                              "harness recruitment stratum; pooled projection "
+                              "recomputed at P(n_rich>=24)>=0.90 "
+                              "(b2_h4ppp_recruitment_stratum_v1_2). No threshold, "
+                              "estimand, decision rule, or seed changes.",
             "numpy": np.__version__, "scipy": stats.__name__.split(".")[0],
             "no_llm_calls": True,
         },
         "a_h2_2_cross_vendor_delta_delta": power_h2_2(s2mod),
         "b_h4ppp_rich_recruitment": recruitment_multiplier(),
+        "b2_h4ppp_recruitment_stratum_v1_2": recruitment_stratum_v1_2(),
         "c_hlang_cross_language": power_hlang(s2mod),
     }
     OUT.write_text(json.dumps(result, indent=2))
@@ -345,6 +457,13 @@ def main():
         print("        x%s: p_m=%.3f  E[n_rich]=%.1f  P(>=24)=%.3f  gate=%s" % (
             m, row["per_put_detect_p_m"], row["expected_pooled_n_rich"],
             row["P_n_rich_ge_24"], row["meets_gate"]))
+    b2 = result["b2_h4ppp_recruitment_stratum_v1_2"]
+    print("[H4''' v1.2] additive pooling (2 arm baselines @p0=%.2f + stratum); "
+          "x4 sufficient=%s; chosen stratum multiplier = x%s "
+          "(expected pooled n_rich %.1f, P(>=24)=%.3f); ceiling~0.905" % (
+              b2["per_put_per_arm_detect_p0"], b2["x4_sufficient"],
+              b2["chosen_stratum_multiplier"], b2["chosen_expected_pooled_n_rich"],
+              b2["chosen_P_ge_24"]))
     c = result["c_hlang_cross_language"]
     print("[H-LANG] v5 true delta = %s | ACHIEVED C grid n=%d %s | "
           "power(delta>0) @n7 = %.4f (a2-excl n6 = %.4f) | well-powered@0.80=%s" % (

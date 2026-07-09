@@ -114,6 +114,99 @@ of power at the achieved n** — neither is a selection on any C outcome.
 one-sided 95% percentile-bootstrap lower bound; B = 10,000; seed 20260708). Only
 the roster (12 → 7, port feasibility) and the resulting achieved power change.
 
+### 0.4 Amendment v1.2 (2026-07-09) — harness-served claude roles + recruitment stratum + gateway baseline resume
+
+Dated, disclosed amendment covering a **serving-stack change** and a
+**recruitment-locus change ONLY**. Made **before ANY Study-4 outcome exists**.
+
+**Pre-outcome attestation (verified at drafting, 2026-07-09).** The gateway
+account hit `insufficient_user_quota` mid-generation and all three arms paused;
+the checkpoint commit (`phase-T(study4)`) holds the paused one-shot draw — same
+arm **177** admitted mutants, cross arm **213**, C arm **123** (per the on-disk
+caches). **No Study-4 outcome of any kind exists:** no SMS cell, no dual-blind
+verdict, no graded-attribution share, no delta_C — verified absent
+(`data/results/*v7*` / `sms_track2_v7*.json` / `dualblind_delta_delta_v7.json` /
+`h4_graded_v7.json` / `hlang_delta_v7c.json` all absent; the three
+`cache_study4/*` + `cache_clang` dirs contain only generation artifacts and
+`campaign_log.jsonl`, no `ingest_review` / verdict / SMS files). Because no
+Study-4 response has been scored or seen, a **pre-outcome amendment is
+legitimate**: it cannot be selection on the response.
+
+**Motivation.** The quota event makes the gateway unavailable for the
+Claude-family roles. The session harness serves those roles instead. The
+non-Anthropic models stay on the gateway.
+
+| Role | v1.1/v2.0 serving | v1.2 serving | Estimand impact |
+|---|---|---|---|
+| Same-source arm generation (remainder) | gateway `claude-fable-5` | **harness claude-family** (the 177 gateway-drawn mutants are RETAINED — no redraw) | none: same-source arm IS single-vendor by design (§5c); within-arm serving heterogeneity gateway/harness within one model family disclosed as a limitation (§5e) |
+| Cross-source arm generation (resume) | gateway `gpt-5.5`/`gemini-3.5-flash`/`grok-4.1` | **gateway, unchanged**, resumed at **BASELINE** (`rich_multiplier=1`) | none: the x4 rich slots relocate to the recruitment stratum (see below); the between-arm generator-vendor contrast is untouched |
+| Blinded review (BOTH arms) | gateway `claude-fable-5` | **harness claude-family** on the existing blinded packets | none: review is **arm-symmetric** — one reviewer sees both arms' blinded packets, so a single harness reviewer adds no Δδ confound (the H2-2 estimand is the between-arm generation contrast; §5c) |
+| Arbitration | gateway `gpt-5.5` | **gateway `gpt-5.5`, unchanged** | none |
+| H4''' rich recruitment | x4 slots in BOTH arms + pooling | **dedicated harness claude-family recruitment stratum** (15 rich PUTs) | recruitment-LOCUS change; pooled projection recomputed (below); the graded-share estimand + 0.15 bar + n_rich≥24 gate are UNCHANGED |
+| C-arm (H-LANG) generation (remainder) | gateway (cross slots) | **harness claude-family**; the 123 gateway-drawn C mutants RETAINED | none: H-LANG tests language-invariance, not vendor diversity; single-family completion disclosed (below) |
+
+**Why accuracy/objectivity are not compromised (per estimand).**
+- **H2-2 (Δδ).** The estimand is the *generation-side* between-arm vendor
+  contrast (§3.1, §5c). The blinded reviewer is single-vendor for both arms by
+  registered design, so moving it from gateway-claude to harness-claude is
+  arm-symmetric and cannot bias Δδ. The cross arm's generators stay on the
+  gateway (genuine gpt/gemini/grok diversity); the same arm stays single-family
+  claude — the manipulated variable is unchanged.
+- **H4''' (graded attribution).** Attribution structure asks *how much of the
+  detected kill is attributed to the declared MetaPattern* — it does **not** test
+  vendor diversity. A single-family (claude) recruitment stratum therefore
+  introduces no confound to the graded-share estimand.
+- **H-LANG (language-invariance).** The estimand is aligned>cross direction on a
+  C port — a within-construct, cross-language claim, not a vendor claim.
+  Single-family C completion introduces no confound. (Pilot fact reinforcing
+  this: `grok-4.1`→`grok-4.3` produced **0/6 admissible** C mutants, P14/§10, so
+  a gateway C completion would have been *quasi-single-family* regardless.)
+
+**H4''' recruitment redesign (recompute).** The rich-class **x4 EXTRA slots move
+OUT of the two H2-2 arms** into a dedicated harness-generated **recruitment
+stratum** (claude-family, the 15 rich PUTs). The two arms therefore generate
+their rich cells at **BASELINE** (`rich_multiplier=1`). Pre-declared **pooling
+redefinition** (before any outcome):
+
+> pooled rich units = same-arm rich baseline + cross-arm rich baseline
+> (**incl. any extra rich attempts already drawn in the caches — drawn is drawn,
+> nothing discarded**) + recruitment stratum.
+
+Projection recomputed in `scripts/power_analysis_study4.py::recruitment_stratum_v1_2`
+(key `b2_h4ppp_recruitment_stratum_v1_2` in `power_study4.json`), using the **v6
+detection rate** `p0 = 6/15 = 0.40`, counting the rich baseline cells of **both
+arms** (Binomial(30, p0)) **PLUS the stratum** (Binomial(15, 1−(1−p0)^{m_s})):
+
+| Quantity | Value |
+|---|---|
+| Registered target | P(pooled n_rich ≥ 24) ≥ **0.90** |
+| Chosen stratum multiplier (smallest integer meeting the gate) | **m_s = 11** |
+| Expected pooled n_rich @ m_s=11 | **26.95** |
+| P(n_rich ≥ 24) @ m_s=11 | **0.9015** |
+| x4 alone (arms at baseline) | insufficient — P(≥24) = 0.699 |
+| Attainable ceiling (arms pinned at baseline) | ~0.905 |
+
+Because the two arms are pinned at baseline, the pool's attainable ceiling is
+~0.905, so the gate is **intrinsically tight** and m_s = 11 is a registered
+**floor** — disclosed, not moved. The stratum is harness-served (no gateway
+quota), so a deep multiplier carries no quota cost; it is realized as the 3
+vendor-neutral slots × ≥ the registered attempt floor. (Note: at freeze the arms
+had drawn **zero** rich C/D mutants — generation paused at a8/b1/b2 — so the
+"drawn is drawn" clause is presently vacuous for the rich classes and the
+baseline projection is the operative floor.) Single-family recruitment disclosed
+with the argument that attribution structure does not test vendor diversity.
+
+**H-LANG completion.** C-arm remainder generation = harness claude-family; the
+123 gateway-drawn C mutants retained; single-family completion disclosed with the
+same argument + the grok-4.3 0/6 pilot fact.
+
+**What does NOT change (attestation).** No threshold, estimand, decision rule,
+primary-MP rule, α, DGP, or seed changes — **serving-stack and recruitment-locus
+changes only**. The frozen `configs/study4_models.json` is **not edited** (the
+`rich_multiplier=1` cross resume uses an in-memory `--rich-multiplier` override).
+Amended **before any Study-4 outcome was computed or seen**. Incident/deviation
+ledger row **D-A2** (§9, §10).
+
 ---
 
 ## 1. Confirmatory research questions (three families)
@@ -180,7 +273,11 @@ detected pooled n_rich ~ Binomial(30, p_m). The multiplier sweep
 multiplier is x4** (expected pooled n_rich 26.1, P(>=24) = 0.92). Cost: x4
 roughly quadruples the C/D mutant-generation + blinded-review budget on the 15
 rich PUTs across both arms; A/B slots are unchanged, so whole-campaign cost rises
-well below 4x. **H-LANG power note (AMENDED v1.1).** The C-port grid landed at the
+well below 4x. *(**Superseded by Amendment v1.2, §0.4**: the x4 rich slots
+relocate from the two arms into a harness recruitment stratum; the arms run rich
+cells at baseline and the projection is recomputed at P(n_rich≥24)≥0.90, chosen
+m_s=11 — `power_study4.json::b2_h4ppp_recruitment_stratum_v1_2`. The n_rich≥24
+gate, graded measure, and 0.15 bar are unchanged.)* **H-LANG power note (AMENDED v1.1).** The C-port grid landed at the
 **7 ported PUTs** (n = 7; the 5 sklearn kernels are unportable, `C_PORT_SPEC.md`
 §3), which gives less power than the v1.0 n = 12 registration and than the n = 28
 Python grid. On the SAME seed 20260708 and the v5-calibrated DGP (true delta =
@@ -426,6 +523,19 @@ the response.
   target. Pooling is registered for H4''' ONLY; H2-2 keeps the arms separate (it
   IS the between-arm contrast).
 
+> **Amendment v1.2 (§0.4) — recruitment-locus change.** The x4 rich slots move
+> OUT of the two arms into a dedicated **harness-served recruitment stratum**
+> (claude-family, 15 rich PUTs); the arms generate rich cells at **baseline**
+> (`rich_multiplier=1`). Pooling is redefined as **same-arm rich baseline +
+> cross-arm rich baseline (incl. any extra rich attempts already drawn — drawn is
+> drawn) + recruitment stratum** (up to 45 PUT-source units). The stratum
+> multiplier is recomputed to keep **P(pooled n_rich ≥ 24) ≥ 0.90**: chosen
+> **m_s = 11** (expected pooled 26.95, P = 0.9015; x4-in-arms alone would give
+> 0.699; ceiling ~0.905, disclosed). Single-family recruitment is disclosed —
+> attribution structure does not test vendor diversity. SSOT:
+> `power_study4.json::b2_h4ppp_recruitment_stratum_v1_2`. The graded measure,
+> 0.15 bar, n_rich ≥ 24 gate, and primary-MP rule are UNCHANGED.
+
 ---
 
 ## 5. Dual-blind protocol + cross-vendor harness disclosure + one-shot rule
@@ -472,6 +582,30 @@ review-diversity. Arbitration is cross-vendor (`gpt-5.5`) to avoid a single
 instance adjudicating its own family's disagreements. We do **not** claim to have
 tested reviewer-side vendor diversity; that is out of scope and stated as open,
 not as a null.
+
+> **Amendment v1.2 (§0.4) — serving stack.** After the gateway quota event, the
+> Claude-family roles are served by the **session harness** instead of the
+> gateway: same-source arm generation (remainder), blinded review (both arms),
+> the H4''' recruitment stratum, and the C-arm remainder. The non-Anthropic
+> generators (`gpt-5.5`/`gemini-3.5-flash`/`grok-4.1`) stay on the **gateway**;
+> arbitration (`gpt-5.5`) stays on the gateway. The 177/213/123 gateway-drawn
+> mutants are **retained** (no redraw). **The H2-2 estimand is unaffected**: review
+> is arm-symmetric (one reviewer over both arms' blinded packets → no Δδ
+> confound), and the manipulated variable (generation-side vendor mapping) is
+> unchanged — the cross arm keeps its genuine gpt/gemini/grok diversity on the
+> gateway; the same arm stays single-family claude.
+
+### 5e. Within-arm serving heterogeneity — honestly noted (Amendment v1.2)
+
+The same-source arm's rich/remainder cells are generated partly on the **gateway**
+(the 177 already-drawn `claude-fable-5` mutants) and partly on the **harness**
+(claude-family) after the quota event. This is a within-arm, within-model-family
+serving heterogeneity (gateway vs harness serving of the *same* Anthropic
+lineage), disclosed as a limitation. It does **not** move the between-arm H2-2
+contrast (the cross arm is a different vendor set entirely, so the same-arm
+serving split cannot masquerade as cross-vs-same source diversity), and it does
+not touch H4''' (attribution is not a vendor test) or H-LANG (a language-invariance
+test). No mutant is discarded to "purify" the serving stack — drawn is drawn.
 
 ### 5d. One-shot confirmatory rule — VERBATIM from v1.1/v2.0
 
@@ -599,6 +733,7 @@ falsification of language-invariance).
 | L15 | A hypothesis formed after seeing prior data cannot be confirmed on that data | fresh v7/vC generation; v4/v5/v6 used for calibration only, stated openly | §0.1, §2c |
 | L17 | Study-3 H4''-graded thin (n_rich = 6) → fragile NOT_CONFIRMED | x4 rich-class slot multiplier + pre-declared two-arm pooling → projected pooled n_rich 26.1 (P(>=24) = 0.92); recruitment gate blocks threshold-moving | §2a, §3.2, §4b |
 | L18 | Bold construct claims must be pre-committed and falsifiable | H-LANG frozen NOW (blind to the C-port outcome), one-shot, delta_C > 0 at 0.87 power; a non-replication is reported as a falsification, not hedged | §3.3 |
+| L19 (D-A2) | A serving-infrastructure change mid-draw must be disclosed pre-outcome and shown estimand-neutral, not silently absorbed | **Amendment v1.2**: gateway quota event → Claude-family roles served by the harness (same-arm remainder, blinded review both arms, H4''' stratum, C-arm remainder); non-Anthropic generators + arbiter stay on the gateway; cross resume at BASELINE (`rich_multiplier=1`, in-memory override, frozen config untouched); 177/213/123 retained; recruitment x4 relocated to a harness stratum, pooled projection recomputed at P(n_rich≥24)≥0.90 (m_s=11). Disclosed pre-outcome; no threshold/estimand/rule/seed moved | §0.4, §4b, §5b–§5e, §10 (D-A2) |
 
 ---
 
@@ -671,6 +806,39 @@ in writing compilable C99, recorded honestly (NEW territory: LLMs writing C).
 24/36 admitted, 24 blinded reviews, 0 arbitrations. All code-level (no threshold,
 estimand, DGP, primary-MP, or roster changed); the confirmatory C run is NOT
 started. Full record: `PILOT_LOG.md` "Study-4 C-arm pilot" section.
+
+**Amendment v1.2 — 2026-07-09 (serving stack + recruitment locus; §0.4).**
+Deviation-ledger row **D-A2**. The gateway account exhausted its quota
+(`insufficient_user_quota`) mid-generation and all three arms paused at a
+committed checkpoint (`phase-T(study4)`): same **177** admitted mutants, cross
+**213**, C **123**. **Pre-outcome attestation (verified):** no Study-4 outcome
+exists — no SMS, no dual-blind verdict, no graded share, no delta_C; the
+`v7*`/`v7c` SSOTs are absent and the caches hold only generation artifacts +
+`campaign_log.jsonl` (no verdict/review/SMS files). A pre-outcome amendment is
+therefore legitimate. **Change (serving-stack + recruitment-locus ONLY):** the
+Claude-family roles are served by the **session harness** instead of the gateway
+— same-source arm generation (remainder), blinded review (BOTH arms), the H4'''
+recruitment stratum, and the C-arm (H-LANG) remainder; the non-Anthropic
+generators (`gpt-5.5`/`gemini-3.5-flash`/`grok-4.1`) and the arbiter (`gpt-5.5`)
+**stay on the gateway**. The cross arm resumes at **BASELINE** (`rich_multiplier=1`,
+an in-memory `--rich-multiplier` override — the frozen `configs/study4_models.json`
+is NOT edited). The 177/213/123 gateway-drawn mutants are **retained** (no
+redraw); within-arm serving heterogeneity (gateway vs harness of the same
+Anthropic lineage) is disclosed (§5e). The rich-class **x4 slots relocate** from
+the two arms into a dedicated harness **recruitment stratum** (claude-family, 15
+rich PUTs); pooling is redefined as same-arm rich baseline + cross-arm rich
+baseline (incl. any already-drawn extras) + stratum, and the projection is
+recomputed to keep **P(pooled n_rich ≥ 24) ≥ 0.90** → chosen **m_s = 11**
+(expected 26.95, P = 0.9015; x4-in-arms alone = 0.699; ceiling ~0.905, disclosed)
+in `power_study4.json::b2_h4ppp_recruitment_stratum_v1_2`. H-LANG C completion is
+single-family (harness claude); the `grok-4.3` 0/6-admissible-C pilot fact (P14)
+shows a gateway completion would have been quasi-single-family anyway. Estimand
+neutrality: H2-2 review is arm-symmetric (no Δδ confound); H4''' attribution and
+H-LANG invariance do not test vendor diversity. **No threshold, estimand,
+decision rule, primary-MP rule, α, DGP, or seed changed.** Code rewiring
+(harness packet export/ingest routing, resume-aware export, rich-multiplier
+override, review-packet src-tag + C support) is offline-tested (`pytest` 545
+green, +9 v1.2 tests). Made before any Study-4 outcome was computed or seen.
 
 *(No further amendments. Any post-freeze change — a pilot-triggered code fix, a
 vendor id remap, a seed correction — is appended here with date and rationale

@@ -15,6 +15,7 @@
       "hlang": "data/results/sms_track2_v5.json (v5 delta~0.43)"
     },
     "amendment_v1_1": "2026-07-09: H-LANG registered n 12 -> 7 (achieved C-port intersection; 5 sklearn PUTs unportable, C_PORT_SPEC \u00a73). a2 retained confirmatory. Power recomputed honestly at n=7 (below 0.80, disclosed).",
+    "amendment_v1_2": "2026-07-09: serving-stack + recruitment-locus change only (pre-any-Study-4-outcome). Claude-family roles (same-arm remainder, blinded review both arms, H4''' recruitment stratum, C-arm remainder) served by the session harness; non-Anthropic generators (gpt-5.5/gemini-3.5-flash/grok-4.1) stay on the gateway at BASELINE (rich_multiplier=1). The x4 rich slots relocate from the two arms into a dedicated harness recruitment stratum; pooled projection recomputed at P(n_rich>=24)>=0.90 (b2_h4ppp_recruitment_stratum_v1_2). No threshold, estimand, decision rule, or seed changes.",
     "numpy": "2.4.6",
     "scipy": "scipy",
     "no_llm_calls": true
@@ -126,6 +127,117 @@
     "chosen_expected_pooled_n_rich": 26.11,
     "chosen_P_ge_24": 0.9153,
     "cost_note": "x2 is INSUFFICIENT (expected pooled n_rich 19.2, P(>=24) 0.05). The registered multiplier is x4, which roughly 4x-es the C/D mutant-generation + blinded-review budget on the 15 rich PUTs across both arms; A/B slots are unchanged, so the whole-campaign cost rises well below 4x."
+  },
+  "b2_h4ppp_recruitment_stratum_v1_2": {
+    "amendment": "v1.2 (2026-07-09): recruitment-locus change only. The x4 rich slots move OUT of the two H2-2 arms into a dedicated harness-served claude-family recruitment stratum; arms generate rich cells at BASELINE. No threshold, estimand, decision rule, or seed changes.",
+    "calibration_source": "data/results/h4_graded_v6.json (Study-3 v6 detected n_rich; design-from-prior-study, Study-4 outcomes unseen)",
+    "serving_stack": "recruitment stratum = claude-family via session harness (no gateway quota); H2-2 arms unchanged (same=harness claude remainder, cross=gateway gpt-5.5/gemini-3.5-flash/grok-4.1). Single-family stratum disclosed: H4''' attribution does not test vendor diversity.",
+    "n_rich_detected_v6": 6,
+    "n_rich_roster": 15,
+    "per_put_per_arm_detect_p0": 0.4,
+    "pooling": "PRE-DECLARED (v1.2): pooled = same-arm rich baseline (15@p0) + cross-arm rich baseline (15@p0) + recruitment stratum (15@p_ms); incl. any extra rich attempts already drawn in the caches (drawn is drawn, nothing discarded); N_pooled up to 45 units.",
+    "projection_model": "arms Binom(30,p0); stratum Binom(15, 1-(1-p0)^m_s); pooled = arms (*) stratum (convolution); target n_rich >= 24 at P >= 0.90",
+    "target_n_rich": 24,
+    "prob_gate": 0.9,
+    "attainable_ceiling_expected_pooled": 27.0,
+    "multiplier_curve": {
+      "1": {
+        "stratum_per_put_detect_p_ms": 0.4,
+        "expected_pooled_n_rich": 18.0,
+        "P_n_rich_ge_24": 0.0483,
+        "meets_gate": false
+      },
+      "2": {
+        "stratum_per_put_detect_p_ms": 0.64,
+        "expected_pooled_n_rich": 21.6,
+        "P_n_rich_ge_24": 0.2799,
+        "meets_gate": false
+      },
+      "3": {
+        "stratum_per_put_detect_p_ms": 0.784,
+        "expected_pooled_n_rich": 23.76,
+        "P_n_rich_ge_24": 0.5332,
+        "meets_gate": false
+      },
+      "4": {
+        "stratum_per_put_detect_p_ms": 0.8704,
+        "expected_pooled_n_rich": 25.06,
+        "P_n_rich_ge_24": 0.6989,
+        "meets_gate": false
+      },
+      "5": {
+        "stratum_per_put_detect_p_ms": 0.9222,
+        "expected_pooled_n_rich": 25.83,
+        "P_n_rich_ge_24": 0.7913,
+        "meets_gate": false
+      },
+      "6": {
+        "stratum_per_put_detect_p_ms": 0.9533,
+        "expected_pooled_n_rich": 26.3,
+        "P_n_rich_ge_24": 0.8413,
+        "meets_gate": false
+      },
+      "7": {
+        "stratum_per_put_detect_p_ms": 0.972,
+        "expected_pooled_n_rich": 26.58,
+        "P_n_rich_ge_24": 0.8688,
+        "meets_gate": false
+      },
+      "8": {
+        "stratum_per_put_detect_p_ms": 0.9832,
+        "expected_pooled_n_rich": 26.75,
+        "P_n_rich_ge_24": 0.8843,
+        "meets_gate": false
+      },
+      "9": {
+        "stratum_per_put_detect_p_ms": 0.9899,
+        "expected_pooled_n_rich": 26.85,
+        "P_n_rich_ge_24": 0.8932,
+        "meets_gate": false
+      },
+      "10": {
+        "stratum_per_put_detect_p_ms": 0.994,
+        "expected_pooled_n_rich": 26.91,
+        "P_n_rich_ge_24": 0.8984,
+        "meets_gate": false
+      },
+      "11": {
+        "stratum_per_put_detect_p_ms": 0.9964,
+        "expected_pooled_n_rich": 26.95,
+        "P_n_rich_ge_24": 0.9015,
+        "meets_gate": true
+      },
+      "12": {
+        "stratum_per_put_detect_p_ms": 0.9978,
+        "expected_pooled_n_rich": 26.97,
+        "P_n_rich_ge_24": 0.9033,
+        "meets_gate": true
+      },
+      "13": {
+        "stratum_per_put_detect_p_ms": 0.9987,
+        "expected_pooled_n_rich": 26.98,
+        "P_n_rich_ge_24": 0.9044,
+        "meets_gate": true
+      },
+      "14": {
+        "stratum_per_put_detect_p_ms": 0.9992,
+        "expected_pooled_n_rich": 26.99,
+        "P_n_rich_ge_24": 0.905,
+        "meets_gate": true
+      },
+      "15": {
+        "stratum_per_put_detect_p_ms": 0.9995,
+        "expected_pooled_n_rich": 26.99,
+        "P_n_rich_ge_24": 0.9054,
+        "meets_gate": true
+      }
+    },
+    "x4_sufficient": false,
+    "chosen_stratum_multiplier": 11,
+    "chosen_expected_pooled_n_rich": 26.95,
+    "chosen_P_ge_24": 0.9015,
+    "operational_realization": "the stratum is exported as 3 vendor-neutral harness slots x the registered attempts; the x4 that left the arms is the seed of the stratum's attempt budget, iterated to >= the registered floor of m_s independent detection passes per rich PUT. Harness-served, so the multiplier carries no gateway-quota cost.",
+    "note": "x4 alone is INSUFFICIENT under the v1.2 additive pooling (P(>=24)=0.699) because the two arms sit at baseline; the registered stratum floor is m_s=x11 (P=0.901, expected pooled n_rich 26.9). The gate is tight (ceiling ~0.905) and disclosed; no threshold moved."
   },
   "c_hlang_cross_language": {
     "hypothesis": "H-LANG: on the ACHIEVED C port of the original Study-1 grid (n=7; 5 sklearn PUTs unportable, C_PORT_SPEC \u00a73) the aligned>cross direction replicates (delta_C > 0)",
