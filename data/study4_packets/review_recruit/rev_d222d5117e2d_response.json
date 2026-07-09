@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_d222d5117e2d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Labels flipped via np.where(==1,0,1) i.e. 1-y; conforms."
+}

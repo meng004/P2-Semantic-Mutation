@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_d0d27d36dfce",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Degree 5->1: deg-1 polyfit is OLS-identical to PolynomialFeatures(1)+LinReg."
+}
