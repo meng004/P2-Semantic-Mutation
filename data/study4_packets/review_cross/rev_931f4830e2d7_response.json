@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_931f4830e2d7",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Stencil negation matches the operator, but the anti-diffusive explicit scheme is unstable and outputs overflow to NaN on the probe grid (fails V2)."
+}

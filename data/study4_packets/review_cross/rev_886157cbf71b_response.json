@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_886157cbf71b",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly the registered transformation at the target locator; runs finite on x in [0,1] and deviates well above 1e-6, so not equivalent."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_80f629a7015a",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Acceptance test rewritten equivalently from log-space and reversed to u > accept_ratio exactly per spec; large chain-mean deviation, not equivalent."
+}
