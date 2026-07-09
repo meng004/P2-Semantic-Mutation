@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_e54bd44302b3",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Laplacian stencil sign flip applied exactly; unstable recurrence yields large/nan output at x=0, clearly non-equivalent."
+}
