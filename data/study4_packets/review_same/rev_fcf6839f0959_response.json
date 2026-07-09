@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_fcf6839f0959",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "set_params(C=1e-4) before fit is semantically identical to constructing with C=1e-4; max deviation 0.50."
+}

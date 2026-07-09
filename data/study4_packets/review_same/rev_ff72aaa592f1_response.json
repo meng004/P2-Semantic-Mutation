@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ff72aaa592f1",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "np.repeat builds [2-2x, 2-2x], i.e. second feature set equal to the first exactly as specified; max deviation 0.27."
+}

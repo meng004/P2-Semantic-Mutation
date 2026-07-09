@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_fee23db7ad08",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "No",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "REJECTED",
+  "reason": "Besides length_scale x10 the mutant adds length_scale_bounds='fixed', disabling hyperparameter optimisation (fitted noise also changes); the literal registered change alone refits to the original kernel (deviation ~1e-9), so the observed effect comes from the extra unregistered change."
+}
