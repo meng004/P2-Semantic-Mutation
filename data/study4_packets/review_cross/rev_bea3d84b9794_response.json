@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_bea3d84b9794",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Spec targets ic[0] only, but mutant also changes ic[1] from 20*x-10 to 10*x-10: extra semantic change beyond the registered operator."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_c1c4c382a423",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "n_estimators 100->1 is the only semantic change; refactors (sort/newaxis, ravel->[:,0]) preserve values, outputs match the clean 1-tree mutant."
+}
