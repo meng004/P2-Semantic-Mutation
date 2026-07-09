@@ -70,6 +70,19 @@ def _load_mutants(cell_dir: Path) -> List[tuple]:
     return mutants
 
 
+def _load_c_mutants(cell_dir: Path) -> List[tuple]:
+    """Load all .c mutants from a C pool dir as CPutProgram callables.
+
+    Mirrors :func:`_load_mutants` for the Study-4 C grid. Each compiled
+    mutant is a plain ``Callable[[float], float]`` so ``run_one_cell`` and
+    the MR machinery consume it with no modification."""
+    from p2.cport.adapter import CPutProgram
+    mutants = []
+    for c_file in sorted(cell_dir.glob("*.c")):
+        mutants.append((c_file.name, CPutProgram(c_file)))
+    return mutants
+
+
 def resolve_pool_dir(put_id: str, pool_version: Optional[str] = None) -> Path:
     """Resolve the mutant-pool directory for ``put_id``.
 
@@ -87,7 +100,7 @@ def resolve_pool_dir(put_id: str, pool_version: Optional[str] = None) -> Path:
     """
     import os as _os
     pv = pool_version if pool_version is not None else _os.environ.get("POOL_VERSION", "")
-    if pv in ("v4", "v5", "v6"):
+    if pv in ("v4", "v5", "v6", "v7c"):
         return MUTANTS_DIR / f"{put_id}_pool_{pv}"
     pool_v3 = MUTANTS_DIR / f"{put_id}_pool_v3"
     pool_v2 = MUTANTS_DIR / f"{put_id}_pool"
@@ -122,6 +135,7 @@ def evaluate_cell(
     mp_k: int,
     mutant_dir: Optional[Path] = None,
     repeats: int = 1,
+    lang: str = "py",
 ) -> dict:
     """Evaluate SMS for one (put_id, mp_k) cell.
 
@@ -138,20 +152,25 @@ def evaluate_cell(
         repeats: N AVP repetitions per killed-check (Round-3 majority vote).
                  Default 1 = legacy single-shot. Use 20 for stochastic PUTs.
     """
+    is_c = (lang == "c")
     if mutant_dir is None:
-        mutant_dir = resolve_pool_dir(put_id)
+        mutant_dir = resolve_pool_dir(put_id, "v7c" if is_c else None)
 
     cell_label = f"{put_id.upper()}_MP{mp_k}"
 
-    # Load PUT program
-    put_mod = _load_module(f"put_{put_id}", PUTS_DIR / f"{put_id}.py")
-    put_fn = put_mod.program
+    # Load PUT program (Python module, or compiled C via the adapter)
+    if is_c:
+        from p2.cport.adapter import load_c_put
+        put_fn = load_c_put(put_id, ROOT)
+    else:
+        put_mod = _load_module(f"put_{put_id}", PUTS_DIR / f"{put_id}.py")
+        put_fn = put_mod.program
 
-    # Build MR
+    # Build MR (shared, language-agnostic — src/p2/mrs/{put}.py unchanged)
     mr = _build_mr(put_id, mp_k)
 
     # Load mutants
-    named_mutants = _load_mutants(mutant_dir)
+    named_mutants = _load_c_mutants(mutant_dir) if is_c else _load_mutants(mutant_dir)
     if not named_mutants:
         return {
             "cell": cell_label,
@@ -201,9 +220,12 @@ def evaluate_cell(
     }
 
 
-def _worker(put_id: str, mp_k: int, repeats: int = 1) -> dict:
+C_GRID_PUTS = ("a1", "a2", "a3", "b1", "b2", "b3", "c2")
+
+
+def _worker(put_id: str, mp_k: int, repeats: int = 1, lang: str = "py") -> dict:
     """Top-level worker for ProcessPoolExecutor (must be picklable)."""
-    return evaluate_cell(put_id, mp_k, repeats=repeats)
+    return evaluate_cell(put_id, mp_k, repeats=repeats, lang=lang)
 
 
 def _build_cell_list(track: int, cell: Optional[str], mp: Optional[int],
@@ -247,6 +269,10 @@ def main():
                         default=None,
                         help="pool version for auto-resolution (v3/v4/v5); "
                              "overrides $POOL_VERSION for this run")
+    parser.add_argument("--lang", choices=("py", "c"), default="py",
+                        help="grid language: 'py' (default) or 'c' (Study-4 "
+                             "H-LANG; scores the 7-PUT C grid from "
+                             "{put}_pool_v7c via the adapter, MRs unchanged)")
     args = parser.parse_args()
 
     if args.pool_version:
@@ -254,6 +280,8 @@ def main():
         _os.environ["POOL_VERSION"] = args.pool_version
 
     puts = [s.strip() for s in args.puts.split(",")] if args.puts else None
+    if args.lang == "c":
+        puts = [p for p in (puts or C_GRID_PUTS) if p in C_GRID_PUTS]
     cells = _build_cell_list(args.track, args.cell, args.mp, puts=puts)
 
     print(f"\n{'='*60}")
@@ -264,14 +292,14 @@ def main():
 
     if len(cells) == 1:
         put_id, mp_k = cells[0]
-        summary = evaluate_cell(put_id, mp_k, repeats=args.repeats)
+        summary = evaluate_cell(put_id, mp_k, repeats=args.repeats, lang=args.lang)
         all_results[summary["cell"]] = summary
         _print_summary(summary)
     else:
         futures = {}
         with ProcessPoolExecutor(max_workers=args.workers) as executor:
             for put_id, mp_k in cells:
-                fut = executor.submit(_worker, put_id, mp_k, args.repeats)
+                fut = executor.submit(_worker, put_id, mp_k, args.repeats, args.lang)
                 futures[fut] = (put_id, mp_k)
 
             for fut in as_completed(futures):
