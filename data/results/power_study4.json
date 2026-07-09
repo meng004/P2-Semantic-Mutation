@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "purpose": "Study-4 pre-registration power/feasibility; frozen before any Study-4 data generation.",
+    "master_seed": 20260708,
+    "n_sim": 2000,
+    "alpha": 0.05,
+    "families": [
+      "H2-2 cross-vendor Delta-delta",
+      "H4''' rich-class recruitment",
+      "H-LANG cross-language invariance"
+    ],
+    "dgp_sources": {
+      "h2_2": "data/results/sms_track2_v4.json (v1.1 methodology verbatim)",
+      "h4ppp": "data/results/h4_graded_v6.json (v6 rich detection rate)",
+      "hlang": "data/results/sms_track2_v5.json (v5 delta~0.43)"
+    },
+    "numpy": "2.4.6",
+    "scipy": "scipy",
+    "no_llm_calls": true
+  },
+  "a_h2_2_cross_vendor_delta_delta": {
+    "estimand": "Delta-delta = delta(cross-source) - delta(same-source), paired on the 28 confirmatory PUTs; both arms API-served (symmetric dual-blind protocol, no harness/API asymmetry)",
+    "decision_rule": "v1.1 H2-2 VERBATIM: paired-role bootstrap 95% two-sided CI (B=10,000, seed 20260708). CI excludes 0 -> CONFIRM >=0.20 effect; CI includes 0 AND half-width <= 0.14 -> BOUNDED NULL; else UNDER-RECRUITED.",
+    "dgp_source": "data/results/sms_track2_v4.json (v4 hurdle DGP; unchanged from v1.1 \u2014 power is effect-size driven, not vendor driven)",
+    "registered_n": 28,
+    "target_detectable_delta_delta": 0.2,
+    "paired_se_by_n": {
+      "12": 0.1135,
+      "18": 0.089,
+      "24": 0.0771,
+      "28": 0.072,
+      "30": 0.0691,
+      "36": 0.0631
+    },
+    "calibrated_paired_rho": 0.7587,
+    "power_by_delta_delta": {
+      "dd_0.1": {
+        "12": 0.1426,
+        "18": 0.202525,
+        "24": 0.256725,
+        "28": 0.2845,
+        "30": 0.30765,
+        "36": 0.3516
+      },
+      "dd_0.15": {
+        "12": 0.25985,
+        "18": 0.3924,
+        "24": 0.494775,
+        "28": 0.547075,
+        "30": 0.5833,
+        "36": 0.659175
+      },
+      "dd_0.2": {
+        "12": 0.417075,
+        "18": 0.6133,
+        "24": 0.73825,
+        "28": 0.792775,
+        "30": 0.825825,
+        "36": 0.884725
+      }
+    },
+    "power_dd020_at_n28": 0.792775,
+    "min_n_80pct": {
+      "dd_0.1": null,
+      "dd_0.15": null,
+      "dd_0.2": 30
+    },
+    "note": "Marginal at n=28 (just below 0.80) exactly as disclosed in v1.1; honestly reported. The registered three-way rule already licenses an UNDER-RECRUITED verdict if the CI is wide, so no threshold is moved to manufacture power."
+  },
+  "b_h4ppp_rich_recruitment": {
+    "calibration_source": "data/results/h4_graded_v6.json (Study-3 v6 detected n_rich; design-from-prior-study, Study-4 outcomes unseen)",
+    "n_rich_detected_v6": 6,
+    "n_rich_roster": 15,
+    "per_put_per_arm_detect_p0": 0.4,
+    "pooling": "PRE-DECLARED pooling of the two Study-4 arms; N_pooled = 2*15 = 30 rich PUT-arm units",
+    "projection_model": "p_m = 1 - (1-p0)^m (doubling slots = m independent baseline detection campaigns); n_rich ~ Binom(30, p_m)",
+    "target_n_rich": 24,
+    "prob_gate": 0.8,
+    "multiplier_curve": {
+      "1": {
+        "per_put_detect_p_m": 0.4,
+        "expected_pooled_n_rich": 12.0,
+        "P_n_rich_ge_24": 0.0,
+        "meets_gate": false
+      },
+      "2": {
+        "per_put_detect_p_m": 0.64,
+        "expected_pooled_n_rich": 19.2,
+        "P_n_rich_ge_24": 0.0467,
+        "meets_gate": false
+      },
+      "3": {
+        "per_put_detect_p_m": 0.784,
+        "expected_pooled_n_rich": 23.52,
+        "P_n_rich_ge_24": 0.5206,
+        "meets_gate": false
+      },
+      "4": {
+        "per_put_detect_p_m": 0.8704,
+        "expected_pooled_n_rich": 26.11,
+        "P_n_rich_ge_24": 0.9153,
+        "meets_gate": true
+      },
+      "5": {
+        "per_put_detect_p_m": 0.9222,
+        "expected_pooled_n_rich": 27.67,
+        "P_n_rich_ge_24": 0.9929,
+        "meets_gate": true
+      },
+      "6": {
+        "per_put_detect_p_m": 0.9533,
+        "expected_pooled_n_rich": 28.6,
+        "P_n_rich_ge_24": 0.9996,
+        "meets_gate": true
+      },
+      "7": {
+        "per_put_detect_p_m": 0.972,
+        "expected_pooled_n_rich": 29.16,
+        "P_n_rich_ge_24": 1.0,
+        "meets_gate": true
+      }
+    },
+    "x2_sufficient": false,
+    "chosen_multiplier": 4,
+    "chosen_expected_pooled_n_rich": 26.11,
+    "chosen_P_ge_24": 0.9153,
+    "cost_note": "x2 is INSUFFICIENT (expected pooled n_rich 19.2, P(>=24) 0.05). The registered multiplier is x4, which roughly 4x-es the C/D mutant-generation + blinded-review budget on the 15 rich PUTs across both arms; A/B slots are unchanged, so the whole-campaign cost rises well below 4x."
+  },
+  "c_hlang_cross_language": {
+    "hypothesis": "H-LANG: on a C port of the 12 original Study-1 PUTs the aligned>cross direction replicates (delta_C > 0)",
+    "estimand": "one-sided 95% percentile-bootstrap lower bound on Cliff's delta (aligned j=k vs cross j!=k) > 0 \u2014 SAME estimand as H2-1', primary-MP rule (PRIMARY_CELLS_V3) mapped to the C cells",
+    "n_puts": 12,
+    "dgp_source": "data/results/sms_track2_v5.json (Study-2 v5 aligned/cross hurdle; observed delta = 0.4295, design-from-prior-study)",
+    "v5_calibrated_true_delta": 0.4385,
+    "v5_dgp": {
+      "p_nonzero_aligned": 0.6071,
+      "p_nonzero_cross": 0.1696,
+      "mean_aligned": 0.2381,
+      "mean_cross": 0.067
+    },
+    "power_delta_gt0_at_n12": 0.8735,
+    "power_by_n": {
+      "12": 0.8735,
+      "18": 0.959,
+      "24": 0.991,
+      "28": 0.995
+    },
+    "well_powered_at_n12": true,
+    "note": "n=12 gives LESS power than the n=28 grid; reported honestly. The direction claim at the v5-calibrated delta~0.43 DGP is well-powered at n=12 (power 0.8735). Registered as confirmatory regardless; if power < 0.80 the achieved value is disclosed and the leg stays confirmatory with that disclosure."
+  }
+}
