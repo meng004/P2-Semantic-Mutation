@@ -235,8 +235,15 @@ LLM-mutant pools).
 Per-relation verification: $\mathrm{Cons.}$ tolerance equality $|\mathrm{LHS} -
 \mathrm{RHS}| \leq \varepsilon$; $\mathrm{Mono.}$ / $\mathrm{P-ord.}$ Wilcoxon signed-rank $\alpha=0.05$; $\mathrm{Conv.}$
 convergence-order + asymptotic residual ratio; Traj. DTW distance
-threshold $\varepsilon_{\mathrm{DTW}}$. AVP version = upstream infrastructure commit hash; our package embeds
-AVP source.
+threshold $\varepsilon_{\mathrm{DTW}}$. In NOETHER's taxonomy
+\citep{noether2026} these are $m_{\mathrm{inv}}$, $m_{\mathrm{mono}}$,
+$m_{\mathrm{cmp}}$, $m_{\mathrm{conv}}$, and $m_{\mathrm{dyn}}$; note that a
+P-ord ($m_{\mathrm{cmp}}$) instance reducing to a pure asymptotic
+residual-ratio rate check shares its acceptance machinery with the Conv
+($m_{\mathrm{conv}}$, limit block $\mathcal{L}^{*}$) checker, so such
+rate-only instances are $\mathcal{L}^{*}$-adjacent while the registered
+stratum stays partial-order. AVP version = upstream infrastructure commit
+hash; our package embeds AVP source.
 
 \textbf{Three-candidate equivalence trade-off.}
 
@@ -1395,7 +1402,9 @@ syntactic-mutation scenarios, no metric-level semantic fragmentation.
 
 This appendix gives the full specification of the confirmatory adjoint
 extension arm summarised in the main manuscript. The arm
-exercises the adjoint invariant $\psi_6$ on three third-party
+exercises the adjoint invariant $\psi_6$, the MetaPattern
+$m_{\mathrm{adj}}$ (self-adjoint block $T^{*}$) in NOETHER's taxonomy
+\citep{noether2026}, on three third-party
 linear-operator libraries, disjoint from the 12 PUTs and the
 pre-registered 60-cell. Each library carries a real fixed defect in its
 adjoint code path as a ground-truth anchor:
@@ -1486,9 +1495,14 @@ Audit item & Evidence content used in the manuscript & Main-text role \\
 \bottomrule\noalign{}
 \endlastfoot
 Verified stratum counts & 34 verified MR-detectable defects across five
-meta-patterns: \(m_{\mathrm{mono}}\) 10, \(m_{\mathrm{conv}}\) 9,
+NOETHER MetaPatterns \citep{noether2026}: \(m_{\mathrm{mono}}\) 10,
+\(m_{\mathrm{conv}}\) 9,
 \(m_{\mathrm{inv}}\) 6, \(m_{\mathrm{adj}}\) 5, and
-\(m_{\mathrm{rev}}\) 4 & Shows that the declared semantic strata are not
+\(m_{\mathrm{rev}}\) 4. This real-defect corpus spans a \emph{different}
+block subset than the MP1--MP5 experimental grid: it adds
+\(m_{\mathrm{adj}}\) and \(m_{\mathrm{rev}}\) and omits \(m_{\mathrm{dyn}}\)
+(MP4) and \(m_{\mathrm{cmp}}\) (MP5), so these five are not the MP1--MP5
+strata. & Shows that the declared semantic strata are not
 only toy labels \\
 Mutation-phase aggregate & The semantic-mutation track exceeds the
 closest baseline by +0.101 on mean score (Holm-adjusted \(p = 0.046\),
@@ -1628,8 +1642,10 @@ Table~\ref{tab:study2-incidents} summarises the calibration-pilot and
 confirmatory incidents. The pilot phase (P1--P5) fixed code defects only,
 under the registration firewall (no threshold, estimand, DGP,
 primary-meta-pattern, or roster change). The confirmatory phase carried
-two tooling incidents (P6, P7) with no protocol impact and one disclosed
-script-interface deviation (D-A1).
+two tooling incidents (P6, P7) with no protocol impact, one disclosed
+script-interface deviation (D-A1), and one disclosed design-intent defect
+(P8) that leaves the registered decision rule intact but was not realised as
+intended.
 
 {%
 \small
@@ -1649,6 +1665,7 @@ P5 & Code defect (pilot) & E1$\wedge$E2 equivalence semantics not defined in-pac
 P6 & Tooling incident & Scoring tool defaulted to the Study-1 track and overwrote \texttt{sms\_track1.json}; restored before use and rerun with an explicit track-2 target. Deterministic re-measurement of frozen pools, not regeneration. \\
 P7 & Blinding guard fired & One PUT's mutants carried a source-family token in docstrings; presentation-layer redaction added at export (displayed code only), affected packets re-exported, assertion retained as the final guard. \\
 D-A1 & Disclosed deviation & Pre-frozen $\delta$ script gained a post-data mode that skips only the gated H2-2 computation and emits its registered not-run verdict; H2-1\('\) logic byte-unchanged; recorded in the output SSOT. \\
+P8 & Disclosed design-intent defect & The CF/TF single-stratum admission screen was wired but a silent no-op for the whole v5 campaign: the pool builder tagged op-ids with a model-source suffix (e.g.\ \texttt{c7\_TF1\_claude}) that the screen's category regex rejects, so category lookup returned \texttt{None} and every candidate was admitted without a flip-count check (81/81 CF/TF null-pass; the pilot's ``9/9 pass'' was the same false negative). H4\('\) thus evaluated the \emph{unscreened} pool. The registered decision rule scores \texttt{suspect\_share} on the admitted pool and does not condition on the screen, so the frozen NOT\_CONFIRMED verdict is valid; only the design intent (CF/TF entering single-stratum) was not realised. The filter code is deliberately \emph{not} fixed here; correcting it belongs to the Study-3 registration wave. See the post-hoc diagnosis in the main text. \\
 \end{longtable}
 \normalsize
 }
