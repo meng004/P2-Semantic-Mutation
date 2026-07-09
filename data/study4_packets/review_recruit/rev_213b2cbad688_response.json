@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_213b2cbad688",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'label flip' (change the label comparison `> 0` to `< 0`) at training label `(_X_train[:,0] + _X_train[:,1] > 0)` and nothing else semantic; parses, runs finite over the grid, deviates ~0.971, non-equivalent."
+}

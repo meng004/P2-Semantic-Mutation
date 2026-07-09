@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_271cc52bfdb6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'k 7\u21921' (change n_neighbors from 7 to 1) at KNeighborsRegressor n_neighbors parameter and nothing else semantic; parses, runs finite over the grid, deviates ~0.178, non-equivalent."
+}

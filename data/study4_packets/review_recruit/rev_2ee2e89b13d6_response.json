@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2ee2e89b13d6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'LR C 1.0\u21921e-4' (change C from 1.0 to 1e-4) at LogisticRegression C parameter and nothing else semantic; parses, runs finite over the grid, deviates ~0.502, non-equivalent."
+}

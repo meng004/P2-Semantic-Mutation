@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2eb6f8fb01f8",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'degree 5\u21921' (change degree from 5 to 1) at polynomial degree in PCE construction and nothing else semantic; parses, runs finite over the grid, deviates ~0.297, non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_259ff8946072",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'length_scale 1\u219210' at RBF kernel length_scale parameter; sole change is at that hyperparameter (value plus fixed bound needed so the change persists past GP re-optimisation); parses, finite on grid, deviates ~0.351, non-equivalent."
+}

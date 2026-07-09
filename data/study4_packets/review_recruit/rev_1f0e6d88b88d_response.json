@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_1f0e6d88b88d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'feature index dropped' (set the second feature to 0 always) at feature-vector construction in program(x) and nothing else semantic; parses, runs finite over the grid, deviates ~0.235, non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_266bf79632bb",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'single-feature input' (use only first feature, drop the second) at feature vector construction and nothing else semantic; parses, runs finite over the grid, deviates ~0.151, non-equivalent."
+}

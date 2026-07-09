@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_1f60d7bc9b66",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'train labels permuted' (randomly permute first 20% of training labels) at training labels assignment and nothing else semantic; parses, runs finite over the grid, deviates ~0.375, non-equivalent."
+}

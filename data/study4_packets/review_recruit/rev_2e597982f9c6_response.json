@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2e597982f9c6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'epsilon 0.01\u21921.0' (change epsilon from 0.01 to 1.0) at SVR epsilon-insensitive tube parameter and nothing else semantic; parses, runs finite over the grid, deviates ~1.01, non-equivalent."
+}

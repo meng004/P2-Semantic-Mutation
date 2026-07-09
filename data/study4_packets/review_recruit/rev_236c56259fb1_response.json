@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_236c56259fb1",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'feat offset 1\u21920.5' (change the offset in `2.0*x - 1.0` from 1.0 to 0.5) at feature map `2.0*x - 1.0` and nothing else semantic; parses, runs finite over the grid, deviates ~0.977, non-equivalent."
+}

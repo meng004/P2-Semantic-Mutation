@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2a7b2a928f50",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'WhiteKernel noise 1e-4\u21921e-1' at WhiteKernel noise_level inside the RBF+WhiteKernel composite kernel; sole change is at that hyperparameter (value plus fixed bound needed so the change persists past GP re-optimisation); parses, finite on grid, deviates ~0.131, non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_23eb6f662553",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'C 10\u21920.01' (change C from 10.0 to 0.01) at SVR regularisation C parameter and nothing else semantic; parses, runs finite over the grid, deviates ~0.313, non-equivalent."
+}

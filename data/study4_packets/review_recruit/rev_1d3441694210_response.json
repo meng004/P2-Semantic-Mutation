@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_1d3441694210",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'activation relu\u2192tanh' (change activation from 'relu' to 'tanh') at MLPRegressor activation parameter and nothing else semantic; parses, runs finite over the grid, deviates ~0.0917, non-equivalent."
+}

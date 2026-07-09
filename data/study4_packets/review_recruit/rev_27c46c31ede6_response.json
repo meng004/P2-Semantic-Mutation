@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_27c46c31ede6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'predict_proba\u2192decision_function' (use decision_function output instead of predict_proba) at prediction call in program(x) and nothing else semantic; parses, runs finite over the grid, deviates ~3.02, non-equivalent."
+}

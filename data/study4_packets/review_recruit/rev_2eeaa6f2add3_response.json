@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2eeaa6f2add3",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'labels flipped' (replace y with 1-y) at training label vector y and nothing else semantic; parses, runs finite over the grid, deviates ~1, non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2bebfd6d5d40",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'feat coeff 2\u21921' (change the coefficient in `2.0 - 2.0*x` from 2.0 to 1.0) at feature map `2.0 - 2.0*x` and nothing else semantic; parses, runs finite over the grid, deviates ~0.379, non-equivalent."
+}

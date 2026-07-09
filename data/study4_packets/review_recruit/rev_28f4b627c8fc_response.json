@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_28f4b627c8fc",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'basis poly\u2192spline' (replace PolynomialFeatures(5, include_bias=True) with SplineTransformer(n_knots=6, degree=3)) at feature transformer in the regression pipeline and nothing else semantic; parses, runs finite over the grid, deviates ~0.038, non-equivalent."
+}

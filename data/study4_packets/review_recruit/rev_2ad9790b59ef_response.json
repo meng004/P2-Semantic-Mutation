@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2ad9790b59ef",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'max_iter 1000\u21925' (change max_iter from 1000 to 5) at MLPRegressor max_iter parameter and nothing else semantic; parses, runs finite over the grid, deviates ~0.192, non-equivalent."
+}

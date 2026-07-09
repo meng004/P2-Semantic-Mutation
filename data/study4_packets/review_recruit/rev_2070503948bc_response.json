@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2070503948bc",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'hidden width 32\u21922' (change hidden_width from 32 to 2) at hidden layer width and nothing else semantic; parses, runs finite over the grid, deviates ~0.165, non-equivalent."
+}

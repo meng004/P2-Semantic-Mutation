@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_2204be8419b9",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'kernel tps\u2192linear' (change kernel from 'thin_plate_spline' to 'linear') at RBFInterpolator kernel parameter and nothing else semantic; parses, runs finite over the grid, deviates ~0.00184, non-equivalent."
+}

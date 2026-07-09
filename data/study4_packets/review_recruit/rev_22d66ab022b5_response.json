@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_22d66ab022b5",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Applies 'test map 3\u21922' (change the offset in `6.0*x - 3.0` from 3.0 to 2.0) at test-point mapping `t = 6.0*x - 3.0` and nothing else semantic; parses, runs finite over the grid, deviates ~1.04, non-equivalent."
+}
