@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_80ae1587cfac",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "n_succ-(1 if n_succ>0 else 0) equals registered off-by-one with floor; max dev 9.7e-3."
+}

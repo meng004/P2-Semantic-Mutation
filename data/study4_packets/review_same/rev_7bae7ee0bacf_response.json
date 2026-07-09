@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_7bae7ee0bacf",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Unregistered noise_level_bounds='fixed' is the sole source of deviation; registered change alone is output-equivalent (dev ~1e-9)."
+}

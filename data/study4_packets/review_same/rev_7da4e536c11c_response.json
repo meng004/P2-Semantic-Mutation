@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_7da4e536c11c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "max(n,1)-1 equals registered (successes-1) floored at 0; max dev 9.7e-3."
+}
