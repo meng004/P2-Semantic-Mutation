@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_ba3d5bbb8af6",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "max_iter 1000 to 2 via hoisted constant; deviates up to 0.084."
+}

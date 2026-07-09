@@ -1,7 +1,7 @@
 {
  "blind_id": "rev_e54bd44302b3",
  "V1_syntax_ok": true,
- "V2_executable": "No",
+ "V2_executable": "Yes",
  "V3_nontrivial": "Yes",
  "operator_match": "Yes",
  "equivalence": {
@@ -9,6 +9,6 @@
   "E2": "No",
   "equivalent": false
  },
- "overall": "REJECTED",
+ "overall": "CONFIRMED",
  "reason": "Laplacian update sign flipped exactly (u - r*lap); anti-diffusion gives astronomically large but mostly finite deviations, with overflow only at the 2 finest-grid probe points."
 }

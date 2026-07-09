@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_be1dc2a40f6d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "C set to 0.01 via set_params before fit, equivalent to constructor arg; deviates up to 0.313."
+}

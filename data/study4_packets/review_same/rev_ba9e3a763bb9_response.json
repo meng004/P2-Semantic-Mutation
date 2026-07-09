@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_ba9e3a763bb9",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Activation relu to tanh; config-dict refactor preserves all other hyperparameters; deviates up to 0.092."
+}

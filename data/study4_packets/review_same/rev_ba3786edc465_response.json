@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_ba3786edc465",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "epsilon 0.01 to 1.0 via kwargs dict, same constructor semantics; deviates up to 1.01."
+}

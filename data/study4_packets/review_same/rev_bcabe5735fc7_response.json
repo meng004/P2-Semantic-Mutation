@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_bcabe5735fc7",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Beyond the registered noise_level 1e-4 to 1e-1 change it adds noise_level_bounds='fixed', an unregistered semantic change that alone causes the 0.131 deviation (the registered change with free bounds is re-optimised away to ~1e-9)."
+}
