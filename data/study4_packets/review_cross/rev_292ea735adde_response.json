@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_292ea735adde",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Sign flip matches the operator, but the resulting anti-diffusion update is numerically unstable: NaN at fine grid spacing (h=1e-4, reached from probe x=0) and deviations up to ~1e281, so it fails the executability check."
+}

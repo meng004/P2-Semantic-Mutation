@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1bc0ef7f35f9",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly the registered change (mean const 2\u21921); runs finite on the probe grid and deviates from the original by up to 0.945 (tolerance 1e-6), so it is a valid non-equivalent mutant."
+}

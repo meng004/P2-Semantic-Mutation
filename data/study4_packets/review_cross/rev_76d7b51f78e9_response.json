@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_76d7b51f78e9",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Mutant shifts the test-point mapping (6x-3 to 6x-2.1) in program(x); the operator targets the training-range generation, which is untouched."
+}

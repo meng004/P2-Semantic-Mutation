@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_7fafa5dc0973",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Uncertain",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "UNCERTAIN",
+ "reason": "Spec 'coefficient in 2.0 - 2.0*x' is ambiguous; mutant changes the intercept (1.0 - 2.0*x), not the x-coefficient the label 'feat coeff' suggests."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1d3e9f4f0e80",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly the registered change (train range narrowed); runs finite on the probe grid and deviates from the original by up to 0.297 (tolerance 1e-6), so it is a valid non-equivalent mutant."
+}
