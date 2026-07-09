@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_35700a2c08a3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "-np.log(_U) changed to np.log(_U) exactly; sign-flipped output, large deviation."
+}

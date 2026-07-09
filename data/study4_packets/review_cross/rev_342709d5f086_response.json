@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_342709d5f086",
+ "V1_syntax_ok": true,
+ "V2_executable": "Uncertain",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact stencil sign flip per spec; anti-diffusive instability yields huge deviation (overflow to inf at finest grid x=0) as the fault manifests; non-equivalent."
+}
