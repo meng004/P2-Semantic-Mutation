@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c507028521cd",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d6_TF1 (label inside\u2194outside) at training label `(x1**2 + x2**2 < 1.0)`; only that semantic change present (refactors aside), runs finite, deviates up to 0.973 on [0,1] grid so non-equivalent."
+}

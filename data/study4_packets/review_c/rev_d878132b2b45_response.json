@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_d878132b2b45",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Returns subdiagonal U10 (exactly 0 by construction since A[1][0]=0), the faithful diag->subdiag analogue on 2x2; unused variables only trigger -Wall warnings; deviation up to 9."
+}

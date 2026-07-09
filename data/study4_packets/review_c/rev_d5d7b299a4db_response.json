@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_d5d7b299a4db",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Whole-file reformat; the only semantic change is A[0][0]=2.0-x as registered; deviation up to 6."
+}

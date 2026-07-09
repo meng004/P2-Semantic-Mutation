@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bc2f0f9eff01",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c5_CE1 (test map 3\u21922) at test-point mapping `t = 6.0*x - 3.0`; only that semantic change present (refactors aside), runs finite, deviates up to 1.53 on [0,1] grid so non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ba3786edc465",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c7_CE1 (epsilon 0.01\u21921.0) at SVR epsilon-insensitive tube parameter; only that semantic change present (refactors aside), runs finite, deviates up to 1.01 on [0,1] grid so non-equivalent."
+}

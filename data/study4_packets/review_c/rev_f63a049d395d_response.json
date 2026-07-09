@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_f63a049d395d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Whole-file reformat (while loop, temp t2); only semantic change is integrand x*t^2 as registered; outputs match the minimal variant; deviation up to 1.0."
+}

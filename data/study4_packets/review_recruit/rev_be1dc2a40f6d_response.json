@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_be1dc2a40f6d",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c7_HP1 (C 10\u21920.01) at SVR regularisation C parameter; only that semantic change present (refactors aside), runs finite, deviates up to 0.313 on [0,1] grid so non-equivalent."
+}

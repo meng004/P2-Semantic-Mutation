@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e235805f2d31",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Target mean changed to 0.3 + (4x-2), exactly adding 0.3 to the mean expression; deviation ~0.3 everywhere."
+}

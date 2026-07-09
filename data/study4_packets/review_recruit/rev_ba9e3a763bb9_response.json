@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ba9e3a763bb9",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c3_HP1 (activation relu\u2192tanh) at MLPRegressor activation parameter; only that semantic change present (refactors aside), runs finite, deviates up to 0.0902 on [0,1] grid so non-equivalent."
+}

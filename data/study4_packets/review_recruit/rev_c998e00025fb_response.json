@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c998e00025fb",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c4_TF1 (train range narrowed) at training-point generation `_rng.uniform(-3.0, 3.0, 300)`; only that semantic change present (refactors aside), runs finite, deviates up to 0.221 on [0,1] grid so non-equivalent."
+}

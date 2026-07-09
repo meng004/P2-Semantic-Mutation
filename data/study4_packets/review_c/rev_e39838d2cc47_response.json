@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e39838d2cc47",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Fits 40 instead of 80 points by thinning to every second RNG draw; registered count halving implemented, point selection unconstrained by the operator; deviation up to 0.0045."
+}

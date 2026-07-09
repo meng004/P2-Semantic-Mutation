@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c5168c455fa6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d7_TF1 (label flip) at training label `(_X_train[:,0] > 0)`; only that semantic change present (refactors aside), runs finite, deviates up to 1 on [0,1] grid so non-equivalent."
+}

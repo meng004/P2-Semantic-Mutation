@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_ca08a07b9370",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d5_CE1 (feat offset 1\u21920.5) at feature map `2.0*x - 1.0`; only that semantic change present (refactors aside), runs finite, deviates up to 0.614 on [0,1] grid so non-equivalent."
+}

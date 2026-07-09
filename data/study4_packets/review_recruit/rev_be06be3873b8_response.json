@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_be06be3873b8",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d8_SI1 (drop 2nd feature) at feature vector `[1.6*x - 0.8, 1.6*x - 0.8]`; only that semantic change present (refactors aside), runs finite, deviates up to 0.161 on [0,1] grid so non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c3cf6f998fa6",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d5_TF1 (label flip) at training label `(0.8*X0 - 0.6*X1 > 0)`; only that semantic change present (refactors aside), runs finite, deviates up to 0.995 on [0,1] grid so non-equivalent."
+}

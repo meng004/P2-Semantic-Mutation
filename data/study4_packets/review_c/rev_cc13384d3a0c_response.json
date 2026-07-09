@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_cc13384d3a0c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Integrand changed x + u*u to x*(u*u), exactly the registered change; deviation up to 1.0."
+}

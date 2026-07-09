@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_be9ab69b655f",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d2_OS1 (predict_proba\u2192decision_function) at prediction call in program(x); only that semantic change present (refactors aside), runs finite, deviates up to 3.02 on [0,1] grid so non-equivalent."
+}

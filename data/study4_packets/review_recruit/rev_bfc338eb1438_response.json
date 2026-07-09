@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_bfc338eb1438",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d7_HP1 (max_iter 1000\u21922) at SGDClassifier max_iter parameter; only that semantic change present (refactors aside), runs finite, deviates up to 0.0841 on [0,1] grid so non-equivalent."
+}

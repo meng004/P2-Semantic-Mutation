@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_f640837f6cf3",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Registered stencil sign flip applied exactly (via negated temp), but the anti-diffusive scheme returns NaN at x=0 on the probe grid, failing V2."
+}

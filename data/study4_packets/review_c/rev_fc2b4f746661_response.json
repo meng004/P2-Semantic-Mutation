@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_fc2b4f746661",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Returns subdiagonal U10 per the registered diag->subdiag change; extra unused variables only trigger -Wall warnings; deviation up to 9."
+}

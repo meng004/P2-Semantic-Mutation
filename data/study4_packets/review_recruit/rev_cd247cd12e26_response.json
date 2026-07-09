@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_cd247cd12e26",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d5_SI1 (feature index swap) at feature vector `[2.0*x - 1.0, 0.0]`; only that semantic change present (refactors aside), runs finite, deviates up to 0.963 on [0,1] grid so non-equivalent."
+}

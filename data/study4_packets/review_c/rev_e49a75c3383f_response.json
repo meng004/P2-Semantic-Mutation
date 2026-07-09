@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e49a75c3383f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Registered alpha/beta swap in the mean formula; pervasive doubled semicolons are empty statements with no semantic effect and compile under gcc -std=c99 -Wall; deviation up to 0.98."
+}

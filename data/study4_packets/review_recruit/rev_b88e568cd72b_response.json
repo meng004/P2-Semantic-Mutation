@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_b88e568cd72b",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator d8_HP1 (length_scale 1\u219210) at RBF kernel length_scale parameter; only that semantic change present (refactors aside), runs finite, deviates up to 0.351 on [0,1] grid so non-equivalent."
+}

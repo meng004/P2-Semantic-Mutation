@@ -1,0 +1,14 @@
+{
+  "blind_id": "rev_c46b1cf2a4d9",
+  "V1_syntax_ok": true,
+  "V2_executable": "Yes",
+  "V3_nontrivial": "Yes",
+  "operator_match": "Yes",
+  "equivalence": {
+    "E1": "No",
+    "E2": "No",
+    "equivalent": false
+  },
+  "overall": "CONFIRMED",
+  "reason": "Mutant applies operator c1_CE1 (WhiteKernel noise 1e-4\u21921e-1) at WhiteKernel noise_level inside the RBF+WhiteKernel composite kernel; only that semantic change present (refactors aside), runs finite, deviates up to 0.131 on [0,1] grid so ..."
+}
