@@ -659,11 +659,36 @@ kernel being assessed. We write the \(i\)-th PUT as \(S_i\).
 
 \textbf{Metamorphic Relation (MR).} An MR is a property that relates the
 outputs of related inputs. The MR family used for PUT \(S_i\) and
-meta-pattern \(k\) is written \(\mathrm{MR}_{i,k}\).
+meta-pattern \(k\) is written \(\mathrm{MR}_{i,k}\). This
+\(\mathrm{MR}_{i,k}\) is a per-PUT, per-meta-pattern \emph{instance} of a
+meta-pattern, that is, the concrete relation set exercised on one subject at
+one stratum; in the companion framework NOETHER \citep{noether2026} the
+coarser object \(\mathrm{MR}(\mathcal{A}_P)\) is the algebra-induced MR space
+of a whole program family, and a MetaPattern is an equivalence class over it,
+so our \(\mathrm{MR}_{i,k}\) sits one granularity below NOETHER's MR class.
 
 \textbf{Meta-pattern (MP).} An MP is a semantic stratum of MR behaviour,
 such as conservation, monotonicity, convergence, trajectory structure, or
 fidelity order. The index \(k\) denotes the MP being tested.
+
+The five meta-patterns are the instance, on the scientific-computing program
+family, of the canonical MetaPattern taxonomy of NOETHER \citep{noether2026},
+which derives MetaPatterns as closure-guaranteed equivalence classes over an
+operator algebra. We adopt NOETHER's names as the primary narrative vocabulary
+and record the correspondence to our registered labels once, here:
+MP1 conservation \(= m_{\mathrm{inv}}\) (symmetry block \(G\)),
+MP2 monotonicity \(= m_{\mathrm{mono}}\) (order block \(O_{\le}\)),
+MP3 convergence order \(= m_{\mathrm{conv}}\) (limit block \(\mathcal{L}^{*}\)),
+MP4 trajectory determinism \(= m_{\mathrm{dyn}}\) (qualitative-dynamics block
+\(\mathcal{D}^{*}\)), and MP5 partial-order consistency \(= m_{\mathrm{cmp}}\)
+(method-comparison block \(\mathcal{E}^{*}\)); the adjoint extension \(\psi_6\)
+is \(m_{\mathrm{adj}}\) (self-adjoint block \(T^{*}\)). The registered labels
+MP1--MP5 are retained throughout for every pre-registration, dataset-key, and
+provenance reference, because the pre-registered protocol was authored under
+those labels and only under those labels; NOETHER's \(m_{xxx}\) names carry the
+semantic narrative and never stand in for a registration. Our framework does
+not exercise NOETHER's time-reversal (\(m_{\mathrm{rev}}\)) or
+relational-equivalence (\(m_{\mathrm{rel}}\)) blocks.
 
 \textbf{Semantic operator.} A semantic operator is a mutation family
 \(\mathrm{mut}_j\) designed to perturb a declared MP. The operator index
@@ -949,15 +974,20 @@ The new ingredient is a finite \emph{semantic invariant family}
 $I = \{\psi_1, \dots, \psi_5\}$, where each $\psi$ is a predicate over
 the observable behaviour $\alpha \circ \llbracket P \rrbracket$. The five
 invariants are exactly the properties the meta-patterns of Section~\ref{operator-signatures} target:
-$\psi_1$ conservation, $\psi_2$ monotonicity, $\psi_3$ convergence order,
-$\psi_4$ trajectory determinism, $\psi_5$ partial-order consistency, so
+$\psi_1$ conservation ($m_{\mathrm{inv}}$), $\psi_2$ monotonicity
+($m_{\mathrm{mono}}$), $\psi_3$ convergence order ($m_{\mathrm{conv}}$),
+$\psi_4$ trajectory determinism ($m_{\mathrm{dyn}}$), $\psi_5$ partial-order
+consistency ($m_{\mathrm{cmp}}$), so
 $\psi_k$ is the invariant whose violation MP$_k$ detects and whose
-breakage $\mathrm{mut}_j$ (at $j=k$) targets. We write
+breakage $\mathrm{mut}_j$ (at $j=k$) targets; each $\psi_k$ is thus the
+invariant defining the NOETHER MetaPattern named in parentheses
+\citep{noether2026}. We write
 $\llbracket P \rrbracket \models \psi$ when $P$'s observable behaviour
 satisfies $\psi$.
 
 The family is open (the extensibility of $I$ noted in Section~\ref{theory-fibers}): a sixth
-invariant $\psi_6$, \emph{adjoint consistency}
+invariant $\psi_6$, \emph{adjoint consistency} ($m_{\mathrm{adj}}$, the
+self-adjoint block $T^{*}$ in NOETHER \citep{noether2026}),
 $\langle A x, y\rangle = \langle x, A^{\mathrm{H}} y\rangle$ for
 linear-operator kernels, instantiates the same construction. Its MR is
 strong (its violation set is closed under $\equiv_\alpha$), so by
@@ -1302,7 +1332,7 @@ least one of (a), (b), (c).
 {\def\LTcaptype{table}
 \small
 \begin{longtable}[]{@{}lccccc@{}}
-\caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns). $\bullet\bullet$ substantial (32 cells), $\bullet$ moderate (19 cells), $\circ$ vacant (9 cells; no MR is exercised).}\label{tab:p2-cells}\\
+\caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns; MP1--MP5 $= m_{\mathrm{inv}}, m_{\mathrm{mono}}, m_{\mathrm{conv}}, m_{\mathrm{dyn}}, m_{\mathrm{cmp}}$). $\bullet\bullet$ substantial (32 cells), $\bullet$ moderate (19 cells), $\circ$ vacant (9 cells; no MR is exercised).}\label{tab:p2-cells}\\
 \toprule\noalign{}
 PUT & Conservation & Monotonicity & Convergence & Trajectory & Partial order \\
 \midrule\noalign{}
@@ -1399,7 +1429,7 @@ off-diagonal cells form the cross slice, and the vacant cells \texttt{$\circ$}
 are not formally adjudicated.
 
 The c-class primary MP is held at the pre-registered choice (the
-partial-order meta-pattern)
+partial-order meta-pattern, $m_{\mathrm{cmp}}$)
 throughout this paper. All H1, H2, H3, and H4 verdicts are rendered
 under this configuration on v3 (same-source) and v4 (cross-source under
 an identical prompt). An earlier exploratory data-driven primary-MP
@@ -2473,7 +2503,14 @@ c2\_OS1 (polynomial $\to$ spline basis), c3\_HP1 (relu $\to$ tanh), c3\_TF1
 (max\_iter 1000 $\to$ 5), d1\_HP1 (MLP $\alpha$ 1e-4 $\to$ 1.0), and d3\_HP1 (LR C 1.0
 $\to$ 1e-4). In each, the mutant \emph{is} a valid hyperparameter-semantic
 injection, but the primary MP, partial-order (asymptotic) for the
-c-class and
+c-class\footnote{The registered c-class stratum is the partial-order /
+fidelity meta-pattern, $m_{\mathrm{cmp}}$ (method-comparison block
+$\mathcal{E}^{*}$) in NOETHER's taxonomy \citep{noether2026}. Where a
+particular instance degrades to a pure asymptotic residual-ratio rate check
+it borders the limit block $\mathcal{L}^{*}$ ($m_{\mathrm{conv}}$); the
+registered stratum nonetheless remains fidelity / partial-order, so the
+canonical mapping is $m_{\mathrm{cmp}}$ with rate-only instances read as
+$\mathcal{L}^{*}$-adjacent.} and
 monotonicity for the d-class, is an asymptotic or statistical relation,
 and the parameter deviation it tolerates is wide enough to absorb the
 mutant. We note a family-boundary caveat these examples expose: edits
@@ -2879,7 +2916,10 @@ design has four fixed elements.
   \textbf{Deterministic primary-meta-pattern rule.} The class rule
   (A\(\to\)MP1, B\(\to\)MP2, C\(\to\)MP5-held, D\(\to\)MP2) is fixed at
   authoring, blind to mutation results; the Study-1 v3b
-  selection-on-the-response path is prohibited.
+  selection-on-the-response path is prohibited. The rule is stated in the
+  registered MPk labels under which it was authored; in NOETHER's names this
+  is A\(\to m_{\mathrm{inv}}\), B\(\to m_{\mathrm{mono}}\),
+  C\(\to m_{\mathrm{cmp}}\)-held, D\(\to m_{\mathrm{mono}}\).
 \item
   \textbf{One-shot rule.} Confirmatory generation runs once per the
   registered budget with seeds and prompt-template hashes pinned;
@@ -3018,10 +3058,25 @@ the 140 confirmatory cells is \(0.1714\), above the registered \(0.05\)
 bar and far above the projected rule-of-three upper bound of \(0.0131\).
 The per-family multi-stratum breakdown locates the leakage: CE
 (0/207) and HP (0/189) stay clean, but TF (72/135) and OS (27/123) leak
-heavily, with CF (9/18) and SI (9/69) contributing the remainder. The
-single-stratum spec constraint did not contain the leakage on the widened
-grid, and OS, which showed no incidental multi-stratum leakage in Study
-1, now does.
+heavily, with CF (9/18) and SI (9/69) contributing the remainder. We must
+disclose a design-intent defect that bears on how this number should be
+read (incident P8, supplementary Appendix J.4): the registered
+single-stratum admission screen for CF and TF was wired but
+\emph{ineffective}. Because the cross-source pool builder tagged each
+candidate with a model-source suffix (for example \texttt{c7\_TF1\_claude}),
+the screen's category regex failed to match, returned an unconstrained
+category, and admitted every candidate without ever evaluating its flip
+count; a post-hoc check confirms all 81 CF/TF multi-stratum mutants were
+admitted this way, and the pilot's apparent ``9/9 single-stratum pass''
+(\texttt{PILOT\_LOG.md}) was the same false negative. H4\('\) therefore
+evaluated the \emph{unscreened} pool. The registered decision rule scores
+\texttt{suspect\_share} on the admitted pool and does not condition on the
+screen, so the frozen NOT\_CONFIRMED verdict is unaffected in validity; what
+was not realised is the design \emph{intent} that CF/TF enter already
+single-stratum. OS and SI were never in the constrained set by design, so
+the screen never targeted them, and OS, which showed no incidental
+multi-stratum leakage in Study 1, now leaks on the richer grid. We do not
+fix the screen here; correcting it belongs to the Study-3 registration wave.
 
 \subsection{Interpretation}\label{study2-interpretation}
 
@@ -3041,10 +3096,13 @@ threshold, is not uniform.
 The H4\('\) miss is a genuine finding, not a nuisance. In Study 1 the
 multi-stratum leakage was confined to the CF and TF families; the
 registration projected that a single-stratum spec constraint would push
-residual leakage down to the clean-family regime. Instead, once the
-operator grid widens, attribution leakage \emph{generalises} beyond the
-CF/TF diagnosis: TF still leaks the most (72/135) and OS leaks newly
-(27/123). LRCA-based single-stratum attribution therefore remains an
+residual leakage down to the clean-family regime. That constraint never
+actually filtered (incident P8): H4\('\) measured the unscreened pool, in
+which attribution leakage \emph{generalises} beyond the CF/TF diagnosis,
+with TF still leaking the most (72/135) and OS leaking newly (27/123). The
+post-hoc diagnosis in Section~\ref{study2-h4-diagnosis} shows this leakage is
+construct-level and reproducible rather than a scoring artifact, so
+LRCA-based single-stratum attribution remains an
 open construct boundary rather than a solved problem. Closing it is an
 open problem, not a promised third study: it would require either a
 per-family single-stratum re-specification validated on the widened grid
@@ -3053,6 +3111,94 @@ or a richer stratum model that admits declared multi-stratum operators
 and scores them accordingly. Until then, the honest reading is that
 aligned\(>\)cross magnitude and direction survive a powered confirmatory
 test, while clean semantic-effect attribution does not.
+
+\subsection{Post-hoc diagnosis of the H4\('\) leakage}\label{study2-h4-diagnosis}
+
+This subsection is \textbf{post-hoc and exploratory}. It decomposes the
+H4\('\) leakage mechanistically; it does not re-litigate the registered
+\(0.05\) threshold or re-register a hypothesis. The frozen verdict remains
+NOT\_CONFIRMED (mean \texttt{suspect\_share} \(0.1714\)). Every number below
+is emitted by \texttt{scripts/diagnose\_h4\_leakage.py} into the SSOT
+\texttt{h4\_leakage\_diagnosis\_v5.json} from committed artifacts only.
+
+\textbf{The leakage is construct-level, not a measurement artifact.} We split
+the 117 multi-stratum confirmatory mutants (CF 9, OS 27, SI 9, TF 72) into
+bucket A (multi-stratum under the frozen \(\mathrm{repeats}=1\) audit but
+single-stratum under a stronger \(\mathrm{repeats}=20\) singleton admission
+re-measurement, that is, an artifact of single-shot scoring) and bucket B
+(multi-stratum under \emph{both} measurements, a real, reproducible
+multi-invariant perturbation). The split is \textbf{B \(=117/117\), A \(=0\)}:
+re-running the 20-repeat majority-vote measurement on every flagged mutant
+reproduces the exact flipped-invariant set the single-shot audit reported.
+The \(\mathrm{repeats}=1\)-versus-\(20\) gap, though a genuine metadata
+difference between the audit and the admission filter, inflated zero flip
+counts. This defends the LRCA score against a single-shot-noise objection:
+the leakage is a property of the mutants, not of the scoring pass.
+
+\textbf{Co-flip fingerprints.} Each family-by-class cell collapses onto a
+single co-flip pair, the signature of a deterministic coupling rather than
+scatter (NOETHER MetaPattern names, with the registered MP indices in
+brackets): on class-a classical numerics, OS flips
+\(m_{\mathrm{inv}},m_{\mathrm{dyn}}\) [MP1, MP4] (9 mutants: an operator swap
+on a spline breaks conservation and trajectory together); on class-b
+stochastic simulators, CF flips \(m_{\mathrm{inv}},m_{\mathrm{mono}}\)
+[MP1, MP2] (9: reversing the Metropolis--Hastings acceptance inequality
+inverts the chain) and OS flips \(m_{\mathrm{mono}},m_{\mathrm{cmp}}\)
+[MP2, MP5] (18); on class-c surrogate regression, TF flips
+\(m_{\mathrm{mono}},m_{\mathrm{cmp}}\) [MP2, MP5] (9); and on class-d ML
+classifiers, TF flips \(m_{\mathrm{mono}},m_{\mathrm{cmp}}\) [MP2, MP5] (63)
+and SI flips the same \(m_{\mathrm{mono}},m_{\mathrm{cmp}}\) [MP2, MP5] (9).
+The dominant \([m_{\mathrm{mono}},m_{\mathrm{cmp}}]\) coupling closes the
+detection matrix exactly: TF's \(53\%\) kill rate at \(m_{\mathrm{mono}}\)
+(72/135) and its \(53\%\) at \(m_{\mathrm{cmp}}\) (72/135) are the \emph{same}
+72 mutants, so every off-diagonal TF kill on one is a kill on the other.
+
+\textbf{The driver is PUT richness, not measurement.} Because A \(=0\), the
+\(\mathrm{repeats}=20\to1\) change cannot explain the growth of leakage from
+Study 1 (CF 9, TF 20; OS and SI both 0) to Study 2 (TF 72, OS 27, SI 9). The
+new class-c surrogates and class-d classifiers \emph{train on data}, so a
+training-data corruption (TF) necessarily perturbs both monotonicity and
+asymptotic ordering, tripling TF leakage, and even local-edit operators
+(OS, SI) straddle invariant classes on these structurally richer subjects. On
+Study 1's simple numeric kernels the same operators touched a single
+computational pathway. CE and HP stay clean in both studies (0 leakage
+throughout), which fixes the phenomenon to structurally rich PUTs rather than
+to any operator in isolation.
+
+\textbf{Counterfactual (not a re-verdict).} As a purely mechanical what-if on
+the frozen matrix: had the admission screen been correctly wired and extended
+to all five families, it would have rejected all 117 multi-stratum mutants,
+driving the counterfactual mean \texttt{suspect\_share} to \(0.0\). We report
+this only to show the mechanism is understood; it is \textbf{not} a corrected
+verdict. Such a screen would discard the majority of TF (72/135) and roughly a
+fifth of OS, admitting a single-stratum-selected, non-representative slice of
+families whose faults are intrinsically multi-invariant on trained models.
+That trades attribution purity for a selection-biased pool; it removes
+structure that should be modelled, not noise that should be filtered.
+
+\textbf{Interpretation.} The evidence (B \(=117/117\), reproducible under the
+stronger measurement) indicates that on structurally rich (surrogate and ML)
+PUTs a single-edit semantic fault \emph{inherently} perturbs several invariant
+classes, so strict single-stratum purity is the wrong construct shape for
+these subjects and a single-valued effect map \(\sigma\) is the wrong model
+for those families. A graded, multi-valued attribution construct (scoring
+attribution quality against a known co-flip signature rather than enforcing a
+purity threshold) is the registered path forward; it is deferred to the
+forthcoming Study-3 registration, which we flag without promising any outcome.
+
+\textbf{An MR-sensitivity coverage boundary.} The same artifacts expose a
+separate, orthogonal boundary: two of the six exercised meta-patterns almost
+never register a detection. Convergence order (MP3, \(m_{\mathrm{conv}}\))
+records \emph{zero} nonzero detection cells in both studies (Study-1 v4: 0
+nonzero cells; Study-2 v5: 0 of 28), and trajectory determinism (MP4,
+\(m_{\mathrm{dyn}}\)) is near-zero (Study-1 v4: 0; Study-2 v5: 1 of 28). This
+is not an artifact of designed-vacant coverage: on the Study-2 grid
+\(m_{\mathrm{conv}}\) has only 2 vacant (\(\circ\)) grades of 28, so the
+invariant is exercised on 26 subjects yet still detects nothing. The two
+strata therefore mark an MR-sensitivity boundary, meta-patterns that are
+declared and instantiated but that the current operator families and AVP
+checkers do not empirically stress, distinct from and additional to the
+attribution-purity boundary above.
 
 \section{Threats to Validity}\label{threats-to-validity}
 

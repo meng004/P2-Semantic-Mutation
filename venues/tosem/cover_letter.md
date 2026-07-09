@@ -30,6 +30,19 @@ single-source-of-truth file (data/results/industrial_percase_v1.json,
 with dataset DOI and archive SHA-256 recorded), from which every RQ4
 number is re-derived.
 
+Companion-citation blinding asymmetry. This manuscript adopts the MetaPattern
+terminology of a companion theory paper, NOETHER, at the presentation layer,
+and cites it (noether2026). Because NOETHER is itself under double-blind
+review, we cite it anonymously (author byline withheld, "companion manuscript
+under review, 2026") to avoid compromising that process. The other P-series
+companions (li2026sms, li2026minmrcomplete, defect4mr2026) are cited by author
+name because they are not under blind review. We flag this deliberate
+asymmetry for transparency; the anonymous NOETHER citation will be
+de-anonymised at camera-ready. No claim, threshold, dataset key, or
+pre-registration in this manuscript depends on NOETHER: the alignment is
+narrative naming only, and all registered artifacts retain their original
+MPk labels.
+
 An earlier version is available on arXiv as arXiv:2605.17437. The current
 submission substantially sharpens the semantic-mutation framework, adds
 formal terminology and argument-evidence mapping, clarifies non-claims, and uses
@@ -61,7 +74,7 @@ dataset protocol over reproduced library defects. Fifth, it narrows the claim fr
 validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
-Length statement. The main manuscript is 51 pages including references in the
+Length statement. The main manuscript is 52 pages including references in the
 ACM manuscript-review format, and the online supplementary material is 24
 pages. We submit to the Regular Track, which imposes no page-length cap.
 
