@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_25278752c5d0",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly d1_TF1 (replace y with 1-y) at the locator with no other semantic change; max deviation 1 on the probe grid."
+}

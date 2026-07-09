@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1b9e56f6ffa3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly a1_SI1 (change ic[0] coefficient from 20*x-10 to 10*x-10) at the locator with no other semantic change; max deviation 34 on the probe grid."
+}

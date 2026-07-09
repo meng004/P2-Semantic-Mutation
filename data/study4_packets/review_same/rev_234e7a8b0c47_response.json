@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_234e7a8b0c47",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly c3_CE1 (change hidden_width from 32 to 2) at the locator with no other semantic change; max deviation 0.16 on the probe grid."
+}

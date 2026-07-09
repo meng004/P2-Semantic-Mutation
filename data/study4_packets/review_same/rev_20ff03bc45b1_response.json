@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_20ff03bc45b1",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "mu is consumed only in the MH log-ratio, so shifting it there is exactly the +0.3 target-mean operator; deviates up to 4.3e-1."
+}

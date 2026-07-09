@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1810ca562917",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly a5_HP1 (change bc_type from 'natural' to 'clamped') at the locator with no other semantic change; max deviation 0.033 on the probe grid."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_195303ad12dc",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Inlined seeded RNG reproduces the module-level draws; only the rate coefficient 2->1 is semantic; deviates up to 1.35."
+}

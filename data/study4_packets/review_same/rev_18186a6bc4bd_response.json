@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_18186a6bc4bd",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Spline-cache refactor is behavior-preserving; only bc_type natural->clamped is semantic; deviates up to 3.3e-2."
+}

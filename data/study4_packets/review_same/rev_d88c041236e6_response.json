@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_d88c041236e6",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Adds unregistered noise_level_bounds='fixed'; the pure noise-level change alone is output-equivalent to the original (dev ~1e-9), so the observed deviation stems from the extra semantic change."
+}

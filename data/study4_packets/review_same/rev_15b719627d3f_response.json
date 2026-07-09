@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_15b719627d3f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly d7_CE1 (change the offset in `2.0*x - 1.0` from 1.0 to 0.5) at the locator with no other semantic change; max deviation 0.98 on the probe grid."
+}

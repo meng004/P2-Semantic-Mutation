@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_2166c244b3fd",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly a5_CE1 (change the number of interpolation samples from 17 to 5) at the locator with no other semantic change; max deviation 0.0011 on the probe grid."
+}

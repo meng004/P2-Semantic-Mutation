@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_249d91a1c1ac",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly a7_CE1 (change the main-diagonal value from 2.0 to 3.0) at the locator with no other semantic change; max deviation 23 on the probe grid."
+}

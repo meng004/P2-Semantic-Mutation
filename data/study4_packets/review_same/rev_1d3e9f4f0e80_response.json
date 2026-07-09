@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1d3e9f4f0e80",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Training draws -1.2+2.4*U restrict t to [-1.2,1.2] i.e. x in [0.3,0.7] as registered; deviates up to 3.0e-1."
+}

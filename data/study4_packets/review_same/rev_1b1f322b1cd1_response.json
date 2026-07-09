@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1b1f322b1cd1",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly c4_HP1 (change n_neighbors from 7 to 1) at the locator with no other semantic change; max deviation 0.23 on the probe grid."
+}

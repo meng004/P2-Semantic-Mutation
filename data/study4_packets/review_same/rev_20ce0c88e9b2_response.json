@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_20ce0c88e9b2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly d6_SI1 (set the second feature equal to the first (`[2-2x, 2-2x]`)) at the locator with no other semantic change; max deviation 0.27 on the probe grid."
+}

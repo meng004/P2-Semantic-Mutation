@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1bd739438429",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly c3_TF1 (change max_iter from 1000 to 5) at the locator with no other semantic change; max deviation 0.19 on the probe grid."
+}

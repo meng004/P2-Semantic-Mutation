@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_19955ae0702e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly b3_CE1 (change t**2 to t**3) at the locator with no other semantic change; max deviation 0.083 on the probe grid."
+}

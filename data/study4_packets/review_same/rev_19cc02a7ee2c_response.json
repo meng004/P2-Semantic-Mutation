@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_19cc02a7ee2c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly b1_CE1 (change successes to (successes - 1) with floor at 0) at the locator with no other semantic change; max deviation 0.0097 on the probe grid."
+}

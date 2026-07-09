@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1bc0ef7f35f9",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly b5_CE1 (change the constant in `4.0*x - 2.0` from 2.0 to 1.0) at the locator with no other semantic change; max deviation 0.95 on the probe grid."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_16eda069d2d9",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly a4_OS1 (change `x + 0.5*_NODES**2` to `x - 0.5*_NODES**2`) at the locator with no other semantic change; max deviation 0.67 on the probe grid."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1b24cf27a2cc",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly d1_HP1 (change alpha from 1e-4 (default) to 1.0) at the locator with no other semantic change; max deviation 0.15 on the probe grid."
+}

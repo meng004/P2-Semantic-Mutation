@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_14ce717adbba",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Implements exactly a5_OS1 (replace np.sin with np.cos in the fitted target) at the locator with no other semantic change; max deviation 1.4 on the probe grid."
+}
