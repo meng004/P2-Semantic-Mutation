@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4f744048a208",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "IC constant changed 1.0 to 0.5 exactly (u0 = 2x-0.5); docstring artifact is non-semantic; output shifted."
+}

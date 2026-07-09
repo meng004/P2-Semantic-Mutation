@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_53d440ab55da",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Besides narrowing the training range, the RNG seed is changed 42 to 999, an extra semantic change outside the registered transformation."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_5bffed30a20c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Training x restricted to [0.3,0.7] exactly (t = 6x-3 mapping preserved, same seed); GP extrapolation deviates."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_553f973b1add",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Residual r**3 + r changed to r**3 - r exactly; root shifts, non-equivalent."
+}

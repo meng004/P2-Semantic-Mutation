@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_52a12491eb33",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "First 20% of training labels randomly permuted as specified (own RNG); fitted SVC probability deviates."
+}

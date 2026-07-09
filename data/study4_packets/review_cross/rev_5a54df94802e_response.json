@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_5a54df94802e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "max_iter changed 1000 to 5 exactly; under-trained MLP prediction deviates."
+}

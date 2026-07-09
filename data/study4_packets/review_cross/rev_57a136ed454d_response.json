@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_57a136ed454d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "LogisticRegression C changed 1.0 to 1e-4 exactly (kwargs dict refactor is non-semantic); probability flattens toward prior, deviates."
+}
