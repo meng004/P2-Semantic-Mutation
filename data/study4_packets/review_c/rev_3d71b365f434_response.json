@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3d71b365f434",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "A[0][0] changed 2.0+x -> 2.0-x exactly; output deviates linearly up to 6."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3e71079f0576",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "set_params(epsilon=1.0) before fit realises exactly epsilon 0.01->1.0; executes finite and deviates from the original (max 1, 101/101 grid points > 1e-6)."
+}

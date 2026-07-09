@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_34f54423e47e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Adds unregistered length_scale_bounds='fixed'; the registered value-only change is optimised away (equivalent to original), so the observed deviation stems entirely from the extra semantic change. (max dev vs original 0.41 on 101-pt grid)."
+}

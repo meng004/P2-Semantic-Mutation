@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3e1427a723cd",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Training t-range [-1.2,1.2] equals registered x-range [0.3,0.7] under t=6x-3; executes finite and deviates from the original (max 0.3, 101/101 grid points > 1e-6)."
+}

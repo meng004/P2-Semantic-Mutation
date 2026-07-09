@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_28f4b627c8fc",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Polynomial basis replaced by a cubic B-spline basis with 6 knots (8 features), the faithful SplineTransformer(n_knots=6, degree=3) analogue; three independent ports agree to ~1e-15; deviation up to 0.029."
+}

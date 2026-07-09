@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_340b11d3a4d5",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact zeroing of second query feature via q[:,1]=0; executes finite and deviates from the original (max 0.17, 100/101 grid points > 1e-6)."
+}

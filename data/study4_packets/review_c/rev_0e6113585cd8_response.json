@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_0e6113585cd8",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "rtol has no direct C locus; mutant parameterizes steps as 10/sqrt(rtol), which reproduces the original N=100000 at 1e-8, then applies the registered 1e-3 change; max deviation 2.0e-6 exceeds 1e-6 at 23/101 points."
+}

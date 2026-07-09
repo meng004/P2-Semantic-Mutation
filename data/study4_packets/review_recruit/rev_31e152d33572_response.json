@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_31e152d33572",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact C 10->0.01 via equivalent kwargs dict; executes finite and deviates from the original (max 0.31, 101/101 grid points > 1e-6)."
+}

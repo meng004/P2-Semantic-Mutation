@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3b1404f2baca",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Posterior mean returns beta_post/total via a temp variable, the exact registered swap; deviation up to 0.98."
+}

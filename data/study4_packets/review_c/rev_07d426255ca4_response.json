@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_07d426255ca4",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Integrand changed from x + u*u to x * u*u exactly (temp variable is non-semantic); deviation up to 1.0."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_256206046e0f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Returns subdiagonal U10 per the registered change; extra unused variables only trigger -Wall warnings, no semantic side effect; deviation up to 9."
+}

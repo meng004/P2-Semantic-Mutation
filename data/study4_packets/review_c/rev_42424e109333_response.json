@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_42424e109333",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Integrand u*u -> u*u*u via a temp variable, semantically the exact registered change; deviation ~0.084."
+}

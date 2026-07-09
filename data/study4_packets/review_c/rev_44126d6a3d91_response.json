@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_44126d6a3d91",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Faithful rtol analogue via N=ceil(10/sqrt(rtol)) (exact at original 1e-8); registered 1e-3 change applied; max deviation 2.0e-6 exceeds 1e-6 at 23/101 points."
+}

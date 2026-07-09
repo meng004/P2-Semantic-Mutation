@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3b08180b6c5c",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact max_iter 1000->2 via kwargs dict; executes finite and deviates from the original (max 0.084, 77/101 grid points > 1e-6)."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_432c965fd58e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "List-comprehension labels are exactly the flipped comparison a+b<0; executes finite and deviates from the original (max 0.97, 101/101 grid points > 1e-6)."
+}

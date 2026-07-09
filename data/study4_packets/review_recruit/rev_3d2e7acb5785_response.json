@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3d2e7acb5785",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact minimal C 10->0.01; executes finite and deviates from the original (max 0.31, 101/101 grid points > 1e-6)."
+}

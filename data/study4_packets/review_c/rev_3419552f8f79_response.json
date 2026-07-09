@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3419552f8f79",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Registered floored off-by-one applied exactly; the added stray ';;' are empty statements/comment edits with no semantic effect, and outputs match the minimal-diff variants."
+}

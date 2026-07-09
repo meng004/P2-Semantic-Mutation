@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_314dbab208e7",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact label comparison flip <1.0 -> >1.0; x*x rewrite is neutral; executes finite and deviates from the original (max 0.97, 101/101 grid points > 1e-6)."
+}

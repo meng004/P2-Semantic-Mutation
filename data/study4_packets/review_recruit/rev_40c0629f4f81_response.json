@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_40c0629f4f81",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact kernel thin_plate_spline->linear; executes finite and deviates from the original (max 0.0017, 84/101 grid points > 1e-6)."
+}

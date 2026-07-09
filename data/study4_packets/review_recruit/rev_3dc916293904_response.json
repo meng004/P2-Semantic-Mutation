@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_3dc916293904",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact comparison flip >0 -> <0; asarray form neutral; executes finite and deviates from the original (max 0.97, 101/101 grid points > 1e-6)."
+}

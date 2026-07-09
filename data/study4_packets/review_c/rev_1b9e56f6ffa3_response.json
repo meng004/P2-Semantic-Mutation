@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1b9e56f6ffa3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "ic[0] coefficient 20x-10 changed to 10x-10 exactly (array init refactor is non-semantic); output deviates up to 21.1."
+}

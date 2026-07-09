@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_422f5fa36610",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Exact second-feature zeroing via vec[1]=0.0; executes finite and deviates from the original (max 0.17, 100/101 grid points > 1e-6)."
+}

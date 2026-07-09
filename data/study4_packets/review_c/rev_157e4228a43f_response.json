@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_157e4228a43f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Returns the computed subdiagonal element U10, the exact analogue of prod(diag(U,k=-1)); output becomes 0, deviating up to 9."
+}

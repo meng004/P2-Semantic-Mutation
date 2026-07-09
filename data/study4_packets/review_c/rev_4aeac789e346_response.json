@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_4aeac789e346",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "(int)(1e10) step formula overflows int (UB), making the loop bound negative so zero RK4 steps run and the IC norm is returned; that is a different semantic change than the registered rtol degradation."
+}
