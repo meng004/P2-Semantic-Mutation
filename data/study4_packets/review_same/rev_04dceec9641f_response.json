@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_04dceec9641f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Feature-map offset changed 1.0 to 0.5 in the single shared expression (np.full form equivalent); deviates up to 0.49."
+}

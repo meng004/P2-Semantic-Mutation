@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_0e6113585cd8",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "rtol changed 1e-8 to 1e-3 exactly (options dict keeps method and atol identical); deviates up to 0.86."
+}

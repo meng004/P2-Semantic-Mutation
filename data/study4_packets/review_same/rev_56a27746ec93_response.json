@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_56a27746ec93",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "rng.normal(0, 0.1*std) equals std*0.1*standard_normal on same stream; max_dev identical to canonical form."
+}

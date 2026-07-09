@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_5ba0ba39f55a",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "bc_type natural->clamped exactly; builder refactor preserves knots and values; deviates on 92% of grid."
+}

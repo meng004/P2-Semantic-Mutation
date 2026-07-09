@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_615bc34f00c2",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Helper computes std*0.1*standard_normal on same stream, exactly sigma x0.1; max_dev identical to canonical form."
+}

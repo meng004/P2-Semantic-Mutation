@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_083783a83987",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "bc_type changed natural to clamped with identical knots/values (builder function non-semantic); deviates up to 0.033."
+}

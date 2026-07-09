@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_0d26bc659cc0",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Second predict feature set to 0.0 exactly (np.where labels and RBF(1.0) are equivalent forms); deviates up to 0.16."
+}

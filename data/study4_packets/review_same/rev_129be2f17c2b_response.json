@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_129be2f17c2b",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Kernel changed thin_plate_spline to linear exactly; deviates up to 1.8e-3, above tolerance on 162 grid points."
+}

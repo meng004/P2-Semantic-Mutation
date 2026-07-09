@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_061cfddb9b76",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Training range restricted to [-1,1] via 2*random-1, the same affine remap of the identical seed-42 stream; deviates up to 0.078."
+}

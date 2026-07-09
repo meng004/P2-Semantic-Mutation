@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_11a49e45d0c3",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Beyond the registered stencil sign flip it adds np.clip of the state and a non-finite-to-1e30 result guard, extra semantic changes that mask the divergence behaviour."
+}

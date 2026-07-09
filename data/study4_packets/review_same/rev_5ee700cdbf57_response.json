@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_5ee700cdbf57",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Sign flip implemented exactly, but anti-diffusive scheme diverges to non-finite (nan) outputs, failing V2."
+}

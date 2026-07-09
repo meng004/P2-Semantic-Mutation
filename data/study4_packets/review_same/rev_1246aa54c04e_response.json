@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_1246aa54c04e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Label comparison flipped >0 to <0 exactly (np.where form equivalent); deviates up to 0.99."
+}
