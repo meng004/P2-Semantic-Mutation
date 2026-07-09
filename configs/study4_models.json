@@ -1,0 +1,60 @@
+{
+  "_note": "Study-4 (H2-2 cross-vendor) model / role configuration. All four models are served over the ONE OpenAI-compatible gateway at BLTCY_BASE_URL. The model-role mapping below is READ by the campaign (config-driven); it is never hardcoded in the client or the driver. PREREGISTRATION_STUDY4 (a sibling is drafting v1.2) is the authority that PINS this file before the confirmatory run; the values here are the calibration-pilot roster (validated live 2026-07-09).",
+  "version": "study4-pilot-2026-07-09",
+  "gateway": {
+    "base_url_env": "BLTCY_BASE_URL",
+    "api_key_env": "BLTCY_API_KEY"
+  },
+  "models": {
+    "claude-fable-5": {
+      "vendor": "anthropic",
+      "min_max_tokens": 800,
+      "served_as": "claude-fable-5",
+      "price_per_mtok": {"prompt": 3.0, "completion": 15.0},
+      "notes": "same-arm generator + blind reviewer. Gateway usage.prompt_tokens is inflated and unstable (18k-37k for a trivial prompt); see PILOT_LOG P11. Cost from usage is recorded verbatim but flagged."
+    },
+    "gpt-5.5": {
+      "vendor": "openai",
+      "min_max_tokens": 800,
+      "served_as": "gpt-5.5",
+      "price_per_mtok": {"prompt": 1.25, "completion": 10.0},
+      "notes": "cross-arm slot src1 + arbiter."
+    },
+    "gemini-3.5-flash": {
+      "vendor": "google",
+      "min_max_tokens": 2000,
+      "served_as": "gemini-3.5-flash",
+      "price_per_mtok": {"prompt": 0.30, "completion": 2.50},
+      "notes": "cross-arm slot src2. Reasoning consumes the token budget; max_tokens floor 2000 or completions truncate empty (PILOT_LOG P12)."
+    },
+    "grok-4.1": {
+      "vendor": "xai",
+      "min_max_tokens": 800,
+      "served_as": "grok-4.3",
+      "price_per_mtok": {"prompt": 3.0, "completion": 15.0},
+      "notes": "cross-arm slot src3. Gateway maps id grok-4.1 -> served grok-4.3 (self-reported in response.model). Emits BARE ``` fences (no python tag); _strip_fences fallback handles it (PILOT_LOG P10)."
+    }
+  },
+  "arms": {
+    "same": {
+      "slots": [
+        {"tag": "src1", "model": "claude-fable-5"},
+        {"tag": "src2", "model": "claude-fable-5"},
+        {"tag": "src3", "model": "claude-fable-5"}
+      ]
+    },
+    "cross": {
+      "slots": [
+        {"tag": "src1", "model": "gpt-5.5"},
+        {"tag": "src2", "model": "gemini-3.5-flash"},
+        {"tag": "src3", "model": "grok-4.1"}
+      ]
+    }
+  },
+  "roles": {
+    "reviewer": "claude-fable-5",
+    "arbiter": "gpt-5.5"
+  },
+  "registered_k": 3,
+  "confirmatory_puts": 28
+}

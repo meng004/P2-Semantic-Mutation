@@ -40,7 +40,9 @@ warnings.filterwarnings("ignore")
 
 from p2.mutators.llm_client import (  # type: ignore[import-not-found]  # noqa: E402
     generator_claude, generator_gpt, generator_deepseek,
+    study4_slot_factories, study4_role_factory,
 )
+from p2.config import study4 as study4_cfg  # type: ignore[import-not-found]  # noqa: E402
 from p2.mutators.operator_registry import OPERATORS  # type: ignore[import-not-found]  # noqa: E402
 from p2.mutators.validation import validate_mutant  # type: ignore[import-not-found]  # noqa: E402
 from p2.config.primary import PRIMARY_CELLS  # type: ignore[import-not-found]  # noqa: E402
@@ -73,6 +75,84 @@ INSTRUCTIONS:
 - Preserve the function signature `def program(x): ...` returning a finite scalar.
 - Do not explain or comment.
 """
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# Study-4 (H-LANG) C-language grid. The operator registry semantics are
+# LANGUAGE-AGNOSTIC and reused verbatim; only the rendered prompt, the PUT
+# source language, and the admission gate (gcc compile + adapter, vs
+# ast/exec) change. C admissions land in a separate cache so Python pools
+# are never touched. Grid = the 7 ORIGINAL Study-1 PUTs with a faithful
+# pure-C99 port (see docs/prereg_v2/C_PORT_SPEC.md; c1/c3/d1/d2/d3 excluded
+# as ML-library kernels).
+# ══════════════════════════════════════════════════════════════════════════
+C_GRID_PUTS = ("a1", "a2", "a3", "b1", "b2", "b3", "c2")
+CACHE_DIR_CLANG = ROOT / "data/operator_campaign/cache_clang"
+CACHE_DIR_CLANG.mkdir(parents=True, exist_ok=True)
+
+PROMPT_TEMPLATE_C = """You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the C program below that implements EXACTLY the named operator described.
+
+PUT NAME: {put_name}
+OPERATOR ID: {op_id}
+OPERATOR LABEL: {op_label}
+TARGET LOCATOR: {target_locator}
+EXACT CHANGE: {transformation}
+RATIONALE: {rationale}
+
+ATTEMPT INDEX: {attempt_idx} of {n_attempts}  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)
+
+The operator semantics are language-agnostic; apply the SAME change to the C source at the analogous site named by the target locator.
+
+━━━ ORIGINAL PROGRAM (C99) ━━━
+```c
+{original_code}
+```
+
+INSTRUCTIONS:
+- Apply the operator transformation EXACTLY as specified.
+- Output ONLY the complete mutated C program in a ```c``` block.
+- The program MUST compile with `gcc -std=c99 -O0 -Wall` (zero warnings) and run on x in [0, 1] returning a finite scalar.
+- Preserve `double program(double x)` and the harness `main` (one x per stdin line -> one float per stdout line).
+- Do not explain or comment.
+"""
+
+
+def _strip_code_fences(text: str) -> str:
+    """Strip a fenced code block for ANY language tag (```python, ```c, bare
+    ```). Superset of ``_strip_fences``; used by the C admission path."""
+    m = re.search(r"```[a-zA-Z0-9_+.-]*\s*\n(.*?)```", text, re.DOTALL)
+    if m:
+        return m.group(1).strip()
+    return text.strip()
+
+
+def _load_c_put_program(put_id: str):
+    """C analogue of ``_load_put_program``: returns (source_text, CPutProgram)."""
+    from p2.cport.adapter import load_c_put
+    src_path = ROOT / f"src/p2/cput/{put_id}.c"
+    return src_path.read_text(), load_c_put(put_id, ROOT)
+
+
+def admit_c_mutant(op, raw_code, original_fn, source_tag, attempt, cache_dir=None):
+    """C analogue of ``admit_mutant``: fence-strip -> V1-V3 (gcc + adapter)
+    -> cache ``{op}_{source}_attemptNN.c``. Byte-parallel to the Python path
+    so ingest bookkeeping (v_passed, filename) is identical downstream."""
+    from p2.cport.validation import validate_c_mutant
+    cache_dir = Path(cache_dir) if cache_dir is not None else CACHE_DIR_CLANG
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    code = _strip_code_fences(raw_code)
+    v = validate_c_mutant(code, original_fn, build_dir=cache_dir / "_build")
+    record = {
+        "op": op.id, "put": op.put, "source": source_tag, "attempt": attempt,
+        "lang": "c",
+        "v_syntax": v.syntax_ok, "v_executable": v.executable,
+        "v_nontrivial": v.nontrivial, "v_passed": v.passed, "v_error": v.error,
+    }
+    if v.passed:
+        fname = f"{op.id}_{source_tag}_attempt{attempt:02d}.c"
+        (cache_dir / fname).write_text(code)
+        record["filename"] = fname
+    return record
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -307,15 +387,62 @@ def _strip_fences(text: str) -> str:
     return text.strip()
 
 
-def _generate_one(client: OpenAI, model: str, prompt: str, max_tokens: int = 800) -> tuple[str, dict]:
-    """Single chat completion with timing + token usage."""
+# Retryable gateway failures (Study-4): rate limits, 5xx, timeouts, dropped
+# connections. Imported lazily-safe so an offline dry-run without the SDK error
+# classes still loads (they exist in openai>=1, but guard anyway).
+try:  # pragma: no cover - trivial import guard
+    from openai import (RateLimitError, APITimeoutError, APIConnectionError,
+                        InternalServerError, APIStatusError)
+    _RETRYABLE = (RateLimitError, APITimeoutError, APIConnectionError,
+                  InternalServerError)
+except Exception:  # pragma: no cover
+    APIStatusError = ()  # type: ignore[assignment,misc]
+    _RETRYABLE = ()  # type: ignore[assignment]
+
+
+def _chat_with_retry(client, *, model, messages, max_tokens, temperature,
+                     tries: int = 3, base_delay: float = 1.5):
+    """chat.completions.create with exponential backoff on 429/5xx/timeouts.
+
+    Study-4 gateway calls retry ``tries`` times (default 3) with delays
+    base_delay * 2**attempt. A 4xx that is not 429 is a hard error (bad request /
+    auth) and is NOT retried. The MockLLMClient path never raises, so this is a
+    transparent pass-through offline.
+    """
+    last = None
+    for attempt in range(tries):
+        try:
+            return client.chat.completions.create(
+                model=model, messages=messages,
+                max_tokens=max_tokens, temperature=temperature)
+        except _RETRYABLE as e:  # transient — back off and retry
+            last = e
+        except APIStatusError as e:  # retry only 5xx / 429
+            code = getattr(e, "status_code", None)
+            if code is not None and (code >= 500 or code == 429):
+                last = e
+            else:
+                raise
+        if attempt < tries - 1:
+            time.sleep(base_delay * (2 ** attempt))
+    raise last  # type: ignore[misc]
+
+
+def _generate_one(client: OpenAI, model: str, prompt: str, max_tokens: int = 800,
+                  min_max_tokens: int = 0) -> tuple[str, dict]:
+    """Single chat completion with timing, token usage, and served-model echo.
+
+    ``min_max_tokens`` raises the effective ``max_tokens`` floor for models whose
+    reasoning consumes the budget (gemini-3.5-flash needs >= 2000). The returned
+    meta records ``served_model`` (response.model) so the grok-4.1 -> grok-4.3
+    mapping is captured at runtime in the campaign log.
+    """
+    eff_max = max(max_tokens, min_max_tokens) if min_max_tokens else max_tokens
     t0 = time.time()
-    resp = client.chat.completions.create(
-        model=model,
+    resp = _chat_with_retry(
+        client, model=model,
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=max_tokens,
-        temperature=0.7,
-    )
+        max_tokens=eff_max, temperature=0.7)
     dt = time.time() - t0
     msg = resp.choices[0].message
     content = msg.content or ""
@@ -324,6 +451,8 @@ def _generate_one(client: OpenAI, model: str, prompt: str, max_tokens: int = 800
         "latency_s": round(dt, 2),
         "prompt_tokens": usage.prompt_tokens if usage else None,
         "completion_tokens": usage.completion_tokens if usage else None,
+        "requested_model": model,
+        "served_model": getattr(resp, "model", None),
     }
 
 
@@ -534,6 +663,21 @@ GENERATION_RESPONSE_SCHEMA = {
                   "entries run the identical V1–V4 admission gate as live runs.",
 }
 
+GENERATION_RESPONSE_SCHEMA_C = {
+    **GENERATION_RESPONSE_SCHEMA,
+    "mutants_item_fields": {
+        "op_id": "one of the packet's operator ids",
+        "source": "one of the packet's 'sources' role tags",
+        "attempt": "integer in 1..k_per_source",
+        "code": "complete C99 mutant program (```c fences tolerated, stripped "
+                "on ingest); must define double program(double x) plus the "
+                "harness main; MUST compile with gcc -std=c99 -O0 -Wall",
+    },
+    "strictness": "Malformed entries are rejected and logged; well-formed "
+                  "entries run the identical V1–V3 gate (gcc compile + adapter) "
+                  "as the Python path, into data/operator_campaign/cache_clang/.",
+}
+
 REVIEW_RESPONSE_SCHEMA = {
     "description": "Return ONE JSON verdict object per review packet. No prose.",
     "required_top_level": ["blind_id", "V1_syntax_ok", "V2_executable",
@@ -650,22 +794,39 @@ def _campaign_log_append(work_dir, event: str, payload: dict) -> None:
 # ── Phase 1: export GENERATION packets ─────────────────────────────────────
 
 def export_generation_packets(out_dir, puts=None, arm="cross",
-                              k=REGISTERED_K, seed=REGISTERED_SEED) -> dict:
+                              k=REGISTERED_K, seed=REGISTERED_SEED,
+                              lang="py") -> dict:
     """One GENERATION packet per selected PUT (its operators feed one per-PUT
-    pool, reused across all 5 MPs). NO SMS/outcome fields anywhere."""
+    pool, reused across all 5 MPs). NO SMS/outcome fields anywhere.
+
+    ``lang`` selects the grid: 'py' (default, all registry PUTs) or 'c'
+    (Study-4 H-LANG; restricted to C_GRID_PUTS, C prompt + C schema, C PUT
+    source). The operator specs and shared MR definitions are identical
+    across languages."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    all_puts = sorted({o.put for o in OPERATORS})
-    puts = sorted(puts) if puts else all_puts
+    is_c = (lang == "c")
+    if is_c:
+        template = PROMPT_TEMPLATE_C
+        load_prog = _load_c_put_program
+        schema = GENERATION_RESPONSE_SCHEMA_C
+        tpl = _pin_template("cross_source_campaign.PROMPT_TEMPLATE_C", template)
+        universe = list(C_GRID_PUTS)
+        puts = [p for p in (sorted(puts) if puts else universe) if p in C_GRID_PUTS]
+    else:
+        template = PROMPT_TEMPLATE
+        load_prog = _load_put_program
+        schema = GENERATION_RESPONSE_SCHEMA
+        tpl = _pin_template("cross_source_campaign.PROMPT_TEMPLATE", template)
+        puts = sorted(puts) if puts else sorted({o.put for o in OPERATORS})
     sources = list(ARMS[arm])
-    tpl = _pin_template("cross_source_campaign.PROMPT_TEMPLATE", PROMPT_TEMPLATE)
     manifest = _load_manifest(out_dir)
     written = []
     for put in puts:
         ops = sorted((o for o in OPERATORS if o.put == put), key=lambda o: o.id)
         if not ops:
             continue
-        original_code, _ = _load_put_program(put)
+        original_code, _ = load_prog(put)
         # Mirror the live generator prompt EXACTLY: append F2's single-stratum
         # CF/TF guardrail clause when enabled (empty for the 4 local-edit
         # families), so packet prompts are byte-identical to a live campaign.
@@ -674,7 +835,7 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
         for op in ops:
             clause = single_stratum_prompt_clause(op.category) if stratum_on else ""
             prompts = {
-                str(a): PROMPT_TEMPLATE.format(
+                str(a): template.format(
                     put_name=op.put.upper(), op_id=op.id, op_label=op.label,
                     target_locator=op.target_locator,
                     transformation=op.transformation, rationale=op.rationale,
@@ -686,10 +847,12 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
             for source in sources:
                 for a in range(1, k + 1):
                     slots.append({"op_id": op.id, "source": source, "attempt": a})
+        pid = f"gen_c_{put}" if is_c else f"gen_{put}"
         packet = {
             "packet_type": "generation",
-            "packet_id": f"gen_{put}",
+            "packet_id": pid,
             "put_id": put,
+            "lang": lang,
             "arm": arm,
             "seed": seed,
             "k_per_source": k,
@@ -705,8 +868,8 @@ def export_generation_packets(out_dir, puts=None, arm="cross",
                 "packet_total": len(slots),
             },
             "required_slots": slots,
-            "response_schema": GENERATION_RESPONSE_SCHEMA,
-            "response_filename": f"gen_{put}_response.json",
+            "response_schema": schema,
+            "response_filename": f"{pid}_response.json",
             "instructions": (
                 "Act as the mutant generator. For EACH required slot, follow the "
                 "operator's rendered prompt (operators[].prompts_by_attempt[attempt]) "
@@ -812,13 +975,19 @@ def _iter_response_files(in_dir):
         yield f, obj, None
 
 
-def ingest_generation(in_dir, cache_dir=None, packets_dir=None) -> dict:
+def ingest_generation(in_dir, cache_dir=None, packets_dir=None, lang=None) -> dict:
     """Validate agent GENERATION responses (strict) and run each admitted
-    mutant through the SAME admission path as the live/mock client."""
+    mutant through the SAME admission path as the live/mock client.
+
+    The language is taken per-packet from the packet's ``lang`` field
+    (falling back to the ``lang`` arg, then 'py'); C packets validate via
+    gcc+adapter and default to the ``cache_clang`` cache, so Python and C
+    responses can even be ingested from the same directory without cross
+    contamination."""
     in_dir = Path(in_dir)
     packets_dir = Path(packets_dir) if packets_dir else in_dir
-    cache_dir = Path(cache_dir) if cache_dir else CACHE_DIR
-    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_override = Path(cache_dir) if cache_dir else None
+    cache_dir = cache_override or CACHE_DIR    # last-touched cache, for the return
     manifest = _load_manifest(in_dir)
     all_records, all_errors, per_put = [], [], {}
     put_fn_cache: dict = {}
@@ -843,15 +1012,22 @@ def ingest_generation(in_dir, cache_dir=None, packets_dir=None) -> dict:
         if errs:
             all_errors.append({"file": f.name, "errors": errs})
         put = packet["put_id"]
-        if put not in put_fn_cache:
-            put_fn_cache[put] = _load_put_program(put)
-        _, original_fn = put_fn_cache[put]
+        pkt_lang = packet.get("lang", lang or "py")
+        is_c = (pkt_lang == "c")
+        cache_dir = cache_override or (CACHE_DIR_CLANG if is_c else CACHE_DIR)
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_key = (put, pkt_lang)
+        if cache_key not in put_fn_cache:
+            put_fn_cache[cache_key] = (
+                _load_c_put_program(put) if is_c else _load_put_program(put))
+        _, original_fn = put_fn_cache[cache_key]
         op_by_id = {o.id: o for o in OPERATORS if o.put == put}
+        admit = admit_c_mutant if is_c else admit_mutant
         covered = set()
         for m in valid:
             op = op_by_id[m["op_id"]]
-            rec = admit_mutant(op, m["code"], original_fn, m["source"],
-                               m["attempt"], cache_dir=cache_dir)
+            rec = admit(op, m["code"], original_fn, m["source"],
+                        m["attempt"], cache_dir=cache_dir)
             rec["ingested_from"] = f.name
             all_records.append(rec)
             covered.add((m["op_id"], m["source"], m["attempt"]))
@@ -1049,6 +1225,192 @@ def ingest_review(in_dir, packets_dir=None) -> dict:
             "arbitration": arbitration_ids}
 
 
+# ══════════════════════════════════════════════════════════════════════════
+# STUDY-4 (H2-2 cross-vendor) — LIVE four-vendor campaign wiring.
+#
+# Four vendors on ONE OpenAI-compatible gateway, model-role mapping read from
+# the pinned config (p2.config.study4), never hardcoded here:
+#   arm=same  -> all 3 generator slots = claude-fable-5
+#   arm=cross -> src1=gpt-5.5, src2=gemini-3.5-flash, src3=grok-4.1
+#   reviewer  = claude-fable-5 (blinded, packets identical to harness mode)
+#   arbiter   = gpt-5.5 (only on reviewer UNCERTAIN)
+# Every generation and review is funnelled through the SAME admit_mutant path
+# (fence-strip -> V1-V4 -> cache-write), with per-call token/cost accounting
+# appended to a JSONL campaign log. Slot tags (src1/2/3) are vendor-neutral and
+# identical across arms, so neither the filename nor the blinded packet reveals
+# the vendor or the arm.
+# ══════════════════════════════════════════════════════════════════════════
+
+STUDY4_CACHE = ROOT / "data" / "operator_campaign" / "cache_study4_pilot"
+
+# Vendor tokens redacted from the DISPLAYED mutant code in review packets, so a
+# model that echoes its own family into a docstring cannot de-blind itself
+# (presentation-layer only; the admitted artifact on disk is untouched).
+STUDY4_VENDOR_TOKENS = ("claude", "fable", "anthropic", "gpt", "openai",
+                        "gemini", "google", "grok", "xai", "deepseek")
+
+
+def _study4_log_append(log_path, record: dict) -> None:
+    """Append one JSON line (per-call token/cost accounting) to the campaign log."""
+    if log_path is None:
+        return
+    log_path = Path(log_path)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    record = {"ts": _now_iso(), **record}
+    with log_path.open("a") as fh:
+        fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def _study4_call(factory, prompt: str, *, kind: str, slot_tag: str,
+                 op_id: str | None, log_path, max_tokens: int = 800) -> tuple[str, dict]:
+    """One gateway call with the model's quirks, cost accounting, and served-id echo.
+
+    Applies the config ``min_max_tokens`` floor (gemini), records the served
+    model (grok-4.1 -> grok-4.3), and appends a per-call cost row to the JSONL
+    campaign log. Returns (stripped_code, meta) with meta['cost_usd'] set.
+    """
+    client, model, quirks = factory()
+    floor = int(quirks.get("min_max_tokens", 0) or 0)
+    code, meta = _generate_one(client, model, prompt, max_tokens=max_tokens,
+                               min_max_tokens=floor)
+    cost = study4_cfg.estimate_cost_usd(
+        model, meta.get("prompt_tokens"), meta.get("completion_tokens"))
+    meta["cost_usd"] = round(cost, 6)
+    meta["vendor"] = quirks.get("vendor")
+    _study4_log_append(log_path, {
+        "event": f"study4-{kind}", "kind": kind, "slot": slot_tag,
+        "op_id": op_id, "requested_model": model,
+        "served_model": meta.get("served_model"),
+        "served_mismatch": (meta.get("served_model") not in (None, model)),
+        "latency_s": meta.get("latency_s"),
+        "prompt_tokens": meta.get("prompt_tokens"),
+        "completion_tokens": meta.get("completion_tokens"),
+        "cost_usd": meta["cost_usd"], "empty_body": not bool(code)})
+    return code, meta
+
+
+def study4_generate_slot(op, original_code, original_fn, slot_tag, factory,
+                         attempts, cache_dir, log_path):
+    """Generate + admit ``attempts`` mutants for one (operator, slot) on the gateway."""
+    results = []
+    for attempt in range(1, attempts + 1):
+        prompt = PROMPT_TEMPLATE.format(
+            put_name=op.put.upper(), op_id=op.id, op_label=op.label,
+            target_locator=op.target_locator, transformation=op.transformation,
+            rationale=op.rationale, attempt_idx=attempt, n_attempts=attempts,
+            original_code=original_code)
+        if single_stratum_filter_enabled():
+            prompt += single_stratum_prompt_clause(op.category)
+        try:
+            code, meta = _study4_call(factory, prompt, kind="generate",
+                                      slot_tag=slot_tag, op_id=op.id,
+                                      log_path=log_path)
+        except Exception as e:
+            rec = {"op": op.id, "put": op.put, "source": slot_tag,
+                   "attempt": attempt, "v_passed": False,
+                   "error": f"LLM_FAIL: {type(e).__name__}: {e}"}
+            results.append(rec)
+            _study4_log_append(log_path, {"event": "study4-generate-error",
+                                          "op_id": op.id, "slot": slot_tag,
+                                          "error": rec["error"]})
+            continue
+        rec = admit_mutant(op, code, original_fn, slot_tag, attempt,
+                           cache_dir=cache_dir, meta=meta)
+        rec["model"] = meta.get("requested_model")
+        rec["served_model"] = meta.get("served_model")
+        rec["cost_usd"] = meta.get("cost_usd")
+        rec["malformed"] = not bool(_strip_fences(code))
+        results.append(rec)
+        print(f"  [{op.id} {slot_tag} a{attempt:02d}] "
+              f"{'PASS' if rec['v_passed'] else 'FAIL'} "
+              f"{meta['latency_s']}s ct={meta.get('completion_tokens')} "
+              f"served={meta.get('served_model')}", flush=True)
+    return results
+
+
+def _study4_blind_code(code: str) -> str:
+    """Redact vendor-family tokens from the displayed mutant code (blinding)."""
+    for tok in STUDY4_VENDOR_TOKENS:
+        code = re.sub(tok, "src", code, flags=re.IGNORECASE)
+    return code
+
+
+def run_study4_blind_review(op, put_source, mutant_code, log_path,
+                            reviewer_factory=None, arbiter_factory=None) -> dict:
+    """Blinded review (claude-fable-5) + arbitration (gpt-5.5) over one mutant.
+
+    Blinding is IDENTICAL to harness mode: the packet is built by
+    ``build_blind_review_packet`` (no generator identity, no arm, no SMS) and
+    the displayed code is vendor-token-redacted. Arbitration fires only when the
+    reviewer returns UNCERTAIN (classify_mutant -> ARBITRATED).
+    """
+    from types import SimpleNamespace
+    from p2.mutators.dual_blind import classify_mutant, MutantStatus
+
+    reviewer_factory = reviewer_factory or study4_role_factory("reviewer")
+    arbiter_factory = arbiter_factory or study4_role_factory("arbiter")
+    display_code = _study4_blind_code(mutant_code)
+    packet = build_blind_review_packet(op, put_source, display_code)
+    # Blinding guard: no vendor family may survive into the packet.
+    flat = json.dumps(packet).lower()
+    for tok in STUDY4_VENDOR_TOKENS:
+        assert tok not in flat, f"review packet leaks vendor token {tok!r}"
+    prompt = REVIEW_PROMPT_TEMPLATE.format(
+        op_id=packet["operator"]["id"], op_label=packet["operator"]["label"],
+        target_locator=packet["operator"]["target_locator"],
+        transformation=packet["operator"]["transformation"],
+        put_source=packet["put_source"], mutant_code=packet["mutant_code"])
+
+    raw, _m = _study4_call(reviewer_factory, prompt, kind="review",
+                           slot_tag="reviewer", op_id=op.id, log_path=log_path,
+                           max_tokens=400)
+    parsed = _parse_review_json(raw)
+    status = classify_mutant(SimpleNamespace(overall=parsed.get("overall", "UNCERTAIN")))
+    arbitrated = False
+    if status == MutantStatus.ARBITRATED:
+        raw_arb, _ma = _study4_call(arbiter_factory, prompt, kind="arbitrate",
+                                    slot_tag="arbiter", op_id=op.id,
+                                    log_path=log_path, max_tokens=400)
+        parsed = _parse_review_json(raw_arb)
+        arbitrated = True
+    return {"review_verdict": parsed.get("overall", "UNCERTAIN"),
+            "operator_match": parsed.get("operator_match", "Uncertain"),
+            "arbitrated": arbitrated}
+
+
+def study4_campaign(puts, arm, attempts, cache_dir=None, log_path=None,
+                    review=False):
+    """Live Study-4 generation (+ optional blinded review) over the given PUTs.
+
+    Returns {records, reviews, cache_dir}. All four vendors run on the gateway;
+    the slot->model mapping is read from the pinned config via
+    ``study4_slot_factories(arm)``.
+    """
+    cache_dir = Path(cache_dir) if cache_dir else STUDY4_CACHE
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    slots = study4_slot_factories(arm)
+    ops = sorted((o for o in OPERATORS if o.put in set(puts)), key=lambda o: o.id)
+    records, reviews = [], []
+    put_cache: dict = {}
+    for op in ops:
+        if op.put not in put_cache:
+            put_cache[op.put] = _load_put_program(op.put)
+        original_code, original_fn = put_cache[op.put]
+        for slot_tag, factory in slots:
+            recs = study4_generate_slot(op, original_code, original_fn, slot_tag,
+                                        factory, attempts, cache_dir, log_path)
+            records.extend(recs)
+            if review:
+                for r in recs:
+                    if r.get("v_passed") and r.get("filename"):
+                        code = (cache_dir / r["filename"]).read_text()
+                        rev = run_study4_blind_review(op, original_code, code,
+                                                      log_path)
+                        r["review"] = rev
+                        reviews.append(rev)
+    return {"records": records, "reviews": reviews, "cache_dir": str(cache_dir)}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--put", default=None, help="restrict to one PUT (e.g. a2)")
@@ -1092,17 +1454,48 @@ def main():
                         metavar="DIR",
                         help="mutant cache dir for packet ingest / review export "
                              "(default data/operator_campaign/cache_cross)")
+    parser.add_argument("--lang", choices=("py", "c"), default="py",
+                        help="grid language for --export-packets / "
+                             "--ingest-generation: 'py' (default) or 'c' "
+                             "(Study-4 H-LANG; 7-PUT C grid, gcc admission, "
+                             "cache_clang). Ingest also auto-detects per packet.")
+    # ── Study-4 (H2-2 cross-vendor) LIVE four-vendor gateway mode ──────────
+    parser.add_argument("--study4", action="store_true",
+                        help="LIVE Study-4 four-vendor gateway campaign "
+                             "(model-role mapping from configs/study4_models.json)")
+    parser.add_argument("--attempts", type=int, default=None,
+                        help="Study-4: attempts per (operator, slot). Default = "
+                             "study4 registered_k; the pilot uses 1.")
+    parser.add_argument("--study4-log", dest="study4_log", default=None,
+                        metavar="FILE",
+                        help="Study-4: JSONL per-call token/cost log path")
     args = parser.parse_args()
+
+    if args.study4:
+        puts = args.puts.split(",") if args.puts else sorted({o.put for o in OPERATORS})
+        cfg = study4_cfg.load_study4_config()
+        attempts = args.attempts if args.attempts is not None else int(cfg["registered_k"])
+        cache = Path(args.cache_dir) if args.cache_dir else STUDY4_CACHE
+        log_path = Path(args.study4_log) if args.study4_log else (cache / "campaign_log.jsonl")
+        print(f"== Study-4 LIVE (arm={args.arm}, attempts={attempts}, "
+              f"review={'on' if args.review else 'off'}) — slots "
+              f"{study4_cfg.arm_slots(args.arm)} ==")
+        out = study4_campaign(puts, args.arm, attempts, cache_dir=cache,
+                              log_path=log_path, review=args.review)
+        n_pass = sum(1 for r in out["records"] if r.get("v_passed"))
+        print(f"== Study-4 done: {len(out['records'])} gen, {n_pass} admitted, "
+              f"{len(out['reviews'])} reviewed; log={log_path} ==")
+        raise SystemExit(0)
 
     # ── Harness (packet) dispatch — each is a terminal offline action ──────
     if args.export_packets:
         puts = args.puts.split(",") if args.puts else None
         export_generation_packets(args.export_packets, puts=puts, arm=args.arm,
-                                  k=args.k, seed=REGISTERED_SEED)
+                                  k=args.k, seed=REGISTERED_SEED, lang=args.lang)
         raise SystemExit(0)
     if args.ingest_generation:
         ingest_generation(args.ingest_generation, cache_dir=args.cache_dir,
-                          packets_dir=args.packets_dir)
+                          packets_dir=args.packets_dir, lang=args.lang)
         raise SystemExit(0)
     if args.export_review:
         export_review_packets(cache_dir=args.cache_dir, out_dir=args.export_review)

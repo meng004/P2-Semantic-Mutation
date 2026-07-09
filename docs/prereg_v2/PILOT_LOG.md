@@ -255,3 +255,66 @@ begun.
   screen-smoke-gate FAIL (zero match), pilot exclusion, missing-input exit-2,
   malformed-input, deterministic bootstrap, pilot-smoke SSOT guard.
 - Full suite: **465 passed** (448 baseline + 17 new).
+
+---
+
+# Study-4 calibration-pilot log — `{a2, b4}` four-vendor LIVE gateway (2026-07-09)
+
+REDUCED pilot (1 attempt per operator × slot instead of K=3 → 18 generations per
+arm; both arms) over the OpenAI-compatible cross-vendor gateway. Driver:
+`scripts/pilot_smoke_study4.py`. Wiring: `scripts/cross_source_campaign.py`
+(`--study4`), `src/p2/mutators/llm_client.py` (four-vendor gateway layer),
+`src/p2/config/study4.py` + `configs/study4_models.json` (config-driven
+model-role map). Code-level firewall: PILOT-marked `v8_pilot` outputs only; the
+frozen v5/v6 pools and confirmatory SSOTs are untouched. Confirmatory run NOT
+started (awaits the sibling's PREREGISTRATION_STUDY4 pin).
+
+## Pilot run record
+
+| Check | Expectation | Result |
+|---|---|---|
+| generation (both arms) | 18 + 18 = 36 live calls | 36 (same 18, cross 18) |
+| admission (shared `admit_mutant`) | high V1–V4 pass | 35/36 admitted (97.2%) |
+| pool → SMS | 10 pilot cells per arm, inst>0 | 10/10 per arm, inst=6, 3 nonzero-kill cells each |
+| blinded API review (reviewer claude-fable-5) | one verdict per admitted mutant | 35 verdicts (18 same, 17 cross) |
+| arbitration (gpt-5.5) | fires only on reviewer UNCERTAIN | 0 live (no UNCERTAIN; path is mock-tested) |
+
+Per-model (generation): claude-fable-5 success 1.00, malformed 0.00, lat 12.0 s,
+ct 368; gpt-5.5 1.00 / 0.00 / 7.9 s / ct 300; gemini-3.5-flash 1.00 / 0.00 /
+2.8 s / ct 271; grok-4.1 0.833 / 0.00 / 8.4 s / ct 260 (served **grok-4.3**).
+
+## Model-specific pathologies + the code they forced (code-level only)
+
+| # | Pathology | Category | Code fix forced |
+|---|---|---|---|
+| P10 | The gateway serves id `grok-4.1` as **grok-4.3** (`response.model` self-reports grok-4.3), and grok emits **bare ` ``` ` fences** (no `python` language tag). A naive `python`-only fence parser would drop every grok body. | vendor id-remap + fence format | `_generate_one` now echoes `response.model` into `meta['served_model']`; `_study4_call` logs it per call with a `served_mismatch` flag, and `configs/study4_models.json` pins `served_as: grok-4.3`. `_strip_fences`' bare-` ``` ` fallback (pre-existing) is confirmed load-bearing for grok — retained deliberately. |
+| P11 | `claude-fable-5` gateway **over-reports and destabilises `usage.prompt_tokens`**: 12,123 mean (range ~8k–37k) for a rendered prompt whose real size is ~600 tokens. It inflates same-arm generation **and** the claude reviewer, dominating the projected cost ($0.042/gen and $0.031/review vs ~$0.001–0.006 for the other vendors). | gateway usage accounting | Cost accounting reads `usage` **verbatim** per call (never a nominal estimate) so the inflation is captured, not hidden; the config flags `claude-fable-5` prompt tokens as gateway-reported/unstable. The projection therefore reflects the true (inflated) claude cost rather than an optimistic nominal one. |
+| P12 | `gemini-3.5-flash` spends its token budget on hidden reasoning; at the default `max_tokens=800` the visible completion truncates/empties. | reasoning-token budget | `min_max_tokens` quirk (config-driven, 2000 for gemini) applied in `_generate_one`/`_study4_call` — the effective `max_tokens` floor is raised per model. With the floor, gemini returned non-empty valid bodies on 6/6 calls (malformed 0.00). |
+
+Non-pathology note: the single cross-arm miss (grok `a2_SI1`) was a V1–V4
+validation FAIL (`malformed_rate=0`, i.e. well-formed body that failed the
+non-triviality/executable gate), not a response pathology — a normal generation
+miss, no code change.
+
+## Cost projection — full confirmatory run
+
+Assumptions (from the pilot means): 28 PUTs × 3.03 mean ops ≈ **85 operators**,
+K=3, 3 slots/arm, 2 arms → **1,530 generation calls**; admission 0.972 →
+**1,488 reviewer (claude-fable-5) calls**; reviewer-UNCERTAIN rate 0.0 → **0
+arbitration calls** (a nonzero rate in the confirmatory run adds gpt-5.5 arbiter
+cost linearly). Projected: **generation $34.6 + review $46.0 + arbitration $0.0
+≈ $80.6 USD**. The review leg exceeds generation because the claude reviewer
+carries the P11 prompt-token inflation on every admitted mutant; a cheaper
+reviewer (or a gateway prompt-token fix) is the largest available cost lever.
+
+SSOT: `data/results/study4/pilot_report.json`,
+`data/results/study4/sms_v8_pilot_{same,cross}.json`.
+
+## Regression tests added
+
+- `tests/mutators/test_study4_client.py` (**16**) — config-driven arm/role
+  mapping + env-override roster, gemini `max_tokens` floor, grok served-id echo,
+  bare-fence stripping, retry/backoff (transient-then-success, exhaustion,
+  non-retryable-not-retried), per-call cost accounting + log, blind-code vendor
+  redaction, review CONFIRMED-no-arbitration vs UNCERTAIN-triggers-arbitration,
+  and a full offline `study4_campaign` wiring test. No live calls in pytest.
