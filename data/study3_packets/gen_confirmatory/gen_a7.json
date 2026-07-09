@@ -1,0 +1,257 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_a7",
+  "put_id": "a7",
+  "arm": "cross",
+  "seed": 20260708,
+  "k_per_source": 3,
+  "sources": [
+    "claude",
+    "gpt",
+    "deepseek"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/a7.py",
+    "sha256": "26debfda87c627089a3fee0696235e83fc7204b1c86afc553a3455bcfd203fe5",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for A7 tridiagonal linear solve, observable Σu(x)=(2x-1)·s.\n\n§3.3 grid: a7 = mp1●● mp2●● mp3○ mp4○ mp5●\n\nThe linear functional Σu(x) is affine and antisymmetric about x=½.\n\nMP1 (Conservation, ●●): r_mp1(x)=1-x; R_mp1: |y_o + y_n| < 1e-6 (antisymmetry\n  Σu(x)+Σu(1-x)=0, exact by linearity of the solve).\nMP2 (Monotonicity, ●●): r_mp2(x)=min(x+0.1,0.9); R_mp2: y_new >= y_orig - 1e-9\n  (strictly increasing in x).\nMP3 (Convergence, ○): direct solve has no refinement knob; ○ baseline.\nMP4 (Trajectory, ○): scalar functional, no trajectory; ○ baseline.\nMP5 (Asymptotic, ●): r_mp5(x)=min(x+0.1,0.9); R_mp5: y_new >= y_orig - 1e-9\n  (asymptotic ordering at the input-domain endpoints).\n\"\"\"\nimport math\n\n\ndef r_mp1(x) -> float:\n    return 1.0 - float(x)\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_o + y_n) < 1e-6\n\n\ndef r_mp2(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 1e-9\n\n\ndef r_mp3(x) -> float:\n    return float(x)\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp4(x) -> float:\n    return float(x)\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp5(x) -> float:\n    return min(float(x) + 0.1, 0.9)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    return float(y_new) >= float(y_orig) - 1e-9\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "a7_CE1",
+        "put": "a7",
+        "category": "CE",
+        "label": "diag 2→3",
+        "target_locator": "main-diagonal fill `_AB[1, :] = 2.0`",
+        "transformation": "change the main-diagonal value from 2.0 to 3.0",
+        "rationale": "wrong stencil coefficient in the tridiagonal operator",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_CE1\nOPERATOR LABEL: diag 2→3\nTARGET LOCATOR: main-diagonal fill `_AB[1, :] = 2.0`\nEXACT CHANGE: change the main-diagonal value from 2.0 to 3.0\nRATIONALE: wrong stencil coefficient in the tridiagonal operator\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_CE1\nOPERATOR LABEL: diag 2→3\nTARGET LOCATOR: main-diagonal fill `_AB[1, :] = 2.0`\nEXACT CHANGE: change the main-diagonal value from 2.0 to 3.0\nRATIONALE: wrong stencil coefficient in the tridiagonal operator\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_CE1\nOPERATOR LABEL: diag 2→3\nTARGET LOCATOR: main-diagonal fill `_AB[1, :] = 2.0`\nEXACT CHANGE: change the main-diagonal value from 2.0 to 3.0\nRATIONALE: wrong stencil coefficient in the tridiagonal operator\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a7_OS1",
+        "put": "a7",
+        "category": "OS",
+        "label": "rhs −→+",
+        "target_locator": "right-hand side `(2.0*x - 1.0) * _D`",
+        "transformation": "change `(2.0*x - 1.0)` to `(2.0*x + 1.0)`",
+        "rationale": "sign error in the linear forcing term",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_OS1\nOPERATOR LABEL: rhs −→+\nTARGET LOCATOR: right-hand side `(2.0*x - 1.0) * _D`\nEXACT CHANGE: change `(2.0*x - 1.0)` to `(2.0*x + 1.0)`\nRATIONALE: sign error in the linear forcing term\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_OS1\nOPERATOR LABEL: rhs −→+\nTARGET LOCATOR: right-hand side `(2.0*x - 1.0) * _D`\nEXACT CHANGE: change `(2.0*x - 1.0)` to `(2.0*x + 1.0)`\nRATIONALE: sign error in the linear forcing term\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_OS1\nOPERATOR LABEL: rhs −→+\nTARGET LOCATOR: right-hand side `(2.0*x - 1.0) * _D`\nEXACT CHANGE: change `(2.0*x - 1.0)` to `(2.0*x + 1.0)`\nRATIONALE: sign error in the linear forcing term\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a7_SI1",
+        "put": "a7",
+        "category": "SI",
+        "label": "drop sub-diagonal",
+        "target_locator": "sub-diagonal fill `_AB[2, :-1] = -1.0`",
+        "transformation": "set the sub-diagonal band to 0.0 (leave only super+main)",
+        "rationale": "matrix-band indexing bug drops one off-diagonal",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_SI1\nOPERATOR LABEL: drop sub-diagonal\nTARGET LOCATOR: sub-diagonal fill `_AB[2, :-1] = -1.0`\nEXACT CHANGE: set the sub-diagonal band to 0.0 (leave only super+main)\nRATIONALE: matrix-band indexing bug drops one off-diagonal\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_SI1\nOPERATOR LABEL: drop sub-diagonal\nTARGET LOCATOR: sub-diagonal fill `_AB[2, :-1] = -1.0`\nEXACT CHANGE: set the sub-diagonal band to 0.0 (leave only super+main)\nRATIONALE: matrix-band indexing bug drops one off-diagonal\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A7\nOPERATOR ID: a7_SI1\nOPERATOR LABEL: drop sub-diagonal\nTARGET LOCATOR: sub-diagonal fill `_AB[2, :-1] = -1.0`\nEXACT CHANGE: set the sub-diagonal band to 0.0 (leave only super+main)\nRATIONALE: matrix-band indexing bug drops one off-diagonal\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A7: Tridiagonal linear solve — direct banded solver (scalar x∈[0,1] interface).\n\nLibrary: scipy.linalg.solve_banded (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.solve_banded.html\n\nprogram(x) where x ∈ [0,1] scalar.\nSolves SPD tridiagonal T u = (2x-1)·d, T = tridiag(-1, 2, -1) of size 6, d = ones.\nReturns Σu. Linear in x; antisymmetric about ½: Σu(x) + Σu(1-x) = 0.\n\"\"\"\nimport numpy as np\nfrom scipy.linalg import solve_banded\n\n_N = 6\n_AB = np.zeros((3, _N))\n_AB[0, 1:] = -1.0    # super-diagonal\n_AB[1, :] = 2.0      # main diagonal\n_AB[2, :-1] = -1.0   # sub-diagonal\n_D = np.ones(_N)\n\n\ndef program(x) -> float:\n    x = float(x)\n    b = (2.0 * x - 1.0) * _D\n    u = solve_banded((1, 1), _AB, b)\n    return float(np.sum(u))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 9,
+    "n_operators": 3,
+    "packet_total": 27
+  },
+  "required_slots": [
+    {
+      "op_id": "a7_CE1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_CE1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_OS1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a7_SI1",
+      "source": "deepseek",
+      "attempt": 3
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_a7_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}

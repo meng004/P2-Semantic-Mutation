@@ -1,0 +1,257 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_a5",
+  "put_id": "a5",
+  "arm": "cross",
+  "seed": 20260708,
+  "k_per_source": 3,
+  "sources": [
+    "claude",
+    "gpt",
+    "deepseek"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/a5.py",
+    "sha256": "857a675d69f647d5cae0aad163c93bc2c86d2fd44bd82e7e8e2ad64167b7b277",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for A5 cubic-spline interpolation of sin(π t).\n\n§3.3 grid: a5 = mp1●● mp2○ mp3● mp4● mp5○\n\nTarget sin(π t) is symmetric about t=½ and bounded in [0,1] over the domain.\n\nMP1 (Conservation, ●●): r_mp1(x)=1-x; R_mp1: |y_o - y_n| < 1e-3 (reflection\n  invariance S(x)=S(1-x); the symmetric knot grid makes it near-exact).\nMP2 (Monotonicity, ○): sin(π t) is not monotone on [0,1]; ○ baseline.\nMP3 (Convergence, ●): r_mp3(x)=x; R_mp3: y ∈ [-0.05, 1.05] (bounded within the\n  target range plus interpolation margin).\nMP4 (Trajectory, ●): r_mp4(x)=1-x; R_mp4: |y_o - y_n| < 0.05 (loose reflection\n  symmetry of the interpolant shape).\nMP5 (Asymptotic, ○): no asymptotic ordering for a non-monotone target; ○ baseline.\n\"\"\"\nimport math\n\n\ndef r_mp1(x) -> float:\n    return 1.0 - float(x)\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_o - y_n) < 1e-3\n\n\ndef r_mp2(x) -> float:\n    return float(x)\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_mp3(x) -> float:\n    return float(x)\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    y = float(y_orig)\n    return math.isfinite(y) and -0.05 <= y <= 1.05\n\n\ndef r_mp4(x) -> float:\n    return 1.0 - float(x)\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_o - y_n) < 0.05\n\n\ndef r_mp5(x) -> float:\n    return float(x)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "a5_CE1",
+        "put": "a5",
+        "category": "CE",
+        "label": "knots 17→5",
+        "target_locator": "sample-grid size in `np.linspace(0.0, 1.0, 17)`",
+        "transformation": "change the number of interpolation samples from 17 to 5",
+        "rationale": "coarse grid — under-samples the sine target",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_CE1\nOPERATOR LABEL: knots 17→5\nTARGET LOCATOR: sample-grid size in `np.linspace(0.0, 1.0, 17)`\nEXACT CHANGE: change the number of interpolation samples from 17 to 5\nRATIONALE: coarse grid — under-samples the sine target\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_CE1\nOPERATOR LABEL: knots 17→5\nTARGET LOCATOR: sample-grid size in `np.linspace(0.0, 1.0, 17)`\nEXACT CHANGE: change the number of interpolation samples from 17 to 5\nRATIONALE: coarse grid — under-samples the sine target\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_CE1\nOPERATOR LABEL: knots 17→5\nTARGET LOCATOR: sample-grid size in `np.linspace(0.0, 1.0, 17)`\nEXACT CHANGE: change the number of interpolation samples from 17 to 5\nRATIONALE: coarse grid — under-samples the sine target\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a5_HP1",
+        "put": "a5",
+        "category": "HP",
+        "label": "bc natural→clamped",
+        "target_locator": "CubicSpline bc_type parameter",
+        "transformation": "change bc_type from 'natural' to 'clamped'",
+        "rationale": "wrong boundary condition perturbs the interpolant near edges",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_HP1\nOPERATOR LABEL: bc natural→clamped\nTARGET LOCATOR: CubicSpline bc_type parameter\nEXACT CHANGE: change bc_type from 'natural' to 'clamped'\nRATIONALE: wrong boundary condition perturbs the interpolant near edges\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_HP1\nOPERATOR LABEL: bc natural→clamped\nTARGET LOCATOR: CubicSpline bc_type parameter\nEXACT CHANGE: change bc_type from 'natural' to 'clamped'\nRATIONALE: wrong boundary condition perturbs the interpolant near edges\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_HP1\nOPERATOR LABEL: bc natural→clamped\nTARGET LOCATOR: CubicSpline bc_type parameter\nEXACT CHANGE: change bc_type from 'natural' to 'clamped'\nRATIONALE: wrong boundary condition perturbs the interpolant near edges\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a5_OS1",
+        "put": "a5",
+        "category": "OS",
+        "label": "target sin→cos",
+        "target_locator": "target-function call `np.sin(np.pi * _TI)`",
+        "transformation": "replace np.sin with np.cos in the fitted target",
+        "rationale": "trig-function confusion when defining the interpolation target",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_OS1\nOPERATOR LABEL: target sin→cos\nTARGET LOCATOR: target-function call `np.sin(np.pi * _TI)`\nEXACT CHANGE: replace np.sin with np.cos in the fitted target\nRATIONALE: trig-function confusion when defining the interpolation target\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_OS1\nOPERATOR LABEL: target sin→cos\nTARGET LOCATOR: target-function call `np.sin(np.pi * _TI)`\nEXACT CHANGE: replace np.sin with np.cos in the fitted target\nRATIONALE: trig-function confusion when defining the interpolation target\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A5\nOPERATOR ID: a5_OS1\nOPERATOR LABEL: target sin→cos\nTARGET LOCATOR: target-function call `np.sin(np.pi * _TI)`\nEXACT CHANGE: replace np.sin with np.cos in the fitted target\nRATIONALE: trig-function confusion when defining the interpolation target\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A5: Cubic-spline interpolation — piecewise-polynomial reconstruction (scalar x∈[0,1] interface).\n\nLibrary: scipy.interpolate.CubicSpline (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CubicSpline.html\n\nprogram(x) where x ∈ [0,1] scalar (evaluation point).\nNatural cubic spline through 17 samples of f(t)=sin(π t) on [0,1], evaluated at t=x.\nTarget is symmetric about ½: sin(π(1-t))=sin(π t) → S(x)=S(1-x).\n\"\"\"\nimport numpy as np\nfrom scipy.interpolate import CubicSpline\n\n_TI = np.linspace(0.0, 1.0, 17)\n_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type=\"natural\")\n\n\ndef program(x) -> float:\n    x = float(x)\n    return float(_SPLINE(x))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 9,
+    "n_operators": 3,
+    "packet_total": 27
+  },
+  "required_slots": [
+    {
+      "op_id": "a5_CE1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_CE1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_HP1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a5_OS1",
+      "source": "deepseek",
+      "attempt": 3
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_a5_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}

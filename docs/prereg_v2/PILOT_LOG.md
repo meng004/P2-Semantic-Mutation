@@ -187,3 +187,71 @@ inference matched the registered semantics; filenames converged).
 | H2-2 cross-vendor dual-blind (Family B) | **NOT-RUN** (gated; same-vendor freeze, no substitution) | dualblind_delta_delta_v5.json |
 
 Review pipeline: 747 blinded verdicts (18 independent reviewer instances), 4 REJECTED at round 1, 6 UNCERTAIN → third-instance arbitration (all 6 CONFIRMED under a uniform GP-hyperparameter-pinning rationale). Admission: 774 valid → 756 admitted (V1–V4); pools 756 mutants / 28 PUTs; 140 confirmatory cells (36 nonzero).
+
+---
+
+# Study-3 calibration-pilot log — `{a2, b4}` under the P8-fixed all-family screen
+
+**Referenced from** `PREREGISTRATION_STUDY3_v2.md` §2b (pilot reused verbatim),
+§5c (screen-smoke gate), §10. Same append-only firewall: **code-level defects
+only**; no threshold, estimand, DGP, primary-MP assignment, or 28-PUT roster is
+touched. Date: 2026-07-09. Branch: `claude/paper-journal-acceptance-kxpveo`.
+Env pinned: `P2_SCREEN_ALL_FAMILIES=1`, `P2_PRIMARY_VERSION=v3`,
+`P2_SINGLE_STRATUM_FILTER=1`. Pilot driver: `scripts/pilot_smoke_study3.py`.
+
+## Defect P9 — no `v6` pool version in the build/score tooling (Study-3 wiring)
+
+- **Defect.** `build_pools._VERSION_SPEC` / `_STUDY2_VERSIONS` and
+  `sms_campaign.resolve_pool_dir` knew only `v2..v5`. A Study-3 `v6` request had
+  no suffix/cache/N mapping and no strict pool resolution — the exact class of
+  omission as v5's D2/D4, on the Study-3 side.
+- **Fix (code-level, mirrors D2/D4).** Added `v6 → (suffix=_pool_v6,
+  cache=cache_cross, N=30, frozen=False)` to `_VERSION_SPEC`; extended
+  `_STUDY2_VERSIONS` and the strict `resolve_pool_dir` branch to `{v4,v5,v6}`. v6
+  is built **under the all-family screen** (`P2_SCREEN_ALL_FAMILIES=1`); the
+  frozen v5 pools are never touched (wrong-version deletion guard enforces a v6
+  build can only ever remove a `_pool_v6` dir).
+- **Why code-level.** Encodes the registered N (30) and cache for a new pool
+  version and points scoring at the correct strict dir; it changes no registered
+  quantity. No Study-3 outcome is read.
+
+## Pilot pipeline run record (Study 3, all-family screen wired)
+
+| Step | Check (registration) | Result |
+|---|---|---|
+| (b) op_id category resolution (P8) | every pilot op_id resolves a known family, else loud fail | **18/18** resolve — CE 6, OS 6, SI 3, TF 3; zero `None` |
+| (a) screen-smoke loud-fail gate (§5c) | wired all-family screen matches **> 0** screened evaluations | **PASS: 54 screened**, 45 admitted, 9 rejected multi-stratum (b4 `OS1` 9/9 flip≥2; b4 `TF1` admitted single-stratum) |
+| v6 pilot pools | build under screen; never touch frozen v5 | `a2_pool_v6` = **27** (all single-stratum), `b4_pool_v6` = **18** (CE 9 + TF 9; OS 9 screened out) |
+| (c) determinism | identical selection across two rebuilds | **PASS** (a2 27, b4 18 byte-identical source selection) |
+| (d) SMS, 10 pilot cells | populate `sms_track2_v6_pilot.json` (PILOT path) | **10/10 cells** populated (a2 inst=27, b4 inst=18); confirmatory `sms_track2_v6.json` **not created** |
+| (e) graded-script end-to-end smoke | `compute_h4_graded.py --pilot-smoke` consumes the pilot SMS output | artefact `h4_graded_v6_PILOT_SMOKE`; strict n_clean=9 purity 1.0 screened=45; graded n_rich=0 (a2/b4 not rich) — **NOT confirmatory**, firewalled |
+
+**Contrast with the incident-P8 v5 no-op.** In v5 the CF/TF screen silently
+admitted every candidate (`category_from_op_id("b4_TF1_claude") → None`). Under
+the P8-fixed parser + all-family scope the screen now performs real work — it
+**rejects** b4's 9 multi-stratum `OS1` mutants at admission — and the registered
+smoke assertion (screened > 0) passes loudly rather than masquerading as an
+unconstrained pass.
+
+**Firewall attestation.** No threshold, estimand, DGP, primary-MP assignment, or
+roster changed. The only code change is the P9 `v6` tooling wiring. Pilot outputs
+(`sms_track2_v6_pilot.json`, `h4_graded_v6_pilot.json`, `{a2,b4}_pool_v6`) are
+PILOT-marked; the confirmatory SSOTs (`sms_track2_v6.json`, `h4_graded_v6.json`,
+`s5_purity_v6.json`) are **verified absent**. Confirmatory generation has **not**
+begun.
+
+## Pre-frozen analysis script + regression tests
+
+- `scripts/compute_h4_graded.py` (**NEW, pre-frozen** before any Study-3 data;
+  §7b contract) — H4''-graded (per-mutant primary-stratum share `s_m`, PUT mean,
+  rich C+D aggregate, B=10,000 percentile-bootstrap lower bound, seed 20260708,
+  confirm iff `boot_lower_95 > 0.15`) + H4''-strict (single-stratum purity on
+  {CE,HP,CF-with-screen}, one-sided 95% lower Clopper-Pearson, confirm iff
+  `cp_lower_95 ≥ 0.90` **and** the all-family screen matched > 0 candidates; a
+  zero-match forces a loud `FAIL_SCREEN_NOOP`). Writes `data/results/h4_graded_v6.json`;
+  prints the registered licensed verdict strings; exits 2 with no input.
+- `tests/analysis/test_compute_h4_graded.py` (**17**) — graded pass/fail/boundary
+  (mean exactly 0.15 fails the strict inequality), strict pass/fail,
+  screen-smoke-gate FAIL (zero match), pilot exclusion, missing-input exit-2,
+  malformed-input, deterministic bootstrap, pilot-smoke SSOT guard.
+- Full suite: **465 passed** (448 baseline + 17 new).

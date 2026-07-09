@@ -1,0 +1,367 @@
+{
+  "artefact": "h4_graded_v6_PILOT_SMOKE",
+  "generated_by": "scripts/compute_h4_graded.py",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY3_v2.md (§3.1 H4''-graded; §3.2 H4''-strict; §7b contract; §2b/§2c pilot exclusion)",
+  "integrity": "Pre-frozen before Study-3 data generation; any post-data modification must be disclosed as a deviation (§5c, §8).",
+  "run_mode": "PILOT-SMOKE (NOT confirmatory; pilot pool, firewalled §2b)",
+  "inputs": {
+    "per_cell_sms_matrix": "data/results/sms_track2_v6_pilot.json"
+  },
+  "master_seed": 20260708,
+  "n_confirmatory_puts_present": 2,
+  "H4pp_graded": {
+    "hypothesis": "H4''-graded (rich-class mean primary-stratum kill share)",
+    "measure": "s_m = 1[primary in flipset]/|flipset| per detected mutant; PUT mean; rich-class (C,D) mean aggregate",
+    "flip_machinery": "IMPORTED from p2.mutators.stratum_filter.audit_matrix (constrained=ALL_FAMILIES; identical to the S5 audit)",
+    "threshold": 0.15,
+    "n_boot": 10000,
+    "boot_seed": 20260708,
+    "alpha": 0.05,
+    "n_rich": 0,
+    "rich_puts": [],
+    "rich_mean_share": 0.0,
+    "boot_lower_95": 0.0,
+    "per_class_share_mean": {
+      "C": {
+        "n_puts": 0,
+        "share_mean": null
+      },
+      "D": {
+        "n_puts": 0,
+        "share_mean": null
+      }
+    },
+    "per_put_share": {
+      "A2": 1.0
+    },
+    "per_put_detail": {
+      "A2": [
+        {
+          "file": "m01_a2_CE1_claude_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m02_a2_CE1_claude_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m03_a2_CE1_claude_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m04_a2_CE1_deepseek_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m05_a2_CE1_deepseek_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m06_a2_CE1_deepseek_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m07_a2_CE1_gpt_a01.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m08_a2_CE1_gpt_a03.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m09_a2_CE1_gpt_a02.py",
+          "category": "CE",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m10_a2_OS1_claude_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m11_a2_OS1_claude_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m12_a2_OS1_claude_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m13_a2_OS1_deepseek_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m14_a2_OS1_deepseek_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m15_a2_OS1_deepseek_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m16_a2_OS1_gpt_a01.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m17_a2_OS1_gpt_a02.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m18_a2_OS1_gpt_a03.py",
+          "category": "OS",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m19_a2_SI1_claude_a03.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m20_a2_SI1_claude_a02.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m21_a2_SI1_claude_a01.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m22_a2_SI1_deepseek_a01.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m23_a2_SI1_deepseek_a02.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m24_a2_SI1_deepseek_a03.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m25_a2_SI1_gpt_a03.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m26_a2_SI1_gpt_a02.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        },
+        {
+          "file": "m27_a2_SI1_gpt_a01.py",
+          "category": "SI",
+          "flip_count": 1,
+          "flipped_invariants": [
+            1
+          ],
+          "primary_mp": 1,
+          "s_m": 1.0
+        }
+      ]
+    },
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "verdict": "NOT_CONFIRMED",
+    "licensed_claim": "graded attribution NOT confirmed: rich-class mean share 0.0 (one-sided 95% lower bound 0.0 <= 0.15); achieved share + per-class breakdown reported factually (C=None, D=None)"
+  },
+  "H4pp_strict": {
+    "hypothesis": "H4''-strict (single-stratum purity on clean families)",
+    "measure": "fraction of DETECTED clean-family {CE,HP,CF-with-screen} mutants that are single-stratum (flip == 1)",
+    "clean_families": [
+      "CE",
+      "HP",
+      "CF"
+    ],
+    "threshold": 0.9,
+    "alpha": 0.05,
+    "n_clean_detected": 9,
+    "n_single_stratum": 9,
+    "purity": 1.0,
+    "cp_lower_95": 0.7169,
+    "cf_screened_out": 0,
+    "per_family": {
+      "CE": {
+        "n_detected": 9,
+        "n_single_stratum": 9,
+        "n_multistratum": 0
+      },
+      "HP": {
+        "n_detected": 0,
+        "n_single_stratum": 0,
+        "n_multistratum": 0
+      },
+      "CF": {
+        "n_detected": 0,
+        "n_single_stratum": 0,
+        "n_multistratum": 0
+      }
+    },
+    "n_screened_candidates": 45,
+    "n_multistratum_flagged": 0,
+    "screen_matched_gt_zero": true,
+    "pilot_puts_excluded": [
+      "a2",
+      "b4"
+    ],
+    "verdict": "NOT_CONFIRMED",
+    "licensed_claim": "single-stratum purity NOT confirmed: observed purity 1.0 (one-sided 95% lower CP bound 0.7169 < 0.9); escaping clean families reported factually: none"
+  },
+  "family_g": {
+    "family": "G — Attribution (H4''-graded, H4''-strict)",
+    "correction": "Holm(2) within family G; both tests one-sided at alpha=0.05",
+    "note": "The frozen per-hypothesis decision rules (graded: boot_lower_95 > 0.15; strict: cp_lower_95 >= 0.90 AND screen matched > 0) are the registered verdicts (§7b). Holm(2) is recorded as the family control; no study-wide cross-family correction (Study-2 families are closed).",
+    "graded_verdict": "NOT_CONFIRMED",
+    "strict_verdict": "NOT_CONFIRMED"
+  }
+}

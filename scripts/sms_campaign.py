@@ -75,8 +75,9 @@ def resolve_pool_dir(put_id: str, pool_version: Optional[str] = None) -> Path:
 
     ``pool_version`` (or the ``POOL_VERSION`` env when None) selects the pool:
 
-      * ``v4``/``v5`` (Study-2): STRICT — always the version-specific dir
-        ``{put}_pool_{version}``. It never silently falls back to a Study-1
+      * ``v4``/``v5`` (Study-2) / ``v6`` (Study-3): STRICT — always the
+        version-specific dir ``{put}_pool_{version}``. It never falls back to a
+        Study-1
         pool; if the dir is absent, ``_load_mutants`` returns empty and the
         cell reports inst=0 (a visible failure, not a wrong-pool score). This
         is the fix for the pilot bug where POOL_VERSION=v5 scored the frozen
@@ -86,7 +87,7 @@ def resolve_pool_dir(put_id: str, pool_version: Optional[str] = None) -> Path:
     """
     import os as _os
     pv = pool_version if pool_version is not None else _os.environ.get("POOL_VERSION", "")
-    if pv in ("v4", "v5"):
+    if pv in ("v4", "v5", "v6"):
         return MUTANTS_DIR / f"{put_id}_pool_{pv}"
     pool_v3 = MUTANTS_DIR / f"{put_id}_pool_v3"
     pool_v2 = MUTANTS_DIR / f"{put_id}_pool"

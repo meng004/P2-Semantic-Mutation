@@ -54,9 +54,13 @@ _VERSION_SPEC = {
     "v3": {"suffix": "_pool_v3", "cache": "cache",       "n": 30, "frozen": True},
     "v4": {"suffix": "_pool_v4", "cache": "cache_cross", "n": 30, "frozen": False},
     "v5": {"suffix": "_pool_v5", "cache": "cache_cross", "n": 30, "frozen": False},
+    # Study-3 (v2.0): fresh validated pool built under the P8-remediated
+    # all-family screen (P2_SCREEN_ALL_FAMILIES=1). Same N/cache as v4/v5; v5 is
+    # a frozen artefact and is never touched by a v6 build.
+    "v6": {"suffix": "_pool_v6", "cache": "cache_cross", "n": 30, "frozen": False},
 }
-# Study-2 pool versions the CF/TF single-stratum filter applies to.
-_STUDY2_VERSIONS = frozenset({"v4", "v5"})
+# Study-2/3 pool versions the single-stratum filter applies to.
+_STUDY2_VERSIONS = frozenset({"v4", "v5", "v6"})
 
 _ATTEMPT_RE = re.compile(r"^([a-d]\d+)_[A-Z]+\d+_[a-z]+_attempt\d+\.py$")
 

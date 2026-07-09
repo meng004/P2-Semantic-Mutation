@@ -1,0 +1,320 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_a1",
+  "put_id": "a1",
+  "arm": "cross",
+  "seed": 20260708,
+  "k_per_source": 3,
+  "sources": [
+    "claude",
+    "gpt",
+    "deepseek"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/a1.py",
+    "sha256": "02807fadd7be049da979d6fa5e9b4b923bedd53cc219787bbb203ac5c513dcf3",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for A1 Lorenz ODE (scalar-output interface).\n\n§3.3 grid: a1 = mp1●● mp2● mp3●● mp4●● mp5○\n\nMP1 (Conservation, ●●): r_mp1(x)=1-x; R_mp1 = anti-divergence sum guard.\nMP2 (Monotonicity, ●): chaotic Lorenz has no global monotonicity in IC.\n  ● strength implemented as a moderate amplitude-bound MR: r_mp2(x)=x/2;\n  R_mp2 = both endpoints lie within 2× attractor envelope (looser than\n  MP3's strict envelope so MP2/MP3 strengths differ).\nMP3 (Convergence, ●●): r_mp3(x)=x/2; R_mp3 = attractor-envelope refinement\n  bound. Strongest convergence MR achievable without exposing rtol/atol\n  through program()'s float→float signature.\nMP4 (Trajectory, ●●): r_mp4(x)=1-x; R_mp4 = both endpoints must lie within\n  attractor envelope (sign-reflected IC trajectory similarity).\nMP5 (Asymptotic, ○): r_mp5=identity; R_mp5 = always False. ○ baseline —\n  chaotic Lorenz has no asymptotic ordering at x→0 / x→1.\n\"\"\"\nimport math\n\n# Lorenz attractor envelope: max ||state||₂ at t=1.0 from |IC|≤sqrt(3·100)≈17.3\n_ATTRACTOR_BOUND = 60.0\n\n\ndef r_mp1(x) -> float:\n    return float(1.0 - float(x))\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    return float(abs(float(y_orig) + float(y_new))) < 1e6\n\n\ndef r_mp2(x) -> float:\n    return max(float(x) / 2.0, 1e-4)\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_o) <= 2.0 * _ATTRACTOR_BOUND and abs(y_n) <= 2.0 * _ATTRACTOR_BOUND\n\n\ndef r_mp3(x) -> float:\n    return float(x) / 2.0\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    if y_o < 0 or y_n < 0:\n        return False\n    return y_n <= _ATTRACTOR_BOUND and y_o <= _ATTRACTOR_BOUND\n\n\ndef r_mp4(x) -> float:\n    return float(1.0 - float(x))\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return y_o <= _ATTRACTOR_BOUND and y_n <= _ATTRACTOR_BOUND\n\n\ndef r_mp5(x) -> float:\n    return float(x)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "a1_CE1",
+        "put": "a1",
+        "category": "CE",
+        "label": "rho 28→27.5",
+        "target_locator": "module-level constant _RHO",
+        "transformation": "change _RHO from 28.0 to 27.5",
+        "rationale": "parameter typo near critical value alters chaos onset",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_CE1\nOPERATOR LABEL: rho 28→27.5\nTARGET LOCATOR: module-level constant _RHO\nEXACT CHANGE: change _RHO from 28.0 to 27.5\nRATIONALE: parameter typo near critical value alters chaos onset\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_CE1\nOPERATOR LABEL: rho 28→27.5\nTARGET LOCATOR: module-level constant _RHO\nEXACT CHANGE: change _RHO from 28.0 to 27.5\nRATIONALE: parameter typo near critical value alters chaos onset\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_CE1\nOPERATOR LABEL: rho 28→27.5\nTARGET LOCATOR: module-level constant _RHO\nEXACT CHANGE: change _RHO from 28.0 to 27.5\nRATIONALE: parameter typo near critical value alters chaos onset\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a1_HP1",
+        "put": "a1",
+        "category": "HP",
+        "label": "rtol 1e-8→1e-3",
+        "target_locator": "solve_ivp call rtol parameter",
+        "transformation": "change rtol from 1e-8 to 1e-3",
+        "rationale": "loose tolerance gives plausibly-runnable but inaccurate solver",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_HP1\nOPERATOR LABEL: rtol 1e-8→1e-3\nTARGET LOCATOR: solve_ivp call rtol parameter\nEXACT CHANGE: change rtol from 1e-8 to 1e-3\nRATIONALE: loose tolerance gives plausibly-runnable but inaccurate solver\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_HP1\nOPERATOR LABEL: rtol 1e-8→1e-3\nTARGET LOCATOR: solve_ivp call rtol parameter\nEXACT CHANGE: change rtol from 1e-8 to 1e-3\nRATIONALE: loose tolerance gives plausibly-runnable but inaccurate solver\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_HP1\nOPERATOR LABEL: rtol 1e-8→1e-3\nTARGET LOCATOR: solve_ivp call rtol parameter\nEXACT CHANGE: change rtol from 1e-8 to 1e-3\nRATIONALE: loose tolerance gives plausibly-runnable but inaccurate solver\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a1_OS1",
+        "put": "a1",
+        "category": "OS",
+        "label": "sigma×beta swap",
+        "target_locator": "_lorenz function: terms involving sigma and beta",
+        "transformation": "swap the roles of sigma and beta in the RHS expressions",
+        "rationale": "parameter ordering confusion in dy/dt definition",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_OS1\nOPERATOR LABEL: sigma×beta swap\nTARGET LOCATOR: _lorenz function: terms involving sigma and beta\nEXACT CHANGE: swap the roles of sigma and beta in the RHS expressions\nRATIONALE: parameter ordering confusion in dy/dt definition\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_OS1\nOPERATOR LABEL: sigma×beta swap\nTARGET LOCATOR: _lorenz function: terms involving sigma and beta\nEXACT CHANGE: swap the roles of sigma and beta in the RHS expressions\nRATIONALE: parameter ordering confusion in dy/dt definition\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_OS1\nOPERATOR LABEL: sigma×beta swap\nTARGET LOCATOR: _lorenz function: terms involving sigma and beta\nEXACT CHANGE: swap the roles of sigma and beta in the RHS expressions\nRATIONALE: parameter ordering confusion in dy/dt definition\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a1_SI1",
+        "put": "a1",
+        "category": "SI",
+        "label": "ic[0] 20x→10x",
+        "target_locator": "initial condition vector ic in program(x)",
+        "transformation": "change ic[0] coefficient from 20*x-10 to 10*x-10",
+        "rationale": "halved scaling in IC — easy off-by-factor mistake",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_SI1\nOPERATOR LABEL: ic[0] 20x→10x\nTARGET LOCATOR: initial condition vector ic in program(x)\nEXACT CHANGE: change ic[0] coefficient from 20*x-10 to 10*x-10\nRATIONALE: halved scaling in IC — easy off-by-factor mistake\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_SI1\nOPERATOR LABEL: ic[0] 20x→10x\nTARGET LOCATOR: initial condition vector ic in program(x)\nEXACT CHANGE: change ic[0] coefficient from 20*x-10 to 10*x-10\nRATIONALE: halved scaling in IC — easy off-by-factor mistake\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A1\nOPERATOR ID: a1_SI1\nOPERATOR LABEL: ic[0] 20x→10x\nTARGET LOCATOR: initial condition vector ic in program(x)\nEXACT CHANGE: change ic[0] coefficient from 20*x-10 to 10*x-10\nRATIONALE: halved scaling in IC — easy off-by-factor mistake\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A1: Lorenz ODE — chaotic dynamical system (scalar-output interface).\n\nLibrary: scipy.integrate.solve_ivp (scipy 1.17.1)\nURL: https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html\n\nprogram(x) where x ∈ [0,1] scalar.\nMaps x to IC: [20x-10, 20x-10, 30x+5]. Integrates for t_end=1.0.\nReturns L2 norm of state vector at t=1.0 (scalar float).\n\"\"\"\nimport numpy as np\nfrom scipy.integrate import solve_ivp\n\n_SIGMA = 10.0\n_RHO = 28.0\n_BETA = 8.0 / 3.0\n\n\ndef _lorenz(t, y, sigma, rho, beta):\n    x, yy, z = y\n    return [sigma * (yy - x), x * (rho - z) - yy, x * yy - beta * z]\n\n\ndef program(x) -> float:\n    x = float(x)\n    ic = np.array([20*x - 10, 20*x - 10, 30*x + 5])\n    sol = solve_ivp(\n        _lorenz, (0.0, 1.0), ic,\n        args=(_SIGMA, _RHO, _BETA),\n        t_eval=[1.0], method=\"RK45\", rtol=1e-8, atol=1e-10,\n    )\n    final_state = sol.y[:, -1]\n    return float(np.linalg.norm(final_state))\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 9,
+    "n_operators": 4,
+    "packet_total": 36
+  },
+  "required_slots": [
+    {
+      "op_id": "a1_CE1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_CE1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_HP1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_OS1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a1_SI1",
+      "source": "deepseek",
+      "attempt": 3
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_a1_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}

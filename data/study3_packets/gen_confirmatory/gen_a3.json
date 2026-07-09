@@ -1,0 +1,257 @@
+{
+  "packet_type": "generation",
+  "packet_id": "gen_a3",
+  "put_id": "a3",
+  "arm": "cross",
+  "seed": 20260708,
+  "k_per_source": 3,
+  "sources": [
+    "claude",
+    "gpt",
+    "deepseek"
+  ],
+  "registered_prompt_template": {
+    "source": "cross_source_campaign.PROMPT_TEMPLATE",
+    "sha256": "06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90",
+    "char_len": 852
+  },
+  "single_stratum_guardrail": true,
+  "put_source": "\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n",
+  "mr_definitions": {
+    "path": "src/p2/mrs/a3.py",
+    "sha256": "6119de4b984e4815269b345f068a203a5b27db26d14a2f1938d5bd6feabf5240",
+    "available_mps": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source": "\"\"\"MR functions for A3 FDM Heat Equation.\n\n§3.3 grid: a3 = mp1●● mp2● mp3●● mp4●● mp5○\n\nPUT: explicit-Euler heat eq, returns u_FDM(0.5, t_end) / u_exact(0.5, t_end);\nratio → 1.0 as h→0 with order O(h²).\n\nMP1 (Conservation, ●●): r_mp1(x)=x; R_mp1: positivity (sin IC stays\n  positive on (0,1) under heat decay; ratio must be > 0).\nMP2 (Monotonicity, ●): r_mp2(x)=x/2 (halve grid spacing); R_mp2 =\n  refinement reduces |ratio−1| (existing implementation).\nMP3 (Convergence, ●●): MP3 is verified by AVP convergence-order verifier\n  (sweeps h; r/R unused). Stubs return identity.\nMP4 (Trajectory, ●●): r_mp4(x)=x/4 (further refinement); R_mp4: ratio at\n  finer grid is closer to 1 than at coarser grid (consistency along the\n  refinement trajectory).\nMP5 (Asymptotic, ○): r_mp5=identity; R_mp5 = always False. ○ baseline —\n  the heat equation has no asymptotic ordering in the grid-spacing input.\n\"\"\"\nimport math\n\n\ndef r_mp1(x) -> float:\n    return float(x)\n\n\ndef R_mp1(y_orig, y_new) -> bool:\n    \"\"\"Positivity invariant: sin IC + heat decay → ratio stays positive.\"\"\"\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return y_o > 0 and y_n > 0\n\n\ndef r_mp2(x) -> float:\n    return max(float(x) / 2.0, 1e-4)\n\n\ndef R_mp2(y_orig, y_new) -> bool:\n    \"\"\"Refinement bound for explicit-Euler heat eq. 5e-2 margin absorbs\n    coarse-grid noise when N=round(1/h) is below the well-resolved\n    threshold (~10); on fine grids the bound is essentially tight.\"\"\"\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_n - 1.0) <= abs(y_o - 1.0) + 5e-2\n\n\ndef r_mp3(x) -> float:\n    return float(x) / 2.0\n\n\ndef R_mp3(y_orig, y_new) -> bool:\n    return True  # unused by verify_convergence_order\n\n\ndef r_mp4(x) -> float:\n    \"\"\"Refine grid spacing by ×10 — substantial enough that coarse-grid\n    discretization noise no longer obscures the monotone refinement.\"\"\"\n    return max(float(x) / 10.0, 1e-3)\n\n\ndef R_mp4(y_orig, y_new) -> bool:\n    \"\"\"Refinement-trajectory consistency: |ratio−1| decreases along the\n    grid-refinement trajectory. 5e-2 margin absorbs coarse-grid noise\n    when the original x already lands in the well-resolved regime\n    (ratio close to 1 → almost no headroom to improve).\"\"\"\n    y_o, y_n = float(y_orig), float(y_new)\n    if not (math.isfinite(y_o) and math.isfinite(y_n)):\n        return False\n    return abs(y_n - 1.0) <= abs(y_o - 1.0) + 5e-2\n\n\ndef r_mp5(x) -> float:\n    return float(x)\n\n\ndef R_mp5(y_orig, y_new) -> bool:\n    return False\n\n\ndef r_trivial(x) -> float:\n    return float(x)\n\n\ndef R_trivial(y_orig, y_new) -> bool:\n    return True\n"
+  },
+  "operators": [
+    {
+      "spec": {
+        "id": "a3_CE1",
+        "put": "a3",
+        "category": "CE",
+        "label": "dt coefficient ×0.5",
+        "target_locator": "time-step computation involving dx and alpha",
+        "transformation": "halve the chosen dt value",
+        "rationale": "conservative-but-wrong dt — preserves stability but mis-scales time",
+        "is_key": true,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_CE1\nOPERATOR LABEL: dt coefficient ×0.5\nTARGET LOCATOR: time-step computation involving dx and alpha\nEXACT CHANGE: halve the chosen dt value\nRATIONALE: conservative-but-wrong dt — preserves stability but mis-scales time\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_CE1\nOPERATOR LABEL: dt coefficient ×0.5\nTARGET LOCATOR: time-step computation involving dx and alpha\nEXACT CHANGE: halve the chosen dt value\nRATIONALE: conservative-but-wrong dt — preserves stability but mis-scales time\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_CE1\nOPERATOR LABEL: dt coefficient ×0.5\nTARGET LOCATOR: time-step computation involving dx and alpha\nEXACT CHANGE: halve the chosen dt value\nRATIONALE: conservative-but-wrong dt — preserves stability but mis-scales time\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a3_OS1",
+        "put": "a3",
+        "category": "OS",
+        "label": "laplacian sign flip",
+        "target_locator": "finite-difference stencil expression",
+        "transformation": "change u[i+1] - 2*u[i] + u[i-1] sign to -(u[i+1] - 2*u[i] + u[i-1])",
+        "rationale": "anti-diffusion — a common stencil sign mistake",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_OS1\nOPERATOR LABEL: laplacian sign flip\nTARGET LOCATOR: finite-difference stencil expression\nEXACT CHANGE: change u[i+1] - 2*u[i] + u[i-1] sign to -(u[i+1] - 2*u[i] + u[i-1])\nRATIONALE: anti-diffusion — a common stencil sign mistake\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_OS1\nOPERATOR LABEL: laplacian sign flip\nTARGET LOCATOR: finite-difference stencil expression\nEXACT CHANGE: change u[i+1] - 2*u[i] + u[i-1] sign to -(u[i+1] - 2*u[i] + u[i-1])\nRATIONALE: anti-diffusion — a common stencil sign mistake\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_OS1\nOPERATOR LABEL: laplacian sign flip\nTARGET LOCATOR: finite-difference stencil expression\nEXACT CHANGE: change u[i+1] - 2*u[i] + u[i-1] sign to -(u[i+1] - 2*u[i] + u[i-1])\nRATIONALE: anti-diffusion — a common stencil sign mistake\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    },
+    {
+      "spec": {
+        "id": "a3_SI1",
+        "put": "a3",
+        "category": "SI",
+        "label": "boundary u[0] copy",
+        "target_locator": "boundary condition assignment after the time loop",
+        "transformation": "copy u[1] into u[0] at each step instead of fixed-value BC",
+        "rationale": "Neumann-vs-Dirichlet boundary confusion",
+        "is_key": false,
+        "constraint_flag": null
+      },
+      "prompts_by_attempt": {
+        "1": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_SI1\nOPERATOR LABEL: boundary u[0] copy\nTARGET LOCATOR: boundary condition assignment after the time loop\nEXACT CHANGE: copy u[1] into u[0] at each step instead of fixed-value BC\nRATIONALE: Neumann-vs-Dirichlet boundary confusion\n\nATTEMPT INDEX: 1 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "2": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_SI1\nOPERATOR LABEL: boundary u[0] copy\nTARGET LOCATOR: boundary condition assignment after the time loop\nEXACT CHANGE: copy u[1] into u[0] at each step instead of fixed-value BC\nRATIONALE: Neumann-vs-Dirichlet boundary confusion\n\nATTEMPT INDEX: 2 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n",
+        "3": "You are an expert in scientific computing software testing. Generate a SEMANTIC MUTANT of the program below that implements EXACTLY the named operator described.\n\nPUT NAME: A3\nOPERATOR ID: a3_SI1\nOPERATOR LABEL: boundary u[0] copy\nTARGET LOCATOR: boundary condition assignment after the time loop\nEXACT CHANGE: copy u[1] into u[0] at each step instead of fixed-value BC\nRATIONALE: Neumann-vs-Dirichlet boundary confusion\n\nATTEMPT INDEX: 3 of 3  (different seed; same operator; produce a STRUCTURALLY DIFFERENT mutant from prior attempts)\n\n━━━ ORIGINAL PROGRAM ━━━\n```python\n\"\"\"A3: FDM Heat Equation — convergence of numerical solution.\n\nLibrary: numpy (explicit Euler FDM, numpy 2.4.4)\nURL: https://numpy.org/doc/stable/\n\nprogram(x) where x = h (grid spacing), x ∈ (0, 1].\nIC: u(xi, 0) = sin(π*xi). BC: Dirichlet u(0)=u(1)=0. α=0.01, t_end=0.5.\nReturns ratio u_FDM(0.5, t_end) / u_exact(0.5, t_end) → 1.0 as h→0, order 2.\nTrue solution: u(x,t) = sin(π*x) * exp(-π²*α*t).\n\"\"\"\nimport numpy as np\n\n_ALPHA = 0.01\n_T_END = 0.5\n_R_STAB = 0.4   # stability ratio r = α*dt/h² < 0.5\n\n\ndef program(x) -> float:\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    h_act = 1.0 / N\n    xi = np.linspace(0.0, 1.0, N + 1)\n    u = np.sin(np.pi * xi)\n    dt_max = _R_STAB * h_act**2 / _ALPHA\n    # Subdivide t_end into equal steps, each ≤ dt_max (stability guaranteed)\n    n_steps = max(1, int(np.ceil(_T_END / dt_max)))\n    dt = _T_END / n_steps\n    r = _ALPHA * dt / h_act**2\n    for _ in range(n_steps):\n        u[1:-1] = u[1:-1] + r * (u[2:] - 2.0*u[1:-1] + u[:-2])\n        u[0] = 0.0\n        u[-1] = 0.0\n    u_fdm_mid = np.interp(0.5, xi, u)\n    u_exact_mid = np.sin(np.pi * 0.5) * np.exp(-np.pi**2 * _ALPHA * _T_END)\n    return float(u_fdm_mid / u_exact_mid)\n\n```\n\nINSTRUCTIONS:\n- Apply the operator transformation EXACTLY as specified.\n- Output ONLY the complete mutated Python program in a ```python``` block.\n- The mutated program MUST execute on x ∈ [0, 1] without raising exceptions.\n- Preserve the function signature `def program(x): ...` returning a finite scalar.\n- Do not explain or comment.\n"
+      }
+    }
+  ],
+  "mutant_count_target": {
+    "per_operator_total": 9,
+    "n_operators": 3,
+    "packet_total": 27
+  },
+  "required_slots": [
+    {
+      "op_id": "a3_CE1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_CE1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_OS1",
+      "source": "deepseek",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "claude",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "claude",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "claude",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "gpt",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "gpt",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "gpt",
+      "attempt": 3
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "deepseek",
+      "attempt": 1
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "deepseek",
+      "attempt": 2
+    },
+    {
+      "op_id": "a3_SI1",
+      "source": "deepseek",
+      "attempt": 3
+    }
+  ],
+  "response_schema": {
+    "description": "Return ONE JSON object per generation packet. No prose.",
+    "required_top_level": [
+      "packet_id",
+      "put_id",
+      "mutants"
+    ],
+    "mutants_item_fields": {
+      "op_id": "one of the packet's operator ids",
+      "source": "one of the packet's 'sources' role tags",
+      "attempt": "integer in 1..k_per_source",
+      "code": "complete Python mutant program (```python fences tolerated, stripped on ingest); must define def program(x)"
+    },
+    "one_entry_per": "required_slots (op_id x source x attempt)",
+    "forbidden_fields_anywhere": [
+      "sms",
+      "killed",
+      "survive",
+      "outcome",
+      "verdict",
+      "kill_count",
+      "equiv"
+    ],
+    "strictness": "Malformed entries are rejected and logged; well-formed entries run the identical V1–V4 admission gate as live runs."
+  },
+  "response_filename": "gen_a3_response.json",
+  "instructions": "Act as the mutant generator. For EACH required slot, follow the operator's rendered prompt (operators[].prompts_by_attempt[attempt]) and return the complete mutant program in the 'code' field. Return exactly one mutants[] entry per required_slots item. Do NOT include any SMS/kill/survive/outcome field. Write the JSON response to the file named in response_filename, in the same directory as this packet."
+}
