@@ -1,0 +1,3906 @@
+{
+  "artefact": "h4_leakage_diagnosis_v5",
+  "status": "POST-HOC / EXPLORATORY — the registered H4' verdict (NOT_CONFIRMED, mean suspect_share 0.1714) is FROZEN and UNCHANGED by this analysis. No threshold is re-litigated.",
+  "generated_by": "scripts/diagnose_h4_leakage.py",
+  "measurement_contexts": {
+    "audit_frozen_v5": {
+      "repeats": 1,
+      "context": "full-pool",
+      "source": "data/results/sms_track2_v5.json",
+      "verified_repeats_hist": {
+        "1": 140
+      }
+    },
+    "admission_filter": {
+      "repeats": 20,
+      "context": "singleton tempdir",
+      "source": "p2.mutators.stratum_filter.make_screen_fn(20)"
+    },
+    "study1_v4_audit": {
+      "repeats": 20,
+      "source": "data/results/s5_purity_v4.json"
+    }
+  },
+  "root_cause_mechanical": {
+    "finding": "The CF/TF single-stratum admission filter was a SILENT NO-OP for the entire cross-source (v5) campaign.",
+    "why": "pool_builder set op_id = filename-before-'_attempt' = e.g. 'c7_TF1_claude' (INCLUDING the model-source suffix). stratum_filter._OPID_CAT_RE = '^[a-d][1-8]_([A-Z]{2})\\\\d+$' requires end-of-string after the operator digit, so the '_claude'/'_deepseek'/'_gpt' suffix makes category_from_op_id return None -> screen_mutant treats it as an UNCONSTRAINED category and admits WITHOUT evaluation. Study-1 op_ids had no source suffix, so the same regex worked there.",
+    "evidence": "every CF/TF multi-stratum mutant below has category_from_op_id(build_op_id) == null.",
+    "secondary": "OS/SI were never in CONSTRAINED_CATEGORIES {CF,TF}, so the screen never targeted them by design."
+  },
+  "A_vs_B_decomposition": {
+    "definition": {
+      "A_measurement": "multi-stratum under the frozen repeats=1 audit but SINGLE-stratum (flip<=1) under the repeats=20 admission majority vote -> a measurement-context artifact of single-shot scoring.",
+      "B_construct": "multi-stratum under BOTH measurements (real, reproducible multi-invariant perturbation)."
+    },
+    "n_total_multistratum": 117,
+    "n_A_measurement": 0,
+    "n_B_construct": 117,
+    "by_family": {
+      "OS": 27,
+      "CF": 9,
+      "TF": 72,
+      "SI": 9
+    },
+    "by_family_bucket": {
+      "OS": {
+        "B_construct": 27
+      },
+      "CF": {
+        "B_construct": 9
+      },
+      "TF": {
+        "B_construct": 72
+      },
+      "SI": {
+        "B_construct": 9
+      }
+    },
+    "filter_coverage_breakdown": {
+      "OS/SI unscreened-family-by-design": 36,
+      "CF/TF screen-was-noop (op_id regex rejected source-suffix)": 81
+    }
+  },
+  "counterfactuals_posthoc": {
+    "CF1_audit_context_all_families": {
+      "description": "IF the screen had been correctly wired AND extended to all 5 families AND applied in the audit's exact context (repeats=1), every audit-flip>=2 mutant is rejected at admission.",
+      "n_rejected_of_117": 117,
+      "fraction_rejected": 1.0,
+      "counterfactual_mean_suspect_share": 0.0,
+      "n_cells": 140,
+      "note": "NOT a re-verdict; a mechanical 'what-if' on the frozen matrix."
+    },
+    "CF2_admission_context_all_families": {
+      "description": "IF the screen were applied in the ADMISSION context (repeats=20) to all families, only the B (real) mutants are rejected; the A mutants pass admission but the frozen repeats=1 audit still counts them.",
+      "n_rejected_B": 117,
+      "residual_mean_suspect_share": 0.0,
+      "note": "residual > 0 isolates the repeats=1-vs-20 measurement gap."
+    }
+  },
+  "fingerprints": {
+    "v5_class_family_coflip": {
+      "a|OS": {
+        "[1, 4]": 9
+      },
+      "b|CF": {
+        "[1, 2]": 9
+      },
+      "b|OS": {
+        "[2, 5]": 18
+      },
+      "c|TF": {
+        "[2, 5]": 9
+      },
+      "d|SI": {
+        "[2, 5]": 9
+      },
+      "d|TF": {
+        "[2, 5]": 63
+      }
+    },
+    "v4_class_family_coflip": {
+      "b|CF": {
+        "[1, 2]": 9
+      },
+      "c|TF": {
+        "[1, 2, 5]": 2
+      },
+      "d|TF": {
+        "[2, 5]": 18
+      }
+    },
+    "v4_multistratum_by_family": {
+      "CF": 9,
+      "TF": 20
+    },
+    "v4_total_by_family": {
+      "CE": 64,
+      "HP": 72,
+      "OS": 60,
+      "SI": 33,
+      "CF": 9,
+      "TF": 54
+    },
+    "put_class_legend": {
+      "a": "classical-numerics (ODE / interpolation / quadrature)",
+      "b": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "c": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "d": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)"
+    }
+  },
+  "registered_verdict_unchanged": {
+    "verdict": "NOT_CONFIRMED",
+    "mean_suspect_share": 0.1714,
+    "per_family_multistratum": {
+      "CE": {
+        "n_mutants": 207,
+        "n_multistratum": 0
+      },
+      "CF": {
+        "n_mutants": 18,
+        "n_multistratum": 9
+      },
+      "HP": {
+        "n_mutants": 189,
+        "n_multistratum": 0
+      },
+      "OS": {
+        "n_mutants": 123,
+        "n_multistratum": 27
+      },
+      "SI": {
+        "n_mutants": 69,
+        "n_multistratum": 9
+      },
+      "TF": {
+        "n_mutants": 135,
+        "n_multistratum": 72
+      }
+    }
+  },
+  "per_mutant": [
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m19_a5_OS1_claude_a03.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m20_a5_OS1_claude_a02.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m21_a5_OS1_claude_a01.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m22_a5_OS1_deepseek_a01.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m23_a5_OS1_deepseek_a02.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m24_a5_OS1_deepseek_a03.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m25_a5_OS1_gpt_a03.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m26_a5_OS1_gpt_a02.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "A5",
+      "put_class": "a",
+      "put_class_name": "classical-numerics (ODE / interpolation / quadrature)",
+      "file": "m27_a5_OS1_gpt_a01.py",
+      "family": "OS",
+      "build_op_id": "a5_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        1,
+        4
+      ],
+      "admission_flips_repeats20": [
+        1,
+        4
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "SURVIVE",
+        "3": "SURVIVE",
+        "4": "KILLED",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        4
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m10_b2_CF1_claude_a02.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m11_b2_CF1_claude_a03.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m12_b2_CF1_claude_a01.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m13_b2_CF1_deepseek_a02.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m14_b2_CF1_deepseek_a01.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m15_b2_CF1_deepseek_a03.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m16_b2_CF1_gpt_a01.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m17_b2_CF1_gpt_a02.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B2",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m18_b2_CF1_gpt_a03.py",
+      "family": "CF",
+      "build_op_id": "b2_CF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        1,
+        2
+      ],
+      "admission_flips_repeats20": [
+        1,
+        2
+      ],
+      "admission_labels": {
+        "1": "KILLED",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "SURVIVE"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m19_b5_OS1_claude_a03.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m20_b5_OS1_claude_a02.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m21_b5_OS1_claude_a01.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m22_b5_OS1_deepseek_a01.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m23_b5_OS1_deepseek_a02.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m24_b5_OS1_deepseek_a03.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m25_b5_OS1_gpt_a03.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m26_b5_OS1_gpt_a02.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B5",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m27_b5_OS1_gpt_a01.py",
+      "family": "OS",
+      "build_op_id": "b5_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m19_b6_OS1_claude_a03.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m20_b6_OS1_claude_a02.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m21_b6_OS1_claude_a01.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m22_b6_OS1_deepseek_a01.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m23_b6_OS1_deepseek_a02.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m24_b6_OS1_deepseek_a03.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m25_b6_OS1_gpt_a03.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m26_b6_OS1_gpt_a02.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "B6",
+      "put_class": "b",
+      "put_class_name": "stochastic-simulation (MCMC / rejection / Monte-Carlo)",
+      "file": "m27_b6_OS1_gpt_a01.py",
+      "family": "OS",
+      "build_op_id": "b6_OS1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m19_c7_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m20_c7_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m21_c7_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m22_c7_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m23_c7_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m24_c7_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m25_c7_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m26_c7_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "C7",
+      "put_class": "c",
+      "put_class_name": "surrogate-regression (GaussianProcess / SVR / kernel)",
+      "file": "m27_c7_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "c7_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m19_d1_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m20_d1_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m21_d1_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m22_d1_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m23_d1_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m24_d1_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m25_d1_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m26_d1_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D1",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m27_d1_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "d1_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m19_d3_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m20_d3_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m21_d3_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m22_d3_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m23_d3_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m24_d3_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m25_d3_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m26_d3_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D3",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m27_d3_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "d3_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m19_d4_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m20_d4_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m21_d4_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m22_d4_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m23_d4_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m24_d4_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m25_d4_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m26_d4_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D4",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m27_d4_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "d4_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m10_d5_SI1_claude_a02.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m11_d5_SI1_claude_a03.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m12_d5_SI1_claude_a01.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m13_d5_SI1_deepseek_a02.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m14_d5_SI1_deepseek_a01.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m15_d5_SI1_deepseek_a03.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m16_d5_SI1_gpt_a01.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m17_d5_SI1_gpt_a02.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m18_d5_SI1_gpt_a03.py",
+      "family": "SI",
+      "build_op_id": "d5_SI1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": false,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m19_d5_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m20_d5_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m21_d5_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m22_d5_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m23_d5_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m24_d5_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m25_d5_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m26_d5_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D5",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m27_d5_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "d5_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m19_d6_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m20_d6_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m21_d6_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m22_d6_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m23_d6_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m24_d6_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m25_d6_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m26_d6_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D6",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m27_d6_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "d6_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m19_d7_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m20_d7_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m21_d7_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m22_d7_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m23_d7_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m24_d7_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m25_d7_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m26_d7_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D7",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m27_d7_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "d7_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m19_d8_TF1_claude_a03.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m20_d8_TF1_claude_a02.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m21_d8_TF1_claude_a01.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_claude",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m22_d8_TF1_deepseek_a01.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m23_d8_TF1_deepseek_a02.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m24_d8_TF1_deepseek_a03.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_deepseek",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m25_d8_TF1_gpt_a03.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m26_d8_TF1_gpt_a02.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    },
+    {
+      "put": "D8",
+      "put_class": "d",
+      "put_class_name": "ML-classifier (MLP / LDA / GP-classifier, fit-data heavy)",
+      "file": "m27_d8_TF1_gpt_a01.py",
+      "family": "TF",
+      "build_op_id": "d8_TF1_gpt",
+      "category_from_op_id": null,
+      "screened_family_by_design": true,
+      "audit_flips_repeats1": [
+        2,
+        5
+      ],
+      "admission_flips_repeats20": [
+        2,
+        5
+      ],
+      "admission_labels": {
+        "1": "SURVIVE",
+        "2": "KILLED",
+        "3": "SURVIVE",
+        "4": "SURVIVE",
+        "5": "KILLED"
+      },
+      "agree": true,
+      "still_multistratum_under_admission": true,
+      "bucket": "B_construct",
+      "co_flip_pair": [
+        2,
+        5
+      ]
+    }
+  ]
+}
