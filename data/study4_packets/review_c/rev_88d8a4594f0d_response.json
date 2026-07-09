@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_88d8a4594f0d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Whole-file reformat; only semantic change is integrand x*(u*u) as registered; matches minimal variant to 1e-17."
+}

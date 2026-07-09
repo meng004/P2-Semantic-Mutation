@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_862762ea87ad",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Array init rewritten element-wise with y[0]=10.0*x-10.0, exactly the registered change and nothing else semantic."
+}

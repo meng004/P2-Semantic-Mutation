@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_82fe2c40aa9d",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "B-spline recursion is broken: only 7 of 8 basis functions, out-of-bounds read of N[NC] in Cox-de Boor loop (undefined behaviour), no degree-0 support on [1.2,2); outputs reach ~1e136, not the registered SplineTransformer(6,3)."
+}

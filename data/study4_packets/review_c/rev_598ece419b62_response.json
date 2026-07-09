@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_598ece419b62",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Whole-file reformat but the only semantic change is proposal sigma * 0.1 as registered; output identical to minimal implementations of the operator."
+}

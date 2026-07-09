@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_6a4aec10bb64",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "SIGMA and BETA roles swapped in the RHS via renamed locals, exactly the registered change; large deviation."
+}

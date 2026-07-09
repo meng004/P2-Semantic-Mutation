@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_7c5eb72a0948",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Spline basis uses only 5 distinct knots (-2,-1,0,1,2) and 7 functions with the right-boundary basis dropped, not SplineTransformer(n_knots=6, degree=3) (6 uniform knots, 8 functions); prediction collapses near t=2."
+}

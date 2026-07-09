@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_9f14d55ab1f5",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Doubled semicolons are non-semantic empty declarations; the mutation line implements (successes-1) floored at 0 exactly as registered."
+}

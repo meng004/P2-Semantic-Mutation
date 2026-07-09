@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_80f629a7015a",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Acceptance test reversed to log_u > log_ratio, the registered reversal in log domain; boundary equality case is measure-zero; huge deviation."
+}

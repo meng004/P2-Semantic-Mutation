@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_ae52ae20c4ed",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Doubled-semicolon noise is non-semantic; returns beta_post/(alpha_post+beta_post), exactly the registered role swap."
+}

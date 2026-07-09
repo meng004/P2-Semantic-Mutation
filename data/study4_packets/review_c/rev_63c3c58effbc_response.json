@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_63c3c58effbc",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "x + u*u changed to x*u*u as registered (association differs from x*(u*u) only at 1e-17); a comment-only ';'->'__SEMI__' artifact is non-semantic."
+}

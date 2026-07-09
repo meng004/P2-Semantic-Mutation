@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_82704f647598",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "No",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Implements product/N but adds long-double accumulation and +/-DBL_MAX saturation not in the registered transformation, changing overflow behaviour (finite DBL_MAX instead of inf)."
+}

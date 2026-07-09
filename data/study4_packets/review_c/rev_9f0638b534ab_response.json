@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_9f0638b534ab",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Returns subdiagonal element U[1][0], exactly what prod(diag(U,k=-1)) yields on 2x2; construction faithful; deviates (returns ~0 vs 6+3x)."
+}
