@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_f0baded2a5af",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "return -u changed to return u exactly; growth instead of decay (deviation ~2.35); non-equivalent."
+}

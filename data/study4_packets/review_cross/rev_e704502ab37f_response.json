@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e704502ab37f",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Loop bound changed to range(_N_STEPS - 1) exactly; deviation ~1.9e-2 across the grid; non-equivalent."
+}

@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_f0d3063bd23e",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Posterior mean computed as beta_post/(alpha_post+beta_post), the exact role swap (docstring removal non-semantic); deviation up to ~0.98, equal only at x=0.5; non-equivalent."
+}

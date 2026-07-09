@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_e795f9f9b973",
+ "V1_syntax_ok": true,
+ "V2_executable": "No",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "REJECTED",
+ "reason": "Sign flip matches the operator, but the anti-diffusive scheme blows up: NaN output at probe x=0 (finest grid spacing), failing the finite-output executability check."
+}

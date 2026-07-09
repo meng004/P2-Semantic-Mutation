@@ -1,0 +1,14 @@
+{
+ "blind_id": "rev_f25cd60a9971",
+ "V1_syntax_ok": true,
+ "V2_executable": "Yes",
+ "V3_nontrivial": "Yes",
+ "operator_match": "Yes",
+ "equivalence": {
+  "E1": "No",
+  "E2": "No",
+  "equivalent": false
+ },
+ "overall": "CONFIRMED",
+ "reason": "Radial label comparison < 1.0 changed to > 1.0 exactly (refactor into _r2/point variables is non-semantic); inverted labels (deviation ~0.97); non-equivalent."
+}
