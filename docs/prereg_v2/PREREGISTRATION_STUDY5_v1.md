@@ -956,3 +956,27 @@ negative-argument domain rejection); read-off power at the frozen §4a
 primary curve: n = 20 → 0.8484. Step-6 hand-port fallback NOT invoked.
 Adapter layer only (`src/p2/xlport/`); no external program code edited. No
 XL mutant, pilot pool, or SMS value existed at this freeze.
+
+**Amendment A2 — 2026-07-10 (scheduled, pre-elicitation): Family-MR Arm-L
+elicitation prompt template freeze.** §2d fixed the template's required
+content (PUT source + registered `MPk` label + NOETHER family symbol +
+one-line Vocabulary gloss, Mode-M noted for MP5 + executable-MR output-format
+contract) and deferred the verbatim text to a pre-run hash-pin slot; this
+amendment discharges that slot. Verbatim template, per-stratum blocks, and
+registered serving parameters (temperature 0.7, requested max_tokens 2500
+with the config `min_max_tokens` floors, transport-only retries, 1-3 MR
+instances per cell, naming contract `r_k`/`R_k`, math/numpy import allowlist)
+frozen in `docs/prereg_v2/STUDY5_MR_ELICITATION_PROMPT.md`, sha256
+`67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c`, used
+identically for all four vendor lineages. The template states the frozen
+`p2.avp` per-stratum evaluation semantics to every vendor identically (design
+note 1 of the template file: equalises the session-harness claude slot's
+unavoidable code-level exposure to the dispatcher; fixed before any outcome;
+no mutant / kill / SMS informs it). Recorded BEFORE any Arm-L elicitation
+call (pilot or confirmatory); no L-side outcome existed at this freeze.
+Disclosed exposure note: at template-freeze time the session harness had
+read, during Study-5 harness reconnaissance, the registered R-side MR module
+`src/p2/mrs/a1.py` (and no other `src/p2/mrs/*` module); this is logged here
+as a claude-slot contamination disclosure for PUT a1 and carried into the
+Family-MR report. The remaining registered MR modules are not opened by the
+session until every claude-slot elicitation is drawn.
