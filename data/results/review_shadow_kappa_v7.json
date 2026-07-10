@@ -1,0 +1,1923 @@
+{
+  "artefact": "review_shadow_kappa_v7",
+  "status": "POST-HOC cross-vendor reviewer-reliability check; frozen labels untouched",
+  "seed": 20260708,
+  "n_sampled": 189,
+  "n_scored": 189,
+  "strata": {
+    "A_rejected": 61,
+    "B_bounds_fixed_confirmed": 28,
+    "C_random_confirmed": 100
+  },
+  "kappa_vs_frozen": {
+    "gpt-5.5": 0.4427,
+    "gemini-3.5-flash": 0.3606
+  },
+  "kappa_between_shadows": 0.8037,
+  "per_stratum_agreement": {
+    "A_rejected": {
+      "gpt-5.5": 0.7541,
+      "gemini-3.5-flash": 0.6557
+    },
+    "B_bounds_fixed_confirmed": {
+      "gpt-5.5": 0.0,
+      "gemini-3.5-flash": 0.0357
+    },
+    "C_random_confirmed": {
+      "gpt-5.5": 0.93,
+      "gemini-3.5-flash": 0.92
+    }
+  },
+  "rows": [
+    {
+      "arm": "same",
+      "blind_id": "rev_11a49e45d0c3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_5ee700cdbf57",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_342709d5f086",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_96f5b0a64a87",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_eee23b2cd2e2",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_0846b70f9a1f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_bcabe5735fc7",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_d88c041236e6",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_2a7b2a928f50",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_7bae7ee0bacf",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_313603502e25",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_a3bcc2d9884a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_f3f94133e79f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_e10d54c149b0",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_72821731c46c",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_69d0f62b966b",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_fee23db7ad08",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_d979cb51ed12",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_4c6a5e1aed7f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_d8c84e56891c",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_bea3d84b9794",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_4c1898de888d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_f640837f6cf3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_5ee700cdbf57",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_e795f9f9b973",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_931f4830e2d7",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_292ea735adde",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_76d7b51f78e9",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_1db88a900d90",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_8730e6aa87a9",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_ae51318aeed3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_4a1788ab9fde",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_486147626cf0",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_53d440ab55da",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_e448cbdb939d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_fa02ccdaf315",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_04dceec9641f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_732c0d878aa4",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_933ebe743274",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_472d904e5b48",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_0a1c55aaef46",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_0846b70f9a1f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_313603502e25",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_3834ba7ad442",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_34f54423e47e",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_fee23db7ad08",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_4c6a5e1aed7f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_50419cf3ba79",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_405b518b2483",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_3f1126f1160f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "REJECTED",
+      "bounds_fixed": true,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_4aeac789e346",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_11a49e45d0c3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_f640837f6cf3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_e54bd44302b3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_e795f9f9b973",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_292ea735adde",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_82704f647598",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_798f5ffc05d1",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_7c5eb72a0948",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_82fe2c40aa9d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_b86457b8a30a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "REJECTED",
+      "bounds_fixed": false,
+      "stratum": "A_rejected",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_3834ba7ad442",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_34f54423e47e",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_96f5b0a64a87",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_eee23b2cd2e2",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_c46b1cf2a4d9",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_bcabe5735fc7",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_d88c041236e6",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_2a7b2a928f50",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_bc5a3b498b1d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_7bae7ee0bacf",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_a3bcc2d9884a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_be1ea4cb4c16",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_f3f94133e79f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_a01edaf490bd",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_e10d54c149b0",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_72821731c46c",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_69d0f62b966b",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_9726a5044891",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_d979cb51ed12",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_29797c050fcd",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_00965ff9594f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_259ff8946072",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_60447eb05ef3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_dab58db124bc",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_677ffd808bef",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_e03524fb0130",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_b88e568cd72b",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_db59a9a5c7a6",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": true,
+      "stratum": "B_bounds_fixed_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_c5168c455fa6",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_3448da046393",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_55fe6dbc46d0",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_e8b337d18baa",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_dd6b03fd1154",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_2a9c44493917",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_4924a9f5152a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_560e95ddaa89",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_f72081f50d5e",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_3cc02ccc0bd9",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_169c88118fb5",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_7a1ca8bb298a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_772c01f3eac7",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_53e4bda9471b",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_1db88a900d90",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_cd92f08f7a56",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_14921bd6bd84",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_35700a2c08a3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_0f9bdfe3bfb1",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_6ab2acec62fa",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_25278752c5d0",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_e035336f16ef",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_b9a070a9b5c1",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_b01beb6f99e9",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_4dccfe0d8a64",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_4026912b0122",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_42347b468b79",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_0c8bbab438d6",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_965024213923",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_656d39420730",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_f2b838330fe4",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_80f629a7015a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_eceb739568e2",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_2eeaa6f2add3",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_620d41a82a0c",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "same",
+      "blind_id": "rev_2e201662fe77",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_same",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_d9d8cee00623",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_fcf6839f0959",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_1b1f322b1cd1",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_88d8a4594f0d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_5bffed30a20c",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_f803f6188e3f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_e1f3a70fa799",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_3234b0449c48",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_a096f3e732bb",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_b39732259e5e",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_cda48f8475db",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_7074943044f9",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_8052f46ca55a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_a1ea55f56a8b",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_09f060eb0d0c",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_b471d850d09d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_2b16a52a3d96",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_4f744048a208",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_28f4b627c8fc",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_fc5a44e85584",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_656d39420730",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_85a9941a033d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_eaad67d03299",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_8c4288d34f7a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_36c6726ce5a0",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_d71d34538577",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_ea8aff11d5aa",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_3dc916293904",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_b1bb76d42ade",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_7f3c0efb3990",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_76e04bfe58c9",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "cross",
+      "blind_id": "rev_2d6af40fc175",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_cross",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_ca08a07b9370",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_eab35f478b63",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_5badd1db291f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_432c965fd58e",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_20ce0c88e9b2",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_b0aaa7640a3f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_a828478bf03d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_c998e00025fb",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_457d790150ff",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_7c68eb46734a",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_3fbe6cfbd948",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_f61adaed5070",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_322b40c9f9cc",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_eff15662bbd4",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_713e8182360e",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_fad21ee51235",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_15b719627d3f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_aa70a695590d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_3c1bde4e912f",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "REJECTED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_e82d11323db2",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_942dbad573c8",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_2977fd8f316b",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_cd247cd12e26",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_dabaaa6524dc",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_c05f363097f6",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "recruit",
+      "blind_id": "rev_52918ca8c64d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_recruit",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "REJECTED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_74e03564e110",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_4fae4bd4d723",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_c1855dafaa40",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_8ec06fee7878",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_4c1898de888d",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    },
+    {
+      "arm": "c",
+      "blind_id": "rev_968eea434411",
+      "dir": "/home/user/P3-Semantic-Mutation/data/study4_packets/review_c",
+      "frozen": "CONFIRMED",
+      "bounds_fixed": false,
+      "stratum": "C_random_confirmed",
+      "gpt-5.5": "CONFIRMED",
+      "gemini-3.5-flash": "CONFIRMED"
+    }
+  ]
+}
