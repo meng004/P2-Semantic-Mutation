@@ -403,6 +403,277 @@ def power_hlang(s2mod) -> dict:
     }
 
 
+# --------------------------------------------------------------------------- #
+# STUDY-5 EXTENSION (docs/prereg_v2/PREREGISTRATION_STUDY5_v1.md)
+# --------------------------------------------------------------------------- #
+# ADDITIVE ONLY: invoked as `python3 scripts/power_analysis_study4.py --study5`;
+# the default invocation (Study-4 power, power_study4.json) is byte-unchanged.
+# Frozen before ANY Study-5 data generation (2026-07-10). DGP calibration is
+# design-from-prior-study, stated openly: the v7c C-arm pool calibrates the
+# primary H-LANG-2 DGP (observed delta_C = +0.2449, the Study-4 point
+# estimate); the v7 Python cross-source arm calibrates the sensitivity DGP
+# (observed delta = 0.4445); the v7 per-PUT SMS variance calibrates Family MR.
+# No Study-5 outcome exists or is used. Master seed 20260708 retained.
+
+OUT5 = RESULTS / "power_study5.json"
+V7C_MATRIX = RESULTS / "sms_track2_v7c.json"
+V7_CROSS_MATRIX = RESULTS / "sms_track2_v7.json"
+V7_SAME_MATRIX = RESULTS / "sms_track2_v7_same.json"
+N_SIM_STUDY5 = 10000            # registered Study-5 Monte-Carlo budget (B=10,000)
+# Achieved-n lookup grid. 8/10/12 are the certification-attrition points the
+# registration reports; 16..28 extend the SAME RNG stream (appended AFTER
+# 8/10/12, so those draws are byte-preserved) to locate the min n reaching
+# 0.80 under the deflated primary DGP — the Study-4 lesson (a knowingly
+# under-powered n is design debt) applied prospectively.
+HLANG2_N_GRID = (8, 10, 12, 16, 20, 24, 28)
+MR_EFFECTS = (0.02, 0.05, 0.10, 0.20)
+MR_RHO_GRID = (0.0, 0.5, 0.75)  # + the v7-calibrated rho appended at run time
+
+
+def _per_put_mean_sms(matrix_path: Path, puts: list) -> dict:
+    """{put: mean SMS over the PUT's non-null cells} (per-PUT battery-level
+    SMS, the Family-MR unit statistic)."""
+    sms = json.loads(matrix_path.read_text())
+    vals: dict[str, list] = {}
+    for cell, v in sms.items():
+        put = cell.split("_")[0].lower()
+        if put not in puts or not isinstance(v, dict):
+            continue
+        if v.get("vacant") is True or v.get("adjudicated") is False:
+            continue
+        if v.get("sms") is None:
+            continue
+        vals.setdefault(put, []).append(float(v["sms"]))
+    return {p: float(np.mean(xs)) for p, xs in vals.items()}
+
+
+def power_study5_hlang2(s2mod) -> dict:
+    """Family XL (H-LANG-2, cross-language EXTERNAL corpus): direction power
+    (delta_XL > 0, one-sided 95% bootstrap lower bound) on a target grid of
+    n = 12 certified program-language pairs (each pair contributes 1 aligned
+    + 4 cross cells, exactly the PUT-grid design), with achieved-n lookup
+    points at n=10 and n=8 in case the registered §2c certification gate
+    excludes pairs. SAME simulation machinery as power_study4.json's H-LANG
+    entry (power_analysis_study2.power_cliffs; n_aligned=n, n_cross=4n; inner
+    bootstrap 400), run at the registered Study-5 MC budget n_sim=10,000.
+
+    Two DGPs, both design-from-prior-study:
+      PRIMARY    : v7c C-arm hurdle (the Study-4 C-port pool; observed
+                   delta_C = +0.2449 — the honest, deflated post-Study-4
+                   effect assumption);
+      SENSITIVITY: v7 Python cross-source-arm hurdle (observed delta =
+                   0.4445 — the Python-scale effect, IF language costs
+                   nothing)."""
+    dgp_v7c = calibrate_hurdle(V7C_MATRIX, list(C_GRID_7))
+    dgp_v7py = calibrate_hurdle(V7_CROSS_MATRIX, CONFIRMATORY_PUTS)
+    legs = {}
+    for tag, dgp, src, obs in (
+            ("primary_v7c_cport", dgp_v7c,
+             "data/results/sms_track2_v7c.json (Study-4 C-arm pool)", 0.2449),
+            ("sensitivity_v7_python_arm", dgp_v7py,
+             "data/results/sms_track2_v7.json (Study-4 Python cross arm)",
+             0.4445)):
+        cliffs = s2mod.power_cliffs(dgp, n_puts=HLANG2_N_GRID, thresholds=(0.0,))
+        pw = cliffs["power_by_threshold"]["delta_ref_0.0"]
+        legs[tag] = {
+            "dgp_source": src,
+            "observed_delta_calibration_anchor": obs,
+            "dgp_true_delta": cliffs["true_delta_dgp"],
+            "dgp": {k: round(v, 4) for k, v in dgp.items()
+                    if k in ("p_nonzero_aligned", "p_nonzero_cross",
+                             "mean_aligned", "mean_cross")},
+            "power_delta_gt0_by_n": {str(n): pw[n] for n in HLANG2_N_GRID},
+            "min_n_80pct": cliffs["min_n_80pct"]["delta_ref_0.0"],
+        }
+    p12 = legs["primary_v7c_cport"]["power_delta_gt0_by_n"]["12"]
+    return {
+        "family": "XL — H-LANG-2 cross-language invariance on an EXTERNAL "
+                  "corpus of certified program-language pairs (single test, "
+                  "confirmatory; the Study-4 Family-L NOT_CONFIRMED verdict "
+                  "stands as recorded)",
+        "estimand": "one-sided 95% percentile-bootstrap lower bound on Cliff's "
+                    "delta_XL (aligned j=k vs cross j!=k) > 0; per-pair primary "
+                    "stratum from the frozen XL roster category->stratum map "
+                    "(configs/xl_roster.json, data-independent, frozen "
+                    "pre-mutant); n pairs -> 5n cells, aligned n, cross 4n",
+        "machinery": "power_analysis_study2.power_cliffs (identical to the "
+                     "power_study4.json H-LANG entry), n_sim=10,000, inner "
+                     "bootstrap 400, master seed 20260708",
+        "registered_target_n": 12,
+        "achieved_n_rule": "if the §2c certification gate excludes pairs, the "
+                           "achieved power is READ OFF this frozen n=12/10/8 "
+                           "curve — no post-data simulation",
+        "n_sim": N_SIM_STUDY5,
+        "legs": legs,
+        "power_primary_at_n12": p12,
+        "well_powered_at_n12_primary": bool(p12 >= 0.80),
+        "note": "The primary DGP deliberately assumes the DEFLATED Study-4 "
+                "C-arm point estimate (+0.2449), not the Python-scale effect: "
+                "after the H-LANG NOT_CONFIRMED, powering the re-test on the "
+                "optimistic Python effect would repeat the Study-4 design "
+                "debt. Both legs are reported; the primary leg governs the "
+                "§4 feasibility statement.",
+    }
+
+
+def power_study5_mr() -> dict:
+    """Family MR (H2-4): paired per-PUT battery-level SMS difference
+    delta_MR = SMS_R - SMS_L on the frozen v7 pools, n = 28 PUTs.
+
+    Calibration (v7 SMS variance, design-from-prior-study): sigma_put = SD of
+    the arm-averaged per-PUT mean SMS across the 28 confirmatory PUTs of the
+    two frozen Study-4 arms; the between-arm per-PUT correlation calibrates
+    the pairing rho ceiling. The R-vs-L pairing correlation on IDENTICAL
+    frozen pools is unknown pre-data, so power is reported over a rho grid
+    {0.0, 0.5, 0.75, rho_v7} — rho=0.0 is the worst-case (independent
+    batteries) floor. sigma_d = sigma_put * sqrt(2*(1-rho)); SE = sigma_d /
+    sqrt(28); one-sided z at alpha=0.05 (the same normal-approximation MC as
+    power_delta_delta), 40,000 draws per design point, seed 20260708+5."""
+    rng = np.random.default_rng(MASTER_SEED + 5)
+    mc = _per_put_mean_sms(V7_CROSS_MATRIX, CONFIRMATORY_PUTS)
+    ms = _per_put_mean_sms(V7_SAME_MATRIX, CONFIRMATORY_PUTS)
+    common = [p for p in CONFIRMATORY_PUTS if p in mc and p in ms]
+    x = np.array([mc[p] for p in common])
+    y = np.array([ms[p] for p in common])
+    avg = (x + y) / 2.0
+    sigma_put = float(avg.std(ddof=1))
+    rho_v7 = float(np.corrcoef(x, y)[0, 1])
+    n = len(common)
+    zcrit = stats.norm.ppf(1 - ALPHA)          # one-sided CONFIRM test
+    zcrit2 = stats.norm.ppf(1 - ALPHA / 2)     # two-sided CI half-width
+    rho_grid = tuple(MR_RHO_GRID) + (round(rho_v7, 4),)
+    power = {}
+    for rho in rho_grid:
+        sigma_d = sigma_put * np.sqrt(2.0 * (1.0 - rho))
+        se = sigma_d / np.sqrt(n)
+        row = {"sigma_d": round(float(sigma_d), 4), "se_n28": round(float(se), 4),
+               "projected_ci95_half_width": round(float(zcrit2 * se), 4),
+               "meets_eq_halfwidth_0.14": bool(zcrit2 * se <= 0.14),
+               "power_confirm_by_effect": {}}
+        for eff in MR_EFFECTS:
+            draws = rng.normal(eff, se, size=40000)
+            row["power_confirm_by_effect"][f"d_{eff}"] = round(
+                float((draws / se > zcrit).mean()), 4)
+        power[f"rho_{rho}"] = row
+    return {
+        "family": "MR — H2-4 MR-side diversity (delta_MR = SMS_R - SMS_L, "
+                  "paired on 28 PUTs, frozen v7 pools)",
+        "calibration_source": "data/results/sms_track2_v7.json + "
+                              "sms_track2_v7_same.json (v7 per-PUT SMS "
+                              "variance; design-from-prior-study, no Study-5 "
+                              "outcome exists)",
+        "n_puts": n,
+        "per_put_mean_sms": {"cross_arm_mean": round(float(x.mean()), 4),
+                             "same_arm_mean": round(float(y.mean()), 4),
+                             "arm_avg_sd_sigma_put": round(sigma_put, 4),
+                             "between_arm_rho_v7": round(rho_v7, 4)},
+        "machinery": "normal-approximation MC (same family as "
+                     "power_delta_delta), 40,000 draws/design point, seed "
+                     "20260708+5; sigma_d = sigma_put*sqrt(2(1-rho))",
+        "effects_grid": list(MR_EFFECTS),
+        "rho_grid": list(rho_grid),
+        "power": power,
+        "note": "Even at the worst-case rho=0.0 the projected two-sided CI "
+                "half-width is far below the registered 0.14 equivalence "
+                "gate, so the H2-4 ladder will effectively be decided by "
+                "whether the CI includes 0 — disclosed in the registration "
+                "(§3.4, §4); the 0.14 gate is kept verbatim for form-identity "
+                "with H2-2 and NOT tightened post-hoc.",
+    }
+
+
+def power_study5_os(s2mod) -> dict:
+    """Family OS (H2-3): identical estimand + three-way rule as H2-2, so the
+    registered power RERUNS the v1.1/Study-4 methodology VERBATIM (v4 hurdle
+    DGP, paired-role Delta-delta; seed stream identical) — what changes is the
+    manipulated variable (open-spec vs registered-spec prompts), not the
+    statistics."""
+    dgp_v4 = s2mod.load_study1_sms_hurdle()
+    dd = s2mod.power_delta_delta(dgp_v4, n_puts=(12, 18, 24, 28, 30, 36),
+                                 delta_deltas=(0.10, 0.15, 0.20))
+    return {
+        "family": "OS — H2-3 open-specification source diversity "
+                  "(Delta-delta_OS = delta(open-spec arm) - "
+                  "delta(registered-spec arm), paired on 28 PUTs)",
+        "decision_rule": "v1.1 H2-2 VERBATIM three-way (CONFIRM >= 0.20 / "
+                         "BOUNDED_NULL half-width <= 0.14 / UNDER-RECRUITED)",
+        "dgp_source": "data/results/sms_track2_v4.json (v4 hurdle DGP — "
+                      "IDENTICAL to the v1.1 and Study-4 H2-2 power runs; "
+                      "power is effect-size driven, not prompt driven)",
+        "registered_n": 28,
+        "target_detectable_delta_delta": 0.20,
+        "paired_se_by_n": dd["paired_se_by_n"],
+        "calibrated_paired_rho": dd["calibrated_paired_rho"],
+        "power_by_delta_delta": dd["power"],
+        "power_dd020_at_n28": dd["power"]["dd_0.2"][28],
+        "min_n_80pct": dd["min_n_80pct"],
+        "empirical_anchor_study4": "the Study-4 H2-2 achieved paired CI "
+                                   "half-width was 0.0448 "
+                                   "(dualblind_delta_delta_v7.json) — well "
+                                   "inside the 0.14 BOUNDED_NULL gate; the "
+                                   "projection above is therefore "
+                                   "conservative",
+        "note": "Marginal at n=28 (just below 0.80) exactly as in v1.1 and "
+                "Study 4; the three-way rule already licenses UNDER-RECRUITED "
+                "when the CI is wide, so no threshold is moved.",
+    }
+
+
+def main_study5():
+    s2mod = _load_study2_module()
+    # Registered Study-5 MC budget (set AFTER exec_module, per the module-
+    # attribute trap noted in CLAUDE.md §4): n_sim 2000 -> 10000.
+    s2mod.N_SIM = N_SIM_STUDY5
+    result = {
+        "meta": {
+            "purpose": "Study-5 pre-registration power/feasibility; frozen "
+                       "before ANY Study-5 data generation (2026-07-10).",
+            "registration": "docs/prereg_v2/PREREGISTRATION_STUDY5_v1.md",
+            "master_seed": MASTER_SEED, "n_sim": N_SIM_STUDY5, "alpha": ALPHA,
+            "families": ["XL H-LANG-2 (cross-language external corpus)",
+                         "OS H2-3 (open-spec source diversity)",
+                         "MR H2-4 (MR-side diversity)"],
+            "dgp_sources": {
+                "xl_hlang2_primary": "data/results/sms_track2_v7c.json "
+                                     "(Study-4 C-arm, delta_C=+0.2449)",
+                "xl_hlang2_sensitivity": "data/results/sms_track2_v7.json "
+                                         "(Study-4 Python cross arm, "
+                                         "delta=0.4445)",
+                "os": "data/results/sms_track2_v4.json (v1.1 methodology "
+                      "verbatim)",
+                "mr": "data/results/sms_track2_v7.json + "
+                      "sms_track2_v7_same.json (v7 per-PUT SMS variance)",
+            },
+            "numpy": np.__version__, "scipy": stats.__name__.split(".")[0],
+            "no_llm_calls": True,
+            "additive_note": "this study5 entry point is ADDITIVE; the "
+                             "default Study-4 run and power_study4.json are "
+                             "byte-unchanged.",
+        },
+        "d_xl_hlang2_direction_power": power_study5_hlang2(s2mod),
+        "e_mr_diversity": power_study5_mr(),
+        "f_os_delta_delta": power_study5_os(s2mod),
+    }
+    OUT5.write_text(json.dumps(result, indent=2))
+    print("wrote", OUT5.relative_to(ROOT))
+
+    d = result["d_xl_hlang2_direction_power"]
+    for tag, leg in d["legs"].items():
+        print("[XL %s] true delta = %s | power(delta>0) by n = %s" % (
+            tag, leg["dgp_true_delta"], leg["power_delta_gt0_by_n"]))
+    e = result["e_mr_diversity"]
+    print("[MR] sigma_put=%.4f rho_v7=%.4f" % (
+        e["per_put_mean_sms"]["arm_avg_sd_sigma_put"],
+        e["per_put_mean_sms"]["between_arm_rho_v7"]))
+    for rho, row in e["power"].items():
+        print("     %s: se=%.4f hw=%.4f power=%s" % (
+            rho, row["se_n28"], row["projected_ci95_half_width"],
+            row["power_confirm_by_effect"]))
+    f = result["f_os_delta_delta"]
+    print("[OS] Delta-delta=0.20 power @n28 = %.4f (rho=%.3f)" % (
+        f["power_dd020_at_n28"], f["calibrated_paired_rho"]))
+
+
 def main():
     s2mod = _load_study2_module()
     result = {
@@ -473,4 +744,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # ADDITIVE dispatcher (Study-5 registration): `--study5` runs ONLY the
+    # Study-5 extension (writes power_study5.json); the default invocation is
+    # the frozen Study-4 run, byte-unchanged (writes power_study4.json).
+    if "--study5" in sys.argv[1:]:
+        main_study5()
+    else:
+        main()

@@ -1,0 +1,204 @@
+{
+  "meta": {
+    "purpose": "Study-5 pre-registration power/feasibility; frozen before ANY Study-5 data generation (2026-07-10).",
+    "registration": "docs/prereg_v2/PREREGISTRATION_STUDY5_v1.md",
+    "master_seed": 20260708,
+    "n_sim": 10000,
+    "alpha": 0.05,
+    "families": [
+      "XL H-LANG-2 (cross-language external corpus)",
+      "OS H2-3 (open-spec source diversity)",
+      "MR H2-4 (MR-side diversity)"
+    ],
+    "dgp_sources": {
+      "xl_hlang2_primary": "data/results/sms_track2_v7c.json (Study-4 C-arm, delta_C=+0.2449)",
+      "xl_hlang2_sensitivity": "data/results/sms_track2_v7.json (Study-4 Python cross arm, delta=0.4445)",
+      "os": "data/results/sms_track2_v4.json (v1.1 methodology verbatim)",
+      "mr": "data/results/sms_track2_v7.json + sms_track2_v7_same.json (v7 per-PUT SMS variance)"
+    },
+    "numpy": "2.4.6",
+    "scipy": "scipy",
+    "no_llm_calls": true,
+    "additive_note": "this study5 entry point is ADDITIVE; the default Study-4 run and power_study4.json are byte-unchanged."
+  },
+  "d_xl_hlang2_direction_power": {
+    "family": "XL \u2014 H-LANG-2 cross-language invariance on an EXTERNAL corpus of certified program-language pairs (single test, confirmatory; the Study-4 Family-L NOT_CONFIRMED verdict stands as recorded)",
+    "estimand": "one-sided 95% percentile-bootstrap lower bound on Cliff's delta_XL (aligned j=k vs cross j!=k) > 0; per-pair primary stratum from the frozen XL roster category->stratum map (configs/xl_roster.json, data-independent, frozen pre-mutant); n pairs -> 5n cells, aligned n, cross 4n",
+    "machinery": "power_analysis_study2.power_cliffs (identical to the power_study4.json H-LANG entry), n_sim=10,000, inner bootstrap 400, master seed 20260708",
+    "registered_target_n": 12,
+    "achieved_n_rule": "if the \u00a72c certification gate excludes pairs, the achieved power is READ OFF this frozen n=12/10/8 curve \u2014 no post-data simulation",
+    "n_sim": 10000,
+    "legs": {
+      "primary_v7c_cport": {
+        "dgp_source": "data/results/sms_track2_v7c.json (Study-4 C-arm pool)",
+        "observed_delta_calibration_anchor": 0.2449,
+        "dgp_true_delta": 0.2376,
+        "dgp": {
+          "p_nonzero_aligned": 0.2857,
+          "p_nonzero_cross": 0.0357,
+          "mean_aligned": 0.0518,
+          "mean_cross": 0.0112
+        },
+        "power_delta_gt0_by_n": {
+          "8": 0.3826,
+          "10": 0.5118,
+          "12": 0.6114,
+          "16": 0.7632,
+          "20": 0.8484,
+          "24": 0.9036,
+          "28": 0.9481
+        },
+        "min_n_80pct": 20
+      },
+      "sensitivity_v7_python_arm": {
+        "dgp_source": "data/results/sms_track2_v7.json (Study-4 Python cross arm)",
+        "observed_delta_calibration_anchor": 0.4445,
+        "dgp_true_delta": 0.4532,
+        "dgp": {
+          "p_nonzero_aligned": 0.6429,
+          "p_nonzero_cross": 0.1964,
+          "mean_aligned": 0.2424,
+          "mean_cross": 0.0719
+        },
+        "power_delta_gt0_by_n": {
+          "8": 0.7428,
+          "10": 0.8275,
+          "12": 0.885,
+          "16": 0.9515,
+          "20": 0.9803,
+          "24": 0.9921,
+          "28": 0.9969
+        },
+        "min_n_80pct": 10
+      }
+    },
+    "power_primary_at_n12": 0.6114,
+    "well_powered_at_n12_primary": false,
+    "note": "The primary DGP deliberately assumes the DEFLATED Study-4 C-arm point estimate (+0.2449), not the Python-scale effect: after the H-LANG NOT_CONFIRMED, powering the re-test on the optimistic Python effect would repeat the Study-4 design debt. Both legs are reported; the primary leg governs the \u00a74 feasibility statement."
+  },
+  "e_mr_diversity": {
+    "family": "MR \u2014 H2-4 MR-side diversity (delta_MR = SMS_R - SMS_L, paired on 28 PUTs, frozen v7 pools)",
+    "calibration_source": "data/results/sms_track2_v7.json + sms_track2_v7_same.json (v7 per-PUT SMS variance; design-from-prior-study, no Study-5 outcome exists)",
+    "n_puts": 28,
+    "per_put_mean_sms": {
+      "cross_arm_mean": 0.106,
+      "same_arm_mean": 0.1036,
+      "arm_avg_sd_sigma_put": 0.0663,
+      "between_arm_rho_v7": 0.9837
+    },
+    "machinery": "normal-approximation MC (same family as power_delta_delta), 40,000 draws/design point, seed 20260708+5; sigma_d = sigma_put*sqrt(2(1-rho))",
+    "effects_grid": [
+      0.02,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "rho_grid": [
+      0.0,
+      0.5,
+      0.75,
+      0.9837
+    ],
+    "power": {
+      "rho_0.0": {
+        "sigma_d": 0.0937,
+        "se_n28": 0.0177,
+        "projected_ci95_half_width": 0.0347,
+        "meets_eq_halfwidth_0.14": true,
+        "power_confirm_by_effect": {
+          "d_0.02": 0.3036,
+          "d_0.05": 0.8803,
+          "d_0.1": 1.0,
+          "d_0.2": 1.0
+        }
+      },
+      "rho_0.5": {
+        "sigma_d": 0.0663,
+        "se_n28": 0.0125,
+        "projected_ci95_half_width": 0.0245,
+        "meets_eq_halfwidth_0.14": true,
+        "power_confirm_by_effect": {
+          "d_0.02": 0.4839,
+          "d_0.05": 0.9908,
+          "d_0.1": 1.0,
+          "d_0.2": 1.0
+        }
+      },
+      "rho_0.75": {
+        "sigma_d": 0.0469,
+        "se_n28": 0.0089,
+        "projected_ci95_half_width": 0.0174,
+        "meets_eq_halfwidth_0.14": true,
+        "power_confirm_by_effect": {
+          "d_0.02": 0.7292,
+          "d_0.05": 1.0,
+          "d_0.1": 1.0,
+          "d_0.2": 1.0
+        }
+      },
+      "rho_0.9837": {
+        "sigma_d": 0.012,
+        "se_n28": 0.0023,
+        "projected_ci95_half_width": 0.0044,
+        "meets_eq_halfwidth_0.14": true,
+        "power_confirm_by_effect": {
+          "d_0.02": 1.0,
+          "d_0.05": 1.0,
+          "d_0.1": 1.0,
+          "d_0.2": 1.0
+        }
+      }
+    },
+    "note": "Even at the worst-case rho=0.0 the projected two-sided CI half-width is far below the registered 0.14 equivalence gate, so the H2-4 ladder will effectively be decided by whether the CI includes 0 \u2014 disclosed in the registration (\u00a73.4, \u00a74); the 0.14 gate is kept verbatim for form-identity with H2-2 and NOT tightened post-hoc."
+  },
+  "f_os_delta_delta": {
+    "family": "OS \u2014 H2-3 open-specification source diversity (Delta-delta_OS = delta(open-spec arm) - delta(registered-spec arm), paired on 28 PUTs)",
+    "decision_rule": "v1.1 H2-2 VERBATIM three-way (CONFIRM >= 0.20 / BOUNDED_NULL half-width <= 0.14 / UNDER-RECRUITED)",
+    "dgp_source": "data/results/sms_track2_v4.json (v4 hurdle DGP \u2014 IDENTICAL to the v1.1 and Study-4 H2-2 power runs; power is effect-size driven, not prompt driven)",
+    "registered_n": 28,
+    "target_detectable_delta_delta": 0.2,
+    "paired_se_by_n": {
+      "12": 0.1135,
+      "18": 0.089,
+      "24": 0.0771,
+      "28": 0.072,
+      "30": 0.0691,
+      "36": 0.0631
+    },
+    "calibrated_paired_rho": 0.7587,
+    "power_by_delta_delta": {
+      "dd_0.1": {
+        "12": 0.1426,
+        "18": 0.202525,
+        "24": 0.256725,
+        "28": 0.2845,
+        "30": 0.30765,
+        "36": 0.3516
+      },
+      "dd_0.15": {
+        "12": 0.25985,
+        "18": 0.3924,
+        "24": 0.494775,
+        "28": 0.547075,
+        "30": 0.5833,
+        "36": 0.659175
+      },
+      "dd_0.2": {
+        "12": 0.417075,
+        "18": 0.6133,
+        "24": 0.73825,
+        "28": 0.792775,
+        "30": 0.825825,
+        "36": 0.884725
+      }
+    },
+    "power_dd020_at_n28": 0.792775,
+    "min_n_80pct": {
+      "dd_0.1": null,
+      "dd_0.15": null,
+      "dd_0.2": 30
+    },
+    "empirical_anchor_study4": "the Study-4 H2-2 achieved paired CI half-width was 0.0448 (dualblind_delta_delta_v7.json) \u2014 well inside the 0.14 BOUNDED_NULL gate; the projection above is therefore conservative",
+    "note": "Marginal at n=28 (just below 0.80) exactly as in v1.1 and Study 4; the three-way rule already licenses UNDER-RECRUITED when the CI is wide, so no threshold is moved."
+  }
+}
