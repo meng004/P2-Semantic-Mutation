@@ -2,11 +2,8 @@
 
 ## Track
 
-Journal-First Paper submitted to the TOSEM Fast-Impact Track. The Fast-Impact
-Track imposes a 45-page text limit excluding the bibliography; the manuscript
-meets it exactly: the narrative body (Introduction through Conclusion, four
-studies) ends on page 45. We read the 45-page text limit as applying to the
-narrative body, with the required statements following on pages 46-47.
+Journal-First regular research paper submitted to ACM TOSEM. No special-track
+eligibility is claimed.
 
 ## Competing Interests
 
@@ -23,23 +20,20 @@ cover letter includes the requested journal-first novelty statement.
 
 ## Length
 
-In ACM manuscript-review format, the narrative body ends on page 45, exactly
-at the Fast-Impact Track 45-page text limit (excluding the bibliography); the
-required statements (data availability, funding, CRediT, generative-AI
-disclosure) follow on pages 46-47, and the References begin on page 47. The
-full PDF is 49 pages including references, and the online supplementary
-material is 37 pages. Content demoted for length (extended protocol prose,
-theorem proofs, higher-order-mutation analysis, full threats and
-program-selection tables, per-study scoreboards consolidated into one
-cross-study verdict ledger) was relocated to the supplementary appendices with
-pointers; no result, verdict, or number was removed.
+In ACM manuscript-review format, the narrative body (Introduction through
+Conclusion, four studies) ends on page 47; the full PDF is 50 pages
+including the required statements and references; the online supplementary
+material is 37 pages.
 
 ## Data and Artifact Availability
 
 All raw data, JSON single sources of truth, mutant pools, AVP source, and
 analysis scripts are archived on Zenodo under DOI 10.5281/zenodo.20250664.
-The industrial real-defect arm draws its result-level statistics from a
-separately archived defect dataset, Zenodo DOI 10.5281/zenodo.21203424.
+The post-hoc editorial sensitivity SSOTs (cluster_sensitivity_v1.json,
+denominator_sensitivity_v1.json, review_shadow_kappa_v7.json) are committed
+beside the frozen confirmatory SSOTs in data/results/. The industrial
+real-defect arm draws its result-level statistics from a separately archived
+defect dataset, Zenodo DOI 10.5281/zenodo.21203424.
 
 ## Generative AI Disclosure
 

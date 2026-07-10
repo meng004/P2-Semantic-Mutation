@@ -9,6 +9,51 @@ release stream.
 
 ---
 
+## [phase-W-editorial] — 2026-07-10 (four-study TOSEM Regular, Major-Revision integration)
+
+### Added
+- Post-hoc editorial sensitivity SSOTs beside the frozen confirmatory
+  SSOTs: `data/results/cluster_sensitivity_v1.json` (PUT-cluster block
+  bootstrap; supersedes cell-level CIs for citation),
+  `data/results/denominator_sensitivity_v1.json` (three-denominator
+  Study-1 sensitivity), `data/results/review_shadow_kappa_v7.json`
+  (cross-vendor shadow reviewer reliability, kappa 0.44/0.36 vs frozen,
+  0.80 shadow-shadow).
+- Denominator-sensitivity paragraph in the construct-validity threats;
+  full shadow-kappa picture reported in the manuscript.
+- `docs/release_2026-07-10/` release note for the Zenodo deposit scope
+  (ACM artifact badging).
+
+### Changed
+- Manuscript is now the four-study version (Study 1 audit; Study 2
+  confirmatory; Study 3 graded attribution; Study 4 cross-vendor /
+  graded / cross-language closure), each confirmatory within its own
+  registration ("sequential registered validation", no unified chain).
+- Claim downgrades per Major-Revision directives: MR-design-lever reading
+  now conditional (hypothesis for causal test); "does not replicate" ->
+  "failed to confirm replication under the registered rule"; Study-3
+  strict attribution narrowed to CE and HP (CF inestimable, no certifiable
+  sample); Study-3 graded verdict stated as NOT_CONFIRMED wording; Study-4
+  pooled graded CONFIRM stated as class-D-principal co-participation
+  (0.4211 over 19 units; class C 0.1026), never dominance; empirical
+  "certificate" vocabulary renamed to "audit record" (not a correctness
+  proof); bounded null stated via the sound containment rule CI within
+  [-0.20, +0.20] with the register-rule caveat disclosed.
+- Title now ends "...for Scientific-Computing Kernels" (main,
+  supplementary, build.py, CITATION.cff).
+- Submission target: TOSEM Regular track only; Fast-Impact framing removed
+  from cover letter/declarations; single authoritative package
+  `submission/TOSEM_regular_20260710/` (main 50 pp, supplementary 37 pp).
+- `REPRODUCIBILITY.md` rewritten: three tiers cover Studies 1-4 SSOTs,
+  the new sensitivity SSOTs, and the 549-test suite.
+
+### Removed
+- Stale packages `submission/TOSEM_fastimpact_20260709/` and
+  `submission/TOSEM_regular_20260709/` from the working tree (git history
+  preserves them).
+
+---
+
 ## [Unreleased]
 
 ### Added

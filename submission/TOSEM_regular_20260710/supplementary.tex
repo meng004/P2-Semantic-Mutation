@@ -27,7 +27,7 @@
   columns=fullflexible
 }
 
-\title[Supplementary Material]{Supplementary Material for ``A Semantic Mutation Metric for Metamorphic-Relation Adequacy in Scientific Computing Programs''}
+\title[Supplementary Material]{Supplementary Material for ``A Semantic Mutation Metric for Metamorphic-Relation Adequacy for Scientific-Computing Kernels''}
 
 \author{Meng Li}
 \orcid{0000-0002-1074-1502}
@@ -272,11 +272,12 @@ SMS bias
 \bottomrule\noalign{}
 \endlastfoot
 E1 alone & numerical coincidence + AVP-coherent & E1 false $\to$ non-equiv &
-Low (smaller denominator) \\
+High (false equivalents shrink the denominator) \\
 E2 alone & output match, MR differs (rare) & K\_eq miss, full-space
 equal & High \\
 \textbf{E1 $\wedge$ E2} & both mis-pass simultaneously & E1 $\vee$ E2 false $\to$ non-equiv
-& Slightly high (conservative) \\
+& Slightly low (conservative; misjudged equivalents stay in the
+denominator as unkillable survivors) \\
 \end{longtable}
 }
 
@@ -1320,15 +1321,29 @@ qualification).} Under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2), semantic-class equ
 (E1 $\wedge$ E2) degenerates to classical behavioural equivalence
 \textbf{almost everywhere} w.r.t. measure $D_S$.
 
-\emph{Proof.} E1 (type consistency) holds trivially under $\varepsilon_{\mathrm{eq}} \to 0$ (L6
-makes imperative output spaces scalar/vector with static types). E2
-($|S_i(x) - s'(x)| < \varepsilon_{\mathrm{eq}}$ for $K_{\mathrm{eq}}$ samples)
+\emph{Proof.} Both arms of the E1 $\wedge$ E2 judgement carry the
+canonical definitions of §A.1 (E1: AVP coherence,
+$\forall \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \mathrm{AVP}(s', \mathit{mr})$;
+E2: bounded output equivalence), and only $L_{\mathrm{equiv}}$ is
+assumed. \emph{E2 arm.} The check
+$\|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$ for $K_{\mathrm{eq}}$ samples
 under L1 ($\varepsilon_{\mathrm{eq}} \to 0$) $\wedge$ L2 ($K_{\mathrm{eq}} \to \infty$ with measure-equivalent sampling)
 is almost-everywhere equivalent to $\forall x \in D_S \setminus N: S_i(x) = s'(x)$, where
 $N$ is a $D_S$-measure-zero set (continuous $D_S$: floating-point
-pathological points / NaN propagation; discrete $D_S$: $N = \emptyset$). This
+pathological points / NaN propagation; discrete $D_S$: $N = \emptyset$).
+\emph{E1 arm.} In the same limit E1 adds no further restriction almost
+everywhere: if $S_i = s'$ outside $N$, every AVP evaluation reads
+identical outputs on source inputs and on their MR-transformed images
+outside $N$ (the MR transformations $r$ are $D_S$-non-singular, so they
+do not map positive-measure sets into $N$), giving
+$\mathrm{AVP}(S_i, \mathit{mr}) = \mathrm{AVP}(s', \mathit{mr})$ for all
+$\mathit{mr} \in \mathrm{MR}_{i,k}$ up to the same measure-zero set;
+conversely, since E1 $\wedge$ E2 $\subseteq$ E2, the conjunction never
+admits a mutant the E2 arm excludes. Hence E1 $\wedge$ E2 degenerates
+to the pointwise-equality relation almost everywhere, which
 matches \citet{jia2011analysis} §3 classical equivalent-mutant definition
-under measure-zero equivalence classes.
+under measure-zero equivalence classes. No component of
+$L_{\mathrm{killed}}$ or $L_{\mathrm{mut}}$ is used.
 
 \textbf{Lemma G.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
 degenerates to classical difference detection.
@@ -1359,7 +1374,8 @@ w.r.t. $D_S$,
 
 \[ \mathrm{SMS}_{i,k,j} \xrightarrow{L} \mathrm{MS}_{i,j} := \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
 
-\emph{Proof.} Combine Lemmas 9.1-9.3:
+\emph{Proof.} Combine Lemmas G.1--G.3, each under exactly its own
+joint condition:
 
 \begin{itemize}
 
@@ -1378,24 +1394,14 @@ w.r.t. $D_S$,
 
 Substituting into the SMS formula gives $\mathrm{MS}_{i,j}$.
 
-\textbf{Corollary G (LRCA trivialisation).} Under $L = L1 \wedge L2 \wedge L3$, C
-= \{C1, \ldots, C5\} degenerates to \{C1\}.
+\textbf{Remark (LRCA layer).} The diagnostic LRCA layer sits outside
+the SMS formula, so Theorem G carries the backward-compatibility claim
+on its own. Whether the root-cause inventory C = \{C1, \ldots, C5\}
+also collapses to \{C1\} under $L$ depends on the engineering
+thresholds of the §A.2 decision tree; no formal claim is made.
 
-\emph{Sketch.} Each of C2-C5's triggering precondition depends on at
-least one $L_j$ being violated. When L1 $\wedge$ L2 $\wedge$ L3 hold simultaneously,
-every non-trivial-space dimension (MR non-triviality, AVP tolerance
-non-zero, non-empty equiv set, MR-design DOF, class-mapping openness)
-closes; C2-C5 triggering set becomes empty (read off from §A.2 decision
-tree). The per-C\_k to per-L\_j minimum-sufficient mapping depends on
-the main manuscript's LRCA-diagnosis engineering thresholds; we do not claim one-to-one
-correspondence at formal level, readers can trace through §A.2 + §C.4.
-Under L, $\texttt{suspect\_share} \to 0$, LRCA reports only C1, SMS degenerates to
-single-layer metric consistent with \citet{jia2011analysis} MS engineering
-structure.
-
-\textbf{Empirical consistency.} Theorem G and the LRCA-trivialisation
-corollary jointly
-show that the SMS-based empirical conclusions (Cliff's delta in the aligned-versus-cross results,
+\textbf{Empirical consistency.} Theorem G
+shows that the SMS-based empirical conclusions (Cliff's delta in the aligned-versus-cross results,
 Friedman chi\^{}2 in the cross-class consistency results, and Spearman rho in the SMS-vs-Pattern-Coverage analysis) are structurally consistent
 with existing \citet{jia2011analysis} literature in classical
 syntactic-mutation scenarios, no metric-level semantic fragmentation.
@@ -1889,7 +1895,8 @@ live with a loud-fail smoke gate; on the v6 campaign it matched 633 candidates
 and flagged 36 multi-stratum where the v5 screen matched zero, so the P8 fix is
 verified in production, not only in unit tests & the Study-3 execution section \\
 Rich-class attribution remains open (Study 3) & Graded declared-stratum
-attribution is refuted on rich (surrogate/ML) classes & Construct & Reported as
+attribution did not reach the confirmation threshold on rich (surrogate/ML)
+classes & Construct & Reported as
 a registered NOT\_CONFIRMED (rich-class mean share 0.0833 $<$ 0.15 bar) with
 $n_{\mathrm{rich}} = 6$; a richer multi-valued attribution model is an open
 construct question, not a promised study & the Study-3 interpretation section \\
@@ -1977,8 +1984,8 @@ identifies $\alpha$ as the single hinge connecting MR-side quality (strength) an
 mutant-side quality (activity). Classification is relative to
 $(I, \alpha, \text{budget})$: extending $I$ can only move a mutant from
 active-off-taxonomy to $\psi$-stratified, never the reverse, and bounded
-$\equiv_\alpha$ verdicts are search conclusions, not proofs, so every certificate
-carries its $(I, \alpha, \text{budget})$ stamp.
+$\equiv_\alpha$ verdicts are search conclusions, not proofs, so every audit
+record carries its $(I, \alpha, \text{budget})$ stamp.
 
 \paragraph{Strong / weak MR and the strong boundary (full definitions).}
 the duality theorem reads off strength algebraically, assuming the

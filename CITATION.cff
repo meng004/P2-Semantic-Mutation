@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "A semantic mutation metric for metamorphic relation adequacy in scientific computing programs"
+title: "A semantic mutation metric for metamorphic relation adequacy for scientific-computing kernels"
 message: "If you use SMS in your research, please cite this preprint."
 type: software
 authors:
@@ -35,7 +35,12 @@ abstract: >-
   overlap between LLM-generated and default cosmic-ray syntactic mutants
   is small; the Hyperparameter, Structural Injection, and Trajectory
   Flip classes are unreachable under default first-order syntactic
-  configurations.
+  configurations. Three pre-registered follow-up studies on fresh data
+  extend the audit: a blind-authored 28-PUT confirmatory study, a graded
+  attribution study, and a four-vendor dual-blind closure returning a
+  bounded null on source diversity, a graded co-participation confirmation,
+  and a cross-language test that failed to confirm replication under the
+  registered rule; each study is confirmatory within its own registration.
 keywords:
   - metamorphic testing
   - mutation testing
@@ -56,12 +61,12 @@ identifiers:
     description: "Zenodo archival DOI for v1.0.0 release (replication package)"
 preferred-citation:
   type: article
-  title: "A semantic mutation metric for metamorphic relation adequacy in scientific computing programs"
+  title: "A semantic mutation metric for metamorphic relation adequacy for scientific-computing kernels"
   authors:
     - given-names: "Meng"
       family-names: "Li"
       email: "mlemon@usc.edu.cn"
       affiliation: "School of Computing, University of South China"
   year: 2026
-  url: "https://arxiv.org/abs/<ARXIV_ID>"
-  notes: "arXiv preprint; submitted to Information and Software Technology (IST)"
+  url: "https://arxiv.org/abs/2605.17437"
+  notes: "arXiv preprint (four-study version); submitted to ACM TOSEM as a Journal-First regular research paper"

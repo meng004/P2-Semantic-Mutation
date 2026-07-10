@@ -1,8 +1,13 @@
-# Reproducibility Guide for P2 Empirical Audit
+# Reproducibility Guide for the SMS Four-Study Audit
 
-**Paper:** When LLM Source Diversity Doesn't Help: A Semantic Mutation Score Audit (论文初稿P2.md)
-**Primary data version:** v4 cross-source（Claude Opus 4.6 + GPT-5.4 + DeepSeek V4 Pro）
-**SSOT for paper numbers:** `data/results/paper_numbers_v4.json`
+**Paper:** A Semantic Mutation Metric for Metamorphic-Relation Adequacy for
+Scientific-Computing Kernels (TOSEM regular research paper; source in
+`source/main.tex` + `source/supplementary.tex`, package built by
+`venues/tosem/build.py`)
+**Studies covered:** Study 1 (12-PUT audit, v4 cross-source), Study 2
+(28-PUT confirmatory, v5), Study 3 (graded attribution, v6), Study 4
+(cross-vendor / graded / cross-language closure, v7 + C port)
+**Master seed for Studies 2-4 statistics:** 20260708
 
 ---
 
@@ -15,130 +20,142 @@
 | RAM | 16 GB | 8 GB |
 | Disk | 4 GB free | 2 GB free |
 | Python | 3.12.x | 3.11+ |
-| Network | required for LLM API calls (steps 3–4 only) | optional if using cached `data/operator_campaign/raw/` |
+| C toolchain (Study 4 H-LANG only) | gcc/clang, C99 | any C99 compiler |
+| Network | required only for tier-3 LLM regeneration | not needed for tiers 1-2 |
 
 ## 2. Environment setup
 
 ```bash
-# Clone repo and create venv
-git clone <repo-url> mt-completeness && cd mt-completeness
+git clone <repo-url> && cd <repo>
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements-frozen.txt
 
-# Configure LLM credentials (steps 3-4 only; skip if using committed cache)
-cp .env.example .env   # then edit .env to set:
-#   ANTHROPIC_API_KEY        (Claude Opus generator)
-#   BLTCY_BASE_URL + BLTCY_API_KEY    (GPT-5.4 reviewer via your OpenAI-compatible proxy)
-#   DEEPSEEK_BASE_URL + DEEPSEEK_API_KEY  (DeepSeek V4 Pro arbitrator)
-# Replace <YOUR_BASE_URL> / <YOUR_API_KEY> placeholders with your own credentials.
+# LLM credentials are needed ONLY for tier 3 (full re-generation)
+cp .env.example .env   # fill in vendor keys; see comments in the file
 ```
 
-## 3. Smoke test
+## 3. Tier 1 — Smoke test (no API key, ~1 min)
 
 ```bash
 PYTHONPATH=src .venv/bin/pytest tests/ -q
-# Expected: 192 passed, 0 failed, ~30s wallclock
+# Expected: 549 passed, ~30s wallclock
 ```
 
-## 4. End-to-end reproduction
+## 4. Tier 2 — Cached / SSOT replay (no API key, ~30 min)
 
-Two paths depending on whether you want to re-call LLMs.
+All confirmatory pools and review labels are committed and frozen; every
+paper number re-derives deterministically from them.
 
-### Path A — Use committed cache (deterministic, ~20 min)
+### 4.1 Study 1 (v4 cross-source, 12 PUTs)
 
-Cache contains **470 LLM trials with raw responses + V1-V6 reviewer labels**, sufficient to reproduce all paper numbers without any LLM API calls.
-
-**Two environment variables together select the paper's analysis configuration:**
-- `SMS_VERSION=v4` — picks the v4 cross-source data files (sms_track2_v4.json, lrca_60cell_v4.json, rq{2,3,4}_*_v4.json).
-- `P2_PRIMARY_VERSION=v3b` — picks the data-driven c-class primary MP assignment (c1/c2/c3 → MP1, from `data/results/c_class_mp_ranking.json`); this is what §3.5.1 of the paper documents and what the `aligned` / `cross` grouping in §5.7 depends on.
-
-**Both are required.** Setting only `SMS_VERSION=v4` without `P2_PRIMARY_VERSION=v3b` will recompute aligned/cross with the v3 default primary (c-class → MP5) and produce numbers that do **not** match the paper.
+Both environment variables are required for the paper's configuration:
 
 ```bash
 export SMS_VERSION=v4
-export P2_PRIMARY_VERSION=v3b   # REQUIRED — matches §3.5.1 c-class data-driven primary MP
+export P2_PRIMARY_VERSION=v3b   # c-class data-driven primary MP (paper section 3.5.1)
 
-# 4A.1  Build per-PUT cross-source v4 pools (≤ 1 min)
 PYTHONPATH=src .venv/bin/python scripts/build_pools.py
-
-# 4A.2  SMS campaign Track-2 v4 (~10-15 min, 60 cells × 12 mutants × N=20 repeats)
-PYTHONPATH=src .venv/bin/python scripts/sms_campaign.py --track 2 \
-    --workers 6 --repeats 20 \
-    2>&1 | tee data/results/sms_track2_v4_console.log
-
-# 4A.3  LRCA labeling (~5 min, 60 cells × ~12 mutants/cell)
+PYTHONPATH=src .venv/bin/python scripts/sms_campaign.py --track 2 --workers 6 --repeats 20
 PYTHONPATH=src .venv/bin/python scripts/run_lrca.py
-
-# 4A.4  RQ statistics
 PYTHONPATH=src .venv/bin/python scripts/compute_rq2.py
-PYTHONPATH=src .venv/bin/python scripts/compute_rq2_logit.py
 PYTHONPATH=src .venv/bin/python scripts/compute_rq3.py
 PYTHONPATH=src .venv/bin/python scripts/compute_rq3_friedman.py
 PYTHONPATH=src .venv/bin/python scripts/compute_rq4.py
-
-# 4A.5  Aggregate paper numbers SSOT
 PYTHONPATH=src .venv/bin/python scripts/build_paper_numbers.py
-
-# 4A.6  Render figures
-PYTHONPATH=src .venv/bin/python scripts/render_figures.py
 ```
 
-**Note:** All `compute_rq*.py` scripts and `build_paper_numbers.py` import `PRIMARY_CELLS` at module load, so the env vars **must** be exported before invoking each script. If you forget `P2_PRIMARY_VERSION=v3b`, `mean_aligned` will be ~0.213 instead of the paper's 0.275 (Cliff's δ and Friedman χ² stay the same; only aligned/cross grouping changes).
+Expected SSOTs: `paper_numbers_v4.json` (RQ1 mean SMS 0.104, 45/60 zero
+cells; RQ3 Friedman chi2 15.30), `rq2_cliffs_delta_v4_mp5.json` (delta
+0.3142), `s5_purity_v4.json`, `h2_incidence_v4.json`.
 
-### Path B — Re-call LLMs from scratch (non-deterministic, ~3-4 h, USD ~$80)
-
-Adds steps before 4A:
+### 4.2 Study 2 (v5, 28 PUTs) and Study 4 (v7 arms)
 
 ```bash
-# 4B.0  Cross-source mutant generation
-PYTHONPATH=src .venv/bin/python scripts/cross_source_campaign.py --workers 4
-# Then continue from 4A.1
+# H2-1' (v5) and H2-2 (v7 paired contrast); defaults point at frozen pools
+PYTHONPATH=src .venv/bin/python scripts/compute_dualblind_delta.py
+# Study 3 / Study 4 graded attribution (H4''-graded/strict, H4''')
+PYTHONPATH=src .venv/bin/python scripts/compute_h4_graded.py
+PYTHONPATH=src .venv/bin/python scripts/h4_v7_sensitivities.py
+# Study 4 H-LANG (C port)
+PYTHONPATH=src .venv/bin/python scripts/compute_hlang_delta.py
 ```
 
-## 5. Expected outputs
+Expected SSOTs: `dualblind_delta_delta_v5.json` (delta +0.4295),
+`dualblind_delta_delta_v7.json` (Delta-delta +0.0147, CI [-0.021, +0.0686]),
+`h4_graded_v6.json` / v7 outputs (Study 3 rich-class mean share 0.0833;
+Study 4 pooled 0.2917, class D 0.4211 / class C 0.1026),
+`hlang_delta_v7c.json` (delta_C +0.2449, one-sided lower -0.0357).
 
-After Path A or B, you should see:
+### 4.3 Post-hoc editorial sensitivity SSOTs (2026-07-10)
 
-| File | Size | Verification |
-|---|---|---|
-| `data/results/paper_numbers_v4.json` | ~1.5 KB | matches values in §6 below |
-| `data/results/sms_track2_v4.json` | ~50 KB | 60 SMS records |
-| `data/results/lrca_60cell_v4.json` | ~187 KB | 60 cells × 5 LRCA buckets |
-| `data/results/rq2_cliffs_delta_v4.json` | ~0.5 KB | δ ≈ 0.439 |
-| `data/results/rq3_friedman_v4.json` | ~0.5 KB | χ² ≈ 15.30 |
-| `figures/fig1_60cell_heatmap.pdf` | ~18 KB | visual identical to figures/v2/ |
-| `figures/fig{2..5}.pdf` | 13–16 KB each | — |
+These respond to the editorial review and are cited by the manuscript as the
+headline inference for aligned-versus-cross CIs:
 
-## 6. Expected paper numbers (sanity check)
-
-After `build_paper_numbers.py --version v4`, `data/results/paper_numbers_v4.json` MUST report:
-
-```json
-{
-  "rq1": {"n_cells": 60, "mean_sms": 0.104, "n_zero_sms": 45, "h5_pass_ratio": 0.20},
-  "rq2": {"cliffs_delta": 0.439, "h2_delta_pass": false, "h2_threshold_delta": 0.474},
-  "rq3": {"friedman_chi2": 15.30, "friedman_p": 0.0041, "primary_converged": false},
-  "rq4": {"spearman_rho": 0.163, "spearman_p": 0.613}
-}
+```bash
+# PUT-cluster block bootstrap: supersedes cell-level CIs for citation
+PYTHONPATH=src .venv/bin/python scripts/compute_cluster_sensitivity.py
+# Study-1 SMS denominator sensitivity (three denominators)
+PYTHONPATH=src .venv/bin/python scripts/compute_denominator_sensitivity.py
 ```
 
-Tolerance: stochastic PUTs (b2 MCMC, b3 MC, c-class GPR, d1 MLP) introduce ~0.05 SMS noise across reproductions; aggregated δ / χ² should match within ±0.005.
+Expected SSOTs (byte-stable at seed 20260708, B=10000):
+`cluster_sensitivity_v1.json` (v5 lower +0.2777; v7 cross +0.2902; v7 same
++0.2793; Study-1 v4 +0.0833; H-LANG cluster lower 0.0; H2-2 already
+PUT-clustered as registered) and `denominator_sensitivity_v1.json`
+(all-admitted delta 0.3142; certified declared-stratum 0.7917 with 6/12 PUTs
+recruiting zero certified primary-flipping mutants; active-any-flip 0.4043).
+
+`review_shadow_kappa_v7.json` (kappa vs frozen 0.44/0.36, shadow-shadow
+0.80) is committed as-is; re-running `scripts/review_shadow_kappa.py` calls
+external vendors and belongs to tier 3.
+
+### 4.4 Verification rule
+
+Re-derived SSOTs must be byte-identical to the committed files:
+
+```bash
+git diff --stat data/results/
+# Expected: empty (stochastic-PUT per-cell SMS may differ +-0.05 only if you
+# regenerate SMS instead of replaying the frozen pools)
+```
+
+## 5. Tier 3 — Full LLM re-generation (API keys, hours, ~USD 100+)
+
+Non-deterministic; produces a fresh pool, not the paper's numbers.
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/cross_source_campaign.py --workers 4   # Study 1
+# Studies 2-4 ran once under frozen registrations (docs/PREREGISTRATION_STUDY{2,3,4}*)
+# through the registered harness/gateway; see docs/CAMPAIGN_RUNBOOK.md and
+# docs/PILOT_LOG.md (incidents P1-P16) before attempting any re-run.
+PYTHONPATH=src .venv/bin/python scripts/review_shadow_kappa.py               # shadow review
+```
+
+## 6. Manuscript build
+
+```bash
+python3 venues/tosem/build.py --track regular
+# Produces submission/TOSEM_regular_<date>/ with main.pdf + supplementary.pdf
+# (tectonic used when xelatex is absent); check logs for zero "Missing character".
+```
 
 ## 7. Reproducibility boundaries
 
-- **LLM nondeterminism:** Claude Opus subscription API exposes no seed. Cross-source pool generation (Path B step 4B.0) will produce different mutants on each run. **Use Path A (cached) for paper-grade reproduction.**
-- **Stochastic PUTs:** N=20 repeats reduces but does not eliminate sampling noise; per-cell SMS may differ ±0.05 between Path A reruns due to numpy RNG state.
-- **LRCA threshold sensitivity:** OOD threshold = 0.05, tolerance multiplier = 10×, N=20 majority. Changes alter `c1_share` distribution but not SMS itself. See §4.6.4 for the 9-grid calibration sweep.
-- **Equivalence detector ε:** unified ε = 1e-6 (PUT-side and AVP-side); see §4.4 for rationale.
+- **LLM nondeterminism:** generation APIs expose no seed; use tier 2 for
+  paper-grade reproduction.
+- **Stochastic PUTs:** N=20 repeats leaves ~0.05 per-cell SMS noise if SMS is
+  re-measured rather than replayed.
+- **Registered verdicts:** frozen SSOTs are the citation source; the
+  PUT-cluster CIs in `cluster_sensitivity_v1.json` supersede cell-level CIs
+  for citation, with all registered verdicts unchanged.
+- **Equivalence detector epsilon:** unified 1e-6 (PUT-side and AVP-side).
 
 ## 8. Per-artifact provenance
 
-See `DATASET.md` (data/code lineage) and `docs/STATE.md` (current paper-stage status).
+See `DATASET.md` (data/code lineage) and `docs/STATE.md` (current stage).
 
 ## 9. Reporting issues
 
-If reproduction yields out-of-tolerance numbers, please open an issue with:
-- Full `pytest -q` output
-- `python --version` + `pip freeze`
-- Diff of `paper_numbers_v4.json` vs §6 above
-- The exact command sequence used
+If reproduction yields out-of-tolerance numbers, please open an issue with
+the full `pytest -q` output, `python --version` + `pip freeze`, the SSOT
+diff, and the exact command sequence used.

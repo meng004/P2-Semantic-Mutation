@@ -2,8 +2,22 @@
 
 > 每次会话开始**只读这一个文件**即可定位。任何重大 commit 后请同步本文件 + 末尾 `last_synced` 日期。
 
-**Last synced:** 2026-07-09（study3 收官：三研究稿 submit-ready，TOSEM Regular track，终评 8/10 SUBMIT NOW）
-**Stage:** **三研究稿 submit-ready（phase-Q）**；NOEther 术语全稿对齐；四项终评 minor 全闭合
+**Last synced:** 2026-07-10（phase-W editorial：四研究稿 Major-Revision 指令全量落地，TOSEM Regular 唯一权威包重建）
+**Stage:** **四研究稿 submit-ready（phase-W）**；P0-2 形式修正 + P1 敏感性 SSOT + P0-3 claim 降级 + P0-1/4/5 全闭合
+
+**2026-07-10 editorial-integration wave（本轮）：**
+- **研究数**：四研究（S1 12-PUT 划界 → S2 28-PUT 方向性确认 → S3 归因双面边界 → S4 跨厂商/分级归因/跨语言收官），每研究仅在自身注册内 confirmatory（"sequential registered validation"，非前瞻统一确认链）
+- **判定（当前措辞）**：H2-1' CONFIRM（δ=+0.4295，PUT-cluster 单侧下界 +0.2777 为引用口径）| H4' NOT_CONFIRMED | H4''-strict CONFIRM（仅 CE/HP；CF 无可认证样本，inestimable）| H4''-graded NOT_CONFIRMED（0.0833，下界 0，n_rich=6，"did not reach the confirmation threshold"）| H2-2 BOUNDED_NULL（Δδ=+0.0147，CI [-0.021,+0.0686]⊂[-0.20,+0.20] sound containment；注册 half-width 规则 caveat 已披露；MR-design-lever 降级为待因果检验假设）| H4'''-graded CONFIRM（class D 主导 0.4211/19 units，class C 0.1026 低于 bar，co-participation 措辞，永不 dominance）| H-LANG NOT_CONFIRMED（cluster 下界 0.0 a fortiori；"failed to confirm replication under the registered rule"）
+- **P1 整合**：PUT-cluster CI 为 headline 引用（cluster_sensitivity_v1.json supersedes cell-level）；denominator 敏感性段落入 construct-validity threats（6/12 PUT 零 certified primary-flipping）；shadow-κ 全貌（0.44/0.36 overall，0.80 shadow-shadow，contested family 近零）
+- **词汇**：经验"certificate"→"audit record"（非 correctness proof 一次性声明）；标题改 "...for Scientific-Computing Kernels"
+- **Track/包**：TOSEM Regular（Fast-Impact 措辞全删，45 页解读段删除，页数平述：正文至 p47，主稿 50 页，附录 37 页）；唯一权威包 `submission/TOSEM_regular_20260710/`（tectonic 编译，零 Missing character）；20260709 两旧包已从工作树移除（git history 保留）
+- **归档同步**：REPRODUCIBILITY.md 三档覆盖 S1-S4 SSOT + 新敏感性 SSOT + 549 测试；CITATION.cff/CHANGELOG 四研究态；docs/release_2026-07-10/zenodo_deposit_checklist.md（ACM badging 清单）
+- **验证**：pytest 549 passed；build.py precheck 零错误
+- **用户门槛项**：(a) Zenodo 铸造（预注册 + 复制包，见 release note）;(b) 实际投稿 TOSEM Regular;(c) commit 本轮工作树改动
+
+**（前史 phase-Q 状态：）**
+**Last synced（前史）:** 2026-07-09（study3 收官：三研究稿 submit-ready，TOSEM Regular track，终评 8/10 SUBMIT NOW）
+**Stage（前史）:** 三研究稿 submit-ready（phase-Q）；NOEther 术语全稿对齐；四项终评 minor 全闭合
 
 **Study-3（2026-07-09,注册 v2.0 分级归因研究）：**
 - 动机：H4' NOT_CONFIRMED + P8 事故（v5 滤器静默 no-op）+ L2 诊断（117/117 构念级耦合）

@@ -24,23 +24,27 @@ ABSTRACT = (
     "syntactic edits and does not say whether a metamorphic-relation set "
     "observes declared domain-semantic effects. This paper introduces Semantic "
     "Mutation Score (SMS), an MR-relative adequacy metric over an admitted "
-    "universe of nonequivalent semantic mutants with explicit certificates and "
+    "universe of nonequivalent semantic mutants with explicit audit records and "
     "a degeneration path back to classical mutation score, instantiated as "
     "five operator families on 12 single-output scientific-computing programs "
     "and audited through four pre-registered studies with boundary, adjoint, "
     "and industrial real-defect arms. Threshold misses delimit operator "
     "applicability, MR-design adequacy, and kill attribution rather than "
     "support universal dominance. A matched four-vendor dual-blind study "
-    "returns a bounded null, so metamorphic-relation design, not generator "
-    "diversity, is the operative lever. Graded declared-stratum attribution "
-    "confirms within its registration, class C staying below the registered "
+    "returns a bounded null: under the matched fixed-specification protocol "
+    "no source-diversity effect of the registered magnitude was detected, "
+    "while the aligned-over-cross direction replicated, so the reading that "
+    "metamorphic-relation design is the operative lever remains a hypothesis "
+    "for causal test. Graded declared-stratum attribution "
+    "confirms within its registration, with co-participation observed "
+    "principally in class D and class C staying below the registered "
     "bar on its own; a matched-regime sensitivity shows the signal comes "
     "entirely from multi-stratum co-firing mutants that the earlier screened "
     "admission regime excluded, so the confirmed construct is coupled "
     "attribution rather than purity rescued by recruitment. Cross-language "
-    "invariance does not replicate on a C port, a non-replication reported "
-    "plainly. SMS is therefore a construct-level diagnostic for declared "
-    "semantic strata."
+    "invariance failed to confirm replication under the registered rule on a "
+    "C port, reported plainly. SMS is therefore a construct-level diagnostic "
+    "for declared semantic strata."
 )
 
 
@@ -73,10 +77,10 @@ def copy_used_figures(out_dir: Path) -> None:
 def write_supplement_readme(out_dir: Path) -> None:
     write(
         out_dir / "readme.txt",
-        "Supplementary material for the TOSEM Fast-Impact Track submission "
-        "\"A Semantic Mutation "
-        "Metric for Metamorphic-Relation Adequacy in Scientific Computing "
-        "Programs\".\n\n"
+        "Supplementary material for the TOSEM (regular research paper) "
+        "submission \"A Semantic Mutation "
+        "Metric for Metamorphic-Relation Adequacy for Scientific-Computing "
+        "Kernels\".\n\n"
         "Contents: supplementary.pdf (with LaTeX source supplementary.tex) "
         "provides Appendices A-K: notation and the operator catalogue, "
         "experimental subjects and operator specialisations, procedure "
@@ -95,7 +99,6 @@ def write_supplement_readme(out_dir: Path) -> None:
 
 
 TRACK_SLUGS = {
-    "fastimpact": "fastimpact",
     "regular": "regular",
 }
 
@@ -416,7 +419,7 @@ def build_main() -> str:
     body = convert_fig_descriptions(body)
     return (
         acm_preamble(
-            "A Semantic Mutation Metric for Metamorphic-Relation Adequacy in Scientific Computing Programs",
+            "A Semantic Mutation Metric for Metamorphic-Relation Adequacy for Scientific-Computing Kernels",
             "Semantic Mutation Score for MR Adequacy",
         )
         + "\n\\begin{document}\n\n"
@@ -440,7 +443,7 @@ def build_supplement() -> str:
     body = normalize_symbols(body)
     return (
         acm_preamble(
-            "Supplementary Material for ``A Semantic Mutation Metric for Metamorphic-Relation Adequacy in Scientific Computing Programs''",
+            "Supplementary Material for ``A Semantic Mutation Metric for Metamorphic-Relation Adequacy for Scientific-Computing Kernels''",
             "Supplementary Material",
         )
         + "\n\\begin{document}\n\n"
@@ -458,10 +461,14 @@ def run(cmd: list[str], cwd: Path) -> None:
 
 
 def compile_tex(out_dir: Path, stem: str) -> None:
-    run(["xelatex", "-interaction=nonstopmode", "-halt-on-error", f"{stem}.tex"], out_dir)
-    run(["bibtex", stem], out_dir)
-    run(["xelatex", "-interaction=nonstopmode", "-halt-on-error", f"{stem}.tex"], out_dir)
-    run(["xelatex", "-interaction=nonstopmode", "-halt-on-error", f"{stem}.tex"], out_dir)
+    if shutil.which("xelatex"):
+        run(["xelatex", "-interaction=nonstopmode", "-halt-on-error", f"{stem}.tex"], out_dir)
+        run(["bibtex", stem], out_dir)
+        run(["xelatex", "-interaction=nonstopmode", "-halt-on-error", f"{stem}.tex"], out_dir)
+        run(["xelatex", "-interaction=nonstopmode", "-halt-on-error", f"{stem}.tex"], out_dir)
+    else:
+        # tectonic runs BibTeX and re-runs passes automatically
+        run(["tectonic", "--keep-logs", f"{stem}.tex"], out_dir)
 
 
 def precheck(tex: str) -> list[str]:
@@ -481,21 +488,22 @@ def precheck(tex: str) -> list[str]:
 
 def package_precheck(out_dir: Path, track: str) -> list[str]:
     errors: list[str] = []
-    if track != "fastimpact":
+    if track != "regular":
         return errors
 
     cover = read(out_dir / "cover_letter.md")
     declarations = read(out_dir / "declarations.md")
     combined = cover + "\n" + declarations
     checks = [
-        (r"Journal-First", "missing Journal-First track statement"),
-        (r"Fast-Impact", "missing Fast-Impact eligibility statement"),
+        (r"Journal-First", "missing Journal-First statement"),
+        (r"regular research paper", "missing regular-track statement"),
         (r"novelty statement", "missing journal-first novelty statement"),
-        (r"45-page", "missing 45-page length-threshold statement"),
         (r"arXiv:2605\.17437", "missing disclosed arXiv prior version"),
         (r"10\.5281/zenodo\.20250664", "missing artifact DOI"),
     ]
     errors.extend(message for pattern, message in checks if not re.search(pattern, combined))
+    if re.search(r"Fast-Impact|fast-impact|45-page", combined):
+        errors.append("stale Fast-Impact / 45-page wording present in cover letter or declarations")
     return errors
 
 
@@ -505,8 +513,8 @@ def main() -> None:
     parser.add_argument(
         "--track",
         choices=sorted(TRACK_SLUGS),
-        default="fastimpact",
-        help="TOSEM submission track packaging label.",
+        default="regular",
+        help="TOSEM submission track packaging label (regular only).",
     )
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--no-compile", action="store_true")
