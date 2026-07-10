@@ -1,0 +1,57 @@
+```python
+import math
+
+_TOL = 1e-12
+
+
+def _finite_pair(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return None
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return None
+    return yo, yn
+
+
+def _nondecreasing_output(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    yo, yn = vals
+    return yn + _TOL >= yo
+
+
+# Move every input to the top element of [0, 1].
+def r_1(x):
+    return 1.0
+
+
+def R_1(y_orig, y_new):
+    return _nondecreasing_output(y_orig, y_new)
+
+
+# Move x halfway upward toward 1: r(x) = (x + 1) / 2 >= x on [0, 1].
+def r_2(x):
+    x = float(x)
+    return 0.5 * (x + 1.0)
+
+
+def R_2(y_orig, y_new):
+    return _nondecreasing_output(y_orig, y_new)
+
+
+# Concave upward-order transformation: sqrt(x) >= x on [0, 1].
+def r_3(x):
+    x = float(x)
+    if x <= 0.0:
+        return 0.0
+    if x >= 1.0:
+        return 1.0
+    return math.sqrt(x)
+
+
+def R_3(y_orig, y_new):
+    return _nondecreasing_output(y_orig, y_new)
+```

@@ -1,0 +1,16 @@
+
+
+```python
+import math
+
+_TI = np.linspace(0.0, 1.0, 17)
+_SPLINE = CubicSpline(_TI, np.sin(np.pi * _TI), bc_type="natural")
+
+def r_1(x):
+    """MP4 — symmetry about ½: S(x) = S(1-x)"""
+    return 1.0 - x
+
+def R_1(y_orig, y_new):
+    """output relation: R_1(y_orig, y_new) == True iff y_orig == y_new"""
+    return math.isclose(y_orig, y_new, abs_tol=1e-9)
+```

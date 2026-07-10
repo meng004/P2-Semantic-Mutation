@@ -1,0 +1,29 @@
+
+
+```python
+import math
+import numpy as np
+
+x0 = 0.0
+x1 = 1.0
+y0 = -1.0
+y1 = 1.0
+
+def r_1(x):
+    return x0 + (x1 - x0) * (1 - x)
+
+def R_1(y_orig, y_new):
+    return math.isclose(y_new, -y_orig, rel_tol=1e-14)
+
+def r_2(x):
+    return x1 - x
+
+def R_2(y_orig, y_new):
+    return math.isclose(y_new, -y_orig, rel_tol=1e-14)
+
+def r_3(x):
+    return 1.0 - x
+
+def R_3(y_orig, y_new):
+    return math.isclose(y_new, -y_orig, rel_tol=1e-14)
+```

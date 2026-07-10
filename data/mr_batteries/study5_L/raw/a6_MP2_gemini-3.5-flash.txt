@@ -1,0 +1,62 @@
+An elegant way to construct metamorphic relations for this program is to exploit its strict monotonicity. 
+
+The program solves the equation $r^3 + r = 4x - 2$ for $r$. Since the left-hand side $r^3 + r$ is strictly increasing in $r$, and the right-hand side $4x - 2$ is strictly increasing in $x$, the root $r(x)$ must be strictly increasing with respect to $x$ for $x \in [0, 1]$.
+
+For the Wilcoxon signed-rank test harness to pass, we need to design $r_k(x)$ such that the transformed input is systematically greater than or equal to the original input (i.e., $r_k(x) \ge x$), which guarantees that the correct output $y_{\text{new}} \ge y_{\text{orig}}$. The output relation $R_k(y_{\text{orig}}, y_{\text{new}})$ must then assert this ordering ($y_{\text{new}} \ge y_{\text{orig}}$), allowing for a tiny tolerance due to floating-point and solver precision limits.
+
+Here are three distinct monotonic transformations:
+1. **Linear scaling towards the upper bound**: $r_1(x) = x + 0.5 \cdot (1 - x)$, which maps $x \in [0, 1]$ to $[0.5, 1.0]$, ensuring $r_1(x) \ge x$.
+2. **Quadratic mapping**: $r_2(x) = \sqrt{x}$, which satisfies $\sqrt{x} \ge x$ for all $x \in [0, 1]$.
+3. **Power mapping**: $r_3(x) = x^{0.5}$, which is equivalent to $\sqrt{x}$ but we can use $r_3(x) = x^{0.25}$ to ensure a stronger separation $x^{0.25} \ge x$ for $x \in [0, 1]$.
+
+```python
+import math
+
+# Numerical tolerance to account for brentq solver tolerances (xtol=1e-12)
+TOL = -1e-11
+
+
+def r_1(x: float) -> float:
+    """Linear contraction towards 1.0.
+
+    For any x in [0, 1], r_1(x) >= x.
+    """
+    return x + 0.5 * (1.0 - x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Asserts y_new >= y_orig modulo numerical tolerance."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return (y_new - y_orig) >= TOL
+
+
+def r_2(x: float) -> float:
+    """Square root mapping.
+
+    For any x in [0, 1], sqrt(x) >= x.
+    """
+    return math.sqrt(x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """Asserts y_new >= y_orig modulo numerical tolerance."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return (y_new - y_orig) >= TOL
+
+
+def r_3(x: float) -> float:
+    """Fourth root mapping.
+
+    For any x in [0, 1], x^0.25 >= x.
+    """
+    return x**0.25
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    """Asserts y_new >= y_orig modulo numerical tolerance."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return (y_new - y_orig) >= TOL
+```

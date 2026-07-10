@@ -1,0 +1,47 @@
+
+
+```python
+import math
+
+
+def r_1(x):
+    """
+    MR1: Squared-input regime (near 0).
+    Rationale (MP5-MODE-M): Input transformation x -> x**2 maps [0,1] -> [0,1] to a comparable regime (smaller x yields smaller |r|). Output relation asserts |r_new| <= |r_orig| (higher fidelity/accuracy for smaller root).
+    """
+    return x**2
+
+
+def R_1(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_new) <= abs(y_orig) + 1e-14
+
+
+def r_2(x):
+    """
+    MR2: Near-boundary regime (near 1).
+    Rationale (MP5-MODE-M): Input transformation x -> 1 - x maps [0,1] -> [0,1] to a comparable regime (x close to 1 yields large negative r). Output relation asserts |r_new| <= |r_orig| (higher fidelity/accuracy for larger |root|).
+    """
+    return 1.0 - x
+
+
+def R_2(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_new) <= abs(y_orig) + 1e-14
+
+
+def r_3(x):
+    """
+    MR3: Midpoint symmetry regime.
+    Rationale (MP5-MODE-M): Input transformation x -> 0.5 maps to the fixed point (r=0). Output relation asserts |r_new| <= |r_orig| (higher fidelity/accuracy for the root at x=0.5).
+    """
+    return 0.5
+
+
+def R_3(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_new) <= abs(y_orig) + 1e-14
+```

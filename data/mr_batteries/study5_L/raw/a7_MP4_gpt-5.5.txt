@@ -1,0 +1,45 @@
+```python
+import math
+
+_TOL = 1e-8
+
+
+def _finite_pair(a, b):
+    return math.isfinite(float(a)) and math.isfinite(float(b))
+
+
+# Shape-preserving identity transformation.
+def r_1(x):
+    x = float(x)
+    return x
+
+
+def R_1(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return abs(float(y_new) - float(y_orig)) <= _TOL
+
+
+# Algebraically identical reparameterisation on [0, 1].
+def r_2(x):
+    x = float(x)
+    return 1.0 - (1.0 - x)
+
+
+def R_2(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return abs(float(y_new) - float(y_orig)) <= _TOL
+
+
+# Another algebraically identical shape-preserving reparameterisation.
+def r_3(x):
+    x = float(x)
+    return 0.5 * x + 0.5 * x
+
+
+def R_3(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return abs(float(y_new) - float(y_orig)) <= _TOL
+```

@@ -1,0 +1,38 @@
+```python
+import math
+
+def r_1(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.0
+    return min(1.0, max(0.0, 0.5 * x))
+
+def R_1(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return True
+
+
+def r_2(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.0
+    return min(1.0, max(0.0, 0.25 * x))
+
+def R_2(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return True
+
+
+def r_3(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.0
+    return min(1.0, max(0.0, 0.125 * x))
+
+def R_3(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return True
+```

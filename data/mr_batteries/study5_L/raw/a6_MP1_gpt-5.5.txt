@@ -1,0 +1,57 @@
+```python
+import math
+
+_TOL = 1e-9
+
+
+def _as_finite_pair(y_orig, y_new):
+    try:
+        a = float(y_orig)
+        b = float(y_new)
+    except Exception:
+        return None
+    if not (math.isfinite(a) and math.isfinite(b)):
+        return None
+    return a, b
+
+
+# Z2 reflection about x = 1/2 conserves output magnitude: |r(x)| = |r(1-x)|.
+def r_1(x):
+    return 1.0 - float(x)
+
+
+def R_1(y_orig, y_new):
+    pair = _as_finite_pair(y_orig, y_new)
+    if pair is None:
+        return False
+    a, b = pair
+    return abs(abs(a) - abs(b)) <= _TOL
+
+
+# Same conserved quantity expressed as equality of squared output.
+def r_2(x):
+    return 1.0 - float(x)
+
+
+def R_2(y_orig, y_new):
+    pair = _as_finite_pair(y_orig, y_new)
+    if pair is None:
+        return False
+    a, b = pair
+    return abs((a * a) - (b * b)) <= _TOL
+
+
+# The magnitude of the cubic balance term is also conserved under reflection.
+def r_3(x):
+    return 1.0 - float(x)
+
+
+def R_3(y_orig, y_new):
+    pair = _as_finite_pair(y_orig, y_new)
+    if pair is None:
+        return False
+    a, b = pair
+    ha = abs(a * a * a + a)
+    hb = abs(b * b * b + b)
+    return abs(ha - hb) <= _TOL
+```

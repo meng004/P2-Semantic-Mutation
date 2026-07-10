@@ -1,0 +1,56 @@
+```python
+import math
+
+_RTOL = 1e-9
+_ATOL = 1e-9
+
+
+def _finite_pair(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return None
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return None
+    return yo, yn
+
+
+# Reflection x -> 1 - x preserves the invariant magnitude of the signed solution sum.
+def r_1(x):
+    return 1.0 - float(x)
+
+
+def R_1(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    yo, yn = vals
+    return math.isclose(abs(yo), abs(yn), rel_tol=_RTOL, abs_tol=_ATOL)
+
+
+# Equivalent conserved quadratic quantity under the same Z2 input action.
+def r_2(x):
+    return 1.0 - float(x)
+
+
+def R_2(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    yo, yn = vals
+    return math.isclose(yo * yo, yn * yn, rel_tol=_RTOL, abs_tol=_ATOL)
+
+
+# The signed orbit-sum over a reflected pair is conserved at zero.
+def r_3(x):
+    return 1.0 - float(x)
+
+
+def R_3(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    yo, yn = vals
+    return math.isclose(yo + yn, 0.0, rel_tol=_RTOL, abs_tol=_ATOL)
+```

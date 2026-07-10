@@ -1,0 +1,20 @@
+```python
+import math
+
+_EPS = 1e-10
+
+def r_1(x):
+    # Identity transformation: preserves the full output trajectory exactly.
+    return float(x)
+
+def R_1(y_orig, y_new):
+    try:
+        y0 = float(y_orig)
+        y1 = float(y_new)
+        if not (math.isfinite(y0) and math.isfinite(y1)):
+            return False
+        # Correct outputs are unchanged under the identity and lie in [-1, 1].
+        return (abs(y0 - y1) <= _EPS) and (-1.0 - _EPS <= y0 <= 1.0 + _EPS)
+    except Exception:
+        return False
+```

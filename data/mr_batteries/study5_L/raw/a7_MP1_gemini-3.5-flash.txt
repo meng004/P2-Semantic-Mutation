@@ -1,0 +1,49 @@
+An elegant family of metamorphic relations for this program can be derived from its symmetry and linearity properties. 
+
+The program solves a linear system $T u = (2x - 1)d$ and returns $\Sigma u(x)$, which is linear in $x$ and antisymmetric about $x = 0.5$. That is, $\Sigma u(x) = c \cdot (x - 0.5)$ for some constant $c$. 
+
+Using this, we can construct invariant properties under specific transformations of the input space:
+
+1. **Identity transformation ($r_1(x) = x$)**: The output must remain exactly equal.
+2. **Antisymmetric negation ($r_2(x) = 1 - x$)**: The output must be negated, meaning $y_{new} = -y_{orig}$. To frame this as a conservation / invariance relation (MP1), we can assert that the sum of the outputs is conserved at $0$ (or equivalently, $|y_{orig} + y_{new}| \approx 0$).
+3. **Reflected scaling**: Since $y(x) = c(x - 0.5)$, if we map $x \mapsto 0.5 - (x - 0.5) = 1 - x$, the absolute value of the output $|y(x)|$ is conserved: $|y(1 - x)| = |y(x)|$.
+
+Below is the implementation of these conservation-based metamorphic relations.
+
+```python
+import math
+import numpy as np
+
+# MR 1: Identity transformation.
+# Conservation of the output value itself under the identity map.
+def r_1(x: float) -> float:
+    return x
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-12, rel_tol=1e-12)
+
+
+# MR 2: Antisymmetric conservation.
+# Under the reflection x -> 1 - x, the sum of the outputs is conserved at 0.
+# (i.e., y(x) + y(1 - x) = 0).
+def r_2(x: float) -> float:
+    return 1.0 - x
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig + y_new, 0.0, abs_tol=1e-12)
+
+
+# MR 3: Magnitude conservation.
+# Under the reflection x -> 1 - x, the absolute value of the output is conserved.
+def r_3(x: float) -> float:
+    return 1.0 - x
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(abs(y_orig), abs(y_new), abs_tol=1e-12, rel_tol=1e-12)
+```

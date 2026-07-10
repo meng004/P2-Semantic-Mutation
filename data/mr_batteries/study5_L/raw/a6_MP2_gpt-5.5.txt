@@ -1,0 +1,62 @@
+```python
+import math
+
+def _finite_pair(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return None
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return None
+    return yo, yn
+
+
+# Increase x by moving halfway toward the upper endpoint.
+def r_1(x):
+    x = float(x)
+    return 0.5 * (x + 1.0)
+
+def R_1(y_orig, y_new):
+    p = _finite_pair(y_orig, y_new)
+    if p is None:
+        return False
+    yo, yn = p
+    return yn >= yo
+
+
+# Increase x by a fixed upward shift, clipped to the valid domain.
+def r_2(x):
+    x = float(x)
+    y = x + 0.25
+    if y > 1.0:
+        y = 1.0
+    if y < 0.0:
+        y = 0.0
+    return y
+
+def R_2(y_orig, y_new):
+    p = _finite_pair(y_orig, y_new)
+    if p is None:
+        return False
+    yo, yn = p
+    return yn >= yo
+
+
+# Increase x via the concave map 1 - (1-x)^2 = 2x - x^2 on [0, 1].
+def r_3(x):
+    x = float(x)
+    y = 1.0 - (1.0 - x) * (1.0 - x)
+    if y > 1.0:
+        y = 1.0
+    if y < 0.0:
+        y = 0.0
+    return y
+
+def R_3(y_orig, y_new):
+    p = _finite_pair(y_orig, y_new)
+    if p is None:
+        return False
+    yo, yn = p
+    return yn >= yo
+```

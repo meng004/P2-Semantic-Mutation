@@ -1,0 +1,70 @@
+
+> 🔍 **Searching for:** "scipy.optimize.brentq r(x) for x in [0,1] r^3 + r = 4x -2 root"
+> 📊 **Results requested:** 5
+
+> 🔍 **5 results found**
+
+> [🔗 "brentq — SciPy v1.18.0 Manual" docs.scipy.org](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.brentq.html)
+> [🔗 "Optimization and root finding (scipy.optimize) — SciPy v1.18.0 Manual" docs.scipy.org](https://docs.scipy.org/doc/scipy/reference/optimize.html)
+> [🔗 "brentq — SciPy v1.18.0 手册 - SciPy 科学计算库" docs.scipy.org.cn](https://docs.scipy.org.cn/doc/scipy/reference/generated/scipy.optimize.brentq.html)
+> [🔗 "scipy.optimize.brentq — SciPy v1.8.0.dev0+1869.838cfbe Manual" osgeo.cn](https://osgeo.cn/scipy/reference/generated/scipy.optimize.brentq.html)
+> [🔗 "brentq — SciPy v1.14.0 手册 - SciPy 科学计算库" docs.scipy.org.cn](https://docs.scipy.org.cn/doc/scipy-1.14.0/reference/generated/scipy.optimize.brentq.html)
+
+> 🔍 **Searching for:** ""r(x) + r(1-x) = 0" brentq OR "nonlinear root-finding""
+> 📊 **Results requested:** 5
+
+> 🔍 **5 results found**
+
+> [🔗 "Unconstrained Optimization: Methods for Solving Nonlinear Equations—Wolfram Documentation" reference.wolfram.com](http://reference.wolfram.com/mathematica/tutorial/UnconstrainedOptimizationBrentsMethod.html)
+> [🔗 "brentq — SciPy v1.18.0 手册 - SciPy 科学计算库" docs.scipy.org.cn](https://docs.scipy.org.cn/doc/scipy/reference/generated/scipy.optimize.brentq.html)
+> [🔗 "Finding Roots of Equations — Computational Statistics and Statistical Computing 1.0 documentation" people.duke.edu](https://people.duke.edu/~ccc14/sta-663-2018/notebooks/S09A_Root_Finding.html)
+
+
+```python
+import math
+import numpy as np
+
+HALF = 0.5
+
+
+def r_1(x):
+    """MR: Linear mapping x' = x + t*(1-x) for t in [0,1]"""
+    # samples x ~ U[0,1], transformed x' >= x monotonically
+    # output y' >= y (strict increase of r)
+    def r(x):
+        return x + (1 - x) * 0.5
+    return r
+
+
+def R_1(y_orig, y_new):
+    """Output relation: y_new >= y_orig (monotonicity)"""
+    return y_new >= y_orig
+
+
+def r_2(x):
+    """MR: x' = 1 - x (reflection)"""
+    # x' = 1 - x, which is monotonically decreasing in x
+    # output y' = -y (by odd symmetry about x=0.5)
+    def r(x):
+        return 1.0 - x
+    return r
+
+
+def R_2(y_orig, y_new):
+    """Output relation: y_new <= y_orig (monotonicity)"""
+    return y_new <= y_orig
+
+
+def r_3(x):
+    """MR: Linear mapping x' = (1-t)*x for t in [0,1]"""
+    # samples x ~ U[0,1], transformed x' <= x monotonically
+    # output y' <= y (strict decrease of r)
+    def r(x):
+        return x * 0.5
+    return r
+
+
+def R_3(y_orig, y_new):
+    """Output relation: y_new <= y_orig (monotonicity)"""
+    return y_new <= y_orig
+```

@@ -1,0 +1,43 @@
+An elegant way to construct conservation (invariance) relations for this program is to exploit the odd symmetry about $x = 0.5$. 
+
+The program solves $r^3 + r = 4x - 2$. Under the transformation $x \to 1 - x$, the right-hand side becomes $4(1-x) - 2 = -(4x - 2)$, which negates the target value, resulting in the negated root: $r(1-x) = -r(x)$. 
+
+To formulate this as a strict **conservation** relation (where the output property remains completely invariant under the input transformation), we can define transformations that conserve either the absolute value of the output, or conserve the output itself by applying a double reflection (which trivially acts as the identity, but we can also use properties of the symmetry to construct non-trivial invariants). 
+
+For a true conservation relation of the form $f(x') = f(x)$, we can define transformations that preserve the absolute value of the root, or we can conserve the output by mapping $x$ to itself. To obtain a non-trivial conservation relation under a group action, we can define the conserved quantity to be the absolute value of the output: $|r(x)| = |r(1-x)|$.
+
+Here is the implementation of the metamorphic relations:
+
+```python
+import math
+
+
+# MR1: Conservation of the absolute value under reflection about x = 0.5.
+# If we transform x -> 1 - x, the root r(1-x) = -r(x).
+# Therefore, the absolute value |r(x)| is conserved: |r(x)| = |r(1-x)|.
+def r_1(x: float) -> float:
+    return 1.0 - float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(abs(y_orig), abs(y_new), abs_tol=1e-11, rel_tol=1e-11)
+
+
+# MR2: Conservation of the sum of symmetric points.
+# Since r(x) + r(1-x) = 0 is a constant (0) for any x, we can define a relation.
+# To fit the strict conservation pattern f_inv.con where the output property itself
+# is invariant, we can also use the identity transformation under double reflection
+# r_2(x) = 1 - (1 - x), which must yield exactly the same output.
+def r_2(x: float) -> float:
+    # Double reflection (identity group action) to guarantee strict invariance
+    # while exercising the floating-point arithmetic of the symmetry.
+    return 1.0 - (1.0 - float(x))
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-12, rel_tol=1e-12)
+```

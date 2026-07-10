@@ -1,0 +1,43 @@
+```python
+import math
+
+# We exploit the odd symmetry of the underlying function about x = 0.5.
+# The program solves r^3 + r = 4x - 2.
+# Let f(x) = program(x).
+# Since 4(1 - x) - 2 = -(4x - 2), and the LHS r^3 + r is an odd function,
+# we have f(1 - x) = -f(x), or f(x) + f(1 - x) = 0.
+#
+# To formulate this as a shape-preserving transformation within the MP4 family:
+# If we transform the input as r_1(x) = 1 - x, the output is y_new = -y_orig.
+# This is a direct, exact shape/symmetry relation.
+
+
+def r_1(x: float) -> float:
+    """Reflects the input about the midpoint x = 0.5."""
+    return 1.0 - float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Verifies the odd symmetry: program(1 - x) == -program(x)."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    # Using a tight absolute tolerance because brentq with xtol=1e-12
+    # yields highly precise results.
+    return math.isclose(y_orig + y_new, 0.0, abs_tol=1e-11)
+
+
+# We can also define identity transformations to verify strict monotonicity.
+# Since the program is strictly increasing, if r_2(x) = x, then y_new == y_orig.
+
+
+def r_2(x: float) -> float:
+    """Identity transformation."""
+    return float(x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """Verifies that the identity transformation preserves the output exactly."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return y_orig == y_new
+```

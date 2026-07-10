@@ -1,0 +1,63 @@
+An elegant way to capture the dynamics/shape properties of this linear, monotonic function $I(x) = 2x + 1/3$ is to leverage its exact symmetries and conservation laws. 
+
+Since $I(x) = 2x + 1/3$, the function is strictly increasing (preserving monotonic shape). We can formulate metamorphic relations based on:
+1. **Self-inverse reflection / Point Symmetry**: The transformation $r_1(x) = 1 - x$ reflects the input domain. The corresponding outputs must satisfy $I(x) + I(1-x) = 8/3$ exactly, which represents a conservation of the sum (a shape trajectory that mirrors across the center $x = 0.5$).
+2. **Translation / Shift**: A constant shift in the input $r_2(x) = x + c$ (for a valid range) translates the output by exactly $2c$. This preserves the linear shape and slope of the trajectory.
+3. **Scaling**: Scaling the input relative to a fixed point preserves the linear scaling factor of the output.
+
+Here is the Python code containing the metamorphic relations:
+
+```python
+import math
+import numpy as np
+
+
+# MR1: Point symmetry / conservation across the midpoint of the domain [0, 1].
+# Under the transformation r_1(x) = 1 - x, the sum of the outputs must be exactly 8/3.
+def r_1(x: float) -> float:
+    return float(1.0 - x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # I(x) + I(1-x) = 8/3
+    return math.isclose(y_orig + y_new, 8.0 / 3.0, rel_tol=1e-12, abs_tol=1e-12)
+
+
+# MR2: Translation invariance of the slope (linear shape preservation).
+# For a shift of +0.5 (restricted to [0, 0.5] to keep the range in [0, 1]),
+# the output must increase by exactly 2 * 0.5 = 1.0.
+def r_2(x: float) -> float:
+    # Map x to [0, 0.5], then shift by 0.5
+    x_bounded = 0.5 * x
+    return float(x_bounded + 0.5)
+
+
+def R_2(y_orig_scaled: float, y_new: float) -> bool:
+    # Note: To compare y_new = program(r_2(x)) with a corresponding original,
+    # we need the original evaluated at the same base point `0.5 * x`.
+    # Since r_2 maps x_bounded -> x_bounded + 0.5, y_new - y_orig_bounded must be exactly 1.0.
+    # However, the harness evaluates y_orig = program(x) and y_new = program(r_2(x)).
+    # We can reconstruct the relation using the linear property:
+    # program(r_2(x)) = program(0.5 * x + 0.5) = (x + 1) + 1/3 = x + 4/3.
+    # program(x) = 2x + 1/3.
+    # Therefore, 2 * program(r_2(x)) - program(x) = 2(x + 4/3) - (2x + 1/3) = 7/3.
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(2.0 * y_new - y_orig, 7.0 / 3.0, rel_tol=1e-12, abs_tol=1e-12)
+
+
+# MR3: Scaling relation (dilation).
+# Let r_3(x) = 0.5 * x.
+# program(0.5 * x) = x + 1/3.
+# Since program(x) = 2x + 1/3, we must have program(x) - 2 * program(0.5 * x) = -1/3.
+def r_3(x: float) -> float:
+    return float(0.5 * x)
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig - 2.0 * y_new, -1.0 / 3.0, rel_tol=1e-12, abs_tol=1e-12)
+```

@@ -990,3 +990,39 @@ fixes only the names. Fix confined to `scripts/study5_mr_elicit.py` parse /
 V1-callability path; full entry in `PILOT_LOG.md` P15. No threshold,
 estimand, prompt semantics, serving parameter, roster, or vendor role
 changed; pilot draws untouched.
+
+**Amendment A3 — 2026-07-10 (author-directed, pre-mutant): Family-XL roster
+EXTENSION wave (scale diversity).** Trigger: author review of the frozen A1
+roster found sources diverse but SCALE homogeneous (21/21 function-level
+routines) and primary-stratum coverage skewed (MP1 13, MP3 6, MP2 1, MP5 1);
+directive: add module/pipeline-scale production-library pairs under the
+standing P1/P2, prioritised (a) module scale, (b) MP2/MP5 primary repair,
+inside the registered cap n <= 28. Legitimacy: pre-outcome (no Family-XL
+confirmatory mutant, SMS value, or v8xl pool exists; the firewalled
+v8xl_pilot runs on A1-determined pairs that precede every A3 pair and is
+untouched). Executed: A3-1 module-scale admission criterion + repair-first
+grouped walk (group (i) primary ∈ {MP2, MP5}, group (ii) rest; Step-4 key
+inside groups) registered in `src/p2/xlport/registry.py::A3_*` BEFORE the
+run; §2c gate UNCHANGED and byte-identical (A3 driver
+`scripts/study5_xl_certify_a3.py` imports the frozen A1 `certify_pair`);
+one-shot; budget 28 − 21 = 7. Result: **7 module-scale pairs certified, 0
+failures** (interp.c, interp.java, chebyshev.c, hermite.cpp — MP5 surrogate
+modules; histstats.c, descstats.java — MP2 statistical pipelines; polyfit.c
+— MP5; max rel dev 0.0–2.1e-15, no declared class-1 band consumed); 9
+enumerated pairs NOT_REACHED at the cap (odedrive, rungekutta, multimin,
+multiroot, quad-ext, fft, polyfit.java — registered walk stop, not
+exclusions); 13 pre-behavioral screens cited (incl. the CM Percentile
+p ∈ (0,100] domain screen and the GSL no-explicit-Euler API screen). Roster
+now n = **28 = cap**: MP1 13, MP2 3, MP3 6, MP4 0, MP5 6; the **scale
+stratum** (function-level 21 / module-level 7) is recorded per pair in
+`configs/xl_roster.json::scale_stratum` as a DISCLOSED stratification
+variable for every pair old and new (Family-X exploratory breakdowns only;
+no confirmatory verdict attaches to it). A1 artifacts append-only-verified
+(A1 roster pair objects deep-equal; A1 certification blocks byte-identical;
+`load_xl_roster` round-trip verified, grid n = 28). Read-off power at the
+frozen §4a primary curve: n = 28 → **0.9481** (no post-data simulation).
+Deviations disclosed in the A3 audit trail (`STUDY5_XL_ROSTER.md` §A3.7):
+A3-D1 grouped walk, A3-D2 adaptive-ODE re-pose at tight tolerances
+(NOT_REACHED), A3-D3 fixed-budget integrators stay MP3 under the frozen
+category map, A3-D4 euler.c API screen, A3-D5 scale-stratum recording
+convention, A3-D6 concurrent-pilot firewall.

@@ -1,10 +1,24 @@
 {
  "meta": {
-  "amendment": "A1 (scheduled, pre-mutant)",
+  "amendment": "A1 (scheduled, pre-mutant) + A3 (author-directed scale-extension wave, pre-mutant)",
   "frozen_by": "scripts/study5_xl_certify.py",
   "registration": "PREREGISTRATION_STUDY5_v1.md S2b/S2c",
-  "achieved_certified_n": 21,
-  "spec_doc": "docs/prereg_v2/STUDY5_XL_ROSTER.md"
+  "achieved_certified_n": 28,
+  "spec_doc": "docs/prereg_v2/STUDY5_XL_ROSTER.md",
+  "a3": {
+   "frozen_by": "scripts/study5_xl_certify_a3.py",
+   "new_pairs": [
+    "interp.c",
+    "interp.java",
+    "chebyshev.c",
+    "hermite.cpp",
+    "histstats.c",
+    "descstats.java",
+    "polyfit.c"
+   ],
+   "new_pair_budget": 7,
+   "scale_stratum_note": "scale_stratum (top-level) is the disclosed stratification variable for every pair old and new; A1 pair objects are byte-unchanged"
+  }
  },
  "pairs": {
   "invsqrt.cpp": {
@@ -307,6 +321,147 @@
     "tol": 1e-06,
     "grid_n": 201
    }
+  },
+  "interp.c": {
+   "primary_mp": 5,
+   "program": "interp",
+   "language": "c",
+   "source": "GNU GSL (C) <-> scipy",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "certification": {
+    "max_rel_dev": 0.0,
+    "tol": 1e-06,
+    "grid_n": 201
+   },
+   "scale": "module",
+   "amendment": "A3"
+  },
+  "interp.java": {
+   "primary_mp": 5,
+   "program": "interp",
+   "language": "java",
+   "source": "GNU GSL (C) <-> scipy",
+   "upstream": "Maven Central org.apache.commons:commons-math3:3.6.1, jar sha256 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308 (Apache-2.0)",
+   "files": [
+    "third_party/commons-math/commons-math3-3.6.1.jar"
+   ],
+   "certification": {
+    "max_rel_dev": 0.0,
+    "tol": 1e-06,
+    "grid_n": 201
+   },
+   "scale": "module",
+   "amendment": "A3"
+  },
+  "chebyshev.c": {
+   "primary_mp": 5,
+   "program": "chebyshev",
+   "language": "c",
+   "source": "GNU GSL (C) <-> scipy",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "certification": {
+    "max_rel_dev": 2.1094237467877974e-15,
+    "tol": 1e-06,
+    "grid_n": 201
+   },
+   "scale": "module",
+   "amendment": "A3"
+  },
+  "hermite.cpp": {
+   "primary_mp": 5,
+   "program": "hermite",
+   "language": "cpp",
+   "source": "Boost.Math (C++) <-> scipy",
+   "upstream": "github.com/boostorg/math@8ee12a5355935cbaac5d5338372d0d0e3311b473 (BSL-1.0)",
+   "files": [
+    "third_party/boost-math/include"
+   ],
+   "certification": {
+    "max_rel_dev": 4.071463428461096e-16,
+    "tol": 1e-06,
+    "grid_n": 201
+   },
+   "scale": "module",
+   "amendment": "A3"
+  },
+  "histstats.c": {
+   "primary_mp": 2,
+   "program": "histstats",
+   "language": "c",
+   "source": "GNU GSL (C) <-> scipy",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "certification": {
+    "max_rel_dev": 0.0,
+    "tol": 1e-06,
+    "grid_n": 201
+   },
+   "scale": "module",
+   "amendment": "A3"
+  },
+  "descstats.java": {
+   "primary_mp": 2,
+   "program": "descstats",
+   "language": "java",
+   "source": "Apache Commons Math (Java) <-> scipy",
+   "upstream": "Maven Central org.apache.commons:commons-math3:3.6.1, jar sha256 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308 (Apache-2.0)",
+   "files": [
+    "third_party/commons-math/commons-math3-3.6.1.jar"
+   ],
+   "certification": {
+    "max_rel_dev": 1.1102230246251565e-16,
+    "tol": 1e-06,
+    "grid_n": 201
+   },
+   "scale": "module",
+   "amendment": "A3"
+  },
+  "polyfit.c": {
+   "primary_mp": 5,
+   "program": "polyfit",
+   "language": "c",
+   "source": "GNU GSL (C) <-> scipy",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "certification": {
+    "max_rel_dev": 1.1174480763305815e-15,
+    "tol": 1e-06,
+    "grid_n": 201
+   },
+   "scale": "module",
+   "amendment": "A3"
   }
+ },
+ "scale_stratum": {
+  "invsqrt.cpp": "function",
+  "brent.c": "function",
+  "brent.java": "function",
+  "euler.java": "function",
+  "newton.rs": "function",
+  "rungekutta.cpp": "function",
+  "betainc.c": "function",
+  "betainc.cpp": "function",
+  "betainc.java": "function",
+  "erf.c": "function",
+  "erf.cpp": "function",
+  "erf.java": "function",
+  "normcdf.c": "function",
+  "normcdf.cpp": "function",
+  "normcdf.java": "function",
+  "sigmoid.rs": "function",
+  "tanh.rs": "function",
+  "quad.c": "function",
+  "quantile.jl": "function",
+  "besselj0.c": "function",
+  "besselj0.cpp": "function",
+  "interp.c": "module",
+  "interp.java": "module",
+  "chebyshev.c": "module",
+  "hermite.cpp": "module",
+  "histstats.c": "module",
+  "descstats.java": "module",
+  "polyfit.c": "module"
  }
 }

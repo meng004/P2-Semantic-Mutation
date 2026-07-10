@@ -1,0 +1,49 @@
+```python
+import math
+import numpy as np
+
+# The program solves T u = (2x - 1) * d, where T is symmetric positive definite (SPD)
+# and d = ones. The output is sum(u) = sum( T^{-1} * (2x - 1) * d ) = (2x - 1) * sum(T^{-1} * d).
+# Since T is SPD and a M-matrix (diagonal > 0, off-diagonal <= 0), T^{-1} is element-wise positive.
+# Therefore, sum(T^{-1} * d) > 0.
+# This means the output f(x) is a strictly increasing linear function of x.
+# Specifically, for x_new >= x_orig, we must have f(x_new) >= f(x_orig).
+
+# MR1: Linear shift towards 1.
+# For any x in [0, 1], x_new = 0.5 * x + 0.5 is also in [0, 1].
+# Since 0.5 * x + 0.5 >= x for all x in [0, 1], we must have program(x_new) >= program(x).
+def r_1(x: float) -> float:
+    return 0.5 * x + 0.5
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_new >= y_orig
+
+
+# MR2: Non-linear monotonic scale-up.
+# x_new = x^2 is not always >= x, but x_new = sqrt(x) is >= x for all x in [0, 1].
+# Thus, program(sqrt(x)) >= program(x).
+def r_2(x: float) -> float:
+    return math.sqrt(x)
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_new >= y_orig
+
+
+# MR3: Reflection and shift ensuring x_new >= x.
+# x_new = 1.0 - 0.5 * x.
+# Since x is in [0, 1], 1.0 - 0.5 * x is in [0.5, 1.0].
+# For x in [0, 2/3], 1.0 - 0.5 * x >= x.
+# To guarantee x_new >= x for all x in [0, 1], we can use x_new = x + 0.5 * (1.0 - x) = 0.5 * x + 0.5.
+# Let's use another monotonic function: x_new = sin(x * pi / 2), which is >= x for all x in [0, 1].
+def r_3(x: float) -> float:
+    return math.sin(x * math.pi / 2.0)
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_new >= y_orig
+```

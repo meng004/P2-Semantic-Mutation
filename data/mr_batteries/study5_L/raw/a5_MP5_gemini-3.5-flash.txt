@@ -1,0 +1,30 @@
+An elegant metamorphic relation for this program under the **method-comparison (MP5 / `m_conv`)** family takes advantage of the symmetry of the target function and its natural cubic spline interpolant. 
+
+The target function $f(t) = \sin(\pi t)$ is perfectly symmetric about the midpoint $t = 1/2$, i.e., $f(1-t) = f(t)$. Since the grid of 17 sample points $\_TI$ is also perfectly symmetric about $1/2$ (with $t_i = i/16$ for $i=0, \dots, 16$), the natural cubic spline interpolant $S(x)$ inherits this exact symmetry, meaning $S(x) = S(1-x)$ for all $x \in [0, 1]$.
+
+In the context of a relative/method-comparison oracle, evaluating the spline at $1-x$ vs. $x$ represents evaluating the same underlying physical/mathematical quantity via a mirrored coordinate system (a classic consistency check in numerical methods). We assert that the absolute difference between these two evaluations is bounded by an extremely tight numerical tolerance (e.g., machine epsilon scaled by a small factor).
+
+Here is the implementation of this metamorphic relation:
+
+```python
+import math
+
+
+def r_1(x: float) -> float:
+    """Input transformation: Mirror the evaluation point about the symmetry axis x = 0.5."""
+    # Ensure the transformed input remains strictly within [0, 1]
+    return max(0.0, min(1.0, 1.0 - x))
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Output relation: The spline interpolation must be symmetric.
+
+    S(x) should equal S(1-x) up to numerical precision.
+    """
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+
+    # The absolute difference should be extremely close to 0 (within machine precision)
+    # We use a strict absolute tolerance of 1e-14
+    return abs(y_orig - y_new) <= 1e-14
+```

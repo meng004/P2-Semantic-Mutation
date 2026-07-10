@@ -278,3 +278,233 @@ Julia (1). Go: 0 certified (invsqrt.go failed, disclosed).
 
 *(End of Amendment A1. Any later change is a new dated entry in
 PREREGISTRATION_STUDY5_v1.md §10, never an edit to this record.)*
+
+---
+
+# Amendment A3: Family-XL roster EXTENSION wave (scale diversity)
+
+**Date**: 2026-07-10. **Status**: author-directed, pre-mutant, append-only;
+Amendment A1 above is byte-unchanged. **Pre-mutant attestation**: at this
+freeze NO Family-XL **confirmatory** mutant, SMS value, or `v8xl` pool
+exists; the only Family-XL behavioral artifacts are (i) the A1 §2c
+certification measurements, (ii) the firewalled `v8xl_pilot` calibration
+pilot (registered §2e; in flight on the A1-determined pairs `invsqrt.cpp` +
+`brent.c`, both A1 walk-order picks that PRECEDE every A3 pair — the pilot
+determination is unchanged by this wave and no A3 pair carries any mutant),
+and (iii) the A3 certification measurements recorded below. Machine-readable
+roster: `configs/xl_roster.json` (A1 pair objects deep-equal-asserted at
+write time); certification SSOT: `data/results/study5_xl_certification.json`
+(A1 `summary`/`pairs` blocks asserted unchanged; A3 results in the new `a3`
+block); candidate registry: `src/p2/xlport/registry.py` (`A3_*` sections,
+appended).
+
+**Author directive (recorded).** The A1 roster review found: sources diverse
+(GSL 6 / Boost 4 / CommonsMath 4 / TheAlgorithms 6 / Julia 1) but SCALE
+homogeneous (21/21 function-level routines) and primary-stratum coverage
+skewed (MP1 13, MP3 6, MP2 1, MP5 1). Directive: add module/pipeline-scale
+production-library pairs; P1 (no self-written PUT code) and P2 (purpose +
+family first, then diversity) still govern; priorities (a) module scale,
+(b) MP2/MP5 primary-coverage repair; registered cap n <= 28 respected.
+
+**Headline**: 7 new module-scale pairs certified, **0 failures**, achieved
+total n = **28 = cap**. Primary-stratum repair: MP2 1 -> 3, MP5 1 -> 6.
+Scale stratum (disclosed stratification variable, all 28 pairs):
+function-level 21 (A1), module-level 7 (A3). Read-off power at the frozen
+§4a primary-DGP curve: tabulated n = 28 -> **0.9481**.
+
+## A3.1 Registered wave rules (fixed BEFORE the certification run)
+
+- **A3-1 (module-scale admission criterion, pre-behavioral)**: the pair's
+  call path must traverse a multi-component library SUBSYSTEM (state object
+  + staged alloc/init/accumulate/solve/eval pipeline, or an adaptive driver
+  chain) — a documented library module with a multi-hundred-LOC call path,
+  not a single closed-form routine. Single-pass closed-form entry points
+  (the structural class of every A1 pair) are out of scope for this wave.
+- **A3 walk order (P2, family-repair first; deterministic)**: group (i) =
+  candidates whose registered primary stratum is MP2 (`f_mono.stat`) or MP5
+  (`f_conv.rate`) in the registered Step-4 total order; then group (ii) =
+  all remaining candidates in Step-4 order. The Step-4 key is unchanged
+  inside each group. (A pure ungrouped Step-4 walk would spend the whole
+  budget on MP3-primary ODE modules and repair nothing — see the ranking
+  table; the grouping layer is the A3 instantiation of §2b Step 1
+  "required family coverage first" + P2, and is disclosed as A3-D1.)
+- **Budget**: N_CAP 28 − A1 achieved 21 = **7 new pairs**; walk stops at
+  the cap; candidates beyond it are NOT_REACHED (registered behavior, not
+  exclusions). Directive target 5-7 pairs.
+- **Certification gate**: §2c UNCHANGED and byte-identical (the A3 driver
+  imports `certify_pair` from the frozen A1 driver): 201-point grid,
+  `|y_L - y_py| <= tol * max(|y_py|, 1)`, both sides finite, tol 1e-6
+  unless a pre-declared class-1 exception (ceiling 1e-5); one-shot;
+  failures disclosed, never fixed.
+- **`l` convention (documented)**: for this wave `l` counts non-Python
+  languages with a same-semantics MODULE-SCALE external implementation
+  (A3-1 applies to the enumeration itself); function-scale implementations
+  of the same semantics (e.g. `gsl_stats_sd` for descstats) exist but are
+  not A3-enumerable and do not count.
+
+## A3.2 Enumeration (registered source list only; pinned upstreams REUSED)
+
+Sweep: (a) the GSL 2.7.1 module index (odeiv2, interpolation, chebyshev,
+histogram, multimin, multiroots, multifit, fft; screened: bspline, monte,
+siman, wavelet, linalg/eigen, 1-D min); (b) the Commons Math 3.6.1 package
+tree (stat.descriptive, analysis.interpolation, fitting, ode.nonstiff,
+transform; screened: SimpleRegression, EmpiricalDistribution, Percentile);
+(c) the vendored Boost.Math header tree (quadrature, interpolators;
+screened: cardinal b-splines, univariate statistics); (d) TheAlgorithms
+repos re-swept for multi-component pipelines (none exist — single-file
+teaching implementations; structural finding); (e) Julia stdlib re-swept
+(no module-scale numeric pipeline; SciML still non-enumerable per A1 D2).
+**No new vendoring was needed**: every A3 pair links the A1-pinned
+upstreams (system GSL 2.7.1 per the A1 GPL precedent — nothing GPL
+vendored; Boost.Math `8ee12a53` vendored headers; commons-math3 3.6.1 jar
+sha256 `1e56d7b0...7ef2b308`); `third_party/` is byte-unchanged.
+
+## A3.3 Step-3 + A3-1 screening audit (rejected candidates, criterion cited)
+
+| Candidate | Rejection (criterion) |
+|---|---|
+| CM `Percentile` (R_7) as `quantile.java` for the A1 program `quantile` | documented domain p ∈ (0,100] rejects the frozen program point p = x = 0; screened pre-behaviorally instead of burning a one-shot certification (besselj0.java lesson) (S3 crit. 3) |
+| GSL odeiv2 explicit-Euler drive as `euler.c` for the A1 program `euler` | GSL odeiv2 ships NO explicit-Euler stepper (rk1imp is IMPLICIT Euler, different semantics); no same-semantics module-scale implementation exists; found at shim-authoring, pre-behavioral (S3 crit. 4) |
+| GSL `gsl_min` 1-D Brent minimiser | single iterate-loop state machine, the structural class of A1 `brent.c` (A3-1) |
+| GSL `gsl_stats_*` / Julia `Statistics.std` / Boost univariate statistics | single-pass closed-form routines (A3-1); hence descstats `l`=1 |
+| CM `SimpleRegression` | streaming accumulator + closed-form readout; no staged pipeline (A3-1) |
+| CM `EmpiricalDistribution` | `cumulativeProbability` has no documented numpy/scipy same-semantics counterpart; the mean readout bypasses the binning module (S3 crit. 4 + A3-1) |
+| GSL bspline / Boost cardinal b-splines vs scipy | knot/boundary semantics not documented-identical (the A1 cubic-spline lesson at module scale) (S3 crit. 4) |
+| GSL monte (plain/miser/vegas) | RNG-stream-dependent; §2c class-2 reproduction precondition structurally unsatisfiable vs numpy (S3 crit. 2) |
+| GSL siman | RNG-stream-dependent (S3 crit. 2) |
+| GSL wavelet | no counterpart in the registered scipy/numpy reference set (S3 crit. 4) |
+| GSL linalg / eigen | matrix-in/matrix-out; no registered scalar-program convention (S3 crit. 3) |
+| TheAlgorithms (all six repos, module-scale sweep) | no multi-component numeric pipeline exists (single-file teaching implementations; structural finding) (A3-1) |
+| Julia stdlib module numerics / SciML OrdinaryDiffEq | stdlib has no module-scale pipeline with a documented scipy contract; SciML non-enumerable (A1 D2 carried) (A3-1 + Step-5 disclosure) |
+
+## A3.4 Deterministic ranking (admissible candidates, grouped walk order)
+
+Key inside each group: (c desc, l desc, src asc, name asc). Group (i) =
+primary ∈ {MP2, MP5} (repair), group (ii) = rest.
+
+| Walk | Grp | Program | c | l | Src | Primary | Pairs |
+|---|---|---|---|---|---|---|---|
+| 1 | i | interp | 4 | 2 | 2 | MP5 | interp.c, interp.java |
+| 2 | i | chebyshev | 4 | 1 | 2 | MP5 | chebyshev.c |
+| 3 | i | hermite | 4 | 1 | 5 | MP5 | hermite.cpp |
+| 4 | i | histstats | 3 | 1 | 2 | MP2 | histstats.c |
+| 5 | i | descstats | 3 | 1 | 4 | MP2 | descstats.java |
+| 6 | i | polyfit | 2 | 2 | 2 | MP5 | polyfit.c, polyfit.java |
+| 7 | ii | odedrive | 4 | 2 | 2 | MP3 | odedrive.c, odedrive.java |
+| 8 | ii | rungekutta | 4 | 1 | 1 | MP3 | rungekutta.java |
+| 9 | ii | multimin | 3 | 1 | 2 | MP3 | multimin.c |
+| 10 | ii | multiroot | 3 | 1 | 2 | MP3 | multiroot.c |
+| 11 | ii | quad | 3 | 1 | 2 | MP3 | quad.cpp |
+| 12 | ii | fft | 2 | 2 | 2 | MP4 | fft.c, fft.java |
+
+## A3.5 §2c certification results (201-point grid, one-shot)
+
+| Pair | Status | max rel dev | argmax x | Note |
+|---|---|---|---|---|
+| interp.c | **PASS** | 0.0 | - | GSL interpolation module (gsl_spline/gsl_interp_linear/accel) — bit-identical piecewise-linear values |
+| interp.java | **PASS** | 0.0 | - | CM LinearInterpolator -> PolynomialSplineFunction — bit-identical |
+| chebyshev.c | **PASS** | 2.11e-15 | 0.14 | GSL gsl_cheb order-12 vs numpy chebinterpolate deg-12: same first-kind-node interpolant, rounding-level |
+| hermite.cpp | **PASS** | 4.07e-16 | 0.78 | Boost cubic_hermite vs scipy CubicHermiteSpline: exactly-defined piecewise cubic |
+| histstats.c | **PASS** | 0.0 | - | GSL histogram pipeline vs numpy.histogram midpoint mean: identical binning + identical binned-mean formula |
+| descstats.java | **PASS** | 1.11e-16 | 0.825 | CM DescriptiveStatistics SD vs numpy std ddof=1 |
+| polyfit.c | **PASS** | 1.12e-15 | 0.05 | GSL multifit balanced-SVD LS vs numpy.polyfit: unique full-rank LS solution, conditioning-level rounding |
+| polyfit.java, odedrive.c, odedrive.java, rungekutta.java, multimin.c, multiroot.c, quad.cpp, fft.c, fft.java | NOT_REACHED | - | - | cap 28 reached (registered walk stop, not exclusions) |
+
+**Failures disclosed**: none this wave (0 FAIL). Declared class-1 exception
+bands (odedrive, multimin, multiroot, quad — registry `A3_CANDIDATES`) were
+never consumed: all walked pairs certified at the standard 1e-6 tolerance,
+and every declared-exception candidate lies beyond the cap.
+
+## A3.6 Declared §2c exception classes (declared pre-run, in the registry)
+
+| Program | Class | Declared tol | Band derivation | Consumed? |
+|---|---|---|---|---|
+| odedrive | 1 | 1e-6 (no relaxation) | both drivers hold local error <= rel 1e-10 / abs 1e-12; O(30-60) accepted steps -> cross-method band ~2e-8 | no (NOT_REACHED) |
+| multimin | 1 | 1e-6 (no relaxation) | simplex size 1e-12 / fatol 1e-13 on a smooth strictly convex objective -> objective band ~1e-12 | no (NOT_REACHED) |
+| multiroot | 1 | 1e-6 (no relaxation) | residual 1e-12, O(1) Jacobian singular values -> root band ~1e-11 | no (NOT_REACHED) |
+| quad (A3 ext.) | 1 | 1e-6 (no relaxation) | both sides adaptive to 1e-10; band ~4e-10 (A1 quad precedent) | no (NOT_REACHED) |
+
+No class-2 (RNG-stream) candidate was admitted (monte/siman screened).
+
+## A3.7 Ambiguities and deviations (reported, not improvised)
+
+- **A3-D1 (grouped walk).** The repair-first grouping layer is NEW relative
+  to the A1 walk (which was pure Step-4). It implements the author
+  directive (P2: purpose + family first) deterministically and was fixed
+  before any A3 behavioral run; the A1 roster is unaffected. Without it the
+  budget would have been consumed by MP3-primary ODE modules (ranking
+  table), repairing nothing.
+- **A3-D2 (adaptive-ODE re-pose).** A1 screened "adaptive ODE (GSL rkf45 vs
+  scipy RK45)" citing an undocumentable band at DEFAULT tolerances. A3
+  re-enumerated it as `odedrive` at frozen tight tolerances (rel 1e-10 /
+  abs 1e-12) under which the class-1 band IS documentable. Disclosed as a
+  deliberate amendment decision, not a silent reversal; the pair ranked in
+  group (ii) and was NOT_REACHED at the cap anyway.
+- **A3-D3 (f_conv.rate for fixed-budget integrators).** The author's
+  suggestion of accuracy-order method pairs (Euler vs RK4 at fixed budget)
+  as MP5 primaries is unavailable under the FROZEN first-matching-row
+  category map: fixed-step ODE drives match row 3 (euler.java precedent)
+  and are not re-mapped. MP5 repair therefore comes from surrogate-
+  structured modules (interp, chebyshev, hermite, polyfit — the invsqrt.cpp
+  category precedent).
+- **A3-D4 (euler.c screen at shim-authoring).** The planned GSL odeiv2
+  explicit-Euler extension of A1 program `euler` was screened when shim
+  authoring surfaced that GSL ships no explicit-Euler stepper (API fact,
+  pre-behavioral, before the gate run); recorded in A3_SCREENED.
+- **A3-D5 (scale stratum recording).** `scale_stratum` is recorded as a NEW
+  top-level roster map covering all 28 pairs (A1 = function, A3 = module)
+  so that A1 pair objects stay byte-identical; A3 pair objects additionally
+  carry `scale`/`amendment` fields. `load_xl_roster` round-trip verified
+  (grid n = 28, underscore-free ids, primary map intact).
+- **A3-D6 (concurrent pilot).** The §2e pilots (`v8xl_pilot`, `v8mr_pilot`)
+  are in flight during this wave in a parallel session; this wave read none
+  of their outputs and touched none of their artifacts. Pilot pools contain
+  no A3 pair; the deterministic pilot-pair determination (A1 §9) precedes
+  every A3 pair and is unchanged.
+
+## A3.8 Roster after A3 (28 pairs, frozen; = `configs/xl_roster.json`)
+
+New pairs (all module-scale; upstreams = A1 pins, unmodified):
+
+| Pair | Lang | Program | Primary | Instantiable | Upstream | Module call path |
+|---|---|---|---|---|---|---|
+| interp.c | C | interp | MP5 `f_conv.rate` | 2,3,4,5 | GSL 2.7.1 (system lib) | gsl_spline + gsl_interp_linear + accel |
+| interp.java | Java | interp | MP5 `f_conv.rate` | 2,3,4,5 | commons-math3 3.6.1 | LinearInterpolator -> PolynomialSplineFunction chain |
+| chebyshev.c | C | chebyshev | MP5 `f_conv.rate` | 2,3,4,5 | GSL 2.7.1 | gsl_cheb_series init-at-nodes + Clenshaw eval |
+| hermite.cpp | C++ | hermite | MP5 `f_conv.rate` | 2,3,4,5 | Boost.Math `8ee12a53` | interpolators::cubic_hermite + detail pipeline |
+| histstats.c | C | histstats | MP2 `f_mono.stat` | 2,3,4 | GSL 2.7.1 | histogram alloc/ranges/512x increment/binned mean |
+| descstats.java | Java | descstats | MP2 `f_mono.stat` | 1,2,4 | commons-math3 3.6.1 | DescriptiveStatistics -> Variance -> Mean moment chain |
+| polyfit.c | C | polyfit | MP5 `f_conv.rate` | 4,5 | GSL 2.7.1 | multifit workspace + balanced-SVD LS pipeline |
+
+**Primary-cell distribution (all 28)**: MP1 13, MP2 **3**, MP3 6, MP4 0,
+MP5 **6** (was MP1 13 / MP2 1 / MP3 6 / MP5 1 at A1; the aligned/cross
+estimand of §3.1 does not require primary balance — the skew repair is a
+robustness upgrade, disclosed as such).
+
+**Scale stratum (disclosed stratification variable)**: function-level 21
+(all A1), module-level 7 (all A3). Recorded per pair in
+`configs/xl_roster.json::scale_stratum` and available for the registered
+exploratory (Family X) per-stratum breakdowns; it licenses NO confirmatory
+verdict.
+
+**Family instantiability coverage (certified programs)**: MP1 11, MP2 17,
+MP3 9, MP4 19, MP5 7 — grid-level hard constraint (>= 2 per family) remains
+satisfied.
+
+**Languages certified (all 28)**: C 10, C++ 7, Java 8, Rust 3, Julia 1
+(A3 adds C +4, C++ +1, Java +2; source spread of the new pairs GSL 4 /
+CM 2 / Boost 1 — P2 puts purpose before source diversity, disclosed).
+
+## A3.9 Gates and read-off power (§3.1, §4a)
+
+- Achieved total certified n = **28** = registered cap (floor 12, target
+  20, cap 28); UNDER_CERTIFIED gate (n < 8) far from triggered.
+- Read-off achieved power on the frozen §4a primary (deflated) curve:
+  largest tabulated n <= 28 is n = 28 -> **0.9481** (sensitivity
+  Python-scale curve: 0.9969). No post-data simulation.
+- One-shot discipline: this wave ran the gate exactly once per walked pair;
+  the 9 NOT_REACHED pairs were never certified and remain available only to
+  a future registered amendment (they cannot enter without one).
+
+*(End of Amendment A3. Any later change is a new dated entry in
+PREREGISTRATION_STUDY5_v1.md §10, never an edit to this record.)*

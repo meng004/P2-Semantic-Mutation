@@ -1,0 +1,65 @@
+```python
+import math
+
+_TOL = 1e-10
+
+
+def _finite_pair(a, b):
+    try:
+        ya = float(a)
+        yb = float(b)
+    except Exception:
+        return None
+    if not (math.isfinite(ya) and math.isfinite(yb)):
+        return None
+    return ya, yb
+
+
+# Quadratic refinement toward the central limit point x -> 1/2, where program(x) -> 0.
+# For the exact kernel, if y = program(x), then program(1/2 + 2*(x-1/2)^2) <= y^2.
+def r_1(x):
+    x = float(x)
+    t = x - 0.5
+    return 0.5 + 2.0 * t * t
+
+
+def R_1(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    y, yn = vals
+    return (-_TOL <= yn <= y * y + _TOL) and (-1.0 - _TOL <= yn <= 1.0 + _TOL)
+
+
+# Quadratic refinement toward x -> 1, where program(x) -> 1.
+def r_2(x):
+    x = float(x)
+    h = 1.0 - x
+    return 1.0 - h * h
+
+
+def R_2(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    y, yn = vals
+    e = abs(1.0 - y)
+    en = abs(1.0 - yn)
+    return (-1.0 - _TOL <= yn <= 1.0 + _TOL) and (en <= 2.0 * e * e + _TOL)
+
+
+# Quadratic refinement toward x -> 0, where program(x) -> -1.
+def r_3(x):
+    x = float(x)
+    return x * x
+
+
+def R_3(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    y, yn = vals
+    e = abs(y + 1.0)
+    en = abs(yn + 1.0)
+    return (-1.0 - _TOL <= yn <= 1.0 + _TOL) and (en <= 2.0 * e * e + _TOL)
+```

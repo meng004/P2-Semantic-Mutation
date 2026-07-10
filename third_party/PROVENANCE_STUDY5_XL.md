@@ -30,3 +30,14 @@ screen, no GPL code from it is vendored. GNU GSL (GPL-3.0) is used via the
 unmodified Ubuntu system library and is called only through the adapter shim
 (`src/p2/xlport/shims/`), consistent with the registration's vendoring clause
 (§2b Step 3 criterion 1).
+
+## Amendment A3 note (2026-07-10)
+
+The A3 roster-extension wave (module/pipeline-scale pairs; see
+`docs/prereg_v2/STUDY5_XL_ROSTER.md` §A3) vendored **nothing new**: every
+A3 pair links upstreams already pinned above — GNU GSL 2.7.1 as the
+unmodified Ubuntu system library (interpolation, chebyshev, histogram,
+multifit modules; GPL-3.0 notice retained, nothing GPL vendored, per the A1
+precedent), Boost.Math `8ee12a53` vendored headers (interpolators module),
+and the commons-math3 3.6.1 jar (analysis.interpolation, stat.descriptive
+modules). This directory is byte-unchanged by A3.
