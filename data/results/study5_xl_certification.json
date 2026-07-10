@@ -1,0 +1,887 @@
+{
+ "summary": {
+  "registration": "PREREGISTRATION_STUDY5_v1.md S2b/S2c (Amendment A1)",
+  "rank_rule": "c desc, l desc, source-list index asc, program name asc (ASCII)",
+  "grid": "x_i = i/200, i=0..200 (201 points)",
+  "tolerance_rule": "|y_L - y_py| <= tol * max(|y_py|, 1), both finite; tol=1e-6 unless pre-declared S2c class-1 exception (ceiling 1e-5)",
+  "n_floor": 12,
+  "n_target": 20,
+  "n_cap": 28,
+  "achieved_certified_n": 21,
+  "floor_met": true,
+  "under_certified_gate_n8": false,
+  "family_instantiability_coverage": {
+   "1": 10,
+   "2": 12,
+   "3": 5,
+   "4": 13,
+   "5": 3
+  },
+  "coverage_ok": true,
+  "languages_certified": [
+   "c",
+   "cpp",
+   "java",
+   "julia",
+   "rust"
+  ],
+  "stop_reason": "target reached after program 'besselj0': certified n=21 >= 20, coverage >= 2 programs per family",
+  "power_read_off": {
+   "largest_tabulated_n_le_achieved": 20,
+   "power": 0.8484,
+   "curve": "S4a primary (deflated) DGP, frozen"
+  },
+  "certified_pairs_in_walk_order": [
+   "invsqrt.cpp",
+   "brent.c",
+   "brent.java",
+   "euler.java",
+   "newton.rs",
+   "rungekutta.cpp",
+   "betainc.c",
+   "betainc.cpp",
+   "betainc.java",
+   "erf.c",
+   "erf.cpp",
+   "erf.java",
+   "normcdf.c",
+   "normcdf.cpp",
+   "normcdf.java",
+   "sigmoid.rs",
+   "tanh.rs",
+   "quad.c",
+   "quantile.jl",
+   "besselj0.c",
+   "besselj0.cpp"
+  ]
+ },
+ "pairs": [
+  {
+   "pair": "trapezoid.rs",
+   "program": "trapezoid",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "FAIL",
+   "max_rel_dev": 0.047576807355286174,
+   "argmax_x": 0.82,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "rust",
+   "upstream": "github.com/TheAlgorithms/Rust@c65d014621a9d50b36b197f08bb1c8016ff505b0 (MIT)",
+   "files": [
+    "third_party/thealgorithms-rust/src/math/trapezoidal_integration.rs"
+   ],
+   "primary_mp": 3,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    5,
+    1,
+    1,
+    "trapezoid"
+   ],
+   "exception": null,
+   "aux": "f(u)=u^2 frozen; interval [0, c(x)], c(x)=2**(2x-1); n=64 panels both sides"
+  },
+  {
+   "pair": "invsqrt.cpp",
+   "program": "invsqrt",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 7.098853415139493e-08,
+   "argmax_x": 0.205,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "cpp",
+   "upstream": "github.com/TheAlgorithms/C-Plus-Plus@b9c118fb5dca86f6325e816481959e1e6c360373 (MIT)",
+   "files": [
+    "third_party/thealgorithms-cpp/math/inv_sqrt.cpp"
+   ],
+   "primary_mp": 5,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    4,
+    2,
+    1,
+    "invsqrt"
+   ],
+   "exception": null,
+   "aux": "input u(x)=4**(2x-1) in [0.25,4]; float32 magic 0x5f3759df, ONE Newton iteration (matches the Python side; C++ template instantiated Fast_InvSqrt<float,1>)"
+  },
+  {
+   "pair": "invsqrt.go",
+   "program": "invsqrt",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "FAIL",
+   "max_rel_dev": 0.0017486050169586952,
+   "argmax_x": 0.475,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.01,
+   "language": "go",
+   "upstream": "github.com/TheAlgorithms/Go@5ba447ec5ff3d1213de65b92e726ee74c5d5cc19 (MIT)",
+   "files": [
+    "third_party/thealgorithms-go/math/binary/fast_inverse_sqrt.go"
+   ],
+   "primary_mp": 5,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    4,
+    2,
+    1,
+    "invsqrt"
+   ],
+   "exception": null,
+   "aux": "input u(x)=4**(2x-1) in [0.25,4]; float32 magic 0x5f3759df, ONE Newton iteration (matches the Python side; C++ template instantiated Fast_InvSqrt<float,1>)",
+   "note": "external Go entry hardcodes TWO Newton iterations vs the Python side's ONE; certification measures the discrepancy"
+  },
+  {
+   "pair": "simpson.cpp",
+   "program": "simpson",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "FAIL",
+   "max_rel_dev": 0.2816020025031294,
+   "argmax_x": 0.935,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "cpp",
+   "upstream": "github.com/TheAlgorithms/C-Plus-Plus@b9c118fb5dca86f6325e816481959e1e6c360373 (MIT)",
+   "files": [
+    "third_party/thealgorithms-cpp/numerical_methods/composite_simpson_rule.cpp"
+   ],
+   "primary_mp": 3,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    4,
+    2,
+    1,
+    "simpson"
+   ],
+   "exception": null,
+   "aux": "f(u)=u^2 frozen; interval [0, c(x)], c(x)=2**(2x-1); n=16 both sides (h=c/16 on the C++ side)"
+  },
+  {
+   "pair": "simpson.rs",
+   "program": "simpson",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "FAIL",
+   "max_rel_dev": 0.28160200250312917,
+   "argmax_x": 0.91,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "rust",
+   "upstream": "github.com/TheAlgorithms/Rust@c65d014621a9d50b36b197f08bb1c8016ff505b0 (MIT)",
+   "files": [
+    "third_party/thealgorithms-rust/src/math/simpsons_integration.rs"
+   ],
+   "primary_mp": 3,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    4,
+    2,
+    1,
+    "simpson"
+   ],
+   "exception": null,
+   "aux": "f(u)=u^2 frozen; interval [0, c(x)], c(x)=2**(2x-1); n=16 both sides (h=c/16 on the C++ side)"
+  },
+  {
+   "pair": "brent.c",
+   "program": "brent",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 2.2976065494617615e-13,
+   "argmax_x": 0.4,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "c",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "primary_mp": 3,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    4,
+    2,
+    2,
+    "brent"
+   ],
+   "exception": {
+    "cls": 1,
+    "tol": 1e-06,
+    "band": "both sides converge to |droot| <= ~1e-12 by their stopping rules; combined band ~4e-12, far inside the standard 1e-6 gate (no relaxation needed; recorded for transparency)"
+   },
+   "aux": "f(t)=t^3+t-c, c(x)=4x-2, bracket [-2,2]; GSL brent epsabs=1e-12; CM BrentSolver(1e-12); scipy brentq xtol=1e-12"
+  },
+  {
+   "pair": "brent.java",
+   "program": "brent",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 5.79813974610488e-13,
+   "argmax_x": 0.405,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.15,
+   "language": "java",
+   "upstream": "Maven Central org.apache.commons:commons-math3:3.6.1, jar sha256 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308 (Apache-2.0)",
+   "files": [
+    "third_party/commons-math/commons-math3-3.6.1.jar"
+   ],
+   "primary_mp": 3,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    4,
+    2,
+    2,
+    "brent"
+   ],
+   "exception": {
+    "cls": 1,
+    "tol": 1e-06,
+    "band": "both sides converge to |droot| <= ~1e-12 by their stopping rules; combined band ~4e-12, far inside the standard 1e-6 gate (no relaxation needed; recorded for transparency)"
+   },
+   "aux": "f(t)=t^3+t-c, c(x)=4x-2, bracket [-2,2]; GSL brent epsabs=1e-12; CM BrentSolver(1e-12); scipy brentq xtol=1e-12"
+  },
+  {
+   "pair": "euler.java",
+   "program": "euler",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 0.0,
+   "argmax_x": 0.0,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.14,
+   "language": "java",
+   "upstream": "github.com/TheAlgorithms/Java@fd2858e7e6138d9f8940ee9820e172912a5acfb4 (MIT)",
+   "files": [
+    "third_party/thealgorithms-java/src/main/java/com/thealgorithms/maths/EulerMethod.java"
+   ],
+   "primary_mp": 3,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    4,
+    1,
+    1,
+    "euler"
+   ],
+   "exception": null,
+   "aux": "dy/dt = y(1-y) frozen; y0(x)=0.05+0.9x; t in [0,2]; h=1/128 (dyadic, exactly 256 steps both sides)"
+  },
+  {
+   "pair": "newton.rs",
+   "program": "newton",
+   "tol": 2e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 7.840879346909801e-07,
+   "argmax_x": 0.165,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "rust",
+   "upstream": "github.com/TheAlgorithms/Rust@c65d014621a9d50b36b197f08bb1c8016ff505b0 (MIT)",
+   "files": [
+    "third_party/thealgorithms-rust/src/math/newton_raphson.rs"
+   ],
+   "primary_mp": 3,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    4,
+    1,
+    1,
+    "newton"
+   ],
+   "exception": {
+    "cls": 1,
+    "tol": 2e-06,
+    "band": "Python side stops at |f(a)|<1e-6 with min |f'| = 2*root >= 1 on the frozen domain, so its root error band is <= 1e-6; Rust side converges to machine precision (8 Newton iterations on a quadratic); combined declared band 2e-6 (<= the registered 1e-5 ceiling)"
+   },
+   "aux": "f(t)=t^2-a, a(x)=4**(2x-1); Rust: exact derivative, guess 1.5, 8 iterations; Python: numerical derivative, x0=1.5, stops at |f|<1e-6"
+  },
+  {
+   "pair": "rungekutta.cpp",
+   "program": "rungekutta",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 0.0,
+   "argmax_x": 0.0,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.06,
+   "language": "cpp",
+   "upstream": "github.com/TheAlgorithms/C-Plus-Plus@b9c118fb5dca86f6325e816481959e1e6c360373 (MIT)",
+   "files": [
+    "third_party/thealgorithms-cpp/numerical_methods/rungekutta.cpp"
+   ],
+   "primary_mp": 3,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    4,
+    1,
+    1,
+    "rungekutta"
+   ],
+   "exception": null,
+   "aux": "dy/dt = (t-y)/2 frozen (hardcoded in the C++ entry; mirrored on the Python side); y0(x)=x; t in [0,2]; h=1/64 (exactly 128 steps both sides)"
+  },
+  {
+   "pair": "betainc.c",
+   "program": "betainc",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 1.7763568394002505e-15,
+   "argmax_x": 0.49,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "c",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "betainc"
+   ],
+   "exception": null,
+   "aux": "a=b=2.5 frozen; program(x) = I_x(2.5, 2.5)"
+  },
+  {
+   "pair": "betainc.cpp",
+   "program": "betainc",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 3.3306690738754696e-16,
+   "argmax_x": 0.555,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "cpp",
+   "upstream": "github.com/boostorg/math@8ee12a5355935cbaac5d5338372d0d0e3311b473 (BSL-1.0)",
+   "files": [
+    "third_party/boost-math/include"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "betainc"
+   ],
+   "exception": null,
+   "aux": "a=b=2.5 frozen; program(x) = I_x(2.5, 2.5)"
+  },
+  {
+   "pair": "betainc.java",
+   "program": "betainc",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 1.27675647831893e-15,
+   "argmax_x": 0.49,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.12,
+   "language": "java",
+   "upstream": "Maven Central org.apache.commons:commons-math3:3.6.1, jar sha256 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308 (Apache-2.0)",
+   "files": [
+    "third_party/commons-math/commons-math3-3.6.1.jar"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "betainc"
+   ],
+   "exception": null,
+   "aux": "a=b=2.5 frozen; program(x) = I_x(2.5, 2.5)"
+  },
+  {
+   "pair": "erf.c",
+   "program": "erf",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 3.3306690738754696e-16,
+   "argmax_x": 0.71,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.01,
+   "language": "c",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "erf"
+   ],
+   "exception": null,
+   "aux": "t(x)=4x-2"
+  },
+  {
+   "pair": "erf.cpp",
+   "program": "erf",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 2.220446049250313e-16,
+   "argmax_x": 0.26,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.01,
+   "language": "cpp",
+   "upstream": "github.com/boostorg/math@8ee12a5355935cbaac5d5338372d0d0e3311b473 (BSL-1.0)",
+   "files": [
+    "third_party/boost-math/include"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "erf"
+   ],
+   "exception": null,
+   "aux": "t(x)=4x-2"
+  },
+  {
+   "pair": "erf.java",
+   "program": "erf",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 4.440892098500626e-16,
+   "argmax_x": 0.19,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.12,
+   "language": "java",
+   "upstream": "Maven Central org.apache.commons:commons-math3:3.6.1, jar sha256 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308 (Apache-2.0)",
+   "files": [
+    "third_party/commons-math/commons-math3-3.6.1.jar"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "erf"
+   ],
+   "exception": null,
+   "aux": "t(x)=4x-2"
+  },
+  {
+   "pair": "normcdf.c",
+   "program": "normcdf",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 1.1102230246251565e-16,
+   "argmax_x": 0.4,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.01,
+   "language": "c",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "normcdf"
+   ],
+   "exception": null,
+   "aux": "t(x)=6x-3, standard normal"
+  },
+  {
+   "pair": "normcdf.cpp",
+   "program": "normcdf",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 1.1102230246251565e-16,
+   "argmax_x": 0.55,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.01,
+   "language": "cpp",
+   "upstream": "github.com/boostorg/math@8ee12a5355935cbaac5d5338372d0d0e3311b473 (BSL-1.0)",
+   "files": [
+    "third_party/boost-math/include"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "normcdf"
+   ],
+   "exception": null,
+   "aux": "t(x)=6x-3, standard normal"
+  },
+  {
+   "pair": "normcdf.java",
+   "program": "normcdf",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 2.220446049250313e-16,
+   "argmax_x": 0.695,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.12,
+   "language": "java",
+   "upstream": "Maven Central org.apache.commons:commons-math3:3.6.1, jar sha256 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308 (Apache-2.0)",
+   "files": [
+    "third_party/commons-math/commons-math3-3.6.1.jar"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    3,
+    2,
+    "normcdf"
+   ],
+   "exception": null,
+   "aux": "t(x)=6x-3, standard normal"
+  },
+  {
+   "pair": "sigmoid.rs",
+   "program": "sigmoid",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 7.294972859117621e-08,
+   "argmax_x": 0.98,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "rust",
+   "upstream": "github.com/TheAlgorithms/Rust@c65d014621a9d50b36b197f08bb1c8016ff505b0 (MIT)",
+   "files": [
+    "third_party/thealgorithms-rust/src/math/sigmoid.rs"
+   ],
+   "primary_mp": 1,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    3,
+    1,
+    1,
+    "sigmoid"
+   ],
+   "exception": null,
+   "aux": "t(x)=8x-4; external Rust side computes in float32 (E.powf), Python side float64: certification measures the precision gap against the standard gate"
+  },
+  {
+   "pair": "tanh.rs",
+   "program": "tanh",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 1.4589945718235242e-07,
+   "argmax_x": 0.98,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "rust",
+   "upstream": "github.com/TheAlgorithms/Rust@c65d014621a9d50b36b197f08bb1c8016ff505b0 (MIT)",
+   "files": [
+    "third_party/thealgorithms-rust/src/math/tanh.rs"
+   ],
+   "primary_mp": 1,
+   "source_idx": 1,
+   "source": "TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust}",
+   "rank": [
+    3,
+    1,
+    1,
+    "tanh"
+   ],
+   "exception": null,
+   "aux": "t(x)=4x-2; external Rust side float32, Python side float64 (as sigmoid)"
+  },
+  {
+   "pair": "quad.c",
+   "program": "quad",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 0.0,
+   "argmax_x": 0.0,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.02,
+   "language": "c",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "primary_mp": 3,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    3,
+    1,
+    2,
+    "quad"
+   ],
+   "exception": {
+    "cls": 1,
+    "tol": 1e-06,
+    "band": "both sides integrate to epsabs=epsrel=1e-10; combined band ~4e-10, far inside the standard gate (recorded for transparency)"
+   },
+   "aux": "integrand 1/(1+u^2) frozen; interval [0, 4x]; epsabs=epsrel=1e-10 both sides; GSL_INTEG_GAUSS21 vs scipy QUADPACK qagse (21-point)"
+  },
+  {
+   "pair": "quantile.jl",
+   "program": "quantile",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 1.2616170734376773e-15,
+   "argmax_x": 0.855,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.76,
+   "language": "julia",
+   "upstream": "Julia 1.11.7 official binary tarball, stdlib entry points (MIT)",
+   "files": [],
+   "primary_mp": 2,
+   "source_idx": 3,
+   "source": "Julia stdlib / SciML <-> scipy",
+   "rank": [
+    3,
+    1,
+    3,
+    "quantile"
+   ],
+   "exception": null,
+   "aux": "frozen symmetric 21-point sample; Julia Statistics.quantile default (type-7 linear interpolation) vs numpy.quantile default (same type-7)"
+  },
+  {
+   "pair": "besselj0.c",
+   "program": "besselj0",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 4.440892098500626e-16,
+   "argmax_x": 0.4,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.01,
+   "language": "c",
+   "upstream": "GNU GSL, Ubuntu libgsl-dev 2.7.1+dfsg-6ubuntu2 system library, unmodified (GPL-3.0)",
+   "files": [],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    2,
+    3,
+    2,
+    "besselj0"
+   ],
+   "exception": null,
+   "aux": "t(x)=8x-4 (negative arguments exercise the parity identity; library domain support measured at certification)"
+  },
+  {
+   "pair": "besselj0.cpp",
+   "program": "besselj0",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "PASS",
+   "max_rel_dev": 3.3306690738754696e-16,
+   "argmax_x": 0.355,
+   "n_nonfinite_L": 0,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.01,
+   "language": "cpp",
+   "upstream": "github.com/boostorg/math@8ee12a5355935cbaac5d5338372d0d0e3311b473 (BSL-1.0)",
+   "files": [
+    "third_party/boost-math/include"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    2,
+    3,
+    2,
+    "besselj0"
+   ],
+   "exception": null,
+   "aux": "t(x)=8x-4 (negative arguments exercise the parity identity; library domain support measured at certification)"
+  },
+  {
+   "pair": "besselj0.java",
+   "program": "besselj0",
+   "tol": 1e-06,
+   "n_grid": 201,
+   "status": "FAIL",
+   "max_rel_dev": 3.3306690738754696e-16,
+   "argmax_x": 0.645,
+   "n_nonfinite_L": 100,
+   "n_nonfinite_py": 0,
+   "elapsed_s": 0.13,
+   "language": "java",
+   "upstream": "Maven Central org.apache.commons:commons-math3:3.6.1, jar sha256 1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308 (Apache-2.0)",
+   "files": [
+    "third_party/commons-math/commons-math3-3.6.1.jar"
+   ],
+   "primary_mp": 1,
+   "source_idx": 2,
+   "source": "GNU GSL (C) <-> scipy",
+   "rank": [
+    2,
+    3,
+    2,
+    "besselj0"
+   ],
+   "exception": null,
+   "aux": "t(x)=8x-4 (negative arguments exercise the parity identity; library domain support measured at certification)"
+  },
+  {
+   "pair": "digamma.c",
+   "program": "digamma",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "digamma.cpp",
+   "program": "digamma",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "digamma.java",
+   "program": "digamma",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "gamma.c",
+   "program": "gamma",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "gamma.cpp",
+   "program": "gamma",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "gamma.java",
+   "program": "gamma",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "gammainc.c",
+   "program": "gammainc",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "gammainc.cpp",
+   "program": "gammainc",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "gammainc.java",
+   "program": "gammainc",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "expint.c",
+   "program": "expint",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "expint.cpp",
+   "program": "expint",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "legendre.c",
+   "program": "legendre",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "legendre.cpp",
+   "program": "legendre",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "zeta.c",
+   "program": "zeta",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "zeta.cpp",
+   "program": "zeta",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  },
+  {
+   "pair": "sinc.jl",
+   "program": "sinc",
+   "status": "NOT_REACHED",
+   "note": "greedy walk stopped before this candidate (S2b Step 5)"
+  }
+ ]
+}

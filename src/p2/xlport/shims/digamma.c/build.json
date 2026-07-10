@@ -1,0 +1,9 @@
+{
+ "language": "c",
+ "shim": "shim.c",
+ "libs": [
+  "-lgsl",
+  "-lgslcblas",
+  "-lm"
+ ]
+}

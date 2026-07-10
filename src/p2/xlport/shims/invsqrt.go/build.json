@@ -1,0 +1,12 @@
+{
+ "language": "go",
+ "shim": "main.go",
+ "gopkg": {
+  "binary": [
+   "third_party/thealgorithms-go/math/binary/fast_inverse_sqrt.go"
+  ]
+ },
+ "hash_extra": [
+  "third_party/thealgorithms-go/math/binary/fast_inverse_sqrt.go"
+ ]
+}

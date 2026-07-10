@@ -1,0 +1,10 @@
+{
+ "language": "cpp",
+ "shim": "shim.cpp",
+ "include_dirs": [
+  "third_party/boost-math/include"
+ ],
+ "defines": [
+  "BOOST_MATH_STANDALONE"
+ ]
+}

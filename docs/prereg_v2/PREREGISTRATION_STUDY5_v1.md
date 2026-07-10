@@ -937,3 +937,22 @@ code-level (never protocol-level).
 *(No further amendments. Any post-freeze change — a pilot-triggered code fix,
 a vendor id remap, the A1 roster freeze — is appended here with date and
 rationale before the corresponding confirmatory run.)*
+
+**Amendment A1 — 2026-07-10 (scheduled, pre-mutant): Family-XL roster
+freeze.** Executed the frozen §2b selection protocol and the §2c
+certification admission gate; full audit trail (enumeration, per-candidate
+screening with criteria cited, deterministic Step-4 ranking table, per-pair
+certification measurements, declared class-1 exception bands, ambiguity
+resolutions D1–D6) in `docs/prereg_v2/STUDY5_XL_ROSTER.md`; machine-readable
+roster `configs/xl_roster.json` (schema verified against the frozen
+`compute_hlang_delta.load_xl_roster`); certification SSOT
+`data/results/study5_xl_certification.json`. Result: achieved certified
+n = 21 pairs (floor 12 met, target 20 exceeded, cap 28 respected), 13
+external programs, languages C/C++/Java/Rust/Julia; five pairs failed
+certification and are excluded-and-disclosed pre-mutant (trapezoid.rs,
+simpson.cpp, simpson.rs: defective/float-fragile external Python reference;
+invsqrt.go: two-vs-one Newton iterations; besselj0.java: Commons Math
+negative-argument domain rejection); read-off power at the frozen §4a
+primary curve: n = 20 → 0.8484. Step-6 hand-port fallback NOT invoked.
+Adapter layer only (`src/p2/xlport/`); no external program code edited. No
+XL mutant, pilot pool, or SMS value existed at this freeze.
