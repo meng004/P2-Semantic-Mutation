@@ -1,0 +1,63 @@
+```python
+import math
+import numpy as np
+
+# MP1 — conservation (invariance under a group action G on the input space).
+# The program first scales and rounds x: n_succ = round(100 * x).
+# The output is (1 + n_succ) / 102.
+# Any transformation of x that preserves round(100 * x) must preserve the output.
+
+
+# MR1: Small perturbations that do not cross the rounding boundaries.
+# For any x, if we perturb it by a very small epsilon (e.g., 1e-5), 
+# 100 * x and 100 * (x + eps) will almost always round to the same integer, 
+# except at the exact half-integers (which is extremely rare for random floats).
+# To make this 100% deterministic and safe for all x ~ U(0, 1), we can project 
+# x to the center of its bin. 
+# Let center(x) = round(100 * x) / 100.
+# Then program(x) must be exactly equal to program(center(x)).
+def r_1(x: float) -> float:
+    # Maps x to the center of its rounding bin
+    return float(round(100.0 * x) / 100.0)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    # Since both inputs map to the same n_succ, the outputs must be exactly equal.
+    return y_orig == y_new
+
+
+# MR2: Invariance under shifting x within its rounding interval.
+# For any x, let n = round(100 * x). The interval mapping to n is [ (n - 0.5)/100, (n + 0.5)/100 ).
+# We can shift x towards the left boundary of its bin by a safe fraction, 
+# e.g., mapping x to its bin's lower-middle point: (n - 0.25) / 100.
+# To handle boundary conditions (x near 0 or 1) safely and keep the value in [0, 1]:
+# we can reconstruct the exact bin representative.
+def r_2(x: float) -> float:
+    n_succ = round(100.0 * x)
+    # Shift slightly to the left within the same rounding bin, keeping it within [0, 100]
+    n_shifted = max(0.0, n_succ - 0.1)
+    return float(n_shifted / 100.0)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return y_orig == y_new
+
+
+# MR3: Invariance under shifting x slightly to the right within its rounding interval.
+# Similarly, we can shift x towards the right boundary of its bin: (n + 0.25) / 100.
+def r_3(x: float) -> float:
+    n_succ = round(100.0 * x)
+    # Shift slightly to the right within the same rounding bin, keeping it within [0, 100]
+    n_shifted = min(100.0, n_succ + 0.1)
+    return float(n_shifted / 100.0)
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return y_orig == y_new
+```

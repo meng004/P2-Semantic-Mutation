@@ -1,0 +1,57 @@
+An analysis of the program under test reveals that it integrates the linear ODE $u' = -u$ with initial condition $u(0) = 2x - 1$. 
+
+Because the ODE is linear and stable, the final value $u(T)$ is a strictly increasing linear function of the initial state $u(0)$. Since $u(0) = 2x - 1$ is strictly increasing with respect to $x$, the output of `program(x)` is strictly increasing with respect to $x$ for any $x \in [0, 1]$.
+
+We can define metamorphic relations based on this monotonicity property:
+1. **Shifting $x$ upwards**: If we increase $x$ by a positive constant $\delta$, the output must increase.
+2. **Scaling $x$ towards 1**: If we scale $x$ towards 1 via a convex combination $r(x) = (1 - \alpha)x + \alpha$ for $\alpha \in (0, 1)$, the input increases, so the output must increase.
+3. **Reflecting $x$ across a threshold**: For $x \in [0, 0.5]$, mapping $x \mapsto 1 - x$ increases the input, which must increase the output.
+
+Here is the implementation of these metamorphic relations:
+
+```python
+import math
+
+
+# MR1: Shift input x upwards by a fixed positive step.
+# For any x in [0, 0.9], x + 0.1 is in [0.1, 1.0].
+# Since program(x) is strictly increasing with x, program(r_1(x)) >= program(x).
+def r_1(x: float) -> float:
+    # Restrict x to [0, 0.9] to keep the transformed input in [0, 1].
+    # For x > 0.9, we map it to 1.0, which still guarantees r_1(x) >= x.
+    if x > 0.9:
+        return 1.0
+    return x + 0.1
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return y_new >= y_orig
+
+
+# MR2: Scale input x towards 1.0.
+# r_2(x) = 0.5 * x + 0.5. Since x <= 1, we have r_2(x) >= x.
+# Therefore, program(r_2(x)) >= program(x).
+def r_2(x: float) -> float:
+    return 0.5 * x + 0.5
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return y_new >= y_orig
+
+
+# MR3: Map x to max(x, 1 - x).
+# This guarantees that the transformed input is always >= the original input,
+# and both are in [0, 1]. Thus, the output must increase or remain equal.
+def r_3(x: float) -> float:
+    return max(x, 1.0 - x)
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return y_new >= y_orig
+```

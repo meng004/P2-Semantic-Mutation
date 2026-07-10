@@ -1,0 +1,15 @@
+
+
+```python
+import math
+
+def r_1(x):
+    """MP3—convergence order: refinable input transform (Mode-I)."""
+    return x
+
+def R_1(y_orig, y_new):
+    """R_1(y_orig, y_new) = True iff |y_new - y_orig| > 0.1."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return abs(y_new - y_orig) > 0.1
+```

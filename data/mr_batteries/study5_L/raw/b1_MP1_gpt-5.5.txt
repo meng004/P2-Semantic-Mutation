@@ -1,0 +1,72 @@
+```python
+import math
+
+_N_TRIALS = 100.0
+_TOL = 1e-12
+
+
+def _clip01(v):
+    v = float(v)
+    if v < 0.0:
+        return 0.0
+    if v > 1.0:
+        return 1.0
+    return v
+
+
+def _rounded_successes(x):
+    return int(round(_N_TRIALS * _clip01(x)))
+
+
+def _same_finite(a, b):
+    try:
+        a = float(a)
+        b = float(b)
+    except Exception:
+        return False
+    if not (math.isfinite(a) and math.isfinite(b)):
+        return False
+    return abs(a - b) <= _TOL
+
+
+# MR1: replace x by the canonical grid representative with the same rounded
+# number of successes; the posterior mean is conserved.
+def r_1(x):
+    k = _rounded_successes(x)
+    return _clip01(k / _N_TRIALS)
+
+
+def R_1(y_orig, y_new):
+    return _same_finite(y_orig, y_new)
+
+
+# MR2: move to a fixed interior point of the same rounding cell; this preserves
+# n_succ and hence conserves the posterior mean.
+def r_2(x):
+    k = _rounded_successes(x)
+    c = k / _N_TRIALS
+    if k >= 100:
+        return 0.9975
+    return _clip01(c + 0.0025)
+
+
+def R_2(y_orig, y_new):
+    return _same_finite(y_orig, y_new)
+
+
+# MR3: contract/reflect x within its current rounding cell, keeping the rounded
+# success count invariant, so the posterior mean must be unchanged.
+def r_3(x):
+    x = _clip01(x)
+    k = _rounded_successes(x)
+    if k <= 0:
+        return _clip01(0.5 * x)
+    if k >= 100:
+        return _clip01(1.0 - 0.5 * (1.0 - x))
+    c = k / _N_TRIALS
+    return _clip01(c - 0.5 * (x - c))
+
+
+def R_3(y_orig, y_new):
+    return _same_finite(y_orig, y_new)
+```

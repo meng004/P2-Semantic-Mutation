@@ -1,0 +1,71 @@
+```python
+import math
+
+
+# The program integrates the ODE u' = -u with initial condition u(0) = 2x - 1.
+# The exact solution at T=1 is u(1) = (2x - 1) * exp(-1).
+# The RK4 numerical integration is highly accurate, so the output is extremely
+# close to (2x - 1) * exp(-1).
+#
+# Under the MP3 convergence order family, as we refine the step size, the numerical
+# approximation converges to the true analytical solution.
+# For any x, the output program(x) must satisfy the analytical properties of the
+# underlying ODE solution. Specifically, we can exploit the linear dependence
+# of the solution on the initial condition u(0) = 2x - 1.
+#
+# Let u_0(x) = 2x - 1. Then program(x) ≈ (2x - 1) * C, where C = (1 - h + h^2/2 - h^3/6 + h^4/24)^20.
+# Since the RK4 stepper is completely linear in the state variable u, this relation
+# is exact up to floating-point precision: program(x) = (2x - 1) * C.
+#
+# We design three metamorphic relations based on this exact scaling property:
+#
+# MR1: Antisymmetry around the midpoint x = 0.5 (where u(0) = 0).
+#      r_1(x) = 1.0 - x
+#      R_1(y_orig, y_new) checks that y_orig + y_new == 0 (within a small tolerance).
+#
+# MR2: Scaling relative to the midpoint x = 0.5.
+#      If we scale the distance from 0.5 by a factor of 0.5:
+#      r_2(x) = 0.5 + 0.5 * (x - 0.5)
+#      Then u_0(r_2(x)) = 0.5 * u_0(x), so program(r_2(x)) should be exactly 0.5 * program(x).
+#
+# MR3: Complementary scaling to shift the initial condition.
+#      r_3(x) = 0.5 - 0.5 * (x - 0.5)
+#      Then u_0(r_3(x)) = -0.5 * u_0(x), so program(r_3(x)) should be exactly -0.5 * program(x).
+
+
+def r_1(x: float) -> float:
+    """Map x to its symmetric counterpart 1 - x."""
+    return 1.0 - float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Verify that program(1 - x) == -program(x) within numerical precision."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    # Use an absolute tolerance since the values are bounded in [-1, 1]
+    return math.isclose(y_orig + y_new, 0.0, abs_tol=1e-14)
+
+
+def r_2(x: float) -> float:
+    """Contract the distance from the midpoint 0.5 by half."""
+    return 0.5 + 0.5 * (float(x) - 0.5)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """Verify that program(r_2(x)) == 0.5 * program(x)."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return math.isclose(y_new, 0.5 * y_orig, abs_tol=1e-14)
+
+
+def r_3(x: float) -> float:
+    """Contract and reflect the distance from the midpoint 0.5 by half."""
+    return 0.5 - 0.5 * (float(x) - 0.5)
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    """Verify that program(r_3(x)) == -0.5 * program(x)."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return math.isclose(y_new, -0.5 * y_orig, abs_tol=1e-14)
+```

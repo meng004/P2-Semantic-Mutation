@@ -1,0 +1,44 @@
+An elegant set of metamorphic relations of the monotonicity family (MP2) can be designed based on the monotonic behavior of the posterior mean with respect to the input parameter $x$. 
+
+As $x$ increases, the number of successes $n_{\text{succ}} = \text{round}(100 \times x)$ is non-decreasing. Because the posterior mean $\frac{1 + n_{\text{succ}}}{102}$ is a strictly increasing function of $n_{\text{succ}}$, the program output must be a non-decreasing (monotone) function of $x$.
+
+Here are three metamorphic relations that exploit this property:
+1. **Constant Shift (`r_1` / `R_1`):** Shifting $x$ upward by a constant positive offset $0.1$ (clipped to $[0, 1]$) must yield a posterior mean greater than or equal to the original.
+2. **Scaling (`r_2` / `R_2`):** Scaling $x$ towards $1.0$ via a convex combination with $1.0$ (i.e., $x \to 0.5x + 0.5$) must yield an output greater than or equal to the original.
+3. **Reflection and Monotonicity (`r_3` / `R_3`):** Since $x$ is mapped to $1 - x$, if we compare a smaller input $x \le 0.5$ with its reflected larger counterpart $1 - x \ge 0.5$, the output for the reflected input must be greater than or equal to the original.
+
+```python
+import numpy as np
+
+
+# MR1: Positive constant shift.
+# If we increase the input x by a positive constant, the output must be non-decreasing.
+def r_1(x: float) -> float:
+    return float(np.clip(x + 0.1, 0.0, 1.0))
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    return y_new >= y_orig
+
+
+# MR2: Scaling towards 1.0.
+# Compressing the interval towards 1.0 (x' = 0.5 * x + 0.5) guarantees x' >= x for all x in [0, 1].
+# Thus, the output must be non-decreasing.
+def r_2(x: float) -> float:
+    return float(0.5 * x + 0.5)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    return y_new >= y_orig
+
+
+# MR3: Reflection mapping.
+# For any x, we map it to max(x, 1 - x). This guarantees the transformed input
+# is always greater than or equal to the original input x, so the output must not decrease.
+def r_3(x: float) -> float:
+    return float(max(x, 1.0 - x))
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    return y_new >= y_orig
+```

@@ -1,0 +1,44 @@
+```python
+import math
+
+
+# The program integrates the linear ODE u' = -u with initial condition u(0) = 2x - 1.
+# The exact solution at T=1 is u(T) = (2x-1) * C, where C = (1 - h + h^2/2 - h^3/6 + h^4/24)^20 > 0.
+# Because the ODE is linear and the RK4 scheme is linear, the output is exactly a linear function of (2x-1).
+# Specifically, program(x) = (2x - 1) * C.
+#
+# MR1: Antisymmetry / Reflection symmetry about x = 0.5.
+# If we transform x to 1 - x, the initial condition becomes 2(1-x)-1 = -(2x-1).
+# By linearity, program(1 - x) = -program(x).
+# Thus, program(x) + program(1 - x) = 0.
+
+def r_1(x: float) -> float:
+    """Input transformation: reflection about the midpoint x = 0.5."""
+    return 1.0 - float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Output relation: y_orig + y_new should be 0 (antisymmetry)."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    # Using an absolute tolerance since the values are in [-1, 1]
+    return math.isclose(y_orig + y_new, 0.0, abs_tol=1e-12)
+
+
+# MR2: Scaling / Shift towards the fixed point of the input space.
+# Since program(x) = (2x - 1) * C, if we map x to a new point x_new = 0.5 + k * (x - 0.5)
+# for some constant k, the output must scale exactly by k.
+# Let k = 0.5. Then r_2(x) = 0.5 * x + 0.25.
+# The output relation is program(r_2(x)) = 0.5 * program(x).
+
+def r_2(x: float) -> float:
+    """Input transformation: contraction towards x = 0.5 by a factor of 0.5."""
+    return 0.5 * float(x) + 0.25
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """Output relation: y_new should be exactly 0.5 * y_orig."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return math.isclose(y_new, 0.5 * y_orig, rel_tol=1e-12, abs_tol=1e-12)
+```

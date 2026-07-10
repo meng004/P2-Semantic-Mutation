@@ -1,0 +1,61 @@
+```python
+import math
+
+_EPS = 1e-14
+
+
+def _finite_pair(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return None
+    return yo, yn
+
+
+# Moves the initial condition toward the upper endpoint: for the correct RK4
+# stepper, linearity and positive amplification imply program(r_1(x)) >= program(x).
+def r_1(x):
+    x = float(x)
+    return 0.5 + 0.5 * x
+
+
+def R_1(y_orig, y_new):
+    p = _finite_pair(y_orig, y_new)
+    if p is None:
+        return False
+    yo, yn = p
+    return yn + _EPS >= yo
+
+
+# A stronger refinement toward the positive-output regime; the relative
+# comparison should again be nondecreasing for every x in [0, 1].
+def r_2(x):
+    x = float(x)
+    return 0.75 + 0.25 * x
+
+
+def R_2(y_orig, y_new):
+    p = _finite_pair(y_orig, y_new)
+    if p is None:
+        return False
+    yo, yn = p
+    return yn + _EPS >= yo
+
+
+# Nonlinear refinement toward larger valid initial data.  Since sqrt(x) >= x
+# on [0, 1], the correct positive-amplification integrator must not decrease.
+def r_3(x):
+    x = float(x)
+    return math.sqrt(x)
+
+
+def R_3(y_orig, y_new):
+    p = _finite_pair(y_orig, y_new)
+    if p is None:
+        return False
+    yo, yn = p
+    return yn + _EPS >= yo
+```

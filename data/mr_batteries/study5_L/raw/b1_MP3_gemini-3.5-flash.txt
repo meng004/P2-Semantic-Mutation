@@ -1,0 +1,71 @@
+```python
+import math
+import numpy as np
+
+# MP3 — convergence order.
+# The program maps a scalar x in [0, 1] to the posterior mean of a Beta-Binomial model
+# with a Beta(1, 1) prior and N = 100 trials, where the number of successes is round(100 * x).
+# Specifically:
+#   n_succ = round(100 * x)
+#   posterior_mean = (1 + n_succ) / (2 + 100) = (1 + round(100 * x)) / 102
+#
+# As x approaches 0, the posterior mean converges to 1/102.
+# As x approaches 1, the posterior mean converges to 101/102.
+# Specifically, for x close to 0, we can define a convergence relation.
+#
+# The harness probes program(h) at h in {0.1, 0.05, 0.025, 0.0125}.
+# For these small h values:
+#   At h = 0.1,    round(100 * 0.1) = 10  => program(0.1) = 11/102 ≈ 0.10784
+#   At h = 0.05,   round(100 * 0.05) = 5  => program(0.05) = 6/102 ≈ 0.05882
+#   At h = 0.025,  round(100 * 0.025) = 3 => program(0.025) = 4/102 ≈ 0.03922
+#   At h = 0.0125, round(100 * 0.0125) = 1 => program(0.0125) = 2/102 ≈ 0.01961
+#
+# We define MRs that capture the convergence behavior or self-consistency of
+# the discretization refinement.
+
+
+def r_1(x: float) -> float:
+    """Refine x by halving it to observe convergence towards the x -> 0 limit.
+
+    If x is already 0, it stays 0.
+    """
+    return float(x / 2.0)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """For any x in [0, 1], halving x reduces (or keeps equal) the number of successes.
+
+    Therefore, the posterior mean must be monotonically non-increasing.
+    Also, the posterior mean is strictly bounded between 1/102 and 101/102.
+    """
+    if not (np.isfinite(y_orig) and np.isfinite(y_new)):
+        return False
+    # Monotonicity under halving of the input
+    if y_new > y_orig:
+        return False
+    # Bounds check
+    if not (1.0 / 102.0 <= y_new <= 101.0 / 102.0):
+        return False
+    return True
+
+
+def r_2(x: float) -> float:
+    """Refine the complement: approach 1 from below by halving the distance to 1."""
+    return float(1.0 - (1.0 - x) / 2.0)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """As we approach 1, the posterior mean must be monotonically non-decreasing.
+
+    Also, it must remain within the valid theoretical bounds.
+    """
+    if not (np.isfinite(y_orig) and np.isfinite(y_new)):
+        return False
+    # Monotonicity under approaching 1
+    if y_new < y_orig:
+        return False
+    # Bounds check
+    if not (1.0 / 102.0 <= y_new <= 101.0 / 102.0):
+        return False
+    return True
+```

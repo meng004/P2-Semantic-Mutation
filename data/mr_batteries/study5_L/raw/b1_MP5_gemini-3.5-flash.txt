@@ -1,0 +1,63 @@
+```python
+import math
+import numpy as np
+
+# MP5 — Method-comparison (m_conv / f_conv.rate style)
+#
+# The program computes the posterior mean of a Beta-Binomial model with 100 trials,
+# given an empirical success rate x in [0, 1].
+#
+# Since the prior is Beta(1, 1) (uniform), the prior mean is 0.5.
+# The posterior mean is a weighted average of the prior mean (0.5) and the empirical 
+# success rate (round(100 * x) / 100).
+# Specifically, posterior_mean = (1 + n_succ) / 102.
+# 
+# If we move the empirical rate x closer to the prior mean of 0.5, the posterior mean 
+# must also move closer to 0.5 (shrinkage effect). 
+# Conversely, if we move x further away from 0.5 towards the extremes (0 or 1), 
+# the posterior mean must move further away from 0.5 towards those extremes.
+#
+# We define relations comparing the distance of the posterior mean from the prior mean (0.5).
+
+def r_1(x: float) -> float:
+    """Move x closer to the prior mean of 0.5.
+    
+    This represents a 'lower-deviation' regime where the empirical evidence is
+    closer to the prior, shrinking the posterior mean towards 0.5.
+    """
+    # Map x to be closer to 0.5 by halving its distance from 0.5
+    return 0.5 + 0.5 * (x - 0.5)
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """The new posterior mean must be closer to the prior mean (0.5) than the original.
+    
+    |y_new - 0.5| <= |y_orig - 0.5|
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_new - 0.5) <= abs(y_orig - 0.5) + 1e-9
+
+
+def r_2(x: float) -> float:
+    """Move x further away from the prior mean of 0.5 towards the boundaries.
+    
+    This represents a 'higher-deviation' regime where the empirical evidence is
+    further from the prior, pushing the posterior mean away from 0.5.
+    """
+    # Push x further towards 0 or 1
+    if x >= 0.5:
+        # Map [0.5, 1.0] to [0.75, 1.0]
+        return 0.75 + 0.5 * (x - 0.5)
+    else:
+        # Map [0.0, 0.5) to [0.0, 0.25)
+        return 0.5 * x
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """The new posterior mean must be further from (or at least as far from) 0.5.
+    
+    |y_new - 0.5| >= |y_orig - 0.5|
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_new - 0.5) >= abs(y_orig - 0.5) - 1e-9
+```

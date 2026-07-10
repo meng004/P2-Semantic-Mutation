@@ -1,4 +1,4 @@
-/* Study-5 Family-XL adapter shim (pair: brent.c). Adapter/oracle layer only:
+/* Study-5 Family-XL adapter shim (pair: brent_c). Adapter/oracle layer only:
    calls the unmodified external entry point(s); frozen aux documented in
    docs/prereg_v2/STUDY5_XL_ROSTER.md. */
 #include <stdio.h>
@@ -8,7 +8,7 @@
 
 static double fcub(double t, void *params) {
     double c = *(double *)params;
-    return t * t * c + t - c;
+    return t * t * t + t - c;
 }
 
 static double program(double x) {

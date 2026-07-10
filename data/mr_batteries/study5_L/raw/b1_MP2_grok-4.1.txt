@@ -1,0 +1,40 @@
+
+
+```python
+import math
+import numpy as np
+
+# Module-level constants
+_ALPHA_PRIOR = 1.0
+_BETA_PRIOR = 1.0
+_N_TRIALS = 100.0
+_ROUND_EPS = 0.5
+
+def _get_alpha_beta(x):
+    n_succ = np.round(_N_TRIALS * x)
+    alpha_post = _ALPHA_PRIOR + n_succ
+    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)
+    return alpha_post, beta_post
+
+def _posterior_mean(x):
+    alpha_post, beta_post = _get_alpha_beta(x)
+    return float(alpha_post / (alpha_post + beta_post))
+
+def r_1(x):
+    return np.clip(x, 0.0, 1.0)
+
+def R_1(y_orig, y_new):
+    return y_new >= y_orig
+
+def r_2(x):
+    return np.clip(x / 2, 0.0, 1.0)
+
+def R_2(y_orig, y_new):
+    return y_new >= y_orig
+
+def r_3(x):
+    return 1.0 - np.clip(x, 0.0, 1.0)
+
+def R_3(y_orig, y_new):
+    return y_new <= y_orig
+```

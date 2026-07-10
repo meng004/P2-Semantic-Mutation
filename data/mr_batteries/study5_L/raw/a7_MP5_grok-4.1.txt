@@ -1,0 +1,36 @@
+
+
+```python
+"""MP5 — method-comparison metamorphic relations (NOETHER f_conv.rate family).
+Mode-M (RELATIVE oracle). For program(x): solves SPD tridiagonal T u = (2x-1)·d
+(T = tridiag(-1,2,-1), size 6, d=ones) via scipy.linalg.solve_banded and returns sum(u).
+Property: linear in x, antisymmetric about ½ (sum(u)(x) = -sum(u)(1-x))."""
+
+import math
+import numpy as np
+
+_AB = np.zeros((3, 6), dtype=float)
+_AB[0, 1:] = -1.0
+_AB[1, :] = 2.0
+_AB[2, :-1] = -1.0
+_D = np.ones(6)
+
+
+def program(x):
+    x = float(x)
+    b = (2.0 * x - 1.0) * _D
+    u = np.linalg.solve(_AB, b)
+    return float(np.sum(u))
+
+
+r_1 = lambda x: x
+R_1 = lambda y_orig, y_new: math.isclose(y_orig, -y_new, rel_tol=1e-12, abs_tol=1e-12)
+
+
+r_2 = lambda x: 1.0 - x
+R_2 = lambda y_orig, y_new: math.isclose(y_orig, -y_new, rel_tol=1e-12, abs_tol=1e-12)
+
+
+r_3 = lambda x: x * x
+R_3 = lambda y_orig, y_new: math.isclose(y_orig, -y_new, rel_tol=1e-12, abs_tol=1e-12)
+```

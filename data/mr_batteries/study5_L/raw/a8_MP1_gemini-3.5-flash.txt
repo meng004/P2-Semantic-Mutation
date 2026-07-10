@@ -1,0 +1,40 @@
+An elegant conservation (invariance) property of this system stems from the antisymmetry of the initial condition and the linearity of the ODE. 
+
+The initial condition is $u(0) = 2x - 1$. Under the transformation $r(x) = 1 - x$, the initial condition becomes $u(0) = 2(1-x) - 1 = 1 - 2x = -(2x - 1)$. Because the ODE $u' = -u$ is linear, the solution is scaled by $-1$. 
+
+Therefore, if we define a conserved quantity or invariant property under the transformation $r(x) = 1 - x$, the sum of the outputs must be conserved at exactly $0$. That is, $y_{\text{new}} + y_{\text{orig}} = 0$, or equivalently, $|y_{\text{new}} + y_{\text{orig}}| < \epsilon$.
+
+We can also exploit the identity transformation $r(x) = x$ to assert strict equality (or conservation of the output value itself), which acts as a robust baseline check for numerical stability and consistency.
+
+Here is the implementation of these metamorphic relations:
+
+```python
+import math
+
+
+# --- MR 1: Antisymmetry / Complementary Invariance ---
+# Under r_1(x) = 1 - x, the initial state u(0) = 2x - 1 becomes -(2x - 1).
+# Since the ODE is linear, the final output must satisfy y_new = -y_orig,
+# meaning their sum is conserved at 0.
+def r_1(x: float) -> float:
+    return 1.0 - float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # The sum should be 0. We use a tight absolute tolerance.
+    return math.isclose(y_orig + y_new, 0.0, abs_tol=1e-15)
+
+
+# --- MR 2: Identity / Self-Invariance ---
+# Under r_2(x) = x, the output must be exactly conserved (identical).
+def r_2(x: float) -> float:
+    return float(x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_orig == y_new
+```

@@ -1,0 +1,65 @@
+An analysis of the program under test reveals that it maps an input $x \in [0, 1]$ to a posterior mean of a Beta-Binomial model with a uniform prior $Beta(1, 1)$ and $100$ trials. 
+
+Specifically, the program rounds $100 \times x$ to the nearest integer $n_{\text{succ}} \in [0, 100]$. The posterior mean is then calculated as:
+$$\text{program}(x) = \frac{1 + n_{\text{succ}}}{102}$$
+
+Because of the rounding operation (`round(100 * x)`), any input transformation $r(x)$ that preserves the rounded value of $100 \times x$ will yield the exact same output. For example, shifting $x$ by a very small epsilon (much smaller than the rounding threshold of $0.005$) will not change the rounded number of successes, preserving the output trajectory shape exactly.
+
+Additionally, we can exploit the symmetry of the Beta-Binomial conjugate update. If we mirror the input $x \to 1 - x$, the number of successes becomes $100 - n_{\text{succ}}$. The new output will be:
+$$\text{program}(1-x) = \frac{1 + (100 - n_{\text{succ}})}{102} = \frac{101 - n_{\text{succ}}}{102} = 1 - \text{program}(x)$$
+This is a shape-preserving transformation under a corresponding output reflection.
+
+Below are three metamorphic relations belonging to the **MP4 (dynamics/shape)** family:
+
+1. **MR1 (Micro-translation):** A tiny shift $x \to x + \epsilon$ (where $\epsilon = 10^{-5}$) does not change the rounded value of $100 \times x$ for almost all $x \in [0, 1]$. Thus, the output must remain identical.
+2. **MR2 (Symmetric Reflection):** Transforming the input via $x \to 1 - x$ reflects the successes and failures. The output trajectory shape is preserved under the relation $y_{\text{new}} = 1 - y_{\text{orig}}$ (within a tight floating-point tolerance).
+3. **MR3 (Scaling within rounding cell):** Scaling the distance of $x$ to its nearest $0.01$ boundary by a factor (e.g., pulling it slightly closer to its nearest $1/100$ grid point) guarantees that the rounded success count remains identical, preserving the output exactly.
+
+```python
+import math
+import numpy as np
+
+# MR1: Micro-translation.
+# Shifting x by a very small value (1e-5) almost never changes round(100 * x).
+# Thus, the output should remain exactly equal.
+def r_1(x: float) -> float:
+    # Ensure we stay within [0.0, 1.0]
+    if x > 0.999:
+        return float(x - 1e-5)
+    return float(x + 1e-5)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-12)
+
+
+# MR2: Symmetric Reflection.
+# Transforming x to 1 - x mirrors the number of successes.
+# The new output must satisfy y_new = 1.0 - y_orig.
+def r_2(x: float) -> float:
+    return float(1.0 - x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig + y_new, 1.0, abs_tol=1e-12)
+
+
+# MR3: Rounding-cell contraction.
+# Move x slightly closer to its nearest 0.01 grid point.
+# This guarantees that round(100 * x) remains invariant, so y_new == y_orig.
+def r_3(x: float) -> float:
+    nearest_grid = round(100.0 * x) / 100.0
+    # Contract the distance to the nearest grid point by 50%
+    x_new = nearest_grid + 0.5 * (x - nearest_grid)
+    return float(np.clip(x_new, 0.0, 1.0))
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-12)
+```

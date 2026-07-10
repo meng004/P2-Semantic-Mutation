@@ -1,0 +1,46 @@
+```python
+import math
+
+def _finite_pair(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return None
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return None
+    return yo, yn
+
+def r_1(x):
+    x = float(x)
+    return 0.5 * (x + 1.0)
+
+def R_1(y_orig, y_new):
+    pair = _finite_pair(y_orig, y_new)
+    if pair is None:
+        return False
+    yo, yn = pair
+    return yn >= yo
+
+def r_2(x):
+    x = float(x)
+    return min(1.0, x + 0.25)
+
+def R_2(y_orig, y_new):
+    pair = _finite_pair(y_orig, y_new)
+    if pair is None:
+        return False
+    yo, yn = pair
+    return yn >= yo
+
+def r_3(x):
+    x = float(x)
+    return math.sqrt(max(0.0, min(1.0, x)))
+
+def R_3(y_orig, y_new):
+    pair = _finite_pair(y_orig, y_new)
+    if pair is None:
+        return False
+    yo, yn = pair
+    return yn >= yo
+```

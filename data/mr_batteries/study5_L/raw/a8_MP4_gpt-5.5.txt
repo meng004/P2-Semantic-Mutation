@@ -1,0 +1,19 @@
+```python
+import math
+
+_TOL = 1e-12
+
+def r_1(x):
+    # Shape-preserving identity transformation on the admissible scalar domain.
+    return float(x)
+
+def R_1(y_orig, y_new):
+    try:
+        a = float(y_orig)
+        b = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(a) and math.isfinite(b)):
+        return False
+    return abs(a - b) <= _TOL * (1.0 + max(abs(a), abs(b)))
+```

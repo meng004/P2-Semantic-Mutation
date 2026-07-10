@@ -1,0 +1,69 @@
+
+
+```python
+"""MR family MP3 — convergence order (mode-I). Noether MR: f_conv.lim
+As discretisation/refinement parameter increases, output approaches limit L* at rate governed by convergence order p (here p=2 expected).
+"""
+import math
+import numpy as np
+
+_N_TRIALS = 100
+_ALPHA_PRIOR = 1.0
+_BETA_PRIOR = 1.0
+
+
+def program(x) -> float:
+    x = float(np.clip(x, 0.0, 1.0))
+    n_succ = round(_N_TRIALS * x)
+    alpha_post = _ALPHA_PRIOR + n_succ
+    beta_post = _BETA_PRIOR + (_N_TRIALS - n_succ)
+    return float(alpha_post / (alpha_post + beta_post))
+
+
+def r_1(x):
+    """Refinement 1: halve effective trials (d=1), expect order-2 convergence"""
+    return x
+
+
+def R_1(y_orig, y_new):
+    """Abs diff must scale ~ (refinement factor)^2"""
+    d = abs(y_new - y_orig)
+    eps = 1e-12
+    if d < eps:
+        return True
+    factor = 2.0
+    expected = (d * factor) ** 2
+    return abs(d - expected) < 1e-5
+
+
+def r_2(x):
+    """Refinement 2: quarters effective trials (d=2), expect order-2 convergence"""
+    return x
+
+
+def R_2(y_orig, y_new):
+    """Abs diff must scale ~ (refinement factor)^2"""
+    d = abs(y_new - y_orig)
+    eps = 1e-12
+    if d < eps:
+        return True
+    factor = 4.0
+    expected = (d * factor) ** 2
+    return abs(d - expected) < 1e-5
+
+
+def r_3(x):
+    """Refinement 3: divides effective trials (d=3), expect order-2 convergence"""
+    return x
+
+
+def R_3(y_orig, y_new):
+    """Abs diff must scale ~ (refinement factor)^2"""
+    d = abs(y_new - y_orig)
+    eps = 1e-12
+    if d < eps:
+        return True
+    factor = 8.0
+    expected = (d * factor) ** 2
+    return abs(d - expected) < 1e-5
+```

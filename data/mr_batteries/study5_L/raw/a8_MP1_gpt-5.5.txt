@@ -1,0 +1,16 @@
+```python
+import math
+
+_ABS_TOL = 1e-12
+_REL_TOL = 1e-12
+
+def r_1(x):
+    # Reflection about x=0.5 preserves the conserved output magnitude.
+    return 1.0 - float(x)
+
+def R_1(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(abs(float(y_orig)), abs(float(y_new)),
+                        rel_tol=_REL_TOL, abs_tol=_ABS_TOL)
+```

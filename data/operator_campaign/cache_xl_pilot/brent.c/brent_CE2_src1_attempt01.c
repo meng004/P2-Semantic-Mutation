@@ -16,10 +16,14 @@ static double program(double x) {
     gsl_function F;
     F.function = &fcub;
     F.params = &c;
+
     gsl_root_fsolver *s = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
     gsl_root_fsolver_set(s, &F, -2.0, 2.0);
-    int status = GSL_CONTINUE, iter = 0;
+
+    int status = GSL_CONTINUE;
+    int iter = 0;
     double r = 0.0;
+
     while (status == GSL_CONTINUE && iter++ < 100) {
         gsl_root_fsolver_iterate(s);
         r = gsl_root_fsolver_root(s);
@@ -27,6 +31,7 @@ static double program(double x) {
                                         gsl_root_fsolver_x_upper(s),
                                         1e-12, 0.0);
     }
+
     gsl_root_fsolver_free(s);
     return r;
 }
@@ -42,5 +47,6 @@ int main(void) {
         printf("%.17g\n", y);
         fflush(stdout);
     }
+
     return 0;
 }

@@ -1,0 +1,55 @@
+
+
+```python
+import math
+import numpy as np
+
+_T_END = 1.0
+_N_STEPS = 20
+
+
+def _rhs(u):
+    return -u
+
+
+def program(x) -> float:
+    u = 2.0 * float(x) - 1.0
+    h = _T_END / _N_STEPS
+    for _ in range(_N_STEPS):
+        k1 = _rhs(u)
+        k2 = _rhs(u + 0.5 * h * k1)
+        k3 = _rhs(u + 0.5 * h * k2)
+        k4 = _rhs(u + h * k3)
+        u = u + h / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+    return float(u)
+
+
+def r_1(x):
+    """NOETHER MR (invariance): x -> 1-x preserves u(T;1-x) = -u(T;x) under the symmetry of the ODE."""
+    return 1.0 - x
+
+
+def R_1(y_orig, y_new):
+    """Antisymmetry check: y_new == -y_orig."""
+    return math.isclose(y_new, -y_orig, rel_tol=1e-9)
+
+
+def r_2(x):
+    """NOETHER MR (invariance): x -> 1-x preserves u(T;1-x) = -u(T;x) under the symmetry of the ODE."""
+    return 1.0 - x
+
+
+def R_2(y_orig, y_new):
+    """Antisymmetry check: y_new == -y_orig."""
+    return math.isclose(y_new, -y_orig, rel_tol=1e-9)
+
+
+def r_3(x):
+    """NOETHER MR (invariance): x -> 1-x preserves u(T;1-x) = -u(T;x) under the symmetry of the ODE."""
+    return 1.0 - x
+
+
+def R_3(y_orig, y_new):
+    """Antisymmetry check: y_new == -y_orig."""
+    return math.isclose(y_new, -y_orig, rel_tol=1e-9)
+```

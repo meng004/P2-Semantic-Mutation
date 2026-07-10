@@ -1,0 +1,40 @@
+```python
+import math
+
+def r_1(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.5
+    if x < 0.0:
+        return 0.0
+    if x > 1.0:
+        return 1.0
+    return x
+
+def R_1(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_orig - y_new) <= 1e-12
+
+def r_2(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.5
+    return min(1.0, max(0.0, x))
+
+def R_2(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_orig - y_new) <= 1e-12
+
+def r_3(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.5
+    return min(1.0, max(0.0, x))
+
+def R_3(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return abs(y_orig - y_new) <= 1e-12
+```

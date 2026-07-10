@@ -1,0 +1,65 @@
+```python
+import math
+
+_EPS = 1e-12
+
+def _same_output(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return False
+    return abs(yo - yn) <= _EPS
+
+
+def _rounded_success_count(x):
+    # Mirrors the kernel's quantisation: n_succ = round(100*x).
+    xf = float(x)
+    if not math.isfinite(xf):
+        xf = 0.0
+    if xf < 0.0:
+        xf = 0.0
+    elif xf > 1.0:
+        xf = 1.0
+    return int(round(100.0 * xf))
+
+
+def r_1(x):
+    # Move x to a safe interior representative of the same round(100*x) bin.
+    n = _rounded_success_count(x)
+    if n >= 100:
+        return 0.9975
+    return (n + 0.25) / 100.0
+
+
+def R_1(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+
+
+def r_2(x):
+    # Alternate interior representative on the lower side of the same bin.
+    n = _rounded_success_count(x)
+    if n <= 0:
+        return 0.0025
+    return (n - 0.25) / 100.0
+
+
+def R_2(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+
+
+def r_3(x):
+    # Central representative of the same quantisation plateau, offset from ties.
+    n = _rounded_success_count(x)
+    if n <= 0:
+        return 0.001
+    if n >= 100:
+        return 0.999
+    return (n + 0.1) / 100.0
+
+
+def R_3(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+```

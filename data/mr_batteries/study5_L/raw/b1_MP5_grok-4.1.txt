@@ -1,0 +1,29 @@
+
+
+```python
+import math
+
+
+def r_1(x: float) -> float:
+    return 1.0 - x
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    return y_orig < y_new or math.isclose(y_orig, y_new)
+
+
+def r_2(x: float) -> float:
+    return math.sqrt(x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    return y_orig < y_new or math.isclose(y_orig, y_new)
+
+
+def r_3(x: float) -> float:
+    return x ** 0.75
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    return y_orig < y_new or math.isclose(y_orig, y_new)
+```

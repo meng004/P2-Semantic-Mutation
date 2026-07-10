@@ -1,0 +1,30 @@
+
+
+```python
+import math
+import numpy as np
+
+def r_1(x):
+    """Symmetricity about x=0.5: program(x) = -program(1-x)."""
+    return 1.0 - x
+
+def R_1(y_orig, y_new):
+    """Output antisymmetry: y_new == -y_orig (exact symmetry of correct SPD tridiagonal solve)."""
+    return y_new == -y_orig
+
+def r_2(x):
+    """Monotonic scaling: scale input while preserving monotonicity direction."""
+    return 0.5 * x
+
+def R_2(y_orig, y_new):
+    """Monotonicity: y_new must have the same sign as y_orig (shape direction unchanged)."""
+    return (y_orig >= 0.0) == (y_new >= 0.0)
+
+def r_3(x):
+    """Trivial identity (shape-preserving)."""
+    return x
+
+def R_3(y_orig, y_new):
+    """Trajectory shape unchanged: y_new == y_orig (exact for correct implementation)."""
+    return y_new == y_orig
+```

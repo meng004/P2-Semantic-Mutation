@@ -1,0 +1,68 @@
+```python
+import math
+
+_EPS = 1e-12
+_N = 100.0
+
+
+def _clip01(x):
+    x = float(x)
+    if x < 0.0:
+        return 0.0
+    if x > 1.0:
+        return 1.0
+    return x
+
+
+def _finite_pair(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return False, 0.0, 0.0
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return False, yo, yn
+    return True, yo, yn
+
+
+# Agreement under the canonical rounded-count representation.
+def r_1(x):
+    x = _clip01(x)
+    n = round(_N * x)
+    return _clip01(n / _N)
+
+
+def R_1(y_orig, y_new):
+    ok, yo, yn = _finite_pair(y_orig, y_new)
+    if not ok:
+        return False
+    return abs(yn - yo) <= _EPS
+
+
+# Compare with the adjacent higher rounded-count regime.
+def r_2(x):
+    x = _clip01(x)
+    n = round(_N * x)
+    return _clip01((n + 1.0) / _N)
+
+
+def R_2(y_orig, y_new):
+    ok, yo, yn = _finite_pair(y_orig, y_new)
+    if not ok:
+        return False
+    return yn + _EPS >= yo
+
+
+# Compare with a stronger higher-count regime, preserving saturation at 1.
+def r_3(x):
+    x = _clip01(x)
+    n = round(_N * x)
+    return _clip01((n + 10.0) / _N)
+
+
+def R_3(y_orig, y_new):
+    ok, yo, yn = _finite_pair(y_orig, y_new)
+    if not ok:
+        return False
+    return yn + _EPS >= yo
+```

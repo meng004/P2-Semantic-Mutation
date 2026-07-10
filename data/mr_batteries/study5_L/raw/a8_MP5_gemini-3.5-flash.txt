@@ -1,0 +1,57 @@
+```python
+import math
+
+# MP5 — Method-comparison (f_conv.rate parent m_conv).
+# The program integrates the linear ODE u' = -u with initial condition u(0) = 2x - 1.
+# The exact solution is u(T) = (2x - 1) * exp(-1), and RK4 with 20 steps
+# produces an approximation u_approx(T) = (2x - 1) * rho, where rho is the RK4 amplification factor.
+#
+# Since the numerical solution is linear in the initial condition u(0), we can compare
+# the numerical output under a scaling of the initial condition.
+# Specifically, if we scale the initial state u(0) towards 0 (by moving x closer to 0.5),
+# the absolute truncation error of the numerical method scales down proportionally.
+#
+# Let x_ref be the reference point 0.5 where u(0) = 0 and the solution is exactly 0.
+# For any x in [0, 1], let x_new = 0.5 + alpha * (x - 0.5) with 0 < alpha < 1.
+# Then u_new(0) = alpha * u_orig(0).
+# Under a correct linear RK4 integration, we must have program(x_new) = alpha * program(x).
+# Due to floating-point limitations, we can assert this relationship within a tight relative tolerance.
+
+
+def r_1(x: float) -> float:
+    """Scale the initial condition closer to the origin (x=0.5) by a factor of 0.5.
+
+    x_new = 0.5 + 0.5 * (x - 0.5) = 0.25 + 0.5 * x.
+    This maps [0, 1] to [0.25, 0.75].
+    """
+    return 0.25 + 0.5 * float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Verifies that the output scales precisely by the factor of 0.5.
+
+    y_new should be equal to 0.5 * y_orig within a tiny floating-point tolerance.
+    """
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    expected = 0.5 * y_orig
+    # Use a very tight absolute tolerance since the values are in [-1, 1]
+    return math.isclose(y_new, expected, rel_tol=1e-12, abs_tol=1e-15)
+
+
+def r_2(x: float) -> float:
+    """Scale the initial condition closer to the origin by a factor of 0.1.
+
+    x_new = 0.5 + 0.1 * (x - 0.5) = 0.45 + 0.1 * x.
+    This maps [0, 1] to [0.45, 0.55].
+    """
+    return 0.45 + 0.1 * float(x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """Verifies that the output scales precisely by the factor of 0.1."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    expected = 0.1 * y_orig
+    return math.isclose(y_new, expected, rel_tol=1e-12, abs_tol=1e-15)
+```

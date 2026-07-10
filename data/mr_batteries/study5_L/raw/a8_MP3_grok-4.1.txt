@@ -1,0 +1,58 @@
+
+
+```python
+import math
+import numpy as np
+
+T_END = 1.0
+N_STEPS = 20
+h0 = T_END / N_STEPS
+
+
+def program(x):
+    u = 2.0 * float(x) - 1.0
+    h = T_END / N_STEPS
+    for _ in range(N_STEPS):
+        k1 = -u
+        k2 = -(u + 0.5 * h * k1)
+        k3 = -(u + 0.5 * h * k2)
+        k4 = -(u + h * k3)
+        u = u + h / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+    return float(u)
+
+
+def _empirical_order(xs):
+    ys = np.abs(np.array([program(x) - 1.0 for x in xs]))
+    if len(ys) < 2:
+        return 0.0
+    log_x = np.log(xs)
+    log_y = np.log(ys)
+    A = np.vstack([log_x, np.ones(len(log_x))]).T
+    b = log_y
+    m, _ = np.linalg.lstsq(A, b, rcond=None)[0]
+    return m
+
+
+def r_1(x):
+    return 0.1
+
+
+def R_1(y_orig, y_new):
+    return math.isclose(y_orig, y_new)
+
+
+def r_2(x):
+    return 0.05
+
+
+def R_2(y_orig, y_new):
+    return math.isclose(y_orig, y_new)
+
+
+def r_3(x):
+    return 0.025
+
+
+def R_3(y_orig, y_new):
+    return math.isclose(y_orig, y_new)
+```

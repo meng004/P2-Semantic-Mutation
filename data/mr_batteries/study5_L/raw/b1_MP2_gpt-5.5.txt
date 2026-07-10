@@ -1,0 +1,54 @@
+```python
+import math
+
+_EPS = 1e-15
+
+
+def _finite_pair(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return None
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return None
+    return yo, yn
+
+
+def r_1(x):
+    x = float(x)
+    return min(1.0, max(0.0, x + 0.10))
+
+
+def R_1(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    yo, yn = vals
+    return yn + _EPS >= yo
+
+
+def r_2(x):
+    x = float(x)
+    return min(1.0, max(0.0, 0.5 * x + 0.5))
+
+
+def R_2(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    yo, yn = vals
+    return yn + _EPS >= yo
+
+
+def r_3(x):
+    return 1.0
+
+
+def R_3(y_orig, y_new):
+    vals = _finite_pair(y_orig, y_new)
+    if vals is None:
+        return False
+    yo, yn = vals
+    return yn + _EPS >= yo
+```
