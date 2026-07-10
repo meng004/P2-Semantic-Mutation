@@ -1,12 +1,23 @@
 # 论文初稿计划：MR 集合充分性 × held-out 决策价值主实验（TOSEM 重写）
 
-> 状态：初稿计划 **v1.1**（2026-07-10；v1.0 同日经 EIC round-2 评估后修订）
+> 状态：初稿计划 **v1.1.1**（2026-07-10；v1.1 经 EIC round-3 "Conditional Pass to Preregistration" 后小修）
 > 上游文档：`research/paper-outline-semantic-mutation-mr-adequacy.md`（论证骨架 v0.1，branch `claude/paper-journal-acceptance-kxpveo` @ 0274196）
 > 评审输入：
 > - Round-1 EIC quick assessment（P0 = held-out decision-value 实验）
 > - Round-2 EIC plan assessment：`docs/review_2026-07-10/r0_eic_round2_plan_assessment.md`
+> - Round-3 EIC conditional pass：`docs/review_2026-07-10/r1_eic_round3_prereg_assessment.md`
 > - 上一轮编辑决定 P0-1…P0-6：`docs/review_2026-07-10/editorial_decision_prior_round_excerpt.md`
 > 前提约束：**忘记已有正文、附录和四项旧实验的叙事结构**；旧数据只按提纲 §10 的迁移决策充当 pilot / 探索性证据；新论文的确认性结论必须全部来自本计划定义的新双盲实验。
+> **冻结条款（round-3）**：本版本经 EIC 确认后即冻结预注册；此后除功效模拟决定样本规模外，不再修改 endpoint、family 定义、策略算法、基线层级或结论判定规则。
+
+**v1.1 → v1.1.1 变更摘要**（对应 round-3 四个技术点 + 两项操作性澄清）：
+
+1. 置换检验单位改为 **PUT 级 sign-flip**：先聚合每 PUT 平均策略差 \(d_{p,S}\)，再对 PUT 整体翻转符号；17+ PUT 时精确枚举全部 \(2^{17}\) 种符号配置，无需 Monte Carlo（§3.6）；
+2. **family registry 冻结时序修正**：registry 构建 → 边界/fidelity 审计 → registry 冻结 → 划分与承诺；family 合并/拆分只允许发生在划分前；family 嵌套于 PUT（ID = (PUT, mechanism/template cluster)），跨 PUT 同类机理改称 **mechanism class**（§3.3/§4.1/§8）；
+3. family 检测 endpoint 改为 **family 内实例检测比例 + family 等权**（primary，统计稳健性最优）；sentinel mutant 判定为 secondary 构念核对；any-instance + family-size sensitivity 进 RQ5（§3.6）；
+4. DVE-T 改名 **target-informed leave-PUT-out transfer（S1-T+）**，另增不读取目标机理类分布的 **S1-T0** 作探索性对照，分离"跨程序知识迁移"与"目标缺陷模型信息"的价值（§3.4）；
+5. 操作性澄清：\(R_{\mathrm{cand}}\) 明确为 **40–60 个 MR 模板 × 每 PUT 实例化（每 PUT 有效候选 ≥ 12）**；定义 \(R_{\mathrm{valid}}=\{r\in R_{\mathrm{cand}}:\mathrm{AVP}(P,r)=\mathrm{pass}\}\)，四策略一律从 \(R_{\mathrm{valid}}\setminus R_0\) 选择（§3.5）；
+6. MID 两级结论规则：统计优势（拒绝 \(H_0:\Delta\le 0\)）与实际重要优势（拒绝 \(H_0:\Delta\le 10\mathrm{pp}\)，即单侧 CI 下界 > MID）分离，仅"点估计超 MID 且相对零显著"不得声称超过 MID（§3.6）。
 
 **v1.0 → v1.1 变更摘要**（对应 round-2 "预注册前必须修改的五点"）：
 
@@ -49,6 +60,18 @@
 | 4 | 分层独立有效性审计 | §4.1（审计分层表 + κ 门槛 + 后果规则） |
 | 5 | closure ledger | §11 |
 | — | \(M^{\mathrm{cert}}_{\Sigma,B}(P)\) 符号与主张限定 | 全文 + §7 写作纪律 |
+
+### 1.3 Round-3 技术点 → v1.1.1 落点
+
+| # | Round-3 要求 | v1.1.1 落点 |
+|---|---|---|
+| 1 | PUT 级 sign-flip 置换（唯一统计阻断项） | §3.6 推断段（\(d_{p,S}\) 聚合 + 精确枚举） |
+| 2 | family registry 冻结先于划分；family 嵌套于 PUT | §3.3（ID 结构 + mechanism class 术语）、§4.1（审计时序拆分）、§8（M1.5a/M1.5b） |
+| 3 | family 检测定义受 size 影响 | §3.6（比例 endpoint primary；sentinel secondary；any-instance 进 RQ5） |
+| 4 | DVE-T 非 zero-shot | §3.4（改名 target-informed；增 S1-T0 探索对照） |
+| 澄清 1 | R_cand 口径（模板 vs 实例） | §3.5 |
+| 澄清 2 | \(R_{\mathrm{valid}}\) 选择空间 | §3.5 |
+| 澄清 3 | MID 统计/实际两级结论 | §3.6 |
 
 EIC round-1 指出的三个相互关联的问题，本计划的针对性回答：
 
@@ -118,7 +141,7 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 流程沿提纲 §7.2，本计划的增量约束：
 
 - **来源约束（P1）**：Fault Card 只允许四类外部来源——需求/领域约束文档、算法规范、历史缺陷（issue/commit URL）、FMEA。每张卡带 `prov` 字段（来源类型、可解引用出处、时间戳、录入角色）。LLM 可辅助起草但必须回溯锚定到四类来源之一。
-- **Fault Card family（v1.1 新增，划分单位）**：录入时即为每张卡指派 family ID——同一来源条目、同一缺陷机理、同一变异模板或同一历史缺陷家族衍生的所有卡与其全部变异体实例构成一个 family。family 指派规则在预注册中定义并在生成前冻结，由第二评者抽审 family 边界一致性（§4.1）。
+- **Fault Card family（v1.1 新增，划分单位；v1.1.1 明确嵌套结构）**：录入时即为每张卡指派 family ID——同一来源条目、同一缺陷机理、同一变异模板或同一历史缺陷家族衍生的所有卡与其全部变异体实例构成一个 family。**family 严格嵌套于 PUT**：ID 结构为 `(PUT, mechanism/template cluster)`，与统计模型的 mutant ⊂ family ⊂ PUT 层级一致；跨 PUT 的同类缺陷机理称为 **mechanism class**（用于分层配额与 DVE-T 迁移映射），不是同一个 family。family 指派规则在预注册中定义并在生成前冻结；registry 的边界审计与冻结时序见 §4.1（任何 family 合并/拆分必须发生在 dev/holdout 划分之前）。
 - **认证等级门槛（P1）**：A–C 级证书进 primary denominator；D 级单独成池只进 RQ5 敏感性。规则 Phase 0 冻结（§4.1）。
 - **规模目标（v1.1 修订）**：以 **family 为计数单位**——A–C 认证 family ≥ **80**（跨 ≥ 17 个主实验 PUT，每缺陷机理大类 ≥ 10 个 family），对应认证变异体预计 300–500。数量由 §3.6 两级功效模拟反推，模拟后冻结。
 - **验收门槛 G1**：A–C family 数、类配额、认证率、审计通过率（§4.1）达标才进 Phase 2；不达标触发预注册范围收缩规则（缩类不降标准）。
@@ -131,19 +154,25 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 - 划分时点：任何 MR 交叉执行之前。分层维度：PUT × 缺陷机理大类 × 证书等级众数；比例 family 数 50:50；随机种子预注册。
 - 承诺机制：holdout family ID 列表 + salt 的 SHA-256 写入 git（timestamped commit + tag）；holdout 变异体 diff 加密存放，custodian 时间锁持钥；解密条件 = 四策略输出以 commit hash 封存完毕。解盲后公开 salt 供第三方验证。审计产物 `data/dve/split_commitment.json`。
 
-**DVE-T（迁移臂，leave-PUT-out / new-PUT holdout）**：
+**DVE-T（target-informed leave-PUT-out transfer 臂；v1.1.1 更名并分解）**：
 
 - 2–3 个新 PUT 整体保留：其全部认证变异体（所有 family）均为 holdout，无 dev 池。
-- 策略在这些 PUT 上的操作化（预注册冻结）：S1-T 只允许读取 (i) dev PUT 们的 kill matrix 与残余缺陷的 family/机理类标签，(ii) 目标 PUT 的 Fault Card **机理类分布**（卡的存在性与类别，非变异体、非 kill 结果）——据此把"机理类 → MR 类别覆盖"映射迁移到目标 PUT 的 \(R_{\mathrm{cand}}\) 选择。S2-T 用目标 PUT 自身的句法变异池信号（句法池不属于保密对象）；S3-T 用目标 PUT 的覆盖度量；S4-T 随机。
+- **S1-T+（target-informed，secondary confirmatory）**：只允许读取 (i) dev PUT 们的 kill matrix 与残余缺陷的 mechanism-class 标签，(ii) 目标 PUT 的 Fault Card **mechanism-class 分布**（卡的存在性与类别，非变异体、非 kill 结果）——据此把"mechanism class → MR 模板覆盖"映射迁移到目标 PUT 的候选选择。**命名如实**：该臂支持的主张是 *target-informed cross-program transfer*，不是 zero-shot transfer——它未见目标变异体与 kill 结果，但获得了目标缺陷域的分布信息，论文措辞按此限定。
+- **S1-T0（distribution-blind，exploratory）**：与 S1-T+ 同构，但**不读取**目标 PUT 的 Fault Card 分布，仅用 dev PUT 上学到的 mechanism-class→模板映射按 dev 侧频率迁移。与 S1-T+ 共同报告，用于分离"跨程序知识迁移"与"目标缺陷模型信息"两种价值来源；执行成本仅为多一组选定 MR 的 holdout 运行。
+- 基线对照：S2-T 用目标 PUT 自身的句法变异池信号（句法池不属于保密对象）；S3-T 用目标 PUT 的覆盖度量；S4-T 随机。
 - 作用：检验指导信号是否携带**跨程序**的决策价值，直接回应"holdout 变异体与训练池同分布"的解读风险。DVE-T 为确认性 **secondary** endpoint（主臂 DVE-W 为 primary），两臂结论合并解释规则见 §3.9。
 
-**论证**：family 级隔离使"未见过"升级为"未见过的缺陷机理家族"；PUT 级保留使其进一步升级为"未见过的程序"。两层加上密码学承诺，把 round-2 风险 1 从设计层关闭。
+**论证**：family 级隔离使"未见过"升级为"未见过的缺陷机理家族"；PUT 级保留使其进一步升级为"未见过的程序（target-informed 意义下）"。两层加上密码学承诺，把 round-2 风险 1 从设计层关闭。
 
 ### 3.5 Phase 3：MR 候选目录 \(R_{\mathrm{cand}}\) 与初始集 \(R_0\)
 
-- MR 设计者只读 \(P,\Sigma\) 与 MT 文献，产出 **40–60 条**候选 MR（每 PUT 覆盖 generic + 领域特定两层，类别配额预注册），每条按提纲定义 7 冻结 \((T_r,\rho_r,A_r,G_r,\Theta_r)\)。
-- 原程序 false-positive 筛查（提纲命题 3）：原程序 fail 的 MR 标记 invalid，永不产生 kill。
-- \(R_0\)：按预注册启发式（每 PUT 取文献最常用 generic MR \(k_0\) 条）在任何执行前选定，制造"已有普通 MR 集合，接下来加哪几条"的真实决策场景。
+- **目录口径（v1.1.1 澄清）**：MR 设计者只读 \(P,\Sigma\) 与 MT 文献，产出 **40–60 个 MR 模板**（generic + 领域特定两层，类别配额预注册）；每个模板对适用的 PUT 逐一实例化，每条实例按提纲定义 7 冻结 \((T_r,\rho_r,A_r,G_r,\Theta_r)\)。**选择在 PUT 级实例空间进行**：每 PUT 的有效候选实例数必须 ≥ 12（可行性由模板可适用性矩阵在冻结前核验），以支撑 \(k^\*=4\) 的选择空间；总实例量预计 250–400。
+- **有效选择空间（v1.1.1 澄清）**：原程序 false-positive 筛查（提纲命题 3）后，定义
+  \[
+  R_{\mathrm{valid}}(P)=\{r\in R_{\mathrm{cand}}(P):\mathrm{AVP}(P,r)=\mathrm{pass}\},
+  \]
+  invalid MR **从选择空间中删除**（不只是"保留但不产生 kill"）；四策略一律从 \(R_{\mathrm{valid}}(P)\setminus R_0(P)\) 中选择。每 PUT 的 ≥ 12 候选门槛以 \(R_{\mathrm{valid}}\) 计。
+- \(R_0\)：按预注册启发式（每 PUT 取文献最常用 generic MR \(k_0\) 条，且 \(R_0\subseteq R_{\mathrm{valid}}\)）在任何变异体执行前选定，制造"已有普通 MR 集合，接下来加哪几条"的真实决策场景。
 
 **关键设计决策——为什么主实验用"目录内选择"而不是"自由人工 revision"**（v1.0 论证保留，主张范围按 round-2 收紧）：
 
@@ -154,7 +183,7 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 
 ### 3.6 Phase 4–6：策略定义、endpoint 与统计方案（v1.1 重写主比较与推断）
 
-**四策略**（同一决策空间 \(R_{\mathrm{cand}}\setminus R_0\)，同预算 \(k\)，全部算法化，代码冻结）：
+**四策略**（同一决策空间 \(R_{\mathrm{valid}}(P)\setminus R_0(P)\)，同预算 \(k\)，全部算法化，代码冻结）：
 
 | 策略 | 指导信号 | 算法 |
 |---|---|---|
@@ -163,17 +192,24 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 | S3 MR-coverage-guided（**共同主基线**） | 预注册 MR 覆盖度量（输入变换类别覆盖 + follow-up 代码覆盖），不用变异体信息 | 贪心最大化覆盖增量 |
 | S4 random / generic（**sanity-check**） | 无信号 | 随机 \(k\) 条 ×1000 重抽 + 固定 generic 参照 |
 
-**Primary endpoint（DVE-W）**：family 级检测率差。对 holdout family \(g\)，定义 \(\mathrm{det}(R,g)=1\) 当且仅当 \(R\) 杀死 \(g\) 中至少一个认证变异体（family 内任一实例被检出即该机理被覆盖；实例级检测率进 secondary）。
+**Primary endpoint（DVE-W；v1.1.1 改为 size 不敏感定义）**：对 holdout family \(g\)（实例集 \(I_g\)），定义 **family 检测分数**为实例检测比例
 
 \[
-\Delta_{S1,S}=\mathrm{FDR}(R_0\cup S_1(k^\*))-\mathrm{FDR}(R_0\cup S(k^\*)),\quad S\in\{S2,S3\}
+\mathrm{det}(R,g)=\frac{1}{|I_g|}\sum_{m\in I_g}\mathrm{det}_R(m)\in[0,1],
 \]
 
-其中 FDR = family detection rate over holdout families。
+family 等权聚合为 \(\mathrm{FDS}(R)=\frac{1}{|G|}\sum_{g\in G}\mathrm{det}(R,g)\)（family detection score）。primary 对比量：
+
+\[
+\Delta_{S1,S}=\mathrm{FDS}(R_0\cup S_1(k^\*))-\mathrm{FDS}(R_0\cup S(k^\*)),\quad S\in\{S2,S3\}.
+\]
+
+选择比例定义的理由：any-instance（"任一实例被杀死即 detected"）使实例多的 family 更易判为 detected，检测率随 family size 膨胀；比例 + family 等权对 size 不敏感且统计上最稳健。两个预注册伴随定义：(i) **sentinel 判定**（每 family 在划分承诺时随机冻结一个 sentinel mutant，\(\mathrm{det}(R,g)=\mathrm{det}_R(m_g^{\mathrm{sent}})\)）作为 secondary 构念核对——它对应"该机理至少有一个可观察见证"的理论解释；(ii) any-instance 定义 + family-size sensitivity 进 RQ5。三个定义的 verdict 一致性本身作为稳健性证据报告。
 
 **预注册假设**：
 
-- **H-DV（primary，确认性，共同基线族）**：\(\Delta_{S1,S2}>0\) **且** \(\Delta_{S1,S3}>0\)（Holm 校正，两者都成立 = 完全确认；只有其一 = 部分确认，结论措辞预注册分级）。点估计 ≥ MID（拟 10 个百分点 family 级，功效模拟后冻结）。
+- **H-DV（primary，确认性，共同基线族）**：\(\Delta_{S1,S2}>0\) **且** \(\Delta_{S1,S3}>0\)（Holm 校正，两者都成立 = 完全确认；只有其一 = 部分确认，结论措辞预注册分级）。
+- **MID 两级结论规则（v1.1.1）**：区分两类主张并分别检验——(a) **统计优势**：拒绝 \(H_0:\Delta\le 0\)；(b) **实际重要优势**：拒绝 \(H_0:\Delta\le\mathrm{MID}\)（等价于单侧置信下界 > MID；MID 拟 10 个百分点 FDS 级，功效模拟后冻结）。论文措辞对应三档：仅 (a) 成立 = "statistically superior"；(a)+(b) 成立 = "superior by a practically important margin"；点估计超 MID 但 (b) 不成立时**禁止**声称超过 MID，写作 "point estimate exceeds the MID but practical importance is not confirmed"。
 - **H-DV-T（secondary，确认性）**：DVE-T 臂上 S1-T 对 S2-T/S3-T 的同型差 > 0。
 - **Sanity**：S1 显著超过 S4 随机分布的预注册分位数（如 90%）；不满足则整个信号体系存疑，触发 §3.9 失败分析。
 - **H1'（区别性）**：沿提纲 RQ2 度量。
@@ -182,7 +218,13 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 **统计推断（v1.1 重写，两级依赖）**：
 
 - 依赖结构：变异体 ⊂ fault family ⊂ PUT。**有效独立单位按 family 与 PUT 计，不按变异体计。**
-- Primary 检验：family 级配对差（同一 holdout family 过两个 MR 集合）的**聚类随机化检验**——在 PUT 内做 family 级 sign-flip permutation（B=10,000），检验统计量为 family 检测差的加权平均（PUT 等权，防大 PUT 支配）；Holm 校正 {S1 vs S2, S1 vs S3}。小样本下置换检验精确，不依赖渐近正态（round-2 要求 3）。
+- Primary 检验（v1.1.1 修正为 **PUT 级 sign-flip**）：先在每个 PUT \(p\) 内把全部 holdout family 的配对差聚合为该 PUT 的平均策略差
+
+  \[
+  d_{p,S}=\frac{1}{|G_p|}\sum_{g\in G_p}\left[\mathrm{det}(R_0\cup S_1(k^\*),g)-\mathrm{det}(R_0\cup S(k^\*),g)\right],
+  \]
+
+  然后把**一个 PUT 内的全部观测作为整体**对 \(d_{p,S}\) 做 PUT 级 sign-flip 随机化检验，检验统计量为 \(\bar d_S=\frac{1}{|P|}\sum_p d_{p,S}\)（PUT 等权）。主实验 PUT ≥ 17 时**精确枚举**全部 \(2^{|P|}\)（如 \(2^{17}=131{,}072\)）种符号配置，不用 Monte Carlo 近似；Holm 校正 {S1 vs S2, S1 vs S3}。这样即使同一 PUT 内 family 相关，交换单位也是独立的 PUT 整体，构成严格的 cluster randomization test（round-3 技术点 1；v1.1 的"PUT 内 family 级 sign-flip"作废）。MID 层检验（\(H_0:\Delta\le\mathrm{MID}\)）用同一 sign-flip 框架对移位统计量 \(\bar d_S-\mathrm{MID}\) 执行。
 - 效应量与 CI：family 级 risk difference，**两级 bootstrap**（先重抽 PUT，再抽 PUT 内 family，BCa）。
 - GLMM（det ~ strategy + (1|PUT) + (1|family)）作为 secondary，预注册 singular-fit 回退 = 上述置换/bootstrap（v4 旧病不再临场决定）。
 - **功效模拟（v1.1 重写）**：生成模型含 PUT 级与 family 级随机效应（ICC 先验各取 0.1–0.3 网格），参数先验来自 v4 pilot kill 率；模拟 family 检测基线率 0.4–0.7、MID=10pp 下 80% 功效所需 (PUT 数, holdout family 数) 组合。初步判断指向 ≥ 17 个主实验 PUT × ≥ 40 个 holdout family（故 §3.3 目标 ≥ 80 family、PUT 扩到 20 上下）；模拟脚本与全部假设进预注册附件，数字以冻结版为准。
@@ -208,7 +250,7 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 - 部分确认（仅胜其一）：按预注册分级措辞（如"优于 coverage 启发但未证明优于经典 MS 指导"）。
 - DVE-W 成立但 DVE-T 不成立：结论限定为 within-program 决策价值，跨程序迁移列为 open problem——不得把 DVE-W 结果外推为一般化主张。
 - Sanity 失败（S1 不敌随机分布高分位）：整个信号链失败分析（目录同质？dev 信号噪声？family 划分错误？），全部如实报告。
-- 天花板分析（全目录 \(R_{\mathrm{cand}}\) 在 holdout 上的最大 FDR）预注册为必报项；天花板过低（< 0.5）作为重要负结果 + residual 结构分析。
+- 天花板分析（全体 \(R_{\mathrm{valid}}\) 在 holdout 上的最大 FDS）预注册为必报项；天花板过低（< 0.5）作为重要负结果 + residual 结构分析。
 - 认证池不达 G1：按预注册收缩规则缩类，不降标准。
 
 ### 3.10 主实验方案自查：EIC 质疑逐条对照
@@ -250,7 +292,9 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 | Fault Card fidelity | 每 family 抽 1 实例 | 变异体是否忠实实现卡声明的编辑；family 边界指派正确性 |
 
 - 每层报告一致率/κ；预注册阈值（拟 κ ≥ 0.6 或一致率 ≥ 0.9，冻结时定）；不达标 → 该层整体复审，仍不达标 → 相关对象降出 primary denominator 并披露。
-- 审计发生于 **holdout 解盲之前、划分承诺之后**（审计者不知 dev/holdout 归属，防审计塑形）。
+- **审计时序（v1.1.1 修正，消除与划分的冲突）**，分两段：
+  1. **划分前（改变 family 边界的审计）**：family registry 构建 → 第二评者完成 **family-boundary + Fault Card fidelity 审计**（上表最后一行）→ 处理全部合并/拆分 → **registry 冻结** → 才允许 dev/holdout 随机划分与承诺（§3.4）。任何 family 合并/拆分在划分后一律禁止。
+  2. **划分后、解盲前（不改变 family 边界的审计）**：证书正确性复核各层（A/B/C 重跑、REJECTED、UNCERTAIN、LLM、多效应）可在划分承诺后进行，审计者不知 dev/holdout 归属（防审计塑形）；其结论只能整体升降对象的池归属（primary ↔ sensitivity），不能改动 family 结构。
 - 产出：`docs/dve/certification_audit_report.md` + label-conditioned 敏感性表（论文 RQ5 报告审计前后 headline 数字差）。
 
 ### 4.2 Fault Card 外部来源证明（provenance ledger）
@@ -318,9 +362,10 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 | M0 | 预注册冻结（含两级功效模拟、审计分层方案、family 规则、策略伪代码） | tag + SHA-256；ARS 五维扫描通过 |
 | M0.5 | **独立形式审计**：框架定义/命题（提纲 §5–§6）由外部形式方法/软件测试研究者逐条复核 | 审计意见闭环（上轮 P0-2 验收标准） |
 | M1 | 缺陷池构建 + 认证完成 | **G1**：A–C family ≥ 80、类配额达标、ledger 完整 |
-| M1.5 | **分层独立审计**（§4.1 八层） | 各层 κ/一致率过阈值；审计报告落盘 |
-| M2 | family 级 dev/holdout 划分承诺 + DVE-T PUT 封存 | commitment hash 入库，holdout 加密封存 |
-| M3 | \(R_{\mathrm{cand}}\) 冻结 + 原程序 FP 筛查 + \(R_0\) 选定 | 40–60 条，invalid 标记完成 |
+| M1.5a | **family-boundary + fidelity 审计 → registry 冻结**（§4.1 时序段 1） | 边界层 κ 过阈值；合并/拆分清零后 registry hash 冻结 |
+| M2 | family 级 dev/holdout 划分承诺 + DVE-T PUT 封存 + sentinel 冻结 | commitment hash 入库，holdout 加密封存 |
+| M2.5 | **证书分层审计**（§4.1 时序段 2，划分后、盲于归属） | 各层 κ/一致率过阈值；审计报告落盘 |
+| M3 | \(R_{\mathrm{cand}}\) 冻结 + 原程序 FP 筛查（\(R_{\mathrm{valid}}\) 定型）+ \(R_0\) 选定 | 40–60 模板，每 PUT 有效实例 ≥ 12 |
 | M4 | dev 交叉执行 + 句法池执行 + 四策略（含 T 变体）代码冻结 | \(K_{\mathrm{dev}}\) 冻结；策略输出 hash 封存 |
 | M5 | 解盲 + holdout 一次性评估（DVE-W/T + 历史缺陷臂 + Tier-2） | salt 公开可验证；endpoint 落数 |
 | M6 | 分析 + 初稿（W2–W6） | 提纲 §12 + §7 新增纪律自查 + DA + ARS |
@@ -387,7 +432,7 @@ Round-2 EIC 判定本方案"回应设计 8/10、实际关闭 3/10"，并给出�
 
 - **原意见**：AI labels 一致性低且未进 gating；须分层独立审计（zero/one/multi-flip、REJECTED、UNCERTAIN、bounds、generation-defect）。
 - **修改位置**：本计划 §4.1 八层分层审计（v1.1 从"仅 D 级"扩展）；准入本身已改为证书制（AI/LLM 标签不再是 gating 依据，见 §4.1 "不准入"行）。
-- **新证据**：待 M1.5 审计报告 + label-conditioned 敏感性表。
+- **新证据**：待 M1.5a/M2.5 审计报告 + label-conditioned 敏感性表。
 - **验收命令**：`docs/dve/certification_audit_report.md` 各层 κ/一致率 ≥ 预注册阈值；RQ5 报告审计前后 headline 差。
 - **状态**：`design-closed`。
 - **残余限制**：第二评者仍是小样本人力；层级阈值不达标时的降级路径已预注册。
