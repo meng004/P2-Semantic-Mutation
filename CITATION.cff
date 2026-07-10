@@ -54,11 +54,16 @@ version: "1.0.0"
 date-released: "2026-05-17"
 url: "https://github.com/meng004/P2-Semantic-Mutation"
 repository-code: "https://github.com/meng004/P2-Semantic-Mutation"
+# Concept DOI (resolves to the latest version). Version 1.0.0 archives the
+# Study-1 replication package. The four-study version deposit is prepared per
+# docs/release_2026-07-10/zenodo_deposit_checklist.md and will be published as
+# a new version under this concept DOI before submission; its version DOI is
+# pending and will replace the marker <VERSION-DOI-PENDING> once minted.
 doi: "10.5281/zenodo.20250664"
 identifiers:
   - type: doi
     value: "10.5281/zenodo.20250664"
-    description: "Zenodo archival DOI for v1.0.0 release (replication package)"
+    description: "Zenodo concept DOI; v1.0.0 archives the Study-1 replication package. Four-study version deposit pending, version DOI to be inserted at mint time: <VERSION-DOI-PENDING>"
 preferred-citation:
   type: article
   title: "A semantic mutation metric for metamorphic relation adequacy for scientific-computing kernels"

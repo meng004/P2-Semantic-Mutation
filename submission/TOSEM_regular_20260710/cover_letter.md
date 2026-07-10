@@ -51,10 +51,17 @@ formal terminology and argument-evidence mapping, clarifies non-claims, and uses
 real-defect evidence only to support the paper's argument. The work is not
 under simultaneous archival review elsewhere.
 
-The replication package is archived on Zenodo under DOI
-10.5281/zenodo.20250664. Extended proofs, protocol details, sensitivity
-analyses, and the result-level real-defect evidence summary are provided as
-supplementary material.
+The Study-1 replication package (raw data, SSOTs, mutant pools, AVP source,
+and analysis scripts) is archived on Zenodo as version 1.0.0 under concept DOI
+10.5281/zenodo.20250664. The four-study version deposit, adding the frozen
+Study 2-4 registrations with amendments, the v5/v6/v7 mutant pools with
+frozen review labels, all confirmatory and sensitivity SSOTs, the analysis
+scripts, and the incident log PILOT_LOG.md (P1-P16), is prepared per
+docs/release_2026-07-10/zenodo_deposit_checklist.md and will be published as
+a new version under the same concept DOI before submission; the version DOI
+will be inserted here at mint time (<VERSION-DOI-PENDING>). Extended proofs,
+protocol details, sensitivity analyses, and the result-level real-defect
+evidence summary are provided as supplementary material.
 
 Journal-first novelty statement. This submission reports a new archival
 contribution rather than an extension of any prior archival publication. The

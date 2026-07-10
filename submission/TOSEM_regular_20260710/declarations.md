@@ -27,11 +27,19 @@ material is 37 pages.
 
 ## Data and Artifact Availability
 
-All raw data, JSON single sources of truth, mutant pools, AVP source, and
-analysis scripts are archived on Zenodo under DOI 10.5281/zenodo.20250664.
+Study-1 raw data, JSON single sources of truth, mutant pools, AVP source, and
+analysis scripts are archived on Zenodo as version 1.0.0 under concept DOI
+10.5281/zenodo.20250664. The four-study version deposit (frozen Study 2-4
+registrations with amendments, the v5/v6/v7 mutant pools with frozen review
+labels, all confirmatory and sensitivity SSOTs, the analysis scripts, and the
+incident log PILOT_LOG.md, P1-P16) is prepared per
+docs/release_2026-07-10/zenodo_deposit_checklist.md and will be published as
+a new version under the same concept DOI before submission; the version DOI
+will be inserted here at mint time (<VERSION-DOI-PENDING>).
 The post-hoc editorial sensitivity SSOTs (cluster_sensitivity_v1.json,
 denominator_sensitivity_v1.json, review_shadow_kappa_v7.json) are committed
-beside the frozen confirmatory SSOTs in data/results/. The industrial
+beside the frozen confirmatory SSOTs in data/results/ and ship in that
+version deposit. The industrial
 real-defect arm draws its result-level statistics from a separately archived
 defect dataset, Zenodo DOI 10.5281/zenodo.21203424.
 

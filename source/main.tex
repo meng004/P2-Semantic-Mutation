@@ -135,7 +135,7 @@
 \noindent\textbf{Context.} Metamorphic Testing (MT) tests scientific programs without full test oracles, but classical Mutation Score (MS) is syntactic: it does not say whether a metamorphic-relation set observes domain-semantic effects such as conservation, monotonicity, convergence, trajectory, or fidelity-order violations.
 \textbf{Objective.} We introduce Semantic Mutation Score (SMS), a backward-compatible adequacy metric for declared semantic strata. The contribution is a metric and audit-record model, not a new LLM mutator or benchmark release.
 \textbf{Method.} We define five semantic operator families, instantiate them on 12 Programs Under Test (PUTs) across five meta-patterns, and validate through an analytical SMS-to-MS degeneration result, a 60-cell empirical audit, an Abstract Syntax Tree (AST)-normalised comparison with default first-order syntactic mutation, boundary and industrial real-defect arms, and three pre-registered follow-up studies on fresh data. The SMS instantiation is scoped to single-output scientific-computing kernels.
-\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing; the semantic-mutant pool has minimal AST-normalised overlap with default syntactic mutants, and three operator families are absent from the default first-order pool. Study 1's pre-registered thresholds are not met; the misses delimit operator applicability, MR design, and attribution rather than invalidating the metric, and the industrial arm shows aggregate kill-rate, semantic alignment, and real-defect detection to be related but distinct constructs. Study 2, on a blind-authored 28-PUT grid, confirms instantiability, a directional aligned-over-cross effect, and three-of-four class consistency, but not attribution purity; its cross-vendor hypothesis is gated not-run under a same-vendor harness. Study 3 returns a two-sided attribution boundary: single-stratum attribution is confirmed where coupling is absent or screenable, and graded declared-stratum attribution did not reach the confirmation threshold on the structurally rich classes. Study 4 executes the cross-vendor question under a matched four-vendor dual-blind protocol and returns a bounded null: under the matched fixed-specification protocol, no source-diversity effect of the registered magnitude was detected, while the aligned-over-cross direction replicated; the reading that metamorphic-relation design is the operative lever remains a hypothesis for causal test. The same study's graded declared-stratum verdict confirms within its own registration, with co-participation observed principally in class D and class C below the registered bar on its own; a matched-regime sensitivity shows the graded signal is carried entirely by multi-stratum co-firing mutants that Study 3's admission screen excluded, so the confirmed construct is coupled attribution rather than purity rescued by recruitment. Cross-language invariance failed to confirm replication under the registered rule on a C port, reported plainly.
+\textbf{Results.} SMS preserves the classical mutation-score ratio form while changing only mutant generation, equivalence, and killing; the semantic-mutant pool has minimal AST-normalised overlap with default syntactic mutants, and three operator families are absent from the default first-order pool. Study 1's pre-registered thresholds are not met; the misses delimit operator applicability, MR design, and attribution rather than invalidating the metric, and the industrial arm shows aggregate kill-rate, semantic alignment, and real-defect detection to be related but distinct constructs. Study 2, on a blind-authored 28-PUT grid, confirms instantiability, a directional aligned-over-cross effect, and three-of-four class consistency, but not attribution purity; its cross-vendor hypothesis is gated not-run under a same-vendor harness. Study 3 returns a two-sided attribution boundary: single-stratum attribution is confirmed where coupling is absent or screenable, and graded declared-stratum attribution did not reach the confirmation threshold on the structurally rich classes. Study 4 executes the cross-vendor question under a matched four-vendor dual-blind protocol and returns a bounded null: under the matched fixed-specification protocol, no source-diversity effect of the registered magnitude was detected, while the aligned-over-cross direction replicated; the reading that metamorphic-relation design is the operative lever remains a hypothesis for causal test. The same study's graded declared-stratum verdict confirms within its own registration, with co-participation observed principally in class D and class C below the registered bar on its own; a matched-regime sensitivity shows the graded signal is carried entirely by multi-stratum co-firing mutants that Study 3's admission screen excluded, so the confirmed construct is coupled attribution rather than purity rescued by recruitment. Cross-language invariance failed to confirm replication under the registered rule on a C port, reported plainly.
 \textbf{Conclusion.} SMS gives a reproducible way to report which declared semantic effects an MR set observes, misses, or kills for non-semantic reasons; its value is diagnostic and construct-level, not a claim of universal dominance.
 \end{abstract}
 
@@ -892,7 +892,10 @@ formula:
 
 \begin{theorem}[SMS $\to$ MS degeneration]\label{thm:degeneration}
 In the degenerate limit
-$L$, \textbf{almost everywhere} with respect to the input
+$L$, and provided the MR input transformations are $D_S$-non-singular
+(no transformation maps a $D_S$-positive-measure set into a
+$D_S$-measure-zero set; hypothesis NS of supplementary Lemma G.1),
+\textbf{almost everywhere} with respect to the input
 distribution $D_S$,
 
 \[ \mathrm{SMS}_{i,k,j} \xrightarrow{L} \mathrm{MS}_{i,j} = \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
@@ -909,7 +912,8 @@ By Lemma G.1, under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2) alone the E2 arm
 of the E1 $\wedge$ E2 judgement (Section~\ref{equivalence-judgement-e1-e2-layer-2})
 forces pointwise output equality almost everywhere with respect to
 $D_S$, and the E1 arm (AVP coherence) is then implied outside the same
-measure-zero set, so
+measure-zero set (hypothesis NS ensures the MR transformations do not map
+positive-measure input sets into it), so
 $\mathrm{equiv}_{i,k,j} \to \mathrm{equiv}_{i,j}^{\mathrm{classic}}$
 almost everywhere; the measure-zero qualifier accommodates
 floating-point pathological points and Not-a-Number propagation. By
@@ -2979,7 +2983,7 @@ not separate a construct property from under-recruitment; and the language
 invariance predicted by the NOETHER derivation \citep{noether2026}, untested
 until now. Study 4 registers exactly three confirmatory families on fresh
 data through a live four-vendor gateway and returns one bounded null, one
-confirmation, and one falsification (Section~\ref{study4-scoreboard}).
+confirmation, and one non-confirmation (Section~\ref{study4-scoreboard}).
 
 \subsection{Design and registration}\label{study4-design}
 
@@ -3092,7 +3096,7 @@ Admission was arm-symmetric within Study 4, so it cannot bias
 the scoreboard reports a screened-subset sensitivity alongside the registered
 verdict.
 
-\subsection{Results: one bounded null, one confirmation, one falsification}\label{study4-scoreboard}
+\subsection{Results: one bounded null, one confirmation, one non-confirmation}\label{study4-scoreboard}
 
 The three verdicts and their permissions are the Study-4 rows of the
 cross-study ledger (Table~\ref{tab:inference-permissions}).
@@ -3472,7 +3476,7 @@ instantiation, not as prerequisites for the SMS definition.
 \item
   A fourth, pre-registered study (Section~\ref{study4-closure}) registers three
   families on fresh data through a four-vendor gateway and returns one bounded
-  null, one confirmation, and one falsification. H2-2, gated for two studies,
+  null, one confirmation, and one non-confirmation. H2-2, gated for two studies,
   finally executes under a matched dual-blind protocol:
   \(\Delta\delta = +0.0147\), 95\% CI \([-0.021, +0.0686]\) (PUT-clustered as
   registered), contained in \([-0.20, +0.20]\), so no source-diversity effect
@@ -3531,8 +3535,16 @@ All Study-1 raw data, JSON SSOTs (paper\_numbers\_v3/v4,
 rq2\_cliffs\_delta\_v3/v4\_mp5, rq3\_friedman\_v4, s5\_purity\_v4,
 h2\_incidence\_v4, lrca\_60cell, lrca\_v4\_mp5\_recompute,
 rq2\_power\_stipulated, cosmic\_ray\_12put\_ast\_diff), mutant pools, AVP source,
-and analysis scripts are archived on Zenodo under DOI
+and analysis scripts are archived on Zenodo (version 1.0.0) under concept DOI
 \href{https://doi.org/10.5281/zenodo.20250664}{10.5281/zenodo.20250664}. The
+four-study version deposit, adding the frozen Study 2--4 registrations with
+amendments, the v5/v6/v7 mutant pools with frozen review labels, all
+confirmatory and sensitivity SSOTs, the analysis scripts, and the incident log
+\texttt{PILOT\_LOG.md} (P1--P16), is prepared per
+\texttt{docs/release\_2026-07-10/zenodo\_deposit\_checklist.md} and will be
+published as a new version under the same concept DOI before submission; the
+version DOI will be inserted here at mint time
+(\texttt{<VERSION-DOI-PENDING>}). The
 industrial arm (Section~\ref{rq4-industrial-construct-separation}) draws its
 result-level statistics from a separately archived defect dataset
 \citep{defect4mr2026}
