@@ -13,6 +13,114 @@ normative source for the MetaPattern / operator-block vocabulary; P3 adopts it a
 
 ---
 
+## v2 (2026-07-10): CANONICAL SUBMISSION PDF SUPERSEDES noether.txt
+
+**Status.** This section is normative. Everything below the `SUPERSEDED (v1)` banner
+was derived from the older extracted draft `noether.txt` and is retained **for audit
+lineage only**. The normative NOETHER source is now the canonical submission PDF
+(`NOETHER_paper_submission.pdf`, 61 pp., "NOETHER: Constructive Metamorphic Pattern
+Identification from Operator Algebras and a Falsifiable Invariance-Blindness
+Theorem"). Where v1 and the PDF disagree, the PDF wins.
+
+### v2.1 The canonical two-layer model (PDF §3.1.2, pp. 11–12)
+
+NOETHER's model has **two layers**, not a flat 8-MetaPattern roster:
+
+- **Layer 1, five MetaPatterns** (p. 11, §3.1.2): the MetaPattern set is
+  `{G, O≤, T*, 𝒯*rev, ℒ*}`, named `m_inv` (Invariance, from group action `G`),
+  `m_mono` (Monotonicity, from partial order `O≤`), `m_adj` (Adjoint, from
+  self-adjoint operator `T*`), `m_rev` (Reversal, from time-reversal involution
+  `𝒯*rev`), and `m_conv` (Convergence, from parametrised limit `ℒ*`).
+  **`m_dyn`, `m_cmp`, and `m_rel` do not exist as MetaPatterns in the canonical
+  system.** The qualitative-dynamics structure `𝒟*` refines `O≤`, the
+  method-comparison structure `ℰ*` refines `ℒ*`, and the relational-equivalence
+  extension `ℬ*rel` lies outside the Lie-group / self-adjoint / time-reversal core;
+  all three are **refinements/extension entering at Layer 2 as MR families**, not
+  additional MetaPatterns (p. 11: "Two further structures are refinements of these
+  MetaPatterns rather than additional MetaPatterns, and they enter the model at
+  Layer 2 as MR families").
+- **The 8-component structural decomposition still exists** (p. 9, §3.1.1):
+  `𝒟(𝒜_P) = (G, O≤, T*, 𝒯*rev, ℒ*, 𝒟*, ℰ*, ℬ*rel)`, called *structural
+  components* (the PDF does not use "operator block"); only the first five yield
+  MetaPatterns.
+- **Layer 2, ten MR families** (Table 1, p. 12; Fig. 2, p. 13): sans-serif glyphs
+  `f_parent.child`, tier-distinct from MetaPattern `m_•` and executable-MR `ρ_•`:
+
+  | Family | MetaPattern | Mode | Gloss |
+  |---|---|---|---|
+  | `f_inv.eqv` | `G` | I | equivariance |
+  | `f_inv.con` | `G` | I | conservation (Noether charge) |
+  | `f_adj.self` | `T*` | I/M | self-adjoint |
+  | `f_adj.dual` | `T*` | M | adjoint duality |
+  | `f_rev.traj` | `𝒯*rev` | I | trajectory reversal |
+  | `f_mono.stat` | `O≤` | I | static order |
+  | `f_mono.shape` | `O≤` (`𝒟*` refinement) | I | dynamic shape |
+  | `f_conv.lim` | `ℒ*` | I | convergence |
+  | `f_conv.rate` | `ℒ*` (`ℰ*` refinement) | M | accuracy-order |
+  | `f_conv.repr` | `ℒ*` (`ℬ*rel` extension) | M | representation-invariance |
+
+- **MR mode** (Definition 2, p. 12): Mode-I (input-orbit) fixes the implementation
+  and varies the input along the MetaPattern structure; Mode-M
+  (implementation-orbit) fixes the input and varies among realisations of the same
+  ideal operator; Mode-M MRs are relative oracles.
+- Contributions framing (C1/C3, pp. 3–4): "the downstream CONSTRUCT-MP layer
+  mechanically derives five MetaPatterns and ten MR families"; the canonical symbol
+  system is "five MetaPatterns, two family-layer refinements, one relational
+  extension, and the ten MR-family symbols of Table 1".
+
+### v2.2 Corrected P3 mapping (registered strata → Layer-2 MR FAMILIES)
+
+P3's registered strata map to NOETHER **MR families** (Layer 2), not to
+MetaPatterns; the v1 mapping table (§A below) is superseded row-by-row:
+
+| P3 registered stratum | NOETHER MR family | Parent MetaPattern | Note |
+|---|---|---|---|
+| MP1 conservation (`ψ1`) | `f_inv.con` | `m_inv` (`G`) | v1 said `m_inv` directly |
+| MP2 monotonicity (`ψ2`) | `f_mono.stat` | `m_mono` (`O≤`) | v1 said `m_mono` directly |
+| MP3 convergence order (`ψ3`) | `f_conv.lim` | `m_conv` (`ℒ*`) | v1 said `m_conv` directly |
+| MP4 dynamics/shape (`ψ4`) | `f_mono.shape` | `m_mono` (`𝒟*` refinement of `O≤`) | v1's `m_dyn` does not exist |
+| MP5 method-comparison (`ψ5`) | `f_conv.rate` | `m_conv` (`ℰ*` refinement of `ℒ*`); **Mode-M** | v1's `m_cmp` does not exist |
+| `ψ6` adjoint arm (appendix) | `f_adj.self` | `m_adj` (`T*`) | v1 said `m_adj` directly |
+
+So P3 instantiates **6 of the 10 MR families**, covering **4 of the 5
+MetaPatterns** (`m_rev` not exercised). The grid is stratified at the family
+layer. No P3 sentence may call MP4's or MP5's parent objects "MetaPatterns of
+NOETHER": they are refinement families under `m_mono` and `m_conv` respectively.
+
+### v2.3 Retraction of the v1 §E verdict ("10 MR families do not exist")
+
+**Retracted.** v1 §E concluded that "10 MR families" was not a real NOETHER count
+and attributed the author's "10个MR Family" to a conflation with ten
+Translate-extension dimensions. Against the canonical submission PDF this is
+wrong: **the author was right**. Table 1 (p. 12) enumerates exactly ten MR
+families as first-class Layer-2 objects, and the contributions (C1, p. 3) state
+"five MetaPatterns and ten MR families". The old draft (`noether.txt`) simply
+predated the two-layer model; its 8-MetaPattern roster (`m_inv, m_mono, m_adj,
+m_rev, m_conv, m_dyn, m_cmp, m_rel`) was reorganised in the canonical version
+into 5 MetaPatterns + 10 MR families. Consequences:
+
+- v1 §1.3 ("canonical total = 8"): superseded; 5 MetaPatterns, 10 MR families.
+- v1 §1.5 ("NOETHER does not use 'MR family' as a distinct primitive"):
+  superseded; *MR family* is now NOETHER's own Layer-2 primitive, which makes
+  P3's per-PUT term "MR family `MR_{i,k}`" a hard terminology collision; the
+  manuscript renames P3's object to **"MR battery"** in prose (a per-PUT set of
+  executable MR instances, NOETHER's `ρ` level), with a first-use disclosure that
+  registered infrastructure documents historically say "MR family".
+- v1 §A rows MP4/MP5 (`m_dyn`/`m_cmp`): superseded per the v2.2 table.
+- v1 §D draft bridge paragraph: superseded by the family-layer correspondence
+  paragraph now in `source/main.tex` (§ Vocabulary and Notation).
+- Hard constraint §B (frozen artifacts keep registered MPk/ψ labels;
+  presentation-layer-only alignment): **unchanged and still in force**.
+
+---
+
+## SUPERSEDED (v1, based on noether.txt; retained for audit lineage only)
+
+> Everything below this banner reflects the older `noether.txt` draft and is
+> superseded by the v2 section above wherever the two disagree.
+
+---
+
 ## JOB 1 — NOETHER's canonical system (precise extraction)
 
 ### 1.1 The eight operator blocks (Def. of `𝒟(𝒜_P)`, NOETHER §3.1.9)

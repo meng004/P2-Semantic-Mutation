@@ -228,13 +228,15 @@ Per-relation verification: $\mathrm{Cons.}$ tolerance equality $|\mathrm{LHS} -
 \mathrm{RHS}| \leq \varepsilon$; $\mathrm{Mono.}$ / $\mathrm{P-ord.}$ Wilcoxon signed-rank $\alpha=0.05$; $\mathrm{Conv.}$
 convergence-order + asymptotic residual ratio; Traj. DTW distance
 threshold $\varepsilon_{\mathrm{DTW}}$. In NOETHER's taxonomy
-\citep{noether2026} these are $m_{\mathrm{inv}}$, $m_{\mathrm{mono}}$,
-$m_{\mathrm{cmp}}$, $m_{\mathrm{conv}}$, and $m_{\mathrm{dyn}}$; note that a
-P-ord ($m_{\mathrm{cmp}}$) instance reducing to a pure asymptotic
+\citep{noether2026} these are the MR families $\mathsf{f}_{\mathrm{inv.con}}$,
+$\mathsf{f}_{\mathrm{mono.stat}}$, $\mathsf{f}_{\mathrm{conv.rate}}$,
+$\mathsf{f}_{\mathrm{conv.lim}}$, and $\mathsf{f}_{\mathrm{mono.shape}}$; note
+that P-ord ($\mathsf{f}_{\mathrm{conv.rate}}$, the $\mathcal{E}^{*}$
+method-comparison refinement) and Conv ($\mathsf{f}_{\mathrm{conv.lim}}$) are
+sibling families under the same MetaPattern $m_{\mathrm{conv}}$ (limit operator
+$\mathcal{L}^{*}$), so a P-ord instance reducing to a pure asymptotic
 residual-ratio rate check shares its acceptance machinery with the Conv
-($m_{\mathrm{conv}}$, limit block $\mathcal{L}^{*}$) checker, so such
-rate-only instances are $\mathcal{L}^{*}$-adjacent while the registered
-stratum stays partial-order. AVP version = upstream infrastructure commit
+checker while the registered stratum stays partial-order. AVP version = upstream infrastructure commit
 hash; our package embeds AVP source.
 
 \textbf{Three-candidate equivalence trade-off.}
@@ -1395,8 +1397,9 @@ syntactic-mutation scenarios, no metric-level semantic fragmentation.
 
 This appendix gives the full specification of the confirmatory adjoint
 extension arm summarised in the main manuscript. The arm
-exercises the adjoint invariant $\psi_6$, the MetaPattern
-$m_{\mathrm{adj}}$ (self-adjoint block $T^{*}$) in NOETHER's taxonomy
+exercises the adjoint invariant $\psi_6$, the MR family
+$\mathsf{f}_{\mathrm{adj.self}}$ under the MetaPattern $m_{\mathrm{adj}}$
+(self-adjoint operator $T^{*}$) in NOETHER's taxonomy
 \citep{noether2026}, on three third-party
 linear-operator libraries, disjoint from the 12 PUTs and the
 pre-registered 60-cell. Each library carries a real fixed defect in its
@@ -1428,7 +1431,7 @@ adjoint code path as a ground-truth anchor:
   index, so \texttt{vjp} silently produced a non-adjoint transpose.
 \end{itemize}
 
-For each subject the MR families are adj.self (self-adjointness) and
+For each subject the MR batteries are adj.self (self-adjointness) and
 adj.dual (scaled/dual-operator transpose). The mutant pool spans
 adjoint-breaking fault mechanisms (drop-conjugate, sign flip, scale and
 phase errors, transpose-without-conjugation, Nyquist mis-scaling), with
@@ -1487,15 +1490,18 @@ Audit item & Evidence content used in the manuscript & Main-text role \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Verified stratum counts & 34 verified MR-detectable defects across five
+Verified stratum counts & 34 verified MR-detectable defects across the five
 NOETHER MetaPatterns \citep{noether2026}: \(m_{\mathrm{mono}}\) 10,
 \(m_{\mathrm{conv}}\) 9,
 \(m_{\mathrm{inv}}\) 6, \(m_{\mathrm{adj}}\) 5, and
-\(m_{\mathrm{rev}}\) 4. This real-defect corpus spans a \emph{different}
-block subset than the MP1--MP5 experimental grid: it adds
-\(m_{\mathrm{adj}}\) and \(m_{\mathrm{rev}}\) and omits \(m_{\mathrm{dyn}}\)
-(MP4) and \(m_{\mathrm{cmp}}\) (MP5), so these five are not the MP1--MP5
-strata. & Shows that the declared semantic strata are not
+\(m_{\mathrm{rev}}\) 4. This real-defect corpus is classified at NOETHER's
+Layer-1 MetaPattern level, whereas the MP1--MP5 experimental grid is
+stratified at the finer Layer-2 family level
+(\(\mathsf{f}_{\mathrm{inv.con}}\), \(\mathsf{f}_{\mathrm{mono.stat}}\),
+\(\mathsf{f}_{\mathrm{conv.lim}}\), \(\mathsf{f}_{\mathrm{mono.shape}}\),
+\(\mathsf{f}_{\mathrm{conv.rate}}\)) and does not touch \(m_{\mathrm{rev}}\),
+so these five MetaPatterns are not the MP1--MP5 strata. & Shows that the
+declared semantic strata are not
 only toy labels \\
 Mutation-phase aggregate & The semantic-mutation track exceeds the
 closest baseline by +0.101 on mean score (Holm-adjusted \(p = 0.046\),
@@ -1518,9 +1524,9 @@ than a single scalar hierarchy \\
 
 This summary is intentionally a result table, not a corpus or benchmark
 description. The main manuscript uses it only to support construct
-separation: a relation family can score similarly on aggregate mutant
+separation: a relation battery can score similarly on aggregate mutant
 kill-rate while differing sharply on real-defect detection, and different
-relation families can observe non-nested semantic-effect fibers.
+relation batteries can observe non-nested semantic-effect fibers.
 
 \section{Study 2 Confirmatory Audit: Per-Family, Per-Class, and Incident Detail}\label{j.-study2-confirmatory-detail}
 

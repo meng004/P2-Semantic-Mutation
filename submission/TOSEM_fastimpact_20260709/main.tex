@@ -585,37 +585,51 @@ here before they are used in the SMS construction.
 kernel being assessed. We write the \(i\)-th PUT as \(S_i\).
 
 \textbf{Metamorphic Relation (MR).} An MR is a property that relates the
-outputs of related inputs. The MR family used for PUT \(S_i\) and
-meta-pattern \(k\) is written \(\mathrm{MR}_{i,k}\). This
-\(\mathrm{MR}_{i,k}\) is a per-PUT, per-meta-pattern \emph{instance} of a
-meta-pattern, that is, the concrete relation set exercised on one subject at
-one stratum; in the companion framework NOETHER \citep{noether2026} the
-coarser object \(\mathrm{MR}(\mathcal{A}_P)\) is the algebra-induced MR space
-of a whole program family, and a MetaPattern is an equivalence class over it,
-so our \(\mathrm{MR}_{i,k}\) sits one granularity below NOETHER's MR class.
+outputs of related inputs. The MR battery used for PUT \(S_i\) and
+meta-pattern \(k\) is written \(\mathrm{MR}_{i,k}\): the concrete set of
+executable MR instances exercised on one subject at one stratum. The
+registered infrastructure documents historically call this object an
+``MR family''; we say \emph{battery} in prose because the companion
+framework NOETHER \citep{noether2026} reserves \emph{MR family} for a
+coarser object, a program-family-level class of executable MRs
+instantiating one MetaPattern. In NOETHER's symbols a MetaPattern is
+\(m_{\bullet}\), an MR family is \(\mathsf{f}_{\bullet}\), and an
+executable MR is \(\rho_{\bullet}\); our \(\mathrm{MR}_{i,k}\) is a
+per-PUT set of such \(\rho\)-level instances, one granularity below
+NOETHER's family layer.
 
 \textbf{Meta-pattern (MP).} An MP is a semantic stratum of MR behaviour,
 such as conservation, monotonicity, convergence, trajectory structure, or
 fidelity order. The index \(k\) denotes the MP being tested.
 
-The five meta-patterns are the instance, on the scientific-computing program
-family, of the canonical MetaPattern taxonomy of NOETHER \citep{noether2026},
-which derives MetaPatterns as closure-guaranteed equivalence classes over an
-operator algebra. We adopt NOETHER's names as the primary narrative vocabulary
-and record the correspondence to our registered labels once, here:
-MP1 conservation \(= m_{\mathrm{inv}}\) (symmetry block \(G\)),
-MP2 monotonicity \(= m_{\mathrm{mono}}\) (order block \(O_{\le}\)),
-MP3 convergence order \(= m_{\mathrm{conv}}\) (limit block \(\mathcal{L}^{*}\)),
-MP4 trajectory determinism \(= m_{\mathrm{dyn}}\) (qualitative-dynamics block
-\(\mathcal{D}^{*}\)), and MP5 partial-order consistency \(= m_{\mathrm{cmp}}\)
-(method-comparison block \(\mathcal{E}^{*}\)); the adjoint extension \(\psi_6\)
-is \(m_{\mathrm{adj}}\) (self-adjoint block \(T^{*}\)). The registered labels
+The five meta-patterns are instances, on the scientific-computing program
+family, of five MR families in the two-layer taxonomy of NOETHER
+\citep{noether2026}. From a program-induced operator algebra NOETHER derives
+five Layer-1 MetaPatterns, \(m_{\mathrm{inv}}\), \(m_{\mathrm{mono}}\),
+\(m_{\mathrm{adj}}\), \(m_{\mathrm{rev}}\), and \(m_{\mathrm{conv}}\), and ten
+Layer-2 MR families instantiating them; two structural refinements
+(\(\mathcal{D}^{*}\), \(\mathcal{E}^{*}\)) and one relational extension enter
+at the family layer rather than adding MetaPatterns. Our grid is stratified at
+the family layer. We record the correspondence to our registered labels once,
+here: MP1 conservation \(= \mathsf{f}_{\mathrm{inv.con}}\) (under
+\(m_{\mathrm{inv}}\), group action \(G\)); MP2 monotonicity
+\(= \mathsf{f}_{\mathrm{mono.stat}}\) (under \(m_{\mathrm{mono}}\), partial
+order \(O_{\le}\)); MP3 convergence order \(= \mathsf{f}_{\mathrm{conv.lim}}\)
+(under \(m_{\mathrm{conv}}\), limit operator \(\mathcal{L}^{*}\)); MP4
+trajectory determinism \(= \mathsf{f}_{\mathrm{mono.shape}}\) (the
+\(\mathcal{D}^{*}\) qualitative-dynamics refinement, under
+\(m_{\mathrm{mono}}\)); and MP5 partial-order consistency
+\(= \mathsf{f}_{\mathrm{conv.rate}}\) (the \(\mathcal{E}^{*}\)
+method-comparison refinement, under \(m_{\mathrm{conv}}\); Mode-M,
+implementation-orbit, in NOETHER's classification). The adjoint extension
+\(\psi_6\) instantiates \(\mathsf{f}_{\mathrm{adj.self}}\) (under
+\(m_{\mathrm{adj}}\), self-adjoint operator \(T^{*}\)). The six strata thus
+cover six of NOETHER's ten MR families and four of its five MetaPatterns
+(time reversal, \(m_{\mathrm{rev}}\), is not exercised). The registered labels
 MP1--MP5 are retained throughout for every pre-registration, dataset-key, and
 provenance reference, because the pre-registered protocol was authored under
-those labels and only under those labels; NOETHER's \(m_{xxx}\) names carry the
-semantic narrative and never stand in for a registration. Our framework does
-not exercise NOETHER's time-reversal (\(m_{\mathrm{rev}}\)) or
-relational-equivalence (\(m_{\mathrm{rel}}\)) blocks.
+those labels and only under those labels; NOETHER's family names carry the
+semantic narrative and never stand in for a registration.
 
 \textbf{Semantic operator.} A semantic operator is a mutation family
 \(\mathrm{mut}_j\) designed to perturb a declared MP. The operator index
@@ -623,23 +637,23 @@ relational-equivalence (\(m_{\mathrm{rel}}\)) blocks.
 
 \textbf{Semantic mutant.} A semantic mutant \(s'\) is a finite syntactic
 edit of \(S_i\) that is admitted by semantic operator \(\mathrm{mut}_j\)
-and is certified against the declared MR family. Formally,
+and is certified against the declared MR battery. Formally,
 \[
   s' \in \mathrm{mut}_j(S_i).
 \]
 The word semantic therefore names the certification target, not a second
 editing mechanism.
 
-\textbf{Semantic-effect fiber.} For an MR family \(\mathrm{MR}_{i,k}\),
+\textbf{Semantic-effect fiber.} For an MR battery \(\mathrm{MR}_{i,k}\),
 the semantic-effect fiber is the subset of admitted semantic mutants
-whose declared effect is observable by that MR family:
+whose declared effect is observable by that MR battery:
 \[
   \mathcal{F}(\mathrm{MR}_{i,k}) =
   \{s' \in \mathrm{mut}_j(S_i): \mathrm{killed}(s', \mathrm{MR}_{i,k})\}.
 \]
-Different MR families can observe different fibers. SMS therefore
+Different MR batteries can observe different fibers. SMS therefore
 measures adequacy relative to a declared stratum; it is not a total order
-over all possible MR families.
+over all possible MR batteries.
 
 \textbf{Equivalent, killed, and surviving mutants.} A mutant is
 equivalent for \((i,k,j)\) when the equivalence judgement of Section~\ref{equivalence-judgement-e1-e2-layer-2} admits
@@ -900,20 +914,22 @@ The new ingredient is a finite \emph{semantic invariant family}
 $I = \{\psi_1, \dots, \psi_5\}$, where each $\psi$ is a predicate over
 the observable behaviour $\alpha \circ \mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack}$. The five
 invariants are exactly the properties the meta-patterns of Section~\ref{operator-signatures} target:
-$\psi_1$ conservation ($m_{\mathrm{inv}}$), $\psi_2$ monotonicity
-($m_{\mathrm{mono}}$), $\psi_3$ convergence order ($m_{\mathrm{conv}}$),
-$\psi_4$ trajectory determinism ($m_{\mathrm{dyn}}$), $\psi_5$ partial-order
-consistency ($m_{\mathrm{cmp}}$), so
+$\psi_1$ conservation ($\mathsf{f}_{\mathrm{inv.con}}$), $\psi_2$ monotonicity
+($\mathsf{f}_{\mathrm{mono.stat}}$), $\psi_3$ convergence order
+($\mathsf{f}_{\mathrm{conv.lim}}$), $\psi_4$ trajectory determinism
+($\mathsf{f}_{\mathrm{mono.shape}}$), $\psi_5$ partial-order
+consistency ($\mathsf{f}_{\mathrm{conv.rate}}$), so
 $\psi_k$ is the invariant whose violation MP$_k$ detects and whose
 breakage $\mathrm{mut}_j$ (at $j=k$) targets; each $\psi_k$ is thus the
-invariant defining the NOETHER MetaPattern named in parentheses
+defining invariant of the NOETHER MR family named in parentheses
 \citep{noether2026}. We write
 $\mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} \models \psi$ when $P$'s observable behaviour
 satisfies $\psi$.
 
 The family is open (the extensibility of $I$ noted in Section~\ref{theory-fibers}): a sixth
-invariant $\psi_6$, \emph{adjoint consistency} ($m_{\mathrm{adj}}$, the
-self-adjoint block $T^{*}$ in NOETHER \citep{noether2026}),
+invariant $\psi_6$, \emph{adjoint consistency} ($\mathsf{f}_{\mathrm{adj.self}}$,
+the self-adjoint family under MetaPattern $m_{\mathrm{adj}}$, operator $T^{*}$,
+in NOETHER \citep{noether2026}),
 $\langle A x, y\rangle = \langle x, A^{\mathrm{H}} y\rangle$ for
 linear-operator kernels, instantiates the same construction. Its MR is
 strong (its violation set is closed under $\equiv_\alpha$), so by
@@ -1056,7 +1072,7 @@ angles, is the canonical instance. (ii) \emph{False negative (surviving
 non-equivalent mutant).} A semantically active mutant
 $P_e \not\equiv_\alpha P$ can leave every invariant in $I$ satisfied
 within $\varepsilon_{\mathrm{tol}}$, a \emph{coincidental satisfaction
-of the MR}, and so survive the strong MR family; this surviving mutant
+of the MR}, and so survive the strong MR battery; this surviving mutant
 is non-equivalent (genuinely $\not\equiv_\alpha P$) and is therefore
 distinct from the classical equivalent mutant of Proposition~\ref{prop:fiber}(ii), and
 when its signature lies below $\varepsilon_{\mathrm{tol}}$ it is a
@@ -1188,7 +1204,7 @@ least one of (a), (b), (c).
 {%
 \small
 \begin{longtable}[]{@{}lccccc@{}}
-\caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns; MP1--MP5 $= m_{\mathrm{inv}}, m_{\mathrm{mono}}, m_{\mathrm{conv}}, m_{\mathrm{dyn}}, m_{\mathrm{cmp}}$). $\bullet\bullet$ substantial (32 cells), $\bullet$ moderate (19 cells), $\circ$ vacant (9 cells; no MR is exercised).}\label{tab:p2-cells}\\
+\caption{Metamorphic-relation coverage matrix: per-PUT coverage density across the five meta-patterns (12 PUTs $\times$ 5 meta-patterns; MP1--MP5 $= \mathsf{f}_{\mathrm{inv.con}}, \mathsf{f}_{\mathrm{mono.stat}}, \mathsf{f}_{\mathrm{conv.lim}}, \mathsf{f}_{\mathrm{mono.shape}}, \mathsf{f}_{\mathrm{conv.rate}}$). $\bullet\bullet$ substantial (32 cells), $\bullet$ moderate (19 cells), $\circ$ vacant (9 cells; no MR is exercised).}\label{tab:p2-cells}\\
 \toprule\noalign{}
 PUT & Conservation & Monotonicity & Convergence & Trajectory & Partial order \\
 \midrule\noalign{}
@@ -1251,7 +1267,7 @@ off-diagonal cells form the cross slice, and the vacant cells \texttt{$\circ$}
 are not formally adjudicated.
 
 The c-class primary MP is held at the pre-registered partial-order meta-pattern
-($m_{\mathrm{cmp}}$) throughout, and all H1--H4 verdicts are rendered under this
+($\mathsf{f}_{\mathrm{conv.rate}}$) throughout, and all H1--H4 verdicts are rendered under this
 configuration on v3 (same-source) and v4 (cross-source, identical prompt). An
 earlier exploratory data-driven primary-MP shift was withdrawn after a
 permutation null (10,000 permutations, seed 42, over the 15 exchangeable c-class
@@ -1403,7 +1419,7 @@ processing), and jax \texttt{linear\_transpose} (automatic
 differentiation), disjoint from the 12 PUTs and the pre-registered
 60-cell. Each library carries a real fixed defect in its adjoint code
 path as a ground-truth anchor (scipy \#8900, pylops \#292, jax \#6223).
-For each, the MR families are adj.self (self-adjointness) and adj.dual
+For each, the MR batteries are adj.self (self-adjointness) and adj.dual
 (scaled/dual-operator transpose), and the mutant pool mixes
 adjoint-breaking mutants (the real defect among them) with semantically
 equivalent mutants a strong MR must \emph{not} kill; the real defects are
@@ -2290,7 +2306,7 @@ distinct across the four cases, value destruction that preserves
 element order, zeroing that preserves a symmetry the relation checks,
 overshoot that stays within the tested bounds, and a
 variable-substitution/stale-read edit that operator mutation does not
-reach well, so no single relation family induces a total order over
+reach well, so no single relation battery induces a total order over
 the others (supplementary Appendix I).
 Thus semantic mutation should be read as a certificate-bearing diagnostic
 for a declared semantic stratum, not as a scalar hierarchy in which one
@@ -2417,18 +2433,18 @@ Observation & Interpretation & Design response \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Low SMS, high C1\_share & The MR family detects few mutants, but the
+Low SMS, high C1\_share & The MR battery detects few mutants, but the
 kills it does make are mostly semantic & Add MRs for adjacent semantic
 strata before enlarging the mutant pool \\
-Low SMS, high suspect\_share & The MR family mainly triggers tolerance,
+Low SMS, high suspect\_share & The MR battery mainly triggers tolerance,
 OOD, statistical, or artefact labels & Inspect tolerances, input domain,
 and statistical assumptions before treating kills as adequacy evidence \\
 High SMS, low real-defect detection & Mutant kill-rate and defect
 detection have diverged & Revisit the declared semantic stratum and add
 real-defect-facing MRs \\
 Generic relation kills outside the pattern-derived relation & Relation
-families are non-nested & Treat the result as a different
-semantic-effect fiber, not as domination by one MR family \\
+batteries are non-nested & Treat the result as a different
+semantic-effect fiber, not as domination by one MR battery \\
 \end{longtable}
 }
 
@@ -2452,7 +2468,7 @@ ISO 26262); pre-generated pools replay offline but new pools require LLM access
 \textbf{Example MR-design use.} If a surrogate-model PUT has
 R\_sem $\approx 1$ for a Hyperparameter mutant but SMS = 0 under the
 primary monotonicity MR, the design action is not to generate more
-mutants of the same kind. The SMS / LRCA reading is that the MR family is
+mutants of the same kind. The SMS / LRCA reading is that the MR battery is
 blind to the admitted semantic-effect fiber; the next design step is to
 add a convergence, stability, or fidelity-order MR for that PUT before
 claiming adequacy for the hyperparameter stratum.
@@ -2519,9 +2535,11 @@ than a third-party registry. The design has four fixed elements.
   (A\(\to\)MP1, B\(\to\)MP2, C\(\to\)MP5-held, D\(\to\)MP2) is fixed at
   authoring, blind to mutation results; the Study-1 v3b
   selection-on-the-response path is prohibited. The rule is stated in the
-  registered MPk labels under which it was authored; in NOETHER's names this
-  is A\(\to m_{\mathrm{inv}}\), B\(\to m_{\mathrm{mono}}\),
-  C\(\to m_{\mathrm{cmp}}\)-held, D\(\to m_{\mathrm{mono}}\).
+  registered MPk labels under which it was authored; in NOETHER's family names
+  this is A\(\to \mathsf{f}_{\mathrm{inv.con}}\),
+  B\(\to \mathsf{f}_{\mathrm{mono.stat}}\),
+  C\(\to \mathsf{f}_{\mathrm{conv.rate}}\)-held,
+  D\(\to \mathsf{f}_{\mathrm{mono.stat}}\).
 \item
   \textbf{One-shot rule.} Confirmatory generation runs once per the
   registered budget with seeds and prompt-template hashes pinned;
@@ -2694,8 +2712,9 @@ flipped-invariant set, so the leakage is a property of the mutants, not of the
 single-shot scoring pass. Each family-by-class cell collapses onto a single
 co-flip pair (a deterministic coupling, not scatter; per-cell fingerprints in
 supplementary Appendix J.4), dominated by the
-$[m_{\mathrm{mono}},m_{\mathrm{cmp}}]$ [MP2, MP5] coupling: TF's 72/135 kills at
-$m_{\mathrm{mono}}$ and at $m_{\mathrm{cmp}}$ are the \emph{same} 72 mutants.
+$[\mathsf{f}_{\mathrm{mono.stat}},\mathsf{f}_{\mathrm{conv.rate}}]$ [MP2, MP5]
+coupling: TF's 72/135 kills at $\mathsf{f}_{\mathrm{mono.stat}}$ and at
+$\mathsf{f}_{\mathrm{conv.rate}}$ are the \emph{same} 72 mutants.
 
 \textbf{The driver is PUT richness, not measurement.} Because A $= 0$, the
 $\mathrm{repeats}=20\to1$ gap cannot explain leakage growth from Study 1 (CF 9,
@@ -2718,10 +2737,10 @@ is the registered path taken by Study 3
 on both sides rather than rescuing the miss.
 
 \textbf{An MR-sensitivity coverage boundary.} The same artifacts expose an
-orthogonal boundary: convergence order (MP3, $m_{\mathrm{conv}}$) records zero
+orthogonal boundary: convergence order (MP3, $\mathsf{f}_{\mathrm{conv.lim}}$) records zero
 nonzero detection cells in both studies (Study-1 v4: 0; Study-2 v5: 0 of 28) and
-trajectory determinism (MP4, $m_{\mathrm{dyn}}$) is near-zero (0; 1 of 28), and
-this is not designed-vacant coverage ($m_{\mathrm{conv}}$ is exercised on 26 of
+trajectory determinism (MP4, $\mathsf{f}_{\mathrm{mono.shape}}$) is near-zero (0; 1 of 28), and
+this is not designed-vacant coverage ($\mathsf{f}_{\mathrm{conv.lim}}$ is exercised on 26 of
 28 subjects yet detects nothing). The two strata mark an MR-sensitivity boundary,
 declared and instantiated but not empirically stressed by the current operators
 and AVP checkers, distinct from the attribution-purity boundary above.
@@ -2758,7 +2777,7 @@ fixed elements.
 \item
   \textbf{A split estimand.} The single purity bar is replaced by two
   confirmatory verdicts in one Holm(2) family (Family G). \emph{H4\('' \)-graded}
-  (primary) asks whether the declared MetaPattern still carries substantial
+  (primary) asks whether the declared stratum (a NOETHER MR family) still carries substantial
   \emph{graded} attribution on the structurally rich classes: for each detected
   mutant \(m\) declared to primary stratum \(m^{*}\),
   \(s_m = \mathbb{1}[m^{*}\in\mathrm{flipset}(m)]/|\mathrm{flipset}(m)|\),
@@ -2767,8 +2786,9 @@ fixed elements.
   asks whether single-stratum purity holds where coupling is absent or
   screenable, over \{CE, HP, CF-with-screen\}, with a bar of purity \(\geq 0.90\)
   (one-sided 95\% lower Clopper--Pearson). The declared strata are the frozen
-  class-primaries, in NOETHER's names C\(\to m_{\mathrm{cmp}}\) and
-  D\(\to m_{\mathrm{mono}}\) (registered labels MP5-held and MP2); the graded
+  class-primaries, in NOETHER's family names
+  C\(\to \mathsf{f}_{\mathrm{conv.rate}}\) and
+  D\(\to \mathsf{f}_{\mathrm{mono.stat}}\) (registered labels MP5-held and MP2); the graded
   measure \emph{reports} rather than repairs the C\(\to\)MP5 mismatch.
 \item
   \textbf{A repaired, live screen.} The P8 defect is fixed forward for the
@@ -2843,14 +2863,14 @@ the point estimate itself misses the bar, so the verdict does not rest on power
 alone. The achieved \(n_{\mathrm{rich}} = 6\) (the rich-class PUTs that produced
 any detected mutant: C3--C6, D2, D5) is below the registered target of 15
 because most rich cells detect nothing, and it is reported as such. The
-per-class breakdown is stark: class C (declared \(m_{\mathrm{cmp}}\)) has mean
+per-class breakdown is stark: class C (declared \(\mathsf{f}_{\mathrm{conv.rate}}\)) has mean
 share \(0.0\) across its four contributing PUTs, and class D (declared
-\(m_{\mathrm{mono}}\)) has \(0.25\) across two. Mechanistically, the detected
-rich-class kills fire on a MetaPattern \emph{other than} the declared stratum:
-on C, the CE and TF kills flip conservation (\(m_{\mathrm{inv}}\)), not
-method-comparison; on D, the OS kills flip \(m_{\mathrm{inv}}\) and only the SI
-co-flip touches the declared \(m_{\mathrm{mono}}\), as half of an
-\(\{m_{\mathrm{mono}}, m_{\mathrm{cmp}}\}\) pair. The declared stratum is not
+\(\mathsf{f}_{\mathrm{mono.stat}}\)) has \(0.25\) across two. Mechanistically, the detected
+rich-class kills fire on a stratum \emph{other than} the declared one:
+on C, the CE and TF kills flip conservation (\(\mathsf{f}_{\mathrm{inv.con}}\)), not
+method-comparison; on D, the OS kills flip \(\mathsf{f}_{\mathrm{inv.con}}\) and only the SI
+co-flip touches the declared \(\mathsf{f}_{\mathrm{mono.stat}}\), as half of an
+\(\{\mathsf{f}_{\mathrm{mono.stat}}, \mathsf{f}_{\mathrm{conv.rate}}\}\) pair. The declared stratum is not
 where the rich-class signal lands.
 
 \subsection{Interpretation}\label{study3-interpretation}
@@ -2862,7 +2882,7 @@ deterministically (CE, HP, CF), single-stratum attribution is now
 rich classes (surrogate and ML), declared-stratum attribution is
 \emph{positively refuted} even in graded form, because a single fault perturbs
 several invariants at once and the kill signal concentrates off the declared
-MetaPattern. This sharpens rather than reverses Study 2: the repaired screen
+stratum. This sharpens rather than reverses Study 2: the repaired screen
 changes the clean-family picture (purity \(1.0\)) without touching the
 rich-class refutation, confirming the earlier failure was construct shape, not a
 wiring artifact. The claim ladder is now three rungs (Study 1 delimits, Study 2
@@ -3025,7 +3045,7 @@ never kills alone in the v7 pools; the graded signal is carried entirely by
 co-firing mutants that Study 3's regime excluded at admission. Under matched
 regimes the two studies agree single-stratum purity is absent on the rich
 classes; what Study 4 establishes at adequate \(n\) is that the declared
-MetaPattern's attribution is intrinsically coupled, manifesting only through
+stratum's attribution is intrinsically coupled, manifesting only through
 multi-stratum flip sets (every nonzero class-D unit sits at exactly \(0.5\),
 the primary firing as half of a two-stratum flip set). Sensitivity S2: a
 PUT-level cluster bootstrap over the 15 distinct rich PUTs keeps the lower
@@ -3321,7 +3341,7 @@ instantiation, not as prerequisites for the SMS definition.
   \{CE, HP, CF-with-screen\}, while graded declared-stratum attribution is
   \emph{refuted} (H4\('' \)-graded: rich-class mean share \(0.0833\), lower
   \(0.0 \leq 0.15\)) on the rich surrogate and ML classes, where the kill signal
-  fires off the declared MetaPattern.
+  fires off the declared stratum.
 \item
   A fourth, pre-registered study (Section~\ref{study4-closure}) registers three
   families on fresh data through a four-vendor gateway and returns one bounded
