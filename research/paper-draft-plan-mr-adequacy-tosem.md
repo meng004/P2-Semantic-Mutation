@@ -143,7 +143,7 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 - **来源约束（P1）**：Fault Card 只允许四类外部来源——需求/领域约束文档、算法规范、历史缺陷（issue/commit URL）、FMEA。每张卡带 `prov` 字段（来源类型、可解引用出处、时间戳、录入角色）。LLM 可辅助起草但必须回溯锚定到四类来源之一。
 - **Fault Card family（v1.1 新增，划分单位；v1.1.1 明确嵌套结构）**：录入时即为每张卡指派 family ID——同一来源条目、同一缺陷机理、同一变异模板或同一历史缺陷家族衍生的所有卡与其全部变异体实例构成一个 family。**family 严格嵌套于 PUT**：ID 结构为 `(PUT, mechanism/template cluster)`，与统计模型的 mutant ⊂ family ⊂ PUT 层级一致；跨 PUT 的同类缺陷机理称为 **mechanism class**（用于分层配额与 DVE-T 迁移映射），不是同一个 family。family 指派规则在预注册中定义并在生成前冻结；registry 的边界审计与冻结时序见 §4.1（任何 family 合并/拆分必须发生在 dev/holdout 划分之前）。
 - **认证等级门槛（P1）**：A–C 级证书进 primary denominator；D 级单独成池只进 RQ5 敏感性。规则 Phase 0 冻结（§4.1）。
-- **规模目标（v1.1 修订）**：以 **family 为计数单位**——A–C 认证 family ≥ **80**（跨 ≥ 17 个主实验 PUT，每缺陷机理大类 ≥ 10 个 family），对应认证变异体预计 300–500。数量由 §3.6 两级功效模拟反推，模拟后冻结。
+- **规模目标（v1.1.1 修订，已由真实功效模拟反推冻结）**：以 **family 为计数单位**。执行 `scripts/dve/power_simulation.py`（结果 `data/dve/power_simulation_results.json`；type-I 校准均值 0.0508 @ 名义 0.05）后确定——MID=0.10 时 80% 功效在保守情形（σ=0.25, ICC=0.3）需 **80 个 holdout family**，即 20 PUT × 4；50:50 划分后 **总认证 family ≥ 160**（dev+holdout），对应认证变异体预计 500–800。若 M1 后由 dev 侧估得 σ ≤ 0.20，holdout 目标可一次性下调至 40–48（总 ≥ 80–96）并披露。每缺陷机理大类仍要求 ≥ 10 个 family。详见 `docs/prereg/DVE_prereg_v1.md` §4。
 - **验收门槛 G1**：A–C family 数、类配额、认证率、审计通过率（§4.1）达标才进 Phase 2；不达标触发预注册范围收缩规则（缩类不降标准）。
 
 ### 3.4 Phase 2：family 级划分、密码学承诺与 PUT 级保留（v1.1 重写）

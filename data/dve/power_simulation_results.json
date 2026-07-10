@@ -1,0 +1,2958 @@
+{
+  "meta": {
+    "plan_version": "v1.1.1",
+    "plan_section": "3.6",
+    "endpoint": "FDS (family-equal mean of per-family instance-detection proportion)",
+    "test": "PUT-level sign-flip randomization, exact enumeration for n_PUT<=20",
+    "alpha": 0.05,
+    "n_sim": 3000,
+    "master_seed": 20260710,
+    "prior_source": "data/results/sms_track2_v4.json (v4 pilot cell SMS std=0.211)",
+    "grids": {
+      "mu": [
+        0.0,
+        0.1,
+        0.15
+      ],
+      "sigma_diff": [
+        0.15,
+        0.2,
+        0.25
+      ],
+      "icc": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "n_put": [
+        12,
+        15,
+        17,
+        20
+      ],
+      "n_fam_per_put": [
+        2,
+        3,
+        4
+      ]
+    }
+  },
+  "results": [
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.0527
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.0513
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.0523
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.0483
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0433
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.0513
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.0457
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.05
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.0577
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.047
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.0503
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.047
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.0527
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.0483
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.0543
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0537
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.0463
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.054
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.054
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.047
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.054
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.0603
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.0497
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.0507
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.049
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.053
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0507
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.0493
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.048
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.051
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.0443
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.0493
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.051
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.0527
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.0557
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.0537
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.053
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0503
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.0473
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.054
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.049
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.044
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.0403
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.048
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.0517
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.0507
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.056
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.055
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.049
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.048
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.0437
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.053
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.0553
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.0533
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.0463
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.056
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.0527
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.046
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.045
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0563
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.0567
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.0533
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.0533
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.048
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.056
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.0487
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.0523
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.045
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.057
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.0597
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0467
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.043
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.063
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.045
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.0563
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.0543
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.0493
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.0493
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.0487
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.0527
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.047
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0567
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.0617
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.0523
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.0447
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.0507
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.052
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.0427
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.0447
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "type1": 0.0487
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "type1": 0.0457
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "type1": 0.0447
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "type1": 0.0533
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "type1": 0.0493
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "type1": 0.0467
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "type1": 0.0473
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "type1": 0.0503
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "type1": 0.0567
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "type1": 0.0493
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "type1": 0.048
+    },
+    {
+      "mu": 0.0,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "type1": 0.0583
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.9043
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.9623
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.9803
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.9517
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.9907
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.997
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.972
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.992
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.9987
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.9847
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.999
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 1.0
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.8783
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.9363
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.965
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.9387
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.9773
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.9883
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.9597
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.987
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.9957
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.9773
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.9933
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9967
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.848
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.898
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.9313
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.9097
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.952
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.9753
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.9483
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.976
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.987
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.9677
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.9883
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9917
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.6997
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.8213
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.8833
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.8067
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.908
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.9423
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.846
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.9273
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.963
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.9037
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.9607
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9853
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.678
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.7627
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.839
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.7703
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.8483
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.901
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.819
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.896
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.936
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.8757
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.939
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9563
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.6367
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.708
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.7597
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.7377
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.7933
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.838
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.7933
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.859
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.886
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.8517
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.913
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9363
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.541
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.6543
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.74
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.6283
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.7537
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.815
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.6803
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.793
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.8593
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.7567
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.8617
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9123
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.5143
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.61
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.651
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.6087
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.7043
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.7597
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.658
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.7313
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.8043
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.7313
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.8087
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.8607
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.486
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.559
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.5863
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.588
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.65
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.6943
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.6323
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.6923
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.739
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.6793
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.754
+    },
+    {
+      "mu": 0.1,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.811
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.9963
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.9997
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.995
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.9993
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.999
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.991
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.995
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.9987
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.998
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.9997
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.15,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.9473
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.988
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.9957
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.986
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.9947
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.999
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.9903
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.9983
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.9997
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.9963
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.9993
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.9357
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.9623
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.986
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.967
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.9923
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.9973
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.9863
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.9973
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.9997
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.995
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.9987
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 1.0
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.9063
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.9543
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.9693
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.9607
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.9847
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.987
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.9777
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.989
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.997
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.994
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.9963
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.2,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9983
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.8263
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.9253
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.9557
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.9193
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.962
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.9863
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.949
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.9853
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.993
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.97
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.992
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.1,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9987
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.8043
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.8953
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.915
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.8873
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.9433
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.9667
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.926
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.9617
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.9833
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.9623
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.981
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.2,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9943
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 2,
+      "total_holdout_families": 24,
+      "power": 0.7673
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 3,
+      "total_holdout_families": 36,
+      "power": 0.8463
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 12,
+      "n_fam": 4,
+      "total_holdout_families": 48,
+      "power": 0.8837
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 2,
+      "total_holdout_families": 30,
+      "power": 0.872
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 3,
+      "total_holdout_families": 45,
+      "power": 0.91
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 15,
+      "n_fam": 4,
+      "total_holdout_families": 60,
+      "power": 0.9497
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 2,
+      "total_holdout_families": 34,
+      "power": 0.8943
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 3,
+      "total_holdout_families": 51,
+      "power": 0.9477
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 17,
+      "n_fam": 4,
+      "total_holdout_families": 68,
+      "power": 0.9547
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 2,
+      "total_holdout_families": 40,
+      "power": 0.9433
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 3,
+      "total_holdout_families": 60,
+      "power": 0.9687
+    },
+    {
+      "mu": 0.15,
+      "sigma_diff": 0.25,
+      "icc": 0.3,
+      "n_put": 20,
+      "n_fam": 4,
+      "total_holdout_families": 80,
+      "power": 0.9833
+    }
+  ]
+}
