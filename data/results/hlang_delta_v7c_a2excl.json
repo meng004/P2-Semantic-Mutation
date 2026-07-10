@@ -1,0 +1,32 @@
+{
+  "family": "L — Cross-language invariance (single test, confirmatory)",
+  "statistic": "two-sample Cliff's delta_C, aligned (j=k) vs cross (j!=k), on the 7 C PUTs (PRIMARY_CELLS_V3 mapped to the C cells)",
+  "c_grid_puts": [
+    "a1",
+    "a2",
+    "a3",
+    "b1",
+    "b2",
+    "b3",
+    "c2"
+  ],
+  "n_puts": 6,
+  "n_aligned": 6,
+  "n_cross": 24,
+  "cliffs_delta_C": 0.2847,
+  "bootstrap_B": 10000,
+  "bootstrap_seed": 20260708,
+  "one_sided_95_lower_bound": -0.0417,
+  "registered_test": "one-sided 95% percentile-bootstrap lower bound > 0 (byte-identical bootstrap to H2-1')",
+  "verdict": "NOT_CONFIRMED",
+  "verdict_bool": false,
+  "licensed_claim": "language-invariance does NOT replicate: the C-port delta_C one-sided 95% lower bound does not exceed 0 — reported as a genuine falsification of the language-invariance claim, not hedged away",
+  "descriptive_only": {
+    "two_sided_ci95": [
+      -0.0833,
+      0.6667
+    ],
+    "note": "two-sided CI is EXPLORATORY (§3.3); the confirmatory verdict is the one-sided lower bound > 0 direction test."
+  },
+  "_sensitivity": "POST-HOC EXECUTION of the registered a2-excluded sensitivity (PREREGISTRATION_STUDY4_v1 amendment v1.1 A2-A3; registered power 0.6085 at n=6). Labeled sensitivity; the registered n=7 primary verdict in hlang_delta_v7c.json is unchanged."
+}

@@ -1,0 +1,110 @@
+{
+  "artefact": "h4_graded_v7_sensitivities",
+  "status": "POST-HOC (NOT registered) — responds to final-review findings R1-B1 (admission-regime change v6 screened vs v7 unscreened) and R3-M1 (unit dependence across pools). The registered verdict in h4_graded_v7.json is unchanged.",
+  "inputs": [
+    "data/results/sms_track2_v7.json",
+    "data/results/sms_track2_v7_same.json",
+    "data/results/sms_track2_v7_recruit.json"
+  ],
+  "seed": 20260708,
+  "bootstrap_B": 10000,
+  "registered_reference": {
+    "pooled_n_rich": 32,
+    "pooled_mean_share": 0.2917,
+    "boot_lower_95_unit_level": 0.2188
+  },
+  "S1_screened_subset_fc1": {
+    "definition": "graded aggregate restricted to fc==1 mutants (post-hoc approximation of the v6 single-stratum admission regime)",
+    "n_rich_units_detected": 13,
+    "recruitment_gate_24_met": false,
+    "pooled_mean_share": 0.0,
+    "boot_lower_95": 0.0,
+    "units": [
+      {
+        "arm": "sms_track2_v7.json",
+        "put": "C1",
+        "share": 0.0,
+        "n_mutants": 1
+      },
+      {
+        "arm": "sms_track2_v7.json",
+        "put": "C3",
+        "share": 0.0,
+        "n_mutants": 16
+      },
+      {
+        "arm": "sms_track2_v7.json",
+        "put": "C4",
+        "share": 0.0,
+        "n_mutants": 7
+      },
+      {
+        "arm": "sms_track2_v7.json",
+        "put": "C5",
+        "share": 0.0,
+        "n_mutants": 9
+      },
+      {
+        "arm": "sms_track2_v7.json",
+        "put": "C6",
+        "share": 0.0,
+        "n_mutants": 9
+      },
+      {
+        "arm": "sms_track2_v7.json",
+        "put": "D2",
+        "share": 0.0,
+        "n_mutants": 7
+      },
+      {
+        "arm": "sms_track2_v7_same.json",
+        "put": "C3",
+        "share": 0.0,
+        "n_mutants": 18
+      },
+      {
+        "arm": "sms_track2_v7_same.json",
+        "put": "C4",
+        "share": 0.0,
+        "n_mutants": 9
+      },
+      {
+        "arm": "sms_track2_v7_same.json",
+        "put": "C5",
+        "share": 0.0,
+        "n_mutants": 9
+      },
+      {
+        "arm": "sms_track2_v7_same.json",
+        "put": "C6",
+        "share": 0.0,
+        "n_mutants": 9
+      },
+      {
+        "arm": "sms_track2_v7_same.json",
+        "put": "D2",
+        "share": 0.0,
+        "n_mutants": 9
+      },
+      {
+        "arm": "sms_track2_v7_recruit.json",
+        "put": "C3",
+        "share": 0.0,
+        "n_mutants": 21
+      },
+      {
+        "arm": "sms_track2_v7_recruit.json",
+        "put": "D2",
+        "share": 0.0,
+        "n_mutants": 5
+      }
+    ]
+  },
+  "S2_put_cluster_bootstrap": {
+    "definition": "resample the distinct rich PUTs (with replacement), carry each sampled PUT's full unit set",
+    "n_distinct_puts": 15,
+    "boot_lower_95": 0.1818,
+    "bar": 0.15,
+    "clears_bar": true
+  }
+}

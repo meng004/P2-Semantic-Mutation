@@ -1,8 +1,8 @@
 {
-  "artefact": "dualblind_delta_delta_v5",
+  "artefact": "dualblind_delta_delta_v7",
   "generated_by": "scripts/compute_dualblind_delta.py",
-  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY2.md (§3 H2-1, H2-2; §4 primary-MP rule; §7 SSOT/seeds)",
-  "integrity": "Pre-frozen before Study-2 data generation; any post-data modification must be disclosed as a deviation.",
+  "pre_registration": "docs/prereg_v2/PREREGISTRATION_STUDY2.md (decision rule, v1.1 verbatim) + docs/prereg_v2/PREREGISTRATION_STUDY4_v1.md (Study-4 execution, amendments v1.1/v1.2)",
+  "integrity": "Frozen analyzer (Study-2 v1.1 decision rule, byte-unchanged); executed on the Study-4 v7 arm SSOTs after the review-label freeze. Metadata self-identification corrected post-verdict (numbers untouched) per final-review R1-M2.",
   "inputs": {
     "cross_source_arm_sms": "data/results/sms_track2_v7.json",
     "same_source_arm_sms": "data/results/sms_track2_v7_same.json"
