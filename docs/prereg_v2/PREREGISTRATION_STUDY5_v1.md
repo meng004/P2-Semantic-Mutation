@@ -1026,3 +1026,22 @@ A3-D1 grouped walk, A3-D2 adaptive-ODE re-pose at tight tolerances
 (NOT_REACHED), A3-D3 fixed-budget integrators stay MP3 under the frozen
 category map, A3-D4 euler.c API screen, A3-D5 scale-stratum recording
 convention, A3-D6 concurrent-pilot firewall.
+
+**Halt H1 — 2026-07-10 (author editorial directive): Family-MR Arm-L
+elicitation wave HALTED mid-draw.** The author's editorial review identified
+a battery-size / execution-budget confound in the registered Family-MR design
+(§2d/§3.3): the Arm-L union battery (up to four vendors x 1-3 certified MRs
+per cell) is unmatched to the single-MR Arm-R battery in MR count, execution
+budget, and kill opportunities under the frozen any-MR kill rule, so
+delta_MR = SMS_R - SMS_L cannot be attributed to battery design source.
+Study-5 families are NOT integrated wholesale into the paper. Execution
+state at halt, under one-shot discipline (drawn is drawn, nothing redrawn or
+post-processed): registered {a2, b4} pilot complete (40/40, certified,
+assembled, firewall-excluded); confirmatory gateway draw stopped at 117/420
+(cell, vendor) units (gpt-5.5 40, gemini-3.5-flash 40, grok-4.1->4.3 37;
+1.1708 USD; 0 transport errors); 140 claude-slot responses authored but
+never ingested; NO confirmatory certification, NO assembly, NO SMS-L
+scoring (analyzer exit-2 state intact). Full halt ledger:
+`data/mr_batteries/study5_L/HALTED.md`. H2-4 remains UNTESTED — no verdict
+of any kind is licensed by the drawn material; any budget-matched follow-up
+is a new registration.

@@ -503,7 +503,7 @@ manifesting; disclosed as a second inter-reviewer inconsistency), C-side UB
 (int-overflow loop bound, unregistered saturation clamps) (3), nonconforming
 spline ports (2).
 
-## P15 — Study-5 Family-MR pilot (v8mr_pilot, 2026-07-10): elicitation-parser binding-syntax defect
+## P16 — Study-5 Family-MR pilot (v8mr_pilot, 2026-07-10): elicitation-parser binding-syntax defect
 
 **Pilot scope executed**: {a2, b4} x 5 strata x 4 vendors = 40 one-shot
 elicitations (30 gateway, 10 session-harness claude), tag `v8mr_pilot`, under
