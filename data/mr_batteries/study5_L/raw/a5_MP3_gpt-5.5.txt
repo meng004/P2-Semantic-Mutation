@@ -1,0 +1,62 @@
+```python
+import math
+
+_LIMIT = 1.0
+_ABS_TOL = 1e-12
+
+
+def _finite_pair(a, b):
+    return math.isfinite(a) and math.isfinite(b)
+
+
+def _contracted_toward_midpoint(x, factor):
+    x = float(x)
+    z = 0.5 + factor * (x - 0.5)
+    if z < 0.0:
+        return 0.0
+    if z > 1.0:
+        return 1.0
+    return z
+
+
+# Refining the distance to the maximizer x*=1/2 by 2 should reduce
+# the error to the limiting value S(1/2)=1 with second-order behavior.
+def r_1(x):
+    return _contracted_toward_midpoint(x, 0.5)
+
+
+def R_1(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    e_orig = abs(float(y_orig) - _LIMIT)
+    e_new = abs(float(y_new) - _LIMIT)
+    return e_new <= 0.35 * e_orig + _ABS_TOL
+
+
+# A fourfold refinement in distance to x*=1/2 should reduce the limiting
+# error by approximately 4^2 = 16.
+def r_2(x):
+    return _contracted_toward_midpoint(x, 0.25)
+
+
+def R_2(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    e_orig = abs(float(y_orig) - _LIMIT)
+    e_new = abs(float(y_new) - _LIMIT)
+    return e_new <= 0.095 * e_orig + _ABS_TOL
+
+
+# A tenfold refinement in distance to x*=1/2 should reduce the limiting
+# error by approximately 10^2 = 100.
+def r_3(x):
+    return _contracted_toward_midpoint(x, 0.1)
+
+
+def R_3(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    e_orig = abs(float(y_orig) - _LIMIT)
+    e_new = abs(float(y_new) - _LIMIT)
+    return e_new <= 0.02 * e_orig + _ABS_TOL
+```

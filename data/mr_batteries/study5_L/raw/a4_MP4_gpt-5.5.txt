@@ -1,0 +1,57 @@
+```python
+import math
+
+_EPS = 2.0e-7
+_TOL = 1.0e-6
+_TWO_PI = 2.0 * math.pi
+
+
+def _clip01(v):
+    v = float(v)
+    if v < 0.0:
+        return 0.0
+    if v > 1.0:
+        return 1.0
+    return v
+
+
+def _close_outputs(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return False
+    return abs(yn - yo) <= _TOL
+
+
+# Near-identity monotone shape-preserving refinement: small inward convex bump.
+def r_1(x):
+    x = _clip01(x)
+    return _clip01(x + _EPS * x * (1.0 - x))
+
+
+def R_1(y_orig, y_new):
+    return _close_outputs(y_orig, y_new)
+
+
+# Near-identity monotone shape-preserving refinement: opposite small convex bump.
+def r_2(x):
+    x = _clip01(x)
+    return _clip01(x - _EPS * x * (1.0 - x))
+
+
+def R_2(y_orig, y_new):
+    return _close_outputs(y_orig, y_new)
+
+
+# Smooth monotone near-identity phase-preserving warp over [0, 1].
+def r_3(x):
+    x = _clip01(x)
+    return _clip01(x + _EPS * math.sin(_TWO_PI * x))
+
+
+def R_3(y_orig, y_new):
+    return _close_outputs(y_orig, y_new)
+```

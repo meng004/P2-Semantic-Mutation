@@ -49,7 +49,7 @@ inline T Fast_InvSqrt(T x) {
 
     y = y * (1.5 + (x2 * y * y));  // 1st iteration Newton's method
     if (iterations == 2) {
-        y = y * (1.5 + (x2 * y * y));  // 2nd iteration, the more exact result
+        y = y * (1.5 - (x2 * y * y));  // 2nd iteration, the more exact result
     }
     return y;
 }

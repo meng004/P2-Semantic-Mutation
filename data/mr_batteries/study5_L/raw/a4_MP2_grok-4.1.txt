@@ -1,0 +1,52 @@
+
+> 🔍 **Searching for:** "monotonicity of integral from -1 to 1 of (x + 0.5 t^2) dt with respect to x"
+> 📊 **Results requested:** 5
+
+> 🔍 **Searching for:** "Gauss-Legendre quadrature monotonicity property"
+> 📊 **Results requested:** 5
+
+> 🔍 **5 results found**
+
+> [▶️ "Gauss-Legendre Quadrature 6: Advanced topicsYouTube·mathAHAAug 9, 2015" www.youtube.com](https://www.youtube.com/watch?v=2kX40PTzwfo)
+> [📚 "Gaussian quadrature" en.wikipedia.org](https://en.wikipedia.org/wiki/Gaussian_quadrature)
+> [🔗 "Legendre-Gauss Quadrature -- from Wolfram MathWorld" mathworld.wolfram.com](https://mathworld.wolfram.com/Legendre-GaussQuadrature.html)
+> [🔗 "Question about the significance of "Gauss-Legendre ..." hsm.stackexchange.com](https://hsm.stackexchange.com/questions/12150/question-about-the-significance-of-gauss-legendre-quadrature)
+> [🔗 "Fast and rigorous arbitrary-precision computation of Gauss ..." inria.hal.science](https://inria.hal.science/hal-01705612/document)
+
+
+```python
+import numpy as np
+from numpy.polynomial.legendre import leggauss
+
+_NODES, _WEIGHTS = leggauss(16)
+
+
+def program(x):
+    x = float(x)
+    integrand = x + 0.5 * _NODES**2
+    return float(np.sum(_WEIGHTS * integrand))
+
+
+def r_1(x):
+    return float(x)
+
+
+def R_1(y_orig, y_new):
+    return y_new >= y_orig
+
+
+def r_2(x):
+    return 1.0 - x
+
+
+def R_2(y_orig, y_new):
+    return y_new >= y_orig
+
+
+def r_3(x):
+    return x * 0.5 + 0.5
+
+
+def R_3(y_orig, y_new):
+    return y_new >= y_orig
+```

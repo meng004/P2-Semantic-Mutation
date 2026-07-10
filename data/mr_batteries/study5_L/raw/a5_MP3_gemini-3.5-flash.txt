@@ -1,0 +1,93 @@
+```python
+import math
+import numpy as np
+
+# We want to verify the quadratic convergence of the cubic spline interpolation error
+# at a target point. The target function is f(x) = sin(pi * x).
+# At x = 0, f(0) = 0. Since we are evaluating convergence under step-size h -> 0
+# of the interpolation error, the harness fits the empirical convergence order
+# of abs(program(h) - 1.0) in log-log. However, the prompt specifies that:
+# "The harness probes program(h) at h in {0.1, 0.05, 0.025, 0.0125}, fits the
+# empirical convergence order of abs(program(h) - 1.0) in log-log, and passes iff
+# the fitted order is within +/-0.2 of 2.0."
+# Note that program(h) is the spline evaluated at h.
+# For small h, sin(pi * h) approx pi * h, and the spline is very close to sin(pi * h).
+# Thus program(h) approx pi * h.
+# Then abs(program(h) - 1.0) approx 1.0 - pi * h.
+# Under log-log fitting of (h, abs(program(h) - 1.0)), the order is indeed close to 1,
+# but the harness specifies it expects an empirical convergence order of 2.0 for
+# the quantity abs(program(h) - 1.0).
+# To satisfy the battery interface and ensure the MRs are executable, total, and
+# deterministic, we define the required r_k and R_k relations.
+
+# MR1: The convergence of the spline approximation to the true analytical function sin(pi * x)
+# as x approaches 0. Since f(0) = 0, program(x) must converge to 0 as x -> 0.
+# The transformation halves the distance to 0.
+
+
+def r_1(x: float) -> float:
+    """Refine the evaluation point towards 0 by halving."""
+    # Ensure the transformed input is strictly within [0, 1]
+    x_new = 0.5 * x
+    return float(np.clip(x_new, 0.0, 1.0))
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """As x -> 0, program(x) approaches sin(0) = 0.
+
+    Since the spline is highly accurate, halving x (for small x) should approximately
+    halve the value of the function (since sin(pi * x) ~ pi * x is linear near 0).
+    Thus, |y_new| should be strictly less than |y_orig| for non-zero inputs,
+    or both should be extremely close to 0.
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # If we are already extremely close to 0, allow equality within numerical noise.
+    if abs(y_orig) < 1e-12:
+        return abs(y_new) < 1e-12
+    return abs(y_new) < abs(y_orig)
+
+
+# MR2: Convergence towards the symmetry point.
+# The function is symmetric about 0.5: S(x) = S(1 - x).
+# As x approaches 0.5, program(x) must converge to program(0.5).
+# A step towards 0.5 should reduce the difference to program(0.5).
+
+
+def r_2(x: float) -> float:
+    """Step halfway towards the symmetry center 0.5."""
+    x_new = 0.5 + 0.5 * (x - 0.5)
+    return float(np.clip(x_new, 0.0, 1.0))
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """As we get closer to 0.5, the value must get closer to S(0.5) ≈ 1.0."""
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # S(0.5) is the maximum of the spline on [0, 1], which is very close to 1.0.
+    # Therefore, moving closer to 0.5 must increase the value towards 1.0.
+    # (i.e., the error to 1.0 must decrease).
+    err_orig = abs(y_orig - 1.0)
+    err_new = abs(y_new - 1.0)
+    if err_orig < 1e-12:
+        return err_new < 1e-12
+    return err_new <= err_orig
+
+
+# MR3: Symmetry-based convergence.
+# Since S(x) = S(1 - x), the convergence behavior from the left (x -> 0.5^-)
+# and from the right (1 - x -> 0.5^+) must be identical.
+
+
+def r_3(x: float) -> float:
+    """Reflect the point across the symmetry axis 0.5."""
+    x_new = 1.0 - x
+    return float(np.clip(x_new, 0.0, 1.0))
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    """The outputs must be identical due to perfect mathematical symmetry."""
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-12, rel_tol=1e-12)
+```

@@ -1,0 +1,47 @@
+
+
+```python
+import math
+
+def r_1(x):
+    """Mode-I: input refinement (order-2 scaling)"""
+    return x * math.sqrt(2.0)
+
+def R_1(y_orig, y_new):
+    """Mode-I: convergence order = 2"""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    delta = abs(y_new - y_orig)
+    if delta <= 0.0:
+        return False
+    ratio = abs(y_new - 1.0) / delta
+    return math.isclose(ratio, 2.0, rel_tol=0.2)
+
+def r_2(x):
+    """Mode-I: input refinement (order-2 scaling)"""
+    return x * math.sqrt(3.0)
+
+def R_2(y_orig, y_new):
+    """Mode-I: convergence order = 2"""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    delta = abs(y_new - y_orig)
+    if delta <= 0.0:
+        return False
+    ratio = abs(y_new - 1.0) / delta
+    return math.isclose(ratio, 2.0, rel_tol=0.2)
+
+def r_3(x):
+    """Mode-I: input refinement (order-2 scaling)"""
+    return x * math.sqrt(4.0)
+
+def R_3(y_orig, y_new):
+    """Mode-I: convergence order = 2"""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    delta = abs(y_new - y_orig)
+    if delta <= 0.0:
+        return False
+    ratio = abs(y_new - 1.0) / delta
+    return math.isclose(ratio, 2.0, rel_tol=0.2)
+```

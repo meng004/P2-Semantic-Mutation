@@ -1,0 +1,14 @@
+
+
+```python
+import math
+import numpy as np
+
+def r_1(x):
+    """MP2: Monotonicity w.r.t. x."""
+    return float(x)
+
+def R_1(y_orig, y_new):
+    """Output relation: new >= original (higher x, higher/equal output)."""
+    return y_new >= y_orig
+```

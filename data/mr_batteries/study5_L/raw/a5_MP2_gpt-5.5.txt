@@ -1,0 +1,53 @@
+```python
+import math
+
+_TOL = 1e-12
+
+
+def _finite_float(v):
+    try:
+        z = float(v)
+    except (TypeError, ValueError, OverflowError):
+        return False, 0.0
+    return math.isfinite(z), z
+
+
+def _geq(y_orig, y_new):
+    ok0, y0 = _finite_float(y_orig)
+    ok1, y1 = _finite_float(y_new)
+    if not (ok0 and ok1):
+        return False
+    return y1 + _TOL >= y0
+
+
+# Move halfway from x toward the known maximum location 0.5.
+def r_1(x):
+    x = float(x)
+    return 0.5 + 0.5 * (x - 0.5)
+
+
+def R_1(y_orig, y_new):
+    return _geq(y_orig, y_new)
+
+
+# Move directly to the known maximum location 0.5.
+def r_2(x):
+    return 0.5
+
+
+def R_2(y_orig, y_new):
+    return _geq(y_orig, y_new)
+
+
+# Move toward 0.5 by a fixed step, clamping at 0.5.
+def r_3(x):
+    x = float(x)
+    if x < 0.5:
+        return min(0.5, x + 0.125)
+    else:
+        return max(0.5, x - 0.125)
+
+
+def R_3(y_orig, y_new):
+    return _geq(y_orig, y_new)
+```

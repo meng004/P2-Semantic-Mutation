@@ -1,0 +1,35 @@
+
+
+```python
+import math
+import numpy as np
+
+# MP5 MR family: method-comparison via NOETHER f_conv.rate refinement (higher-order vs base 16-node quadrature on same degree-2 integrand)
+# r_k shifts x to x' = 1-x (symmetry point of Legendre domain) to compare relative convergence rates of the two quadrature evaluations
+# R_k asserts that the higher-order quadrature (smaller h) yields a strictly smaller absolute error
+#   than the base quadrature (larger h), per the relative oracle for method comparison
+
+
+def r_1(x):
+    return float(1 - x)
+
+
+def R_1(y_orig, y_new):
+    return y_new < y_orig  # relative ordering: smaller error from refined quadrature
+
+
+def r_2(x):
+    return float(x / 2)
+
+
+def R_2(y_orig, y_new):
+    return y_new < y_orig
+
+
+def r_3(x):
+    return float((x + 1) / 2)
+
+
+def R_3(y_orig, y_new):
+    return y_new < y_orig
+```

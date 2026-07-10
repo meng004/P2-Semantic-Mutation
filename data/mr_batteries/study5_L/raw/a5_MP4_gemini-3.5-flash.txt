@@ -1,0 +1,26 @@
+An elegant metamorphic relation for this program exploits the symmetry of both the target function $f(t) = \sin(\pi t)$ and the chosen boundary conditions (natural cubic spline) on the domain $[0, 1]$. 
+
+Because the interpolation nodes $t_i = i/16$ for $i \in \{0, \dots, 16\}$ are perfectly symmetric about $x = 0.5$, and the boundary conditions are symmetric, the resulting natural cubic spline $S(x)$ satisfies $S(x) = S(1 - x)$ for all $x \in [0, 1]$.
+
+Here is the implementation of this metamorphic relation:
+
+```python
+import math
+
+
+def r_1(x: float) -> float:
+    """Input transformation: reflection across the midpoint 0.5 of the domain [0, 1]."""
+    # Clamp to ensure strict floating-point containment in [0.0, 1.0]
+    return max(0.0, min(1.0, 1.0 - x))
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Output relation: the spline reconstruction must be symmetric.
+
+    S(x) == S(1 - x) up to numerical precision.
+    """
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    # Use a tight absolute tolerance suited for double-precision float operations
+    return math.isclose(y_orig, y_new, abs_tol=1e-14, rel_tol=1e-14)
+```

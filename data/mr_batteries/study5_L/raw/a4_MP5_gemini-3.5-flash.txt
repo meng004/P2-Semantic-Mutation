@@ -1,0 +1,14 @@
+```python
+import math
+
+
+def r_1(x: float) -> float:
+    """Map x to a larger value in [0, 1] to compare evaluations.
+
+    For x in
+ [0, 1), r_1(x) > x, so program(r_1(x)) > program(x).
+    """
+    return 0.5 * (x + 1.0)
+
+
+def R_1

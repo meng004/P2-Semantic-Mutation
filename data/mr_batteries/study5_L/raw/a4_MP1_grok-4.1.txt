@@ -1,0 +1,74 @@
+
+
+```python
+import math
+import numpy as np
+
+def program(x: float) -> float:
+    x = float(x)
+    integrand = x + 0.5 * _NODES**2
+    return float(np.sum(_WEIGHTS * integrand))
+
+# Precomputed nodes/weights (internal to the P.U.T.)
+_NODES, _WEIGHTS = np.polynomial.legendre.leggauss(16)
+
+def r_1(x: float) -> float:
+    """
+    MP1 — conservation (NOETHER MR family, mode-I)
+    Maps x -> 1 - x (reflection symmetry group action)
+    Transformed input leaves the conserved output property unchanged:
+    I(x) + I(1-x) = 8/3
+    """
+    return 1.0 - x
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """
+    Output relation predicate (mode-I):
+    The sum of the original and transformed outputs must equal the
+    exact conservation constant 8/3.
+    Returns False for non-finite inputs.
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig + y_new, 8.0 / 3.0, rel_tol=1e-8)
+
+def r_2(x: float) -> float:
+    """
+    MP1 — conservation (NOETHER MR family, mode-I)
+    Maps x -> 0.5 (group action: averaging)
+    Transformed input leaves the conserved output property unchanged:
+    I(x) + I(0.5) = 8/3
+    """
+    return 0.5
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """
+    Output relation predicate (mode-I):
+    The sum of the original and transformed outputs must equal the
+    exact conservation constant 8/3.
+    Returns False for non-finite inputs.
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig + y_new, 8.0 / 3.0, rel_tol=1e-8)
+
+def r_3(x: float) -> float:
+    """
+    MP1 — conservation (NOETHER MR family, mode-I)
+    Maps x -> x**0.5 (nonlinear group action)
+    Transformed input leaves the conserved output property unchanged:
+    I(x) + I(sqrt(x)) = 8/3
+    """
+    return math.sqrt(x)
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    """
+    Output relation predicate (mode-I):
+    The sum of the original and transformed outputs must equal the
+    exact conservation constant 8/3.
+    Returns False for non-finite inputs.
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig + y_new, 8.0 / 3.0, rel_tol=1e-8)
+```

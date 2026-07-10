@@ -428,3 +428,468 @@ def rank_check() -> bool:
     """Verify CANDIDATES is stored in the registered Step-4 total order."""
     keys = [(-e["c"], -e["l"], e["src"], e["program"]) for e in CANDIDATES]
     return keys == sorted(keys)
+
+
+# =========================================================================== #
+# Amendment A3 — Family-XL roster EXTENSION wave (scale diversity),
+# author-directed, pre-mutant. PREREGISTRATION_STUDY5_v1.md §10 entry
+# "Amendment A3"; audit trail: docs/prereg_v2/STUDY5_XL_ROSTER.md §A3.
+#
+# Author directive (recorded verbatim in the amendment): the A1 roster is
+# source-diverse but SCALE-homogeneous (21/21 function-level routines) and
+# primary-stratum-skewed (MP1 13, MP3 6, MP2 1, MP5 1). This wave adds
+# module/pipeline-scale production-library pairs under the standing
+# principles P1 (no self-written PUT code) and P2 (purpose + family first,
+# then diversity), prioritised to (a) module scale and (b) MP2/MP5
+# primary-coverage repair. Registered cap n <= 28 total is respected:
+# A3 new-pair budget = N_CAP - 21 = 7.
+#
+# Everything in this block is fixed BEFORE the A3 certification run; no
+# entry consults any behavioral quantity. A1 CANDIDATES/SCREENED above are
+# byte-unchanged.
+# =========================================================================== #
+
+A3_SCALE_RULE = (
+    "A3-1 (module-scale admission criterion, pre-behavioral): the pair's "
+    "call path must traverse a multi-component library SUBSYSTEM — a state "
+    "object plus a staged pipeline (alloc/init/accumulate/solve/eval) or an "
+    "adaptive driver chain — i.e. a documented library module with a "
+    "multi-hundred-LOC call path, not a single closed-form routine. "
+    "Single-pass closed-form entry points (the structural class of every A1 "
+    "pair, e.g. gsl_stats_*, Julia Statistics.std, 1-D gsl_min iterate "
+    "loops) are OUT OF SCOPE for this wave."
+)
+
+A3_GROUP_RULE = (
+    "A3 walk order (P2, family-repair first; deterministic): group (i) = "
+    "candidates whose registered primary stratum is MP2 (f_mono.stat) or "
+    "MP5 (f_conv.rate) — the author-identified under-covered strata — in "
+    "the registered Step-4 total order; then group (ii) = all remaining "
+    "candidates in Step-4 order. The Step-4 key (c desc, l desc, src asc, "
+    "name asc) is unchanged inside each group; a pure ungrouped Step-4 walk "
+    "would spend the whole 7-pair budget on MP3-primary ODE modules and "
+    "repair nothing, violating the author directive."
+)
+
+A3_NEW_PAIR_BUDGET = 7   # = N_CAP - achieved A1 n (21); cap 28 respected
+A1_SCALE = "function"    # author-review classification of every A1 pair
+A3_SCALE = "module"
+
+# l convention for A3 (documented): l counts non-Python languages with a
+# same-semantics MODULE-SCALE external implementation (A3-1 applies to the
+# enumeration itself); function-scale implementations of the same semantics
+# exist for some candidates (e.g. gsl_stats_sd for descstats) but are not
+# A3-enumerable and do not count toward this wave's l.
+A3_CANDIDATES = [
+    # ------------------------- group (i): MP2/MP5 repair ------------------ #
+    dict(
+        program="interp", c=4, l=2, src=2, group=1,
+        category="surrogate/fidelity-ordered kernel: piecewise-linear "
+                 "interpolant surrogate of an exactly-known target sampled "
+                 "at frozen nodes (map row 5; invsqrt precedent — not a "
+                 "solver, so map row 3's enumerated list does not match)",
+        primary_mp=5,
+        scale=A3_SCALE,
+        scale_evidence="GSL interpolation module (gsl_interp type object + "
+                       "accelerator + gsl_spline wrapper: interp.c/linear.c/"
+                       "accel.c/spline.c pipeline); Commons Math "
+                       "analysis.interpolation.LinearInterpolator -> "
+                       "PolynomialSplineFunction -> PolynomialFunction chain",
+        instantiable={2: "piecewise-linear interpolant of strictly "
+                         "increasing samples is strictly increasing (exact)",
+                      3: "node-refinement structure (17-node mesh; "
+                         "interpolant -> target as mesh -> 0)",
+                      4: "convex increasing envelope (chords of the convex "
+                         "target lie above it)",
+                      5: "surrogate-vs-target: target exp known exactly "
+                         "(Mode-M relative oracle; fidelity ordered by node "
+                         "count)"},
+        aux="nodes t_j = j/16, j=0..16; samples exp(t_j); linear "
+            "interpolation; program(x) = interpolant(x), x in [0,1]",
+        exception=None,
+        pairs=[dict(pair="interp.c", language="c", upstream="gsl", files=[]),
+               dict(pair="interp.java", language="java", upstream="cm",
+                    files=["third_party/commons-math/commons-math3-3.6.1.jar"])],
+        pyref="scipy.interpolate.interp1d(kind='linear')",
+    ),
+    dict(
+        program="chebyshev", c=4, l=1, src=2, group=1,
+        category="surrogate/fidelity-ordered kernel: order-12 Chebyshev "
+                 "approximant of an exactly-known target (map row 5; "
+                 "invsqrt precedent)",
+        primary_mp=5,
+        scale=A3_SCALE,
+        scale_evidence="GSL chebyshev module (gsl_cheb_series state + "
+                       "init-at-nodes + Clenshaw evaluation pipeline)",
+        instantiable={2: "approximant of the strictly monotone target exp "
+                         "(order-12 error << separation on the frozen grid; "
+                         "monotone envelope per the invsqrt precedent)",
+                      3: "order-refinement structure (approximant -> target "
+                         "as order -> infinity)",
+                      4: "convex increasing envelope",
+                      5: "surrogate with analytically known target exp "
+                         "(Mode-M; fidelity ordered by series order)"},
+        aux="target f(t)=exp(t) frozen on [-1,1]; series order 12 (13 "
+            "first-kind Chebyshev nodes); program(x) = series(2x-1)",
+        exception=None,
+        pairs=[dict(pair="chebyshev.c", language="c", upstream="gsl", files=[])],
+        pyref="numpy.polynomial.chebyshev.chebinterpolate(deg=12) + chebval",
+    ),
+    dict(
+        program="hermite", c=4, l=1, src=5, group=1,
+        category="surrogate/fidelity-ordered kernel: piecewise cubic "
+                 "Hermite interpolant surrogate of an exactly-known target "
+                 "with exact frozen derivatives (map row 5)",
+        primary_mp=5,
+        scale=A3_SCALE,
+        scale_evidence="Boost.Math interpolators module "
+                       "(boost::math::interpolators::cubic_hermite + "
+                       "detail::cubic_hermite_detail pipeline)",
+        instantiable={2: "Hermite interpolant of increasing data with the "
+                         "exact positive derivatives (monotone envelope)",
+                      3: "node-refinement structure (O(h^4) convergence to "
+                         "the target as the mesh refines)",
+                      4: "convex increasing envelope",
+                      5: "surrogate-vs-target with known exact target and "
+                         "O(h^4) fidelity order (Mode-M)"},
+        aux="nodes t_j = j/16, j=0..16; values exp(t_j); derivatives "
+            "exp(t_j) (exact, frozen); program(x) = H(x)",
+        exception=None,
+        pairs=[dict(pair="hermite.cpp", language="cpp", upstream="boost",
+                    files=["third_party/boost-math/include"])],
+        pyref="scipy.interpolate.CubicHermiteSpline",
+    ),
+    dict(
+        program="histstats", c=3, l=1, src=2, group=1,
+        category="statistical estimator / probabilistic kernel: binned-"
+                 "histogram mean estimator over a frozen deterministic "
+                 "sample stream (map row 2)",
+        primary_mp=2,
+        scale=A3_SCALE,
+        scale_evidence="GSL histogram module pipeline: gsl_histogram_alloc "
+                       "-> set_ranges_uniform -> 512x increment (binning) "
+                       "-> gsl_histogram_mean (bin-midpoint statistics over "
+                       "the accumulated state)",
+        instantiable={2: "binned mean of the power-transformed sample is "
+                         "monotone decreasing in x (mass shifts toward 0 as "
+                         "the exponent grows)",
+                      3: "bin-refinement structure (32-bin mesh; binned "
+                         "mean -> sample mean as bins -> infinity)",
+                      4: "monotone decreasing envelope"},
+        aux="u_i = frac(i*PHI), PHI=1.6180339887498949 (double literal, "
+            "identical both sides), i=1..512; s_i = u_i**(1+2x) in (0,1); "
+            "32 uniform bins on [0,1); readout = binned mean "
+            "sum(n_k m_k)/N with m_k = bin midpoints (the documented "
+            "gsl_histogram_mean formula)",
+        exception=None,
+        pairs=[dict(pair="histstats.c", language="c", upstream="gsl", files=[])],
+        pyref="numpy.histogram(bins=32, range=(0,1)) + midpoint mean "
+              "(the same documented binned-mean formula)",
+    ),
+    dict(
+        program="descstats", c=3, l=1, src=4, group=1,
+        category="statistical estimator / probabilistic kernel: bias-"
+                 "corrected sample-dispersion estimator over a frozen "
+                 "scale-parameterised dataset (map row 2; quantile "
+                 "precedent — an MP1-instantiable identity does not move an "
+                 "estimator out of row 2)",
+        primary_mp=2,
+        scale=A3_SCALE,
+        scale_evidence="Commons Math stat.descriptive pipeline: "
+                       "DescriptiveStatistics (windowed storage) -> "
+                       "Variance -> Mean -> FirstMoment/SecondMoment "
+                       "statistic-object delegation chain",
+        instantiable={1: "exact scale equivariance SD(c + w*u) = w*SD(u) "
+                         "with w(x)*w(1-x) = 0.16: product identity "
+                         "y(x)*y(1-x) = (0.4*SD(u))^2 (exact in real "
+                         "arithmetic)",
+                      2: "dispersion estimator monotone increasing in x "
+                         "(w(x) = 0.4*2**(2x-1) increasing)",
+                      4: "log-linear (exponential) envelope"},
+        aux="u_i = frac(i*PHI), PHI=1.6180339887498949, i=1..256; "
+            "s_i = 0.5 + (u_i - 0.5)*w(x), w(x) = 0.4*2**(2x-1); readout = "
+            "bias-corrected sample standard deviation (ddof=1)",
+        exception=None,
+        pairs=[dict(pair="descstats.java", language="java", upstream="cm",
+                    files=["third_party/commons-math/commons-math3-3.6.1.jar"])],
+        pyref="numpy.std(ddof=1)",
+    ),
+    dict(
+        program="polyfit", c=2, l=2, src=2, group=1,
+        category="surrogate/fidelity-ordered kernel: least-squares cubic "
+                 "fit surrogate of an exactly-known target (map row 5)",
+        primary_mp=5,
+        scale=A3_SCALE,
+        scale_evidence="GSL multifit module (gsl_multifit_linear_workspace "
+                       "+ balanced-SVD least-squares pipeline); Commons "
+                       "Math fitting module (PolynomialCurveFitter -> "
+                       "Levenberg-Marquardt optimizer chain)",
+        instantiable={4: "convex increasing envelope (LS cubic of convex "
+                         "increasing data; approximate, envelope MR)",
+                      5: "surrogate-vs-target: d_j = exp(a(x) t_j) known "
+                         "exactly; fidelity ordered by fit degree (Mode-M)"},
+        aux="nodes t_j = j/32, j=0..32; data d_j(x) = exp((0.5+x)*t_j); "
+            "least-squares cubic fit; readout = fitted value at t=0.6. "
+            "The LS solution is unique (full-rank Vandermonde); "
+            "implementation differences are conditioning-level rounding "
+            "(kappa ~ 1e3 -> ~1e-13), inside the standard gate",
+        exception=None,
+        pairs=[dict(pair="polyfit.c", language="c", upstream="gsl", files=[]),
+               dict(pair="polyfit.java", language="java", upstream="cm",
+                    files=["third_party/commons-math/commons-math3-3.6.1.jar"])],
+        pyref="numpy.polyfit(deg=3) + polyval",
+    ),
+    # ------------------------- group (ii): remaining ---------------------- #
+    dict(
+        program="odedrive", c=4, l=2, src=2, group=2,
+        category="discretised/iterative solver with a tolerance knob: full "
+                 "adaptive ODE drive (map row 3; no conserved quantity in "
+                 "the frozen logistic system)",
+        primary_mp=3,
+        scale=A3_SCALE,
+        scale_evidence="GSL odeiv2 module (driver -> control -> evolve -> "
+                       "rkf45 stepper chain); Commons Math ode.nonstiff "
+                       "module (DormandPrince54Integrator -> "
+                       "EmbeddedRungeKuttaIntegrator -> AbstractIntegrator "
+                       "+ step handlers)",
+        instantiable={2: "monotone in initial condition (logistic flow "
+                         "order-preserving)",
+                      3: "adaptive step/tolerance knob (limit tol -> 0)",
+                      4: "S-curve trajectory shape",
+                      5: "surrogate with known exact logistic solution"},
+        aux="dy/dt = y(1-y) frozen; y0(x) = 0.05+0.9x; t: 0 -> 1; "
+            "epsrel=1e-10, epsabs=1e-12 both sides; readout y(1). "
+            "A3 re-pose of the A1-screened adaptive-ODE candidate: the A1 "
+            "screen cited an undocumentable band at DEFAULT tolerances; at "
+            "the frozen 1e-10/1e-12 tolerances the class-1 band IS "
+            "documentable (see exception); disclosed as A3-D2, not a "
+            "silent reversal",
+        exception=dict(cls=1, tol=1e-6,
+                       band="both drivers hold local error <= "
+                            "rel 1e-10 / abs 1e-12; the frozen logistic "
+                            "problem takes O(30-60) accepted steps on "
+                            "[0,1], so each side's global band is <~1e-8 "
+                            "and the cross-method band <~2e-8, far inside "
+                            "the standard 1e-6 gate (no relaxation "
+                            "needed; recorded for transparency)"),
+        pairs=[dict(pair="odedrive.c", language="c", upstream="gsl", files=[]),
+               dict(pair="odedrive.java", language="java", upstream="cm",
+                    files=["third_party/commons-math/commons-math3-3.6.1.jar"])],
+        pyref="scipy.integrate.solve_ivp(method='RK45', rtol=1e-10, "
+              "atol=1e-12)",
+    ),
+    dict(
+        program="rungekutta", c=4, l=1, src=1, group=2,
+        category="fixed-step ODE solver (map row 3) — A3 module-scale "
+                 "EXTENSION of the A1 program 'rungekutta' (aux verbatim); "
+                 "fixed-budget high-order member of the euler-vs-rk4 "
+                 "accuracy-order pair (A3-D3 note as for euler)",
+        primary_mp=3,
+        scale=A3_SCALE,
+        scale_evidence="Commons Math ode.nonstiff module "
+                       "(ClassicalRungeKuttaIntegrator -> "
+                       "RungeKuttaIntegrator -> AbstractIntegrator chain)",
+        instantiable={2: "monotone in initial condition (linear ODE flow)",
+                      3: "step-size discretisation structure (h=1/64)",
+                      4: "trajectory/shape kernel (relaxation toward the "
+                         "t-2 asymptote)",
+                      5: "surrogate with known exact solution "
+                         "y = t-2+(y0+2)exp(-t/2)"},
+        aux="A1 aux verbatim: dy/dt = (t-y)/2; y0(x)=x; t in [0,2]; h=1/64 "
+            "(exactly 128 fixed steps)",
+        exception=None,
+        pairs=[dict(pair="rungekutta.java", language="java", upstream="cm",
+                    files=["third_party/commons-math/commons-math3-3.6.1.jar"])],
+        pyref="external Python implementation third_party/"
+              "thealgorithms-python/maths/numerical_analysis/runge_kutta.py "
+              "(A1 pyref, unchanged)",
+    ),
+    dict(
+        program="multimin", c=3, l=1, src=2, group=2,
+        category="iterative solver with a tolerance knob: derivative-free "
+                 "multidimensional minimiser, converged objective readout "
+                 "(map row 3)",
+        primary_mp=3,
+        scale=A3_SCALE,
+        scale_evidence="GSL multimin module (gsl_multimin_fminimizer_"
+                       "nmsimplex2 simplex state machine + size-test "
+                       "iteration driver)",
+        instantiable={2: "converged objective a(1 - ln a) + const is "
+                         "strictly decreasing for a > 1 (a(x)=exp(x+0.1) "
+                         "increasing): monotone in x",
+                      3: "iterative simplex solver with size-tolerance knob",
+                      4: "concave decreasing envelope (d2/da2 = -1/a < 0)"},
+        aux="F(u,v) = exp(u) - a*u + (v-0.7)^2, a(x) = exp(x+0.1); start "
+            "(0,0), initial step (0.5,0.5); stop at simplex size < 1e-12 "
+            "(<= 100000 iterations); readout = converged objective value. "
+            "Python side: scipy Nelder-Mead, xatol=1e-12, fatol=1e-13",
+        exception=dict(cls=1, tol=1e-6,
+                       band="smooth strictly convex objective; simplex-size "
+                            "1e-12 / fatol 1e-13 stopping rules bound the "
+                            "converged-objective error by ~1e-12 per side; "
+                            "combined band ~1e-12, far inside the standard "
+                            "gate (no relaxation needed; recorded)"),
+        pairs=[dict(pair="multimin.c", language="c", upstream="gsl", files=[])],
+        pyref="scipy.optimize.minimize(method='Nelder-Mead')",
+    ),
+    dict(
+        program="multiroot", c=3, l=1, src=2, group=2,
+        category="iterative solver with a tolerance knob: coupled 2-D "
+                 "root-finder, root-component readout (map row 3)",
+        primary_mp=3,
+        scale=A3_SCALE,
+        scale_evidence="GSL multiroots module (gsl_multiroot_fsolver_"
+                       "hybrids: scaled HYBRD trust-region machinery)",
+        instantiable={2: "root component u increasing in r(x) (implicit-"
+                         "function argument on the circle-line system)",
+                      3: "iterative solver with residual-tolerance knob",
+                      4: "monotone envelope"},
+        aux="f1 = u^2+v^2-r(x)^2, f2 = u-v-0.3, r(x)=1+x/2; start "
+            "(1.0, 0.5); stop at |f| residual < 1e-12; readout = u. Python "
+            "side: scipy.optimize.root(method='hybr', tol=1e-12) (both "
+            "sides are MINPACK-HYBRD-derived)",
+        exception=dict(cls=1, tol=1e-6,
+                       band="residual 1e-12 with O(1) Jacobian singular "
+                            "values on the frozen branch -> root band "
+                            "~1e-12 per side; combined ~1e-11, inside the "
+                            "standard gate (recorded)"),
+        pairs=[dict(pair="multiroot.c", language="c", upstream="gsl", files=[])],
+        pyref="scipy.optimize.root(method='hybr')",
+    ),
+    dict(
+        program="quad", c=3, l=1, src=2, group=2,
+        category="adaptive quadrature with tolerance knob (map row 3) — A3 "
+                 "module-scale EXTENSION of the A1 program 'quad' (aux "
+                 "verbatim)",
+        primary_mp=3,
+        scale=A3_SCALE,
+        scale_evidence="Boost.Math quadrature module (gauss_kronrod<double,"
+                       "21> adaptive subdivision machinery)",
+        instantiable={2: "monotone increasing (positive integrand)",
+                      3: "adaptive mesh/tolerance structure",
+                      4: "concave increasing envelope (arctan)"},
+        aux="A1 aux verbatim: integrand 1/(1+u^2); interval [0, 4x]; "
+            "adaptive to tol 1e-10 (boost gauss_kronrod max_depth 15, "
+            "tol 1e-10 vs scipy QUADPACK epsabs=epsrel=1e-10)",
+        exception=dict(cls=1, tol=1e-6,
+                       band="both sides integrate the smooth frozen "
+                            "integrand to ~1e-10; combined band ~4e-10, "
+                            "far inside the standard gate (A1 quad "
+                            "precedent; recorded)"),
+        pairs=[dict(pair="quad.cpp", language="cpp", upstream="boost",
+                    files=["third_party/boost-math/include"])],
+        pyref="scipy.integrate.quad (A1 pyref, unchanged)",
+    ),
+    dict(
+        program="fft", c=2, l=2, src=2, group=2,
+        category="trajectory/qualitative-shape kernel (map row 4; the "
+                 "DFT's Parseval/unitarity invariances are not expressible "
+                 "through a constant-relation R on the frozen scalar "
+                 "readout — digamma precedent)",
+        primary_mp=4,
+        scale=A3_SCALE,
+        scale_evidence="GSL fft module (gsl_fft_real_radix2 butterfly "
+                       "machinery); Commons Math transform module "
+                       "(FastFourierTransformer)",
+        instantiable={2: "|S_4|^2 of the centered Gaussian pulse strictly "
+                         "decreasing in the time-width w(x)=3+9x "
+                         "(frequency width inverse to time width)",
+                      4: "monotone decreasing envelope"},
+        aux="N=64 real signal s_k = exp(-((k-32)/w(x))^2), w(x)=3+9x; "
+            "forward DFT, standard normalization; registered scalar "
+            "spectral statistic: readout = |S_4|^2 (frozen bin 4)",
+        exception=None,
+        pairs=[dict(pair="fft.c", language="c", upstream="gsl", files=[]),
+               dict(pair="fft.java", language="java", upstream="cm",
+                    files=["third_party/commons-math/commons-math3-3.6.1.jar"])],
+        pyref="numpy.fft.fft + |S[4]|^2",
+    ),
+]
+
+# A3 Step-3 screening audit (pre-behavioral, criterion cited).
+A3_SCREENED = [
+    dict(candidate="CM Percentile (R_7) as pair quantile.java for the A1 program 'quantile'", src=4,
+         reason="Commons Math Percentile.evaluate documents p in (0, 100]: "
+                "the frozen A1 program domain includes p = x = 0, which the "
+                "entry rejects by contract (documented pre-behaviorally; "
+                "besselj0.java lesson applied at screening time instead of "
+                "burning a one-shot certification)",
+         clause="S2b Step 3 criterion 3 (single-entry interface must cover "
+                "x in [0,1])"),
+    dict(candidate="GSL odeiv2 explicit-Euler fixed-step drive as pair euler.c for the A1 program 'euler'", src=2,
+         reason="GSL odeiv2 ships NO explicit-Euler stepper (stepper set: "
+                "rk2/rk4/rkf45/rkck/rk8pd/rk1imp/rk2imp/rk4imp/bsimp/"
+                "msadams/msbdf; rk1imp is IMPLICIT Euler, different "
+                "semantics), so no same-semantics module-scale external "
+                "implementation of the frozen A1 'euler' aux exists; "
+                "discovered at shim-authoring (API availability, "
+                "pre-behavioral, before the one-shot gate run)",
+         clause="S2b Step 3 criterion 4 (same-semantics external "
+                "implementation)"),
+    dict(candidate="GSL gsl_min 1-D Brent minimiser", src=2,
+         reason="single iterate-loop state machine, the structural class of "
+                "A1 brent.c (function-level)",
+         clause="A3-1 scale criterion"),
+    dict(candidate="GSL gsl_stats_* / Julia Statistics.std / Boost.Math "
+                   "univariate statistics (as descstats-semantics "
+                   "implementations)", src=2,
+         reason="single-pass closed-form routines; not module-scale; they "
+                "therefore do not contribute pairs or count toward this "
+                "wave's l",
+         clause="A3-1 scale criterion"),
+    dict(candidate="CM SimpleRegression", src=4,
+         reason="single streaming accumulator with closed-form slope "
+                "readout; no staged pipeline or driver",
+         clause="A3-1 scale criterion"),
+    dict(candidate="CM EmpiricalDistribution", src=4,
+         reason="cumulativeProbability has no documented numpy/scipy "
+                "same-semantics counterpart (within-bin kernel smoothing); "
+                "the mean readout bypasses the binning module entirely",
+         clause="S2b Step 3 criterion 4 + A3-1"),
+    dict(candidate="GSL bspline / Boost cardinal_cubic_b_spline vs scipy "
+                   "make_lsq_spline/BSpline", src=2,
+         reason="knot construction and boundary-condition semantics are not "
+                "documented-identical across the implementations (the A1 "
+                "cubic-spline lesson at module scale)",
+         clause="S2b Step 3 criterion 4"),
+    dict(candidate="GSL monte (plain/miser/vegas) vs scipy/numpy MC", src=2,
+         reason="RNG-stream-dependent; no identical generator algorithm + "
+                "seed stream exists across GSL and numpy, so the S2c "
+                "class-2 reproduction precondition is structurally "
+                "unsatisfiable",
+         clause="S2b Step 3 criterion 2 / S2c class 2"),
+    dict(candidate="GSL siman (simulated annealing)", src=2,
+         reason="RNG-stream-dependent (as monte)",
+         clause="S2b Step 3 criterion 2"),
+    dict(candidate="GSL wavelet", src=2,
+         reason="no counterpart inside the registered Python-side reference "
+                "set (scipy/numpy ship no discrete wavelet transform; "
+                "PyWavelets is outside the registered references)",
+         clause="S2b Step 3 criterion 4"),
+    dict(candidate="GSL linalg / eigen (matrix decompositions)", src=2,
+         reason="matrix-in/matrix-out interfaces; any scalar freeze reduces "
+                "to a single decomposition readout without a registered "
+                "scalar-program convention on [0,1]",
+         clause="S2b Step 3 criterion 3"),
+    dict(candidate="TheAlgorithms/{Python,C,C-Plus-Plus,Java,Go,Rust} "
+                   "(source 1, module-scale sweep)", src=1,
+         reason="single-file teaching implementations throughout; the "
+                "sweep found no multi-component numeric pipeline satisfying "
+                "A3-1 (structural finding, not a per-file rejection)",
+         clause="A3-1 scale criterion (sweep finding)"),
+    dict(candidate="Julia stdlib module-scale numerics / SciML "
+                   "OrdinaryDiffEq (source 3)", src=3,
+         reason="Julia stdlib exposes no module-scale numeric pipeline "
+                "with a documented scipy-equivalent contract; the SciML "
+                "half remains non-enumerable (Pkg installation infeasible, "
+                "A1 D2 carried forward)",
+         clause="A3-1 + S2b Step 2 sweep-shortfall disclosure"),
+]
+
+
+def a3_rank_check() -> bool:
+    """Verify A3_CANDIDATES is stored in the registered A3 walk order:
+    group asc (repair-first), then the Step-4 key inside each group."""
+    keys = [(e["group"], -e["c"], -e["l"], e["src"], e["program"])
+            for e in A3_CANDIDATES]
+    return keys == sorted(keys)

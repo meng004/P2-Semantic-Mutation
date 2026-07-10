@@ -47,10 +47,7 @@ inline T Fast_InvSqrt(T x) {
 
     y = *reinterpret_cast<T *>(&i);  // Convert new bits into float
 
-    y = y * (1.5 + (x2 * y * y));  // 1st iteration Newton's method
-    if (iterations == 2) {
-        y = y * (1.5 + (x2 * y * y));  // 2nd iteration, the more exact result
-    }
+    // Newton refinement skipped (1 iteration -> 0)
     return y;
 }
 
@@ -58,7 +55,7 @@ inline T Fast_InvSqrt(T x) {
  * @brief This is the function that calculates the fast inverse square root.
  * The following code is the fast inverse square root with standard lib (cmath)
  * More information can be found at
- * [LinkedIn](https://www.linkedin.com/pulse/fast-inverse-square-root-still-armin-kassemi-langroodi)
+ * [LinkedIn](https://www.linkedin.com/pulse/fast-inverse-square-root-still-arminkassemi-langroodi)
  * @tparam T floating type
  * @param number value to calculate
  * @return the inverse square root

@@ -1,0 +1,23 @@
+```python
+import math
+
+# Symmetry of the natural cubic spline induced by symmetric knots and data:
+# sin(pi * (1 - t)) == sin(pi * t), hence S(1 - x) == S(x).
+_TOL = 1e-8
+
+
+def r_1(x):
+    x = float(x)
+    return 1.0 - x
+
+
+def R_1(y_orig, y_new):
+    try:
+        y0 = float(y_orig)
+        y1 = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(y0) and math.isfinite(y1)):
+        return False
+    return abs(y0 - y1) <= _TOL
+```

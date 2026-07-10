@@ -1,0 +1,36 @@
+
+
+```python
+import math
+import numpy as np
+
+_NODES, _WEIGHTS = np.array([0.0]), np.array([1.0])
+def program(x):
+    x = float(x)
+    integrand = x + 0.5 * _NODES**2
+    return float(np.sum(_WEIGHTS * integrand))
+
+def r_1(x):
+    """Exact symmetry of the polynomial integrand: f_mono (degree 2)."""
+    return 1.0 - x
+
+def R_1(y_orig, y_new):
+    """Shape-preserving: the two trajectories must be identical (symmetry)."""
+    return abs(y_orig - y_new) <= 1e-8
+
+def r_2(x):
+    """Exact symmetry of the polynomial integrand: f_mono (degree 2)."""
+    return 1.0 - x
+
+def R_2(y_orig, y_new):
+    """Shape-preserving: the two trajectories must be identical (symmetry)."""
+    return abs(y_orig - y_new) <= 1e-8
+
+def r_3(x):
+    """Exact symmetry of the polynomial integrand: f_mono (degree 2)."""
+    return 1.0 - x
+
+def R_3(y_orig, y_new):
+    """Shape-preserving: the two trajectories must be identical (symmetry)."""
+    return abs(y_orig - y_new) <= 1e-8
+```

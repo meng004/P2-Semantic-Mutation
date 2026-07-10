@@ -1,0 +1,42 @@
+
+
+```python
+import math
+import numpy as np
+
+# Conservation of output magnitude under input symmetry
+# (sin(π(1-x)) = sin(πx) for all x ∈ [0,1] implies |S(x)| = |S(1-x)|)
+
+def r_1(x):
+    return float(1.0 - x)
+
+def R_1(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-10)
+
+
+# Conservation of output magnitude under input scaling
+# (sin(π(1 - k·(1-x))) = sin(π·k·x) for k=0.5 implies |S(x)| = |S(k·x)|)
+
+def r_2(x):
+    k = 0.5
+    return float(k * x)
+
+def R_2(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-10)
+
+
+# Conservation of output magnitude under input negation (alternative symmetry)
+# (sin(π·(-x)) = -sin(πx) implies |S(x)| = |-S(-x)|)
+
+def r_3(x):
+    return float(-x)
+
+def R_3(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-10)
+```

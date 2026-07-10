@@ -1,0 +1,35 @@
+An elegant way to construct metamorphic relations for this program is to exploit the symmetries and invariant properties of the natural cubic spline interpolating $f(t) = \sin(\pi t)$ on $[0,1]$.
+
+1. **Symmetry about $x = 0.5$**: The target function $f(t) = \sin(\pi t)$ is symmetric about $0.5$, and the 17 sample points $t_i = i/16$ for $i=0,\dots,16$ are also symmetric about $0.5$. Because the natural boundary conditions are symmetric, the resulting unique natural cubic spline $S(x)$ is perfectly symmetric about $x = 0.5$. Thus, $S(1-x) = S(x)$. This gives us our first relation: $r_1(x) = 1 - x$, with $R_1(y, y') \iff y \approx y'$.
+2. **Identity transformation**: The simplest conservation relation is the identity map $r_2(x) = x$, which must conserve the output value exactly (up to strict equality or extremely tight tolerance).
+
+Here is the implementation of these metamorphic relations:
+
+```python
+import math
+
+
+def r_1(x: float) -> float:
+    """Symmetry transformation about the midpoint 0.5: x -> 1 - x."""
+    return 1.0 - x
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """The spline output must be symmetric about 0.5."""
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # Using a tight tolerance for numerical equivalence
+    return math.isclose(y_orig, y_new, rel_tol=1e-12, abs_tol=1e-12)
+
+
+def r_2(x: float) -> float:
+    """Identity transformation: x -> x."""
+    return x
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """The output must be strictly equal under the identity transformation."""
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_orig == y_new
+```
