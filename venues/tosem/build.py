@@ -25,56 +25,22 @@ ABSTRACT = (
     "observes declared domain-semantic effects. This paper introduces Semantic "
     "Mutation Score (SMS), an MR-relative adequacy metric over an admitted "
     "universe of nonequivalent semantic mutants with explicit certificates and "
-    "a degeneration path back to classical mutation score. We instantiate five "
-    "semantic operator families on 12 single-output scientific-computing "
-    "programs and audit the resulting 60-cell design with an SMS-to-MS proof, "
-    "an AST-normalized syntactic comparison, aligned-versus-cross relation "
-    "analysis, and boundary and adjoint studies. The semantic pool has 5.14% "
-    "AST-normalized overlap with default first-order syntactic mutants. "
-    "Several pre-registered empirical thresholds "
-    "are not met; we use these failures to delimit operator applicability, "
-    "MR-design adequacy, and kill attribution rather than to claim universal "
-    "dominance. A direct stratum-purity audit confirms the semantic-effect "
-    "map is single-valued on the large majority of admitted mutants, with the "
-    "multi-stratum exceptions characterized, and a post-hoc detection-incidence "
-    "sensitivity finds aligned meta-patterns detect a nonzero effect more often "
-    "than cross patterns while the effect-size gap itself stays below the "
-    "pre-registered large-effect threshold. An industrial real-defect arm of reproduced, MR-detectable "
-    "defects from widely used scientific-computing libraries then tests the "
-    "central construct claim: a four-group mutation comparison pre-registered "
-    "in the dataset protocol "
-    "and a per-defect detection face show that aggregate kill-rate, semantic "
-    "alignment, and real-defect detection are related but distinct "
-    "constructs. A second, pre-registered confirmatory study re-registers the "
-    "first study's unpowered threshold misses as powered successors on a "
-    "blind-authored 28-program grid and executes them once: three of four "
-    "executable hypotheses confirm (operators instantiate adequately; the "
-    "aligned slice dominates the cross slice as a directional, medium-magnitude "
-    "claim; the aligned-over-cross direction holds in three of four classes), "
-    "attribution purity is not confirmed as multi-stratum leakage generalises "
-    "beyond the earlier diagnosis once the operator grid widens, and the "
-    "cross-vendor dual-blind hypothesis is gated not-run under a same-vendor "
-    "harness. A third, pre-registered study re-registers the attribution "
-    "construct on freshly generated mutants with the repaired admission screen "
-    "verified live, and returns a two-sided boundary: single-stratum "
-    "attribution is confirmed where coupling is absent or screenable, while "
-    "graded declared-stratum attribution is refuted on the structurally rich "
-    "classes, where a single fault perturbs several invariants at once. "
-    "A fourth, pre-registered study executes the previously gated cross-vendor "
-    "question under a matched four-vendor dual-blind protocol and returns a "
-    "bounded null: no source-diversity effect of the registered magnitude is "
-    "detectable, removing the remaining protocol-asymmetry confound and "
-    "supporting metamorphic-relation design, not generator diversity, as the "
-    "operative lever; the same study confirms graded declared-stratum "
-    "attribution on the rich classes once recruitment is adequate, and does "
-    "not confirm cross-language invariance of the aligned-over-cross "
-    "direction on a C port, a non-replication reported plainly. "
-    "SMS is therefore a construct-level diagnostic for "
-    "declared semantic strata, delimited by the first study, confirmed "
-    "directionally by the second, bounded on both sides by the third, and "
-    "cleared of its source-diversity confound by the fourth, "
-    "with its construct separation supported on "
-    "industrial code."
+    "a degeneration path back to classical mutation score, instantiated as "
+    "five operator families on 12 single-output scientific-computing programs "
+    "and audited through four pre-registered studies with boundary, adjoint, "
+    "and industrial real-defect arms. Threshold misses delimit operator "
+    "applicability, MR-design adequacy, and kill attribution rather than "
+    "support universal dominance. A matched four-vendor dual-blind study "
+    "returns a bounded null, so metamorphic-relation design, not generator "
+    "diversity, is the operative lever. Graded declared-stratum attribution "
+    "confirms within its registration, class C staying below the registered "
+    "bar on its own; a matched-regime sensitivity shows the signal comes "
+    "entirely from multi-stratum co-firing mutants that the earlier screened "
+    "admission regime excluded, so the confirmed construct is coupled "
+    "attribution rather than purity rescued by recruitment. Cross-language "
+    "invariance does not replicate on a C port, a non-replication reported "
+    "plainly. SMS is therefore a construct-level diagnostic for declared "
+    "semantic strata."
 )
 
 
@@ -107,17 +73,20 @@ def copy_used_figures(out_dir: Path) -> None:
 def write_supplement_readme(out_dir: Path) -> None:
     write(
         out_dir / "readme.txt",
-        "Supplementary material for the TOSEM Regular Track submission "
+        "Supplementary material for the TOSEM Fast-Impact Track submission "
         "\"A Semantic Mutation "
         "Metric for Metamorphic-Relation Adequacy in Scientific Computing "
         "Programs\".\n\n"
         "Contents: supplementary.pdf (with LaTeX source supplementary.tex) "
-        "provides Appendices A-I: notation and the operator catalogue, "
+        "provides Appendices A-K: notation and the operator catalogue, "
         "experimental subjects and operator specialisations, procedure "
         "details, statistical analysis details, deployment considerations, "
         "threats-to-validity mitigation, the full SMS-to-MS degeneration "
-        "proof, the adjoint extension arm, and the result-level real-defect "
-        "evidence summary supporting the main article.\n\n"
+        "proof, the adjoint extension arm, the result-level real-defect "
+        "evidence summary, the Study 2-3 confirmatory and incident detail, "
+        "and the consolidated demoted material (full threats-to-validity "
+        "table, theory derivations, higher-order-mutation reachability, and "
+        "power detail) supporting the main article.\n\n"
         "Usage: read supplementary.pdf alongside the main manuscript; the "
         "main text points to the relevant appendix at each use. To recompile, "
         "run tectonic (or xelatex plus BibTeX) with the ACM acmart class files "
@@ -387,12 +356,10 @@ def main_statements() -> str:
     return r"""
 \section*{Supplementary Material}
 
-Appendices A--I (notation and operator catalogue; experimental subjects and
-operator specialisations; experimental procedure details; statistical analysis
-details; deployment considerations; detailed threats-to-validity mitigation;
-the full SMS-to-MS degeneration proof; the adjoint extension arm; and a
-result-level real-defect evidence summary) are provided as separate online
-supplementary material.
+Appendices A--K, from the notation and operator catalogue through the Study
+2--3 confirmatory and incident detail to the consolidated demoted material
+(including the full threats-to-validity table), are provided as separate
+online supplementary material; the supplement's readme lists the contents.
 
 \section*{Funding}
 

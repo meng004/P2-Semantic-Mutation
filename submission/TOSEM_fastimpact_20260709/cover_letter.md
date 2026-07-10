@@ -6,8 +6,11 @@ We submit "A Semantic Mutation Metric for Metamorphic-Relation Adequacy in
 Scientific Computing Programs" as a Journal-First Paper for ACM Transactions on
 Software Engineering and Methodology (TOSEM). The manuscript is submitted to
 the Fast-Impact Track, whose 45-page text limit (excluding the bibliography)
-the manuscript satisfies: the narrative body runs to 45 pages, followed by the required statements and the References
-section, leaving headroom within the cap.
+the manuscript meets exactly: the narrative body ends on page 45, so the
+submission is at the limit rather than under it. We read the 45-page text
+limit as applying to the narrative body (Introduction through Conclusion),
+with the required declarations following on pages 45-47 and the References
+thereafter.
 
 The manuscript contributes Semantic Mutation Score (SMS), a
 backward-compatible adequacy metric that preserves the denominator logic of
@@ -77,12 +80,12 @@ validation, with supplementary material and artifacts separating
 reproducibility details from the main argument.
 
 Length statement. In the ACM manuscript-review format, the narrative body
-(Introduction through Conclusion, now four studies) ends on page 45, within
-the Fast-Impact Track 45-page text limit; pages 46-47 carry the required
-declarations (data availability, funding, CRediT, generative-AI disclosure)
-and the References begin on page 47. The full PDF is 48 pages including
-references, and the online supplementary material is
-34 pages. Length was reduced from an earlier 52-page draft by demoting extended
+(Introduction through Conclusion, now four studies) ends on page 45, exactly
+at the Fast-Impact Track 45-page text limit, which we read as applying to the
+narrative body; the required statements (data availability, funding, CRediT,
+generative-AI disclosure) follow on pages 45-47 and the References begin on
+page 47. The full PDF is 48 pages including references, and the online
+supplementary material is 37 pages. Length was reduced from an earlier 52-page draft by demoting extended
 protocol prose, theorem proofs, the higher-order-mutation analysis, and the
 full threats and program-selection tables to the supplementary appendices
 (Appendix K), and by consolidating the three per-study scoreboards and the
