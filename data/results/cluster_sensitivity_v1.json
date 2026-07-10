@@ -1,0 +1,190 @@
+{
+  "artefact": "cluster_sensitivity_v1",
+  "generated_by": "scripts/compute_cluster_sensitivity.py",
+  "status": "POST-HOC SENSITIVITY (2026-07-10): responds to the editorial review's cluster-inference concern (P1). NOT a registered analyzer; written after all confirmatory verdicts were closed.",
+  "citation_policy": "the registered cell-level verdicts stand as recorded in their frozen SSOTs; the PUT-cluster CIs below SUPERSEDE the cell-level CIs for manuscript citation",
+  "issue": "the frozen H2-1'/H2-1/H-LANG multinomial bootstrap resamples the 28 aligned + 112 cross CELLS as independent; the five cells of one PUT are correlated (shared mutant pool and program), so the exchangeable resampling unit is the PUT (block bootstrap)",
+  "master_seed": 20260708,
+  "bootstrap_B": 10000,
+  "primary_mp_rule": "PRIMARY_CELLS_V3 (imported from the frozen compute_dualblind_delta.py; v3b prohibited)",
+  "analyses": {
+    "a_study2_v5_h2_1_prime": {
+      "input_pool": "data/results/sms_track2_v5.json",
+      "n_aligned": 28,
+      "n_cross": 112,
+      "point_cliffs_delta": 0.4295,
+      "cell_level_as_committed": {
+        "point": 0.4295,
+        "one_sided_95_lower_bound": 0.2653,
+        "two_sided_ci95": [
+          0.2328,
+          0.6193
+        ],
+        "verdict": "CONFIRM",
+        "source": "data/results/dualblind_delta_delta_v5.json",
+        "note": "cell-level multinomial two-sample bootstrap; treats cells of one PUT as independent (the flagged issue)"
+      },
+      "put_cluster": {
+        "scheme": "PUT-block bootstrap: resample PUTs with replacement, keep each PUT's cells intact, recompute Cliff's delta per replicate",
+        "n_puts": 28,
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.2777,
+        "two_sided_ci95": [
+          0.2494,
+          0.6062
+        ]
+      },
+      "registered_verdict": "CONFIRM",
+      "verdict_impact": "NO IMPACT: the registered CONFIRM direction survives clustering (PUT-cluster one-sided 95% lower bound > 0). Cluster CI supersedes the cell-level CI for citation."
+    },
+    "b_study4_v7_h2_1_cross": {
+      "input_pool": "data/results/sms_track2_v7.json",
+      "n_aligned": 28,
+      "n_cross": 112,
+      "point_cliffs_delta": 0.4445,
+      "cell_level_as_committed": {
+        "point": 0.4445,
+        "one_sided_95_lower_bound": 0.2771,
+        "two_sided_ci95": [
+          0.2414,
+          0.6342
+        ],
+        "verdict": "CONFIRM",
+        "source": "data/results/dualblind_delta_delta_v7.json",
+        "note": "cell-level multinomial two-sample bootstrap; treats cells of one PUT as independent (the flagged issue)"
+      },
+      "put_cluster": {
+        "scheme": "PUT-block bootstrap: resample PUTs with replacement, keep each PUT's cells intact, recompute Cliff's delta per replicate",
+        "n_puts": 28,
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.2902,
+        "two_sided_ci95": [
+          0.2624,
+          0.6231
+        ]
+      },
+      "registered_verdict": "CONFIRM",
+      "verdict_impact": "NO IMPACT: the registered CONFIRM direction survives clustering (PUT-cluster one-sided 95% lower bound > 0). Cluster CI supersedes the cell-level CI for citation."
+    },
+    "c_study4_v7_same_arm": {
+      "input_pool": "data/results/sms_track2_v7_same.json",
+      "n_aligned": 28,
+      "n_cross": 112,
+      "point_cliffs_delta": 0.4298,
+      "cell_level_as_committed": {
+        "point": 0.4298,
+        "one_sided_95_lower_bound": 0.2643,
+        "two_sided_ci95": [
+          0.2321,
+          0.6224
+        ],
+        "verdict": "(descriptive arm)",
+        "source": "point: dualblind_delta_delta_v7.json::delta_same_source_arm",
+        "note": "no standalone cell-level CI was committed for this arm; the cell-level comparator here is recomputed with the frozen H2-1 multinomial method (B=10000, seed 20260708) for a like-for-like contrast"
+      },
+      "put_cluster": {
+        "scheme": "PUT-block bootstrap: resample PUTs with replacement, keep each PUT's cells intact, recompute Cliff's delta per replicate",
+        "n_puts": 28,
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.2793,
+        "two_sided_ci95": [
+          0.25,
+          0.6055
+        ]
+      },
+      "registered_verdict": "(descriptive arm)",
+      "verdict_impact": "Descriptive contrast (no registered one-sided verdict): direction survives clustering; cluster CI supersedes the cell-level CI for citation."
+    },
+    "d_study4_h2_2_delta_delta": {
+      "inputs": [
+        "data/results/sms_track2_v7.json",
+        "data/results/sms_track2_v7_same.json"
+      ],
+      "already_cluster_correct": true,
+      "how": "the frozen compute_dualblind_delta.paired_bootstrap_dd block-resamples the shared 28-PUT list with replacement and applies the SAME resample to both arms (paired-role bootstrap); the resampling unit was the PUT from the start, so NO cluster correction is needed for H2-2",
+      "n_puts_paired": 28,
+      "delta_delta_point": 0.0147,
+      "ci95_two_sided": [
+        -0.021,
+        0.0686
+      ],
+      "ci95_half_width": 0.0448,
+      "reproduction_check": "frozen paired_bootstrap_dd re-executed (B=10000, seed 20260708); point and CI match the committed SSOT exactly",
+      "registered_verdict": "BOUNDED_NULL",
+      "verdict_impact": "NO IMPACT: H2-2 was already PUT-clustered as registered; the committed BOUNDED_NULL verdict and CI are unchanged and remain citable as-is",
+      "bounded_null_formalization": {
+        "achieved_ci": [
+          -0.021,
+          0.0686
+        ],
+        "sound_rule": "CI subset of [-0.2, +0.2]",
+        "sound_rule_holds": true,
+        "registered_rule": "CI contains 0 AND half-width <= 0.14",
+        "registered_rule_flag": "the registered rule does NOT logically imply containment in [-0.20, +0.20] in general: a CI of [-0.001, +0.279] contains 0 with half-width 0.14 yet its upper end exceeds +0.20. For the achieved CI [-0.021, +0.0686] containment HOLDS, so the BOUNDED_NULL verdict is also licensed by the sound rule; the manuscript should state the containment criterion, not the half-width heuristic."
+      }
+    },
+    "e_hlang_v7c_delta_C": {
+      "input_pool": "data/results/sms_track2_v7c.json",
+      "n_aligned": 7,
+      "n_cross": 28,
+      "point_cliffs_delta": 0.2449,
+      "cell_level_as_committed": {
+        "point": 0.2449,
+        "one_sided_95_lower_bound": -0.0357,
+        "two_sided_ci95": [
+          -0.0357,
+          0.5714
+        ],
+        "verdict": "NOT_CONFIRMED",
+        "source": "data/results/hlang_delta_v7c.json",
+        "note": "cell-level multinomial two-sample bootstrap; treats cells of one PUT as independent (the flagged issue)"
+      },
+      "put_cluster": {
+        "scheme": "PUT-block bootstrap: resample PUTs with replacement, keep each PUT's cells intact, recompute Cliff's delta per replicate",
+        "n_puts": 7,
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.0,
+        "two_sided_ci95": [
+          0.0,
+          0.551
+        ]
+      },
+      "registered_verdict": "NOT_CONFIRMED",
+      "verdict_impact": "NO IMPACT: registered NOT_CONFIRMED; the PUT-cluster lower bound is also <= 0, so the negative verdict stands a fortiori under the corrected inference."
+    },
+    "f_study1_v4_mp5_headline": {
+      "input_pool": "data/results/sms_track2_v4.json",
+      "n_aligned": 12,
+      "n_cross": 48,
+      "point_cliffs_delta": 0.3142,
+      "cell_level_as_committed": {
+        "point": 0.3142,
+        "one_sided_95_lower_bound": null,
+        "two_sided_ci95": [
+          0.0138,
+          0.6215
+        ],
+        "verdict": "(descriptive headline; no registered one-sided rule)",
+        "source": "data/results/rq2_cliffs_delta_v4_mp5.json",
+        "note": "committed CI is the per-group cell resampling of p2.stats.cliffs_delta.bootstrap_delta_ci (B=10000, seed 42, no one-sided bound recorded); cells of one PUT treated as independent (the flagged issue)"
+      },
+      "put_cluster": {
+        "scheme": "PUT-block bootstrap: resample PUTs with replacement, keep each PUT's cells intact, recompute Cliff's delta per replicate",
+        "n_puts": 12,
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.0833,
+        "two_sided_ci95": [
+          0.0469,
+          0.5903
+        ]
+      },
+      "registered_verdict": "(descriptive headline; no registered one-sided rule)",
+      "verdict_impact": "Descriptive contrast (no registered one-sided verdict): direction survives clustering; cluster CI supersedes the cell-level CI for citation."
+    }
+  }
+}

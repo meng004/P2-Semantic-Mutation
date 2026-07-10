@@ -1,0 +1,188 @@
+{
+  "artefact": "denominator_sensitivity_v1",
+  "generated_by": "scripts/compute_denominator_sensitivity.py",
+  "status": "POST-HOC SENSITIVITY (2026-07-10): responds to the editorial review's construct-validity item on the Study-1 v4 SMS denominator. NOT confirmatory; the registered all-admitted estimand stands. Denominators 2-3 condition on the response (see selection_on_response flags) and are reported for transparency only.",
+  "inputs": {
+    "sms_pool": "data/results/sms_track2_v4.json",
+    "flip_audit_crosscheck": "data/results/s5_purity_v4.json",
+    "committed_headline": "data/results/rq2_cliffs_delta_v4_mp5.json"
+  },
+  "master_seed": 20260708,
+  "bootstrap_B": 10000,
+  "primary_mp_rule": "PRIMARY_CELLS_V3 (c-class held at MP5, matching the committed v4_mp5 headline; v3b prohibited)",
+  "per_mutant_flip_map_availability": "FULLY DERIVABLE from committed artifacts: sms_track2_v4.json carries per-mutant KILLED/SURVIVE outcomes in all 60 cells; the derived flip map agrees mutant-by-mutant with the committed S5 flip audit (s5_purity_v4.json). Nothing needed for this sensitivity is missing.",
+  "flip_audit_crosscheck": {
+    "n_admitted": 292,
+    "flip_histogram": {
+      "0": 170,
+      "1": 93,
+      ">=2": 29
+    },
+    "expected": {
+      "n_admitted": 292,
+      "flip_histogram": {
+        "0": 170,
+        "1": 93,
+        ">=2": 29
+      }
+    }
+  },
+  "denominators": {
+    "all_admitted": {
+      "rule": "all admitted mutants (the committed baseline denominator)",
+      "selection_on_response": false,
+      "n_mutants_included": 292,
+      "per_put_n_included": {
+        "a1": 30,
+        "a2": 27,
+        "a3": 18,
+        "b1": 27,
+        "b2": 27,
+        "b3": 20,
+        "c1": 10,
+        "c2": 27,
+        "c3": 27,
+        "d1": 27,
+        "d2": 27,
+        "d3": 25
+      },
+      "puts_dropped_entirely": [],
+      "n_cells": 60,
+      "n_aligned_cells": 12,
+      "n_cross_cells": 48,
+      "mean_aligned": 0.2133,
+      "mean_cross": 0.0767,
+      "cliffs_delta": 0.3142,
+      "delta_vs_all_admitted": null,
+      "cell_level_ci": {
+        "method": "frozen multinomial two-sample bootstrap (compute_dualblind_delta.boot_delta_distribution); reported for comparability, treats cells as independent",
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.0503,
+        "two_sided_ci95": [
+          0.0,
+          0.6302
+        ]
+      },
+      "put_cluster_ci": {
+        "method": "PUT-block bootstrap (resample PUTs with replacement, cells travel intact) — the corrected inference",
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "n_puts": 12,
+        "one_sided_95_lower_bound": 0.0833,
+        "two_sided_ci95": [
+          0.0469,
+          0.5903
+        ]
+      },
+      "reproduces_committed_headline": "yes: matches rq2_cliffs_delta_v4_mp5.json::cliffs_delta (0.3142); committed cell-level CI there is [0.01384548611111115, 0.6215277777777778] (B=10000, seed 42, p2.stats.cliffs_delta.bootstrap_delta_ci)"
+    },
+    "certified_declared_stratum": {
+      "rule": "flip set includes the PUT's declared primary MP (PRIMARY_CELLS_V3; aligned-cell SMS = 1.0 by construction)",
+      "selection_on_response": true,
+      "n_mutants_included": 65,
+      "per_put_n_included": {
+        "a1": 0,
+        "a2": 27,
+        "a3": 0,
+        "b1": 9,
+        "b2": 9,
+        "b3": 0,
+        "c1": 2,
+        "c2": 0,
+        "c3": 0,
+        "d1": 9,
+        "d2": 0,
+        "d3": 9
+      },
+      "puts_dropped_entirely": [
+        "a1",
+        "a3",
+        "b3",
+        "c2",
+        "c3",
+        "d2"
+      ],
+      "n_cells": 30,
+      "n_aligned_cells": 6,
+      "n_cross_cells": 24,
+      "mean_aligned": 1.0,
+      "mean_cross": 0.2083,
+      "cliffs_delta": 0.7917,
+      "delta_vs_all_admitted": 0.4775,
+      "cell_level_ci": {
+        "method": "frozen multinomial two-sample bootstrap (compute_dualblind_delta.boot_delta_distribution); reported for comparability, treats cells as independent",
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.6667,
+        "two_sided_ci95": [
+          0.625,
+          0.9583
+        ]
+      },
+      "put_cluster_ci": {
+        "method": "PUT-block bootstrap (resample PUTs with replacement, cells travel intact) — the corrected inference",
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "n_puts": 6,
+        "one_sided_95_lower_bound": 0.6667,
+        "two_sided_ci95": [
+          0.6667,
+          0.9167
+        ]
+      }
+    },
+    "active_any_flip": {
+      "rule": "at least one flipped invariant (any MP killed)",
+      "selection_on_response": true,
+      "n_mutants_included": 122,
+      "per_put_n_included": {
+        "a1": 0,
+        "a2": 27,
+        "a3": 0,
+        "b1": 27,
+        "b2": 9,
+        "b3": 11,
+        "c1": 2,
+        "c2": 0,
+        "c3": 20,
+        "d1": 9,
+        "d2": 8,
+        "d3": 9
+      },
+      "puts_dropped_entirely": [
+        "a1",
+        "a3",
+        "c2"
+      ],
+      "n_cells": 45,
+      "n_aligned_cells": 9,
+      "n_cross_cells": 36,
+      "mean_aligned": 0.5926,
+      "mean_cross": 0.2407,
+      "cliffs_delta": 0.4043,
+      "delta_vs_all_admitted": 0.0901,
+      "cell_level_ci": {
+        "method": "frozen multinomial two-sample bootstrap (compute_dualblind_delta.boot_delta_distribution); reported for comparability, treats cells as independent",
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "one_sided_95_lower_bound": 0.1111,
+        "two_sided_ci95": [
+          0.0463,
+          0.7253
+        ]
+      },
+      "put_cluster_ci": {
+        "method": "PUT-block bootstrap (resample PUTs with replacement, cells travel intact) — the corrected inference",
+        "bootstrap_B": 10000,
+        "bootstrap_seed": 20260708,
+        "n_puts": 9,
+        "one_sided_95_lower_bound": 0.1235,
+        "two_sided_ci95": [
+          0.0617,
+          0.7037
+        ]
+      }
+    }
+  }
+}
