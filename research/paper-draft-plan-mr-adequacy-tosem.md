@@ -192,6 +192,12 @@ Phase 6  解盲：holdout 一次性评估（DVE-W + DVE-T + 历史缺陷外部�
 | S3 MR-coverage-guided（**共同主基线**） | 预注册 MR 覆盖度量（输入变换类别覆盖 + follow-up 代码覆盖），不用变异体信息 | 贪心最大化覆盖增量 |
 | S4 random / generic（**sanity-check**） | 无信号 | 随机 \(k\) 条 ×1000 重抽 + 固定 generic 参照 |
 
+**M-infra dry-run 反馈的三条设计修订（v1.1.1，`docs/dve/M_infra_dry_run.md`）**：端到端 I4 彩排（`scripts/dve/dry_run_pipeline.py`）在合成世界上暴露三个混淆并已回灌——
+
+1. **potency 混淆**：S1 天然选中宽 profile 强力 MR，S1-vs-S3（coverage 不针对 kill）的差含 potency 成分。**S1-vs-S2（kill 信号 vs kill 信号）升为决定性确认比较**；S1-vs-S3 保留但预注册其 potency+transfer 混合解释。
+2. **对照须 coverage-matched**：确认性决策价值 estimand 的对照须"挑 k 个不同的非 R0 类"（与 S1 同样避开 R0 冗余），而非朴素随机；朴素随机仅作 S4 sanity 下界。因"residual"按定义相对 R0，朴素随机对照会把覆盖多样化误算成 transfer 收益（dry-run 实测 transfer=0 时 Δ≈+0.13）。
+3. **per-PUT 选择是 sign-flip 有效性前提**：全局共用组合会使各 PUT 的 d_p 同号相关、type-I 膨胀至 ≈0.17；计划 §3.5 的逐 PUT `R_valid(P)\R_0(P)` 选择由此获得经验证成（per-PUT 恢复后 type-I 回落至 0.044）。
+
 **Primary endpoint（DVE-W；v1.1.1 改为 size 不敏感定义）**：对 holdout family \(g\)（实例集 \(I_g\)），定义 **family 检测分数**为实例检测比例
 
 \[

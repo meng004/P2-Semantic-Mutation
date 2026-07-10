@@ -114,6 +114,26 @@ confirmed on the pilot rehearsal before freeze.
 - **S2 classical-MS-guided** (joint primary baseline): same greedy over surviving syntactic (Cosmic Ray default first-order, config frozen) mutants of R0.
 - **S3 MR-coverage-guided** (joint primary baseline): greedy over the pre-registered MR-coverage metric; no mutant information.
 - **S4 random / generic** (sanity-check): 1000 random draws + a fixed generic reference.
+
+**Dry-run design amendments (M-infra, `docs/dve/M_infra_dry_run.md`).** The
+end-to-end I4 rehearsal certified the instrument (type-I 0.044 at zero transfer;
+monotone response to real signal) and surfaced three confounds, now frozen into
+the confirmatory reading:
+
+1. **S1-vs-S2 is the decisive confirmatory comparison** (kill-signal vs
+   kill-signal, a fair fight). S1-vs-S3 is reported but pre-registered as
+   potency+transfer, because S1 intrinsically prefers potent MRs and S3 does not
+   target kills.
+2. The confirmatory decision-value estimand is measured against a
+   **coverage-matched comparator** (k distinct non-R0-covered classes), because
+   "residual" is defined relative to R0 and a naive-random comparator would
+   miscredit coverage diversification as transfer (dry-run showed Δ≈+0.13 at
+   zero transfer against naive random). Naive random remains only as the S4
+   sanity floor.
+3. **Per-PUT selection is a validity precondition** of the PUT-level sign-flip
+   test: a global shared portfolio correlates the per-PUT differences and
+   inflated type-I to ≈0.17; per-PUT selection (§7 selection space) restores
+   nominal type-I.
 - **DVE-T**: S1-T+ (target-informed: reads dev kill matrix + target-PUT Fault-Card mechanism-class distribution), S1-T0 (distribution-blind, exploratory), S2-T/S3-T/S4-T comparators.
 
 ## 8. Stopping / one-shot rules (plan §3.1, §3.9)

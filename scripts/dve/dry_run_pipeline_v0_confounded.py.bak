@@ -1,0 +1,204 @@
+"""End-to-end DVE dry-run (I4 rehearsal) on a synthetic world with known truth.
+
+Plan v1.1.1 §3.1 (I4). This runs the WHOLE frozen pipeline
+    family registry -> split commitment -> S1-S4 selection -> holdout FDS
+    -> PUT-level sign-flip test
+against synthetic kill matrices, and validates two things the real experiment
+depends on but cannot self-check:
+
+  (A) NULL world  (mechanism-class detectability does NOT transfer dev->holdout):
+      S1's dev-informed picks are no better than the comparators on the holdout,
+      so the true FDS difference is 0. The pipeline must reject at ~alpha (no
+      manufactured false positives). This is the honest guard against
+      "SMS looks good only because the machinery is biased".
+
+  (B) SIGNAL world (detectability transfers): S1 must show real power.
+
+Nothing here is a substantive result about SMS. It only certifies that the
+analysis machinery has correct operating characteristics BEFORE any real
+holdout is opened.
+
+Reproducibility: fully seeded.
+"""
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from p2.dve import endpoint as ep
+from p2.dve import strategies as st
+
+
+def make_world(rng, n_put, n_fam_per_put, n_mech_classes, n_mr, transfer,
+               base_kill, k0):
+    """Build one synthetic world.
+
+    Each family has a mechanism class. Each MR has a profile: the set of
+    mechanism classes it can detect. A family instance is killed by an MR with
+    probability depending on whether the MR's profile covers the family's class.
+
+    `transfer` in [0,1]: probability that a family's detectability by class
+    structure is the SAME in dev and holdout. transfer=0 -> class structure is
+    re-randomized per side (no dev->holdout signal); transfer=1 -> identical.
+    """
+    puts = [f"P{p}" for p in range(n_put)]
+    mrs = [f"mr{j}" for j in range(n_mr)]
+    classes = [f"mc{c}" for c in range(n_mech_classes)]
+
+    # each MR detects a random subset of mechanism classes
+    mr_profile = {mr: set(rng.choice(classes,
+                    size=rng.integers(1, max(2, n_mech_classes // 2)), replace=False))
+                  for mr in mrs}
+
+    families = []       # (put, family_id, mechanism_class, n_instances)
+    for p in puts:
+        for f in range(n_fam_per_put):
+            mc = classes[rng.integers(0, n_mech_classes)]
+            n_inst = int(rng.integers(2, 7))
+            families.append((p, f"{p}::fam{f}", mc, n_inst))
+
+    def kill_matrix(side_seed):
+        """Return {mr: {family_id}} kills (family-level) and per-instance flags."""
+        srng = np.random.default_rng(side_seed)
+        fam_class = {}
+        for (p, fid, mc, n_inst) in families:
+            if srng.random() < transfer:
+                fam_class[fid] = mc                 # detectability transfers
+            else:
+                fam_class[fid] = classes[srng.integers(0, n_mech_classes)]  # re-randomized
+        inst_detect = {}   # (mr, fid) -> list[bool] over instances
+        fam_kill = {mr: set() for mr in mrs}
+        for (p, fid, mc, n_inst) in families:
+            eff_mc = fam_class[fid]
+            for mr in mrs:
+                pk = 0.9 if eff_mc in mr_profile[mr] else base_kill
+                flags = srng.random(n_inst) < pk
+                inst_detect[(mr, fid)] = flags
+                if flags.any():
+                    fam_kill[mr].add(fid)
+        return fam_kill, inst_detect
+
+    return puts, mrs, families, mr_profile, kill_matrix
+
+
+def det_family_score(portfolio, fid, inst_detect, n_inst):
+    """det(R,g): fraction of family instances killed by ANY MR in the portfolio."""
+    if not portfolio:
+        return 0.0
+    any_killed = np.zeros(n_inst, dtype=bool)
+    for mr in portfolio:
+        any_killed |= inst_detect[(mr, fid)]
+    return float(any_killed.mean())
+
+
+def run_one_world(rng, cfg):
+    n_put, n_fam, n_mr = cfg["n_put"], cfg["n_fam"], cfg["n_mr"]
+    puts, mrs, families, profile, kill_matrix = make_world(
+        rng, n_put, n_fam, cfg["n_mech"], n_mr, cfg["transfer"],
+        cfg["base_kill"], cfg["k0"])
+
+    # split families 50:50 within PUT (dev vs holdout), seeded
+    dev_fams, hold_fams = [], []
+    for p in puts:
+        pf = [f for f in families if f[0] == p]
+        idx = rng.permutation(len(pf))
+        h = len(pf) // 2
+        for j, i in enumerate(idx):
+            (hold_fams if j < h else dev_fams).append(pf[i])
+
+    dev_kill, dev_inst = kill_matrix(int(rng.integers(1, 2**31)))
+    hold_kill, hold_inst = kill_matrix(int(rng.integers(1, 2**31)))
+
+    # R0: first k0 MRs (frozen baseline). valid space excludes R0.
+    r0 = mrs[:cfg["k0"]]
+    valid = [m for m in mrs if m not in r0]
+
+    dev_fam_ids = {f[1] for f in dev_fams}
+    # dev residual families: not killed by R0 (any R0 MR) at family level
+    r0_dev_kill = set().union(*[dev_kill[m] for m in r0]) if r0 else set()
+    dev_residual = {fid for fid in dev_fam_ids if fid not in r0_dev_kill}
+
+    # signals
+    dev_kill_by_valid = {m: dev_kill[m] & dev_fam_ids for m in valid}
+    # S2 syntactic proxy: use a *different, independent* kill structure so S2 is a
+    # genuine alternative baseline, not identical to S1.
+    syn_rng = np.random.default_rng(int(rng.integers(1, 2**31)))
+    syn_universe = {f"syn{i}" for i in range(cfg["n_mech"])}
+    syn_kill = {m: set(np.array(sorted(syn_universe))[
+        syn_rng.random(len(syn_universe)) < 0.4]) for m in valid}
+    r0_surv_syn = set(syn_universe)
+    # S3 coverage: each MR covers a random coverage set independent of faults
+    cov_rng = np.random.default_rng(int(rng.integers(1, 2**31)))
+    cov_universe = [f"cov{i}" for i in range(cfg["n_mech"])]
+    coverage = {m: set(np.array(cov_universe)[
+        cov_rng.random(len(cov_universe)) < 0.4]) for m in valid}
+
+    k = cfg["k"]
+    picks = {
+        "S1": st.s1_residual_guided(valid, dev_kill_by_valid, dev_residual, k),
+        "S2": st.s2_classical_ms_guided(valid, syn_kill, r0_surv_syn, k),
+        "S3": st.s3_coverage_guided(valid, coverage, set(), k),
+    }
+
+    # evaluate on holdout: FDS per portfolio (R0 + picks)
+    def fds_for(portfolio):
+        scores = {}
+        for (p, fid, mc, n_inst) in hold_fams:
+            scores[(p, fid)] = det_family_score(portfolio, fid, hold_inst, n_inst)
+        return scores
+
+    fds_scores = {name: fds_for(r0 + pk) for name, pk in picks.items()}
+
+    results = {}
+    for comp in ["S2", "S3"]:
+        by_put = ep.paired_family_diffs(fds_scores["S1"], fds_scores[comp])
+        d_put = ep.put_level_diffs(by_put)
+        test = ep.signflip_test(d_put, shift=0.0, seed=int(rng.integers(1, 2**31)))
+        results[comp] = {"delta": float(d_put.mean()), "p": test["p_value"]}
+    return results
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--n-worlds", type=int, default=1000)
+    ap.add_argument("--seed", type=int, default=20260710)
+    args = ap.parse_args()
+
+    base_cfg = dict(n_put=17, n_fam=8, n_mr=40, n_mech=10, base_kill=0.05,
+                    k0=3, k=4)
+
+    for label, transfer in [("NULL (no dev->holdout transfer)", 0.0),
+                            ("SIGNAL (strong transfer)", 0.85)]:
+        cfg = dict(base_cfg, transfer=transfer)
+        rng = np.random.default_rng(args.seed + int(transfer * 1000))
+        rej_holm = 0
+        rej_s2 = rej_s3 = 0
+        deltas_s2 = []
+        for _ in range(args.n_worlds):
+            res = run_one_world(rng, cfg)
+            p2, p3 = res["S2"]["p"], res["S3"]["p"]
+            deltas_s2.append(res["S2"]["delta"])
+            # Holm over the two comparisons at alpha=0.05
+            ps = sorted([p2, p3])
+            holm_ok = (ps[0] <= 0.05 / 2) and (ps[1] <= 0.05)
+            rej_holm += int(holm_ok)
+            rej_s2 += int(p2 <= 0.05)
+            rej_s3 += int(p3 <= 0.05)
+        n = args.n_worlds
+        print(f"\n=== {label}  transfer={transfer} ===")
+        print(f"  mean Delta(S1-S2) = {np.mean(deltas_s2):+.4f}")
+        print(f"  reject S1>S2 @0.05      : {rej_s2/n:.3f}")
+        print(f"  reject S1>S3 @0.05      : {rej_s3/n:.3f}")
+        print(f"  reject H-DV (Holm both) : {rej_holm/n:.3f}")
+        if transfer == 0.0:
+            print("  -> interpretation: this is the type-I rate; must be near 0.05")
+        else:
+            print("  -> interpretation: this is power; should be high")
+
+
+if __name__ == "__main__":
+    main()
