@@ -9,7 +9,7 @@ the Fast-Impact Track, whose 45-page text limit (excluding the bibliography)
 the manuscript meets exactly: the narrative body ends on page 45, so the
 submission is at the limit rather than under it. We read the 45-page text
 limit as applying to the narrative body (Introduction through Conclusion),
-with the required declarations following on pages 45-47 and the References
+with the required declarations following on pages 46-47 and the References
 thereafter.
 
 The manuscript contributes Semantic Mutation Score (SMS), a
@@ -83,8 +83,8 @@ Length statement. In the ACM manuscript-review format, the narrative body
 (Introduction through Conclusion, now four studies) ends on page 45, exactly
 at the Fast-Impact Track 45-page text limit, which we read as applying to the
 narrative body; the required statements (data availability, funding, CRediT,
-generative-AI disclosure) follow on pages 45-47 and the References begin on
-page 47. The full PDF is 48 pages including references, and the online
+generative-AI disclosure) follow on pages 46-47 and the References begin on
+page 47. The full PDF is 49 pages including references, and the online
 supplementary material is 37 pages. Length was reduced from an earlier 52-page draft by demoting extended
 protocol prose, theorem proofs, the higher-order-mutation analysis, and the
 full threats and program-selection tables to the supplementary appendices

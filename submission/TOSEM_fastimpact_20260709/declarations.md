@@ -6,7 +6,7 @@ Journal-First Paper submitted to the TOSEM Fast-Impact Track. The Fast-Impact
 Track imposes a 45-page text limit excluding the bibliography; the manuscript
 meets it exactly: the narrative body (Introduction through Conclusion, four
 studies) ends on page 45. We read the 45-page text limit as applying to the
-narrative body, with the required statements following on pages 45-47.
+narrative body, with the required statements following on pages 46-47.
 
 ## Competing Interests
 
@@ -26,8 +26,8 @@ cover letter includes the requested journal-first novelty statement.
 In ACM manuscript-review format, the narrative body ends on page 45, exactly
 at the Fast-Impact Track 45-page text limit (excluding the bibliography); the
 required statements (data availability, funding, CRediT, generative-AI
-disclosure) follow on pages 45-47, and the References begin on page 47. The
-full PDF is 48 pages including references, and the online supplementary
+disclosure) follow on pages 46-47, and the References begin on page 47. The
+full PDF is 49 pages including references, and the online supplementary
 material is 37 pages. Content demoted for length (extended protocol prose,
 theorem proofs, higher-order-mutation analysis, full threats and
 program-selection tables, per-study scoreboards consolidated into one
