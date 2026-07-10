@@ -74,9 +74,8 @@ def run_one_world(rng, cfg):
     # non-uniform class frequency (Zipf-like), independent draws for dev & holdout
     w = 1.0 / (1.0 + np.arange(n_mech))
     dev_p = w / w.sum()
-    # holdout frequency equals dev freq w.p. transfer, else an independent shuffle
-    if rng.random() < 1.0:  # per-world coupling controlled below per family
-        pass
+    # holdout frequency equals dev freq w.p. transfer (per family, below), else an
+    # independent shuffle of the same weights.
     hold_perm = rng.permutation(n_mech)
     hold_p_indep = (w[hold_perm] / w.sum())
 

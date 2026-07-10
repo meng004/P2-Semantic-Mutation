@@ -29,17 +29,15 @@ def _greedy_set_cover(candidates: Sequence[str],
     chosen: List[str] = []
     cost = cost or {}
     for _ in range(min(k, len(remaining))):
+        # pick the candidate with the smallest sort key
+        # (-gain, cost, id): most new coverage, then lowest cost, then id.
         best = None
-        best_gain = -1
         best_key = None
         for c in remaining:
             gain = len(element_sets.get(c, set()) - covered)
             key = (-gain, cost.get(c, 0.0), c)
-            if gain > best_gain or (gain == best_gain and (best_key is None or key < best_key)):
-                if best is None or key < best_key:
-                    best, best_gain, best_key = c, gain, key
-        if best is None:
-            break
+            if best_key is None or key < best_key:
+                best, best_key = c, key
         chosen.append(best)
         covered |= element_sets.get(best, set())
         remaining.remove(best)

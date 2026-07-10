@@ -142,6 +142,7 @@ def power_of(sc: Scenario, n_sim: int, seed: int, n_perm: int = 2000) -> float:
     rng = np.random.default_rng(seed)
     signs = _sign_matrix(sc.n_put, n_perm, rng)          # (S, n_put)
     n_signs = signs.shape[0]
+    is_exact = 2 ** sc.n_put <= max(n_perm, 4096)
     # generate all datasets: per-PUT aggregated differences, shape (n_sim, n_put)
     v_tot = sc.sigma_diff ** 2
     sd_put = np.sqrt(sc.icc * v_tot)
@@ -152,8 +153,84 @@ def power_of(sc: Scenario, n_sim: int, seed: int, n_perm: int = 2000) -> float:
     obs = d.mean(axis=1)                                 # (n_sim,)
     null_stats = (d @ signs.T) / sc.n_put                # (n_sim, S)
     ge = (null_stats >= obs[:, None] - 1e-12).sum(axis=1)
-    pvals = ge / n_signs
+    if is_exact:
+        # exact enumeration already contains the observed (all-plus) config
+        pvals = ge / n_signs
+    else:
+        # sampled path: add the observed configuration for a valid, non-anti-
+        # conservative p-value (matches endpoint.signflip_test).
+        pvals = (ge + 1) / (n_signs + 1)
     return float((pvals <= ALPHA).mean())
+
+
+def power_of_bounded(sc: "BoundedScenario", n_sim: int, seed: int,
+                     n_perm: int = 2000) -> float:
+    """Power under a BOUNDED-endpoint model (reviewer P1-1).
+
+    FDS is a proportion in [0,1]; its paired difference cannot be Gaussian near
+    the floor/ceiling. Here each holdout family gets a comparator detection
+    probability p_c(g) drawn around a baseline `base` (Beta), and the treatment
+    probability is p_t(g) = clip(p_c(g) + lift, 0, 1) so the achievable lift
+    COMPRESSES as p_c approaches 1. Per-family detection scores are then the
+    mean of n_inst Bernoulli draws (the real FDS instance proportion), the
+    paired difference is aggregated to d_p, and the exact PUT-level sign-flip is
+    applied. This shows whether a saturated holdout erodes power in a way the
+    Gaussian projection cannot.
+    """
+    rng = np.random.default_rng(seed)
+    signs = _sign_matrix(sc.n_put, n_perm, rng)
+    n_signs = signs.shape[0]
+    is_exact = 2 ** sc.n_put <= max(n_perm, 4096)
+    # Beta shape for comparator baseline with mean `base`, concentration `conc`
+    a = sc.base * sc.conc
+    b = (1 - sc.base) * sc.conc
+    rejects = 0
+    for _ in range(n_sim):
+        d_put = np.empty(sc.n_put)
+        # PUT-level shift of the baseline to induce ICC-like clustering
+        put_shift = rng.normal(0.0, sc.put_sd, size=sc.n_put)
+        for p in range(sc.n_put):
+            pc = np.clip(rng.beta(a, b, size=sc.n_fam) + put_shift[p], 0.02, 0.98)
+            pt = np.clip(pc + sc.lift, 0.0, 1.0)
+            n_inst = rng.integers(2, 7, size=sc.n_fam)
+            # family detection score = mean of n_inst Bernoulli draws
+            sc_c = np.array([rng.binomial(n, q) / n for n, q in zip(n_inst, pc)])
+            sc_t = np.array([rng.binomial(n, q) / n for n, q in zip(n_inst, pt)])
+            d_put[p] = (sc_t - sc_c).mean()
+        obs = d_put.mean()
+        stats = (signs * d_put).mean(axis=1)
+        ge = int(np.count_nonzero(stats >= obs - 1e-12))
+        pval = ge / n_signs if is_exact else (ge + 1) / (n_signs + 1)
+        rejects += int(pval <= ALPHA)
+    return rejects / n_sim
+
+
+@dataclass
+class BoundedScenario:
+    lift: float          # additive treatment lift on detection probability
+    base: float          # comparator baseline detection probability (Beta mean)
+    conc: float          # Beta concentration (family heterogeneity)
+    put_sd: float        # PUT-level baseline shift SD (induces clustering)
+    n_put: int
+    n_fam: int
+
+
+def run_bounded_check(n_sim: int, seed: int) -> list:
+    """Bounded-endpoint power at the frozen conservative design and neighbours."""
+    rows = []
+    designs = [(20, 4), (17, 4), (15, 4), (12, 4)]
+    for base in [0.4, 0.6, 0.75]:          # incl. a near-saturated holdout
+        for lift in [0.0, 0.10, 0.15]:     # 0.0 = type-I under bounded model
+            for (n_put, n_fam) in designs:
+                sc = BoundedScenario(lift, base, conc=6.0, put_sd=0.10,
+                                     n_put=n_put, n_fam=n_fam)
+                pw = power_of_bounded(sc, n_sim, seed + n_put * 31 + int(base * 100)
+                                      + int(lift * 1000))
+                rows.append({"model": "bounded", "base": base, "lift": lift,
+                             "n_put": n_put, "n_fam": n_fam,
+                             "holdout_families": n_put * n_fam,
+                             ("power" if lift > 0 else "type1"): round(pw, 4)})
+    return rows
 
 
 def main() -> None:
@@ -188,6 +265,9 @@ def main() -> None:
                         row["power" if mu > 0 else "type1"] = round(pw, 4)
                         results.append(row)
 
+    # bounded-endpoint robustness check (reviewer P1-1)
+    bounded = run_bounded_check(max(args.n_sim // 2, 500), args.seed)
+
     payload = {
         "meta": {
             "plan_version": "v1.1.1",
@@ -202,8 +282,11 @@ def main() -> None:
                 "mu": mu_grid, "sigma_diff": sigma_grid, "icc": icc_grid,
                 "n_put": nput_grid, "n_fam_per_put": nfam_grid,
             },
+            "bounded_model_note": "run_bounded_check: FDS simulated as a bounded "
+            "proportion with ceiling compression (reviewer P1-1 robustness).",
         },
         "results": results,
+        "bounded_results": bounded,
     }
     with open(args.out, "w") as f:
         json.dump(payload, f, indent=2)
@@ -227,6 +310,17 @@ def main() -> None:
                 else:
                     print("  sigma=%.2f icc=%.1f -> NOT reached within grid (max n_put=20,n_fam=4)"
                           % (sigma, icc))
+
+    print("\n=== BOUNDED-endpoint robustness (reviewer P1-1) ===")
+    bt1 = [r["type1"] for r in bounded if "type1" in r]
+    print("  type-I (lift=0): mean=%.4f min=%.4f max=%.4f"
+          % (np.mean(bt1), np.min(bt1), np.max(bt1)))
+    for base in [0.4, 0.6, 0.75]:
+        row = next((r for r in bounded if r.get("lift") == 0.10 and r["base"] == base
+                    and r["n_put"] == 20 and r["n_fam"] == 4), None)
+        if row:
+            print("  base=%.2f lift=0.10 @20x4(80 fam): power=%.3f%s"
+                  % (base, row["power"], "  <- near-saturated" if base == 0.75 else ""))
     print("\nWrote", args.out)
 
 

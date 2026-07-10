@@ -46,6 +46,17 @@
   standard.
 - All second-reviewer / domain-expert / EIC-sign-off gates.
 
+## LOOP iteration 3 — independent TOSEM review + response
+
+Independent academic review (`docs/review_2026-07-10/r2_independent_tosem_review_and_response.md`)
+verdict: **Reject as a paper / strong Conditional Pass as pre-registration stage /
+NOT at TOSEM stable-acceptance.** Reviewer independently reproduced the 20 tests
+and the power-sim frontier (M0 numbers real). All pre-freeze-permissible items
+addressed this iteration: P1-1 (bounded-endpoint power corroboration), P1-2
+(S1-vs-S2 as decisive reporting rule), P1-3 (S2 richness floor), P1-5 (taxonomy
+integrity threat), P2-1/2/3 (code fixes). Remaining blockers P0-1..3 and P1-4 are
+execution/recruitment gates that cannot be closed without fabricating data.
+
 ## Honest bottom line
 
 The project is at **"pre-registration frozen-candidate + instrument validated,
