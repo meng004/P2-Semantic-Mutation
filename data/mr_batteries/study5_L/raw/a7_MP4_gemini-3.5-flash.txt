@@ -1,0 +1,5 @@
+) ... must average <= 1e-6".
+This means the sequence of $program(r_k(x))$ must be very close to $program(x)$ under DTW.
+Wait! If $r_k(x) = 1 - x$, then $y_{new} = -y_{orig}$.
+The DTW distance between $Y$ and $-Y$ is not small.
+But wait, what if $r_k(x)$ is
