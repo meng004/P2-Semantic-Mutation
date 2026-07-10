@@ -770,9 +770,12 @@ truly non-equivalent mutant admitted as equivalent) requires \emph{both}
 AVP coherence and numerical agreement on K\_eq samples to hold despite the
 non-equivalence (both mis-pass simultaneously), which is rare;
 false-non-equiv requires only one of E1, E2 to fail for a truly equivalent
-mutant, biasing SMS slightly high. The trade-off table against
-E1-alone and E2-alone is in Appendix A.3. Under the Section~\ref{sms-ms-degeneration-formal-statement} degenerate
-limit \texttt{L}, E1 $\wedge$ E2 reduces almost everywhere to classical bitwise
+mutant, biasing SMS slightly low: a misjudged equivalent mutant remains in
+the denominator as an unkillable survivor, understating adequacy. The
+trade-off table against
+E1-alone and E2-alone is in Appendix A.3. Under the $L_{\mathrm{equiv}}$
+component (L1 $\wedge$ L2) of the Section~\ref{sms-ms-degeneration-formal-statement} degenerate
+limit, E1 $\wedge$ E2 reduces almost everywhere to classical bitwise
 equivalence (Lemma G.1, supplementary Appendix G).
 
 \paragraph{Semantic certificate record.}
@@ -838,9 +841,11 @@ introduce no new formula terms and no new state classifications.
 
 Under the degenerate limit $L$ defined in Section~\ref{sms-ms-degeneration-formal-statement}, SMS reduces
 almost everywhere to classical syntactic MS, equivalent mutants
-degenerate to classical behavioural equivalence, killed mutants
-degenerate to bitwise difference detection, and the LRCA layer
-trivialises, C2 through C5 cannot fire when L1 $\wedge$ L2 $\wedge$ L3 hold. Any
+degenerate to classical behavioural equivalence, and killed mutants
+degenerate to bitwise difference detection. LRCA labels are diagnostic
+annotations outside the SMS formula
+(Section~\ref{lrca-engineering-attribution-layer-descriptive-not-in-sms}),
+so the metric-level claim does not rest on the diagnostic layer. Any
 SMS-based empirical conclusion is therefore structurally consistent with
 the existing mutation-testing literature in the classical
 syntactic-mutation regime, so there is no metric-level semantic
@@ -855,9 +860,9 @@ The Section~\ref{backward-compatibility-declaration} backward-compatibility clai
 theorem. The full notation cross-reference is \textbf{Appendix G.1}; the joint
 conditions are in \textbf{Appendix G.2}, the lemma proofs in
 \textbf{Appendix G.3}, and the full theorem proof in \textbf{Appendix G.4}. We
-state only the main theorem and corollary here; the three construction
+state only the main theorem here; the three construction
 lemmas are stated and proved in the supplementary material as
-Lemma G.1--G.3.
+Lemma G.1--G.3, each under exactly its own joint condition.
 
 \textbf{Definition (Degenerate limit).}
 $L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$, where each joint
@@ -893,15 +898,25 @@ and $\mathrm{mut}^{\mathrm{syntax}}$ is the syntactic-mutant set.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
-By Lemma G.1, equiv\_\{i,k,j\} $\to$
-equiv\_\{i,j\}\^{}classic almost everywhere with respect to D\_S; the
-measure-zero qualifier accommodates floating-point pathological points
-and Not-a-Number propagation. By Lemma G.2, killed\_\{i,k,j\} $\to$
-killed\_\{i,j\}\^{}classic, and the MP index k degenerates because L4
-collapses MR\_\{i,k\} to \{MP\_eq\}. By Lemma G.3, mut\_j(S\_i) $\to$
-mut\_j\^{}syntax(S\_i). Substituting into the SMS formula gives
-MS\_\{i,j\}. Full lemma proofs are in supplementary Appendix G.3 and the
-full theorem proof in supplementary Appendix G.4.
+By Lemma G.1, under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2) alone the E2 arm
+of the E1 $\wedge$ E2 judgement (Section~\ref{equivalence-judgement-e1-e2-layer-2})
+forces pointwise output equality almost everywhere with respect to
+$D_S$, and the E1 arm (AVP coherence) is then implied outside the same
+measure-zero set, so
+$\mathrm{equiv}_{i,k,j} \to \mathrm{equiv}_{i,j}^{\mathrm{classic}}$
+almost everywhere; the measure-zero qualifier accommodates
+floating-point pathological points and Not-a-Number propagation. By
+Lemma G.2, under $L_{\mathrm{killed}}$ (L3 $\wedge$ L4) alone,
+$\mathrm{killed}_{i,k,j} \to \mathrm{killed}_{i,j}^{\mathrm{classic}}$,
+and the MP index $k$ degenerates because L4 collapses
+$\mathrm{MR}_{i,k}$ to $\{\mathrm{MP}_{\mathrm{eq}}\}$. By Lemma G.3,
+under $L_{\mathrm{mut}}$ (L5 $\wedge$ L6) alone,
+$\mathrm{mut}_j(S_i) \to \mathrm{mut}_j^{\mathrm{syntax}}(S_i)$. Each
+lemma uses only its own joint condition, so no step of the composition
+invokes an assumption outside its stated level. Substituting the three
+limits into the SMS formula gives $\mathrm{MS}_{i,j}$. Full lemma
+proofs are in supplementary Appendix G.3 and the full theorem proof in
+supplementary Appendix G.4.
 \end{proof}
 
 Under the stated substitutions the equality is definitional once the
@@ -911,17 +926,15 @@ therefore read Theorem~\ref{thm:degeneration} as a
 backward-compatibility characterisation of SMS, not as an independent
 mathematical contribution.
 
-\begin{corollary}[LRCA trivialisation]\label{cor:lrca}
-Under \texttt{L}, the
-likely-root-cause inventory C = \{C1, \ldots, C5\} degenerates to
-\{C1\}, so suspect\_share $\to$ 0 and SMS becomes a single-layer metric
-consistent with the engineering attribution structure of
-\citet{jia2011analysis}.
-\end{corollary}
+The diagnostic LRCA layer sits outside the SMS formula
+(Section~\ref{lrca-engineering-attribution-layer-descriptive-not-in-sms}),
+so Theorem~\ref{thm:degeneration} carries the backward-compatibility
+claim on its own; whether the root-cause inventory also collapses to
+\{C1\} under $L$ depends on the engineering thresholds of the LRCA
+decision tree and is not claimed formally.
 
-\textbf{Empirical consistency.} Theorem~\ref{thm:degeneration} and
-Corollary~\ref{cor:lrca} jointly
-show that the SMS-based empirical conclusions (Section~\ref{statistical-analysis-and-empirical-results} Cliff's delta,
+\textbf{Empirical consistency.} Theorem~\ref{thm:degeneration}
+shows that the SMS-based empirical conclusions (Section~\ref{statistical-analysis-and-empirical-results} Cliff's delta,
 Friedman chi\^{}2, Spearman rho) are structurally consistent with
 existing mutation-testing literature in the classical syntactic-mutation
 regime, and \textbf{do not} constitute metric-level semantic
