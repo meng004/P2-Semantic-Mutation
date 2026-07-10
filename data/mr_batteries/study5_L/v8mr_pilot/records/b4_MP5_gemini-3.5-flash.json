@@ -1,0 +1,31 @@
+{
+  "cell": "B4_MP5",
+  "put": "b4",
+  "mp": 5,
+  "vendor_slot": "gemini-3.5-flash",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP5_gemini-3.5-flash.txt",
+  "module_src": "import math\nimport numpy as np\n\n\n# --- MR 1: Shift by a fixed positive delta ---\n# If we shift the input x by +0.2, the output must increase by exactly 4 * 0.2 = 0.8.\n# We restrict x to [0.0, 0.8] to ensure r_1(x) remains in [0, 1].\ndef r_1(x: float) -> float:\n    # Map x to [0.0, 0.8] then shift by 0.2\n    x_bounded = x * 0.8\n    return x_bounded + 0.2\n\n\ndef R_1(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    # The expected difference is exactly 4.0 * 0.2 = 0.8\n    expected_diff = 0.8\n    actual_diff = y_new - y_orig\n    # We allow a tiny tolerance for floating-point rounding\n    return math.isclose(actual_diff, expected_diff, rel_tol=1e-12, abs_tol=1e-12)\n\n\n# --- MR 2: Linear scaling comparison ---\n# If we scale the input x towards 1.0, say r_2(x) = 0.5 * x + 0.5,\n# then the output difference program(r_2(x)) - program(x) must be exactly\n# 4 * (0.5 * x + 0.5 - x) = 4 * (0.5 - 0.5 * x) = 2 * (1 - x).\ndef r_2(x: float) -> float:\n    return 0.5 * x + 0.5\n\n\ndef R_2(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    # We reconstruct the original x from y_orig using the analytical relationship:\n    # y_orig = mu_boot + 4*x - 2.\n    # However, to keep the relation purely dependent on the outputs and the known input\n    # transformation, we can exploit the relative difference.\n    # Since r_2(x) >= x for all x in [0, 1], y_new must be >= y_orig.\n    # More precisely, we can verify that: (y_new - y_orig) is non-negative and\n    # bounded by the maximum possible shift of 2.0.\n    actual_diff = y_new - y_orig\n    return (actual_diff >= -1e-12) and (actual_diff <= 2.0 + 1e-12)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 2,
+  "n_certified": 1,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

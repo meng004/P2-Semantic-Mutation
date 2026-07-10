@@ -1,0 +1,57 @@
+```python
+import math
+import numpy as np
+
+# MP3: Convergence Order (f_conv.lim / m_conv)
+#
+# The program returns the ratio:
+#   y = u_FDM(0.5, t_end) / u_exact(0.5, t_end)
+#
+# The true FDM error at the midpoint scales as O(h^2) under explicit Euler
+# because the time step dt is scaled as O(h^2) to satisfy the stability condition
+# (dt <= r_stab * h^2 / alpha). Thus, the overall truncation error is:
+#   u_FDM(0.5, t_end) - u_exact(0.5, t_end) = C * h^2 + O(h^4)
+#
+# Since y = u_FDM / u_exact, we have:
+#   y - 1.0 = (u_FDM - u_exact) / u_exact = (C / u_exact) * h^2 + O(h^4)
+#   |y - 1.0| ≈ K * h^2
+#
+# If we refine the grid spacing from h to h_new = h / 2, the error should reduce
+# by a factor of approximately 4.
+#   |y_new - 1.0| / |y_orig - 1.0| ≈ (h_new / h)^2 = 0.25
+#
+# We define the input transformation r_1(x) = x / 2.
+# In the output relation R_1, we assert that the empirical convergence rate
+# matches the theoretical O(h^2) behavior. Specifically, the ratio of the absolute
+# errors should be approximately 0.25, with a small tolerance to accommodate
+# discrete step effects (such as rounding 1.0/h to an integer N).
+
+def r_1(x: float) -> float:
+    """Halve the grid spacing parameter to test quadratic convergence rate."""
+    # Ensure the transformed input remains within the valid domain (0, 1]
+    # and is not too small to avoid numerical underflow/precision limits.
+    return max(float(x) / 2.0, 1e-4)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Verify that the approximation error reduces quadratically.
+    
+    Since |y - 1.0| ≈ K * h^2, halving h should reduce the error by approx 4x.
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+        
+    err_orig = abs(y_orig - 1.0)
+    err_new = abs(y_new - 1.0)
+    
+    # If the original error is already extremely close to machine precision,
+    # we cannot reliably measure the convergence rate.
+    if err_orig < 1e-12:
+        return err_new < 1e-11
+        
+    ratio = err_new / err_orig
+    # For order 2 convergence with h_new = h/2, ratio should be close to 0.25.
+    # We allow a generous range [0.15, 0.40] to account for discrete grid effects
+    # (e.g., rounding N = 1/h) and high-order terms.
+    return 0.15 <= ratio <= 0.40
+```

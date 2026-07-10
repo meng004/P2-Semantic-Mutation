@@ -1,0 +1,57 @@
+An elegant way to implement **MP5 (method-comparison / convergence-rate)** for this program is to exploit the fact that the bootstrap estimate of the mean is a highly stable, monotonic, and analytically predictable function of $x$. 
+
+Specifically, the program computes:
+$$\text{program}(x) = \frac{1}{B} \sum_{b=1}^{B} \frac{1}{N} \sum_{i=1}^{N} \left( D_{\text{idx}[b, i]} + 4x - 2 \right) = \mu_{\text{boot}} + 4x - 2$$
+where $\mu_{\text{boot}}$ is a constant determined entirely by the fixed seed and the bootstrap index matrix.
+
+Thus, the exact output relation is linear: $\text{program}(x') - \text{program}(x) = 4(x' - x)$. 
+
+We can construct method-comparison relations by comparing a baseline evaluation at $x$ with a transformed evaluation at $r(x) > x$. Under a correct implementation, the difference $y_{\text{new}} - y_{\text{orig}}$ must precisely match the theoretical shift $4(r(x) - x)$ within extremely tight numerical tolerances (machine epsilon scaled by the operations). Any implementation fault that distorts the linear scaling, the shift application, or the bootstrap indexing will violate this precise relative relationship.
+
+Here is the Python code defining the metamorphic relations:
+
+```python
+import math
+import numpy as np
+
+
+# --- MR 1: Shift by a fixed positive delta ---
+# If we shift the input x by +0.2, the output must increase by exactly 4 * 0.2 = 0.8.
+# We restrict x to [0.0, 0.8] to ensure r_1(x) remains in [0, 1].
+def r_1(x: float) -> float:
+    # Map x to [0.0, 0.8] then shift by 0.2
+    x_bounded = x * 0.8
+    return x_bounded + 0.2
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # The expected difference is exactly 4.0 * 0.2 = 0.8
+    expected_diff = 0.8
+    actual_diff = y_new - y_orig
+    # We allow a tiny tolerance for floating-point rounding
+    return math.isclose(actual_diff, expected_diff, rel_tol=1e-12, abs_tol=1e-12)
+
+
+# --- MR 2: Linear scaling comparison ---
+# If we scale the input x towards 1.0, say r_2(x) = 0.5 * x + 0.5,
+# then the output difference program(r_2(x)) - program(x) must be exactly
+# 4 * (0.5 * x + 0.5 - x) = 4 * (0.5 - 0.5 * x) = 2 * (1 - x).
+def r_2(x: float) -> float:
+    return 0.5 * x + 0.5
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # We reconstruct the original x from y_orig using the analytical relationship:
+    # y_orig = mu_boot + 4*x - 2.
+    # However, to keep the relation purely dependent on the outputs and the known input
+    # transformation, we can exploit the relative difference.
+    # Since r_2(x) >= x for all x in [0, 1], y_new must be >= y_orig.
+    # More precisely, we can verify that: (y_new - y_orig) is non-negative and
+    # bounded by the maximum possible shift of 2.0.
+    actual_diff = y_new - y_orig
+    return (actual_diff >= -1e-12) and (actual_diff <= 2.0 + 1e-12)
+```

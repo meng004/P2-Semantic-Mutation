@@ -1,0 +1,31 @@
+{
+  "cell": "B4_MP1",
+  "put": "b4",
+  "mp": 1,
+  "vendor_slot": "claude-fable-5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP1_claude-fable-5.txt",
+  "module_src": "import math\n\n# MR1: complement transform — y(x) + y(1-x) = 2*c where c is the fixed\n# bootstrap centre of a standard-normal base sample (|c| well below 0.5).\ndef r_1(x):\n    return 1.0 - float(x)\n\ndef R_1(y_orig, y_new):\n    y0, y1 = float(y_orig), float(y_new)\n    if not (math.isfinite(y0) and math.isfinite(y1)):\n        return False\n    return abs(y0 + y1) < 1.0\n\n# MR2: centre probe — at x = 0.5 the shift vanishes, so the output must be\n# the bare bootstrap centre, small in magnitude, and within 2 of y(x).\ndef r_2(x):\n    return 0.5\n\ndef R_2(y_orig, y_new):\n    y0, y1 = float(y_orig), float(y_new)\n    if not (math.isfinite(y0) and math.isfinite(y1)):\n        return False\n    return abs(y1) < 0.5 and abs(y0 - y1) <= 2.0 + 1e-9",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 2,
+  "n_certified": 2,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

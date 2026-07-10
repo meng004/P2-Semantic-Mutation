@@ -1,0 +1,131 @@
+{
+  "cell": "A2_MP4",
+  "put": "a2",
+  "mp": 4,
+  "tag": "v8mr_pilot",
+  "registration": "PREREGISTRATION_STUDY5_v1.md §2d (union of the four vendors' certified MRs)",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "vendors": {
+    "gpt-5.5": {
+      "n_parsed": 3,
+      "n_certified": 3,
+      "parse_error": null,
+      "format_error": null,
+      "mrs": [
+        {
+          "k": 1,
+          "v1": true,
+          "v1_reason": null,
+          "v2": true,
+          "certified": true
+        },
+        {
+          "k": 2,
+          "v1": true,
+          "v1_reason": null,
+          "v2": true,
+          "certified": true
+        },
+        {
+          "k": 3,
+          "v1": true,
+          "v1_reason": null,
+          "v2": true,
+          "certified": true
+        }
+      ]
+    },
+    "gemini-3.5-flash": {
+      "n_parsed": 1,
+      "n_certified": 0,
+      "parse_error": null,
+      "format_error": null,
+      "mrs": [
+        {
+          "k": 1,
+          "v1": true,
+          "v1_reason": null,
+          "v2": false,
+          "certified": false
+        }
+      ]
+    },
+    "grok-4.1": {
+      "n_parsed": 3,
+      "n_certified": 1,
+      "parse_error": null,
+      "format_error": null,
+      "mrs": [
+        {
+          "k": 1,
+          "v1": true,
+          "v1_reason": null,
+          "v2": true,
+          "certified": true
+        },
+        {
+          "k": 2,
+          "v1": true,
+          "v1_reason": null,
+          "v2": false,
+          "certified": false
+        },
+        {
+          "k": 3,
+          "v1": true,
+          "v1_reason": null,
+          "v2": false,
+          "certified": false
+        }
+      ]
+    },
+    "claude-fable-5": {
+      "n_parsed": 1,
+      "n_certified": 1,
+      "parse_error": null,
+      "format_error": null,
+      "mrs": [
+        {
+          "k": 1,
+          "v1": true,
+          "v1_reason": null,
+          "v2": true,
+          "certified": true
+        }
+      ]
+    }
+  },
+  "union_battery": [
+    {
+      "vendor_slot": "gpt-5.5",
+      "k": 1,
+      "name": "a2_MP4_L_gpt-5.5_1",
+      "record": "data/mr_batteries/study5_L/v8mr_pilot/records/a2_MP4_gpt-5.5.json"
+    },
+    {
+      "vendor_slot": "gpt-5.5",
+      "k": 2,
+      "name": "a2_MP4_L_gpt-5.5_2",
+      "record": "data/mr_batteries/study5_L/v8mr_pilot/records/a2_MP4_gpt-5.5.json"
+    },
+    {
+      "vendor_slot": "gpt-5.5",
+      "k": 3,
+      "name": "a2_MP4_L_gpt-5.5_3",
+      "record": "data/mr_batteries/study5_L/v8mr_pilot/records/a2_MP4_gpt-5.5.json"
+    },
+    {
+      "vendor_slot": "grok-4.1",
+      "k": 1,
+      "name": "a2_MP4_L_grok-4.1_1",
+      "record": "data/mr_batteries/study5_L/v8mr_pilot/records/a2_MP4_grok-4.1.json"
+    },
+    {
+      "vendor_slot": "claude-fable-5",
+      "k": 1,
+      "name": "a2_MP4_L_claude-fable-5_1",
+      "record": "data/mr_batteries/study5_L/v8mr_pilot/records/a2_MP4_claude-fable-5.json"
+    }
+  ],
+  "union_size": 5
+}

@@ -1,0 +1,38 @@
+{
+  "cell": "B4_MP4",
+  "put": "b4",
+  "mp": 4,
+  "vendor_slot": "gemini-3.5-flash",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP4_gemini-3.5-flash.txt",
+  "module_src": "import math\nimport numpy as np\n\n# We can pre-compute the expected value at x = 0.5 to anchor our relations.\n# program(0.5) = \\bar{D}^* + 4(0.5) - 2 = \\bar{D}^*.\n# Since _D and _IDX are fixed, \\bar{D}^* is a constant.\n_N = 200\n_B = 500\n_SEED = 42\n_D = np.random.default_rng(_SEED).standard_normal(_N)\n_IDX = np.random.default_rng(_SEED).integers(0, _N, size=(_B, _N))\n_BOOT_MEAN_CONST = float(np.mean(_D[_IDX].mean(axis=1)))\n\n\n# --- MR 1: Identity Transformation ---\n# r_1(x) = x\n# The output must be identical.\ndef r_1(x: float) -> float:\n    return float(x)\n\n\ndef R_1(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    return math.isclose(y_orig, y_new, abs_tol=1e-9)\n\n\n# --- MR 2: Scaling / Linear Shrinkage ---\n# r_2(x) = 0.5 * x\n# Since program(x) = \\bar{D}^* + 4x - 2,\n# program(r_2(x)) = \\bar{D}^* + 2x - 2 = program(x) - 2x.\ndef r_2(x: float) -> float:\n    return float(0.5 * x)\n\n\ndef R_2(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    # Reconstruct x from y_orig: x = (y_orig - \\bar{D}^* + 2) / 4\n    x_reconstructed = (y_orig - _BOOT_MEAN_CONST + 2.0) / 4.0\n    expected_y_new = y_orig - 2.0 * x_reconstructed\n    return math.isclose(y_new, expected_y_new, abs_tol=1e-9)\n\n\n# --- MR 3: Symmetric Reflection ---\n# r_3(x) = 1.0 - x\n# program(x) + program(1 - x) = 2 * \\bar{D}^*\ndef r_3(x: float) -> float:\n    return float(1.0 - x)\n\n\ndef R_3(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    expected_sum = 2.0 * _BOOT_MEAN_CONST\n    return math.isclose(y_orig + y_new, expected_sum, abs_tol=1e-9)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 1,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    }
+  ]
+}

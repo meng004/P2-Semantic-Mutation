@@ -1,0 +1,107 @@
+An elegant metamorphic relation of the **conservation (invariance)** family can be derived by exploiting the deterministic index matrix `_IDX` used for bootstrap resampling. 
+
+In the program, the bootstrap resamples are constructed by indexing the shifted dataset:
+$$\text{shifted} = D + (4x - 2)$$
+The mean of the bootstrap means is computed as:
+$$\text{output}(x) = \frac{1}{B} \sum_{b=1}^{B} \left( \frac{1}{N} \sum_{i=1}^{N} \text{shifted}[\text{\_IDX}[b, i]] \right)$$
+
+Because $\text{shifted}[j] = D[j] + 4x - 2$, we can distribute the shift out of the indexing and averaging operations:
+$$\text{output}(x) = \left( \frac{1}{B \cdot N} \sum_{b=1}^{B} \sum_{i=1}^{N} D[\text{\_IDX}[b, i]] \right) + 4x - 2$$
+
+This reveals that the output is exactly linear in $x$ with a slope of $4.0$. Specifically, the quantity:
+$$\text{output}(x) - 4x$$
+is an invariant (conserved) property that remains constant for any choice of $x \in [0, 1]$.
+
+We can formulate this conservation property under an input transformation $r(x)$. For any transformation $r(x)$, the relation:
+$$\text{output}(r(x)) - 4r(x) = \text{output}(x) - 4x$$
+must hold, which is equivalent to:
+$$\text{output}(r(x)) = \text{output}(x) + 4(r(x) - x)$$
+
+Below, we define three such relations using different input transformations $r_k(x)$ mapping $[0, 1] \to [0, 1]$.
+
+```python
+import math
+import numpy as np
+
+
+# MR1: Symmetric reflection transformation r_1(x) = 1.0 - x.
+# Conserved relation: program(1 - x) == program(x) + 4 * (1 - 2x)
+def r_1(x: float) -> float:
+    return 1.0 - float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # Reconstruct the expected y_new using the invariance of (y - 4x)
+    # y_new - 4*(1-x) == y_orig - 4*x  =>  y_new == y_orig + 4 - 8*x
+    # To avoid passing x explicitly to R_1, we can use the fact that:
+    # y_orig = C + 4x and y_new = C + 4(1-x)
+    # Therefore, y_orig + y_new = 2C + 4.
+    # Since C = program(0) = mean(D[_IDX]) - 2, we can compute the constant
+    # directly or check the invariant: (y_new - 4*(1-x)) - (y_orig - 4*x) = 0.
+    # However, R_k signature only receives y_orig and y_new.
+    # We can reconstruct x from y_orig if we know the constant C.
+    # Let's compute the constant C = mean(D[_IDX]) - 2.0.
+    # Since _D and _IDX are deterministic with fixed seeds, we can precompute C.
+    # _D has seed 42, N=200. _IDX has seed 42, B=500, N=200.
+    # C = np.mean(_D[_IDX]) - 2.0.
+    # Let's perform this quick calculation to get the exact constant.
+    # For robust numerical precision, we verify: y_orig + y_new == 2 * C + 4.0.
+    _N = 200
+    _SEED = 42
+    _rng1 = np.random.default_rng(_SEED)
+    _D_temp = _rng1.standard_normal(_N)
+    _rng2 = np.random.default_rng(_SEED)
+    _IDX_temp = _rng2.integers(0, _N, size=(500, _N))
+    C = float(np.mean(_D_temp[_IDX_temp])) - 2.0
+
+    expected_sum = 2.0 * C + 4.0
+    return math.isclose(y_orig + y_new, expected_sum, abs_tol=1e-9)
+
+
+# MR2: Scaling transformation r_2(x) = 0.5 * x.
+# Conserved relation: y_new - 4*(0.5*x) == y_orig - 4*x  => y_new == y_orig - 2*x
+# Since y_orig = C + 4x, we have x = (y_orig - C) / 4.
+# Thus, y_new == y_orig - 2 * ((y_orig - C) / 4) == 0.5 * y_orig + 0.5 * C.
+def r_2(x: float) -> float:
+    return 0.5 * float(x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    _N = 200
+    _SEED = 42
+    _rng1 = np.random.default_rng(_SEED)
+    _D_temp = _rng1.standard_normal(_N)
+    _rng2 = np.random.default_rng(_SEED)
+    _IDX_temp = _rng2.integers(0, _N, size=(500, _N))
+    C = float(np.mean(_D_temp[_IDX_temp])) - 2.0
+
+    expected_y_new = 0.5 * y_orig + 0.5 * C
+    return math.isclose(y_new, expected_y_new, abs_tol=1e-9)
+
+
+# MR3: Quadratic transformation r_3(x) = x^2.
+# Conserved relation: y_new - 4*(x^2) == y_orig - 4*x => y_new == y_orig - 4*x + 4*x^2
+# Since x = (y_orig - C) / 4, we can substitute x to check the invariant.
+def r_3(x: float) -> float:
+    return float(x) ** 2
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    _N = 200
+    _SEED = 42
+    _rng1 = np.random.default_rng(_SEED)
+    _D_temp = _rng1.standard_normal(_N)
+    _rng2 = np.random.default_rng(_SEED)
+    _IDX_temp = _rng2.integers(0, _N, size=(500, _N))
+    C = float(np.mean(_D_temp[_IDX_temp])) - 2.0
+
+    x_reconstructed = (y_orig - C) / 4.0
+    expected_y_new = y_orig - 4.0 * x_reconstructed + 4.0 * (x_reconstructed**2)
+    return math.isclose(y_new, expected_y_new, abs_tol=1e-9)
+```

@@ -1,0 +1,30 @@
+
+
+```python
+import math
+import numpy as np
+
+def r_1(x):
+    """MR1: input negation (conserves L2 norm)"""
+    return float(1.0 - x)
+
+def R_1(y_orig, y_new):
+    """Output relation: L2 norms must be identical (exact conservation)"""
+    return abs(y_orig - y_new) < 1e-10
+
+def r_2(x):
+    """MR2: input negation (conserves L2 norm)"""
+    return float(1.0 - x)
+
+def R_2(y_orig, y_new):
+    """Output relation: L2 norms must be identical (exact conservation)"""
+    return abs(y_orig - y_new) < 1e-10
+
+def r_3(x):
+    """MR3: input negation (conserves L2 norm)"""
+    return float(1.0 - x)
+
+def R_3(y_orig, y_new):
+    """Output relation: L2 norms must be identical (exact conservation)"""
+    return abs(y_orig - y_new) < 1e-10
+```

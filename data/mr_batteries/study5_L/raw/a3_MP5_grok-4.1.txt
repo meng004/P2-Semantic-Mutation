@@ -1,0 +1,27 @@
+
+
+```python
+import math
+
+# MP5: method-comparison (E* refinement, relative ordering to higher-fidelity regime)
+# r_k: deterministic transformation to a higher-fidelity evaluation regime of the same quantity
+# R_k: asserts u_FDM_mid_ratio_new >= u_FDM_mid_ratio_orig (order 2 convergence)
+
+def r_1(x):
+    return max(1.0, x * 4.0)
+
+def R_1(y_orig, y_new):
+    return y_new >= y_orig
+
+def r_2(x):
+    return max(1.0, x * 2.0)
+
+def R_2(y_orig, y_new):
+    return y_new >= y_orig
+
+def r_3(x):
+    return max(1.0, x * 1.5)
+
+def R_3(y_orig, y_new):
+    return y_new >= y_orig
+```

@@ -1,0 +1,24 @@
+{
+  "cell": "B4_MP3",
+  "put": "b4",
+  "mp": 3,
+  "vendor_slot": "claude-fable-5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP3_claude-fable-5.txt",
+  "module_src": "import math\n\ndef r_1(x):\n    return float(x) / 2.0\n\ndef R_1(y_orig, y_new):\n    y0, y1 = float(y_orig), float(y_new)\n    if not (math.isfinite(y0) and math.isfinite(y1)):\n        return False\n    return abs(y0) <= 3.0 and abs(y1) <= 3.0",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 1,
+  "n_certified": 0,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    }
+  ]
+}

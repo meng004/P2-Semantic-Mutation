@@ -1,0 +1,42 @@
+```python
+import math
+
+def _effective_N(x):
+    h = max(float(x), 1e-4)
+    return max(4, round(1.0 / h))
+
+def _finite_pair(y_orig, y_new):
+    try:
+        return math.isfinite(float(y_orig)) and math.isfinite(float(y_new))
+    except Exception:
+        return False
+
+def _same_output(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return abs(float(y_orig) - float(y_new)) <= 1e-12
+
+# Canonicalize any input to the exact grid spacing producing the same effective N.
+def r_1(x):
+    N = _effective_N(x)
+    return min(1.0, max(0.0, 1.0 / float(N)))
+
+def R_1(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+
+# Move to another point strictly inside the same round-to-N basin.
+def r_2(x):
+    N = _effective_N(x)
+    return min(1.0, max(0.0, 1.0 / (float(N) + 0.25)))
+
+def R_2(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+
+# Move to the opposite side of the same round-to-N basin.
+def r_3(x):
+    N = _effective_N(x)
+    return min(1.0, max(0.0, 1.0 / (float(N) - 0.25)))
+
+def R_3(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+```

@@ -1,0 +1,38 @@
+{
+  "cell": "B4_MP5",
+  "put": "b4",
+  "mp": 5,
+  "vendor_slot": "gpt-5.5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP5_gpt-5.5.txt",
+  "module_src": "import math\n\ndef _finite_pair(a, b):\n    return math.isfinite(float(a)) and math.isfinite(float(b))\n\n\n# Higher-regime comparison: move x halfway toward the upper end of the\n# admissible interval.  For the correct kernel this strictly increases the\n# shifted bootstrap mean for all x < 1.\ndef r_1(x):\n    x = float(x)\n    return 0.5 * (x + 1.0)\n\ndef R_1(y_orig, y_new):\n    if not _finite_pair(y_orig, y_new):\n        return False\n    return float(y_new) > float(y_orig)\n\n\n# Alternative refinement schedule: concave lift toward 1.  On [0,1],\n# sqrt(x) >= x, with strict increase except at the endpoints.\ndef r_2(x):\n    x = float(x)\n    if x < 0.0:\n        x = 0.0\n    elif x > 1.0:\n        x = 1.0\n    return math.sqrt(x)\n\ndef R_2(y_orig, y_new):\n    if not _finite_pair(y_orig, y_new):\n        return False\n    return float(y_new) > float(y_orig)\n\n\n# Quadratic lift toward the upper regime: 1 - (1-x)^2 = 2x - x^2.\n# This remains in [0,1] and is strictly above x for interior points.\ndef r_3(x):\n    x = float(x)\n    if x < 0.0:\n        x = 0.0\n    elif x > 1.0:\n        x = 1.0\n    return 1.0 - (1.0 - x) * (1.0 - x)\n\ndef R_3(y_orig, y_new):\n    if not _finite_pair(y_orig, y_new):\n        return False\n    return float(y_new) > float(y_orig)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 3,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

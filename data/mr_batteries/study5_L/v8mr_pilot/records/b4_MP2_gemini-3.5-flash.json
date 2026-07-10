@@ -1,0 +1,16 @@
+{
+  "cell": "B4_MP2",
+  "put": "b4",
+  "mp": 2,
+  "vendor_slot": "gemini-3.5-flash",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP2_gemini-3.5-flash.txt",
+  "module_src": "- x)$?\nIf $r_3(x) = x + 0.1 * x * (1.0 - x)$, then for $x \\in [0,1]$, $x(1-x) \\ge 0$.\nSo $r_3(x) \\ge x$.\nAnd $r_3(x) \\le x + 0.1 * 0.25 = x + 0.0",
+  "parse_error": "SyntaxError: unmatched ')' (<unknown>, line 1)",
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 0,
+  "n_certified": 0,
+  "mrs": []
+}

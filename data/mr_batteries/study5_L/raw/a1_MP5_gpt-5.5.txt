@@ -1,0 +1,60 @@
+```python
+import math
+
+_SIGMA = 10.0
+_RHO = 28.0
+_BETA = 8.0 / 3.0
+
+
+def _rk4_norm_at_1(u):
+    """Independent fixed-step RK4 approximation of program(u), used only to
+    select a high-output comparison regime for this method-comparison MR."""
+    u = min(1.0, max(0.0, float(u)))
+    x = 20.0 * u - 10.0
+    y = 20.0 * u - 10.0
+    z = 30.0 * u + 5.0
+
+    h = 0.0025
+    n = 400
+
+    def f(a, b, c):
+        return (
+            _SIGMA * (b - a),
+            a * (_RHO - c) - b,
+            a * b - _BETA * c,
+        )
+
+    for _ in range(n):
+        k1x, k1y, k1z = f(x, y, z)
+        k2x, k2y, k2z = f(x + 0.5 * h * k1x, y + 0.5 * h * k1y, z + 0.5 * h * k1z)
+        k3x, k3y, k3z = f(x + 0.5 * h * k2x, y + 0.5 * h * k2y, z + 0.5 * h * k2z)
+        k4x, k4y, k4z = f(x + h * k3x, y + h * k3y, z + h * k3z)
+
+        x += (h / 6.0) * (k1x + 2.0 * k2x + 2.0 * k3x + k4x)
+        y += (h / 6.0) * (k1y + 2.0 * k2y + 2.0 * k3y + k4y)
+        z += (h / 6.0) * (k1z + 2.0 * k2z + 2.0 * k3z + k4z)
+
+    return math.sqrt(x * x + y * y + z * z)
+
+
+# Select, by an independent fixed-step method, a high-fidelity comparison point
+# expected to produce a larger final-state norm than a typical source input.
+_BEST_X = 0.0
+_BEST_V = -1.0
+for _i in range(401):
+    _u = _i / 400.0
+    _v = _rk4_norm_at_1(_u)
+    if math.isfinite(_v) and _v > _BEST_V:
+        _BEST_X = _u
+        _BEST_V = _v
+
+
+def r_1(x):
+    return float(_BEST_X)
+
+
+def R_1(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_new >= y_orig
+```

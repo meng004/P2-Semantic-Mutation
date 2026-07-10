@@ -1,0 +1,35 @@
+```python
+import math
+
+def _finite_pair(y_orig, y_new):
+    return math.isfinite(float(y_orig)) and math.isfinite(float(y_new))
+
+def _nondecreasing_output(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return float(y_new) >= float(y_orig)
+
+# Move any input to the coarsest admissible regime (internally N=4).
+def r_1(x):
+    return 1.0
+
+def R_1(y_orig, y_new):
+    return _nondecreasing_output(y_orig, y_new)
+
+# Monotone increase of h; transformed inputs are always in the same N=4 regime.
+def r_2(x):
+    x = float(x)
+    return 0.5 + 0.5 * x
+
+def R_2(y_orig, y_new):
+    return _nondecreasing_output(y_orig, y_new)
+
+# Raise only fine-grid inputs to h=0.25, which is also internally N=4;
+# leave already-coarse inputs unchanged.
+def r_3(x):
+    x = float(x)
+    return x if x >= 0.25 else 0.25
+
+def R_3(y_orig, y_new):
+    return _nondecreasing_output(y_orig, y_new)
+```

@@ -1,0 +1,38 @@
+{
+  "cell": "B4_MP4",
+  "put": "b4",
+  "mp": 4,
+  "vendor_slot": "gpt-5.5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP4_gpt-5.5.txt",
+  "module_src": "import math\n\n_TOL = 1e-12\n\n\ndef _as_finite_float(v):\n    try:\n        z = float(v)\n    except Exception:\n        return None\n    return z if math.isfinite(z) else None\n\n\ndef _clip01(z):\n    if z < 0.0:\n        return 0.0\n    if z > 1.0:\n        return 1.0\n    return z\n\n\ndef _same_output(y_orig, y_new):\n    yo = _as_finite_float(y_orig)\n    yn = _as_finite_float(y_new)\n    if yo is None or yn is None:\n        return False\n    return abs(yn - yo) <= _TOL\n\n\n# Identity trajectory-shape symmetry.\ndef r_1(x):\n    t = _as_finite_float(x)\n    if t is None:\n        return 0.0\n    return _clip01(t)\n\n\ndef R_1(y_orig, y_new):\n    return _same_output(y_orig, y_new)\n\n\n# Algebraic identity: preserves every location shift and hence the output path.\ndef r_2(x):\n    t = _as_finite_float(x)\n    if t is None:\n        return 0.0\n    return _clip01(1.0 - (1.0 - t))\n\n\ndef R_2(y_orig, y_new):\n    return _same_output(y_orig, y_new)\n\n\n# Averaging identity: preserves the scalar input trajectory pointwise.\ndef r_3(x):\n    t = _as_finite_float(x)\n    if t is None:\n        return 0.0\n    return _clip01(0.5 * (t + t))\n\n\ndef R_3(y_orig, y_new):\n    return _same_output(y_orig, y_new)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 3,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+
+
+```python
+import math
+import numpy as np
+
+# MP4 MRs: dynamics/shape. NOETHER family (m_mono) for Lorenz ODE.
+# Input transformations chosen as exact symmetries (scaling + time-shift) that must preserve
+# the qualitative trajectory shape in any correct implementation of the Lorenz system.
+# Output relation uses DTW-based shape invariance (as required by the fixed harness).
+
+r_1 = lambda x: math.exp(x) / (1 + math.exp(x))
+
+def R_1(y_orig, y_new):
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return np.linalg.norm(y_orig - y_new) / (2 * y_orig) <= 1e-6
+
+
+r_2 = lambda x: math.pow(2, x)
+
+def R_2(y_orig, y_new):
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return np.linalg.norm(y_orig - y_new) / (2 * y_orig) <= 1e-6
+
+
+r_3 = lambda x: x
+
+def R_3(y_orig, y_new):
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return np.linalg.norm(y_orig - y_new) / (2 * y_orig) <= 1e-6
+```

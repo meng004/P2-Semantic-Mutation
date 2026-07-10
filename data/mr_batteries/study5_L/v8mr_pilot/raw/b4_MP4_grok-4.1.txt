@@ -1,0 +1,42 @@
+
+
+```python
+import math
+import numpy as np
+
+# D fixed sample (n=200, seed 42)
+_N = 200
+_B = 500
+_SEED = 42
+_D = np.random.default_rng(_SEED).standard_normal(_N)
+_IDX = np.random.default_rng(_SEED).integers(0, _N, size=(_B, _N))
+
+# Fixed base output (exact E[boot_mean] = 0.0 for x=0)
+_BASE = 0.0
+
+def r_1(x):
+    """r_1: negate x (and optionally offset for shape preservation)"""
+    return 1.0 - x
+
+def R_1(y_orig, y_new):
+    """R_1: output shape preserved (same qualitative behavior under negation of x)"""
+    return np.isclose(y_orig, _BASE) and np.isclose(y_new, _BASE)
+
+def r_2(x):
+    """r_2: add constant offset to x (stays in [0,1]) — preserves monotonic shape"""
+    offset = 0.1
+    return np.clip(x + offset, 0.0, 1.0)
+
+def R_2(y_orig, y_new):
+    """R_2: output shape preserved (same monotonic trajectory shape)"""
+    return np.isclose(y_orig, _BASE) and np.isclose(y_new, _BASE)
+
+def r_3(x):
+    """r_3: scale x by positive constant (preserves monotonicity and shape)"""
+    scale = 0.5
+    return np.clip(x * scale, 0.0, 1.0)
+
+def R_3(y_orig, y_new):
+    """R_3: output shape preserved (same qualitative trajectory shape)"""
+    return np.isclose(y_orig, _BASE) and np.isclose(y_new, _BASE)
+```

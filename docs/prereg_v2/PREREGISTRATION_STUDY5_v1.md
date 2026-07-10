@@ -980,3 +980,13 @@ read, during Study-5 harness reconnaissance, the registered R-side MR module
 as a claude-slot contamination disclosure for PUT a1 and carried into the
 Family-MR report. The remaining registered MR modules are not opened by the
 session until every claude-slot elicitation is drawn.
+
+**Incident P15 — 2026-07-10 (Study-5 Family-MR pilot, code-level).**
+Elicitation-parser binding-syntax defect found by the registered `v8mr_pilot`
+({a2, b4}) pilot and fixed code-only BEFORE the confirmatory Family-MR
+elicitation run: MR pairs bound by assignment (`r_1 = lambda ...`, grok
+lineage) were rejected by a `def`-only detector although the A2 contract
+fixes only the names. Fix confined to `scripts/study5_mr_elicit.py` parse /
+V1-callability path; full entry in `PILOT_LOG.md` P15. No threshold,
+estimand, prompt semantics, serving parameter, roster, or vendor role
+changed; pilot draws untouched.

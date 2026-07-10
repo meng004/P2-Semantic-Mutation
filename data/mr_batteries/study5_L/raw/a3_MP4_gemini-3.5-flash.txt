@@ -1,0 +1,56 @@
+An elegant way to construct metamorphic relations for this program is to exploit the grid discretization behavior. The grid spacing $h$ is mapped to a discrete number of intervals $N = \max(4, \text{round}(1.0 / h))$ and an actual grid spacing $h_{act} = 1.0 / N$. 
+
+Because of the rounding step $\text{round}(1.0 / h)$, there exist intervals of $x$ (or $h$) that map to the exact same integer $N$, resulting in the exact same numerical grid, time-stepping parameters, and final computed ratio. 
+
+We can define shape-preserving input transformations $r_k(x)$ that perturb $x$ within the boundaries that map to the same discrete $N$. This guarantees that the output of the program remains invariant (up to machine precision), preserving the identity of the output.
+
+Here is the implementation of three such metamorphic relations:
+
+```python
+import math
+import numpy as np
+
+# Helper to find the discrete N corresponding to a given x
+def _get_N(x: float) -> int:
+    h = max(float(x), 1e-4)
+    return max(4, round(1.0 / h))
+
+def r_1(x: float) -> float:
+    """Maps x to the center of the interval that yields the same grid size N."""
+    N = _get_N(x)
+    # The boundary for round(1/h) == N is [1/(N+0.5), 1/(N-0.5))
+    # We choose the exact reciprocal of N, which is guaranteed to be in this interval.
+    return 1.0 / N
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """The outputs must be identical within numerical precision."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return abs(y_orig - y_new) < 1e-12
+
+
+def r_2(x: float) -> float:
+    """Maps x to a value slightly larger than 1/N, but still rounding to N."""
+    N = _get_N(x)
+    # 1.0 / (N + 0.25) safely rounds to N
+    return 1.0 / (N + 0.25)
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """The outputs must be identical within numerical precision."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return abs(y_orig - y_new) < 1e-12
+
+
+def r_3(x: float) -> float:
+    """Maps x to a value slightly smaller than 1/N, but still rounding to N."""
+    N = _get_N(x)
+    # 1.0 / (N - 0.25) safely rounds to N (for N >= 4)
+    return 1.0 / (N - 0.25)
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    """The outputs must be identical within numerical precision."""
+    if not math.isfinite(y_orig) or not math.isfinite(y_new):
+        return False
+    return abs(y_orig - y_new) < 1e-12
+```

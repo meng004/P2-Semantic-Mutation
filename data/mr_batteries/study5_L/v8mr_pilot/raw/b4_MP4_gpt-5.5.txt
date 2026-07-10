@@ -1,0 +1,65 @@
+```python
+import math
+
+_TOL = 1e-12
+
+
+def _as_finite_float(v):
+    try:
+        z = float(v)
+    except Exception:
+        return None
+    return z if math.isfinite(z) else None
+
+
+def _clip01(z):
+    if z < 0.0:
+        return 0.0
+    if z > 1.0:
+        return 1.0
+    return z
+
+
+def _same_output(y_orig, y_new):
+    yo = _as_finite_float(y_orig)
+    yn = _as_finite_float(y_new)
+    if yo is None or yn is None:
+        return False
+    return abs(yn - yo) <= _TOL
+
+
+# Identity trajectory-shape symmetry.
+def r_1(x):
+    t = _as_finite_float(x)
+    if t is None:
+        return 0.0
+    return _clip01(t)
+
+
+def R_1(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+
+
+# Algebraic identity: preserves every location shift and hence the output path.
+def r_2(x):
+    t = _as_finite_float(x)
+    if t is None:
+        return 0.0
+    return _clip01(1.0 - (1.0 - t))
+
+
+def R_2(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+
+
+# Averaging identity: preserves the scalar input trajectory pointwise.
+def r_3(x):
+    t = _as_finite_float(x)
+    if t is None:
+        return 0.0
+    return _clip01(0.5 * (t + t))
+
+
+def R_3(y_orig, y_new):
+    return _same_output(y_orig, y_new)
+```

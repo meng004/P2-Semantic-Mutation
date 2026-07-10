@@ -1,0 +1,38 @@
+{
+  "cell": "B4_MP2",
+  "put": "b4",
+  "mp": 2,
+  "vendor_slot": "gpt-5.5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP2_gpt-5.5.txt",
+  "module_src": "import math\n\ndef _is_finite_number(v):\n    try:\n        return math.isfinite(float(v))\n    except Exception:\n        return False\n\ndef _ge_finite(y_orig, y_new):\n    if not (_is_finite_number(y_orig) and _is_finite_number(y_new)):\n        return False\n    return float(y_new) >= float(y_orig)\n\n# Increase x by a fixed amount, saturating at the upper domain boundary.\ndef r_1(x):\n    x = float(x)\n    return min(1.0, max(0.0, x + 0.25))\n\ndef R_1(y_orig, y_new):\n    return _ge_finite(y_orig, y_new)\n\n# Move x halfway toward 1; for x in [0, 1], this is always >= x.\ndef r_2(x):\n    x = float(x)\n    return 0.5 * (x + 1.0)\n\ndef R_2(y_orig, y_new):\n    return _ge_finite(y_orig, y_new)\n\n# Square-root transformation is order-increasing relative to identity on [0, 1].\ndef r_3(x):\n    x = float(x)\n    x = min(1.0, max(0.0, x))\n    return math.sqrt(x)\n\ndef R_3(y_orig, y_new):\n    return _ge_finite(y_orig, y_new)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 3,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

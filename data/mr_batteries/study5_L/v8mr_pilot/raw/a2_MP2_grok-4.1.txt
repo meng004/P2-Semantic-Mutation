@@ -1,0 +1,38 @@
+
+
+```python
+"""MP2 — monotonicity for program(x) with x in [0,1].
+Direct oracle mode on output pair (conservation implies monotonicity via order-preserving transform)."""
+
+import math
+
+
+def r_1(x):
+    """Order-preserving transform: negate (direct MP2 Mode-I)."""
+    return 1.0 - x
+
+
+def R_1(y_orig, y_new):
+    """Output ordering: new >= orig (conservation enforces it)."""
+    return y_new >= y_orig
+
+
+def r_2(x):
+    """Order-preserving transform: reciprocal (direct MP2 Mode-I)."""
+    return 1.0 / (1.0 + x) if x > 0.0 else 0.0
+
+
+def R_2(y_orig, y_new):
+    """Output ordering: new >= orig (conservation enforces it)."""
+    return y_new >= y_orig
+
+
+def r_3(x):
+    """Order-preserving transform: linear decay to 0.75 (direct MP2 Mode-I)."""
+    return 0.75 * x
+
+
+def R_3(y_orig, y_new):
+    """Output ordering: new >= orig (conservation enforces it)."""
+    return y_new >= y_orig
+```

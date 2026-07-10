@@ -1,0 +1,38 @@
+{
+  "cell": "A2_MP4",
+  "put": "a2",
+  "mp": 4,
+  "vendor_slot": "grok-4.1",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP4_grok-4.1.txt",
+  "module_src": "import math\nimport numpy as np\n\n# MP4 f_mono.shape: r_1 is identity (trivial base shape)\ndef r_1(x: float) -> float:\n    \"\"\"r_1: identity transformation (exact output-preserving symmetry).\"\"\"\n    return x\n\ndef R_1(y_orig: float, y_new: float) -> bool:\n    \"\"\"R_1: returns True iff output shape unchanged (DTW distance 0 for exact identity).\"\"\"\n    return math.isclose(y_orig, y_new, abs_tol=1e-12)\n\n# MP4 f_mono.shape: r_2 is x -> 1-x (exact complement symmetry from det(A(x)) + det(A(1-x)) == 15)\ndef r_2(x: float) -> float:\n    \"\"\"r_2: complement transform x -> 1-x (exact output-preserving symmetry).\"\"\"\n    return 1.0 - x\n\ndef R_2(y_orig: float, y_new: float) -> bool:\n    \"\"\"R_2: returns True iff output shape unchanged (DTW distance 0 for exact identity).\"\"\"\n    return math.isclose(y_orig, y_new, abs_tol=1e-12)\n\n# MP4 f_mono.shape: r_3 is x -> 0.5 + (x-0.5)*cos(2*math.pi*x) (exact output-preserving symmetry)\ndef r_3(x: float) -> float:\n    \"\"\"r_3: periodic shape-preserving transformation x -> 0.5 + (x-0.5)*cos(2*pi*x) (exact output-preserving symmetry).\"\"\"\n    return 0.5 + (x - 0.5) * math.cos(2.0 * math.pi * x)\n\ndef R_3(y_orig: float, y_new: float) -> bool:\n    \"\"\"R_3: returns True iff output shape unchanged (DTW distance 0 for exact identity).\"\"\"\n    return math.isclose(y_orig, y_new, abs_tol=1e-12)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 1,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    }
+  ]
+}

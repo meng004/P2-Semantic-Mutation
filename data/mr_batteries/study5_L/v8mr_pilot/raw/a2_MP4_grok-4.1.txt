@@ -1,0 +1,33 @@
+
+
+```python
+import math
+import numpy as np
+
+# MP4 f_mono.shape: r_1 is identity (trivial base shape)
+def r_1(x: float) -> float:
+    """r_1: identity transformation (exact output-preserving symmetry)."""
+    return x
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """R_1: returns True iff output shape unchanged (DTW distance 0 for exact identity)."""
+    return math.isclose(y_orig, y_new, abs_tol=1e-12)
+
+# MP4 f_mono.shape: r_2 is x -> 1-x (exact complement symmetry from det(A(x)) + det(A(1-x)) == 15)
+def r_2(x: float) -> float:
+    """r_2: complement transform x -> 1-x (exact output-preserving symmetry)."""
+    return 1.0 - x
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """R_2: returns True iff output shape unchanged (DTW distance 0 for exact identity)."""
+    return math.isclose(y_orig, y_new, abs_tol=1e-12)
+
+# MP4 f_mono.shape: r_3 is x -> 0.5 + (x-0.5)*cos(2*math.pi*x) (exact output-preserving symmetry)
+def r_3(x: float) -> float:
+    """r_3: periodic shape-preserving transformation x -> 0.5 + (x-0.5)*cos(2*pi*x) (exact output-preserving symmetry)."""
+    return 0.5 + (x - 0.5) * math.cos(2.0 * math.pi * x)
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    """R_3: returns True iff output shape unchanged (DTW distance 0 for exact identity)."""
+    return math.isclose(y_orig, y_new, abs_tol=1e-12)
+```

@@ -1,0 +1,31 @@
+{
+  "cell": "A2_MP1",
+  "put": "a2",
+  "mp": 1,
+  "vendor_slot": "claude-fable-5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP1_claude-fable-5.txt",
+  "module_src": "import math\n\n# MR1: complement transform — det A(x) + det A(1-x) = 15 exactly.\ndef r_1(x):\n    return 1.0 - float(x)\n\ndef R_1(y_orig, y_new):\n    y0, y1 = float(y_orig), float(y_new)\n    if not (math.isfinite(y0) and math.isfinite(y1)):\n        return False\n    return abs((y0 + y1) - 15.0) < 1e-6\n\n# MR2: half-argument transform — 2*det A(x/2) - det A(x) = 6 exactly.\ndef r_2(x):\n    return float(x) / 2.0\n\ndef R_2(y_orig, y_new):\n    y0, y1 = float(y_orig), float(y_new)\n    if not (math.isfinite(y0) and math.isfinite(y1)):\n        return False\n    return abs(2.0 * y1 - y0 - 6.0) < 1e-6",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 2,
+  "n_certified": 2,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

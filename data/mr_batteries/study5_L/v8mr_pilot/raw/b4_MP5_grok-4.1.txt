@@ -1,0 +1,20 @@
+
+
+```python
+import numpy as np
+import math
+
+# Not to be repeated
+_N = 200
+_B = 500
+_SEED = 42
+_D = np.random.default_rng(_SEED).standard_normal(_N)
+_IDX = np.random.default_rng(_SEED).integers(0, _N, size=(_B, _N))
+_F = np.random.default_rng(_SEED).uniform(0.0, 1.0)
+
+def program(x) -> float:
+    x = float(x)
+    shifted = _D + (4.0 * x - 2.0)
+    boot_means = shifted[_IDX].mean(axis=1)
+    return float(np.mean(boot_means))
+```

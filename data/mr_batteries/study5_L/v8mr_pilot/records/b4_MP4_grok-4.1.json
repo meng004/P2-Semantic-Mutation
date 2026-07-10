@@ -1,0 +1,38 @@
+{
+  "cell": "B4_MP4",
+  "put": "b4",
+  "mp": 4,
+  "vendor_slot": "grok-4.1",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP4_grok-4.1.txt",
+  "module_src": "import math\nimport numpy as np\n\n# D fixed sample (n=200, seed 42)\n_N = 200\n_B = 500\n_SEED = 42\n_D = np.random.default_rng(_SEED).standard_normal(_N)\n_IDX = np.random.default_rng(_SEED).integers(0, _N, size=(_B, _N))\n\n# Fixed base output (exact E[boot_mean] = 0.0 for x=0)\n_BASE = 0.0\n\ndef r_1(x):\n    \"\"\"r_1: negate x (and optionally offset for shape preservation)\"\"\"\n    return 1.0 - x\n\ndef R_1(y_orig, y_new):\n    \"\"\"R_1: output shape preserved (same qualitative behavior under negation of x)\"\"\"\n    return np.isclose(y_orig, _BASE) and np.isclose(y_new, _BASE)\n\ndef r_2(x):\n    \"\"\"r_2: add constant offset to x (stays in [0,1]) — preserves monotonic shape\"\"\"\n    offset = 0.1\n    return np.clip(x + offset, 0.0, 1.0)\n\ndef R_2(y_orig, y_new):\n    \"\"\"R_2: output shape preserved (same monotonic trajectory shape)\"\"\"\n    return np.isclose(y_orig, _BASE) and np.isclose(y_new, _BASE)\n\ndef r_3(x):\n    \"\"\"r_3: scale x by positive constant (preserves monotonicity and shape)\"\"\"\n    scale = 0.5\n    return np.clip(x * scale, 0.0, 1.0)\n\ndef R_3(y_orig, y_new):\n    \"\"\"R_3: output shape preserved (same qualitative trajectory shape)\"\"\"\n    return np.isclose(y_orig, _BASE) and np.isclose(y_new, _BASE)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 0,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": false,
+      "v1_reason": "R returned bool, not bool",
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 2,
+      "v1": false,
+      "v1_reason": "R returned bool, not bool",
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 3,
+      "v1": false,
+      "v1_reason": "R returned bool, not bool",
+      "v2": false,
+      "certified": false
+    }
+  ]
+}

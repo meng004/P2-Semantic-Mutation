@@ -1,0 +1,49 @@
+```python
+import math
+
+_TOL = 1e-9
+
+def r_1(x):
+    x = float(x)
+    return x
+
+def R_1(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return False
+    return abs(yo - yn) <= _TOL and 6.0 - _TOL <= yo <= 9.0 + _TOL
+
+
+def r_2(x):
+    x = float(x)
+    return min(1.0, max(0.0, x))
+
+def R_2(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return False
+    return abs(yo - yn) <= _TOL and 6.0 - _TOL <= yn <= 9.0 + _TOL
+
+
+def r_3(x):
+    x = float(x)
+    return 1.0 - (1.0 - x)
+
+def R_3(y_orig, y_new):
+    try:
+        yo = float(y_orig)
+        yn = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(yo) and math.isfinite(yn)):
+        return False
+    return abs(yo - yn) <= _TOL and 6.0 - _TOL <= yo <= 9.0 + _TOL and 6.0 - _TOL <= yn <= 9.0 + _TOL
+```

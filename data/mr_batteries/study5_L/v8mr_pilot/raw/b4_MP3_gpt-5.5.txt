@@ -1,0 +1,14 @@
+```python
+import math
+
+def r_1(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.0
+    return min(1.0, max(0.0, 0.5 * x))
+
+def R_1(y_orig, y_new):
+    y_orig = float(y_orig)
+    y_new = float(y_new)
+    return math.isfinite(y_orig) and math.isfinite(y_new)
+```

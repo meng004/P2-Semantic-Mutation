@@ -1,0 +1,20 @@
+```python
+import math
+
+_TOL = 1e-10
+
+def r_1(x):
+    x = float(x)
+    if not math.isfinite(x):
+        return 0.5
+    if x < 0.0:
+        return 0.0
+    if x > 1.0:
+        return 1.0
+    return x
+
+def R_1(y_orig, y_new):
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, rel_tol=_TOL, abs_tol=_TOL)
+```

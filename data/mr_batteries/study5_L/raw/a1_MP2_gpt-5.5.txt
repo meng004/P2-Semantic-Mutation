@@ -1,0 +1,53 @@
+```python
+import math
+
+_TOL = 1e-9
+
+
+def _finite_pair(y_orig, y_new):
+    return math.isfinite(float(y_orig)) and math.isfinite(float(y_new))
+
+
+def _geq(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return float(y_new) + _TOL >= float(y_orig)
+
+
+# Move the input away from the invariant low-norm center x=0.5 toward
+# the corresponding end of the interval.
+def r_1(x):
+    x = float(x)
+    if x < 0.5:
+        return 0.0
+    return 1.0
+
+
+def R_1(y_orig, y_new):
+    return _geq(y_orig, y_new)
+
+
+# A milder order-directed move away from x=0.5: double the distance from
+# the center, clipped to [0, 1].
+def r_2(x):
+    x = float(x)
+    if x < 0.5:
+        return max(0.0, 2.0 * x - 0.5)
+    return min(1.0, 2.0 * x)
+
+
+def R_2(y_orig, y_new):
+    return _geq(y_orig, y_new)
+
+
+# Another monotone outward move by a fixed offset, clipped at the boundary.
+def r_3(x):
+    x = float(x)
+    if x < 0.5:
+        return max(0.0, x - 0.25)
+    return min(1.0, x + 0.25)
+
+
+def R_3(y_orig, y_new):
+    return _geq(y_orig, y_new)
+```

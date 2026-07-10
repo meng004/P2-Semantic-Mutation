@@ -1,0 +1,74 @@
+An elegant way to construct metamorphic relations for this program is to exploit its strict mathematical monotonicity. 
+
+The program computes a bootstrap mean of the shifted dataset:
+$$\text{program}(x) = \frac{1}{B} \sum_{b=1}^{B} \frac{1}{N} \sum_{i=1}^{N} \left( D_{\text{idx}[b, i]} + 4x - 2 \right) = \bar{D}^* + 4x - 2$$
+where $\bar{D}^*$ is the average of the bootstrap resamples, which is a constant determined by the fixed seed.
+
+Because the output is strictly monotonically increasing with respect to $x$ (specifically, it is a linear shift with a positive slope of $4.0$), any shape-preserving input transformation that maintains this order or maps the input space under a known monotonic transformation will yield a strictly predictable output relation.
+
+We can define three distinct metamorphic relations under the `f_mono.shape` family:
+
+1. **Identity transformation ($r_1(x) = x$):** The output must be exactly identical ($y_{\text{new}} = y_{\text{orig}}$).
+2. **Translation/Shift ($r_2(x) = x + c$):** For a constant shift $c$, the output must shift exactly by $4c$. We choose $r_2(x) = 0.5x$, which maps $[0, 1] \to [0, 0.5]$. The corresponding output relation is $y_{\text{new}} = y_{\text{orig}} - 2x$.
+3. **Symmetric Reflection ($r_3(x) = 1 - x$):** Reflecting $x$ about $0.5$ must reflect the output about the value at $0.5$. Since $\text{program}(x) + \text{program}(1-x) = 2 \bar{D}^*$, we can verify that $y_{\text{orig}} + y_{\text{new}} = 2 \text{program}(0.5)$.
+
+Here is the implementation of these metamorphic relations:
+
+```python
+import math
+import numpy as np
+
+# We can pre-compute the expected value at x = 0.5 to anchor our relations.
+# program(0.5) = \bar{D}^* + 4(0.5) - 2 = \bar{D}^*.
+# Since _D and _IDX are fixed, \bar{D}^* is a constant.
+_N = 200
+_B = 500
+_SEED = 42
+_D = np.random.default_rng(_SEED).standard_normal(_N)
+_IDX = np.random.default_rng(_SEED).integers(0, _N, size=(_B, _N))
+_BOOT_MEAN_CONST = float(np.mean(_D[_IDX].mean(axis=1)))
+
+
+# --- MR 1: Identity Transformation ---
+# r_1(x) = x
+# The output must be identical.
+def r_1(x: float) -> float:
+    return float(x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, abs_tol=1e-9)
+
+
+# --- MR 2: Scaling / Linear Shrinkage ---
+# r_2(x) = 0.5 * x
+# Since program(x) = \bar{D}^* + 4x - 2,
+# program(r_2(x)) = \bar{D}^* + 2x - 2 = program(x) - 2x.
+def r_2(x: float) -> float:
+    return float(0.5 * x)
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # Reconstruct x from y_orig: x = (y_orig - \bar{D}^* + 2) / 4
+    x_reconstructed = (y_orig - _BOOT_MEAN_CONST + 2.0) / 4.0
+    expected_y_new = y_orig - 2.0 * x_reconstructed
+    return math.isclose(y_new, expected_y_new, abs_tol=1e-9)
+
+
+# --- MR 3: Symmetric Reflection ---
+# r_3(x) = 1.0 - x
+# program(x) + program(1 - x) = 2 * \bar{D}^*
+def r_3(x: float) -> float:
+    return float(1.0 - x)
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    expected_sum = 2.0 * _BOOT_MEAN_CONST
+    return math.isclose(y_orig + y_new, expected_sum, abs_tol=1e-9)
+```

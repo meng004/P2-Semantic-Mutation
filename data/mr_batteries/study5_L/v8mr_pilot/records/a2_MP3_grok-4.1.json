@@ -1,0 +1,38 @@
+{
+  "cell": "A2_MP3",
+  "put": "a2",
+  "mp": 3,
+  "vendor_slot": "grok-4.1",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP3_grok-4.1.txt",
+  "module_src": "import numpy as np\nimport math\n\ndef r_1(x):\n    return 1 - x\n\ndef R_1(y_orig, y_new):\n    if not math.isfinite(y_orig) or not math.isfinite(y_new):\n        return False\n    return math.isclose(y_new, 15.0 - y_orig, rel_tol=1e-12)\n\ndef r_2(x):\n    return 0.0\n\ndef R_2(y_orig, y_new):\n    if not math.isfinite(y_orig) or not math.isfinite(y_new):\n        return False\n    return math.isclose(y_new, 15.0 - y_orig, rel_tol=1e-12)\n\ndef r_3(x):\n    return x\n\ndef R_3(y_orig, y_new):\n    if not math.isfinite(y_orig) or not math.isfinite(y_new):\n        return False\n    return math.isclose(y_new, 15.0 - y_orig, rel_tol=1e-12)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 0,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    }
+  ]
+}

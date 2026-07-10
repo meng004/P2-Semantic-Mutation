@@ -1,0 +1,36 @@
+
+
+```python
+import math
+import numpy as np
+from numpy import random
+
+def program(x):
+    x = float(x)
+    shifted = _D + (4.0 * x - 2.0)
+    return float(np.mean(shifted[_IDX]))
+
+def program1(x):
+    x = float(x)
+    shifted = _D + (4.0 * x - 2.0)
+    return float(np.mean(shifted[_IDX]))
+
+def program2(x):
+    x = float(x)
+    shifted = _D + (4.0 * x - 2.0)
+    return float(np.mean(shifted[_IDX]))
+
+def program3(x):
+    x = float(x)
+    shifted = _D + (4.0 * x - 2.0)
+    return float(np.mean(shifted[_IDX]))
+
+r_1 = lambda x: program(x)
+R_1 = lambda y_orig, y_new: y_orig < y_new
+
+r_2 = lambda x: program(x)
+R_2 = lambda y_orig, y_new: y_orig > y_new
+
+r_3 = lambda x: program(x)
+R_3 = lambda y_orig, y_new: y_orig == y_new
+```

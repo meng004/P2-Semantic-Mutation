@@ -1,0 +1,3 @@
+ x$ but expressed differently, e.g., $r(x) = 1.0 * x$? That's still identity.
+What if we do $r(x) = x$ and $R(y_1, y_2) = \text{math.isclose}(y_1, y_2, rel\_tol=1e-7)$?
+Wait, if the program is mutated, say the solver's tolerance

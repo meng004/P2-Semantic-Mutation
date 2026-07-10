@@ -1,0 +1,49 @@
+```python
+import numpy as np
+
+# MP5 — method-comparison (convergence rate / refinement).
+# The program(x) returns the ratio of the numerical FDM solution to the exact 
+# solution at the midpoint (x=0.5, t=t_end).
+# As the grid spacing parameter x = h decreases (closer to 0), the FDM grid 
+# is refined (N = round(1/h) increases, h_act decreases).
+# Because FDM under explicit Euler with stable dt converges to the exact solution,
+# the ratio u_FDM / u_exact converges to 1.0.
+# The error |ratio - 1.0| should generally decrease or remain extremely small 
+# as we refine the grid (i.e., when we decrease x).
+# To make this relation robust to the discrete steps in grid size N and potential 
+# numerical noise, we compare a coarser grid x to a significantly refined grid r(x) = x / 2.
+# We assert that the refined grid yields an approximation ratio closer to 1.0,
+# or at least within a tiny numerical tolerance of being closer.
+
+def r_1(x: float) -> float:
+    # Refine the grid spacing by halving it, ensuring it stays within (0, 1].
+    # We clip to 1e-3 to avoid extremely slow executions while still 
+    # guaranteeing a significant refinement.
+    h = max(float(x), 1e-3)
+    return max(h / 2.0, 1e-4)
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    # y_orig = program(x), y_new = program(r_1(x))
+    # Both values represent u_FDM/u_exact, which should converge to 1.0.
+    # Therefore, the absolute error |y - 1.0| should decrease as we refine.
+    # We allow a tiny tolerance (1e-9) for numerical/floating-point equivalence.
+    if not np.isfinite(y_orig) or not np.isfinite(y_new):
+        return False
+    err_orig = abs(y_orig - 1.0)
+    err_new = abs(y_new - 1.0)
+    return err_new <= err_orig + 1e-9
+
+
+def r_2(x: float) -> float:
+    # Further refine the grid spacing by dividing by 3.
+    h = max(float(x), 1.5e-3)
+    return max(h / 3.0, 1e-4)
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    # Similar to R_1, a threefold refinement should yield a ratio closer to 1.0.
+    if not np.isfinite(y_orig) or not np.isfinite(y_new):
+        return False
+    err_orig = abs(y_orig - 1.0)
+    err_new = abs(y_new - 1.0)
+    return err_new <= err_orig + 1e-9
+```

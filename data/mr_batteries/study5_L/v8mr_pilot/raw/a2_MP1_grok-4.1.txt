@@ -1,0 +1,38 @@
+
+> 🔍 **Thinking about your request**
+> 🔍 **Formulating the conservation metamorphic relation**
+> 🔍 **Defining the metamorphic relations**
+
+```python
+import math
+
+def r_1(x: float) -> float:
+    """Complement transform: x -> 1-x."""
+    return 1.0 - float(x)
+
+def R_1(y: float, y_new: float) -> bool:
+    """Conservation: y + y_new == 15 (with tolerance and finite check)."""
+    if not (math.isfinite(y) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y + y_new, 15.0, abs_tol=1e-8)
+
+def r_2(x: float) -> float:
+    """Self-inverse property of complement: r(r(x)) = x."""
+    return 1.0 - float(x)
+
+def R_2(y: float, y_new: float) -> bool:
+    """Invariance under double complement: y == y_new (since r_2 twice is id)."""
+    if not (math.isfinite(y) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y, y_new, abs_tol=1e-8)
+
+def r_3(x: float) -> float:
+    """Fixed-point of complement (x=0.5)."""
+    return 0.5
+
+def R_3(y: float, y_new: float) -> bool:
+    """Self-consistency at fixed point: y == y_new and y == 7.5."""
+    if not (math.isfinite(y) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y, y_new, abs_tol=1e-8) and math.isclose(y, 7.5, abs_tol=1e-8)
+```

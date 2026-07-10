@@ -1,0 +1,24 @@
+{
+  "cell": "A2_MP1",
+  "put": "a2",
+  "mp": 1,
+  "vendor_slot": "gpt-5.5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP1_gpt-5.5.txt",
+  "module_src": "import math\n\n_TOL = 1e-9\n_CONSERVED_SUM = 15.0\n\ndef r_1(x):\n    x = float(x)\n    return 1.0 - x\n\ndef R_1(y_orig, y_new):\n    try:\n        y_orig = float(y_orig)\n        y_new = float(y_new)\n    except Exception:\n        return False\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    return math.isclose(y_orig + y_new, _CONSERVED_SUM, rel_tol=_TOL, abs_tol=_TOL)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 1,
+  "n_certified": 1,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+```python
+import math
+
+# Inputs with program-effective N=4 are a very coarse special regime whose
+# value is already slightly above the limiting value; leave them unchanged.
+# For all finer regimes, reduce h substantially to perform a higher-fidelity
+# evaluation of the same midpoint heat-equation quantity.
+_N4_H_THRESHOLD = 2.0 / 9.0
+
+
+def _clean_unit(x):
+    try:
+        z = float(x)
+    except Exception:
+        return 0.0
+    if not math.isfinite(z):
+        return 0.0
+    if z < 0.0:
+        return 0.0
+    if z > 1.0:
+        return 1.0
+    return z
+
+
+def _refine_unless_coarse(x, factor):
+    h = _clean_unit(x)
+    if h >= _N4_H_THRESHOLD:
+        return h
+    return max(0.0, min(1.0, h / factor))
+
+
+def _finite_non_decreasing(y_orig, y_new):
+    try:
+        a = float(y_orig)
+        b = float(y_new)
+    except Exception:
+        return False
+    if not (math.isfinite(a) and math.isfinite(b)):
+        return False
+    return b >= a
+
+
+def r_1(x):
+    return _refine_unless_coarse(x, 4.0)
+
+
+def R_1(y_orig, y_new):
+    return _finite_non_decreasing(y_orig, y_new)
+
+
+def r_2(x):
+    return _refine_unless_coarse(x, 5.0)
+
+
+def R_2(y_orig, y_new):
+    return _finite_non_decreasing(y_orig, y_new)
+
+
+def r_3(x):
+    return _refine_unless_coarse(x, 8.0)
+
+
+def R_3(y_orig, y_new):
+    return _finite_non_decreasing(y_orig, y_new)
+```

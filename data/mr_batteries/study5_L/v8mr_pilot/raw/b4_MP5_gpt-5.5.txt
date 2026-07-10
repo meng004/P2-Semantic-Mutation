@@ -1,0 +1,51 @@
+```python
+import math
+
+def _finite_pair(a, b):
+    return math.isfinite(float(a)) and math.isfinite(float(b))
+
+
+# Higher-regime comparison: move x halfway toward the upper end of the
+# admissible interval.  For the correct kernel this strictly increases the
+# shifted bootstrap mean for all x < 1.
+def r_1(x):
+    x = float(x)
+    return 0.5 * (x + 1.0)
+
+def R_1(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return float(y_new) > float(y_orig)
+
+
+# Alternative refinement schedule: concave lift toward 1.  On [0,1],
+# sqrt(x) >= x, with strict increase except at the endpoints.
+def r_2(x):
+    x = float(x)
+    if x < 0.0:
+        x = 0.0
+    elif x > 1.0:
+        x = 1.0
+    return math.sqrt(x)
+
+def R_2(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return float(y_new) > float(y_orig)
+
+
+# Quadratic lift toward the upper regime: 1 - (1-x)^2 = 2x - x^2.
+# This remains in [0,1] and is strictly above x for interior points.
+def r_3(x):
+    x = float(x)
+    if x < 0.0:
+        x = 0.0
+    elif x > 1.0:
+        x = 1.0
+    return 1.0 - (1.0 - x) * (1.0 - x)
+
+def R_3(y_orig, y_new):
+    if not _finite_pair(y_orig, y_new):
+        return False
+    return float(y_new) > float(y_orig)
+```

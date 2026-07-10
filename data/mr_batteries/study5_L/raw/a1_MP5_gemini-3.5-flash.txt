@@ -1,0 +1,38 @@
+An elegant way to implement **MP5 (method-comparison)** for this Lorenz ODE solver is to exploit the symmetry of the Lorenz system. 
+
+The Lorenz equations are invariant under the transformation $(x, y, z) \to (-x, -y, z)$. 
+The program maps an input $x \in [0, 1]$ to the initial condition:
+$$IC(x) = [20x - 10, 20x - 10, 30x + 5]$$
+
+Let's consider the input transformation $r(x) = 1 - x$.
+Evaluating the initial condition at $r(x)$ gives:
+$$IC(1-x) = [20(1-x) - 10, 20(1-x) - 10, 30(1-x) + 5] = [-20x + 10, -20x + 10, -30x + 35]$$
+
+While the $x$ and $y$ coordinates of $IC(1-x)$ are exactly the negated versions of those in $IC(x)$ (since $-(20x - 10) = -20x + 10$), the $z$ coordinate is not invariant ($30x + 5 \neq -30x + 35$ except at $x=0.5$). Thus, pure symmetry does not hold directly over the entire domain $[0, 1]$ for $r(x) = 1-x$.
+
+However, we can construct a method-comparison relation by comparing the output of $x$ against a modified execution of the same physical quantity. Since we only have access to `program(x)` and cannot change the solver's internal parameters (like tolerance or method) because they are hardcoded, we must find an input transformation $r(x)$ that yields a predictable relative relationship.
+
+At $x = 0.5$, the initial condition is $IC(0.5) = [0, 0, 20]$. The Lorenz system starting at $[0, 0, z_0]$ has a steady-state/invariant manifold where $x(t) = 0$ and $y(t) = 0$ for all $t$, reducing the system to $\dot{z} = -\beta z$. This linear decay is highly stable and non-chaotic. Near $x = 0.5$, the system behaves much more predictably (less chaotic sensitivity) than at the boundaries $x=0$ or $x=1$ where the initial states are far from the z-axis.
+
+Specifically, as $x$ moves closer to $0.5$, the trajectory stays closer to the $z$-axis where the dynamics are contractive ($\dot{z} = -\beta z$ with $\beta > 0$ and the local Jacobian has negative eigenvalues). Thus, the L2 norm of the final state at $t=1.0$ is strictly smaller (more contracted) when the initial state is closer to the $z$-axis (i.e., closer to $x=0.5$). 
+
+We can define a relation comparing an input $x$ further from $0.5$ to an input $r(x)$ closer to $0.5$. The L2 norm of the state vector at $t=1.0$ for the input closer to $0.5$ will be smaller due to the contractive nature of the flow near the $z$-axis.
+
+```python
+import numpy as np
+
+# MR1: Compares an input x to an input r_1(x) that is closer to the symmetric center 0.5.
+# Because the Lorenz flow is highly contractive near the z-axis (where x=0.5),
+# the state vector norm at t=1.0 is smaller for inputs closer to 0.5.
+def r_1(x: float) -> float:
+    # Contract the distance to 0.5 by 50%
+    return 0.5 + 0.5 * (x - 0.5)
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not np.isfinite(y_orig) or not np.isfinite(y_new):
+        return False
+    # The trajectory closer to the contractive z-axis (y_new) should have a smaller
+    # or equal L2 norm than the trajectory further away (y_orig).
+    # We use a small tolerance to account for numerical precision near the center.
+    return y_new <= y_orig + 1e-9
+```

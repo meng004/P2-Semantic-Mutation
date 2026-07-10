@@ -1,0 +1,38 @@
+{
+  "cell": "B4_MP2",
+  "put": "b4",
+  "mp": 2,
+  "vendor_slot": "grok-4.1",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/b4_MP2_grok-4.1.txt",
+  "module_src": "import math\nimport numpy as np\nfrom numpy import random\n\ndef program(x):\n    x = float(x)\n    shifted = _D + (4.0 * x - 2.0)\n    return float(np.mean(shifted[_IDX]))\n\ndef program1(x):\n    x = float(x)\n    shifted = _D + (4.0 * x - 2.0)\n    return float(np.mean(shifted[_IDX]))\n\ndef program2(x):\n    x = float(x)\n    shifted = _D + (4.0 * x - 2.0)\n    return float(np.mean(shifted[_IDX]))\n\ndef program3(x):\n    x = float(x)\n    shifted = _D + (4.0 * x - 2.0)\n    return float(np.mean(shifted[_IDX]))\n\nr_1 = lambda x: program(x)\nR_1 = lambda y_orig, y_new: y_orig < y_new\n\nr_2 = lambda x: program(x)\nR_2 = lambda y_orig, y_new: y_orig > y_new\n\nr_3 = lambda x: program(x)\nR_3 = lambda y_orig, y_new: y_orig == y_new",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 0,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": false,
+      "v1_reason": "NameError: name '_D' is not defined",
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 2,
+      "v1": false,
+      "v1_reason": "NameError: name '_D' is not defined",
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 3,
+      "v1": false,
+      "v1_reason": "NameError: name '_D' is not defined",
+      "v2": false,
+      "certified": false
+    }
+  ]
+}

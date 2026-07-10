@@ -1,0 +1,39 @@
+```python
+import math
+
+def _is_finite_number(v):
+    try:
+        return math.isfinite(float(v))
+    except Exception:
+        return False
+
+def _ge_finite(y_orig, y_new):
+    if not (_is_finite_number(y_orig) and _is_finite_number(y_new)):
+        return False
+    return float(y_new) >= float(y_orig)
+
+# Increase x by a fixed amount, saturating at the upper domain boundary.
+def r_1(x):
+    x = float(x)
+    return min(1.0, max(0.0, x + 0.25))
+
+def R_1(y_orig, y_new):
+    return _ge_finite(y_orig, y_new)
+
+# Move x halfway toward 1; for x in [0, 1], this is always >= x.
+def r_2(x):
+    x = float(x)
+    return 0.5 * (x + 1.0)
+
+def R_2(y_orig, y_new):
+    return _ge_finite(y_orig, y_new)
+
+# Square-root transformation is order-increasing relative to identity on [0, 1].
+def r_3(x):
+    x = float(x)
+    x = min(1.0, max(0.0, x))
+    return math.sqrt(x)
+
+def R_3(y_orig, y_new):
+    return _ge_finite(y_orig, y_new)
+```

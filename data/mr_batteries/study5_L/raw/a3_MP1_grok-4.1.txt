@@ -1,0 +1,39 @@
+
+> 🔍 **Thinking about your request**
+> 🔍 **Generating metamorphic relations for the heat equation solver**
+> 🔍 **Identifying invariance properties for the heat equation solver**
+> 🔍 **Defining input transformations that preserve discretization level**
+> 🔍 **Defining the transformation and relation functions**
+> 🔍 **Refining invariance transformations for the heat equation**
+> 🔍 **Defining the transformation and relation functions**
+> 🔍 **Defining the transformation and relation functions**
+> 🔍 **Defining the transformation and relation functions**
+> 🔍 **Refining the transformation logic for the heat equation**
+
+```python
+import math
+
+def r_1(x: float) -> float:
+    """Map input h to the effective grid spacing h_act used by the program (preserves N)."""
+    h = max(float(x), 1e-4)
+    N = max(4, round(1.0 / h))
+    return 1.0 / N
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Output must be identical (invariance under discretization-preserving transform)."""
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, rel_tol=1e-9, abs_tol=1e-12)
+
+def r_2(x: float) -> float:
+    """Map input h to another spacing in the same rounding bin for N (preserves N)."""
+    h = max(float(x), 1e-4)
+    N = max(4, round(1.0 / h))
+    return 1.0 / (N - 0.4)
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    """Output must be identical (invariance under discretization-preserving transform)."""
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig, y_new, rel_tol=1e-9, abs_tol=1e-12)
+```

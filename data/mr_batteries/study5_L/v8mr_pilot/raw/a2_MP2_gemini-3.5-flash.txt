@@ -1,0 +1,58 @@
+An analysis of the program under test shows that the output of `program(x)` is the determinant of the matrix $A(x) = \begin{pmatrix} 2+x & x \\ 0 & 3 \end{pmatrix}$. The determinant is given by:
+$$\det(A(x)) = (2+x) \cdot 3 = 6 + 3x$$
+
+Since $3 > 0$, the function $f(x) = 6 + 3x$ is strictly monotonically increasing with respect to $x$ for $x \in [0, 1]$. 
+
+To design metamorphic relations belonging to the **MP2 — monotonicity** family, we define input transformations $r_k(x)$ such that $r_k(x) \ge x$ for all $x \in [0, 1]$. This guarantees that the output of the transformed input is systematically greater than or equal to the output of the original input: $\text{program}(r_k(x)) \ge \text{program}(x)$.
+
+We define three such relations:
+1. $r_1(x) = \frac{1 + x}{2}$: Since $x \in [0, 1]$, we have $r_1(x) \ge x$, with equality holding only at $x = 1$.
+2. $r_2(x) = \sqrt{x}$: For $x \in [0, 1]$, we have $\sqrt{x} \ge x$.
+3. $r_3(x) = 1.0$: This maps any input to the upper bound of the domain, ensuring $r_3(x) \ge x$.
+
+For all relations, the output relation $R_k(y_{\text{orig}}, y_{\text{new}})$ asserts that $y_{\text{new}} \ge y_{\text{orig}}$ (with a small tolerance for numerical floating-point precision).
+
+```python
+import math
+import numpy as np
+
+
+# MR1: Linear interpolation towards 1.0.
+# Since x in [0, 1], (1 + x) / 2 >= x.
+# Therefore, program(r_1(x)) >= program(x).
+def r_1(x: float) -> float:
+    return (1.0 + float(x)) / 2.0
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    # Use a small negative tolerance to account for floating-point imprecision
+    return y_new - y_orig >= -1e-12
+
+
+# MR2: Square root transform.
+# For x in [0, 1], sqrt(x) >= x.
+# Therefore, program(r_2(x)) >= program(x).
+def r_2(x: float) -> float:
+    return math.sqrt(float(x))
+
+
+def R_2(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_new - y_orig >= -1e-12
+
+
+# MR3: Constant upper-bound mapping.
+# For x in [0, 1], 1.0 >= x.
+# Therefore, program(1.0) >= program(x).
+def r_3(x: float) -> float:
+    return 1.0
+
+
+def R_3(y_orig: float, y_new: float) -> bool:
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return y_new - y_orig >= -1e-12
+```

@@ -1,0 +1,28 @@
+An elegant metamorphic relation for this program can be derived from the core conservation law stated in the program's description: $\det(A(x)) + \det(A(1-x)) = 15$. 
+
+If we define the input transformation as the complement transform $r(x) = 1 - x$, then the output trajectory of $y_{\text{new}} = \text{program}(1-x)$ is completely determined by the original output $y_{\text{orig}} = \text{program}(x)$ through the relation $y_{\text{new}} = 15 - y_{\text{orig}}$. 
+
+This transformation maps the domain $[0, 1]$ to $[0, 1]$ bijectively, preserving the shape of the function space (specifically, reflecting it across $x = 0.5$ and the output across $y = 7.5$).
+
+Here is the metamorphic relation implementing this property:
+
+```python
+import math
+import numpy as np
+
+
+def r_1(x: float) -> float:
+    """Complement input transformation: x -> 1 - x."""
+    return float(1.0 - x)
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """Output relation: det(A(x)) + det(A(1-x)) = 15.
+
+    We check if the sum of the original and transformed outputs is 15
+    within a reasonable floating-point tolerance.
+    """
+    if not (math.isfinite(y_orig) and math.isfinite(y_new)):
+        return False
+    return math.isclose(y_orig + y_new, 15.0, rel_tol=1e-9, abs_tol=1e-9)
+```

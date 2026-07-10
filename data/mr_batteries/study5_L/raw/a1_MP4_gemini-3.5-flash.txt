@@ -1,0 +1,41 @@
+An elegant symmetry of the Lorenz system is its invariance under the coordinate transformation $(x, y, z) \to (-x, -y, z)$. 
+
+For the initial conditions mapping $x \mapsto \text{IC}(x) = [20x - 10, 20x - 10, 30x + 5]$, let us analyze how this symmetry interacts with the input parameter $x \in [0, 1]$:
+- Let $x_1 \in [0, 1]$ and $x_2 = 1 - x_1 \in [0, 1]$.
+- The first state component of $\text{IC}(x_2)$ is $20(1 - x_1) - 10 = 10 - 20x_1 = -(20x_1 - 10)$.
+- The second state component of $\text{IC}(x_2)$ is $20(1 - x_1) - 10 = -(20x_1 - 10)$.
+- The third state component of $\text{IC}(x_2)$ is $30(1 - x_1) + 5 = 35 - 30x_1$.
+
+This is not a perfect symmetry for the $z$ component because $35 - 30x_1 \neq 30x_1 + 5$ in general. However, at the specific point $x = 0.5$:
+- $\text{IC}(0.5) = [0, 0, 20]$.
+- Since the initial $x$ and $y$ components are exactly $0$, the trajectory remains on the $z$-axis for all $t$ (i.e., $x(t) = 0, y(t) = 0$ for all $t$, and $\dot{z} = -\beta z$).
+- An input transformation $r_1(x) = 0.5$ maps any input to this invariant manifold.
+
+To exploit the exact spatial symmetry $(x, y, z) \to (-x, -y, z)$ of the vector field, we must have the same $z$ value. This occurs when $30x_1 + 5 = 30x_2 + 5$, which implies $x_1 = x_2$. This yields the identity transform.
+
+Instead, we can construct a metamorphic relation based on the fixed point of the input transformation. If we choose $r_1(x) = 0.5$, then the output must be exactly the analytical solution of the $z$-axis invariant manifold at $t=1.0$:
+$$z(1.0) = z(0) e^{-\beta} = 20 e^{-8/3} \approx 1.38929$$
+Since $x(1.0) = 0$ and $y(1.0) = 0$, the L2 norm of the final state is exactly $20 e^{-8/3}$. This allows us to define a highly precise shape/dynamics relation.
+
+Here is the Python code containing the metamorphic relations.
+
+```python
+import math
+import numpy as np
+
+# Analytical L2 norm for the invariant z-axis trajectory starting at IC(0.5) = [0, 0, 20]
+# At t = 1.0, the state is [0, 0, 20 * exp(-8/3)]
+_EXPECTED_NORM_AT_05 = 20.0 * math.exp(-8.0 / 3.0)
+
+
+def r_1(x: float) -> float:
+    """Maps any input x to the symmetry center x = 0.5."""
+    return 0.5
+
+
+def R_1(y_orig: float, y_new: float) -> bool:
+    """The output at x = 0.5 must be extremely close to the analytical value."""
+    if not np.isfinite(y_new):
+        return False
+    return abs(y_new - _EXPECTED_NORM_AT_05) < 1e-7
+```

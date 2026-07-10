@@ -1,0 +1,38 @@
+{
+  "cell": "A2_MP2",
+  "put": "a2",
+  "mp": 2,
+  "vendor_slot": "gemini-3.5-flash",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP2_gemini-3.5-flash.txt",
+  "module_src": "import math\nimport numpy as np\n\n\n# MR1: Linear interpolation towards 1.0.\n# Since x in [0, 1], (1 + x) / 2 >= x.\n# Therefore, program(r_1(x)) >= program(x).\ndef r_1(x: float) -> float:\n    return (1.0 + float(x)) / 2.0\n\n\ndef R_1(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    # Use a small negative tolerance to account for floating-point imprecision\n    return y_new - y_orig >= -1e-12\n\n\n# MR2: Square root transform.\n# For x in [0, 1], sqrt(x) >= x.\n# Therefore, program(r_2(x)) >= program(x).\ndef r_2(x: float) -> float:\n    return math.sqrt(float(x))\n\n\ndef R_2(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    return y_new - y_orig >= -1e-12\n\n\n# MR3: Constant upper-bound mapping.\n# For x in [0, 1], 1.0 >= x.\n# Therefore, program(1.0) >= program(x).\ndef r_3(x: float) -> float:\n    return 1.0\n\n\ndef R_3(y_orig: float, y_new: float) -> bool:\n    if not (math.isfinite(y_orig) and math.isfinite(y_new)):\n        return False\n    return y_new - y_orig >= -1e-12",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 3,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

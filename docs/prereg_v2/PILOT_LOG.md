@@ -502,3 +502,40 @@ semantic edits (12), anti-diffusive a3_OS1 numerical blow-up judged V2-fail
 manifesting; disclosed as a second inter-reviewer inconsistency), C-side UB
 (int-overflow loop bound, unregistered saturation clamps) (3), nonconforming
 spline ports (2).
+
+## P15 — Study-5 Family-MR pilot (v8mr_pilot, 2026-07-10): elicitation-parser binding-syntax defect
+
+**Pilot scope executed**: {a2, b4} x 5 strata x 4 vendors = 40 one-shot
+elicitations (30 gateway, 10 session-harness claude), tag `v8mr_pilot`, under
+the A2-frozen template (sha256 `67c879d2…92a02c`) and frozen serving
+parameters; V1/V2 executability certification through the frozen `p2.avp`
+harness (`scripts/study5_mr_elicit.py`). Pilot artifacts live under
+`data/mr_batteries/study5_L/v8mr_pilot/` and are firewall-excluded from every
+confirmatory statistic. The pilot's L-SCORING leg (registration §2e) is
+deferred to the SMS-L scoring wave, where the scoring adapter it exercises
+will exist; elicitation+certification machinery is what this wave builds and
+what this pilot exercises.
+
+**Defect found (code-level)**: `parse_response` detected MR pairs only as
+module-level `def` statements; grok-4.1 (served grok-4.3) binds MRs as
+`r_1 = lambda x: ...` assignments (pilot cell B4_MP2). The frozen A2 contract
+fixes the NAMES `r_k`/`R_k`, not the binding syntax, so rejecting
+assignment-bound MRs was a parser narrowness defect, not a vendor content
+failure.
+
+**Fix (code only)**: pair detection now accepts module-level FunctionDef and
+Name-target assignments; callability is enforced at V1 certification
+("bound but not callable" = V1 executability failure). No threshold,
+estimand, prompt semantics, serving parameter, roster, or vendor role
+changed. Certification is mechanical and re-runnable (not a draw); the pilot
+records were re-certified after the fix. Draws untouched (drawn is drawn).
+
+**Non-defects triaged and left as honest outcomes**: (i) two
+gemini-3.5-flash pilot completions truncated at the requested-2500 token cap
+(A2-frozen serving parameter; the P12 min-token floor 2000 already applies)
+-> parse failures, disclosed per-vendor; (ii) one grok response echoing the
+program with no MR pair -> content failure; (iii) ALL vendors' MP3 MRs on
+{a2, b4} fail V2 because the frozen MP3 harness probe (order-2.0 vs reference
+1.0) fails on these PUTs themselves — the same mechanics that yield sms=0 on
+non-MP3-aligned cells in the frozen R arm; certification faithfully mirrors
+the harness, nothing to fix.

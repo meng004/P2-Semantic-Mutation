@@ -1,0 +1,31 @@
+{
+  "cell": "A2_MP2",
+  "put": "a2",
+  "mp": 2,
+  "vendor_slot": "claude-fable-5",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP2_claude-fable-5.txt",
+  "module_src": "import math\n\n# MR1: additive forward shift (clipped to the domain) — output must not decrease.\ndef r_1(x):\n    return min(float(x) + 0.25, 1.0)\n\ndef R_1(y_orig, y_new):\n    y0, y1 = float(y_orig), float(y_new)\n    if not (math.isfinite(y0) and math.isfinite(y1)):\n        return False\n    return y1 >= y0 - 1e-9\n\n# MR2: square root maps [0,1] to itself and dominates x — output must not decrease.\ndef r_2(x):\n    return float(x) ** 0.5\n\ndef R_2(y_orig, y_new):\n    y0, y1 = float(y_orig), float(y_new)\n    if not (math.isfinite(y0) and math.isfinite(y1)):\n        return False\n    return y1 >= y0 - 1e-9",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 2,
+  "n_certified": 2,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    }
+  ]
+}

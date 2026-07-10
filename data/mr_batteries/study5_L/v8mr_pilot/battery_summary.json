@@ -1,0 +1,126 @@
+{
+  "artefact": "study5_L_battery_summary (v8mr_pilot)",
+  "generated_by": "scripts/study5_mr_elicit.py summary",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "puts": [
+    "a2",
+    "b4"
+  ],
+  "n_cells": 10,
+  "per_vendor": {
+    "gpt-5.5": {
+      "responses": 10,
+      "empty": 0,
+      "parse_fail": 0,
+      "format_fail": 0,
+      "mrs_parsed": 24,
+      "v1_pass": 24,
+      "v2_pass": 22,
+      "certified": 22,
+      "cost_usd": 0.1127,
+      "prompt_tokens": 8036,
+      "completion_tokens": 10261,
+      "calls_logged": 10,
+      "transport_errors": 0,
+      "served_models": {
+        "gpt-5.5": 10
+      },
+      "cert_rate_of_parsed": 0.9167
+    },
+    "gemini-3.5-flash": {
+      "responses": 10,
+      "empty": 0,
+      "parse_fail": 2,
+      "format_fail": 0,
+      "mrs_parsed": 17,
+      "v1_pass": 17,
+      "v2_pass": 9,
+      "certified": 9,
+      "cost_usd": 0.0356,
+      "prompt_tokens": 8764,
+      "completion_tokens": 13196,
+      "calls_logged": 10,
+      "transport_errors": 0,
+      "served_models": {
+        "gemini-3.5-flash": 10
+      },
+      "cert_rate_of_parsed": 0.5294
+    },
+    "grok-4.1": {
+      "responses": 10,
+      "empty": 0,
+      "parse_fail": 1,
+      "format_fail": 0,
+      "mrs_parsed": 27,
+      "v1_pass": 21,
+      "v2_pass": 6,
+      "certified": 6,
+      "cost_usd": 0.063,
+      "prompt_tokens": 8006,
+      "completion_tokens": 2598,
+      "calls_logged": 10,
+      "transport_errors": 0,
+      "served_models": {
+        "grok-4.1": 10
+      },
+      "cert_rate_of_parsed": 0.2222
+    },
+    "claude-fable-5": {
+      "responses": 10,
+      "empty": 0,
+      "parse_fail": 0,
+      "format_fail": 0,
+      "mrs_parsed": 14,
+      "v1_pass": 14,
+      "v2_pass": 12,
+      "certified": 12,
+      "cost_usd": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "calls_logged": 10,
+      "transport_errors": 0,
+      "served_models": {
+        "session-harness": 10
+      },
+      "cert_rate_of_parsed": 0.8571
+    }
+  },
+  "per_family_coverage": {
+    "MP1": {
+      "cells": 2,
+      "cells_with_nonempty_union": 2,
+      "union_mrs": 15
+    },
+    "MP2": {
+      "cells": 2,
+      "cells_with_nonempty_union": 2,
+      "union_mrs": 14
+    },
+    "MP3": {
+      "cells": 2,
+      "cells_with_nonempty_union": 0,
+      "union_mrs": 0
+    },
+    "MP4": {
+      "cells": 2,
+      "cells_with_nonempty_union": 2,
+      "union_mrs": 10
+    },
+    "MP5": {
+      "cells": 2,
+      "cells_with_nonempty_union": 2,
+      "union_mrs": 10
+    }
+  },
+  "per_put": {
+    "a2": {
+      "cells_with_nonempty_union": 4,
+      "union_mrs": 24
+    },
+    "b4": {
+      "cells_with_nonempty_union": 4,
+      "union_mrs": 25
+    }
+  },
+  "total_gateway_cost_usd": 0.2113
+}

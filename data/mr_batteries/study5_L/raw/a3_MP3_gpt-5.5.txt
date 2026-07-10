@@ -1,0 +1,76 @@
+```python
+import math
+
+_LIMIT = 1.0
+
+# Conservative tolerance for coarse-grid/rounding/interpolation effects.
+# The fixed MP3 harness performs the quantitative order-2 check separately.
+_BAND_TOL = 8.0e-2
+_ADD_TOL = 6.0e-2
+
+
+def _finite_float(v):
+    try:
+        z = float(v)
+    except Exception:
+        return None
+    return z if math.isfinite(z) else None
+
+
+def _clip01(v):
+    z = _finite_float(v)
+    if z is None:
+        return 0.0
+    if z < 0.0:
+        return 0.0
+    if z > 1.0:
+        return 1.0
+    return z
+
+
+def _conv_pair_ok(y_orig, y_new, factor):
+    yo = _finite_float(y_orig)
+    yn = _finite_float(y_new)
+    if yo is None or yn is None:
+        return False
+
+    eo = abs(yo - _LIMIT)
+    en = abs(yn - _LIMIT)
+
+    # Direct convergence-to-limit oracle: both values should remain near 1,
+    # and the refined value should be compatible with order-2 contraction,
+    # with a guard band for coarse grids and integer grid rounding.
+    if eo > _BAND_TOL or en > _BAND_TOL:
+        return False
+    return en <= max(factor * eo + 2.0e-3, _ADD_TOL)
+
+
+def r_1(x):
+    # One refinement level: h -> h/2.
+    return _clip01(0.5 * _clip01(x))
+
+
+def R_1(y_orig, y_new):
+    # Expected asymptotic error contraction is about (1/2)^2 = 1/4.
+    return bool(_conv_pair_ok(y_orig, y_new, 0.30))
+
+
+def r_2(x):
+    # Two refinement levels: h -> h/4.
+    return _clip01(0.25 * _clip01(x))
+
+
+def R_2(y_orig, y_new):
+    # Expected asymptotic error contraction is about (1/4)^2 = 1/16.
+    return bool(_conv_pair_ok(y_orig, y_new, 0.08))
+
+
+def r_3(x):
+    # Three refinement levels: h -> h/8.
+    return _clip01(0.125 * _clip01(x))
+
+
+def R_3(y_orig, y_new):
+    # Expected asymptotic error contraction is about (1/8)^2 = 1/64.
+    return bool(_conv_pair_ok(y_orig, y_new, 0.03))
+```

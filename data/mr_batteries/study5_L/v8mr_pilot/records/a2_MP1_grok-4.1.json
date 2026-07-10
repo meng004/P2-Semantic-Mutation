@@ -1,0 +1,38 @@
+{
+  "cell": "A2_MP1",
+  "put": "a2",
+  "mp": 1,
+  "vendor_slot": "grok-4.1",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP1_grok-4.1.txt",
+  "module_src": "import math\n\ndef r_1(x: float) -> float:\n    \"\"\"Complement transform: x -> 1-x.\"\"\"\n    return 1.0 - float(x)\n\ndef R_1(y: float, y_new: float) -> bool:\n    \"\"\"Conservation: y + y_new == 15 (with tolerance and finite check).\"\"\"\n    if not (math.isfinite(y) and math.isfinite(y_new)):\n        return False\n    return math.isclose(y + y_new, 15.0, abs_tol=1e-8)\n\ndef r_2(x: float) -> float:\n    \"\"\"Self-inverse property of complement: r(r(x)) = x.\"\"\"\n    return 1.0 - float(x)\n\ndef R_2(y: float, y_new: float) -> bool:\n    \"\"\"Invariance under double complement: y == y_new (since r_2 twice is id).\"\"\"\n    if not (math.isfinite(y) and math.isfinite(y_new)):\n        return False\n    return math.isclose(y, y_new, abs_tol=1e-8)\n\ndef r_3(x: float) -> float:\n    \"\"\"Fixed-point of complement (x=0.5).\"\"\"\n    return 0.5\n\ndef R_3(y: float, y_new: float) -> bool:\n    \"\"\"Self-consistency at fixed point: y == y_new and y == 7.5.\"\"\"\n    if not (math.isfinite(y) and math.isfinite(y_new)):\n        return False\n    return math.isclose(y, y_new, abs_tol=1e-8) and math.isclose(y, 7.5, abs_tol=1e-8)",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 1,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    }
+  ]
+}

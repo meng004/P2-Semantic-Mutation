@@ -1,0 +1,38 @@
+{
+  "cell": "A2_MP2",
+  "put": "a2",
+  "mp": 2,
+  "vendor_slot": "grok-4.1",
+  "tag": "v8mr_pilot",
+  "template_sha256": "67c879d29e42f1f8b6c2cfb45e8a59a6efa70517cd252828488b1fe20192a02c",
+  "raw_file": "data/mr_batteries/study5_L/v8mr_pilot/raw/a2_MP2_grok-4.1.txt",
+  "module_src": "\"\"\"MP2 — monotonicity for program(x) with x in [0,1].\nDirect oracle mode on output pair (conservation implies monotonicity via order-preserving transform).\"\"\"\n\nimport math\n\n\ndef r_1(x):\n    \"\"\"Order-preserving transform: negate (direct MP2 Mode-I).\"\"\"\n    return 1.0 - x\n\n\ndef R_1(y_orig, y_new):\n    \"\"\"Output ordering: new >= orig (conservation enforces it).\"\"\"\n    return y_new >= y_orig\n\n\ndef r_2(x):\n    \"\"\"Order-preserving transform: reciprocal (direct MP2 Mode-I).\"\"\"\n    return 1.0 / (1.0 + x) if x > 0.0 else 0.0\n\n\ndef R_2(y_orig, y_new):\n    \"\"\"Output ordering: new >= orig (conservation enforces it).\"\"\"\n    return y_new >= y_orig\n\n\ndef r_3(x):\n    \"\"\"Order-preserving transform: linear decay to 0.75 (direct MP2 Mode-I).\"\"\"\n    return 0.75 * x\n\n\ndef R_3(y_orig, y_new):\n    \"\"\"Output ordering: new >= orig (conservation enforces it).\"\"\"\n    return y_new >= y_orig",
+  "parse_error": null,
+  "format_error": null,
+  "n_extra_pairs": 0,
+  "n_parsed": 3,
+  "n_certified": 1,
+  "mrs": [
+    {
+      "k": 1,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    },
+    {
+      "k": 2,
+      "v1": true,
+      "v1_reason": null,
+      "v2": true,
+      "certified": true
+    },
+    {
+      "k": 3,
+      "v1": true,
+      "v1_reason": null,
+      "v2": false,
+      "certified": false
+    }
+  ]
+}
