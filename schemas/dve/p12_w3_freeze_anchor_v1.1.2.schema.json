@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "p12_w3_freeze_anchor_v1.1.2.schema.json",
+  "title": "P3 acknowledgment of the P12 W3.4 freeze",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "anchor_id",
+    "producer",
+    "consumer",
+    "transport",
+    "chronology",
+    "amendment_id",
+    "scope",
+    "anchor_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "anchor_id": {"const": "p3-p12-w3.4-cross-repo-anchor-v1.1.2"},
+    "producer": {
+      "type": "object",
+      "required": ["repository", "branch", "freeze_stage", "freeze_commit", "contract_sha256", "freeze_manifest_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "repository": {"const": "meng004/P12-Defect4MR"},
+        "branch": {"const": "codex/p12-independent-evidence-design"},
+        "freeze_stage": {"const": "W3.4"},
+        "freeze_commit": {"pattern": "^[0-9a-f]{40}$"},
+        "contract_sha256": {"pattern": "^[0-9a-f]{64}$"},
+        "freeze_manifest_sha256": {"pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "consumer": {
+      "type": "object",
+      "required": ["repository", "contract_path", "contract_commit", "contract_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "repository": {"const": "meng004/P3-Semantic-Mutation"},
+        "contract_path": {"const": "data/dve/p12_consumer_contract_v1.1.2.json"},
+        "contract_commit": {"pattern": "^[0-9a-f]{40}$"},
+        "contract_sha256": {"pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "transport": {
+      "type": "object",
+      "required": ["anchor_mode", "tag_name", "tag_status", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "anchor_mode": {"const": "cross-repository-content-hash"},
+        "tag_name": {"const": "p12-provider-w3-freeze-v1.1.2"},
+        "tag_status": {"const": "unavailable_due_to_cloud_ref_permission"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "chronology": {
+      "type": "object",
+      "required": ["acknowledged_at", "d2_opened", "w4_executed"],
+      "additionalProperties": false,
+      "properties": {
+        "acknowledged_at": {"type": "string", "format": "date-time"},
+        "d2_opened": {"const": false},
+        "w4_executed": {"const": false}
+      }
+    },
+    "amendment_id": {"const": "P3-A001"},
+    "scope": {"type": "string", "minLength": 1},
+    "anchor_sha256": {"pattern": "^[0-9a-f]{64}$"}
+  }
+}
+
