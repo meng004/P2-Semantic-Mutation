@@ -1,0 +1,130 @@
+ledger_id: p3-semantic-mutation-claim-ledger-v1.2.0
+status: frozen-scope-baseline
+frozen_at: "2026-07-12T00:00:00+08:00"
+scope_authority: research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md
+supersedes_narrative_priority_of:
+  - research/paper-outline-semantic-mutation-mr-adequacy.md
+  - research/paper-draft-plan-mr-adequacy-tosem.md
+
+claims:
+  - claim_id: C1_SEMANTIC_MUTATION_SYSTEM_PROTOCOL
+    text: "P3 prospectively defines an auditable semantic-mutation system comprising operators, controlled mutants, equivalence handling, and semantic mutation scores."
+    intended_location: method
+    status: supported
+    evidence:
+      output_files:
+        - research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md
+        - docs/superpowers/specs/2026-07-12-p12-v120-equivalence-nontriviality-redesign.md
+    scope_limits:
+      - "Protocol existence does not establish operator effectiveness or score validity."
+      - "No confirmatory mutant outcome is implied."
+    wording_allowed: "We prospectively specified the operator, equivalence, denominator, and scoring rules of the semantic-mutation system."
+    next_step_to_unblock: "none"
+
+  - claim_id: C2_CROSS_PROJECT_OPERATOR_EFFECTIVENESS
+    text: "The frozen semantic mutation operators generate valid, executable, trigger-covered, non-equivalent semantic mutants across source-disjoint projects."
+    intended_location: results
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "Candidate operators, static site bindings, and attainable plans are not confirmed operators."
+      - "Requires original/mutant dual-arm execution under frozen witnesses."
+    blocked_reason: "Main-P12 confirmatory operator calibration has not produced an accepted CORE_OPERATORS_FROZEN handoff."
+    wording_allowed: "We test whether the frozen operators generate valid semantic mutants across source-disjoint projects."
+    next_step_to_unblock: "Accept a content-addressed CORE_OPERATORS_FROZEN package with raw dual-arm evidence."
+
+  - claim_id: C3_EQUIVALENCE_PROTOCOL_VALUE
+    text: "Certificate-first equivalence handling yields a more robust and interpretable semantic-mutant denominator than naive survival-based handling."
+    intended_location: results
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "Finite agreement, zero MR kills, build failure, and unexercised triggers cannot certify equivalence."
+      - "Requires denominator and sensitivity results from the frozen target-mutant population."
+    blocked_reason: "No accepted target-mutant equivalence assessment and sealed denominator exist."
+    wording_allowed: "We use certificate-first equivalence handling and report unresolved cases separately."
+    next_step_to_unblock: "Accept the sealed equivalence ledger and compare strict, conservative, and sensitivity denominators."
+
+  - claim_id: C4_SMS_DISCRIMINANT_VALIDITY
+    text: "The semantic mutation score distinguishes MT conditions with different semantic-fault detection completeness and localizes differences by operator family."
+    intended_location: results
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "B0 and B1 are controlled measurement probes, not the paper's core contribution."
+      - "Family-balanced and instance-weighted results must both be reported."
+    blocked_reason: "No accepted B0/B1 target-mutant kill matrix exists."
+    wording_allowed: "We evaluate the discriminant validity of SMS using two budget-matched MT conditions."
+    next_step_to_unblock: "Accept sealed B0/B1 sets and the blinded target-mutant kill matrix."
+
+  - claim_id: C5_CONTROLLED_REAL_CONSISTENCY
+    text: "Controlled semantic-mutant evaluation is consistent with or explains the same MT conditions' performance on developer-authored real semantic faults."
+    intended_location: results
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "Primary analysis uses only prospectively frozen DIRECT mappings."
+      - "ADJACENT mappings are sensitivity evidence; OUT_OF_SCOPE and UNCERTAIN faults remain visible."
+      - "Selection-conditioned D2 detection cannot be generalized to all real defects."
+    blocked_reason: "No accepted frozen D2 mapping and paired controlled/real detection matrices exist."
+    wording_allowed: "We test controlled-to-real consistency at project, operator-family, and semantic-fault-class levels."
+    next_step_to_unblock: "Accept the outcome-blind D2 mapping and both blinded execution matrices."
+
+  - claim_id: C6_STRUCTURED_VS_NATIVE_SUPERIORITY
+    text: "Structured MR recognition using meta-patterns and MR Families outperforms LLM-native MR recognition."
+    intended_location: secondary_analysis
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "This is not a core P3 contribution."
+      - "Any result is limited to the frozen projects, models, prompts, budgets, and MR-admission protocol."
+      - "The comparison primarily evaluates SMS discriminant validity and family-level explanation."
+    blocked_reason: "No accepted uncontaminated B0, structured B1, or confirmatory outcome matrix exists."
+    wording_allowed: "B0 and B1 serve as two controlled MT conditions for evaluating the semantic-mutation system."
+    next_step_to_unblock: "Regenerate uncontaminated B0, freeze budget-matched B1, and accept both blinded matrices."
+
+  - claim_id: C7_REPRODUCIBLE_EVIDENCE_INFRASTRUCTURE
+    text: "The study uses content-addressed, role-isolated, append-only evidence production and blinded execution controls."
+    intended_location: method
+    status: qualified
+    evidence:
+      output_files:
+        - research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md
+        - docs/superpowers/specs/2026-07-12-p12-v120-equivalence-nontriviality-redesign.md
+    scope_limits:
+      - "Infrastructure supports C1-C3 but is not an equal scientific contribution."
+      - "Workflow design does not establish compliance of future execution packages."
+    wording_allowed: "We designed a content-addressed and role-isolated evidence workflow; package-level compliance is verified separately."
+    next_step_to_unblock: "Upgrade package-specific wording only after consumer validation of final artifacts."
+
+status_policy:
+  abstract_allows:
+    - supported
+    - qualified
+  contributions_allow:
+    - supported
+    - qualified
+  results_allow:
+    - supported
+    - observed
+    - qualified
+  limitations_allow:
+    - insufficient
+    - blocked
+    - speculative
+  prohibited_upgrades:
+    - "Infrastructure readiness may not be upgraded to a scientific result."
+    - "Static site binding may not be upgraded to an effective operator."
+    - "Zero kill or finite agreement may not be upgraded to equivalence."
+    - "B0/B1 superiority may not be upgraded to the paper identity."
+

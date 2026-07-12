@@ -1,5 +1,7 @@
 # 论文初稿计划：MR 集合充分性 × held-out 决策价值主实验（TOSEM 重写）
 
+> **范围更新（2026-07-12）：** 本文档降级为历史 DVE / portfolio-selection 设计与可选扩展实验，不再定义 P3 的确认性核心、论文标题、主 RQ 或贡献排序。P3 v1.2.0 的权威范围基线是 `research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md`。B0/B1 与 held-out 策略只能作为语义变异系统的区分效度或扩展分析，不得取代“算子—等价—得分—真实缺陷一致性”主线。
+
 > 状态：初稿计划 **v1.1.1**（2026-07-10；v1.1 经 EIC round-3 "Conditional Pass to Preregistration" 后小修）
 > 上游文档：`research/paper-outline-semantic-mutation-mr-adequacy.md`（论证骨架 v0.1，branch `claude/paper-journal-acceptance-kxpveo` @ 0274196）
 > 评审输入：
@@ -32,7 +34,7 @@
 
 ## 0. 计划的一句话
 
-在提纲 v0.1 的形式框架之上，把 EIC 的 P0 要求落成一项**预注册、双盲、family 级 held-out 的 MR 决策价值实验（Decision-Value Experiment, DVE）**：证明（或证伪）"用 SMS/residual faults 指导冻结目录内的 MR portfolio selection，在同等预算下，对**未见过的缺陷机理家族**取得比经典 mutation score 与 MR coverage 指导更高的检测收益"。该实验成为论文的确认性核心；提纲原有的 RQ1–RQ4 降为构造性与诊断性支撑。
+在提纲 v0.1 的形式框架之上，本历史版本曾把 EIC 的 P0 要求落成一项**预注册、双盲、family 级 held-out 的 MR 决策价值实验（Decision-Value Experiment, DVE）**：证明（或证伪）“用 SMS/residual faults 指导冻结目录内的 MR portfolio selection，在同等预算下，对**未见过的缺陷机理家族**取得比经典 mutation score 与 MR coverage 指导更高的检测收益”。**该实验在本历史版本中曾被设为确认性核心；自 P3 v1.2.0 起已降级为可选区分效度或扩展分析，不再支配论文身份、主 RQ 或贡献排序。**
 
 **主张范围的自我限定**（round-2 风险 4 的回应）：确认性结论的措辞固定为 *"MR portfolio selection within a frozen candidate catalogue"*，不外推为一般的 MR revision/design 效率；自由设计场景由 Tier-2 臂提供次级证据（§3.7）。
 
