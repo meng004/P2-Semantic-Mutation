@@ -252,3 +252,39 @@ The design is ready for implementation planning when the written specification i
 - G2 restricted to D1/non-confirmatory assets;
 - G3/L3 moved to post-outcome analysis;
 - D2 retained unopened until the new W4_PREOPEN and P3 statistical hard gates pass.
+
+## 11. Migration from the v1.1.2 Task 18-22 Checkpoint
+
+P12 commit `aa61553731e86c89fccbd77c885d8e9231e82cc0` is retained as an immutable v1.1.2 execution checkpoint. It shall not be reverted, force-pushed, amended, or rewritten. Its W4_PREOPEN result remains `BLOCKED (14/16)` and shall be described as a successful integration/intake rehearsal, not a scientific failure or a v1.2.0 pre-opening result.
+
+The checkpoint may be reused directly for:
+
+- verification of the nine delivered transport files and their handoff hashes;
+- the 176-family/12-project D1 admitted manifest as operator-induction input;
+- the 94-family/20-project D2 admitted and sealed manifest;
+- the D0/D2 zero-overlap evidence;
+- the D2 commitment with `open_count=0`;
+- the neutral D1/MR/D2 overlap audit;
+- append-only intake provenance, failures, limitations, and negative evidence.
+
+The checkpoint may be reused only after qualification or audit for:
+
+- the 83-definition/14-family MR corpus, which is a B0 candidate only after generation-context contamination audit;
+- D1 family labels, which are evidence for operator induction rather than executable target mutants;
+- D2 semantic labels, which require a new outcome-blind v1.2.0 mapping ledger without exposing identities to the MR tracks.
+
+The following checkpoint artifacts are superseded for v1.2.0 confirmatory use and must be rebuilt without deleting their v1.1.2 history:
+
+- `portfolio-s1.json` and `portfolio-s2.json`;
+- their portfolio-construction ledger events;
+- the v1.1.2 `w4-preopen.json` state and report;
+- the v1.1.2 readiness-source design;
+- the old S1/S2 strategy interpretation;
+- any inference that D1 families are already executable semantic mutants;
+- any MR admission or selection that lacks the v1.2.0 B0/B1 provenance and L0-L2 certificates.
+
+The v1.2.0 branch shall be created from `aa615537...` so the append-only intake and commitment history is preserved. It shall add a governed `v1.2.0` amendment and new versioned artifacts; it shall not modify W3.4-frozen files or the bytes of existing v1.1.2 generated records.
+
+The standalone W3.5 readiness relocation proposed for v1.1.2 is not authorized. Executor and human-protocol readiness shall be redesigned and frozen as part of v1.2.0 after the operator, equivalence, B0/B1, and MR-gate protocols exist.
+
+The old machine W4 state records the same `artifact_sha256=44136fa3...` for all sixteen checks. This is insufficient as per-check evidence binding even though the accompanying report lists separate manifest hashes. The v1.2.0 gate shall recompute and record the actual source-artifact hash or a canonical composite hash for every check, reject an empty/generic artifact binding, and test that changing any bound manifest, ledger, policy, readiness record, or receipt changes or blocks the corresponding check.
