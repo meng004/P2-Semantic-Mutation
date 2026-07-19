@@ -1,6 +1,6 @@
 # V125 Two-Layer Semantic Operator Redesign
 
-**Status:** approved direction, written specification pending user review  
+**Status:** approved for implementation after P12 K0–K5 intake at `b50cbb286cc3a6f3898cfdf2e6b8c3c678fe3f41`  
 **Date:** 2026-07-20  
 **Scientific scope:** P3 RQ1 operator-system rescue experiment  
 **Upstream blocked evidence:** D1 `V124_OPERATOR_REDESIGN_V5_1_3_DEVELOPMENT_BLOCKED` at `9d01626a3551a331469f7d3e0953632f22b0aea5`
@@ -275,4 +275,3 @@ Recommended branch names:
 Runtime discovery of a different authoritative full commit must be recorded
 and fail closed rather than guessed. No force-push, history rewrite, or
 in-place modification of V124/D124 artifacts is permitted.
-
