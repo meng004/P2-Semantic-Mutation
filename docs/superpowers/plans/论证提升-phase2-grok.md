@@ -23,7 +23,7 @@
 
 - [ ] **Step 1:** 选定未用过的 provider（候选按对称协议可满足性排序），逐项核对对称清单：prompt=v4 同文、parser 同版、候选数/修复次数/预算/温度同值；清单存 `data/v5/MR_SOURCE_SYMMETRY.md`
 - [ ] **Step 2:** 生成 aligned/cross MR 集 → prescreen → kill 矩阵
-- [ ] **Step 3:** 跑 `analysis_hzero.py`（零预测：THM-GAP/COR-ZERO 预测标签 vs 观测零/非零）与 `analysis_hdisc.py`（条件判别）；verdict 入 SSOT；Commit
+- [ ] **Step 3:** 跑 `analysis_hzero.py`（零预测：THM-GAP/COR-ZERO 预测标签 vs 观测零/非零）与 `analysis_hdisc.py`（条件判别，配对主口径：within-cell Wilcoxon + \(r_{\mathrm{mp}}\)，非配对 δ 作敏感性）；verdict 入 SSOT；Commit
 
 ## Task 2.3：剂量反应实验（EXP-DOSE，H-DOSE）
 

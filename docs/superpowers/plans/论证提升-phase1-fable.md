@@ -27,15 +27,16 @@
 **Files:** Create: `scripts/prereg/power_simulation.py`；Output: `research/prereg_v2/power_report.md`
 
 - [ ] **Step 1:** 从 v4 数据估计两部分分布参数：P(SMS>0|aligned)、P(SMS>0|cross)、非零部分的 Beta 拟合参数
-- [ ] **Step 2:** 模拟设计变量网格：applicable cell 数 × 每 cell 变异体数 {20,30} × MR 集数（v5 held-out 份数 {1,2}）；每格 2000 次模拟，输出 H-ZERO（McNemar）与 H-DISC（条件 Cliff's δ=0.33）的功效
-- [ ] **Step 3:** 选定最小达 0.8 功效的配置写入 power_report；若 KER 全集（12 核）配置全部 <0.8，触发"追加 4–8 个紧凑核"决策（列出候选核清单与选择标准，交作者拍板）
+- [ ] **Step 2:** 模拟设计变量网格（cell=算子×PUT，master §0.3）：applicable cell 数 × 每 cell 变异体密度 {8,12,16,20} × MR 集数（v5 held-out 份数 {1,2}）；每格 2000 次模拟，输出 H-ZERO（McNemar）与 H-DISC（配对口径：Wilcoxon 符号秩 + \(r_{\mathrm{mp}}\)，MID 候选由 δ=0.33 换算）的功效；**强制产出预算算术表**：applicable cell 数 × 密度 = 变异体总量（预算区间约 300–840）× 单变异体生成/执行成本
+- [ ] **Step 2b:** 外部线可行性模拟（R-3）：以 DEF-CAL 检出率为先验，模拟就绪缺陷数 n∈{12,16,20,24} × 项目数 J∈{6,8,10} × 每项目缺陷分布下 H-CAL（McNemar）与 H-RANK（\(\bar\tau\ge0.3\)）的功效与并列密度；输出"阈值检验 or 区间估计"裁定建议
+- [ ] **Step 3:** 选定最小达 0.8 功效的配置写入 power_report；若 KER 全集（12 核）配置全部 <0.8，触发"追加 4–8 个紧凑核"决策（追加=PUT 级增加 cell 数；列出候选核清单与选择标准，交作者拍板）；若外部线模拟显示 \(\bar\tau\) 阈值检验功效 <0.8，H-RANK 冻结前降为区间估计报告（Task 1.3 落实）
 - [ ] **Step 4:** Commit
 
 ## Task 1.3：假设与分析代码冻结（门禁：理论线 CHECKPOINT T2 已过）
 
 **Files:** Create: `research/prereg_v2/hypotheses.md`、`scripts/prereg/analysis_hzero.py`、`analysis_hdisc.py`、`analysis_hcons.py`、`analysis_hdose.py`、`analysis_hcal_hrank.py`
 
-- [ ] **Step 1:** hypotheses.md 定稿六条（H-ZERO balanced accuracy ≥0.75 + McNemar；H-DISC 条件 δ ≥ 模拟锁定 MID + BCa CI；H-CONS Wilson 下界 >0.5；H-DOSE isotonic vs 常数置换检验；H-CAL accuracy/Brier 优于多数类；H-RANK 项目等权 Kendall τ ≥ MID，\(\tau_{\mathrm{SMS}}-\tau_{\mathrm{MS}}\) 描述性）；每条注明推导来源定理（THM-GAP/THM-WIN/COR-ZERO）与降级路径
+- [ ] **Step 1:** hypotheses.md 定稿六条（H-ZERO balanced accuracy ≥0.75 + McNemar；H-DISC 配对主口径：within-cell（aligned−cross）Wilcoxon 符号秩 + \(r_{\mathrm{mp}}\) ≥ 模拟锁定 MID 且 CI 下界 >0，非配对条件 Cliff's δ 降敏感性（v4 可比）；H-CONS Wilson 下界 >0.5；H-DOSE isotonic vs 常数置换检验；H-CAL accuracy/Brier 优于多数类；H-RANK 项目等权 Kendall τ ≥ MID——项目准入：就绪缺陷 ≥3、并列处理与合格项目数 J 报告规则明文、若 Task 1.2 Step 2b 可行性模拟功效 <0.8 则本条冻结前降为区间估计报告——\(\tau_{\mathrm{SMS}}-\tau_{\mathrm{MS}}\) 描述性）；每条注明推导来源定理（THM-GAP/THM-WIN/COR-ZERO）与降级路径
 - [ ] **Step 2:** 分析脚本按假设一比一实现，输入统一为 SSOT JSON 新键，输出统一 schema `{hypothesis, estimate, ci, p, verdict}`；对空输入跑通冒烟测试（合成数据）
 - [ ] **Step 3:** 冻结机制：`git tag prereg-v2-freeze && shasum -a 256 research/prereg_v2/* scripts/prereg/*.py > research/prereg_v2/FREEZE_MANIFEST.sha256`
 - [ ] **Step 4:** Commit
@@ -46,7 +47,7 @@
 
 - [ ] **Step 1:** 准入三条（且仅三条）：真实缺陷（公开 issue+fix commit）；双臂可复现（buggy/fixed 构建+触发）；in-scope（单/少输出数值核，签名可适配）。**明文排除** "MR 可判别"条件并注明这是对 D0 循环的修正
 - [ ] **Step 1b:** 内嵌 master §1.3.1 挖掘规范：仓库白名单定稿（Defect4MR 覆盖项目 + numpy/scipy/scikit-learn/statsmodels/PyMC/GPy/GPyTorch/chaospy/SALib 候选池取舍）、issue 检索信号词与排除类清单、语义符合性判定模板（issue URL + buggy SHA + fixed SHA + 一句机理）、两段式统一标识规则（准入期 `EXT-<repo>-<序号>`，映射冻结后 `bug-<算子代号>-<序号>`；准入期禁止出现算子归类）
-- [ ] **Step 2:** fiber 映射协议：两名标注者、训练集=DEF-CAL（verified_full）中 10 例（development）、标签集 {DIRECT, ADJACENT, OUT_OF_SCOPE, UNCERTAIN}、盲化规定（不见 kill 结果、不见对方标注）、κ≥0.6 门禁、分歧仲裁程序
+- [ ] **Step 2:** fiber 映射协议：**两名人类标注者**（身份类别写入协议；均不接触 MR 生成与 kill 执行；LLM 仅可作标注辅助工具，须声明且不计入 κ）、训练集=DEF-CAL（verified_full）中 10 例（development）、标签集 {DIRECT, ADJACENT, OUT_OF_SCOPE, UNCERTAIN}、盲化规定（不见 kill 结果、不见对方标注）、κ≥0.6 门禁、分歧仲裁程序；**降级方案并列预注册（R-4）**：第二人类标注者不可得 → 单人类标注者 + 时间分隔（≥2 周）test–retest 自一致性 + 全部标注材料公开 + §6 披露
 - [ ] **Step 3:** 冻结预测协议：执行前对每 (defect, MR set) 产出 detect/miss 预测 + 每 MR 集 SMS 排序预测，`shasum -a 256` 存证；揭盲规则
 - [ ] **Step 4:** Commit（协议单独冻结后即可通知 `论证提升-phase3-terra.md` 启动 Task 3.1/3.2）
 

@@ -23,7 +23,7 @@
 - [ ] **Step 2:** §3 新增四小节：适用矩阵（引 prereg 哈希）、剂量反应设计、held-out source 对称协议、外部切片准入与盲化协议（含 master §1.3.1 两段式标识）；baseline 小节并入 mutmut/random-floor/MS 排序三基线；对象选取原则段=master §1.4 的 P1–P7 压缩版（≤1 段）；对象命名一律用 master §1.1 语义集合名（KER-*/POOL-*/MRSET-*/DEF-*）
 - [ ] **Step 3:** §4 重排：**先 H-ZERO 零预测准确率 → H-DISC 条件判别 → H-CONS/H-DOSE → 外部线 H-CAL/H-RANK → Prior Audit 小节（旧 H1–H4 原样 + 一段"为什么旧阈值与理论错配"）**；全部数字模板注入自 SSOT
 - [ ] **Step 4:** §5：缺口归因解读段（零膨胀的 \(\mathrm{Gap}_{\mathrm{aln}}(R)\) 部分=理论确认）、SMS vs MS 有界比较段（明示不做普适优越主张）、T1/T2/T4 接口段（各一句+引用）
-- [ ] **Step 5:** §6 Threats 新增：双重使用防火墙（旧数据用途清单）、外部切片选择披露（准入解耦声明+就绪失败案保留）、v5 provider 单一性
+- [ ] **Step 5:** §6 Threats 新增：双重使用防火墙（旧数据用途清单）、外部切片选择披露（准入解耦声明+就绪失败案保留）、v5 provider 单一性、标注者安排披露（双人类 or 降级 test–retest + LLM 辅助声明）
 - [ ] **Step 6:** 每节改完即编译 + `python scripts/check_ssot_consistency.py` 过门禁；分节 commit
 
 ## Task 4.3：图表重生
