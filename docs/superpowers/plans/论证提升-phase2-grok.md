@@ -1,0 +1,49 @@
+# 论证提升-phase2-grok：构念线（EXP-CON / EXP-DIS / EXP-DOSE / EXP-STR）
+
+> **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans。任务用 checkbox 跟踪；REVIEW CHECKPOINT 必须停下等作者拍板。
+> **执行模型:** `cursor-grok-4.5-high-fast`（分派类别：**执行**——生成/跑批/分析脚本执行量大，速度优先；全部判据与分析代码已在 Phase 1 冻结，本阶段不做统计设计决策）。非此模型请勿执行本文件。
+
+**Master plan（规格权威）:** `docs/superpowers/plans/2026-07-28-p3-argumentation-uplift.md`。开工前必读其 §0（标识系统）、§1.1（对象集合定义与说明——KER-*/POOL-* 语义命名）、§1.2（链路总表=判据公式）、§1.3（预处理规范——变异体统一标识 `mut-<算子>-<PUT>-<序号>` 与剂量档位标定）、§1.5（方法卡片）。内容冲突以 master 为准。**纪律：预注册冻结后分析代码不得改动，改动即降级 exploratory 并披露。**
+
+**前置门禁:** Phase 1 完成（`prereg-v2-freeze` tag 存在，REVIEW CHECKPOINT 1 已过）。
+
+**并行性:** 与 Phase 3（terra）并行；工期 4–6 周。Task 2.3 的对象清单受理论线 Phase T3 输出（\(L_r\) 不可估 PUT 清单）联动约束。
+
+**交接物:** SSOT 新键 `funnel_v5`、`dose_response_v5`、`syntactic_overlap_v2` + 四个 verdict（H-CONS/H-ZERO/H-DISC/H-DOSE）→ 供 Phase 4 写作模板注入。
+
+---
+
+## Task 2.1：新变异体生成（v5 lineage，EXP-CON）
+
+- [ ] **Step 1:** 按 Task 1.2 锁定配置在 applicable cell 生成新变异体（生成器版本、seed、prompt 哈希入台账 `data/v5/GENERATION_LEDGER.md`）；逐个赋统一标识 `mut-<算子>-<PUT>-<序号>`（master §1.3.2）
+- [ ] **Step 2:** 全漏斗插桩：parse/build/trigger/E1∧E2/证书 各级损耗计数落 SSOT 新键 `funnel_v5`
+- [ ] **Step 3:** 跑 `analysis_hcons.py`，verdict 入 SSOT；Commit
+
+## Task 2.2：held-out MR source（v5-MR，EXP-DIS）
+
+- [ ] **Step 1:** 选定未用过的 provider（候选按对称协议可满足性排序），逐项核对对称清单：prompt=v4 同文、parser 同版、候选数/修复次数/预算/温度同值；清单存 `data/v5/MR_SOURCE_SYMMETRY.md`
+- [ ] **Step 2:** 生成 aligned/cross MR 集 → prescreen → kill 矩阵
+- [ ] **Step 3:** 跑 `analysis_hzero.py`（零预测：THM-GAP/COR-ZERO 预测标签 vs 观测零/非零）与 `analysis_hdisc.py`（条件判别）；verdict 入 SSOT；Commit
+
+## Task 2.3：剂量反应实验（EXP-DOSE，H-DOSE）
+
+- [ ] **Step 1:** 参数化算子实现：HP（超参幅度）与 CE（守恒侵蚀强度）各设 ≥6 档幅度网格，每档名义违反幅度 \(\varepsilon_m\) 标定入台账（master §1.3.3）；对象=每类一核（Lorenz、MC 积分、GPR、LogReg，数据键 A1/B3/C1/D3；若理论线 Phase T3 判某核的 Lipschitz 常数 \(L_r\) 不可估则按其清单替换）
+- [ ] **Step 2:** 每档 × 20 重复执行 kill 判定（个体标识 `mut-<算子>-<PUT>-e<档位>-r<重复>`），曲线数据落 SSOT `dose_response_v5`
+- [ ] **Step 3:** 跑 `analysis_hdose.py`（isotonic vs 常数，置换 p；Page's L）；同时报告转变位置与 THM-WIN 预测中心 \(\varepsilon_{\mathrm{tol}}\) 的偏差（模型检验，不设通过线）；Commit
+
+## Task 2.4：语法基线扩充（EXP-STR）
+
+- [ ] **Step 1:** mutmut 默认配置跑 KER 全集（12 核），产物 AST 归一化后与 v4+v5 语义变异体（POOL-SEM）做精确重叠审计（复用现有 cosmic-ray 审计脚本，`rg -l "ast" scripts/ | head` 定位）
+- [ ] **Step 2:** 双引擎重叠表入 SSOT `syntactic_overlap_v2`；Commit
+
+**REVIEW CHECKPOINT 2：构念线四组结果（H-CONS/H-ZERO/H-DISC/H-DOSE）verdict 汇报，含任何降级触发。**
+
+---
+
+## 本阶段风险
+
+| 风险 | 触发点 | 处置 |
+|---|---|---|
+| v5 provider 不满足对称清单 | Task 2.2 | 换第二候选；全部不满足 → 判别线降 development 复现，H-DISC 降 exploratory |
+| 任一确认性假设失败 | 各 Task Step 3 | 按 hypotheses.md 预注册降级路径执行，不改阈值、不删数据 |
+| 分析脚本运行报缺陷需改代码 | 任意 | 修 bug 须同步在 FREEZE_MANIFEST 记 amendment（哈希+理由），对应假设标注 exploratory 风险并在 CHECKPOINT 2 汇报 |
