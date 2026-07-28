@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans。任务用 checkbox 跟踪；每个 REVIEW CHECKPOINT 必须停下等作者拍板。
 
-**Goal:** 在 `submission/TOSEM_regular_20260706/main.tex` 基线上完成四个新结果（THM-INT 区间健全性、THM-GAP 缺口归因、THM-WIN 检测窗、PROP-IDF 可辨识性）与退化定理修补（THM-DEG-R），通过独立形式审计，产出可进入预注册阶段的理论章节。
+**Goal:** 在 `submission/TOSEM_regular_20260706/main.tex` 基线上完成三个新主定理（THM-INT 区间健全性、THM-GAP 缺口归因、THM-WIN 检测窗）+ 辨识性重读 REM-IDF（THM-GAP 之 Remark）与退化定理修补（THM-DEG-R），通过独立形式审计，产出可进入预注册阶段的**最小理论核心**（R-9）章节。
 
 **Architecture:** 先在 `research/theory_drafts/` 用 Markdown+LaTeX 起草定理陈述与证明（便于审计者独立阅读），评审通过后整合进 main.tex §2.10–2.12 与 Appendix G，最后跑一致性与编译验证。
 
@@ -20,7 +20,7 @@
 | T1 THM-INT | `理论增强-phaseT1-fable.md` | claude-fable-5-thinking-max（推理） | T0 | T2/T3/T5 |
 | T2 THM-GAP | `理论增强-phaseT2-fable.md` | claude-fable-5-thinking-max（推理） | T0 | T1/T3/T5 |
 | T3 THM-WIN | `理论增强-phaseT3-fable.md` | claude-fable-5-thinking-max（推理） | T0 | T1/T2/T5 |
-| T4 PROP-IDF | `理论增强-phaseT4-fable.md` | claude-fable-5-thinking-max（推理） | T2 | T5 |
+| T4 REM-IDF（THM-GAP Remark） | `理论增强-phaseT4-fable.md` | claude-fable-5-thinking-max（推理） | T2 | T5 |
 | T5 THM-DEG-R | `理论增强-phaseT5-fable.md` | claude-fable-5-thinking-max（推理） | T0 | T1–T4 |
 | T6 整合与审计 | `理论增强-phaseT6-terra.md` | gpt-5.6-terra-max（审计） | T1–T5 + CHECKPOINT T1–T3 | 审计等待窗口内：论证 Phase 0–2 |
 
@@ -32,7 +32,7 @@
 
 1. **禁止无语义孤立字母命名**：数学对象不得以裸的 A、B、C、D、E、F、S 等单字母命名；一律用语义算子名（\(\mathrm{Cov}\)、\(\mathrm{Gap}\)、\(\mathrm{eff}\)、\(\mathrm{sig}\)，沿四柱 \(\operatorname{Det}_\Gamma\)/\(\operatorname{Complete}_\Gamma\) 的命名风格）或带语义下标的字母（\(\Delta_r\)、\(\mu_r\)、\(\sigma_{\mathrm{out}}\)、\(u_{\mathrm{neq}}\)）。
 2. **符号闭集**：全部数学符号以 §0.2 总表为闭集；新增符号必须先入表（补序号、含义、来源、冲突检查）再入草稿/正文。Task T0.2 的 `notation_registry.md` 与本表一对一同步。
-3. **定理族标签**：`THM-`（定理）、`LEM-`（引理）、`COR-`（推论）、`PROP-`（命题）+ 语义缩写。正文最终编号由 LaTeX 自动分配，Task T6.1 产出"标签 → 正文编号"映射表。既有结果登记：`THM-UND`（现稿 Thm 1 不可判定）、`THM-DUAL`（现稿 Thm 2 对偶）、`THM-DEG`（现稿 Thm 9.1 退化）。
+3. **定理族标签**：`THM-`（定理）、`LEM-`（引理）、`COR-`（推论）、`PROP-`（命题）、`REM-`（Remark，正文不占定理环境计数）+ 语义缩写。正文最终编号由 LaTeX 自动分配，Task T6.1 产出"标签 → 正文编号"映射表。既有结果登记：`THM-UND`（现稿 Thm 1 不可判定）、`THM-DUAL`（现稿 Thm 2 对偶）、`THM-DEG`（现稿 Thm 9.1 退化）。
 4. **其他标识**：定义 `DEF-nn`；证明义务 `PO-<定理缩写>-n`；假设 `H-<语义缩写>`、实验 `EXP-<语义缩写>`（见论证提升计划 §0.3）。
 5. **权威源优先级**：统一框架 v1.2 附录 A > 四柱 v1.2 > MR有效性理论 v3.1 > P3 内部惯用。
 
@@ -62,7 +62,7 @@
 | 20 | \(w_j\) | 层权重 | DEF-07 | — |
 | 21 | \(\mathrm{Cov}(R)\) | 被 \(R\) 精确检查的层指标集 | DEF-06 | 原拟 \(F_R\)，改语义算子名；与统计协方差无关 |
 | 22 | \(\mathrm{Gap}_{\mathrm{aln}}(R),\ \mathrm{Gap}_{\mathrm{str}}(R)\) | 对齐缺口、强度缺口 | DEF-08 | 原拟 \(A(R)/S(R)\)；\(\mathrm{Gap}_{\mathrm{aln}}\leftrightarrow\) 四柱 \(\Omega_{\mathrm{sel}}\) |
-| 23 | \(\xi(R)\) | 精确性偏差（块外 kill 质量占比） | DEF-09 | 模型检验统计量，不入 SMS |
+| 23 | \(\xi(R)\) | 精确性偏差（块外 kill 质量占比） | DEF-09 | 模型检验统计量，不入 SMS；描述性诊断、无预注册通过线（R-9），充当 A-PROV 的检验器 |
 | 24 | \(\mathrm{sig}(m)\) | kill 签名 | DEF-14 | — |
 | 25 | \(\varepsilon_m\) | 违反幅度 | DEF-10 | — |
 | 26 | \(\Delta_r\) | 正确程序结构保持残差 \(\sup_{x\in D_r}\varepsilon_r(x;P^\star)\) | DEF-12 | = v3.1 结构保持偏差 \(\Delta(S,P)\) 的实例；对接结构命运四分类 |
@@ -119,16 +119,16 @@
 | Thm A / T-A | **THM-INT** | SMS 区间健全性与单调性（interval） |
 | Thm B / T-B | **THM-GAP** | 块对角与缺口归因（gap attribution） |
 | Thm C / T-C | **THM-WIN** | 容差索引检测窗（window） |
-| Prop D / P-D | **PROP-IDF** | kill 签名可辨识性（identifiability） |
+| Prop D / P-D | **REM-IDF**（原拟 PROP-IDF，R-9 降为 THM-GAP 之 Remark） | kill 签名可辨识性（identifiability 重读） |
 | Lemma A.1 / L-A1 | **LEM-WIT** | kill witness upgrade |
 | L-B1 | **LEM-CLO** | exact checker 的 violation set 闭包性 |
 | C-B1 | **COR-ZERO** | cross-zero 预测 |
-| C-C1 | **COR-FPOS** | 弱 MR 假阳性 |
-| C-C2 | **COR-FNEG** | 随机假阴性与 \(N^{-1/2}\) 处方 |
+| C-C1 | **REM-FPOS**（原拟 COR-FPOS，R-9 改为 THM-WIN 内 Remark） | 弱 MR 假阳性 |
+| C-C2 | **REM-FNEG**（原拟 COR-FNEG，R-9 改为 THM-WIN 内 Remark） | 随机假阴性与 \(N^{-1/2}\) 处方 |
 | T-9.1′ | **THM-DEG-R** | 退化定理修补版（现稿 THM-DEG 的替换） |
 | D1–D14 | DEF-01–DEF-14 | 形式化定义 |
 | \(F_R\)；\(A(R)/S(R)\)；\(\rho_0\)；\(e^*\)；σ(effect map)；I(不变量族)；\(D_S\) | \(\mathrm{Cov}(R)\)；\(\mathrm{Gap}_{\mathrm{aln}}/\mathrm{Gap}_{\mathrm{str}}\)；\(\Delta_r\)；\(u_{\mathrm{neq}}\)；\(\mathrm{eff}\)；\(\Psi\)；\(\mathcal D_P\) | 数学符号语义化 |
-| PO-A1..A5 / B0..B5 / C1..C6 / D1..D2 / F1..F3 | PO-INT-1..5 / PO-GAP-1..6 / PO-WIN-1..6 / PO-IDF-1..2 / PO-DEG-1..3 | 证明义务 |
+| PO-A1..A5 / B0..B5 / C1..C6 / D1..D2 / F1..F3 | PO-INT-1..5 / PO-GAP-1..6 / PO-WIN-1..6 / PO-DEG-1..3；PO-IDF-1..2（旧 D1..D2）撤销——R-9 后 REM-IDF 无独立 PO，论证并入 THM-GAP 讨论 | 证明义务 |
 | H-B1 / H-B2 / H-C1 / H-C2 / H-X1 / H-X2 | H-ZERO / H-DISC / H-CONS / H-DOSE / H-CAL / H-RANK | 假设（论证计划 §0.3） |
 | 实验 E2 / E3 / E3c / E4 / RQ-S 审计 | EXP-CON / EXP-DIS / EXP-DOSE / EXP-EXT / EXP-STR | 实验（论证计划 §0.3） |
 | Phase A–G / Task A1–G2 / CHECKPOINT 1–4 | Phase T0–T6 / Task T0.1–T6.2 / CHECKPOINT T1–T4 | 计划结构 |
@@ -140,10 +140,10 @@
 | 目标 | 度量 | 验收值 |
 |---|---|---|
 | 新增形式化定义 | §0.3 定义清单落入正文/附录 | 14/14，每条有编号可交叉引用 |
-| 新增/修补定理 | §1.1 清单 | 新增 4 主结果 + 3 推论 + 2 引理；THM-DEG-R 修补 3 项全闭合 |
-| 证明义务 | §1.2 台账 | 22/22 状态=closed，每条证明无前向引用、无循环 |
+| 新增/修补定理 | §1.1 清单 | 新增 3 主定理 + 1 推论（COR-ZERO）+ 2 引理 + 3 Remark（REM-IDF/REM-FPOS/REM-FNEG）；THM-DEG-R 修补 3 项全闭合（R-9 最小理论核心） |
+| 证明义务 | §1.2 台账 | 20/20 状态=closed（R-9 撤销 PO-IDF-1..2），每条证明无前向引用、无循环 |
 | 独立审计 | 8 项清单（Task T6.2） | 8/8 ✓，报告含草稿 SHA256 签署 |
-| 正文体积 | 新增理论正文 | ≤ 4 页（TOSEM acmsmall 版式）；完整证明全部入 Appendix G |
+| 正文体积 | 新增理论正文 | ≤ 3 页（TOSEM acmsmall 版式，R-9）；完整证明全部入 Appendix G；正文只载证明链上符号，§0.2 全表以 notation table 入附录 |
 | 构建 | 编译 + 字符 | 两遍编译零 error；`grep -c "Missing character" main.log` = 0 |
 | 记号一致 | notation_registry 比对 | §0.2 总表为符号闭集，草稿/正文零溢出；与统一框架附录 A 零冲突 |
 
@@ -157,9 +157,9 @@
 | **THM-GAP** | 块对角与缺口归因分解 | DEF-05–09, S5 | THM-DUAL、LEM-CLO、THM-WIN(iii) | PO-GAP-2–5 | draft |
 | COR-ZERO | cross-zero 预测（非对齐 SMS=0） | — | THM-GAP | PO-GAP-6 | draft |
 | **THM-WIN** | 容差索引检测窗（现稿 Prop 2 升级） | DEF-10–13 | latency window（§2.8） | PO-WIN-1–4 | draft |
-| COR-FPOS | 弱 MR 假阳性 | DEF-12 | THM-WIN | PO-WIN-5 | draft |
-| COR-FNEG | 随机假阴性与 \(N^{-1/2}\) 处方 | DEF-11 | THM-WIN | PO-WIN-6 | draft |
-| **PROP-IDF** | kill 签名可辨识性 | DEF-14 | THM-GAP | PO-IDF-1, 2 | draft |
+| REM-FPOS（THM-WIN 内 Remark） | 弱 MR 假阳性 | DEF-12 | THM-WIN | PO-WIN-5 | draft |
+| REM-FNEG（THM-WIN 内 Remark） | 随机假阴性与 \(N^{-1/2}\) 处方 | DEF-11 | THM-WIN | PO-WIN-6 | draft |
+| REM-IDF（THM-GAP 内 Remark） | kill 签名可辨识性（重读） | DEF-14 | THM-GAP | —（无独立 PO，论证并入 THM-GAP 讨论段） | draft |
 | THM-DEG-R | 退化定理（修补版） | 支撑假设 | 现稿 Lemma 9.1–9.3 | PO-DEG-1–3 | repair |
 
 ### 1.2 证明义务台账（执行时逐条置 closed）
@@ -181,10 +181,10 @@
 | PO-WIN-2 | 必杀界（三角不等式） | THM-WIN | ≤10 行 |
 | PO-WIN-3 | 必不杀界 | THM-WIN | ≤10 行 |
 | PO-WIN-4 | 窗含入（与 ε_crash、S4 对接） | THM-WIN | ≤6 行 |
-| PO-WIN-5 | \(\mu_r<0\) ⟹ 原程序被标记 ⟹ 退出可采纳评价集 | COR-FPOS | ≤6 行 |
-| PO-WIN-6 | N 下界代数推导 | COR-FNEG | ≤6 行 |
-| PO-IDF-1 | 被杀 m 的 \(\mathrm{sig}(m)\) 同层性 ⟹ fiber 精确辨识 | PROP-IDF | ≤8 行 |
-| PO-IDF-2 | 存活 m 辨识粒度=覆盖等价类；分离族下 \(\mathrm{Cov}(R)\) 上平凡 | PROP-IDF | ≤10 行 |
+| PO-WIN-5 | \(\mu_r<0\) ⟹ 原程序被标记 ⟹ 退出可采纳评价集 | REM-FPOS | ≤6 行 |
+| PO-WIN-6 | N 下界代数推导 | REM-FNEG | ≤6 行 |
+
+（PO-IDF-1/2 已撤销——R-9：REM-IDF 的同层性与覆盖等价类论证以两句话并入 THM-GAP 讨论段，由 T6 审计项 (8) 一并复核，不设独立台账行。）
 | PO-DEG-1 | Lemma 9.1 增补 \(\mathrm{supp}(\mathcal D_P)\supseteq\mathcal X_{\mathrm{adm}}\) 假设 + 无假设反例注记 | THM-DEG-R | ≤8 行 |
 | PO-DEG-2 | a.e. 改二选一表述（浮点有限例外集 / 连续化测度零），G.3 同步 | THM-DEG-R | ≤10 行 |
 | PO-DEG-3 | \(L=L_{\mathrm{lim}}\wedge L_{\mathrm{switch}}\) 两段式重述及证明适配 | THM-DEG-R | ≤12 行 |
@@ -341,34 +341,36 @@ implies $r$ does not kill $m$; (iii) with the crash threshold
 $\varepsilon_{\mathrm{crash}}$ (S4), the kill region lies within
 $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$.
 
-\textbf{Corollary [COR-FPOS] (weak-MR false positive).} If
+\textbf{Remark [REM-FPOS] (weak-MR false positive).} If
 $\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$ the correct program is flagged
 and $r$ exits the admissible evaluation set (empirically: the PINN case).
 
-\textbf{Corollary [COR-FNEG] (stochastic false negative and repeat prescription).}
+\textbf{Remark [REM-FNEG] (stochastic false negative and repeat prescription).}
 For stochastic PUTs $\bar\eta=c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}$;
 guaranteed detection at target magnitude $\varepsilon^\dagger$ requires
 $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol}}-\Delta_r-2\eta_{\mathrm{det}})\bigr)^2$
 (empirically: the RNG case).
 ```
 
+（R-9：两条原拟推论改为 THM-WIN 定理环境内的 Remark，不占独立定理编号；其论证义务 PO-WIN-5/6 保留。）
+
 - [ ] **Step 2:** 写证明（误差预算三角不等式两次；对接 §2.9 latency window 定义，(iii) 由 S4 直接）
-- [ ] **Step 3:** 写"经验预测"小节：kill 概率沿 ε_m 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\) —— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为推论实例
-- [ ] **Step 4:** 写"结构命运对应"注记（≤1 段）：以 \(\mu_r\) 与 \(\Delta_r\) 把 P3 的 MR 分类形式对接 v3.1 §4.2 结构命运四分类——\(\Delta_r=0\) ↔ 精确保持（strict MR）、\(0<\Delta_r\le\varepsilon_{\mathrm{tol}}\) ↔ 近似保持（strong/tolerance MR）、\(\Delta_r>\varepsilon_{\mathrm{tol}}\) ↔ 结构破坏（weak MR，即 COR-FPOS）、\(\Delta_r(h)\to0\) ↔ 渐近保持；注明这使 THM-WIN 成为 v3.1 引理 1（\(\Delta\le\tau\Rightarrow\mathrm{Valid}\)）在变异检测语境下的定量细化
+- [ ] **Step 3:** 写"经验预测"小节：kill 概率沿 ε_m 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\) —— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为 Remark 实例
+- [ ] **Step 4:** 写"结构命运对应"注记（≤1 段）：以 \(\mu_r\) 与 \(\Delta_r\) 把 P3 的 MR 分类形式对接 v3.1 §4.2 结构命运四分类——\(\Delta_r=0\) ↔ 精确保持（strict MR）、\(0<\Delta_r\le\varepsilon_{\mathrm{tol}}\) ↔ 近似保持（strong/tolerance MR）、\(\Delta_r>\varepsilon_{\mathrm{tol}}\) ↔ 结构破坏（weak MR，即 REM-FPOS）、\(\Delta_r(h)\to0\) ↔ 渐近保持；注明这使 THM-WIN 成为 v3.1 引理 1（\(\Delta\le\tau\Rightarrow\mathrm{Valid}\)）在变异检测语境下的定量细化
 - [ ] **Step 5:** Commit
 
 ---
 
-## Phase T4：PROP-IDF 可辨识性
+## Phase T4：REM-IDF 辨识性重读（THM-GAP 之 Remark，R-9 后的轻量阶段）
 
-### Task T4.1：起草与证明
+### Task T4.1：起草 Remark 与 LRCA 重定位段
 
-**Files:** Create: `research/theory_drafts/prop_identifiability.md`
+**Files:** Create: `research/theory_drafts/rem_identifiability.md`
 
-- [ ] **Step 1:** 写入（定稿基准）：
+- [ ] **Step 1:** 写入（定稿基准；Remark 环境，无独立定理编号）：
 
 ```latex
-\textbf{Proposition [PROP-IDF] (identifiability up to coverage classes).} Under the
+\textbf{Remark [REM-IDF] (identifiability up to coverage classes).} Under the
 assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m)=\{r\in R: r\ \text{kills}\ m\}$.
 For any killed $m$, all members of $\mathrm{sig}(m)$ are checkers of the
 same stratum, which identifies the fiber of $m$ exactly. For survivors,
@@ -377,10 +379,10 @@ by identical $R$-coverage; with a separating family (one exact checker per
 stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 ```
 
-- [ ] **Step 2:** 证明（块对角矩阵直接推论）；写 LRCA 重定位段：现稿贡献声明 C2–C5 = 对块结构偏离（ξ 质量）的诊断标注器，引用替换 §2.4 的功能描述句
+- [ ] **Step 2:** 论证以两句话并入 THM-GAP 讨论段（同层性=块对角矩阵直接重读；覆盖等价类粒度=survivor 行恒零的观测不可分辨），**无独立 PO**（R-9；由 T6 审计项 (8) 一并复核）；写 LRCA 重定位段：现稿贡献声明 C2–C5 = 对块结构偏离（ξ 质量）的诊断标注器，引用替换 §2.4 的功能描述句
 - [ ] **Step 3:** Commit
 
-**REVIEW CHECKPOINT T3：作者确认 THM-WIN/PROP-IDF 假设清单与推论对既有 boundary cases 的覆盖。**
+**REVIEW CHECKPOINT T3：作者确认 THM-WIN 假设清单、REM-FPOS/REM-FNEG/REM-IDF 的 Remark 表述与既有 boundary cases 的覆盖。**
 
 ---
 
@@ -411,11 +413,11 @@ stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 
 ### Task T6.1：草稿整合进正文
 
-**Files:** Modify: main.tex（新增 §2.10 THM-INT、§2.11 THM-GAP、§2.12 PROP-IDF；§2.9 Prop 2→THM-WIN 原位升级；Appendix G 新增 G.6–G.9 完整证明；正文编号由 LaTeX 分配）
+**Files:** Modify: main.tex（新增 §2.10 THM-INT、§2.11 THM-GAP（含 REM-IDF Remark，R-9 不设独立小节）；§2.9 Prop 2→THM-WIN 原位升级（含 REM-FPOS/REM-FNEG）；Appendix G 新增 G.6–G.8 完整证明；正文编号由 LaTeX 分配）
 
 - [ ] **Step 1:** 按草稿逐节移植；`[标签]` 占位符替换为正文编号，并在 notation_registry 附"标签 → 正文编号"映射表；正文只放陈述+证明思路 ≤5 行，完整证明入 Appendix
 - [ ] **Step 2:** 执行 §0.4 决议的三处全文改名（按 Task T0.2 Step 5 的出现清单）：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\to\mathrm{eff}^{-1}\)，§2.9 与 Appendix G 相关证明）；不变量族 \(I\to\Psi\)（§2.7 及其引用处）；\(D_S\to\mathcal D_P\)（§2.6）。改后复查：`rg -n "sigma\^\{-1\}|D_S" submission/TOSEM_regular_20260706/main.tex` 应为 0；改名单独成 commit 以便独立 revert
-- [ ] **Step 3:** 更新 §1 claim-evidence map：新增四行（THM-INT、THM-GAP、THM-WIN、PROP-IDF → Supported (formal)）；更新 RQ1 表述为"健全性、单调性、退化与归因保证"
+- [ ] **Step 3:** 更新 §1 claim-evidence map：新增三行（THM-INT、THM-GAP（含 REM-IDF）、THM-WIN → Supported (formal)）；更新 RQ1 表述为"健全性、单调性、退化与归因保证"；正文符号最小化：只保留证明链上符号，§0.2 全表导出为 Appendix notation table（R-12）
 - [ ] **Step 4:** 交叉引用检查：`rg -n "Proposition 2" submission/TOSEM_regular_20260706/main.tex` 应为 0（已升级为 THM-WIN 编号并全文改引）
 - [ ] **Step 5:** 编译两遍 + `grep -c "Missing character" main.log` 期望 0；Commit
 

@@ -33,7 +33,7 @@
 ## Task 3.4：执行与揭盲
 
 - [ ] **Step 1:** 对就绪案逐一执行四组 MR（aligned/cross/v5/random floor）于 buggy/fixed 双臂；原始判定落 `data/external_slice/runs/`
-- [ ] **Step 2:** 经典 MS 基线：mutmut 跑对应模块得 kill-rate 排序；Pattern Coverage 排序同步计算
+- [ ] **Step 2:** 经典 MS 基线：cosmic-ray 跑对应模块得 kill-rate 排序（版本与 normaliser 与 EXP-STR 同钉扎，R-10）；Pattern Coverage 排序同步计算（描述性次级基线）
 - [ ] **Step 3:** 跑 `analysis_hcal_hrank.py`：预测校准（accuracy/Brier vs 多数类）、项目等权 Kendall τ（SMS 排序 vs 真实检出排序；仅就绪缺陷 ≥3 的合格项目入 \(\bar\tau\)，报告合格项目数 J，不合格项目描述性单列）、\(\tau_{\mathrm{SMS}}-\tau_{\mathrm{MS}}\) 与 \(\tau_{\mathrm{SMS}}-\tau_{\mathrm{PC}}\) 描述性对比、OUT_OF_SCOPE 份额；全部入 SSOT `external_validation`
 - [ ] **Step 4:** Commit
 

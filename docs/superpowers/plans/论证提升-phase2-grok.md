@@ -33,8 +33,9 @@
 
 ## Task 2.4：语法基线扩充（EXP-STR）
 
-- [ ] **Step 1:** mutmut 默认配置跑 KER 全集（12 核），产物 AST 归一化后与 v4+v5 语义变异体（POOL-SEM）做精确重叠审计（复用现有 cosmic-ray 审计脚本，`rg -l "ast" scripts/ | head` 定位）
-- [ ] **Step 2:** 双引擎重叠表入 SSOT `syntactic_overlap_v2`；Commit
+- [ ] **Step 1:** cosmic-ray 既有 1,250 一阶变异体与 v4+v5 语义变异体（POOL-SEM）做 AST 归一化精确重叠审计（复用现有审计脚本，`rg -l "ast" scripts/ | head` 定位；引擎版本钉扎入台账，R-10）
+- [ ] **Step 2:** 构造性论证文档（R-10，替代第二引擎运行）：整理 cosmic-ray 与 mutmut 公开算子清单，逐族映射到"一阶 AST 局部编辑"类，论证语法引擎可达集边界；材料入 `docs/review_20260728/syntactic_reach.md`
+- [ ] **Step 3:** 重叠表 + 论证文档索引入 SSOT `syntactic_overlap_v2`；Commit
 
 **REVIEW CHECKPOINT 2：构念线四组结果（H-CONS/H-ZERO/H-DISC/H-DOSE）verdict 汇报，含任何降级触发。**
 
