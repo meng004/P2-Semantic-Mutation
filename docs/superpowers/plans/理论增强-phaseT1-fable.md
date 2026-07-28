@@ -48,10 +48,10 @@ $R\subseteq R'$ both endpoints are non-decreasing.
 
 **Files:** Create: `scripts/theory/interval_demo.py`；Output: `data/results/interval_demo_v4.json`
 
-- [ ] **Step 1:** 从 v4 prescreen 台账统计每 mp-cell 的 (n, k, u)：u 取"仅由 K_eq 抽样判等、无 AST/证书"的候选数（输入=prescreen 计数台账，与论证线 Phase 0 的 δ 冲突正交，无需等其 CHECKPOINT 0，F-13）。数据源定位：`rg -l "equiv" data/ --glob "*v4*"`
-- [ ] **Step 2:** 输出每 mp-cell（v4 遗产划分 12 PUT × 5 MP，F-8）与总体的 [SMS_cons, SMS_strict] 及宽度分布；写入 JSON（键名 `mp_cells`；新键，不改旧键）
-- [ ] **Step 3:** 验证：`python scripts/theory/interval_demo.py && python -c "import json;d=json.load(open('data/results/interval_demo_v4.json'));print(len(d['mp_cells']))"` 期望 60（mp-cell 口径，F-8）
-- [ ] **Step 4:** Commit（此结果只作 §2.10 演示图，标注 development-only）
+- [x] **Step 1:** 从 v4 prescreen 台账统计每 mp-cell 的 (n, k, u)：u 取"仅由 K_eq 抽样判等、无 AST/证书"的候选数（输入=prescreen 计数台账，与论证线 Phase 0 的 δ 冲突正交，无需等其 CHECKPOINT 0，F-13）。数据源定位结果：`data/results/sms_track2_v4.json`（60 mp-cell 计数台账）+ `data/results/equiv_diagnosis.json`（判等语义证据：单次 E1∧E2 抽样、无证书层，equiv=0 为真实观测）；故 n=killed+survive、k=killed、u=equiv
+- [x] **Step 2:** 输出每 mp-cell（v4 遗产划分 12 PUT × 5 MP，F-8）与总体的 [SMS_cons, SMS_strict] 及宽度分布；写入 JSON（键名 `mp_cells`；新键，不改旧键）
+- [x] **Step 3:** 验证：`python scripts/theory/interval_demo.py && python -c "import json;d=json.load(open('data/results/interval_demo_v4.json'));print(len(d['mp_cells']))"` 输出 60 ✓（pooled 区间 [0.104795, 0.104795]，宽度全 0——v4 无 unresolved，区间坍缩为点，与旧 SMS 零回溯差异）
+- [x] **Step 4:** Commit（此结果只作 §2.10 演示图，标注 development-only）
 
 **REVIEW CHECKPOINT T1：作者确认 THM-INT 陈述、假设与演示口径。**
 
