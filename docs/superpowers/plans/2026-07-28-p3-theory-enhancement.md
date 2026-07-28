@@ -62,7 +62,7 @@
 | 20 | \(w_j\) | 层权重 | DEF-07 | — |
 | 21 | \(\mathrm{Cov}(R)\) | 被 \(R\) 精确检查的层指标集 | DEF-06 | 原拟 \(F_R\)，改语义算子名；与统计协方差无关 |
 | 22 | \(\mathrm{Gap}_{\mathrm{aln}}(R),\ \mathrm{Gap}_{\mathrm{str}}(R)\) | 对齐缺口、强度缺口 | DEF-08 | 原拟 \(A(R)/S(R)\)；\(\mathrm{Gap}_{\mathrm{aln}}\leftrightarrow\) 四柱 \(\Omega_{\mathrm{sel}}\) |
-| 23 | \(\xi(R)\) | 精确性偏差（块外 kill 质量占比） | DEF-09 | 模型检验统计量，不入 SMS；描述性诊断、无预注册通过线（R-9），充当 A-PROV 的检验器 |
+| 23 | \(\xi(R)\) | 精确性偏差（块外 kill 质量占比） | DEF-09 | 模型检验统计量，不入 SMS；pooled 口径升 secondary confirmatory 假设 H-XI（先验地标 0.10，B-1，见论证计划 §1.2），充当 A-PROV 的 ex-post 检验器；per-cell 分布仍描述性 |
 | 24 | \(\mathrm{sig}(m)\) | kill 签名 | DEF-14 | — |
 | 25 | \(\varepsilon_m\) | 违反幅度 | DEF-10 | — |
 | 26 | \(\Delta_r\) | 正确程序结构保持残差 \(\sup_{x\in D_r}\varepsilon_r(x;P^\star)\) | DEF-12 | = v3.1 结构保持偏差 \(\Delta(S,P)\) 的实例；对接结构命运四分类 |
@@ -92,7 +92,7 @@
 - **DEF-12（边际与结构保持残差）**：\(\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r\)，其中 \(\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)\) 为正确程序 \(P^\star\) 上的关系残差上确界，**即 v3.1 的结构保持偏差 \(\Delta(S,P)\) 在 \(r\) 的诱导结构上的实例**。
 - **DEF-13（检测窗）**：\((\varepsilon_{\mathrm{lo}},\varepsilon_{\mathrm{crash}})\)，\(\varepsilon_{\mathrm{lo}}=\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta\)。
 - **DEF-14（签名与分离族）**：\(\mathrm{sig}(m)=\{r\in R: r\ \text{kills}\ m\}\)；分离族 = \(\mathrm{Cov}(R)\) 中每层至少一个 exact checker。
-- **A-PROV（构念桥接假设，R-6；方法学假设，不进入任何定理的数学前提）**：实证操作化中，aligned 出处的 MR 集近似其目标层的 exact checker（DEF-05 的经验近似）；\(\mathrm{Cov}(R)\) 的操作化 = 适用矩阵 × MR 出处（provenance-as-coverage）；证据双通道（F-2）：**ex-ante 通道**=出处与构造审计（对称清单、生成期 eff 标签、适用矩阵哈希），与 kill 结果无关，决定 A-PROV 是否被断言；**ex-post 通道**=\(\xi(R)\)（DEF-09）作结果侧诊断，消费规则预注册于论证计划 Task 1.3 Step 1b——H-ZERO/H-DISC verdict 无条件，ξ 不改变 verdict。登记于此供两计划统一引用；实证落地见论证提升计划 Task 1.3。
+- **A-PROV（构念桥接假设，R-6；方法学假设，不进入任何定理的数学前提）**：实证操作化中，aligned 出处的 MR 集近似其目标层的 exact checker（DEF-05 的经验近似）；\(\mathrm{Cov}(R)\) 的操作化 = 适用矩阵 × MR 出处（provenance-as-coverage）；证据双通道（F-2）：**ex-ante 通道**=出处与构造审计（对称清单、生成期 eff 标签、适用矩阵哈希），与 kill 结果无关，决定 A-PROV 是否被断言；**ex-post 通道**=\(\xi(R)\)（DEF-09）作结果侧诊断，其 pooled 口径为 secondary confirmatory 预测 H-XI（先验地标 0.10，B-1），消费规则预注册于论证计划 Task 1.3 Step 1b——H-ZERO/H-DISC verdict 无条件，ξ 不改变 verdict，H-ZERO × H-XI 2×2 裁决表预注册。登记于此供两计划统一引用；实证落地见论证提升计划 Task 1.3。
 
 ### 0.4 跨文档符号冲突消解表（权威源优先级见 §0.1 第 5 条）
 

@@ -34,7 +34,7 @@
 
 - [ ] **Step 1:** 对就绪案逐一执行四组 MR（aligned/cross/v5/random floor）于 buggy/fixed 双臂；原始判定落 `data/external_slice/runs/`
 - [ ] **Step 2:** 经典 MS 基线：cosmic-ray 跑对应模块得 kill-rate 排序（版本与 normaliser 与 EXP-STR 同钉扎，R-10）；Pattern Coverage 排序同步计算（描述性次级基线）
-- [ ] **Step 3:** 跑 `analysis_hcal_hrank.py`：预测校准（主口径：aligned 条件每缺陷一对 accuracy vs 多数类，精确 McNemar；fixed 臂 FPR 单列，F-3）、项目等权 Kendall τ（SMS 排序 vs 真实检出排序；仅就绪缺陷 ≥3 的合格项目入 \(\bar\tau\)，报告合格项目数 J，不合格项目描述性单列）、\(\tau_{\mathrm{SMS}}-\tau_{\mathrm{MS}}\) 与 \(\tau_{\mathrm{SMS}}-\tau_{\mathrm{PC}}\) 描述性对比、OUT_OF_SCOPE 份额；全部入 SSOT `external_validation`
+- [ ] **Step 3:** 跑 `analysis_hcal_hrank.py`：预测校准（主口径：aligned 条件每缺陷一对 accuracy vs 多数类，精确 McNemar；fixed 臂 FPR 单列，F-3）、项目等权 Kendall τ（SMS 排序 vs 真实检出排序；仅就绪缺陷 ≥3 的合格项目入 \(\bar\tau\)，报告合格项目数 J，不合格项目描述性单列）、\(\bar\tau_{\mathrm{SMS}}-\bar\tau_{\mathrm{MS}}\) 与 \(\bar\tau_{\mathrm{SMS}}-\bar\tau_{\mathrm{PC}}\) 配对差+bootstrap 95% CI（估计优先，B-3）、四条件合并聚簇 bootstrap secondary 判定（B-3）、OUT_OF_SCOPE 份额；全部入 SSOT `external_validation`
 - [ ] **Step 4:** Commit
 
 **REVIEW CHECKPOINT 3：外部线揭盲结果汇报；若 H-CAL/H-RANK 无信号，确认按预注册降级叙事（有界不一致 + THM-GAP 归因）执行写作。**
