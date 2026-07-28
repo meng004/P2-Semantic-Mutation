@@ -17,11 +17,11 @@
 
 **Files:** Modify: `submission/TOSEM_regular_20260706/main.tex:688-739`（§2.6）、Appendix G 对应节
 
-- [ ] **Step 1:** L 拆分：\(L=L_{\mathrm{lim}}\wedge L_{\mathrm{switch}}\)，\(L_{\mathrm{lim}}=(\varepsilon_{\mathrm{eq}}\to0)\wedge(K_{\mathrm{eq}}\to\infty)\wedge(\varepsilon_{\mathrm{AVP}}\to0)\)，\(L_{\mathrm{switch}}=\)（MP 集置换 ∧ 算子切换 ∧ PUT 类限制）；定理陈述改为"在 \(L_{\mathrm{switch}}\) 固定下沿 \(L_{\mathrm{lim}}\) 取极限"
-- [ ] **Step 2:** Lemma 9.1 增加显式假设："\(\mathcal D_P\)（原稿 \(D_S\)，随程序记号统一改名）的支撑覆盖 \(\mathcal X_{\mathrm{adm}}\)"；无此假设时给反例注记（一行）
-- [ ] **Step 3:** "almost everywhere" 改为二选一表述（浮点域有限例外集 / 连续化模型下测度零），Appendix G.3 同步
-- [ ] **Step 4:** 编译验证：`cd submission/TOSEM_regular_20260706 && pdflatex -interaction=nonstopmode main.tex | tail -3`，期望无 error
-- [ ] **Step 5:** Commit
+- [x] **Step 1:** L 拆分：\(L=L_{\mathrm{lim}}\wedge L_{\mathrm{switch}}\)，\(L_{\mathrm{lim}}=L1\wedge L2\wedge L3\)（\(\varepsilon_{\mathrm{eq}}\to0\wedge K_{\mathrm{eq}}\to\infty\wedge\varepsilon_{\mathrm{AVP}}\to0\)），\(L_{\mathrm{switch}}=L4\wedge L5\wedge L6\)（MP 集置换 ∧ 算子切换 ∧ PUT 类限制）；两种读法恒等（\(=L_{\mathrm{equiv}}\wedge L_{\mathrm{killed}}\wedge L_{\mathrm{mut}}\)）；定理陈述改为"在 \(L_{\mathrm{switch}}\) 固定下沿 \(L_{\mathrm{lim}}\) 取极限"，箭头改 \(\xrightarrow{L_{\mathrm{lim}}}\)；G.4 Corollary 9.1 的遗留 "\(L=L1\wedge L2\wedge L3\)" 命名冲突一并修正（改回 "Under \(L\)" + 三联合条件名）
+- [x] **Step 2:** Lemma 9.1 增加显式假设："\(\mathcal D_P\)（原稿 \(D_S\)，随程序记号统一改名，仅限 §2.6+G.2–G.4 范围，全文扫尾归 T6.1）的支撑覆盖 \(\mathcal X_{\mathrm{adm}}\)"；无假设反例注记（一行）已入 proof sketch 尾部；G.3 证明中 \(\forall x\in D_S\setminus N\) 类型修正为 \(\forall x\in\mathcal X_{\mathrm{adm}}\setminus N\)（支撑假设由此被实际使用）
+- [x] **Step 3:** "almost everywhere" 改为二选一表述（浮点域有限例外集（NaN 传播/上下溢陷阱，精确离散情形为空）/ 连续化模型下 \(\mathcal D_P\)-测度零），Thm 9.1（main+G.4）与 Lemma 9.1（G.3）同步；§1/§4 的顺带提法留给 T6 写作层
+- [ ] **Step 4:** 编译验证：`cd submission/TOSEM_regular_20260706 && pdflatex -interaction=nonstopmode main.tex | tail -3`，期望无 error——**pending**：环境无 TeX，texlive 安装进行中（tmux `texlive-install`），装毕补验并在此更新
+- [x] **Step 5:** Commit
 
 ## Task T5.2：三态等价状态集成（依 Task T0.2 Step 4 的登记）
 

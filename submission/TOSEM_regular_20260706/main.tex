@@ -677,6 +677,7 @@ contents of MUT, MP, C, and \texttt{cls} remain open to future
 extension.
 
 \subsection{SMS-to-MS degeneration: formal statement}\label{sms-ms-degeneration-formal-statement}
+% NOTE: D_S -> \mathcal{D}_P rename is scoped to the degeneration-theorem sections in this pass; the global sweep completes in the notation-alignment pass (T6.1).
 
 The §2.5 backward-compatibility claim is formalised as a degeneration
 theorem. The full notation cross-reference is \textbf{Appendix G.1}; the
@@ -704,11 +705,31 @@ formula:
   programs (controls mut layer; Lemma 9.3).
 \end{itemize}
 
-\textbf{Theorem 9.1 (SMS $\to$ MS degeneration).} In the degenerate limit
-\texttt{L}, \textbf{almost everywhere} with respect to the input
-distribution \texttt{D\_S},
+The same conjunction admits an orthogonal regrouping that separates
+what tends to a limit from what is merely switched. Write
+$L_{\mathrm{lim}} = L1 \wedge L2 \wedge L3$
+($\varepsilon_{\mathrm{eq}} \to 0$, $K_{\mathrm{eq}} \to \infty$,
+$\varepsilon_{\mathrm{AVP}} \to 0$) for the quantitative limit axes, and
+$L_{\mathrm{switch}} = L4 \wedge L5 \wedge L6$ (MP set
+$= \{\mathrm{MP}_{\mathrm{eq}}\}$; rule-based syntactic operators;
+imperative deterministic PUT class) for the discrete configuration
+switches. Then
+$L = L_{\mathrm{lim}} \wedge L_{\mathrm{switch}} = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$:
+the same conjunction under two readings, the lemma-facing pairing above
+and the limit/switch split used to state Theorem 9.1.
 
-\[ \mathrm{SMS}_{i,k,j} \xrightarrow{L} \mathrm{MS}_{i,j} = \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
+\textbf{Theorem 9.1 (SMS $\to$ MS degeneration).} Fix the switch
+component $L_{\mathrm{switch}}$ and assume
+$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$ (the
+sampling distribution's support covers the admitted input domain).
+Along the limit component $L_{\mathrm{lim}}$, \textbf{outside an
+exception set $N$}, where over floating-point (finite) input domains
+$N$ is the finite set of pathological inputs (Not-a-Number propagation
+and overflow/underflow traps) and is empty in the exact discrete case,
+while under the continuum idealisation $N$ has
+$\mathcal{D}_P$-measure zero,
+
+\[ \mathrm{SMS}_{i,k,j} \xrightarrow{L_{\mathrm{lim}}} \mathrm{MS}_{i,j} = \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
 
 where the right-hand side is the classical Mutation Score of
 \citet{d7c38286734419b52de4262c9802ebdfcf4b9447}, \texttt{killed\^{}classic} is the difference-detection
@@ -716,14 +737,21 @@ set, \texttt{equiv\^{}classic} is the behavioural-equivalence set, and
 \texttt{mut\^{}syntax} is the syntactic-mutant set.
 
 \textbf{Proof sketch.} By Lemma 9.1, equiv\_\{i,k,j\} $\to$
-equiv\_\{i,j\}\^{}classic almost everywhere with respect to D\_S; the
-measure-zero qualifier accommodates floating-point pathological points
-and Not-a-Number propagation. By Lemma 9.2, killed\_\{i,k,j\} $\to$
+equiv\_\{i,j\}\^{}classic outside the exception set $N$ of the theorem
+statement (finite on floating-point domains;
+$\mathcal{D}_P$-measure-zero under the continuum idealisation). By
+Lemma 9.2, killed\_\{i,k,j\} $\to$
 killed\_\{i,j\}\^{}classic, and the MP index k degenerates because L4
 collapses MR\_\{i,k\} to \{MP\_eq\}. By Lemma 9.3, mut\_j(S\_i) $\to$
 mut\_j\^{}syntax(S\_i). Substituting into the SMS formula gives
 MS\_\{i,j\}. Full lemma proofs are in Appendix G.3 and the full theorem
-proof in Appendix G.4.
+proof in Appendix G.4. The support assumption is not removable: if
+$\mathrm{supp}(\mathcal{D}_P) \not\supseteq \mathcal{X}_{\mathrm{adm}}$,
+a mutant that differs from the original only on
+$\mathcal{X}_{\mathrm{adm}} \setminus \mathrm{supp}(\mathcal{D}_P)$
+passes the E2 sampler at every $K_{\mathrm{eq}}$, so the sampled
+equivalence class never converges to behavioural equivalence on
+$\mathcal{X}_{\mathrm{adm}}$.
 
 \textbf{Corollary 9.1 (LRCA trivialisation).} Under \texttt{L}, the
 likely-root-cause inventory C = \{C1, \ldots, C5\} degenerates to

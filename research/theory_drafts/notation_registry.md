@@ -27,6 +27,12 @@ superseded.
 | MR-validity v3.1 §3–§4 | `MR有效性理论_v3.0_理论收敛版.md` (file-name legacy; document heading v3.1), blob `412d833ba4dd9921661007461c4ecf2cd6618b96` |
 | Authority used for collision resolution | Unified Framework v1.2 Appendix A, confirmed by the Four-Pillar and MR-validity cross-references |
 
+Drift note (2026-07-28, post-T5): the Phase T5 manuscript edits to §2.3, §2.5,
+§2.6 (main.tex) and G.2–G.4 (supplementary.tex) shift line numbers after
+main.tex:592 relative to the fingerprinted baseline above. The occurrence
+columns below record the pre-T5 baseline; Task T6.1 must re-run the occurrence
+scans before executing the migrations (already a T6.1 step).
+
 Both the baseline source and the external authority source are now available.
 The authority comparison found three additional collisions in the initial P3
 contract: \(\alpha\) is reserved for the unified framework's effect

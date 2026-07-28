@@ -1217,12 +1217,20 @@ formula:
 \]
 
 \subsection{G.2 Degenerate-limit definition}\label{g.2-degenerate-limit-definition-r-8-p1-3-revision-3-joint-conditions}
+% NOTE: D_S -> \mathcal{D}_P rename is scoped to the degeneration-theorem sections in this pass; the global sweep completes in the notation-alignment pass (T6.1).
 
 The degenerate limit $L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$
 consists of three \textbf{joint conditions} (paired axes), each
 controlling one layer of the SMS formula. L1-L6 are not 6 independent
 axes; the pairing reflects dependency structure across the SMS formula
-layers.
+layers. Equivalently, the same conjunction regroups orthogonally as
+$L = L_{\mathrm{lim}} \wedge L_{\mathrm{switch}}$, where
+$L_{\mathrm{lim}} = L1 \wedge L2 \wedge L3$ collects the quantitative
+limit axes ($\varepsilon_{\mathrm{eq}} \to 0$,
+$K_{\mathrm{eq}} \to \infty$, $\varepsilon_{\mathrm{AVP}} \to 0$) and
+$L_{\mathrm{switch}} = L4 \wedge L5 \wedge L6$ collects the discrete
+configuration switches (MP set $= \{\mathrm{MP}_{\mathrm{eq}}\}$;
+rule-based syntactic operators; imperative deterministic PUT class).
 
 {%
 \begin{longtable}[]{@{}
@@ -1244,9 +1252,9 @@ Pairing rationale
 \bottomrule\noalign{}
 \endlastfoot
 \textbf{$L_{\mathrm{equiv}}$} (Lemma 9.1) & L1: $\varepsilon_{\mathrm{eq}} \to 0$; L2: $K_{\mathrm{eq}} \to \infty$ & L1 alone:
-equiv stays probabilistic ($K_{\mathrm{eq}}$ cannot cover $D_S$). L2 alone: bitwise
+equiv stays probabilistic ($K_{\mathrm{eq}}$ cannot cover $\mathcal{D}_P$). L2 alone: bitwise
 equality diluted by $\varepsilon_{\mathrm{eq}}$. Both simultaneously degenerate equiv to
-classical behavioural equivalence outside a D\_S-measure-zero set. \\
+classical behavioural equivalence outside a $\mathcal{D}_P$-measure-zero set. \\
 \textbf{$L_{\mathrm{killed}}$} (Lemma 9.2) & L3: $\varepsilon_{\mathrm{AVP}}^k \to 0$; L4: MP =
 $\{\mathrm{MP}_{\mathrm{eq}}\}$, R(y,y') $\equiv$ y = y' & L3 alone: $\varepsilon_{\mathrm{AVP}} \to 0$ still allows
 non-trivial MP (monotonicity, convergence). L4 alone: equality still
@@ -1263,20 +1271,30 @@ set. \\
 
 \subsection{G.3 Lemmas, Three-state decomposition degenerates under L}\label{g.3-lemmas-three-state-decomposition-degenerates-under-l}
 
-\textbf{Lemma 9.1 (equiv degeneration; measure-zero
-qualification).} Under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2), semantic-class equivalence
+\textbf{Lemma 9.1 (equiv degeneration; exception-set
+qualification).} Assume
+$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$.
+Under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2), semantic-class equivalence
 (E1 $\wedge$ E2) degenerates to classical behavioural equivalence
-\textbf{almost everywhere} w.r.t. measure $D_S$.
+\textbf{outside an exception set $N$}: over floating-point (finite)
+input domains, $N$ is the finite set of pathological inputs
+(Not-a-Number propagation and overflow/underflow traps), empty in the
+exact discrete case; under the continuum idealisation, $N$ has
+$\mathcal{D}_P$-measure zero.
 
 \emph{Proof.} E1 (type consistency) holds trivially under $\varepsilon_{\mathrm{eq}} \to 0$ (L6
 makes imperative output spaces scalar/vector with static types). E2
 ($|S_i(x) - s'(x)| < \varepsilon_{\mathrm{eq}}$ for $K_{\mathrm{eq}}$ samples)
-under L1 ($\varepsilon_{\mathrm{eq}} \to 0$) $\wedge$ L2 ($K_{\mathrm{eq}} \to \infty$ with measure-equivalent sampling)
-is almost-everywhere equivalent to $\forall x \in D_S \setminus N: S_i(x) = s'(x)$, where
-$N$ is a $D_S$-measure-zero set (continuous $D_S$: floating-point
-pathological points / NaN propagation; discrete $D_S$: $N = \emptyset$). This
+under L1 ($\varepsilon_{\mathrm{eq}} \to 0$) $\wedge$ L2 ($K_{\mathrm{eq}} \to \infty$ with measure-equivalent
+sampling, which by the support assumption reaches all of
+$\mathcal{X}_{\mathrm{adm}}$)
+is equivalent to $\forall x \in \mathcal{X}_{\mathrm{adm}} \setminus N: S_i(x) = s'(x)$, where
+$N$ is the exception set of the lemma statement (floating-point
+domains: the finite set of pathological inputs / NaN propagation;
+exact discrete case: $N = \emptyset$; continuum idealisation:
+$\mathcal{D}_P$-measure zero). This
 matches \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} §3 classical equivalent-mutant definition
-under measure-zero equivalence classes.
+up to the exception set $N$.
 
 \textbf{Lemma 9.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
 degenerates to classical difference detection.
@@ -1300,11 +1318,15 @@ set, independent of domain semantics.
 
 \subsection{G.4 Theorem 9.1, Detailed proof}\label{g.4-theorem-9.1-detailed-proof}
 
-\textbf{Theorem 9.1 (SMS $\to$ MS degeneration).} In the degenerate limit
-$L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$, almost everywhere
-w.r.t. $D_S$,
+\textbf{Theorem 9.1 (SMS $\to$ MS degeneration).} Fix the switch
+component $L_{\mathrm{switch}} = L4 \wedge L5 \wedge L6$ and assume
+$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$.
+Along the limit component $L_{\mathrm{lim}} = L1 \wedge L2 \wedge L3$,
+outside the exception set $N$ of Lemma 9.1 (finite set of pathological
+inputs over floating-point domains, empty in the exact discrete case;
+$\mathcal{D}_P$-measure-zero under the continuum idealisation),
 
-\[ \mathrm{SMS}_{i,k,j} \xrightarrow{L} \mathrm{MS}_{i,j} := \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
+\[ \mathrm{SMS}_{i,k,j} \xrightarrow{L_{\mathrm{lim}}} \mathrm{MS}_{i,j} := \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
 
 \emph{Proof.} Combine Lemmas 9.1-9.3:
 
@@ -1320,16 +1342,17 @@ w.r.t. $D_S$,
 \item
   Denominator $|\mathrm{equiv}_{i,k,j}|$: under L1 $\wedge$ L2 $\to$
   $|\mathrm{equiv}_{i,j}^{\mathrm{classic}}|$ (Lemma 9.1;
-  almost-everywhere w.r.t. $D_S$).
+  outside the exception set $N$).
 \end{itemize}
 
 Substituting into the SMS formula gives $\mathrm{MS}_{i,j}$.
 
-\textbf{Corollary 9.1 (LRCA trivialisation).} Under $L = L1 \wedge L2 \wedge L3$, C
+\textbf{Corollary 9.1 (LRCA trivialisation).} Under $L$, C
 = \{C1, \ldots, C5\} degenerates to \{C1\}.
 
 \emph{Sketch.} Each of C2-C5's triggering precondition depends on at
-least one $L_j$ being violated. When L1 $\wedge$ L2 $\wedge$ L3 hold simultaneously,
+least one $L_j$ being violated. When the three joint conditions
+$L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$ hold simultaneously,
 every non-trivial-space dimension (MP non-triviality, AVP tolerance
 non-zero, non-empty equiv set, MR-design DOF, class-mapping openness)
 closes; C2-C5 triggering set becomes empty (read off from §A.2 decision
