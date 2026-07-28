@@ -435,6 +435,21 @@ def main() -> None:
             "p_a": b["p_nonzero_aligned"], "beta_a": (1.0, 1.0), "aligned_one": True,
             "p_c": b["p_nonzero_cross"], "beta_c": b["beta_cross"],
         },
+        # Appended after the original four so existing scenario indices
+        # (and therefore their rng streams / results) stay byte-stable.
+        # Purpose: localise the H-ZERO power cliff in p_a (pre-review).
+        "S_U70_target_uplift": {
+            "p_a": 0.70, "beta_a": a["beta_aligned"],
+            "p_c": a["p_nonzero_cross"], "beta_c": a["beta_cross"],
+        },
+        "S_U75_target_uplift": {
+            "p_a": 0.75, "beta_a": a["beta_aligned"],
+            "p_c": a["p_nonzero_cross"], "beta_c": a["beta_cross"],
+        },
+        "S_U85_target_uplift": {
+            "p_a": 0.85, "beta_a": a["beta_aligned"],
+            "p_c": a["p_nonzero_cross"], "beta_c": a["beta_cross"],
+        },
     }
 
     result = {

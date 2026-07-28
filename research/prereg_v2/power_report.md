@@ -130,3 +130,16 @@ H-DOSE headline power is saturated at every configuration if the theory-derived 
 5. **EXP-DOSE: 6×20×8 = 960 executions**; H-DOSE-CTR criterion (≥6/8) confirmed to test location, not noise.
 6. **EXP-FIX: sample 15 cells** (pass bar 12/15).
 7. All locks above are recommendations until Task 1.3 freezes them (blocked on theory CHECKPOINT T2); any post-freeze change goes through `AMENDMENTS.md` (F-7).
+
+---
+
+## Addendum (pre-review, 2026-07-28): H-ZERO power cliff localisation
+
+Scenarios S_U70/S_U75/S_U85 appended (after the original four, so pre-existing rng streams and result rows are byte-stable; stability spot-checked). At the recommended config (n_app=51, m=16, s=2):
+
+| true P(SMS>0 \| aligned) | 0.50 | 0.65 | 0.70 | 0.75 | 0.80 | 0.85 |
+|---|---|---|---|---|---|---|
+| true BA | 0.643 | 0.712 | 0.737 | 0.761 | 0.785 | 0.808 |
+| H-ZERO power | 0.004 | 0.196 | 0.376 | 0.613 | 0.806 | 0.925 |
+
+The pass region requires the aligned-condition nonzero rate to reach ≈0.80; ~0.5 power near p_a≈0.72 is boundary behaviour (true BA ≈ threshold). Full reading and the arbitration probes: `docs/review_20260728/prereg_prereview.md`.
