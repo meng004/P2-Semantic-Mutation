@@ -17,7 +17,7 @@
 
 **Files:** Create: `research/theory_drafts/thm_interval.md`
 
-- [ ] **Step 1:** 写入 LEM-WIT 与 THM-INT 陈述（下述 LaTeX 为定稿基准，`[·]` 占位符在 Task T6.1 换成正文编号；执行者可润色不可改语义）：
+- [x] **Step 1:** 写入 LEM-WIT 与 THM-INT 陈述（下述 LaTeX 为定稿基准，`[·]` 占位符在 Task T6.1 换成正文编号；执行者可润色不可改语义）：
 
 ```latex
 \textbf{Lemma [LEM-WIT] (kill witness upgrade).} Assume the AVP verdict is a
@@ -40,9 +40,9 @@ equivalence certificate ($u\!\to\!u\!-\!1$) or divergence witness
 $R\subseteq R'$ both endpoints are non-decreasing.
 ```
 
-- [ ] **Step 2:** 写证明（要点：宽度 \(k/n-k/(n+u)=k u/(n(n+u))\)；MR 扩张时 \((k+\Delta+j)/(n+j)\ge k/n\) 因 \(k\le n\)；证书两类分别验证两端点变化方向）
-- [ ] **Step 3:** 自检清单：AVP 决定性假设是否已在 §2.3 有依据；随机 PUT 的 AVP 重复语义（N=20）是否破坏 LEM-WIT（若 kill 判定含统计聚合，需把"超容差"改为"按 AVP 判定语义超容差"并加脚注）。逐项在草稿"Obligations"节记录
-- [ ] **Step 4:** Commit
+- [x] **Step 2:** 写证明（要点：宽度 \(k/n-k/(n+u)=k u/(n(n+u))\)；MR 扩张时 \((k+\Delta+j)/(n+j)\ge k/n\) 因 \(k\le n\)；证书两类分别验证两端点变化方向）
+- [x] **Step 3:** 自检清单：AVP 决定性假设是否已在 §2.3 有依据；随机 PUT 的 AVP 重复语义（N=20）是否破坏 LEM-WIT（若 kill 判定含统计聚合，需把"超容差"改为"按 AVP 判定语义超容差"并加脚注）。逐项在草稿"Obligations"节记录——结论：v4 kill 判定确为 N=20 严格多数票聚合（`src/p2/avp/repeat.py`），随机 PUT 情形按聚合观测读取并加脚注 F1；另显式补充 margin non-degeneracy（stability）条款并接 DEF-13
+- [x] **Step 4:** Commit
 
 ## Task T1.2：区间演示计算（现有数据，development 身份）
 

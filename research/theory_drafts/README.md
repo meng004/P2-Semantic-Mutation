@@ -8,7 +8,7 @@ The notation registry is the closed symbol set for every draft below.
 | File | Responsible phase | Purpose | Status |
 |---|---|---|---|
 | `notation_registry.md` | T0 | Frozen notation registry and manuscript rename inventory | audited |
-| `thm_interval.md` | T1 | LEM-WIT and THM-INT | draft |
+| `thm_interval.md` | T1 | LEM-WIT and THM-INT | internal-review |
 | `thm_gap.md` | T2 | LEM-CLO, THM-GAP, and COR-ZERO | draft |
 | `thm_window.md` | T3 | THM-WIN with REM-FPOS and REM-FNEG | draft |
 | `rem_identifiability.md` | T4 | REM-IDF and LRCA repositioning | draft |
