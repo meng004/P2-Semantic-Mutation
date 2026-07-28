@@ -17,20 +17,26 @@
 
 **Files:** Create: `research/theory_drafts/rem_identifiability.md`
 
-- [ ] **Step 1:** 写入（定稿基准；Remark 环境，无独立定理编号，`[·]` 占位符在 Task T6.1 换成正文编号）：
+- [x] **Step 1:** 写入（定稿基准；Remark 环境，无独立定理编号，`[·]` 占位符在 Task T6.1 换成正文编号；陈述按 CHECKPOINT T3 修订 A3）：
 
 ```latex
-\textbf{Remark [REM-IDF] (identifiability up to coverage classes).} Under the
+\textbf{Remark [REM-IDF] (identifiability from kill signatures).} Under the
 assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m_{\mathrm{mut}})=\{r\in R: r\ \text{kills}\ m_{\mathrm{mut}}\}$.
 For any killed $m_{\mathrm{mut}}$, all members of $\mathrm{sig}(m_{\mathrm{mut}})$ are checkers of the
-same stratum, which identifies the fiber of $m_{\mathrm{mut}}$ exactly. For survivors,
-fiber membership is identifiable only up to the partition of strata induced
-by identical $R$-coverage; with a separating family (one exact checker per
-stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
+same stratum, which identifies the fiber of $m_{\mathrm{mut}}$ exactly; with a
+separating family (one exact checker per stratum in $\mathrm{Cov}(R)$) the
+killed subpopulations therefore separate every covered stratum. For
+survivors the signature is identically empty and carries no fiber
+information: an empty signature is consistent with every uncovered fiber and
+with the below-window remainder (Theorem~[THM-WIN](ii)) of every covered
+fiber, so survivor fiber attribution must come from generation-time labels,
+not from kill signatures.
 ```
 
-- [ ] **Step 2:** 论证以两句话并入 THM-GAP 讨论段（同层性=块对角矩阵直接重读；覆盖等价类粒度=survivor 行恒零的观测不可分辨），**无独立 PO**（R-9；由 T6 审计项 (8) 一并复核）；写 LRCA 重定位段：现稿贡献声明 C2–C5 = 对块结构偏离（ξ 质量）的诊断标注器，引用替换 §2.4 的功能描述句
-- [ ] **Step 3:** Commit
+（陈述按 CHECKPOINT T3 修订 A3 同步 master：survivor 从句原拟"identifiable up to coverage partition"过度主张，改述为"空签名不携带 fiber 信息、归属由生成期标签承担"；separating family 效力改述为 killed 子群分离全部 covered 层。）
+
+- [x] **Step 2:** 论证以两句话并入 THM-GAP 讨论段（同层性=块对角矩阵直接重读；survivor 行恒零=观测不可分辨，归属由生成期 eff 标签（A-PROV ex-ante 通道）承担——A3 修订后表述），**无独立 PO**（R-9；由 T6 审计项 (8) 一并复核）；LRCA 重定位段已写入 `rem_identifiability.md` §3（C1=对角一致 kill；C2–C5=ξ 质量的诊断标注器；SMS 公式不动），替换句对准现稿 main.tex:646–649
+- [x] **Step 3:** Commit
 
 **REVIEW CHECKPOINT T3：作者确认 THM-WIN 假设清单、REM-FPOS/REM-FNEG/REM-IDF 的 Remark 表述与既有 boundary cases 的覆盖（与 T3 联合拍板）。**
 

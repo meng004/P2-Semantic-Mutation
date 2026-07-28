@@ -11,7 +11,7 @@ The notation registry is the closed symbol set for every draft below.
 | `thm_interval.md` | T1 | LEM-WIT and THM-INT | internal-review |
 | `thm_gap.md` | T2 | LEM-CLO, THM-GAP, and COR-ZERO | internal-review |
 | `thm_window.md` | T3 | THM-WIN with REM-FPOS and REM-FNEG | internal-review |
-| `rem_identifiability.md` | T4 | REM-IDF and LRCA repositioning | draft |
+| `rem_identifiability.md` | T4 | REM-IDF and LRCA repositioning | internal-review |
 
 Status progression is `draft` → `internal-review` → `audited` → `integrated`.
 Phase T5 directly repairs the existing manuscript and Appendix G; it therefore

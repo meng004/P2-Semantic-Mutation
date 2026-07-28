@@ -380,16 +380,22 @@ $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol
 - [ ] **Step 1:** 写入（定稿基准；Remark 环境，无独立定理编号）：
 
 ```latex
-\textbf{Remark [REM-IDF] (identifiability up to coverage classes).} Under the
+\textbf{Remark [REM-IDF] (identifiability from kill signatures).} Under the
 assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m_{\mathrm{mut}})=\{r\in R: r\ \text{kills}\ m_{\mathrm{mut}}\}$.
 For any killed $m_{\mathrm{mut}}$, all members of $\mathrm{sig}(m_{\mathrm{mut}})$ are checkers of the
-same stratum, which identifies the fiber of $m_{\mathrm{mut}}$ exactly. For survivors,
-fiber membership is identifiable only up to the partition of strata induced
-by identical $R$-coverage; with a separating family (one exact checker per
-stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
+same stratum, which identifies the fiber of $m_{\mathrm{mut}}$ exactly; with a
+separating family (one exact checker per stratum in $\mathrm{Cov}(R)$) the
+killed subpopulations therefore separate every covered stratum. For
+survivors the signature is identically empty and carries no fiber
+information: an empty signature is consistent with every uncovered fiber and
+with the below-window remainder (Theorem~[THM-WIN](ii)) of every covered
+fiber, so survivor fiber attribution must come from generation-time labels,
+not from kill signatures.
 ```
 
-- [ ] **Step 2:** 论证以两句话并入 THM-GAP 讨论段（同层性=块对角矩阵直接重读；覆盖等价类粒度=survivor 行恒零的观测不可分辨），**无独立 PO**（R-9；由 T6 审计项 (8) 一并复核）；写 LRCA 重定位段：现稿贡献声明 C2–C5 = 对块结构偏离（ξ 质量）的诊断标注器，引用替换 §2.4 的功能描述句
+（CHECKPOINT T3 修订 A3（2026-07-28）：原拟 survivor 从句"identifiable only up to the partition of strata induced by identical R-coverage; with a separating family the partition is trivial on Cov(R)"过度主张——空签名与所有 uncovered fiber 及每个 covered fiber 的窗下残留同时一致，"up to coverage partition"的辨识在观测上不成立；修订为"空签名不携带 fiber 信息，survivor 归属须由生成期标签承担"，separating family 的正确效力改述为"killed 子群分离全部 covered 层"。详见 `docs/review_20260728/checkpoint_t3_record.md`。）
+
+- [ ] **Step 2:** 论证以两句话并入 THM-GAP 讨论段（同层性=块对角矩阵直接重读；survivor 行恒零=观测不可分辨，归属由生成期标签承担（A3）），**无独立 PO**（R-9；由 T6 审计项 (8) 一并复核）；写 LRCA 重定位段：现稿贡献声明 C2–C5 = 对块结构偏离（ξ 质量）的诊断标注器，引用替换 §2.4 的功能描述句
 - [ ] **Step 3:** Commit
 
 **REVIEW CHECKPOINT T3：作者确认 THM-WIN 假设清单、REM-FPOS/REM-FNEG/REM-IDF 的 Remark 表述与既有 boundary cases 的覆盖。**
