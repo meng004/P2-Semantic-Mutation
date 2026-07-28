@@ -28,7 +28,7 @@
 ## Task 2.3：剂量反应实验（EXP-DOSE，H-DOSE）
 
 - [ ] **Step 1:** 参数化算子实现：HP（超参幅度）与 CE（守恒侵蚀强度）各设 ≥6 档幅度网格，每档名义违反幅度 \(\varepsilon_m\) 标定入台账（master §1.3.3）；对象=每类一核（Lorenz、MC 积分、GPR、LogReg，数据键 A1/B3/C1/D3；若理论线 Phase T3 判某核的 Lipschitz 常数 \(L_r\) 不可估则按其清单替换）
-- [ ] **Step 2:** 每档 × 20 重复执行 kill 判定（个体标识 `mut-<算子>-<PUT>-e<档位>-r<重复>`），曲线数据落 SSOT `dose_response_v5`
+- [ ] **Step 2:** 每档 × 按 power_report 锁定的重复数（≤960 总执行上限，F-4）执行 kill 判定（个体标识 `mut-<算子>-<PUT>-e<档位>-r<重复>`），曲线数据落 SSOT `dose_response_v5`
 - [ ] **Step 3:** 跑 `analysis_hdose.py`（isotonic vs 常数，置换 p；Page's L）；同时报告转变位置与 THM-WIN 预测中心 \(\varepsilon_{\mathrm{tol}}\) 的偏差（模型检验，不设通过线）；Commit
 
 ## Task 2.4：语法基线扩充（EXP-STR）

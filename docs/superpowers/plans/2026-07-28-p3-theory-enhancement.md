@@ -92,7 +92,7 @@
 - **DEF-12（边际与结构保持残差）**：\(\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r\)，其中 \(\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)\) 为正确程序 \(P^\star\) 上的关系残差上确界，**即 v3.1 的结构保持偏差 \(\Delta(S,P)\) 在 \(r\) 的诱导结构上的实例**。
 - **DEF-13（检测窗）**：\((\varepsilon_{\mathrm{lo}},\varepsilon_{\mathrm{crash}})\)，\(\varepsilon_{\mathrm{lo}}=\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta\)。
 - **DEF-14（签名与分离族）**：\(\mathrm{sig}(m)=\{r\in R: r\ \text{kills}\ m\}\)；分离族 = \(\mathrm{Cov}(R)\) 中每层至少一个 exact checker。
-- **A-PROV（构念桥接假设，R-6；方法学假设，不进入任何定理的数学前提）**：实证操作化中，aligned 出处的 MR 集近似其目标层的 exact checker（DEF-05 的经验近似）；\(\mathrm{Cov}(R)\) 的操作化 = 适用矩阵 × MR 出处（provenance-as-coverage）；成立程度由 \(\xi(R)\)（DEF-09）诊断——ξ 大则 A-PROV 受质疑，H-ZERO/H-DISC 的解读须相应弱化。登记于此供两计划统一引用；实证落地见论证提升计划 Task 1.3。
+- **A-PROV（构念桥接假设，R-6；方法学假设，不进入任何定理的数学前提）**：实证操作化中，aligned 出处的 MR 集近似其目标层的 exact checker（DEF-05 的经验近似）；\(\mathrm{Cov}(R)\) 的操作化 = 适用矩阵 × MR 出处（provenance-as-coverage）；证据双通道（F-2）：**ex-ante 通道**=出处与构造审计（对称清单、生成期 eff 标签、适用矩阵哈希），与 kill 结果无关，决定 A-PROV 是否被断言；**ex-post 通道**=\(\xi(R)\)（DEF-09）作结果侧诊断，消费规则预注册于论证计划 Task 1.3 Step 1b——H-ZERO/H-DISC verdict 无条件，ξ 不改变 verdict。登记于此供两计划统一引用；实证落地见论证提升计划 Task 1.3。
 
 ### 0.4 跨文档符号冲突消解表（权威源优先级见 §0.1 第 5 条）
 
@@ -300,7 +300,7 @@ as a model-check statistic, not folded into SMS.
 
 - [ ] **Step 2:** 写证明（要点：\(m\in M_j, j\notin \mathrm{Cov}(R)\)；任取 \(r\) 为 \(\psi_l\) 的 exact checker，\(l\ne j\)；S5 纯性给 \([\![m]\!]\models\psi_l\)，故 r 不 flag m；r 在原程序上 pass；killed 需存在 flag → 无。分解式由块对角直接展开）
 - [ ] **Step 3:** 写接口注记（一段）：\(\mathrm{Gap}_{\mathrm{aln}}(R)\) 对应四柱 T3 的选择残余 \(\Omega_{\mathrm{sel}}\)（加对齐 MR 可消除），\(\mathrm{Gap}_{\mathrm{str}}(R)\) 是声明层内检测力缺口；注明"四柱之采纳集 \(S\) ≙ 本文 \(R\)"；引用四柱框架为 companion technical report，不承重
-- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 60-cell（12 PUT × 5 MP）零膨胀中 cross cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（§0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其诊断
+- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 60-cell（12 PUT × 5 MP）零膨胀中 cross cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（§0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其 ex-post 诊断（证据双通道与 verdict 无条件规则见 §0.3 A-PROV 条目，F-2）
 - [ ] **Step 5:** Commit
 
 ### Task T2.2：现稿一致性核对
@@ -439,6 +439,6 @@ stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 | 风险 | 处置 |
 |---|---|
 | LEM-WIT 在随机 PUT 的 AVP 聚合语义下不成立 | 把引理限定到确定性判定语义，随机情形降为"在 AVP 判定语义下的条件版本"，THM-INT 主体不受影响 |
-| THM-GAP 前提被审计判定过强 | 保留定理，增加"偏差质量 ξ 的经验上界"作为适用性检验；H-ZERO 判据改用 ξ 校正后的预测 |
+| THM-GAP 前提被审计判定过强 | 保留定理；冻结前=修订 A-PROV 操作化与讨论段设计（设计变更）；冻结后=按论证计划 AMENDMENTS.md 程序记录，判据不变（F-2） |
 | THM-WIN 的 Lipschitz 常数 \(L_r\) 在个别 PUT 不可估 | 该 PUT 退出剂量反应实验对象清单（在论证提升计划 Phase 2 联动更新） |
 | 审计超 2 周未回 | 启动第二审计人；两周为窗口非门槛，门槛是审计通过本身 |

@@ -19,11 +19,11 @@
 
 ## Task 4.2：章节改写（按 writing-plan §0 处置表执行）
 
-- [ ] **Step 1:** §1：旗舰主张一句话替换摘要与贡献段；新 **RQ1–RQ4 表（4+1 结构，R-11；口径=master §0.3）**；**论文 2 与论文 4 边界段（R-12）**（P2 concurrent TOSEM submission 声明 + "元模式作为给定词汇消费"；P4 TSE 在审分工：P3 度量 MR 集"够不够"，P4 选"最小够用集"，互不承重）；claim-evidence map 增补 THM-INT/THM-GAP（含 REM-IDF）/THM-WIN 行与外部锚行（骨架=master §1.2 链路总表）
+- [ ] **Step 1:** §1：旗舰主张一句话替换摘要与贡献段（校准主张限定 aligned 条件口径，F-3b）；新 **RQ1–RQ4 表（4+1 结构，R-11；口径=master §0.3）**；**论文 2 与论文 4 边界段（R-12）**（P2 concurrent TOSEM submission 声明 + "元模式作为给定词汇消费"；P4 TSE 在审分工：P3 度量 MR 集"够不够"，P4 选"最小够用集"，互不承重）；claim-evidence map 增补 THM-INT/THM-GAP（含 REM-IDF）/THM-WIN 行与外部锚行（骨架=master §1.2 链路总表）
 - [ ] **Step 2:** §3 新增五小节：适用矩阵（引 prereg 哈希）、**A-PROV 桥接假设声明（provenance-as-coverage + ξ 诊断，R-6）**、剂量反应设计、held-out source 对称协议、外部切片准入与盲化协议（含 master §1.3.1 两段式标识）；baseline 小节并入 random-floor/MS 排序（cosmic-ray）两基线 + PC 描述性次级 + 算子族文档论证（R-10）；对象选取原则段=master §1.4 的 P1–P7 压缩版（≤1 段）；对象命名一律用 master §1.1 语义集合名（KER-*/POOL-*/MRSET-*/DEF-*）
-- [ ] **Step 3:** §4 按新 RQ 顺序重排（R-11）：**RQ2（H-DOSE 剂量反应 + ξ 诊断）→ RQ3（H-CONS 操纵检验开场 → H-ZERO 零预测 → H-DISC 条件判别 → 结构定位段 EXP-STR）→ RQ4（κ 门禁 → H-CAL → H-RANK）→ Prior Audit 小节（旧 H1–H4 原样 + 一段"为什么旧阈值与理论错配"）**；全部数字模板注入自 SSOT
+- [ ] **Step 3:** §4 按新 RQ 顺序重排（R-11）：**RQ2（H-DOSE 剂量反应 + ξ 诊断）→ RQ3（H-CONS 操纵检验开场 → H-ZERO 零预测 → H-DISC 条件判别 → 结构定位段 EXP-STR）→ RQ4（κ 门禁 → H-CAL（aligned 主口径措辞与 hypotheses.md 一致，F-3b）→ H-RANK）→ Prior Audit 小节（旧 H1–H4 原样 + 一段"为什么旧阈值与理论错配"）**；全部数字模板注入自 SSOT
 - [ ] **Step 4:** §5：缺口归因解读段（零膨胀的 \(\mathrm{Gap}_{\mathrm{aln}}(R)\) 部分=理论确认）、SMS vs MS 有界比较段（明示不做普适优越主张）、T1/T2/T4 接口段（各一句+引用）
-- [ ] **Step 5:** §6 Threats 新增：双重使用防火墙（旧数据用途清单）、外部切片选择披露（准入解耦声明+就绪失败案保留）、v5 provider 单一性、标注者安排披露（双人类 or 降级 test–retest + LLM 辅助声明）
+- [ ] **Step 5:** §6 Threats 新增：双重使用防火墙（旧数据用途清单）、外部切片选择披露（准入解耦声明+就绪失败案保留）、v5 provider 单一性、标注者安排披露（双人类 or 降级 test–retest + LLM 辅助声明）、映射训练例扣除披露（DEF-CAL 训练 10 例不入确认性池，F-1）
 - [ ] **Step 6:** 每节改完即编译 + `python scripts/check_ssot_consistency.py` 过门禁（SSOT 含 \(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\) 双口径键；键迁移核对须已按 master Task 0.2 Step 2b 执行，R-7）；分节 commit
 
 ## Task 4.3：图表重生

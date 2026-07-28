@@ -45,7 +45,7 @@ as a model-check statistic, not folded into SMS.
 
 - [ ] **Step 2:** 写证明（要点：\(m\in M_j, j\notin \mathrm{Cov}(R)\)；任取 \(r\) 为 \(\psi_l\) 的 exact checker，\(l\ne j\)；S5 纯性给 \([\![m]\!]\models\psi_l\)，故 r 不 flag m；r 在原程序上 pass；killed 需存在 flag → 无。分解式由块对角直接展开）
 - [ ] **Step 3:** 写接口注记（一段）：\(\mathrm{Gap}_{\mathrm{aln}}(R)\) 对应四柱 T3 的选择残余 \(\Omega_{\mathrm{sel}}\)（加对齐 MR 可消除），\(\mathrm{Gap}_{\mathrm{str}}(R)\) 是声明层内检测力缺口；注明"四柱之采纳集 \(S\) ≙ 本文 \(R\)"；引用四柱框架为 companion technical report，不承重
-- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 60-cell（12 PUT × 5 MP）零膨胀中 cross cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（master §0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其诊断
+- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 60-cell（12 PUT × 5 MP）零膨胀中 cross cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（master §0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其 ex-post 诊断（证据双通道与 verdict 无条件规则见 master §0.3 A-PROV 条目，F-2）
 - [ ] **Step 5:** Commit
 
 ## Task T2.2：现稿一致性核对
@@ -62,5 +62,5 @@ as a model-check statistic, not folded into SMS.
 
 | 风险 | 处置 |
 |---|---|
-| THM-GAP 前提被评审/审计判定过强 | 保留定理，增加"偏差质量 ξ 的经验上界"作为适用性检验；H-ZERO 判据改用 ξ 校正后的预测 |
+| THM-GAP 前提被评审/审计判定过强 | 保留定理；冻结前=修订 A-PROV 操作化与讨论段设计（设计变更）；冻结后=按论证计划 AMENDMENTS.md 程序记录，判据不变（F-2） |
 | T3 的 THM-WIN 陈述后续有语义变化 | 本阶段引用为占位标签；T6.1 整合时统一核对（iii) 前提的表述与 THM-WIN 终稿一致 |
