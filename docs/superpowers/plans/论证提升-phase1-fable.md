@@ -45,11 +45,15 @@
 
 **Files:** Create: `research/prereg_v2/hypotheses.md`、`scripts/prereg/analysis_hzero.py`、`analysis_hdisc.py`、`analysis_hcons.py`、`analysis_hdose.py`（含 H-DOSE-CTR，B-2）、`analysis_hcal_hrank.py`（含 B-3 聚簇 secondary 与 \(\bar\tau\) 配对差 CI）、`analysis_hxi.py`（B-1）、`analysis_hfix.py`（B-4）
 
-- [ ] **Step 1:** hypotheses.md 定稿 **5 headline + 1 操纵检验**（R-11）：headline——H-ZERO balanced accuracy ≥0.75 + McNemar；H-DISC 配对主口径：within-cell（aligned−cross）Wilcoxon 符号秩 + \(r_{\mathrm{mp}}\) ≥ 模拟锁定 MID 且 CI 下界 >0，非配对条件 Cliff's δ 降敏感性（v4 可比）；H-DOSE isotonic vs 常数置换检验；H-CAL 主口径=aligned 条件每缺陷一对（n=就绪缺陷数），accuracy 优于多数类（精确二项 McNemar；不采 cluster bootstrap 作主口径，理由明文：n≈20–25 簇不稳，F-3）；fixed 臂 FPR 单列规则；Brier 删除（二值预测下冗余，F-3a）；H-RANK 项目等权 Kendall τ ≥ MID——项目准入：就绪缺陷 ≥3、并列处理与合格项目数 J 报告规则明文、若 Task 1.2 Step 2b 可行性模拟功效 <0.8 则本条冻结前降为区间估计报告——\(\bar\tau_{\mathrm{SMS}}-\bar\tau_{\mathrm{MS}}\) 配对差+bootstrap 95% CI 估计优先报告（不做优越性检验：J≈8 无功效，B-3）。操纵检验——H-CONS Wilson 下界 >0.5（EXP-CON 可行性门槛，不入 headline 主张）。每条注明推导来源定理（THM-GAP/THM-WIN/COR-ZERO）与降级路径；**检验族政策（F-11，两族版）**：五条 headline 为异质构念的 co-primary，各自 α=0.05 不作族校正（理由明文：无合取主张+强制全报告防选择性；H-CONS 操纵检验不入族）；**secondary confirmatory 族（B 组）**——H-XI（Step 1b）、H-DOSE-CTR（中心包含，候选 ≥6/8，Step 2c 校准后冻结前锁定；\(\Delta_r/\bar\eta\) 逐曲线估计协议引 THM-WIN 审计项 (5)，B-2）、H-CAL 四条件合并聚簇 bootstrap（缺陷为簇，B-3）、H-FIX（master Task 2.5，B-4）：各自 α=0.05、显式标注 secondary、失败如实报告、不 gate headline
-- [ ] **Step 1b:** A-PROV 桥接假设显式化（R-6）：hypotheses.md 开篇声明 provenance-as-coverage 操作化（\(\mathrm{Cov}(R)\) = 适用矩阵 × MR 出处；权威表述=理论计划 §0.3 A-PROV 条目）；**证据双通道（F-2）**：A-PROV 断言由 ex-ante 出处审计（对称清单、生成期 eff 标签、适用矩阵哈希）决定，与 kill 结果无关；ξ 为 ex-post 诊断随判别结果并报；**裁决规则**：H-ZERO/H-DISC verdict 无条件按冻结判据判定，ξ 不改变任何 verdict，只进讨论段归因；**H-XI（B-1，secondary confirmatory）**：pooled ξ ≤ 0.10（先验固定地标）+ bootstrap 95% CI + 可估性守卫（总 kill <50 → UNDERPOWERED 报区间）；**H-ZERO × H-XI 2×2 裁决表**四格结论句式预注册入 hypotheses.md（四格=双过同证 / ZERO 过 XI 败主张有界 / ZERO 败 XI 过诚实否证 / 双败操作化失败）
-- [ ] **Step 2:** 分析脚本按假设一比一实现，输入统一为 SSOT JSON 新键，输出统一 schema `{hypothesis, estimate, ci, p, verdict}`；对空输入跑通冒烟测试（合成数据）
-- [ ] **Step 3:** 冻结机制：先创建 `research/prereg_v2/AMENDMENTS.md`（仅表头模板，字段：编号/日期/触发事件/影响范围/改动摘要+diff 哈希/§6 披露句/作者签署；**显式排除出 FREEZE_MANIFEST 哈希集**——该文件生来冻结后追加，完整性由逐条 amendment 单独 commit 的 git 历史保证，F-7a）；再 `git tag prereg-v2-freeze && shasum -a 256 $(ls research/prereg_v2/* | grep -v AMENDMENTS) scripts/prereg/*.py > research/prereg_v2/FREEZE_MANIFEST.sha256`（F-7）
-- [ ] **Step 4:** Commit
+> **门禁记录：** 理论 CHECKPOINT T2 于 2026-07-28 经作者确认通过（THM-GAP 草稿=理论分支 `7c48d06`+`7bb1519`）；本任务随即执行。
+
+- [x] **Step 1:** hypotheses.md 定稿 **5 headline + 1 操纵检验**（R-11）：headline——H-ZERO balanced accuracy ≥0.75 + McNemar；H-DISC 配对主口径：within-cell（aligned−cross）Wilcoxon 符号秩 + \(r_{\mathrm{mp}}\) ≥ 模拟锁定 MID 且 CI 下界 >0，非配对条件 Cliff's δ 降敏感性（v4 可比）；H-DOSE isotonic vs 常数置换检验；H-CAL 主口径=aligned 条件每缺陷一对（n=就绪缺陷数），accuracy 优于多数类（精确二项 McNemar；不采 cluster bootstrap 作主口径，理由明文：n≈20–25 簇不稳，F-3）；fixed 臂 FPR 单列规则；Brier 删除（二值预测下冗余，F-3a）；H-RANK 项目等权 Kendall τ ≥ MID——项目准入：就绪缺陷 ≥3、并列处理与合格项目数 J 报告规则明文、若 Task 1.2 Step 2b 可行性模拟功效 <0.8 则本条冻结前降为区间估计报告——\(\bar\tau_{\mathrm{SMS}}-\bar\tau_{\mathrm{MS}}\) 配对差+bootstrap 95% CI 估计优先报告（不做优越性检验：J≈8 无功效，B-3）。操纵检验——H-CONS Wilson 下界 >0.5（EXP-CON 可行性门槛，不入 headline 主张）。每条注明推导来源定理（THM-GAP/THM-WIN/COR-ZERO）与降级路径；**检验族政策（F-11，两族版）**：五条 headline 为异质构念的 co-primary，各自 α=0.05 不作族校正（理由明文：无合取主张+强制全报告防选择性；H-CONS 操纵检验不入族）；**secondary confirmatory 族（B 组）**——H-XI（Step 1b）、H-DOSE-CTR（中心包含，候选 ≥6/8，Step 2c 校准后冻结前锁定；\(\Delta_r/\bar\eta\) 逐曲线估计协议引 THM-WIN 审计项 (5)，B-2）、H-CAL 四条件合并聚簇 bootstrap（缺陷为簇，B-3）、H-FIX（master Task 2.5，B-4）：各自 α=0.05、显式标注 secondary、失败如实报告、不 gate headline
+- [x] **Step 1b:** A-PROV 桥接假设显式化（R-6）：hypotheses.md 开篇声明 provenance-as-coverage 操作化（\(\mathrm{Cov}(R)\) = 适用矩阵 × MR 出处；权威表述=理论计划 §0.3 A-PROV 条目）；**证据双通道（F-2）**：A-PROV 断言由 ex-ante 出处审计（对称清单、生成期 eff 标签、适用矩阵哈希）决定，与 kill 结果无关；ξ 为 ex-post 诊断随判别结果并报；**裁决规则**：H-ZERO/H-DISC verdict 无条件按冻结判据判定，ξ 不改变任何 verdict，只进讨论段归因；**H-XI（B-1，secondary confirmatory）**：pooled ξ ≤ 0.10（先验固定地标）+ bootstrap 95% CI + 可估性守卫（总 kill <50 → UNDERPOWERED 报区间）；**H-ZERO × H-XI 2×2 裁决表**四格结论句式预注册入 hypotheses.md（四格=双过同证 / ZERO 过 XI 败主张有界 / ZERO 败 XI 过诚实否证 / 双败操作化失败）
+- [x] **Step 2:** 分析脚本按假设一比一实现，输入统一为 SSOT JSON 新键，输出统一 schema `{hypothesis, estimate, ci, p, verdict}`；对空输入跑通冒烟测试（合成数据）
+  - 7 脚本 + `_stats.py` 共享冻结工具 + `smoke_all.py`；冒烟 **7/7 PASS**。
+- [x] **Step 3:** 冻结机制：先创建 `research/prereg_v2/AMENDMENTS.md`（仅表头模板，字段：编号/日期/触发事件/影响范围/改动摘要+diff 哈希/§6 披露句/作者签署；**显式排除出 FREEZE_MANIFEST 哈希集**——该文件生来冻结后追加，完整性由逐条 amendment 单独 commit 的 git 历史保证，F-7a）；再 `git tag prereg-v2-freeze && shasum -a 256 $(ls research/prereg_v2/* | grep -v AMENDMENTS) scripts/prereg/*.py > research/prereg_v2/FREEZE_MANIFEST.sha256`（F-7）
+  - 顺序按可审计性调整为：manifest 入 commit（`eaa400d`）→ tag 指向该 commit（tag 内含 manifest）。
+- [x] **Step 4:** Commit（`6ad5388` 包内容 + `eaa400d` manifest/tag）
 
 ## Task 1.4：外部切片准入与映射协议
 
@@ -65,7 +69,7 @@
 
 **REVIEW CHECKPOINT 1：作者审预注册包全件（矩阵、功效/可行性配置、假设全件=5 headline + 1 操纵检验 + secondary 族（B 组）、协议），冻结后进入执行。**
 
-> **状态（2026-07-28）：** Task 1.1/1.2/1.4 完成并 commit；**Task 1.3 及冻结 tag 按门禁阻塞于理论 CHECKPOINT T2（理论线未启动）**。CHECKPOINT 1 的"假设全件"要件因此尚不齐备——作者可先行预审已完成三件（矩阵仲裁 2 格、功效配置推荐、外部协议），正式 CHECKPOINT 1 待 T2 → Task 1.3 后召开。作者预审关注点：①矩阵 §4 两处仲裁（CE×c2、SI×b3）；②H-CAL 降区间估计裁定；③H-RANK ≥6 合格项目门槛；④主配置 m=16×s=2。
+> **状态（2026-07-28，final）：** Task 1.1/1.2/1.3/1.4 全部完成。预审（作者委托）经干预式探针 UPHELD 两处仲裁并定位 H-ZERO 功效悬崖（`docs/review_20260728/prereg_prereview.md`）；理论 CHECKPOINT T2 经作者确认通过后，Task 1.3 假设全件冻结（冒烟 7/7），`FREEZE_MANIFEST.sha256` 入 commit `eaa400d`，tag **`prereg-v2-freeze`** 已打。**REVIEW CHECKPOINT 1 已就绪待作者裁决**——全件=矩阵（仲裁已探针背书）+ 功效报告 + 假设全件 + 外部协议 + 冻结清单。裁决通过后：Phase 2（grok 类）与 Phase 3（terra 类）依计划调度并行执行。
 
 ---
 
