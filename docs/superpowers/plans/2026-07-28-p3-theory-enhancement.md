@@ -154,8 +154,8 @@
 
 | 标签 | 名称 | 依赖定义 | 依赖既有结果 | 证明义务 | 状态 |
 |---|---|---|---|---|---|
-| LEM-WIT | kill witness upgrade（被杀即非等价见证） | DEF-01–03 | §2.3 AVP 语义 | PO-INT-1, 2 | draft |
-| **THM-INT** | SMS 区间健全性与单调性 | DEF-02–04 | LEM-WIT | PO-INT-3–5 | draft |
+| LEM-WIT | kill witness upgrade（被杀即非等价见证） | DEF-01–03、DEF-13（margin 条款，CHECKPOINT T1 A1） | §2.3 AVP 语义 | PO-INT-1, 2 | internal-review |
+| **THM-INT** | SMS 区间健全性与单调性 | DEF-02–04 | LEM-WIT | PO-INT-3–5 | internal-review |
 | LEM-CLO | exact checker ⊂ strong MR | DEF-05 | THM-DUAL（现稿 Thm 2，\(\equiv_{\mathrm{obs}}\) 闭包） | PO-GAP-1 | draft |
 | **THM-GAP** | 块对角与缺口归因分解 | DEF-05–09, S5 | THM-DUAL、LEM-CLO、THM-WIN(iii) | PO-GAP-2–5 | draft |
 | COR-ZERO | cross-zero 预测（非对齐 SMS=0） | — | THM-GAP | PO-GAP-6 | draft |
@@ -234,7 +234,10 @@ rg -n "\\\\equiv_|varepsilon_|mathrm\{SMS\}|K_\{?\\\\mathrm\{eq\}|M_\{\\\\mathrm
 ```latex
 \textbf{Lemma [LEM-WIT] (kill witness upgrade).} Assume the AVP verdict is a
 deterministic function of the $\mathrm{obs}$-observed outputs of the executions
-in an MR tuple. If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
+in an MR tuple, and that on the executed tuple the verdict is stable under
+pointwise obs-output perturbations of magnitude at most
+$\varepsilon_{\mathrm{eq}}$ (non-degenerate tolerance margins; the regime of
+Theorem~[THM-WIN](iii)). If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
 execution input $x$ satisfies
 $\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
@@ -249,8 +252,12 @@ Then the ground-truth score $k/(n+u_{\mathrm{neq}})$ satisfies
 with width $\mathrm{SMS}_{\mathrm{strict}}\cdot\tfrac{u}{n+u}$. Each
 equivalence certificate ($u\!\to\!u\!-\!1$) or divergence witness
 ($u\!\to\!u\!-\!1$, $n\!\to\!n\!+\!1$) weakly narrows the interval; and for
-$R\subseteq R'$ both endpoints are non-decreasing.
+$R\subseteq R'$, with the three-state classification held fixed (admission and
+witness status computed once against the cell's relation universe), both
+endpoints are non-decreasing.
 ```
+
+（CHECKPOINT T1 修订记录 A1/A2（2026-07-28）：A1=margin 稳定性条款升入 LEM-WIT 陈述（无此条款引理存在贴阈值反例）；A2=R⊆R′ 端点单调句加"三态分类冻结"限定（E1 量化域随 R 扩大会产生仅见证事件使 strict 端点下降）。详见 `docs/review_20260728/checkpoint_t1_record.md`。）
 
 - [ ] **Step 2:** 写证明（要点：宽度 \(k/n-k/(n+u)=k u/(n(n+u))\)；MR 扩张时 \((k+\Delta+j)/(n+j)\ge k/n\) 因 \(k\le n\)；证书两类分别验证两端点变化方向）
 - [ ] **Step 3:** 自检清单：AVP 决定性假设是否已在 §2.3 有依据；随机 PUT 的 AVP 重复语义（N=20）是否破坏 LEM-WIT（若 kill 判定含统计聚合，需把"超容差"改为"按 AVP 判定语义超容差"并加脚注）。逐项在草稿"Obligations"节记录

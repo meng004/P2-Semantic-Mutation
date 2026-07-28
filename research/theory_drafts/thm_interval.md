@@ -1,6 +1,8 @@
 # THM-INT: Interval Soundness and Monotonicity (with LEM-WIT)
 
-Status: internal-review (awaiting REVIEW CHECKPOINT T1)
+Status: internal-review — CHECKPOINT T1 passed with amendments A1/A2
+(2026-07-28, delegated review; record:
+`docs/review_20260728/checkpoint_t1_record.md`)
 
 Normative sources: master plan §0.2–§0.5 (36-symbol closed set) and
 [`notation_registry.md`](notation_registry.md). Audited manuscript baseline:
@@ -39,7 +41,10 @@ positive denominator; every v4 cell has \(n\ge 10\)).
 ```latex
 \textbf{Lemma [LEM-WIT] (kill witness upgrade).} Assume the AVP verdict is a
 deterministic function of the $\mathrm{obs}$-observed outputs of the executions
-in an MR tuple. If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
+in an MR tuple, and that on the executed tuple the verdict is stable under
+pointwise obs-output perturbations of magnitude at most
+$\varepsilon_{\mathrm{eq}}$ (non-degenerate tolerance margins; the regime of
+Theorem~[THM-WIN](iii)). If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
 execution input $x$ satisfies
 $\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
@@ -54,8 +59,15 @@ Then the ground-truth score $k/(n+u_{\mathrm{neq}})$ satisfies
 with width $\mathrm{SMS}_{\mathrm{strict}}\cdot\tfrac{u}{n+u}$. Each
 equivalence certificate ($u\!\to\!u\!-\!1$) or divergence witness
 ($u\!\to\!u\!-\!1$, $n\!\to\!n\!+\!1$) weakly narrows the interval; and for
-$R\subseteq R'$ both endpoints are non-decreasing.
+$R\subseteq R'$, with the three-state classification held fixed (admission and
+witness status computed once against the cell's relation universe), both
+endpoints are non-decreasing.
 ```
+
+(Statements carry CHECKPOINT T1 amendments A1/A2, synchronised with the master
+plan: A1 hoists the margin-stability clause into LEM-WIT's hypotheses — without
+it the lemma admits a threshold-straddling counterexample; A2 adds the
+fixed-classification proviso to the \(R\subseteq R'\) clause.)
 
 ## 3. Proof of LEM-WIT (closes PO-INT-1, PO-INT-2)
 
@@ -72,17 +84,23 @@ pipeline replaces each AVP call by a strict-majority vote over \(N=20\)
 independent repetitions (`src/p2/avp/repeat.py`); the verdict is then a fixed
 function of the \(N\)-repeat *aggregated* observation, and every occurrence of
 "observed output" below is read at that aggregated level (DEF-03's parenthetical;
-footnote F1). One further regime condition is used and made explicit:
+footnote F1). The second stated hypothesis (amendment A1) reads concretely:
 
-- **Margin non-degeneracy (stability clause).** On the executed tuple, no
-  relation residual lies within \(\varepsilon_{\mathrm{eq}}\) of its decision
-  threshold, so the verdict functional \(V_{mr}\) is invariant under pointwise
-  perturbations of the observed outputs of magnitude
-  \(\le\varepsilon_{\mathrm{eq}}\). This is the non-degenerate-margin regime of
-  the detection window (DEF-13; forward reference THM-WIN(iii)); in the v4
-  pipeline \(\varepsilon_{\mathrm{eq}}=\varepsilon_{\mathrm{AVP}}=10^{-6}\) are
-  wired equal (`src/p2/equiv/judge.py`), so the clause is the assumption that no
+- **Margin non-degeneracy (stability clause; hypothesis, not proof device).**
+  On the executed tuple, no relation residual lies within
+  \(\varepsilon_{\mathrm{eq}}\) of its decision threshold, so the verdict
+  functional \(V_{mr}\) is invariant under pointwise perturbations of the
+  observed outputs of magnitude \(\le\varepsilon_{\mathrm{eq}}\). This is the
+  non-degenerate-margin regime of the detection window (DEF-13; forward
+  reference THM-WIN(iii)); in the v4 pipeline
+  \(\varepsilon_{\mathrm{eq}}=\varepsilon_{\mathrm{AVP}}=10^{-6}\) are wired
+  equal (`src/p2/equiv/judge.py`), so the clause is the assumption that no
   executed residual straddles the shared tolerance within \(10^{-6}\).
+  Necessity: with residuals \(\tau-\delta_1\) (pass on \(P\)) and
+  \(\tau+\delta_2\) (fail on \(P'\)), \(\delta_1+\delta_2\) small, a kill can
+  arise from pointwise output divergence \(<\varepsilon_{\mathrm{eq}}\); the
+  bare determinism hypothesis therefore cannot yield the
+  \(>\varepsilon_{\mathrm{eq}}\) witness, and the clause is not removable.
 
 **Witness extraction (PO-INT-2).** Assume
 \(\mathrm{killed}(P',\mathrm{MR}_{i,k})\). Fix \(mr\) with
@@ -159,11 +177,14 @@ neither endpoint can be excluded without new certificates or witnesses. ∎
    LEM-WIT witness, so \((n,k,u)\to(n+1,k+1,u-1)\). This is an instance of MR
    expansion, judged by the endpoint-monotonicity claim of case 4 (with
    \(\Delta=0\), \(j=1\)), not by the narrowing claim.
-4. *MR expansion \(R\subseteq R'\)*: OR-aggregation over a superset can only
-   add kills. Let \(\Delta\ge 0\) be new kills among confirmed non-equivalent
-   survivors and \(j\ge 0\) new kills among unresolved survivors (each of the
-   latter moves one unit \(u\to u-1\), \(n\to n+1\), \(k\to k+1\) by LEM-WIT).
-   The updated counts are \(n'=n+j\), \(k'=k+\Delta+j\), \(u'=u-j\). Then
+4. *MR expansion \(R\subseteq R'\), fixed classification (amendment A2)*: the
+   three-state classification is computed once against the cell's relation
+   universe (the prescreen-once protocol), so enlarging the evaluated set
+   changes kills only; OR-aggregation over a superset can only add kills. Let
+   \(\Delta\ge 0\) be new kills among confirmed non-equivalent survivors and
+   \(j\ge 0\) new kills among unresolved survivors (each of the latter moves
+   one unit \(u\to u-1\), \(n\to n+1\), \(k\to k+1\) by LEM-WIT). The updated
+   counts are \(n'=n+j\), \(k'=k+\Delta+j\), \(u'=u-j\). Then
    \[
    \mathrm{SMS}_{\mathrm{strict}}'=\frac{k+\Delta+j}{n+j}\;\ge\;\frac{k+j}{n+j}\;\ge\;\frac{k}{n}
    \quad(\text{since } k\le n),
@@ -171,17 +192,39 @@ neither endpoint can be excluded without new certificates or witnesses. ∎
    \mathrm{SMS}_{\mathrm{cons}}'=\frac{k+\Delta+j}{(n+j)+(u-j)}=\frac{k+\Delta+j}{n+u}\;\ge\;\frac{k}{n+u}.
    \]
    Both endpoints are non-decreasing. (The interval need not narrow under
-   expansion; the two motions are deliberately separated in the statement.) ∎
+   expansion; the two motions are deliberately separated in the statement.
+   Why the proviso is not removable: if the classification were re-run with
+   \(R'\), the E1 quantification domain would grow, and a new relation on
+   which the verdicts of \(P\) and \(P'\) differ without a kill — fail on
+   \(P\), pass on \(P'\) — would convert an unresolved survivor into a
+   confirmed one, a case-2 witness motion \((n{+}1,k,u{-}1)\) that lowers the
+   strict endpoint; "both endpoints non-decreasing" would then be false for
+   the composite update.) ∎
+
+*Remark (uniform lower-endpoint monotonicity).* Across all four motions the
+conservative endpoint \(\mathrm{SMS}_{\mathrm{cons}}\) never decreases
+(cases 1 and 4 raise or preserve it; cases 2 and 3 preserve and raise it
+respectively), so \(\mathrm{SMS}_{\mathrm{cons}}\) is a monotone lower bound
+of the ground-truth score under every admissible evidence update.
 
 ## 5. Obligations ledger
 
 | PO | Disposition |
 |---|---|
-| PO-INT-1 | closed — §3 scope paragraph: deterministic PUTs exact; stochastic PUTs via N=20 strict-majority aggregation (F1); stability clause stated explicitly and tied to DEF-13 margins with the pipeline fact \(\varepsilon_{\mathrm{eq}}=\varepsilon_{\mathrm{AVP}}=10^{-6}\) |
+| PO-INT-1 | closed — §3 scope paragraph: deterministic PUTs exact; stochastic PUTs via N=20 strict-majority aggregation (F1); stability clause hoisted into the statement (amendment A1) with a necessity counterexample, tied to DEF-13 margins and the pipeline fact \(\varepsilon_{\mathrm{eq}}=\varepsilon_{\mathrm{AVP}}=10^{-6}\) |
 | PO-INT-2 | closed — §3 witness extraction (contradiction through the fixed verdict functional) |
 | PO-INT-3 | closed — §4(i), monotone map plus attainable endpoints |
 | PO-INT-4 | closed — §4(ii), algebraic identity |
-| PO-INT-5 | closed — §4(iii), all four evidence motions verified endpoint-by-endpoint |
+| PO-INT-5 | closed — §4(iii), all four evidence motions verified endpoint-by-endpoint; \(R\subseteq R'\) clause carries the fixed-classification proviso (amendment A2) with a non-removability argument |
+
+CHECKPOINT T1 amendments (2026-07-28, delegated review):
+
+- **A1 (validity repair).** Margin-stability clause hoisted from the proof into
+  LEM-WIT's stated hypotheses; without it the lemma admits the
+  threshold-straddling counterexample recorded in §3.
+- **A2 (validity repair).** Fixed-classification proviso added to the
+  \(R\subseteq R'\) clause; without it E1's growing quantification domain can
+  generate witness-only motions that lower the strict endpoint.
 
 Self-check items (Task T1.1 Step 3):
 

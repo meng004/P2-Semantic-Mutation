@@ -22,7 +22,10 @@
 ```latex
 \textbf{Lemma [LEM-WIT] (kill witness upgrade).} Assume the AVP verdict is a
 deterministic function of the $\mathrm{obs}$-observed outputs of the executions
-in an MR tuple. If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
+in an MR tuple, and that on the executed tuple the verdict is stable under
+pointwise obs-output perturbations of magnitude at most
+$\varepsilon_{\mathrm{eq}}$ (non-degenerate tolerance margins; the regime of
+Theorem~[THM-WIN](iii)). If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
 execution input $x$ satisfies
 $\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
@@ -37,8 +40,12 @@ Then the ground-truth score $k/(n+u_{\mathrm{neq}})$ satisfies
 with width $\mathrm{SMS}_{\mathrm{strict}}\cdot\tfrac{u}{n+u}$. Each
 equivalence certificate ($u\!\to\!u\!-\!1$) or divergence witness
 ($u\!\to\!u\!-\!1$, $n\!\to\!n\!+\!1$) weakly narrows the interval; and for
-$R\subseteq R'$ both endpoints are non-decreasing.
+$R\subseteq R'$, with the three-state classification held fixed (admission and
+witness status computed once against the cell's relation universe), both
+endpoints are non-decreasing.
 ```
+
+（陈述按 CHECKPOINT T1 修订记录 A1/A2 同步 master：margin 稳定性条款升入 LEM-WIT 陈述；R⊆R′ 句加三态分类冻结限定。）
 
 - [x] **Step 2:** 写证明（要点：宽度 \(k/n-k/(n+u)=k u/(n(n+u))\)；MR 扩张时 \((k+\Delta+j)/(n+j)\ge k/n\) 因 \(k\le n\)；证书两类分别验证两端点变化方向）
 - [x] **Step 3:** 自检清单：AVP 决定性假设是否已在 §2.3 有依据；随机 PUT 的 AVP 重复语义（N=20）是否破坏 LEM-WIT（若 kill 判定含统计聚合，需把"超容差"改为"按 AVP 判定语义超容差"并加脚注）。逐项在草稿"Obligations"节记录——结论：v4 kill 判定确为 N=20 严格多数票聚合（`src/p2/avp/repeat.py`），随机 PUT 情形按聚合观测读取并加脚注 F1；另显式补充 margin non-degeneracy（stability）条款并接 DEF-13
@@ -54,6 +61,8 @@ $R\subseteq R'$ both endpoints are non-decreasing.
 - [x] **Step 4:** Commit（此结果只作 §2.10 演示图，标注 development-only）
 
 **REVIEW CHECKPOINT T1：作者确认 THM-INT 陈述、假设与演示口径。**
+
+> **CHECKPOINT T1 = PASS（2026-07-28，作者委托评审执行）**：验算全部通过；两项效度修复 A1（margin 稳定性条款升入 LEM-WIT 陈述）与 A2（R⊆R′ 句加三态分类冻结限定）已按"先改 master 再同步"落地。记录：`docs/review_20260728/checkpoint_t1_record.md`。T2/T3/T5 解锁。
 
 ---
 
