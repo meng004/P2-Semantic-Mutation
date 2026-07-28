@@ -68,7 +68,7 @@
 |---|---|---|---|---|---|
 | 数值动力学核集（KER-NUM） | Lorenz-63 显式积分器；LU 分解；一维热传导显式 FDM | 每核 `float→float`、<2KB（约 40–120 LOC） | 本仓库 12-PUT 基础设施（与 P2 共用；执行时 `rg --files` 定位路径并在台账固化 SHA256） | 无内容预处理（§1.3.6 资产盘点） | EXP-CON/DIS/DOSE/STR |
 | 统计随机核集（KER-STAT） | Beta-Binomial 共轭后验；Metropolis–Hastings 采样器；蒙特卡洛积分 | 同上 | 同上 | 同上 | 同上 |
-| SciML 代理核集（KER-SCIML） | 高斯过程回归（GPR）；多项式混沌展开（PCE）；浅层 NN 代理 | 同上 | 同上 | 同上 | 同上 |
+| SciML 代理核集（KER-SCIML） | 高斯过程回归（GPR）；多项式混沌展开（PCE）；浅层 NN 代理。**命名澄清（R-12）**：本类=代理建模（surrogate modelling）核，不含 PINN 等物理信息网络；类名沿用既有数据资产命名，正文首现加此限定 | 同上 | 同上 | 同上 | 同上 |
 | 分类学习核集（KER-MLC） | MLP；SVM；逻辑回归 | 同上 | 同上 | 同上 | 同上 |
 | 追加紧凑核（条件触发） | 与上四类同签名同体量的候选核 | 同上约束 | Task 1.2 功效模拟触发的候选清单，作者拍板 | 同 KER 各集 | 功效补充 |
 | 语义变异体池（POOL-SEM，v5 lineage） | 5 语义算子在 applicable cell 内对 KER 全集生成的变异体 | 密度由 Task 1.2 功效模拟在成本约束内锁定（cell=算子×PUT，§0.3；算术表：applicable cell 数 × 密度 = 总量，预算区间约 300–840） | 本计划 Task 2.1 生成（generator 版本/seed/prompt 哈希入台账） | 生成漏斗+三态归档+统一标识（§1.3.2） | EXP-CON/DIS 确认性分母 |
@@ -98,7 +98,7 @@
 ### 1.3 预处理规范与统一标识
 
 - **1.3.1 DEF-REAL 真实缺陷挖掘（核心预处理，两段式标识防循环）**
-  1. **仓库白名单**（冻结进 Task 1.4 协议，不得因结果增删）：Defect4MR 已覆盖项目 + 主流权威科学计算仓库——numpy、scipy、scikit-learn、statsmodels、PyMC、GPy/GPyTorch、chaospy、SALib（候选池，Task 1.4 定稿）。
+  1. **仓库白名单**（冻结进 Task 1.4 协议，不得因结果增删）：Defect4MR 已覆盖项目 + 主流权威科学计算仓库——numpy、scipy、scikit-learn、statsmodels、PyMC、GPy/GPyTorch、chaospy、SALib、PyTorch/JAX 数值组件（候选池，Task 1.4 定稿）。**预期管理（R-12）**：GPy 近年低活跃、预期产出低——定稿时保留/弃用须在协议注明理由；低产出项可在冻结前以候选池内项目替换，冻结后不得增删。
   2. **issue 扫描**：检索信号词（wrong result / incorrect value / numerical regression / precision loss / convergence failure / conservation violation / biased estimate 等），**排除** crash-only、构建/打包、API 误用、文档类；要求 issue 可定位到 fix commit。
   3. **语义符合性判定**：fix diff 的语义效应可映射到不变量族 \(\Psi\) 某层（符合本文语义变异体定义：类型/签名保持、在可采输入上违反某 \(\psi_j\)）；判定证据=（issue URL, buggy SHA, fixed SHA）三元组 + 一句机理说明。
   4. **双臂复现**：buggy/fixed 两版本构建+触发脚本（`reproducers/`）；失败标 `REPRO_FAILED` 保留不替换。
@@ -221,7 +221,7 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 **Files:** Create: `research/prereg_v2/external_slice_protocol.md`
 
 - [ ] **Step 1:** 准入三条（且仅三条）：真实缺陷（公开 issue+fix commit）；双臂可复现（buggy/fixed 构建+触发）；in-scope（单/少输出数值核，签名可适配）。**明文排除** "MR 可判别"条件并注明这是对 D0 循环的修正
-- [ ] **Step 1b:** 内嵌 §1.3.1 挖掘规范：仓库白名单定稿（Defect4MR 覆盖项目 + numpy/scipy/scikit-learn/statsmodels/PyMC/GPy/GPyTorch/chaospy/SALib 候选池取舍）、issue 检索信号词与排除类清单、语义符合性判定模板（issue URL + buggy SHA + fixed SHA + 一句机理）、两段式统一标识规则（准入期 `EXT-<repo>-<序号>`，映射冻结后 `bug-<算子代号>-<序号>`；准入期禁止出现算子归类）
+- [ ] **Step 1b:** 内嵌 §1.3.1 挖掘规范：仓库白名单定稿（Defect4MR 覆盖项目 + numpy/scipy/scikit-learn/statsmodels/PyMC/GPy/GPyTorch/chaospy/SALib/PyTorch/JAX 数值组件候选池取舍；GPy 低活跃预期管理见 §1.3.1，R-12）、issue 检索信号词与排除类清单、语义符合性判定模板（issue URL + buggy SHA + fixed SHA + 一句机理）、两段式统一标识规则（准入期 `EXT-<repo>-<序号>`，映射冻结后 `bug-<算子代号>-<序号>`；准入期禁止出现算子归类）
 - [ ] **Step 2:** fiber 映射协议：**两名人类标注者**（身份类别写入协议；均不接触 MR 生成与 kill 执行；LLM 仅可作标注辅助工具，须声明且不计入 κ）、训练集=DEF-CAL（verified_full）中 10 例（development）、标签集 {DIRECT, ADJACENT, OUT_OF_SCOPE, UNCERTAIN}、盲化规定（不见 kill 结果、不见对方标注）、κ≥0.6 门禁、分歧仲裁程序；**降级方案并列预注册（R-4）**：第二人类标注者不可得 → 单人类标注者 + 时间分隔（≥2 周）test–retest 自一致性 + 全部标注材料公开 + §6 披露
 - [ ] **Step 3:** 冻结预测协议：执行前对每 (defect, MR set) 产出 detect/miss 预测 + 每 MR 集 SMS 排序预测，`shasum -a 256` 存证；揭盲规则
 - [ ] **Step 4:** Commit
@@ -298,7 +298,7 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 
 ### Task 4.2：章节改写（按 writing-plan §0 处置表执行）
 
-- [ ] **Step 1:** §1：旗舰主张一句话替换摘要与贡献段；新 **RQ1–RQ4 表（4+1 结构，R-11；口径=本计划 §0.3）**；**论文 2 边界段**（concurrent TOSEM submission 声明 + "元模式作为给定词汇消费"）；claim-evidence map 增补 THM-INT/THM-GAP（含 REM-IDF）/THM-WIN 行与外部锚行（骨架=§1.2 链路总表）
+- [ ] **Step 1:** §1：旗舰主张一句话替换摘要与贡献段；新 **RQ1–RQ4 表（4+1 结构，R-11；口径=本计划 §0.3）**；**论文 2 与论文 4 边界段（R-12）**（P2 concurrent TOSEM submission 声明 + "元模式作为给定词汇消费"；P4 TSE 在审分工：P3 度量 MR 集"够不够"，P4 选"最小够用集"，互不承重）；claim-evidence map 增补 THM-INT/THM-GAP（含 REM-IDF）/THM-WIN 行与外部锚行（骨架=§1.2 链路总表）
 - [ ] **Step 2:** §3 新增五小节：适用矩阵（引 prereg 哈希）、**A-PROV 桥接假设声明（provenance-as-coverage + ξ 诊断，R-6）**、剂量反应设计、held-out source 对称协议、外部切片准入与盲化协议（含 §1.3.1 两段式标识）；baseline 小节并入 random-floor/MS 排序（cosmic-ray）两基线 + PC 描述性次级 + 算子族文档论证（R-10）；对象选取原则段=§1.4 的 P1–P7 压缩版（≤1 段）；对象命名一律用 §1.1 语义集合名（KER-*/POOL-*/MRSET-*/DEF-*）
 - [ ] **Step 3:** §4 按新 RQ 顺序重排（R-11）：**RQ2（H-DOSE 剂量反应 + ξ 诊断）→ RQ3（H-CONS 操纵检验开场 → H-ZERO 零预测 → H-DISC 条件判别 → 结构定位段 EXP-STR）→ RQ4（κ 门禁 → H-CAL → H-RANK）→ Prior Audit 小节（旧 H1–H4 原样 + 一段"为什么旧阈值与理论错配"）**；全部数字模板注入自 SSOT
 - [ ] **Step 4:** §5：缺口归因解读段（零膨胀的 \(\mathrm{Gap}_{\mathrm{aln}}(R)\) 部分=理论确认）、SMS vs MS 有界比较段（明示不做普适优越主张）、T1/T2/T4 接口段（各一句+引用）
