@@ -220,11 +220,59 @@ REM-IDF (identifiability up to coverage classes) attaches to this theorem's
 discussion section; drafted in Phase T4 (`rem_identifiability.md`), merged in
 Task T6.1.
 
+## 9b. LEM-CLO and manuscript consistency (Task T2.2)
+
+**Lemma statement.**
+
+```latex
+\textbf{Lemma [LEM-CLO] (exact checkers are strong MRs).} Let $r$ be an exact
+checker for stratum $\psi_j$ (DEF-05). Then the violation set of $r$ equals
+$\{P' : [\![P']\!]\not\models_{\tau}\psi_j\}$ and is closed under
+$\equiv_{\mathrm{obs}}$; hence $r$ is a strong MR in the sense of
+Theorem~[THM-DUAL], and inherits its duality guarantees (a strong MR detects
+no observationally inactive mutant).
+```
+
+*Proof (PO-GAP-1).* The violation-set identity is DEF-05 read as a set
+equation: \(\mathrm{flag}(r,P')\iff[\![P']\!]\not\models_\tau\psi_j\). Each
+\(\psi_j\) is a predicate over the observable behaviour, and satisfaction is
+evaluated on the observed behaviour (main.tex:766–775: "each \(\psi\) is a
+predicate over the observable behaviour", "\([\![P]\!]\models\psi\) when
+\(P\)'s observable behaviour satisfies \(\psi\)"); the tolerance-indexed
+relation \(\models_\tau\) evaluates the same predicate with margin
+\(\tau\) on the same observable. Membership of
+\(\{P':[\![P']\!]\not\models_\tau\psi_j\}\) therefore depends on \(P'\) only
+through its observed behaviour. If \(P''\equiv_{\mathrm{obs}}P'\), the two
+observed behaviours coincide pointwise on the admitted domain, so
+\(P''\) violates iff \(P'\) does: the violation set is a union of
+\(\equiv_{\mathrm{obs}}\)-classes, i.e. closed. The manuscript defines a
+strong MR exactly by this closure (main.tex:862–863), so \(r\) is strong and
+Theorem 2's guarantees apply. ∎
+
+**Properness (one line).** The inclusion is strict in general: a relation
+whose violation set is the union of two distinct strata's tolerance-violation
+classes is \(\equiv_{\mathrm{obs}}\)-closed (hence strong) but exact for
+neither stratum — exactness additionally pins the set to a single stratum's
+class.
+
+**S5 manuscript check and elevation note.** Verified wording
+(main.tex:807–810): S5 is stated *conditionally* — "stratum purity (required
+where stratum labels feed downstream), \([\![P']\!]\models\psi'\) for all
+\(\psi'\in I\setminus\{\psi\}\)" (family symbol \(I\) pending the
+\(I\to\Psi\) migration). THM-GAP elevates S5 from conditional to premise (i).
+Required body note for Task T6.1 integration (recorded here as the
+hand-off): "S5-violating mutants route their kill mass into the exactness
+defect \(\xi\)" — i.e. the elevation does not silently drop impure mutants;
+it prices them into the model-check statistic. The \(\models\) vs
+\(\models_\tau\) gap between S5's wording and DEF-05's decision is bridged by
+premise (iii) (§3), the same regime that CHECKPOINT T1's amendment A1 made
+explicit in LEM-WIT.
+
 ## 10. Obligations ledger and CHECKPOINT T2 questions
 
 | PO | Disposition |
 |---|---|
-| PO-GAP-1 | pending Task T2.2 (LEM-CLO: exact checker ⊂ strong MR, manuscript-consistency pass) |
+| PO-GAP-1 | closed — §9b (LEM-CLO: violation-set identity from DEF-05; closure through the observable-behaviour definition of \(\psi_j\), main.tex:766–775; strongness per Theorem 2's closure definition, main.tex:862–863; properness noted) |
 | PO-GAP-2 | closed — §4 (uncovered fibers survive) |
 | PO-GAP-3 | closed — §4 (block-diagonal statement, prose array, registry-closed) |
 | PO-GAP-4 | closed — §5 (exact algebraic identity from the fiber partition) |
