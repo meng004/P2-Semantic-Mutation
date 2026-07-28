@@ -30,11 +30,10 @@
 rg -n "\\\\equiv_|varepsilon_|mathrm\{SMS\}|K_\{?\\\\mathrm\{eq\}|M_\{\\\\mathrm\{neq\}|sigma\^\{-1\}|psi_" submission/TOSEM_regular_20260706/main.tex | head -60
 ```
 
-- [x] **Step 2:** 在 `notation_registry.md` 落地 master §0.2 符号总表（序号、符号、含义、首定义/来源、备注五列一对一照搬），并加"现稿出现行号"列。新增符号闭集 = §0.2 的 #17–#32 中标注 DEF/THM 来源者；任何草稿引入表外符号即违规，先补表再用
-- [ ] **Step 3:** 定位《MT基础理论统一框架》v1.2 附录 A（OneDrive `0-论文/MR识别/theory/` 目录），对 registry 逐符号 diff；重点核对保留符号 \(\sigma,\Gamma,\mathfrak G,\lambda,S,I,\rho,e,\kappa\) 未被 P3 新文本挪用。附录 A 不可达时以四柱 v1.2 §2 + v3.1 §3 为代理权威并在 registry 头部注明
-  - 当前状态：已按用户给定定位器查询 `meng004/mr-theory`，但 GitHub API 与 `git ls-remote` 均返回 `Repository not found`；附录 A、四柱 v1.2 §2、MR-validity v3.1 §3 因而仍未取得。registry 已记录本地冲突审计与该外部证据缺口；不能把它误报为完成的逐符号外部 diff。
+- [x] **Step 2:** 在 `notation_registry.md` 落地 master §0.2 符号总表（序号、符号、含义、首定义/来源、备注五列一对一照搬），并加"现稿出现行号"列。新增符号闭集 = §0.2 的 #17–#32 与 #36 中标注 DEF/THM 来源者；任何草稿引入表外符号即违规，先补表再用
+- [x] **Step 3:** 通过用户提供的 `github_token` 读取私有仓库 `meng004/MR-theory@66abf5743a56576935e723ebd6f9ae789bc2e6e9`，逐符号比对统一框架 v1.2 Appendix A（blob `e73f77a72e21a3c00991909f2ca001f11491a497`）、四柱 v1.2（blob `41219ecc713cc4b0e22ca9e3ae896f6d01f338fa`）和 MR 有效性理论 v3.1（blob `412d833ba4dd9921661007461c4ecf2cd6618b96`）。registry 记录比对结果：\(\sigma,I\) 的既定改名保留；新增 \(\alpha\to\mathrm{obs}\)、\(m\to m_{\mathrm{mut}}\)、\(e\to\mathrm{edit}\) 的外部注册表裁决。
 - [x] **Step 4:** 检查现稿是否已有 `SMS_strict / SMS_conservative` 与 `EQUIVALENCE_UNRESOLVED` 词汇（`rg -n "strict|conservative|UNRESOLVED" submission/TOSEM_regular_20260706/main.tex`）。若无：登记"需在 §2.3 引入三态等价（certified-equivalent / confirmed-non-equivalent / unresolved），把现 E1∧E2 样本等价降格为 unresolved 的证据"这一集成任务到 Task T5.2（`理论增强-phaseT5-fable.md`）
-- [x] **Step 5:** 盘点现稿待改名符号的出现范围：`rg -c "sigma\^\{-1\}|\\\\sigma\\b" submission/TOSEM_regular_20260706/main.tex`（effect map σ→\(\mathrm{eff}\)）与 `rg -n "invariant family|I = \\\\\{|\\\\mathcal\{?I\}?" submission/TOSEM_regular_20260706/main.tex`（不变量族 I→\(\Psi\)）与 `rg -n "D_S" submission/TOSEM_regular_20260706/main.tex`（\(D_S\to\mathcal D_P\)），把出现清单写入 registry 附录，改名动作归 Task T6.1（`理论增强-phaseT6-terra.md`）
+- [x] **Step 5:** 盘点现稿待改名符号的出现范围：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\)）；不变量族 \(I\to\Psi\)；\(D_S\to\mathcal D_P\)；观测映射 \(\alpha\to\mathrm{obs}\)、\(\equiv_\alpha\to\equiv_{\mathrm{obs}}\)；有限 AST 编辑 \(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\)。把出现清单写入 registry 附录，改名动作归 Task T6.1（`理论增强-phaseT6-terra.md`）
 - [x] **Step 6:** Commit
 
 ---
@@ -43,5 +42,5 @@ rg -n "\\\\equiv_|varepsilon_|mathrm\{SMS\}|K_\{?\\\\mathrm\{eq\}|M_\{\\\\mathrm
 
 | 风险 | 处置 |
 |---|---|
-| 统一框架 v1.2 附录 A 找不到 | 按 Step 3 降级：四柱 v1.2 §2 + v3.1 §3 为代理权威，registry 头部注明；不阻塞后续阶段 |
+| 私有理论源因认证不可读 | 使用用户提供的 `github_token` 通过 GitHub API 读取；只记录 commit/blob 标识，不记录 token |
 | 现稿符号盘点遗漏 | T6.1 改名前会二次 rg 复查；本阶段清单标注"初版" |

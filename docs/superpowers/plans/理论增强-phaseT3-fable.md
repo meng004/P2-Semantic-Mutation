@@ -16,7 +16,7 @@
 ## Task T3.1：现有 Prop 2 资产盘点
 
 - [ ] **Step 1:** `rg -n "Proposition 2|strong boundary|varepsilon_\{?\\\\mathrm\{tol\}" submission/TOSEM_regular_20260706/main.tex`，摘录 Prop 2 全文与其非形式假设进草稿
-- [ ] **Step 2:** 在 `research/theory_drafts/thm_window.md` 列假设清单：观测泛函对 ε_m 的 Lipschitz 性（常数 \(L_r\)）、噪声界 \(\bar\eta\)（确定性=舍入；随机=\(c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}\)）、checker 阈值形式
+- [ ] **Step 2:** 在 `research/theory_drafts/thm_window.md` 列假设清单：观测泛函对 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 的 Lipschitz 性（常数 \(L_r\)）、噪声界 \(\bar\eta\)（确定性=舍入；随机=\(c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}\)）、checker 阈值形式
 
 ## Task T3.2：起草定理与推论
 
@@ -25,17 +25,17 @@
 - [ ] **Step 1:** 写入（定稿基准，`[·]` 占位符在 Task T6.1 换成正文编号）：
 
 ```latex
-\textbf{Theorem [THM-WIN] (tolerance-indexed detection window).} Let $m$ carry
-violation magnitude $\varepsilon_m$ at stratum $\psi$, let $r$ be an exact
+\textbf{Theorem [THM-WIN] (tolerance-indexed detection window).} Let $m_{\mathrm{mut}}$ carry
+violation magnitude $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$ at stratum $\psi$, let $r$ be an exact
 checker with tolerance $\varepsilon_{\mathrm{tol}}$, let
 $\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)$ be the correct-program
 structure-preservation residual (the instantiation of $\Delta(S,P)$ from the
 MR-validity theory on the structure inducing $r$), and $|\eta|\le\bar\eta$
 the execution noise, with the violation functional $L_r$-Lipschitz in
-$\varepsilon_m$. Then
-(i) $\varepsilon_m>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$ implies
-$r$ kills $m$; (ii) $\varepsilon_m<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
-implies $r$ does not kill $m$; (iii) with the crash threshold
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Then
+(i) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$ implies
+$r$ kills $m_{\mathrm{mut}}$; (ii) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
+implies $r$ does not kill $m_{\mathrm{mut}}$; (iii) with the crash threshold
 $\varepsilon_{\mathrm{crash}}$ (S4), the kill region lies within
 $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$.
 
@@ -53,7 +53,7 @@ $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol
 （R-9：两条原拟推论改为 THM-WIN 定理环境内的 Remark，不占独立定理编号；其论证义务 PO-WIN-5/6 保留。）
 
 - [ ] **Step 2:** 写证明（误差预算三角不等式两次；对接 §2.9 latency window 定义，(iii) 由 S4 直接）
-- [ ] **Step 3:** 写"经验预测"小节：kill 概率沿 ε_m 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\) —— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为推论实例
+- [ ] **Step 3:** 写"经验预测"小节：kill 概率沿 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\) —— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为推论实例
 - [ ] **Step 4:** 写"结构命运对应"注记（≤1 段）：以 \(\mu_r\) 与 \(\Delta_r\) 把 P3 的 MR 分类形式对接 v3.1 §4.2 结构命运四分类——\(\Delta_r=0\) ↔ 精确保持（strict MR）、\(0<\Delta_r\le\varepsilon_{\mathrm{tol}}\) ↔ 近似保持（strong/tolerance MR）、\(\Delta_r>\varepsilon_{\mathrm{tol}}\) ↔ 结构破坏（weak MR，即 REM-FPOS）、\(\Delta_r(h)\to0\) ↔ 渐近保持；注明这使 THM-WIN 成为 v3.1 引理 1（\(\Delta\le\tau\Rightarrow\mathrm{Valid}\)）在变异检测语境下的定量细化
 - [ ] **Step 5:** 逐 PUT 类评估 \(L_r\) 可估性，产出"不可估 PUT 清单"（供论证线 Task 2.3 替换剂量反应对象）；Commit
 

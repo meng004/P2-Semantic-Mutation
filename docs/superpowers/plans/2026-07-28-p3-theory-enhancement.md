@@ -35,6 +35,7 @@
 3. **定理族标签**：`THM-`（定理）、`LEM-`（引理）、`COR-`（推论）、`PROP-`（命题）、`REM-`（Remark，正文不占定理环境计数）+ 语义缩写。正文最终编号由 LaTeX 自动分配，Task T6.1 产出"标签 → 正文编号"映射表。既有结果登记：`THM-UND`（现稿 Thm 1 不可判定）、`THM-DUAL`（现稿 Thm 2 对偶）、`THM-DEG`（现稿 Thm 9.1 退化）。
 4. **其他标识**：定义 `DEF-nn`；证明义务 `PO-<定理缩写>-n`；假设 `H-<语义缩写>`、实验 `EXP-<语义缩写>`（见论证提升计划 §0.3）。
 5. **权威源优先级**：统一框架 v1.2 附录 A > 四柱 v1.2 > MR有效性理论 v3.1 > P3 内部惯用。
+6. **外部注册表裁决**：统一框架 Appendix A 明定 \(\alpha\) 仅指效应抽象、\(m\) 仅指 MetaPattern；MR 有效性理论 v3.1 将 \(e\) 用作结构命运字段。因此 P3 的观测映射、单个变异体和有限 AST 编辑分别固定为 \(\mathrm{obs}\)、\(m_{\mathrm{mut}}\) 和 \(\mathrm{edit}\)，不得复用裸 \(\alpha,m,e\)。
 
 ### 0.2 符号总表（序号 | 符号 | 含义 | 首定义/来源 | 备注）
 
@@ -45,7 +46,7 @@
 | 3 | \(\Phi_P\) | 程序计算映射 \(I\circ D_h\) | v3.1 §3.1 | 原稿 \(\Phi_{S_i}\) 统一为 \(\Phi_P\) |
 | 4 | \(x\) | 执行输入 | v3.1 §3 | — |
 | 5 | \(\mathcal D_P,\ \mathcal X_{\mathrm{adm}}\) | 输入抽样分布、可采输入域 | 现稿 §2.6 | 原稿 \(D_S\) 改名 \(\mathcal D_P\)（避让 v3.1 适用域 \(D\) 与结构 \(S\)） |
-| 6 | \(\alpha,\ \equiv_\alpha\) | 语义抽象（观测）映射、α-观测等价 | 现稿 §2.2 | 四柱统计误报率写 \(\alpha_{\mathrm{FPR}}\)，不与本 α 混用 |
+| 6 | \(\mathrm{obs},\ \equiv_{\mathrm{obs}}\) | 语义观测映射、观测等价 | 现稿 §2.2；统一框架 v1.2 Appendix A | 原稿 \(\alpha,\equiv_\alpha\) 改为 \(\mathrm{obs},\equiv_{\mathrm{obs}}\)，避让统一框架唯一效应抽象 \(\alpha\) |
 | 7 | \(\mathcal C,\ c\) | 等价证书集、单个证书 | DEF-01 | 与 v3.1 谱系对象 \(K_\rho\) 的字段 \(C\) 不同对象 |
 | 8 | \(\varepsilon_{\mathrm{eq}},\ K_{\mathrm{eq}}\) | 判等容差、判等抽样预算 | 现稿 §2.3 | \(K_{\mathrm{eq}}\) 与 v3.1 \(K_\rho\) 不同对象 |
 | 9 | \(\mathrm{killed}(P',\mathrm{MR}_{i,k})\) | kill 谓词（AVP fail 于第 i 个 PUT 的第 k 条 MR 元组） | 现稿 §2.3 | — |
@@ -56,42 +57,43 @@
 | 14 | \(\models_\tau\) | 容差语义满足关系 | 现稿 §2.7 | DEF-05 使用 |
 | 15 | \(\psi_j,\ \Psi\) | 第 j 个语义不变量（层）、不变量族 \(\Psi=\{\psi_1..\psi_5\}\) | 现稿 §2.7 | 原稿记 \(I\)，改 \(\Psi\)（避让 v3.1 实现 \(I\)） |
 | 16 | \(\mathrm{eff},\ \mathrm{eff}^{-1}\) | 语义效应映射、fiber 取原像 | 现稿 §2.9 | 原稿记 \(\sigma\)，改 \(\mathrm{eff}\)（避让统一框架声明结构 \(\sigma\)） |
-| 17 | \(M_{\mathrm{neq}},\ M_j,\ m\) | 非等价变异体全集、第 j 层 fiber、单个变异体 | DEF-07 | \(M_j=\mathrm{eff}^{-1}(\psi_j\text{-viol})\cap M_{\mathrm{neq}}\) |
-| 18 | \(n,\ k,\ u,\ u_{\mathrm{neq}}\) | 已证非等价数、被杀数、悬置存活数、悬置中真非等价数 | DEF-02 | 不用 \(e^*\)（避让 v3.1 结构命运字段 \(e\)） |
+| 17 | \(M_{\mathrm{neq}},\ M_j,\ m_{\mathrm{mut}}\) | 非等价变异体全集、第 j 层 fiber、单个变异体 | DEF-07；统一框架 v1.2 Appendix A | \(M_j=\mathrm{eff}^{-1}(\psi_j\text{-viol})\cap M_{\mathrm{neq}}\)；不用裸 \(m\)（该符号仅指 MetaPattern） |
+| 18 | \(n,\ k,\ u,\ u_{\mathrm{neq}}\) | 已证非等价数、被杀数、悬置存活数、悬置中真非等价数 | DEF-02 | 不用裸 \(e\) 或 \(e^*\)（避让 v3.1 结构命运字段 \(e\)） |
 | 19 | \(\mathrm{SMS}_{\mathrm{strict}},\ \mathrm{SMS}_{\mathrm{cons}},\ \mathrm{SMS}_j\) | 严格/保守口径、第 j 层层内得分 | DEF-04 / DEF-07 | — |
 | 20 | \(w_j\) | 层权重 | DEF-07 | — |
 | 21 | \(\mathrm{Cov}(R)\) | 被 \(R\) 精确检查的层指标集 | DEF-06 | 原拟 \(F_R\)，改语义算子名；与统计协方差无关 |
 | 22 | \(\mathrm{Gap}_{\mathrm{aln}}(R),\ \mathrm{Gap}_{\mathrm{str}}(R)\) | 对齐缺口、强度缺口 | DEF-08 | 原拟 \(A(R)/S(R)\)；\(\mathrm{Gap}_{\mathrm{aln}}\leftrightarrow\) 四柱 \(\Omega_{\mathrm{sel}}\) |
 | 23 | \(\xi(R)\) | 精确性偏差（块外 kill 质量占比） | DEF-09 | 模型检验统计量，不入 SMS；pooled 口径升 secondary confirmatory 假设 H-XI（先验地标 0.10，B-1，见论证计划 §1.2），充当 A-PROV 的 ex-post 检验器；per-cell 分布仍描述性 |
-| 24 | \(\mathrm{sig}(m)\) | kill 签名 | DEF-14 | — |
-| 25 | \(\varepsilon_m\) | 违反幅度 | DEF-10 | — |
+| 24 | \(\mathrm{sig}(m_{\mathrm{mut}})\) | kill 签名 | DEF-14 | — |
+| 25 | \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) | 违反幅度 | DEF-10 | — |
 | 26 | \(\Delta_r\) | 正确程序结构保持残差 \(\sup_{x\in D_r}\varepsilon_r(x;P^\star)\) | DEF-12 | = v3.1 结构保持偏差 \(\Delta(S,P)\) 的实例；对接结构命运四分类 |
 | 27 | \(\mu_r\) | 强度边际 \(\varepsilon_{\mathrm{tol}}-\Delta_r\) | DEF-12 | — |
 | 28 | \(\eta,\ \bar\eta,\ \eta_{\mathrm{det}}\) | 执行噪声、噪声界、确定性噪声分量 | DEF-11 | ↔ v3.1 预算项 \(\tau_{\mathrm{stat}}/\tau_{\mathrm{round}}/\tau_{\mathrm{obs}}\) |
 | 29 | \(N,\ c,\ \sigma_{\mathrm{out}}\) | 重复执行次数、噪声集中常数、随机 PUT 输出标准差 | DEF-11 | 标准差必须写 \(\sigma_{\mathrm{out}}\)，禁用裸 \(\sigma\) |
-| 30 | \(L_r\) | 违反泛函对 \(\varepsilon_m\) 的 Lipschitz 常数 | THM-WIN | 命名沿四柱 \(L_\sigma\) 风格；与 #31 的退化极限 \(L\) 不同对象 |
+| 30 | \(L_r\) | 违反泛函对 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 的 Lipschitz 常数 | THM-WIN | 命名沿四柱 \(L_\sigma\) 风格；与 #31 的退化极限 \(L\) 不同对象 |
 | 31 | \(L,\ L_{\mathrm{lim}},\ L_{\mathrm{switch}}\) | 退化极限拼合（regime） | 现稿 §2.6 | THM-DEG-R 拆分后的两段 |
 | 32 | \(\varepsilon_{\mathrm{lo}},\ \varepsilon_{\mathrm{crash}}\) | 检测窗下沿、崩溃阈 | DEF-13 / 现稿 S4 | — |
 | 33 | \(\mathrm{supp}(\mathcal D_P)\) | 抽样分布支撑 | 现稿 Lemma 9.1 | THM-DEG-R 新增假设使用 |
 | 34 | S1–S5 | sanity gate 编号 | 现稿 §2.8 | 门禁标签非数学符号，沿用 |
 | 35 | E1∧E2 | 判等程序编号 | 现稿 §2.3 | 与实验标签空间分离（实验一律 `EXP-` 前缀，见论证计划 §0.3） |
+| 36 | \(\mathrm{edit},\ P_{\mathrm{edit}}\) | 有限 AST 编辑算子、其作用后的程序 | 现稿 §2.8；MR有效性理论 v3.1 §3.8 | 原稿 \(e,P_e\) 改为语义命名，避让 v3.1 结构命运字段 \(e\) |
 
 ### 0.3 形式化定义与方法学假设清单（先于定理正文冻结；A-PROV 为方法学假设，非 DEF 条目，F-12）
 
-- **DEF-01（三态等价）**：候选体 \(P'\) 处于且仅处于一态：`CERTIFIED_EQUIVALENT`（存在机器可核验证书 \(c\in\mathcal C\) 证 \(P'\equiv_\alpha P\)）、`CONFIRMED_NON_EQUIVALENT`（存在见证 \(x:\ \|\alpha(\Phi_P(x))-\alpha(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}\)）、`EQUIVALENCE_UNRESOLVED`（两者皆无；含现行 E1∧E2 抽样一致者）。
+- **DEF-01（三态等价）**：候选体 \(P'\) 处于且仅处于一态：`CERTIFIED_EQUIVALENT`（存在机器可核验证书 \(c\in\mathcal C\) 证 \(P'\equiv_{\mathrm{obs}} P\)）、`CONFIRMED_NON_EQUIVALENT`（存在见证 \(x:\ \|\mathrm{obs}(\Phi_P(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}\)）、`EQUIVALENCE_UNRESOLVED`（两者皆无；含现行 E1∧E2 抽样一致者）。
 - **DEF-02（计数）**：\(n=|\text{confirmed non-equiv}|\)，\(k=\) 其中被 \(R\) 杀死数，\(u=|\text{unresolved 存活}|\)，\(u_{\mathrm{neq}}\in[0,u]\) 为 unresolved 中真非等价数（未知量）。
-- **DEF-03（AVP 决定性假设）**：MR 判定是执行元组 α-观测输出的确定函数（随机 PUT 按 §2.3 的 N 重复聚合语义解释）；对应 v3.1 §3.6 判定 \(J_r\) 的确定性。
+- **DEF-03（AVP 决定性假设）**：MR 判定是执行元组 \(\mathrm{obs}\)-观测输出的确定函数（随机 PUT 按 §2.3 的 N 重复聚合语义解释）；对应 v3.1 §3.6 判定 \(J_r\) 的确定性。
 - **DEF-04（区间口径）**：\(\mathrm{SMS}_{\mathrm{strict}}=k/n\)，\(\mathrm{SMS}_{\mathrm{cons}}=k/(n+u)\)。
 - **DEF-05（exact checker）**：\(r\) 是 \(\psi_j\) 的精确检查器 ⟺ \(\mathrm{flag}(r,P')\iff [\![P']\!]\not\models_\tau \psi_j\)，其中 \(\mathrm{flag}(r,P')\equiv(J_r=\mathrm{fail})\)（AVP fail）。
 - **DEF-06（被检层集）**：\(\mathrm{Cov}(R)=\{j: \exists r\in R\ \text{为}\ \psi_j\ \text{的 exact checker}\}\)（covered strata）。
 - **DEF-07（fiber、层权重与层内得分）**：fiber \(M_j:=\mathrm{eff}^{-1}(\psi_j\text{-viol})\cap M_{\mathrm{neq}}\)；\(w_j=|M_j|/|M_{\mathrm{neq}}|\)；\(\mathrm{SMS}_j(R)=\) 限制在 \(M_j\) 的杀死率。
 - **DEF-08（缺口分解）**：对齐缺口 \(\mathrm{Gap}_{\mathrm{aln}}(R)=\sum_{j\notin \mathrm{Cov}(R)}w_j\)；强度缺口 \(\mathrm{Gap}_{\mathrm{str}}(R)=\sum_{j\in \mathrm{Cov}(R)}w_j\,(1-\mathrm{SMS}_j(R))\)。
 - **DEF-09（精确性偏差）**：\(\xi(R)=\) 块外 kill 质量 / 总 kill 质量（模型检验统计量，不入 SMS）。
-- **DEF-10（违反幅度）**：\(\varepsilon_m\) 为编辑模板在 latency window 语义下的违反幅度参数（沿用 §2.8）。
+- **DEF-10（违反幅度）**：\(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 为编辑模板在 latency window 语义下的违反幅度参数（沿用 §2.8）。
 - **DEF-11（噪声模型）**：\(|\eta|\le\bar\eta\)；确定性 \(\bar\eta=\eta_{\mathrm{det}}\)，随机 \(\bar\eta=c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}\)。**预算对应（v3.1 §4.3）**：\(\eta_{\mathrm{det}}\approx\tau_{\mathrm{round}}+\tau_{\mathrm{obs}}\)，随机项 ≙ \(\tau_{\mathrm{stat}}\)，\(\Delta_r\)（DEF-12）由 \(\tau_{\mathrm{disc}}\) 主导。
 - **DEF-12（边际与结构保持残差）**：\(\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r\)，其中 \(\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)\) 为正确程序 \(P^\star\) 上的关系残差上确界，**即 v3.1 的结构保持偏差 \(\Delta(S,P)\) 在 \(r\) 的诱导结构上的实例**。
 - **DEF-13（检测窗）**：\((\varepsilon_{\mathrm{lo}},\varepsilon_{\mathrm{crash}})\)，\(\varepsilon_{\mathrm{lo}}=\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta\)。
-- **DEF-14（签名与分离族）**：\(\mathrm{sig}(m)=\{r\in R: r\ \text{kills}\ m\}\)；分离族 = \(\mathrm{Cov}(R)\) 中每层至少一个 exact checker。
+- **DEF-14（签名与分离族）**：\(\mathrm{sig}(m_{\mathrm{mut}})=\{r\in R: r\ \text{kills}\ m_{\mathrm{mut}}\}\)；分离族 = \(\mathrm{Cov}(R)\) 中每层至少一个 exact checker。
 - **A-PROV（构念桥接假设，R-6；方法学假设，不进入任何定理的数学前提）**：实证操作化中，aligned 出处的 MR 集近似其目标层的 exact checker（DEF-05 的经验近似）；\(\mathrm{Cov}(R)\) 的操作化 = 适用矩阵 × MR 出处（provenance-as-coverage）；证据双通道（F-2）：**ex-ante 通道**=出处与构造审计（对称清单、生成期 eff 标签、适用矩阵哈希），与 kill 结果无关，决定 A-PROV 是否被断言；**ex-post 通道**=\(\xi(R)\)（DEF-09）作结果侧诊断，其 pooled 口径为 secondary confirmatory 预测 H-XI（先验地标 0.10，B-1），消费规则预注册于论证计划 Task 1.3 Step 1b——H-ZERO/H-DISC verdict 无条件，ξ 不改变 verdict，H-ZERO × H-XI 2×2 裁决表预注册。登记于此供两计划统一引用；实证落地见论证提升计划 Task 1.3。
 
 ### 0.4 跨文档符号冲突消解表（权威源优先级见 §0.1 第 5 条）
@@ -102,8 +104,9 @@
 | \(\sigma\) | 统一框架：声明结构（关系对）；v3.1 已将层位改记 \(\lambda\) 归还 \(\sigma\) | effect map \(\sigma:e\mapsto\) 效应类（§2.9） | **P3 effect map 改记 \(\mathrm{eff}\)**（#16）；正文改名于 Task T6.1 执行；标准差写 \(\sigma_{\mathrm{out}}\)（#29） |
 | \(\rho\) | v3.1：候选/可执行 MR | （新增 THM-WIN 曾拟 \(\rho_0\)） | 残差改用 \(\Delta_r\)（#26）；P3 不以 \(\rho\) 命名其他对象 |
 | \(I\) | v3.1：程序实现（\(P=(M,D_h,I)\)） | 不变量族 \(I=\{\psi_1..\psi_5\}\)（§2.7） | 新文本不变量族改记 \(\Psi\)（#15）；正文改名于 Task T6.1 执行 |
-| \(e\) | v3.1：结构命运（\(K_\rho\) 字段） | （新增曾拟 \(e^*\)） | 改 \(u_{\mathrm{neq}}\)（#18） |
-| \(\alpha\) | 四柱统计情形：误报率 \(\mathrm{StatValid}_{\alpha,\delta}\) | 语义抽象/观测 \(\alpha\)、\(\equiv_\alpha\) | P3 保留 \(\alpha\)=抽象（先占且遍布）；引用统计资格时写 \(\alpha_{\mathrm{FPR}}\) |
+| \(e\) | v3.1：结构命运（\(K_\rho\) 字段） | 有限 AST 编辑 \(e\)、结果程序 \(P_e\)（§2.8） | 改 \(\mathrm{edit},P_{\mathrm{edit}}\)（#36）；\(u_{\mathrm{neq}}\) 继续避免 \(e^*\)（#18） |
+| \(m\) | 统一框架 Appendix A：仅指 MetaPattern | 单个变异体 | 改 \(m_{\mathrm{mut}}\)（#17）；违反幅度改 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\)（#25） |
+| \(\alpha\) | 统一框架 v1.2 定义 10：唯一效应抽象；四柱统计情形：误报率 \(\mathrm{StatValid}_{\alpha,\delta}\) | 语义抽象/观测 \(\alpha\)、\(\equiv_\alpha\) | P3 观测映射改 \(\mathrm{obs}\)、\(\equiv_{\mathrm{obs}}\)（#6）；P3 不另行定义 \(\alpha\)，仅在引用外部统计资格时保留原符号 |
 | \(\tau\) | v3.1：误差预算/容差（\(\tau_r\)） | \(\varepsilon_{\mathrm{tol}}\)（ε 族内聚） | P3 保留 ε 族；对应表注明 \(\varepsilon_{\mathrm{tol}}\equiv\tau_r\)，不拆散 ε 系统 |
 | \(\Delta\) | v3.1：结构保持偏差 \(\Delta(S,P)\) | （新增） | **直接采用**：\(\Delta_r\)（#26），实现实质对接 |
 | \(S\)（集合） | 四柱 T3：已采纳关系集合 \(S\subseteq\mathcal A_\Gamma\) | MR 集 \(R\) | P3 用 \(R\)；接口注记时写"四柱之 \(S\) ≙ 本文 \(R\)" |
@@ -127,7 +130,7 @@
 | C-C2 | **REM-FNEG**（原拟 COR-FNEG，R-9 改为 THM-WIN 内 Remark） | 随机假阴性与 \(N^{-1/2}\) 处方 |
 | T-9.1′ | **THM-DEG-R** | 退化定理修补版（现稿 THM-DEG 的替换） |
 | D1–D14 | DEF-01–DEF-14 | 形式化定义 |
-| \(F_R\)；\(A(R)/S(R)\)；\(\rho_0\)；\(e^*\)；σ(effect map)；I(不变量族)；\(D_S\) | \(\mathrm{Cov}(R)\)；\(\mathrm{Gap}_{\mathrm{aln}}/\mathrm{Gap}_{\mathrm{str}}\)；\(\Delta_r\)；\(u_{\mathrm{neq}}\)；\(\mathrm{eff}\)；\(\Psi\)；\(\mathcal D_P\) | 数学符号语义化 |
+| \(F_R\)；\(A(R)/S(R)\)；\(\rho_0\)；裸 \(e/e^*\)；σ(effect map)；I(不变量族)；\(D_S\)；α(观测)；m(变异体) | \(\mathrm{Cov}(R)\)；\(\mathrm{Gap}_{\mathrm{aln}}/\mathrm{Gap}_{\mathrm{str}}\)；\(\Delta_r\)；\(\mathrm{edit},P_{\mathrm{edit}}/u_{\mathrm{neq}}\)；\(\mathrm{eff}\)；\(\Psi\)；\(\mathcal D_P\)；\(\mathrm{obs}\)；\(m_{\mathrm{mut}}\) | 数学符号语义化 |
 | PO-A1..A5 / B0..B5 / C1..C6 / D1..D2 / F1..F3 | PO-INT-1..5 / PO-GAP-1..6 / PO-WIN-1..6 / PO-DEG-1..3；PO-IDF-1..2（旧 D1..D2）撤销——R-9 后 REM-IDF 无独立 PO，论证并入 THM-GAP 讨论 | 证明义务 |
 | H-B1 / H-B2 / H-C1 / H-C2 / H-X1 / H-X2 | H-ZERO / H-DISC / H-CONS / H-DOSE / H-CAL / H-RANK | 假设（论证计划 §0.3） |
 | 实验 E2 / E3 / E3c / E4 / RQ-S 审计 | EXP-CON / EXP-DIS / EXP-DOSE / EXP-EXT / EXP-STR | 实验（论证计划 §0.3） |
@@ -153,7 +156,7 @@
 |---|---|---|---|---|---|
 | LEM-WIT | kill witness upgrade（被杀即非等价见证） | DEF-01–03 | §2.3 AVP 语义 | PO-INT-1, 2 | draft |
 | **THM-INT** | SMS 区间健全性与单调性 | DEF-02–04 | LEM-WIT | PO-INT-3–5 | draft |
-| LEM-CLO | exact checker ⊂ strong MR | DEF-05 | THM-DUAL（现稿 Thm 2，≡_α 闭包） | PO-GAP-1 | draft |
+| LEM-CLO | exact checker ⊂ strong MR | DEF-05 | THM-DUAL（现稿 Thm 2，\(\equiv_{\mathrm{obs}}\) 闭包） | PO-GAP-1 | draft |
 | **THM-GAP** | 块对角与缺口归因分解 | DEF-05–09, S5 | THM-DUAL、LEM-CLO、THM-WIN(iii) | PO-GAP-2–5 | draft |
 | COR-ZERO | cross-zero 预测（非对齐 SMS=0） | — | THM-GAP | PO-GAP-6 | draft |
 | **THM-WIN** | 容差索引检测窗（现稿 Prop 2 升级） | DEF-10–13 | latency window（§2.8） | PO-WIN-1–4 | draft |
@@ -167,11 +170,11 @@
 | PO | 义务（一条=一个可独立核验的断言） | 所属 | 预计篇幅 |
 |---|---|---|---|
 | PO-INT-1 | DEF-03 假设在 §2.3 现行 AVP 语义下成立范围的论证（含随机聚合情形的限定） | LEM-WIT | ≤10 行 |
-| PO-INT-2 | killed ⟹ ∃x α-分歧超 ε_eq（经 MR 关系谓词分解） | LEM-WIT | ≤15 行 |
+| PO-INT-2 | killed ⟹ ∃x 观测分歧超 ε_eq（经 MR 关系谓词分解） | LEM-WIT | ≤15 行 |
 | PO-INT-3 | \(k/(n+u_{\mathrm{neq}})\) 单调于 \(u_{\mathrm{neq}}\) ⟹ 区间成立且两端可达 | THM-INT | ≤8 行 |
 | PO-INT-4 | 宽度 \(=ku/(n(n+u))=\mathrm{SMS}_{\mathrm{strict}}\cdot u/(n+u)\) | THM-INT | ≤5 行 |
 | PO-INT-5 | 单调性 4 情形：等价证书 / 分歧见证 / unresolved 被新 MR 杀 / \(R\subseteq R'\)，两端点方向逐一验证 | THM-INT | ≤20 行 |
-| PO-GAP-1 | exact checker 的 violation set 对 ≡_α 封闭（故为 strong MR） | LEM-CLO | ≤8 行 |
+| PO-GAP-1 | exact checker 的 violation set 对 \(\equiv_{\mathrm{obs}}\) 封闭（故为 strong MR） | LEM-CLO | ≤8 行 |
 | PO-GAP-2 | (i)S5+(ii)exact+(iii)窗非退化 ⟹ 无跨层 kill | THM-GAP | ≤15 行 |
 | PO-GAP-3 | kill matrix 块对角形式化陈述 | THM-GAP | ≤5 行 |
 | PO-GAP-4 | \(1-\mathrm{SMS}=\mathrm{Gap}_{\mathrm{aln}}+\mathrm{Gap}_{\mathrm{str}}\) 代数恒等 | THM-GAP | ≤8 行 |
@@ -212,10 +215,10 @@
 rg -n "\\\\equiv_|varepsilon_|mathrm\{SMS\}|K_\{?\\\\mathrm\{eq\}|M_\{\\\\mathrm\{neq\}|sigma\^\{-1\}|psi_" submission/TOSEM_regular_20260706/main.tex | head -60
 ```
 
-- [ ] **Step 2:** 在 `notation_registry.md` 落地 §0.2 符号总表（序号、符号、含义、首定义/来源、备注五列一对一照搬），并加"现稿出现行号"列。新增符号闭集 = §0.2 的 #17–#32 中标注 DEF/THM 来源者；任何草稿引入表外符号即违规，先补表再用
-- [ ] **Step 3:** 定位《MT基础理论统一框架》v1.2 附录 A（OneDrive `0-论文/MR识别/theory/` 目录），对 registry 逐符号 diff；重点核对保留符号 \(\sigma,\Gamma,\mathfrak G,\lambda,S,I,\rho,e,\kappa\) 未被 P3 新文本挪用。附录 A 不可达时以四柱 v1.2 §2 + v3.1 §3 为代理权威并在 registry 头部注明
+- [ ] **Step 2:** 在 `notation_registry.md` 落地 §0.2 符号总表（序号、符号、含义、首定义/来源、备注五列一对一照搬），并加"现稿出现行号"列。新增符号闭集 = §0.2 的 #17–#32 与 #36 中标注 DEF/THM 来源者；任何草稿引入表外符号即违规，先补表再用
+- [ ] **Step 3:** 通过用户提供的 `github_token` 读取私有仓库 `meng004/MR-theory` 的《MT基础理论统一框架》v1.2 Appendix A、四柱 v1.2 与 MR 有效性理论 v3.1（文件名可能保留历史版本号，以文档正文 heading 为准），对 registry 逐符号 diff；重点核对保留符号 \(\sigma,\Gamma,\mathfrak G,\lambda,S,I,\rho,e,\kappa,\alpha,m\) 未被 P3 新文本挪用。无法读取私有源时，记录缺口并停止外部兼容性声明；不得以未验证的代理文本替代。
 - [ ] **Step 4:** 检查现稿是否已有 `SMS_strict / SMS_conservative` 与 `EQUIVALENCE_UNRESOLVED` 词汇（`rg -n "strict|conservative|UNRESOLVED" submission/TOSEM_regular_20260706/main.tex`）。若无：登记"需在 §2.3 引入三态等价（certified-equivalent / confirmed-non-equivalent / unresolved），把现 E1∧E2 样本等价降格为 unresolved 的证据"这一集成任务到 Task T5.2
-- [ ] **Step 5:** 盘点现稿待改名符号的出现范围：`rg -c "sigma\^\{-1\}|\\\\sigma\\b" submission/TOSEM_regular_20260706/main.tex`（effect map σ→\(\mathrm{eff}\)）与 `rg -n "invariant family|I = \\\\\{|\\\\mathcal\{?I\}?" submission/TOSEM_regular_20260706/main.tex`（不变量族 I→\(\Psi\)）与 `rg -n "D_S" submission/TOSEM_regular_20260706/main.tex`（\(D_S\to\mathcal D_P\)），把出现清单写入 registry 附录，改名动作归 Task T6.1
+- [ ] **Step 5:** 盘点现稿待改名符号的出现范围：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\)）；不变量族 \(I\to\Psi\)；\(D_S\to\mathcal D_P\)；理论观测映射 \(\alpha\to\mathrm{obs}\)、\(\equiv_\alpha\to\equiv_{\mathrm{obs}}\)；有限 AST 编辑 \(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\)。把出现清单写入 registry 附录，改名动作归 Task T6.1
 - [ ] **Step 6:** Commit
 
 ---
@@ -230,10 +233,10 @@ rg -n "\\\\equiv_|varepsilon_|mathrm\{SMS\}|K_\{?\\\\mathrm\{eq\}|M_\{\\\\mathrm
 
 ```latex
 \textbf{Lemma [LEM-WIT] (kill witness upgrade).} Assume the AVP verdict is a
-deterministic function of the $\alpha$-observed outputs of the executions
+deterministic function of the $\mathrm{obs}$-observed outputs of the executions
 in an MR tuple. If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
 execution input $x$ satisfies
-$\|\alpha(\Phi_{P}(x))-\alpha(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
+$\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
 contains no killed mutants.
 
@@ -281,9 +284,9 @@ $[\![P']\!]\not\models_{\tau}\psi_j$ within the tolerance regime of
 Theorem~[THM-WIN]. $\mathrm{Cov}(R)=\{j: R$ contains an exact checker for $\psi_j\}$.
 
 \textbf{Theorem [THM-GAP] (block structure and gap attribution).} Assume (i)
-stratum purity S5 for all $m\in M_{\mathrm{neq}}$, (ii) every $r\in R$ is
+stratum purity S5 for all $m_{\mathrm{mut}}\in M_{\mathrm{neq}}$, (ii) every $r\in R$ is
 an exact checker for some stratum, (iii) non-degenerate tolerance margins
-(Theorem~[THM-WIN]). Then no $m$ in fiber $M_j$ with $j\notin \mathrm{Cov}(R)$
+(Theorem~[THM-WIN]). Then no $m_{\mathrm{mut}}$ in fiber $M_j$ with $j\notin \mathrm{Cov}(R)$
 is killed, the fiber-by-stratum kill matrix is block-diagonal, and
 \[ 1-\mathrm{SMS}(R)=\underbrace{\textstyle\sum_{j\notin \mathrm{Cov}(R)} w_j}_{\mathrm{Gap}_{\mathrm{aln}}(R)\ \text{(alignment gap)}}
  +\underbrace{\textstyle\sum_{j\in \mathrm{Cov}(R)} w_j\,(1-\mathrm{SMS}_j(R))}_{\mathrm{Gap}_{\mathrm{str}}(R)\ \text{(strength gap)}},
@@ -298,14 +301,14 @@ mass / total kills; $\xi$ measures deviation from (i)-(ii) and is reported
 as a model-check statistic, not folded into SMS.
 ```
 
-- [ ] **Step 2:** 写证明（要点：\(m\in M_j, j\notin \mathrm{Cov}(R)\)；任取 \(r\) 为 \(\psi_l\) 的 exact checker，\(l\ne j\)；S5 纯性给 \([\![m]\!]\models\psi_l\)，故 r 不 flag m；r 在原程序上 pass；killed 需存在 flag → 无。分解式由块对角直接展开）
+- [ ] **Step 2:** 写证明（要点：\(m_{\mathrm{mut}}\in M_j, j\notin \mathrm{Cov}(R)\)；任取 \(r\) 为 \(\psi_l\) 的 exact checker，\(l\ne j\)；S5 纯性给 \([\![m_{\mathrm{mut}}]\!]\models\psi_l\)，故 r 不 flag \(m_{\mathrm{mut}}\)；r 在原程序上 pass；killed 需存在 flag → 无。分解式由块对角直接展开）
 - [ ] **Step 3:** 写接口注记（一段）：\(\mathrm{Gap}_{\mathrm{aln}}(R)\) 对应四柱 T3 的选择残余 \(\Omega_{\mathrm{sel}}\)（加对齐 MR 可消除），\(\mathrm{Gap}_{\mathrm{str}}(R)\) 是声明层内检测力缺口；注明"四柱之采纳集 \(S\) ≙ 本文 \(R\)"；引用四柱框架为 companion technical report，不承重
 - [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 mp-cell 划分（12 PUT × 5 MP = 60，F-8）零膨胀中 cross mp-cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（§0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其 ex-post 诊断（证据双通道与 verdict 无条件规则见 §0.3 A-PROV 条目，F-2）
 - [ ] **Step 5:** Commit
 
 ### Task T2.2：现稿一致性核对
 
-- [ ] **Step 1:** 核对现稿 Thm 2（THM-DUAL）的 strong MR 定义（violation set 对 ≡_α 封闭）与 exact checker 的关系：exact checker ⊂ strong MR；在草稿中写 LEM-CLO 链接两者（exact checker 的 violation set = \(\{P':\not\models_\tau\psi_j\}\)，对 ≡_α 封闭因 \(\models_\tau\) 经 α 定义）
+- [ ] **Step 1:** 核对现稿 Thm 2（THM-DUAL）的 strong MR 定义（violation set 对 \(\equiv_{\mathrm{obs}}\) 封闭）与 exact checker 的关系：exact checker ⊂ strong MR；在草稿中写 LEM-CLO 链接两者（exact checker 的 violation set = \(\{P':\not\models_\tau\psi_j\}\)，对 \(\equiv_{\mathrm{obs}}\) 封闭因 \(\models_\tau\) 经 \(\mathrm{obs}\) 定义）
 - [ ] **Step 2:** 核对 S5 在 §2.8 的表述（"required where stratum labels feed downstream"）——THM-GAP 把 S5 从可选升为前提，需在正文注明"S5 不满足的变异体计入 ξ 偏差质量"
 - [ ] **Step 3:** Commit
 
@@ -318,7 +321,7 @@ as a model-check statistic, not folded into SMS.
 ### Task T3.1：现有 Prop 2 资产盘点
 
 - [ ] **Step 1:** `rg -n "Proposition 2|strong boundary|varepsilon_\{?\\\\mathrm\{tol\}" submission/TOSEM_regular_20260706/main.tex`，摘录 Prop 2 全文与其非形式假设进草稿
-- [ ] **Step 2:** 在 `research/theory_drafts/thm_window.md` 列假设清单：观测泛函对 ε_m 的 Lipschitz 性（常数 \(L_r\)）、噪声界 \(\bar\eta\)（确定性=舍入；随机=\(c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}\)）、checker 阈值形式
+- [ ] **Step 2:** 在 `research/theory_drafts/thm_window.md` 列假设清单：观测泛函对 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 的 Lipschitz 性（常数 \(L_r\)）、噪声界 \(\bar\eta\)（确定性=舍入；随机=\(c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}\)）、checker 阈值形式
 
 ### Task T3.2：起草定理与推论
 
@@ -327,17 +330,17 @@ as a model-check statistic, not folded into SMS.
 - [ ] **Step 1:** 写入（定稿基准）：
 
 ```latex
-\textbf{Theorem [THM-WIN] (tolerance-indexed detection window).} Let $m$ carry
-violation magnitude $\varepsilon_m$ at stratum $\psi$, let $r$ be an exact
+\textbf{Theorem [THM-WIN] (tolerance-indexed detection window).} Let $m_{\mathrm{mut}}$ carry
+violation magnitude $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$ at stratum $\psi$, let $r$ be an exact
 checker with tolerance $\varepsilon_{\mathrm{tol}}$, let
 $\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)$ be the correct-program
 structure-preservation residual (the instantiation of $\Delta(S,P)$ from the
 MR-validity theory on the structure inducing $r$), and $|\eta|\le\bar\eta$
 the execution noise, with the violation functional $L_r$-Lipschitz in
-$\varepsilon_m$. Then
-(i) $\varepsilon_m>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$ implies
-$r$ kills $m$; (ii) $\varepsilon_m<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
-implies $r$ does not kill $m$; (iii) with the crash threshold
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Then
+(i) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$ implies
+$r$ kills $m_{\mathrm{mut}}$; (ii) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
+implies $r$ does not kill $m_{\mathrm{mut}}$; (iii) with the crash threshold
 $\varepsilon_{\mathrm{crash}}$ (S4), the kill region lies within
 $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$.
 
@@ -355,7 +358,7 @@ $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol
 （R-9：两条原拟推论改为 THM-WIN 定理环境内的 Remark，不占独立定理编号；其论证义务 PO-WIN-5/6 保留。）
 
 - [ ] **Step 2:** 写证明（误差预算三角不等式两次；对接 §2.9 latency window 定义，(iii) 由 S4 直接）
-- [ ] **Step 3:** 写"经验预测"小节：kill 概率沿 ε_m 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\) —— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为 Remark 实例
+- [ ] **Step 3:** 写"经验预测"小节：kill 概率沿 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\) —— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为 Remark 实例
 - [ ] **Step 4:** 写"结构命运对应"注记（≤1 段）：以 \(\mu_r\) 与 \(\Delta_r\) 把 P3 的 MR 分类形式对接 v3.1 §4.2 结构命运四分类——\(\Delta_r=0\) ↔ 精确保持（strict MR）、\(0<\Delta_r\le\varepsilon_{\mathrm{tol}}\) ↔ 近似保持（strong/tolerance MR）、\(\Delta_r>\varepsilon_{\mathrm{tol}}\) ↔ 结构破坏（weak MR，即 REM-FPOS）、\(\Delta_r(h)\to0\) ↔ 渐近保持；注明这使 THM-WIN 成为 v3.1 引理 1（\(\Delta\le\tau\Rightarrow\mathrm{Valid}\)）在变异检测语境下的定量细化
 - [ ] **Step 5:** Commit
 
@@ -371,9 +374,9 @@ $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol
 
 ```latex
 \textbf{Remark [REM-IDF] (identifiability up to coverage classes).} Under the
-assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m)=\{r\in R: r\ \text{kills}\ m\}$.
-For any killed $m$, all members of $\mathrm{sig}(m)$ are checkers of the
-same stratum, which identifies the fiber of $m$ exactly. For survivors,
+assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m_{\mathrm{mut}})=\{r\in R: r\ \text{kills}\ m_{\mathrm{mut}}\}$.
+For any killed $m_{\mathrm{mut}}$, all members of $\mathrm{sig}(m_{\mathrm{mut}})$ are checkers of the
+same stratum, which identifies the fiber of $m_{\mathrm{mut}}$ exactly. For survivors,
 fiber membership is identifiable only up to the partition of strata induced
 by identical $R$-coverage; with a separating family (one exact checker per
 stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
@@ -416,7 +419,7 @@ stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 **Files:** Modify: main.tex（新增 §2.10 THM-INT、§2.11 THM-GAP（含 REM-IDF Remark，R-9 不设独立小节）；§2.9 Prop 2→THM-WIN 原位升级（含 REM-FPOS/REM-FNEG）；Appendix G 新增 G.6–G.8 完整证明；正文编号由 LaTeX 分配）
 
 - [ ] **Step 1:** 按草稿逐节移植；`[标签]` 占位符替换为正文编号，并在 notation_registry 附"标签 → 正文编号"映射表；正文只放陈述+证明思路 ≤5 行，完整证明入 Appendix
-- [ ] **Step 2:** 执行 §0.4 决议的三处全文改名（按 Task T0.2 Step 5 的出现清单）：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\to\mathrm{eff}^{-1}\)，§2.9 与 Appendix G 相关证明）；不变量族 \(I\to\Psi\)（§2.7 及其引用处）；\(D_S\to\mathcal D_P\)（§2.6）。改后复查：`rg -n "sigma\^\{-1\}|D_S" submission/TOSEM_regular_20260706/main.tex` 应为 0；改名单独成 commit 以便独立 revert
+- [ ] **Step 2:** 执行 §0.4 决议的五处全文改名（按 Task T0.2 Step 5 的出现清单）：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\to\mathrm{eff}^{-1}\)，§2.9 与 Appendix G 相关证明）；不变量族 \(I\to\Psi\)（§2.7 及其引用处）；\(D_S\to\mathcal D_P\)（§2.6）；观测映射 \(\alpha\to\mathrm{obs}\)、\(\equiv_\alpha\to\equiv_{\mathrm{obs}}\)（§2.7–2.9 与语义证书未来工作段）；有限 AST 编辑 \(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\)（§2.8–2.9）。统计 \(\alpha_{\mathrm{FDR}}\) 与已命名的领域超参数必须逐处审计，不做盲目全局替换。改后复查：`rg -n "sigma\^\{-1\}|D_S|\\\\equiv_\\\\alpha|\\\\alpha \\\\circ|through \\\\alpha|P_e|= e\\\\(P\\\\)" submission/TOSEM_regular_20260706/main.tex` 应为 0；改名单独成 commit 以便独立 revert
 - [ ] **Step 3:** 更新 §1 claim-evidence map：新增三行（THM-INT、THM-GAP（含 REM-IDF）、THM-WIN → Supported (formal)）；更新 RQ1 表述为"健全性、单调性、退化与归因保证"；正文符号最小化：只保留证明链上符号，§0.2 全表导出为 Appendix notation table（R-12）
 - [ ] **Step 4:** 交叉引用检查：`rg -n "Proposition 2" submission/TOSEM_regular_20260706/main.tex` 应为 0（已升级为 THM-WIN 编号并全文改引）
 - [ ] **Step 5:** 编译两遍 + `grep -c "Missing character" main.log` 期望 0；Commit

@@ -29,7 +29,7 @@
 
 ### 0.1 数学符号（引用 SSOT，不另立）
 
-本计划不新造数学符号；使用的全部数学符号以**理论增强计划 §0.2 符号总表**（35 项闭集）与 §0.3 定义清单（DEF-01–14）为唯一权威。本计划高频使用其中：\(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\)（#19）、\(n,k,u,u_{\mathrm{neq}}\)（#18）、\(\mathrm{Cov}(R)\)（#21）、\(\mathrm{Gap}_{\mathrm{aln}}(R)/\mathrm{Gap}_{\mathrm{str}}(R)\)（#22）、\(\xi(R)\)（#23）、\(\varepsilon_{\mathrm{tol}}\)（#13）、\(\varepsilon_m\)（#25）、\(\Delta_r\)（#26）、\(\mathrm{eff}\)（#16）、\(\Psi\)（#15）、\(M_j,w_j\)（#17/#20）。确需新增符号 → 先入理论计划 §0.2 总表（补序号与冲突检查）再使用。
+本计划不新造数学符号；使用的全部数学符号以**理论增强计划 §0.2 符号总表**（36 项闭集）与 §0.3 定义清单（DEF-01–14）为唯一权威。本计划高频使用其中：\(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\)（#19）、\(n,k,u,u_{\mathrm{neq}}\)（#18）、\(\mathrm{Cov}(R)\)（#21）、\(\mathrm{Gap}_{\mathrm{aln}}(R)/\mathrm{Gap}_{\mathrm{str}}(R)\)（#22）、\(\xi(R)\)（#23）、\(\varepsilon_{\mathrm{tol}}\)（#13）、\(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\)（#25）、\(\Delta_r\)（#26）、\(\mathrm{eff}\)（#16）、\(\Psi\)（#15）、\(M_j,w_j\)（#17/#20）。确需新增符号 → 先入理论计划 §0.2 总表（补序号与冲突检查）再使用。
 
 ### 0.2 统计符号补充表（仅实证章节使用）
 
@@ -50,7 +50,7 @@
 
 - **统计单元 cell（R-1 唯一定义）**：cell = 算子 × PUT（5 × 12 = 60 格）。类级适用矩阵（Task 1.1，5 算子 × 4 类）按"类内成员核继承"广播到 PUT 级；applicable cell 指广播后判 applicable 的 PUT 级格。功效应急"追加紧凑核"由此在 PUT 级**增加 cell 数**（配对单元数随之增加）。PUT 级位点核查（Task 1.1 Step 2b）后 applicable 判定方为最终（F-5）。v4 遗产划分定专名 **mp-cell**（12 PUT × 5 MP = 60；与新 cell 基数同为 60 纯属巧合，F-8），仅 development 用途，正文不与新 cell 混称。
 - **RQ（R-11 重构后 4+1 结构）**：RQ1 形式保证 / RQ2 理论—观测对应（H-DOSE 剂量反应 + H-DOSE-CTR 中心包含（secondary，B-2）+ H-XI 辨识预测（secondary，B-1））/ RQ3 构念效度（H-CONS 操纵检验 → H-ZERO 零预测 → H-DISC 条件判别 → H-FIX 干预（secondary，B-4）+ 结构定位段）/ RQ4 外部效度锚（κ 门禁 + H-CAL + H-RANK）。旧编号映射（v2.0 设计稿 §3）：旧 RQ2 双向对应→RQ2；旧 RQ3 可构造性→RQ3 之操纵检验；旧 RQ4 判别效度→RQ3；旧 RQ5 外部锚→RQ4；旧 RQ-S 撤销独立编号，作为 RQ3 内的描述性定位段（实验标签 EXP-STR 不变）。
-- **假设**（`H-<语义缩写>`）：H-ZERO 零预测、H-DISC 条件判别、H-CONS 可构造性、H-DOSE 剂量反应、H-CAL 外部校准、H-RANK 排序一致。**H-CONS 角色=操纵检验（manipulation check，R-11）**：判据不变，作为 EXP-CON 可行性门槛报告，不作 headline 主张；headline 假设为其余五条。**secondary confirmatory 族（B 组，CLAUDE.md §10 大胆假设升级）**：H-XI（pooled ξ ≤0.10 地标，B-1）、H-DOSE-CTR（检测窗中心包含，B-2）、H-FIX（add-one 修复干预，B-4）与 H-CAL 全条件聚簇分析（B-3）；各自 α=0.05、显式标注 secondary、失败如实报告、不 gate headline（检验族政策见 Task 1.3 Step 1）。旧标签映射：H-B1→H-ZERO、H-B2→H-DISC、H-C1→H-CONS、H-C2→H-DOSE、H-X1→H-CAL、H-X2→H-RANK。现稿旧 H1–H4 仅在 Prior Audit 小节以历史标签出现。
+- **假设**（`H-<语义缩写>`）：H-ZERO 零预测、H-DISC 条件判别、H-CONS 可构造性、H-DOSE 剂量反应、H-CAL 外部校准、H-RANK 排序一致。**H-CONS 角色=操纵检验（manipulation check，R-11）**：判据不变，作为 EXP-CON 可行性门槛报告，不作 headline 主张；headline 假设为其余五条。**secondary confirmatory 族（B 组，CLAUDE.md §10 大胆假设升级）**：H-XI（pooled ξ ≤0.10 地标，B-1）、H-DOSE-CTR（检测窗中心包含，B-2）、H-FIX（add-one 修复干预，B-4）与 H-CAL 全条件聚簇分析（B-3）；各自名义显著性水平为 0.05、显式标注 secondary、失败如实报告、不 gate headline（检验族政策见 Task 1.3 Step 1）。旧标签映射：H-B1→H-ZERO、H-B2→H-DISC、H-C1→H-CONS、H-C2→H-DOSE、H-X1→H-CAL、H-X2→H-RANK。现稿旧 H1–H4 仅在 Prior Audit 小节以历史标签出现。
 - **实验**（`EXP-<语义缩写>`）：EXP-CON 构造审计（旧 E2）、EXP-DIS 两部分判别（旧 E3）、EXP-DOSE 剂量反应（旧 E3c）、EXP-EXT 外部盲测（旧 E4）、EXP-STR 结构定位审计（旧 RQ-S 审计）、EXP-FIX add-one 修复干预（EXP-DIS 子实验，B-4）。**判等程序 E1∧E2（现稿 §2.3）保留原名**；实验全部改用 `EXP-` 前缀后，两个标签空间不再撞名。RQ1 的载体是理论计划 Task T6.2（独立形式审计），不占本计划实验编号。
 - **结果编码**（字符串枚举，全大写下划线）：`PRED_ZERO_ALIGN` / `NOT_APPLICABLE` / `REPRO_FAILED` / `PROTOCOL_AMBIGUOUS`。
 - **对象集合代号**（语义命名，禁数字前缀）：KER-NUM / KER-STAT / KER-SCIML / KER-MLC（四类程序核集）、POOL-SEM / POOL-DOSE / POOL-SYN（变异体池）、MRSET-ALN / MRSET-CRS / MRSET-RND（MR 条件集）、DEF-REAL / DEF-CAL（缺陷集）；定义与说明见 §1.1。
@@ -72,7 +72,7 @@
 | 分类学习核集（KER-MLC） | MLP；SVM；逻辑回归 | 同上 | 同上 | 同上 | 同上 |
 | 追加紧凑核（条件触发） | 与上四类同签名同体量的候选核 | 同上约束 | Task 1.2 功效模拟触发的候选清单，作者拍板 | 同 KER 各集 | 功效补充 |
 | 语义变异体池（POOL-SEM，v5 lineage） | 5 语义算子在 applicable cell 内对 KER 全集生成的变异体 | 密度由 Task 1.2 功效模拟在成本约束内锁定（cell=算子×PUT，§0.3；算术表：applicable cell 数 × 密度 = 总量，预算区间约 300–840） | 本计划 Task 2.1 生成（generator 版本/seed/prompt 哈希入台账） | 生成漏斗+三态归档+统一标识（§1.3.2） | EXP-CON/DIS 确认性分母 |
-| 剂量梯度池（POOL-DOSE） | HP（超参幅度）、CE（守恒侵蚀）两参数化算子 × 每类一核（Lorenz、MC 积分、GPR、LogReg）× ≥6 档 × 模拟锁定重复数 | ≤960 次执行（上限；实际配置由 Task 1.2 Step 2c 锁定，F-4） | 本计划 Task 2.3 实现 | 档位 \(\varepsilon_m\) 标定+统一标识（§1.3.3） | EXP-DOSE |
+| 剂量梯度池（POOL-DOSE） | HP（超参幅度）、CE（守恒侵蚀）两参数化算子 × 每类一核（Lorenz、MC 积分、GPR、LogReg）× ≥6 档 × 模拟锁定重复数 | ≤960 次执行（上限；实际配置由 Task 1.2 Step 2c 锁定，F-4） | 本计划 Task 2.3 实现 | 档位 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 标定+统一标识（§1.3.3） | EXP-DOSE |
 | MR 条件集（MRSET-ALN / MRSET-CRS / MRSET-RND） | aligned / cross / seeded-random 三组 | 判别线每 cell 2 条件（ALN/CRS，F-6）；外部线 4 条件（ALN/CRS/v5/RND） | v4 kill 结果数据=development-only；v4 出处 MR 集=EXP-EXT 的 treatment 条件（允许进确认性，响应变量全新采，F-9）；v5 held-out provider=判别线确认性 | 对称清单核对+prescreen（§1.3.4）；RND 仅外部线生成（F-6） | EXP-DIS（ALN/CRS）/ EXP-EXT（4 条件）处理与对照 |
 | 真实缺陷对集（DEF-REAL） | 数值语义缺陷的 buggy/fixed 程序对 | 就绪 n≥20、项目 ≥8 | Defect4MR 64 池（P12 仓库 `/Users/limeng/Papers/P12-Defect4MR`）重裁 + 主流权威仓库补充挖掘（白名单见 §1.3.1） | **issue 挖掘+双臂复现+两段式统一标识（§1.3.1，核心预处理）** | EXP-EXT validation |
 | 校准缺陷集（DEF-CAL） | verified_full 中预注册抽取的 10 例（映射训练子集；seeded 简单随机或按 repo 分层，禁以 fiber 标签为分层变量，F-1a）+ 全 35 例历史检出率（仅作功效先验） | 10 训练 / 35 先验 | P12 Defect4MR `verified_full` | 无新预处理；仅 fiber 映射训练与功效先验 | EXP-EXT development only；训练 10 例以排除码 `MAPPING_TRAIN` 从确认性 DEF-REAL 扣除（F-1） |
@@ -83,7 +83,7 @@
 | RQ | 假设 | 对象集合 | 实验方法 | 评价指标（计算公式） | 判据 | 支撑论点 |
 |---|---|---|---|---|---|---|
 | RQ1 形式保证 | —（无实证假设） | 不占实证对象；区间演示用 KER 全集 v4 数据（development） | 理论计划 Task T6.2 独立形式审计 + THM-INT 区间演示 | 审计清单 8 项通过数；区间宽度 \(\mathrm{SMS}_{\mathrm{strict}}\cdot u/(n+u)\)（描述性，随证书预算收窄曲线） | 审计 8/8 ✓ | SMS 给出健全区间、单调收窄与可归因缺口 |
-| RQ2 理论—观测对应（剂量侧） | H-DOSE；H-DOSE-CTR（secondary，B-2） | POOL-DOSE ×（KER-NUM/STAT/SCIML/MLC 每类一核） | EXP-DOSE 单因子剂量梯度（≥6 档 × 模拟锁定重复数、≤960 总执行上限，档内独立 seed，F-4） | isotonic 回归 vs 常数模型：\(T=\mathrm{RSS}_{\mathrm{const}}-\mathrm{RSS}_{\mathrm{iso}}\)，置换检验 p（10⁴ 次）；辅 Page's L；转变中心估计（横轴=实测实现 \(\varepsilon_m\)，F-10） | H-DOSE：p<0.05（headline）；**H-DOSE-CTR（B-2）**：转变中心 ∈ \(\varepsilon_{\mathrm{tol}}\pm(\Delta_r+2\bar\eta)\) 逐曲线判定，判据（候选 ≥6/8 曲线包含）经 Task 1.2 Step 2c 中心估计精度模拟校准后冻结前锁定 | kill 行为受 THM-WIN 检测窗支配：沿 \(\varepsilon_m\) 单调、中心落于理论窗内（点预测受检，B-2） |
+| RQ2 理论—观测对应（剂量侧） | H-DOSE；H-DOSE-CTR（secondary，B-2） | POOL-DOSE ×（KER-NUM/STAT/SCIML/MLC 每类一核） | EXP-DOSE 单因子剂量梯度（≥6 档 × 模拟锁定重复数、≤960 总执行上限，档内独立 seed，F-4） | isotonic 回归 vs 常数模型：\(T=\mathrm{RSS}_{\mathrm{const}}-\mathrm{RSS}_{\mathrm{iso}}\)，置换检验 p（10⁴ 次）；辅 Page's L；转变中心估计（横轴=实测实现 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\)，F-10） | H-DOSE：p<0.05（headline）；**H-DOSE-CTR（B-2）**：转变中心 ∈ \(\varepsilon_{\mathrm{tol}}\pm(\Delta_r+2\bar\eta)\) 逐曲线判定，判据（候选 ≥6/8 曲线包含）经 Task 1.2 Step 2c 中心估计精度模拟校准后冻结前锁定 | kill 行为受 THM-WIN 检测窗支配：沿 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 单调、中心落于理论窗内（点预测受检，B-2） |
 | RQ2 理论—观测对应（辨识诊断侧） | H-XI（secondary confirmatory，B-1） | POOL-SEM × MRSET | 块结构诊断（THM-GAP 之 REM-IDF 伴随；A-PROV 的 ex-post 检验） | pooled \(\xi(R)=\) 块外 kill 质量 / 总 kill 质量（理论计划 DEF-09）+ bootstrap 95% CI；per-cell ξ 分布描述性 | pooled ξ ≤ 0.10（先验固定地标）；总 kill <50 判 UNDERPOWERED 报区间；verdict 与 H-ZERO/H-DISC 互不 gate（F-2 双通道保留）；**H-ZERO × H-XI 2×2 裁决表**预注册：双过=理论+操作化同证；ZERO 过 XI 败=块结构近似成立、主张有界；ZERO 败 XI 过=理论预测在干净操作化下被否证（诚实负结果）；双败=操作化失败、不裁决理论 | kill 签名与缺陷层的对应受检，A-PROV 可检验且可失败（B-1） |
 | RQ3 构念效度（操纵检验） | H-CONS（操纵检验，R-11） | KER 全集（12 核）× POOL-SEM | EXP-CON 单臂生成漏斗（applicability-aware，5 级计数） | 实例化率 \(\hat p = n^{+}_{\mathrm{cell}}/n_{\mathrm{app}}\)（\(n^{+}_{\mathrm{cell}}\)=非等价变异体≥5 的 applicable cell 数，\(n_{\mathrm{app}}\)=applicable cell 总数），Wilson 95% CI | CI 下界 >0.5（可行性门槛，不作 headline） | 处理变量可按预冻结适用矩阵批量制备，构念操作化可行 |
 | RQ3 构念效度（零部分） | H-ZERO | KER 全集 × POOL-SEM × MRSET-ALN/CRS | EXP-DIS 处理-对照；预测标签=COR-ZERO 的 PRED_ZERO/NONZERO | balanced accuracy \(=(\mathrm{TPR}+\mathrm{TNR})/2\)，观测=cell SMS 是否为 0 | ≥0.75 且 McNemar p<0.05（vs 多数类） | SMS 的零来自理论预测的结构对齐缺失，非度量失效 |
@@ -105,7 +105,7 @@
   4. **双臂复现**：buggy/fixed 两版本构建+触发脚本（`reproducers/`）；失败标 `REPRO_FAILED` 保留不替换。
   5. **两段式统一标识**：准入期赋中性 ID **`EXT-<repo>-<序号>`**（如 `EXT-scipy-07`），准入期**禁止**出现任何算子/层归类；盲化 fiber 映射（Task 3.2）仲裁冻结后赋分析别名 **`bug-<算子代号>-<序号>`**（算子代号 ∈ Task 1.1 适用矩阵冻结的 5 算子；ADJACENT 记 `bug-ADJ-<序号>`，OUT_OF_SCOPE 记 `bug-OOS-<序号>`）；对照表入 SSOT `external_fiber_map`，**别名赋予 commit 必须晚于映射冻结、早于任何 kill 执行**（`git log` 时间戳可验证）。两段式的理由：算子归类是盲化映射的输出，若准入 ID 先带算子名，等于把待检验的对应关系写进选样，重蹈 D0 循环。
 - **1.3.2 POOL-SEM**：applicability 过滤 → 生成（generator 版本/seed/prompt 哈希入 `GENERATION_LEDGER.md`）→ parse/build/trigger → E1∧E2 → 证书三态归档；统一标识 **`mut-<算子>-<PUT>-<序号>`**；全漏斗计数入 SSOT `funnel_v5`。
-- **1.3.3 POOL-DOSE**：参数化算子实现；标定协议（F-10）：每档记录名义注入参数，并以**直接不变量违反泛函**（对输出直接计算 ψ 层违反幅度；不得经由将来判 kill 的 MR 检查器测量，防"用裁判定义横轴再考裁判"的循环）实测实现 \(\varepsilon_m\)，名义/实现两轴同录台账；H-DOSE 分析与 THM-WIN 中心比较以实现轴为准（THM-WIN 预测的横轴）；统一标识 **`mut-<算子>-<PUT>-e<档位>-r<重复>`**。
+- **1.3.3 POOL-DOSE**：参数化算子实现；标定协议（F-10）：每档记录名义注入参数，并以**直接不变量违反泛函**（对输出直接计算 ψ 层违反幅度；不得经由将来判 kill 的 MR 检查器测量，防"用裁判定义横轴再考裁判"的循环）实测实现 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\)，名义/实现两轴同录台账；H-DOSE 分析与 THM-WIN 中心比较以实现轴为准（THM-WIN 预测的横轴）；统一标识 **`mut-<算子>-<PUT>-e<档位>-r<重复>`**。
 - **1.3.4 MRSET**：held-out provider 对称清单核对（prompt 同文/parser 同版/候选数/预算/温度同值）→ 生成 → prescreen；MRSET-RND 按冻结 seed 抽样，规模与 aligned 等大。外部模块适配版 MR 的实例化协议见 Task 1.4 Step 2c（F-15）。
 - **1.3.5 POOL-SYN（R-10 单引擎）**：cosmic-ray 既有 1,250 变异体沿统一 normaliser 生成精确匹配指纹表；真实模块 MS 基线由 cosmic-ray 新跑（版本与 EXP-STR 钉扎一致）；mutmut 等其他引擎**不运行**——其公开算子清单逐族映射到"一阶 AST 局部编辑"类，作为 EXP-STR 定位主张的文档级构造性论证（材料入 `docs/review_20260728/syntactic_reach.md`）。
 - **1.3.6 KER 各集**：无内容预处理；执行前路径盘点 + 文件 SHA256 固化入台账（保证与 P2 共用版本一致）。
@@ -252,9 +252,9 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 
 ### Task 2.3：剂量反应实验（EXP-DOSE，H-DOSE）
 
-- [ ] **Step 1:** 参数化算子实现：HP（超参幅度）与 CE（守恒侵蚀强度）各设 ≥6 档幅度网格，每档名义+实测实现 \(\varepsilon_m\) 两轴标定入台账（§1.3.3，F-10：实现轴用直接不变量违反泛函，不经 MR 检查器）；对象=每类一核（Lorenz、MC 积分、GPR、LogReg，数据键 A1/B3/C1/D3；若理论计划 Phase T3 判某核的 Lipschitz 常数 \(L_r\) 不可估则按其清单替换）
+- [ ] **Step 1:** 参数化算子实现：HP（超参幅度）与 CE（守恒侵蚀强度）各设 ≥6 档幅度网格，每档名义+实测实现 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 两轴标定入台账（§1.3.3，F-10：实现轴用直接不变量违反泛函，不经 MR 检查器）；对象=每类一核（Lorenz、MC 积分、GPR、LogReg，数据键 A1/B3/C1/D3；若理论计划 Phase T3 判某核的 Lipschitz 常数 \(L_r\) 不可估则按其清单替换）
 - [ ] **Step 2:** 每档 × 按 power_report 锁定的重复数（≤960 总执行上限，F-4）执行 kill 判定（个体标识 `mut-<算子>-<PUT>-e<档位>-r<重复>`），曲线数据落 SSOT `dose_response_v5`
-- [ ] **Step 3:** 跑 `analysis_hdose.py`（isotonic vs 常数，置换 p；Page's L）；同时判定 **H-DOSE-CTR（B-2）**：转变中心是否落于 \(\varepsilon_{\mathrm{tol}}\pm(\Delta_r+2\bar\eta)\)（逐曲线，横轴=实测实现 \(\varepsilon_m\)；判据=冻结锁定值，候选 ≥6/8）；Commit
+- [ ] **Step 3:** 跑 `analysis_hdose.py`（isotonic vs 常数，置换 p；Page's L）；同时判定 **H-DOSE-CTR（B-2）**：转变中心是否落于 \(\varepsilon_{\mathrm{tol}}\pm(\Delta_r+2\bar\eta)\)（逐曲线，横轴=实测实现 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\)；判据=冻结锁定值，候选 ≥6/8）；Commit
 
 ### Task 2.4：语法基线扩充（EXP-STR）
 

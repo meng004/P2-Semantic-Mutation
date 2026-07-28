@@ -18,7 +18,7 @@
 **Files:** Modify: main.tex（新增 §2.10 THM-INT、§2.11 THM-GAP（含 REM-IDF Remark，R-9 不设独立小节）；§2.9 Prop 2→THM-WIN 原位升级（含 REM-FPOS/REM-FNEG）；Appendix G 新增 G.6–G.8 完整证明；正文编号由 LaTeX 分配）
 
 - [ ] **Step 1:** 按草稿逐节移植；`[标签]` 占位符替换为正文编号，并在 notation_registry 附"标签 → 正文编号"映射表；正文只放陈述+证明思路 ≤5 行，完整证明入 Appendix
-- [ ] **Step 2:** 执行 master §0.4 决议的三处全文改名（按 Task T0.2 Step 5 的出现清单）：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\to\mathrm{eff}^{-1}\)，§2.9 与 Appendix G 相关证明）；不变量族 \(I\to\Psi\)（§2.7 及其引用处）；\(D_S\to\mathcal D_P\)（§2.6）。改后复查：`rg -n "sigma\^\{-1\}|D_S" submission/TOSEM_regular_20260706/main.tex` 应为 0；改名单独成 commit 以便独立 revert
+- [ ] **Step 2:** 执行 master §0.4 决议的五处全文改名（按 Task T0.2 Step 5 的出现清单）：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\to\mathrm{eff}^{-1}\)，§2.9 与 Appendix G 相关证明）；不变量族 \(I\to\Psi\)（§2.7 及其引用处）；\(D_S\to\mathcal D_P\)（§2.6）；理论观测映射 \(\alpha\to\mathrm{obs}\)、\(\equiv_\alpha\to\equiv_{\mathrm{obs}}\)（§2.7–2.9 与语义证书未来工作段）；有限 AST 编辑 \(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\)（§2.8–2.9）。统计 \(\alpha_{\mathrm{FDR}}\) 与已命名的领域超参数必须逐处审计，不做盲目全局替换。改后复查：`rg -n "sigma\^\{-1\}|D_S|\\\\equiv_\\\\alpha|\\\\alpha \\\\circ|through \\\\alpha|P_e|= e\\\\(P\\\\)" submission/TOSEM_regular_20260706/main.tex` 应为 0；改名单独成 commit 以便独立 revert
 - [ ] **Step 3:** 更新 §1 claim-evidence map：新增三行（THM-INT、THM-GAP（含 REM-IDF）、THM-WIN → Supported (formal)）；更新 RQ1 表述为"健全性、单调性、退化与归因保证"；正文符号最小化：只保留证明链上符号，master §0.2 全表导出为 Appendix notation table（R-12）
 - [ ] **Step 4:** 交叉引用检查：`rg -n "Proposition 2" submission/TOSEM_regular_20260706/main.tex` 应为 0（已升级为 THM-WIN 编号并全文改引）
 - [ ] **Step 5:** 编译两遍 + `grep -c "Missing character" main.log` 期望 0；Commit

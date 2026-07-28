@@ -21,10 +21,10 @@
 
 ```latex
 \textbf{Lemma [LEM-WIT] (kill witness upgrade).} Assume the AVP verdict is a
-deterministic function of the $\alpha$-observed outputs of the executions
+deterministic function of the $\mathrm{obs}$-observed outputs of the executions
 in an MR tuple. If $\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some
 execution input $x$ satisfies
-$\|\alpha(\Phi_{P}(x))-\alpha(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
+$\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
 contains no killed mutants.
 

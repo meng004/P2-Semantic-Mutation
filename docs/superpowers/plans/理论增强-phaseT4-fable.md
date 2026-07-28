@@ -21,9 +21,9 @@
 
 ```latex
 \textbf{Remark [REM-IDF] (identifiability up to coverage classes).} Under the
-assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m)=\{r\in R: r\ \text{kills}\ m\}$.
-For any killed $m$, all members of $\mathrm{sig}(m)$ are checkers of the
-same stratum, which identifies the fiber of $m$ exactly. For survivors,
+assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m_{\mathrm{mut}})=\{r\in R: r\ \text{kills}\ m_{\mathrm{mut}}\}$.
+For any killed $m_{\mathrm{mut}}$, all members of $\mathrm{sig}(m_{\mathrm{mut}})$ are checkers of the
+same stratum, which identifies the fiber of $m_{\mathrm{mut}}$ exactly. For survivors,
 fiber membership is identifiable only up to the partition of strata induced
 by identical $R$-coverage; with a separating family (one exact checker per
 stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
