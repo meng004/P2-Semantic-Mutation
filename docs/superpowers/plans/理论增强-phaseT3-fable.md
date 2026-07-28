@@ -65,3 +65,5 @@ $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol
 |---|---|
 | \(L_r\) 在个别 PUT 不可估 | 该 PUT 退出剂量反应实验对象清单（Step 5 输出，论证提升计划 Phase 2 联动更新） |
 | 跨阶段草稿记号风格漂移 | 严格以 master §0.2 总表为闭集；T6.1 整合时统一润色并由 terra 审计核对 |
+
+> **CHECKPOINT T3 = PASS（2026-07-28，与 T4 联合拍板）**：见 `理论增强-phaseT4-fable.md` 检查点记录与 `docs/review_20260728/checkpoint_t3_record.md`（修复 B2/B3，L_r 不可估清单 C3/D1/D2 + C1 条件可估移交论证线 Task 2.3）。

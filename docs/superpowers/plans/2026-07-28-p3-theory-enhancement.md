@@ -156,14 +156,14 @@
 |---|---|---|---|---|---|
 | LEM-WIT | kill witness upgrade（被杀即非等价见证） | DEF-01–03、DEF-13（margin 条款，CHECKPOINT T1 A1） | §2.3 AVP 语义 | PO-INT-1, 2 | internal-review |
 | **THM-INT** | SMS 区间健全性与单调性 | DEF-02–04 | LEM-WIT | PO-INT-3–5 | internal-review |
-| LEM-CLO | exact checker ⊂ strong MR | DEF-05 | THM-DUAL（现稿 Thm 2，\(\equiv_{\mathrm{obs}}\) 闭包） | PO-GAP-1 | draft |
-| **THM-GAP** | 块对角与缺口归因分解 | DEF-05–09, S5 | THM-DUAL、LEM-CLO、THM-WIN(iii) | PO-GAP-2–5 | draft |
-| COR-ZERO | cross-zero 预测（非对齐 SMS=0） | — | THM-GAP | PO-GAP-6 | draft |
-| **THM-WIN** | 容差索引检测窗（现稿 Prop 2 升级） | DEF-10–13 | latency window（§2.8） | PO-WIN-1–4 | draft |
-| REM-FPOS（THM-WIN 内 Remark） | 弱 MR 假阳性 | DEF-12 | THM-WIN | PO-WIN-5 | draft |
-| REM-FNEG（THM-WIN 内 Remark） | 随机假阴性与 \(N^{-1/2}\) 处方 | DEF-11 | THM-WIN | PO-WIN-6 | draft |
-| REM-IDF（THM-GAP 内 Remark） | kill 签名可辨识性（重读） | DEF-14 | THM-GAP | —（无独立 PO，论证并入 THM-GAP 讨论段） | draft |
-| THM-DEG-R | 退化定理（修补版） | 支撑假设 | 现稿 Lemma 9.1–9.3 | PO-DEG-1–3 | repair |
+| LEM-CLO | exact checker ⊂ strong MR | DEF-05 | THM-DUAL（现稿 Thm 2，\(\equiv_{\mathrm{obs}}\) 闭包） | PO-GAP-1 | internal-review（CHECKPOINT T2 ✓） |
+| **THM-GAP** | 块对角与缺口归因分解 | DEF-05–09, S5 | THM-DUAL、LEM-CLO、THM-WIN(R1+H-a) | PO-GAP-2–5 | internal-review（CHECKPOINT T2 ✓，B1） |
+| COR-ZERO | cross-zero 预测（非对齐 SMS=0） | — | THM-GAP | PO-GAP-6 | internal-review（CHECKPOINT T2 ✓） |
+| **THM-WIN** | 容差索引检测窗（现稿 Prop 2 升级） | DEF-10–13 | latency window（§2.8） | PO-WIN-1–4 | internal-review（CHECKPOINT T3 ✓，B2/B3） |
+| REM-FPOS（THM-WIN 内 Remark） | 弱 MR 假阳性 | DEF-12 | THM-WIN | PO-WIN-5 | internal-review（CHECKPOINT T3 ✓） |
+| REM-FNEG（THM-WIN 内 Remark） | 随机假阴性与 \(N^{-1/2}\) 处方 | DEF-11 | THM-WIN | PO-WIN-6 | internal-review（CHECKPOINT T3 ✓） |
+| REM-IDF（THM-GAP 内 Remark） | kill 签名可辨识性（A3 修订：killed 侧精确辨识；survivor 侧零签名信息、归属由生成期标签承担） | DEF-14 | THM-GAP、THM-WIN(ii) | —（无独立 PO，论证并入 THM-GAP 讨论段） | internal-review（CHECKPOINT T3 ✓，A3） |
+| THM-DEG-R | 退化定理（修补版） | 支撑假设 | 现稿 Lemma 9.1–9.3 | PO-DEG-1–3 | repaired（T5 已落稿；审计=T6.2 项 (6)） |
 
 ### 1.2 证明义务台账（执行时逐条置 closed）
 

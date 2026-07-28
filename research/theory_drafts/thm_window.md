@@ -104,8 +104,12 @@ the S4 upper edge.
   under the §2.3 $N$-repeat aggregation ($N=20$ in the pipeline):
   $\bar\eta=c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}$, where
   $\sigma_{\mathrm{out}}$ is the output standard deviation and $c$ the
-  concentration constant of the aggregator. Budget correspondence to the
-  MR-validity theory v3.1 §4.3:
+  concentration constant of the aggregator. Reading (CHECKPOINT T3 note B3):
+  for unbounded noise distributions the bound $|\eta|\le\bar\eta$ is a
+  concentration-style model assumption, and the stochastic-case statements
+  hold with the confidence level attached to the choice of $c$; "guaranteed"
+  in REM-FNEG is guaranteed under the model, i.e. at that confidence.
+  Budget correspondence to the MR-validity theory v3.1 §4.3:
   $\eta_{\mathrm{det}}\approx\tau_{\mathrm{round}}+\tau_{\mathrm{obs}}$; the
   stochastic term $c\sigma_{\mathrm{out}}/\sqrt N$ ≙ $\tau_{\mathrm{stat}}$;
   $\Delta_r$ (below) is dominated by $\tau_{\mathrm{disc}}$.
@@ -178,29 +182,33 @@ read with the $p=4$ budget and that constant.
 ## 4. The non-degenerate-margin regime (H-c; the regime cited by LEM-WIT and THM-GAP)
 
 **Definition (non-degenerate-margin regime; the tolerance regime of
-Theorem [THM-WIN](iii)).** The pair $(r, P^\star)$ is in the
-*non-degenerate-margin regime* iff
+Theorem [THM-WIN](iii); two clauses per CHECKPOINT T3 repair B2).** The pair
+$(r, P^\star)$ is in the *non-degenerate-margin regime* iff
 
-$$\mu_r \;=\; \varepsilon_{\mathrm{tol}}-\Delta_r \;>\; 2\bar\eta \quad\text{(strict)}.$$
+- **(R1) margin dominance:**
+  $\mu_r \;=\; \varepsilon_{\mathrm{tol}}-\Delta_r \;>\; 2\bar\eta$ (strict;
+  for a $p$-execution relation read $2\bar\eta$ as $p\bar\eta$ throughout,
+  §3 scope note), and
+- **(R2) $\varepsilon_{\mathrm{eq}}$-separation:** on the executed tuples,
+  no relation residual lies within $\varepsilon_{\mathrm{eq}}$ of the
+  decision threshold $\varepsilon_{\mathrm{tol}}$, so the verdict functional
+  is invariant under pointwise obs-output perturbations of magnitude
+  $\le\varepsilon_{\mathrm{eq}}$.
 
-In this regime the correct program passes robustly: every residual computed
-on an executed tuple of $P^\star$ is at most $\Delta_r+2\bar\eta<
-\varepsilon_{\mathrm{tol}}$, so $J_r(P^\star)=\mathrm{pass}$ on every
-evaluation, and the verdict is stable under pointwise output perturbations
-of magnitude $\le\varepsilon_{\mathrm{eq}}$ (perturbing any observed output
-by $\le\varepsilon_{\mathrm{eq}}$ keeps the executed residual on the same
-side of $\varepsilon_{\mathrm{tol}}$, provided the noise-plus-perturbation
-budget $2\bar\eta$ is read to absorb $\varepsilon_{\mathrm{eq}}$-level
-perturbations, as in the pipeline where
-$\varepsilon_{\mathrm{eq}}=\varepsilon_{\mathrm{AVP}}=10^{-6}$ is wired far
-below the margins). This is exactly the regime that LEM-WIT's hypothesis
-cites as "non-degenerate tolerance margins; the regime of
-Theorem [THM-WIN](iii)" (`thm_interval.md` §2, amendment A1) and that
-THM-GAP's premise (iii) cites as "non-degenerate tolerance margins
-(Theorem [THM-WIN])" (`thm_gap.md` §2–§3). Both citations resolve here:
-margin exceeding the noise budget is what licenses "satisfied outright ⇒
-satisfied with margin ⇒ tolerance verdict agrees" in THM-GAP's cross-stratum
-lemma and the verdict-stability clause in LEM-WIT.
+R1 makes the correct program pass robustly: every residual computed on an
+executed tuple of $P^\star$ is at most
+$\Delta_r+2\bar\eta<\varepsilon_{\mathrm{tol}}$, so
+$J_r(P^\star)=\mathrm{pass}$ on every evaluation. R2 is the verdict-stability
+clause; it is logically independent of R1 (R1 bounds residual *levels*, R2
+bounds their *distance to the threshold*) and is mild in the pipeline, where
+$\varepsilon_{\mathrm{eq}}=\varepsilon_{\mathrm{AVP}}=10^{-6}$ sits far below
+the working margins. Consumption map: THM-WIN(i) and (iii) and THM-GAP's
+premise (iii) consume R1 (with H-a); LEM-WIT's stability hypothesis
+(amendment A1) consumes R2. Both external citations resolve here: THM-GAP's
+"non-degenerate tolerance margins (Theorem [THM-WIN])" = R1 imported at
+every $r\in R$ together with H-a (`thm_gap.md` §3, repair B1); LEM-WIT's
+"stable under pointwise obs-output perturbations … the regime of
+Theorem [THM-WIN](iii)" = R2 (`thm_interval.md` §2–§3).
 
 ## 5. Hypotheses and proofs
 

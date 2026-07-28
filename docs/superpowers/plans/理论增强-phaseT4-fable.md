@@ -40,6 +40,8 @@ not from kill signatures.
 
 **REVIEW CHECKPOINT T3：作者确认 THM-WIN 假设清单、REM-FPOS/REM-FNEG/REM-IDF 的 Remark 表述与既有 boundary cases 的覆盖（与 T3 联合拍板）。**
 
+> **CHECKPOINT T3 = PASS（2026-07-28，作者委托评审执行，与 T3 联合）**：全部不等式与源码事实独立复核通过；修复 B2（regime 拆 R1 边际支配 / R2 ε_eq-分离并给消费映射）、B3（噪声界置信读法）；修订 A3（REM-IDF survivor 从句过度主张改述，master-first）；裁定 Q1 保留加性 H-a、Q2 保留冻结陈述+scope note、Q3 严格超出约定入 T6.1 检查单、Q4 GPR 处置移交论证线冻结前锁定、Q5 告诫留证明层。PINN/RNG 边界覆盖确认。记录：`docs/review_20260728/checkpoint_t3_record.md`。**T6 全部前置现已满足。**
+
 ---
 
 ## 本阶段风险
