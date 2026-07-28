@@ -258,8 +258,8 @@ $R\subseteq R'$ both endpoints are non-decreasing.
 **Files:** Create: `scripts/theory/interval_demo.py`；Output: `data/results/interval_demo_v4.json`
 
 - [ ] **Step 1:** 从 v4 prescreen 台账统计每 cell 的 (n, k, u)：u 取"仅由 K_eq 抽样判等、无 AST/证书"的候选数。数据源定位：`rg -l "equiv" data/ --glob "*v4*"`
-- [ ] **Step 2:** 输出每 cell 与总体的 [SMS_cons, SMS_strict] 及宽度分布；写入 JSON（新键，不改旧键）
-- [ ] **Step 3:** 验证：`python scripts/theory/interval_demo.py && python -c "import json;d=json.load(open('data/results/interval_demo_v4.json'));print(len(d['cells']))"` 期望 60
+- [ ] **Step 2:** 输出每 mp-cell（v4 遗产划分 12 PUT × 5 MP，F-8）与总体的 [SMS_cons, SMS_strict] 及宽度分布；写入 JSON（键名 `mp_cells`；新键，不改旧键）
+- [ ] **Step 3:** 验证：`python scripts/theory/interval_demo.py && python -c "import json;d=json.load(open('data/results/interval_demo_v4.json'));print(len(d['mp_cells']))"` 期望 60（mp-cell 口径，F-8）
 - [ ] **Step 4:** Commit（此结果只作 §2.10 演示图，标注 development-only）
 
 **REVIEW CHECKPOINT T1：作者确认 THM-INT 陈述、假设与演示口径。**
@@ -300,7 +300,7 @@ as a model-check statistic, not folded into SMS.
 
 - [ ] **Step 2:** 写证明（要点：\(m\in M_j, j\notin \mathrm{Cov}(R)\)；任取 \(r\) 为 \(\psi_l\) 的 exact checker，\(l\ne j\)；S5 纯性给 \([\![m]\!]\models\psi_l\)，故 r 不 flag m；r 在原程序上 pass；killed 需存在 flag → 无。分解式由块对角直接展开）
 - [ ] **Step 3:** 写接口注记（一段）：\(\mathrm{Gap}_{\mathrm{aln}}(R)\) 对应四柱 T3 的选择残余 \(\Omega_{\mathrm{sel}}\)（加对齐 MR 可消除），\(\mathrm{Gap}_{\mathrm{str}}(R)\) 是声明层内检测力缺口；注明"四柱之采纳集 \(S\) ≙ 本文 \(R\)"；引用四柱框架为 companion technical report，不承重
-- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 60-cell（12 PUT × 5 MP）零膨胀中 cross cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（§0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其 ex-post 诊断（证据双通道与 verdict 无条件规则见 §0.3 A-PROV 条目，F-2）
+- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 mp-cell 划分（12 PUT × 5 MP = 60，F-8）零膨胀中 cross mp-cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（§0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其 ex-post 诊断（证据双通道与 verdict 无条件规则见 §0.3 A-PROV 条目，F-2）
 - [ ] **Step 5:** Commit
 
 ### Task T2.2：现稿一致性核对
@@ -402,7 +402,7 @@ stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 
 **Files:** Modify: main.tex §2.3（E1∧E2 节）、§2.5
 
-- [ ] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书）/ CONFIRMED_NON_EQUIVALENT（分歧见证）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 60-cell 的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict
+- [ ] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书）/ CONFIRMED_NON_EQUIVALENT（分歧见证）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 mp-cell（60，F-8）的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict
 - [ ] **Step 2:** §2.5 向后兼容声明补一句：三态在退化极限下坍缩回经典二态（与 Lemma 9.1 一致）
 - [ ] **Step 2b:** 通知论证线执行 SSOT 双口径键迁移核对（其 Task 0.2 Step 2b：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\)、新增 \(\mathrm{SMS}_{\mathrm{cons}}\)；该核对是论证线 Phase 4 注数的前置门禁，R-7）
 - [ ] **Step 3:** 编译验证 + Commit
@@ -426,11 +426,11 @@ stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 **Files:** Create: `docs/review_20260728/formal_audit_protocol.md`、`docs/review_20260728/formal_audit_report.md`
 
 - [ ] **Step 1:** 写审计协议：审计人=未参与实证分析的合作者或外部同行；输入=五份草稿+main.tex §2；审计清单固定 8 项——(1) 每个定理前提在正文有定义，(2) 无循环（结论不作前提），(3) LEM-WIT 的 AVP 决定性假设成立范围，(4) THM-GAP 的 S5/exact-checker 前提与 ξ 报告一致，(5) THM-WIN 常数与 Lipschitz 假设可满足性，(6) THM-DEG-R 支撑假设与例外集表述，(7) 记号与 notation_registry（§0.2 总表）零冲突，(8) 证明步骤逐行可复核
-- [ ] **Step 2:** 审计执行（外部人工步骤，等待窗口 ≤2 周；期间可并行论证提升计划 Phase 0–2）。审计顺序要求：**优先审 THM-GAP**（清单第 4 项提前），使其尽早获得审计级确认——预注册包已依赖其内部评审版，THM-GAP 若出 blocker 需按预注册修订程序（amendment 记录）处理
+- [ ] **Step 2:** 审计执行（外部人工步骤，等待窗口 ≤2 周；期间可并行论证提升计划 Phase 0–2）。审计顺序要求：**优先审 THM-GAP**（清单第 4 项提前），使其尽早获得审计级确认——预注册包已依赖其内部评审版，THM-GAP 若出 blocker 需按预注册修订程序（amendment 记录，载体=论证计划 `research/prereg_v2/AMENDMENTS.md`，F-7）处理
 - [ ] **Step 3:** 审计意见分级处理：blocker→回对应 Phase 修正后重审该项；minor→正文修订；全部关闭后在报告尾部签"AUDIT PASS + 日期 + 草稿 SHA256"（`shasum -a 256 research/theory_drafts/*.md`）
 - [ ] **Step 4:** Commit
 
-**REVIEW CHECKPOINT T4（终检）：审计报告全绿；作者确认理论章节冻结（写作期引用基线），通知论证提升计划。预注册冻结门禁唯一 = CHECKPOINT T2（THM-GAP 内部评审，R-5），T4 不重复充当冻结门禁；T4 审计若出 blocker，按预注册 amendment 程序（修订记录 + 正文披露）处理，不回溯撤销已生效的冻结。**
+**REVIEW CHECKPOINT T4（终检）：审计报告全绿；作者确认理论章节冻结（写作期引用基线），通知论证提升计划。预注册冻结门禁唯一 = CHECKPOINT T2（THM-GAP 内部评审，R-5），T4 不重复充当冻结门禁；T4 审计若出 blocker，按预注册 amendment 程序（载体=论证计划 `research/prereg_v2/AMENDMENTS.md`，修订记录 + 正文披露，F-7）处理，不回溯撤销已生效的冻结。**
 
 ---
 

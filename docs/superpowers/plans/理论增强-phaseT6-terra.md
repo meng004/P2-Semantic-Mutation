@@ -9,7 +9,7 @@
 
 **并行性:** Task T6.2 的审计等待窗口（≤2 周）内，论证提升计划 Phase 0–2 可并行推进。
 
-**交接物:** main.tex 理论章节冻结版 + `docs/review_20260728/formal_audit_report.md`（AUDIT PASS 签署）+ "标签 → 正文编号"映射表 → CHECKPOINT T4 通过后通知论证提升计划：理论章节冻结（写作期引用基线）。**预注册冻结门禁唯一 = CHECKPOINT T2（R-5）**；本阶段审计 blocker 走预注册 amendment 程序，不回溯撤销冻结。
+**交接物:** main.tex 理论章节冻结版 + `docs/review_20260728/formal_audit_report.md`（AUDIT PASS 签署）+ "标签 → 正文编号"映射表 → CHECKPOINT T4 通过后通知论证提升计划：理论章节冻结（写作期引用基线）。**预注册冻结门禁唯一 = CHECKPOINT T2（R-5）**；本阶段审计 blocker 走预注册 amendment 程序（载体=论证计划 `research/prereg_v2/AMENDMENTS.md`，F-7），不回溯撤销冻结。
 
 ---
 
@@ -28,11 +28,11 @@
 **Files:** Create: `docs/review_20260728/formal_audit_protocol.md`、`docs/review_20260728/formal_audit_report.md`
 
 - [ ] **Step 1:** 写审计协议：审计人=未参与实证分析的合作者或外部同行；输入=五份草稿+main.tex §2；审计清单固定 8 项——(1) 每个定理前提在正文有定义，(2) 无循环（结论不作前提），(3) LEM-WIT 的 AVP 决定性假设成立范围，(4) THM-GAP 的 S5/exact-checker 前提与 ξ 报告一致，(5) THM-WIN 常数与 Lipschitz 假设可满足性，(6) THM-DEG-R 支撑假设与例外集表述，(7) 记号与 notation_registry（master §0.2 总表）零冲突，(8) 证明步骤逐行可复核
-- [ ] **Step 2:** 审计执行（外部人工步骤，等待窗口 ≤2 周；期间可并行论证提升计划 Phase 0–2）。审计顺序要求：**优先审 THM-GAP**（清单第 4 项提前），使其尽早获得审计级确认——预注册包已依赖其内部评审版，THM-GAP 若出 blocker 需按预注册修订程序（amendment 记录）处理
+- [ ] **Step 2:** 审计执行（外部人工步骤，等待窗口 ≤2 周；期间可并行论证提升计划 Phase 0–2）。审计顺序要求：**优先审 THM-GAP**（清单第 4 项提前），使其尽早获得审计级确认——预注册包已依赖其内部评审版，THM-GAP 若出 blocker 需按预注册修订程序（amendment 记录，载体=论证计划 `research/prereg_v2/AMENDMENTS.md`，F-7）处理
 - [ ] **Step 3:** 审计意见分级处理：blocker→回对应 Phase 修正后重审该项；minor→正文修订；全部关闭后在报告尾部签"AUDIT PASS + 日期 + 草稿 SHA256"（`shasum -a 256 research/theory_drafts/*.md`）
 - [ ] **Step 4:** Commit
 
-**REVIEW CHECKPOINT T4（终检）：审计报告全绿；作者确认理论章节冻结（写作期引用基线），通知论证提升计划。预注册冻结门禁唯一 = CHECKPOINT T2（THM-GAP 内部评审，R-5），T4 不重复充当冻结门禁；T4 审计若出 blocker，按预注册 amendment 程序（修订记录 + 正文披露）处理，不回溯撤销已生效的冻结。**
+**REVIEW CHECKPOINT T4（终检）：审计报告全绿；作者确认理论章节冻结（写作期引用基线），通知论证提升计划。预注册冻结门禁唯一 = CHECKPOINT T2（THM-GAP 内部评审，R-5），T4 不重复充当冻结门禁；T4 审计若出 blocker，按预注册 amendment 程序（载体=论证计划 `research/prereg_v2/AMENDMENTS.md`，修订记录 + 正文披露，F-7）处理，不回溯撤销已生效的冻结。**
 
 ---
 

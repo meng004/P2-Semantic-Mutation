@@ -49,8 +49,8 @@ $R\subseteq R'$ both endpoints are non-decreasing.
 **Files:** Create: `scripts/theory/interval_demo.py`；Output: `data/results/interval_demo_v4.json`
 
 - [ ] **Step 1:** 从 v4 prescreen 台账统计每 cell 的 (n, k, u)：u 取"仅由 K_eq 抽样判等、无 AST/证书"的候选数。数据源定位：`rg -l "equiv" data/ --glob "*v4*"`
-- [ ] **Step 2:** 输出每 cell 与总体的 [SMS_cons, SMS_strict] 及宽度分布；写入 JSON（新键，不改旧键）
-- [ ] **Step 3:** 验证：`python scripts/theory/interval_demo.py && python -c "import json;d=json.load(open('data/results/interval_demo_v4.json'));print(len(d['cells']))"` 期望 60
+- [ ] **Step 2:** 输出每 mp-cell（v4 遗产划分 12 PUT × 5 MP，F-8）与总体的 [SMS_cons, SMS_strict] 及宽度分布；写入 JSON（键名 `mp_cells`；新键，不改旧键）
+- [ ] **Step 3:** 验证：`python scripts/theory/interval_demo.py && python -c "import json;d=json.load(open('data/results/interval_demo_v4.json'));print(len(d['mp_cells']))"` 期望 60（mp-cell 口径，F-8）
 - [ ] **Step 4:** Commit（此结果只作 §2.10 演示图，标注 development-only）
 
 **REVIEW CHECKPOINT T1：作者确认 THM-INT 陈述、假设与演示口径。**

@@ -27,7 +27,7 @@
 
 **Files:** Modify: main.tex §2.3（E1∧E2 节）、§2.5
 
-- [ ] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书）/ CONFIRMED_NON_EQUIVALENT（分歧见证）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 60-cell 的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict
+- [ ] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书）/ CONFIRMED_NON_EQUIVALENT（分歧见证）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 mp-cell（60，F-8）的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict
 - [ ] **Step 2:** §2.5 向后兼容声明补一句：三态在退化极限下坍缩回经典二态（与 Lemma 9.1 一致）
 - [ ] **Step 2b:** 通知论证线执行 SSOT 双口径键迁移核对（其 Task 0.2 Step 2b：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\)、新增 \(\mathrm{SMS}_{\mathrm{cons}}\)；该核对是论证线 Phase 4 注数的前置门禁，R-7）
 - [ ] **Step 3:** 编译验证 + Commit

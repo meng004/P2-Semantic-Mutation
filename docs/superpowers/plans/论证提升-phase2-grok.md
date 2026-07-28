@@ -27,7 +27,7 @@
 
 ## Task 2.3：剂量反应实验（EXP-DOSE，H-DOSE）
 
-- [ ] **Step 1:** 参数化算子实现：HP（超参幅度）与 CE（守恒侵蚀强度）各设 ≥6 档幅度网格，每档名义违反幅度 \(\varepsilon_m\) 标定入台账（master §1.3.3）；对象=每类一核（Lorenz、MC 积分、GPR、LogReg，数据键 A1/B3/C1/D3；若理论线 Phase T3 判某核的 Lipschitz 常数 \(L_r\) 不可估则按其清单替换）
+- [ ] **Step 1:** 参数化算子实现：HP（超参幅度）与 CE（守恒侵蚀强度）各设 ≥6 档幅度网格，每档名义+实测实现 \(\varepsilon_m\) 两轴标定入台账（master §1.3.3，F-10：实现轴用直接不变量违反泛函，不经 MR 检查器）；对象=每类一核（Lorenz、MC 积分、GPR、LogReg，数据键 A1/B3/C1/D3；若理论线 Phase T3 判某核的 Lipschitz 常数 \(L_r\) 不可估则按其清单替换）
 - [ ] **Step 2:** 每档 × 按 power_report 锁定的重复数（≤960 总执行上限，F-4）执行 kill 判定（个体标识 `mut-<算子>-<PUT>-e<档位>-r<重复>`），曲线数据落 SSOT `dose_response_v5`
 - [ ] **Step 3:** 跑 `analysis_hdose.py`（isotonic vs 常数，置换 p；Page's L）；同时报告转变位置与 THM-WIN 预测中心 \(\varepsilon_{\mathrm{tol}}\) 的偏差（模型检验，不设通过线）；Commit
 
@@ -47,4 +47,4 @@
 |---|---|---|
 | v5 provider 不满足对称清单 | Task 2.2 | 换第二候选；全部不满足 → 判别线降 development 复现，H-DISC 降 exploratory |
 | 任一确认性假设失败 | 各 Task Step 3 | 按 hypotheses.md 预注册降级路径执行，不改阈值、不删数据 |
-| 分析脚本运行报缺陷需改代码 | 任意 | 修 bug 须同步在 FREEZE_MANIFEST 记 amendment（哈希+理由），对应假设标注 exploratory 风险并在 CHECKPOINT 2 汇报 |
+| 分析脚本运行报缺陷需改代码 | 任意 | 修 bug 须同步在 `research/prereg_v2/AMENDMENTS.md` 记 amendment（哈希+理由，F-7），对应假设标注 exploratory 风险并在 CHECKPOINT 2 汇报 |
