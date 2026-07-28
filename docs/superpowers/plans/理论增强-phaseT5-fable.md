@@ -34,10 +34,10 @@
 > baseline; the audited source fingerprints and migration inventory are in
 > `research/theory_drafts/notation_registry.md`.
 
-- [ ] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书）/ CONFIRMED_NON_EQUIVALENT（分歧见证）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 mp-cell（60，F-8）的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict
-- [ ] **Step 2:** §2.5 向后兼容声明补一句：三态在退化极限下坍缩回经典二态（与 Lemma 9.1 一致）
-- [ ] **Step 2b:** 通知论证线执行 SSOT 双口径键迁移核对（其 Task 0.2 Step 2b：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\)、新增 \(\mathrm{SMS}_{\mathrm{cons}}\)；该核对是论证线 Phase 4 注数的前置门禁，R-7）
-- [ ] **Step 3:** 编译验证 + Commit
+- [x] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书；当前管线无证书器，该态现为空）/ CONFIRMED_NON_EQUIVALENT（分歧见证，E1∨E2 失败路）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 mp-cell（60，F-8）的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict，并注明 v4 sample-equivalent 集为空故两口径重合、无回溯数字改动
+- [x] **Step 2:** §2.5 向后兼容声明补一句：三态在退化极限（\(L_{\mathrm{lim}}\)）下坍缩回经典二态（与 Lemma 9.1 一致）；顺带修 §2.5 遗留 "L1∧L2∧L3" 命名（改三联合条件名）与 "almost everywhere" 措辞（改例外集表述）
+- [x] **Step 2b:** 通知论证线执行 SSOT 双口径键迁移核对（其 Task 0.2 Step 2b：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\)、新增 \(\mathrm{SMS}_{\mathrm{cons}}\)；该核对是论证线 Phase 4 注数的前置门禁，R-7）——通知载体=本 commit message trailer 与本行记录；论证线 Phase 0 启动时按此执行
+- [ ] **Step 3:** 编译验证 + Commit——commit 已做；编译 **pending**（texlive 安装中，装毕补验并更新此行）
 
 ---
 
