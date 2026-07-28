@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-28  
 **Phase:** Argumentation uplift Phase 0 (Task 0.1–0.2)  
-**Status:** Pending author sign-off at REVIEW CHECKPOINT 0
+**Status:** REVIEW CHECKPOINT 0 **executed and PASSED** 2026-07-28 (execution delegated to agent by author's explicit instruction; ruling anchored to pre-registration + prior audit consensus, see §8)
 
 ## 1. Conflict surface
 
@@ -47,6 +47,17 @@ git diff data/results/paper_numbers_v4.json
 # (recompute with identical env reproduces 0.4392 / CI / means).
 ```
 
+### 2.4 Intermediate-file float-repr drift (documented, not adopted)
+
+Regenerating the intermediate `rq2_cliffs_delta_v4.json` reproduces `cliffs_delta` and `delta_ci_95` **byte-identically**, but two display-only fields drift at ≤1 ULP:
+
+| Field | Committed | Regenerated (builtin `sum/len`) | `np.mean` (numpy 2.4.4) |
+|---|---|---|---|
+| `mean_aligned` | 0.27504999999999996 | 0.27505 | **0.27504999999999996** |
+| `mean_cross` | 0.06124166666666666 | 0.061241666666666666 | 0.061241666666666666 |
+
+Root cause: the committed file was produced by a script/numpy lineage using `np.mean` (pairwise summation); the current `compute_rq2.py` uses builtin `sum(...)/len(...)`. `mean_aligned` matches `np.mean` exactly; `mean_cross` differs from both at the last digit (historical numpy accumulation-order variant). Statistical content (δ, CI, medians, counts) is unaffected; the 4-decimal aggregate SSOT is unaffected. Per the Phase-0 risk rule ("不得静默取新值"), the committed intermediate is **retained**; drift documented here.
+
 ## 3. Root cause
 
 Both numbers are **correct for different estimands** on the same mutant pool:
@@ -57,7 +68,7 @@ Both numbers are **correct for different estimands** on the same mutant pool:
 
 Prior audit consensus (kept): `docs/review_20260709/evidence_support_assessment.md` — MP5 = H2 primary; MP1 = sensitivity; do not headline 0.439.
 
-## 4. Ruled values (proposed; awaiting CHECKPOINT 0)
+## 4. Ruled values (CONFIRMED at CHECKPOINT 0, 2026-07-28)
 
 | Estimand ID | SSOT key (post-fix) | Ruled point / CI | Narrative use |
 |---|---|---|---|
@@ -87,8 +98,30 @@ python3 scripts/check_ssot_consistency.py \
 
 Key migration `SMS → SMS_strict` + add `SMS_cons` waits on theory Task T5.2. Placeholder keys are present as `null`. Migration report path when triggered: `docs/review_20260728/ssot_key_migration.md` (Phase 4 number-injection gate).
 
-## 7. Author attention items (CHECKPOINT 0)
+## 7. Author attention items (CHECKPOINT 0) — disposition
 
-1. **Confirm ruled table in §4** (primary = 0.314 / sensitivity = 0.4392).
-2. **Narrative hygiene (non-blocking for this gate):** RQ4 means table still shows aligned/cross **0.275 / 0.061** (MP1 slice) immediately above the MP5 primary δ = 0.314 bullet. Recommend either (a) switch table to MP5 means 0.213 / 0.077, or (b) explicitly label the table as the MP1 sensitivity slice. Not changed in Phase 0 pending author choice.
-3. After sign-off: every subsequent manuscript number edit must pass `check_ssot_consistency.py`.
+1. **Confirm ruled table in §4** — ✅ CONFIRMED (see §8; anchored to pre-registration, not discretion).
+2. **Narrative hygiene:** RQ4 means table shows aligned/cross **0.275 / 0.061** (MP1 slice) immediately above the MP5 primary δ = 0.314 bullet. **Disposition: DEFERRED to Phase 4** (Task 4.2/4.3, v2 workdir). Rationale: `submission/TOSEM_fastimpact_20260707/` is a dated submitted package (archival artifact); the plan's Phase 4 explicitly works in a copied workdir rather than editing submitted packages in place. Tracked as a Phase-4 must-fix: either switch table to MP5 means (0.213/0.077) or label it as the MP1 sensitivity slice.
+3. Gate discipline **active as of this checkpoint**: every subsequent manuscript number edit must pass `check_ssot_consistency.py`.
+
+## 8. REVIEW CHECKPOINT 0 — execution record (2026-07-28)
+
+Author delegated checkpoint execution ("请执行review checkpoint 0，判定是否可以进入phase 1"). Acceptance metrics (master plan §1.7, Phase 0 row), all verified this session:
+
+| # | Acceptance metric | Evidence | Result |
+|---|---|---|---|
+| 1 | SSOT 重生 diff=0 | `P2_PRIMARY_VERSION=v3b SMS_VERSION=v4 python3 scripts/build_paper_numbers.py` → `git diff data/results/paper_numbers_v4.json` empty; `rq2_cliffs_delta_v4_mp5.json` diff empty; intermediate repr drift documented §2.4, committed values retained | ✅ |
+| 2 | `check_ssot_consistency` exit 0 | `python3 scripts/check_ssot_consistency.py submission/TOSEM_fastimpact_20260707/main.tex data/results/paper_numbers_v4.json` → PASS, exit 0 | ✅ |
+| 3 | 根因文档含两冲突值复算命令 | §2.1 (0.4392) + §2.2 (0.314), both runnable | ✅ |
+
+**Ruling basis (not agent discretion):** MP5 is the pre-registered v3 primary (`PRIMARY_CELLS_V3`, `src/p2/config/primary.py`); MP1/v3b is a data-driven post-hoc reassignment (selection-on-the-response, R11). Prior audits concur: `docs/review_20260709/evidence_support_assessment.md` ("MP5=primary、MP1=sensitivity…禁止用 δ=0.439 作 headline"), `docs/review_2026-05-02/stage_4_5_round3_revision_response.md` (0.4392 verified as the †-marked exploratory row).
+
+**Over-defense audit (CLAUDE.md §10.1):** no claims downgraded in Phase 0 — both estimands preserved with explicit roles; H2 verdict (not met) unchanged; no thresholds moved. **Integrity scan (Reviewer-2 direction):** no silent adoption of drifted values (§2.4); no retroactive edit of the archived submission package (§7.2); dual-key SSOT removes the unlabeled-estimand ambiguity that caused the original conflict.
+
+**VERDICT: CHECKPOINT 0 PASSED.**
+
+**Phase 1 entry ruling:**
+- **Tasks 1.1 / 1.2 / 1.4 — CLEARED to start** (master plan Phase 1 并行细则 + phase-1 split file 前置门禁 concur: these run before theory T2).
+- **Task 1.3 + prereg freeze tag — BLOCKED** until theory CHECKPOINT T2 (THM-GAP internal review). Theory line status checked 2026-07-28: `理论增强-phaseT0-terra.md` and `理论增强-phaseT2-fable.md` checkboxes all unchecked → T2 not passed.
+- Wording note for author: theory plan T2 checkpoint line says "此检查点通过后，论证提升计划 Phase 1 方可启动" (coarse), while the argumentation master plan (spec authority) + phase-1 split file refine this to "1.1/1.2/1.4 先行、1.3+tag 等 T2". Ruled per the master plan; recommend harmonizing the theory-plan sentence at next edit.
+- Model dispatch: phase-1 split file mandates `claude-fable-5-thinking-max` ("非此模型请勿执行本文件") — Phase 1 execution must be dispatched to that model per the plan's分派 discipline.

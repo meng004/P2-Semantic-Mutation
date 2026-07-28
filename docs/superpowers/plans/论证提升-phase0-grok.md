@@ -37,7 +37,7 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 - [x] **Step 3:** Commit：`fix(ssot): reconcile v4 cliff delta + add manuscript-SSOT consistency gate`
 
 **REVIEW CHECKPOINT 0：作者确认裁定值与根因说明。此后任何稿件数字改动必须过 check_ssot_consistency。**
-**→ 已停下等待作者拍板（见 `docs/review_20260728/ssot_reconciliation.md` §4 / §7）。**
+**→ ✅ 已执行并通过（2026-07-28，作者显式委托执行）。验收 3/3 全绿 + 裁定值锚定预注册与既有审计共识；执行记录=`docs/review_20260728/ssot_reconciliation.md` §8。Phase 1 准入裁定：Task 1.1/1.2/1.4 放行；Task 1.3+冻结 tag 阻塞至理论 CHECKPOINT T2。**
 
 ---
 
