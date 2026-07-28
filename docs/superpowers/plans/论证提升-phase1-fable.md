@@ -29,12 +29,17 @@
 
 **Files:** Create: `scripts/prereg/power_simulation.py`；Output: `research/prereg_v2/power_report.md`
 
-- [ ] **Step 1:** 从 v4 数据估计两部分分布参数：P(SMS>0|aligned)、P(SMS>0|cross)、非零部分的 Beta 拟合参数
-- [ ] **Step 2:** 模拟设计变量网格（cell=算子×PUT，master §0.3）：applicable cell 数 × 每 cell 变异体密度 {8,12,16,20} × MR 集数（v5 held-out 份数 {1,2}）；每格 2000 次模拟，输出 H-ZERO（McNemar）与 H-DISC（配对口径：Wilcoxon 符号秩 + \(r_{\mathrm{mp}}\)，MID 候选由 δ=0.33 换算）的功效；**强制产出预算算术表**：applicable cell 数 × 密度 = 变异体总量（预算区间约 300–840）× 单变异体生成/执行成本
-- [ ] **Step 2b:** 外部线可行性模拟（R-3）：以 DEF-CAL 检出率为先验、以扣除 10 训练例后的计数为基线（F-1a），模拟就绪缺陷数 n∈{12,16,20,24} × 项目数 J∈{6,8,10} × 每项目缺陷分布下 H-CAL（主口径=aligned 条件每缺陷一对，精确二项 McNemar，F-3a）与 H-RANK（\(\bar\tau\ge0.3\)；显式模拟每项目 4 条件排序的 τ_b 与并列密度，F-4a）的功效；输出"阈值检验 or 区间估计"裁定建议
-- [ ] **Step 2c（F-4）:** H-DOSE 功效模拟：生成模型=由 THM-WIN 窗宽 \(O(\Delta_r+2\bar\eta)\) 与噪声假设推导的 logistic 转变曲线（参数来源诚实标注为理论推导而非 v4 数据，斜率敏感性扫描）；配置空间受总执行数 ≤960 约束（6 档×20 重复×8 曲线=960 恰为上限，8 档配置须削重复数）；同时模拟转变中心估计精度（供 H-DOSE-CTR 判据锁定，B-2）；H-CONS 为操纵检验不入模拟，另报固定 \(n_{\mathrm{app}}\) 下的 Wilson CI 宽度预算（解析）
-- [ ] **Step 3:** 选定最小达 0.8 功效的配置写入 power_report；若 KER 全集（12 核）配置全部 <0.8，触发"追加 4–8 个紧凑核"决策（追加=PUT 级增加 cell 数；列出候选核清单与选择标准，交作者拍板）；若外部线模拟显示 \(\bar\tau\) 阈值检验功效 <0.8，H-RANK 冻结前降为区间估计报告（Task 1.3 落实）
-- [ ] **Step 4:** Commit
+- [x] **Step 1:** 从 v4 数据估计两部分分布参数：P(SMS>0|aligned)、P(SMS>0|cross)、非零部分的 Beta 拟合参数
+  - 双锚点：A=PUT×class-primary-MP（0.500/0.1875 + Beta 拟合）；B=算子级 alignment-map（0.118/0.324，信号反转）——B 作为诚实证伪情景入模拟（报告 §1）。
+- [x] **Step 2:** 模拟设计变量网格（cell=算子×PUT，master §0.3）：applicable cell 数 × 每 cell 变异体密度 {8,12,16,20} × MR 集数（v5 held-out 份数 {1,2}）；每格 2000 次模拟，输出 H-ZERO（McNemar）与 H-DISC（配对口径：Wilcoxon 符号秩 + \(r_{\mathrm{mp}}\)，MID 候选由 δ=0.33 换算）的功效；**强制产出预算算术表**：applicable cell 数 × 密度 = 变异体总量（预算区间约 300–840）× 单变异体生成/执行成本
+  - H-DISC 锚点 A 全密度 ≥0.835（MID 0.33）；H-ZERO 需 m=16+s=2 在设计备择 S_U80 达 0.806；预算表=报告 §5（m=16 → 816 恰在 ≤840 内）。
+- [x] **Step 2b:** 外部线可行性模拟（R-3）：……输出"阈值检验 or 区间估计"裁定建议
+  - H-CAL 阈值检验全网格不可行（acc 0.8 最高 0.31；acc 0.9 最高 0.66）→ **建议降区间估计**（Wilson CI 宽度表在案）；H-RANK 保留 τ̄≥0.3 pass-line，新增 **合格项目 ≥6 门槛**（null 伪通过 4 项目 14% → ≥6 项目 ≤9%）。
+- [x] **Step 2c（F-4）:** H-DOSE 功效模拟 + 中心估计精度 + H-CONS Wilson 解析预算
+  - 全配置 per-curve 功效饱和（理论转变存在时）；中心估计 sd ≤0.22 ≪ 窗宽 → H-DOSE-CTR ≥6/8 判据检验"位置"而非"噪声"✓；H-CONS n=51 需 p̂≥0.65（dev 锚 0.667 边际通过，SI 为风险集中点）。
+- [x] **Step 3:** 选定最小达 0.8 功效的配置写入 power_report
+  - **主配置：n_app=51 × 密度 16 × 2 份 v5 held-out MR 集**；MID(r_mp)=0.33；**增核决策未触发**（含条件性候选清单交作者）；EXP-DOSE=6档×20重复×8曲线=960；EXP-FIX 抽 15 cells（bar=12/15）。
+- [x] **Step 4:** Commit
 
 ## Task 1.3：假设与分析代码冻结（门禁：理论线 CHECKPOINT T2 已过）
 
