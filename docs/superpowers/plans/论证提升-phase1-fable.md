@@ -55,12 +55,13 @@
 
 **Files:** Create: `research/prereg_v2/external_slice_protocol.md`
 
-- [ ] **Step 1:** 准入三条（且仅三条）：真实缺陷（公开 issue+fix commit）；双臂可复现（buggy/fixed 构建+触发）；in-scope（单/少输出数值核，签名可适配）。**明文排除** "MR 可判别"条件并注明这是对 D0 循环的修正
-- [ ] **Step 1b:** 内嵌 master §1.3.1 挖掘规范：仓库白名单定稿（Defect4MR 覆盖项目 + numpy/scipy/scikit-learn/statsmodels/PyMC/GPy/GPyTorch/chaospy/SALib/PyTorch/JAX 数值组件候选池取舍；GPy 低活跃预期管理见 master §1.3.1，R-12）、issue 检索信号词与排除类清单、语义符合性判定模板（issue URL + buggy SHA + fixed SHA + 一句机理）、两段式统一标识规则（准入期 `EXT-<repo>-<序号>`，映射冻结后 `bug-<算子代号>-<序号>`；准入期禁止出现算子归类）
-- [ ] **Step 2:** fiber 映射协议：**两名人类标注者**（身份类别写入协议；均不接触 MR 生成与 kill 执行；LLM 仅可作标注辅助工具，须声明且不计入 κ）、训练集=DEF-CAL 训练子集 10 例（抽取规则预注册：seeded 简单随机或按 repo 分层、禁以 fiber 标签为分层变量、抽取者不得担任标注者，F-1a；10 例以 `MAPPING_TRAIN` 从确认性 DEF-REAL 扣除）、标签集 {DIRECT, ADJACENT, OUT_OF_SCOPE, UNCERTAIN}、盲化规定（不见 kill 结果、不见对方标注）、κ≥0.6 门禁、分歧仲裁程序；**降级方案并列预注册（R-4）**：第二人类标注者不可得 → 单人类标注者 + 时间分隔（≥2 周）test–retest 自一致性 + 全部标注材料公开 + §6 披露
-- [ ] **Step 2c（F-15）:** 外部模块 MR 实例化条款：对每个就绪缺陷模块，aligned/cross MR 由各 fiber 的模式按 provenance 实例化为该模块签名可执行版本；执笔者不接触任何 kill 结果；完成时点在 Task 3.3 冻结预测之前；实例化产物（MR 文本+适配代码）`shasum -a 256` 随 predictions_frozen 一并冻结；random floor 按冻结 seed 从预注册 MR 池抽样适配
-- [ ] **Step 3:** 冻结预测协议：执行前对每 (defect, MR set) 产出 detect/miss 预测 + 每 MR 集 SMS 排序预测，`shasum -a 256` 存证；揭盲规则
-- [ ] **Step 4:** Commit（协议单独冻结后即可通知 `论证提升-phase3-terra.md` 启动 Task 3.1/3.2）
+- [x] **Step 1:** 准入三条（且仅三条）：真实缺陷（公开 issue+fix commit）；双臂可复现（buggy/fixed 构建+触发）；in-scope（单/少输出数值核，签名可适配）。**明文排除** "MR 可判别"条件并注明这是对 D0 循环的修正（协议 §1）
+- [x] **Step 1b:** 内嵌 master §1.3.1 挖掘规范：白名单定稿（GPy 排除、理由=低活跃 R-12，surrogate 覆盖交 GPyTorch）、信号词/排除类清单、判定模板、两段式标识 + git 时序不变量（协议 §2）
+- [x] **Step 2:** fiber 映射协议：两名人类标注者 + 训练集抽取规则（seeded 简单随机，seed=20260728，抽取者≠标注者，F-1a）+ 8 类联合标签 κ≥0.6 门禁 + 一次重标 + 仲裁 + R-4 降级方案并列预注册（协议 §3）
+- [x] **Step 2c（F-15）:** 外部模块 MR 实例化条款（执笔者隔离、时点先于预测冻结、哈希随 predictions_frozen 冻结、RND 冻结 seed 抽样；协议 §4）
+- [x] **Step 3:** 冻结预测协议：detect/miss + SMS 排序预测、逐条 rationale 字段、`shasum -a 256` 存证、git 时序链、揭盲与 `PROTOCOL_AMBIGUOUS` 规则（协议 §5）
+- [x] **Step 4:** Commit（协议单独冻结后即可通知 `论证提升-phase3-terra.md` 启动 Task 3.1/3.2）
+  - 独立哈希已入库 `research/prereg_v2/external_slice_protocol.sha256`；Phase 3 Task 3.1/3.2 依计划解锁（执行模型=gpt-5.6-terra-max 类，另行调度）。
 
 **REVIEW CHECKPOINT 1：作者审预注册包全件（矩阵、功效/可行性配置、假设全件=5 headline + 1 操纵检验 + secondary 族（B 组）、协议），冻结后进入执行。**
 
