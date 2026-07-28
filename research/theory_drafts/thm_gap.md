@@ -88,15 +88,23 @@ as program classes, \(j\) and \(l\) would be indistinguishable to any
 checker; the declared family \(\Psi\) is assumed non-redundant in this
 sense — one line, recorded).
 
-**Premise (iii), what it licenses.** The manuscript states S5 with plain
-\(\models\) (main.tex:807–810) while DEF-05's checker decides
-\(\models_\tau\). Non-degenerate margins (the regime defined in THM-WIN;
-margin exceeding the noise budget) close this gap: a stratum satisfied
-outright is satisfied with margin, so the checker's tolerance decision does
-not spuriously flag it, and checkers pass on the original program. Premise
-(iii) is therefore not decorative: without it, borderline residuals could
-flip tolerance verdicts and break the block structure — the same regime
-condition that CHECKPOINT T1's amendment A1 made explicit in LEM-WIT.
+**Premise (iii), what it licenses (explicit import chain; CHECKPOINT T2
+repair B1).** The manuscript states S5 with plain \(\models\)
+(main.tex:807–810) while DEF-05's checker decides \(\models_\tau\). Premise
+(iii) closes this gap by importing, for **every** \(r\in R\), THM-WIN's
+hypotheses at that checker: the additive residual budget H-a and the
+non-degenerate-margin regime \(\mu_r>2\bar\eta\) (thm_window.md §4–§5; for a
+\(p\)-execution relation read \(2\bar\eta\) as \(p\bar\eta\)). The licensing
+chain for a non-target stratum is then explicit: S5 gives zero violation
+contribution at \(\psi_l\), so H-a applied at \((m_{\mathrm{mut}}, r)\) with
+\(\varepsilon_{\mathrm{viol}}=0\) bounds the executed residual by
+\(\Delta_r+2\bar\eta\), and the margin gives
+\(\Delta_r+2\bar\eta<\varepsilon_{\mathrm{tol}}\): the tolerance verdict is
+pass, not a spurious flag; the same margin makes checkers pass on the
+original program. Premise (iii) is therefore not decorative: without it,
+borderline residuals could flip tolerance verdicts and break the block
+structure — the same regime condition that CHECKPOINT T1's amendment A1 made
+explicit in LEM-WIT.
 
 ## 4. Core lemma: no cross-stratum flag (closes PO-GAP-2, PO-GAP-3)
 
@@ -107,7 +115,9 @@ checker of \(\psi_l\) and \(m_{\mathrm{mut}}\in M_j\) with \(l\ne j\), then
 
 *Proof.* By (i), \(m_{\mathrm{mut}}\) satisfies every stratum other than
 \(\psi_j\); in particular \([\![m_{\mathrm{mut}}]\!]\models\psi_l\). By (iii)
-this satisfaction holds with margin, so the tolerance decision agrees:
+via the §3 import chain (H-a at \((m_{\mathrm{mut}},r)\) with zero violation
+contribution, then \(\mu_r>2\bar\eta\)), the executed residual stays below
+\(\varepsilon_{\mathrm{tol}}\), so the tolerance decision agrees:
 \([\![m_{\mathrm{mut}}]\!]\models_\tau\psi_l\). By DEF-05,
 \(\mathrm{flag}(r,m_{\mathrm{mut}})\iff[\![m_{\mathrm{mut}}]\!]\not\models_\tau\psi_l\),
 so \(r\) does not flag \(m_{\mathrm{mut}}\), i.e.
@@ -150,10 +160,13 @@ Inputs required: (a) fiber labels of mutants (generation-time
 \(r\in R\)); (c) the per-(fiber, checker) kill matrix from execution. Then:
 \(w_j\) = label counts over \(|M_{\mathrm{neq}}|\);
 \(\mathrm{SMS}_j(R)\) = row-\(j\) kill indicator rate;
-\(\mathrm{Cov}(R)=\ell(R)\). Both gaps are finite sums of these quantities —
-no equivalence oracle beyond the \(M_{\mathrm{neq}}\) certification already
-assumed, and no ground-truth beyond the labels. Constructive and
-post-hoc-computable from archived campaign artefacts. ∎
+\(\mathrm{Cov}(R)=\ell(R)\). The statement's "from the kill matrix and fiber
+labels alone" is exact because the fiber-by-stratum kill matrix carries the
+checker labels as its column index set, so (b) is embedded in (c). Both gaps
+are finite sums of these quantities — no equivalence oracle beyond the
+\(M_{\mathrm{neq}}\) certification already assumed, and no ground-truth
+beyond the labels. Constructive and post-hoc-computable from archived
+campaign artefacts. ∎
 
 ## 7. COR-ZERO (closes PO-GAP-6) and the exactness defect ξ
 

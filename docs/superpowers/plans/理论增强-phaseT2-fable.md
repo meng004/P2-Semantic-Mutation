@@ -56,6 +56,8 @@ as a model-check statistic, not folded into SMS.
 
 **REVIEW CHECKPOINT T2：作者确认 THM-GAP 前提强度（S5+exact checker 是否过强）与 ξ 的报告方式。此检查点通过后，论证提升计划 Phase 1 方可启动（通知 `论证提升-phase1-fable.md` 的执行者）。**
 
+> **CHECKPOINT T2 = PASS（2026-07-28，作者委托评审执行）**：证明逐条复核通过；修复 B1（premise (iii) 显式引入 THM-WIN 的 H-a + μ_r>2η̄ 链）与 "alone" 可计算性措辞；裁定 Q1 保留干净陈述（A-PROV 桥 + ξ 量化偏差）、Q2 确认 ξ 报告口径、Q3 Ψ 非冗余作 standing convention。记录：`docs/review_20260728/checkpoint_t2_record.md`。**预注册冻结门禁开启（R-5）：论证提升计划 Phase 1 可启动。**
+
 ---
 
 ## 本阶段风险
