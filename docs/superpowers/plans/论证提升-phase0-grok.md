@@ -29,8 +29,9 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 
 **Files:** Create: `scripts/check_ssot_consistency.py`
 
-- [ ] **Step 1:** 实现：从 main.tex 提取全部统计数字（正则匹配 `\d+\.\d{2,4}` 邻接关键词 delta/CI/p/mean），与 SSOT JSON 键值比对，不一致则非零退出并列出差异表
+- [ ] **Step 1:** 实现：从 main.tex 提取全部统计数字（正则匹配 `\d+\.\d{2,4}` 邻接关键词 delta/CI/p/mean），与 SSOT JSON 键值比对，不一致则非零退出并列出差异表；schema 预留 \(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\) 双口径键（R-7：承接理论 T5.2 三态等价改造）
 - [ ] **Step 2:** 验证：`python scripts/check_ssot_consistency.py submission/TOSEM_regular_20260706/main.tex data/results/paper_numbers_v4.json`，当前应报出 δ 冲突（若 20260706 稿沿用旧值）；修正 main.tex 后重跑，期望 exit 0
+- [ ] **Step 2b（延迟触发，理论 T5.2 联动）:** 理论 Task T5.2（三态等价上稿）完成后，对 SSOT 执行一次性键迁移核对：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\) 重命名映射、\(\mathrm{SMS}_{\mathrm{cons}}\) 新增；diff 报告入 `docs/review_20260728/ssot_key_migration.md`。**此核对通过是 Phase 4 注数的前置门禁**
 - [ ] **Step 3:** Commit：`fix(ssot): reconcile v4 cliff delta + add manuscript-SSOT consistency gate`
 
 **REVIEW CHECKPOINT 0：作者确认裁定值与根因说明。此后任何稿件数字改动必须过 check_ssot_consistency。**

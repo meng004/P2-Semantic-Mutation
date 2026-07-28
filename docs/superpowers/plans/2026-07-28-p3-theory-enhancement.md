@@ -92,6 +92,7 @@
 - **DEF-12（边际与结构保持残差）**：\(\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r\)，其中 \(\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)\) 为正确程序 \(P^\star\) 上的关系残差上确界，**即 v3.1 的结构保持偏差 \(\Delta(S,P)\) 在 \(r\) 的诱导结构上的实例**。
 - **DEF-13（检测窗）**：\((\varepsilon_{\mathrm{lo}},\varepsilon_{\mathrm{crash}})\)，\(\varepsilon_{\mathrm{lo}}=\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta\)。
 - **DEF-14（签名与分离族）**：\(\mathrm{sig}(m)=\{r\in R: r\ \text{kills}\ m\}\)；分离族 = \(\mathrm{Cov}(R)\) 中每层至少一个 exact checker。
+- **A-PROV（构念桥接假设，R-6；方法学假设，不进入任何定理的数学前提）**：实证操作化中，aligned 出处的 MR 集近似其目标层的 exact checker（DEF-05 的经验近似）；\(\mathrm{Cov}(R)\) 的操作化 = 适用矩阵 × MR 出处（provenance-as-coverage）；成立程度由 \(\xi(R)\)（DEF-09）诊断——ξ 大则 A-PROV 受质疑，H-ZERO/H-DISC 的解读须相应弱化。登记于此供两计划统一引用；实证落地见论证提升计划 Task 1.3。
 
 ### 0.4 跨文档符号冲突消解表（权威源优先级见 §0.1 第 5 条）
 
@@ -299,7 +300,7 @@ as a model-check statistic, not folded into SMS.
 
 - [ ] **Step 2:** 写证明（要点：\(m\in M_j, j\notin \mathrm{Cov}(R)\)；任取 \(r\) 为 \(\psi_l\) 的 exact checker，\(l\ne j\)；S5 纯性给 \([\![m]\!]\models\psi_l\)，故 r 不 flag m；r 在原程序上 pass；killed 需存在 flag → 无。分解式由块对角直接展开）
 - [ ] **Step 3:** 写接口注记（一段）：\(\mathrm{Gap}_{\mathrm{aln}}(R)\) 对应四柱 T3 的选择残余 \(\Omega_{\mathrm{sel}}\)（加对齐 MR 可消除），\(\mathrm{Gap}_{\mathrm{str}}(R)\) 是声明层内检测力缺口；注明"四柱之采纳集 \(S\) ≙ 本文 \(R\)"；引用四柱框架为 companion technical report，不承重
-- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ 60-cell 零膨胀中 cross cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）
+- [ ] **Step 4:** 写"经验含义"小节：cross/非对齐 MR 的 SMS 预测为 0 ⟹ v4 遗产 60-cell（12 PUT × 5 MP）零膨胀中 cross cell 的零质量属理论预测；为论证提升计划的 H-ZERO/H-DISC 提供推导来源（明确引用行）；同小节显式声明 **A-PROV 桥接假设**（§0.3：provenance-as-coverage）是把 COR-ZERO 应用到实证数据的前提，ξ 为其诊断
 - [ ] **Step 5:** Commit
 
 ### Task T2.2：现稿一致性核对
@@ -401,6 +402,7 @@ stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 
 - [ ] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书）/ CONFIRMED_NON_EQUIVALENT（分歧见证）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 60-cell 的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict
 - [ ] **Step 2:** §2.5 向后兼容声明补一句：三态在退化极限下坍缩回经典二态（与 Lemma 9.1 一致）
+- [ ] **Step 2b:** 通知论证线执行 SSOT 双口径键迁移核对（其 Task 0.2 Step 2b：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\)、新增 \(\mathrm{SMS}_{\mathrm{cons}}\)；该核对是论证线 Phase 4 注数的前置门禁，R-7）
 - [ ] **Step 3:** 编译验证 + Commit
 
 ---
@@ -426,7 +428,7 @@ stratum in $\mathrm{Cov}(R)$) the partition is trivial on $\mathrm{Cov}(R)$.
 - [ ] **Step 3:** 审计意见分级处理：blocker→回对应 Phase 修正后重审该项；minor→正文修订；全部关闭后在报告尾部签"AUDIT PASS + 日期 + 草稿 SHA256"（`shasum -a 256 research/theory_drafts/*.md`）
 - [ ] **Step 4:** Commit
 
-**REVIEW CHECKPOINT T4（终检）：审计报告全绿；作者确认理论章节冻结，通知论证提升计划可进入预注册冻结（其 Phase 1 门禁）。**
+**REVIEW CHECKPOINT T4（终检）：审计报告全绿；作者确认理论章节冻结（写作期引用基线），通知论证提升计划。预注册冻结门禁唯一 = CHECKPOINT T2（THM-GAP 内部评审，R-5），T4 不重复充当冻结门禁；T4 审计若出 blocker，按预注册 amendment 程序（修订记录 + 正文披露）处理，不回溯撤销已生效的冻结。**
 
 ---
 

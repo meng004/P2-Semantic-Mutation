@@ -4,7 +4,7 @@
 
 **Goal:** 解决构念效度证据为负与外部效度断链两大问题：以理论派生假设 + 两部分口径重建判别效度，以准入解耦切片重建真实缺陷外部锚，并完成合并稿重构与投稿前流水线。
 
-**Architecture:** 五阶段串行门禁（Phase 0 SSOT → 1 预注册 → 2 构念线 ∥ 3 外部线 → 4 写作 → 5 流水线）；Phase 1 以理论增强计划的 REVIEW CHECKPOINT T2（THM-GAP 内部评审通过）为前置。
+**Architecture:** 五阶段串行门禁（Phase 0 SSOT → 1 预注册 → 2 构念线 ∥ 3 外部线 → 4 写作 → 5 流水线）；Phase 1 以理论增强计划的 REVIEW CHECKPOINT T2（THM-GAP 内部评审通过）为前置——**T2 是唯一的理论侧冻结门禁（R-5）**；理论线 T4 终审若出 blocker，按预注册 amendment 程序处理，不回溯撤销冻结。
 
 **上游输入:** `research/p3-tosem-v2.0-writing-plan.md`（指标/对象/baseline 定义）、`docs/superpowers/plans/2026-07-28-p3-theory-enhancement.md`（符号系统 §0 与定理群）、`research/fable-p3-p12-new-argumentation-plan.md` §3.4（SSOT 冲突记录）。
 
@@ -118,7 +118,7 @@
 - **P3 预注册封闭（反 selection-on-response）**：各集合成员名单在 prereg tag 前冻结；追加只能由功效模拟（Task 1.2）触发且在冻结前完成；执行后不增删不替换（失败案以 `REPRO_FAILED` 等编码保留）。→ 服务全部确认性判据的可信度。
 - **P4 development/confirmatory 隔离**：v4 资产（旧 60-cell、DEF-CAL）只用于参数估计、功效模拟、映射训练；确认性分母全部来自新 lineage（POOL-SEM、MRSET v5 held-out、DEF-REAL 冻结切片）。这是对"构念效度证据为负"论证中同源循环的直接修复。→ 服务 RQ4/RQ5 的确认性资格。
 - **P5 真值锚独立（反循环）**：合成侧的层标签真值来自注入构造本身（生成期 \(\mathrm{eff}\) 标签）；外部侧的准入真值来自 issue+fix 双臂（明文排除"MR 可判别"条件，两段式标识见 §1.3.1）。两锚互不依赖 MR 侧结论。→ 服务 RQ5 外部锚的非循环性，回应 D0 选择偏倚。
-- **P6 功效定规模**：每 cell 变异体密度（≥20）、cell 数、MR 集份数由功效模拟 ≥0.8 锁定；不足触发追加紧凑核决策（交作者拍板），拒绝追加则上调 MID 并披露欠功效。规模是推导量，不是方便样本。→ 服务 H-ZERO/H-DISC 判据的可解释性。
+- **P6 功效定密度、诚实规模论证（R-8）**：12 核是继承自 P2 的已验证基础设施（零边际工程风险、类内 n=3 重复、跨四类分层），**不声称核数由功效推导**；功效模拟决定的是每 cell 变异体密度（网格 {8,12,16,20}）、MR 集份数与是否在 PUT 级追加紧凑核；不足且拒绝追加则上调 MID 并披露欠功效。密度与追加是推导量，核集是既有资产。→ 服务 H-ZERO/H-DISC 判据的可解释性与规模论证的不可攻击性。
 - **P7 对照完备**：每个确认性对比配 floor（MRSET-RND）+ 参照（MRSET-ALN）+ 跨引擎语法参照（POOL-SYN 双引擎），阻断"效应是单一工具伪迹"的替代解释。→ 服务 EXP-DIS/EXP-EXT/EXP-STR 结论的排他性。
 
 ### 1.5 实验方法卡片
@@ -176,8 +176,9 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 
 **Files:** Create: `scripts/check_ssot_consistency.py`
 
-- [ ] **Step 1:** 实现：从 main.tex 提取全部统计数字（正则匹配 `\d+\.\d{2,4}` 邻接关键词 delta/CI/p/mean），与 SSOT JSON 键值比对，不一致则非零退出并列出差异表
+- [ ] **Step 1:** 实现：从 main.tex 提取全部统计数字（正则匹配 `\d+\.\d{2,4}` 邻接关键词 delta/CI/p/mean），与 SSOT JSON 键值比对，不一致则非零退出并列出差异表；schema 预留 \(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\) 双口径键（R-7：承接理论 T5.2 三态等价改造）
 - [ ] **Step 2:** 验证：`python scripts/check_ssot_consistency.py submission/TOSEM_regular_20260706/main.tex data/results/paper_numbers_v4.json`，当前应报出 δ 冲突（若 20260706 稿沿用旧值）；修正 main.tex 后重跑，期望 exit 0
+- [ ] **Step 2b（延迟触发，理论 T5.2 联动）:** 理论 Task T5.2（三态等价上稿）完成后，对 SSOT 执行一次性键迁移核对：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\) 重命名映射、\(\mathrm{SMS}_{\mathrm{cons}}\) 新增；diff 报告入 `docs/review_20260728/ssot_key_migration.md`。**此核对通过是 Phase 4 注数的前置门禁**
 - [ ] **Step 3:** Commit：`fix(ssot): reconcile v4 cliff delta + add manuscript-SSOT consistency gate`
 
 **REVIEW CHECKPOINT 0：作者确认裁定值与根因说明。此后任何稿件数字改动必须过 check_ssot_consistency。**
@@ -210,6 +211,7 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 **Files:** Create: `research/prereg_v2/hypotheses.md`、`scripts/prereg/analysis_hzero.py`、`analysis_hdisc.py`、`analysis_hcons.py`、`analysis_hdose.py`、`analysis_hcal_hrank.py`
 
 - [ ] **Step 1:** hypotheses.md 定稿六条（H-ZERO balanced accuracy ≥0.75 + McNemar；H-DISC 配对主口径：within-cell（aligned−cross）Wilcoxon 符号秩 + \(r_{\mathrm{mp}}\) ≥ 模拟锁定 MID 且 CI 下界 >0，非配对条件 Cliff's δ 降敏感性（v4 可比）；H-CONS Wilson 下界 >0.5；H-DOSE isotonic vs 常数置换检验；H-CAL accuracy/Brier 优于多数类；H-RANK 项目等权 Kendall τ ≥ MID——项目准入：就绪缺陷 ≥3、并列处理与合格项目数 J 报告规则明文、若 Task 1.2 Step 2b 可行性模拟功效 <0.8 则本条冻结前降为区间估计报告——\(\tau_{\mathrm{SMS}}-\tau_{\mathrm{MS}}\) 描述性）；每条注明推导来源定理（THM-GAP/THM-WIN/COR-ZERO）与降级路径
+- [ ] **Step 1b:** A-PROV 桥接假设显式化（R-6）：hypotheses.md 开篇声明 provenance-as-coverage 操作化（\(\mathrm{Cov}(R)\) = 适用矩阵 × MR 出处；权威表述=理论计划 §0.3 A-PROV 条目）；H-ZERO/H-DISC 的解读以 A-PROV 为前提，ξ 分布作为其诊断随判别结果并报
 - [ ] **Step 2:** 分析脚本按假设一比一实现，输入统一为 SSOT JSON 新键，输出统一 schema `{hypothesis, estimate, ci, p, verdict}`；对空输入跑通冒烟测试（合成数据）
 - [ ] **Step 3:** 冻结机制：`git tag prereg-v2-freeze && shasum -a 256 research/prereg_v2/* scripts/prereg/*.py > research/prereg_v2/FREEZE_MANIFEST.sha256`
 - [ ] **Step 4:** Commit
@@ -296,11 +298,11 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 ### Task 4.2：章节改写（按 writing-plan §0 处置表执行）
 
 - [ ] **Step 1:** §1：旗舰主张一句话替换摘要与贡献段；新 RQ1–RQ5 表（口径=本计划 §0.3）；**论文 2 边界段**（concurrent TOSEM submission 声明 + "元模式作为给定词汇消费"）；claim-evidence map 增补 THM-INT/THM-GAP/THM-WIN/PROP-IDF 行与外部锚行（骨架=§1.2 链路总表）
-- [ ] **Step 2:** §3 新增四小节：适用矩阵（引 prereg 哈希）、剂量反应设计、held-out source 对称协议、外部切片准入与盲化协议（含 §1.3.1 两段式标识）；baseline 小节并入 mutmut/random-floor/MS 排序三基线；对象选取原则段=§1.4 的 P1–P7 压缩版（≤1 段）；对象命名一律用 §1.1 语义集合名（KER-*/POOL-*/MRSET-*/DEF-*）
+- [ ] **Step 2:** §3 新增五小节：适用矩阵（引 prereg 哈希）、**A-PROV 桥接假设声明（provenance-as-coverage + ξ 诊断，R-6）**、剂量反应设计、held-out source 对称协议、外部切片准入与盲化协议（含 §1.3.1 两段式标识）；baseline 小节并入 mutmut/random-floor/MS 排序三基线；对象选取原则段=§1.4 的 P1–P7 压缩版（≤1 段）；对象命名一律用 §1.1 语义集合名（KER-*/POOL-*/MRSET-*/DEF-*）
 - [ ] **Step 3:** §4 重排：**先 H-ZERO 零预测准确率 → H-DISC 条件判别 → H-CONS/H-DOSE → 外部线 H-CAL/H-RANK → Prior Audit 小节（旧 H1–H4 原样 + 一段"为什么旧阈值与理论错配"）**；全部数字模板注入自 SSOT
 - [ ] **Step 4:** §5：缺口归因解读段（零膨胀的 \(\mathrm{Gap}_{\mathrm{aln}}(R)\) 部分=理论确认）、SMS vs MS 有界比较段（明示不做普适优越主张）、T1/T2/T4 接口段（各一句+引用）
 - [ ] **Step 5:** §6 Threats 新增：双重使用防火墙（旧数据用途清单）、外部切片选择披露（准入解耦声明+就绪失败案保留）、v5 provider 单一性、标注者安排披露（双人类 or 降级 test–retest + LLM 辅助声明）
-- [ ] **Step 6:** 每节改完即编译 + `python scripts/check_ssot_consistency.py` 过门禁；分节 commit
+- [ ] **Step 6:** 每节改完即编译 + `python scripts/check_ssot_consistency.py` 过门禁（SSOT 含 \(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\) 双口径键；键迁移核对须已按 Task 0.2 Step 2b 执行，R-7）；分节 commit
 
 ### Task 4.3：图表重生
 
