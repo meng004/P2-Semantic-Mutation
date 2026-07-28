@@ -15,14 +15,14 @@
 
 ## Task T3.1：现有 Prop 2 资产盘点
 
-- [ ] **Step 1:** `rg -n "Proposition 2|strong boundary|varepsilon_\{?\\\\mathrm\{tol\}" submission/TOSEM_regular_20260706/main.tex`，摘录 Prop 2 全文与其非形式假设进草稿
-- [ ] **Step 2:** 在 `research/theory_drafts/thm_window.md` 列假设清单：观测泛函对 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 的 Lipschitz 性（常数 \(L_r\)）、噪声界 \(\bar\eta\)（确定性=舍入；随机=\(c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}\)）、checker 阈值形式
+- [x] **Step 1:** 摘录 Prop 2 全文（main.tex:908–934）、strong/weak/strong boundary 定义（884–906）与 latency window（817–822）进草稿 §1，附五条非形式假设清单
+- [x] **Step 2:** 在 `research/theory_drafts/thm_window.md` 列假设清单：观测泛函对 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 的 Lipschitz 性（常数 \(L_r\)，仅承载剂量反应转移、不承载 (i)–(iii)）、噪声界 \(\bar\eta\)（确定性=舍入；随机=\(c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}\)）、checker 阈值形式（严格超出约定，对照 `mp1_conservation.py` 的 `≤ε⇒pass` 核实）
 
 ## Task T3.2：起草定理与推论
 
 **Files:** Create: `research/theory_drafts/thm_window.md`
 
-- [ ] **Step 1:** 写入（定稿基准，`[·]` 占位符在 Task T6.1 换成正文编号）：
+- [x] **Step 1:** 写入（定稿基准，`[·]` 占位符在 Task T6.1 换成正文编号）；另加 scope note：\(2\bar\eta\) 覆盖成对执行关系，MP_3 收敛阶关系每判定执行 p=4 网格（`src/p2/avp/dispatcher.py:15-16`），一般形式 \(p\bar\eta\)（陈述冻结不动，泛化入 scope note，CHECKPOINT T3 问题 2）：
 
 ```latex
 \textbf{Theorem [THM-WIN] (tolerance-indexed detection window).} Let $m_{\mathrm{mut}}$ carry
@@ -52,10 +52,10 @@ $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol
 
 （R-9：两条原拟推论改为 THM-WIN 定理环境内的 Remark，不占独立定理编号；其论证义务 PO-WIN-5/6 保留。）
 
-- [ ] **Step 2:** 写证明（误差预算三角不等式两次；对接 §2.9 latency window 定义，(iii) 由 S4 直接）
-- [ ] **Step 3:** 写"经验预测"小节：kill 概率沿 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\) —— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为推论实例
-- [ ] **Step 4:** 写"结构命运对应"注记（≤1 段）：以 \(\mu_r\) 与 \(\Delta_r\) 把 P3 的 MR 分类形式对接 v3.1 §4.2 结构命运四分类——\(\Delta_r=0\) ↔ 精确保持（strict MR）、\(0<\Delta_r\le\varepsilon_{\mathrm{tol}}\) ↔ 近似保持（strong/tolerance MR）、\(\Delta_r>\varepsilon_{\mathrm{tol}}\) ↔ 结构破坏（weak MR，即 REM-FPOS）、\(\Delta_r(h)\to0\) ↔ 渐近保持；注明这使 THM-WIN 成为 v3.1 引理 1（\(\Delta\le\tau\Rightarrow\mathrm{Valid}\)）在变异检测语境下的定量细化
-- [ ] **Step 5:** 逐 PUT 类评估 \(L_r\) 可估性，产出"不可估 PUT 清单"（供论证线 Task 2.3 替换剂量反应对象）；Commit
+- [x] **Step 2:** 写证明（误差预算三角不等式两次=H-a；对接 §2.9 latency window 定义，(iii) 由 S4 直接）；PO-WIN-1–6 全闭合；非退化边际域 \(\mu_r>2\bar\eta\) 独立成节（§4）供 LEM-WIT/THM-GAP 引用解析
+- [x] **Step 3:** 写"经验预测"小节：kill 概率沿 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 单调、转变区宽 \(O(\Delta_r+\bar\eta)\)、中心 \(\approx\varepsilon_{\mathrm{tol}}\)（含 H-DOSE-CTR 中心包含预测 \(\varepsilon_{\mathrm{tol}}\pm(\Delta_r+2\bar\eta)\)）—— 论证提升计划剂量反应实验 EXP-DOSE（H-DOSE）的预测来源；现有 boundary cases（PINN、RNG）改述为 REM-FPOS/REM-FNEG 实例（RNG=PO-WIN-6 侧条件失败实例）
+- [x] **Step 4:** 写"结构命运对应"注记（≤1 段）：以 \(\mu_r\) 与 \(\Delta_r\) 把 P3 的 MR 分类形式对接 v3.1 §4.2 结构命运四分类——\(\Delta_r=0\) ↔ 精确保持（strict MR）、\(0<\Delta_r\le\varepsilon_{\mathrm{tol}}\) ↔ 近似保持（strong/tolerance MR）、\(\Delta_r>\varepsilon_{\mathrm{tol}}\) ↔ 结构破坏（weak MR，即 REM-FPOS）、\(\Delta_r(h)\to0\) ↔ 渐近保持；注明这使 THM-WIN 成为 v3.1 引理 1（\(\Delta\le\tau\Rightarrow\mathrm{Valid}\)）在变异检测语境下的定量细化
+- [x] **Step 5:** 逐 PUT 类评估 \(L_r\) 可估性（12 核逐一入表），产出"不可估 PUT 清单"：**C3（shallow-NN）、D1（MLP）、D2（SVM）不可估；C1（GPR）条件可估（须冻结核超参，或 Task 2.3 换 PCE）**；供论证线 Task 2.3 替换剂量反应对象；Commit
 
 ---
 
