@@ -3,7 +3,7 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans。任务用 checkbox 跟踪。
 > **执行模型:** `gpt-5.6-terra-max`（分派类别：**逻辑评审或审计**——跨文档符号逐项核对是审计作业；跨家族视角独立于后续起草证明的 fable）。非此模型请勿执行本文件。
 
-**Master plan（规格权威）:** `docs/superpowers/plans/2026-07-28-p3-theory-enhancement.md`。开工前必读其 §0 全部（0.1 命名规约、0.2 符号总表、0.3 定义清单、0.4 冲突消解表、0.5 标签映射）。内容冲突以 master 为准，修订先改 master 再同步本文件。
+**Master plan（规格权威）:** `docs/superpowers/plans/2026-07-28-p3-theory-enhancement.md`。开工前必读其 §0 全部（0.1 命名规约、0.2 符号总表、0.3 定义与方法学假设清单、0.4 冲突消解表、0.5 标签映射）。内容冲突以 master 为准，修订先改 master 再同步本文件。
 
 **前置门禁:** 无（本阶段是理论线全部后续阶段的前置）。
 

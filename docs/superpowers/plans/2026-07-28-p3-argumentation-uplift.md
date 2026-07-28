@@ -321,7 +321,7 @@ rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 
 - [ ] **Step 1:** academic-pipeline stage 检测（终稿 → stage 4.5 FINAL INTEGRITY）
 - [ ] **Step 2:** 参考文献真实性校验（paper-search MCP 逐条，审计表落 `docs/review_<DATE>/reference_verification.md`；门槛 ✗=0、△≤5）
-- [ ] **Step 3:** proofread：数字/交叉引用/符号先用后定义（对照理论计划 §0.2 总表逐项）/图表 caption 一致性
+- [ ] **Step 3:** proofread：数字/交叉引用/符号先用后定义（对照理论计划 §0.2 总表逐项）/图表 caption 一致性；**标签一致性门禁（F-14）**：rg 全稿核查——旧标签零残留（`PROP-IDF|COR-FPOS|COR-FNEG`=0；`H1`–`H4` 仅限 Prior Audit 小节；`E3c`、旧 `RQ5`=0）、H-/EXP-/THM-/RQ 标签与论证 §0.3 + 理论 §0.5 注册表一致、对象仅用语义集合名（KER-*/POOL-*/MRSET-*/DEF-*）、mp-cell 与新 cell 不混称
 - [ ] **Step 4:** humanizer 去 AI 化（em-dash 零容忍、AI 高频词清单、连接词保留规则）
 - [ ] **Step 5:** 构建验证：两遍编译 + `grep -c "Missing character" main.log`=0 + check_ssot_consistency=0；arXiv 预印本 tarball 同步构建（.bbl 内联、图平铺）；Commit + tag `tosem-v2-submitted`
 

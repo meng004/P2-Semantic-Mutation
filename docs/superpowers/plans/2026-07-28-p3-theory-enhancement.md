@@ -76,7 +76,7 @@
 | 34 | S1–S5 | sanity gate 编号 | 现稿 §2.8 | 门禁标签非数学符号，沿用 |
 | 35 | E1∧E2 | 判等程序编号 | 现稿 §2.3 | 与实验标签空间分离（实验一律 `EXP-` 前缀，见论证计划 §0.3） |
 
-### 0.3 形式化定义清单（先于定理正文冻结）
+### 0.3 形式化定义与方法学假设清单（先于定理正文冻结；A-PROV 为方法学假设，非 DEF 条目，F-12）
 
 - **DEF-01（三态等价）**：候选体 \(P'\) 处于且仅处于一态：`CERTIFIED_EQUIVALENT`（存在机器可核验证书 \(c\in\mathcal C\) 证 \(P'\equiv_\alpha P\)）、`CONFIRMED_NON_EQUIVALENT`（存在见证 \(x:\ \|\alpha(\Phi_P(x))-\alpha(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}\)）、`EQUIVALENCE_UNRESOLVED`（两者皆无；含现行 E1∧E2 抽样一致者）。
 - **DEF-02（计数）**：\(n=|\text{confirmed non-equiv}|\)，\(k=\) 其中被 \(R\) 杀死数，\(u=|\text{unresolved 存活}|\)，\(u_{\mathrm{neq}}\in[0,u]\) 为 unresolved 中真非等价数（未知量）。
@@ -257,7 +257,7 @@ $R\subseteq R'$ both endpoints are non-decreasing.
 
 **Files:** Create: `scripts/theory/interval_demo.py`；Output: `data/results/interval_demo_v4.json`
 
-- [ ] **Step 1:** 从 v4 prescreen 台账统计每 cell 的 (n, k, u)：u 取"仅由 K_eq 抽样判等、无 AST/证书"的候选数。数据源定位：`rg -l "equiv" data/ --glob "*v4*"`
+- [ ] **Step 1:** 从 v4 prescreen 台账统计每 mp-cell 的 (n, k, u)：u 取"仅由 K_eq 抽样判等、无 AST/证书"的候选数（输入=prescreen 计数台账，与论证线 Phase 0 的 δ 冲突正交，无需等其 CHECKPOINT 0，F-13）。数据源定位：`rg -l "equiv" data/ --glob "*v4*"`
 - [ ] **Step 2:** 输出每 mp-cell（v4 遗产划分 12 PUT × 5 MP，F-8）与总体的 [SMS_cons, SMS_strict] 及宽度分布；写入 JSON（键名 `mp_cells`；新键，不改旧键）
 - [ ] **Step 3:** 验证：`python scripts/theory/interval_demo.py && python -c "import json;d=json.load(open('data/results/interval_demo_v4.json'));print(len(d['mp_cells']))"` 期望 60（mp-cell 口径，F-8）
 - [ ] **Step 4:** Commit（此结果只作 §2.10 演示图，标注 development-only）
