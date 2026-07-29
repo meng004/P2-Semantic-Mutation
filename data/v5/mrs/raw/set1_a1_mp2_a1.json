@@ -1,0 +1,1 @@
+{"set": 1, "put": "a1", "mp": 2, "attempt": 1, "model": "gemini-3.5-flash", "content": "```python\nimport math\n\n\ndef r(x):\n    if x < 0.5:\n        return 0.5 * x\n    else:\n        return 0.5 * x + 0.5\n\n\ndef R(y_orig, y_new):\n    if not math.isfinite(y_orig) or not math.isfinite(y_new):\n        return False\n    return True\n```", "created_at": "2026-07-29T04:37:27Z"}

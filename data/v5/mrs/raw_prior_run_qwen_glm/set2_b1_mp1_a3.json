@@ -1,0 +1,1 @@
+{"set": 2, "put": "b1", "mp": 1, "attempt": 3, "model": "glm-4.7", "content": "```python\ndef r(x):\n    return 1.0 - x\n\ndef R(y_orig, y_new):\n    return abs(y_orig + y_new - 1.0) < 1e-9\n```", "created_at": "2026-07-29T03:52:19Z"}

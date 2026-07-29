@@ -1,0 +1,1 @@
+{"set": 1, "put": "b3", "mp": 2, "attempt": 1, "model": "gemini-3.5-flash", "content": "```python\nimport numpy as np\n\n\ndef r(x):\n    return 0.5 * float(x) + 0.5\n\n\ndef R(y_orig, y_new):\n    return (\n        np.isfinite(y_orig)\n        and np.isfinite(y_new)\n        and float(y_new) > float(y_orig)\n    )\n```", "created_at": "2026-07-29T04:40:46Z"}

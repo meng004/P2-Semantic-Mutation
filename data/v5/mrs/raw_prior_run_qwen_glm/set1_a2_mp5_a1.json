@@ -1,0 +1,1 @@
+{"set": 1, "put": "a2", "mp": 5, "attempt": 1, "model": "qwen3-235b-a22b-instruct-2507", "content": "```python\ndef r(x):\n    x = float(x)\n    return 1.0 - np.exp(-10 * (1 - x))\n\ndef R(y_orig, y_new):\n    return y_new > y_orig - 1e-9\n```", "created_at": "2026-07-29T03:33:33Z"}

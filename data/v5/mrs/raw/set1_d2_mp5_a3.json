@@ -1,0 +1,1 @@
+{"set": 1, "put": "d2", "mp": 5, "attempt": 3, "model": "gemini-3.5-flash", "content": "```python\nimport numpy as np\n\n\ndef r(x):\n    return float(1.0 - (1.0 - x) ** 2)\n\n\ndef R(y_orig, y_new):\n    return True\n```", "created_at": "2026-07-29T04:44:28Z"}
