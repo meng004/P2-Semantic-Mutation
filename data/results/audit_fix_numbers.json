@@ -1,0 +1,516 @@
+{
+  "_provenance": "scripts/audit_fix_numbers.py over frozen v3/v4 SSOT; primary map = pre-registered v3 (c-class MP5)",
+  "h2_slice_v4_mp5primary": {
+    "n_aligned": 12,
+    "n_cross": 48,
+    "mean_aligned": 0.2133,
+    "mean_cross": 0.0767,
+    "median_aligned": 0.1,
+    "median_cross": 0.0,
+    "zero_aligned": 6,
+    "zero_cross": 39,
+    "nonzero_aligned": 6,
+    "nonzero_cross": 9,
+    "binarized_or": 4.33
+  },
+  "h2_slice_v3_mp5primary": {
+    "n_aligned": 12,
+    "n_cross": 48,
+    "mean_aligned": 0.183,
+    "mean_cross": 0.0636,
+    "median_aligned": 0.0833,
+    "median_cross": 0.0,
+    "zero_aligned": 6,
+    "zero_cross": 40,
+    "nonzero_aligned": 6,
+    "nonzero_cross": 8,
+    "binarized_or": 5.0
+  },
+  "h2_delta_ssot": {
+    "v4_mp5": {
+      "delta": 0.3142361111111111,
+      "ci": [
+        0.01384548611111115,
+        0.6215277777777778
+      ],
+      "mean_aligned": 0.213325,
+      "mean_cross": 0.07667291666666666,
+      "median_aligned": 0.1,
+      "median_cross": 0.0
+    },
+    "v3": {
+      "delta": 0.323,
+      "design": "v3 same-source, MP5"
+    },
+    "v4_mp1_posthoc": {
+      "delta": 0.439,
+      "design": "v4 cross-source, MP1 (v3b post-hoc)"
+    }
+  },
+  "h1_v4": {
+    "per_operator": {
+      "CE": {
+        "puts_ge5": 7,
+        "puts": [
+          "a1",
+          "a2",
+          "a3",
+          "b1",
+          "b2",
+          "b3",
+          "c3"
+        ],
+        "per_put": {
+          "a1": 9,
+          "a2": 9,
+          "a3": 9,
+          "b1": 9,
+          "b2": 9,
+          "b3": 9,
+          "c1": 1,
+          "c2": 0,
+          "c3": 9,
+          "d1": 0,
+          "d2": 0,
+          "d3": 0
+        }
+      },
+      "OS": {
+        "puts_ge5": 7,
+        "puts": [
+          "a1",
+          "a2",
+          "a3",
+          "b1",
+          "b3",
+          "c2",
+          "d2"
+        ],
+        "per_put": {
+          "a1": 6,
+          "a2": 9,
+          "a3": 9,
+          "b1": 9,
+          "b2": 0,
+          "b3": 9,
+          "c1": 0,
+          "c2": 9,
+          "c3": 0,
+          "d1": 0,
+          "d2": 9,
+          "d3": 0
+        }
+      },
+      "HP": {
+        "puts_ge5": 8,
+        "puts": [
+          "a1",
+          "b1",
+          "b2",
+          "c2",
+          "c3",
+          "d1",
+          "d2",
+          "d3"
+        ],
+        "per_put": {
+          "a1": 9,
+          "a2": 0,
+          "a3": 0,
+          "b1": 9,
+          "b2": 9,
+          "b3": 0,
+          "c1": 0,
+          "c2": 9,
+          "c3": 9,
+          "d1": 9,
+          "d2": 9,
+          "d3": 9
+        }
+      },
+      "TF": {
+        "puts_ge5": 6,
+        "puts": [
+          "c1",
+          "c2",
+          "c3",
+          "d1",
+          "d2",
+          "d3"
+        ],
+        "per_put": {
+          "a1": 0,
+          "a2": 0,
+          "a3": 0,
+          "b1": 0,
+          "b2": 0,
+          "b3": 0,
+          "c1": 9,
+          "c2": 9,
+          "c3": 9,
+          "d1": 9,
+          "d2": 9,
+          "d3": 9
+        }
+      },
+      "SI": {
+        "puts_ge5": 4,
+        "puts": [
+          "a1",
+          "a2",
+          "d1",
+          "d3"
+        ],
+        "per_put": {
+          "a1": 6,
+          "a2": 9,
+          "a3": 0,
+          "b1": 0,
+          "b2": 0,
+          "b3": 2,
+          "c1": 0,
+          "c2": 0,
+          "c3": 0,
+          "d1": 9,
+          "d2": 0,
+          "d3": 7
+        }
+      },
+      "CF": {
+        "puts_ge5": 1,
+        "puts": [
+          "b2"
+        ],
+        "per_put": {
+          "a1": 0,
+          "a2": 0,
+          "a3": 0,
+          "b1": 0,
+          "b2": 9,
+          "b3": 0,
+          "c1": 0,
+          "c2": 0,
+          "c3": 0,
+          "d1": 0,
+          "d2": 0,
+          "d3": 0
+        }
+      }
+    },
+    "operators_clearing_9put_bar": [],
+    "h1_pass_count": 0
+  },
+  "h3_v4": {
+    "delta_sms": {
+      "a": 0.3333,
+      "b": 0.093,
+      "c": -0.0284,
+      "d": 0.1486
+    },
+    "sign_positive": 3,
+    "inverted_classes": [
+      "c"
+    ],
+    "cv_sample": 1.102
+  },
+  "h3_v3": {
+    "delta_sms": {
+      "a": 0.3333,
+      "b": 0.125,
+      "c": -0.0583,
+      "d": 0.0777
+    },
+    "sign_positive": 3,
+    "inverted_classes": [
+      "c"
+    ],
+    "cv_sample": 1.36
+  },
+  "class_means": {
+    "v3": {
+      "a": 0.0667,
+      "b": 0.1556,
+      "c": 0.0467,
+      "d": 0.0811
+    },
+    "v4": {
+      "a": 0.0667,
+      "b": 0.1478,
+      "c": 0.0894,
+      "d": 0.1122
+    }
+  },
+  "h4_v4": {
+    "_incl_L0_note": "incl-L0 readings treat LRCA L0-prescreened artefact kills as suspect over the SMS killed denominator",
+    "cells_total": 60,
+    "cells_zero_kill_NA": 45,
+    "cells_evaluable": 15,
+    "macro_mean_kill_cells": 0.1633,
+    "median_kill_cells": 0.0,
+    "pooled_suspect_share": 0.1875,
+    "total_kills_lrca": 144,
+    "suspect_kills": 27,
+    "cells_le_020": 12,
+    "cells_le_020_aligned": 5,
+    "cells_le_020_cross": 7,
+    "cutoff_sweep_evaluable": {
+      "0.05": 12,
+      "0.1": 12,
+      "0.15": 12,
+      "0.2": 12,
+      "0.25": 12,
+      "0.3": 12,
+      "0.35": 12,
+      "0.4": 12,
+      "0.45": 13,
+      "0.5": 13
+    },
+    "implemented_rule_mean_all60": 0.7908
+  },
+  "h4_v4_incl_l0": {
+    "pooled_incl_L0": 0.2353,
+    "suspect_incl_L0": 36,
+    "total_kills_sms": 153,
+    "macro_incl_L0_kill_cells": 0.1856,
+    "mean_sms_c1_60cells": 0.0873,
+    "nonzero_sms_c1_cells": 13
+  },
+  "v3_unresolved_census": {
+    "cells_with_equiv": 10,
+    "equiv_incidences": 80,
+    "all_zero_kill": true,
+    "cells": {
+      "A3_MP1": {
+        "equiv": 1,
+        "killed": 0
+      },
+      "A3_MP2": {
+        "equiv": 1,
+        "killed": 0
+      },
+      "A3_MP3": {
+        "equiv": 1,
+        "killed": 0
+      },
+      "A3_MP4": {
+        "equiv": 1,
+        "killed": 0
+      },
+      "A3_MP5": {
+        "equiv": 1,
+        "killed": 0
+      },
+      "C1_MP1": {
+        "equiv": 15,
+        "killed": 0
+      },
+      "C1_MP2": {
+        "equiv": 15,
+        "killed": 0
+      },
+      "C1_MP3": {
+        "equiv": 15,
+        "killed": 0
+      },
+      "C1_MP4": {
+        "equiv": 15,
+        "killed": 0
+      },
+      "C1_MP5": {
+        "equiv": 15,
+        "killed": 0
+      }
+    }
+  },
+  "friedman_v4": {
+    "chi2": 16.76,
+    "p": 0.00215,
+    "rank_means": [
+      3.083,
+      2.583,
+      2.0,
+      3.0,
+      4.333
+    ],
+    "per_class_raw_p": {
+      "a": 0.406,
+      "b": 0.0351,
+      "c": 0.2311,
+      "d": 0.2873
+    },
+    "per_class_adj_p": {
+      "a": 1.0,
+      "b": 0.1402,
+      "c": 0.9243,
+      "d": 1.0
+    },
+    "per_class_W": {
+      "a": 0.333,
+      "b": 0.862,
+      "c": 0.467,
+      "d": 0.417
+    }
+  },
+  "pattern_coverage_v4": {
+    "mean": 0.75,
+    "rho": 0.1628,
+    "tau": 0.1357,
+    "per_put": {
+      "a1": {
+        "pattern_coverage": 0.5,
+        "mean_sms_over_5_cells": 0.0
+      },
+      "a2": {
+        "pattern_coverage": 0.6,
+        "mean_sms_over_5_cells": 0.2
+      },
+      "a3": {
+        "pattern_coverage": 0.6,
+        "mean_sms_over_5_cells": 0.0
+      },
+      "b1": {
+        "pattern_coverage": 0.7,
+        "mean_sms_over_5_cells": 0.2
+      },
+      "b2": {
+        "pattern_coverage": 1.0,
+        "mean_sms_over_5_cells": 0.1333
+      },
+      "b3": {
+        "pattern_coverage": 0.7,
+        "mean_sms_over_5_cells": 0.11
+      },
+      "c1": {
+        "pattern_coverage": 0.9,
+        "mean_sms_over_5_cells": 0.12
+      },
+      "c2": {
+        "pattern_coverage": 0.8,
+        "mean_sms_over_5_cells": 0.0
+      },
+      "c3": {
+        "pattern_coverage": 1.0,
+        "mean_sms_over_5_cells": 0.1481
+      },
+      "d1": {
+        "pattern_coverage": 0.7,
+        "mean_sms_over_5_cells": 0.1333
+      },
+      "d2": {
+        "pattern_coverage": 0.8,
+        "mean_sms_over_5_cells": 0.0593
+      },
+      "d3": {
+        "pattern_coverage": 0.7,
+        "mean_sms_over_5_cells": 0.144
+      }
+    }
+  },
+  "pool_sizes_v4": {
+    "per_put": {
+      "a2": 27,
+      "a3": 18,
+      "b1": 27,
+      "b2": 27,
+      "b3": 20,
+      "c1": 10,
+      "c2": 27,
+      "a1": 30,
+      "c3": 27,
+      "d1": 27,
+      "d2": 27,
+      "d3": 25
+    },
+    "mean": 24.3,
+    "min": 10,
+    "max": 30,
+    "total": 292
+  },
+  "put_loc": {
+    "a1": {
+      "loc": 32,
+      "bytes": 934
+    },
+    "a2": {
+      "loc": 19,
+      "bytes": 613
+    },
+    "a3": {
+      "loc": 35,
+      "bytes": 1203
+    },
+    "b1": {
+      "loc": 24,
+      "bytes": 745
+    },
+    "b2": {
+      "loc": 32,
+      "bytes": 996
+    },
+    "b3": {
+      "loc": 19,
+      "bytes": 652
+    },
+    "c1": {
+      "loc": 27,
+      "bytes": 1057
+    },
+    "c2": {
+      "loc": 26,
+      "bytes": 974
+    },
+    "c3": {
+      "loc": 32,
+      "bytes": 971
+    },
+    "d1": {
+      "loc": 31,
+      "bytes": 1089
+    },
+    "d2": {
+      "loc": 25,
+      "bytes": 927
+    },
+    "d3": {
+      "loc": 24,
+      "bytes": 893
+    }
+  },
+  "coverage_matrix_partition": {
+    "substantial": 32,
+    "moderate": 19,
+    "vacant": 9,
+    "aligned": {
+      "substantial": 10,
+      "moderate": 1,
+      "vacant": 1
+    },
+    "cross": {
+      "substantial": 22,
+      "moderate": 18,
+      "vacant": 8
+    }
+  },
+  "sms_totals_v4": {
+    "total_kill_incidences_60cells": 153,
+    "cells_zero_sms": 45,
+    "mean_sms": 0.104,
+    "median_sms": 0.0,
+    "std_sms": 0.2109
+  },
+  "xi_summary": {
+    "definition": "xi = block-off-diagonal kill mass / total kills; NA when total kills = 0",
+    "fiber_source": "generation-time operator category (CE->1 OS->2 HP->3 TF->4 SI->5; CF/unparseable = off-taxonomy)",
+    "total_kills": 153,
+    "offdiag_kills": 117,
+    "xi_pooled": 0.7647,
+    "cells_evaluable": 15,
+    "cells_NA": 45,
+    "xi_pooled_aligned_cells": 0.7231,
+    "xi_pooled_cross_cells": 0.7955,
+    "diagonal_kills_by_category": {
+      "CE": 27,
+      "OS": 9
+    }
+  }
+}
