@@ -15,11 +15,15 @@
 
 ## Task 2.1：新变异体生成（v5 lineage，EXP-CON）
 
+> **状态：BLOCKED（环境无 LLM API 密钥）。** 管线已备好一键可跑：`scripts/v5/generate_v5_mutants.py`（fail-fast 列出所需 env：`BLTCY_API_KEY`/`BLTCY_BASE_URL`）；台账/漏斗模板已预填（prompt SHA-256=`06fa552d…`）。密钥注入后按 Step 1–3 执行。**严禁伪造 LLM 输出。**
+
 - [ ] **Step 1:** 按 Task 1.2 锁定配置在 applicable cell 生成新变异体（生成器版本、seed、prompt 哈希入台账 `data/v5/GENERATION_LEDGER.md`）；逐个赋统一标识 `mut-<算子>-<PUT>-<序号>`（master §1.3.2）
 - [ ] **Step 2:** 全漏斗插桩：parse/build/trigger/E1∧E2/证书 各级损耗计数落 SSOT 新键 `funnel_v5`
 - [ ] **Step 3:** 跑 `analysis_hcons.py`，verdict 入 SSOT；Commit
 
 ## Task 2.2：held-out MR source（v5-MR，EXP-DIS）
+
+> **状态：BLOCKED（同 2.1）。** 候选 provider 排序（排除 v4 的 Claude/GPT/DeepSeek）：Gemini > Qwen > Mistral > Llama-hosted；对称清单模板已预填 v4 侧参数（`data/v5/MR_SOURCE_SYMMETRY.md`）。
 
 - [ ] **Step 1:** 选定未用过的 provider（候选按对称协议可满足性排序），逐项核对对称清单：prompt=v4 同文、parser 同版、候选数/修复次数/预算/温度同值；清单存 `data/v5/MR_SOURCE_SYMMETRY.md`
 - [ ] **Step 2:** 生成 aligned/cross MR 集 → prescreen → kill 矩阵
@@ -27,17 +31,19 @@
 
 ## Task 2.3：剂量反应实验（EXP-DOSE，H-DOSE）
 
-- [ ] **Step 1:** 参数化算子实现：HP（超参幅度）与 CE（守恒侵蚀强度）各设 ≥6 档幅度网格，每档名义+实测实现 \(\varepsilon_m\) 两轴标定入台账（master §1.3.3，F-10：实现轴用直接不变量违反泛函，不经 MR 检查器）；对象=每类一核（Lorenz、MC 积分、GPR、LogReg，数据键 A1/B3/C1/D3；若理论线 Phase T3 判某核的 Lipschitz 常数 \(L_r\) 不可估则按其清单替换）
-- [ ] **Step 2:** 每档 × 按 power_report 锁定的重复数（≤960 总执行上限，F-4）执行 kill 判定（个体标识 `mut-<算子>-<PUT>-e<档位>-r<重复>`），曲线数据落 SSOT `dose_response_v5`
-- [ ] **Step 3:** 跑 `analysis_hdose.py`（isotonic vs 常数，置换 p；Page's L）；同时判定 **H-DOSE-CTR（B-2）**：转变中心是否落于 \(\varepsilon_{\mathrm{tol}}\pm(\Delta_r+2\bar\eta)\)（逐曲线，横轴=实测实现 \(\varepsilon_m\)；判据=冻结锁定值，候选 ≥6/8）；Commit
+- [x] **Step 1:** 参数化算子实现 + F-10 双轴标定 + **窗口冻结**（`data/dose/WINDOWS_FROZEN.json`，commit `f7ca7cc`，先于任何剂量产物；随后 Amendment #2（`9b9939b`）以仪器分辨率下限修复 6/8 确定性核的退化窗，均在执行前）
+- [x] **Step 2:** 960/960 执行（0 错误，56s），曲线数据落 `data/dose/dose_response_v5.json`（commit `2378065`）
+- [x] **Step 3:** 冻结脚本裁决：**H-DOSE PASS**（全局置换 p=9.999e-5，由 CE-B3/CE-C1 干净转变驱动）；**H-DOSE-CTR FAIL（2/8，判据 ≥6/8）**——诚实落账；归因：CE-D3 硬界提前触发（转变在网格左侧）、CE-A1 与全部 HP 曲线的 aligned 检查器弱/近空（kill 通道不动而实现轴单调上升）→ A-PROV 操作化失配 + REM-FPOS 叙事素材，留 CHECKPOINT 2 汇报
 
 ## Task 2.4：语法基线扩充（EXP-STR）
 
-- [ ] **Step 1:** cosmic-ray 既有 1,250 一阶变异体与 v4+v5 语义变异体（POOL-SEM）做 AST 归一化精确重叠审计（复用现有审计脚本，`rg -l "ast" scripts/ | head` 定位；引擎版本钉扎入台账，R-10）
-- [ ] **Step 2:** 构造性论证文档（R-10，替代第二引擎运行）：整理 cosmic-ray 与 mutmut 公开算子清单，逐族映射到"一阶 AST 局部编辑"类，论证语法引擎可达集边界；材料入 `docs/review_20260728/syntactic_reach.md`
-- [ ] **Step 3:** 重叠表 + 论证文档索引入 SSOT `syntactic_overlap_v2`；Commit
+- [x] **Step 1:** v4 池 AST 归一化重叠审计：15/292=5.14%，HP/SI/TF 零重叠（lineage=已提交审计 JSON；会话 sqlite 不在仓库，未咨询）；**v5 增补审计待 POOL-SEM v5 落地后重跑**（完整性注记，非阻塞）
+- [x] **Step 2:** 构造性论证文档 `docs/review_20260728/syntactic_reach.md`（cosmic-ray + mutmut 算子族 → 一阶 AST 局部编辑类；HOM 不作反驳声明）
+- [x] **Step 3:** `data/results/syntactic_overlap_v2.json` 入库（commit `f7ca7cc`）
 
 ## Task 2.5：add-one 修复干预（EXP-FIX，H-FIX，B-4）
+
+> **状态：BLOCKED（依赖 Task 2.1/2.2 的 POOL-SEM v5 与 MRSET-ALN）。**
 
 - [ ] **Step 1:** 按预注册抽样规则（冻结 seed）从预测非零对比集中抽 10–15 个 Gap_aln>0 的 cell；对每 cell 构造增广集 \(R^+\) = cross ∪ {一条目标层 aligned MR（取自已生成 MRSET-ALN，不新生成）}
 - [ ] **Step 2:** 复用 POOL-SEM 既有变异体补跑 \(R^+\) kill 判定（仅增量执行）；结果落 SSOT 新键 `fix_intervention_v5`

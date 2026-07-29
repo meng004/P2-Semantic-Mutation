@@ -15,11 +15,15 @@
 
 ## Task 3.1：重裁与就绪检查
 
-- [ ] **Step 1:** 对 Defect4MR 64 候选按 Task 1.4 三条准入重裁，产出 `data/external_slice/admission_sheet.csv`（列：neutral_id=`EXT-<repo>-<序号>`、issue_url、buggy_sha、fixed_sha、三条判定、纳入/排除理由；analysis_id 列此阶段留空，Task 3.2 映射冻结后回填）；预期可纳入池 ≥25（verified_full 35 − 10 映射训练例=25 去掉 oracle 条件后基本全过 + candidate_full 16 部分过；训练例以 `MAPPING_TRAIN` 单列，F-1）
+> **状态（2026-07-29，执行=gpt-5.6-sol-xhigh 代 terra，已披露）：** Defect4MR 64 池工件不在本工作区（作者本地 P12 仓库 / Zenodo 版本不可取）→ 64 池重裁 **BLOCKED**；补充挖掘试点已真实执行（gh 只读，44 次调用）：admission_sheet 9 行（6 ADMIT_PENDING_REPRO：numpy 1 / scipy 1 / sklearn 1 / statsmodels 3；3 EXCLUDED 带理由），中性纪律 grep 零违例，analysis_id 全空。复现（双臂构建+触发）为下一步可执行项。挖掘规程=`docs/review_20260728/external_admission_runbook.md`。
+
+- [ ] **Step 1:** 对 Defect4MR 64 候选按 Task 1.4 三条准入重裁，产出 `data/external_slice/admission_sheet.csv`（列：neutral_id=`EXT-<repo>-<序号>`、issue_url、buggy_sha、fixed_sha、三条判定、纳入/排除理由；analysis_id 列此阶段留空，Task 3.2 映射冻结后回填）；预期可纳入池 ≥25（verified_full 35 − 10 映射训练例=25 去掉 oracle 条件后基本全过 + candidate_full 16 部分过；训练例以 `MAPPING_TRAIN` 单列，F-1）——**64 池部分待工件；补充挖掘已开动（见上）**
 - [ ] **Step 2:** 就绪检查：逐案跑双臂构建+触发冒烟（复用 `reproducers/`），失败案标 `REPRO_FAILED` 保留不替换；目标就绪 n≥20、≥8 项目（其中入 \(\bar\tau\) 分析的项目需就绪缺陷 ≥3，计入补充挖掘目标），不足则按 master §1.3.1 白名单+检索信号词启动补充挖掘（准入判定同 Task 1.4 三条）
 - [ ] **Step 3:** **切片冻结**：名单 SHA256 入 `data/external_slice/FREEZE.sha256`；Commit
 
 ## Task 3.2：盲化 fiber 映射
+
+> **状态：标注包模板与流程文档已备（`data/external_slice/annotation/`，κ 门禁接 `analysis_hcal_hrank.py::kappa_gate`）；BLOCKED on 两名人类标注者（R-4 降级仍需一名人类 + ≥2 周 test–retest）。**
 
 - [ ] **Step 1:** 发放标注包（缺陷描述+fix diff，无任何 MR/kill 信息；不含 DEF-CAL 训练 10 例，F-1）；两名人类标注者独立标注（或按 Task 1.4 预注册降级方案执行单人 test–retest）
 - [ ] **Step 2:** 计算 κ（`analysis_hcal_hrank.py` 内置函数）；κ<0.6 → 协议修订一轮重标（预注册允许一次）；仍不达 → DIRECT 主分析降敏感性分析（降级路径生效）
