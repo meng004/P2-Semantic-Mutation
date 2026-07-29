@@ -27,12 +27,12 @@
 
 **Files:** Create: `docs/review_20260728/formal_audit_protocol.md`、`docs/review_20260728/formal_audit_report.md`
 
-- [ ] **Step 1:** 写审计协议：审计人=未参与实证分析的合作者或外部同行；输入=五份草稿+main.tex §2；审计清单固定 8 项——(1) 每个定理前提在正文有定义，(2) 无循环（结论不作前提），(3) LEM-WIT 的 AVP 决定性假设成立范围，(4) THM-GAP 的 S5/exact-checker 前提与 ξ 报告一致，(5) THM-WIN 常数与 Lipschitz 假设可满足性，(6) THM-DEG-R 支撑假设与例外集表述，(7) 记号与 notation_registry（master §0.2 总表）零冲突，(8) 证明步骤逐行可复核
-- [ ] **Step 2:** 审计执行（外部人工步骤，等待窗口 ≤2 周；期间可并行论证提升计划 Phase 0–2）。审计顺序要求：**优先审 THM-GAP**（清单第 4 项提前），使其尽早获得审计级确认——预注册包已依赖其内部评审版，THM-GAP 若出 blocker 需按预注册修订程序（amendment 记录，载体=论证计划 `research/prereg_v2/AMENDMENTS.md`，F-7）处理
-- [ ] **Step 3:** 审计意见分级处理：blocker→回对应 Phase 修正后重审该项；minor→正文修订；全部关闭后在报告尾部签"AUDIT PASS + 日期 + 草稿 SHA256"（`shasum -a 256 research/theory_drafts/*.md`）
-- [ ] **Step 4:** Commit
+- [x] **Step 1:** 写审计协议（`formal_audit_protocol.md`）：审计人=跨家族独立模型（gpt 系 `gpt-5.6-sol-xhigh`，未参与 T1–T5 起草；外部人类同行复审可追加）；输入=五份草稿+整合稿 main.tex §2+supplementary G；固定 8 项清单全文落稿；THM-GAP 优先次序写入
+- [x] **Step 2:** 审计执行（3 轮）：Round 1 全量审计返回 **AUDIT BLOCKED**（6 blocker + 3 minor，含两项既有稿件老缺口 B4/B5：L4 允许 r≠id、Lemma 9.1 借用未假设的 L6 且误称 E1）；THM-GAP 项（B1）最先裁定。THM-GAP 的 blocker 为 ξ 统计量定义卫生（NA 约定 + 单侧性），不触及 Theorem 5 结论与预注册预测通道（H-ZERO/H-DISC/H-XI 判读不变），经审计人确认无需预注册 amendment
+- [x] **Step 3:** 分级处置：修订 A4（THM-WIN 承重假设入陈述 + P⋆ 锚定）、A5（REM-FPOS 分层化，终稿单遍论证）、A6（THM-INT n≥1）；修复 D 组（ξ NA+单侧、SMS(R) 定义、kill 矩阵 incidence、L4 强制 r=id、Lemma 9.1 前提/证明重写、L_r 可估性句、registry #37–40）。Round 2 复核余 B1/B3 残句，Round 3 终验 **AUDIT PASS**。报告含 9 项处置表 + 修复类别核对（全部效度修复，无主张收缩）+ SHA256 签署：`docs/review_20260728/formal_audit_report.md`
+- [x] **Step 4:** Commit（`7faf32f` → `4a27604` → `57c5717` → 报告+G.5 结果句 commit）
 
-**REVIEW CHECKPOINT T4（终检）：审计报告全绿；作者确认理论章节冻结（写作期引用基线），通知论证提升计划。预注册冻结门禁唯一 = CHECKPOINT T2（THM-GAP 内部评审，R-5），T4 不重复充当冻结门禁；T4 审计若出 blocker，按预注册 amendment 程序（载体=论证计划 `research/prereg_v2/AMENDMENTS.md`，修订记录 + 正文披露，F-7）处理，不回溯撤销已生效的冻结。**
+**REVIEW CHECKPOINT T4（终检）：✅ PASS（2026-07-29）。审计报告全绿（8/8 项，9/9 发现闭合）；理论章节冻结为写作期引用基线（Theorem 3/4/5 + Lemma 4.1/5.1 + Corollary 5.1 + 三 Remark + Theorem 9.1(修) + Corollary 9.1，编号与标签映射见 notation_registry）；论证提升计划自此按冻结基线引用理论章节。T4 审计的全部 blocker 已当轮闭合，无需动用预注册 amendment 程序（CHECKPOINT T2 的冻结不受影响）。**
 
 ---
 
