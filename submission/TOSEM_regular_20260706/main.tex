@@ -665,10 +665,12 @@ artefacts. Multiple labels are resolved by priority C5 \textgreater{} C4
 The output quantities are \texttt{C1\_share} (share of C1 among killed
 mutants) and \texttt{suspect\_share\ :=\ 1\ $-$\ C1\_share}. \textbf{LRCA
 does not modify the SMS formula}: the killed set is never filtered by
-suspect status. LRCA is a diagnostic annotation that tells the reader
-whether a given kill is more consistent with a semantic-failure
-detection, tolerance sensitivity, OOD behaviour, statistical-assumption
-failure, or mutator artefact. Appendix A.2 gives the full decision tree, the 9-grid
+suspect status. LRCA is a diagnostic annotator of deviations from the
+block structure of Theorem 5 (§2.11): C1 marks kills consistent with the
+diagonal, the declared-stratum detection the metric is designed to
+count, while C2 through C5 label the kill mass that the exactness defect
+$\xi$ aggregates (tolerance sensitivity, OOD behaviour,
+statistical-assumption failure, mutator artefact). Appendix A.2 gives the full decision tree, the 9-grid
 threshold calibration, and the engineering rationale for the priority
 ordering.
 
@@ -962,39 +964,196 @@ MR is exactly a non-strong (non-grounded) MR in the effective, discrete
 sense: its violation set is not closed under the program's
 $\varepsilon_{\mathrm{tol}}$-level $\equiv_\alpha$.
 
-\textbf{Proposition 2 (the two boundary failures and their
-$\varepsilon_{\mathrm{tol}}$ coupling).} Relative to
-$(\varepsilon_{\mathrm{tol}}, P)$ the duality of Theorem 2 has two
-failure modes. (i) \emph{False positive (weak MR).} When $r$ is weak the
-correct $P$ violates $r$ and a non-fault is reported; the
-rotational-symmetry invariant of a neutron-transport operator under a
-method-of-characteristics discretisation, satisfied only at special
-angles, is the canonical instance. (ii) \emph{False negative (surviving
-non-equivalent mutant).} A semantically active mutant
-$P_e \not\equiv_\alpha P$ can leave every invariant in $I$ satisfied
-within $\varepsilon_{\mathrm{tol}}$, a \emph{coincidental satisfaction
-of the MR}, and so survive the strong MR family; this surviving mutant
-is non-equivalent (genuinely $\not\equiv_\alpha P$) and is therefore
-distinct from the classical equivalent mutant of Proposition 1(ii), and
-when its signature lies below $\varepsilon_{\mathrm{tol}}$ it is a
-\emph{tolerance fault}. The two modes are coupled through
-$\varepsilon_{\mathrm{tol}}$: tightening it shrinks the false-negative
-set (more surviving mutants are killed) but grows the false-positive set
-(more correct programs are flagged), and loosening it does the reverse.
-The boundary is therefore an $\varepsilon_{\mathrm{tol}}$-governed
+\textbf{Theorem 3 (tolerance-indexed detection window).} Let
+$m_{\mathrm{mut}}$ carry violation magnitude
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$ at stratum $\psi$, let $r$
+be an exact checker with tolerance $\varepsilon_{\mathrm{tol}}$
+(Definition, §2.11), let
+$\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)$ be the
+correct-program structure-preservation residual on the applicable domain
+$D_r$ of $r$, with $P^\star$ the reference correct implementation (the
+instantiation of the structure-preservation deviation of the MR-validity
+theory on the structure inducing $r$), and $|\eta|\le\bar\eta$ the
+execution noise, with the violation functional $L_r$-Lipschitz in
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Then (i)
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$
+implies $r$ kills $m_{\mathrm{mut}}$; (ii)
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
+implies $r$ does not kill $m_{\mathrm{mut}}$; (iii) with the crash
+threshold $\varepsilon_{\mathrm{crash}}$ (S4), the kill region lies
+within
+$(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$.
+
+\emph{Remark (weak-MR false positive).} If
+$\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$ the correct program is
+flagged and $r$ exits the admissible evaluation set (empirically: the
+PINN case, §4.8); the rotational-symmetry invariant of a
+neutron-transport operator under a method-of-characteristics
+discretisation, satisfied only at special angles, is the canonical
+instance.
+
+\emph{Remark (stochastic false negative and repeat prescription).} For
+stochastic PUTs
+$\bar\eta=c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}$, with
+$\sigma_{\mathrm{out}}$ the output standard deviation, $c$ the
+concentration constant of the aggregator, and $\eta_{\mathrm{det}}$ the
+deterministic noise component; guaranteed detection at target magnitude
+$\varepsilon^\dagger$ requires
+$N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol}}-\Delta_r-2\eta_{\mathrm{det}})\bigr)^2$,
+provided
+$\varepsilon^\dagger>\varepsilon_{\mathrm{tol}}+\Delta_r+2\eta_{\mathrm{det}}$
+(empirically: the RNG case, §4.8, where this side condition fails on the
+structural observables and the fix is a different observable, not more
+repeats).
+
+\emph{Proof sketch.} Two triangle-inequality passes over the additive
+residual budget
+$|\varepsilon_r(x;m_{\mathrm{mut}})-\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})|\le\Delta_r+2\bar\eta$
+(the mutant inherits the correct program's structure-preservation
+residual, and each of the two tuple executions contributes noise at most
+$\bar\eta$) give (i) and (ii); (iii) follows from (ii)'s contrapositive
+and the S4 crash exclusion. A below-window survivor is genuinely
+non-equivalent, distinct from the classical equivalent mutant of
+Proposition 1(ii); when its signature lies below
+$\varepsilon_{\mathrm{tol}}$ it is a \emph{tolerance fault}. The two
+remarks are coupled through $\varepsilon_{\mathrm{tol}}$: tightening it
+shrinks the false-negative region and shrinks the margin $\mu_r$ toward
+false positives, and loosening it does the reverse, an
+$\varepsilon_{\mathrm{tol}}$-governed
 \emph{sensitivity--specificity trade-off}, not a defect to be engineered
-away. \emph{Proof.} (i) and (ii) instantiate the Definition: weakness
-places the correct program's residual above $\varepsilon_{\mathrm{tol}}$,
-and coincidental satisfaction places the mutant's signature below it;
-monotonicity of both sets in $\varepsilon_{\mathrm{tol}}$ holds because
-both membership predicates are threshold comparisons against the same
-$\varepsilon_{\mathrm{tol}}$. $\square$
+away. Hypotheses, the non-degenerate-margin regime (R1: margin dominance
+$\mu_r>2\bar\eta$; R2: $\varepsilon_{\mathrm{eq}}$-separation), the
+$p$-execution generalization of the $2\bar\eta$ budget, and full proofs
+are in Appendix G.8.
 
 Theorem 2 thus holds within the strong regime, and the
 $\varepsilon_{\mathrm{tol}}$-governed strong boundary, where a strong
 MR degrades into a weak MR (false positives) or is evaded by a surviving
 non-equivalent mutant (false negatives), is mapped empirically on real
 and textbook programs in §4.8.
+
+\subsection{Interval soundness under unresolved equivalence}\label{theory-interval}
+
+Throughout this subsection and §2.11, $n$ denotes the number of
+confirmed non-equivalent mutants of a cell, $k$ the number of them
+killed by the evaluated MR set $R$, and $u$ the number of unresolved
+survivors (three-state status, §2.3); these count symbols are local to
+the theory extension, and the subscript $k$ of
+$\mathrm{SMS}_{i,k,j}$ elsewhere remains the relation index. We write
+$\Phi_Q$ for the computation map of program $Q$ (its executed
+input-output function, the executable realisation of
+$\mathopen{\lbrack\!\lbrack} Q \mathclose{\rbrack\!\rbrack}$), and
+$\mathrm{obs}$ for the committed semantic observation of §2.7.
+
+\textbf{Lemma 4.1 (kill witness upgrade).} Assume the AVP verdict is a
+deterministic function of the $\mathrm{obs}$-observed outputs of the
+executions in an MR tuple, and that on the executed tuple the verdict is
+stable under pointwise obs-output perturbations of magnitude at most
+$\varepsilon_{\mathrm{eq}}$ (non-degenerate tolerance margins; clause R2
+of the Theorem 3 regime, Appendix G.8). If
+$\mathrm{killed}(P',\mathrm{MR}_{i,k})$ holds, then some execution input
+$x$ satisfies
+$\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{eq}}$,
+hence $P'$ is \texttt{CONFIRMED\_NON\_EQUIVALENT}. Consequently the
+unresolved set contains no killed mutants.
+
+\textbf{Theorem 4 (interval soundness and monotonicity).} Let $n$ be the
+number of confirmed non-equivalent mutants, $k$ the number killed by
+$R$, and $u$ the number of unresolved survivors. Let
+$u_{\mathrm{neq}}\in[0,u]$ be the (unknown) number of truly
+non-equivalent mutants among the unresolved. Then the ground-truth score
+$k/(n+u_{\mathrm{neq}})$ satisfies
+\[ \mathrm{SMS}_{\mathrm{cons}}=\tfrac{k}{n+u}\;\le\;\tfrac{k}{n+u_{\mathrm{neq}}}\;\le\;\tfrac{k}{n}=\mathrm{SMS}_{\mathrm{strict}}, \]
+with width $\mathrm{SMS}_{\mathrm{strict}}\cdot\tfrac{u}{n+u}$. Each
+equivalence certificate ($u\!\to\!u\!-\!1$) or divergence witness
+($u\!\to\!u\!-\!1$, $n\!\to\!n\!+\!1$) weakly narrows the interval; and
+for $R\subseteq R'$, with the three-state classification held fixed
+(admission and witness status computed once against the cell's relation
+universe), both endpoints are non-decreasing.
+
+\emph{Proof sketch.} Monotonicity of $t\mapsto k/(n+t)$ gives the
+sandwich with both endpoints attainable; the width identity is
+algebraic; the four evidence motions (certificate, witness, kill of an
+unresolved survivor, MR expansion) are verified endpoint-by-endpoint,
+with expansion evaluated against the frozen classification. Full proofs:
+Appendix G.6. In the audited 60-cell campaign $u=0$ in every cell, so
+both readings coincide with the recorded SMS (§2.3) and the interval
+machinery activates only when certificates or unresolved candidates
+appear.
+
+\subsection{Block structure and gap attribution}\label{theory-gap}
+
+\textbf{Definition (exact checker and covered strata).} $r$ is an
+\emph{exact checker} for stratum $\psi_j$ if its violation predicate
+flags $P'$ iff
+$\mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack}\not\models_{\tau}\psi_j$
+within the tolerance regime of Theorem 3 (Appendix G.8); the flag is the
+AVP fail verdict, and the pipeline convention is strict exceedance of
+$\varepsilon_{\mathrm{tol}}$. $\mathrm{Cov}(R)=\{j: R$ contains an exact
+checker for $\psi_j\}$. The declared invariant family is assumed
+non-redundant: distinct strata have distinct tolerance-violation
+classes.
+
+\textbf{Lemma 5.1 (exact checkers are strong MRs).} The violation set of
+an exact checker for $\psi_j$ equals
+$\{P' : \mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack}\not\models_{\tau}\psi_j\}$
+and is closed under observational equivalence; hence every exact checker
+is a strong MR in the sense of Theorem 2 and inherits its duality
+guarantees. The inclusion is strict: a union of two strata's violation
+classes is closed but exact for neither.
+
+\textbf{Theorem 5 (block structure and gap attribution).} Assume (i)
+stratum purity S5 for all $m_{\mathrm{mut}}\in M_{\mathrm{neq}}$, the
+admitted non-equivalent universe, each mutant violating its unique
+target stratum and satisfying all others; (ii) every $r\in R$ is an
+exact checker for some stratum; (iii) non-degenerate tolerance margins
+(Theorem 3, clause R1 with the residual budget, imported at every
+$r\in R$; Appendix G.8). Then no $m_{\mathrm{mut}}$ in fiber $M_j$ with
+$j\notin \mathrm{Cov}(R)$ is killed, the fiber-by-stratum kill matrix is
+block-diagonal, and
+\[ 1-\mathrm{SMS}(R)=\underbrace{\textstyle\sum_{j\notin \mathrm{Cov}(R)} w_j}_{\mathrm{Gap}_{\mathrm{aln}}(R)\ \text{(alignment gap)}}
+ +\underbrace{\textstyle\sum_{j\in \mathrm{Cov}(R)} w_j\,(1-\mathrm{SMS}_j(R))}_{\mathrm{Gap}_{\mathrm{str}}(R)\ \text{(strength gap)}},
+ \qquad w_j=\tfrac{|M_j|}{|M_{\mathrm{neq}}|}, \]
+both computable from the kill matrix and fiber labels alone, where
+$M_j$ is the fiber of mutants targeting $\psi_j$, $w_j$ its weight, and
+$\mathrm{SMS}_j(R)$ the kill rate restricted to $M_j$.
+
+\textbf{Corollary 5.1 (cross-zero prediction).} If
+$\mathrm{Cov}(R)\cap\{j:w_j>0\}=\varnothing$ then $\mathrm{SMS}(R)=0$.
+
+\textbf{Definition (exactness defect).} $\xi(R)=$ block-off-diagonal
+kill mass / total kills; $\xi$ measures deviation from premises
+(i)--(ii) and is reported as a model-check statistic, not folded into
+SMS. Mutants failing S5 route their kill mass into $\xi$.
+
+\emph{Remark (identifiability from kill signatures).} Under the
+assumptions of Theorem 5 let
+$\mathrm{sig}(m_{\mathrm{mut}})=\{r\in R: r\ \text{kills}\ m_{\mathrm{mut}}\}$.
+For any killed $m_{\mathrm{mut}}$, all members of
+$\mathrm{sig}(m_{\mathrm{mut}})$ are checkers of the same stratum, which
+identifies the fiber of $m_{\mathrm{mut}}$ exactly; with a separating
+family (one exact checker per stratum in $\mathrm{Cov}(R)$) the killed
+subpopulations therefore separate every covered stratum. For survivors
+the signature is identically empty and carries no fiber information: an
+empty signature is consistent with every uncovered fiber and with the
+below-window remainder (Theorem 3(ii)) of every covered fiber, so
+survivor fiber attribution must come from generation-time labels, not
+from kill signatures.
+
+\emph{Proof sketch.} A mutant of fiber $M_j$ satisfies every non-target
+stratum (S5); the imported budget and margin keep every non-target
+checker's executed residual below $\varepsilon_{\mathrm{tol}}$, so no
+cross-stratum flag exists and kills are supported on the diagonal; the
+decomposition is the fiber-partition expansion with uncovered strata
+contributing their full weight. Full proofs and the Remark's
+justification: Appendix G.7. Interface and consumption:
+$\mathrm{Gap}_{\mathrm{aln}}$ corresponds to the selection residual of
+the companion four-pillar technical report (its adopted relation set
+corresponds to this paper's $R$; the citation is not load-bearing);
+Corollary 5.1, under the declared provenance-as-coverage bridge between
+MR provenance and $\mathrm{Cov}(R)$, supplies the zero/nonzero
+prediction labels consumed by the pre-registered discrimination
+hypotheses; $\xi$ is reported alongside SMS, never folded in.
 
 % [thematic break removed]
 

@@ -1369,6 +1369,247 @@ Friedman chi\^{}2 §4.5, Spearman rho §4.6) is structurally consistent
 with existing \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} literature in classical
 syntactic-mutation scenarios, no metric-level semantic fragmentation.
 
+\subsection{G.5 Independent formal audit of the theory extension}\label{g.5-independent-formal-audit}
+
+The theory-extension results (Theorems 3--5 with Lemmas 4.1 and 5.1,
+Corollary 5.1, the two detection-window remarks, the identifiability
+remark, and the repaired Theorem 9.1) were checked by an independent
+formal audit against a fixed eight-item checklist: (1) every theorem
+premise is defined in the body; (2) no circularity (no conclusion is
+used as a premise); (3) the scope of the AVP-determinism assumption of
+Lemma 4.1; (4) consistency of Theorem 5's S5/exact-checker premises with
+the $\xi$ reporting rule; (5) satisfiability of Theorem 3's constants
+and Lipschitz hypothesis per PUT class; (6) Theorem 9.1's support
+assumption and exception-set wording; (7) notation conformance against
+the frozen symbol registry; (8) line-by-line checkability of the proofs.
+The audit protocol and the signed report are archived with the
+replication materials.
+
+\subsection{G.6 Interval soundness: full proofs (Lemma 4.1 and Theorem 4)}\label{g.6-interval-proofs}
+
+\textbf{Scope of the determinism hypothesis (Lemma 4.1).} The evaluation
+procedure of a relation fixes its executed input tuple (seeded input
+generation is part of the procedure), runs the program on that tuple,
+applies the observation $\mathrm{obs}$, and computes the verdict by a
+fixed threshold functional at tolerance $\varepsilon_{\mathrm{AVP}}$.
+For deterministic PUTs the verdict is a fixed function $V_{mr}$ of the
+tuple of observed outputs on the common executed inputs. For stochastic
+PUTs the pipeline replaces each AVP call by a strict-majority vote over
+$N=20$ independent repetitions; the verdict is then a fixed function of
+the $N$-repeat aggregated observation, and every occurrence of "observed
+output" is read at that aggregated level: the witness produced below is
+a divergence of aggregated observations, in the AVP verdict semantics,
+not a claim about any single random run. The stability hypothesis
+(clause R2, G.8) is not removable: with relation residuals
+$\tau-\delta_1$ (pass on $P$) and $\tau+\delta_2$ (fail on $P'$),
+$\delta_1+\delta_2$ arbitrarily small, a kill can arise from pointwise
+output divergence below $\varepsilon_{\mathrm{eq}}$, and bare
+determinism cannot yield the required witness.
+
+\emph{Proof of Lemma 4.1.} Fix $mr$ with
+$\mathrm{AVP}(P,mr)=\mathrm{pass}$ and
+$\mathrm{AVP}(P',mr)=\mathrm{fail}$. Suppose every executed input $x$
+satisfied
+$\|\mathrm{obs}(\Phi_P(x))-\mathrm{obs}(\Phi_{P'}(x))\|\le\varepsilon_{\mathrm{eq}}$.
+Then the observed-output tuple of $P'$ is a pointwise
+$\le\varepsilon_{\mathrm{eq}}$ perturbation of that of $P$, and R2
+forces $V_{mr}$ to return the same verdict on both, contradicting
+pass/fail. Hence some executed $x$ has divergence exceeding
+$\varepsilon_{\mathrm{eq}}$: the divergence witness of the three-state
+classification (§2.3), so $P'$ is
+\texttt{CONFIRMED\_NON\_EQUIVALENT}, and no killed mutant is
+unresolved. $\square$
+
+\emph{Proof of Theorem 4.} By Lemma 4.1 the killed count $k$ lies inside
+the confirmed non-equivalent population $n$, so the ground-truth
+denominator is $n+u_{\mathrm{neq}}$ with the same numerator $k$.
+\emph{(Interval and attainability.)} For fixed $k\ge0$, $n\ge1$ the map
+$t\mapsto k/(n+t)$ is non-increasing on $t\ge0$; applying it to
+$0\le u_{\mathrm{neq}}\le u$ gives the sandwich, with both endpoints
+attained at $u_{\mathrm{neq}}=u$ and $u_{\mathrm{neq}}=0$, each
+consistent with the available evidence. \emph{(Width.)}
+$k/n-k/(n+u)=ku/(n(n+u))=\mathrm{SMS}_{\mathrm{strict}}\cdot u/(n+u)$.
+\emph{(Monotonicity, four motions.)} (1) An equivalence certificate on
+an unresolved survivor maps $(n,k,u)\to(n,k,u-1)$: the upper endpoint is
+unchanged and the lower endpoint rises, so the interval weakly narrows
+(strictly when $k>0$, $u\ge1$). (2) A divergence witness on an
+unresolved survivor maps $(n,k,u)\to(n+1,k,u-1)$: the lower endpoint
+$k/(n+u)$ is unchanged and the upper endpoint falls to $k/(n+1)$, so the
+interval weakly narrows; unresolved mutants are survivors by Lemma 4.1,
+so $k$ is unchanged. (3) An unresolved survivor killed by a newly added
+MR acquires the Lemma 4.1 witness, $(n,k,u)\to(n+1,k+1,u-1)$, an
+instance of motion (4) with $\Delta=0$, $j=1$. (4) For
+$R\subseteq R'$ with the three-state classification held fixed,
+OR-aggregation over a superset can only add kills: with $\Delta\ge0$ new
+kills among confirmed survivors and $j\ge0$ among unresolved survivors,
+the counts update to $n'=n+j$, $k'=k+\Delta+j$, $u'=u-j$, and
+$\mathrm{SMS}_{\mathrm{strict}}'=(k+\Delta+j)/(n+j)\ge(k+j)/(n+j)\ge k/n$
+(since $k\le n$), while
+$\mathrm{SMS}_{\mathrm{cons}}'=(k+\Delta+j)/(n+u)\ge k/(n+u)$: both
+endpoints are non-decreasing. The proviso is not removable: if the
+classification were recomputed against $R'$, the E1 quantification
+domain would grow and a new relation with differing verdicts in the
+non-kill direction would convert an unresolved survivor into a confirmed
+one, a motion-(2) event lowering the strict endpoint. Across all four
+motions the conservative endpoint never decreases: it is a monotone
+lower bound of the ground-truth score under every admissible evidence
+update. $\square$
+
+\subsection{G.7 Block structure: full proofs (Lemma 5.1, Theorem 5, Corollary 5.1, and the identifiability remark)}\label{g.7-gap-proofs}
+
+\emph{Proof of Lemma 5.1.} The violation-set identity is the exact-checker
+definition read as a set equation. Each stratum invariant is a predicate
+over the observable behaviour, and the tolerance-indexed satisfaction
+evaluates that predicate on the observed behaviour; membership of the
+violation set therefore depends on a program only through its observed
+behaviour, so observationally equivalent programs violate together: the
+set is a union of equivalence classes, i.e.\ closed, and Theorem 2's
+strong-MR definition applies. Properness: the union of two distinct
+strata's violation classes is closed but pins to neither stratum.
+$\square$
+
+\textbf{Premise reading.} (i) reads: every admitted non-equivalent
+mutant is stratified, violating its unique target stratum (S3 witness)
+and satisfying all others (S5), so the fibers $\{M_j\}$ partition
+$M_{\mathrm{neq}}$ and $\sum_j w_j=1$; mutants outside this reading
+(active-off-taxonomy, multi-stratum violators) are excluded by the
+premise, and their kill mass is exactly what $\xi$ measures. (ii)
+attaches to every $r\in R$ a stratum label, unique by the non-redundancy
+convention. (iii) imports, for every $r\in R$, the residual budget and
+margin-dominance clause R1 of G.8: the S5-satisfied stratum contributes
+zero violation, the budget bounds the executed residual by
+$\Delta_r+2\bar\eta$, and R1 places that below
+$\varepsilon_{\mathrm{tol}}$.
+
+\emph{Proof of Theorem 5.} \emph{(No cross-stratum flag.)} Let $r\in R$
+be an exact checker of $\psi_l$ and $m_{\mathrm{mut}}\in M_j$ with
+$l\ne j$. By (i), $m_{\mathrm{mut}}$ satisfies $\psi_l$; by (iii) the
+executed residual of $r$ on $m_{\mathrm{mut}}$ stays below
+$\varepsilon_{\mathrm{tol}}$, so the tolerance verdict is pass and $r$
+does not flag $m_{\mathrm{mut}}$. The kill predicate requires a fail on
+the mutant, so $r$ does not kill it. \emph{(Uncovered fibers survive.)}
+If $j\notin\mathrm{Cov}(R)$, every $r\in R$ has label $l\ne j$, so no
+$r$ flags any member of $M_j$ and OR-aggregation yields no kill.
+\emph{(Block diagonality.)} Indexing rows by fibers and columns by
+checker strata, the argument shows every off-diagonal entry is zero.
+\emph{(Decomposition.)} The fibers partition $M_{\mathrm{neq}}$, so
+$\mathrm{SMS}(R)=\sum_j w_j\,\mathrm{SMS}_j(R)$ with
+$\mathrm{SMS}_j(R)=0$ for uncovered $j$; hence
+$1-\mathrm{SMS}(R)=\sum_{j\notin\mathrm{Cov}(R)}w_j+\sum_{j\in\mathrm{Cov}(R)}w_j(1-\mathrm{SMS}_j(R))$,
+an exact identity with non-negative terms. \emph{(Computability.)}
+$w_j$ from fiber-label counts, $\mathrm{SMS}_j(R)$ from row-wise kill
+rates, $\mathrm{Cov}(R)$ from the checker labels carried by the kill
+matrix's column index: no equivalence oracle beyond the
+$M_{\mathrm{neq}}$ certification and no ground truth beyond the labels.
+$\square$
+
+\emph{Proof of Corollary 5.1.} If no covered stratum has positive mass,
+$\mathrm{SMS}(R)=\sum_{j\in\mathrm{Cov}(R)}w_j\,\mathrm{SMS}_j(R)=0$.
+$\square$
+
+\emph{Justification of the identifiability remark.} Same-stratum
+membership of a killed mutant's signature is the block-diagonal matrix
+reread row-wise: a killed member of $M_j$ can only be flagged by
+checkers with label $j$, so its nonempty signature certifies the kill
+and names the fiber; with one exact checker per covered stratum the
+killed subpopulations separate every covered stratum. Survivor rows are
+identically zero, hence observationally indistinguishable: the
+below-window remainder of every covered fiber (Theorem 3(ii)) and every
+uncovered fiber produce the same all-pass observation, so survivor
+attribution is carried by generation-time labels, not by execution
+outcomes. $\square$
+
+\subsection{G.8 Detection window: hypotheses, regime, and full proofs (Theorem 3)}\label{g.8-window-proofs}
+
+\textbf{Hypotheses.} \emph{(H-a, additive residual budget.)} On the
+executed tuple at input $x\in D_r$, the residual the checker computes
+for the mutant satisfies
+$|\varepsilon_r(x;m_{\mathrm{mut}})-\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})|\le\Delta_r+2\bar\eta$:
+the ideal mutant residual decomposes into the structural violation
+contribution plus the structure-preservation residual, bounded by
+$\Delta_r$ because the edit perturbs the declared structure, not the
+discretisation; and the executed tuple aggregates two program
+executions, each observation carrying noise at most $\bar\eta$. For a
+relation whose residual functional consumes $p$ program executions the
+budget generalizes to $p\bar\eta$; the catalogue's convergence-order
+relations evaluate $p=4$ grid resolutions and their regression verdict
+additionally carries a design-dependent conditioning constant, so their
+window bounds are read with the $p=4$ budget. \emph{(H-b, Lipschitz
+transfer.)} The violation functional is $L_r$-Lipschitz in
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$; H-b is used only for
+the dose-response transfer between the nominal-parameter axis and the
+realized violation axis, not for bounds (i)--(iii), which are stated on
+the realized axis. \emph{(H-c, non-degenerate-margin regime.)} Two
+clauses: (R1) margin dominance,
+$\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r>2\bar\eta$ strictly (read
+$p\bar\eta$ for $p$-execution relations); and (R2)
+$\varepsilon_{\mathrm{eq}}$-separation, no executed residual within
+$\varepsilon_{\mathrm{eq}}$ of the threshold, making the verdict
+invariant under pointwise obs-output perturbations of magnitude at most
+$\varepsilon_{\mathrm{eq}}$. R1 is consumed by (i) and (iii) and by
+Theorem 5's premise (iii); R2 is consumed by Lemma 4.1. For unbounded
+noise the bound $|\eta|\le\bar\eta$ is a concentration-style model
+assumption and stochastic-case statements hold at the confidence
+attached to $c$. \emph{(H-d, magnitude realization.)} The executed
+tuple realizes the declared magnitude; for uniform parametric violation
+templates every admissible input realizes it, and unrealized magnitudes
+only weaken (i), reverting detection to finite-input search, while (ii)
+and (iii) are unaffected.
+
+\emph{Proof of (i).} By H-a's lower side,
+$\varepsilon_r(x;m_{\mathrm{mut}})\ge\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})-\Delta_r-2\bar\eta>\varepsilon_{\mathrm{tol}}$,
+so the checker flags the mutant (strict exceedance); by R1 every
+executed residual of $P^\star$ is at most
+$\Delta_r+2\bar\eta<\varepsilon_{\mathrm{tol}}$, so the checker passes
+the original; the kill predicate's two conjuncts hold. $\square$
+
+\emph{Proof of (ii).} By H-a's upper side, on every executed tuple
+$\varepsilon_r(x;m_{\mathrm{mut}})\le\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})+\Delta_r+2\bar\eta<\varepsilon_{\mathrm{tol}}$,
+so the checker never flags the mutant and the kill predicate's second
+conjunct fails; the verdict on $P^\star$ is not needed. $\square$
+
+\emph{Proof of (iii).} The lower edge is the contrapositive of (ii); at
+equality the executed residual is at most $\varepsilon_{\mathrm{tol}}$,
+which under strict exceedance still yields no flag, so killed magnitudes
+exceed $\varepsilon_{\mathrm{lo}}=\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
+strictly. Magnitudes at or beyond $\varepsilon_{\mathrm{crash}}$ violate
+S4 latency and are excluded from the admitted universe by the crash
+oracle, so the kill region lies within
+$(\varepsilon_{\mathrm{lo}},\varepsilon_{\mathrm{crash}})$. $\square$
+
+\emph{Proof of the weak-MR remark.} $\mu_r<0$ iff
+$\Delta_r>\varepsilon_{\mathrm{tol}}$; since $\Delta_r$ is a supremum
+over $D_r$, inputs exist whose correct-program residual exceeds
+$\varepsilon_{\mathrm{tol}}$ (no attainment needed), and whenever
+validation executes such an input the correct program is flagged
+(guaranteed when the residual exceeds
+$\varepsilon_{\mathrm{tol}}+2\bar\eta$; in the intermediate band noise
+can mask the flag, and validation sampling must reach such inputs at
+all). A flagged correct program breaks the kill predicate's
+pass-on-original conjunct, so the relation contributes no kills and is
+rejected upstream at MR validation. $\square$
+
+\emph{Proof of the stochastic remark.} Substituting
+$\bar\eta=c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}$ into (i)
+at target magnitude $\varepsilon^\dagger$ and solving for $N$ gives
+$\sqrt N>2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol}}-\Delta_r-2\eta_{\mathrm{det}})$,
+provided the denominator is positive; squaring gives the stated bound,
+necessary in general and sufficient with strict inequality. If the side
+condition fails, no repeat budget guarantees detection and the remedy is
+a different observable. $\square$
+
+\textbf{Structure-fate correspondence.} $\Delta_r$ places each MR on the
+MR-validity theory's structure-fate axis: $\Delta_r=0$, exact
+preservation (strict MR); $0<\Delta_r\le\varepsilon_{\mathrm{tol}}$,
+approximate preservation (the strong/tolerance MR of §2.9);
+$\Delta_r>\varepsilon_{\mathrm{tol}}$, structure broken (weak MR, the
+first remark's $\mu_r<0$); $\Delta_r(h)\to0$ under refinement,
+asymptotic preservation. Theorem 3 thereby refines, quantitatively and
+in the mutation-detection context, the validity direction of that
+theory: it prices the same $\Delta_r$ into two-sided detection bounds,
+how much violation magnitude a valid relation must convert into a kill
+and how much it must miss.
+
 \section{H. Adjoint Extension Arm, Subjects, Pools, and Forward
 Results}\label{h.-adjoint-extension-arm}
 
