@@ -361,10 +361,12 @@ $\varepsilon_{\mathrm{crash}}$ (S4), the kill region lies within
 $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$.
 
 \textbf{Remark [REM-FPOS] (weak-MR false positive).} If
-$\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$ the correct program is flagged
-whenever validation executes an input whose residual exceeds
-$\varepsilon_{\mathrm{tol}}+2\bar\eta$ (such inputs exist since $\Delta_r$
-is a supremum; in the band up to $2\bar\eta$ noise can mask the flag), and
+$\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$, inputs with correct-program
+residual above $\varepsilon_{\mathrm{tol}}$ exist ($\Delta_r$ is a
+supremum) and the correct program is flagged whenever validation executes
+an input whose residual exceeds $\varepsilon_{\mathrm{tol}}+2\bar\eta$
+(such inputs are guaranteed to exist when $\mu_r<-2\bar\eta$; in the band
+up to $2\bar\eta$ noise can mask the flag), and
 $r$ exits the admissible evaluation set (empirically: the PINN case).
 
 \textbf{Remark [REM-FNEG] (stochastic false negative and repeat prescription).}

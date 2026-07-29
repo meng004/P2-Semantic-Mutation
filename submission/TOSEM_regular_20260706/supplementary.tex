@@ -1617,10 +1617,11 @@ $\Delta_r>\varepsilon_{\mathrm{tol}}$; since $\Delta_r$ is a supremum
 over $D_r$, inputs exist whose correct-program residual exceeds
 $\varepsilon_{\mathrm{tol}}$ (no attainment needed), and whenever
 validation executes such an input the correct program is flagged
-(guaranteed when the residual exceeds
-$\varepsilon_{\mathrm{tol}}+2\bar\eta$; in the intermediate band noise
-can mask the flag, and validation sampling must reach such inputs at
-all). A flagged correct program breaks the kill predicate's
+(guaranteed when the executed residual exceeds
+$\varepsilon_{\mathrm{tol}}+2\bar\eta$, and inputs at that level exist
+exactly when $\mu_r<-2\bar\eta$, the tiered reading of the remark; in
+the intermediate band noise can mask the flag, and validation sampling
+must reach such inputs at all). A flagged correct program breaks the kill predicate's
 pass-on-original conjunct, so the relation contributes no kills and is
 rejected upstream at MR validation. $\square$
 

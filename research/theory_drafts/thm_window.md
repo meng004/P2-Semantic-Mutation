@@ -152,10 +152,12 @@ $\varepsilon_{\mathrm{crash}}$ (S4), the kill region lies within
 $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$.
 
 \textbf{Remark [REM-FPOS] (weak-MR false positive).} If
-$\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$ the correct program is flagged
-whenever validation executes an input whose residual exceeds
-$\varepsilon_{\mathrm{tol}}+2\bar\eta$ (such inputs exist since $\Delta_r$
-is a supremum; in the band up to $2\bar\eta$ noise can mask the flag), and
+$\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$, inputs with correct-program
+residual above $\varepsilon_{\mathrm{tol}}$ exist ($\Delta_r$ is a
+supremum) and the correct program is flagged whenever validation executes
+an input whose residual exceeds $\varepsilon_{\mathrm{tol}}+2\bar\eta$
+(such inputs are guaranteed to exist when $\mu_r<-2\bar\eta$; in the band
+up to $2\bar\eta$ noise can mask the flag), and
 $r$ exits the admissible evaluation set (empirically: the PINN case).
 
 \textbf{Remark [REM-FNEG] (stochastic false negative and repeat prescription).}
@@ -341,7 +343,10 @@ over $D_r$, $\sup_{x\in D_r}\varepsilon_r(x;P^\star)>\varepsilon_{\mathrm{tol}}$
 implies some $x\in D_r$ has ideal correct-program residual exceeding
 $\varepsilon_{\mathrm{tol}}$ (no sup-attainment needed); whenever validation
 executes such an input, the correct program is flagged (guaranteed when the
-residual exceeds $\varepsilon_{\mathrm{tol}}+2\bar\eta$; between
+executed residual exceeds $\varepsilon_{\mathrm{tol}}+2\bar\eta$ — inputs at
+that level are themselves guaranteed to exist exactly when
+$\Delta_r>\varepsilon_{\mathrm{tol}}+2\bar\eta$, i.e. $\mu_r<-2\bar\eta$,
+which is the tiered reading the amended remark states; between
 $\varepsilon_{\mathrm{tol}}$ and $\varepsilon_{\mathrm{tol}}+2\bar\eta$
 noise can mask the flag — and the validation inputs must hit such residuals
 at all: a one-sentence sampling caveat, stated honestly). A flagged correct

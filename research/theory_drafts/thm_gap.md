@@ -285,9 +285,12 @@ where stratum labels feed downstream), \([\![P']\!]\models\psi'\) for all
 \(\psi'\in I\setminus\{\psi\}\)" (family symbol \(I\) pending the
 \(I\to\Psi\) migration). THM-GAP elevates S5 from conditional to premise (i).
 Required body note for Task T6.1 integration (recorded here as the
-hand-off): "S5-violating mutants route their kill mass into the exactness
-defect \(\xi\)" — i.e. the elevation does not silently drop impure mutants;
-it prices them into the model-check statistic. The \(\models\) vs
+hand-off, wording as repaired by D2): "deviations from S5 surface in the
+exactness defect \(\xi\) exactly through off-diagonal kills" — i.e. the
+elevation does not silently drop impure mutants; their cross-stratum kills
+are priced into the model-check statistic, while impure mutants killed only
+on their labelled stratum remain invisible to ξ (one-sided diagnostic, §3
+and §7). The \(\models\) vs
 \(\models_\tau\) gap between S5's wording and DEF-05's decision is bridged by
 premise (iii) (§3), the same regime that CHECKPOINT T1's amendment A1 made
 explicit in LEM-WIT.
