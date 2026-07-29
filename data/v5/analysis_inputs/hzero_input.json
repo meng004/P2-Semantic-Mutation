@@ -1,0 +1,584 @@
+{
+  "units": [
+    {
+      "cell": "CE\u00d7a1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "CE\u00d7a2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "CE\u00d7a2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "CE\u00d7a3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "CE\u00d7a3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "CE\u00d7b1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "CE\u00d7b1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "CE\u00d7b2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "CE\u00d7b2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "CE\u00d7b3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "CE\u00d7b3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "CE\u00d7c2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.71875
+    },
+    {
+      "cell": "CE\u00d7c2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "CE\u00d7c3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "CE\u00d7c3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "OS\u00d7a2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "OS\u00d7a3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "OS\u00d7b1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "OS\u00d7b2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "OS\u00d7b3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "OS\u00d7c1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.25
+    },
+    {
+      "cell": "OS\u00d7c2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "OS\u00d7c3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.9375
+    },
+    {
+      "cell": "OS\u00d7d1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.5625
+    },
+    {
+      "cell": "OS\u00d7d2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "OS\u00d7d3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7a1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7b1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7b2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7b3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7c1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7c2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7c3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7d1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7d2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "HP\u00d7d3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7a1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7a3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7a3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.4166666666666667
+    },
+    {
+      "cell": "TF\u00d7b2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7b2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7c1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7c1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7c2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7c2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7c3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7c3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7d1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7d1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "TF\u00d7d2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7d2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7d3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "TF\u00d7d3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "SI\u00d7a1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.2
+    },
+    {
+      "cell": "SI\u00d7a2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "SI\u00d7a2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "SI\u00d7c1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "SI\u00d7c1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "SI\u00d7c2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "SI\u00d7c2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.375
+    },
+    {
+      "cell": "SI\u00d7c3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "SI\u00d7c3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "SI\u00d7d1",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "SI\u00d7d1",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "SI\u00d7d2",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "SI\u00d7d2",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 1.0
+    },
+    {
+      "cell": "SI\u00d7d3",
+      "condition": "ALN",
+      "predicted_nonzero": true,
+      "observed_sms": 0.0
+    },
+    {
+      "cell": "SI\u00d7d3",
+      "condition": "CRS",
+      "predicted_nonzero": false,
+      "observed_sms": 0.0
+    }
+  ],
+  "excluded": [
+    {
+      "cell": "CE\u00d7a1",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "CE\u00d7c1",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "CE\u00d7c1",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7a1",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7a1",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7a2",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7a3",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7b1",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7b2",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7b3",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7c1",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7c2",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7c3",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7d1",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7d2",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "OS\u00d7d3",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7a1",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7a3",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7a3",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7b1",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7b2",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7b3",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7c1",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7c2",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7c3",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7d1",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7d2",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "HP\u00d7d3",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "TF\u00d7a1",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "SI\u00d7a1",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "SI\u00d7a3",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "SI\u00d7a3",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "SI\u00d7b3",
+      "condition": "ALN",
+      "reason": "no measurable set replicate"
+    },
+    {
+      "cell": "SI\u00d7b3",
+      "condition": "CRS",
+      "reason": "no measurable set replicate"
+    }
+  ]
+}

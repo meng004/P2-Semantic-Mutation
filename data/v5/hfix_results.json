@@ -1,0 +1,18 @@
+{
+  "hypothesis": "H-FIX",
+  "estimate": 0.3333333333333333,
+  "ci": [
+    0.1517632443971473,
+    0.5828645226148023
+  ],
+  "p": null,
+  "verdict": "FAIL",
+  "extras": {
+    "n_cells": 15,
+    "n_transitioned": 5,
+    "gap_ledger_max_deviation": 0.0,
+    "gap_ledger_ok": true,
+    "family": "secondary-confirmatory (B-4)",
+    "criterion": "Wilson95 LB > 0.5 on share of SMS_j 0->positive"
+  }
+}

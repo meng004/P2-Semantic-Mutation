@@ -15,19 +15,19 @@
 
 ## Task 2.1：新变异体生成（v5 lineage，EXP-CON）
 
-> **状态：BLOCKED（环境无 LLM API 密钥）。** 管线已备好一键可跑：`scripts/v5/generate_v5_mutants.py`（fail-fast 列出所需 env：`BLTCY_API_KEY`/`BLTCY_BASE_URL`）；台账/漏斗模板已预填（prompt SHA-256=`06fa552d…`）。密钥注入后按 Step 1–3 执行。**严禁伪造 LLM 输出。**
+> **状态：DONE（2026-07-29，密钥注入后全速执行）。** 生成模型 `gpt-4o`（生成臂 api_key_1）；918/918 次 LLM 调用零 API 失败；漏斗 918 attempts → 918 parse → 889 build → 775 trigger → 460 E1∧E2 非等价 → 443 confirmed（SHA 去重后入池）。33/51 cell 达 ≥5 confirmed；**H-CONS PASS**（p̂=0.647，Wilson 95% CI [0.510, 0.764]，LB>0.5，边缘通过）。诚实损耗样例：SI×b3 全 18 次 AM→GM 实现为 exp(sum(log)) 溢出（build=0）；CE×c1 的 WhiteKernel 初值编辑被超参优化器吸收（trigger=0）；单一实现算子类（OS×b1 swap 等）重复率高——正是 power report §4 预警的风险集中，按 F-5a 留在漏斗不重编码。
 
-- [ ] **Step 1:** 按 Task 1.2 锁定配置在 applicable cell 生成新变异体（生成器版本、seed、prompt 哈希入台账 `data/v5/GENERATION_LEDGER.md`）；逐个赋统一标识 `mut-<算子>-<PUT>-<序号>`（master §1.3.2）
-- [ ] **Step 2:** 全漏斗插桩：parse/build/trigger/E1∧E2/证书 各级损耗计数落 SSOT 新键 `funnel_v5`
-- [ ] **Step 3:** 跑 `analysis_hcons.py`，verdict 入 SSOT；Commit
+- [x] **Step 1:** 按 Task 1.2 锁定配置在 applicable cell 生成新变异体（生成器版本、seed、prompt 哈希入台账 `data/v5/GENERATION_LEDGER.md`）；逐个赋统一标识 `mut-<算子>-<PUT>-<序号>`（master §1.3.2）
+- [x] **Step 2:** 全漏斗插桩：parse/build/trigger/E1∧E2/证书 各级损耗计数落 SSOT 新键 `funnel_v5`
+- [x] **Step 3:** 跑 `analysis_hcons.py`，verdict 入 SSOT（`data/v5/hcons_results.json`）；Commit
 
 ## Task 2.2：held-out MR source（v5-MR，EXP-DIS）
 
-> **状态：BLOCKED（同 2.1）。** 候选 provider 排序（排除 v4 的 Claude/GPT/DeepSeek）：Gemini > Qwen > Mistral > Llama-hosted；对称清单模板已预填 v4 侧参数（`data/v5/MR_SOURCE_SYMMETRY.md`）。
+> **状态：DONE（2026-07-29）。** 作者指令优先级过滤后 held-out 双集：set1 `gemini-3.5-flash`（44/60 槽位）、set2 `grok-4.5`（46/60）；gpt-5.5/deepseek-v4-flash 因 v4 家族约束不入 MR 臂，glm-5.2/qwen3.7-plus/minimax-m2.7 在 16K token 下仍交付不出工件（探针在案）。清单第 6 项偏差已记录（max_tokens=16000 覆盖思考通道；工件信封 prescreen 强制 ≤3200 字符 ≈ v4 的 800-token 预算）。MP3 槽位两套全空（冻结 v4 调度器不消费 r/R）→ HP 行失 ALN、OS 行失 CRS，诚实排除。kill 矩阵：68/102 H-ZERO 单元、22 配对、303 kill 事件（cyclic CRS 映射 ex-ante 提交，MR 冻结 commit `c7aaa1ee` 早于 kill 执行）。**verdicts：H-ZERO FAIL（BA=0.534）；H-DISC FAIL + UNDERPOWERED（r_mp=−0.103，非零配对 12<30）；H-XI FAIL（ξ=0.284）；2×2 双败格="操作化失败，不裁决理论"。** 详见 `docs/review_20260728/checkpoint2_construct_line.md`。
 
-- [ ] **Step 1:** 选定未用过的 provider（候选按对称协议可满足性排序），逐项核对对称清单：prompt=v4 同文、parser 同版、候选数/修复次数/预算/温度同值；清单存 `data/v5/MR_SOURCE_SYMMETRY.md`
-- [ ] **Step 2:** 生成 aligned/cross MR 集 → prescreen → kill 矩阵
-- [ ] **Step 3:** 跑 `analysis_hzero.py`（零预测：THM-GAP/COR-ZERO 预测标签 vs 观测零/非零）、`analysis_hdisc.py`（条件判别，配对主口径：within-cell Wilcoxon + \(r_{\mathrm{mp}}\)，非配对 δ 作敏感性）与 `analysis_hxi.py`（pooled ξ vs 0.10 地标 + 2×2 裁决表格位，B-1）；verdict 入 SSOT；Commit
+- [x] **Step 1:** 选定未用过的 provider（候选按对称协议可满足性排序），逐项核对对称清单：prompt=v4 同文、parser 同版、候选数/修复次数/预算/温度同值；清单存 `data/v5/MR_SOURCE_SYMMETRY.md`
+- [x] **Step 2:** 生成 aligned/cross MR 集 → prescreen → kill 矩阵（`data/v5/kill_matrix_v5.json`）
+- [x] **Step 3:** 跑 `analysis_hzero.py`（零预测：THM-GAP/COR-ZERO 预测标签 vs 观测零/非零）、`analysis_hdisc.py`（条件判别，配对主口径：within-cell Wilcoxon + \(r_{\mathrm{mp}}\)，非配对 δ 作敏感性）与 `analysis_hxi.py`（pooled ξ vs 0.10 地标 + 2×2 裁决表格位，B-1）；verdict 入 SSOT（`data/v5/h{zero,disc,xi}_results.json`）；Commit
 
 ## Task 2.3：剂量反应实验（EXP-DOSE，H-DOSE）
 
@@ -43,13 +43,13 @@
 
 ## Task 2.5：add-one 修复干预（EXP-FIX，H-FIX，B-4）
 
-> **状态：BLOCKED（依赖 Task 2.1/2.2 的 POOL-SEM v5 与 MRSET-ALN）。**
+> **状态：DONE（2026-07-29）。** seed 20260728 从 20 个合格 cell（指定副本 set1 双条件可测）抽 15；增量复用已提交 kill 矩阵（零新增 AVP 调用）。**H-FIX FAIL**（5/15 转正，Wilson CI [0.152, 0.583]，LB≤0.5；判据线 12/15）；Gap 账目恒等偏差 0。模式：CE 类 5/6 转正（MP1 检查器真实）vs SI/TF 类 0/9（MP4/MP5 检查器无杀伤力）——干预可行动性在 MP1 通道有界成立。
 
-- [ ] **Step 1:** 按预注册抽样规则（冻结 seed）从预测非零对比集中抽 10–15 个 Gap_aln>0 的 cell；对每 cell 构造增广集 \(R^+\) = cross ∪ {一条目标层 aligned MR（取自已生成 MRSET-ALN，不新生成）}
-- [ ] **Step 2:** 复用 POOL-SEM 既有变异体补跑 \(R^+\) kill 判定（仅增量执行）；结果落 SSOT 新键 `fix_intervention_v5`
-- [ ] **Step 3:** 跑 `analysis_hfix.py`（SMS_j 0→正比例 + Wilson 95% CI；\(\mathrm{Gap}_{\mathrm{aln}}\) 转移账目表）；verdict 入 SSOT；Commit
+- [x] **Step 1:** 按预注册抽样规则（冻结 seed）从预测非零对比集中抽 10–15 个 Gap_aln>0 的 cell；对每 cell 构造增广集 \(R^+\) = cross ∪ {一条目标层 aligned MR（取自已生成 MRSET-ALN，不新生成）}
+- [x] **Step 2:** 复用 POOL-SEM 既有变异体补跑 \(R^+\) kill 判定（仅增量执行）；结果落 SSOT 新键 `fix_intervention_v5`（`data/v5/fix_intervention_v5.json`）
+- [x] **Step 3:** 跑 `analysis_hfix.py`（SMS_j 0→正比例 + Wilson 95% CI；\(\mathrm{Gap}_{\mathrm{aln}}\) 转移账目表）；verdict 入 SSOT（`data/v5/hfix_results.json`）；Commit
 
-**REVIEW CHECKPOINT 2：构念线结果 verdict 汇报——headline（H-CONS/H-ZERO/H-DISC/H-DOSE）+ secondary（H-XI/H-DOSE-CTR/H-FIX），含任何降级触发。**
+**REVIEW CHECKPOINT 2：构念线结果 verdict 汇报——headline（H-CONS/H-ZERO/H-DISC/H-DOSE）+ secondary（H-XI/H-DOSE-CTR/H-FIX），含任何降级触发。→ 报告已备：`docs/review_20260728/checkpoint2_construct_line.md`（8 个 verdict 全列；2×2 双败格；过度防御审计通过；等作者拍板）。**
 
 ---
 
