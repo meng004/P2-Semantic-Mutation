@@ -144,7 +144,7 @@
 \noindent\textbf{Context.} Metamorphic Testing (MT) helps software engineers test scientific programs without full test oracles, but classical Mutation Score (MS) remains syntactic. It does not say whether a metamorphic-relation set observes domain-semantic effects such as conservation, monotonicity, convergence, trajectory, or fidelity-order violations.
 \textbf{Objective.} We introduce Semantic Mutation Score (SMS), a backward-compatible adequacy metric for declared semantic strata. The contribution is a metric and certificate model, not a new LLM mutator or benchmark release.
 \textbf{Method.} We define five semantic operator families and instantiate them on 12 Programs Under Test (PUTs) across five meta-patterns. Validation combines an analytical theory layer (an SMS-to-MS degeneration result plus detection-window, interval-soundness, and gap-attribution theorems), a 60-cell empirical audit, an Abstract Syntax Tree (AST)-normalised comparison with default first-order syntactic mutation, a diagnostic root-cause layer, a strong/weak metamorphic-relation boundary study, and an industrial real-defect arm built on reproduced defects from widely used scientific-computing libraries. The SMS instantiation is scoped to single-output scientific-computing kernels.
-\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. The pre-registered instantiability, effect-size, and cross-class-consistency thresholds are not met, and the attribution threshold is not evaluable as pre-registered because its per-cell statistic is undefined on zero-kill cells; these outcomes expose operator applicability, MR-design, and attribution boundaries rather than invalidating the metric. On the industrial arm, a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs, supporting the paper's construct separation on real defects.
+\textbf{Results.} SMS preserves the classical mutation-score denominator while changing only mutant generation, equivalence, and killing. The semantic-mutant pool has 5.14\% AST-normalised overlap with 1,250 default syntactic mutants; three operator families are absent from the default first-order syntactic pool. Aligned cells have higher SMS than cross-pattern cells (\(\delta=0.314\)); a 100,000-draw PUT-cluster bootstrap gives a 95\% interval of [0.045, 0.594], supporting the directional hypothesis while the pre-registered large-effect threshold remains unmet. The instantiability and cross-class-consistency thresholds are also not met, and the attribution threshold is not evaluable as pre-registered because its per-cell statistic is undefined on zero-kill cells. On the industrial arm, a four-group mutation comparison pre-registered in the dataset protocol and a per-defect detection face show that aggregate kill-rate, semantic alignment, and real-defect detection are related but distinct constructs.
 \textbf{Conclusion.} SMS gives software-testing researchers a reproducible way to report which declared semantic effects an MR set observes, misses, or kills for non-semantic reasons. Its value is diagnostic and construct-level, not a claim of universal dominance.
 \end{abstract}
 
@@ -276,8 +276,8 @@ syntactic mutation tools can never generate higher-order semantic
 mutants \\
 MR alignment is visible but bounded & Aligned mean SMS 0.213 vs
 cross mean SMS 0.077 under the frozen primary convention; Cliff's
-\(\delta\) is positive but below the
-pre-registered large-effect threshold & The current 12-PUT audit proves
+\(\delta=0.314\), with PUT-cluster 95\% CI [0.045, 0.594], is positive
+but below the pre-registered large-effect threshold & The current 12-PUT audit proves
 a large universal aligned-vs-cross effect \\
 SMS carries formal soundness, window, and attribution guarantees &
 Interval-soundness, detection-window, and gap-attribution theorems
@@ -604,11 +604,10 @@ replication package
   \textbf{H2 (RQ4; pre-registered as an exploratory large-effect
   target).} The aligned-SMS to
   cross-SMS odds ratio is $\geq$ 3.0, and Cliff's $\delta$ is $\geq$ 0.474.
-  The threshold was fixed before data collection, but the design is
-  underpowered at this boundary, so its verdict is read as a
-  point-estimate result
-  (stipulated-alternative power in Section~\ref{rq2-stipulated-alternative-power}), not
-  a confirmatory claim of the paper.
+  The threshold was fixed before data collection. Its large-effect
+  verdict follows the point estimate, while the direction is evaluated
+  with a dependence-aware PUT-cluster interval
+  (Section~\ref{rq2-stipulated-alternative-power}).
 \item
   \textbf{H3 (RQ5).} A within-class sign test gives 4/4 across the 4 classes,
   and CV($\Delta$SMS) \textless{} 0.5.
@@ -2156,17 +2155,14 @@ For each killed mutant the three-layer decision tree applies in order:
 
 Multi-label priority C5 \textgreater{} C4 \textgreater{} C3
 \textgreater{} C2 \textgreater{} C1 takes the earliest confirmed
-non-semantic cause (decision-tree control flow). Threshold calibration
-over a 9-grid ($\texttt{ood\_band} \in \{0.02, 0.05, 0.10\}$ $\times$
+non-semantic cause (decision-tree control flow). The 9-grid scan
+($\texttt{ood\_band} \in \{0.02, 0.05, 0.10\}$ $\times$
 $\texttt{tolerance\_multiplier} \in \{3.0, 10.0, 30.0\}$, repeats fixed
-at 20) lifts H4 from 10/60 to 12/60 cells; the best combination
-(\texttt{ood\_band\ =\ 0.02,\ tolerance\_multiplier\ =\ 3.0}) is
-reported as primary, with default-threshold results retained as control
-(\texttt{lrca\_60cell\_v3.json}). The calibration ceiling (12/60 = 20\%)
-remains far below the 80\% pre-registered threshold; H4 is unattainable
-on this dataset as an intrinsic property of LLM-mutant pools, not a
-calibration issue. Detailed grid table, L0-L3 sub-protocols, and
-decision-tree pseudocode are in \textbf{Appendix A.2 + C.3}.
+at 20) calibrates the diagnostic labels only; it does not test H4.
+The main analysis retains zero-kill cells as \texttt{NA} and reports
+the grid as a post-hoc sensitivity. Detailed grid results, L0--L3
+sub-protocols, and decision-tree pseudocode are in
+\textbf{Appendix A.2 + C.3}.
 
 % [thematic break removed]
 
@@ -2220,7 +2216,7 @@ Reporting format
 RQ3 & inst\_rate, equiv\_rate, C1\_share, survive\_rate & 60-cell
 heatmap + 4-class marginals \\
 RQ4 & aligned-SMS vs cross-SMS; sparse $\circ$ vs dense \textbullet\textbullet equiv\_rate &
-Cliff's delta + odds ratio + 95\% bootstrap CI \\
+Cliff's delta + odds ratio + 95\% PUT-cluster bootstrap CI \\
 RQ5 & $\Delta$SMS\_c (c $\in$ \{A,B,C,D\}); CV($\Delta$SMS) & directional consistency count over the 4 classes (no p-value attached) +
 descriptive forest plot \\
 RQ5 (desc.) & Spearman $\rho$ + Kendall $\tau$ (SMS vs PC) & scatter + dual-metric ranking
@@ -2235,8 +2231,10 @@ by Theorem~\ref{thm:degeneration} (Section~\ref{sms-ms-degeneration-formal-state
 Where multiple per-class tests are reported (the per-class Friedman tests
 of Section~\ref{rq3-cross-class-consistency-and-friedman}), they carry a Bonferroni correction across the four classes; we
 do not report a separate cell-level family of p-values, so no family-wise
-cell-level correction is claimed. Bootstrap 95\% CIs use 1,000 iterations
-as default (B = 10,000 for the headline H2 delta CI). Mixed-effects
+cell-level correction is claimed. Descriptive cell-bootstrap 95\% CIs
+use 1,000 iterations where stated; the headline H2 interval uses
+100,000 PUT-cluster resamples (seed 42), preserving each PUT's one
+aligned and four cross cells. Mixed-effects
 modelling
 (\texttt{sms\ \textasciitilde{}\ C(class)\ *\ C(operator)\ +\ (1\ \textbar{}\ put)})
 failed with a Singular matrix at N = 60: the class $\times$ operator
@@ -2291,10 +2289,11 @@ Statistic & Pre-registration status & Sampling unit (n) & Licensed reading \\
 H1 operator--PUT counts & pre-registered threshold & PUT $\times$
 operator & deterministic count; verdict factual on this pool \\
 H2 Cliff's $\delta$, odds ratio, bootstrap CI & pre-registered
-exploratory large-effect target & cell (12 aligned vs 48 cross;
-non-independent within PUT) & point-estimate verdict only; no
-population claim (pass probability $\approx$ 0.5 at the boundary is
-rule-intrinsic; Section~\ref{rq2-stipulated-alternative-power}) \\
+exploratory large-effect target & PUT (n = 12 clusters; each contributes
+one aligned and four cross cells) & directional population reading for
+this PUT frame from the cluster interval; large-effect verdict remains
+the frozen point-estimate rule
+(Section~\ref{rq2-stipulated-alternative-power}) \\
 H3 sign test, CV($\Delta$SMS) & pre-registered threshold & class (n = 4)
 & verdict factual on these four classes \\
 H4 mean suspect\_share & pre-registered threshold & cell (evaluable
@@ -2356,9 +2355,8 @@ licensed verdict.
 mask a much smaller information content: only 15 observations carry
 nonzero SMS (6 nonzero aligned + 9 nonzero cross). This is a heuristic
 information count, not a formal effective sample size, but it explains the
-wide 95\% bootstrap CI {[}0.014, 0.622{]} of the v4 primary delta
-(spanning negligible to large, consistent with the known liberal tendency of the percentile
-bootstrap when few observations carry signal). The implications for power and the H2 verdict direction are
+wide dependence-aware 95\% PUT-cluster interval [0.045, 0.594] of the
+v4 primary delta. The implications for power and the H2 verdict direction are
 quantified jointly with the stipulated-alternative analysis in Section~\ref{rq2-stipulated-alternative-power}.
 PUT-class diversification at n $\geq$ 30 is a testable route to relaxing
 the effective-n constraint. Power and effect-size disambiguation are
@@ -2447,11 +2445,10 @@ convention:
 \begin{itemize}
 \tightlist
 \item
-  \textbf{v3 (same-source, pre-registered):} delta = \textbf{0.323},
-  95\% CI {[}0.017, 0.622{]}
+  \textbf{v3 (same-source, pre-registered):} delta = \textbf{0.323}.
 \item
   \textbf{v4 (cross-source, c-class held at partial-order):} delta =
-  \textbf{0.314}, 95\% CI {[}0.014, 0.622{]}. The cross-source pool
+  \textbf{0.314}, PUT-cluster 95\% CI [0.045, 0.594]. The cross-source pool
   aggregates Claude / GPT / DeepSeek under an identical prompt; the
   c-class primary is held at the pre-registered partial-order
   meta-pattern so that the v3 $\to$ v4
@@ -2472,24 +2469,24 @@ verdict post hoc to a Vargha--Delaney interpretation scale. The
 odds ratio is degenerate: because the cross-slice median SMS is exactly
 0 (table above), the median odds ratio is $+\infty$, so the ratio
 criterion is satisfied only trivially under zero-inflation and carries no
-evidential weight. H2 is therefore not met as a large-effect target. The
+evidential weight. H2 is therefore not met as a large-effect target.
+The positive PUT-cluster interval supports the directional hypothesis
+that aligned MR designs tend to score above cross-pattern designs in
+this PUT frame; it does not license a claim that the effect is large. The
 contrast $\delta_{\mathrm{v4}} - \delta_{\mathrm{v3}} = -0.009$ (paired-role
 bootstrap 95\% CI {[}-0.238, 0.207{]}) is too small to interpret as a stable LLM-source-diversity effect
 under the present asymmetric protocol: replacing a same-source pool with
 a three-LLM cross-source pool does not appreciably shift Cliff's delta
 within this design, but the exact source-diversity contribution requires
-a dual-blind v4 rerun. We frame H2 as an underpowered exploratory
-contribution and defer full verification to a follow-up study with a
-larger PUT sample.
+a dual-blind v4 rerun.
 
 \textbf{Vacant-cell sensitivity.} Excluding the 9 cells marked vacant in
 Table~\ref{tab:p2-cells} gives the same H2 verdict. Under the frozen
 primary-MR convention, v4 has n = 11 aligned and n = 40 cross cells,
-$\delta = 0.323$ with 95\% CI {[}-0.011, 0.648{]}; v3 has
-$\delta = 0.270$ with 95\% CI {[}-0.043, 0.595{]}. The direction remains
-positive but still below 0.474, and the interval crosses zero once vacant
-cells are removed. The sensitivity is a denominator check, not a changed
-conclusion.
+$\delta = 0.323$ with PUT-cluster 95\% CI [0.045, 0.599].
+The direction remains positive and the point estimate remains below
+0.474. The sensitivity is a denominator check, not a changed
+large-effect verdict.
 
 This medium-effect placement is consistent with \citet{tip2025llmorpheus}
 LLMorpheus's medium-effect range on JavaScript LLM mutants, a contextual
@@ -2510,31 +2507,32 @@ power against a stipulated alternative) is:
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \caption{RQ4: Bootstrap exceedance probability under the observed
-distribution.}\\
+distribution.}\label{tab:rq4-observed-exceedance}\\
 \toprule\noalign{}
 Threshold & Interpretation & Exceedance prob.\ at (12, 48) \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-$\delta$ \textgreater{} 0.000 & Any effect & \textbf{0.997} \\
-$\delta$ \textgreater{} 0.147 & Small & 0.966 \\
-$\delta$ \textgreater{} 0.330 & Medium & 0.759 \\
+$\delta$ \textgreater{} 0.000 & Any effect & \textbf{0.978} \\
+$\delta$ \textgreater{} 0.147 & Small & 0.849 \\
+$\delta$ \textgreater{} 0.330 & Medium & 0.457 \\
 \textbf{$\delta$ \textgreater{} 0.474} & \textbf{Large (H2)} &
-\textbf{0.423} \\
+\textbf{0.155} \\
 \end{longtable}
 }
 
 The plug-in result answers the question ``given the \emph{observed}
 distribution, how often do we exceed the threshold?'' A
 stipulated-alternative simulation answers a more pointed question: ``if
-the \emph{truth} equals the H2 boundary 0.474, how often does the (12,
+the \emph{truth} lies at the nearest attainable mixture to the H2
+boundary 0.474, how often does the (12,
 48) design return $\delta \geq 0.474$?'' SMS distributions have heavy ties at zero
 (45 of 60 cells), so a raw shift is discontinuous: any $\varepsilon$ \textgreater{}
 0 jumps $\delta$ from 0.314 to 0.74. We therefore use a mixture, drawing the
 aligned sample with probability w from (observed\_aligned + 0.001) and
-with probability 1 − w from observed\_aligned, calibrating w = 0.094 to
-realise $E[\delta] = 0.4746$.
+with probability 1 − w from observed\_aligned, calibrating w = 0.373 to
+realise $E[\delta] \approx 0.470$.
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -2546,34 +2544,33 @@ Stipulated truth & Criterion & Power \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.474 & $\hat{\delta} \geq 0.474$ (point estimate) & \textbf{0.491} \\
-0.474 & Lower 95\% CI bound \textgreater{} 0 (any effect) & 0.868 \\
+0.470 (target 0.474) & $\hat{\delta} \geq 0.474$ (point estimate) & \textbf{0.504} \\
+0.470 (target 0.474) & Lower 95\% CI bound \textgreater{} 0 (any effect) & 0.895 \\
 \end{longtable}
 }
 
-Even when the truth equals the H2 boundary, the point-estimate
+Even when the stipulated effect lies approximately at the H2 boundary, the point-estimate
 decision rule returns ``not met'' in roughly half of replications; a
 pass probability near one half at the boundary is intrinsic to a
 threshold rule applied to an approximately median-unbiased estimator
-at any sample size, so the 49.1\% figure characterises the
+at any sample size, so the 50.4\% figure characterises the
 pre-registered decision rule, not a deficiency specific to the (12,
 48) design, and its exact value depends on the stipulated alternative
-(the mixture with E[$\delta$] = 0.4746 is one of many alternatives
+(the mixture with \(E[\delta] \approx 0.470\) is one of many alternatives
 with that mean). This supports the
 framing in Section~\ref{rq2-aligned-vs-cross-cliffs-delta}: the H2 verdict is a factual statement about the point
 estimate failing to clear the threshold, not a claim that the effect is
 necessarily smaller than 0.474. Increasing the sample size narrows the
 confidence interval but cannot lift the point estimate. The plug-in
 sample-size sweep (n\_aligned $\in$ \{6, 12, \ldots, 60\}; n\_cross = 4 $\times$
-n\_aligned; power for $\delta$ \textgreater{} 0 reaches 0.974 at n\_aligned = 6
-and 0.996 at 12, then plateaus; the small discrepancy with the 0.997
-exceedance entry above reflects independent simulation runs) is in
+n\_aligned; exceedance probability for $\delta$ \textgreater{} 0 is
+0.909 at n\_aligned = 6, 0.978 at 12, and 0.994 at 18) is in
 Appendix D.3.
 
-\textbf{The source-axis contrast is underpowered too.} We did not run a
+\textbf{The source-axis contrast remains unresolved.} We did not run a
 separate power simulation for the source-axis contrast $\Delta\delta$ =
 −0.009 (paired-role bootstrap 95\% CI {[}-0.238, 0.207{]}); its estimand and dependence structure differ
-from the aligned-vs-cross $\delta$, so the 49.1\% figure above does not
+from the aligned-vs-cross $\delta$, so the 50.4\% figure above does not
 transfer to it. The small design (n = 12 PUTs) leaves the −0.009 null
 consistent with a wide range of true source-diversity effects, so we
 explicitly do not read it as evidence that source diversity is inert. A
@@ -2599,9 +2596,9 @@ convention (suspect\_share is undefined on zero-kill cells).}
 \toprule
 Metric & Value \\
 \midrule
-Cells with at least one LRCA-evaluated kill & 15 / 60 (45 \texttt{NA}) \\
-Mean C1\_share (v3 same-source pool; evaluable cells) & 0.164 \\
-Mean C1\_share (v4 cross-source pool; evaluable cells) & \textbf{0.209} \\
+Cells with at least one LRCA-evaluated kill (v3 / v4) & 12 / 60; 15 / 60 \\
+Macro-mean C1\_share (v3; evaluable cells) & 0.821 \\
+Macro-mean C1\_share (v4; evaluable cells) & \textbf{0.837} \\
 Macro-mean suspect\_share (v4, evaluable cells) & 0.163 \\
 Macro-mean suspect\_share (v4, counting L0-prescreened artefact kills as suspect) & 0.186 \\
 Pooled suspect kill mass / LRCA-evaluated kills (v4) & 27 / 144 = 0.188 \\
@@ -2627,8 +2624,10 @@ kill-weighted reading is 0.188 (0.235 incl.\ L0), and 12 of the 15
 evaluable cells sit at or below the 0.20 threshold. Under the macro
 readings the criterion would hold and under the pooled incl.-L0 reading
 it would fail, so the honest summary is that the verdict depends on an
-aggregation choice the pre-registration did not fix; a re-specified
-estimand is deferred to pre-registered follow-up work. The dense cutoff
+aggregation choice the pre-registration did not fix. The next study
+will pre-register pooled suspect kills divided by all LRCA-evaluated
+kills as primary and the evaluable-cell macro-mean as secondary, with
+zero-kill cells fixed as \texttt{NA}, before observing any outcome. The dense cutoff
 sweep of Appendix D.2 is re-based on the evaluable cells accordingly.
 
 \textbf{C1-weighted sensitivity.} Because LRCA deliberately does not
@@ -2653,10 +2652,12 @@ per-cell values in \path{data/results/xi_exactness_defect_v4.json}):
 roughly three quarters of kill incidences occur under a checker stratum
 different from the killed mutant's generation-time label, and the
 diagonal mass concentrates in the CE and OS families. Read against
-Theorem~\ref{thm:gap}, the S5/exact-checker premises do not hold for
-this pool at the provenance-label level, so the block-diagonal
-decomposition and the Corollary~\ref{cor:zero} zero-prediction apply
-only to the premise-conforming sub-population; the aligned-cell $\xi$
+The observable antecedent of Corollary~\ref{cor:zero} holds in 26/60
+cells (6 aligned, 20 cross): 20 have zero SMS and 6 do not. The six
+nonzero cases are direct empirical witnesses that the wider
+S5/exact-checker premises fail at the provenance-label level. Thus the
+block-diagonal decomposition and zero-prediction apply only to the
+full-premise subpopulation, not to all 45 observed zero cells. The aligned-cell $\xi$
 (0.723) and cross-cell $\xi$ (0.795) are similar, consistent with the
 family-boundary and S5-purity slack disclosed in
 Section~\ref{decoupling-between-r_sem-and-r_kill}. $\xi$ and LRCA are
@@ -2783,18 +2784,18 @@ than measures adequacy (adjoint-arm reproduction-fidelity threat).
 
 \phantomsection\label{discussion}
 
-\subsection{Cross-source contributes mutant quality, not effect size}\label{cross-source-contributes-mutant-quality-not-effect-size}
+\subsection{Cross-source protocol changes diagnostic coverage more than effect size}\label{cross-source-contributes-mutant-quality-not-effect-size}
 
 Going from same-source to cross-source under the pre-registered
 primary-MP convention shifts Cliff's $\delta$ by only −0.009 (paired-role
-bootstrap 95\% CI {[}-0.238, 0.207{]}). Cross-source pooling raises mean C1\_share from 0.164 to 0.209 (a
-27\% relative increase), class-c mean SMS by \textbf{+91.5\%}, and
+bootstrap 95\% CI {[}-0.238, 0.207{]}). LRCA-evaluable cells increase
+from 12 to 15 of 60 while their macro-mean C1 share changes from 0.821
+to 0.837 (+1.9\% relative); class-c mean SMS rises by \textbf{+91.5\%}, and
 class-d mean SMS by 38.3\%. Under an identical prompt template, three
 LLMs produce similar distributions for the aligned-vs-cross question.
-Within this fixed-prompt design, LLM source identity is therefore not the
-dominant factor behind the H2 ceiling: cross-source pooling improves the
-diagnostic quality of the kill set (LRCA C1 share, class-mean SMS)
-without moving the aligned-vs-cross effect size. This is a scoped null,
+Within this fixed-prompt but protocol-asymmetric comparison, cross-source
+pooling expands diagnostic coverage without materially moving C1 purity
+or the aligned-vs-cross effect size. This is a scoped null,
 not a general claim that LLM diversity is inert. The strong-sense
 source-diversity test, with per-LLM differential prompts (V\_persona,
 V\_cot), is deferred to a follow-up study. Appendix C.1 records the full
@@ -2845,27 +2846,26 @@ of the off-diagonal kill mass may reflect multi-stratum effects rather
 than pure cross-stratum detection.
 
 The cell-level evidence in Section~\ref{rq1-60-cell-distribution} reproduces this pattern: 75\% of cells
-are zero, concentrated in the cross slices. Under v4 cross-source, mean
-C1\_share rises from 0.164 to 0.209 (+27\%): among the few killed
-mutants, the cross-source pool produces cleaner LRCA diagnostic labels.
-Source diversity therefore improves the \emph{quality} of the kill set
-without expanding its \emph{coverage}. \textbf{The engineering reading of
-this design is that primary-stratum alignment in MR design, not
-enlargement of the semantically feasible mutant pool, is the factor
-associated with strong SMS signals; pool enlargement dilutes the C1
-proportion without lifting the kill rate.} The claim is associational
-within this design (the exactness-defect audit of
-Section~\ref{h5-lrca-mass} shows the idealised alignment premises are
-far from exact here), not a necessity theorem about MR design in
-general. Two open questions remain:
+are zero, concentrated in the cross slices. From v3 to v4, LRCA
+evaluable cells increase from 12 to 15 while macro C1 share stays high
+(0.821 to 0.837). Two observational mechanisms can generate the SMS
+pattern: the MR may fail to observe an admitted mutant's effect fiber,
+or it may observe that fiber but lack sufficient strength relative to
+the tolerance window. The present campaign does not identify a causal
+operator effect because \(j\) is a per-mutant generation label rather
+than a separately randomized \((i,k,j)\) axis. The positive
+aligned-versus-cross contrast therefore supports an MR-design
+hypothesis, while the exactness-defect audit of
+Section~\ref{h5-lrca-mass} shows that fiber purity is imperfect. Two open questions remain:
 whether SMS can infer which MP class is missing for which PUT class, and
 whether LRCA can be calibrated with class-specific thresholds separating
 likely semantic failures from artefacts.
 
-This decoupling motivates the source-axis reading in Section~\ref{rq2-aligned-vs-cross-cliffs-delta}: the v3 $\to$
-v4 micro-shift of −0.009 estimates LLM source diversity under a fixed
-prompt, while MR-design adequacy at the primary-stratum level governs the
-kill rate in this design.
+This decoupling motivates the source-axis reading in
+Section~\ref{rq2-aligned-vs-cross-cliffs-delta}: the v3 $\to$ v4
+micro-shift of −0.009 is descriptive under a fixed prompt and asymmetric
+review protocols. A future operator-stratified rerun must restore the
+true \((i,k,j)\) axis before operator-level causal claims are tested.
 
 \subsection{RQ4: Industrial Construct-Separation Evidence}\label{rq4-industrial-construct-separation}
 
@@ -3177,7 +3177,8 @@ raw-response store & Appendix F.1 \\
 Higher-order mutation & HOM equivalence & External & Confined claim to first-order
 syntactic tools; HOM testing deferred & Appendix F.2 \\
 Protocol asymmetry & v3 vs v4 protocol asymmetry (dual-blind reviewer) & Internal &
-Quality not down (C1\_share 0.164 $\to$ 0.209); follow-up to rerun
+LRCA evaluable cells 12 $\to$ 15 and macro C1 share 0.821 $\to$ 0.837;
+follow-up to rerun
 dual-blind on v4 & Appendix F.1 \\
 Adjoint reproduction & Adjoint-arm reproduction fidelity and by-construction pools &
 Internal & Real defects reproduced through extracted diffs (no
@@ -3376,23 +3377,22 @@ instantiation, not as prerequisites for the SMS definition.
   Structural Injection, and Trajectory Flip are 0/72, 0/33, and 0/54
   under first-order defaults.
 \item
-  Operator-MP alignment produces a positive but not large effect in this
-  design. The H2 large-effect threshold is \textbf{not met under the
-  pre-registered point-estimate criterion}: \(\delta_{\mathrm{v3}} =
-  0.323\), just below the \citet{romano2006cliff} medium threshold of
-  0.330. The stipulated-alternative analysis shows the point-estimate rule
-  itself passes with probability near one half when the truth sits at
-  the boundary, so the verdict is a point-estimate result, not a proof
-  that the true effect is below the large-effect threshold.
+  Aligned MR designs score above cross-pattern designs in this PUT
+  frame: the v4 point estimate is \(\delta=0.314\), with a
+  dependence-aware PUT-cluster 95\% CI of [0.045, 0.594]. The
+  directional hypothesis is supported, while the H2 large-effect
+  threshold is \textbf{not met under the pre-registered point-estimate
+  criterion}. The stipulated-alternative rule passes with probability
+  0.504 when the simulated effect lies approximately at the boundary.
 \item
   Cross-source pooling changes mutant quality more than aligned-versus-
   cross separation. Holding the c-class primary metamorphic relation at
   the pre-registered partial-order meta-pattern, three-LLM pooling under
   an identical prompt
   shifts Cliff's \(\delta\) by only -0.009 (paired-role bootstrap 95\%
-  CI {[}-0.238, 0.207{]}), while
-  raising mean C1\_share by 27\%, class-c mean SMS by 91.5\%, and
-  class-d mean SMS by 38.3\%.
+  CI {[}-0.238, 0.207{]}), while LRCA-evaluable cells increase from 12
+  to 15 and macro C1 share changes from 0.821 to 0.837. Class-c and
+  class-d mean SMS rise by 91.5\% and 38.3\%, respectively.
 \item
   The MP structure is visible, but cross-class consistency is not yet
   stable. The Friedman main effect on MP differentiation is
@@ -3405,9 +3405,9 @@ instantiation, not as prerequisites for the SMS definition.
   a future hypothesis.
 \item
   The industrial real-defect arm supports construct separation beyond
-  the small PUT audit. Pattern-derived relations detect all 34 tabled
-  real defects
-  in the reported face, while the pre-registered four-group comparison
+  the small PUT audit. In the selection-conditioned reported face,
+  pattern-derived relations detect all 34 tabled real defects, while
+  the pre-registered four-group comparison
   shows only a modest aggregate kill-rate advantage
   over literature-generic baselines, and non-nesting
   cases remain in both directions. Thus kill-rate, semantic-stratum

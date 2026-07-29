@@ -234,15 +234,15 @@ For each $s' \in \mathrm{killed}_{i,k}$:
 
 \textbf{LRCA threshold calibration (9-grid scan;
 \texttt{lrca\_calibration.json}).} Best ood\_band=0.02 with any
-tolerance\_multiplier (3.0 / 10.0 / 30.0) gives mean\_C1\_share 0.200
-over evaluable cells and 12 cells at suspect\_share $\leq 0.20$;
-ood\_band=0.05 (default) or 0.10 gives 0.164 / 10 cells.
+tolerance\_multiplier (3.0 / 10.0 / 30.0) gives 12 of 15 evaluable
+cells at suspect\_share $\leq 0.20$.
 \texttt{tolerance\_multiplier} has zero impact (L1 tolerance
 rarely triggered); \texttt{ood\_band} is the only discriminator. Under
 the \texttt{NA} convention of the main text the pass-count denominator
 is the 15 evaluable cells, not 60; the main-text H4 discussion renders
 no pass/fail verdict because the pre-registered 60-cell mean is
-undefined on this data.
+undefined on this data. The grid calibrates diagnostic labels only and
+is not an H4 hypothesis test.
 
 \subsection{Verification Protocol and Equivalence-Judgement Trade-Off}\label{a.3-avp-protocol-specification-and-equivalence-judgement-trade-off}
 
@@ -899,10 +899,13 @@ zero-mass dominance, not metric-scale choice.
 \textbf{Vacant-cell sensitivity.} Excluding the 9 vacant cells (cells
 with no exercised MR) leaves the aligned-versus-cross verdict unchanged.
 In v4 the analysis becomes n = 11 aligned and n = 40 cross with
-$\delta = 0.323$ (95\% CI [-0.011, 0.648]); the matching v3 slice gives
-$\delta = 0.270$ (95\% CI [-0.043, 0.595]). The exclusion widens the
-interval because the design is smaller, but it does not move H2 across
-the pre-registered Romano medium threshold.
+$\delta = 0.323$ (PUT-cluster 95\% CI [0.045, 0.599]). The exclusion
+does not move H2 across the pre-registered large-effect threshold.
+For the complete primary grid, 100,000 PUT-cluster resamples (seed 42)
+give \(\delta=0.314\), 95\% CI [0.045, 0.594], with 0.00964 of
+resamples at or below zero
+(\path{scripts/compute_rq2_cluster_bootstrap.py};
+\path{data/results/rq2_cluster_bootstrap_v4.json}).
 
 \textbf{Primary-MR withdrawal permutation-null.} The auxiliary c-class
 check pools 15 SMS values, shuffles labels over the $3 \times 5$ (PUT,
@@ -921,30 +924,27 @@ aligned (n=12) and cross (n=48) v4 SMS pools; N\_sim = 5,000, seed = 42
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Power analysis under observed and stipulated effects.}\label{tab:p2-23}\\
+\caption{Observed-distribution exceedance probabilities.}\label{tab:p2-23}\\
 \toprule\noalign{}
-Threshold & Interpretation & Power \\
+Threshold & Interpretation & Exceedance probability \\
 \midrule\noalign{}
 \endfirsthead
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-delta \textgreater{} 0.000 & Any-effect & \textbf{0.997} \\
-delta \textgreater{} 0.147 & Small & 0.966 \\
-delta \textgreater{} 0.330 & Medium & 0.759 \\
+delta \textgreater{} 0.000 & Any-effect & \textbf{0.978} \\
+delta \textgreater{} 0.147 & Small & 0.849 \\
+delta \textgreater{} 0.330 & Medium & 0.457 \\
 \textbf{delta \textgreater{} 0.474} & \textbf{Large (H2)} &
-\textbf{0.423} \\
+\textbf{0.155} \\
 \end{longtable}
 }
 
 Sample-size sweep ($n_{\mathrm{aligned}} \in \{6, 12, \ldots, 60\}$, $n_{\mathrm{cross}} = 4 \times n_{\mathrm{aligned}}$):
-power for delta \textgreater{} 0 reaches 0.974 at n=6, 0.996 at 12,
-plateaus thereafter. RQ4 primary analysis has very low sample-size
-requirement; the bottleneck is the effect-size boundary itself, not
-sampling noise. Even at $\delta_{\mathrm{truth}} \approx 0.474$, sample has only
-\textasciitilde42\% chance of detecting under plug-in; but this does
-\textbf{not} mean ``insufficient power is the cause of H2 not being
-met'', observed $\delta_{\mathrm{v3}} = 0.323 < 0.474$, observed
+the probability for delta \textgreater{} 0 is 0.909 at n=6, 0.978 at
+12, and 0.994 at 18. These are observed-distribution exceedance
+probabilities, not power against a stipulated alternative. Observed
+$\delta_{\mathrm{v3}} = 0.323 < 0.474$ and observed
 $\delta_{\mathrm{v4}} = 0.314 < 0.474$; increasing sample only narrows CI.
 
 \textbf{Stipulated-alternative.} Implemented in
@@ -953,8 +953,8 @@ N\_sim = 2,000): SMS has heavy ties at zero (45/60 = 0), raw shifting is
 discontinuous (any $\varepsilon$ \textgreater{} 0 jumps delta from 0.314 to 0.74).
 Mixture: aligned' = (probability w) sample from (observed\_aligned +
 0.001) + (probability 1−w) sample from observed\_aligned, calibrate w so
-E{[}delta{]} $\approx$ 0.474. Calibrated w = 0.094, realised E{[}delta{]} =
-0.4746.
+E{[}delta{]} $\approx$ 0.474. Calibrated w = 0.373, realised E{[}delta{]} =
+0.470.
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -966,13 +966,14 @@ Stipulated truth & Criterion & Power \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.474 & $\hat{\delta} \geq 0.474$ (point-estimate) & \textbf{0.491} \\
-0.474 & 95\% CI lower \textgreater{} 0 (any-effect) & 0.868 \\
+0.470 (target 0.474) & $\hat{\delta} \geq 0.474$ (point-estimate) & \textbf{0.504} \\
+0.470 (target 0.474) & 95\% CI lower \textgreater{} 0 (any-effect) & 0.895 \\
 \end{longtable}
 }
 
-Even at $\delta_{\mathrm{truth}} = 0.474$, the (12, 48) design returns $\hat{\delta} \geq
-0.474$ in only \textasciitilde49\% of replications. This
+At the nearest attainable mixture, \(E[\delta]\approx0.470\), the
+(12, 48) design returns $\hat{\delta} \geq
+0.474$ in \textasciitilde50\% of replications. This
 \emph{supports} the main manuscript's aligned-versus-cross framing that ``not met'' is point-estimate, not
 effect-size.
 
@@ -1214,8 +1215,8 @@ prompt+response committed for direct reuse & Claude Opus subscription
 lacks seed control \\
 \textbf{Protocol asymmetry} & \textbf{Protocol-implementation gap v3 vs v4} & v4 used 3
 providers (Claude 101 / GPT 98 / DeepSeek 99) without dual-blind; v4
-C1\_share 0.209 \textgreater{} v3 0.164 weakly opposes ``v4 quality
-decline'' & Complete separation requires a follow-up dual-blind rerun on
+LRCA-evaluable cells increase 12 $\to$ 15 and macro C1 share changes
+0.821 $\to$ 0.837 & Complete separation requires a follow-up dual-blind rerun on
 the v4 grid \\
 \end{longtable}
 }
