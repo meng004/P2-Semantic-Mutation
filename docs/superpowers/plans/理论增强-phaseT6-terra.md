@@ -17,11 +17,11 @@
 
 **Files:** Modify: main.tex（新增 §2.10 THM-INT、§2.11 THM-GAP（含 REM-IDF Remark，R-9 不设独立小节）；§2.9 Prop 2→THM-WIN 原位升级（含 REM-FPOS/REM-FNEG）；Appendix G 新增 G.6–G.8 完整证明；正文编号由 LaTeX 分配）
 
-- [ ] **Step 1:** 按草稿逐节移植；`[标签]` 占位符替换为正文编号，并在 notation_registry 附"标签 → 正文编号"映射表；正文只放陈述+证明思路 ≤5 行，完整证明入 Appendix
-- [ ] **Step 2:** 执行 master §0.4 决议的五处全文改名（按 Task T0.2 Step 5 的出现清单）：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\to\mathrm{eff}^{-1}\)，§2.9 与 Appendix G 相关证明）；不变量族 \(I\to\Psi\)（§2.7 及其引用处）；\(D_S\to\mathcal D_P\)（§2.6）；理论观测映射 \(\alpha\to\mathrm{obs}\)、\(\equiv_\alpha\to\equiv_{\mathrm{obs}}\)（§2.7–2.9 与语义证书未来工作段）；有限 AST 编辑 \(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\)（§2.8–2.9）。统计 \(\alpha_{\mathrm{FDR}}\) 与已命名的领域超参数必须逐处审计，不做盲目全局替换。改后复查：`rg -n "sigma\^\{-1\}|D_S|\\\\equiv_\\\\alpha|\\\\alpha \\\\circ|through \\\\alpha|P_e|= e\\\\(P\\\\)" submission/TOSEM_regular_20260706/main.tex` 应为 0；改名单独成 commit 以便独立 revert
-- [ ] **Step 3:** 更新 §1 claim-evidence map：新增三行（THM-INT、THM-GAP（含 REM-IDF）、THM-WIN → Supported (formal)）；更新 RQ1 表述为"健全性、单调性、退化与归因保证"；正文符号最小化：只保留证明链上符号，master §0.2 全表导出为 Appendix notation table（R-12）
-- [ ] **Step 4:** 交叉引用检查：`rg -n "Proposition 2" submission/TOSEM_regular_20260706/main.tex` 应为 0（已升级为 THM-WIN 编号并全文改引）
-- [ ] **Step 5:** 编译两遍 + `grep -c "Missing character" main.log` 期望 0；Commit
+- [x] **Step 1:** 按草稿逐节移植；`[标签]` 占位符替换为正文编号（THM-WIN→Theorem 3（§2.9 原位替换 Prop 2）、LEM-WIT/THM-INT→Lemma 4.1/Theorem 4（新 §2.10）、LEM-CLO/THM-GAP/COR-ZERO/REM-IDF→Lemma 5.1/Theorem 5/Corollary 5.1/unnumbered Remark（新 §2.11）、三个 Remark 均不占独立编号），notation_registry 已附"标签 → 正文编号"映射表；正文只放陈述+证明思路 ≤5 行，完整证明入 Appendix G.6–G.8（另设 G.5 审计小节）；C3 裁决的计数符号 local-scope 句、T3-Q3 严格超出约定、S5→ξ 注记、LRCA §2.4 替换句、Ψ 非冗余（§2.7 引入处）一并落稿
+- [x] **Step 2:** 执行 master §0.4 决议的五处全文改名：effect map \(\sigma\to\mathrm{eff}\)（含 \(\sigma^{-1}\)）；不变量族 \(I\to\Psi\)；\(D_S\to\mathcal D_P\)（全文扫尾，含 §2.3/程序节/LRCA 节与 supplementary A.1/A.2，scoped NOTE 注释移除）；\(\alpha\to\mathrm{obs}\)、\(\equiv_\alpha\to\equiv_{\mathrm{obs}}\)（§2.7–2.9 + 未来工作段）；\(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\)。逐处审计保留：MLP 超参 \(\alpha\)（main:2343）、\(\sigma_{\mathrm{out}}\)、Wilcoxon α=0.05 / \(\alpha_{\mathrm{FDR}}\)（supplementary A.3/D）、附录 H 复数标量 α。复查全零（\(\sigma^{-1}\)、语义 \(\equiv_\alpha\)/\(\alpha\circ\)/through α、P_e、= e(P)、D_S 均 0）；改名单独成 commit（`3043f49`）
+- [x] **Step 3:** 更新 §1 claim-evidence map：新增三行（Theorem 3 检测窗、Theorem 4 区间健全、Theorem 5 缺口归因 → Supported (formal)）；RQ1 标题与正文改述为"soundness, monotonicity, degeneration, and attribution guarantees"并补 (d) 子问；正文符号最小化：只保留证明链上符号，§0.2 全表以"Theory-extension symbols"块导出至 supplementary A.1（R-12）
+- [x] **Step 4:** 交叉引用检查：`grep -c "Proposition 2"` main/supplementary 均为 0（§1 roadmap、RQ1、RQ4、§4.8 ×3 全部改引 Theorem 3 或其 Remark）
+- [x] **Step 5:** 编译两遍（main+supplementary）：各仅 1 个 pre-existing `\Bbbk` preamble 错误（与基线同环境一致，非本次引入）；`Missing character` = 0；归档 PDF 恢复未动；Commit
 
 ## Task T6.2：独立形式审计
 

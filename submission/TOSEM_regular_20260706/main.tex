@@ -201,6 +201,15 @@ Claim & Evidence & Verdict & Scope \\
 \endlastfoot
 SMS is backward-compatible with MS & Theorem 9.1 and Corollary 9.1 &
 Supported & Degenerate syntactic limit \\
+Detection is governed by a tolerance-indexed window & Theorem 3 with its
+two remarks; §4.8 boundary cases & Supported (formal) & Additive residual
+budget and margin regime (Appendix G.8) \\
+SMS is interval-sound under unresolved equivalence & Lemma 4.1 and
+Theorem 4 & Supported (formal) & Three-state status (§2.3); audited
+campaign interval degenerate ($u=0$) \\
+$1-\mathrm{SMS}$ decomposes into alignment and strength gaps & Lemma 5.1,
+Theorem 5, Corollary 5.1, identifiability remark & Supported (formal) &
+Idealised S5/exact-checker premises; deviation measured by $\xi$ \\
 First-order syntactic coverage is limited &
 5.14\% overlap; HP/SI/TF at 0/0/0 & Supported & cosmic-ray defaults;
 higher-order mutation not refuted \\
@@ -294,7 +303,7 @@ code-level operator framework (Conservation Erosion, Operator
 Substitution, Hyperparameter, Trajectory Flip, Structural Injection)
 targeting kernel-specific faults, and to delineate the strong boundary
 of metamorphic-relation grounding, a strong/weak MR distinction whose
-$\varepsilon_{\mathrm{tol}}$-governed duality (Theorem 2, Proposition 2)
+$\varepsilon_{\mathrm{tol}}$-governed duality (Theorem 2, Theorem 3)
 is mapped empirically on real and textbook programs spanning the
 meta-patterns (§4.8), complemented by a cross-library adjoint extension
 arm (§3.7, §4.9) that supports the duality forward on third-party
@@ -408,9 +417,10 @@ aspiration only).
 The research questions are ordered from the theoretical foundation
 (RQ1), through the structural separation that motivates it (RQ2), to the
 empirical demonstration on the 60-cell audit (RQ3--RQ5). RQ1 is answered
-by construction and proof (§2.7--2.9: Theorem 1 undecidability,
-Proposition 1 fiber characterisation, and Theorem 2 duality, together
-with the SMS--MS degeneration of §2.6); RQ2 by the
+by construction and proof (§2.7--2.11: Theorem 1 undecidability,
+Proposition 1 fiber characterisation, Theorem 2 duality, Theorem 3
+detection window, Theorem 4 interval soundness, and Theorem 5 gap
+attribution, together with the SMS--MS degeneration of §2.6); RQ2 by the
 AST-normalised structural audit (§3.5); RQ3--RQ5 by the pre-registered
 statistical pipeline (§4). This ordering mirrors the three-layer
 framework of §1.2: Layer 1 (definitional) carries RQ1, Layer 3 (applied)
@@ -419,21 +429,25 @@ carries RQ2.
 \begin{itemize}
 
 \item
-  \textbf{RQ1 (Theory of semantic mutation: constructibility,
-  undecidability, duality, backward compatibility).} Can semantic
+  \textbf{RQ1 (Theory of semantic mutation: soundness, monotonicity,
+  degeneration, and attribution guarantees).} Can semantic
   mutation be formalised as a fiber decomposition of a single effect map
   over admitted nonequivalent \emph{domain-semantic code mutants} for
   scientific-computing kernels, such that (a) stratum membership is
   undecidable and therefore certificate-based (Theorem 1), (b) the
-  induced adequacy metric SMS degenerates almost everywhere to the
-  classical Mutation Score (Proposition 1; Theorem 9.1), and (c)
+  induced adequacy metric SMS degenerates, outside the exception set, to
+  the classical Mutation Score (Proposition 1; Theorem 9.1), (c)
   strong metamorphic relations detect only the semantically active
   mutants within a tolerance-bounded regime, while outside it the duality
   degrades along an $\varepsilon_{\mathrm{tol}}$-governed strong boundary
   into false positives (weak MRs, where a correct discrete program
   violates the invariant) and false negatives (surviving non-equivalent
-  mutants under coincidental satisfaction) (Theorem 2 and Proposition 2;
-  the boundary is mapped empirically under RQ4)?
+  mutants under coincidental satisfaction), with the kill region confined
+  to a quantitative detection window (Theorem 2 and Theorem 3;
+  the boundary is mapped empirically under RQ4), and (d) the reported
+  score is interval-sound under unresolved equivalence, monotone under
+  evidence, and its shortfall $1-\mathrm{SMS}$ attributable to alignment
+  and strength gaps computable from the kill matrix (Theorems 4 and 5)?
 \item
   \textbf{RQ2 (Syntactic unreachability).} To what extent is the
   domain-semantic mutant space induced by the five operators reachable
@@ -449,7 +463,7 @@ carries RQ2.
   boundary).} Does SMS discriminate operator-MP aligned slices (j=k) from
   cross slices (j$\neq$k); does cross-source LLM pooling under an
   identical prompt move the aligned-versus-cross effect size, or only the
-  kill-set quality; and where does the strong boundary of Proposition 2
+  kill-set quality; and where does the strong boundary of Theorem 3
   lie empirically, on which real and textbook programs does a strong
   MR kill the genuine fault, and where does the duality fail as a weak-MR
   false positive or as a surviving non-equivalent mutant?
@@ -465,8 +479,8 @@ carries RQ2.
 \subsection{Hypotheses}\label{hypotheses}
 
 The empirical questions RQ3--RQ5 carry pre-registered hypotheses; RQ1 is
-answered by Theorem 9.1 and RQ2 by the §3.5 structural audit, neither of
-which is a statistical hypothesis.
+answered by Theorems 3--5 and 9.1 and RQ2 by the §3.5 structural audit,
+neither of which is a statistical hypothesis.
 
 \begin{itemize}
 
@@ -830,7 +844,8 @@ $\psi_4$ trajectory determinism, $\psi_5$ partial-order consistency, so
 $\psi_k$ is the invariant whose violation MP$_k$ detects and whose
 breakage $\mathrm{mut}_j$ (at $j=k$) targets. We write
 $\mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} \models \psi$ when $P$'s observable behaviour
-satisfies $\psi$.
+satisfies $\psi$. The family is assumed non-redundant: distinct strata
+have distinct tolerance-violation classes.
 
 The family is open (the extensibility of $\Psi$ noted in §2.9): a sixth
 invariant $\psi_6$, \emph{adjoint consistency}
@@ -1091,9 +1106,7 @@ $\mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack}\not\models_{\tau}\p
 within the tolerance regime of Theorem 3 (Appendix G.8); the flag is the
 AVP fail verdict, and the pipeline convention is strict exceedance of
 $\varepsilon_{\mathrm{tol}}$. $\mathrm{Cov}(R)=\{j: R$ contains an exact
-checker for $\psi_j\}$. The declared invariant family is assumed
-non-redundant: distinct strata have distinct tolerance-violation
-classes.
+checker for $\psi_j\}$ (non-redundancy of the family: §2.7).
 
 \textbf{Lemma 5.1 (exact checkers are strong MRs).} The violation set of
 an exact checker for $\psi_j$ equals
@@ -2190,7 +2203,7 @@ characteristics were known, so this is a finding worth reporting.
 \subsection{RQ4: The strong boundary, false positives and false negatives}\label{rq4-strong-boundary}
 
 The 60-cell audit (§4.2--§4.7) exercises strong MRs in the regime where
-Theorem 2 holds. To map the strong boundary of Proposition 2 we run a
+Theorem 2 holds. To map the strong boundary of Theorem 3 we run a
 complementary study on six third-party or textbook programs spanning the
 meta-patterns, kept separate from the 12 PUTs. Wherever a genuine fixed
 defect exists in a third-party library we use real version-switching:
@@ -2241,7 +2254,8 @@ $\varepsilon_{\mathrm{tol}} = 10^{-4}$, so the exact-boundary strong MR
 flags it: the discretisation (the soft constraint), not a fault, breaks
 the invariant. This is the discrete-program instance of the
 rotational-symmetry counterexample, a continuous invariant reproduced
-only approximately, and the empirical face of Proposition 2(i). The
+only approximately, and the empirical face of Theorem 3's weak-MR
+false-positive remark. The
 hard-constraint ansatz $u = x(1-x)\,\mathrm{NN}(x)$ satisfies the invariant
 by construction and passes, confirming that the violation is a property of
 the discretisation, not of training.
@@ -2268,7 +2282,7 @@ residual pattern instead arose from a true boundary-condition fault,
 loosening $\varepsilon_{\mathrm{tol}}$ would turn that survival into a
 false negative. Tightening
 $\varepsilon_{\mathrm{tol}}$ trades false negatives for false positives and
-loosening it does the reverse, as Proposition 2 requires. The strong
+loosening it does the reverse, as Theorem 3 predicts. The strong
 boundary is therefore the honest scope of the duality, a tunable
 operating point, not a defect to be removed.
 

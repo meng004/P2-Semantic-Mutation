@@ -171,6 +171,18 @@ The notation skeleton (11 core concepts + three-state decomposition +
 SMS formula + AVP interface) is \textbf{fixed}; the \emph{content} of
 MUT, MP, C, and cls is open to extension.
 
+\paragraph{Theory-extension symbols (Theorems 3--5 and the repaired Theorem 9.1).}
+\begin{itemize}
+\item Observation: $\mathrm{obs} : \mathcal{Y} \to \mathcal{Y}_{\mathrm{obs}}$; observational equivalence $\equiv_{\mathrm{obs}}$; computation map $\Phi_Q$ (executable realisation of $\mathopen{\lbrack\!\lbrack} Q \mathclose{\rbrack\!\rbrack}$).
+\item Invariant family: $\Psi = \{\psi_1, \dots, \psi_5\}$ (non-redundant; open to extension, e.g.\ $\psi_6$).
+\item Edits and fibers: edit operator $\mathrm{edit}$, edited program $P_{\mathrm{edit}} = \mathrm{edit}(P)$; effect map $\mathrm{eff}$ with fibers $\mathrm{eff}^{-1}(\cdot)$; admitted non-equivalent universe $M_{\mathrm{neq}}$, fiber $M_j$, single mutant $m_{\mathrm{mut}}$, weight $w_j = |M_j|/|M_{\mathrm{neq}}|$.
+\item Sampling: input distribution $\mathcal{D}_P$ with support $\mathrm{supp}(\mathcal{D}_P)$; admitted domain $\mathcal{X}_{\mathrm{adm}}$.
+\item Three-state status and counts (local to the theory extension): \texttt{CERTIFIED\_EQUIVALENT} / \texttt{CONFIRMED\_NON\_EQUIVALENT} / \texttt{EQUIVALENCE\_UNRESOLVED}; $n$ confirmed non-equivalent, $k$ killed, $u$ unresolved survivors, $u_{\mathrm{neq}} \in [0,u]$ truly non-equivalent among unresolved; readings $\mathrm{SMS}_{\mathrm{strict}} = k/n$, $\mathrm{SMS}_{\mathrm{cons}} = k/(n+u)$, per-fiber $\mathrm{SMS}_j(R)$.
+\item Coverage and gaps: covered strata $\mathrm{Cov}(R)$; alignment gap $\mathrm{Gap}_{\mathrm{aln}}(R)$; strength gap $\mathrm{Gap}_{\mathrm{str}}(R)$; exactness defect $\xi(R)$; kill signature $\mathrm{sig}(m_{\mathrm{mut}})$.
+\item Window quantities: violation magnitude $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$; correct-program residual $\Delta_r = \sup_{x \in D_r} \varepsilon_r(x; P^\star)$ on the applicable domain $D_r$ with reference implementation $P^\star$; margin $\mu_r = \varepsilon_{\mathrm{tol}} - \Delta_r$; noise $\eta$, bound $\bar\eta$, deterministic component $\eta_{\mathrm{det}}$; repeats $N$, concentration constant $c$, output standard deviation $\sigma_{\mathrm{out}}$; Lipschitz constant $L_r$; window edges $\varepsilon_{\mathrm{lo}} = \varepsilon_{\mathrm{tol}} - \Delta_r - 2\bar\eta$ and $\varepsilon_{\mathrm{crash}}$.
+\item Degenerate limit: $L = L_{\mathrm{lim}} \wedge L_{\mathrm{switch}} = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$.
+\end{itemize}
+
 \subsection{A.2 LRCA decision tree and three-layer diagnostic protocol}\label{a.2-lrca-decision-tree-and-three-layer-diagnostic-protocol}
 
 \textbf{Five likely root causes} (open):

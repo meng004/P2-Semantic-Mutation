@@ -155,6 +155,30 @@ the manuscript during T0.
 | \(\alpha,\equiv_\alpha\to\mathrm{obs},\equiv_{\mathrm{obs}}\) | `main.tex:757-764,768,781,804,829-920,2566` | Rename only the semantic-observation usage. Review the unrelated MLP hyperparameter at `main.tex:2126` and the supplementary statistical/scale parameters individually. |
 | \(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\) | `main.tex:800,827-840,869-872,917` | Rename the finite AST-edit operator, the derived-program subscript, and every theory reference as one scoped change. |
 
+## Label-to-body-numbering map (Task T6.1 Step 1)
+
+| Draft label | Body identifier (integrated manuscript) | Location |
+|---|---|---|
+| THM-WIN | Theorem 3 (tolerance-indexed detection window) | §2.9; proofs Appendix G.8 |
+| REM-FPOS | unnumbered Remark (weak-MR false positive) inside Theorem 3 | §2.9 |
+| REM-FNEG | unnumbered Remark (stochastic false negative and repeat prescription) inside Theorem 3 | §2.9 |
+| LEM-WIT | Lemma 4.1 (kill witness upgrade) | §2.10; proof Appendix G.6 |
+| THM-INT | Theorem 4 (interval soundness and monotonicity) | §2.10; proof Appendix G.6 |
+| LEM-CLO | Lemma 5.1 (exact checkers are strong MRs) | §2.11; proof Appendix G.7 |
+| THM-GAP | Theorem 5 (block structure and gap attribution) | §2.11; proofs Appendix G.7 |
+| COR-ZERO | Corollary 5.1 (cross-zero prediction) | §2.11; proof Appendix G.7 |
+| REM-IDF | unnumbered Remark (identifiability from kill signatures) | §2.11; justification Appendix G.7 |
+| THM-DEG-R | Theorem 9.1 (repaired: L_lim/L_switch split, support assumption, exception set) | §2.6; Appendix G.2–G.4 |
+| non-degenerate-margin regime (R1/R2) | named regime, Appendix G.8 (cited by Lemma 4.1 and Theorem 5(iii)) | G.8 |
+| retired | Proposition 2 (superseded by Theorem 3; zero remaining references) | — |
+
+Post-integration status: the five-symbol migration is executed (semantic
+α→obs, effect map σ→eff, invariant family I→Ψ, D_S→𝒟_P, e/P_e→edit/P_edit);
+remaining `\alpha` in main.tex is the MLP hyperparameter (audited keep), and
+remaining `\sigma` occurrences are `\sigma_{\mathrm{out}}` only. The
+occurrence columns in the closed symbol table above describe the pre-T5
+baseline and are superseded by this map for integrated symbols.
+
 ## T0 disposition
 
 The committed-baseline source-line audit and the external authority comparison
