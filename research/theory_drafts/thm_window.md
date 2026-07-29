@@ -341,15 +341,16 @@ contained in $(\varepsilon_{\mathrm{lo}},\ \varepsilon_{\mathrm{crash}})$. ∎
 $\mu_r<0\iff\Delta_r>\varepsilon_{\mathrm{tol}}$. Since $\Delta_r$ is a sup
 over $D_r$, $\sup_{x\in D_r}\varepsilon_r(x;P^\star)>\varepsilon_{\mathrm{tol}}$
 implies some $x\in D_r$ has ideal correct-program residual exceeding
-$\varepsilon_{\mathrm{tol}}$ (no sup-attainment needed); whenever validation
-executes such an input, the correct program is flagged (guaranteed when the
-executed residual exceeds $\varepsilon_{\mathrm{tol}}+2\bar\eta$ — inputs at
-that level are themselves guaranteed to exist exactly when
-$\Delta_r>\varepsilon_{\mathrm{tol}}+2\bar\eta$, i.e. $\mu_r<-2\bar\eta$,
-which is the tiered reading the amended remark states; between
-$\varepsilon_{\mathrm{tol}}$ and $\varepsilon_{\mathrm{tol}}+2\bar\eta$
-noise can mask the flag — and the validation inputs must hit such residuals
-at all: a one-sentence sampling caveat, stated honestly). A flagged correct
+$\varepsilon_{\mathrm{tol}}$ (no sup-attainment needed). If validation
+executes an input whose residual exceeds
+$\varepsilon_{\mathrm{tol}}+2\bar\eta$, the observed residual stays above
+$\varepsilon_{\mathrm{tol}}$ under any admissible noise and the flag is
+guaranteed; inputs at that level exist exactly when
+$\Delta_r>\varepsilon_{\mathrm{tol}}+2\bar\eta$, i.e. $\mu_r<-2\bar\eta$
+(the tiered reading the amended remark states). In the band
+$(\varepsilon_{\mathrm{tol}},\varepsilon_{\mathrm{tol}}+2\bar\eta]$ the
+flag occurs unless noise masks it — and the validation inputs must hit such
+residuals at all: a one-sentence sampling caveat, stated honestly. A flagged correct
 program breaks the kill predicate's pass-on-original conjunct
 (main.tex:620–626), so $r$ can contribute no kills, and under the upstream
 MR-validation semantics (§2.9, main.tex:884–906: a weak MR flags the

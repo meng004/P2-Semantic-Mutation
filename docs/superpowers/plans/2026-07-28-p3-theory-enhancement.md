@@ -188,7 +188,7 @@
 | PO-WIN-2 | 必杀界（三角不等式） | THM-WIN | ≤10 行 |
 | PO-WIN-3 | 必不杀界 | THM-WIN | ≤10 行 |
 | PO-WIN-4 | 窗含入（与 ε_crash、S4 对接） | THM-WIN | ≤6 行 |
-| PO-WIN-5 | \(\mu_r<0\) ⟹ 原程序被标记 ⟹ 退出可采纳评价集 | REM-FPOS | ≤6 行 |
+| PO-WIN-5 | \(\mu_r<0\) ⟹ 超 \(\varepsilon_{\mathrm{tol}}\) 残差输入存在；执行残差超 \(\varepsilon_{\mathrm{tol}}+2\bar\eta\) 时保证被标记（该级输入存在当且仅当 \(\mu_r<-2\bar\eta\)）⟹ 退出可采纳评价集 | REM-FPOS | ≤6 行 |
 | PO-WIN-6 | N 下界代数推导 | REM-FNEG | ≤6 行 |
 
 （PO-IDF-1/2 已撤销——R-9：REM-IDF 的同层性与覆盖等价类论证以两句话并入 THM-GAP 讨论段，由 T6 审计项 (8) 一并复核，不设独立台账行。）

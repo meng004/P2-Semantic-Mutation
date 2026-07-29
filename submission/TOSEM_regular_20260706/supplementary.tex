@@ -1615,13 +1615,15 @@ $(\varepsilon_{\mathrm{lo}},\varepsilon_{\mathrm{crash}})$. $\square$
 \emph{Proof of the weak-MR remark.} $\mu_r<0$ iff
 $\Delta_r>\varepsilon_{\mathrm{tol}}$; since $\Delta_r$ is a supremum
 over $D_r$, inputs exist whose correct-program residual exceeds
-$\varepsilon_{\mathrm{tol}}$ (no attainment needed), and whenever
-validation executes such an input the correct program is flagged
-(guaranteed when the executed residual exceeds
-$\varepsilon_{\mathrm{tol}}+2\bar\eta$, and inputs at that level exist
-exactly when $\mu_r<-2\bar\eta$, the tiered reading of the remark; in
-the intermediate band noise can mask the flag, and validation sampling
-must reach such inputs at all). A flagged correct program breaks the kill predicate's
+$\varepsilon_{\mathrm{tol}}$ (no attainment needed). If validation
+executes an input whose residual exceeds
+$\varepsilon_{\mathrm{tol}}+2\bar\eta$, the observed residual stays
+above $\varepsilon_{\mathrm{tol}}$ under any admissible noise and the
+flag is guaranteed; inputs at that level exist exactly when
+$\mu_r<-2\bar\eta$. In the band
+$(\varepsilon_{\mathrm{tol}},\varepsilon_{\mathrm{tol}}+2\bar\eta]$ the
+flag occurs unless noise masks it, and in all cases validation sampling
+must reach such inputs at all. A flagged correct program breaks the kill predicate's
 pass-on-original conjunct, so the relation contributes no kills and is
 rejected upstream at MR validation. $\square$
 
