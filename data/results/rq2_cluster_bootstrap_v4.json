@@ -1,0 +1,65 @@
+{
+  "method": "percentile PUT-cluster bootstrap of Cliff's delta",
+  "cluster_definition": {
+    "resampling_unit": "PUT",
+    "cells_carried_together": "one aligned and four cross cells before sensitivity exclusions"
+  },
+  "input_sms": "sms_track2_v4.json",
+  "primary_map": {
+    "a1": 1,
+    "a2": 1,
+    "a3": 1,
+    "b1": 2,
+    "b2": 2,
+    "b3": 2,
+    "c1": 5,
+    "c2": 5,
+    "c3": 5,
+    "d1": 2,
+    "d2": 2,
+    "d3": 2
+  },
+  "primary_map_source": "p2.config.primary.PRIMARY_CELLS_V3",
+  "primary": {
+    "resampling_unit": "PUT",
+    "seed": 42,
+    "n_bootstrap": 100000,
+    "n_put_clusters": 12,
+    "n_aligned": 12,
+    "n_cross": 48,
+    "point_estimate": 0.3142361111111111,
+    "ci_95": [
+      0.04513888888888889,
+      0.59375
+    ],
+    "bootstrap_fraction_delta_le_zero": 0.00964,
+    "bootstrap_median": 0.3090277777777778
+  },
+  "vacant_cell_sensitivity": {
+    "resampling_unit": "PUT",
+    "seed": 42,
+    "n_bootstrap": 100000,
+    "n_put_clusters": 12,
+    "n_aligned": 11,
+    "n_cross": 40,
+    "point_estimate": 0.32272727272727275,
+    "ci_95": [
+      0.04487179487179487,
+      0.5991009604645964
+    ],
+    "bootstrap_fraction_delta_le_zero": 0.01051,
+    "bootstrap_median": 0.3181818181818182
+  },
+  "vacant_cells_excluded": [
+    "A1_MP5",
+    "A2_MP2",
+    "A3_MP5",
+    "B1_MP3",
+    "B1_MP4",
+    "B3_MP2",
+    "B3_MP5",
+    "D2_MP4",
+    "D3_MP4"
+  ],
+  "interpretation": "PUT identifiers are sampled with replacement; every sampled cluster carries its retained aligned and cross cells together."
+}

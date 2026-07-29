@@ -102,6 +102,7 @@ data/results/lrca_60cell_console.log
 !data/results/rq2_power_stipulated_v4.json
 !data/results/h5_sensitivity_v4.json
 !data/results/c_class_permutation_v4.json
+!data/results/interval_demo_v4.json
 !data/results/cosmic_ray_a1_ast_diff.json
 !data/results/cosmic_ray_*_summary.json
 !data/results/cosmic_ray_a1_console.log
@@ -150,6 +151,7 @@ references_pdfs/
 # === Editor / IDE ===
 .idea/
 .vscode/
+.worktrees/
 
 # === Build / dist ===
 dist/
@@ -166,3 +168,5 @@ submission/arxiv_bundle/*.fls
 submission/arxiv_bundle/*.fdb_latexmk
 submission/arxiv_bundle/*.pdf
 submission/arxiv_bundle/*.synctex.gz
+!data/results/audit_fix_numbers.json
+!data/results/xi_exactness_defect_v4.json

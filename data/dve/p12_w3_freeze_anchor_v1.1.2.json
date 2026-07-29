@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "anchor_id": "p3-p12-w3.4-cross-repo-anchor-v1.1.2",
+  "producer": {
+    "repository": "meng004/P12-Defect4MR",
+    "branch": "codex/p12-independent-evidence-design",
+    "freeze_stage": "W3.4",
+    "freeze_commit": "223fbadb55a016a76ac7c5bcd0dca37481103f1a",
+    "contract_sha256": "ea26e756b7f04831f981fffd19bcdf2070b8e5055fe4914e2b5cbce6c488182e",
+    "freeze_manifest_sha256": "8509567d11c4f91508578431448744a54d5f0c400eb5c937f6b91625d2cb236e"
+  },
+  "consumer": {
+    "repository": "meng004/P3-Semantic-Mutation",
+    "contract_path": "data/dve/p12_consumer_contract_v1.1.2.json",
+    "contract_commit": "2f1088854c284b3af56e34fc6ff4fe8542962920",
+    "contract_sha256": "be201031e738c28c5c0ff15a1048da81891cd8d971d0684ef040d3cd7d6d28b6"
+  },
+  "transport": {
+    "anchor_mode": "cross-repository-content-hash",
+    "tag_name": "p12-provider-w3-freeze-v1.1.2",
+    "tag_status": "unavailable_due_to_cloud_ref_permission",
+    "reason": "The P12 cloud credential can push the authority branch but GitHub rejects refs/tags/*; exact content hashes are cross-pinned instead."
+  },
+  "chronology": {
+    "acknowledged_at": "2026-07-12T00:00:00+08:00",
+    "d2_opened": false,
+    "w4_executed": false
+  },
+  "amendment_id": "P3-A001",
+  "scope": "Transport and freeze chronology only; no P12 result, scale, RFDS direction, or W4 compliance is accepted by this record.",
+  "anchor_sha256": "7a2d1b9397f414f209a6c6efa49403a26b339bb1caccb059dc1f21ea5aa372a9"
+}

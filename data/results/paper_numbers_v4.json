@@ -1,31 +1,104 @@
 {
+  "provenance": {
+    "version": "v4",
+    "primary_map": {
+      "a1": 1,
+      "a2": 1,
+      "a3": 1,
+      "b1": 2,
+      "b2": 2,
+      "b3": 2,
+      "c1": 5,
+      "c2": 5,
+      "c3": 5,
+      "d1": 2,
+      "d2": 2,
+      "d3": 2
+    },
+    "primary_map_source": "p2.config.primary.PRIMARY_CELLS_V3",
+    "frozen_inputs": [
+      "sms_track2_v4.json",
+      "lrca_60cell_v4.json",
+      "rq2_cliffs_delta_v4_mp5.json",
+      "rq3_mixed_effects_v4.json",
+      "rq4_pattern_coverage_v4.json"
+    ]
+  },
   "rq1": {
     "n_cells": 60,
     "mean_sms": 0.104,
     "median_sms": 0.0,
     "std_sms": 0.2127,
-    "n_zero_sms": 45,
-    "mean_c1_share": 0.2092,
-    "mean_suspect_share": 0.7908,
-    "h5_threshold_suspect": 0.2,
-    "h5_cells_pass": 12,
-    "h5_pass_ratio": 0.2
+    "n_zero_sms": 45
   },
   "rq2": {
     "n_aligned": 12,
     "n_cross": 48,
-    "mean_aligned": 0.275,
-    "mean_cross": 0.0612,
-    "median_aligned": 0.2666,
+    "mean_aligned": 0.2133,
+    "mean_cross": 0.0767,
+    "median_aligned": 0.1,
     "median_cross": 0.0,
-    "cliffs_delta": 0.4392,
-    "delta_ci_95_lo": 0.1267,
-    "delta_ci_95_hi": 0.7396,
+    "cliffs_delta": 0.3142,
+    "delta_ci_95_lo": 0.0138,
+    "delta_ci_95_hi": 0.6215,
     "h2_threshold_delta": 0.474,
     "h2_delta_pass": false,
     "h2_threshold_ratio": 3.0,
     "h2_ratio_pass": true,
-    "odds_ratio_inf": true
+    "odds_ratio_inf": true,
+    "cluster_bootstrap": {
+      "resampling_unit": "PUT",
+      "seed": 42,
+      "n_bootstrap": 100000,
+      "n_put_clusters": 12,
+      "n_aligned": 12,
+      "n_cross": 48,
+      "point_estimate": 0.3142361111111111,
+      "ci_95": [
+        0.04513888888888889,
+        0.59375
+      ],
+      "bootstrap_fraction_delta_le_zero": 0.00964,
+      "bootstrap_median": 0.3090277777777778
+    },
+    "vacant_cell_sensitivity": {
+      "resampling_unit": "PUT",
+      "seed": 42,
+      "n_bootstrap": 100000,
+      "n_put_clusters": 12,
+      "n_aligned": 11,
+      "n_cross": 40,
+      "point_estimate": 0.32272727272727275,
+      "ci_95": [
+        0.04487179487179487,
+        0.5991009604645964
+      ],
+      "bootstrap_fraction_delta_le_zero": 0.01051,
+      "bootstrap_median": 0.3181818181818182
+    },
+    "observed_exceedance": {
+      "power_at_delta_gt_0.0": 0.9782,
+      "power_at_delta_gt_0.147": 0.8494,
+      "power_at_delta_gt_0.33": 0.4568,
+      "power_at_delta_gt_0.474": 0.1552
+    },
+    "stipulated_alternative": {
+      "power_point_estimate_meets_H2": 0.504,
+      "power_CI_lower_above_zero": 0.895,
+      "delta_hat_distribution_summary": {
+        "mean": 0.47199375,
+        "std": 0.14871759920977196,
+        "p10": 0.27760416666666676,
+        "p50": 0.4756944444444444,
+        "p90": 0.6598958333333339
+      }
+    },
+    "stipulated_truth": {
+      "target_delta": 0.474,
+      "mixture_weight": 0.373046875,
+      "realized_E_delta_at_w": 0.46983159722222223,
+      "rationale": "SMS distributions have heavy ties at zero (45/60 cells = 0); raw shifting Cliff's δ is discontinuous (any ε > 0 jumps δ from 0.314 to 0.74). We instead use a mixture-weight construction: with probability w we draw from (observed_aligned + 0.001), and with probability 1-w from observed_aligned. This gives smooth control over realized δ. Calibrating w by bisection yields E[δ] = 0.4698 ≈ 0.474, stipulating the alternative as the H2 boundary. This answers R1 W1: 'if the truth is the H2 threshold, how often would our n=(12,48) design produce a δ_hat meeting the H2 criterion?'"
+    }
   },
   "rq3": {
     "n_observations": 60,
@@ -42,13 +115,13 @@
     "fallback_p_class_b": 0.4284,
     "fallback_p_class_c": 0.7134,
     "fallback_p_class_d": 0.769,
-    "sign_test_aligned_above_cross": 4,
-    "friedman_chi2": 15.3028,
-    "friedman_p": 0.0041,
+    "sign_test_aligned_above_cross": 3,
+    "friedman_chi2": 16.76,
+    "friedman_p": 0.0022,
     "friedman_per_class_p": {
       "a": 0.406,
-      "b": 0.0292,
-      "c": 0.406,
+      "b": 0.0351,
+      "c": 0.2311,
       "d": 0.2873
     }
   },
@@ -61,5 +134,718 @@
     "min_pc": 0.5,
     "max_pc": 1.0,
     "mean_pc": 0.75
+  },
+  "lrca": {
+    "v3": {
+      "cells_total": 60,
+      "cells_evaluable": 12,
+      "cells_zero_kill_NA": 48,
+      "macro_mean_c1_share": 0.8214,
+      "macro_mean_suspect_share": 0.1786,
+      "pooled_c1_share": 0.8375,
+      "pooled_suspect_share": 0.1625,
+      "total_kills": 80,
+      "c1_kills": 67
+    },
+    "v4": {
+      "cells_total": 60,
+      "cells_evaluable": 15,
+      "cells_zero_kill_NA": 45,
+      "macro_mean_c1_share": 0.8367,
+      "macro_mean_suspect_share": 0.1633,
+      "pooled_c1_share": 0.8125,
+      "pooled_suspect_share": 0.1875,
+      "total_kills": 144,
+      "c1_kills": 117
+    }
+  },
+  "gap_premise_support": {
+    "definition": "observable antecedent Cov(R) intersect {j:w_j>0} is empty",
+    "antecedent_holds": 26,
+    "antecedent_fails": 34,
+    "antecedent_holds_aligned": 6,
+    "antecedent_holds_cross": 20,
+    "antecedent_holds_zero_sms": 20,
+    "antecedent_holds_nonzero_sms": 6,
+    "antecedent_cells": [
+      "A1_MP4",
+      "A2_MP3",
+      "A2_MP4",
+      "A3_MP3",
+      "A3_MP4",
+      "A3_MP5",
+      "B1_MP4",
+      "B1_MP5",
+      "B2_MP2",
+      "B2_MP4",
+      "B2_MP5",
+      "B3_MP3",
+      "B3_MP4",
+      "C1_MP2",
+      "C1_MP3",
+      "C1_MP5",
+      "C2_MP1",
+      "C2_MP5",
+      "C3_MP2",
+      "C3_MP5",
+      "D1_MP1",
+      "D1_MP2",
+      "D2_MP1",
+      "D2_MP5",
+      "D3_MP1",
+      "D3_MP2"
+    ],
+    "per_cell": [
+      {
+        "cell": "A1_MP1",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A1_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A1_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A2_MP1",
+        "aligned": true,
+        "sms": 1.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A2_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A2_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A3_MP1",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A3_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A3_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B1_MP1",
+        "aligned": false,
+        "sms": 0.6667,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B1_MP2",
+        "aligned": true,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B1_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B2_MP1",
+        "aligned": false,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B2_MP2",
+        "aligned": true,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B2_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B3_MP1",
+        "aligned": false,
+        "sms": 0.55,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B3_MP2",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B3_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C1_MP1",
+        "aligned": false,
+        "sms": 0.2,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C1_MP2",
+        "aligned": false,
+        "sms": 0.2,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C1_MP5",
+        "aligned": true,
+        "sms": 0.2,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C2_MP1",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C2_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C2_MP5",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C3_MP1",
+        "aligned": false,
+        "sms": 0.7407,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C3_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C3_MP5",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D1_MP1",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D1_MP2",
+        "aligned": true,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D1_MP5",
+        "aligned": false,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP1",
+        "aligned": false,
+        "sms": 0.2963,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D2_MP2",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D3_MP1",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D3_MP2",
+        "aligned": true,
+        "sms": 0.36,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D3_MP5",
+        "aligned": false,
+        "sms": 0.36,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      }
+    ]
   }
 }

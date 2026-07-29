@@ -1,0 +1,142 @@
+ledger_id: p3-p12-claim-ledger-v1.1.2
+status: frozen-initial-state
+frozen_at: "2026-07-11T00:00:00+08:00"
+contract: data/dve/p12_consumer_contract_v1.1.2.json
+
+claims:
+  - claim_id: C1_CONSUMER_PROTOCOL
+    text: "P3 uses a prospectively frozen protocol to accept and use P12 evidence."
+    intended_location: method
+    status: supported
+    evidence:
+      output_files:
+        - docs/protocols/P3_P12_CONSUMER_ACCEPTANCE_DATA_USE_PROTOCOL_v1.1.2.md
+        - data/dve/p12_consumer_contract_v1.1.2.json
+    scope_limits:
+      - "This supports protocol existence, not protocol compliance by P12."
+    wording_allowed: "We prospectively froze the P3 consumer acceptance and data-use rules before importing P12 outcomes."
+    next_step_to_unblock: "none"
+
+  - claim_id: C2_D0_DEVELOPMENT_EVIDENCE
+    text: "Existing P3 and P12 evidence can support development and calibration only."
+    intended_location: method
+    status: qualified
+    evidence:
+      output_files:
+        - docs/superpowers/specs/2026-07-11-tosem-v1.1.2-real-fault-dve-design.md
+    scope_limits:
+      - "D0 cannot estimate confirmatory real-fault decision value."
+      - "The 35 verified_full cases are selection-conditioned on an MR-discriminating oracle."
+    wording_allowed: "We used the legacy evidence only to develop and rehearse the instruments."
+    next_step_to_unblock: "No upgrade is permitted for confirmatory use."
+
+  - claim_id: C3_P12_WORKFLOW_COMPLIANCE
+    text: "P12 followed the frozen independent evidence workflow through W4."
+    intended_location: method
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "A producer W4_FINAL PASS is necessary but requires P3 consumer verification."
+    blocked_reason: "P12 W4 package has not been delivered and accepted."
+    wording_allowed: "P12 is executing the frozen workflow; compliance remains unverified."
+    next_step_to_unblock: "Pass P3 gates G0-G3 and G6."
+
+  - claim_id: C4_PLANNED_SCALE
+    text: "The study achieved 20 projects, 80 new D2 real-fault families, and 160 D1 families."
+    intended_location: abstract
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "The 17-project/60-family floor is not planned-scale attainment."
+    blocked_reason: "No accepted P12 manifests exist."
+    wording_allowed: "The planned scale is 20 projects, 80 D2 families, and 160 D1 families."
+    next_step_to_unblock: "Recompute counts from a G0-G6 accepted package."
+
+  - claim_id: C5_PRIMARY_RFDS_SUPERIORITY
+    text: "S1 detects more unseen real semantic fault families than S2."
+    intended_location: results
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "S1 versus S2 is the only confirmatory comparison."
+      - "Requires the one-sided 95% lower bound above zero."
+    blocked_reason: "The D2 experiment and independent P3 recomputation do not yet exist."
+    wording_allowed: "We will test whether S1 yields higher RFDS than S2."
+    next_step_to_unblock: "Pass G0-G7 and link the accepted primary-analysis artifact."
+
+  - claim_id: C6_PRIMARY_RFDS_PRACTICAL_IMPORTANCE
+    text: "S1 improves RFDS over S2 by a practically important amount."
+    intended_location: abstract
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "Requires the one-sided 95% lower bound above MID=0.10, not merely a point estimate above 0.10."
+    blocked_reason: "No accepted primary interval exists."
+    wording_allowed: "MID=0.10 was frozen before outcome analysis."
+    next_step_to_unblock: "Pass G7 and satisfy the MID lower-bound rule."
+
+  - claim_id: C7_DVE_T_TRANSFER
+    text: "The guidance transfers across programs."
+    intended_location: discussion
+    status: speculative
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "DVE-T is exploratory and cannot rescue the primary comparison."
+    blocked_reason: "No accepted exploratory transfer result exists."
+    wording_allowed: "We explore cross-program transfer as a secondary analysis."
+    next_step_to_unblock: "Report accepted DVE-T results as observed or qualified only."
+
+  - claim_id: C8_CROSS_VENDOR_LLM_AUDIT
+    text: "Key evidence was independently audited by a blinded cross-vendor LLM panel."
+    intended_location: validation
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "Requires five distinct model/version identities from at least three providers."
+      - "This is not external human replication."
+    blocked_reason: "The real W4 panel outputs have not been accepted."
+    wording_allowed: "A blinded five-seat cross-vendor LLM audit is planned."
+    next_step_to_unblock: "Pass G6 with the frozen real panel identities."
+
+  - claim_id: C9_EXTERNAL_HUMAN_REPLICATION
+    text: "An unaffiliated human independently replicated key samples."
+    intended_location: validation
+    status: blocked
+    evidence:
+      runs: []
+      output_files: []
+    scope_limits:
+      - "Optional and non-blocking."
+      - "Must state exact personnel independence and sample scope."
+    blocked_reason: "No external human replication record exists."
+    wording_allowed: "External human replication was not required; its absence is reported as a limitation."
+    next_step_to_unblock: "Accept a documented unaffiliated-human replication record."
+
+status_policy:
+  abstract_allows:
+    - supported
+    - qualified
+  contributions_allow:
+    - supported
+    - qualified
+  results_allow:
+    - supported
+    - observed
+    - qualified
+  limitations_allow:
+    - insufficient
+    - blocked
+    - speculative
+  p3_may_only_downgrade_p12_claims: true

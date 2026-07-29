@@ -1,0 +1,49 @@
+# 理论增强-phaseT5-fable：退化定理修补（THM-DEG-R）与三态等价集成
+
+> **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans。任务用 checkbox 跟踪。
+> **执行模型:** `claude-fable-5-thinking-max`（分派类别：**最强推理**——测度论表述改写与退化前提修补，需与 T1–T4 新定理群同一推理口径）。非此模型请勿执行本文件。
+
+**Master plan（规格权威）:** `docs/superpowers/plans/2026-07-28-p3-theory-enhancement.md`。开工前必读其 §0（符号闭集——本阶段涉及 \(L=L_{\mathrm{lim}}\wedge L_{\mathrm{switch}}\)（#31）、\(\mathcal D_P\)（#5）、\(K_{\mathrm{eq}}/\varepsilon_{\mathrm{AVP}}\)（#8/#13））与 §1.2（关闭 PO-DEG-1–3）。内容冲突以 master 为准。
+
+**前置门禁:** Phase T0 完成（Task T5.2 依赖 T0.2 Step 4 的三态等价登记结论）。
+
+**并行性:** 可与 T1/T2/T3/T4 并行（本阶段直接修改 main.tex §2.3/§2.5/§2.6，不触碰新定理草稿目录；T6.1 整合新定理时以本阶段修改后的 main.tex 为基）。
+
+**交接物:** main.tex §2.6 修补版（THM-DEG-R 三项闭合）+ §2.3/§2.5 三态等价声明 + 编译验证记录 → 供 T6 整合与审计项 (6)。
+
+---
+
+## Task T5.1：修补退化定理
+
+**Files:** Modify: `submission/TOSEM_regular_20260706/main.tex:688-739`（§2.6）、Appendix G 对应节
+
+- [x] **Step 1:** L 拆分：\(L=L_{\mathrm{lim}}\wedge L_{\mathrm{switch}}\)，\(L_{\mathrm{lim}}=L1\wedge L2\wedge L3\)（\(\varepsilon_{\mathrm{eq}}\to0\wedge K_{\mathrm{eq}}\to\infty\wedge\varepsilon_{\mathrm{AVP}}\to0\)），\(L_{\mathrm{switch}}=L4\wedge L5\wedge L6\)（MP 集置换 ∧ 算子切换 ∧ PUT 类限制）；两种读法恒等（\(=L_{\mathrm{equiv}}\wedge L_{\mathrm{killed}}\wedge L_{\mathrm{mut}}\)）；定理陈述改为"在 \(L_{\mathrm{switch}}\) 固定下沿 \(L_{\mathrm{lim}}\) 取极限"，箭头改 \(\xrightarrow{L_{\mathrm{lim}}}\)；G.4 Corollary 9.1 的遗留 "\(L=L1\wedge L2\wedge L3\)" 命名冲突一并修正（改回 "Under \(L\)" + 三联合条件名）
+- [x] **Step 2:** Lemma 9.1 增加显式假设："\(\mathcal D_P\)（原稿 \(D_S\)，随程序记号统一改名，仅限 §2.6+G.2–G.4 范围，全文扫尾归 T6.1）的支撑覆盖 \(\mathcal X_{\mathrm{adm}}\)"；无假设反例注记（一行）已入 proof sketch 尾部；G.3 证明中 \(\forall x\in D_S\setminus N\) 类型修正为 \(\forall x\in\mathcal X_{\mathrm{adm}}\setminus N\)（支撑假设由此被实际使用）
+- [x] **Step 3:** "almost everywhere" 改为二选一表述（浮点域有限例外集（NaN 传播/上下溢陷阱，精确离散情形为空）/ 连续化模型下 \(\mathcal D_P\)-测度零），Thm 9.1（main+G.4）与 Lemma 9.1（G.3）同步；§1/§4 的顺带提法留给 T6 写作层
+- [x] **Step 4:** 编译验证（texlive 现装后执行）：main.tex 与 supplementary.tex 各两遍。结果：各 1 个 **pre-existing** preamble 错误（`\Bbbk already defined`，amssymb × 新版 TeX Live 的 acmart/newtxmath 环境产物）——用编辑前基线（`8758bc6`）同环境对照编译得到完全相同的单一错误，**本次编辑零新增错误**；两 PDF 均产出，`Missing character` = 0。归档 PDF（xelatex 原建）已恢复未动，重编产物不入库
+- [x] **Step 5:** Commit
+
+## Task T5.2：三态等价状态集成（依 Task T0.2 Step 4 的登记）
+
+**Files:** Modify: main.tex §2.3（E1∧E2 节）、§2.5
+
+> **T0 audit handoff (2026-07-28):** The local audit found no literal
+> `\mathrm{SMS}_{\mathrm{strict}}`, `\mathrm{SMS}_{\mathrm{cons}}`, or
+> `EQUIVALENCE_UNRESOLVED` in the committed
+> `submission/TOSEM_regular_20260706` baseline. Apply this task to that
+> baseline; the audited source fingerprints and migration inventory are in
+> `research/theory_drafts/notation_registry.md`.
+
+- [x] **Step 1:** §2.3 增加三态声明：CERTIFIED_EQUIVALENT（仅证书；当前管线无证书器，该态现为空）/ CONFIRMED_NON_EQUIVALENT（分歧见证，E1∨E2 失败路）/ EQUIVALENCE_UNRESOLVED（E1∧E2 样本一致但无证书）；现 mp-cell（60，F-8）的 E1∧E2 判等在新口径下=unresolved，旧 SMS = SMS_strict，并注明 v4 sample-equivalent 集为空故两口径重合、无回溯数字改动
+- [x] **Step 2:** §2.5 向后兼容声明补一句：三态在退化极限（\(L_{\mathrm{lim}}\)）下坍缩回经典二态（与 Lemma 9.1 一致）；顺带修 §2.5 遗留 "L1∧L2∧L3" 命名（改三联合条件名）与 "almost everywhere" 措辞（改例外集表述）
+- [x] **Step 2b:** 通知论证线执行 SSOT 双口径键迁移核对（其 Task 0.2 Step 2b：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\)、新增 \(\mathrm{SMS}_{\mathrm{cons}}\)；该核对是论证线 Phase 4 注数的前置门禁，R-7）——通知载体=本 commit message trailer 与本行记录；论证线 Phase 0 启动时按此执行
+- [x] **Step 3:** 编译验证 + Commit——编译验证同 T5.1 Step 4（零新增错误 vs 基线，PDF 产出，Missing character=0）；commit `076a8d6`
+
+---
+
+## 本阶段风险
+
+| 风险 | 处置 |
+|---|---|
+| §2.6 行号区间与实际稿面漂移 | 以 `rg -n "degenerate|Lemma 9.1" main.tex` 重定位后再改；不按行号盲改 |
+| 与 T6.1 的 \(D_S\to\mathcal D_P\) 全文改名撞车 | 本阶段只改 §2.6 内出现；全文扫尾归 T6.1 Step 2，两处 commit 分开 |

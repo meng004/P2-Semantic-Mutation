@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.0.0",
+  "contract_id": "p3-p12-consumer-v1.1.2",
+  "status": "frozen",
+  "frozen_at": "2026-07-11T00:00:00+08:00",
+  "design_basis": {
+    "path": "docs/superpowers/specs/2026-07-11-tosem-v1.1.2-real-fault-dve-design.md",
+    "commit": "84683e37e707dab03eda3aa3a147fd5b3120710a"
+  },
+  "producer": "P12-Defect4MR",
+  "consumer": "P3-SemanticMutation",
+  "producer_release": {
+    "package_path": "release/provider/p12-p3-v1.1.2/evidence-package.json",
+    "expected_tag": "p12-evidence-v1.1.2",
+    "required_stage_passes": [
+      "W1",
+      "W2",
+      "W3",
+      "W4_PREOPEN",
+      "W4_FINAL"
+    ]
+  },
+  "confirmatory_design": {
+    "primary_comparison": [
+      "S1",
+      "S2"
+    ],
+    "primary_endpoint": "RFDS",
+    "project_weighting": "equal",
+    "portfolio_budget_k": 4,
+    "mid": 0.1,
+    "primary_interval": "two-level-BCa",
+    "primary_interval_levels": [
+      "project",
+      "real-fault-family-within-project"
+    ],
+    "superiority_rule": "one-sided-95-percent-lower-bound>0",
+    "practical_importance_rule": "one-sided-95-percent-lower-bound>0.10",
+    "sensitivity": [
+      "project-level-exact-sign-flip"
+    ],
+    "exploratory": [
+      "DVE-T",
+      "S1-vs-S3",
+      "S1-vs-S4"
+    ]
+  },
+  "scale": {
+    "planned_projects": 20,
+    "planned_d2_families": 80,
+    "planned_d1_families": 160,
+    "minimum_projects": 17,
+    "minimum_d2_families": 60,
+    "minimum_d2_families_per_project": 2,
+    "maximum_d2_project_share": 0.2,
+    "minimum_s2_mutants_per_project": 20,
+    "minimum_s2_operator_families_per_project": 3,
+    "floor_is_not_target": true
+  },
+  "partition_policy": {
+    "D0": {
+      "confirmatory_eligible": false,
+      "uses": [
+        "development",
+        "calibration",
+        "positive-control",
+        "historical-context"
+      ]
+    },
+    "D1": {
+      "confirmatory_eligible": false,
+      "uses": [
+        "S1-development",
+        "portfolio-construction",
+        "development-diagnostics"
+      ]
+    },
+    "D2": {
+      "confirmatory_eligible": true,
+      "admission_without_mr_or_outcome": true,
+      "retain_all_mr_misses": true
+    },
+    "D3": {
+      "confirmatory_eligible": false,
+      "uses": [
+        "exploratory",
+        "transfer",
+        "positive-control"
+      ]
+    }
+  },
+  "legacy_d0_exclusions": {
+    "p12_verified_full": 35,
+    "mutation_cases": 34,
+    "applied_mutants": 1124,
+    "exclude_aliases_and_derivatives": true
+  },
+  "audit_policy": {
+    "cleanroom_required": true,
+    "llm_panel_required": true,
+    "llm_seats": 5,
+    "minimum_llm_providers": 3,
+    "maximum_seats_per_provider": 2,
+    "distinct_model_versions_required": true,
+    "four_human_rater_label_validity_required": true,
+    "external_human_replication_required": false,
+    "llm_must_not_be_described_as_human_replication": true
+  },
+  "consumer_gates": [
+    "G0_TRANSPORT_IDENTITY",
+    "G1_WORKFLOW_CHRONOLOGY",
+    "G2_PARTITION_PROVENANCE",
+    "G3_ADMISSION_FAMILY_INTEGRITY",
+    "G4_SCALE_BASELINE_ADEQUACY",
+    "G5_RUN_MATRIX_DENOMINATORS",
+    "G6_VALIDATION_AUDIT",
+    "G7_ANALYSIS_COMPATIBILITY",
+    "G8_CLAIM_DISCLOSURE"
+  ],
+  "package_states": [
+    "ACCEPT",
+    "QUARANTINE",
+    "REJECT_CONFIRMATORY",
+    "SCOPE_DOWNGRADE"
+  ],
+  "hard_reject_conditions": [
+    "artifact-hash-mismatch",
+    "unversioned-freeze-drift",
+    "substantive-D0-D2-overlap",
+    "cross-branch-D2-leakage",
+    "MR-or-outcome-informed-D2-admission",
+    "post-outcome-family-reshaping",
+    "second-holdout-opening",
+    "selective-run-removal",
+    "asymmetric-retry-policy",
+    "post-opening-denominator-change",
+    "confirmatory-estimand-drift"
+  ],
+  "claim_policy": {
+    "allowed_in_abstract": [
+      "supported",
+      "qualified"
+    ],
+    "allowed_in_results": [
+      "supported",
+      "observed",
+      "qualified"
+    ],
+    "prohibited_as_findings": [
+      "insufficient",
+      "blocked",
+      "speculative"
+    ],
+    "consumer_may_only_downgrade_producer_claim": true
+  }
+}

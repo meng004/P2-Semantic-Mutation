@@ -102,14 +102,14 @@ metamorphic relation adequacy in scientific computing programs''}
 \item PUT set $I = \{\text{A1,A2,A3, B1,B2,B3, C1,C2,C3, D1,D2,D3}\}$, $|I| = 12$.
 \item PUT: $S_i$ ($i \in I$).
 \item Class mapping: $\mathrm{cls} : I \to \{A, B, C, D\}$ (open, extensible).
-\item Valid input distribution: $D_S$, sampling $X_{K_{\mathrm{eq}}} \sim D_S$.
+\item Valid input distribution: $\mathcal{D}_P$, sampling $X_{K_{\mathrm{eq}}} \sim \mathcal{D}_P$.
 \end{itemize}
 
 \paragraph{Metamorphic testing side.}
 \begin{itemize}
 \item Metamorphic-relation label set: $\mathcal{R} = \{\text{Cons.}, \text{Mono.}, \text{Conv.}, \text{Traj.}, \text{P-ord.}\}$, $k \in \{1,\ldots,5\}$ (open, extensible).
 \item Metamorphic Relation: $\mathrm{MR}_{i,k}$ (from the shared infrastructure); $\mathit{mr} = (r, R) \in \mathrm{MR}_{i,k}$.
-\item Automated Verification Pipeline (AVP): $\mathrm{AVP} : \text{Programs} \times \mathrm{MR}_{\text{universe}} \times \mathbb{R}^+ \to \{\text{pass}, \text{fail}\}$; $\mathrm{AVP}(s, \mathit{mr}, \varepsilon_{\mathrm{AVP}}^k)$ invokes the verification method per relation index $k$.
+\item Automated Verification Pipeline (AVP): $\mathrm{AVP} : \text{Programs} \times \mathrm{MR}_{\text{universe}} \times \mathbb{R}^+ \to \{\text{pass}, \text{fail}\}$; $\mathrm{AVP}(s, \mathit{mr}, \varepsilon_{\mathrm{AVP}}^k)$ invokes the verification method per relation index $k$. Where the tolerance is fixed by the relation's meta-pattern we abbreviate $\mathrm{AVP}(s, \mathit{mr}) := \mathrm{AVP}(s, \mathit{mr}, \varepsilon_{\mathrm{AVP}}^k)$.
 \end{itemize}
 
 \paragraph{Mutation testing side.}
@@ -120,39 +120,61 @@ metamorphic relation adequacy in scientific computing programs''}
 \item Alignment: $\mathrm{align}(j) = j$.
 \end{itemize}
 
-\paragraph{Three-state decomposition (fixed).}
+\paragraph{Evaluation unit and pool decomposition (fixed).}
+The evaluation unit is the (PUT, meta-pattern) cell $(i,k)$ over the
+PUT's pooled admitted mutants
+$\mathrm{mut}(S_i) = \bigcup_j \mathrm{mut}_j(S_i)$; the operator index
+$j$ is a per-mutant fiber label, not a cell axis.
 \[
 \begin{aligned}
-\mathrm{mut}_j(S_i)
-  &= \mathrm{equiv}_{i,k,j} \cup \mathrm{killed}_{i,k,j}
-     \cup \mathrm{survive}_{i,k,j},\\
-&\hspace{1.5em}\text{with the three sets disjoint, mutually exclusive, and exhaustive.}
+\mathrm{mut}(S_i)
+  &= \mathrm{certified}_{i,k} \cup \mathrm{killed}_{i,k}
+     \cup \mathrm{survive}_{i,k} \cup \mathrm{unresolved}_{i,k},\\
+&\hspace{1.5em}\text{with the four sets disjoint, mutually exclusive, and exhaustive.}
 \end{aligned}
 \]
 \begin{itemize}
-\item \emph{equiv determination} (dual conditions):
+\item \emph{equivalence-status evidence} (dual conditions):
   (E1) AVP-coherent: $\forall \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \mathrm{AVP}(s', \mathit{mr})$;
-  (E2) Output-equiv: $\forall x \in X_{K_{\mathrm{eq}}} \sim D_S: \|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$.
-\item \emph{killed determination}: $\mathrm{killed}(s', \mathrm{MR}_{i,k}) \Leftrightarrow \exists \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \text{pass} \wedge \mathrm{AVP}(s', \mathit{mr}) = \text{fail}$.
+  (E2) Output-equiv: $\forall x \in X_{K_{\mathrm{eq}}} \sim \mathcal{D}_P: \|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$.
+  E1 $\vee$ E2 failure yields \texttt{CONFIRMED\_NON\_EQUIVALENT}; E1
+  $\wedge$ E2 agreement without a machine-checkable certificate yields
+  \texttt{EQUIVALENCE\_UNRESOLVED}; \texttt{CERTIFIED\_EQUIVALENT} is
+  reserved for certificate-bearing candidates (empty in the current
+  pipeline).
+\item \emph{killed determination}: $\mathrm{killed}(s', \mathrm{MR}_{i,k}) \Leftrightarrow \exists \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \text{pass} \wedge \mathrm{AVP}(s', \mathit{mr}) = \text{fail}$; killed mutants are confirmed non-equivalent (kill witness upgrade, main-text lemma).
 \end{itemize}
 
-\paragraph{Metric (fixed classical structure).}
+\paragraph{Metric (fixed classical structure; strict and conservative readings).}
 \begin{align*}
-\mathrm{SMS}_{i,k,j} &:= \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{mut}_j(S_i)| - |\mathrm{equiv}_{i,k,j}|} \\
-                    &\phantom{:}= \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{killed}_{i,k,j}| + |\mathrm{survive}_{i,k,j}|} \in [0, 1].
+\mathrm{SMS}_{i,k} := \mathrm{SMS}^{\mathrm{strict}}_{i,k} &= \frac{|\mathrm{killed}_{i,k}|}{|\mathrm{killed}_{i,k}| + |\mathrm{survive}_{i,k}|}, \\
+\mathrm{SMS}^{\mathrm{cons}}_{i,k} &= \frac{|\mathrm{killed}_{i,k}|}{|\mathrm{killed}_{i,k}| + |\mathrm{survive}_{i,k}| + |\mathrm{unresolved}_{i,k}|} \in [0, 1],
 \end{align*}
+each \texttt{NA} on an empty denominator. With $u_{i,k} = 0$ (the
+audited v4 campaign) both equal the classical ratio
+$|\mathrm{killed}|/(|\mathrm{mut}| - |\mathrm{equiv}|)$.
 
 \paragraph{LRCA engineering attribution layer (descriptive, not in SMS).}
 \begin{itemize}
-\item Likely root-cause inventory: $C = \{C_1, \ldots, C_5\}$ (open, extensible). C1 True semantic failure; C2 Tolerance perturbation; C3 OOD; C4 Statistical-assumption violation; C5 Mutator artefact.
+\item Likely root-cause inventory: $C = \{C_1, \ldots, C_5\}$ (open, extensible). C1 Likely semantic failure (residual label: no C2--C5 trigger); C2 Tolerance perturbation; C3 OOD; C4 Statistical-assumption violation; C5 Mutator artefact.
 \item LRCA output: each $s' \in \mathrm{killed}$ annotated with $\texttt{root\_cause}(s') \in C$.
-\item Descriptive quantities: $\texttt{C1\_share}_{i,k,j}$, $\texttt{suspect\_share}_{i,k,j}$.
+\item Descriptive quantities: $\texttt{C1\_share}_{i,k}$, $\texttt{suspect\_share}_{i,k}$; both \texttt{NA} on zero-kill cells.
 \end{itemize}
 
 \paragraph{Slicing and cross-class.}
 \begin{itemize}
-\item Slicing: aligned $j = k$; cross $j \neq k$.
+\item Slicing: aligned $k = k^\star(i)$ (the PUT's class-primary meta-pattern); cross $k \neq k^\star(i)$.
 \item Cross-class: $\Delta\mathrm{SMS}_c$, $c \in \{A, B, C, D\}$; $\mathrm{CV}(\Delta\mathrm{SMS}) := \mathrm{std}(\Delta\mathrm{SMS}_c) / |\mathrm{mean}(\Delta\mathrm{SMS}_c)|$.
+\end{itemize}
+
+\paragraph{Theory-extension symbols (window, interval, and gap results).}
+\begin{itemize}
+\item Observation: $\mathrm{obs} : \mathcal{Y} \to \mathcal{Y}_{\mathrm{obs}}$; observational equivalence $\equiv_{\mathrm{obs}}$; computation map $\Phi_Q$.
+\item Invariant family: $\Psi = \{\psi_1, \dots, \psi_5\}$ (non-redundant; open, e.g.\ $\psi_6$); edit operator $\mathrm{edit}$ with $P_{\mathrm{edit}} = \mathrm{edit}(P)$; effect map $\mathrm{eff}$ with fibers $\mathrm{eff}^{-1}(\cdot)$.
+\item Counts (local to the theory subsections): $n$ confirmed non-equivalent, $\kappa$ killed, $u$ unresolved, $u_{\mathrm{neq}} \in [0, u]$.
+\item Coverage and gaps: $\mathrm{Cov}(R)$; $\mathrm{Gap}_{\mathrm{aln}}(R)$; $\mathrm{Gap}_{\mathrm{str}}(R)$; exactness defect $\xi(R)$ (\texttt{NA} on zero kills; one-sided); kill signature $\mathrm{sig}(m)$; universe $M_{\mathrm{neq}}$, fibers $M_j$, weights $w_j$.
+\item Window quantities: violation magnitude $\varepsilon_{\mathrm{viol}}(m)$; residual $\Delta_r = \sup_{x \in D_r} \varepsilon_r(x; P^\star)$ over the applicable domain $D_r$; margin $\mu_r = \varepsilon_{\mathrm{tol}} - \Delta_r$; per-run noise bound $\bar\eta$ with execution multiplicity $p$; repeats $N$, concentration constant $c$, output spread $\sigma_{\mathrm{out}}$, deterministic noise $\eta_{\mathrm{det}}$; Lipschitz constant $L_r$; crash threshold $\varepsilon_{\mathrm{crash}}$; exception set $\mathcal{N}_{\mathrm{exc}}$ (degeneration).
+\item Degenerate limit: $L = L_{\mathrm{lim}} \wedge L_{\mathrm{switch}} = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$.
 \end{itemize}
 
 \paragraph{Tolerance and sampling.}
@@ -179,7 +201,8 @@ Code & Meaning \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-C1 & True semantic failure (what SMS seeks) \\
+C1 & Likely semantic failure (residual label: no C2--C5 trigger; the
+kill class SMS seeks) \\
 C2 & Numerical tolerance perturbation \\
 C3 & Out-of-distribution (OOD) \\
 C4 & Statistical-assumption violation \\
@@ -192,13 +215,13 @@ C5 & Mutator artefact \\
 \begin{itemize}
 \item \textbf{L0 artefact pre-scan.} Double-blind review following the main manuscript's mutant-pool prescreen and equivalence-detection protocol: dual-LLM cross-source review plus 20\% manual sampling.
 \item \textbf{L1 tolerance robustness.} $N = 20$ replicates; fail ratio $\geq 0.80$ considered stable.
-\item \textbf{L2 OOD triage.} For C/D classes, distinguish valid $D_S^{\text{valid}}$ from OOD.
+\item \textbf{L2 OOD triage.} For C/D classes, distinguish valid $\mathcal{D}_P^{\text{valid}}$ from OOD.
 \item \textbf{L3 statistical baseline.} For Wilcoxon/DTW, IID/stationarity pre-check on PUT samples.
 \end{itemize}
 
 \textbf{Decision tree:}
 
-For each $s' \in \mathrm{killed}_{i,k,j}$:
+For each $s' \in \mathrm{killed}_{i,k}$:
 \begin{itemize}
 \item \textbf{L1.} fail ratio $< 0.80 \Rightarrow$ C2; otherwise $\Rightarrow$ L2.
 \item \textbf{L2} (C/D classes). fail only in OOD $\Rightarrow$ C3; otherwise $\Rightarrow$ L3.
@@ -211,13 +234,15 @@ For each $s' \in \mathrm{killed}_{i,k,j}$:
 
 \textbf{LRCA threshold calibration (9-grid scan;
 \texttt{lrca\_calibration.json}).} Best ood\_band=0.02 with any
-tolerance\_multiplier (3.0 / 10.0 / 30.0) gives mean\_C1\_share 0.200 /
-H4 12/60 (20.0\%); ood\_band=0.05 (default) or 0.10 gives 0.164 / 10/60
-(16.7\%). \texttt{tolerance\_multiplier} has zero impact (L1 tolerance
-rarely triggered); \texttt{ood\_band} is the only discriminator.
-Calibration ceiling 12/60 = 20\% remains far below 80\%, H4
-unattainable on this dataset, not a calibration issue (inherent SNR of
-LLM-mutant pools).
+tolerance\_multiplier (3.0 / 10.0 / 30.0) gives 12 of 15 evaluable
+cells at suspect\_share $\leq 0.20$.
+\texttt{tolerance\_multiplier} has zero impact (L1 tolerance
+rarely triggered); \texttt{ood\_band} is the only discriminator. Under
+the \texttt{NA} convention of the main text the pass-count denominator
+is the 15 evaluable cells, not 60; the main-text H4 discussion renders
+no pass/fail verdict because the pre-registered 60-cell mean is
+undefined on this data. The grid calibrates diagnostic labels only and
+is not an H4 hypothesis test.
 
 \subsection{Verification Protocol and Equivalence-Judgement Trade-Off}\label{a.3-avp-protocol-specification-and-equivalence-judgement-trade-off}
 
@@ -259,14 +284,17 @@ Low (smaller denominator) \\
 E2 alone & output match, MR differs (rare) & K\_eq miss, full-space
 equal & High \\
 \textbf{E1 $\wedge$ E2} & both mis-pass simultaneously & E1 $\vee$ E2 false $\to$ non-equiv
-& Slightly high (conservative) \\
+& Slightly low (conservative: misclassified equivalents remain as
+unkillable survivors in the denominator) \\
 \end{longtable}
 }
 
 E1 alone is fooled by insufficient AVP coverage; E2 alone by numerical
 coincidence on $K_{\mathrm{eq}}$. E1 $\wedge$ E2 is the conservative complete
-instantiation; under $L_{\mathrm{equiv}}$ it reduces almost-everywhere to
-classical bitwise equivalence (Lemma G.1). Counter-examples: E2 passes
+instantiation; under $L_{\mathrm{equiv}}$ (with the switch component
+fixed) it reduces to
+classical bitwise equivalence outside the exception set
+$\mathcal{N}_{\mathrm{exc}}$ (Lemma G.1). Counter-examples: E2 passes
 but E1 does not (rare; mutant coincides at K\_eq but deviates at MR
 trigger points $\to$ non-equivalent); E1 passes but E2 does not (common;
 consistent within MR but numerical drift \textgreater{} $\varepsilon_{\mathrm{eq}} \to$
@@ -298,7 +326,8 @@ al.~2021): semantic class-D topical overlap on ML kernels. Defects4J (Just et
 al.~2014): no overlap, only mutation-as-fault-proxy reference. mutmut /
 cosmic-ray demos: general Python; the semantic operators extend the scientific-computing focus.
 
-\textbf{(d) Scale vs representativeness.} Each PUT 50-400 LOC; signature
+\textbf{(d) Scale vs representativeness.} Each PUT kernel file is 19-35
+LOC (0.6-1.2 KB), wrapping its library calls behind the signature
 standardised to \texttt{program(x:\ float)\ $\to$\ float}. Substantively
 smaller than industrial code (typically 1-10 KLOC).
 
@@ -310,7 +339,7 @@ systematically under-estimate SMS and cross-class differences on
 industrial PUTs (declared in the main manuscript's threats-to-validity section;
 future work validates on industrial-grade PUTs).
 
-\subsection{Systematic vs incidental}\label{b.1.5-systematic-vs-incidental}
+\subsubsection{Systematic vs incidental}\label{b.1.5-systematic-vs-incidental}
 
 Syntactic tools may \emph{occasionally} hit the semantic-mutation criteria in the main manuscript (a)
 (cross-function-boundary) or (c) (algorithm class), but occasionality
@@ -383,17 +412,17 @@ probability-distribution sampling swaps; on class c: surrogate-class
 swaps (GPR $\leftrightarrow$ RBF $\leftrightarrow$ NN). \textbf{TF} on class a: integration-order
 changes (RK4 $\to$ Euler); on class b: MC estimator changes.
 
-\textbf{Operator-level cross-table with cosmic-ray defaults}. The 12
-cosmic-ray default operators are AST-local:
-\texttt{NumberReplacer} (Num/Constant, CE partial, $\bigtriangleup$ literal values
-only); \texttt{ReplaceArithmeticOperator} (BinOp);
-\texttt{ReplaceComparisonOperator} (Compare);
-\texttt{ReplaceLogicalOperator} (BoolOp); \texttt{ReplaceUnaryOperator}
-(UnaryOp); \texttt{ReplaceTrueFalse} (NameConstant, CE keyword, $\bigtriangleup$
-Bool literal); \texttt{BreakContinueReplacer} (Break/Continue);
-\texttt{RemoveDecorator}; \texttt{RemoveExceptHandler};
-\texttt{ZeroIterationForLoop} (For); \texttt{ReplaceIfBlock} (If);
-\texttt{MutateSubscript}. None correspond to OS / HP / TF / SI:
+\textbf{Operator-level cross-table with cosmic-ray defaults}. The 13
+cosmic-ray default operators (the B.6 inventory) are AST-local:
+\texttt{number\_replacer} (Num/Constant, CE partial, $\bigtriangleup$ literal values
+only); \texttt{binary\_operator\_replacement} (BinOp);
+\texttt{comparison\_operator\_replacement} (Compare);
+\texttt{boolean\_replacer} (BoolOp); \texttt{unary\_operator\_replacement}
+(UnaryOp); \texttt{keyword\_replacer} (NameConstant, CE keyword, $\bigtriangleup$
+Bool literal); \texttt{break\_continue} (Break/Continue);
+\texttt{exception\_replacer}; \texttt{remove\_decorator};
+\texttt{variable\_inserter}; \texttt{variable\_replacer};
+\texttt{no\_op}; \texttt{zero\_iteration\_for\_loop} (For). None correspond to OS / HP / TF / SI:
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
@@ -466,8 +495,9 @@ artefact); d2/d3 dominantly C1 / C3 mixed.
 
 \subsection{Engineering-significance mapping}\label{b.5-engineering-significance-mapping}
 
-j = k aligned diagonal is the H2 threshold-test slice; j $\neq$ k
-off-diagonal is control; 9 vacant cells ($\circ$, no MR exercised) are not formally
+The aligned slice $k = k^\star(i)$ is the H2 threshold-test slice; the
+cross slice $k \neq k^\star(i)$
+is control; 9 vacant cells ($\circ$, no MR exercised) are not formally
 adjudicated and are repurposed in the main manuscript's R\_sem/R\_kill decoupling discussion as descriptive evidence for
 R\_sem / R\_kill decoupling. The v3 $\to$ v4 micro-change
 ($\Delta\delta = -0.009$, paired-role bootstrap 95\% CI [-0.238, 0.207])
@@ -671,7 +701,7 @@ grid, \textasciitilde\$5-8 USD); v3 used the original Phase-1 dual-blind
 v3 $\to$ v4 source-axis shift may be slight v4 quality decline rather than
 LLM-source diversity.
 
-\subsection{Differential prompt protocol}\label{c.1.1-differential-prompt-protocol-future-work-commitment}
+\subsubsection{Differential prompt protocol}\label{c.1.1-differential-prompt-protocol-future-work-commitment}
 
 The v3 $\to$ v4 micro-change of -0.009 (paired-role bootstrap 95\% CI
 [-0.238, 0.207]) may reflect ``three LLMs under
@@ -740,7 +770,7 @@ double-blind; L1 tolerance $\leftrightarrow$ N = 20 repetition subprocess; L2 OO
 input-distribution definition; L3 statistical baseline $\leftrightarrow$ pre-check
 protocol.
 
-\subsection{Pilot calibration}\label{c.4.1-pilot-calibration-37-operators-k-1020}
+\subsubsection{Pilot calibration}\label{c.4.1-pilot-calibration-37-operators-k-1020}
 
 A 2026 Q3 operator-level pilot ran 12 PUTs $\times$ 37 operators (36
 primary PUT-class operator pairs plus one CF structural-injection
@@ -769,20 +799,14 @@ label flip). This is empirical evidence for R\_sem / R\_kill decoupling at cell 
 
 \section{Statistical Analysis Details}\label{d.-statistical-analysis-details}
 
-\subsection{Semantic-Mutation Score Variants and Construction Lemmas}\label{d.1-sms-variants-and-construction-lemmas}
+\subsection{Reporting Conventions and Primary-Table Construction}\label{d.1-sms-variants-and-construction-lemmas}
 
-\textbf{SMS\_unfiltered (reviewer comparison metric):}
-
-\[
-\mathrm{SMS}^{\mathrm{unfiltered}}_{i,k,j} := \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{mut}_j(S_i)| - |\mathrm{equiv}_{i,k,j}|}
-\]
-
-(Same form as the primary metric; here \texttt{killed} does not distinguish C1 from C2--C5.)
-
-The appendix of the reproducibility package provides cell-by-cell
-difference between SMS\_unfiltered and SMS; if relative difference
-\textless{} 5\%, this confirms LRCA does not affect robustness of
-primary conclusions.
+An earlier draft defined a separate \texttt{SMS\_unfiltered} variant
+``without LRCA filtering''. Under the final definitions LRCA never
+filters the killed set, so that variant coincides with SMS identically
+and has been removed; the diagnostic secondary view is the C1-weighted
+$\mathrm{SMS}_{\mathrm{C1}}$ of the main text, which is explicitly a
+product of two reported quantities rather than a second mutation score.
 
 \textbf{Primary-table construction.}
 
@@ -827,36 +851,43 @@ N = 20 bootstrap intervals:
 \textbf{H4 cutoff sensitivity.} Dense grid scan (cutoff
 $\in$ \{0.05, 0.10, \ldots, 0.50\}, step 0.05) on v4 data
 (\path{scripts/h5_sensitivity.py},
-\path{data/results/h5_sensitivity_v4.json}):
+\path{data/results/h5_sensitivity_v4.json}), re-based on the 15
+evaluable cells per the main text's \texttt{NA} convention (zero-kill
+cells carry no defined suspect\_share):
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Effect-size sensitivity and logit-transformation invariance.}\label{tab:p2-22}\\
+\caption{Cutoff sensitivity of the per-cell suspect-share pass count
+over evaluable cells.}\label{tab:p2-22}\\
 \toprule\noalign{}
-cutoff & h5\_cells\_pass & h5\_pass\_ratio \\
+cutoff & cells at or below cutoff & share of evaluable \\
 \midrule\noalign{}
 \endfirsthead
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.05 & 12 / 60 & 20.0\% \\
-0.10 & 12 / 60 & 20.0\% \\
-0.15 & 12 / 60 & 20.0\% \\
-\textbf{0.20 (paper)} & \textbf{12 / 60} & \textbf{20.0\%} \\
-0.25 & 12 / 60 & 20.0\% \\
-0.30 & 12 / 60 & 20.0\% \\
-0.35 & 12 / 60 & 20.0\% \\
-0.40 & 12 / 60 & 20.0\% \\
-0.45 & 13 / 60 & 21.7\% \\
-0.50 & 13 / 60 & 21.7\% \\
+0.05 & 12 / 15 & 80.0\% \\
+0.10 & 12 / 15 & 80.0\% \\
+0.15 & 12 / 15 & 80.0\% \\
+\textbf{0.20 (paper)} & \textbf{12 / 15} & \textbf{80.0\%} \\
+0.25 & 12 / 15 & 80.0\% \\
+0.30 & 12 / 15 & 80.0\% \\
+0.35 & 12 / 15 & 80.0\% \\
+0.40 & 12 / 15 & 80.0\% \\
+0.45 & 13 / 15 & 86.7\% \\
+0.50 & 13 / 15 & 86.7\% \\
 \end{longtable}
 }
 
-\textbf{Conclusion.} H4 verdict (not met) is intrinsic data property,
-independent of cutoff choice. v4 suspect\_share distribution is severely
-bimodal: median 1.0, mean 0.79; 48 cross cells at suspect\_share $\approx$ 1, 12
-aligned cells in low end; the {[}0.20, 0.80{]} interior is nearly empty.
-Specific value 0.20 is \textbf{not load-bearing}.
+\textbf{Conclusion.} The per-cell pass count is flat across cutoffs
+$\in$ {[}0.05, 0.40{]}: the evaluable cells' suspect\_share
+distribution is strongly bimodal (twelve cells at or near 0, a small
+high-suspect tail carrying most of the pooled suspect mass), so the
+specific cutoff 0.20 is \textbf{not load-bearing}. An earlier draft
+reported this sweep over all 60 cells (12/60 flat) by coding zero-kill
+cells as suspect\_share = 1; that coding is withdrawn with the H4
+estimand discussion in the main text, and no pass/fail verdict attaches
+to this table.
 
 \textbf{Logit-transformation invariance.} Cliff's delta is rank-based
 (function of $U / (n_1 \cdot n_2)$), mathematically invariant under any strictly
@@ -868,10 +899,13 @@ zero-mass dominance, not metric-scale choice.
 \textbf{Vacant-cell sensitivity.} Excluding the 9 vacant cells (cells
 with no exercised MR) leaves the aligned-versus-cross verdict unchanged.
 In v4 the analysis becomes n = 11 aligned and n = 40 cross with
-$\delta = 0.323$ (95\% CI [-0.011, 0.648]); the matching v3 slice gives
-$\delta = 0.270$ (95\% CI [-0.043, 0.595]). The exclusion widens the
-interval because the design is smaller, but it does not move H2 across
-the pre-registered Romano medium threshold.
+$\delta = 0.323$ (PUT-cluster 95\% CI [0.045, 0.599]). The exclusion
+does not move H2 across the pre-registered large-effect threshold.
+For the complete primary grid, 100,000 PUT-cluster resamples (seed 42)
+give \(\delta=0.314\), 95\% CI [0.045, 0.594], with 0.00964 of
+resamples at or below zero
+(\path{scripts/compute_rq2_cluster_bootstrap.py};
+\path{data/results/rq2_cluster_bootstrap_v4.json}).
 
 \textbf{Primary-MR withdrawal permutation-null.} The auxiliary c-class
 check pools 15 SMS values, shuffles labels over the $3 \times 5$ (PUT,
@@ -890,30 +924,27 @@ aligned (n=12) and cross (n=48) v4 SMS pools; N\_sim = 5,000, seed = 42
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Power analysis under observed and stipulated effects.}\label{tab:p2-23}\\
+\caption{Observed-distribution exceedance probabilities.}\label{tab:p2-23}\\
 \toprule\noalign{}
-Threshold & Interpretation & Power \\
+Threshold & Interpretation & Exceedance probability \\
 \midrule\noalign{}
 \endfirsthead
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-delta \textgreater{} 0.000 & Any-effect & \textbf{0.997} \\
-delta \textgreater{} 0.147 & Small & 0.966 \\
-delta \textgreater{} 0.330 & Medium & 0.759 \\
+delta \textgreater{} 0.000 & Any-effect & \textbf{0.978} \\
+delta \textgreater{} 0.147 & Small & 0.849 \\
+delta \textgreater{} 0.330 & Medium & 0.457 \\
 \textbf{delta \textgreater{} 0.474} & \textbf{Large (H2)} &
-\textbf{0.423} \\
+\textbf{0.155} \\
 \end{longtable}
 }
 
 Sample-size sweep ($n_{\mathrm{aligned}} \in \{6, 12, \ldots, 60\}$, $n_{\mathrm{cross}} = 4 \times n_{\mathrm{aligned}}$):
-power for delta \textgreater{} 0 reaches 0.974 at n=6, 0.996 at 12,
-plateaus thereafter. RQ4 primary analysis has very low sample-size
-requirement; the bottleneck is the effect-size boundary itself, not
-sampling noise. Even at $\delta_{\mathrm{truth}} \approx 0.474$, sample has only
-\textasciitilde42\% chance of detecting under plug-in; but this does
-\textbf{not} mean ``insufficient power is the cause of H2 not being
-met'', observed $\delta_{\mathrm{v3}} = 0.323 < 0.474$, observed
+the probability for delta \textgreater{} 0 is 0.909 at n=6, 0.978 at
+12, and 0.994 at 18. These are observed-distribution exceedance
+probabilities, not power against a stipulated alternative. Observed
+$\delta_{\mathrm{v3}} = 0.323 < 0.474$ and observed
 $\delta_{\mathrm{v4}} = 0.314 < 0.474$; increasing sample only narrows CI.
 
 \textbf{Stipulated-alternative.} Implemented in
@@ -922,8 +953,8 @@ N\_sim = 2,000): SMS has heavy ties at zero (45/60 = 0), raw shifting is
 discontinuous (any $\varepsilon$ \textgreater{} 0 jumps delta from 0.314 to 0.74).
 Mixture: aligned' = (probability w) sample from (observed\_aligned +
 0.001) + (probability 1−w) sample from observed\_aligned, calibrate w so
-E{[}delta{]} $\approx$ 0.474. Calibrated w = 0.094, realised E{[}delta{]} =
-0.4746.
+E{[}delta{]} $\approx$ 0.474. Calibrated w = 0.373, realised E{[}delta{]} =
+0.470.
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -935,27 +966,30 @@ Stipulated truth & Criterion & Power \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.474 & $\hat{\delta} \geq 0.474$ (point-estimate) & \textbf{0.491} \\
-0.474 & 95\% CI lower \textgreater{} 0 (any-effect) & 0.868 \\
+0.470 (target 0.474) & $\hat{\delta} \geq 0.474$ (point-estimate) & \textbf{0.504} \\
+0.470 (target 0.474) & 95\% CI lower \textgreater{} 0 (any-effect) & 0.895 \\
 \end{longtable}
 }
 
-Even at $\delta_{\mathrm{truth}} = 0.474$, the (12, 48) design returns $\hat{\delta} \geq
-0.474$ in only \textasciitilde49\% of replications. This
+At the nearest attainable mixture, \(E[\delta]\approx0.470\), the
+(12, 48) design returns $\hat{\delta} \geq
+0.474$ in \textasciitilde50\% of replications. This
 \emph{supports} the main manuscript's aligned-versus-cross framing that ``not met'' is point-estimate, not
 effect-size.
 
 \subsection{Per-Class Friedman Tests}\label{d.4-friedman-per-class-discussion-of-small-n-concordance}
 
-Per-class Friedman (3 SUTs $\times$ 5 MRs) with Bonferroni $\times$ 4: a chi\^{}2=4.00
-raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.78 raw \textbf{0.029} adj
-\textbf{0.116}, W=\textbf{0.898}; c chi\^{}2=4.00 raw 0.406 adj 1.000,
-W=0.333; d chi\^{}2=5.00 raw 0.287 adj 1.000, W=0.417. After correction,
+Per-class Friedman (3 SUTs $\times$ 5 MRs, v4 primary pool) with Bonferroni
+$\times$ 4: a chi\^{}2=4.00
+raw 0.406 adj 1.000, W=0.333; b chi\^{}2=10.34 raw \textbf{0.035} adj
+\textbf{0.140}, W=\textbf{0.862}; c chi\^{}2=5.60 raw 0.231 adj 0.924,
+W=0.467; d chi\^{}2=5.00 raw 0.287 adj 1.000, W=0.417. After correction,
 no per-class result remains significant at family-wise alpha = 0.05.
-Even b-class W = 0.898 (Cohen 1988 large concordance) is insufficient at
+Even b-class W = 0.862 (Cohen 1988 large concordance) is insufficient at
 N = 3 per class. \textbf{H3 verdict rests on the main manuscript's cross-class consistency sign test}; per-class
-Friedman is sensitivity / descriptive only. Friedman main effect on full
-60 cells (chi\^{}2 = 15.30, p = 0.0041) confirms MR rank differences but
+Friedman is sensitivity / descriptive only. Friedman main effect on the full
+60 cells (v4: chi\^{}2 = 16.76, p = 0.0022; v3: 15.30, 0.0041) confirms
+MR rank differences but
 is logically independent from H3 cross-class consistency.
 
 \textbf{Mixed-effects unavailability.} Primary
@@ -974,21 +1008,25 @@ means + sign test + Friedman + forest plot).
 Per SUT, (MR\_k, R\_outcome $\in$ \{True, False\}) binary-tuple coverage: 5
 MRs $\times$ 2 outcomes = 10 cells, PC = \#triggered / 10. Simplest baseline
 (per-SUT granularity, not distinguishing mutants). PC range over 12
-SUTs: {[}0.500, 1.000{]}, mean 0.733 (\texttt{paper\_numbers\_v4.json}).
-Pairing per PUT: Spearman rho = 0.163 (p = 0.613); Kendall tau = 0.136
-(p = 0.568).
+SUTs (v4): {[}0.500, 1.000{]}, mean 0.750
+(\texttt{rq4\_pattern\_coverage\_v4.json}).
+Pairing per PUT: Spearman rho = 0.163; Kendall tau = 0.136
+(descriptive).
 
 \textbf{Power caveat.} At n = 12, Spearman 95\% CI $\approx$ {[}-0.5, +0.6{]}
 (Fisher-z approximation); cannot distinguish ``zero correlation'' from ``moderate positive'' or
-``moderate negative''. p = 0.61 / 0.57 means ``no correlation detected
+``moderate negative''. The descriptive reading is ``no correlation detected
 at n = 12'', not ``correlation does not exist''.
 
-\textbf{Within-class descriptive.} b2 PC = 1.0 with mean SMS = 0.067; b1
-PC = 0.7 with mean SMS = 0.20. c3 PC = 1.0 with mean SMS = 0.14; c1 / c2
-PC = 0.7-0.8 with mean SMS = 0.0. Within the same class, higher-PC PUT
-has lower SMS, contradicts naive ``more PC kills more mutants''
-assumption. This pattern is consistent with orthogonality, but n = 12
-cannot confirm it. A confirmatory study would need n $\geq$ 30 and a PC
+\textbf{Within-class descriptive.} In the b class, b2 (PC = 1.0) has
+mean SMS 0.133 while b1 (PC = 0.7) has 0.20: higher PC, lower SMS. In
+the c class the ordering reverses: c3 (PC = 1.0) has mean SMS 0.148,
+c1 (PC = 0.9) has 0.12, and c2 (PC = 0.8) has 0.0. The within-class
+PC-SMS ordering is therefore not stable across classes, consistent with
+the headline finding of no detectable correlation at n = 12; an earlier
+draft reported v3 values here and read the b-class pattern as
+uniformly ``higher PC, lower SMS'', which the v4 numbers do not
+support. A confirmatory study would need n $\geq$ 30 and a PC
 definition that incorporates the mutant dimension.
 
 % [thematic break removed]
@@ -1071,7 +1109,7 @@ API \$5-15; \textasciitilde30 min \\
 \textasciitilde10-20 min \\
 3 & \texttt{run\_lrca.py} & \textless{} 1 min \\
 4 & MR-design team review of MRs with aligned-cell SMS significantly
-below historical median (0.275) & 1-2 h meeting \\
+below the historical aligned mean (0.213) & 1-2 h meeting \\
 \end{longtable}
 }
 
@@ -1122,7 +1160,7 @@ link in the evidence chain, not a single-point qualification.
 
 \textbf{Hoeffding-style false-equivalence bound (referenced by
 main-text Limitation 1).} For a mutant whose true per-sample
-disagreement probability against the original program under $D_S$ is
+disagreement probability against the original program under $\mathcal{D}_P$ is
 at least $p_0$ (at the E2 tolerance), the probability that all
 $K_{\mathrm{eq}}$ independent E2 samples agree, producing a false
 equivalence verdict, is at most $(1-p_0)^{K_{\mathrm{eq}}} \leq
@@ -1177,8 +1215,8 @@ prompt+response committed for direct reuse & Claude Opus subscription
 lacks seed control \\
 \textbf{Protocol asymmetry} & \textbf{Protocol-implementation gap v3 vs v4} & v4 used 3
 providers (Claude 101 / GPT 98 / DeepSeek 99) without dual-blind; v4
-C1\_share 0.209 \textgreater{} v3 0.164 weakly opposes ``v4 quality
-decline'' & Complete separation requires a follow-up dual-blind rerun on
+LRCA-evaluable cells increase 12 $\to$ 15 and macro C1 share changes
+0.821 $\to$ 0.837 & Complete separation requires a follow-up dual-blind rerun on
 the v4 grid \\
 \end{longtable}
 }
@@ -1242,13 +1280,16 @@ semantic detection, not production engineering value (out of scope here).
 \subsection{Notation cross-reference}\label{g.1-notation-cross-reference-with-2.1}
 
 PUT $S_i$, mutation operator family mut (syntactic or semantic),
-mutant set $\mathrm{mut}(S_i)$, MR-label set, equivalence tolerance $\varepsilon_{\mathrm{eq}}$, equivalence
-sample size $K_{\mathrm{eq}}$, AVP tolerance $\varepsilon_{\mathrm{AVP}}$. Three-state decomposition:
-$\mathrm{mut}(S)=\mathrm{killed} \cup \mathrm{equiv} \cup \mathrm{survive}$ (disjoint). SMS
-formula:
+pooled mutant set $\mathrm{mut}(S_i)$, MR-label set, equivalence tolerance $\varepsilon_{\mathrm{eq}}$, equivalence
+sample size $K_{\mathrm{eq}}$, AVP tolerance $\varepsilon_{\mathrm{AVP}}$. Pool
+decomposition (three-state refinement, §A.1):
+$\mathrm{mut}(S) = \mathrm{certified} \cup \mathrm{killed} \cup \mathrm{survive} \cup \mathrm{unresolved}$
+(disjoint). Strict SMS formula (the reported reading; in the
+$u = 0$ regime it equals the classical form):
 
 \[
-\mathrm{SMS}_{i,k,j} = \frac{|\mathrm{killed}_{i,k,j}|}{|\mathrm{mut}_j(S_i)| - |\mathrm{equiv}_{i,k,j}|}
+\mathrm{SMS}_{i,k} = \frac{|\mathrm{killed}_{i,k}|}{|\mathrm{killed}_{i,k}| + |\mathrm{survive}_{i,k}|}
+= \frac{|\mathrm{killed}_{i,k}|}{|\mathrm{mut}(S_i)| - |\mathrm{equiv}_{i,k}|} \quad (u_{i,k} = 0)
 \]
 
 \subsection{Degenerate-limit definition}\label{g.2-degenerate-limit-definition-r-8-p1-3-revision-3-joint-conditions}
@@ -1257,7 +1298,13 @@ The degenerate limit $L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L
 consists of three \textbf{joint conditions} (paired axes), each
 controlling one layer of the SMS formula. L1-L6 are not 6 independent
 axes; the pairing reflects dependency structure across the SMS formula
-layers.
+layers. Equivalently, the same conjunction regroups orthogonally as
+$L = L_{\mathrm{lim}} \wedge L_{\mathrm{switch}}$, where
+$L_{\mathrm{lim}} = L1 \wedge L2 \wedge L3$ collects the quantitative
+limit axes and $L_{\mathrm{switch}} = L4 \wedge L5 \wedge L6$ collects
+the discrete configuration switches (reference-anchored identity
+relation; rule-based syntactic operators; imperative deterministic PUT
+class).
 
 {\def\LTcaptype{table} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1279,13 +1326,18 @@ Pairing rationale
 \bottomrule\noalign{}
 \endlastfoot
 \textbf{$L_{\mathrm{equiv}}$} (Lemma G.1) & L1: $\varepsilon_{\mathrm{eq}} \to 0$; L2: $K_{\mathrm{eq}} \to \infty$ & L1 alone:
-equiv stays probabilistic ($K_{\mathrm{eq}}$ cannot cover $D_S$). L2 alone: bitwise
+equiv stays probabilistic ($K_{\mathrm{eq}}$ cannot cover $\mathcal{D}_P$). L2 alone: bitwise
 equality diluted by $\varepsilon_{\mathrm{eq}}$. Both simultaneously degenerate equiv to
-classical behavioural equivalence outside a D\_S-measure-zero set. \\
+classical behavioural equivalence outside the exception set
+$\mathcal{N}_{\mathrm{exc}}$. \\
 \textbf{$L_{\mathrm{killed}}$} (Lemma G.2) & L3: $\varepsilon_{\mathrm{AVP}}^k \to 0$; L4: MR-label set =
-$\{\mathrm{MR}_{\mathrm{eq}}\}$, R(y,y') ≡ y = y' & L3 alone: $\varepsilon_{\mathrm{AVP}} \to 0$ still allows
+$\{\mathrm{MR}_{\mathrm{eq}}^{S_i}\}$, the reference-anchored identity
+relation ($r = \mathrm{id}$, $R(y,y') \equiv y = y'$, follow-up output
+compared against the recorded reference output of $S_i$) & L3 alone: $\varepsilon_{\mathrm{AVP}} \to 0$ still allows
 non-trivial MR (monotonicity, convergence). L4 alone: equality still
-carries $\varepsilon_{\mathrm{AVP}}$ tolerance. Both simultaneously degenerate killed to
+carries $\varepsilon_{\mathrm{AVP}}$ tolerance; without the identity
+restriction the comparison $S_i(x)$ vs $s'(r(x))$ retains a metamorphic
+follow-up and is not the classical same-input oracle. Both simultaneously degenerate killed to
 classical difference detection. \\
 \textbf{$L_{\mathrm{mut}}$} (Lemma G.3) & L5: $\mathrm{mut}_j \to$ rule-based syntactic (Mothra
 AOR/ROR/SDL/CRP); L6: cls(I) $\subseteq$ \{imperative deterministic\} & L5 alone:
@@ -1296,82 +1348,139 @@ set. \\
 \end{longtable}
 }
 
-\subsection{Lemmas for Three-State Decomposition}\label{g.3-lemmas-three-state-decomposition-degenerates-under-l}
+\subsection{Lemmas for the Pool Decomposition}\label{g.3-lemmas-three-state-decomposition-degenerates-under-l}
 
-\textbf{Lemma G.1 (equiv degeneration; measure-zero
-qualification).} Under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2), semantic-class equivalence
+\textbf{Lemma G.1 (equiv degeneration; exception-set
+qualification).} Assume
+$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$ and
+fix the switch component $L_{\mathrm{switch}}$. Under
+$L_{\mathrm{equiv}}$ (L1 $\wedge$ L2), semantic-class equivalence
 (E1 $\wedge$ E2) degenerates to classical behavioural equivalence
-\textbf{almost everywhere} w.r.t. measure $D_S$.
+\textbf{outside an exception set $\mathcal{N}_{\mathrm{exc}}$}: over
+floating-point (finite) input domains, $\mathcal{N}_{\mathrm{exc}}$ is
+the finite set of pathological inputs (Not-a-Number propagation and
+overflow/underflow traps), empty in the exact discrete case; under the
+continuum idealisation, $\mathcal{N}_{\mathrm{exc}}$ has
+$\mathcal{D}_P$-measure zero.
 
-\emph{Proof.} E1 (type consistency) holds trivially under $\varepsilon_{\mathrm{eq}} \to 0$ (L6
-makes imperative output spaces scalar/vector with static types). E2
-($|S_i(x) - s'(x)| < \varepsilon_{\mathrm{eq}}$ for $K_{\mathrm{eq}}$ samples)
-under L1 ($\varepsilon_{\mathrm{eq}} \to 0$) $\wedge$ L2 ($K_{\mathrm{eq}} \to \infty$ with measure-equivalent sampling)
-is almost-everywhere equivalent to $\forall x \in D_S \setminus N: S_i(x) = s'(x)$, where
-$N$ is a $D_S$-measure-zero set (continuous $D_S$: floating-point
-pathological points / NaN propagation; discrete $D_S$: $N = \emptyset$). This
-matches \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} §3 classical equivalent-mutant definition
-under measure-zero equivalence classes.
+\emph{Proof.} Under the fixed $L_{\mathrm{switch}}$ the relation set is
+the reference-anchored identity relation
+$\mathrm{MR}_{\mathrm{eq}}^{S_i}$, whose AVP check of a program $Q$
+compares $Q$'s outputs against the recorded reference outputs of $S_i$
+on the executed inputs. The E2 limit below yields exact output equality
+on its covered domain. Exact equality makes the original and mutant AVP
+verdicts identical for every non-negative AVP tolerance, so E1 is
+automatically satisfied on the E2 limit. No
+$\varepsilon_{\mathrm{AVP}}\to0$ premise is used here; that L3 axis
+belongs only to the killed-set degeneration of Lemma G.2. E2
+($\|S_i(x) - s'(x)\| < \varepsilon_{\mathrm{eq}}$ for $K_{\mathrm{eq}}$ samples)
+degenerates in two regimes. Over floating-point (finite) input domains,
+L2 ($K_{\mathrm{eq}} \to \infty$) with full-support sampling
+($\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$)
+covers every admissible input almost surely, and L1
+($\varepsilon_{\mathrm{eq}} \to 0$) sharpens the per-input test to exact
+equality, giving
+$\forall x \in \mathcal{X}_{\mathrm{adm}} \setminus \mathcal{N}_{\mathrm{exc}}: S_i(x) = s'(x)$
+with $\mathcal{N}_{\mathrm{exc}}$ the finite pathological set
+($\mathcal{N}_{\mathrm{exc}} = \emptyset$ in the exact discrete case).
+Under the continuum idealisation, sampled agreement at
+$\varepsilon_{\mathrm{eq}} \to 0$ over an almost-surely dense
+full-support sample forces equality $\mathcal{D}_P$-almost everywhere,
+i.e.\ outside a $\mathcal{D}_P$-measure-zero
+$\mathcal{N}_{\mathrm{exc}}$; pointwise equality on all of
+$\mathcal{X}_{\mathrm{adm}}$ is not claimed in this regime, and the
+degenerate equivalence claim is read on
+$\mathcal{X}_{\mathrm{adm}} \setminus \mathcal{N}_{\mathrm{exc}}$
+throughout. This matches \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} §3 classical
+equivalent-mutant definition up to the exception set.
+
+\emph{Support-assumption counterexample (non-removability).} Let
+$\mathcal{X}_{\mathrm{adm}} = [0, 2]$ but
+$\mathrm{supp}(\mathcal{D}_P) = [0, 1]$, and let $s'$ differ from $S_i$
+only on $(1, 2]$. Every E2 sample agrees at every $K_{\mathrm{eq}}$, so
+the limit judgement certifies equivalence, yet $s'$ is behaviourally
+non-equivalent on $\mathcal{X}_{\mathrm{adm}}$; the degeneration target
+is therefore false without
+$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$.
 
 \textbf{Lemma G.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
-degenerates to classical difference detection.
+degenerates to classical same-input difference detection.
 
-\emph{Proof.} L4 restricts the MR-label set to \{MR\_eq\} with R(y, y') ≡ y = y'. For
-mr = (r, R) and mutant s', the $\mathrm{MR}_{\mathrm{eq}}$ violation condition $\exists x: S_i(x) \neq
-s'(r(x))$ under L3 ($\varepsilon_{\mathrm{AVP}} \to 0$) becomes exact inequality. With r = id,
-violation is $S_i(x) \neq s'(x)$, classical difference detection. With r
-$\neq$ id, $\mathrm{MR}_{\mathrm{eq}}$ still requires $S_i(x) = s'(r(x))$ as reference oracle from
-original program; no new state classifications introduced.
+\emph{Proof.} L4 restricts the MR-label set to
+$\{\mathrm{MR}_{\mathrm{eq}}^{S_i}\}$ with identity source
+transformation ($r = \mathrm{id}$), $R(y, y') \equiv y = y'$, and the
+follow-up output compared against the recorded reference output of
+$S_i$. The killed predicate requires
+$\mathrm{AVP}(S_i, mr) = \text{pass}$, which holds identically for the
+reference-anchored relation, and $\mathrm{AVP}(s', mr) = \text{fail}$,
+which under L3 ($\varepsilon_{\mathrm{AVP}} \to 0$) is exactly
+$\exists x: s'(x) \neq S_i(x)$: classical same-input difference
+detection against the original program. Without the identity
+restriction the comparison $S_i(x)$ vs $s'(r(x))$ retains a metamorphic
+follow-up and is not the classical oracle, and without the reference
+anchor an identity relation evaluated within a single deterministic
+program passes trivially on both $S_i$ and $s'$ and detects nothing;
+both clauses of L4 are therefore load-bearing.
 
-\textbf{Lemma G.3 (mut degeneration).} Under L5 $\wedge$ L6, mut\_j(S\_i)
+\textbf{Lemma G.3 (mut degeneration).} Under L5 $\wedge$ L6, the pooled
+$\mathrm{mut}(S_i)$
 degenerates to the syntactic mutant set of \citet{d7c38286734419b52de4262c9802ebdfcf4b9447}.
 
-\emph{Proof.} L5 switches $\mathrm{mut}_j$ to rule-based syntactic operators (AOR,
+\emph{Proof.} L5 switches every generator family to rule-based syntactic operators (AOR,
 ROR, SDL, CRP, UOI, standard Mothra/Proteum sets); L6 restricts PUTs
 to imperative deterministic programs, excluding triggering conditions
 for semantic operators on probabilistic/ML programs. Under this
-configuration, $\mathrm{mut}_j(S_i)$ is the literature-defined syntactic mutant
+configuration, $\mathrm{mut}(S_i)$ is the literature-defined syntactic mutant
 set, independent of domain semantics.
 
 \subsection{Degeneration Theorem: Detailed Proof}\label{g.4-theorem-9.1-detailed-proof}
 
 \textbf{Theorem G (SMS $\to$ MS degeneration; stated in the main text
-as the degeneration theorem).} In the degenerate limit
-$L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$, almost everywhere
-w.r.t. $D_S$,
+as the degeneration theorem).} Fix the switch component
+$L_{\mathrm{switch}} = L4 \wedge L5 \wedge L6$ and assume
+$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$.
+Along the limit component $L_{\mathrm{lim}} = L1 \wedge L2 \wedge L3$,
+outside the exception set $\mathcal{N}_{\mathrm{exc}}$ of Lemma G.1,
 
-\[ \mathrm{SMS}_{i,k,j} \xrightarrow{L} \mathrm{MS}_{i,j} := \frac{|\mathrm{killed}_{i,j}^{\mathrm{classic}}|}{|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i,j}^{\mathrm{classic}}|} \]
+\[ \mathrm{SMS}_{i,k} \xrightarrow{L_{\mathrm{lim}}} \mathrm{MS}_{i} := \frac{|\mathrm{killed}_{i}^{\mathrm{classic}}|}{|\mathrm{mut}^{\mathrm{syntax}}(S_i)| - |\mathrm{equiv}_{i}^{\mathrm{classic}}|} \]
 
-\emph{Proof.} Combine Lemmas 9.1-9.3:
+\emph{Proof.} Combine Lemmas G.1-G.3:
 
 \begin{itemize}
 \tightlist
 \item
-  Numerator: under L3 $\wedge$ L4, $\mathrm{killed}_{i,k,j} \to
-  \mathrm{killed}_{i,j}^{\mathrm{classic}}$ (Lemma G.2); L4 makes $\mathrm{MR}_{i,k}$ trivial
-  over k (only $\mathrm{MR}_{\mathrm{eq}}$ remains), so subscript k degenerates.
+  Numerator: under L3 $\wedge$ L4, $\mathrm{killed}_{i,k} \to
+  \mathrm{killed}_{i}^{\mathrm{classic}}$ (Lemma G.2); L4 makes $\mathrm{MR}_{i,k}$ trivial
+  over $k$ (only the reference-anchored identity relation remains), so
+  the subscript $k$ degenerates.
 \item
-  Denominator $|\mathrm{mut}_j(S_i)|$: under L5 $\wedge$ L6 $\to$
-  $|\mathrm{mut}_j^{\mathrm{syntax}}(S_i)|$ (Lemma G.3).
+  Denominator $|\mathrm{mut}(S_i)|$: under L5 $\wedge$ L6 $\to$
+  $|\mathrm{mut}^{\mathrm{syntax}}(S_i)|$ (Lemma G.3).
 \item
-  Denominator $|\mathrm{equiv}_{i,k,j}|$: under L1 $\wedge$ L2 $\to$
-  $|\mathrm{equiv}_{i,j}^{\mathrm{classic}}|$ (Lemma G.1;
-  almost-everywhere w.r.t. $D_S$).
+  Denominator $|\mathrm{equiv}_{i,k}|$: under L1 $\wedge$ L2 with the
+  support assumption $\to$
+  $|\mathrm{equiv}_{i}^{\mathrm{classic}}|$ (Lemma G.1;
+  outside $\mathcal{N}_{\mathrm{exc}}$), and the unresolved set empties
+  into the classical dichotomy, so the strict and conservative readings
+  coincide in the limit.
 \end{itemize}
 
-Substituting into the SMS formula gives $\mathrm{MS}_{i,j}$.
+Substituting into the SMS formula gives $\mathrm{MS}_{i}$; the
+restriction to any single generator family is immediate.
 
-\textbf{Corollary G (LRCA trivialisation).} Under $L = L1 \wedge L2 \wedge L3$, C
+\textbf{Corollary G (LRCA trivialisation).} Under $L$, C
 = \{C1, \ldots, C5\} degenerates to \{C1\}.
 
 \emph{Sketch.} Each of C2-C5's triggering precondition depends on at
-least one $L_j$ being violated. When L1 $\wedge$ L2 $\wedge$ L3 hold simultaneously,
+least one $L_j$ being violated. When the three joint conditions
+$L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$
+hold simultaneously,
 every non-trivial-space dimension (MR non-triviality, AVP tolerance
 non-zero, non-empty equiv set, MR-design DOF, class-mapping openness)
 closes; C2-C5 triggering set becomes empty (read off from §A.2 decision
 tree). The per-C\_k to per-L\_j minimum-sufficient mapping depends on
 the main manuscript's LRCA-diagnosis engineering thresholds; we do not claim one-to-one
-correspondence at formal level, readers can trace through §A.2 + §C.4.
+correspondence at formal level, readers can trace through §A.2 + §C.3.
 Under L, $\texttt{suspect\_share} \to 0$, LRCA reports only C1, SMS degenerates to
 single-layer metric consistent with \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} MS engineering
 structure.
@@ -1382,6 +1491,278 @@ show that the SMS-based empirical conclusions (Cliff's delta in the aligned-vers
 Friedman chi\^{}2 in the cross-class consistency results, and Spearman rho in the SMS-vs-Pattern-Coverage analysis) are structurally consistent
 with existing \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} literature in classical
 syntactic-mutation scenarios, no metric-level semantic fragmentation.
+
+\subsection{Independent formal audit of the theory extension}\label{g.5-independent-formal-audit}
+
+The theory-extension results (the detection-window, interval-soundness,
+and gap-attribution theorems with their lemmas, corollary, and remarks,
+and the repaired degeneration theorem above) were checked by an
+independent formal audit against a fixed eight-item checklist: (1)
+every theorem premise is defined in the body; (2) no circularity; (3)
+the scope of the AVP-determinism assumption of the kill-witness lemma;
+(4) consistency of the gap theorem's S5/exact-checker premises with the
+$\xi$ reporting rule; (5) satisfiability of the window theorem's
+constants and Lipschitz hypothesis per PUT class; (6) the degeneration
+theorem's support assumption and exception-set wording; (7) notation
+conformance against the frozen symbol registry; (8) line-by-line
+checkability of the proofs. The audit raised blocking and minor
+findings (premise hygiene, the $\xi$ empty-kill convention and
+one-sidedness, the reference-anchored degenerate oracle, estimand
+definedness); all were repaired and verified closed in follow-up
+rounds, for a final verdict of PASS. The audit protocol and the signed
+report are archived with the replication materials.
+
+\subsection{Interval soundness: full proofs}\label{g.6-interval-proofs}
+
+\emph{Proof of the protocol-level kill-witness lemma.} A kill supplies
+an \(mr\) for which
+\(\mathrm{AVP}(S_i,mr)=\mathrm{pass}\) and
+\(\mathrm{AVP}(s',mr)=\mathrm{fail}\). Hence E1 fails on that relation.
+The three-state protocol defines E1 or E2 failure as
+\texttt{CONFIRMED\_NON\_EQUIVALENT}; no determinism or tolerance-margin
+premise is needed. Therefore no killed mutant is unresolved. \(\square\)
+
+\textbf{Scope of the determinism hypothesis (quantitative output
+witness).} The
+evaluation procedure of a relation fixes its executed input tuple
+(seeded input generation is part of the procedure), runs the program on
+that tuple, applies the observation $\mathrm{obs}$, and computes the
+verdict by a fixed threshold functional at tolerance
+$\varepsilon_{\mathrm{AVP}}$. For deterministic PUTs the verdict is a
+fixed function $V_{mr}$ of the tuple of observed outputs on the common
+executed inputs. For stochastic PUTs the pipeline replaces each AVP call
+by a majority vote over $N = 20$ repetitions; the verdict is then a
+fixed function of the $N$-repeat aggregated observation, and every
+occurrence of ``observed output'' is read at that aggregated level: the
+witness produced below is a divergence of aggregated observations, in
+the AVP verdict semantics, not a claim about any single random run.
+(The LRCA layer's 0.80 fail-ratio cutoff is a separate robustness
+annotation on killed mutants and plays no role in the kill verdict.)
+The stability hypothesis (clause R2, §G.8) is not removable: with
+relation residuals $\tau - \delta_1$ (pass on $S_i$) and
+$\tau + \delta_2$ (fail on $s'$), $\delta_1 + \delta_2$ arbitrarily
+small, a kill can arise from pointwise output divergence below
+$\varepsilon_{\mathrm{eq}}$, and bare determinism cannot yield the
+required witness.
+
+\emph{Proof of the quantitative output-witness proposition.} Fix $mr$ with
+$\mathrm{AVP}(S_i, mr) = \mathrm{pass}$ and
+$\mathrm{AVP}(s', mr) = \mathrm{fail}$. Suppose every executed input $x$
+satisfied
+$\|\mathrm{obs}(\Phi_{S_i}(x)) - \mathrm{obs}(\Phi_{s'}(x))\| \leq \varepsilon_{\mathrm{eq}}$.
+Then the observed-output tuple of $s'$ is a pointwise
+$\leq \varepsilon_{\mathrm{eq}}$ perturbation of that of $S_i$, and R2
+forces $V_{mr}$ to return the same verdict on both, contradicting
+pass/fail. Hence some executed $x$ has divergence exceeding
+$\varepsilon_{\mathrm{eq}}$: the divergence witness of the three-state
+classification. $\square$
+
+\emph{Proof of the interval theorem.} By the kill-witness lemma the
+killed count $\kappa$ lies inside the confirmed non-equivalent
+population $n$, so the ground-truth denominator is
+$n + u_{\mathrm{neq}}$ with the same numerator $\kappa$.
+\emph{(Interval and attainability.)} For fixed $\kappa \geq 0$,
+$n \geq 1$ the map $t \mapsto \kappa/(n+t)$ is non-increasing on
+$t \geq 0$; applying it to $0 \leq u_{\mathrm{neq}} \leq u$ gives the
+sandwich, with both endpoints attained at $u_{\mathrm{neq}} = u$ and
+$u_{\mathrm{neq}} = 0$, each consistent with the available evidence.
+\emph{(Width.)}
+$\kappa/n - \kappa/(n+u) = \kappa u/(n(n+u)) = \mathrm{SMS}^{\mathrm{strict}} \cdot u/(n+u)$.
+\emph{(Monotonicity, four motions.)} (1) An equivalence certificate on
+an unresolved survivor maps $(n, \kappa, u) \to (n, \kappa, u-1)$: the
+upper endpoint is unchanged and the lower endpoint rises, so the
+interval weakly narrows (strictly when $\kappa > 0$, $u \geq 1$). (2) A
+divergence witness on an unresolved survivor maps
+$(n, \kappa, u) \to (n+1, \kappa, u-1)$: the lower endpoint
+$\kappa/(n+u)$ is unchanged and the upper endpoint falls to
+$\kappa/(n+1)$, so the interval weakly narrows; unresolved mutants are
+survivors by the kill-witness lemma, so $\kappa$ is unchanged. (3) An
+unresolved survivor killed by a newly added MR acquires the witness,
+$(n, \kappa, u) \to (n+1, \kappa+1, u-1)$, an instance of motion (4)
+with $\Delta = 0$, $j = 1$. (4) For $R \subseteq R'$ with the
+three-state classification held fixed, OR-aggregation over a superset
+can only add kills: with $\Delta \geq 0$ new kills among confirmed
+survivors and $j \geq 0$ among unresolved survivors, the counts update
+to $n' = n + j$, $\kappa' = \kappa + \Delta + j$, $u' = u - j$, and
+$\mathrm{SMS}^{\mathrm{strict}\prime} = (\kappa+\Delta+j)/(n+j) \geq (\kappa+j)/(n+j) \geq \kappa/n$
+(since $\kappa \leq n$), while
+$\mathrm{SMS}^{\mathrm{cons}\prime} = (\kappa+\Delta+j)/(n+u) \geq \kappa/(n+u)$:
+both endpoints are non-decreasing. The proviso is not removable: if the
+classification were recomputed against $R'$, the E1 quantification
+domain would grow and a new relation with differing verdicts in the
+non-kill direction would convert an unresolved survivor into a confirmed
+one, a motion-(2) event lowering the strict endpoint. Across all four
+motions the conservative endpoint never decreases: it is a monotone
+lower bound of the ground-truth score under every admissible evidence
+update. $\square$
+
+\subsection{Block structure: full proofs}\label{g.7-gap-proofs}
+
+\emph{Proof of the closure lemma (exact checkers are strong MRs).} The
+violation-set identity is the exact-checker definition read as a set
+equation. Each stratum invariant is a predicate over the observable
+behaviour, and the tolerance-indexed satisfaction evaluates that
+predicate on the observed behaviour; membership of the violation set
+therefore depends on a program only through its observed behaviour, so
+observationally equivalent programs violate together: the set is a
+union of equivalence classes, i.e.\ closed, and the strong-MR
+definition applies. Properness: the union of two distinct strata's
+violation classes is closed but pins to neither stratum. $\square$
+
+\textbf{Premise reading.} (i) reads: every admitted non-equivalent
+mutant is stratified, violating its unique target stratum (S3 witness)
+and satisfying all others (S5), so the fibers $\{M_j\}$ partition
+$M_{\mathrm{neq}}$ and $\sum_j w_j = 1$; mutants outside this reading
+(active-off-taxonomy, multi-stratum violators) are excluded by the
+premise, and their off-diagonal kills are exactly what $\xi$ registers
+(the diagnostic is one-sided: premise violations that kill only on the
+labelled stratum leave $\xi$ unchanged, so observed $\xi$ lower-bounds
+the deviation mass). (ii) attaches to every $r \in R$ a stratum label,
+unique by the non-redundancy convention. (iii) imports, for every
+$r \in R$, the residual budget and margin-dominance clause R1 of §G.8:
+the S5-satisfied stratum contributes zero violation, the budget bounds
+the executed residual by $\Delta_r + p\bar\eta$, and R1 places that
+below $\varepsilon_{\mathrm{tol}}$.
+
+\emph{Proof of the gap theorem.} \emph{(No cross-stratum flag.)} Let
+$r \in R$ be an exact checker of $\psi_l$ and $m \in M_j$ with
+$l \neq j$. By (i), $m$ satisfies $\psi_l$; by (iii) the executed
+residual of $r$ on $m$ stays below $\varepsilon_{\mathrm{tol}}$, so the
+tolerance verdict is pass and $r$ does not flag $m$. The kill predicate
+requires a fail on the mutant, so $r$ does not kill it.
+\emph{(Uncovered fibers survive.)} If $j \notin \mathrm{Cov}(R)$, every
+$r \in R$ has label $l \neq j$, so no $r$ flags any member of $M_j$ and
+OR-aggregation yields no kill. \emph{(Block diagonality.)} Indexing rows
+by fibers and columns by checker strata, the argument shows every
+off-diagonal entry is zero. \emph{(Decomposition.)} The fibers partition
+$M_{\mathrm{neq}}$, so
+$\mathrm{SMS}(R) = \sum_j w_j\,\mathrm{SMS}_j(R)$ with
+$\mathrm{SMS}_j(R) = 0$ for uncovered $j$; hence
+$1 - \mathrm{SMS}(R) = \sum_{j \notin \mathrm{Cov}(R)} w_j + \sum_{j \in \mathrm{Cov}(R)} w_j (1 - \mathrm{SMS}_j(R))$,
+an exact identity with non-negative terms. \emph{(Computability.)}
+$w_j$ from fiber-label counts, $\mathrm{SMS}_j(R)$ from row-wise kill
+rates, $\mathrm{Cov}(R)$ from the checker labels carried by the kill
+matrix's column index: no equivalence oracle beyond the
+$M_{\mathrm{neq}}$ certification and no ground truth beyond the labels.
+$\square$
+
+\emph{Proof of the cross-zero corollary.} If no covered stratum has
+positive mass,
+$\mathrm{SMS}(R) = \sum_{j \in \mathrm{Cov}(R)} w_j\,\mathrm{SMS}_j(R) = 0$.
+$\square$
+
+\emph{Justification of the identifiability remark.} Same-stratum
+membership of a killed mutant's signature is the block-diagonal matrix
+reread row-wise: a killed member of $M_j$ can only be flagged by
+checkers with label $j$, so its nonempty signature certifies the kill
+and names the fiber; with one exact checker per covered stratum the
+killed subpopulations separate every covered stratum. Survivor rows are
+identically zero, hence observationally indistinguishable: the
+below-window remainder of every covered fiber (window theorem, clause
+(ii)) and every uncovered fiber produce the same all-pass observation,
+so survivor attribution is carried by generation-time labels, not by
+execution outcomes. $\square$
+
+\subsection{Detection window: hypotheses, regime, and full proofs}\label{g.8-window-proofs}
+
+\textbf{Hypotheses.} \emph{(H-a, additive residual budget.)} On the
+executed tuple at input $x \in D_r$, the residual the checker computes
+for the mutant satisfies
+$|\varepsilon_r(x; m) - \varepsilon_{\mathrm{viol}}(m)| \leq \Delta_r + p\bar\eta$:
+the ideal mutant residual decomposes into the structural violation
+contribution plus the structure-preservation residual, bounded by
+$\Delta_r$ because the edit perturbs the declared structure, not the
+discretisation; and the executed tuple aggregates $p$ program
+executions, each observation carrying noise at most $\bar\eta$. The
+pairwise relations that dominate the catalogue have $p = 2$; the
+convergence-order relations evaluate $p = 4$ grid resolutions and their
+regression verdict additionally carries a design-dependent conditioning
+constant, so their window bounds are read with the $p = 4$ budget.
+\emph{(H-b, Lipschitz transfer.)} The violation functional is
+$L_r$-Lipschitz in $\varepsilon_{\mathrm{viol}}(m)$; H-b is used only
+for the dose-response transfer between the nominal-parameter axis and
+the realized violation axis, not for bounds (i)--(iii), which are
+stated on the realized axis. Estimability of $L_r$ is assessed per PUT
+class: linear and quasi-linear kernels admit closed-form or regression
+estimates, while chaotic and stochastic-structural kernels do not admit
+a stable $L_r$ on the raw observable, and any dose-response consumption
+of H-b is restricted to the estimable subset and pre-registered as
+such. \emph{(H-c, non-degenerate-margin regime.)} Two clauses: (R1)
+margin dominance,
+$\mu_r = \varepsilon_{\mathrm{tol}} - \Delta_r > p\bar\eta$ strictly;
+and (R2) $\varepsilon_{\mathrm{eq}}$-separation, no executed residual
+within $\varepsilon_{\mathrm{eq}}$ of the threshold, making the verdict
+invariant under pointwise obs-output perturbations of magnitude at most
+$\varepsilon_{\mathrm{eq}}$. R1 is consumed by (i) and (iii) and by the
+gap theorem's premise (iii); R2 is consumed by the kill-witness lemma.
+For unbounded noise the bound $|\eta| \leq \bar\eta$ is a
+concentration-style model assumption and stochastic-case statements
+hold at the confidence attached to $c$. \emph{(H-d, magnitude
+realization.)} The executed tuple realizes the declared magnitude; for
+uniform parametric violation templates every admissible input realizes
+it, and unrealized magnitudes only weaken (i), reverting detection to
+finite-input search, while (ii) and (iii) are unaffected.
+
+\emph{Proof of (i).} By H-a's lower side,
+$\varepsilon_r(x; m) \geq \varepsilon_{\mathrm{viol}}(m) - \Delta_r - p\bar\eta > \varepsilon_{\mathrm{tol}}$,
+so the checker flags the mutant (strict exceedance); by R1 every
+executed residual of the original program is at most
+$\Delta_r + p\bar\eta < \varepsilon_{\mathrm{tol}}$, so the checker
+passes the original; the kill predicate's two conjuncts hold. $\square$
+
+\emph{Proof of (ii).} By H-a's upper side, on every executed tuple
+$\varepsilon_r(x; m) \leq \varepsilon_{\mathrm{viol}}(m) + \Delta_r + p\bar\eta < \varepsilon_{\mathrm{tol}}$,
+so the checker never flags the mutant and the kill predicate's second
+conjunct fails; the verdict on the original is not needed. $\square$
+
+\emph{Proof of (iii).} The lower edge is the contrapositive of (ii); at
+equality the executed residual is at most $\varepsilon_{\mathrm{tol}}$,
+which under strict exceedance still yields no flag, so killed magnitudes
+exceed
+$\varepsilon_{\mathrm{tol}} - \Delta_r - p\bar\eta$
+strictly. Magnitudes at or beyond $\varepsilon_{\mathrm{crash}}$ violate
+S4 latency and are excluded from the admitted universe by the crash
+oracle, so the kill region lies within
+$(\varepsilon_{\mathrm{tol}} - \Delta_r - p\bar\eta,\ \varepsilon_{\mathrm{crash}})$.
+$\square$
+
+\emph{Proof of the weak-MR remark.} $\mu_r < 0$ iff
+$\Delta_r > \varepsilon_{\mathrm{tol}}$; since $\Delta_r$ is a supremum
+over $D_r$, inputs exist whose correct-program residual exceeds
+$\varepsilon_{\mathrm{tol}}$ (no attainment needed). If validation
+executes an input whose residual exceeds
+$\varepsilon_{\mathrm{tol}} + p\bar\eta$, the observed residual stays
+above $\varepsilon_{\mathrm{tol}}$ under any admissible noise and the
+flag is guaranteed; inputs at that level exist exactly when
+$\mu_r < -p\bar\eta$. In the band
+$(\varepsilon_{\mathrm{tol}}, \varepsilon_{\mathrm{tol}} + p\bar\eta]$
+the flag occurs unless noise masks it, and in all cases validation
+sampling must reach such inputs at all. A flagged correct program
+breaks the kill predicate's pass-on-original conjunct, so the relation
+contributes no kills and is rejected upstream at MR validation.
+$\square$
+
+\emph{Proof of the stochastic remark.} For a pairwise relation
+($p = 2$), substituting
+$\bar\eta = c\,\sigma_{\mathrm{out}}/\sqrt{N} + \eta_{\mathrm{det}}$
+into (i) at target magnitude $\varepsilon^\dagger$ and solving for $N$
+gives
+$\sqrt{N} > 2c\,\sigma_{\mathrm{out}}/(\varepsilon^\dagger - \varepsilon_{\mathrm{tol}} - \Delta_r - 2\eta_{\mathrm{det}})$,
+provided the denominator is positive; squaring gives the stated bound,
+which is sufficient with strict inequality; necessity holds under the
+boundary-attaining noise model used to derive the budget. If the side
+condition fails, no repeat budget guarantees detection and the remedy
+is a different observable. $\square$
+
+\textbf{Structure-fate correspondence.} $\Delta_r$ places each MR on a
+structure-preservation axis: $\Delta_r = 0$, exact preservation;
+$0 < \Delta_r \leq \varepsilon_{\mathrm{tol}}$, approximate
+preservation (the strong/tolerance MR of the main text);
+$\Delta_r > \varepsilon_{\mathrm{tol}}$, structure broken (weak MR, the
+first remark's $\mu_r < 0$); $\Delta_r(h) \to 0$ under refinement,
+asymptotic preservation. The window theorem prices the same $\Delta_r$
+into two-sided detection bounds: how much violation magnitude a valid
+relation must convert into a kill and how much it must miss.
 
 \section{Adjoint Extension Study}\label{h.-adjoint-extension-arm}
 

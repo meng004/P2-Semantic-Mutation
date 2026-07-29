@@ -1,0 +1,574 @@
+{
+  "schema": "interval_demo_v1",
+  "provenance": {
+    "role": "development-only (THM-INT illustration; not confirmatory)",
+    "generated_by": "scripts/theory/interval_demo.py",
+    "ledger": {
+      "path": "data/results/sms_track2_v4.json",
+      "sha256": "2b9ca001750dedf820fade1a71e4dac5aa82636a5dc999ccc278a91346370c31"
+    },
+    "equiv_semantics_evidence": {
+      "path": "data/results/equiv_diagnosis.json",
+      "sha256": "a8d7cbc09ec441eb783907b1338c5e0009c217f274e62132b6fc4cef3d8398d1"
+    },
+    "u_rule": "u = cell `equiv` count: the v4 equivalence judgement is single-shot E1^E2 on K_eq=1000 samples with epsilon_eq=epsilon_AVP=1e-6 and no AST/certificate layer, so every equiv verdict is sample-only, i.e. EQUIVALENCE_UNRESOLVED under DEF-01 (see equiv_diagnosis.json, case B).",
+    "cell_caliber": "mp-cell (12 PUT x 5 MP, v4 legacy partition, F-8)"
+  },
+  "overall_pooled": {
+    "n": 1460,
+    "k": 153,
+    "u": 0,
+    "sms_strict": 0.1047945205479452,
+    "sms_cons": 0.1047945205479452,
+    "width": 0.0
+  },
+  "width_distribution": {
+    "cells": 60,
+    "nonzero_widths": 0,
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.0
+  },
+  "mp_cells": {
+    "A1_MP1": {
+      "n": 30,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A1_MP2": {
+      "n": 30,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A1_MP3": {
+      "n": 30,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A1_MP4": {
+      "n": 30,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A1_MP5": {
+      "n": 30,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A2_MP1": {
+      "n": 27,
+      "k": 27,
+      "u": 0,
+      "sms_strict": 1.0,
+      "sms_cons": 1.0,
+      "width": 0.0,
+      "legacy_sms": 1.0
+    },
+    "A2_MP2": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A2_MP3": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A2_MP4": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A2_MP5": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A3_MP1": {
+      "n": 18,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A3_MP2": {
+      "n": 18,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A3_MP3": {
+      "n": 18,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A3_MP4": {
+      "n": 18,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "A3_MP5": {
+      "n": 18,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B1_MP1": {
+      "n": 27,
+      "k": 18,
+      "u": 0,
+      "sms_strict": 0.6666666666666666,
+      "sms_cons": 0.6666666666666666,
+      "width": 0.0,
+      "legacy_sms": 0.6667
+    },
+    "B1_MP2": {
+      "n": 27,
+      "k": 9,
+      "u": 0,
+      "sms_strict": 0.3333333333333333,
+      "sms_cons": 0.3333333333333333,
+      "width": 0.0,
+      "legacy_sms": 0.3333
+    },
+    "B1_MP3": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B1_MP4": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B1_MP5": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B2_MP1": {
+      "n": 27,
+      "k": 9,
+      "u": 0,
+      "sms_strict": 0.3333333333333333,
+      "sms_cons": 0.3333333333333333,
+      "width": 0.0,
+      "legacy_sms": 0.3333
+    },
+    "B2_MP2": {
+      "n": 27,
+      "k": 9,
+      "u": 0,
+      "sms_strict": 0.3333333333333333,
+      "sms_cons": 0.3333333333333333,
+      "width": 0.0,
+      "legacy_sms": 0.3333
+    },
+    "B2_MP3": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B2_MP4": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B2_MP5": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B3_MP1": {
+      "n": 20,
+      "k": 11,
+      "u": 0,
+      "sms_strict": 0.55,
+      "sms_cons": 0.55,
+      "width": 0.0,
+      "legacy_sms": 0.55
+    },
+    "B3_MP2": {
+      "n": 20,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B3_MP3": {
+      "n": 20,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B3_MP4": {
+      "n": 20,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "B3_MP5": {
+      "n": 20,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C1_MP1": {
+      "n": 10,
+      "k": 2,
+      "u": 0,
+      "sms_strict": 0.2,
+      "sms_cons": 0.2,
+      "width": 0.0,
+      "legacy_sms": 0.2
+    },
+    "C1_MP2": {
+      "n": 10,
+      "k": 2,
+      "u": 0,
+      "sms_strict": 0.2,
+      "sms_cons": 0.2,
+      "width": 0.0,
+      "legacy_sms": 0.2
+    },
+    "C1_MP3": {
+      "n": 10,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C1_MP4": {
+      "n": 10,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C1_MP5": {
+      "n": 10,
+      "k": 2,
+      "u": 0,
+      "sms_strict": 0.2,
+      "sms_cons": 0.2,
+      "width": 0.0,
+      "legacy_sms": 0.2
+    },
+    "C2_MP1": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C2_MP2": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C2_MP3": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C2_MP4": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C2_MP5": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C3_MP1": {
+      "n": 27,
+      "k": 20,
+      "u": 0,
+      "sms_strict": 0.7407407407407407,
+      "sms_cons": 0.7407407407407407,
+      "width": 0.0,
+      "legacy_sms": 0.7407
+    },
+    "C3_MP2": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C3_MP3": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C3_MP4": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "C3_MP5": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D1_MP1": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D1_MP2": {
+      "n": 27,
+      "k": 9,
+      "u": 0,
+      "sms_strict": 0.3333333333333333,
+      "sms_cons": 0.3333333333333333,
+      "width": 0.0,
+      "legacy_sms": 0.3333
+    },
+    "D1_MP3": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D1_MP4": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D1_MP5": {
+      "n": 27,
+      "k": 9,
+      "u": 0,
+      "sms_strict": 0.3333333333333333,
+      "sms_cons": 0.3333333333333333,
+      "width": 0.0,
+      "legacy_sms": 0.3333
+    },
+    "D2_MP1": {
+      "n": 27,
+      "k": 8,
+      "u": 0,
+      "sms_strict": 0.2962962962962963,
+      "sms_cons": 0.2962962962962963,
+      "width": 0.0,
+      "legacy_sms": 0.2963
+    },
+    "D2_MP2": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D2_MP3": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D2_MP4": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D2_MP5": {
+      "n": 27,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D3_MP1": {
+      "n": 25,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D3_MP2": {
+      "n": 25,
+      "k": 9,
+      "u": 0,
+      "sms_strict": 0.36,
+      "sms_cons": 0.36,
+      "width": 0.0,
+      "legacy_sms": 0.36
+    },
+    "D3_MP3": {
+      "n": 25,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D3_MP4": {
+      "n": 25,
+      "k": 0,
+      "u": 0,
+      "sms_strict": 0.0,
+      "sms_cons": 0.0,
+      "width": 0.0,
+      "legacy_sms": 0.0
+    },
+    "D3_MP5": {
+      "n": 25,
+      "k": 9,
+      "u": 0,
+      "sms_strict": 0.36,
+      "sms_cons": 0.36,
+      "width": 0.0,
+      "legacy_sms": 0.36
+    }
+  }
+}

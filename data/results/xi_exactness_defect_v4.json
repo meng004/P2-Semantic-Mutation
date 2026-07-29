@@ -1,0 +1,377 @@
+{
+  "definition": "xi = block-off-diagonal kill mass / total kills; NA when total kills = 0",
+  "fiber_source": "generation-time operator category (CE->1 OS->2 HP->3 TF->4 SI->5; CF/unparseable = off-taxonomy)",
+  "total_kills": 153,
+  "offdiag_kills": 117,
+  "xi_pooled": 0.7647,
+  "cells_evaluable": 15,
+  "cells_NA": 45,
+  "xi_pooled_aligned_cells": 0.7231,
+  "xi_pooled_cross_cells": 0.7955,
+  "diagonal_kills_by_category": {
+    "CE": 27,
+    "OS": 9
+  },
+  "per_cell": {
+    "A2_MP1": {
+      "kills": 27,
+      "offdiag": 18,
+      "xi": 0.6667,
+      "aligned": true
+    },
+    "A2_MP2": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A2_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A2_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A2_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A3_MP1": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": true
+    },
+    "A3_MP2": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A3_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A3_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A3_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B1_MP1": {
+      "kills": 18,
+      "offdiag": 9,
+      "xi": 0.5,
+      "aligned": false
+    },
+    "B1_MP2": {
+      "kills": 9,
+      "offdiag": 0,
+      "xi": 0.0,
+      "aligned": true
+    },
+    "B1_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B1_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B1_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A1_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A1_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B2_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B2_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B2_MP1": {
+      "kills": 9,
+      "offdiag": 9,
+      "xi": 1.0,
+      "aligned": false
+    },
+    "B3_MP1": {
+      "kills": 11,
+      "offdiag": 11,
+      "xi": 1.0,
+      "aligned": false
+    },
+    "B3_MP2": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": true
+    },
+    "B3_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B3_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B3_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C1_MP1": {
+      "kills": 2,
+      "offdiag": 2,
+      "xi": 1.0,
+      "aligned": false
+    },
+    "C1_MP2": {
+      "kills": 2,
+      "offdiag": 2,
+      "xi": 1.0,
+      "aligned": false
+    },
+    "C1_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C1_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C1_MP5": {
+      "kills": 2,
+      "offdiag": 2,
+      "xi": 1.0,
+      "aligned": true
+    },
+    "C2_MP1": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A1_MP1": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": true
+    },
+    "C2_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "A1_MP2": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C2_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C3_MP1": {
+      "kills": 20,
+      "offdiag": 11,
+      "xi": 0.55,
+      "aligned": false
+    },
+    "C2_MP2": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C3_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C3_MP2": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C3_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "C2_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": true
+    },
+    "C3_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": true
+    },
+    "D1_MP1": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D1_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D1_MP2": {
+      "kills": 9,
+      "offdiag": 9,
+      "xi": 1.0,
+      "aligned": true
+    },
+    "D1_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D2_MP1": {
+      "kills": 8,
+      "offdiag": 8,
+      "xi": 1.0,
+      "aligned": false
+    },
+    "D2_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D2_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D1_MP5": {
+      "kills": 9,
+      "offdiag": 9,
+      "xi": 1.0,
+      "aligned": false
+    },
+    "D2_MP2": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": true
+    },
+    "D3_MP1": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D3_MP3": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D3_MP4": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D3_MP2": {
+      "kills": 9,
+      "offdiag": 9,
+      "xi": 1.0,
+      "aligned": true
+    },
+    "D2_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "D3_MP5": {
+      "kills": 9,
+      "offdiag": 9,
+      "xi": 1.0,
+      "aligned": false
+    },
+    "A1_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    },
+    "B2_MP2": {
+      "kills": 9,
+      "offdiag": 9,
+      "xi": 1.0,
+      "aligned": true
+    },
+    "B2_MP5": {
+      "kills": 0,
+      "offdiag": 0,
+      "xi": null,
+      "aligned": false
+    }
+  }
+}

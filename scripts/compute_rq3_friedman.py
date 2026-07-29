@@ -85,9 +85,18 @@ def main():
         "rank_means_mp1_to_mp5": [round(r, 3) for r in rank_means],
         "per_class": per_class,
         "interpretation": (
-            "p < 0.05 ⇒ MP-effect varies across PUTs (cross-class consistency rejected)"
-            if p_main < 0.05 else
-            "p ≥ 0.05 ⇒ no significant MP × PUT effect; consistent with §5.8.2 sign test direction"
+            "Exploratory PUT-blocked evidence that SMS distributions differ "
+            "across MP columns. The mixed mutant pool does not identify an "
+            "operator-level causal effect, and the pre-registered class-level "
+            "direction criterion remains 3/4 rather than 4/4."
+            if p_main < 0.05
+            else
+            "No exploratory PUT-blocked evidence of an MP-column difference. "
+            "The mixed mutant pool does not identify an operator-level causal effect."
+        ),
+        "inference_permission": (
+            "exploratory non-parametric PUT-blocked comparison; "
+            "no operator-level causal interpretation"
         ),
     }
     out_path = ROOT / "data/results" / out_name

@@ -1,79 +1,78 @@
 {
   "version": "v4",
-  "n_cells": 60,
-  "suspect_distribution": {
-    "mean": 0.7908,
-    "std": 0.405,
+  "hypothesis": "H4",
+  "legacy_filename_note": "The h5 filename is retained for compatibility; the manuscript hypothesis is H4.",
+  "aggregation": "evaluable-cell macro sensitivity; zero-kill cells are NA",
+  "cells_total": 60,
+  "cells_evaluable": 15,
+  "cells_zero_kill_NA": 45,
+  "suspect_distribution_evaluable_cells": {
+    "mean": 0.1633,
+    "std": 0.3588,
     "min": 0.0,
     "max": 1.0,
     "quantiles": {
       "p5": 0.0,
       "p10": 0.0,
-      "p25": 1.0,
-      "p50": 1.0,
-      "p75": 1.0,
-      "p90": 1.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.78,
       "p95": 1.0
     }
   },
-  "paper_h5_cutoff": 0.2,
-  "paper_h5_result": {
-    "cutoff": 0.2,
-    "h5_cells_pass": 12,
-    "h5_pass_ratio": 0.2
-  },
+  "paper_cutoff": 0.2,
   "sensitivity_curve": [
     {
       "cutoff": 0.05,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.1,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.15,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.2,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.25,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.3,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.35,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.4,
-      "h5_cells_pass": 12,
-      "h5_pass_ratio": 0.2
+      "h4_evaluable_cells_le_cutoff": 12,
+      "h4_evaluable_ratio_le_cutoff": 0.8
     },
     {
       "cutoff": 0.45,
-      "h5_cells_pass": 13,
-      "h5_pass_ratio": 0.2167
+      "h4_evaluable_cells_le_cutoff": 13,
+      "h4_evaluable_ratio_le_cutoff": 0.8667
     },
     {
       "cutoff": 0.5,
-      "h5_cells_pass": 13,
-      "h5_pass_ratio": 0.2167
+      "h4_evaluable_cells_le_cutoff": 13,
+      "h4_evaluable_ratio_le_cutoff": 0.8667
     }
   ],
-  "smallest_cutoff_for_80pct_pass": null,
-  "interpretation": "H5 verdict robustness: if the cutoff in {0.05..0.50} produces pass_ratio < 0.80 at any reasonable cut (e.g. 0.20-0.35), the 0.20 specific value is NOT load-bearing — the H5 'unmet' verdict is robust across the cutoff family. smallest_cutoff_for_80pct_pass tells you how lenient the threshold would have to become before H5 flips to 'met'."
+  "interpretation": "Post-hoc sensitivity only. The pre-registered all-60-cell macro estimand is undefined because zero-kill cells have suspect_share = NA; no H4 verdict is produced."
 }
