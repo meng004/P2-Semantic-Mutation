@@ -229,9 +229,9 @@ report; no result in this draft depends on it (non-load-bearing).
   H-ZERO × H-XI 2×2 adjudication table. ξ does not change H-ZERO/H-DISC
   verdicts.
 
-REM-IDF (identifiability up to coverage classes) attaches to this theorem's
-discussion section; drafted in Phase T4 (`rem_identifiability.md`), merged in
-Task T6.1.
+REM-IDF is merged as the discussion Remark in §9c below (Task T4.1 Step 2;
+provenance, amendment A3 rationale, and the LRCA repositioning text live in
+[`rem_identifiability.md`](rem_identifiability.md)).
 
 ## 9b. LEM-CLO and manuscript consistency (Task T2.2)
 
@@ -280,6 +280,35 @@ it prices them into the model-check statistic. The \(\models\) vs
 \(\models_\tau\) gap between S5's wording and DEF-05's decision is bridged by
 premise (iii) (§3), the same regime that CHECKPOINT T1's amendment A1 made
 explicit in LEM-WIT.
+
+## 9c. Discussion Remark: REM-IDF (merged per Task T4.1 Step 2; statement as amended by A3)
+
+```latex
+\textbf{Remark [REM-IDF] (identifiability from kill signatures).} Under the
+assumptions of Theorem~[THM-GAP] let $\mathrm{sig}(m_{\mathrm{mut}})=\{r\in R: r\ \text{kills}\ m_{\mathrm{mut}}\}$.
+For any killed $m_{\mathrm{mut}}$, all members of $\mathrm{sig}(m_{\mathrm{mut}})$ are checkers of the
+same stratum, which identifies the fiber of $m_{\mathrm{mut}}$ exactly; with a
+separating family (one exact checker per stratum in $\mathrm{Cov}(R)$) the
+killed subpopulations therefore separate every covered stratum. For
+survivors the signature is identically empty and carries no fiber
+information: an empty signature is consistent with every uncovered fiber and
+with the below-window remainder (Theorem~[THM-WIN](ii)) of every covered
+fiber, so survivor fiber attribution must come from generation-time labels,
+not from kill signatures.
+```
+
+*Justification (two sentences, R-9: no independent obligations; audited under
+T6 audit item (8)).* Same-stratum membership of
+\(\mathrm{sig}(m_{\mathrm{mut}})\) is the block-diagonal kill matrix of §4
+reread row-wise: a killed \(m_{\mathrm{mut}}\in M_j\) can only be flagged by
+checkers with label \(j\), so its nonempty signature both certifies the kill
+and names the fiber. Survivor rows are identically zero, hence
+observationally indistinguishable: the below-window remainder of every
+covered fiber (THM-WIN(ii)) and every uncovered fiber produce the same
+all-pass observation, so survivor attribution is carried by generation-time
+\(\mathrm{eff}\) labels (the A-PROV ex-ante channel), not by execution
+outcomes. LRCA repositioning consequent on this Remark:
+`rem_identifiability.md` §3 (replacement text for main.tex:646–649, T6.1).
 
 ## 10. Obligations ledger and CHECKPOINT T2 questions
 

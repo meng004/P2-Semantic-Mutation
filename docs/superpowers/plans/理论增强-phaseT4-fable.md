@@ -35,7 +35,7 @@ not from kill signatures.
 
 （陈述按 CHECKPOINT T3 修订 A3 同步 master：survivor 从句原拟"identifiable up to coverage partition"过度主张，改述为"空签名不携带 fiber 信息、归属由生成期标签承担"；separating family 效力改述为 killed 子群分离全部 covered 层。）
 
-- [x] **Step 2:** 论证以两句话并入 THM-GAP 讨论段（同层性=块对角矩阵直接重读；survivor 行恒零=观测不可分辨，归属由生成期 eff 标签（A-PROV ex-ante 通道）承担——A3 修订后表述），**无独立 PO**（R-9；由 T6 审计项 (8) 一并复核）；LRCA 重定位段已写入 `rem_identifiability.md` §3（C1=对角一致 kill；C2–C5=ξ 质量的诊断标注器；SMS 公式不动），替换句对准现稿 main.tex:646–649
+- [x] **Step 2:** 论证以两句话并入 THM-GAP 讨论段（同层性=块对角矩阵直接重读；survivor 行恒零=观测不可分辨，归属由生成期 eff 标签（A-PROV ex-ante 通道）承担——A3 修订后表述），**无独立 PO**（R-9；由 T6 审计项 (8) 一并复核）——**并入已实际落地：`thm_gap.md` §9c（2026-07-29 完整化，Remark 陈述 + 两句论证全文并入，非指针）**；LRCA 重定位段已写入 `rem_identifiability.md` §3（C1=对角一致 kill；C2–C5=ξ 质量的诊断标注器；SMS 公式不动），替换句对准现稿 main.tex:646–649
 - [x] **Step 3:** Commit
 
 **REVIEW CHECKPOINT T3：作者确认 THM-WIN 假设清单、REM-FPOS/REM-FNEG/REM-IDF 的 Remark 表述与既有 boundary cases 的覆盖（与 T3 联合拍板）。**
