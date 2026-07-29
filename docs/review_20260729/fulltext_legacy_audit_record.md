@@ -77,6 +77,16 @@
   reference-anchored oracle、soundness/monotonicity RQ1）全部在位。
 - 定理编号由 acmart 自动分配（Theorem 3.1–3.11 系列），交叉引用零失效。
 
+## 三-b、独立复核（修复关闭验证）
+
+修复后由全新只读验证线程按 18 项清单复核（agent 702f13cf）：首轮 17/18
+CLOSED，揪出两处残余——M:3044 的 b-class 残句、附录小节层级致实编与主稿
+硬写指针漂移（B.1.5/C.4 系）——以及 MR_eq/MP_eq 记号一处不一致；三处均已
+修复（子小节降级使实编 B.1–B.6 / C.1–C.3 与指针逐一对应）并重建包复验。
+终裁：**FIX-VERIFICATION PASS**（0 error / 0 Missing character /
+0 undefined reference；唯一告警为良性 TU/inconsolata 斜体字形替换；
+提交 PDF 已收敛，49 页）。
+
 ## 四、遗留与边界
 
 - `submission/` 下其余历史包（arxiv-*、IST/JSS、TOSEM_regular_20260705、
