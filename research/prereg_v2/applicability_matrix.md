@@ -2,7 +2,8 @@
 
 **Prereg component:** Task 1.1 (argumentation-uplift Phase 1)  
 **Date:** 2026-07-28  
-**Content hash (SHA-256, scope = everything from `<!-- HASH-SCOPE-START -->` to EOF):** `8b701e026c7607348c1fdeec420a1712e2baf3ccf574759dd9a76c15dda8997a`  
+**Content hash (SHA-256, scope = everything after the first standalone HASH-SCOPE-START marker line; Amendment #1 repaired the original self-referential recipe, rulings untouched):** `670e5748437e409e03bd36a202273b9a428112c3e1433aa8fc386c3a87e85b2f`  
+**Operative integrity control:** file-level hash in `research/prereg_v2/FREEZE_MANIFEST.sha256` + git history.  
 **Status:** two-rater merge complete; **author ratification pending at REVIEW CHECKPOINT 1**; inclusion in `FREEZE_MANIFEST` deferred to Task 1.3 (blocked on theory CHECKPOINT T2)
 
 **Raters (identity categories per protocol):**
