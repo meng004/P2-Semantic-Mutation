@@ -1,5 +1,15 @@
 # External Admission Adjudication Runbook
 
+## 0. Defect4MR artifact — delivery specification (for the author)
+
+The blocked "Defect4MR 工件" = the P12 project's archived defect dataset (Defect4MR v1.0.0, archival DOI `10.5281/zenodo.21203424`; local copy at the author's `/Users/limeng/Papers/P12-Defect4MR`). Task 3.1's 64-pool re-adjudication and the seeded `MAPPING_TRAIN` draw need, concretely:
+
+1. **Minimum viable (unblocks 64-pool re-adjudication + MAPPING_TRAIN draw):** one manifest file (CSV or JSON) with one row per candidate (all 64), fields: `defect_id, project, issue_url, buggy_sha, fixed_sha, short_description, status` (status ∈ verified_full / candidate_full / other). The `verified_full` 35 must appear with their canonical release IDs (the seeded draw sorts these lexicographically).
+2. **Second instalment (unblocks readiness checks):** the `reproducers/` scripts (per-defect dual-arm build + trigger), or equivalent build pins.
+3. **Delivery paths (any one):** copy into this repo under `data/external_slice/defect4mr_import/` and push; or grant read access to the P12 repository; or attach the evidence package (`release/provider/p12-p3-v1.1.2/evidence-package.json`).
+
+Discipline reminder: the import lands **as-is** (raw, immutable); re-adjudication happens only through this runbook's procedure; no operator/fiber vocabulary may be added to any imported admission-side file.
+
 ## 1. Authority and current boundary
 
 The governing specification is `research/prereg_v2/external_slice_protocol.md`, especially §§1, 2, and 6. Admission has exactly three criteria. No extra quality, popularity, downstream-detection, or convenience criterion may be introduced.

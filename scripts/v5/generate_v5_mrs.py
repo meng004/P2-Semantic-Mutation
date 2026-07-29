@@ -46,6 +46,19 @@ V4_PARSER = "cross_source_campaign._strip_fences (```python fence extractor)"
 
 REQUIRED_ENV = ("V5_MR_API_KEY", "V5_MR_BASE_URL", "V5_MR_MODEL")
 
+# Cloud-agent secret-name adapter (author's dashboard names, 2026-07-29):
+#   base_url -> V5_MR_BASE_URL; api_key_2 (preferred, keeps the held-out arm
+#   on a distinct credential) else api_key_1 -> V5_MR_API_KEY.
+# V5_MR_MODEL has NO fallback: it must be chosen from a `--probe` listing and
+# verified to be a non-v4 family (not Claude/GPT/DeepSeek) before generation.
+if not os.environ.get("V5_MR_BASE_URL") and os.environ.get("base_url"):
+    os.environ["V5_MR_BASE_URL"] = os.environ["base_url"]
+if not os.environ.get("V5_MR_API_KEY"):
+    for _alt in ("api_key_2", "api_key_1"):
+        if os.environ.get(_alt):
+            os.environ["V5_MR_API_KEY"] = os.environ[_alt]
+            break
+
 PROVIDER_RANKING = [
     {
         "rank": 1,

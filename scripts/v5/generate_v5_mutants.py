@@ -100,6 +100,14 @@ PROMPT_SHA256 = hashlib.sha256(PROMPT_TEMPLATE.encode()).hexdigest()
 
 REQUIRED_ENV = ("BLTCY_API_KEY", "BLTCY_BASE_URL")
 
+# Cloud-agent secret-name adapter (author's dashboard names, 2026-07-29):
+#   base_url -> BLTCY_BASE_URL, api_key_1 -> BLTCY_API_KEY (generation arm).
+# Explicit BLTCY_* names take precedence when both are set.
+_ENV_FALLBACKS = {"BLTCY_API_KEY": "api_key_1", "BLTCY_BASE_URL": "base_url"}
+for _canon, _alt in _ENV_FALLBACKS.items():
+    if not os.environ.get(_canon) and os.environ.get(_alt):
+        os.environ[_canon] = os.environ[_alt]
+
 
 def _strip_fences(text: str) -> str:
     """Same parser as scripts/cross_source_campaign.py::_strip_fences."""
