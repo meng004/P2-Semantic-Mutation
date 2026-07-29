@@ -1,0 +1,1 @@
+{"set": 2, "put": "b3", "mp": 1, "attempt": 3, "model": "grok-4.5", "content": "```python\ndef r(x):\n    x = float(x)\n    return (x + 0.3) % 1.0\n\ndef R(y_orig, y_new):\n    d = y_new - y_orig\n    return abs(d - 0.3) < 1e-6 or abs(d + 0.7) < 1e-6\n```", "created_at": "2026-07-29T05:03:21Z"}

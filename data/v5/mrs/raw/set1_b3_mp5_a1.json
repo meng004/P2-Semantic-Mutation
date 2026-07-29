@@ -1,0 +1,1 @@
+{"set": 1, "put": "b3", "mp": 5, "attempt": 1, "model": "gemini-3.5-flash", "content": "```python\ndef r(x):\n    return 0.5 * float(x) + 0.5\n\n\ndef R(y_orig, y_new):\n    return y_new >= y_orig\n```", "created_at": "2026-07-29T04:41:25Z"}

@@ -1,0 +1,63 @@
+{
+  "cell": "OS\u00d7d3",
+  "op": "OS",
+  "put": "d3",
+  "eff_stratum": 2,
+  "n_confirmed": 6,
+  "mutants": [
+    {
+      "mutant_id": "mut-OS-D3-01",
+      "attempt_idx": 1,
+      "op_id": "d3_OS1v5",
+      "model": "gpt-4o",
+      "sha256": "6e4dad3102779525ba8a3e227d68c82279536be68898d53147b2fbec06c82363",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/d3_OS_a01.json"
+    },
+    {
+      "mutant_id": "mut-OS-D3-02",
+      "attempt_idx": 3,
+      "op_id": "d3_OS1v5",
+      "model": "gpt-4o",
+      "sha256": "367240e4bce13f5bbd3e78e5e4dc4391b592a83fd2b9355f4cee667ff7c53492",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/d3_OS_a03.json"
+    },
+    {
+      "mutant_id": "mut-OS-D3-03",
+      "attempt_idx": 4,
+      "op_id": "d3_OS1v5",
+      "model": "gpt-4o",
+      "sha256": "db8f65f68e2db8398d1e3723370e74f1b8e3dc034fa037175af9b51ae109eafd",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/d3_OS_a04.json"
+    },
+    {
+      "mutant_id": "mut-OS-D3-04",
+      "attempt_idx": 5,
+      "op_id": "d3_OS1v5",
+      "model": "gpt-4o",
+      "sha256": "d868fcff8e9ea55171d72b82a0837454a0c12223de41fe84f0480947c5946960",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/d3_OS_a05.json"
+    },
+    {
+      "mutant_id": "mut-OS-D3-05",
+      "attempt_idx": 9,
+      "op_id": "d3_OS1v5",
+      "model": "gpt-4o",
+      "sha256": "464a08b2b4e5b0831e8205aaa1e4c89919d4ccd6b44ffa0d05a846caefd3b83d",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/d3_OS_a09.json"
+    },
+    {
+      "mutant_id": "mut-OS-D3-06",
+      "attempt_idx": 13,
+      "op_id": "d3_OS1v5",
+      "model": "gpt-4o",
+      "sha256": "bf5d2744055acb4ecce1fcb8bcd8d1bed8d3369a98f70137f907a1096522ff6b",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/d3_OS_a13.json"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "cell": "HP\u00d7c3",
+  "op": "HP",
+  "put": "c3",
+  "eff_stratum": 3,
+  "n_confirmed": 4,
+  "mutants": [
+    {
+      "mutant_id": "mut-HP-C3-01",
+      "attempt_idx": 1,
+      "op_id": "c3_HP1",
+      "model": "gpt-4o",
+      "sha256": "b1be97561f2759e0232d712433dcde0b858420ac3d09611af94933aa71d871f2",
+      "eff_stratum": 3,
+      "raw_relpath": "data/v5/raw_candidates/c3_HP_a01.json"
+    },
+    {
+      "mutant_id": "mut-HP-C3-02",
+      "attempt_idx": 3,
+      "op_id": "c3_HP1",
+      "model": "gpt-4o",
+      "sha256": "8baf392b75179b198c59d01e6a4c47530bae7721fac8ad389734ceb6da1b9e33",
+      "eff_stratum": 3,
+      "raw_relpath": "data/v5/raw_candidates/c3_HP_a03.json"
+    },
+    {
+      "mutant_id": "mut-HP-C3-03",
+      "attempt_idx": 9,
+      "op_id": "c3_HP1",
+      "model": "gpt-4o",
+      "sha256": "e35ac63be4273bd50eb662e5137f52e80856df270e6d252c16088a49d1e9b317",
+      "eff_stratum": 3,
+      "raw_relpath": "data/v5/raw_candidates/c3_HP_a09.json"
+    },
+    {
+      "mutant_id": "mut-HP-C3-04",
+      "attempt_idx": 15,
+      "op_id": "c3_HP1",
+      "model": "gpt-4o",
+      "sha256": "83d156a815cf6d2abaa5385b500f74a40b71107c732c038d3aa67c97fadef159",
+      "eff_stratum": 3,
+      "raw_relpath": "data/v5/raw_candidates/c3_HP_a15.json"
+    }
+  ]
+}

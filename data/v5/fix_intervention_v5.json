@@ -1,0 +1,278 @@
+{
+  "protocol": {
+    "seed": 20260728,
+    "n_sample": 15,
+    "n_drawn": 15,
+    "designated_set": 1,
+    "eligible_definition": "applicable \u2229 predicted-nonzero \u2229 Gap_aln>0; instrument availability on the designated set (both ALN and CRS measurable)",
+    "eligible_cells": [
+      "CE\u00d7a2",
+      "CE\u00d7a3",
+      "CE\u00d7b1",
+      "CE\u00d7b2",
+      "CE\u00d7b3",
+      "CE\u00d7c2",
+      "CE\u00d7c3",
+      "SI\u00d7a2",
+      "SI\u00d7c1",
+      "SI\u00d7c2",
+      "SI\u00d7c3",
+      "SI\u00d7d1",
+      "SI\u00d7d3",
+      "TF\u00d7b2",
+      "TF\u00d7c1",
+      "TF\u00d7c2",
+      "TF\u00d7c3",
+      "TF\u00d7d1",
+      "TF\u00d7d2",
+      "TF\u00d7d3"
+    ],
+    "sampling": "sorted lexicographic order; default_rng(seed).choice(n, 15, replace=False)",
+    "incremental": "reuses committed kill_matrix_v5.json vectors; no new AVP calls"
+  },
+  "sampled_cells": [
+    "CE\u00d7a2",
+    "CE\u00d7a3",
+    "CE\u00d7b1",
+    "CE\u00d7b2",
+    "CE\u00d7b3",
+    "CE\u00d7c3",
+    "SI\u00d7a2",
+    "SI\u00d7c2",
+    "SI\u00d7d1",
+    "SI\u00d7d3",
+    "TF\u00d7b2",
+    "TF\u00d7c1",
+    "TF\u00d7c2",
+    "TF\u00d7d1",
+    "TF\u00d7d3"
+  ],
+  "cells": [
+    {
+      "cell": "CE\u00d7a2",
+      "sms_j_before": 0.0,
+      "sms_j_after": 1.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 7,
+        "added_mr": "data/v5/mrs/set1/a2_mp1.py",
+        "cross_mr": "data/v5/mrs/set1/a2_mp2.py",
+        "sms_set_cross_only": 1.0,
+        "sms_set_rplus": 1.0
+      }
+    },
+    {
+      "cell": "CE\u00d7a3",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 16,
+        "added_mr": "data/v5/mrs/set1/a3_mp1.py",
+        "cross_mr": "data/v5/mrs/set1/a3_mp2.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 0.0
+      }
+    },
+    {
+      "cell": "CE\u00d7b1",
+      "sms_j_before": 0.0,
+      "sms_j_after": 1.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 14,
+        "added_mr": "data/v5/mrs/set1/b1_mp1.py",
+        "cross_mr": "data/v5/mrs/set1/b1_mp2.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 1.0
+      }
+    },
+    {
+      "cell": "CE\u00d7b2",
+      "sms_j_before": 0.0,
+      "sms_j_after": 1.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 16,
+        "added_mr": "data/v5/mrs/set1/b2_mp1.py",
+        "cross_mr": "data/v5/mrs/set1/b2_mp2.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 1.0
+      }
+    },
+    {
+      "cell": "CE\u00d7b3",
+      "sms_j_before": 0.0,
+      "sms_j_after": 1.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 3,
+        "added_mr": "data/v5/mrs/set1/b3_mp1.py",
+        "cross_mr": "data/v5/mrs/set1/b3_mp2.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 1.0
+      }
+    },
+    {
+      "cell": "CE\u00d7c3",
+      "sms_j_before": 0.0,
+      "sms_j_after": 1.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 7,
+        "added_mr": "data/v5/mrs/set1/c3_mp1.py",
+        "cross_mr": "data/v5/mrs/set1/c3_mp2.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 1.0
+      }
+    },
+    {
+      "cell": "SI\u00d7a2",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 3,
+        "added_mr": "data/v5/mrs/set1/a2_mp5.py",
+        "cross_mr": "data/v5/mrs/set1/a2_mp1.py",
+        "sms_set_cross_only": 1.0,
+        "sms_set_rplus": 1.0
+      }
+    },
+    {
+      "cell": "SI\u00d7c2",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 4,
+        "added_mr": "data/v5/mrs/set1/c2_mp5.py",
+        "cross_mr": "data/v5/mrs/set1/c2_mp1.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 0.0
+      }
+    },
+    {
+      "cell": "SI\u00d7d1",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 1,
+        "added_mr": "data/v5/mrs/set1/d1_mp5.py",
+        "cross_mr": "data/v5/mrs/set1/d1_mp1.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 0.0
+      }
+    },
+    {
+      "cell": "SI\u00d7d3",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 11,
+        "added_mr": "data/v5/mrs/set1/d3_mp5.py",
+        "cross_mr": "data/v5/mrs/set1/d3_mp1.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 0.0
+      }
+    },
+    {
+      "cell": "TF\u00d7b2",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 4,
+        "added_mr": "data/v5/mrs/set1/b2_mp4.py",
+        "cross_mr": "data/v5/mrs/set1/b2_mp5.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 0.0
+      }
+    },
+    {
+      "cell": "TF\u00d7c1",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 16,
+        "added_mr": "data/v5/mrs/set1/c1_mp4.py",
+        "cross_mr": "data/v5/mrs/set1/c1_mp5.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 0.0
+      }
+    },
+    {
+      "cell": "TF\u00d7c2",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 12,
+        "added_mr": "data/v5/mrs/set1/c2_mp4.py",
+        "cross_mr": "data/v5/mrs/set1/c2_mp5.py",
+        "sms_set_cross_only": 0.0,
+        "sms_set_rplus": 0.0
+      }
+    },
+    {
+      "cell": "TF\u00d7d1",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 6,
+        "added_mr": "data/v5/mrs/set1/d1_mp4.py",
+        "cross_mr": "data/v5/mrs/set1/d1_mp5.py",
+        "sms_set_cross_only": 1.0,
+        "sms_set_rplus": 1.0
+      }
+    },
+    {
+      "cell": "TF\u00d7d3",
+      "sms_j_before": 0.0,
+      "sms_j_after": 0.0,
+      "w_j": 1.0,
+      "gap_aln_before": 1.0,
+      "gap_aln_after": 0.0,
+      "extras": {
+        "pool_n": 11,
+        "added_mr": "data/v5/mrs/set1/d3_mp4.py",
+        "cross_mr": "data/v5/mrs/set1/d3_mp5.py",
+        "sms_set_cross_only": 1.0,
+        "sms_set_rplus": 1.0
+      }
+    }
+  ],
+  "created_at": "2026-07-29T05:43:14Z"
+}

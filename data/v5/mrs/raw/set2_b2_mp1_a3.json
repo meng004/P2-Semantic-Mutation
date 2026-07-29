@@ -1,0 +1,1 @@
+{"set": 2, "put": "b2", "mp": 1, "attempt": 3, "model": "grok-4.5", "content": "```python\nimport math\n\ndef r(x):\n    return 1.0 - float(x)\n\ndef R(y_orig, y_new):\n    return math.fabs(y_orig + y_new) <= 0.85\n```", "created_at": "2026-07-29T04:59:40Z"}

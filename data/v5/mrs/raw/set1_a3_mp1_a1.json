@@ -1,0 +1,1 @@
+{"set": 1, "put": "a3", "mp": 1, "attempt": 1, "model": "gemini-3.5-flash", "content": "```python\nimport math\nimport numpy as np\n\ndef r(x):\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    return 1.0 / N\n\ndef R(y_orig, y_new):\n    return math.isclose(y_orig, y_new, rel_tol=1e-11, abs_tol=1e-11)\n```", "created_at": "2026-07-29T04:38:30Z"}

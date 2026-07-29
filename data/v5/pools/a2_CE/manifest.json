@@ -1,0 +1,72 @@
+{
+  "cell": "CE\u00d7a2",
+  "op": "CE",
+  "put": "a2",
+  "eff_stratum": 1,
+  "n_confirmed": 7,
+  "mutants": [
+    {
+      "mutant_id": "mut-CE-A2-01",
+      "attempt_idx": 1,
+      "op_id": "a2_CE1",
+      "model": "gpt-4o",
+      "sha256": "d8d1a06f0ca1c35cb7cfc6ca18fad7ab66527bb65023a7505b4a4b721df4ae43",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/a2_CE_a01.json"
+    },
+    {
+      "mutant_id": "mut-CE-A2-02",
+      "attempt_idx": 2,
+      "op_id": "a2_CE1",
+      "model": "gpt-4o",
+      "sha256": "b06e4c1fdf48f5bb110ef322e9fa77010579d88fb303af19539b0c78ca4ed5e6",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/a2_CE_a02.json"
+    },
+    {
+      "mutant_id": "mut-CE-A2-03",
+      "attempt_idx": 4,
+      "op_id": "a2_CE1",
+      "model": "gpt-4o",
+      "sha256": "026e1a2df3f14d6d8ed9c47383d3451c698e5336823b66d2f10d2311ae961084",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/a2_CE_a04.json"
+    },
+    {
+      "mutant_id": "mut-CE-A2-04",
+      "attempt_idx": 6,
+      "op_id": "a2_CE1",
+      "model": "gpt-4o",
+      "sha256": "8ad029160e467873f57db2483499a93582f49cf1d8514ea83665be7a17458e89",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/a2_CE_a06.json"
+    },
+    {
+      "mutant_id": "mut-CE-A2-05",
+      "attempt_idx": 11,
+      "op_id": "a2_CE1",
+      "model": "gpt-4o",
+      "sha256": "91bb19d08f2dafbda26dd230a40ea164a55804991483e07475d7de160f4eae66",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/a2_CE_a11.json"
+    },
+    {
+      "mutant_id": "mut-CE-A2-06",
+      "attempt_idx": 12,
+      "op_id": "a2_CE1",
+      "model": "gpt-4o",
+      "sha256": "c2742387a66da1b5f48e0a907de646d89524c8deca580f50efb97830a4f0631a",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/a2_CE_a12.json"
+    },
+    {
+      "mutant_id": "mut-CE-A2-07",
+      "attempt_idx": 15,
+      "op_id": "a2_CE1",
+      "model": "gpt-4o",
+      "sha256": "ecb1e44001b617e7ef945567faa9d0fff566df13b1db80757e7f87a8dffb1777",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/a2_CE_a15.json"
+    }
+  ]
+}

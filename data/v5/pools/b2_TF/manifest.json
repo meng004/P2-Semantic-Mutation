@@ -1,0 +1,45 @@
+{
+  "cell": "TF\u00d7b2",
+  "op": "TF",
+  "put": "b2",
+  "eff_stratum": 4,
+  "n_confirmed": 4,
+  "mutants": [
+    {
+      "mutant_id": "mut-TF-B2-01",
+      "attempt_idx": 3,
+      "op_id": "b2_TF1v5",
+      "model": "gpt-4o",
+      "sha256": "be4e67469a69a3b650ad5799cf5979c3da62d12cfa9b2bf7935395d351abbcf6",
+      "eff_stratum": 4,
+      "raw_relpath": "data/v5/raw_candidates/b2_TF_a03.json"
+    },
+    {
+      "mutant_id": "mut-TF-B2-02",
+      "attempt_idx": 7,
+      "op_id": "b2_TF1v5",
+      "model": "gpt-4o",
+      "sha256": "e79c03b4379e779227dc1fd0be9cbc125a8d189dc9cedd8e0ed42f4fce7be4cc",
+      "eff_stratum": 4,
+      "raw_relpath": "data/v5/raw_candidates/b2_TF_a07.json"
+    },
+    {
+      "mutant_id": "mut-TF-B2-03",
+      "attempt_idx": 11,
+      "op_id": "b2_TF1v5",
+      "model": "gpt-4o",
+      "sha256": "99bef22c68816c5bcb55adf82163d4a3e68f2c9ba298f88ed69a3d0336e6a7d4",
+      "eff_stratum": 4,
+      "raw_relpath": "data/v5/raw_candidates/b2_TF_a11.json"
+    },
+    {
+      "mutant_id": "mut-TF-B2-04",
+      "attempt_idx": 17,
+      "op_id": "b2_TF1v5",
+      "model": "gpt-4o",
+      "sha256": "02aaade49d154710a2db76833e6e3d9880fb4815c23359016d39d7aa6b8783cb",
+      "eff_stratum": 4,
+      "raw_relpath": "data/v5/raw_candidates/b2_TF_a17.json"
+    }
+  ]
+}

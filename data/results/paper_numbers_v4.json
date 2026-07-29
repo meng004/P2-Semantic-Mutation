@@ -25,7 +25,8 @@
     "h2_delta_pass": false,
     "h2_threshold_ratio": 3.0,
     "h2_ratio_pass": true,
-    "odds_ratio_inf": true
+    "odds_ratio_inf": true,
+    "estimand": "v4 cross-source, c-class primary = MP1 (v3b post-hoc); sensitivity / development slice"
   },
   "rq3": {
     "n_observations": 60,
@@ -61,5 +62,22 @@
     "min_pc": 0.5,
     "max_pc": 1.0,
     "mean_pc": 0.75
+  },
+  "SMS_strict": null,
+  "SMS_cons": null,
+  "rq2_primary_mp5": {
+    "estimand": "v4 cross-source, c-class primary held at MP5 (pre-registered v3); H2 headline",
+    "n_aligned": 12,
+    "n_cross": 48,
+    "mean_aligned": 0.2133,
+    "mean_cross": 0.0767,
+    "median_aligned": 0.1,
+    "median_cross": 0.0,
+    "cliffs_delta": 0.3142,
+    "delta_ci_95_lo": 0.0138,
+    "delta_ci_95_hi": 0.6215,
+    "h2_threshold_delta": 0.474,
+    "h2_delta_pass": false,
+    "source_file": "rq2_cliffs_delta_v4_mp5.json"
   }
 }

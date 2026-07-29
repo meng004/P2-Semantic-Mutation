@@ -1,0 +1,51 @@
+{
+ "schema": "syntactic_overlap_v2",
+ "engine": "cosmic-ray",
+ "engine_version_pin": "cosmic-ray default operator plugin set; lineage = committed artifacts data/results/cosmic_ray_12put_ast_diff.json + data/results/cosmic_ray_*_summary.json (n_cosmic_ray_total=1250; session .sqlite DBs are NOT present in this workspace and were not consulted). Operator families: core/NumberReplacer, binary_operator_replacement, comparison_operator_replacement, unary_operator_replacement, boolean_replacer, break_continue, exception_replacer, keyword_replacer, remove_decorator, variable_inserter, variable_replacer, zero_iteration_for_loop, no_op (https://github.com/sixty-north/cosmic-ray/tree/master/src/cosmic_ray/operators)",
+ "normaliser_id": "ast.dump(annotate_fields=False,include_attributes=False)#sha256=c6cb6b80f92315fe",
+ "pool_sem": "v4 (data/mutants/*_pool_v4)",
+ "overall": {
+  "n_sem": 292,
+  "n_syn": 1250,
+  "n_overlap": 15,
+  "overlap_rate": 0.05136986301369863,
+  "overlap_fraction_str": "15/292",
+  "overlap_pct": 5.14
+ },
+ "per_operator_family": {
+  "HP": {
+   "n_p2": 72,
+   "n_overlap": 0,
+   "overlap_rate": 0.0
+  },
+  "SI": {
+   "n_p2": 33,
+   "n_overlap": 0,
+   "overlap_rate": 0.0
+  },
+  "TF": {
+   "n_p2": 54,
+   "n_overlap": 0,
+   "overlap_rate": 0.0
+  },
+  "CE": {
+   "n_p2": 64,
+   "n_overlap": 5,
+   "overlap_rate": 0.078125
+  },
+  "OS": {
+   "n_p2": 60,
+   "n_overlap": 7,
+   "overlap_rate": 0.11666666666666667
+  },
+  "CF": {
+   "n_p2": 9,
+   "n_overlap": 3,
+   "overlap_rate": 0.3333333333333333
+  }
+ },
+ "headline": "v4 AST-normalised overlap vs cosmic-ray default = 15/292 = 5.14%; HP/SI/TF = 0-overlap; CE/OS/CF partial.",
+ "v5_addendum": "pending POOL-SEM v5",
+ "source_audit": "data/results/cosmic_ray_12put_ast_diff.json",
+ "reach_doc": "docs/review_20260728/syntactic_reach.md"
+}

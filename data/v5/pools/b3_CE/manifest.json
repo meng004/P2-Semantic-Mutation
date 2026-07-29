@@ -1,0 +1,36 @@
+{
+  "cell": "CE\u00d7b3",
+  "op": "CE",
+  "put": "b3",
+  "eff_stratum": 1,
+  "n_confirmed": 3,
+  "mutants": [
+    {
+      "mutant_id": "mut-CE-B3-01",
+      "attempt_idx": 1,
+      "op_id": "b3_CE1",
+      "model": "gpt-4o",
+      "sha256": "60c86272d605cc0de458c8464f932f8199a1ea0cfbfd4ef2517abde5985eb83f",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/b3_CE_a01.json"
+    },
+    {
+      "mutant_id": "mut-CE-B3-02",
+      "attempt_idx": 2,
+      "op_id": "b3_CE1",
+      "model": "gpt-4o",
+      "sha256": "03c086cddf368f9a082be9d3f6ed1e9934fdc092066ad54da1d91de8b84cad0e",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/b3_CE_a02.json"
+    },
+    {
+      "mutant_id": "mut-CE-B3-03",
+      "attempt_idx": 7,
+      "op_id": "b3_CE1",
+      "model": "gpt-4o",
+      "sha256": "e2428d06770d799594aa935f058ada50d2a1db19406755115902934347aaaef1",
+      "eff_stratum": 1,
+      "raw_relpath": "data/v5/raw_candidates/b3_CE_a07.json"
+    }
+  ]
+}

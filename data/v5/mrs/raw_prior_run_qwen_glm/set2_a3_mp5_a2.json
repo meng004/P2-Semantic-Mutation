@@ -1,0 +1,1 @@
+{"set": 2, "put": "a3", "mp": 5, "attempt": 2, "model": "glm-4.7", "content": "```python\nimport numpy as np\n\ndef r(x):\n    return np.tanh(x)\n\ndef R(y_orig, y_new):\n    return np.isfinite(y_orig) and np.isfinite(y_new) and y_new > y_orig\n```", "created_at": "2026-07-29T03:51:17Z"}

@@ -1,0 +1,1 @@
+{"set": 2, "put": "c3", "mp": 3, "attempt": 3, "model": "grok-4.5", "content": "```python\ndef r(x):\n    return 0.5 * x\n\ndef R(y_orig, y_new):\n    e0 = abs(float(y_orig) - 1.0)\n    e1 = abs(float(y_new) - 1.0)\n    if e0 < 1e-18:\n        return e1 < 1e-18\n    ratio = e1 / e0\n    return (0.217 <= ratio <= 0.288)\n```", "created_at": "2026-07-29T05:09:14Z"}

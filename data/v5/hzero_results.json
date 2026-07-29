@@ -1,0 +1,21 @@
+{
+  "hypothesis": "H-ZERO",
+  "estimate": 0.5341991341991342,
+  "ci": [
+    0.421875,
+    0.6459070910973083
+  ],
+  "p": 0.9552344605326653,
+  "verdict": "FAIL",
+  "extras": {
+    "tpr": 0.37142857142857144,
+    "tnr": 0.696969696969697,
+    "mcnemar_b": 13,
+    "mcnemar_c": 22,
+    "majority_label_nonzero": false,
+    "n_units": 68,
+    "n_cells": 46,
+    "flags": [],
+    "criterion": "BA>=0.75 AND McNemar p<0.05"
+  }
+}
