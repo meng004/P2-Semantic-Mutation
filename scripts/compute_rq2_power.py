@@ -10,8 +10,9 @@ Two complementary analyses:
    compute Cliff's delta, and tally the rejection rate against three
    thresholds (small=0.147, medium=0.330, large=0.474).
 
-2. **Required sample size** — Holding the observed effect size fixed
-   (delta = 0.439 at v4), at what (n_aligned, n_cross) does the power
+2. **Required sample size** — Holding the frozen MP5-primary observed
+   effect size fixed (delta = 0.314 at v4), at what
+   (n_aligned, n_cross) does the power
    to reject "delta <= 0" reach 0.80? Sweeps n_aligned from 6 to 60
    in steps of 6 with n_cross = 4 * n_aligned (the v4 ratio).
 
@@ -35,7 +36,7 @@ import numpy as np
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
+from p2.config.primary import PRIMARY_CELLS_V3 as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
 from p2.stats.cliffs_delta import cliffs_delta  # type: ignore[import-not-found]  # noqa: E402
 
 VERSION = os.environ.get("SMS_VERSION", "v4")
@@ -115,6 +116,9 @@ report = {
     "n_simulations": NSIM,
     "seed": SEED,
     "version": VERSION,
+    "input_sms": SMS_FILE,
+    "primary_map": PRIMARY,
+    "primary_map_source": "p2.config.primary.PRIMARY_CELLS_V3",
     "observed": {
         "n_aligned": int(len(aligned_arr)),
         "n_cross": int(len(cross_arr)),

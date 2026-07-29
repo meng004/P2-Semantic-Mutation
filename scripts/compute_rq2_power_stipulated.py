@@ -1,9 +1,9 @@
 """Stipulated-alternative power simulation for RQ2 H2 (R1 W1 round-2).
 
 Complementary to scripts/compute_rq2_power.py (which uses parametric
-bootstrap from the *observed* empirical distributions). R1 W1 noted
-that the plug-in approach answers "with what power could we detect
-the *observed* δ = 0.439", but does not answer "if the truth is
+bootstrap from the *observed* empirical distributions). The plug-in
+approach answers "how often would a resample from the frozen MP5-primary
+empirical distribution exceed the threshold", but does not answer "if the truth is
 δ = 0.474 (the H2 large-effect threshold), what is our power".
 
 This script implements the stipulated-alternative simulation:
@@ -41,7 +41,7 @@ import numpy as np
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
+from p2.config.primary import PRIMARY_CELLS_V3 as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
 from p2.stats.cliffs_delta import cliffs_delta  # type: ignore[import-not-found]  # noqa: E402
 
 VERSION = os.environ.get("SMS_VERSION", "v4")
@@ -89,7 +89,7 @@ def calibrate_mixture_weight(
     SMS distributions have heavy ties at zero (45/60 cells = 0); raw
     shifting is discontinuous (any ε > 0 jumps δ from 0.314 to 0.74).
     The mixture approach gives smooth control: w = 0 reproduces
-    observed (δ = 0.439); w = 1 produces strongly-shifted pool
+    observed (δ = 0.314); w = 1 produces strongly-shifted pool
     (δ ≈ 0.736); intermediate w produces intermediate δ.
 
     Returns (w_calibrated, realized_delta_at_w).
@@ -186,6 +186,9 @@ report = {
     "n_simulations": NSIM,
     "seed": SEED,
     "version": VERSION,
+    "input_sms": SMS_FILE,
+    "primary_map": PRIMARY,
+    "primary_map_source": "p2.config.primary.PRIMARY_CELLS_V3",
     "observed": {
         "n_aligned": int(n_a_obs),
         "n_cross": int(n_c_obs),
@@ -227,8 +230,10 @@ report = {
         "actually attained the large-effect boundary, our sample size "
         "still produces δ_hat below the threshold a non-trivial fraction "
         "of the time. This complements (but does not replace) the plug-in "
-        "power 0.42 in compute_rq2_power.py: the plug-in number answers "
-        "'with what power could we detect the observed δ = 0.439', while "
+        "observed-distribution exceedance calculation in "
+        "compute_rq2_power.py: the plug-in number answers "
+        "'how often would a resample from the observed MP5-primary "
+        "distribution exceed the threshold', while "
         "this stipulated number answers 'if the truth is at H2 boundary, "
         "what is our chance to confirm it'. Both are sub-0.80 at n=(12,48), "
         "consistent with §5.7.3's existing finding that the design is "

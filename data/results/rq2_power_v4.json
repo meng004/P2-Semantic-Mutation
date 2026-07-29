@@ -3,26 +3,42 @@
   "n_simulations": 5000,
   "seed": 42,
   "version": "v4",
+  "input_sms": "sms_track2_v4.json",
+  "primary_map": {
+    "a1": 1,
+    "a2": 1,
+    "a3": 1,
+    "b1": 2,
+    "b2": 2,
+    "b3": 2,
+    "c1": 5,
+    "c2": 5,
+    "c3": 5,
+    "d1": 2,
+    "d2": 2,
+    "d3": 2
+  },
+  "primary_map_source": "p2.config.primary.PRIMARY_CELLS_V3",
   "observed": {
     "n_aligned": 12,
     "n_cross": 48,
-    "cliffs_delta": 0.4392361111111111
+    "cliffs_delta": 0.3142361111111111
   },
   "achieved_power_at_observed_n": {
-    "power_at_delta_gt_0.0": 0.9974,
-    "power_at_delta_gt_0.147": 0.966,
-    "power_at_delta_gt_0.33": 0.759,
-    "power_at_delta_gt_0.474": 0.423
+    "power_at_delta_gt_0.0": 0.9782,
+    "power_at_delta_gt_0.147": 0.8494,
+    "power_at_delta_gt_0.33": 0.4568,
+    "power_at_delta_gt_0.474": 0.1552
   },
   "interpretation": "achieved_power_at_delta_gt_0.000 = probability of detecting any stochastic dominance; achieved_power_at_delta_gt_0.330 = probability of detecting a medium-or-larger effect; achieved_power_at_delta_gt_0.474 = probability of detecting a large effect at the Romano (2006) threshold (this is the H2 power).",
   "sample_size_curve_for_delta_gt_0": {
-    "n_aligned=6_n_cross=24": 0.9738,
-    "n_aligned=12_n_cross=48": 0.9964,
-    "n_aligned=18_n_cross=72": 0.9994,
-    "n_aligned=24_n_cross=96": 0.9998,
-    "n_aligned=30_n_cross=120": 1.0,
+    "n_aligned=6_n_cross=24": 0.9088,
+    "n_aligned=12_n_cross=48": 0.9776,
+    "n_aligned=18_n_cross=72": 0.9942,
+    "n_aligned=24_n_cross=96": 0.9984,
+    "n_aligned=30_n_cross=120": 0.9998,
     "n_aligned=36_n_cross=144": 1.0,
-    "n_aligned=42_n_cross=168": 1.0,
+    "n_aligned=42_n_cross=168": 0.9998,
     "n_aligned=48_n_cross=192": 1.0,
     "n_aligned=54_n_cross=216": 1.0,
     "n_aligned=60_n_cross=240": 1.0
