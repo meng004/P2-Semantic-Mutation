@@ -31,10 +31,12 @@ ABSTRACT = (
     "an AST-normalized syntactic comparison, aligned-versus-cross relation "
     "analysis, and boundary and adjoint studies. The semantic pool has 5.14% "
     "AST-normalized overlap with default first-order syntactic mutants. "
-    "Several pre-registered empirical thresholds "
-    "are not met; we use these failures to delimit operator applicability, "
-    "MR-design adequacy, and kill attribution rather than to claim universal "
-    "dominance. An industrial real-defect arm of reproduced, MR-detectable "
+    "Aligned cells score above cross-pattern cells (Cliff's delta 0.314); "
+    "a 100,000-draw PUT-cluster bootstrap gives a 95% interval of "
+    "[0.045, 0.594], supporting the directional hypothesis while the "
+    "pre-registered large-effect threshold remains unmet. The attribution "
+    "threshold is not evaluable as registered because zero-kill cells make "
+    "its per-cell share undefined. An industrial real-defect arm of reproduced, MR-detectable "
     "defects from widely used scientific-computing libraries then tests the "
     "central construct claim: a four-group mutation comparison pre-registered "
     "in the dataset protocol "
@@ -234,13 +236,11 @@ def convert_fig_descriptions(tex: str) -> str:
         description = match.group(2).replace(r"\textbackslash", "backslash")
         path = match.group(3)
         clean_options = re.sub(r",?\s*alt=\{[^{}]*\}", "", options).strip().strip(",")
-        return (
-            rf"\includegraphics[{clean_options}]{{{path}}}"
-            + "\n"
-            + r"\Description{"
-            + description
-            + "}"
-        )
+        include = rf"\includegraphics[{clean_options}]{{{path}}}"
+        following = tex[match.end() :]
+        if re.match(r"\s*\\Description\{", following):
+            return include
+        return include + "\n" + r"\Description{" + description + "}"
 
     return re.sub(
         r"\\includegraphics\[([^\]]*?)\s*,\s*alt=\{([^{}]*)\}\]\{([^{}]+)\}",
