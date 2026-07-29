@@ -1367,13 +1367,12 @@ $\mathcal{D}_P$-measure zero.
 the reference-anchored identity relation
 $\mathrm{MR}_{\mathrm{eq}}^{S_i}$, whose AVP check of a program $Q$
 compares $Q$'s outputs against the recorded reference outputs of $S_i$
-on the executed inputs. E1 (AVP coherence between $S_i$ and $s'$)
-therefore reduces to the same exact-equality test as E2 in the limit:
-$\mathrm{AVP}(S_i, \cdot)$ passes identically (the reference agrees with
-itself), and $\mathrm{AVP}(s', \cdot)$ passes iff $s'$ agrees with the
-reference on the executed inputs, which at
-$\varepsilon_{\mathrm{AVP}} \to 0$ is the $\varepsilon \to 0$ limit of
-the E2 predicate. E2
+on the executed inputs. The E2 limit below yields exact output equality
+on its covered domain. Exact equality makes the original and mutant AVP
+verdicts identical for every non-negative AVP tolerance, so E1 is
+automatically satisfied on the E2 limit. No
+$\varepsilon_{\mathrm{AVP}}\to0$ premise is used here; that L3 axis
+belongs only to the killed-set degeneration of Lemma G.2. E2
 ($\|S_i(x) - s'(x)\| < \varepsilon_{\mathrm{eq}}$ for $K_{\mathrm{eq}}$ samples)
 degenerates in two regimes. Over floating-point (finite) input domains,
 L2 ($K_{\mathrm{eq}} \to \infty$) with full-support sampling
@@ -1515,7 +1514,16 @@ report are archived with the replication materials.
 
 \subsection{Interval soundness: full proofs}\label{g.6-interval-proofs}
 
-\textbf{Scope of the determinism hypothesis (kill-witness lemma).} The
+\emph{Proof of the protocol-level kill-witness lemma.} A kill supplies
+an \(mr\) for which
+\(\mathrm{AVP}(S_i,mr)=\mathrm{pass}\) and
+\(\mathrm{AVP}(s',mr)=\mathrm{fail}\). Hence E1 fails on that relation.
+The three-state protocol defines E1 or E2 failure as
+\texttt{CONFIRMED\_NON\_EQUIVALENT}; no determinism or tolerance-margin
+premise is needed. Therefore no killed mutant is unresolved. \(\square\)
+
+\textbf{Scope of the determinism hypothesis (quantitative output
+witness).} The
 evaluation procedure of a relation fixes its executed input tuple
 (seeded input generation is part of the procedure), runs the program on
 that tuple, applies the observation $\mathrm{obs}$, and computes the
@@ -1537,7 +1545,7 @@ small, a kill can arise from pointwise output divergence below
 $\varepsilon_{\mathrm{eq}}$, and bare determinism cannot yield the
 required witness.
 
-\emph{Proof of the kill-witness lemma.} Fix $mr$ with
+\emph{Proof of the quantitative output-witness proposition.} Fix $mr$ with
 $\mathrm{AVP}(S_i, mr) = \mathrm{pass}$ and
 $\mathrm{AVP}(s', mr) = \mathrm{fail}$. Suppose every executed input $x$
 satisfied
@@ -1547,8 +1555,7 @@ $\leq \varepsilon_{\mathrm{eq}}$ perturbation of that of $S_i$, and R2
 forces $V_{mr}$ to return the same verdict on both, contradicting
 pass/fail. Hence some executed $x$ has divergence exceeding
 $\varepsilon_{\mathrm{eq}}$: the divergence witness of the three-state
-classification, so $s'$ is \texttt{CONFIRMED\_NON\_EQUIVALENT}, and no
-killed mutant is unresolved. $\square$
+classification. $\square$
 
 \emph{Proof of the interval theorem.} By the kill-witness lemma the
 killed count $\kappa$ lies inside the confirmed non-equivalent
@@ -1742,7 +1749,8 @@ into (i) at target magnitude $\varepsilon^\dagger$ and solving for $N$
 gives
 $\sqrt{N} > 2c\,\sigma_{\mathrm{out}}/(\varepsilon^\dagger - \varepsilon_{\mathrm{tol}} - \Delta_r - 2\eta_{\mathrm{det}})$,
 provided the denominator is positive; squaring gives the stated bound,
-necessary in general and sufficient with strict inequality. If the side
+which is sufficient with strict inequality; necessity holds under the
+boundary-attaining noise model used to derive the budget. If the side
 condition fails, no repeat budget guarantees detection and the remedy
 is a different observable. $\square$
 
