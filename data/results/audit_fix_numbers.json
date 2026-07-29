@@ -240,6 +240,30 @@
       "d": 0.1122
     }
   },
+  "lrca_na_summary": {
+    "v3": {
+      "cells_total": 60,
+      "cells_evaluable": 12,
+      "cells_zero_kill_NA": 48,
+      "macro_mean_c1_share": 0.8214,
+      "macro_mean_suspect_share": 0.1786,
+      "pooled_c1_share": 0.8375,
+      "pooled_suspect_share": 0.1625,
+      "total_kills": 80,
+      "c1_kills": 67
+    },
+    "v4": {
+      "cells_total": 60,
+      "cells_evaluable": 15,
+      "cells_zero_kill_NA": 45,
+      "macro_mean_c1_share": 0.8367,
+      "macro_mean_suspect_share": 0.1633,
+      "pooled_c1_share": 0.8125,
+      "pooled_suspect_share": 0.1875,
+      "total_kills": 144,
+      "c1_kills": 117
+    }
+  },
   "h4_v4": {
     "_incl_L0_note": "incl-L0 readings treat LRCA L0-prescreened artefact kills as suspect over the SMS killed denominator",
     "cells_total": 60,
@@ -265,7 +289,7 @@
       "0.45": 13,
       "0.5": 13
     },
-    "implemented_rule_mean_all60": 0.7908
+    "legacy_invalid_mean_all60_do_not_use": 0.7908
   },
   "h4_v4_incl_l0": {
     "pooled_incl_L0": 0.2353,
@@ -274,6 +298,695 @@
     "macro_incl_L0_kill_cells": 0.1856,
     "mean_sms_c1_60cells": 0.0873,
     "nonzero_sms_c1_cells": 13
+  },
+  "gap_premise_support": {
+    "definition": "observable antecedent Cov(R) intersect {j:w_j>0} is empty",
+    "antecedent_holds": 26,
+    "antecedent_fails": 34,
+    "antecedent_holds_aligned": 6,
+    "antecedent_holds_cross": 20,
+    "antecedent_holds_zero_sms": 20,
+    "antecedent_holds_nonzero_sms": 6,
+    "antecedent_cells": [
+      "A1_MP4",
+      "A2_MP3",
+      "A2_MP4",
+      "A3_MP3",
+      "A3_MP4",
+      "A3_MP5",
+      "B1_MP4",
+      "B1_MP5",
+      "B2_MP2",
+      "B2_MP4",
+      "B2_MP5",
+      "B3_MP3",
+      "B3_MP4",
+      "C1_MP2",
+      "C1_MP3",
+      "C1_MP5",
+      "C2_MP1",
+      "C2_MP5",
+      "C3_MP2",
+      "C3_MP5",
+      "D1_MP1",
+      "D1_MP2",
+      "D2_MP1",
+      "D2_MP5",
+      "D3_MP1",
+      "D3_MP2"
+    ],
+    "per_cell": [
+      {
+        "cell": "A1_MP1",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A1_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A1_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A2_MP1",
+        "aligned": true,
+        "sms": 1.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A2_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A2_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A3_MP1",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A3_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "A3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "A3_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B1_MP1",
+        "aligned": false,
+        "sms": 0.6667,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B1_MP2",
+        "aligned": true,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B1_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B2_MP1",
+        "aligned": false,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B2_MP2",
+        "aligned": true,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B2_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B3_MP1",
+        "aligned": false,
+        "sms": 0.55,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B3_MP2",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "B3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "B3_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          2,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C1_MP1",
+        "aligned": false,
+        "sms": 0.2,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C1_MP2",
+        "aligned": false,
+        "sms": 0.2,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C1_MP5",
+        "aligned": true,
+        "sms": 0.2,
+        "positive_weight_strata": [
+          1,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C2_MP1",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C2_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C2_MP5",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C3_MP1",
+        "aligned": false,
+        "sms": 0.7407,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C3_MP2",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "C3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "C3_MP5",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          1,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D1_MP1",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D1_MP2",
+        "aligned": true,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D1_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D1_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D1_MP5",
+        "aligned": false,
+        "sms": 0.3333,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP1",
+        "aligned": false,
+        "sms": 0.2963,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D2_MP2",
+        "aligned": true,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D2_MP5",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          2,
+          3,
+          4
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D3_MP1",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D3_MP2",
+        "aligned": true,
+        "sms": 0.36,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": true
+      },
+      {
+        "cell": "D3_MP3",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D3_MP4",
+        "aligned": false,
+        "sms": 0.0,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      },
+      {
+        "cell": "D3_MP5",
+        "aligned": false,
+        "sms": 0.36,
+        "positive_weight_strata": [
+          3,
+          4,
+          5
+        ],
+        "antecedent_holds": false
+      }
+    ]
   },
   "v3_unresolved_census": {
     "cells_with_equiv": 10,

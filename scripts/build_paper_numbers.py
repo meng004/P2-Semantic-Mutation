@@ -1,8 +1,9 @@
-"""Aggregate all numbers cited in 论文初稿P2.md §5.6-5.9 into a single JSON.
+"""Aggregate manuscript-cited numbers into a single versioned JSON SSOT.
 
 Set env SMS_VERSION=v3 (default) to read sms_track2_v3 + lrca_60cell_v3 +
 rq2/3/4_*_v3.json and write paper_numbers_v3.json. Set SMS_VERSION=v2 for
-the legacy (Round 4) files.
+the legacy (Round 4) files. VERSION=v4 locks the pre-registered MP5
+primary map and consumes the corrected TOSEM revision outputs.
 """
 import json
 import math
@@ -18,7 +19,7 @@ ROOT = Path(__file__).parent.parent
 RESULTS = ROOT / "data/results"
 import sys as _sys
 _sys.path.insert(0, str(ROOT / "src"))
-from p2.config.primary import PRIMARY_CELLS as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
+from p2.config.primary import PRIMARY_CELLS_V3 as PRIMARY  # type: ignore[import-not-found]  # noqa: E402
 
 VERSION = os.environ.get("SMS_VERSION", "v3")
 _suffix = f"_{VERSION}" if VERSION != "v2" else ""
@@ -46,13 +47,26 @@ def _is_inf(v):
 def main() -> None:
     sms = _load(SMS_FILE)
     lrca = _load(LRCA_FILE)
-    rq2 = _load(RQ2_FILE)
+    rq2 = _load("rq2_cliffs_delta_v4_mp5.json" if VERSION == "v4" else RQ2_FILE)
     rq3 = _load(RQ3_FILE)
     rq4 = _load(RQ4_FILE)
     try:
-        friedman = _load("rq3_friedman.json")
+        friedman_name = (
+            f"rq3_friedman_{VERSION}.json"
+            if VERSION not in ("v2", "v3")
+            else "rq3_friedman.json"
+        )
+        friedman = _load(friedman_name)
     except FileNotFoundError:
         friedman = None
+    audit = _load("audit_fix_numbers.json") if VERSION == "v4" else None
+    power = _load("rq2_power_v4.json") if VERSION == "v4" else None
+    stipulated = (
+        _load("rq2_power_stipulated_v4.json") if VERSION == "v4" else None
+    )
+    cluster = (
+        _load("rq2_cluster_bootstrap_v4.json") if VERSION == "v4" else None
+    )
 
     aligned, cross = [], []
     per_class_aligned = {"a": [], "b": [], "c": [], "d": []}
@@ -69,12 +83,6 @@ def main() -> None:
             per_class_cross[put_id[0]].append(s)
 
     all_sms = [v["sms"] for v in sms.values()]
-    c1_shares = [r["c1_share"] for r in lrca.values()]
-    suspects = [r["suspect_share"] for r in lrca.values()]
-
-    h5_threshold = 0.20  # paper §5.2 H5
-    h5_cells_pass = sum(1 for s in suspects if s <= h5_threshold)
-
     sign_passes = 0
     for c in "abcd":
         m_a = float(np.mean(per_class_aligned[c])) if per_class_aligned[c] else 0.0
@@ -84,17 +92,26 @@ def main() -> None:
 
     odds = rq2.get("odds_ratio_median", 0.0)
     out = {
+        "provenance": {
+            "version": VERSION,
+            "primary_map": PRIMARY,
+            "primary_map_source": "p2.config.primary.PRIMARY_CELLS_V3",
+            "frozen_inputs": [
+                SMS_FILE,
+                LRCA_FILE,
+                "rq2_cliffs_delta_v4_mp5.json"
+                if VERSION == "v4"
+                else RQ2_FILE,
+                RQ3_FILE,
+                RQ4_FILE,
+            ],
+        },
         "rq1": {
             "n_cells": len(sms),
             "mean_sms": round(float(np.mean(all_sms)), 4),
             "median_sms": round(float(np.median(all_sms)), 4),
             "std_sms": round(float(np.std(all_sms, ddof=1)), 4),
             "n_zero_sms": int(sum(1 for s in all_sms if s == 0.0)),
-            "mean_c1_share": round(float(np.mean(c1_shares)), 4),
-            "mean_suspect_share": round(float(np.mean(suspects)), 4),
-            "h5_threshold_suspect": h5_threshold,
-            "h5_cells_pass": h5_cells_pass,
-            "h5_pass_ratio": round(h5_cells_pass / len(sms), 4),
         },
         "rq2": {
             "n_aligned": len(aligned),
@@ -108,9 +125,15 @@ def main() -> None:
             "delta_ci_95_hi": round(rq2["delta_ci_95"][1], 4),
             "h2_threshold_delta": rq2["h2_threshold_delta"],
             "h2_delta_pass": rq2["h2_delta_pass"],
-            "h2_threshold_ratio": rq2["h2_threshold_ratio"],
-            "h2_ratio_pass": rq2["h2_ratio_pass"],
-            "odds_ratio_inf": _is_inf(odds),
+            "h2_threshold_ratio": rq2.get("h2_threshold_ratio", 3.0),
+            "h2_ratio_pass": rq2.get(
+                "h2_ratio_pass",
+                float(np.median(aligned)) > 0 and float(np.median(cross)) == 0,
+            ),
+            "odds_ratio_inf": (
+                _is_inf(odds)
+                or (float(np.median(aligned)) > 0 and float(np.median(cross)) == 0)
+            ),
         },
         "rq3": {
             "n_observations": rq3["n_observations"],
@@ -131,7 +154,7 @@ def main() -> None:
             "fallback_p_class_d": round(
                 rq3.get("fallback_p_values", {}).get("C(class)[T.d]", float("nan")), 4),
             "sign_test_aligned_above_cross": sign_passes,
-            "friedman_chi2": round(friedman["chi2"], 4) if friedman else None,
+            "friedman_chi2": round(friedman["chi2"], 2) if friedman else None,
             "friedman_p": round(friedman["p_value"], 4) if friedman else None,
             "friedman_per_class_p": (
                 {c: round(friedman["per_class"][c]["p"], 4)
@@ -151,9 +174,27 @@ def main() -> None:
                 [v["pattern_coverage"] for v in rq4["per_put"].values()])), 4),
         },
     }
+    if VERSION == "v4":
+        assert audit is not None
+        assert power is not None
+        assert stipulated is not None
+        assert cluster is not None
+        out["rq2"]["cluster_bootstrap"] = cluster["primary"]
+        out["rq2"]["vacant_cell_sensitivity"] = cluster[
+            "vacant_cell_sensitivity"
+        ]
+        out["rq2"]["observed_exceedance"] = power[
+            "achieved_power_at_observed_n"
+        ]
+        out["rq2"]["stipulated_alternative"] = stipulated[
+            "stipulated_alternative_power"
+        ]
+        out["rq2"]["stipulated_truth"] = stipulated["stipulated_truth"]
+        out["lrca"] = audit["lrca_na_summary"]
+        out["gap_premise_support"] = audit["gap_premise_support"]
 
     out_path = RESULTS / OUT_FILE
-    out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
     print(f"saved -> {out_path}")
     print(json.dumps(out, indent=2, ensure_ascii=False))
 

@@ -13,13 +13,19 @@ from __future__ import annotations
 import json
 import re
 import statistics as st
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RES = ROOT / "data/results"
+sys.path.insert(0, str(ROOT / "src"))
 
-PRIMARY = {"a1": 1, "a2": 1, "a3": 1, "b1": 2, "b2": 2, "b3": 2,
-           "c1": 5, "c2": 5, "c3": 5, "d1": 2, "d2": 2, "d3": 2}
+from p2.config.primary import PRIMARY_CELLS_V3 as PRIMARY  # noqa: E402
+from p2.stats.tosem_revision import (  # noqa: E402
+    gap_premise_support,
+    summarize_lrca,
+)
+
 # operator category -> targeted stratum / meta-pattern index
 CAT2MP = {"CE": 1, "OS": 2, "HP": 3, "TF": 4, "SI": 5}
 CAT_RE = re.compile(r"_(CE|OS|HP|TF|SI|CF)\d")
@@ -136,7 +142,9 @@ def h4_readings(lrca):
         "cells_le_020": len(low), "cells_le_020_aligned": len(low_aligned),
         "cells_le_020_cross": len(low) - len(low_aligned),
         "cutoff_sweep_evaluable": sweep,
-        "implemented_rule_mean_all60": round(st.mean([v["suspect_share"] for v in lrca.values()]), 4),
+        "legacy_invalid_mean_all60_do_not_use": round(
+            st.mean([v["suspect_share"] for v in lrca.values()]), 4
+        ),
     }
 
 
@@ -243,6 +251,7 @@ def main():
     sms4 = load("sms_track2_v4.json")
     sms3 = load("sms_track2_v3.json")
     lrca4 = load("lrca_60cell_v4.json")
+    lrca3 = load("lrca_60cell_v3.json")
     mp5 = load("rq2_cliffs_delta_v4_mp5.json")
     fried4 = load("rq3_friedman_v4.json")
     pc4 = load("rq4_pattern_coverage_v4.json")
@@ -265,8 +274,13 @@ def main():
         "h3_v4": per_class_delta(sms4),
         "h3_v3": per_class_delta(sms3),
         "class_means": {"v3": class_means(sms3), "v4": class_means(sms4)},
+        "lrca_na_summary": {
+            "v3": summarize_lrca(lrca3),
+            "v4": summarize_lrca(lrca4),
+        },
         "h4_v4": h4_readings(lrca4),
         "h4_v4_incl_l0": h4_incl_l0(sms4, lrca4),
+        "gap_premise_support": gap_premise_support(sms4, PRIMARY),
         "v3_unresolved_census": v3_unresolved(sms3),
         "friedman_v4": {"chi2": round(fried4["chi2"], 2), "p": round(fried4["p_value"], 5),
                         "rank_means": fried4["rank_means_mp1_to_mp5"],

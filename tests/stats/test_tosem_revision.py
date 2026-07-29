@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from p2.stats.tosem_revision import (
     gap_premise_support,
     put_cluster_bootstrap,
@@ -7,6 +10,7 @@ from p2.stats.tosem_revision import (
 
 
 PRIMARY = {"a1": 1, "b1": 2}
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def _cell(sms, files):
@@ -78,3 +82,25 @@ def test_put_cluster_bootstrap_preserves_one_to_one_cluster_draws():
     assert out["n_bootstrap"] == 200
     assert out["resampling_unit"] == "PUT"
     assert len(out["ci_95"]) == 2
+
+
+def test_committed_v4_ssot_uses_mp5_and_na_convention():
+    paper = json.loads((ROOT / "data/results/paper_numbers_v4.json").read_text())
+    assert paper["rq2"]["cliffs_delta"] == 0.3142
+    assert paper["rq2"]["mean_aligned"] == 0.2133
+    assert paper["lrca"]["v4"]["cells_evaluable"] == 15
+    assert paper["lrca"]["v4"]["macro_mean_c1_share"] == 0.8367
+    assert paper["lrca"]["v3"]["cells_evaluable"] == 12
+    assert paper["lrca"]["v3"]["macro_mean_c1_share"] == 0.8214
+    assert paper["rq3"]["friedman_chi2"] == 16.76
+
+
+def test_committed_gap_antecedent_count_is_auditable():
+    paper = json.loads((ROOT / "data/results/paper_numbers_v4.json").read_text())
+    gap = paper["gap_premise_support"]
+    assert gap["antecedent_holds"] == len(gap["antecedent_cells"])
+    assert (
+        gap["antecedent_holds_zero_sms"]
+        + gap["antecedent_holds_nonzero_sms"]
+        == gap["antecedent_holds"]
+    )
