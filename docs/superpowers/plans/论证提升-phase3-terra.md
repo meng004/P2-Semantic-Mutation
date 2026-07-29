@@ -7,6 +7,8 @@
 
 **前置门禁（分段）:** Task 3.1/3.2 在 Phase 1 的 Task 1.4 协议单独冻结（hash 入库）后即可启动，不必等 Phase 1 全部完成；**Task 3.3（冻结预测）额外要求理论线 Phase T3（THM-WIN 草稿）完成**；Task 3.4 在 3.3 的冻结 commit 之后。
 
+**过程纪律（CP2 评审整改，强制）：** 任何裁决前规格（admission FREEZE、预测冻结、MR 实例化哈希、分析输入 schema 绑定）必须**先于执行产物单独 commit**；禁止规格与结果同 commit（Phase 2 kill 规格曾同 commit 入库，已作过程偏差披露，见 `docs/review_20260728/checkpoint2_construct_line.md` §4.1）。
+
 **并行性:** 与 Phase 2（grok）并行；工期 6–10 周（外部线是全计划关键路径）。
 
 **交接物:** `data/external_slice/`（admission_sheet、FREEZE.sha256、predictions_frozen.json、runs/）+ SSOT 键 `external_fiber_map`、`external_validation` + H-CAL/H-RANK verdict → 供 Phase 4 写作。

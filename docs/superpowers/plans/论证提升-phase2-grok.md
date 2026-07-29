@@ -49,7 +49,7 @@
 - [x] **Step 2:** 复用 POOL-SEM 既有变异体补跑 \(R^+\) kill 判定（仅增量执行）；结果落 SSOT 新键 `fix_intervention_v5`（`data/v5/fix_intervention_v5.json`）
 - [x] **Step 3:** 跑 `analysis_hfix.py`（SMS_j 0→正比例 + Wilson 95% CI；\(\mathrm{Gap}_{\mathrm{aln}}\) 转移账目表）；verdict 入 SSOT（`data/v5/hfix_results.json`）；Commit
 
-**REVIEW CHECKPOINT 2：构念线结果 verdict 汇报——headline（H-CONS/H-ZERO/H-DISC/H-DOSE）+ secondary（H-XI/H-DOSE-CTR/H-FIX），含任何降级触发。→ 报告已备：`docs/review_20260728/checkpoint2_construct_line.md`（8 个 verdict 全列；2×2 双败格；过度防御审计通过；等作者拍板）。**
+**REVIEW CHECKPOINT 2：构念线结果 verdict 汇报——headline（H-CONS/H-ZERO/H-DISC/H-DOSE）+ secondary（H-XI/H-DOSE-CTR/H-FIX），含任何降级触发。→ 报告已备：`docs/review_20260728/checkpoint2_construct_line.md`（8 个 verdict 全列；2×2 双败格；过度防御审计通过）。证据级评审 `checkpoint2_review.md`：**APPROVED WITH REQUIRED DISCLOSURES**（H-CONS 有界化 + kill 规格同 commit 过程偏差已落地于报告 §1.1/§4.1）；最终等作者拍板。**
 
 ---
 

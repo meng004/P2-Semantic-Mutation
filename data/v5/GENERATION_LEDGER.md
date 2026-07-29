@@ -19,7 +19,7 @@ Status: **COMPLETE** (live run; keys injected 2026-07-29).
 | Target confirmed / cell | `16` |
 | Attempts budget / cell | `18` (= ceil(16 × 1.117)) |
 | Confirmation | E1∧E2 non-equivalence: E2 K_eq=1000 uniform[0,1] seed 42 eps 1e-6; E1 AVP coherence over the PUT's 5 hand-coded MRs (v4 sms_campaign constants) |
-| Dedup | exact SHA-256 of parsed code within cell |
+| Dedup | exact SHA-256 of parsed code within cell（冻结 H-CONS 输入口径；见下节双口径敏感性） |
 | Mutant ID scheme | `mut-<OP>-<PUT>-<NN>` (NN = confirmed order) |
 | eff stratum labels | generation-time: CE→1 OS→2 HP→3 TF→4 SI→5 (ex-ante, applicability_matrix.md §7) |
 | Output pools | `data/v5/pools/` (+ per-cell `manifest.json`) |
@@ -81,6 +81,17 @@ Status: **COMPLETE** (live run; keys injected 2026-07-29).
 | SI×d2 | 18 | 18 | 18 | 18 | 2 | 16 | 2 | 2 |
 | SI×d3 | 18 | 18 | 18 | 18 | 11 | 7 | 11 | 11 |
 
+## Distinctness dual-count (CP2 review disclosure)
+
+Frozen H-CONS consumes the exact-SHA confirmed counts above (33/51 cells ≥5; Wilson LB 0.510 → PASS). An exploratory sensitivity probe ordered by the CP2 evidence-level review re-counts the same pool under the project's EXP-STR AST normaliser (`ast.dump(annotate_fields=False, include_attributes=False)`):
+
+| Basis | cells ≥5 | Wilson 95% CI | Gate LB > 0.5 |
+|---|---|---|---|
+| exact-SHA (frozen input) | 33/51 | [0.510, 0.764] | yes |
+| AST-normalised (sensitivity) | 28/51 | [0.414, 0.677] | **no** |
+
+Five cells cross below the ≥5 line under AST dedupe (OS×b2 13→2, OS×c3 16→4, TF×a1 8→2, TF×d1 6→2, OS×d3 6→3). Artifact: `data/v5/hcons_dedup_sensitivity.json`. The frozen `analysis_hcons.py` verdict stands; manuscript must state H-CONS in bounded form (exact-text PASS / AST FAIL). No amendment — analysis code untouched; distinctness operationalisation was not pinned in the freeze text.
+
 ## Held-out MR source (Task 2.2)
 
 See `data/v5/MR_SOURCE_SYMMETRY.md`.
@@ -91,3 +102,4 @@ See `data/v5/MR_SOURCE_SYMMETRY.md`.
 |---|---|
 | PASS-1 ledger template written | 2026-07-29 (phase-2 executor) |
 | Live generation run | 2026-07-29T02:51:41Z |
+| CP2 review dual-count disclosure | 2026-07-29 (post-review amendment to ledger text only) |
