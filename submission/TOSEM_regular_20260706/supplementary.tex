@@ -1240,7 +1240,8 @@ $L_{\mathrm{lim}} = L1 \wedge L2 \wedge L3$ collects the quantitative
 limit axes ($\varepsilon_{\mathrm{eq}} \to 0$,
 $K_{\mathrm{eq}} \to \infty$, $\varepsilon_{\mathrm{AVP}} \to 0$) and
 $L_{\mathrm{switch}} = L4 \wedge L5 \wedge L6$ collects the discrete
-configuration switches (MP set $= \{\mathrm{MP}_{\mathrm{eq}}\}$;
+configuration switches (MP set $= \{\mathrm{MP}_{\mathrm{eq}}\}$ with
+identity source transformation;
 rule-based syntactic operators; imperative deterministic PUT class).
 
 {%
@@ -1267,9 +1268,12 @@ equiv stays probabilistic ($K_{\mathrm{eq}}$ cannot cover $\mathcal{D}_P$). L2 a
 equality diluted by $\varepsilon_{\mathrm{eq}}$. Both simultaneously degenerate equiv to
 classical behavioural equivalence outside a $\mathcal{D}_P$-measure-zero set. \\
 \textbf{$L_{\mathrm{killed}}$} (Lemma 9.2) & L3: $\varepsilon_{\mathrm{AVP}}^k \to 0$; L4: MP =
-$\{\mathrm{MP}_{\mathrm{eq}}\}$, R(y,y') $\equiv$ y = y' & L3 alone: $\varepsilon_{\mathrm{AVP}} \to 0$ still allows
+$\{\mathrm{MP}_{\mathrm{eq}}\}$ with identity source transformation
+($r = \mathrm{id}$), R(y,y') $\equiv$ y = y' & L3 alone: $\varepsilon_{\mathrm{AVP}} \to 0$ still allows
 non-trivial MP (monotonicity, convergence). L4 alone: equality still
-carries $\varepsilon_{\mathrm{AVP}}$ tolerance. Both simultaneously degenerate killed to
+carries $\varepsilon_{\mathrm{AVP}}$ tolerance; without $r = \mathrm{id}$
+the comparison is $S_i(x)$ vs $s'(r(x))$, not the classical same-input
+difference. Both simultaneously degenerate killed to
 classical difference detection. \\
 \textbf{$L_{\mathrm{mut}}$} (Lemma 9.3) & L5: $\mathrm{mut}_j \to$ rule-based syntactic (Mothra
 AOR/ROR/SDL/CRP); L6: cls(I) $\subseteq$ \{imperative deterministic\} & L5 alone:
@@ -1284,7 +1288,8 @@ set. \\
 
 \textbf{Lemma 9.1 (equiv degeneration; exception-set
 qualification).} Assume
-$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$.
+$\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$ and
+fix the switch component $L_{\mathrm{switch}}$.
 Under $L_{\mathrm{equiv}}$ (L1 $\wedge$ L2), semantic-class equivalence
 (E1 $\wedge$ E2) degenerates to classical behavioural equivalence
 \textbf{outside an exception set $N$}: over floating-point (finite)
@@ -1293,29 +1298,40 @@ input domains, $N$ is the finite set of pathological inputs
 exact discrete case; under the continuum idealisation, $N$ has
 $\mathcal{D}_P$-measure zero.
 
-\emph{Proof.} E1 (type consistency) holds trivially under $\varepsilon_{\mathrm{eq}} \to 0$ (L6
-makes imperative output spaces scalar/vector with static types). E2
+\emph{Proof.} E1 (AVP coherence) imposes no constraint in the limit:
+under the fixed $L_{\mathrm{switch}}$ the relation set is
+$\{\mathrm{MP}_{\mathrm{eq}}\}$ with identity source transformation on
+deterministic PUTs (L4, L6), whose verdict on any single program is
+constant, so the coherence comparison is trivially satisfied. E2
 ($|S_i(x) - s'(x)| < \varepsilon_{\mathrm{eq}}$ for $K_{\mathrm{eq}}$ samples)
-under L1 ($\varepsilon_{\mathrm{eq}} \to 0$) $\wedge$ L2 ($K_{\mathrm{eq}} \to \infty$ with measure-equivalent
-sampling, which by the support assumption reaches all of
-$\mathcal{X}_{\mathrm{adm}}$)
-is equivalent to $\forall x \in \mathcal{X}_{\mathrm{adm}} \setminus N: S_i(x) = s'(x)$, where
-$N$ is the exception set of the lemma statement (floating-point
-domains: the finite set of pathological inputs / NaN propagation;
-exact discrete case: $N = \emptyset$; continuum idealisation:
-$\mathcal{D}_P$-measure zero). This
+degenerates in two regimes. Over floating-point (finite) input domains,
+L2 ($K_{\mathrm{eq}} \to \infty$) with full-support sampling
+($\mathrm{supp}(\mathcal{D}_P) \supseteq \mathcal{X}_{\mathrm{adm}}$)
+covers every admissible input almost surely, and L1
+($\varepsilon_{\mathrm{eq}} \to 0$) sharpens the per-input test to exact
+equality, giving
+$\forall x \in \mathcal{X}_{\mathrm{adm}} \setminus N: S_i(x) = s'(x)$
+with $N$ the finite pathological set ($N = \emptyset$ in the exact
+discrete case). Under the continuum idealisation, sampled agreement at
+$\varepsilon_{\mathrm{eq}} \to 0$ over an almost-surely dense
+full-support sample forces equality $\mathcal{D}_P$-almost everywhere,
+i.e.\ outside a $\mathcal{D}_P$-measure-zero $N$; pointwise equality on
+all of $\mathcal{X}_{\mathrm{adm}}$ is not claimed in this regime. This
 matches \citet{d7c38286734419b52de4262c9802ebdfcf4b9447} §3 classical equivalent-mutant definition
 up to the exception set $N$.
 
 \textbf{Lemma 9.2 (killed degeneration).} Under L3 $\wedge$ L4, killed
 degenerates to classical difference detection.
 
-\emph{Proof.} L4 restricts MP to \{MP\_eq\} with R(y, y') $\equiv$ y = y'. For
-mr = (r, R) and mutant s', the $\mathrm{MP}_{\mathrm{eq}}$ violation condition $\exists x: S_i(x) \neq
-s'(r(x))$ under L3 ($\varepsilon_{\mathrm{AVP}} \to 0$) becomes exact inequality. With r = id,
-violation is $S_i(x) \neq s'(x)$, classical difference detection. With r
-$\neq$ id, $\mathrm{MP}_{\mathrm{eq}}$ still requires $S_i(x) = s'(r(x))$ as reference oracle from
-original program; no new state classifications introduced.
+\emph{Proof.} L4 restricts MP to \{MP\_eq\} with identity source
+transformation ($r = \mathrm{id}$) and R(y, y') $\equiv$ y = y'. For a
+mutant s', the $\mathrm{MP}_{\mathrm{eq}}$ violation condition
+$\exists x: S_i(x) \neq s'(r(x))$ under L3 ($\varepsilon_{\mathrm{AVP}} \to 0$)
+becomes exact inequality, and with $r = \mathrm{id}$ it reads
+$\exists x: S_i(x) \neq s'(x)$: classical same-input difference
+detection. Without the identity restriction the comparison
+$S_i(x)$ vs $s'(r(x))$ retains a metamorphic follow-up and is not the
+classical oracle, which is why $r = \mathrm{id}$ is part of L4.
 
 \textbf{Lemma 9.3 (mut degeneration).} Under L5 $\wedge$ L6, mut\_j(S\_i)
 degenerates to the syntactic mutant set of \citet{d7c38286734419b52de4262c9802ebdfcf4b9447}.
@@ -1484,7 +1500,10 @@ mutant is stratified, violating its unique target stratum (S3 witness)
 and satisfying all others (S5), so the fibers $\{M_j\}$ partition
 $M_{\mathrm{neq}}$ and $\sum_j w_j=1$; mutants outside this reading
 (active-off-taxonomy, multi-stratum violators) are excluded by the
-premise, and their kill mass is exactly what $\xi$ measures. (ii)
+premise, and their off-diagonal kills are exactly what $\xi$ registers
+(the diagnostic is one-sided: premise violations that kill only on the
+labelled stratum leave $\xi$ unchanged, so $\xi$ lower-bounds the
+deviation mass). (ii)
 attaches to every $r\in R$ a stratum label, unique by the non-redundancy
 convention. (iii) imports, for every $r\in R$, the residual budget and
 margin-dominance clause R1 of G.8: the S5-satisfied stratum contributes
@@ -1550,7 +1569,12 @@ transfer.)} The violation functional is $L_r$-Lipschitz in
 $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$; H-b is used only for
 the dose-response transfer between the nominal-parameter axis and the
 realized violation axis, not for bounds (i)--(iii), which are stated on
-the realized axis. \emph{(H-c, non-degenerate-margin regime.)} Two
+the realized axis. Estimability of $L_r$ is assessed per PUT class:
+linear and quasi-linear kernels admit closed-form or regression
+estimates, while chaotic and stochastic-structural kernels do not admit
+a stable $L_r$ on the raw observable, and any dose-response consumption
+of H-b is restricted to the estimable subset and pre-registered as
+such. \emph{(H-c, non-degenerate-margin regime.)} Two
 clauses: (R1) margin dominance,
 $\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r>2\bar\eta$ strictly (read
 $p\bar\eta$ for $p$-execution relations); and (R2)

@@ -50,7 +50,7 @@ $\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{e
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
 contains no killed mutants.
 
-\textbf{Theorem [THM-INT] (interval soundness and monotonicity).} Let $n$ be the
+\textbf{Theorem [THM-INT] (interval soundness and monotonicity).} Let $n\ge1$ be the
 number of confirmed non-equivalent mutants, $k$ the number killed by $R$,
 and $u$ the number of unresolved survivors. Let $u_{\mathrm{neq}}\in[0,u]$ be the
 (unknown) number of truly non-equivalent mutants among the unresolved.
@@ -67,7 +67,9 @@ endpoints are non-decreasing.
 (Statements carry CHECKPOINT T1 amendments A1/A2, synchronised with the master
 plan: A1 hoists the margin-stability clause into LEM-WIT's hypotheses — without
 it the lemma admits a threshold-straddling counterexample; A2 adds the
-fixed-classification proviso to the \(R\subseteq R'\) clause.)
+fixed-classification proviso to the \(R\subseteq R'\) clause. Amendment A6
+(2026-07-29, T6.2 independent audit) adds \(n\ge1\) to the statement,
+hoisting the §1 domain convention into the hypotheses.)
 
 ## 3. Proof of LEM-WIT (closes PO-INT-1, PO-INT-2)
 

@@ -31,7 +31,7 @@ $\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{e
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
 contains no killed mutants.
 
-\textbf{Theorem [THM-INT] (interval soundness and monotonicity).} Let $n$ be the
+\textbf{Theorem [THM-INT] (interval soundness and monotonicity).} Let $n\ge1$ be the
 number of confirmed non-equivalent mutants, $k$ the number killed by $R$,
 and $u$ the number of unresolved survivors. Let $u_{\mathrm{neq}}\in[0,u]$ be the
 (unknown) number of truly non-equivalent mutants among the unresolved.

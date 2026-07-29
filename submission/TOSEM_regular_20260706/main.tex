@@ -742,7 +742,8 @@ formula:
   layer; Lemma 9.1).
 \item
   $L_{\mathrm{killed}} = L3 \wedge L4$: $\varepsilon_{\mathrm{AVP}} \to 0 \wedge$ MP set = $\{\mathrm{MP}_{\mathrm{eq}}\}$
-  (controls killed layer; Lemma 9.2).
+  with identity source transformation ($r = \mathrm{id}$) and
+  $R(y,y') \equiv y = y'$ (controls killed layer; Lemma 9.2).
 \item
   $L_{\mathrm{mut}} = L5 \wedge L6$: $\mathrm{mut}_j$ switches to rule-based syntactic
   operators (Mothra-style, or modern MutMut/PIT-style) $\wedge$ PUT class $\subseteq$ imperative deterministic
@@ -755,7 +756,8 @@ $L_{\mathrm{lim}} = L1 \wedge L2 \wedge L3$
 ($\varepsilon_{\mathrm{eq}} \to 0$, $K_{\mathrm{eq}} \to \infty$,
 $\varepsilon_{\mathrm{AVP}} \to 0$) for the quantitative limit axes, and
 $L_{\mathrm{switch}} = L4 \wedge L5 \wedge L6$ (MP set
-$= \{\mathrm{MP}_{\mathrm{eq}}\}$; rule-based syntactic operators;
+$= \{\mathrm{MP}_{\mathrm{eq}}\}$ with identity source transformation;
+rule-based syntactic operators;
 imperative deterministic PUT class) for the discrete configuration
 switches. Then
 $L = L_{\mathrm{lim}} \wedge L_{\mathrm{switch}} = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$:
@@ -989,9 +991,12 @@ $\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)$ be the
 correct-program structure-preservation residual on the applicable domain
 $D_r$ of $r$, with $P^\star$ the reference correct implementation (the
 instantiation of the structure-preservation deviation of the MR-validity
-theory on the structure inducing $r$), and $|\eta|\le\bar\eta$ the
+theory on the structure inducing $r$; here $P^\star$ is the cell's
+original program, assumed correct per S2), and $|\eta|\le\bar\eta$ the
 execution noise, with the violation functional $L_r$-Lipschitz in
-$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Then (i)
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Assume the additive
+residual budget H-a, the non-degenerate-margin regime R1, and, for (i),
+magnitude realization H-d (Appendix G.8). Then (i)
 $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$
 implies $r$ kills $m_{\mathrm{mut}}$; (ii)
 $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
@@ -1002,7 +1007,10 @@ $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$
 
 \emph{Remark (weak-MR false positive).} If
 $\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$ the correct program is
-flagged and $r$ exits the admissible evaluation set (empirically: the
+flagged whenever validation executes an input whose residual exceeds
+$\varepsilon_{\mathrm{tol}}+2\bar\eta$ (such inputs exist since
+$\Delta_r$ is a supremum; in the band up to $2\bar\eta$ noise can mask
+the flag), and $r$ exits the admissible evaluation set (empirically: the
 PINN case, §4.8); the rotational-symmetry invariant of a
 neutron-transport operator under a method-of-characteristics
 discretisation, satisfied only at special angles, is the canonical
@@ -1073,7 +1081,7 @@ $\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{e
 hence $P'$ is \texttt{CONFIRMED\_NON\_EQUIVALENT}. Consequently the
 unresolved set contains no killed mutants.
 
-\textbf{Theorem 4 (interval soundness and monotonicity).} Let $n$ be the
+\textbf{Theorem 4 (interval soundness and monotonicity).} Let $n\ge1$ be the
 number of confirmed non-equivalent mutants, $k$ the number killed by
 $R$, and $u$ the number of unresolved survivors. Let
 $u_{\mathrm{neq}}\in[0,u]$ be the (unknown) number of truly
@@ -1106,7 +1114,14 @@ $\mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack}\not\models_{\tau}\p
 within the tolerance regime of Theorem 3 (Appendix G.8); the flag is the
 AVP fail verdict, and the pipeline convention is strict exceedance of
 $\varepsilon_{\mathrm{tol}}$. $\mathrm{Cov}(R)=\{j: R$ contains an exact
-checker for $\psi_j\}$ (non-redundancy of the family: §2.7).
+checker for $\psi_j\}$ (non-redundancy of the family: §2.7). We write
+$\mathrm{SMS}(R)$ for the strict score of the evaluated set $R$ on the
+admitted non-equivalent universe $M_{\mathrm{neq}}$, i.e.\ the killed
+fraction of $M_{\mathrm{neq}}$ (the cell-level strict reading of §2.3;
+the subscripted $\mathrm{SMS}_{i,k,j}$ elsewhere carries the relation
+index). The fiber-by-stratum kill matrix has binary entries per
+(mutant, checker-stratum) pair, a mutant counting as killed in a column
+class if at least one checker of that stratum kills it.
 
 \textbf{Lemma 5.1 (exact checkers are strong MRs).} The violation set of
 an exact checker for $\psi_j$ equals
@@ -1136,9 +1151,14 @@ $\mathrm{SMS}_j(R)$ the kill rate restricted to $M_j$.
 $\mathrm{Cov}(R)\cap\{j:w_j>0\}=\varnothing$ then $\mathrm{SMS}(R)=0$.
 
 \textbf{Definition (exactness defect).} $\xi(R)=$ block-off-diagonal
-kill mass / total kills; $\xi$ measures deviation from premises
-(i)--(ii) and is reported as a model-check statistic, not folded into
-SMS. Mutants failing S5 route their kill mass into $\xi$.
+kill mass / total kills, defined only when the total kill count is
+positive and reported as \texttt{NA} otherwise; $\xi$ measures deviation
+from premises (i)--(ii) and is reported as a model-check statistic, not
+folded into SMS. The diagnostic is one-sided: deviations surface in
+$\xi$ exactly through off-diagonal kills, so an S5-violating mutant
+killed only on its labelled stratum remains invisible to $\xi$, and
+observed $\xi$ lower-bounds the premise-violation mass rather than
+measuring it exhaustively.
 
 \emph{Remark (identifiability from kill signatures).} Under the
 assumptions of Theorem 5 let

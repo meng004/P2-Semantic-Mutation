@@ -95,6 +95,13 @@ or manuscript.
 | 34 | S1–S5 | sanity gate 编号 | 现稿 §2.8 | 门禁标签非数学符号，沿用 | `main.tex:792-815` |
 | 35 | E1∧E2 | 判等程序编号 | 现稿 §2.3 | 与实验标签空间分离（实验一律 `EXP-` 前缀，见论证计划 §0.3） | `main.tex:601-615,1479-1505` |
 | 36 | \(\mathrm{edit},\ P_{\mathrm{edit}}\) | 有限 AST 编辑算子、其作用后的程序 | 现稿 §2.8；MR-validity v3.1 §3.8 | 原稿 \(e,P_e\) 改为语义命名，避让 v3.1 结构命运字段 \(e\) | current bare-\(e\) uses: `main.tex:800,827-840,869-872,917`; T6 migration pending |
+| 37 | \(\mathrm{SMS}(R)\) | 评估集 \(R\) 在 \(M_{\mathrm{neq}}\) 上的 cell 级严格得分 | DEF-04/DEF-08 用法；T6.2 审计补录 | 与含关系索引下标的 \(\mathrm{SMS}_{i,k,j}\) 区分；整合稿 §2.11 首用处定义 | main §2.11 |
+| 38 | \(\varepsilon^\dagger\) | 目标违反幅度（REM-FNEG 的 N 处方参数） | THM-WIN REM-FNEG 冻结陈述；T6.2 审计补录 | — | main §2.9; supp G.8 |
+| 39 | \(\Phi_Q\) | \(\Phi_P\)（#3）对任意程序变元 \(Q\) 的泛化记法 | 整合稿 §2.10；T6.2 审计补录 | 语义同 #3 | main §2.10; supp G.6 |
+| 40 | \(p\) | 关系元组执行重数（\(p\bar\eta\) 预算泛化；MP_3 为 4） | THM-WIN scope note；T6.2 审计补录 | 与 #1 程序符号 \(P\) 大小写区分 | supp G.8 |
+
+（T6.2 审计后闭集扩为 40 项；#37–40 均为冻结陈述/范围注记中已在使用、
+审计要求显式入册的符号，非新增理论对象。）
 
 ## Reserved-symbol conflict audit
 

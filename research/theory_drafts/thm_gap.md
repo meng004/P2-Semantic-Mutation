@@ -64,9 +64,17 @@ both computable from the kill matrix and fiber labels alone.
 $\mathrm{Cov}(R)\cap\{j:w_j>0\}=\varnothing$ then $\mathrm{SMS}(R)=0$.
 
 \textbf{Definition (exactness defect).} $\xi(R)=$ block-off-diagonal kill
-mass / total kills; $\xi$ measures deviation from (i)-(ii) and is reported
-as a model-check statistic, not folded into SMS.
+mass / total kills, defined only when the total kill count is positive and
+reported as \texttt{NA} otherwise; $\xi$ measures deviation from (i)-(ii)
+and is reported as a model-check statistic, not folded into SMS. The
+diagnostic is one-sided: deviations surface in $\xi$ exactly through
+off-diagonal kills, so observed $\xi$ lower-bounds the premise-violation
+mass.
 ```
+
+（T6.2 独立审计修复 D2/D6，2026-07-29：ξ 补零 kill 的 NA 约定与单侧性声明；
+整合稿 §2.11 另有 SMS(R) 首用定义与 kill 矩阵 binary-incidence/OR 聚合语义句，
+与 registry #37 对应。）
 
 ## 3. Setup and premise reading
 
@@ -77,7 +85,9 @@ non-equivalent mutant is *stratified* — it violates its unique target stratum
 the fibers \(\{M_j\}\) partition \(M_{\mathrm{neq}}\) and
 \(\sum_j w_j=1\). Mutants outside this reading (active-off-taxonomy, or
 S5-impure multi-stratum violators) are excluded by the premise; empirically
-their kill mass is exactly what \(\xi\) measures (§7). This reading is
+their *off-diagonal* kills are exactly what \(\xi\) registers (§7) — a
+one-sided diagnostic: premise violators killed only on their labelled
+stratum leave ξ unchanged. This reading is
 flagged for author confirmation at CHECKPOINT T2 (§10, Q1).
 
 **Premise (ii), checker labels.** Every \(r\in R\) carries a stratum label
@@ -175,10 +185,11 @@ decomposition \(\mathrm{SMS}(R)=\sum_{j\in\mathrm{Cov}(R)}w_j\,\mathrm{SMS}_j(R)
 since every covered fiber has zero mass. ∎
 
 **ξ semantics.** Under premises (i)–(iii) the block structure forces
-\(\xi(R)=0\); observed \(\xi(R)>0\) therefore *quantifies deviation from the
+\(\xi(R)=0\) (whenever defined, i.e. total kills > 0); observed
+\(\xi(R)>0\) therefore *quantifies deviation from the
 premises* (S5-impure mutants, non-exact checkers, or degenerate margins) —
 a model-check statistic in the sense of a testable implication of the
-assumed measurement model. ξ is reported alongside SMS and never folded into
+assumed measurement model, one-sided as noted in §3. ξ is reported alongside SMS and never folded into
 it. Reporting rule (per master §0.3 A-PROV and the argumentation plan): the
 pooled ξ is the secondary confirmatory prediction H-XI (prior landmark
 0.10, B-1); per-cell ξ distributions remain descriptive; verdicts of

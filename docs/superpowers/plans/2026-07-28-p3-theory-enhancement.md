@@ -77,6 +77,10 @@
 | 34 | S1–S5 | sanity gate 编号 | 现稿 §2.8 | 门禁标签非数学符号，沿用 |
 | 35 | E1∧E2 | 判等程序编号 | 现稿 §2.3 | 与实验标签空间分离（实验一律 `EXP-` 前缀，见论证计划 §0.3） |
 | 36 | \(\mathrm{edit},\ P_{\mathrm{edit}}\) | 有限 AST 编辑算子、其作用后的程序 | 现稿 §2.8；MR有效性理论 v3.1 §3.8 | 原稿 \(e,P_e\) 改为语义命名，避让 v3.1 结构命运字段 \(e\) |
+| 37 | \(\mathrm{SMS}(R)\) | 评估集 \(R\) 在 \(M_{\mathrm{neq}}\) 上的 cell 级严格得分 \(k/\lvert M_{\mathrm{neq}}\rvert\) | DEF-04/DEF-08 用法；T6.2 审计补录 | 与 \(\mathrm{SMS}_{i,k,j}\)（含关系索引下标）区分；整合稿 §2.11 首用处定义 |
+| 38 | \(\varepsilon^\dagger\) | 目标违反幅度（REM-FNEG 的 N 处方参数） | THM-WIN REM-FNEG 冻结陈述；T6.2 审计补录 | — |
+| 39 | \(\Phi_Q\) | \(\Phi_P\)（#3）对任意程序变元 \(Q\) 的泛化记法 | 整合稿 §2.10；T6.2 审计补录 | 语义同 #3 |
+| 40 | \(p\) | 关系元组的执行重数（\(p\bar\eta\) 预算泛化；MP_3 为 4） | THM-WIN scope note；T6.2 审计补录 | 与 #1 程序符号 \(P\) 大小写区分 |
 
 ### 0.3 形式化定义与方法学假设清单（先于定理正文冻结；A-PROV 为方法学假设，非 DEF 条目，F-12）
 
@@ -243,7 +247,7 @@ $\|\mathrm{obs}(\Phi_{P}(x))-\mathrm{obs}(\Phi_{P'}(x))\|>\varepsilon_{\mathrm{e
 hence $P'$ is CONFIRMED\_NON\_EQUIVALENT. Consequently the unresolved set
 contains no killed mutants.
 
-\textbf{Theorem [THM-INT] (interval soundness and monotonicity).} Let $n$ be the
+\textbf{Theorem [THM-INT] (interval soundness and monotonicity).} Let $n\ge1$ be the
 number of confirmed non-equivalent mutants, $k$ the number killed by $R$,
 and $u$ the number of unresolved survivors. Let $u_{\mathrm{neq}}\in[0,u]$ be the
 (unknown) number of truly non-equivalent mutants among the unresolved.
@@ -258,6 +262,8 @@ endpoints are non-decreasing.
 ```
 
 （CHECKPOINT T1 修订记录 A1/A2（2026-07-28）：A1=margin 稳定性条款升入 LEM-WIT 陈述（无此条款引理存在贴阈值反例）；A2=R⊆R′ 端点单调句加"三态分类冻结"限定（E1 量化域随 R 扩大会产生仅见证事件使 strict 端点下降）。详见 `docs/review_20260728/checkpoint_t1_record.md`。）
+
+（T6.2 独立审计修订 A6（2026-07-29）：THM-INT 陈述补 \(n\ge1\)（k/n 的定义域前提入陈述）。A4/A5 见 Phase T3 块；D 组修复（ξ 空 kill 约定与单侧路由措辞、SMS(R) 首用定义、L4 强制 r=id、Lemma 9.1 前提与证明修正、kill 矩阵 incidence 语义）见 `docs/review_20260728/formal_audit_report.md`。）
 
 - [ ] **Step 2:** 写证明（要点：宽度 \(k/n-k/(n+u)=k u/(n(n+u))\)；MR 扩张时 \((k+\Delta+j)/(n+j)\ge k/n\) 因 \(k\le n\)；证书两类分别验证两端点变化方向）
 - [ ] **Step 3:** 自检清单：AVP 决定性假设是否已在 §2.3 有依据；随机 PUT 的 AVP 重复语义（N=20）是否破坏 LEM-WIT（若 kill 判定含统计聚合，需把"超容差"改为"按 AVP 判定语义超容差"并加脚注）。逐项在草稿"Obligations"节记录
@@ -342,9 +348,12 @@ violation magnitude $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$ at stratum $
 checker with tolerance $\varepsilon_{\mathrm{tol}}$, let
 $\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)$ be the correct-program
 structure-preservation residual (the instantiation of $\Delta(S,P)$ from the
-MR-validity theory on the structure inducing $r$), and $|\eta|\le\bar\eta$
+MR-validity theory on the structure inducing $r$; here $P^\star$ is the
+cell's original program, assumed correct per S2), and $|\eta|\le\bar\eta$
 the execution noise, with the violation functional $L_r$-Lipschitz in
-$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Then
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Assume the additive
+residual budget H-a, the non-degenerate-margin regime R1, and, for (i),
+magnitude realization H-d (Appendix hypotheses). Then
 (i) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$ implies
 $r$ kills $m_{\mathrm{mut}}$; (ii) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
 implies $r$ does not kill $m_{\mathrm{mut}}$; (iii) with the crash threshold
@@ -353,7 +362,10 @@ $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$
 
 \textbf{Remark [REM-FPOS] (weak-MR false positive).} If
 $\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$ the correct program is flagged
-and $r$ exits the admissible evaluation set (empirically: the PINN case).
+whenever validation executes an input whose residual exceeds
+$\varepsilon_{\mathrm{tol}}+2\bar\eta$ (such inputs exist since $\Delta_r$
+is a supremum; in the band up to $2\bar\eta$ noise can mask the flag), and
+$r$ exits the admissible evaluation set (empirically: the PINN case).
 
 \textbf{Remark [REM-FNEG] (stochastic false negative and repeat prescription).}
 For stochastic PUTs $\bar\eta=c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}$;

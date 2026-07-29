@@ -139,9 +139,12 @@ violation magnitude $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$ at stratum $
 checker with tolerance $\varepsilon_{\mathrm{tol}}$, let
 $\Delta_r:=\sup_{x\in D_r}\varepsilon_r(x;P^\star)$ be the correct-program
 structure-preservation residual (the instantiation of $\Delta(S,P)$ from the
-MR-validity theory on the structure inducing $r$), and $|\eta|\le\bar\eta$
+MR-validity theory on the structure inducing $r$; here $P^\star$ is the
+cell's original program, assumed correct per S2), and $|\eta|\le\bar\eta$
 the execution noise, with the violation functional $L_r$-Lipschitz in
-$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Then
+$\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})$. Assume the additive
+residual budget H-a, the non-degenerate-margin regime R1, and, for (i),
+magnitude realization H-d (Appendix hypotheses). Then
 (i) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})>\varepsilon_{\mathrm{tol}}+\Delta_r+2\bar\eta$ implies
 $r$ kills $m_{\mathrm{mut}}$; (ii) $\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})<\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta$
 implies $r$ does not kill $m_{\mathrm{mut}}$; (iii) with the crash threshold
@@ -150,7 +153,10 @@ $(\varepsilon_{\mathrm{tol}}-\Delta_r-2\bar\eta,\ \varepsilon_{\mathrm{crash}})$
 
 \textbf{Remark [REM-FPOS] (weak-MR false positive).} If
 $\mu_r=\varepsilon_{\mathrm{tol}}-\Delta_r<0$ the correct program is flagged
-and $r$ exits the admissible evaluation set (empirically: the PINN case).
+whenever validation executes an input whose residual exceeds
+$\varepsilon_{\mathrm{tol}}+2\bar\eta$ (such inputs exist since $\Delta_r$
+is a supremum; in the band up to $2\bar\eta$ noise can mask the flag), and
+$r$ exits the admissible evaluation set (empirically: the PINN case).
 
 \textbf{Remark [REM-FNEG] (stochastic false negative and repeat prescription).}
 For stochastic PUTs $\bar\eta=c\sigma_{\mathrm{out}}/\sqrt N+\eta_{\mathrm{det}}$;
@@ -160,7 +166,11 @@ $N\ge\bigl(2c\sigma_{\mathrm{out}}/(\varepsilon^\dagger-\varepsilon_{\mathrm{tol
 ```
 
 (R-9: the two Remarks live inside the THM-WIN theorem environment with no
-independent numbering; their proof obligations PO-WIN-5/6 remain.)
+independent numbering; their proof obligations PO-WIN-5/6 remain.
+Amendments A4/A5 (2026-07-29, T6.2 independent audit): A4 hoists H-a/R1/H-d
+into the stated hypotheses and pins $P^\star$ to the cell's original program;
+A5 conditions REM-FPOS's flagging on validation executing an
+above-threshold-plus-noise input, master-first synced.)
 
 **Scope note (execution multiplicity).** The constant $2\bar\eta$ is the
 noise budget of a *pairwise* relation tuple: one source and one follow-up
