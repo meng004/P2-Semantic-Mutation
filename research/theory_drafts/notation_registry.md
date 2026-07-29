@@ -118,6 +118,7 @@ concrete P3 migration work that follows from it.
 | \(\kappa\) | No current literal occurrence | Reserve Four-Pillar \(\kappa(\Gamma,\mathcal R)\); distinguish any later Cohen's κ as inter-rater agreement. |
 | \(\Gamma,\mathfrak G,\lambda\) | No current literal occurrence | Do not introduce them as P3 objects. |
 | \(J_\rho\) | No current literal occurrence | Use \(J_r\) only for the AVP verdict mapping in DEF-03/05. |
+| \(k\) (subscript/index) | Manuscript MP/relation index in \(\mathrm{MR}_{i,k}\), \(\mathrm{SMS}_{i,k,j}\), \(\varepsilon_{\mathrm{AVP}}^k\) | #18 killed count \(k\) collides in prose | Context isolation (checkpoint consolidated review, repair C3): the count symbols \(n,k,u\) appear only inside the integrated theory sections with a local-scope sentence at first use (T6.1 duty); the §2.3 three-state paragraph uses prose, no count formulas. |
 | \(\Omega_{\mathrm{intr}},\Omega_{\mathrm{sel}},\Omega_{\mathrm{search}}\) | No current literal occurrence | Use only in the THM-GAP interface note; map \(\mathrm{Gap}_{\mathrm{aln}}(R)\) to \(\Omega_{\mathrm{sel}}\). |
 
 ## Required manuscript-integration flags

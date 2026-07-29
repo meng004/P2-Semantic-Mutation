@@ -90,9 +90,10 @@ footnote F1). The second stated hypothesis (amendment A1) reads concretely:
   On the executed tuple, no relation residual lies within
   \(\varepsilon_{\mathrm{eq}}\) of its decision threshold, so the verdict
   functional \(V_{mr}\) is invariant under pointwise perturbations of the
-  observed outputs of magnitude \(\le\varepsilon_{\mathrm{eq}}\). This is the
-  non-degenerate-margin regime of the detection window (DEF-13; forward
-  reference THM-WIN(iii)); in the v4 pipeline
+  observed outputs of magnitude \(\le\varepsilon_{\mathrm{eq}}\). This is
+  clause R2 (\(\varepsilon_{\mathrm{eq}}\)-separation) of the THM-WIN §4
+  regime (DEF-13; consumption map in `thm_window.md` §4, repair B2); in the
+  v4 pipeline
   \(\varepsilon_{\mathrm{eq}}=\varepsilon_{\mathrm{AVP}}=10^{-6}\) are wired
   equal (`src/p2/equiv/judge.py`), so the clause is the assumption that no
   executed residual straddles the shared tolerance within \(10^{-6}\).

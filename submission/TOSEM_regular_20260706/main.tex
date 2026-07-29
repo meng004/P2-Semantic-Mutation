@@ -629,12 +629,13 @@ verdicts differ on some relation (the E1 $\vee$ E2 failure route); and
 holds without a certificate. Under this refinement the sample-judged
 equivalent set reads as unresolved rather than proven equivalent. The
 score reported in this paper is the strict reading
-$\mathrm{SMS}_{\mathrm{strict}} = k/n$ over confirmed non-equivalent
-mutants; the conservative companion reading
-$\mathrm{SMS}_{\mathrm{cons}} = k/(n+u)$ treats every unresolved survivor
-as truly non-equivalent. In the audited 60-cell campaign the
-sample-equivalent set is empty, so the two readings coincide and the
-refinement changes no recorded number.
+$\mathrm{SMS}_{\mathrm{strict}}$, the killed fraction of the confirmed
+non-equivalent mutants; the conservative companion reading
+$\mathrm{SMS}_{\mathrm{cons}}$ divides the same killed count by the
+confirmed non-equivalent and unresolved mutants together, treating every
+unresolved survivor as truly non-equivalent. In the audited 60-cell
+campaign the sample-equivalent set is empty, so the two readings coincide
+and the refinement changes no recorded number.
 
 The killed determination preserves the classical OR-aggregation:
 
