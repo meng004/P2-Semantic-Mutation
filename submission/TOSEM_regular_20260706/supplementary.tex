@@ -108,7 +108,7 @@
 \item PUT set $I = \{\text{A1,A2,A3, B1,B2,B3, C1,C2,C3, D1,D2,D3}\}$, $|I| = 12$.
 \item PUT: $S_i$ ($i \in I$).
 \item Class mapping: $\mathrm{cls} : I \to \{A, B, C, D\}$ (open, extensible).
-\item Valid input distribution: $D_S$, sampling $X_{K_{\mathrm{eq}}} \sim D_S$.
+\item Valid input distribution: $\mathcal{D}_P$, sampling $X_{K_{\mathrm{eq}}} \sim \mathcal{D}_P$.
 \end{itemize}
 
 \paragraph{Metamorphic testing side.}
@@ -138,7 +138,7 @@
 \begin{itemize}
 \item \emph{equiv determination} (dual conditions):
   (E1) AVP-coherent: $\forall \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \mathrm{AVP}(s', \mathit{mr})$;
-  (E2) Output-equiv: $\forall x \in X_{K_{\mathrm{eq}}} \sim D_S: \|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$.
+  (E2) Output-equiv: $\forall x \in X_{K_{\mathrm{eq}}} \sim \mathcal{D}_P: \|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$.
 \item \emph{killed determination}: $\mathrm{killed}(s', \mathrm{MR}_{i,k}) \Leftrightarrow \exists \mathit{mr} \in \mathrm{MR}_{i,k}: \mathrm{AVP}(S_i, \mathit{mr}) = \text{pass} \wedge \mathrm{AVP}(s', \mathit{mr}) = \text{fail}$.
 \end{itemize}
 
@@ -198,7 +198,7 @@ C5 & Mutator artefact \\
 \begin{itemize}
 \item \textbf{L0 artefact pre-scan.} Double-blind review (§3.9.4 dual-LLM cross-source + 20\% manual sampling).
 \item \textbf{L1 tolerance robustness.} $N = 20$ replicates; fail ratio $\geq 0.80$ considered stable.
-\item \textbf{L2 OOD triage.} For C/D classes, distinguish valid $D_S^{\text{valid}}$ from OOD.
+\item \textbf{L2 OOD triage.} For C/D classes, distinguish valid $\mathcal{D}_P^{\text{valid}}$ from OOD.
 \item \textbf{L3 statistical baseline.} For Wilcoxon/DTW, IID/stationarity pre-check on PUT samples.
 \end{itemize}
 
@@ -1217,7 +1217,6 @@ formula:
 \]
 
 \subsection{G.2 Degenerate-limit definition}\label{g.2-degenerate-limit-definition-r-8-p1-3-revision-3-joint-conditions}
-% NOTE: D_S -> \mathcal{D}_P rename is scoped to the degeneration-theorem sections in this pass; the global sweep completes in the notation-alignment pass (T6.1).
 
 The degenerate limit $L = L_{\mathrm{equiv}} \wedge L_{\mathrm{killed}} \wedge L_{\mathrm{mut}}$
 consists of three \textbf{joint conditions} (paired axes), each

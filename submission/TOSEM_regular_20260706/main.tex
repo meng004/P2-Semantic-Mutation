@@ -602,7 +602,7 @@ necessary conditions (§3.2.0). For each candidate mutant
   $\mathrm{AVP}(s', mr)$.
 \item
   \textbf{E2 (Output-equivalent):} $\forall$ x in $K_{\mathrm{eq}}=1000$ samples
-  $\sim D_S$: $\|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$.
+  $\sim \mathcal{D}_P$: $\|S_i(x) - s'(x)\| \leq \varepsilon_{\mathrm{eq}}$.
 \end{itemize}
 
 E1 $\wedge$ E2 is the conservative complete instantiation: false-equiv (a
@@ -708,7 +708,6 @@ contents of MUT, MP, C, and \texttt{cls} remain open to future
 extension.
 
 \subsection{SMS-to-MS degeneration: formal statement}\label{sms-ms-degeneration-formal-statement}
-% NOTE: D_S -> \mathcal{D}_P rename is scoped to the degeneration-theorem sections in this pass; the global sweep completes in the notation-alignment pass (T6.1).
 
 The §2.5 backward-compatibility claim is formalised as a degeneration
 theorem. The full notation cross-reference is \textbf{Appendix G.1}; the
@@ -813,18 +812,18 @@ because the condition is undecidable).
 Fix a grammar $G$ and the set $\mathrm{Prog}(G)$ of well-formed programs
 with denotational semantics
 $\mathopen{\lbrack\!\lbrack}\cdot\mathclose{\rbrack\!\rbrack} : \mathrm{Prog}(G) \to (\mathcal{X} \rightharpoonup \mathcal{Y})$.
-Let $\alpha : \mathcal{Y} \to \mathcal{Y}_\alpha$ be the committed
-semantic abstraction (the observable that the AVP of §2.3 reads), and
-write $P \equiv_\alpha P'$ when
-$\alpha \circ \mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} = \alpha \circ \mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack}$
+Let $\mathrm{obs} : \mathcal{Y} \to \mathcal{Y}_{\mathrm{obs}}$ be the committed
+semantic observation (the observable that the AVP of §2.3 reads), and
+write $P \equiv_{\mathrm{obs}} P'$ when
+$\mathrm{obs} \circ \mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} = \mathrm{obs} \circ \mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack}$
 pointwise on the admitted input domain $\mathcal{X}_{\mathrm{adm}}$.
-This $\equiv_\alpha$ is exactly the equivalent-mutant relation
+This $\equiv_{\mathrm{obs}}$ is exactly the equivalent-mutant relation
 $\mathrm{equiv}$ of §2.1: the E2 component of the E1$\wedge$E2 judgement
 (§2.3) is its bounded decision procedure on $K_{\mathrm{eq}}$ samples.
 
 The new ingredient is a finite \emph{semantic invariant family}
-$I = \{\psi_1, \dots, \psi_5\}$, where each $\psi$ is a predicate over
-the observable behaviour $\alpha \circ \mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack}$. The five
+$\Psi = \{\psi_1, \dots, \psi_5\}$, where each $\psi$ is a predicate over
+the observable behaviour $\mathrm{obs} \circ \mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack}$. The five
 invariants are exactly the properties the meta-patterns of §2.2 target:
 $\psi_1$ conservation, $\psi_2$ monotonicity, $\psi_3$ convergence order,
 $\psi_4$ trajectory determinism, $\psi_5$ partial-order consistency, so
@@ -833,11 +832,11 @@ breakage $\mathrm{mut}_j$ (at $j=k$) targets. We write
 $\mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} \models \psi$ when $P$'s observable behaviour
 satisfies $\psi$.
 
-The family is open (the extensibility of $I$ noted in §2.9): a sixth
+The family is open (the extensibility of $\Psi$ noted in §2.9): a sixth
 invariant $\psi_6$, \emph{adjoint consistency}
 $\langle A x, y\rangle = \langle x, A^{\mathrm{H}} y\rangle$ for
 linear-operator kernels, instantiates the same construction. Its MR is
-strong (its violation set is closed under $\equiv_\alpha$), so by Theorem
+strong (its violation set is closed under $\equiv_{\mathrm{obs}}$), so by Theorem
 2 it detects only the semantically active mutants of the adjoint code
 path. Because adjoint consistency is meaningful only for linear operators
 , not for the chaotic, stochastic, and nonlinear machine-learning
@@ -856,17 +855,18 @@ informal Layer-1 necessary conditions of §3.2.
 \textbf{Definition (semantic mutant).} Given $(P, \psi)$ with
 $\mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} \models \psi$, a program $P'$ is a
 \emph{semantic mutant of $P$ at stratum $\psi$} iff: (S1)
-\emph{realizability}, $P' = e(P)$ for a finite AST edit $e$; (S2)
+\emph{realizability}, $P' = \mathrm{edit}(P)$ for a finite AST edit
+operator $\mathrm{edit}$; (S2)
 \emph{baseline}, $\mathopen{\lbrack\!\lbrack} P \mathclose{\rbrack\!\rbrack} \models \psi$; (S3)
 \emph{violation with witness},
 $\mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack} \not\models \psi$, witnessed by some
-$x \in \mathcal{X}_{\mathrm{adm}}$ observable through $\alpha$; (S4)
+$x \in \mathcal{X}_{\mathrm{adm}}$ observable through $\mathrm{obs}$; (S4)
 \emph{latency}, $P'$ compiles, terminates on $\mathcal{X}_{\mathrm{adm}}$,
 and is type-correct, so the defect is observable only at the semantic
 layer, never by a crash oracle; (S5) \emph{stratum purity} (required
 where stratum labels feed downstream),
 $\mathopen{\lbrack\!\lbrack} P' \mathclose{\rbrack\!\rbrack} \models \psi'$ for all
-$\psi' \in I \setminus \{\psi\}$.
+$\psi' \in \Psi \setminus \{\psi\}$.
 
 A semantic mutation class is therefore defined by which invariant must
 break and how (S2--S5) and realized by whichever syntactic edits achieve
@@ -883,20 +883,21 @@ window certifies non-realizability of the template at that site.
 \subsection{Effect map, fibers, and three theorems}\label{theory-fibers}
 
 \textbf{Definition (effect map and fibers).} For fixed $P$, the
-\emph{effect map} $\sigma$ sends an applicable edit $e$ to the
-semantic-effect class of $P_e = e(P)$, valued in
-$\{\, \equiv_\alpha,\ \text{ill-formed},\ \psi_1\text{-viol}, \dots, \psi_5\text{-viol},\ \text{active-off-taxonomy} \,\}$,
-where active-off-taxonomy means $P_e \not\equiv_\alpha P$ yet no
-$\psi \in I$ flips from satisfied to violated. The \emph{fiber} of a
-class is its $\sigma$-preimage. $P_e$ is \emph{semantically active} iff
-$P_e \not\equiv_\alpha P$; the strict syntactic-only mutants are exactly
-the inactive fiber $\sigma^{-1}(\equiv_\alpha)$.
+\emph{effect map} $\mathrm{eff}$ sends an applicable edit operator
+$\mathrm{edit}$ to the
+semantic-effect class of $P_{\mathrm{edit}} = \mathrm{edit}(P)$, valued in
+$\{\, \equiv_{\mathrm{obs}},\ \text{ill-formed},\ \psi_1\text{-viol}, \dots, \psi_5\text{-viol},\ \text{active-off-taxonomy} \,\}$,
+where active-off-taxonomy means $P_{\mathrm{edit}} \not\equiv_{\mathrm{obs}} P$ yet no
+$\psi \in \Psi$ flips from satisfied to violated. The \emph{fiber} of a
+class is its $\mathrm{eff}$-preimage. $P_{\mathrm{edit}}$ is \emph{semantically active} iff
+$P_{\mathrm{edit}} \not\equiv_{\mathrm{obs}} P$; the strict syntactic-only mutants are exactly
+the inactive fiber $\mathrm{eff}^{-1}(\equiv_{\mathrm{obs}})$.
 
 \textbf{Theorem 1 (undecidability of semantic-mutant membership).} For
 Turing-complete $\mathrm{Prog}(G)$ and non-trivial $\psi$, deciding
-whether an edit $e$ is a semantic mutant at stratum $\psi$
+whether an edit outcome $P_{\mathrm{edit}}$ is a semantic mutant at stratum $\psi$
 (conditions S2--S4) is undecidable. \emph{Proof sketch.} S3 requires
-deciding $\mathopen{\lbrack\!\lbrack} P_e \mathclose{\rbrack\!\rbrack} \not\models \psi$, a non-trivial
+deciding $\mathopen{\lbrack\!\lbrack} P_{\mathrm{edit}} \mathclose{\rbrack\!\rbrack} \not\models \psi$, a non-trivial
 semantic property, undecidable by Rice's theorem; the termination clause
 of S4 is independently undecidable by reduction from the halting
 problem. Semantic-mutant status therefore cannot be read off the edit;
@@ -906,9 +907,9 @@ gate-shaped rather than a decision procedure.
 
 \textbf{Proposition 1 (fiber characterization of classical practice).}
 (i) Every semantic mutant arises from some syntactic edit; the
-stratum-$\psi$ class equals $\sigma^{-1}(\psi\text{-viol})$ intersected
+stratum-$\psi$ class equals $\mathrm{eff}^{-1}(\psi\text{-viol})$ intersected
 with S4. (ii) The classical equivalent-mutant problem is exactly the
-degenerate fiber $\sigma^{-1}(\equiv_\alpha)$ of unconstrained syntactic
+degenerate fiber $\mathrm{eff}^{-1}(\equiv_{\mathrm{obs}})$ of unconstrained syntactic
 sampling. (iii) Classical mutation testing and semantic mutation are the
 same effect map under two sampling policies: sample the edit domain
 blindly, versus sample a specified non-degenerate fiber. \emph{Proof.}
@@ -919,34 +920,34 @@ fiber collapses to the syntactic default, the SMS denominator collapses
 to the MS denominator.
 
 \textbf{Theorem 2 (duality with strong MRs).} Let $r$ be a
-metamorphic relation whose violation set is closed under $\equiv_\alpha$
+metamorphic relation whose violation set is closed under $\equiv_{\mathrm{obs}}$
 (a \emph{strong} MR). Then $r$ detects no semantically inactive
 mutant, and conversely any mutant detected by a strong MR is
 semantically active. Hence over a strong MR universe the kill matrix
 is supported exactly on the semantically active fibers, and inactive
 (syntactic-only) mutants are structural noise for strong MT evaluation
-rather than hard cases. \emph{Proof.} If $P_e \equiv_\alpha P$ and $r$'s
-violation predicate factors through $\alpha$, then $r$ flags $P_e$ iff
+rather than hard cases. \emph{Proof.} If $P_{\mathrm{edit}} \equiv_{\mathrm{obs}} P$ and $r$'s
+violation predicate factors through $\mathrm{obs}$, then $r$ flags $P_{\mathrm{edit}}$ iff
 it flags $P$; MR validity says $r$ does not flag $P$, so it does not
-flag $P_e$. The converse is the contrapositive. $\square$
+flag $P_{\mathrm{edit}}$. The converse is the contrapositive. $\square$
 
-The duality identifies $\alpha$ as the single hinge connecting MR-side
+The duality identifies $\mathrm{obs}$ as the single hinge connecting MR-side
 quality (strength) and mutant-side quality (activity). Classification
-is relative to $(I, \alpha, \text{budget})$: extending $I$ can only move
+is relative to $(\Psi, \mathrm{obs}, \text{budget})$: extending $\Psi$ can only move
 a mutant from active-off-taxonomy to $\psi$-stratified, never the
-reverse, and bounded $\equiv_\alpha$ verdicts are search conclusions,
-not proofs, so every certificate carries its $(I, \alpha, \text{budget})$
+reverse, and bounded $\equiv_{\mathrm{obs}}$ verdicts are search conclusions,
+not proofs, so every certificate carries its $(\Psi, \mathrm{obs}, \text{budget})$
 stamp. The full reduction for Theorem 1 follows Rice's theorem together
 with the standard halting reduction for the termination clause; the
-proof of Theorem 2 is the $\equiv_\alpha$-closure argument above.
+proof of Theorem 2 is the $\equiv_{\mathrm{obs}}$-closure argument above.
 
 \textbf{Definition (strong MR, weak MR, strong boundary).} Theorem 2
 reads off strength algebraically, assuming the invariant $\psi$ behind
 $r$ is satisfied by the correct program so that closure under
-$\equiv_\alpha$ makes a violation diagnostic. For a discrete program $P$
+$\equiv_{\mathrm{obs}}$ makes a violation diagnostic. For a discrete program $P$
 approximating a continuous operator this assumption is \emph{contingent}:
 the correct $P$ reproduces the operator's algebraic invariant only up to
-a discretisation residual, so $\equiv_\alpha$ between $P$ and the ideal
+a discretisation residual, so $\equiv_{\mathrm{obs}}$ between $P$ and the ideal
 solution holds only within the tolerance $\varepsilon_{\mathrm{tol}}$ of
 the latency-window definition. Fixing $\varepsilon_{\mathrm{tol}}$, call
 $r$ \emph{strong} on $P$ when the correct $P$ satisfies $r$ within
@@ -962,7 +963,7 @@ two regimes; tightening $\varepsilon_{\mathrm{tol}}$ or coarsening the
 discretisation carries a strong MR across it into the weak regime. A weak
 MR is exactly a non-strong (non-grounded) MR in the effective, discrete
 sense: its violation set is not closed under the program's
-$\varepsilon_{\mathrm{tol}}$-level $\equiv_\alpha$.
+$\varepsilon_{\mathrm{tol}}$-level $\equiv_{\mathrm{obs}}$.
 
 \textbf{Theorem 3 (tolerance-indexed detection window).} Let
 $m_{\mathrm{mut}}$ carry violation magnitude
@@ -1699,7 +1700,7 @@ full justification in Appendices C.2 and C.3).
 
 \item
   \textbf{E2 step.} Sample K\_eq = 1000 inputs
-  \texttt{x\ \textasciitilde{}\ D\_S}; compute
+  $x \sim \mathcal{D}_P$; compute
   $\|S_i(x) - s'(x)\|$; if $\leq \varepsilon_{\mathrm{eq}}$ for all
   samples, mark E2-pass.
 \item
@@ -1751,7 +1752,7 @@ For each killed mutant the three-layer decision tree applies in order:
   exits.
 \item
   \textbf{L2 OOD triage} (C / D classes only). Sample from
-  \texttt{D\_S\^{}valid}; if the mutant fails \emph{only} in the OOD
+  $\mathcal{D}_P^{\mathrm{valid}}$; if the mutant fails \emph{only} in the OOD
   region, label C3 (out-of-distribution) and exit.
 \item
   \textbf{L3 statistical-assumption baseline} (B / D + Wilcoxon / DTW
@@ -2779,7 +2780,7 @@ Seven directions follow from this study.
   orthogonality and for HOM-equivalence empirics.
 \item
   An abstract-semantics certificate layer: define the abstraction
-  $\alpha$ from concrete executions to scientific invariant domains,
+  $\mathrm{obs}$ from concrete executions to scientific invariant domains,
   specify CE/OS/HP/TF/SI as semantic-effect predicates over those
   domains, and attach per-mutant proof objects, error expressions, or
   proof labels that certify class membership.
