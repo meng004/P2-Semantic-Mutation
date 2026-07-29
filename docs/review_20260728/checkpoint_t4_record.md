@@ -33,6 +33,19 @@ H-ZERO/H-DISC 引 Corollary 5.1 + A-PROV；H-XI 引 §2.11 ξ 定义（含 NA �
 与单侧性）；区间报告引 Theorem 4。理论章节后续任何改动需重开审计项并在
 本记录追加 amendment 行。
 
+## 增补（2026-07-29：冻结基线迁移）
+
+作者随后发起的全文旧版本残留独立审计（三线程，
+`docs/review_20260729/fulltext_legacy_audit_record.md`）发现
+`TOSEM_regular_20260706` 存在三真源失同步问题并裁定
+**source/*.tex 为唯一可信来源**。理论章节的冻结内容（定理集与符号闭集）
+语义不变，但冻结**载体**迁移：Theorem 3/4/5 等编号映射改以 source
+\label（`thm:window`/`thm:interval`/`thm:gap` 等）与再生包
+`TOSEM_regular_20260729` 的 acmart 自动编号为准（registry 有对照表）。
+审计对理论陈述追加的修订（p·η̄ 参数化、ξ 的 NA+单侧、L4
+reference-anchored、𝒩_exc 改名、Theorem 2 only-on+validity 前提、eff
+全域化）均属效度修复，逐项记录于审计记录二节。
+
 ## 遗留（非门禁）
 
 - `\Bbbk` preamble 冲突为基线继承问题（amssymb×newtxmath），与本阶段无关，

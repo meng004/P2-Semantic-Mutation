@@ -162,7 +162,30 @@ the manuscript during T0.
 | \(\alpha,\equiv_\alpha\to\mathrm{obs},\equiv_{\mathrm{obs}}\) | `main.tex:757-764,768,781,804,829-920,2566` | Rename only the semantic-observation usage. Review the unrelated MLP hyperparameter at `main.tex:2126` and the supplementary statistical/scale parameters individually. |
 | \(e,P_e\to\mathrm{edit},P_{\mathrm{edit}}\) | `main.tex:800,827-840,869-872,917` | Rename the finite AST-edit operator, the derived-program subscript, and every theory reference as one scoped change. |
 
-## Label-to-body-numbering map (Task T6.1 Step 1)
+## SSOT relocation notice (2026-07-29)
+
+全文旧版本残留审计（`docs/review_20260729/fulltext_legacy_audit_record.md`）
+后，作者裁定 `source/main.tex` + `source/supplementary.tex` 为唯一可信来源；
+理论层已重新移植入 source（amsthm 环境 + \label 交叉引用），投稿包由
+`venues/tosem/build.py` 再生（当前 `submission/TOSEM_regular_20260729/`）。
+下方针对已移除的 `TOSEM_regular_20260706` 的行号/编号映射仅存档；
+现行映射以 source 标签为准：
+
+| Draft label | source \label | Built numbering (acmart, 20260729) |
+|---|---|---|
+| THM-WIN | `thm:window` | Theorem 3.6 |
+| LEM-WIT | `lem:witness` | Lemma 3.7 |
+| THM-INT | `thm:interval` | Theorem 3.8 |
+| LEM-CLO | `lem:closure` | Lemma 3.9 |
+| THM-GAP | `thm:gap` | Theorem 3.10 |
+| COR-ZERO | `cor:zero` | Corollary 3.11 |
+| THM-DEG-R | `thm:degeneration` | Theorem 3.1（+ Corollary 3.2） |
+| REM-FPOS/FNEG/IDF | 无编号 Remark 段 | — |
+
+（审计修订追加：p·η̄ 预算参数化入 THM-WIN 陈述；ξ 增补 NA 约定与单侧性；
+L4 重定义为 reference-anchored 身份关系；例外集改名 𝒩_exc 避让 #23 的 N。）
+
+## Label-to-body-numbering map (Task T6.1 Step 1, archived: TOSEM_regular_20260706)
 
 | Draft label | Body identifier (integrated manuscript) | Location |
 |---|---|---|
