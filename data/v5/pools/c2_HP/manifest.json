@@ -1,0 +1,27 @@
+{
+  "cell": "HP\u00d7c2",
+  "op": "HP",
+  "put": "c2",
+  "eff_stratum": 3,
+  "n_confirmed": 2,
+  "mutants": [
+    {
+      "mutant_id": "mut-HP-C2-01",
+      "attempt_idx": 1,
+      "op_id": "c2_HP1",
+      "model": "gpt-4o",
+      "sha256": "7a339c2110ae60613fc4f11a15fb03fd8187fc14c117f9045fedc07378c42dc9",
+      "eff_stratum": 3,
+      "raw_relpath": "data/v5/raw_candidates/c2_HP_a01.json"
+    },
+    {
+      "mutant_id": "mut-HP-C2-02",
+      "attempt_idx": 2,
+      "op_id": "c2_HP1",
+      "model": "gpt-4o",
+      "sha256": "3394d12ae856e9e6ae6193f064395a942120007b915b66e11aa983d70006af17",
+      "eff_stratum": 3,
+      "raw_relpath": "data/v5/raw_candidates/c2_HP_a02.json"
+    }
+  ]
+}

@@ -1,48 +1,93 @@
 # GENERATION_LEDGER — POOL-SEM v5 (Task 2.1)
 
-Status: **BLOCKED on API keys** (PASS-1 prep only; no LLM outputs fabricated).
+Status: **COMPLETE** (live run; keys injected 2026-07-29).
 
-## Knowable-now configuration
+## Run configuration
 
 | Field | Value |
 |---|---|
 | Generator script | `scripts/v5/generate_v5_mutants.py` |
-| Generator version | `v5.0.0-pass1-prep` |
-| Base seed | `20260728` |
+| Generator version | `v5.1.0-live` |
+| Generator model | `gpt-4o` |
+| Base seed | `20260728` (nominal; provider sampling is not seed-reproducible, raw outputs archived under `data/v5/raw_candidates/`) |
 | Prompt source | `scripts/cross_source_campaign.py` `PROMPT_TEMPLATE` (verbatim) |
 | Prompt SHA-256 | `06fa552d7431cecc00120bddeb4e8cdc4511ce03f695139809b5af83508a3e90` |
 | Temperature | `0.7` |
-| Parser | `cross_source_campaign._strip_fences` (replicated in generate_v5_mutants) |
-| n_app | `51` (applicability_matrix.md §3; hardcoded with provenance comment) |
+| Max tokens | `800` |
+| Parser | `cross_source_campaign._strip_fences` (replicated) |
+| n_app | `51` (applicability_matrix.md §3) |
 | Target confirmed / cell | `16` |
 | Attempts budget / cell | `18` (= ceil(16 × 1.117)) |
-| Mutant ID scheme | `mut-<OP>-<PUT>-<序号>` |
-| Output pools | `data/v5/pools/` |
+| Confirmation | E1∧E2 non-equivalence: E2 K_eq=1000 uniform[0,1] seed 42 eps 1e-6; E1 AVP coherence over the PUT's 5 hand-coded MRs (v4 sms_campaign constants) |
+| Dedup | exact SHA-256 of parsed code within cell |
+| Mutant ID scheme | `mut-<OP>-<PUT>-<NN>` (NN = confirmed order) |
+| eff stratum labels | generation-time: CE→1 OS→2 HP→3 TF→4 SI→5 (ex-ante, applicability_matrix.md §7) |
+| Output pools | `data/v5/pools/` (+ per-cell `manifest.json`) |
 | Funnel SSOT | `data/v5/funnel_v5.json` (schema for `analysis_hcons.py`) |
 
-## Required env vars (fail-fast)
+## Per-cell funnel (attempts → parse → build → trigger → E1∧E2 → confirmed)
 
-| Var | Purpose |
-|---|---|
-| `BLTCY_API_KEY` | OpenAI-compatible API key (v4 generator path) |
-| `BLTCY_BASE_URL` | OpenAI-compatible base URL |
-| `V5_GENERATOR_MODEL` | optional; default `gpt-4o` |
-
-## Per-cell ledger (filled on live run)
-
-| cell | attempts | parse | build | trigger | E1∧E2 | confirmed | certificate | timestamp |
+| cell | attempts | parse | build | trigger | E1∧E2 nonequiv | dup | confirmed | certificate |
 |---|---|---|---|---|---|---|---|---|
-| *(51 rows — see funnel_v5.json; all zeros while BLOCKED)* | | | | | | | | |
+| CE×a1 | 18 | 18 | 18 | 18 | 15 | 3 | 15 | 15 |
+| CE×a2 | 18 | 18 | 18 | 18 | 7 | 11 | 7 | 7 |
+| CE×a3 | 18 | 18 | 18 | 18 | 18 | 0 | 16 | 16 |
+| CE×b1 | 18 | 18 | 17 | 17 | 14 | 3 | 14 | 14 |
+| CE×b2 | 18 | 18 | 18 | 18 | 18 | 0 | 16 | 16 |
+| CE×b3 | 18 | 18 | 18 | 18 | 3 | 15 | 3 | 3 |
+| CE×c1 | 18 | 18 | 18 | 0 | 0 | 0 | 0 | 0 |
+| CE×c2 | 18 | 18 | 18 | 18 | 18 | 0 | 16 | 16 |
+| CE×c3 | 18 | 18 | 18 | 18 | 7 | 11 | 7 | 7 |
+| OS×a1 | 18 | 18 | 18 | 18 | 2 | 16 | 2 | 2 |
+| OS×a2 | 18 | 18 | 18 | 18 | 2 | 16 | 2 | 2 |
+| OS×a3 | 18 | 18 | 18 | 18 | 8 | 10 | 8 | 8 |
+| OS×b1 | 18 | 18 | 18 | 18 | 1 | 17 | 1 | 1 |
+| OS×b2 | 18 | 18 | 18 | 18 | 13 | 5 | 13 | 13 |
+| OS×b3 | 18 | 18 | 18 | 18 | 6 | 12 | 6 | 6 |
+| OS×c1 | 18 | 18 | 17 | 17 | 8 | 9 | 8 | 8 |
+| OS×c2 | 18 | 18 | 18 | 18 | 10 | 8 | 10 | 10 |
+| OS×c3 | 18 | 18 | 18 | 18 | 16 | 2 | 16 | 16 |
+| OS×d1 | 18 | 18 | 18 | 18 | 17 | 1 | 16 | 16 |
+| OS×d2 | 18 | 18 | 12 | 12 | 3 | 9 | 3 | 3 |
+| OS×d3 | 18 | 18 | 18 | 18 | 6 | 12 | 6 | 6 |
+| HP×a1 | 18 | 18 | 18 | 18 | 13 | 5 | 13 | 13 |
+| HP×a3 | 18 | 18 | 18 | 0 | 0 | 0 | 0 | 0 |
+| HP×b1 | 18 | 18 | 18 | 18 | 18 | 0 | 16 | 16 |
+| HP×b2 | 18 | 18 | 18 | 18 | 18 | 0 | 16 | 16 |
+| HP×b3 | 18 | 18 | 18 | 18 | 18 | 0 | 16 | 16 |
+| HP×c1 | 18 | 18 | 18 | 2 | 2 | 0 | 2 | 2 |
+| HP×c2 | 18 | 18 | 18 | 18 | 2 | 16 | 2 | 2 |
+| HP×c3 | 18 | 18 | 18 | 18 | 4 | 14 | 4 | 4 |
+| HP×d1 | 18 | 18 | 18 | 18 | 17 | 1 | 16 | 16 |
+| HP×d2 | 18 | 18 | 18 | 18 | 16 | 2 | 16 | 16 |
+| HP×d3 | 18 | 18 | 18 | 18 | 16 | 2 | 16 | 16 |
+| TF×a1 | 18 | 18 | 16 | 8 | 8 | 0 | 8 | 8 |
+| TF×a3 | 18 | 18 | 18 | 18 | 12 | 6 | 12 | 12 |
+| TF×b2 | 18 | 18 | 18 | 4 | 4 | 0 | 4 | 4 |
+| TF×c1 | 18 | 18 | 18 | 18 | 17 | 1 | 16 | 16 |
+| TF×c2 | 18 | 18 | 18 | 18 | 12 | 6 | 12 | 12 |
+| TF×c3 | 18 | 18 | 18 | 12 | 12 | 0 | 12 | 12 |
+| TF×d1 | 18 | 18 | 18 | 18 | 6 | 12 | 6 | 6 |
+| TF×d2 | 18 | 18 | 18 | 18 | 18 | 0 | 16 | 16 |
+| TF×d3 | 18 | 18 | 17 | 17 | 11 | 6 | 11 | 11 |
+| SI×a1 | 18 | 18 | 18 | 18 | 15 | 3 | 15 | 15 |
+| SI×a2 | 18 | 18 | 18 | 18 | 3 | 15 | 3 | 3 |
+| SI×a3 | 18 | 18 | 18 | 0 | 0 | 0 | 0 | 0 |
+| SI×b3 | 18 | 18 | 0 | 0 | 0 | 0 | 0 | 0 |
+| SI×c1 | 18 | 18 | 18 | 2 | 2 | 0 | 2 | 2 |
+| SI×c2 | 18 | 18 | 18 | 18 | 4 | 14 | 4 | 4 |
+| SI×c3 | 18 | 18 | 18 | 18 | 6 | 12 | 6 | 6 |
+| SI×d1 | 18 | 18 | 18 | 18 | 1 | 17 | 1 | 1 |
+| SI×d2 | 18 | 18 | 18 | 18 | 2 | 16 | 2 | 2 |
+| SI×d3 | 18 | 18 | 18 | 18 | 11 | 7 | 11 | 11 |
 
 ## Held-out MR source (Task 2.2)
 
-See `data/v5/MR_SOURCE_SYMMETRY.md`. Required: `V5_MR_API_KEY`, `V5_MR_BASE_URL`, `V5_MR_MODEL`.
-Provider ranking: Gemini > Qwen > Mistral > Llama-hosted (none of Claude/GPT/DeepSeek).
+See `data/v5/MR_SOURCE_SYMMETRY.md`.
 
 ## Timestamps
 
 | Event | Time (UTC) |
 |---|---|
 | PASS-1 ledger template written | 2026-07-29 (phase-2 executor) |
-| Live generation start | *pending keys* |
-| Live generation end | *pending keys* |
+| Live generation run | 2026-07-29T02:51:41Z |

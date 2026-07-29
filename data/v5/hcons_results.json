@@ -1,0 +1,17 @@
+{
+  "hypothesis": "H-CONS",
+  "estimate": 0.6470588235294118,
+  "ci": [
+    0.5098605845450523,
+    0.7636551154847915
+  ],
+  "p": null,
+  "verdict": "PASS",
+  "extras": {
+    "n_pass_cells": 33,
+    "n_app": 51,
+    "min_confirmed": 5,
+    "criterion": "Wilson95 LB > 0.5 on share of cells with >= 5 confirmed",
+    "role": "manipulation check (EXP-CON feasibility gate; not a headline claim)"
+  }
+}

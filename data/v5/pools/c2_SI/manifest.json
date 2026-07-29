@@ -1,0 +1,45 @@
+{
+  "cell": "SI\u00d7c2",
+  "op": "SI",
+  "put": "c2",
+  "eff_stratum": 5,
+  "n_confirmed": 4,
+  "mutants": [
+    {
+      "mutant_id": "mut-SI-C2-01",
+      "attempt_idx": 1,
+      "op_id": "c2_SI1v5",
+      "model": "gpt-4o",
+      "sha256": "bd79dec3129d6b34e83b6607871df9079769bef76e58baa1a4baa3e015ba0e57",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/c2_SI_a01.json"
+    },
+    {
+      "mutant_id": "mut-SI-C2-02",
+      "attempt_idx": 3,
+      "op_id": "c2_SI1v5",
+      "model": "gpt-4o",
+      "sha256": "9d19d72236e84bebffd84b381aefda5ded7077e24a4cb0835c0c7c8901828cf0",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/c2_SI_a03.json"
+    },
+    {
+      "mutant_id": "mut-SI-C2-03",
+      "attempt_idx": 4,
+      "op_id": "c2_SI1v5",
+      "model": "gpt-4o",
+      "sha256": "1ff18e563785533252c5129d15f5dbff81e8fffb435bca31482ba75fa4a19f8c",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/c2_SI_a04.json"
+    },
+    {
+      "mutant_id": "mut-SI-C2-04",
+      "attempt_idx": 8,
+      "op_id": "c2_SI1v5",
+      "model": "gpt-4o",
+      "sha256": "60a417784927183e5ee28eeb128679161fcaf8c7f79273896d52c8f5f17c9370",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/c2_SI_a08.json"
+    }
+  ]
+}

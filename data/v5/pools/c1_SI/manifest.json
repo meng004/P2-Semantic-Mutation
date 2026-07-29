@@ -1,0 +1,27 @@
+{
+  "cell": "SI\u00d7c1",
+  "op": "SI",
+  "put": "c1",
+  "eff_stratum": 5,
+  "n_confirmed": 2,
+  "mutants": [
+    {
+      "mutant_id": "mut-SI-C1-01",
+      "attempt_idx": 3,
+      "op_id": "c1_SI1v5",
+      "model": "gpt-4o",
+      "sha256": "313c57c307a0fdeb0c4d0a385d6afd1487d336bde6bf08cab05c470f1f7597d9",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/c1_SI_a03.json"
+    },
+    {
+      "mutant_id": "mut-SI-C1-02",
+      "attempt_idx": 8,
+      "op_id": "c1_SI1v5",
+      "model": "gpt-4o",
+      "sha256": "5dbc17dae2539253e55eaf4c6957dc95836b224c514b85c96b5241f2bb7aedde",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/c1_SI_a08.json"
+    }
+  ]
+}

@@ -35,10 +35,20 @@ def probe(base_url: str, key: str, label: str) -> list[str]:
     return ids
 
 
+def _env(*names: str) -> str | None:
+    """First set value among case variants (cloud injection uppercases names)."""
+    for n in names:
+        for cand in (n, n.upper(), n.lower()):
+            v = os.environ.get(cand)
+            if v:
+                return v
+    return None
+
+
 def main() -> int:
-    base = os.environ.get("base_url") or os.environ.get("BLTCY_BASE_URL")
-    k1 = os.environ.get("api_key_1") or os.environ.get("BLTCY_API_KEY")
-    k2 = os.environ.get("api_key_2") or os.environ.get("V5_MR_API_KEY")
+    base = _env("base_url", "BLTCY_BASE_URL")
+    k1 = _env("api_key_1", "BLTCY_API_KEY")
+    k2 = _env("api_key_2", "V5_MR_API_KEY")
     if not base or not (k1 or k2):
         print("BLOCKED: secrets not present in this VM "
               "(need base_url + api_key_1/api_key_2; injected only into NEW "
