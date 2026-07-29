@@ -15,26 +15,29 @@
 
 ## Task 0.1：定位并复现冲突
 
-- [ ] **Step 1:** 定位结果生成脚本与两个冲突数源：
+- [x] **Step 1:** 定位结果生成脚本与两个冲突数源：
 
 ```bash
 rg -ln "0\.4392|0\.314" data/results/ submission/ scripts/ --glob "!*.pdf"
 rg -ln "cliff|delta" scripts/ --glob "*.py" | head
 ```
 
-- [ ] **Step 2:** 重跑结果脚本重生 `data/results/paper_numbers_v4.json`，`git diff data/results/paper_numbers_v4.json` 记录是否漂移
-- [ ] **Step 3:** 追溯 0.314 的来源（脚本版本 / 数据切片 / 聚合口径），在 `docs/review_20260728/ssot_reconciliation.md` 写明根因与裁定值，两个数字各附计算命令
+- [x] **Step 2:** 重跑结果脚本重生 `data/results/paper_numbers_v4.json`，`git diff data/results/paper_numbers_v4.json` 记录是否漂移
+  - 在 `P2_PRIMARY_VERSION=v3b SMS_VERSION=v4` 下重生：历史 `rq2.*` 数值 diff=0；随后双键 enrichment 为有意新增（见 reconciliation §5）。
+- [x] **Step 3:** 追溯 0.314 的来源（脚本版本 / 数据切片 / 聚合口径），在 `docs/review_20260728/ssot_reconciliation.md` 写明根因与裁定值，两个数字各附计算命令
 
 ## Task 0.2：CI 式数字比对
 
 **Files:** Create: `scripts/check_ssot_consistency.py`
 
-- [ ] **Step 1:** 实现：从 main.tex 提取全部统计数字（正则匹配 `\d+\.\d{2,4}` 邻接关键词 delta/CI/p/mean），与 SSOT JSON 键值比对，不一致则非零退出并列出差异表；schema 预留 \(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\) 双口径键（R-7：承接理论 T5.2 三态等价改造）
-- [ ] **Step 2:** 验证：`python scripts/check_ssot_consistency.py submission/TOSEM_regular_20260706/main.tex data/results/paper_numbers_v4.json`，当前应报出 δ 冲突（若 20260706 稿沿用旧值）；修正 main.tex 后重跑，期望 exit 0
+- [x] **Step 1:** 实现：从 main.tex 提取全部统计数字（正则匹配 `\d+\.\d{2,4}` 邻接关键词 delta/CI/p/mean），与 SSOT JSON 键值比对，不一致则非零退出并列出差异表；schema 预留 \(\mathrm{SMS}_{\mathrm{strict}}/\mathrm{SMS}_{\mathrm{cons}}\) 双口径键（R-7：承接理论 T5.2 三态等价改造）
+- [x] **Step 2:** 验证：`python scripts/check_ssot_consistency.py submission/TOSEM_regular_20260706/main.tex data/results/paper_numbers_v4.json`，当前应报出 δ 冲突（若 20260706 稿沿用旧值）；修正 main.tex 后重跑，期望 exit 0
+  - 路径适配：`TOSEM_regular_20260706` 不存在 → 使用 `submission/TOSEM_fastimpact_20260707/main.tex`。缺 `rq2_primary_mp5` 的 legacy SSOT → FAIL；enrichment 后 → PASS exit 0。稿面 primary 已是 0.314，无需改数。
 - [ ] **Step 2b（延迟触发，理论 T5.2 联动）:** 理论 Task T5.2（三态等价上稿）完成后，对 SSOT 执行一次性键迁移核对：旧 SMS 键 → \(\mathrm{SMS}_{\mathrm{strict}}\) 重命名映射、\(\mathrm{SMS}_{\mathrm{cons}}\) 新增；diff 报告入 `docs/review_20260728/ssot_key_migration.md`。**此核对通过是 Phase 4 注数的前置门禁**
-- [ ] **Step 3:** Commit：`fix(ssot): reconcile v4 cliff delta + add manuscript-SSOT consistency gate`
+- [x] **Step 3:** Commit：`fix(ssot): reconcile v4 cliff delta + add manuscript-SSOT consistency gate`
 
 **REVIEW CHECKPOINT 0：作者确认裁定值与根因说明。此后任何稿件数字改动必须过 check_ssot_consistency。**
+**→ ✅ 已执行并通过（2026-07-28，作者显式委托执行）。验收 3/3 全绿 + 裁定值锚定预注册与既有审计共识；执行记录=`docs/review_20260728/ssot_reconciliation.md` §8。Phase 1 准入裁定：Task 1.1/1.2/1.4 放行；Task 1.3+冻结 tag 阻塞至理论 CHECKPOINT T2。**
 
 ---
 

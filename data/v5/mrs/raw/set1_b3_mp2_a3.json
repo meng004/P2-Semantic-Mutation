@@ -1,0 +1,1 @@
+{"set": 1, "put": "b3", "mp": 2, "attempt": 3, "model": "gemini-3.5-flash", "content": "```python\nimport numpy as np\n\n\ndef r(x):\n    return float(np.sqrt(x))\n\n\ndef R(y_orig, y_new):\n    return bool(np.isfinite(y_orig) and np.isfinite(y_new) and y_new >= y_orig)\n```", "created_at": "2026-07-29T04:40:55Z"}

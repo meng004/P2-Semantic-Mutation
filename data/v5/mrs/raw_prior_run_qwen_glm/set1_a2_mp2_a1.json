@@ -1,0 +1,1 @@
+{"set": 1, "put": "a2", "mp": 2, "attempt": 1, "model": "qwen3-235b-a22b-instruct-2507", "content": "```python\ndef r(x):\n    return 1.0 - x\n\ndef R(y_orig, y_new):\n    return np.isfinite(y_orig) and np.isfinite(y_new) and y_orig + y_new == 15.0\n```", "created_at": "2026-07-29T03:33:28Z"}

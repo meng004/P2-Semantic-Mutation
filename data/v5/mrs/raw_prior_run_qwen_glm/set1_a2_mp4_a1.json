@@ -1,0 +1,1 @@
+{"set": 1, "put": "a2", "mp": 4, "attempt": 1, "model": "qwen3-235b-a22b-instruct-2507", "content": "```python\nimport numpy as np\n\ndef r(x):\n    return 1.0 - x\n\ndef R(y_orig, y_new):\n    return abs(y_orig + y_new - 15.0) <= 1e-6\n```", "created_at": "2026-07-29T03:33:32Z"}

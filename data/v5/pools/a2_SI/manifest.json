@@ -1,0 +1,36 @@
+{
+  "cell": "SI\u00d7a2",
+  "op": "SI",
+  "put": "a2",
+  "eff_stratum": 5,
+  "n_confirmed": 3,
+  "mutants": [
+    {
+      "mutant_id": "mut-SI-A2-01",
+      "attempt_idx": 1,
+      "op_id": "a2_SI1",
+      "model": "gpt-4o",
+      "sha256": "6c67bcedb4eb6771e09d9ca7d6cba0d55bf905bad8909b727250d4417a07fcb9",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/a2_SI_a01.json"
+    },
+    {
+      "mutant_id": "mut-SI-A2-02",
+      "attempt_idx": 3,
+      "op_id": "a2_SI1",
+      "model": "gpt-4o",
+      "sha256": "77c59cfcdc589dd36b91c223f2e6be1bcdec2e66199d2e0183c7d8b899bf916e",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/a2_SI_a03.json"
+    },
+    {
+      "mutant_id": "mut-SI-A2-03",
+      "attempt_idx": 11,
+      "op_id": "a2_SI1",
+      "model": "gpt-4o",
+      "sha256": "af8abea7b8e221992e1a3a9cd575974109217bff2e2aeaf64f7e3d93a4b06d01",
+      "eff_stratum": 5,
+      "raw_relpath": "data/v5/raw_candidates/a2_SI_a11.json"
+    }
+  ]
+}

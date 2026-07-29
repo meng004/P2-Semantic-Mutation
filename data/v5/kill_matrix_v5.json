@@ -1,0 +1,4325 @@
+{
+  "spec": {
+    "conditions": "ALN = held-out MR of ALIGNED_MP[op]; CRS = held-out MR of CROSS_MP[op]",
+    "aligned_map": {
+      "CE": 1,
+      "OS": 2,
+      "HP": 3,
+      "TF": 4,
+      "SI": 5
+    },
+    "cross_map_cyclic": {
+      "CE": 2,
+      "OS": 3,
+      "HP": 4,
+      "TF": 5,
+      "SI": 1
+    },
+    "cross_rationale": "fixed cyclic map (aligned mod 5)+1: cardinality-matched 1-vs-1 conditions; matches the per-MP single-MR v4 anchors the power simulation calibrated on; each stratum appears exactly once as a cross target; fixed ex-ante before any kill execution",
+    "kill_predicate": "AVP(S,mr)=PASS and AVP(s',mr)=FAIL, 20-repeat majority (v4 K_avp)",
+    "epsilon_avp": 1e-06,
+    "denominator": "funnel-confirmed non-equivalent pool (Task 2.1), never re-judged here",
+    "sets": [
+      1,
+      2
+    ],
+    "measurability": "slot won in prescreen AND AVP(S,mr)=PASS; unmeasurable excluded+logged, never imputed"
+  },
+  "n_cells": 51,
+  "wall_s": 270.3,
+  "completed_at": "2026-07-29T05:41:47Z",
+  "cells": [
+    {
+      "cell": "CE\u00d7a1",
+      "op": "CE",
+      "put": "a1",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-A1-01",
+        "mut-CE-A1-02",
+        "mut-CE-A1-03",
+        "mut-CE-A1-04",
+        "mut-CE-A1-05",
+        "mut-CE-A1-06",
+        "mut-CE-A1-07",
+        "mut-CE-A1-08",
+        "mut-CE-A1-09",
+        "mut-CE-A1-10",
+        "mut-CE-A1-11",
+        "mut-CE-A1-12",
+        "mut-CE-A1-13",
+        "mut-CE-A1-14",
+        "mut-CE-A1-15"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A1-01": false,
+            "mut-CE-A1-02": false,
+            "mut-CE-A1-03": false,
+            "mut-CE-A1-04": false,
+            "mut-CE-A1-05": false,
+            "mut-CE-A1-06": false,
+            "mut-CE-A1-07": false,
+            "mut-CE-A1-08": false,
+            "mut-CE-A1-09": false,
+            "mut-CE-A1-10": false,
+            "mut-CE-A1-11": false,
+            "mut-CE-A1-12": false,
+            "mut-CE-A1-13": false,
+            "mut-CE-A1-14": false,
+            "mut-CE-A1-15": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a1_mp2.py",
+          "mp": 2,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A1-01": false,
+            "mut-CE-A1-02": false,
+            "mut-CE-A1-03": false,
+            "mut-CE-A1-04": false,
+            "mut-CE-A1-05": false,
+            "mut-CE-A1-06": false,
+            "mut-CE-A1-07": false,
+            "mut-CE-A1-08": false,
+            "mut-CE-A1-09": false,
+            "mut-CE-A1-10": false,
+            "mut-CE-A1-11": false,
+            "mut-CE-A1-12": false,
+            "mut-CE-A1-13": false,
+            "mut-CE-A1-14": false,
+            "mut-CE-A1-15": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a1_mp2.py",
+          "mp": 2,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "CE\u00d7a2",
+      "op": "CE",
+      "put": "a2",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-A2-01",
+        "mut-CE-A2-02",
+        "mut-CE-A2-03",
+        "mut-CE-A2-04",
+        "mut-CE-A2-05",
+        "mut-CE-A2-06",
+        "mut-CE-A2-07"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A2-01": true,
+            "mut-CE-A2-02": true,
+            "mut-CE-A2-03": true,
+            "mut-CE-A2-04": true,
+            "mut-CE-A2-05": true,
+            "mut-CE-A2-06": true,
+            "mut-CE-A2-07": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A2-01": true,
+            "mut-CE-A2-02": true,
+            "mut-CE-A2-03": true,
+            "mut-CE-A2-04": true,
+            "mut-CE-A2-05": true,
+            "mut-CE-A2-06": true,
+            "mut-CE-A2-07": true
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A2-01": true,
+            "mut-CE-A2-02": true,
+            "mut-CE-A2-03": true,
+            "mut-CE-A2-04": true,
+            "mut-CE-A2-05": true,
+            "mut-CE-A2-06": true,
+            "mut-CE-A2-07": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A2-01": true,
+            "mut-CE-A2-02": true,
+            "mut-CE-A2-03": true,
+            "mut-CE-A2-04": true,
+            "mut-CE-A2-05": true,
+            "mut-CE-A2-06": true,
+            "mut-CE-A2-07": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set1_CRS": 1.0,
+        "set2_ALN": 1.0,
+        "set2_CRS": 1.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 1.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "CE\u00d7a3",
+      "op": "CE",
+      "put": "a3",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-A3-01",
+        "mut-CE-A3-02",
+        "mut-CE-A3-03",
+        "mut-CE-A3-04",
+        "mut-CE-A3-05",
+        "mut-CE-A3-06",
+        "mut-CE-A3-07",
+        "mut-CE-A3-08",
+        "mut-CE-A3-09",
+        "mut-CE-A3-10",
+        "mut-CE-A3-11",
+        "mut-CE-A3-12",
+        "mut-CE-A3-13",
+        "mut-CE-A3-14",
+        "mut-CE-A3-15",
+        "mut-CE-A3-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A3-01": false,
+            "mut-CE-A3-02": false,
+            "mut-CE-A3-03": false,
+            "mut-CE-A3-04": false,
+            "mut-CE-A3-05": false,
+            "mut-CE-A3-06": false,
+            "mut-CE-A3-07": false,
+            "mut-CE-A3-08": false,
+            "mut-CE-A3-09": false,
+            "mut-CE-A3-10": false,
+            "mut-CE-A3-11": false,
+            "mut-CE-A3-12": false,
+            "mut-CE-A3-13": false,
+            "mut-CE-A3-14": false,
+            "mut-CE-A3-15": false,
+            "mut-CE-A3-16": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A3-01": false,
+            "mut-CE-A3-02": false,
+            "mut-CE-A3-03": false,
+            "mut-CE-A3-04": false,
+            "mut-CE-A3-05": false,
+            "mut-CE-A3-06": false,
+            "mut-CE-A3-07": false,
+            "mut-CE-A3-08": false,
+            "mut-CE-A3-09": false,
+            "mut-CE-A3-10": false,
+            "mut-CE-A3-11": false,
+            "mut-CE-A3-12": false,
+            "mut-CE-A3-13": false,
+            "mut-CE-A3-14": false,
+            "mut-CE-A3-15": false,
+            "mut-CE-A3-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A3-01": false,
+            "mut-CE-A3-02": false,
+            "mut-CE-A3-03": false,
+            "mut-CE-A3-04": false,
+            "mut-CE-A3-05": false,
+            "mut-CE-A3-06": false,
+            "mut-CE-A3-07": false,
+            "mut-CE-A3-08": false,
+            "mut-CE-A3-09": false,
+            "mut-CE-A3-10": false,
+            "mut-CE-A3-11": false,
+            "mut-CE-A3-12": false,
+            "mut-CE-A3-13": false,
+            "mut-CE-A3-14": false,
+            "mut-CE-A3-15": false,
+            "mut-CE-A3-16": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-A3-01": false,
+            "mut-CE-A3-02": false,
+            "mut-CE-A3-03": false,
+            "mut-CE-A3-04": false,
+            "mut-CE-A3-05": false,
+            "mut-CE-A3-06": false,
+            "mut-CE-A3-07": false,
+            "mut-CE-A3-08": false,
+            "mut-CE-A3-09": false,
+            "mut-CE-A3-10": false,
+            "mut-CE-A3-11": false,
+            "mut-CE-A3-12": false,
+            "mut-CE-A3-13": false,
+            "mut-CE-A3-14": false,
+            "mut-CE-A3-15": false,
+            "mut-CE-A3-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "CE\u00d7b1",
+      "op": "CE",
+      "put": "b1",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-B1-01",
+        "mut-CE-B1-02",
+        "mut-CE-B1-03",
+        "mut-CE-B1-04",
+        "mut-CE-B1-05",
+        "mut-CE-B1-06",
+        "mut-CE-B1-07",
+        "mut-CE-B1-08",
+        "mut-CE-B1-09",
+        "mut-CE-B1-10",
+        "mut-CE-B1-11",
+        "mut-CE-B1-12",
+        "mut-CE-B1-13",
+        "mut-CE-B1-14"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B1-01": true,
+            "mut-CE-B1-02": true,
+            "mut-CE-B1-03": true,
+            "mut-CE-B1-04": true,
+            "mut-CE-B1-05": true,
+            "mut-CE-B1-06": true,
+            "mut-CE-B1-07": true,
+            "mut-CE-B1-08": true,
+            "mut-CE-B1-09": true,
+            "mut-CE-B1-10": true,
+            "mut-CE-B1-11": true,
+            "mut-CE-B1-12": true,
+            "mut-CE-B1-13": true,
+            "mut-CE-B1-14": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B1-01": false,
+            "mut-CE-B1-02": false,
+            "mut-CE-B1-03": false,
+            "mut-CE-B1-04": false,
+            "mut-CE-B1-05": false,
+            "mut-CE-B1-06": false,
+            "mut-CE-B1-07": false,
+            "mut-CE-B1-08": false,
+            "mut-CE-B1-09": false,
+            "mut-CE-B1-10": false,
+            "mut-CE-B1-11": false,
+            "mut-CE-B1-12": false,
+            "mut-CE-B1-13": false,
+            "mut-CE-B1-14": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B1-01": true,
+            "mut-CE-B1-02": true,
+            "mut-CE-B1-03": true,
+            "mut-CE-B1-04": true,
+            "mut-CE-B1-05": true,
+            "mut-CE-B1-06": true,
+            "mut-CE-B1-07": true,
+            "mut-CE-B1-08": true,
+            "mut-CE-B1-09": true,
+            "mut-CE-B1-10": true,
+            "mut-CE-B1-11": true,
+            "mut-CE-B1-12": true,
+            "mut-CE-B1-13": true,
+            "mut-CE-B1-14": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B1-01": false,
+            "mut-CE-B1-02": false,
+            "mut-CE-B1-03": false,
+            "mut-CE-B1-04": false,
+            "mut-CE-B1-05": false,
+            "mut-CE-B1-06": false,
+            "mut-CE-B1-07": false,
+            "mut-CE-B1-08": false,
+            "mut-CE-B1-09": false,
+            "mut-CE-B1-10": false,
+            "mut-CE-B1-11": false,
+            "mut-CE-B1-12": false,
+            "mut-CE-B1-13": false,
+            "mut-CE-B1-14": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 1.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "CE\u00d7b2",
+      "op": "CE",
+      "put": "b2",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-B2-01",
+        "mut-CE-B2-02",
+        "mut-CE-B2-03",
+        "mut-CE-B2-04",
+        "mut-CE-B2-05",
+        "mut-CE-B2-06",
+        "mut-CE-B2-07",
+        "mut-CE-B2-08",
+        "mut-CE-B2-09",
+        "mut-CE-B2-10",
+        "mut-CE-B2-11",
+        "mut-CE-B2-12",
+        "mut-CE-B2-13",
+        "mut-CE-B2-14",
+        "mut-CE-B2-15",
+        "mut-CE-B2-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B2-01": true,
+            "mut-CE-B2-02": true,
+            "mut-CE-B2-03": true,
+            "mut-CE-B2-04": true,
+            "mut-CE-B2-05": true,
+            "mut-CE-B2-06": true,
+            "mut-CE-B2-07": true,
+            "mut-CE-B2-08": true,
+            "mut-CE-B2-09": true,
+            "mut-CE-B2-10": true,
+            "mut-CE-B2-11": true,
+            "mut-CE-B2-12": true,
+            "mut-CE-B2-13": true,
+            "mut-CE-B2-14": true,
+            "mut-CE-B2-15": true,
+            "mut-CE-B2-16": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B2-01": false,
+            "mut-CE-B2-02": false,
+            "mut-CE-B2-03": false,
+            "mut-CE-B2-04": false,
+            "mut-CE-B2-05": false,
+            "mut-CE-B2-06": false,
+            "mut-CE-B2-07": false,
+            "mut-CE-B2-08": false,
+            "mut-CE-B2-09": false,
+            "mut-CE-B2-10": false,
+            "mut-CE-B2-11": false,
+            "mut-CE-B2-12": false,
+            "mut-CE-B2-13": false,
+            "mut-CE-B2-14": false,
+            "mut-CE-B2-15": false,
+            "mut-CE-B2-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B2-01": true,
+            "mut-CE-B2-02": true,
+            "mut-CE-B2-03": true,
+            "mut-CE-B2-04": true,
+            "mut-CE-B2-05": true,
+            "mut-CE-B2-06": true,
+            "mut-CE-B2-07": true,
+            "mut-CE-B2-08": true,
+            "mut-CE-B2-09": true,
+            "mut-CE-B2-10": true,
+            "mut-CE-B2-11": true,
+            "mut-CE-B2-12": true,
+            "mut-CE-B2-13": true,
+            "mut-CE-B2-14": true,
+            "mut-CE-B2-15": true,
+            "mut-CE-B2-16": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B2-01": false,
+            "mut-CE-B2-02": false,
+            "mut-CE-B2-03": false,
+            "mut-CE-B2-04": false,
+            "mut-CE-B2-05": false,
+            "mut-CE-B2-06": false,
+            "mut-CE-B2-07": false,
+            "mut-CE-B2-08": false,
+            "mut-CE-B2-09": false,
+            "mut-CE-B2-10": false,
+            "mut-CE-B2-11": false,
+            "mut-CE-B2-12": false,
+            "mut-CE-B2-13": false,
+            "mut-CE-B2-14": false,
+            "mut-CE-B2-15": false,
+            "mut-CE-B2-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 1.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "CE\u00d7b3",
+      "op": "CE",
+      "put": "b3",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-B3-01",
+        "mut-CE-B3-02",
+        "mut-CE-B3-03"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B3-01": true,
+            "mut-CE-B3-02": true,
+            "mut-CE-B3-03": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B3-01": false,
+            "mut-CE-B3-02": false,
+            "mut-CE-B3-03": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B3-01": true,
+            "mut-CE-B3-02": true,
+            "mut-CE-B3-03": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-B3-01": false,
+            "mut-CE-B3-02": false,
+            "mut-CE-B3-03": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 1.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "CE\u00d7c1",
+      "op": "CE",
+      "put": "c1",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [],
+      "conditions": {},
+      "sms": {},
+      "log": [
+        "NO_POOL"
+      ]
+    },
+    {
+      "cell": "CE\u00d7c2",
+      "op": "CE",
+      "put": "c2",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-C2-01",
+        "mut-CE-C2-02",
+        "mut-CE-C2-03",
+        "mut-CE-C2-04",
+        "mut-CE-C2-05",
+        "mut-CE-C2-06",
+        "mut-CE-C2-07",
+        "mut-CE-C2-08",
+        "mut-CE-C2-09",
+        "mut-CE-C2-10",
+        "mut-CE-C2-11",
+        "mut-CE-C2-12",
+        "mut-CE-C2-13",
+        "mut-CE-C2-14",
+        "mut-CE-C2-15",
+        "mut-CE-C2-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C2-01": false,
+            "mut-CE-C2-02": false,
+            "mut-CE-C2-03": true,
+            "mut-CE-C2-04": true,
+            "mut-CE-C2-05": true,
+            "mut-CE-C2-06": true,
+            "mut-CE-C2-07": true,
+            "mut-CE-C2-08": true,
+            "mut-CE-C2-09": true,
+            "mut-CE-C2-10": false,
+            "mut-CE-C2-11": false,
+            "mut-CE-C2-12": true,
+            "mut-CE-C2-13": true,
+            "mut-CE-C2-14": true,
+            "mut-CE-C2-15": true,
+            "mut-CE-C2-16": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C2-01": false,
+            "mut-CE-C2-02": false,
+            "mut-CE-C2-03": false,
+            "mut-CE-C2-04": false,
+            "mut-CE-C2-05": false,
+            "mut-CE-C2-06": false,
+            "mut-CE-C2-07": false,
+            "mut-CE-C2-08": false,
+            "mut-CE-C2-09": false,
+            "mut-CE-C2-10": false,
+            "mut-CE-C2-11": false,
+            "mut-CE-C2-12": false,
+            "mut-CE-C2-13": false,
+            "mut-CE-C2-14": false,
+            "mut-CE-C2-15": false,
+            "mut-CE-C2-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C2-01": false,
+            "mut-CE-C2-02": false,
+            "mut-CE-C2-03": true,
+            "mut-CE-C2-04": true,
+            "mut-CE-C2-05": true,
+            "mut-CE-C2-06": true,
+            "mut-CE-C2-07": true,
+            "mut-CE-C2-08": true,
+            "mut-CE-C2-09": true,
+            "mut-CE-C2-10": true,
+            "mut-CE-C2-11": false,
+            "mut-CE-C2-12": true,
+            "mut-CE-C2-13": true,
+            "mut-CE-C2-14": true,
+            "mut-CE-C2-15": true,
+            "mut-CE-C2-16": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C2-01": false,
+            "mut-CE-C2-02": false,
+            "mut-CE-C2-03": false,
+            "mut-CE-C2-04": false,
+            "mut-CE-C2-05": false,
+            "mut-CE-C2-06": false,
+            "mut-CE-C2-07": false,
+            "mut-CE-C2-08": false,
+            "mut-CE-C2-09": false,
+            "mut-CE-C2-10": false,
+            "mut-CE-C2-11": false,
+            "mut-CE-C2-12": false,
+            "mut-CE-C2-13": false,
+            "mut-CE-C2-14": false,
+            "mut-CE-C2-15": false,
+            "mut-CE-C2-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.6875,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.75,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.71875,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "CE\u00d7c3",
+      "op": "CE",
+      "put": "c3",
+      "mutant_stratum": 1,
+      "aln_mp": 1,
+      "crs_mp": 2,
+      "pool": [
+        "mut-CE-C3-01",
+        "mut-CE-C3-02",
+        "mut-CE-C3-03",
+        "mut-CE-C3-04",
+        "mut-CE-C3-05",
+        "mut-CE-C3-06",
+        "mut-CE-C3-07"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C3-01": true,
+            "mut-CE-C3-02": true,
+            "mut-CE-C3-03": true,
+            "mut-CE-C3-04": true,
+            "mut-CE-C3-05": true,
+            "mut-CE-C3-06": true,
+            "mut-CE-C3-07": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C3-01": false,
+            "mut-CE-C3-02": false,
+            "mut-CE-C3-03": false,
+            "mut-CE-C3-04": false,
+            "mut-CE-C3-05": false,
+            "mut-CE-C3-06": false,
+            "mut-CE-C3-07": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C3-01": true,
+            "mut-CE-C3-02": true,
+            "mut-CE-C3-03": true,
+            "mut-CE-C3-04": true,
+            "mut-CE-C3-05": true,
+            "mut-CE-C3-06": true,
+            "mut-CE-C3-07": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-CE-C3-01": false,
+            "mut-CE-C3-02": false,
+            "mut-CE-C3-03": false,
+            "mut-CE-C3-04": false,
+            "mut-CE-C3-05": false,
+            "mut-CE-C3-06": false,
+            "mut-CE-C3-07": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 1.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7a1",
+      "op": "OS",
+      "put": "a1",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-A1-01",
+        "mut-OS-A1-02"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a1_mp2.py",
+          "mp": 2,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a1_mp2.py",
+          "mp": 2,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7a2",
+      "op": "OS",
+      "put": "a2",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-A2-01",
+        "mut-OS-A2-02"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-A2-01": false,
+            "mut-OS-A2-02": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-A2-01": false,
+            "mut-OS-A2-02": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7a3",
+      "op": "OS",
+      "put": "a3",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-A3-01",
+        "mut-OS-A3-02",
+        "mut-OS-A3-03",
+        "mut-OS-A3-04",
+        "mut-OS-A3-05",
+        "mut-OS-A3-06",
+        "mut-OS-A3-07",
+        "mut-OS-A3-08"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-A3-01": true,
+            "mut-OS-A3-02": true,
+            "mut-OS-A3-03": true,
+            "mut-OS-A3-04": true,
+            "mut-OS-A3-05": true,
+            "mut-OS-A3-06": true,
+            "mut-OS-A3-07": true,
+            "mut-OS-A3-08": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-A3-01": true,
+            "mut-OS-A3-02": true,
+            "mut-OS-A3-03": true,
+            "mut-OS-A3-04": true,
+            "mut-OS-A3-05": true,
+            "mut-OS-A3-06": true,
+            "mut-OS-A3-07": true,
+            "mut-OS-A3-08": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set2_ALN": 1.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7b1",
+      "op": "OS",
+      "put": "b1",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-B1-01"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-B1-01": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-B1-01": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set2_ALN": 1.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7b2",
+      "op": "OS",
+      "put": "b2",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-B2-01",
+        "mut-OS-B2-02",
+        "mut-OS-B2-03",
+        "mut-OS-B2-04",
+        "mut-OS-B2-05",
+        "mut-OS-B2-06",
+        "mut-OS-B2-07",
+        "mut-OS-B2-08",
+        "mut-OS-B2-09",
+        "mut-OS-B2-10",
+        "mut-OS-B2-11",
+        "mut-OS-B2-12",
+        "mut-OS-B2-13"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-B2-01": true,
+            "mut-OS-B2-02": true,
+            "mut-OS-B2-03": true,
+            "mut-OS-B2-04": true,
+            "mut-OS-B2-05": true,
+            "mut-OS-B2-06": true,
+            "mut-OS-B2-07": true,
+            "mut-OS-B2-08": true,
+            "mut-OS-B2-09": true,
+            "mut-OS-B2-10": true,
+            "mut-OS-B2-11": true,
+            "mut-OS-B2-12": true,
+            "mut-OS-B2-13": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-B2-01": true,
+            "mut-OS-B2-02": true,
+            "mut-OS-B2-03": true,
+            "mut-OS-B2-04": true,
+            "mut-OS-B2-05": true,
+            "mut-OS-B2-06": true,
+            "mut-OS-B2-07": true,
+            "mut-OS-B2-08": true,
+            "mut-OS-B2-09": true,
+            "mut-OS-B2-10": true,
+            "mut-OS-B2-11": true,
+            "mut-OS-B2-12": true,
+            "mut-OS-B2-13": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set2_ALN": 1.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7b3",
+      "op": "OS",
+      "put": "b3",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-B3-01",
+        "mut-OS-B3-02",
+        "mut-OS-B3-03",
+        "mut-OS-B3-04",
+        "mut-OS-B3-05",
+        "mut-OS-B3-06"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-B3-01": false,
+            "mut-OS-B3-02": false,
+            "mut-OS-B3-03": false,
+            "mut-OS-B3-04": false,
+            "mut-OS-B3-05": false,
+            "mut-OS-B3-06": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-B3-01": false,
+            "mut-OS-B3-02": false,
+            "mut-OS-B3-03": false,
+            "mut-OS-B3-04": false,
+            "mut-OS-B3-05": false,
+            "mut-OS-B3-06": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7c1",
+      "op": "OS",
+      "put": "c1",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-C1-01",
+        "mut-OS-C1-02",
+        "mut-OS-C1-03",
+        "mut-OS-C1-04",
+        "mut-OS-C1-05",
+        "mut-OS-C1-06",
+        "mut-OS-C1-07",
+        "mut-OS-C1-08"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-C1-01": false,
+            "mut-OS-C1-02": false,
+            "mut-OS-C1-03": false,
+            "mut-OS-C1-04": true,
+            "mut-OS-C1-05": false,
+            "mut-OS-C1-06": false,
+            "mut-OS-C1-07": true,
+            "mut-OS-C1-08": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-C1-01": false,
+            "mut-OS-C1-02": false,
+            "mut-OS-C1-03": false,
+            "mut-OS-C1-04": true,
+            "mut-OS-C1-05": false,
+            "mut-OS-C1-06": false,
+            "mut-OS-C1-07": true,
+            "mut-OS-C1-08": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.25,
+        "set2_ALN": 0.25,
+        "ALN_mean": 0.25,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7c2",
+      "op": "OS",
+      "put": "c2",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-C2-01",
+        "mut-OS-C2-02",
+        "mut-OS-C2-03",
+        "mut-OS-C2-04",
+        "mut-OS-C2-05",
+        "mut-OS-C2-06",
+        "mut-OS-C2-07",
+        "mut-OS-C2-08",
+        "mut-OS-C2-09",
+        "mut-OS-C2-10"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-C2-01": false,
+            "mut-OS-C2-02": false,
+            "mut-OS-C2-03": false,
+            "mut-OS-C2-04": false,
+            "mut-OS-C2-05": false,
+            "mut-OS-C2-06": false,
+            "mut-OS-C2-07": false,
+            "mut-OS-C2-08": false,
+            "mut-OS-C2-09": false,
+            "mut-OS-C2-10": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-C2-01": false,
+            "mut-OS-C2-02": false,
+            "mut-OS-C2-03": false,
+            "mut-OS-C2-04": false,
+            "mut-OS-C2-05": false,
+            "mut-OS-C2-06": false,
+            "mut-OS-C2-07": false,
+            "mut-OS-C2-08": false,
+            "mut-OS-C2-09": false,
+            "mut-OS-C2-10": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7c3",
+      "op": "OS",
+      "put": "c3",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-C3-01",
+        "mut-OS-C3-02",
+        "mut-OS-C3-03",
+        "mut-OS-C3-04",
+        "mut-OS-C3-05",
+        "mut-OS-C3-06",
+        "mut-OS-C3-07",
+        "mut-OS-C3-08",
+        "mut-OS-C3-09",
+        "mut-OS-C3-10",
+        "mut-OS-C3-11",
+        "mut-OS-C3-12",
+        "mut-OS-C3-13",
+        "mut-OS-C3-14",
+        "mut-OS-C3-15",
+        "mut-OS-C3-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-C3-01": true,
+            "mut-OS-C3-02": true,
+            "mut-OS-C3-03": true,
+            "mut-OS-C3-04": true,
+            "mut-OS-C3-05": true,
+            "mut-OS-C3-06": true,
+            "mut-OS-C3-07": false,
+            "mut-OS-C3-08": true,
+            "mut-OS-C3-09": true,
+            "mut-OS-C3-10": true,
+            "mut-OS-C3-11": true,
+            "mut-OS-C3-12": true,
+            "mut-OS-C3-13": true,
+            "mut-OS-C3-14": true,
+            "mut-OS-C3-15": true,
+            "mut-OS-C3-16": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-C3-01": true,
+            "mut-OS-C3-02": true,
+            "mut-OS-C3-03": true,
+            "mut-OS-C3-04": true,
+            "mut-OS-C3-05": true,
+            "mut-OS-C3-06": true,
+            "mut-OS-C3-07": false,
+            "mut-OS-C3-08": true,
+            "mut-OS-C3-09": true,
+            "mut-OS-C3-10": true,
+            "mut-OS-C3-11": true,
+            "mut-OS-C3-12": true,
+            "mut-OS-C3-13": true,
+            "mut-OS-C3-14": true,
+            "mut-OS-C3-15": true,
+            "mut-OS-C3-16": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.9375,
+        "set2_ALN": 0.9375,
+        "ALN_mean": 0.9375,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7d1",
+      "op": "OS",
+      "put": "d1",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-D1-01",
+        "mut-OS-D1-02",
+        "mut-OS-D1-03",
+        "mut-OS-D1-04",
+        "mut-OS-D1-05",
+        "mut-OS-D1-06",
+        "mut-OS-D1-07",
+        "mut-OS-D1-08",
+        "mut-OS-D1-09",
+        "mut-OS-D1-10",
+        "mut-OS-D1-11",
+        "mut-OS-D1-12",
+        "mut-OS-D1-13",
+        "mut-OS-D1-14",
+        "mut-OS-D1-15",
+        "mut-OS-D1-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-D1-01": false,
+            "mut-OS-D1-02": false,
+            "mut-OS-D1-03": false,
+            "mut-OS-D1-04": false,
+            "mut-OS-D1-05": true,
+            "mut-OS-D1-06": true,
+            "mut-OS-D1-07": false,
+            "mut-OS-D1-08": true,
+            "mut-OS-D1-09": true,
+            "mut-OS-D1-10": true,
+            "mut-OS-D1-11": false,
+            "mut-OS-D1-12": true,
+            "mut-OS-D1-13": true,
+            "mut-OS-D1-14": false,
+            "mut-OS-D1-15": true,
+            "mut-OS-D1-16": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d1_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-D1-01": false,
+            "mut-OS-D1-02": false,
+            "mut-OS-D1-03": false,
+            "mut-OS-D1-04": false,
+            "mut-OS-D1-05": true,
+            "mut-OS-D1-06": true,
+            "mut-OS-D1-07": false,
+            "mut-OS-D1-08": true,
+            "mut-OS-D1-09": true,
+            "mut-OS-D1-10": true,
+            "mut-OS-D1-11": false,
+            "mut-OS-D1-12": true,
+            "mut-OS-D1-13": true,
+            "mut-OS-D1-14": false,
+            "mut-OS-D1-15": true,
+            "mut-OS-D1-16": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.5625,
+        "set2_ALN": 0.5625,
+        "ALN_mean": 0.5625,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7d2",
+      "op": "OS",
+      "put": "d2",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-D2-01",
+        "mut-OS-D2-02",
+        "mut-OS-D2-03"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-D2-01": false,
+            "mut-OS-D2-02": false,
+            "mut-OS-D2-03": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d2_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-D2-01": false,
+            "mut-OS-D2-02": false,
+            "mut-OS-D2-03": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "OS\u00d7d3",
+      "op": "OS",
+      "put": "d3",
+      "mutant_stratum": 2,
+      "aln_mp": 2,
+      "crs_mp": 3,
+      "pool": [
+        "mut-OS-D3-01",
+        "mut-OS-D3-02",
+        "mut-OS-D3-03",
+        "mut-OS-D3-04",
+        "mut-OS-D3-05",
+        "mut-OS-D3-06"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-D3-01": false,
+            "mut-OS-D3-02": false,
+            "mut-OS-D3-03": false,
+            "mut-OS-D3-04": false,
+            "mut-OS-D3-05": false,
+            "mut-OS-D3-06": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d3_mp2.py",
+          "mp": 2,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-OS-D3-01": false,
+            "mut-OS-D3-02": false,
+            "mut-OS-D3-03": false,
+            "mut-OS-D3-04": false,
+            "mut-OS-D3-05": false,
+            "mut-OS-D3-06": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7a1",
+      "op": "HP",
+      "put": "a1",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-A1-01",
+        "mut-HP-A1-02",
+        "mut-HP-A1-03",
+        "mut-HP-A1-04",
+        "mut-HP-A1-05",
+        "mut-HP-A1-06",
+        "mut-HP-A1-07",
+        "mut-HP-A1-08",
+        "mut-HP-A1-09",
+        "mut-HP-A1-10",
+        "mut-HP-A1-11",
+        "mut-HP-A1-12",
+        "mut-HP-A1-13"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-A1-01": false,
+            "mut-HP-A1-02": false,
+            "mut-HP-A1-03": false,
+            "mut-HP-A1-04": false,
+            "mut-HP-A1-05": false,
+            "mut-HP-A1-06": false,
+            "mut-HP-A1-07": false,
+            "mut-HP-A1-08": false,
+            "mut-HP-A1-09": false,
+            "mut-HP-A1-10": false,
+            "mut-HP-A1-11": false,
+            "mut-HP-A1-12": false,
+            "mut-HP-A1-13": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-A1-01": false,
+            "mut-HP-A1-02": false,
+            "mut-HP-A1-03": false,
+            "mut-HP-A1-04": false,
+            "mut-HP-A1-05": false,
+            "mut-HP-A1-06": false,
+            "mut-HP-A1-07": false,
+            "mut-HP-A1-08": false,
+            "mut-HP-A1-09": false,
+            "mut-HP-A1-10": false,
+            "mut-HP-A1-11": false,
+            "mut-HP-A1-12": false,
+            "mut-HP-A1-13": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7a3",
+      "op": "HP",
+      "put": "a3",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [],
+      "conditions": {},
+      "sms": {},
+      "log": [
+        "NO_POOL"
+      ]
+    },
+    {
+      "cell": "HP\u00d7b1",
+      "op": "HP",
+      "put": "b1",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-B1-01",
+        "mut-HP-B1-02",
+        "mut-HP-B1-03",
+        "mut-HP-B1-04",
+        "mut-HP-B1-05",
+        "mut-HP-B1-06",
+        "mut-HP-B1-07",
+        "mut-HP-B1-08",
+        "mut-HP-B1-09",
+        "mut-HP-B1-10",
+        "mut-HP-B1-11",
+        "mut-HP-B1-12",
+        "mut-HP-B1-13",
+        "mut-HP-B1-14",
+        "mut-HP-B1-15",
+        "mut-HP-B1-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-B1-01": false,
+            "mut-HP-B1-02": false,
+            "mut-HP-B1-03": false,
+            "mut-HP-B1-04": false,
+            "mut-HP-B1-05": false,
+            "mut-HP-B1-06": false,
+            "mut-HP-B1-07": false,
+            "mut-HP-B1-08": false,
+            "mut-HP-B1-09": false,
+            "mut-HP-B1-10": false,
+            "mut-HP-B1-11": false,
+            "mut-HP-B1-12": false,
+            "mut-HP-B1-13": false,
+            "mut-HP-B1-14": false,
+            "mut-HP-B1-15": false,
+            "mut-HP-B1-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-B1-01": false,
+            "mut-HP-B1-02": false,
+            "mut-HP-B1-03": false,
+            "mut-HP-B1-04": false,
+            "mut-HP-B1-05": false,
+            "mut-HP-B1-06": false,
+            "mut-HP-B1-07": false,
+            "mut-HP-B1-08": false,
+            "mut-HP-B1-09": false,
+            "mut-HP-B1-10": false,
+            "mut-HP-B1-11": false,
+            "mut-HP-B1-12": false,
+            "mut-HP-B1-13": false,
+            "mut-HP-B1-14": false,
+            "mut-HP-B1-15": false,
+            "mut-HP-B1-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7b2",
+      "op": "HP",
+      "put": "b2",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-B2-01",
+        "mut-HP-B2-02",
+        "mut-HP-B2-03",
+        "mut-HP-B2-04",
+        "mut-HP-B2-05",
+        "mut-HP-B2-06",
+        "mut-HP-B2-07",
+        "mut-HP-B2-08",
+        "mut-HP-B2-09",
+        "mut-HP-B2-10",
+        "mut-HP-B2-11",
+        "mut-HP-B2-12",
+        "mut-HP-B2-13",
+        "mut-HP-B2-14",
+        "mut-HP-B2-15",
+        "mut-HP-B2-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-B2-01": false,
+            "mut-HP-B2-02": false,
+            "mut-HP-B2-03": false,
+            "mut-HP-B2-04": false,
+            "mut-HP-B2-05": false,
+            "mut-HP-B2-06": false,
+            "mut-HP-B2-07": false,
+            "mut-HP-B2-08": false,
+            "mut-HP-B2-09": false,
+            "mut-HP-B2-10": false,
+            "mut-HP-B2-11": false,
+            "mut-HP-B2-12": false,
+            "mut-HP-B2-13": false,
+            "mut-HP-B2-14": false,
+            "mut-HP-B2-15": false,
+            "mut-HP-B2-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-B2-01": false,
+            "mut-HP-B2-02": false,
+            "mut-HP-B2-03": false,
+            "mut-HP-B2-04": false,
+            "mut-HP-B2-05": false,
+            "mut-HP-B2-06": false,
+            "mut-HP-B2-07": false,
+            "mut-HP-B2-08": false,
+            "mut-HP-B2-09": false,
+            "mut-HP-B2-10": false,
+            "mut-HP-B2-11": false,
+            "mut-HP-B2-12": false,
+            "mut-HP-B2-13": false,
+            "mut-HP-B2-14": false,
+            "mut-HP-B2-15": false,
+            "mut-HP-B2-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7b3",
+      "op": "HP",
+      "put": "b3",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-B3-01",
+        "mut-HP-B3-02",
+        "mut-HP-B3-03",
+        "mut-HP-B3-04",
+        "mut-HP-B3-05",
+        "mut-HP-B3-06",
+        "mut-HP-B3-07",
+        "mut-HP-B3-08",
+        "mut-HP-B3-09",
+        "mut-HP-B3-10",
+        "mut-HP-B3-11",
+        "mut-HP-B3-12",
+        "mut-HP-B3-13",
+        "mut-HP-B3-14",
+        "mut-HP-B3-15",
+        "mut-HP-B3-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-B3-01": false,
+            "mut-HP-B3-02": false,
+            "mut-HP-B3-03": false,
+            "mut-HP-B3-04": false,
+            "mut-HP-B3-05": false,
+            "mut-HP-B3-06": false,
+            "mut-HP-B3-07": false,
+            "mut-HP-B3-08": false,
+            "mut-HP-B3-09": false,
+            "mut-HP-B3-10": false,
+            "mut-HP-B3-11": false,
+            "mut-HP-B3-12": false,
+            "mut-HP-B3-13": false,
+            "mut-HP-B3-14": false,
+            "mut-HP-B3-15": false,
+            "mut-HP-B3-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-B3-01": false,
+            "mut-HP-B3-02": false,
+            "mut-HP-B3-03": false,
+            "mut-HP-B3-04": false,
+            "mut-HP-B3-05": false,
+            "mut-HP-B3-06": false,
+            "mut-HP-B3-07": false,
+            "mut-HP-B3-08": false,
+            "mut-HP-B3-09": false,
+            "mut-HP-B3-10": false,
+            "mut-HP-B3-11": false,
+            "mut-HP-B3-12": false,
+            "mut-HP-B3-13": false,
+            "mut-HP-B3-14": false,
+            "mut-HP-B3-15": false,
+            "mut-HP-B3-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7c1",
+      "op": "HP",
+      "put": "c1",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-C1-01",
+        "mut-HP-C1-02"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-C1-01": false,
+            "mut-HP-C1-02": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-C1-01": false,
+            "mut-HP-C1-02": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7c2",
+      "op": "HP",
+      "put": "c2",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-C2-01",
+        "mut-HP-C2-02"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-C2-01": false,
+            "mut-HP-C2-02": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-C2-01": false,
+            "mut-HP-C2-02": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7c3",
+      "op": "HP",
+      "put": "c3",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-C3-01",
+        "mut-HP-C3-02",
+        "mut-HP-C3-03",
+        "mut-HP-C3-04"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-C3-01": false,
+            "mut-HP-C3-02": false,
+            "mut-HP-C3-03": false,
+            "mut-HP-C3-04": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-C3-01": false,
+            "mut-HP-C3-02": false,
+            "mut-HP-C3-03": false,
+            "mut-HP-C3-04": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7d1",
+      "op": "HP",
+      "put": "d1",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-D1-01",
+        "mut-HP-D1-02",
+        "mut-HP-D1-03",
+        "mut-HP-D1-04",
+        "mut-HP-D1-05",
+        "mut-HP-D1-06",
+        "mut-HP-D1-07",
+        "mut-HP-D1-08",
+        "mut-HP-D1-09",
+        "mut-HP-D1-10",
+        "mut-HP-D1-11",
+        "mut-HP-D1-12",
+        "mut-HP-D1-13",
+        "mut-HP-D1-14",
+        "mut-HP-D1-15",
+        "mut-HP-D1-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-D1-01": false,
+            "mut-HP-D1-02": false,
+            "mut-HP-D1-03": false,
+            "mut-HP-D1-04": false,
+            "mut-HP-D1-05": false,
+            "mut-HP-D1-06": false,
+            "mut-HP-D1-07": false,
+            "mut-HP-D1-08": false,
+            "mut-HP-D1-09": false,
+            "mut-HP-D1-10": false,
+            "mut-HP-D1-11": false,
+            "mut-HP-D1-12": false,
+            "mut-HP-D1-13": false,
+            "mut-HP-D1-14": false,
+            "mut-HP-D1-15": false,
+            "mut-HP-D1-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d1_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-D1-01": false,
+            "mut-HP-D1-02": false,
+            "mut-HP-D1-03": false,
+            "mut-HP-D1-04": false,
+            "mut-HP-D1-05": false,
+            "mut-HP-D1-06": false,
+            "mut-HP-D1-07": false,
+            "mut-HP-D1-08": false,
+            "mut-HP-D1-09": false,
+            "mut-HP-D1-10": false,
+            "mut-HP-D1-11": false,
+            "mut-HP-D1-12": false,
+            "mut-HP-D1-13": false,
+            "mut-HP-D1-14": false,
+            "mut-HP-D1-15": false,
+            "mut-HP-D1-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7d2",
+      "op": "HP",
+      "put": "d2",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-D2-01",
+        "mut-HP-D2-02",
+        "mut-HP-D2-03",
+        "mut-HP-D2-04",
+        "mut-HP-D2-05",
+        "mut-HP-D2-06",
+        "mut-HP-D2-07",
+        "mut-HP-D2-08",
+        "mut-HP-D2-09",
+        "mut-HP-D2-10",
+        "mut-HP-D2-11",
+        "mut-HP-D2-12",
+        "mut-HP-D2-13",
+        "mut-HP-D2-14",
+        "mut-HP-D2-15",
+        "mut-HP-D2-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-D2-01": false,
+            "mut-HP-D2-02": false,
+            "mut-HP-D2-03": false,
+            "mut-HP-D2-04": false,
+            "mut-HP-D2-05": false,
+            "mut-HP-D2-06": false,
+            "mut-HP-D2-07": false,
+            "mut-HP-D2-08": false,
+            "mut-HP-D2-09": false,
+            "mut-HP-D2-10": false,
+            "mut-HP-D2-11": false,
+            "mut-HP-D2-12": false,
+            "mut-HP-D2-13": false,
+            "mut-HP-D2-14": false,
+            "mut-HP-D2-15": false,
+            "mut-HP-D2-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d2_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-D2-01": false,
+            "mut-HP-D2-02": false,
+            "mut-HP-D2-03": false,
+            "mut-HP-D2-04": false,
+            "mut-HP-D2-05": false,
+            "mut-HP-D2-06": false,
+            "mut-HP-D2-07": false,
+            "mut-HP-D2-08": false,
+            "mut-HP-D2-09": false,
+            "mut-HP-D2-10": false,
+            "mut-HP-D2-11": false,
+            "mut-HP-D2-12": false,
+            "mut-HP-D2-13": false,
+            "mut-HP-D2-14": false,
+            "mut-HP-D2-15": false,
+            "mut-HP-D2-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "HP\u00d7d3",
+      "op": "HP",
+      "put": "d3",
+      "mutant_stratum": 3,
+      "aln_mp": 3,
+      "crs_mp": 4,
+      "pool": [
+        "mut-HP-D3-01",
+        "mut-HP-D3-02",
+        "mut-HP-D3-03",
+        "mut-HP-D3-04",
+        "mut-HP-D3-05",
+        "mut-HP-D3-06",
+        "mut-HP-D3-07",
+        "mut-HP-D3-08",
+        "mut-HP-D3-09",
+        "mut-HP-D3-10",
+        "mut-HP-D3-11",
+        "mut-HP-D3-12",
+        "mut-HP-D3-13",
+        "mut-HP-D3-14",
+        "mut-HP-D3-15",
+        "mut-HP-D3-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-D3-01": false,
+            "mut-HP-D3-02": false,
+            "mut-HP-D3-03": false,
+            "mut-HP-D3-04": false,
+            "mut-HP-D3-05": false,
+            "mut-HP-D3-06": false,
+            "mut-HP-D3-07": false,
+            "mut-HP-D3-08": false,
+            "mut-HP-D3-09": false,
+            "mut-HP-D3-10": false,
+            "mut-HP-D3-11": false,
+            "mut-HP-D3-12": false,
+            "mut-HP-D3-13": false,
+            "mut-HP-D3-14": false,
+            "mut-HP-D3-15": false,
+            "mut-HP-D3-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d3_mp3.py",
+          "mp": 3,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-HP-D3-01": false,
+            "mut-HP-D3-02": false,
+            "mut-HP-D3-03": false,
+            "mut-HP-D3-04": false,
+            "mut-HP-D3-05": false,
+            "mut-HP-D3-06": false,
+            "mut-HP-D3-07": false,
+            "mut-HP-D3-08": false,
+            "mut-HP-D3-09": false,
+            "mut-HP-D3-10": false,
+            "mut-HP-D3-11": false,
+            "mut-HP-D3-12": false,
+            "mut-HP-D3-13": false,
+            "mut-HP-D3-14": false,
+            "mut-HP-D3-15": false,
+            "mut-HP-D3-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7a1",
+      "op": "TF",
+      "put": "a1",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-A1-01",
+        "mut-TF-A1-02",
+        "mut-TF-A1-03",
+        "mut-TF-A1-04",
+        "mut-TF-A1-05",
+        "mut-TF-A1-06",
+        "mut-TF-A1-07",
+        "mut-TF-A1-08"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-A1-01": false,
+            "mut-TF-A1-02": false,
+            "mut-TF-A1-03": false,
+            "mut-TF-A1-04": false,
+            "mut-TF-A1-05": false,
+            "mut-TF-A1-06": false,
+            "mut-TF-A1-07": false,
+            "mut-TF-A1-08": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a1_mp5.py",
+          "mp": 5,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-A1-01": false,
+            "mut-TF-A1-02": false,
+            "mut-TF-A1-03": false,
+            "mut-TF-A1-04": false,
+            "mut-TF-A1-05": false,
+            "mut-TF-A1-06": false,
+            "mut-TF-A1-07": false,
+            "mut-TF-A1-08": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a1_mp5.py",
+          "mp": 5,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": null,
+        "CRS_n_sets": 0
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7a3",
+      "op": "TF",
+      "put": "a3",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-A3-01",
+        "mut-TF-A3-02",
+        "mut-TF-A3-03",
+        "mut-TF-A3-04",
+        "mut-TF-A3-05",
+        "mut-TF-A3-06",
+        "mut-TF-A3-07",
+        "mut-TF-A3-08",
+        "mut-TF-A3-09",
+        "mut-TF-A3-10",
+        "mut-TF-A3-11",
+        "mut-TF-A3-12"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-A3-01": false,
+            "mut-TF-A3-02": false,
+            "mut-TF-A3-03": false,
+            "mut-TF-A3-04": false,
+            "mut-TF-A3-05": false,
+            "mut-TF-A3-06": false,
+            "mut-TF-A3-07": false,
+            "mut-TF-A3-08": false,
+            "mut-TF-A3-09": false,
+            "mut-TF-A3-10": false,
+            "mut-TF-A3-11": false,
+            "mut-TF-A3-12": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a3_mp5.py",
+          "mp": 5,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-A3-01": false,
+            "mut-TF-A3-02": false,
+            "mut-TF-A3-03": false,
+            "mut-TF-A3-04": false,
+            "mut-TF-A3-05": false,
+            "mut-TF-A3-06": false,
+            "mut-TF-A3-07": false,
+            "mut-TF-A3-08": false,
+            "mut-TF-A3-09": false,
+            "mut-TF-A3-10": false,
+            "mut-TF-A3-11": false,
+            "mut-TF-A3-12": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-A3-01": true,
+            "mut-TF-A3-02": false,
+            "mut-TF-A3-03": true,
+            "mut-TF-A3-04": false,
+            "mut-TF-A3-05": true,
+            "mut-TF-A3-06": false,
+            "mut-TF-A3-07": false,
+            "mut-TF-A3-08": false,
+            "mut-TF-A3-09": true,
+            "mut-TF-A3-10": false,
+            "mut-TF-A3-11": true,
+            "mut-TF-A3-12": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.4166666666666667,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.4166666666666667,
+        "CRS_n_sets": 1
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7b2",
+      "op": "TF",
+      "put": "b2",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-B2-01",
+        "mut-TF-B2-02",
+        "mut-TF-B2-03",
+        "mut-TF-B2-04"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/b2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-B2-01": false,
+            "mut-TF-B2-02": false,
+            "mut-TF-B2-03": false,
+            "mut-TF-B2-04": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/b2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-B2-01": false,
+            "mut-TF-B2-02": false,
+            "mut-TF-B2-03": false,
+            "mut-TF-B2-04": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/b2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-B2-01": false,
+            "mut-TF-B2-02": false,
+            "mut-TF-B2-03": false,
+            "mut-TF-B2-04": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/b2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-B2-01": false,
+            "mut-TF-B2-02": false,
+            "mut-TF-B2-03": false,
+            "mut-TF-B2-04": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7c1",
+      "op": "TF",
+      "put": "c1",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-C1-01",
+        "mut-TF-C1-02",
+        "mut-TF-C1-03",
+        "mut-TF-C1-04",
+        "mut-TF-C1-05",
+        "mut-TF-C1-06",
+        "mut-TF-C1-07",
+        "mut-TF-C1-08",
+        "mut-TF-C1-09",
+        "mut-TF-C1-10",
+        "mut-TF-C1-11",
+        "mut-TF-C1-12",
+        "mut-TF-C1-13",
+        "mut-TF-C1-14",
+        "mut-TF-C1-15",
+        "mut-TF-C1-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C1-01": false,
+            "mut-TF-C1-02": false,
+            "mut-TF-C1-03": false,
+            "mut-TF-C1-04": false,
+            "mut-TF-C1-05": false,
+            "mut-TF-C1-06": false,
+            "mut-TF-C1-07": false,
+            "mut-TF-C1-08": false,
+            "mut-TF-C1-09": false,
+            "mut-TF-C1-10": false,
+            "mut-TF-C1-11": false,
+            "mut-TF-C1-12": false,
+            "mut-TF-C1-13": false,
+            "mut-TF-C1-14": false,
+            "mut-TF-C1-15": false,
+            "mut-TF-C1-16": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C1-01": false,
+            "mut-TF-C1-02": false,
+            "mut-TF-C1-03": false,
+            "mut-TF-C1-04": false,
+            "mut-TF-C1-05": false,
+            "mut-TF-C1-06": false,
+            "mut-TF-C1-07": false,
+            "mut-TF-C1-08": false,
+            "mut-TF-C1-09": false,
+            "mut-TF-C1-10": false,
+            "mut-TF-C1-11": false,
+            "mut-TF-C1-12": false,
+            "mut-TF-C1-13": false,
+            "mut-TF-C1-14": false,
+            "mut-TF-C1-15": false,
+            "mut-TF-C1-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C1-01": false,
+            "mut-TF-C1-02": false,
+            "mut-TF-C1-03": false,
+            "mut-TF-C1-04": false,
+            "mut-TF-C1-05": false,
+            "mut-TF-C1-06": false,
+            "mut-TF-C1-07": false,
+            "mut-TF-C1-08": false,
+            "mut-TF-C1-09": false,
+            "mut-TF-C1-10": false,
+            "mut-TF-C1-11": false,
+            "mut-TF-C1-12": false,
+            "mut-TF-C1-13": false,
+            "mut-TF-C1-14": false,
+            "mut-TF-C1-15": false,
+            "mut-TF-C1-16": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C1-01": false,
+            "mut-TF-C1-02": false,
+            "mut-TF-C1-03": false,
+            "mut-TF-C1-04": false,
+            "mut-TF-C1-05": false,
+            "mut-TF-C1-06": false,
+            "mut-TF-C1-07": false,
+            "mut-TF-C1-08": false,
+            "mut-TF-C1-09": false,
+            "mut-TF-C1-10": false,
+            "mut-TF-C1-11": false,
+            "mut-TF-C1-12": false,
+            "mut-TF-C1-13": false,
+            "mut-TF-C1-14": false,
+            "mut-TF-C1-15": false,
+            "mut-TF-C1-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7c2",
+      "op": "TF",
+      "put": "c2",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-C2-01",
+        "mut-TF-C2-02",
+        "mut-TF-C2-03",
+        "mut-TF-C2-04",
+        "mut-TF-C2-05",
+        "mut-TF-C2-06",
+        "mut-TF-C2-07",
+        "mut-TF-C2-08",
+        "mut-TF-C2-09",
+        "mut-TF-C2-10",
+        "mut-TF-C2-11",
+        "mut-TF-C2-12"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C2-01": false,
+            "mut-TF-C2-02": false,
+            "mut-TF-C2-03": false,
+            "mut-TF-C2-04": false,
+            "mut-TF-C2-05": false,
+            "mut-TF-C2-06": false,
+            "mut-TF-C2-07": false,
+            "mut-TF-C2-08": false,
+            "mut-TF-C2-09": false,
+            "mut-TF-C2-10": false,
+            "mut-TF-C2-11": false,
+            "mut-TF-C2-12": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C2-01": false,
+            "mut-TF-C2-02": false,
+            "mut-TF-C2-03": false,
+            "mut-TF-C2-04": false,
+            "mut-TF-C2-05": false,
+            "mut-TF-C2-06": false,
+            "mut-TF-C2-07": false,
+            "mut-TF-C2-08": false,
+            "mut-TF-C2-09": false,
+            "mut-TF-C2-10": false,
+            "mut-TF-C2-11": false,
+            "mut-TF-C2-12": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C2-01": false,
+            "mut-TF-C2-02": false,
+            "mut-TF-C2-03": false,
+            "mut-TF-C2-04": false,
+            "mut-TF-C2-05": false,
+            "mut-TF-C2-06": false,
+            "mut-TF-C2-07": false,
+            "mut-TF-C2-08": false,
+            "mut-TF-C2-09": false,
+            "mut-TF-C2-10": false,
+            "mut-TF-C2-11": false,
+            "mut-TF-C2-12": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C2-01": false,
+            "mut-TF-C2-02": false,
+            "mut-TF-C2-03": false,
+            "mut-TF-C2-04": false,
+            "mut-TF-C2-05": false,
+            "mut-TF-C2-06": false,
+            "mut-TF-C2-07": false,
+            "mut-TF-C2-08": false,
+            "mut-TF-C2-09": false,
+            "mut-TF-C2-10": false,
+            "mut-TF-C2-11": false,
+            "mut-TF-C2-12": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7c3",
+      "op": "TF",
+      "put": "c3",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-C3-01",
+        "mut-TF-C3-02",
+        "mut-TF-C3-03",
+        "mut-TF-C3-04",
+        "mut-TF-C3-05",
+        "mut-TF-C3-06",
+        "mut-TF-C3-07",
+        "mut-TF-C3-08",
+        "mut-TF-C3-09",
+        "mut-TF-C3-10",
+        "mut-TF-C3-11",
+        "mut-TF-C3-12"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C3-01": false,
+            "mut-TF-C3-02": false,
+            "mut-TF-C3-03": false,
+            "mut-TF-C3-04": false,
+            "mut-TF-C3-05": false,
+            "mut-TF-C3-06": false,
+            "mut-TF-C3-07": false,
+            "mut-TF-C3-08": false,
+            "mut-TF-C3-09": false,
+            "mut-TF-C3-10": false,
+            "mut-TF-C3-11": false,
+            "mut-TF-C3-12": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C3-01": false,
+            "mut-TF-C3-02": false,
+            "mut-TF-C3-03": false,
+            "mut-TF-C3-04": false,
+            "mut-TF-C3-05": false,
+            "mut-TF-C3-06": false,
+            "mut-TF-C3-07": false,
+            "mut-TF-C3-08": false,
+            "mut-TF-C3-09": false,
+            "mut-TF-C3-10": false,
+            "mut-TF-C3-11": false,
+            "mut-TF-C3-12": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C3-01": false,
+            "mut-TF-C3-02": false,
+            "mut-TF-C3-03": false,
+            "mut-TF-C3-04": false,
+            "mut-TF-C3-05": false,
+            "mut-TF-C3-06": false,
+            "mut-TF-C3-07": false,
+            "mut-TF-C3-08": false,
+            "mut-TF-C3-09": false,
+            "mut-TF-C3-10": false,
+            "mut-TF-C3-11": false,
+            "mut-TF-C3-12": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-C3-01": false,
+            "mut-TF-C3-02": false,
+            "mut-TF-C3-03": false,
+            "mut-TF-C3-04": false,
+            "mut-TF-C3-05": false,
+            "mut-TF-C3-06": false,
+            "mut-TF-C3-07": false,
+            "mut-TF-C3-08": false,
+            "mut-TF-C3-09": false,
+            "mut-TF-C3-10": false,
+            "mut-TF-C3-11": false,
+            "mut-TF-C3-12": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7d1",
+      "op": "TF",
+      "put": "d1",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-D1-01",
+        "mut-TF-D1-02",
+        "mut-TF-D1-03",
+        "mut-TF-D1-04",
+        "mut-TF-D1-05",
+        "mut-TF-D1-06"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D1-01": false,
+            "mut-TF-D1-02": false,
+            "mut-TF-D1-03": false,
+            "mut-TF-D1-04": false,
+            "mut-TF-D1-05": false,
+            "mut-TF-D1-06": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D1-01": true,
+            "mut-TF-D1-02": true,
+            "mut-TF-D1-03": true,
+            "mut-TF-D1-04": true,
+            "mut-TF-D1-05": true,
+            "mut-TF-D1-06": true
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d1_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D1-01": false,
+            "mut-TF-D1-02": false,
+            "mut-TF-D1-03": false,
+            "mut-TF-D1-04": false,
+            "mut-TF-D1-05": false,
+            "mut-TF-D1-06": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D1-01": true,
+            "mut-TF-D1-02": true,
+            "mut-TF-D1-03": true,
+            "mut-TF-D1-04": true,
+            "mut-TF-D1-05": true,
+            "mut-TF-D1-06": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 1.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 1.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 1.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7d2",
+      "op": "TF",
+      "put": "d2",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-D2-01",
+        "mut-TF-D2-02",
+        "mut-TF-D2-03",
+        "mut-TF-D2-04",
+        "mut-TF-D2-05",
+        "mut-TF-D2-06",
+        "mut-TF-D2-07",
+        "mut-TF-D2-08",
+        "mut-TF-D2-09",
+        "mut-TF-D2-10",
+        "mut-TF-D2-11",
+        "mut-TF-D2-12",
+        "mut-TF-D2-13",
+        "mut-TF-D2-14",
+        "mut-TF-D2-15",
+        "mut-TF-D2-16"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D2-01": false,
+            "mut-TF-D2-02": false,
+            "mut-TF-D2-03": false,
+            "mut-TF-D2-04": false,
+            "mut-TF-D2-05": false,
+            "mut-TF-D2-06": false,
+            "mut-TF-D2-07": false,
+            "mut-TF-D2-08": false,
+            "mut-TF-D2-09": false,
+            "mut-TF-D2-10": false,
+            "mut-TF-D2-11": false,
+            "mut-TF-D2-12": false,
+            "mut-TF-D2-13": false,
+            "mut-TF-D2-14": false,
+            "mut-TF-D2-15": false,
+            "mut-TF-D2-16": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D2-01": false,
+            "mut-TF-D2-02": false,
+            "mut-TF-D2-03": false,
+            "mut-TF-D2-04": false,
+            "mut-TF-D2-05": false,
+            "mut-TF-D2-06": false,
+            "mut-TF-D2-07": false,
+            "mut-TF-D2-08": false,
+            "mut-TF-D2-09": false,
+            "mut-TF-D2-10": false,
+            "mut-TF-D2-11": false,
+            "mut-TF-D2-12": false,
+            "mut-TF-D2-13": false,
+            "mut-TF-D2-14": false,
+            "mut-TF-D2-15": false,
+            "mut-TF-D2-16": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d2_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D2-01": false,
+            "mut-TF-D2-02": false,
+            "mut-TF-D2-03": false,
+            "mut-TF-D2-04": false,
+            "mut-TF-D2-05": false,
+            "mut-TF-D2-06": false,
+            "mut-TF-D2-07": false,
+            "mut-TF-D2-08": false,
+            "mut-TF-D2-09": false,
+            "mut-TF-D2-10": false,
+            "mut-TF-D2-11": false,
+            "mut-TF-D2-12": false,
+            "mut-TF-D2-13": false,
+            "mut-TF-D2-14": false,
+            "mut-TF-D2-15": false,
+            "mut-TF-D2-16": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D2-01": false,
+            "mut-TF-D2-02": false,
+            "mut-TF-D2-03": false,
+            "mut-TF-D2-04": false,
+            "mut-TF-D2-05": false,
+            "mut-TF-D2-06": false,
+            "mut-TF-D2-07": false,
+            "mut-TF-D2-08": false,
+            "mut-TF-D2-09": false,
+            "mut-TF-D2-10": false,
+            "mut-TF-D2-11": false,
+            "mut-TF-D2-12": false,
+            "mut-TF-D2-13": false,
+            "mut-TF-D2-14": false,
+            "mut-TF-D2-15": false,
+            "mut-TF-D2-16": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "TF\u00d7d3",
+      "op": "TF",
+      "put": "d3",
+      "mutant_stratum": 4,
+      "aln_mp": 4,
+      "crs_mp": 5,
+      "pool": [
+        "mut-TF-D3-01",
+        "mut-TF-D3-02",
+        "mut-TF-D3-03",
+        "mut-TF-D3-04",
+        "mut-TF-D3-05",
+        "mut-TF-D3-06",
+        "mut-TF-D3-07",
+        "mut-TF-D3-08",
+        "mut-TF-D3-09",
+        "mut-TF-D3-10",
+        "mut-TF-D3-11"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D3-01": false,
+            "mut-TF-D3-02": false,
+            "mut-TF-D3-03": false,
+            "mut-TF-D3-04": false,
+            "mut-TF-D3-05": false,
+            "mut-TF-D3-06": false,
+            "mut-TF-D3-07": false,
+            "mut-TF-D3-08": false,
+            "mut-TF-D3-09": false,
+            "mut-TF-D3-10": false,
+            "mut-TF-D3-11": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D3-01": true,
+            "mut-TF-D3-02": true,
+            "mut-TF-D3-03": true,
+            "mut-TF-D3-04": true,
+            "mut-TF-D3-05": true,
+            "mut-TF-D3-06": true,
+            "mut-TF-D3-07": true,
+            "mut-TF-D3-08": true,
+            "mut-TF-D3-09": true,
+            "mut-TF-D3-10": true,
+            "mut-TF-D3-11": true
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d3_mp4.py",
+          "mp": 4,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D3-01": false,
+            "mut-TF-D3-02": false,
+            "mut-TF-D3-03": false,
+            "mut-TF-D3-04": false,
+            "mut-TF-D3-05": false,
+            "mut-TF-D3-06": false,
+            "mut-TF-D3-07": false,
+            "mut-TF-D3-08": false,
+            "mut-TF-D3-09": false,
+            "mut-TF-D3-10": false,
+            "mut-TF-D3-11": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-TF-D3-01": true,
+            "mut-TF-D3-02": true,
+            "mut-TF-D3-03": true,
+            "mut-TF-D3-04": true,
+            "mut-TF-D3-05": true,
+            "mut-TF-D3-06": true,
+            "mut-TF-D3-07": true,
+            "mut-TF-D3-08": true,
+            "mut-TF-D3-09": true,
+            "mut-TF-D3-10": true,
+            "mut-TF-D3-11": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 1.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 1.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 1.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7a1",
+      "op": "SI",
+      "put": "a1",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-A1-01",
+        "mut-SI-A1-02",
+        "mut-SI-A1-03",
+        "mut-SI-A1-04",
+        "mut-SI-A1-05",
+        "mut-SI-A1-06",
+        "mut-SI-A1-07",
+        "mut-SI-A1-08",
+        "mut-SI-A1-09",
+        "mut-SI-A1-10",
+        "mut-SI-A1-11",
+        "mut-SI-A1-12",
+        "mut-SI-A1-13",
+        "mut-SI-A1-14",
+        "mut-SI-A1-15"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a1_mp5.py",
+          "mp": 5,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-A1-01": false,
+            "mut-SI-A1-02": true,
+            "mut-SI-A1-03": false,
+            "mut-SI-A1-04": false,
+            "mut-SI-A1-05": false,
+            "mut-SI-A1-06": false,
+            "mut-SI-A1-07": true,
+            "mut-SI-A1-08": true,
+            "mut-SI-A1-09": false,
+            "mut-SI-A1-10": true,
+            "mut-SI-A1-11": false,
+            "mut-SI-A1-12": true,
+            "mut-SI-A1-13": false,
+            "mut-SI-A1-14": false,
+            "mut-SI-A1-15": true
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a1_mp5.py",
+          "mp": 5,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-A1-01": false,
+            "mut-SI-A1-02": false,
+            "mut-SI-A1-03": false,
+            "mut-SI-A1-04": false,
+            "mut-SI-A1-05": false,
+            "mut-SI-A1-06": false,
+            "mut-SI-A1-07": false,
+            "mut-SI-A1-08": false,
+            "mut-SI-A1-09": false,
+            "mut-SI-A1-10": false,
+            "mut-SI-A1-11": false,
+            "mut-SI-A1-12": false,
+            "mut-SI-A1-13": false,
+            "mut-SI-A1-14": false,
+            "mut-SI-A1-15": false
+          }
+        }
+      },
+      "sms": {
+        "set1_CRS": 0.4,
+        "set2_CRS": 0.0,
+        "ALN_mean": null,
+        "ALN_n_sets": 0,
+        "CRS_mean": 0.2,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7a2",
+      "op": "SI",
+      "put": "a2",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-A2-01",
+        "mut-SI-A2-02",
+        "mut-SI-A2-03"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/a2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-A2-01": false,
+            "mut-SI-A2-02": false,
+            "mut-SI-A2-03": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/a2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-A2-01": true,
+            "mut-SI-A2-02": true,
+            "mut-SI-A2-03": true
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/a2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-A2-01": false,
+            "mut-SI-A2-02": false,
+            "mut-SI-A2-03": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/a2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-A2-01": true,
+            "mut-SI-A2-02": true,
+            "mut-SI-A2-03": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 1.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 1.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 1.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7a3",
+      "op": "SI",
+      "put": "a3",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [],
+      "conditions": {},
+      "sms": {},
+      "log": [
+        "NO_POOL"
+      ]
+    },
+    {
+      "cell": "SI\u00d7b3",
+      "op": "SI",
+      "put": "b3",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [],
+      "conditions": {},
+      "sms": {},
+      "log": [
+        "NO_POOL"
+      ]
+    },
+    {
+      "cell": "SI\u00d7c1",
+      "op": "SI",
+      "put": "c1",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-C1-01",
+        "mut-SI-C1-02"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C1-01": true,
+            "mut-SI-C1-02": true
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C1-01": true,
+            "mut-SI-C1-02": true
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C1-01": true,
+            "mut-SI-C1-02": true
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C1-01": true,
+            "mut-SI-C1-02": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 1.0,
+        "set1_CRS": 1.0,
+        "set2_ALN": 1.0,
+        "set2_CRS": 1.0,
+        "ALN_mean": 1.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 1.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7c2",
+      "op": "SI",
+      "put": "c2",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-C2-01",
+        "mut-SI-C2-02",
+        "mut-SI-C2-03",
+        "mut-SI-C2-04"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C2-01": false,
+            "mut-SI-C2-02": false,
+            "mut-SI-C2-03": false,
+            "mut-SI-C2-04": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C2-01": false,
+            "mut-SI-C2-02": false,
+            "mut-SI-C2-03": false,
+            "mut-SI-C2-04": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C2-01": false,
+            "mut-SI-C2-02": false,
+            "mut-SI-C2-03": false,
+            "mut-SI-C2-04": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C2-01": true,
+            "mut-SI-C2-02": false,
+            "mut-SI-C2-03": true,
+            "mut-SI-C2-04": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.75,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.375,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7c3",
+      "op": "SI",
+      "put": "c3",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-C3-01",
+        "mut-SI-C3-02",
+        "mut-SI-C3-03",
+        "mut-SI-C3-04",
+        "mut-SI-C3-05",
+        "mut-SI-C3-06"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/c3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C3-01": false,
+            "mut-SI-C3-02": false,
+            "mut-SI-C3-03": false,
+            "mut-SI-C3-04": false,
+            "mut-SI-C3-05": false,
+            "mut-SI-C3-06": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/c3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C3-01": true,
+            "mut-SI-C3-02": true,
+            "mut-SI-C3-03": true,
+            "mut-SI-C3-04": true,
+            "mut-SI-C3-05": true,
+            "mut-SI-C3-06": true
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/c3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C3-01": false,
+            "mut-SI-C3-02": false,
+            "mut-SI-C3-03": false,
+            "mut-SI-C3-04": false,
+            "mut-SI-C3-05": false,
+            "mut-SI-C3-06": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/c3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-C3-01": true,
+            "mut-SI-C3-02": true,
+            "mut-SI-C3-03": true,
+            "mut-SI-C3-04": true,
+            "mut-SI-C3-05": true,
+            "mut-SI-C3-06": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 1.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 1.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 1.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7d1",
+      "op": "SI",
+      "put": "d1",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-D1-01"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D1-01": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D1-01": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d1_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D1-01": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d1_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D1-01": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7d2",
+      "op": "SI",
+      "put": "d2",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-D2-01",
+        "mut-SI-D2-02"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D2-01": false,
+            "mut-SI-D2-02": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d2_mp1.py",
+          "mp": 1,
+          "measurable": false,
+          "orig_pass": null,
+          "kills": {},
+          "reason": "MR_SLOT_EMPTY"
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d2_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D2-01": false,
+            "mut-SI-D2-02": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d2_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D2-01": true,
+            "mut-SI-D2-02": true
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 1.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 1.0,
+        "CRS_n_sets": 1
+      },
+      "log": []
+    },
+    {
+      "cell": "SI\u00d7d3",
+      "op": "SI",
+      "put": "d3",
+      "mutant_stratum": 5,
+      "aln_mp": 5,
+      "crs_mp": 1,
+      "pool": [
+        "mut-SI-D3-01",
+        "mut-SI-D3-02",
+        "mut-SI-D3-03",
+        "mut-SI-D3-04",
+        "mut-SI-D3-05",
+        "mut-SI-D3-06",
+        "mut-SI-D3-07",
+        "mut-SI-D3-08",
+        "mut-SI-D3-09",
+        "mut-SI-D3-10",
+        "mut-SI-D3-11"
+      ],
+      "conditions": {
+        "set1_ALN": {
+          "mr_path": "data/v5/mrs/set1/d3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D3-01": false,
+            "mut-SI-D3-02": false,
+            "mut-SI-D3-03": false,
+            "mut-SI-D3-04": false,
+            "mut-SI-D3-05": false,
+            "mut-SI-D3-06": false,
+            "mut-SI-D3-07": false,
+            "mut-SI-D3-08": false,
+            "mut-SI-D3-09": false,
+            "mut-SI-D3-10": false,
+            "mut-SI-D3-11": false
+          }
+        },
+        "set1_CRS": {
+          "mr_path": "data/v5/mrs/set1/d3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D3-01": false,
+            "mut-SI-D3-02": false,
+            "mut-SI-D3-03": false,
+            "mut-SI-D3-04": false,
+            "mut-SI-D3-05": false,
+            "mut-SI-D3-06": false,
+            "mut-SI-D3-07": false,
+            "mut-SI-D3-08": false,
+            "mut-SI-D3-09": false,
+            "mut-SI-D3-10": false,
+            "mut-SI-D3-11": false
+          }
+        },
+        "set2_ALN": {
+          "mr_path": "data/v5/mrs/set2/d3_mp5.py",
+          "mp": 5,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D3-01": false,
+            "mut-SI-D3-02": false,
+            "mut-SI-D3-03": false,
+            "mut-SI-D3-04": false,
+            "mut-SI-D3-05": false,
+            "mut-SI-D3-06": false,
+            "mut-SI-D3-07": false,
+            "mut-SI-D3-08": false,
+            "mut-SI-D3-09": false,
+            "mut-SI-D3-10": false,
+            "mut-SI-D3-11": false
+          }
+        },
+        "set2_CRS": {
+          "mr_path": "data/v5/mrs/set2/d3_mp1.py",
+          "mp": 1,
+          "measurable": true,
+          "orig_pass": true,
+          "kills": {
+            "mut-SI-D3-01": false,
+            "mut-SI-D3-02": false,
+            "mut-SI-D3-03": false,
+            "mut-SI-D3-04": false,
+            "mut-SI-D3-05": false,
+            "mut-SI-D3-06": false,
+            "mut-SI-D3-07": false,
+            "mut-SI-D3-08": false,
+            "mut-SI-D3-09": false,
+            "mut-SI-D3-10": false,
+            "mut-SI-D3-11": false
+          }
+        }
+      },
+      "sms": {
+        "set1_ALN": 0.0,
+        "set1_CRS": 0.0,
+        "set2_ALN": 0.0,
+        "set2_CRS": 0.0,
+        "ALN_mean": 0.0,
+        "ALN_n_sets": 2,
+        "CRS_mean": 0.0,
+        "CRS_n_sets": 2
+      },
+      "log": []
+    }
+  ]
+}

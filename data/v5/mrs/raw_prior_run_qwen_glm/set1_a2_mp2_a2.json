@@ -1,0 +1,1 @@
+{"set": 1, "put": "a2", "mp": 2, "attempt": 2, "model": "qwen3-235b-a22b-instruct-2507", "content": "```python\nimport numpy as np\n\ndef r(x):\n    return 1 - x\n\ndef R(y_orig, y_new):\n    if not (np.isfinite(y_orig) and np.isfinite(y_new)):\n        return False\n    return abs((y_orig + y_new) - 15.0) < 1e-6\n```", "created_at": "2026-07-29T03:33:28Z"}

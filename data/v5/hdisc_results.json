@@ -1,0 +1,21 @@
+{
+  "hypothesis": "H-DISC",
+  "estimate": -0.10256410256410256,
+  "ci": [
+    -0.7111111111111111,
+    0.5277777777777778
+  ],
+  "p": 0.65380859375,
+  "verdict": "FAIL",
+  "extras": {
+    "hodges_lehmann_shift": 0.0,
+    "cliffs_delta_sensitivity": -0.07644628099173553,
+    "n_pairs": 22,
+    "n_nonzero_pairs": 12,
+    "mid": 0.33,
+    "flags": [
+      "UNDERPOWERED"
+    ],
+    "criterion": "Wilcoxon(greater) p<0.05 AND r_mp>=0.33"
+  }
+}

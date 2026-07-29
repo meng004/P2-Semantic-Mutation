@@ -173,6 +173,11 @@ def main() -> None:
             "mean_pc": round(float(np.mean(
                 [v["pattern_coverage"] for v in rq4["per_put"].values()])), 4),
         },
+        # Reserved for theory T5.2 three-state equivalence (Task 0.2 Step 2b).
+        # Do not populate until the SSOT key-migration gate in
+        # docs/review_20260728/ssot_key_migration.md passes.
+        "SMS_strict": None,
+        "SMS_cons": None,
     }
     if VERSION == "v4":
         assert audit is not None
@@ -192,6 +197,36 @@ def main() -> None:
         out["rq2"]["stipulated_truth"] = stipulated["stipulated_truth"]
         out["lrca"] = audit["lrca_na_summary"]
         out["gap_premise_support"] = audit["gap_premise_support"]
+
+    # Keep the argument-uplift consumer key while preserving the newer TOSEM
+    # SSOT ruling: rq2 itself is the frozen MP5 primary, not the historical
+    # MP1/v3b sensitivity slice.
+    if VERSION == "v4":
+        mp5_path = RESULTS / "rq2_cliffs_delta_v4_mp5.json"
+        if mp5_path.exists():
+            mp5 = json.loads(mp5_path.read_text())
+            out["rq2"]["estimand"] = (
+                "v4 cross-source, c-class primary held at MP5 "
+                "(pre-registered v3); H2 headline"
+            )
+            out["rq2_primary_mp5"] = {
+                "estimand": (
+                    "v4 cross-source, c-class primary held at MP5 "
+                    "(pre-registered v3); H2 headline"
+                ),
+                "n_aligned": mp5["n_aligned"],
+                "n_cross": mp5["n_cross"],
+                "mean_aligned": round(float(mp5["mean_aligned"]), 4),
+                "mean_cross": round(float(mp5["mean_cross"]), 4),
+                "median_aligned": round(float(mp5["median_aligned"]), 4),
+                "median_cross": round(float(mp5["median_cross"]), 4),
+                "cliffs_delta": round(float(mp5["cliffs_delta"]), 4),
+                "delta_ci_95_lo": round(float(mp5["delta_ci_95"][0]), 4),
+                "delta_ci_95_hi": round(float(mp5["delta_ci_95"][1]), 4),
+                "h2_threshold_delta": mp5["h2_threshold_delta"],
+                "h2_delta_pass": mp5["h2_delta_pass"],
+                "source_file": "rq2_cliffs_delta_v4_mp5.json",
+            }
 
     out_path = RESULTS / OUT_FILE
     out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")

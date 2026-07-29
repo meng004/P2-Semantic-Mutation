@@ -1,0 +1,1 @@
+{"set": 2, "put": "d1", "mp": 1, "attempt": 3, "model": "grok-4.5", "content": "```python\ndef r(x):\n    return 0.0\n\ndef R(y_orig, y_new):\n    return abs(y_new - 0.5) <= 0.2 and y_orig + y_new >= 0.85\n```", "created_at": "2026-07-29T05:12:43Z"}

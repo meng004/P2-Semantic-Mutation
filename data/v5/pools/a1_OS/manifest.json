@@ -1,0 +1,27 @@
+{
+  "cell": "OS\u00d7a1",
+  "op": "OS",
+  "put": "a1",
+  "eff_stratum": 2,
+  "n_confirmed": 2,
+  "mutants": [
+    {
+      "mutant_id": "mut-OS-A1-01",
+      "attempt_idx": 1,
+      "op_id": "a1_OS1",
+      "model": "gpt-4o",
+      "sha256": "fc348d34308bf5e5482fa3f3dfc074654c7908532429fc39edd1391548ce10a2",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/a1_OS_a01.json"
+    },
+    {
+      "mutant_id": "mut-OS-A1-02",
+      "attempt_idx": 5,
+      "op_id": "a1_OS1",
+      "model": "gpt-4o",
+      "sha256": "c8a267c343080f9dd5fcbed40f37e904deb2fbe7222c897aecd705c4dc23b991",
+      "eff_stratum": 2,
+      "raw_relpath": "data/v5/raw_candidates/a1_OS_a05.json"
+    }
+  ]
+}

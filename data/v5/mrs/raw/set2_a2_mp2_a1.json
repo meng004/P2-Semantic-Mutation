@@ -1,0 +1,1 @@
+{"set": 2, "put": "a2", "mp": 2, "attempt": 1, "model": "grok-4.5", "content": "```python\nimport math\n\ndef r(x):\n    x = float(x)\n    return 0.5 * x + 0.5\n\ndef R(y_orig, y_new):\n    return math.isfinite(y_orig) and math.isfinite(y_new)\n```", "created_at": "2026-07-29T04:48:09Z"}

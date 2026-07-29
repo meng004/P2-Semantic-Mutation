@@ -1,0 +1,1 @@
+{"set": 2, "put": "a2", "mp": 1, "attempt": 3, "model": "glm-4.7", "content": "```python\nimport math\n\ndef r(x):\n    return 1.0 - x\n\ndef R(y_orig, y_new):\n    return math.isclose(y_orig, 15.0 - y_new, rel_tol=1e-9, abs_tol=1e-9)\n```", "created_at": "2026-07-29T03:42:21Z"}

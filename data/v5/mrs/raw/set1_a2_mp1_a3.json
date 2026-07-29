@@ -1,0 +1,1 @@
+{"set": 1, "put": "a2", "mp": 1, "attempt": 3, "model": "gemini-3.5-flash", "content": "```python\nimport numpy as np\n\n\ndef r(x):\n    return x / 2.0\n\n\ndef R(y_orig, y_new):\n    return np.isclose(2.0 * y_new - y_orig, 6.0, atol=1e-9)\n```", "created_at": "2026-07-29T04:38:00Z"}

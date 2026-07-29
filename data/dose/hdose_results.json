@@ -1,0 +1,66 @@
+[
+  {
+    "hypothesis": "H-DOSE",
+    "estimate": 56.666666666666664,
+    "ci": null,
+    "p": 9.999000099990002e-05,
+    "verdict": "PASS",
+    "extras": {
+      "per_curve_T": [
+        0.0,
+        26.666666666666664,
+        30.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "per_curve_p": [
+        1.0,
+        9.999000099990002e-05,
+        9.999000099990002e-05,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "page_L": 613.5,
+      "page_p_descriptive": 0.12466617132178032,
+      "n_perm": 10000,
+      "criterion": "global within-curve permutation p<0.05"
+    }
+  },
+  {
+    "hypothesis": "H-DOSE-CTR",
+    "estimate": 2.0,
+    "ci": null,
+    "p": null,
+    "verdict": "FAIL",
+    "extras": {
+      "centres": [
+        null,
+        0.011830536981763236,
+        0.10362936906351715,
+        0.01246830909990726,
+        null,
+        null,
+        null,
+        null
+      ],
+      "contained": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "family": "secondary-confirmatory (B-2)",
+      "criterion": ">=6/8 curves contained in eps_tol \u00b1 (Delta_r+2*eta_bar)"
+    }
+  }
+]

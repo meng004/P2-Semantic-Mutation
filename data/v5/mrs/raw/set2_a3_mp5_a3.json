@@ -1,0 +1,1 @@
+{"set": 2, "put": "a3", "mp": 5, "attempt": 3, "model": "grok-4.5", "content": "```python\nimport numpy as np\n\ndef r(x):\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    if N < 8:\n        return float(x)\n    return 1.0 / (2 * N)\n\ndef R(y_orig, y_new):\n    return bool(np.isfinite(y_orig) and np.isfinite(y_new))\n```", "created_at": "2026-07-29T05:00:30Z"}

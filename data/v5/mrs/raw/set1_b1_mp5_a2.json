@@ -1,0 +1,1 @@
+{"set": 1, "put": "b1", "mp": 5, "attempt": 2, "model": "gemini-3.5-flash", "content": "```python\nimport numpy as np\n\n\ndef r(x):\n    # Scale input towards the upper asymptotic bound of 1.0\n    return float(0.5 * x + 0.5)\n\n\ndef R(y_orig, y_new):\n    # The output must be monotonically non-decreasing\n    return y_new >= y_orig\n```", "created_at": "2026-07-29T04:39:59Z"}

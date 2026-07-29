@@ -1,0 +1,1 @@
+{"set": 2, "put": "a3", "mp": 5, "attempt": 1, "model": "glm-4.7", "content": "```python\ndef r(x):\n    # Halve the grid spacing to move towards the asymptotic regime (h -> 0)\n    return x / 2.0\n\ndef R(y_orig, y_new):\n    # Gating validity: The ratio of physical quantities should be positive.\n    return y_orig > 0 and y_new > 0\n```", "created_at": "2026-07-29T03:53:03Z"}

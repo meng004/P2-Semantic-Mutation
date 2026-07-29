@@ -1,0 +1,313 @@
+{
+  "schema": "hcons_dedup_sensitivity_v1",
+  "role": "exploratory sensitivity probe ordered by the CP2 evidence-level review; the frozen H-CONS verdict (analysis_hcons.py on the exact-SHA funnel) stands; this artifact quantifies its robustness to the distinctness operationalisation, which the frozen prereg text does not pin down",
+  "normaliser_id": "ast.dump(annotate_fields=False, include_attributes=False) \u2014 same normaliser family as EXP-STR (syntactic_overlap_v2)",
+  "bases": {
+    "exact_sha": {
+      "cells_ge5": 33,
+      "n_app": 51,
+      "p_hat": 0.6470588235294118,
+      "wilson95": [
+        0.5098605845450523,
+        0.7636551154847915
+      ],
+      "gate_LB_gt_0.5": true
+    },
+    "ast_normalised": {
+      "cells_ge5": 28,
+      "n_app": 51,
+      "p_hat": 0.5490196078431373,
+      "wilson95": [
+        0.41384708550368815,
+        0.6773248145062598
+      ],
+      "gate_LB_gt_0.5": false
+    }
+  },
+  "cells_crossing_5_line": [
+    {
+      "cell": "OS\u00d7b2",
+      "n_confirmed_sha": 13,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "OS\u00d7c3",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 4
+    },
+    {
+      "cell": "OS\u00d7d3",
+      "n_confirmed_sha": 6,
+      "n_confirmed_ast": 3
+    },
+    {
+      "cell": "TF\u00d7a1",
+      "n_confirmed_sha": 8,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "TF\u00d7d1",
+      "n_confirmed_sha": 6,
+      "n_confirmed_ast": 2
+    }
+  ],
+  "per_cell": [
+    {
+      "cell": "CE\u00d7a1",
+      "n_confirmed_sha": 15,
+      "n_confirmed_ast": 13
+    },
+    {
+      "cell": "CE\u00d7a2",
+      "n_confirmed_sha": 7,
+      "n_confirmed_ast": 7
+    },
+    {
+      "cell": "CE\u00d7a3",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 12
+    },
+    {
+      "cell": "CE\u00d7b1",
+      "n_confirmed_sha": 14,
+      "n_confirmed_ast": 11
+    },
+    {
+      "cell": "CE\u00d7b2",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 15
+    },
+    {
+      "cell": "CE\u00d7b3",
+      "n_confirmed_sha": 3,
+      "n_confirmed_ast": 3
+    },
+    {
+      "cell": "CE\u00d7c1",
+      "n_confirmed_sha": 0,
+      "n_confirmed_ast": 0
+    },
+    {
+      "cell": "CE\u00d7c2",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 11
+    },
+    {
+      "cell": "CE\u00d7c3",
+      "n_confirmed_sha": 7,
+      "n_confirmed_ast": 7
+    },
+    {
+      "cell": "OS\u00d7a1",
+      "n_confirmed_sha": 2,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "OS\u00d7a2",
+      "n_confirmed_sha": 2,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "OS\u00d7a3",
+      "n_confirmed_sha": 8,
+      "n_confirmed_ast": 5
+    },
+    {
+      "cell": "OS\u00d7b1",
+      "n_confirmed_sha": 1,
+      "n_confirmed_ast": 1
+    },
+    {
+      "cell": "OS\u00d7b2",
+      "n_confirmed_sha": 13,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "OS\u00d7b3",
+      "n_confirmed_sha": 6,
+      "n_confirmed_ast": 5
+    },
+    {
+      "cell": "OS\u00d7c1",
+      "n_confirmed_sha": 8,
+      "n_confirmed_ast": 7
+    },
+    {
+      "cell": "OS\u00d7c2",
+      "n_confirmed_sha": 10,
+      "n_confirmed_ast": 10
+    },
+    {
+      "cell": "OS\u00d7c3",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 4
+    },
+    {
+      "cell": "OS\u00d7d1",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 15
+    },
+    {
+      "cell": "OS\u00d7d2",
+      "n_confirmed_sha": 3,
+      "n_confirmed_ast": 3
+    },
+    {
+      "cell": "OS\u00d7d3",
+      "n_confirmed_sha": 6,
+      "n_confirmed_ast": 3
+    },
+    {
+      "cell": "HP\u00d7a1",
+      "n_confirmed_sha": 13,
+      "n_confirmed_ast": 13
+    },
+    {
+      "cell": "HP\u00d7a3",
+      "n_confirmed_sha": 0,
+      "n_confirmed_ast": 0
+    },
+    {
+      "cell": "HP\u00d7b1",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 13
+    },
+    {
+      "cell": "HP\u00d7b2",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 13
+    },
+    {
+      "cell": "HP\u00d7b3",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 16
+    },
+    {
+      "cell": "HP\u00d7c1",
+      "n_confirmed_sha": 2,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "HP\u00d7c2",
+      "n_confirmed_sha": 2,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "HP\u00d7c3",
+      "n_confirmed_sha": 4,
+      "n_confirmed_ast": 4
+    },
+    {
+      "cell": "HP\u00d7d1",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 16
+    },
+    {
+      "cell": "HP\u00d7d2",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 16
+    },
+    {
+      "cell": "HP\u00d7d3",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 16
+    },
+    {
+      "cell": "TF\u00d7a1",
+      "n_confirmed_sha": 8,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "TF\u00d7a3",
+      "n_confirmed_sha": 12,
+      "n_confirmed_ast": 9
+    },
+    {
+      "cell": "TF\u00d7b2",
+      "n_confirmed_sha": 4,
+      "n_confirmed_ast": 3
+    },
+    {
+      "cell": "TF\u00d7c1",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 8
+    },
+    {
+      "cell": "TF\u00d7c2",
+      "n_confirmed_sha": 12,
+      "n_confirmed_ast": 6
+    },
+    {
+      "cell": "TF\u00d7c3",
+      "n_confirmed_sha": 12,
+      "n_confirmed_ast": 12
+    },
+    {
+      "cell": "TF\u00d7d1",
+      "n_confirmed_sha": 6,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "TF\u00d7d2",
+      "n_confirmed_sha": 16,
+      "n_confirmed_ast": 16
+    },
+    {
+      "cell": "TF\u00d7d3",
+      "n_confirmed_sha": 11,
+      "n_confirmed_ast": 5
+    },
+    {
+      "cell": "SI\u00d7a1",
+      "n_confirmed_sha": 15,
+      "n_confirmed_ast": 14
+    },
+    {
+      "cell": "SI\u00d7a2",
+      "n_confirmed_sha": 3,
+      "n_confirmed_ast": 3
+    },
+    {
+      "cell": "SI\u00d7a3",
+      "n_confirmed_sha": 0,
+      "n_confirmed_ast": 0
+    },
+    {
+      "cell": "SI\u00d7b3",
+      "n_confirmed_sha": 0,
+      "n_confirmed_ast": 0
+    },
+    {
+      "cell": "SI\u00d7c1",
+      "n_confirmed_sha": 2,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "SI\u00d7c2",
+      "n_confirmed_sha": 4,
+      "n_confirmed_ast": 4
+    },
+    {
+      "cell": "SI\u00d7c3",
+      "n_confirmed_sha": 6,
+      "n_confirmed_ast": 6
+    },
+    {
+      "cell": "SI\u00d7d1",
+      "n_confirmed_sha": 1,
+      "n_confirmed_ast": 1
+    },
+    {
+      "cell": "SI\u00d7d2",
+      "n_confirmed_sha": 2,
+      "n_confirmed_ast": 2
+    },
+    {
+      "cell": "SI\u00d7d3",
+      "n_confirmed_sha": 11,
+      "n_confirmed_ast": 5
+    }
+  ],
+  "reading": "H-CONS PASS on the exact-SHA basis (33/51, LB 0.510) is NOT robust: on the AST-normalised basis 28/51, LB<0.5 (would FAIL). The manipulation-check claim must be stated in bounded form and this sensitivity disclosed (CP2 review).",
+  "created_at": "2026-07-29T08:06:05Z"
+}

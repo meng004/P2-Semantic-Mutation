@@ -1,0 +1,259 @@
+{
+  "schema": "dose_response_v5 / analysis_hdose input",
+  "amendment": "Amendment #2: window_halfwidth = r_c = max(delta_r+2*eta_bar, eps_tol*(sqrt(g)-1)) with g=(4/0.25)^(1/5)\u22481.741101; sqrt(g)-1\u22480.319508",
+  "n_curves": 8,
+  "n_executions": 960,
+  "n_execution_errors": 0,
+  "runtime_s_total": 56.4,
+  "kill_predicate": "is_killed: exists mr in aligned MR set with AVP(orig)=PASS and AVP(mut)=FAIL; epsilon_avp=1e-6; repeats=20 for b3 else 1 (sms_campaign convention); errored run = non-kill after \u22641 re-run",
+  "curves": [
+    {
+      "curve_id": "CE-A1",
+      "eps_realized": [
+        0.2505261843202655,
+        0.43817245613733674,
+        0.7492681899279519,
+        1.3237922083615874,
+        2.3038503490233513,
+        3.9952769045423993
+      ],
+      "kills": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reps": 20,
+      "eps_tol": 1.0,
+      "window_halfwidth": 0.3195079107728942,
+      "raw_delta_r": 0.0,
+      "raw_eta_bar": 1e-06,
+      "resolution_floor": 0.3195079107728942,
+      "raw_theory_window": 2e-06,
+      "execution_errors": 0,
+      "runtime_s": 42.98,
+      "aligned_mp": 1,
+      "avp_repeats": 1,
+      "epsilon_avp": 1e-06
+    },
+    {
+      "curve_id": "CE-B3",
+      "eps_realized": [
+        0.0050389408562390575,
+        0.008658356421079805,
+        0.015002717542446666,
+        0.026056279744667243,
+        0.045852504410425564,
+        0.08044584853982054
+      ],
+      "kills": [
+        0,
+        0,
+        20,
+        20,
+        20,
+        20
+      ],
+      "reps": 20,
+      "eps_tol": 0.02,
+      "window_halfwidth": 0.01686748085423147,
+      "raw_delta_r": 1.1410625530869663e-16,
+      "raw_eta_bar": 0.008433740427115678,
+      "resolution_floor": 0.006390158215457884,
+      "raw_theory_window": 0.01686748085423147,
+      "execution_errors": 0,
+      "runtime_s": 1.37,
+      "aligned_mp": 1,
+      "avp_repeats": 20,
+      "epsilon_avp": 1e-06
+    },
+    {
+      "curve_id": "CE-C1",
+      "eps_realized": [
+        0.025007819556944026,
+        0.043750129756981185,
+        0.07636630859167481,
+        0.13089242953535948,
+        0.22635557728052352,
+        0.40047399952760204
+      ],
+      "kills": [
+        0,
+        0,
+        0,
+        20,
+        20,
+        20
+      ],
+      "reps": 20,
+      "eps_tol": 0.1,
+      "window_halfwidth": 0.031950791077289424,
+      "raw_delta_r": 0.00026041115678236107,
+      "raw_eta_bar": 1e-06,
+      "resolution_floor": 0.031950791077289424,
+      "raw_theory_window": 0.00026241115678236107,
+      "execution_errors": 0,
+      "runtime_s": 4.28,
+      "aligned_mp": 1,
+      "avp_repeats": 1,
+      "epsilon_avp": 1e-06
+    },
+    {
+      "curve_id": "CE-D3",
+      "eps_realized": [
+        0.01246830909990726,
+        0.021974263894904745,
+        0.03777726211137219,
+        0.0660649421899629,
+        0.11436620115678911,
+        0.20248318365337892
+      ],
+      "kills": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "reps": 20,
+      "eps_tol": 0.05,
+      "window_halfwidth": 0.015975395538644712,
+      "raw_delta_r": 0.0,
+      "raw_eta_bar": 1e-06,
+      "resolution_floor": 0.015975395538644712,
+      "raw_theory_window": 2e-06,
+      "execution_errors": 0,
+      "runtime_s": 1.49,
+      "aligned_mp": 1,
+      "avp_repeats": 1,
+      "epsilon_avp": 1e-06
+    },
+    {
+      "curve_id": "HP-A1",
+      "eps_realized": [
+        0.28736600926626943,
+        0.4105634893748157,
+        0.6858009286044728,
+        1.3795420053110246,
+        2.038681386019063,
+        3.90428640009356
+      ],
+      "kills": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reps": 20,
+      "eps_tol": 1.0,
+      "window_halfwidth": 0.3195079107728942,
+      "raw_delta_r": 0.0,
+      "raw_eta_bar": 1e-06,
+      "resolution_floor": 0.3195079107728942,
+      "raw_theory_window": 2e-06,
+      "execution_errors": 0,
+      "runtime_s": 1.8,
+      "aligned_mp": 3,
+      "avp_repeats": 1,
+      "epsilon_avp": 1e-06
+    },
+    {
+      "curve_id": "HP-B3",
+      "eps_realized": [
+        0.01326755054083357,
+        0.028101780951593835,
+        0.03186009579053321,
+        0.05922676236258675,
+        0.12021279918728571,
+        0.24535494775216918
+      ],
+      "kills": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reps": 20,
+      "eps_tol": 0.05,
+      "window_halfwidth": 0.021337986953070813,
+      "raw_delta_r": 0.0044705060988394565,
+      "raw_eta_bar": 0.008433740427115678,
+      "resolution_floor": 0.015975395538644712,
+      "raw_theory_window": 0.021337986953070813,
+      "execution_errors": 0,
+      "runtime_s": 0.19,
+      "aligned_mp": 3,
+      "avp_repeats": 20,
+      "epsilon_avp": 1e-06
+    },
+    {
+      "curve_id": "HP-C1",
+      "eps_realized": [
+        0.02717759538765801,
+        0.04382314988051776,
+        0.07185123151010227,
+        0.13512259840435187,
+        0.22841584407503043,
+        0.40972136252555125
+      ],
+      "kills": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reps": 20,
+      "eps_tol": 0.1,
+      "window_halfwidth": 0.031950791077289424,
+      "raw_delta_r": 0.0003366504741613984,
+      "raw_eta_bar": 1e-06,
+      "resolution_floor": 0.031950791077289424,
+      "raw_theory_window": 0.00033865047416139837,
+      "execution_errors": 0,
+      "runtime_s": 2.52,
+      "aligned_mp": 3,
+      "avp_repeats": 1,
+      "epsilon_avp": 1e-06
+    },
+    {
+      "curve_id": "HP-D3",
+      "eps_realized": [
+        0.01250193560358819,
+        0.021806838714616493,
+        0.03840769529205477,
+        0.06616581751237882,
+        0.11506452895233318,
+        0.19954314988498462
+      ],
+      "kills": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "reps": 20,
+      "eps_tol": 0.05,
+      "window_halfwidth": 0.015975395538644712,
+      "raw_delta_r": 0.0,
+      "raw_eta_bar": 1e-06,
+      "resolution_floor": 0.015975395538644712,
+      "raw_theory_window": 2e-06,
+      "execution_errors": 0,
+      "runtime_s": 1.25,
+      "aligned_mp": 3,
+      "avp_repeats": 1,
+      "epsilon_avp": 1e-06
+    }
+  ]
+}

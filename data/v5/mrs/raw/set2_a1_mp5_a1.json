@@ -1,0 +1,1 @@
+{"set": 2, "put": "a1", "mp": 5, "attempt": 1, "model": "grok-4.5", "content": "```python\nimport numpy as np\n\ndef r(x):\n    x = float(np.clip(x, 0.0, 1.0))\n    if x < 0.5:\n        return 0.5 * x\n    return 0.5 * (x + 1.0)\n\ndef R(y_orig, y_new):\n    return bool(np.isfinite(y_orig) and np.isfinite(y_new))\n```", "created_at": "2026-07-29T04:47:51Z"}

@@ -1,0 +1,1 @@
+{"set": 2, "put": "a3", "mp": 4, "attempt": 3, "model": "grok-4.5", "content": "```python\nimport numpy as np\n\ndef r(x):\n    h = max(float(x), 1e-4)\n    N = max(4, round(1.0 / h))\n    return 1.0 / float(N)\n\ndef R(y_orig, y_new):\n    return abs(float(y_orig) - float(y_new)) <= 1e-6\n```", "created_at": "2026-07-29T04:54:49Z"}
