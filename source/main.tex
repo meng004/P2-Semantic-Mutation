@@ -933,8 +933,8 @@ formula:
   $L_{\mathrm{equiv}} = L1 \wedge L2$: $\varepsilon_{\mathrm{eq}} \to 0 \wedge K_{\mathrm{eq}} \to \infty$ (controls equiv
   layer; Lemma G.1).
 \item
-  $L_{\mathrm{killed}} = L3 \wedge L4$: $\varepsilon_{\mathrm{AVP}} \to 0 \wedge$ MP set =
-  $\{\mathrm{MP}_{\mathrm{eq}}^{S_i}\}$, the reference-anchored identity
+  $L_{\mathrm{killed}} = L3 \wedge L4$: $\varepsilon_{\mathrm{AVP}} \to 0 \wedge$ relation set =
+  $\{\mathrm{MR}_{\mathrm{eq}}^{S_i}\}$, the reference-anchored identity
   relation: identity source transformation ($r = \mathrm{id}$), output
   relation $R(y,y') \equiv y = y'$, with the follow-up output compared
   against the recorded reference output of the original program $S_i$
@@ -1831,7 +1831,7 @@ challenge.}
   An earlier draft labelled the OS row ``$\times$ tool-inexpressible''. The
   12-PUT data refines this categorical claim to ``$\bigtriangleup$ 88.33\% disjoint,
   11.67\% incidental hits''. The systematic-versus-incidental argument
-  in Section~\ref{preventive-defence-framing} (with details in Appendix B.1.5) clarifies why those
+  in Section~\ref{preventive-defence-framing} (with details in Appendix B.1) clarifies why those
   incidental hits are stochastic byproducts rather than systematic
   semantic mutation.
 \item
@@ -1875,7 +1875,7 @@ physical constants, unit conversions, boundary conditions,
 hyperparameter semantics, numerical-method order, are not AST-local; the
 syntactic-tool design goals (operator typos, off-by-one errors, negation
 flips) do not target them. Systematic semantic mutation therefore
-requires (a), (b), or (c) to be design intent. Appendix B.1.5 records
+requires (a), (b), or (c) to be design intent. Appendix B.1 records
 this argument in full.
 
 \textbf{(b) HOM caveat.} HOM \citep{c03829bdd1a6e45113092384bf0fa05a064ca54a,kintis2018effective}
@@ -2073,7 +2073,7 @@ inherited from a blind LLM reviewer vote. A fraction of the v3 $\to$ v4
 source-axis shift may therefore reflect a quality decline rather than a
 source-diversity contribution. We declare this protocol asymmetry in
 Section~\ref{cross-source-contributes-mutant-quality-not-effect-size};
-full justification is in Appendices C.1--C.3.
+full justification is in Appendices C.1 and C.2.
 
 \textbf{Equivalence detection (E1 $\wedge$ E2).} For each mutant
 $s' \in \mathrm{mut}(S_i)$:
@@ -2166,7 +2166,7 @@ reported as primary, with default-threshold results retained as control
 remains far below the 80\% pre-registered threshold; H4 is unattainable
 on this dataset as an intrinsic property of LLM-mutant pools, not a
 calibration issue. Detailed grid table, L0-L3 sub-protocols, and
-decision-tree pseudocode are in \textbf{Appendix A.2 + C.4}.
+decision-tree pseudocode are in \textbf{Appendix A.2 + C.3}.
 
 % [thematic break removed]
 
@@ -2408,14 +2408,14 @@ superseded by the table above.
 As a secondary interpretive denominator, we also count only PUTs for
 which the operator family has an explicit class-specific specialization
 in Appendix B.2 and the operator-level pilot records an attempted
-instantiation in Appendix C.4. Under this applicability-adjusted view,
+instantiation in Appendix C.3. Under this applicability-adjusted view,
 CE reaches 7/8 applicable PUTs, OS 7/7, HP 8/9, TF 6/6, and SI 4/6. The
 secondary denominator does not overturn the pre-registered H1 verdict,
 but it identifies the scientific source of the failure: within their
 intended classes the families are largely implementable, and the
 $\geq 9/12$ bar fails because no family is intended to span nine PUTs
 except HP. The per-operator implementability profile ($r_{\mathrm{sem}}$,
-$d_{\mathrm{impl}}$) is reported in Appendix C.4.
+$d_{\mathrm{impl}}$) is reported in Appendix C.3.
 
 \subsection{RQ4: Aligned and Cross-Pattern Comparisons}\label{rq2-aligned-vs-cross-cliffs-delta}
 
@@ -2819,7 +2819,7 @@ not mechanism validation.
 
 \subsection{Decoupling between Semantic Feasibility and Kill Rate}\label{decoupling-between-r_sem-and-r_kill}
 
-The operator-level pilot in Appendix C.4.1 reveals a sharp pattern: HP,
+The operator-level pilot in Appendix C.3.1 reveals a sharp pattern: HP,
 TF, and OS operators on the c-class (surrogate) and d-class (machine
 learning) PUTs reach R\_sem $\approx$ 1.0 (semantic feasibility, the LLM
 successfully produces a syntactically valid, executable, intent-bearing
@@ -3041,7 +3041,7 @@ Section~\ref{rq3-cross-class-consistency-and-friedman} gives the formal
 H3 verdict, so this deployment-facing reading is deliberately shorter:
 cross-source pooling improves the c- and d-class means (+91.5\% and
 +38.3\%), consistent with c / d classes having higher mutant-diversity
-demand than a / b, but it does not repair the b-class inversion or the
+demand than a / b, but it does not repair the c-class inversion or the
 CV($\Delta$SMS) dispersion failure. The mixed-effects singularity and the
 Friedman fallback are treated once, in that RQ5 result section, not as a
 second independent result here.
