@@ -1,0 +1,28 @@
+{
+  "repo": "meng004/P12-Defect4MR",
+  "commit": "2bf7c2401c846544e715d879eb639e8c3bf44067",
+  "path": "data/ledgers/candidates.json",
+  "blob_sha": "1469a2e2b15dcb2cdf59d185f3ec92f58fb77189",
+  "counts": {
+    "total": 64,
+    "verified_full": 35,
+    "candidate_full": 16,
+    "rejected": 12,
+    "candidate_needs_oracle": 1
+  },
+  "allowed_keys": [
+    "provisional_id",
+    "project",
+    "status",
+    "evidence_depth",
+    "source_urls",
+    "revisions",
+    "modified_files",
+    "exclusions_checked"
+  ],
+  "sanitized_path": "data/external_slice/defect4mr_import/candidates_sanitized.json",
+  "sanitized_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "raw_ledger_copied_into_repo": false,
+  "source_mode": "github-api-raw",
+  "imported_at_utc": "2026-07-30T14:18:56Z"
+}
