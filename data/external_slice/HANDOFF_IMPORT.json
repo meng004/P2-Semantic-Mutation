@@ -1,0 +1,116 @@
+{
+  "task": "C1",
+  "gate_requested": "A0",
+  "branch": "cursor/grok-phase3-5-execution",
+  "baseline_commit": "785a95a4ba9f0b98403b6c65445f7f2eef602391",
+  "output_commit": "PENDING_FILL_AFTER_COMMIT",
+  "cloud_agent": "bc-0bd9c61b-5482-450b-8739-2da3e98dff82",
+  "model": "Grok 4.5 High Fast",
+  "commands": [
+    {
+      "cmd": "PYTHONPATH=src python3 -m pytest -q",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "notes": "pre-change baseline after installing scikit-learn+seaborn: 233 passed"
+    },
+    {
+      "cmd": "PYTHONPATH=src python3 -m pytest tests/external_slice/test_import_defect4mr_pool.py -q",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "notes": "TDD red: 5 failed / 3 passed before import artifacts existed"
+    },
+    {
+      "cmd": "PYTHONPATH=src python3 scripts/external_slice/import_defect4mr_pool.py --repo meng004/P12-Defect4MR --commit 2bf7c2401c846544e715d879eb639e8c3bf44067 --output data/external_slice/defect4mr_import/candidates_sanitized.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "notes": "canonical import via GitHub Contents API raw; uses env github_token"
+    },
+    {
+      "cmd": "PYTHONPATH=src python3 -m pytest tests/external_slice/test_import_defect4mr_pool.py -q",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "notes": "8 passed"
+    },
+    {
+      "cmd": "jq 'length' data/external_slice/defect4mr_import/candidates_sanitized.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "stdout": "64"
+    },
+    {
+      "cmd": "grep -RniE 'mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|kill|fiber|analysis_id' data/external_slice/defect4mr_import",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "notes": "exit 1 = no matches (required)"
+    },
+    {
+      "cmd": "PYTHONPATH=src python3 -m pytest -q",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "notes": "241 passed (233 baseline + 8 new import contract tests)"
+    }
+  ],
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "git": "git version 2.43.0",
+    "pytest": "pytest 9.1.1",
+    "hostname": "cursor",
+    "imported_at_utc": "2026-07-30T14:18:56Z"
+  },
+  "inputs": [
+    {
+      "path": "meng004/P12-Defect4MR@2bf7c2401c846544e715d879eb639e8c3bf44067:data/ledgers/candidates.json",
+      "git_blob_sha": "1469a2e2b15dcb2cdf59d185f3ec92f58fb77189",
+      "sha256": "0f797c10da5e7b3e12656f0062aa55b0dc3e31c701249ee5f05f4e744171786e",
+      "bytes": 278904,
+      "copied_into_p3_repo": false
+    }
+  ],
+  "outputs": [
+    {
+      "path": "scripts/external_slice/import_defect4mr_pool.py",
+      "sha256": "292a8da4840060a26dac8cc844ee52dff4d3d179828f93d3f5a88fa74658f16f"
+    },
+    {
+      "path": "tests/external_slice/test_import_defect4mr_pool.py",
+      "sha256": "7ba189e6039abe63de3368349bd565daed4a6f7e7b2d6c18decc1aa156d5de5c"
+    },
+    {
+      "path": "data/external_slice/defect4mr_import/candidates_sanitized.json",
+      "sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac"
+    },
+    {
+      "path": "data/external_slice/defect4mr_import/PROVENANCE.json",
+      "sha256": "af7e9c522967bcccaba02db2361a1aadaf11fb64219b4a5bafcaab4cc89de152"
+    },
+    {
+      "path": "data/external_slice/defect4mr_import/IMPORT_LOG.md",
+      "sha256": "384134afddba35ca8e5e08d5965474ac9996a38e0d344165ce60dfe6af0834fe"
+    },
+    {
+      "path": "data/external_slice/CURSOR_EXECUTION_LEDGER.md",
+      "sha256": "PENDING_AFTER_LEDGER_UPDATE"
+    },
+    {
+      "path": "data/external_slice/HANDOFF_IMPORT.json",
+      "sha256": "PENDING_SELF"
+    }
+  ],
+  "exit_codes": [0, 1, 0, 0, 0, 1, 0],
+  "failures": [],
+  "retries": [
+    {
+      "reason": "IMPORT_LOG initially contained reserved vocabulary token; wording revised and import re-run",
+      "resolution": "replaced result-role phrase; leak grep exit 1"
+    }
+  ],
+  "unresolved_findings": [],
+  "notes": [
+    "C0+C1 only. This Cursor VM/session must retire from admission/annotation/prediction/execution roles after Gate A0 handoff.",
+    "Raw ledger was fetched into /tmp only and was not copied under the P3 tree.",
+    "gh CLI default token cannot read the private source; import used injected github_token via the GitHub Contents API.",
+    "One free-text revision note contained a reserved field-name reference and was mechanically redacted to [redacted]."
+  ]
+}

@@ -1,0 +1,1672 @@
+[
+  {
+    "provisional_id": "B-FFTW-001",
+    "project": "FFTW",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/FFTW/fftw3/issues/20"
+    ],
+    "revisions": {
+      "buggy": "FFTW 3.3 / 3.3.4 reported; independently reconfirmed on FFTW 3.3.10 in cloud session commit 0fee6f3",
+      "fixed": "unknown"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "B-FFTW-002",
+    "project": "FFTW",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/FFTW/fftw3/issues/294"
+    ],
+    "revisions": {
+      "buggy": "FFTW with AVX/AVX2 plus generic simd256 plan sequence reported on Ubuntu 21.10/22.04",
+      "fixed": "unknown"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "B-FFTW-003",
+    "project": "FFTW",
+    "status": "rejected",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/FFTW/fftw3/issues/327"
+    ],
+    "revisions": {
+      "buggy": "FFTW version not specified in issue",
+      "fixed": "unknown"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "B-FFTW-004",
+    "project": "FFTW",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/FFTW/fftw3/issues/328"
+    ],
+    "revisions": {
+      "buggy": "FFTW 3.3.10 with generic simd256 and AVX-family flags",
+      "fixed": "unknown"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "B-FFTW-005",
+    "project": "FFTW",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/FFTW/fftw3/issues/174"
+    ],
+    "revisions": {
+      "buggy": "FFTW MPI single-precision local_size_many_transposed report; independently reconfirmed on FFTW 3.3.10 in cloud session commit 5f1abf1",
+      "fixed": "unknown"
+    },
+    "modified_files": [
+      "mpi/api.c (fftw_mpi_local_size_many_transposed)"
+    ],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "F-SUITESPARSE-001",
+    "project": "SuiteSparse CHOLMOD",
+    "status": "rejected",
+    "evidence_depth": "rejected",
+    "source_urls": [
+      "https://github.com/DrTimothyAldenDavis/SuiteSparse/commit/97d3b1037d2430bea5526f3c0c33310e3016e4a3"
+    ],
+    "revisions": {
+      "buggy": "before 97d3b1037d2430bea5526f3c0c33310e3016e4a3",
+      "fixed": "97d3b1037d2430bea5526f3c0c33310e3016e4a3"
+    },
+    "modified_files": [
+      "CHOLMOD/Cholesky/cholmod_postorder.c"
+    ],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "F-SUITESPARSE-002",
+    "project": "SuiteSparse CHOLMOD",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/DrTimothyAldenDavis/SuiteSparse/commit/c0b141a984939884df4067df9994833c93547d22",
+      "https://github.com/DrTimothyAldenDavis/SuiteSparse/commit/b6ed7c905e32c46c20285e8582dbdb95e439ef17"
+    ],
+    "revisions": {
+      "buggy": "before c0b141a984939884df4067df9994833c93547d22",
+      "fixed": "b6ed7c905e32c46c20285e8582dbdb95e439ef17"
+    },
+    "modified_files": [
+      "CHOLMOD/Supernodal/t_cholmod_super_numeric.c",
+      "CHOLMOD/Supernodal/t_cholmod_super_numeric_worker.c",
+      "CHOLMOD/Include/cholmod_internal.h"
+    ],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "F-SUITESPARSE-003",
+    "project": "SuiteSparseQR",
+    "status": "rejected",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/982"
+    ],
+    "revisions": {
+      "buggy": "SuiteSparse v7.8.3 d3c4926 tested (issue-era); no defect: issue's two-step arm omits SuiteSparseQR_C_qmult(SPQR_QTX)",
+      "fixed": "unknown"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "F-SUITESPARSE-004",
+    "project": "SuiteSparse KLU",
+    "status": "rejected",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1040"
+    ],
+    "revisions": {
+      "buggy": "SuiteSparse v7.8.3 commit d3c4926 reported",
+      "fixed": "unknown"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "F-SUITESPARSE-005",
+    "project": "SuiteSparse LAGraph / GraphBLAS",
+    "status": "candidate_needs_oracle",
+    "evidence_depth": "needs_oracle",
+    "source_urls": [
+      "https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1018"
+    ],
+    "revisions": {
+      "buggy": "SuiteSparse 7.12.1 on ppc64le Alpine Linux reported",
+      "fixed": "unknown"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "crash_only": true,
+      "api_only": true,
+      "documentation_only": true,
+      "performance_only": true,
+      "closed_backend_only": true
+    }
+  },
+  {
+    "provisional_id": "B-POCKETFFT-001",
+    "project": "PocketFFT (mreineck/pocketfft)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/mreineck/pocketfft/commit/fb21e40",
+      "https://github.com/mreineck/pocketfft/commit/ecd78ca",
+      "https://github.com/scipy/scipy/issues/21693"
+    ],
+    "revisions": {
+      "buggy": "076cb3d (mreineck/pocketfft, parent of fb21e40) -- independently built and executed in cloud session commit fc3b898",
+      "fixed": "fb21e40 (merged as ecd78ca, 2023-06-15, 'fix_dcst23_ortho' branch, mtr/pocketfft!7) -- independently built and executed in cloud session commit fc3b898"
+    },
+    "modified_files": [
+      "pocketfft_hdronly.h",
+      "README.md"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "B-POCKETFFT-002",
+    "project": "PocketFFT (mreineck/pocketfft)",
+    "status": "verified_full",
+    "evidence_depth": "verified_full",
+    "source_urls": [
+      "https://github.com/mreineck/pocketfft/issues/15",
+      "https://github.com/mreineck/pocketfft/commit/3de1740"
+    ],
+    "revisions": {
+      "buggy": "bb5bdb7 (mreineck/pocketfft, parent of 3de1740)",
+      "fixed": "3de1740 (2024-06-30, 'Avoid overflow in good_size... functions, see #15', authored by crisluengo)"
+    },
+    "modified_files": [
+      "pocketfft_hdronly.h"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "B-POCKETFFT-003",
+    "project": "PocketFFT (mreineck/pocketfft)",
+    "status": "rejected",
+    "evidence_depth": "rejected",
+    "source_urls": [
+      "https://github.com/mreineck/pocketfft/issues/4"
+    ],
+    "revisions": {
+      "buggy": "unknown (repo HEAD as of issue open, 2021-12-28, reported by user savowe)",
+      "fixed": "unknown (issue closed as 'completed' by maintainer mreineck; no linked PR/commit found in public search of a small, mostly-direct-commit repo)"
+    },
+    "modified_files": [
+      "unknown -- likely pocketfft_hdronly.h multi-axis c2c transform driver"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "B-POCKETFFT-004",
+    "project": "NumPy (numpy.fft, pocketfft-derived real-transform C code)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/numpy/numpy/issues/25679",
+      "https://github.com/numpy/numpy/issues/25661",
+      "https://github.com/numpy/numpy/pull/25668",
+      "https://github.com/numpy/numpy/commit/f0322c83c8c6df44b05566b30fd0803a481e212d"
+    ],
+    "revisions": {
+      "buggy": "numpy main pre-f0322c8 (2.0.0.dev0 era, ~Jan 2024)",
+      "fixed": "f0322c83c8c6df44b05566b30fd0803a481e212d ('BUG: correct irfft with n not equal to the input size', merged via PR #25668)"
+    },
+    "modified_files": [
+      "numpy/fft/_pocketfft_umath.c",
+      "numpy/fft/tests/test_pocketfft.py"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "A-OPENBLAS-001",
+    "project": "OpenMathLib/OpenBLAS",
+    "status": "verified_full",
+    "evidence_depth": "verified_full",
+    "source_urls": [
+      "https://github.com/OpenMathLib/OpenBLAS/issues/5811",
+      "https://github.com/OpenMathLib/OpenBLAS/pull/5815",
+      "https://github.com/OpenMathLib/OpenBLAS/commit/70a5a5374743ec985ccd38fe81a442951ba76e07"
+    ],
+    "revisions": {
+      "buggy": "v0.3.33 release (riscv64_zvl256b DYNAMIC_ARCH kernel path); regression introduced somewhere in the ~250 commits between v0.3.31 and v0.3.33",
+      "fixed": "70a5a5374743ec985ccd38fe81a442951ba76e07 (PR #5815, merged into develop, 'Fix contiguous memory check for SGEMM and DGEMM')"
+    },
+    "modified_files": [
+      "kernel/riscv64/dgemm_kernel_8x8_zvl256b.c",
+      "kernel/riscv64/sgemm_kernel_16x8_zvl256b.c"
+    ],
+    "exclusions_checked": {
+      "documentation_only": false,
+      "build_or_packaging_only": false,
+      "api_only": false,
+      "crash_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "A-BLIS-001",
+    "project": "flame/blis",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/flame/blis/issues/380",
+      "https://github.com/flame/blis/pull/382",
+      "https://github.com/flame/blis/pull/382/files"
+    ],
+    "revisions": {
+      "buggy": "flame/blis c01d249d (= e186d714^, the last commit with the optimized zen amaxv kernels ACTIVE; the immediate parent of the fix, e186d714, had disabled the kernels as a stopgap and does NOT exhibit the bug -- arm selection corrected during verification)",
+      "fixed": "flame/blis PR #382, merged 2020-03-24 by fgvanzee, 'Fix vectorized version of bli_amaxv'"
+    },
+    "modified_files": [
+      "kernels/zen/1/bli_amaxv_zen_int.c",
+      "ref_kernels/1/bli_amaxv_ref.c",
+      "config/haswell/bli_cntx_init_haswell.c",
+      "config/knl/bli_cntx_init_knl.c",
+      "config/skx/bli_cntx_init_skx.c",
+      "config/zen/bli_cntx_init_zen.c",
+      "config/zen2/bli_cntx_init_zen2.c"
+    ],
+    "exclusions_checked": {
+      "documentation_only": false,
+      "build_or_packaging_only": false,
+      "crash_only": false,
+      "api_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "A-BLIS-002",
+    "project": "flame/blis",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/flame/blis/issues/828",
+      "https://github.com/flame/blis/issues/829",
+      "https://github.com/flame/blis/pull/830",
+      "https://github.com/flame/blis/pull/830/files"
+    ],
+    "revisions": {
+      "buggy": "flame/blis main branch prior to PR #830 (issue #828 filed 2024/2025, closed 2025-02-27)",
+      "fixed": "flame/blis PR #830, merged 2025-02-27, merge commit a014a08189d05f45752f7ac23d8d42a24536fb93, 'Add new level-0 macro layer'"
+    },
+    "modified_files": [
+      "ci/do_level0.sh",
+      "config/template/kernels/1/bli_axpyv_template_noopt_var1.c",
+      "config/template/kernels/1/bli_dotv_template_noopt_var1.c",
+      "build/plugin/my_kernel_1_ref.c",
+      "build/plugin/my_kernel_2_ref.c",
+      "blastest/src/dblat1.c",
+      "build/libblis-symbols.def",
+      "common.mk"
+    ],
+    "exclusions_checked": {
+      "documentation_only": false,
+      "build_or_packaging_only": false,
+      "crash_only": false,
+      "api_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "A-CUPY-001",
+    "project": "cupy/cupy",
+    "status": "rejected",
+    "evidence_depth": "needs_oracle",
+    "source_urls": [
+      "https://github.com/cupy/cupy/issues/1602",
+      "https://github.com/cupy/cupy/pull/1524",
+      "https://github.com/cupy/cupy/pull/1674",
+      "https://github.com/cupy/cupy/pull/1674/commits"
+    ],
+    "revisions": {
+      "buggy": "cupy v5.0.0b4 and earlier (any commit prior to PR #1674 merge on 2018-10-02); cupy.linalg.solve complex-dtype code path in cupy/linalg/solve.py before that date",
+      "fixed": "PR #1674 'Take #1524 over. Fix #1602' merged to master 2018-10-02 (first commit 8aa6a01f6973cdd5fb6b5239d1be74fe46ac5d02, 'add complex support in solve'); superseded/incorporated original PR #1524. Exact merge-commit SHA on master could not be independently confirmed via GitHub API from this sandbox (api.github.com access blocked), but the PR page itself (fetched) shows status Merged and lists this commit."
+    },
+    "modified_files": [
+      "cupy/linalg/solve.py (historical path; now cupy/linalg/_solve.py)",
+      "cupy/tests/cupy_tests/linalg_tests/test_solve.py"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "A-CUPY-002",
+    "project": "cupy/cupy",
+    "status": "candidate_full",
+    "evidence_depth": "oracle_executed_no_fix_upstream",
+    "source_urls": [
+      "https://github.com/cupy/cupy/issues/6446",
+      "https://github.com/cupy/cupy/issues/7495",
+      "https://github.com/cupy/cupy/issues/8486",
+      "https://github.com/cupy/cupy/issues/5024",
+      "https://github.com/cupy/cupy/blob/main/cupyx/scipy/sparse/linalg/_eigen.py"
+    ],
+    "revisions": {
+      "buggy": "cupyx.scipy.sparse.linalg.eigsh as of CuPy 9.0.0b3 (issue #5024, 2021) through at least CuPy 13.2.0 (issue #8486, most recent reproduction) -- the Lanczos implementation in cupyx/scipy/sparse/linalg/_eigen.py (_lanczos_fast) across this multi-year span",
+      "fixed": "unknown -- all four issues (#5024, #6446, #7495, #8486) remain open as of the most recent check (July 2026); no linked merged fix PR was found for this defect"
+    },
+    "modified_files": [
+      "cupyx/scipy/sparse/linalg/_eigen.py"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "A-CUPY-003",
+    "project": "cupy/cupy",
+    "status": "rejected",
+    "evidence_depth": "needs_oracle",
+    "source_urls": [
+      "https://github.com/cupy/cupy/issues/2071",
+      "https://github.com/cupy/cupy/pull/2468"
+    ],
+    "revisions": {
+      "buggy": "cupy.linalg.inv prior to PR #2468 (merged 2019-09-19); complex-dtype matrix inversion for large matrices (reported at ~4000x4000)",
+      "fixed": "PR #2468, merged to master 2019-09-19 by hvy, milestone v7.0.0b4, which closed issues #1903, #2071, and #2464 together"
+    },
+    "modified_files": [
+      "cupy/linalg/solve.py (historical path, contains cupy.linalg.inv implementation at the time; now split across cupy/linalg/_solve.py)"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-PETSC-001",
+    "project": "petsc/petsc",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://gitlab.com/petsc/petsc/-/issues/1618",
+      "https://gitlab.com/petsc/petsc/-/merge_requests/7700",
+      "https://gitlab.com/petsc/petsc/-/commit/b07ab1d94b3b556e52636876d50f19ae1cf0398a",
+      "https://gitlab.com/petsc/petsc/-/commit/a1f56445ddd4d8959d97e53dc8f8096db3a63e08"
+    ],
+    "revisions": {
+      "buggy": "commit a1f56445ddd4d8959d97e53dc8f8096db3a63e08 ('Consolidate Mat code deriving from MATSHELL', Jan 2024, shipped in PETSc v3.21.0)",
+      "fixed": "commit b07ab1d94b3b556e52636876d50f19ae1cf0398a (MR !7700 'MatCreateSchurComplementPmat: fix Mat[Hermitian]Transpose case', merged 2024-07-24, released in v3.21.4/3.21.5)"
+    },
+    "modified_files": [
+      "src/ksp/ksp/utils/schurm/schurm.c",
+      "src/ksp/ksp/tutorials/ex87.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-PETSC-002",
+    "project": "petsc/petsc",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://gitlab.com/petsc/petsc/-/issues/1869",
+      "https://gitlab.com/petsc/petsc/-/merge_requests/9061",
+      "https://gitlab.com/petsc/petsc/-/raw/main/src/ksp/ksp/impls/gcr/gcr.c"
+    ],
+    "revisions": {
+      "buggy": "PETSc v3.21.3, src/ksp/ksp/impls/gcr/gcr.c function KSPSolve_GCR_cycle() -- independently built from source and experimentally reproduced in cloud session commit (see [redacted])",
+      "fixed": "unknown -- MR !9061 ('KSPGCR: set max-iteration reason to KSP_DIVERGED_ITS') was opened to fix this but was closed WITHOUT being merged; issue #1869 remains open as of 2026-07-03"
+    },
+    "modified_files": [
+      "src/ksp/ksp/impls/gcr/gcr.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-PETSC-003",
+    "project": "petsc/petsc",
+    "status": "candidate_full",
+    "evidence_depth": "oracle_executed_no_fix_upstream",
+    "source_urls": [
+      "https://gitlab.com/petsc/petsc/-/issues/1862",
+      "https://gitlab.com/petsc/petsc/-/raw/main/src/ksp/ksp/impls/cr/pipecr/pipecr.c"
+    ],
+    "revisions": {
+      "buggy": "PETSc main branch / v3.24.4, src/ksp/ksp/impls/cr/pipecr/pipecr.c function KSPSolve_PIPECR() (confirmed unguarded divisions still present by fetching raw main source on 2026-07-03)",
+      "fixed": "unknown -- no merge request has been opened yet as of 2026-07-03; issue #1862 is open with no assignee"
+    },
+    "modified_files": [
+      "src/ksp/ksp/impls/cr/pipecr/pipecr.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-PETSC-004",
+    "project": "petsc/petsc",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://gitlab.com/petsc/petsc/-/issues/1897",
+      "https://gitlab.com/petsc/petsc/-/merge_requests/9403"
+    ],
+    "revisions": {
+      "buggy": "PETSc main branch, src/mat/graphops/sorder.c (~line 171): MatGetOrdering() uses PetscObjectTypeCompare(mat, MATMPIAIJ, ...) to decide whether to build row/col index sets on the matrix's communicator; this check returns false for MATMPIAIJKOKKOS (and presumably other MPIAIJ subclasses), so the parallel path is skipped and index sets are built on PETSC_COMM_SELF instead",
+      "fixed": "MERGED MR !9403 'Fix MatGetOrdering() on MPIAIJ subclasses' (merged 2026-07-03T12:22:45Z, merge commit 96d4db8e52b8e105cb94a28c3b1357101318e998, MR head sha cba8a621035be6e5fc4c5ba8eb65cce3b809bbb2, milestone v3.25-release-fixes; issue #1897 closed 2026-07-03)"
+    },
+    "modified_files": [
+      "src/mat/graphops/sorder.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-PETSC-005",
+    "project": "petsc/petsc",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://gitlab.com/petsc/petsc/-/issues/840"
+    ],
+    "revisions": {
+      "buggy": "PETSc (version not pinned in issue; reported against a recent release using PCHYPRE/BoomerAMG with CG), issue open, no assignee",
+      "fixed": "unknown -- no linked/merged fix found; issue remains open"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "A-LAPACK-001",
+    "project": "Reference-LAPACK/lapack",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/Reference-LAPACK/lapack/issues/826",
+      "https://github.com/Reference-LAPACK/lapack/pull/867",
+      "https://github.com/JuliaLang/LinearAlgebra.jl/issues/983"
+    ],
+    "revisions": {
+      "buggy": "LAPACK master prior to PR #867 merge (merged 2023-07-04, merge context commit ~8b7f510); affects releases through 3.11.x",
+      "fixed": "PR #867 merge commit (merged into master 2023-07-04 by langou); underlying fix commits include 128b0a9b5f01e600d89d163d39ab4fc98af1980e, 3a7690c09429b81f581b12c7ec66f4164a7704f3, 6f039cb044c5ebaa85f5ad942631692da6e1ebb2"
+    },
+    "modified_files": [
+      "SRC/sstemr.f",
+      "SRC/dstemr.f",
+      "SRC/cstemr.f",
+      "SRC/zstemr.f"
+    ],
+    "exclusions_checked": {
+      "documentation_only": false,
+      "api_only": false,
+      "crash_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "A-LAPACK-002",
+    "project": "Reference-LAPACK/lapack",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/Reference-LAPACK/lapack/issues/379",
+      "https://github.com/Reference-LAPACK/lapack/commit/9b24dee",
+      "https://raw.githubusercontent.com/Reference-LAPACK/lapack/master/LAPACKE/src/lapacke_cheev_work.c"
+    ],
+    "revisions": {
+      "buggy": "LAPACK/LAPACKE 3.9.0 (regression from 3.8.0, which used LAPACKE_cge_trans consistently); code state before commit 9b24dee",
+      "fixed": "commit 9b24dee ('Fixes from MKL team in LAPACKE interfaces', authored by sergey-v-kuznetsov, merged 2021-04-14) -- verified by directly reading current master source of lapacke_cheev_work.c, which now calls LAPACKE_cge_trans (general transpose) rather than LAPACKE_che_trans (Hermitian-aware transpose) in the JOBZ='V' branch"
+    },
+    "modified_files": [
+      "LAPACKE/src/lapacke_cheev_work.c",
+      "LAPACKE/src/lapacke_cheevd_work.c",
+      "LAPACKE/src/lapacke_zheev_work.c",
+      "LAPACKE/src/lapacke_zheevd_work.c"
+    ],
+    "exclusions_checked": {
+      "documentation_only": false,
+      "api_only": false,
+      "crash_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "A-LAPACK-003",
+    "project": "Reference-LAPACK/lapack",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/Reference-LAPACK/lapack/issues/151",
+      "https://github.com/miroi/lapack-dsyevr-test",
+      "http://icl.cs.utk.edu/lapack-forum/viewtopic.php?f=2&t=1820#p11388"
+    ],
+    "revisions": {
+      "buggy": "LAPACK 3.7.0 through current master (issue remains open as of this scan; DSYEVR/SSYEVR still assigned open bug, tracked historically as netlib LAPACK bug_list.html #126)",
+      "fixed": "unknown - issue #151 is still OPEN, assigned to oamarques, no merged PR identified"
+    },
+    "modified_files": [],
+    "exclusions_checked": {
+      "documentation_only": false,
+      "api_only": false,
+      "crash_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "C-DEEPXDE-001",
+    "project": "deepxde",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/lululxvi/deepxde/issues/2071",
+      "https://github.com/lululxvi/deepxde/blob/master/deepxde/geometry/csg.py"
+    ],
+    "revisions": {
+      "buggy": "main branch as of 2026-07-03 (bug confirmed present by directly fetching deepxde/geometry/csg.py: CSGUnion/CSGDifference/CSGIntersection.periodic_point() delegate to self.geom1.periodic_point(), i.e. the parent sub-geometry's own bbox, not the combined CSG object's true bbox)",
+      "fixed": "unknown (issue #2071 is open, no PR/commit linked yet)"
+    },
+    "modified_files": [
+      "deepxde/geometry/csg.py"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "C-DEEPXDE-002",
+    "project": "deepxde",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/lululxvi/deepxde/issues/2073",
+      "https://github.com/lululxvi/deepxde/blob/master/deepxde/data/pde.py"
+    ],
+    "revisions": {
+      "buggy": "main branch as of 2026-07-03 (confirmed via direct fetch of deepxde/data/pde.py: the shared losses() method computes boundary-condition error as bc.error(self.train_x, inputs, outputs, beg, end) using fixed beg:end index ranges derived from bcs_start=cumsum(num_bcs), under the hard-coded assumption in the source comment 'The same BC points are used for training and testing')",
+      "fixed": "unknown (issue #2073 is open, no PR/commit linked yet)"
+    },
+    "modified_files": [
+      "deepxde/data/pde.py"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "C-DEEPXDE-003",
+    "project": "deepxde",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/lululxvi/deepxde/issues/2074",
+      "https://github.com/lululxvi/deepxde/issues/2073",
+      "https://github.com/lululxvi/deepxde/blob/master/deepxde/icbc/boundary_conditions.py"
+    ],
+    "revisions": {
+      "buggy": "main branch as of 2026-07-03 (confirmed via direct fetch of deepxde/icbc/boundary_conditions.py: npfunc_range_autocache()'s wrapper_cache/wrapper_cache_auxiliary memoize func(X[beg:end], aux_var[beg:end]) using cache key = (id(X), beg, end), which does not include the current value of any trainable Variable that func's body may close over)",
+      "fixed": "unknown (issue #2074 is open, no PR/commit linked yet; user reports a private fork commit but no upstream fix)"
+    },
+    "modified_files": [
+      "deepxde/icbc/boundary_conditions.py"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "A-MAGMA-001",
+    "project": "MAGMA (icl-utk-edu/magma, mirrored from bitbucket.org/icl/magma)",
+    "status": "rejected",
+    "evidence_depth": "needs_oracle",
+    "source_urls": [
+      "https://github.com/icl-utk-edu/magma/commit/39cbc109a371446ef03d613f214f86cbd10ce223",
+      "https://github.com/icl-utk-edu/magma/commit/39cbc109a371446ef03d613f214f86cbd10ce223.patch",
+      "https://github.com/icl-utk-edu/magma/blob/master/ReleaseNotes"
+    ],
+    "revisions": {
+      "buggy": "cab872dd25255b33b074f01cf10576647ee41c38",
+      "fixed": "39cbc109a371446ef03d613f214f86cbd10ce223"
+    },
+    "modified_files": [
+      "src/zgelqf.cpp",
+      "src/zgelqf_gpu.cpp",
+      "testing/testing_zgelqf.cpp",
+      "testing/testing_zgelqf_gpu.cpp",
+      "control/common_magma.h"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "A-MAGMA-002",
+    "project": "MAGMA (icl-utk-edu/magma, mirrored from bitbucket.org/icl/magma)",
+    "status": "verified_full",
+    "evidence_depth": "verified_full",
+    "source_urls": [
+      "https://github.com/icl-utk-edu/magma/commit/34fa851b5729fac855acb0ed09e4d2a5193eba9d",
+      "https://github.com/icl-utk-edu/magma/commit/34fa851b5729fac855acb0ed09e4d2a5193eba9d.patch",
+      "https://github.com/icl-utk-edu/magma/commit/55c5b2b38f67897e8ca2f58ba46b7c4982cd4105",
+      "https://github.com/icl-utk-edu/magma/commit/55c5b2b38f67897e8ca2f58ba46b7c4982cd4105.patch",
+      "https://github.com/icl-utk-edu/magma/blob/master/ReleaseNotes"
+    ],
+    "revisions": {
+      "buggy": "e20a6748d9e7067c0946036b9c6d5caa022051db",
+      "fixed": "55c5b2b38f67897e8ca2f58ba46b7c4982cd4105"
+    },
+    "modified_files": [
+      "include/magma_zbatched.h",
+      "magmablas/zgerbt.h",
+      "magmablas/zgerbt_func_batched.cu",
+      "magmablas/zgerbt_kernels.cu",
+      "src/zgerbt_batched.cpp",
+      "src/zgesv_rbt_batched.cpp"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-001",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/issues/702",
+      "https://github.com/LLNL/sundials/pull/787",
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/releases/tag/v7.6.0"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS <= v7.5.0 (issue #702 reported against v7.2.1; buggy eta computation from predicted state verified in v7.5.0 source and by execution)",
+      "fixed": "PR #787 (\"Bugfix: CVODE(S) Inequality Constraints\", closes #702), merged to develop and released in SUNDIALS v7.6.0"
+    },
+    "modified_files": [
+      "src/cvode/cvode.c",
+      "src/cvodes/cvodes.c",
+      "src/ida/ida.c",
+      "src/idas/idas.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-002",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/pull/548",
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/releases/tag/v7.3.0"
+    ],
+    "revisions": {
+      "buggy": "Versions with a 'TINY' error-floor constant in the SUNAdaptController step-size controller implementations (introduced with the SUNAdaptController class, present through SUNDIALS v7.2.x)",
+      "fixed": "PR #548 (\"Simplify/Fix Adaptivity for Small Errors or no CFL\"), merged to develop (branch feature/min-err), released in SUNDIALS v7.3.0: 'Removed error floors from the SUNAdaptController implementations which could unnecessarily limit the time step size growth, particularly after the first step.'"
+    },
+    "modified_files": [
+      "src/sunadaptcontroller/soderlind/sunadaptcontroller_soderlind.c",
+      "src/sunadaptcontroller/imexgus/sunadaptcontroller_imexgus.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-003",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/pull/888",
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/releases/tag/v7.8.0"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS v7.7.0 and earlier releases of IDAS (quadrature initialization logic in idas.c predates this fix)",
+      "fixed": "PR #888 (\"Bugfix: Fix quadrature initialization in IDAS\"), merged to develop, released in SUNDIALS v7.8.0"
+    },
+    "modified_files": [
+      "src/idas/idas.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-004",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/releases/tag/v7.7.0"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS v7.3.0 through v7.6.x (ARKODE discrete adjoint / SUNAdjointStepper + SUNAdjointCheckpointScheme capability, introduced in v7.3.0)",
+      "fixed": "SUNDIALS v7.7.0, commit 3fe0bcddd (PR #897 'Feature: Various ARKODE updates'), located during verification via git log on the clone: changes step-start checkpoint insertion in arkode_erkstep.c/arkode_arkstep.c from (tcur, ycur) to (tn, yn) and adds ensure_ycur; matches the v7.7.0 changelog bullet verbatim."
+    },
+    "modified_files": [
+      "src/arkode/arkode.c",
+      "src/arkode/arkode_erkstep.c",
+      "src/arkode/arkode_arkstep.c"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "F-GRAPHBLAS-001",
+    "project": "GraphBLAS (DrTimothyAldenDavis/GraphBLAS, SuiteSparse:GraphBLAS core)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/DrTimothyAldenDavis/GraphBLAS/issues/244",
+      "https://github.com/DrTimothyAldenDavis/GraphBLAS/commit/ffaa21e82974709e4604497a63ba7e702f848af"
+    ],
+    "revisions": {
+      "buggy": "SuiteSparse:GraphBLAS v8.2.0 release tag (bug present v8.0.0..v8.2.0; real source build, cmake Release, full FactoryKernels)",
+      "fixed": "SuiteSparse:GraphBLAS v8.2.1 release tag (contains ffaa21e \"fix saxpy4/saxpy5\"; identical build options)"
+    },
+    "modified_files": [
+      "Source/mxm/GB_AxB_saxpy4.c",
+      "Source/mxm/GB_AxB_saxpy5.c"
+    ],
+    "exclusions_checked": {
+      "crash_only": false,
+      "api_only": false,
+      "documentation_only": false,
+      "performance_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "D-FREIA-001",
+    "project": "vislearn/FrEIA",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/vislearn/FrEIA/issues/140",
+      "https://github.com/vislearn/FrEIA/commit/0f100e008deda5c8521a4ba7014f0376ed5a0eb7",
+      "https://github.com/vislearn/FrEIA/commit/fa7b45d91710f9113bc000298b4a8e6aecdbcb23",
+      "https://github.com/vislearn/FrEIA/commit/ba2aee0205f278ff0f89df174f317a3d6dabf943",
+      "https://github.com/vislearn/FrEIA/blob/master/FrEIA/modules/splines/binned.py"
+    ],
+    "revisions": {
+      "buggy": "ba2aee0205f278ff0f89df174f317a3d6dabf943 (FrEIA/modules/splines/binned.py, pre-fix state; bug present verbatim as quoted in issue #140 through this revision)",
+      "fixed": "0f100e008deda5c8521a4ba7014f0376ed5a0eb7 (initial fix attempt, Mar 31 2023) finalized by fa7b45d91710f9113bc000298b4a8e6aecdbcb23 (Apr 3 2023, commit message: 'revert to leq for inside domain check (wasn't the problem). Using correct knots in reverse direction')"
+    },
+    "modified_files": [
+      "FrEIA/modules/splines/binned.py"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-PETSC-006",
+    "project": "petsc/petsc",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://gitlab.com/petsc/petsc/-/issues/1583",
+      "https://gitlab.com/petsc/petsc/-/blob/main/src/snes/linesearch/impls/cp/linesearchcp.c",
+      "https://gitlab.com/petsc/petsc/-/commit/6b095a85e4a7400e1f5005aabbce4fbe90ab3d26"
+    ],
+    "revisions": {
+      "buggy": "PETSc v3.21.3 (built and tested in this session; src/snes/linesearch/impls/cp/linesearchcp.c lines 28-37, initial-point atol short-circuit setting SNES_CONVERGED_FNORM_ABS). Introduced/aligned by commit 6b095a85e4a7400e1f5005aabbce4fbe90ab3d26 (2023-10-27) per batch-3 scan.",
+      "fixed": "unknown (issue #1583 is still open/unresolved on gitlab.com/petsc/petsc as of query date)"
+    },
+    "modified_files": [
+      "src/snes/linesearch/impls/cp/linesearchcp.c"
+    ],
+    "exclusions_checked": {
+      "crash_only": false,
+      "api_only": false,
+      "performance_only": false,
+      "documentation_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "E-PETSC-007",
+    "project": "petsc/petsc",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://gitlab.com/petsc/petsc/-/issues/1667",
+      "https://petsc.org/release/changes/320/"
+    ],
+    "revisions": {
+      "buggy": "PETSc >=3.20 (main branch after the 'Swap the order of monitor and convergence test. Now monitors are always called after a convergence test' change referenced in the 3.20 changelog); reporter contrasts working PETSc 3.19 vs broken 3.21",
+      "fixed": "unknown -- issue closed 2024-11-13 but no linked merge request/commit was found via the GitLab API (related_merge_requests returned empty), so it is unclear whether a code fix landed or the issue was closed as a documented/expected behavior change"
+    },
+    "modified_files": [
+      "src/snes/interface/snes.c (SNESSolve monitor/convergence-test ordering, per the 3.20 changelog note; not independently confirmed by reading the diff)"
+    ],
+    "exclusions_checked": {
+      "crash_only": false,
+      "api_only": false,
+      "performance_only": false,
+      "documentation_only": false,
+      "closed_backend_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-005",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/releases/tag/v5.2.0",
+      "https://github.com/LLNL/sundials/commit/dd0fc3db066275dc0a5b383764894317d454f398",
+      "https://github.com/LLNL/sundials/pull/325"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS v5.1.0 and earlier (any release with ARKODE non-identity mass-matrix + user-supplied iterative unscaled linear-solver support, prior to commit dd0fc3db066275dc0a5b383764894317d454f398)",
+      "fixed": "SUNDIALS v5.2.0, commit dd0fc3db066275dc0a5b383764894317d454f398 (merges PR #325, branch bugfix/arkode-unscaled-ls, in src/arkode/arkode_ls.c)"
+    },
+    "modified_files": [
+      "src/arkode/arkode_ls.c",
+      "doc/arkode/ARKode.tex",
+      "doc/arkode/SphinxDocs/guide/source/Introduction.rst",
+      "doc/arkode/SphinxDocs/guide/source/sunlinsol/ARKode_requirements.rst",
+      "recent_changes.md"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-006",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/releases/tag/v5.0.0",
+      "https://github.com/LLNL/sundials/commit/ecb58259a7ec2a42ba114e8b62c7187f9e44820c"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS v4.1.0 (and earlier releases with SUNNonlinSolSetConvTestFn support), prior to commit ecb58259a7ec2a42ba114e8b62c7187f9e44820c",
+      "fixed": "SUNDIALS v5.0.0, commit ecb58259a7ec2a42ba114e8b62c7187f9e44820c (merges internal PR #254, branch feature/cvode-acornrm, adding the cv_acnrmcur tracking flag in src/cvode/{cvode.c,cvode_impl.h,cvode_nls.c})"
+    },
+    "modified_files": [
+      "src/cvode/cvode.c",
+      "src/cvode/cvode_impl.h",
+      "src/cvode/cvode_nls.c",
+      "doc/cvode/cv_intro.tex",
+      "doc/cvodes/cvs_intro.tex"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-007",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/pull/763",
+      "https://github.com/LLNL/sundials/commit/5f5a8c3facdd413e54e02361afc47a2032091175"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS releases containing the MRIHTol SUNAdaptController prior to PR #763 (up through v7.4.0)",
+      "fixed": "SUNDIALS v7.5.0, commit 5f5a8c3facdd413e54e02361afc47a2032091175 (PR #763, 'Fixes for MRI-HTol adaptivity -- added missing scaling to accumulated error, and allowed fuzz factor to also be used when assessing tstop criteria at the start of a step')"
+    },
+    "modified_files": [
+      "src/arkode/arkode_mristep.c",
+      "src/sunadaptcontroller/mrihtol/sunadaptcontroller_mrihtol.c",
+      "doc/shared/sunadaptcontroller/SUNAdaptController_MRIHTol.rst",
+      "doc/shared/RecentChanges.rst",
+      "CHANGELOG.md"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-008",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/pull/764",
+      "https://github.com/LLNL/sundials/commit/49763f35da7bacd3a384b12ec46feb1f83422807",
+      "https://github.com/mfem/mfem/issues/5004"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS v7.3.0 through v7.4.0: kin_current_depth introduced by PR #679 (Anderson adaptive damping/depth, v7.3.0) is never reset in KINInitAA, so AA depth/history leaks across successive KINSol calls on one instance. (Correction of earlier note: KINSetMAA-after-KINInit was NOT added in v7.3.0; that relaxation is PR #742, v7.5.0.)",
+      "fixed": "SUNDIALS v7.5.0, commit 49763f35da7bacd3a384b12ec46feb1f83422807 (PR #764, 'Bugfix: KINSOL initialize Anderson acceleration depth', adds test/unit_tests/kinsol/C_serial/kin_test_reuse_fp.c; fixes mfem/mfem#5004)"
+    },
+    "modified_files": [
+      "src/kinsol/kinsol.c",
+      "src/kinsol/kinsol_aa.c",
+      "test/unit_tests/kinsol/C_serial/kin_test_reuse_fp.c",
+      "test/unit_tests/kinsol/C_serial/CMakeLists.txt",
+      "doc/shared/RecentChanges.rst",
+      "CHANGELOG.md"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-009",
+    "project": "LLNL/sundials",
+    "status": "rejected",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/pull/850",
+      "https://github.com/LLNL/sundials/commit/a49c06c8ee90f9872f6d47fd3d6f5c8622cb3524"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS v7.3.0 (when ARKODE_TSITOURAS_7_4_5 became the new default 5th-order explicit method) through v7.6.0, prior to commit a49c06c8ee90f9872f6d47fd3d6f5c8622cb3524",
+      "fixed": "SUNDIALS v7.7.0, commit a49c06c8ee90f9872f6d47fd3d6f5c8622cb3524 (PR #850, 'Bugfix: Fix the embedded coefficients of the ARKODE_TSITOURAS_7_4_5 method', citing errors in the source paper https://doi.org/10.1016/j.camwa.2011.06.002 and its accompanying Mathematica code)"
+    },
+    "modified_files": [
+      "src/arkode/arkode_butcher_erk.def",
+      "doc/arkode/guide/source/Butcher.rst"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "A-LAPACK-004",
+    "project": "Reference-LAPACK/lapack",
+    "status": "verified_full",
+    "evidence_depth": "verified_full",
+    "source_urls": [
+      "https://github.com/Reference-LAPACK/lapack/commit/6d3c6b3d719c4fa38f8321e398a8ab142c124f22",
+      "https://www.netlib.org/lapack/bug_list.html",
+      "http://icl.cs.utk.edu/lapack-forum/archives/lapack/msg01713.html"
+    ],
+    "revisions": {
+      "buggy": "Any Reference-LAPACK/lapack revision prior to commit 6d3c6b3d719c4fa38f8321e398a8ab142c124f22 (e.g. the 3.5.0/3.6.0 release lines; parent commit 2491c9367a9c5e827a935679a4755387b348e159)",
+      "fixed": "6d3c6b3d719c4fa38f8321e398a8ab142c124f22 (\"Fix bug 139 submitted by Christoph Conrads on Oct 6th 2015\", authored/committed by Julie Langou, Oct 22 2015)"
+    },
+    "modified_files": [
+      "SRC/dstedc.f",
+      "SRC/sstedc.f",
+      "SRC/cstedc.f",
+      "SRC/zstedc.f"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-TRILINOS-001",
+    "project": "trilinos/Trilinos",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/trilinos/Trilinos/issues/7680",
+      "https://github.com/trilinos/Trilinos/commit/c7f0d92"
+    ],
+    "revisions": {
+      "buggy": "Trilinos commit prior to c7f0d92 (parent 4209d0d), packages/belos/src/BelosCGSingleRedIter.hpp: two occurrences of `rHr_ = sHt(1,1);` inside the convergence-folding (`Fold Convergence Detection Into Allreduce` / single-reduction CG) code path.",
+      "fixed": "Trilinos commit c7f0d92 \"A residual bug fix in the Belos single CG solver\" (2020-07-16, author Kang Hyun) which changes both occurrences to `rHr_ = sHt(0,1);`."
+    },
+    "modified_files": [
+      "packages/belos/src/BelosCGSingleRedIter.hpp"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "C-SCIPY-001",
+    "project": "scipy (scipy.interpolate.PchipInterpolator)",
+    "status": "rejected",
+    "evidence_depth": "rejected",
+    "source_urls": [
+      "https://github.com/scipy/scipy/issues/5326",
+      "https://github.com/scipy/scipy/issues/3453",
+      "https://github.com/scipy/scipy/pull/5351",
+      "https://github.com/scipy/scipy/issues/2357"
+    ],
+    "revisions": {
+      "buggy": "scipy >= 0.13.0 (initial PchipInterpolator/pchip implementation, 2013) through scipy 0.16.x, i.e. any revision prior to the merge of PR #5351",
+      "fixed": "scipy 0.17.0 (PR #5351 merged 2015-10-17; component commits b127884, 2e60b7c, c81510c, afab091, 1a90d36)"
+    },
+    "modified_files": [
+      "scipy/interpolate/_monotone.py (historically polyint.py -> interpolate_monotone.py -> _monotone.py) - the interior weighted-harmonic-mean slope function (w1/w2) and the end-slope calculation"
+    ],
+    "exclusions_checked": {
+      "doc_only": false,
+      "build_only": false,
+      "performance_only": false,
+      "closed_source_backend": false,
+      "input_validation_only": false
+    }
+  },
+  {
+    "provisional_id": "C-DEALII-001",
+    "project": "dealii/dealii",
+    "status": "rejected",
+    "evidence_depth": "dual_arm_executed",
+    "source_urls": [
+      "https://github.com/dealii/dealii/issues/3874",
+      "https://github.com/dealii/dealii/commit/6fdbe51",
+      "https://github.com/dealii/dealii/commit/92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f",
+      "https://github.com/dealii/dealii/blob/v8.5.0/include/deal.II/fe/mapping_q_generic.h",
+      "https://www.dealii.org/current/doxygen/deal.II/changes_between_8_4_2_and_8_5_0.html",
+      "https://github.com/dealii/dealii/blob/master/tests/mappings/mapping_q_mixed_manifolds_01.cc"
+    ],
+    "revisions": {
+      "buggy": "deal.II v8.4.2 (released 2016-09-03) and any commit prior to kronbichler's ~2017-03-18/03-19 fix, e.g. commit 7f71113 (parent of 6fdbe51) -- MappingQGeneric/MappingQ interior support-point placement code in include/deal.II/fe/mapping_q_generic.h and source/fe/mapping_q_generic.cc",
+      "fixed": "commits 6fdbe51 ('Fix manifold code by introducing a new flag', kronbichler, ~2017-03-18) and 92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f ('Unify interpolation from surrounding points. Query multiple points from mapping.', kronbichler, ~2017-03-19); first released in deal.II v8.5.0 (2017-04-06)"
+    },
+    "modified_files": [
+      "include/deal.II/fe/mapping_q.h",
+      "include/deal.II/fe/mapping_q_generic.h",
+      "source/fe/mapping_q.cc",
+      "source/fe/mapping_q_generic.cc",
+      "tests/mappings/mapping_q_mixed_manifolds_01.cc"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "E-SUNDIALS-010",
+    "project": "LLNL/sundials",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/LLNL/sundials/issues/311",
+      "https://github.com/LLNL/sundials/pull/324",
+      "https://github.com/LLNL/sundials/pull/324/files",
+      "https://github.com/LLNL/sundials/blob/main/CHANGELOG.md",
+      "https://github.com/LLNL/sundials/blob/main/src/arkode/arkode_erkstep.c",
+      "https://github.com/LLNL/sundials/releases/tag/v6.7.0"
+    ],
+    "revisions": {
+      "buggy": "SUNDIALS <= v6.6.2 (any release before PR #324), src/arkode/arkode_erkstep.c function erkStep_FullRHS(), ARK_FULLRHS_END branch: FSAL (first-same-as-last) detection incorrectly checked only Butcher-table c[s-1]==1, at line range corresponding to https://github.com/LLNL/sundials/blob/1ea097bb3bce207335ac35f0b5e78df5d71c6409/src/arkode/arkode_erkstep.c#L670-L672",
+      "fixed": "PR #324 ('Feature: Update Full RHS Calls', merged 2023-11-08), which added ARKodeButcherTable_IsStifflyAccurate() (checking A[stages-1][i]==b[i], the correct FSAL/stiffly-accurate condition) in arkode_butcher.c/.h and used it to gate the FullRHS reuse in arkode_erkstep.c, arkode_arkstep.c, arkode_mristep.c, arkode_sprkstep.c; released in SUNDIALS v6.7.0"
+    },
+    "modified_files": [
+      "src/arkode/arkode_erkstep.c",
+      "src/arkode/arkode_arkstep.c",
+      "src/arkode/arkode_arkstep_impl.h",
+      "src/arkode/arkode_butcher.c",
+      "include/arkode/arkode_butcher.h",
+      "src/arkode/arkode_mristep.c",
+      "src/arkode/arkode_sprkstep.c",
+      "CHANGELOG.md"
+    ],
+    "exclusions_checked": {
+      "api_only": false,
+      "closed_backend_only": false,
+      "crash_only": false,
+      "documentation_only": false,
+      "performance_only": false
+    }
+  },
+  {
+    "provisional_id": "C-SCIPY-002",
+    "project": "scipy/scipy (scipy.stats)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/scipy/scipy/issues/11186",
+      "https://github.com/scipy/scipy/pull/12640"
+    ],
+    "revisions": {
+      "buggy": "scipy.stats.pearson3 as shipped before merge commit 1caf233 (reproduced on 1.5.0.dev0+5421b30; affects released 1.5.x). pearson3_gen in scipy/stats/_continuous_distns.py, cdf/sf branch for negative skew.",
+      "fixed": "merge commit 1caf233 (PR #12640, merged 2020-10-17 by WarrenWeckesser, milestone scipy 1.6.0); negative-skew branch reworked to use gamma.sf instead of gamma._cdf on the transformed argument."
+    },
+    "modified_files": [
+      "scipy/stats/_continuous_distns.py"
+    ],
+    "exclusions_checked": {
+      "doc_only": false,
+      "build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false,
+      "behavior_change_confirmed": true
+    }
+  },
+  {
+    "provisional_id": "C-BOOSTMATH-001",
+    "project": "boostorg/math (Boost.Math statistical distributions)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/boostorg/math/issues/184",
+      "https://github.com/boostorg/math/pull/1080",
+      "https://github.com/boostorg/math/pull/1080/commits"
+    ],
+    "revisions": {
+      "buggy": "Boost.Math skew_normal quantile as shipped Boost 1.67-1.83 (issue reproduced on 1.67 returning -inf and 1.69 returning 0 for an interior probability); root-finding path used by quantile(skew_normal, p) in boost/math/distributions/skew_normal.hpp via the generic root finders in boost/math/tools/roots.hpp.",
+      "fixed": "PR #1080 merged into develop 2024-02-06 (commits a57fb0a 'Reinstate root finding protection against huge jumps', 04c2c24); reinstated guard against unbounded steps in the root-finding client used by the quantile."
+    },
+    "modified_files": [
+      "boost/math/tools/roots.hpp",
+      "boost/math/distributions/skew_normal.hpp (consumer)"
+    ],
+    "exclusions_checked": {
+      "doc_only": false,
+      "build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false,
+      "behavior_change_confirmed": true
+    }
+  },
+  {
+    "provisional_id": "C-GSL-001",
+    "project": "GNU Scientific Library (GSL) cdf/specfunc",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://www.mail-archive.com/bug-gsl@gnu.org/msg02964.html",
+      "http://www.mail-archive.com/bug-gsl@gnu.org/msg03107.html"
+    ],
+    "revisions": {
+      "buggy": "GSL 2.6 (as reported) AND GSL 2.8 (latest release; verified still present 2026-07-04 -- identical violating values)",
+      "fixed": "none released: bug-gsl msg03107 patch (gamma_inc.c crossover 1e6->1e4) was never merged upstream; applied locally to 2.8 it repairs all six pairs to Q~0.8387-0.8392 (inside the reporter's scipy band) -- mechanism closure only"
+    },
+    "modified_files": [
+      "specfunc/gamma_inc.c",
+      "cdf/gamma.c (consumer of gsl_sf_gamma_inc_Q)"
+    ],
+    "exclusions_checked": {
+      "doc_only": false,
+      "build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false,
+      "behavior_change_confirmed": true
+    }
+  },
+  {
+    "provisional_id": "C-SCIPY-003",
+    "project": "scipy/scipy (scipy.stats)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/scipy/scipy/issues/8692",
+      "https://github.com/scipy/scipy/pull/10091"
+    ],
+    "revisions": {
+      "buggy": "scipy.stats.hypergeom before merge commit 2ca8bfe: logcdf returns positive values (cdf>1), e.g. hypergeom.logcdf(40, 1600, 50, 300) = 7.578e-13 -> cdf = 1.0000000000007578 (R's phyper gives ~1). hypergeom_gen.logcdf/logsf in scipy/stats/_discrete_distns.py.",
+      "fixed": "merge commit 2ca8bfe (PR #10091 'improve logcdf and logsf of hypergeometric distribution', merged 2019-04-24, milestone scipy 1.3.0)."
+    },
+    "modified_files": [
+      "scipy/stats/_discrete_distns.py"
+    ],
+    "exclusions_checked": {
+      "doc_only": false,
+      "build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false,
+      "behavior_change_confirmed": true
+    }
+  },
+  {
+    "provisional_id": "C-DATAINTERPOLATIONS-001",
+    "project": "SciML/DataInterpolations.jl",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/SciML/DataInterpolations.jl/issues/415",
+      "https://github.com/SciML/DataInterpolations.jl/pull/416",
+      "https://github.com/SciML/DataInterpolations.jl/commit/73ea895598a37c915baff1d66680f6dc298ca0f1",
+      "https://raw.githubusercontent.com/SciML/DataInterpolations.jl/d188ecdc75f9e582d8f4b249f720243fc3827cdc/src/interpolation_utils.jl"
+    ],
+    "revisions": {
+      "buggy": "d188ecdc75f9e582d8f4b249f720243fc3827cdc (state after PR #400 / v8.0.0; _du in src/interpolation_utils.jl applies the raw three-point endpoint slope formula ((2h1+h2)*d1 - h1*d2)/(h1+h2) whenever sign(delta1)==sign(delta2), with no shape-preservation clamp)",
+      "fixed": "73ea895598a37c915baff1d66680f6dc298ca0f1 (PR #416 'fix pchip endpoints'; adds _edge_case: clamp endpoint derivative to 0 when sign(d)!=sign(delta1), and to 3*delta1 when sign(delta1)!=sign(delta2) and abs(d)>3*abs(delta1))"
+    },
+    "modified_files": [
+      "src/interpolation_utils.jl"
+    ],
+    "exclusions_checked": {
+      "closed_source_backend": "no - pure Julia numerical routine",
+      "behavior_change": "yes - interpolant numerical values and monotonicity change at boundary intervals; not doc/build/perf; violation observable directly, no crash needed",
+      "oracle_without_fix": "yes - PCHIP no-overshoot/monotonicity guarantee is the defining mathematical property",
+      "not_already_in_ledger": "yes - ledger has C-SCIPY-001 (scipy PCHIP interior weights) but no DataInterpolations.jl entry; distinct bug (endpoint clamp)"
+    }
+  },
+  {
+    "provisional_id": "C-CASTRO-001",
+    "project": "AMReX-Astro/Castro",
+    "status": "verified_full",
+    "evidence_depth": "dual_arm_executed",
+    "source_urls": [
+      "https://github.com/AMReX-Astro/Castro/issues/3259",
+      "https://github.com/AMReX-Astro/Castro/blame/main/Source/sdc/sdc_newton_solve.H"
+    ],
+    "revisions": {
+      "buggy": "23c000f8 (= d9549c53^; absolute floor max(small_x, rhoX) in sdc_newton_subdivide)",
+      "fixed": "d9549c53 (\"fix small_x clamping for SDC on conserved state\", PR #3268, zingale, 2026-02-25; density-scaled floor max(rho*small_x, rhoX))"
+    },
+    "modified_files": [
+      "Source/sdc/sdc_newton_solve.H"
+    ],
+    "exclusions_checked": {
+      "closed_source_backend": "no - open C++/AMReX source",
+      "behavior_change": "yes - the floored composition value changes at low density; bound/normalization violation observable before any downstream failure",
+      "oracle_without_fix": "yes - mass-fraction bounds 0<=X<=1, sum=1 are standard invariants",
+      "not_already_in_ledger": "yes - no Castro/Nyx entry in ledger"
+    }
+  },
+  {
+    "provisional_id": "F-SCIPY-001",
+    "project": "scipy/scipy (scipy.sparse)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/scipy/scipy/issues/6401",
+      "https://github.com/scipy/scipy/pull/6405",
+      "https://github.com/scipy/scipy/pull/6405/files"
+    ],
+    "revisions": {
+      "buggy": "scipy 0.17.1 (git tag v0.17.1). scipy/sparse/compressed.py elementwise true-divide assumed the output sparsity pattern equals the union of operand patterns; positions where the numerator has a structural (implicit) zero but the denominator is stored-nonzero were left as NaN instead of 0. Reproducer from issue #6401: a=csr_matrix((1,1)); b=csr_matrix((1,1)); b[0,0]=1; (a/b).toarray() -> [[nan]], should be [[0.]].",
+      "fixed": "PR #6405 (merged 2016-08-01, backported to 0.18.1). Fix pre-fills the dense divide result and sets out[row,col]=0 at the denominator's stored-nonzero positions, so implicit-zero numerators divide to 0 as in the dense reference."
+    },
+    "modified_files": [
+      "scipy/sparse/compressed.py",
+      "scipy/sparse/tests/test_base.py"
+    ],
+    "exclusions_checked": {
+      "not_doc_build_perf": "true -- wrong numeric value (NaN vs 0)",
+      "not_crash_only": "true",
+      "not_closed_source_backend": "true -- pure Python/scipy.sparse logic",
+      "not_float_reordering": "true -- NaN vs 0 is a hard correctness error, not ulp noise",
+      "oracle_stateable_without_fix": "true -- invariance to implicit/explicit zero storage (and equivalence to dense divide) is stateable from the sparse-matrix contract alone"
+    }
+  },
+  {
+    "provisional_id": "F-EIGEN-001",
+    "project": "libeigen/eigen (SparseCore)",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://gitlab.com/libeigen/eigen/-/work_items/718",
+      "https://gitlab.com/libeigen/eigen/-/issues/718",
+      "https://eigen.tuxfamily.org/bz/show_bug.cgi?id=718"
+    ],
+    "revisions": {
+      "buggy": "Eigen 3.2 (as reported in Bugzilla #718, migrated to GitLab issue #718). SparseMatrix<T,RowMajor>::InnerIterator returns a garbage value where the equivalent ColMajor matrix returns the correct stored element. Reproducer: build a 5x5 SparseMatrix, insert value 1 at (0,0); iterating outerSize x InnerIterator prints '1' for ColMajor but 'an absurd number' for RowMajor.",
+      "fixed": "Eigen 3.3.0: SparseCompressedBase::InnerIterator's converting constructor from SparseMatrixBase<OtherDerived> is private (guard machinery introduced with commit 7838fda82), making the issue's cross-storage-order iterator pattern ill-formed; verified by compile rejection on 3.3.0 and current master."
+    },
+    "modified_files": [
+      "Eigen/src/SparseCore/SparseMatrix.h (InnerIterator for RowMajor path -- exact file/line unverified)"
+    ],
+    "exclusions_checked": {
+      "not_doc_build_perf": "true -- returns a wrong element value",
+      "not_crash_only": "true -- silent garbage value, not a crash",
+      "not_closed_source_backend": "true -- pure Eigen header code (distinct from issue #1476 which is MKL-backend and excluded)",
+      "not_float_reordering": "true -- garbage value, not ulp noise",
+      "oracle_stateable_without_fix": "true -- RowMajor/ColMajor storage invariance of iterated contents is a pure representation contract"
+    }
+  },
+  {
+    "provisional_id": "A-LAPACK-005",
+    "project": "Reference-LAPACK/lapack (LAPACKE C interface)",
+    "status": "candidate_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/Reference-LAPACK/lapack/issues/729"
+    ],
+    "revisions": {
+      "buggy": "Reference-LAPACK LAPACKE (issue #729, open at time of research). LAPACKE_slacpy (and dlacpy/clacpy/zlacpy) with LAPACK_ROW_MAJOR and uplo='U' or 'L' transposes the FULL matrix before/after the core call, so the triangular-only copy corrupts the untouched region of the destination B. Reproducer copies the upper triangle of a 3x3 into a B pre-filled with 100: COL_MAJOR correctly leaves 100 in the un-copied positions; ROW_MAJOR overwrites them with 0/garbage (uninitialized malloc region).",
+      "fixed": "unknown -- issue #729 reported open with no linked PR at time of research; reporter suggests replacing the transpose-based wrapper with a native C row-major implementation. Coordinator to check for a later fixing commit."
+    },
+    "modified_files": [
+      "LAPACKE/src/lapacke_slacpy_work.c",
+      "LAPACKE/src/lapacke_dlacpy_work.c",
+      "LAPACKE/src/lapacke_clacpy_work.c",
+      "LAPACKE/src/lapacke_zlacpy_work.c"
+    ],
+    "exclusions_checked": {
+      "not_doc_build_perf": "true -- wrong destination values (issue explicitly a correctness bug, not merely efficiency)",
+      "not_crash_only": "true -- produces wrong values (though it also reads an uninitialized region); the semantic violation is observable as wrong output before any crash",
+      "not_closed_source_backend": "true -- entirely in reference LAPACKE wrapper source",
+      "not_float_reordering": "true -- corrupted/zeroed entries, not ulp noise",
+      "oracle_stateable_without_fix": "true -- row/column-major layout invariance of a triangular copy is a pure representation contract"
+    }
+  },
+  {
+    "provisional_id": "C-LAMMPS-001",
+    "project": "LAMMPS",
+    "status": "verified_full",
+    "evidence_depth": "dual_arm_executed",
+    "source_urls": [
+      "https://github.com/lammps/lammps/pull/4781",
+      "https://github.com/lammps/lammps/pull/4781/files",
+      "https://github.com/lammps/lammps/compare/stable_29Aug2024_update4...ssande7:lammps:sllod-integration",
+      "https://github.com/lammps/lammps/blob/main/doc/src/run_style.rst"
+    ],
+    "revisions": {
+      "buggy": "596e439c2^ (parent of the true PR #4781 merge; initial scan pin f243373f corrected -- it was a PR-branch sync commit)",
+      "fixed": "596e439c2 (merge commit of PR #4781 \"sllod-integration\", ssande7)"
+    },
+    "modified_files": [
+      "src/fix_nvt_sllod.cpp",
+      "src/fix_nvt_sllod.h",
+      "src/fix_deform.cpp",
+      "src/fix_deform.h",
+      "src/compute_temp_deform.cpp",
+      "src/compute_temp_deform.h",
+      "src/fix_nh.cpp",
+      "src/domain.cpp",
+      "src/domain.h",
+      "src/compute.cpp",
+      "src/compute.h",
+      "src/compute_angmom_chunk.cpp",
+      "src/compute_omega_chunk.cpp",
+      "src/group.cpp",
+      "src/EFF/* (fix_nvt_sllod_eff and related)",
+      "src/EXTRA-FIX/*",
+      "src/KOKKOS/*",
+      "src/OPENMP/*"
+    ],
+    "exclusions_checked": {
+      "doc_only": false,
+      "build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false
+    }
+  },
+  {
+    "provisional_id": "C-REBOUND-001",
+    "project": "REBOUND",
+    "status": "rejected",
+    "evidence_depth": "rejected",
+    "source_urls": [
+      "https://github.com/hannorein/rebound/issues/615",
+      "https://github.com/hannorein/rebound/blob/main/changelog.md"
+    ],
+    "revisions": {
+      "buggy": "REBOUND main branch as of the issue report (2022-10-06), i.e. approximately commit e221a59309bebdf7182089f3390bff42d45778f2 (2022-10-01, 'Added new youtube link #612', the last main-branch commit before the issue was filed) / release series v3.19.x-v3.20.0",
+      "fixed": "unknown -- issue #615 was closed 2022-10-13 with state_reason 'completed', but no linked PR or commit referencing issue 615 could be found via GitHub commit/PR search in the surrounding weeks, and the full 16-comment discussion thread (beyond the reporter's opening post) could not be retrieved through any available read-only tool (WebFetch only ever surfaced the first post; the GitHub issue-comments REST endpoint returned HTTP 403 anonymously; web.archive.org and third-party reader proxies were unavailable/blocked in this environment). It is therefore not confirmed whether resolution involved a source-code fix or was closed as user/configuration error."
+    },
+    "modified_files": [
+      "unknown -- likely rebound/simulation.py or src/integrator_whfast.c / src/rebound.c (Python ctypes wrapper around WHFast step/synchronize logic), not confirmed"
+    ],
+    "exclusions_checked": {
+      "doc_only": false,
+      "build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false
+    }
+  },
+  {
+    "provisional_id": "E-ORDINARYDIFFEQ-001",
+    "project": "SciML/OrdinaryDiffEq.jl",
+    "status": "verified_full",
+    "evidence_depth": "verified_full",
+    "source_urls": [
+      "https://github.com/SciML/OrdinaryDiffEq.jl/issues/577",
+      "https://github.com/SciML/OrdinaryDiffEq.jl/pull/578",
+      "https://patch-diff.githubusercontent.com/raw/SciML/OrdinaryDiffEq.jl/pull/578.diff",
+      "https://github.com/SciML/OrdinaryDiffEq.jl/commit/fc76440e23ec634bed9b0686ad2111ba8d01ccc9"
+    ],
+    "revisions": {
+      "buggy": "OrdinaryDiffEq.jl master @ ~d3fff74 (the commit immediately prior to fc76440e2; i.e. any release/master state before 2018-12-22, e.g. as installed and reported in issue #577 on 2018-12-22)",
+      "fixed": "OrdinaryDiffEq.jl commit fc76440e23ec634bed9b0686ad2111ba8d01ccc9 (PR #578 'Fix SymplecticEuler', merged 2018-12-22T19:54:31Z)"
+    },
+    "modified_files": [
+      "src/perform_step/symplectic_perform_step.jl"
+    ],
+    "exclusions_checked": {
+      "doc_or_build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false,
+      "inherent_numerical_instability_only": false
+    }
+  },
+  {
+    "provisional_id": "E-ORDINARYDIFFEQ-002",
+    "project": "SciML/OrdinaryDiffEq.jl",
+    "status": "verified_full",
+    "evidence_depth": "full",
+    "source_urls": [
+      "https://github.com/SciML/OrdinaryDiffEq.jl/issues/1312",
+      "https://github.com/SciML/DiffEqPhysics.jl/issues/60",
+      "https://github.com/SciML/OrdinaryDiffEq.jl/pull/1313",
+      "https://patch-diff.githubusercontent.com/raw/SciML/OrdinaryDiffEq.jl/pull/1313.diff",
+      "https://github.com/SciML/OrdinaryDiffEq.jl/commit/dc04babde3c35363c177e382bb761bf1d4d48bb3"
+    ],
+    "revisions": {
+      "buggy": "OrdinaryDiffEq.jl v5.47.0 (last release before PR #1313; registry-pinned real install, Julia 1.5.4)",
+      "fixed": "OrdinaryDiffEq.jl v5.47.1 (first release containing dc04bab \"fixed symplectic methods\", 2020-12-31; adjacent tag established via git tag --contains)"
+    },
+    "modified_files": [
+      "src/perform_step/symplectic_perform_step.jl",
+      "test/algconvergence/symplectic_tests.jl"
+    ],
+    "exclusions_checked": {
+      "doc_or_build_only": false,
+      "performance_only": false,
+      "crash_only": false,
+      "closed_source_backend": false,
+      "inherent_numerical_instability_only": false
+    }
+  }
+]
