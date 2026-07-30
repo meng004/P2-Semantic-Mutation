@@ -3,7 +3,7 @@
   "gate_requested": "A0",
   "branch": "cursor/grok-phase3-5-execution",
   "baseline_commit": "785a95a4ba9f0b98403b6c65445f7f2eef602391",
-  "output_commit": "PENDING_FILL_AFTER_COMMIT",
+  "output_commit": "a789bcecbd9d0544c223d4401fa101909694fbbb",
   "cloud_agent": "bc-0bd9c61b-5482-450b-8739-2da3e98dff82",
   "model": "Grok 4.5 High Fast",
   "commands": [
@@ -91,14 +91,23 @@
     },
     {
       "path": "data/external_slice/CURSOR_EXECUTION_LEDGER.md",
-      "sha256": "PENDING_AFTER_LEDGER_UPDATE"
+      "sha256": "ca034af0cfeda092efce50524fc4165a453722bc70c6583fce402087e1acb74e"
     },
     {
       "path": "data/external_slice/HANDOFF_IMPORT.json",
-      "sha256": "PENDING_SELF"
+      "sha256_note": "self-referential; use git object hash after commit",
+      "sha256_at_write": "95bee8f76219b7671026f0a8153d2bc180afbe490b3aaf4076d64aec9cb8d65f"
     }
   ],
-  "exit_codes": [0, 1, 0, 0, 0, 1, 0],
+  "exit_codes": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0
+  ],
   "failures": [],
   "retries": [
     {
