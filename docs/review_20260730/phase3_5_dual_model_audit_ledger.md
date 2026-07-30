@@ -129,6 +129,7 @@ rtk git diff --name-status d91083af4b368457245adbcc4d55ac2b2f786822..785a95a4ba9
 | `A0-INTAKE-001` | blocker | Cursor commit 中没有 `HANDOFF_IMPORT.json` 或其他 handoff manifest，因而没有可复核的命令、环境、退出码、失败/重试、输入 hash 或输出 hash。 | Cursor 必须从固定基线提交并 push 完整 handoff manifest；收到不可变 commit 后新增 A0 首次审计条目。 |
 | `A0-INTAKE-002` | blocker | 相对基线的唯一新增文件是 `docs/task-instructions/2026-07-30-cursor-vm-phase3-5.md`。 | 任务指令不能代替运行证据；不得据此签核 A0。 |
 | `A0-INTAKE-003` | blocker | 缺少 `scripts/external_slice/import_defect4mr_pool.py`、`tests/external_slice/test_import_defect4mr_pool.py`、`data/external_slice/defect4mr_import/candidates_sanitized.json`、`data/external_slice/defect4mr_import/PROVENANCE.json`、`data/external_slice/defect4mr_import/IMPORT_LOG.md`。 | Cursor 完成一次性 sanitized import，并将全部规定工件与 handoff manifest 置于同一可审计交接中。 |
+| `STARTUP-CONFLICT-001` | 未验证的口径兼容性风险；若未解决则为 Gate A2 blocker | 冻结的 `research/prereg_v2/external_slice_protocol.md` §2.1 仍以 Defect4MR v1.0.0 / DOI release manifest 为项目池来源，§3 规定 DEF-CAL 10 例从按 v1.0.0 release manifest 字典序排序的 35 个 `verified_full` ID 中抽样；2026-07-30 双模型执行规格与任务则将 A0 sanitized import 来源钉扎到私有仓库 commit `2bf7c2401c846544e715d879eb639e8c3bf44067` 的 ledger blob `1469a2e2b15dcb2cdf59d185f3ec92f58fb77189`。两个 manifest 的 35-ID 集合及排序是否等价尚未验证；本 finding 不声称二者已经不等价。 | 不改写 A0 provenance，也不新增或改变 A0 verdict。在 Gate A2 的 DEF-CAL 抽样或训练排除前，必须用不可变 crosswalk 及其 hash 证明两个 manifest 的 35-ID 集合与排序等价；若不等价，必须依照高优先级冻结协议通过 `AMENDMENTS.md` 和作者裁决处理，禁止默默改用 commit ledger 顺序。若 Gate A2 前仍未解决，本 finding 升为 A2 blocker。 |
 
 #### 判定
 
