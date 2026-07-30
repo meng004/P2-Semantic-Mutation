@@ -1,20 +1,20 @@
 # External Admission Adjudication Runbook
 
-## 0. Defect4MR artifact — delivery specification (for the author)
+## 0. Defect4MR artifact — fixed GitHub source
 
-The blocked "Defect4MR 工件" = the P12 project's archived defect dataset (Defect4MR v1.0.0, archival DOI `10.5281/zenodo.21203424`; local copy at the author's `/Users/limeng/Papers/P12-Defect4MR`). Task 3.1's 64-pool re-adjudication and the seeded `MAPPING_TRAIN` draw need, concretely:
+The Defect4MR artifact is available from the private repository `https://github.com/meng004/P12-Defect4MR` (the supplied lowercase URL redirects to this canonical name). Task 3.1 pins commit `2bf7c2401c846544e715d879eb639e8c3bf44067`; the authoritative 64-row ledger is `data/ledgers/candidates.json`, blob SHA `1469a2e2b15dcb2cdf59d185f3ec92f58fb77189`.
 
-1. **Minimum viable (unblocks 64-pool re-adjudication + MAPPING_TRAIN draw):** one manifest file (CSV or JSON) with one row per candidate (all 64), fields: `defect_id, project, issue_url, buggy_sha, fixed_sha, short_description, status` (status ∈ verified_full / candidate_full / other). The `verified_full` 35 must appear with their canonical release IDs (the seeded draw sorts these lexicographically).
-2. **Second instalment (unblocks readiness checks):** the `reproducers/` scripts (per-defect dual-arm build + trigger), or equivalent build pins.
-3. **Delivery paths (any one):** copy into this repo under `data/external_slice/defect4mr_import/` and push; or grant read access to the P12 repository; or attach the evidence package (`release/provider/p12-p3-v1.1.2/evidence-package.json`).
+Verified census at the pinned commit: 64 total = 35 `verified_full` + 16 `candidate_full` + 12 `rejected` + 1 `candidate_needs_oracle`. The `v1.0.1` tag has a different 34/17 split and is not an acceptable substitute for this execution.
 
-Discipline reminder: the import lands **as-is** (raw, immutable); re-adjudication happens only through this runbook's procedure; no operator/fiber vocabulary may be added to any imported admission-side file.
+The raw ledger contains `mr_mapping` and `proposed_mr_oracle`, so it must **not** be copied as-is into the admission workspace. A one-time import job must verify repository commit, ledger blob, counts, and schema, then emit a sanitized manifest that excludes those two fields and all mutation/kill information. The import session is retired after this mechanical conversion and may not adjudicate admission. Store only the sanitized manifest plus provenance/hash log under `data/external_slice/defect4mr_import/`.
+
+Readiness support is distributed across `reports/cloud/<case>-verification.md`, `scripts/cloud/<case>-verification/`, `data/registry/cases.{yaml,json}`, `tools/d4mr/`, and `docs/d4mr-CONTRACT.md`. The registry covers all 35 `verified_full` cases, but only 3/35 image entries have a digest; for the other 32, rebuild from the verification report or first publish and pin the image. Do not interpret a registry entry with `digest: null` as an immediately runnable image.
 
 ## 1. Authority and current boundary
 
 The governing specification is `research/prereg_v2/external_slice_protocol.md`, especially §§1, 2, and 6. Admission has exactly three criteria. No extra quality, popularity, downstream-detection, or convenience criterion may be introduced.
 
-The Defect4MR v1.0.0 candidate artifact is not present in this workspace. Its 64 cases cannot be re-adjudicated or reconstructed from memory. The current sheet therefore contains only the bounded supplementary-mining pilot. Two-human annotation and buggy/fixed build work are also not performed in this preparation phase.
+The 64-pool source is now accessible at the fixed GitHub commit and its re-adjudication is unblocked, but has not yet been executed. The current sheet still contains only the bounded supplementary-mining pilot. The pilot remains supplemental and must not replace the 64-pool adjudication. Two-human annotation and new buggy/fixed build work have not yet been performed.
 
 ## 2. Sheet contract
 

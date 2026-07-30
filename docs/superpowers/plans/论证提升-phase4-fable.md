@@ -1,7 +1,7 @@
 # 论证提升-phase4-fable：手稿重构写作
 
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans。任务用 checkbox 跟踪；REVIEW CHECKPOINT 必须停下等作者拍板。
-> **执行模型:** `claude-fable-5-thinking-max`（分派类别：**最强推理**——学术英文写作与叙事重排是本阶段唯一瓶颈，降级措辞需最强行文控制；与理论章节（同为 fable 起草）保持口径一致）。非此模型请勿执行本文件。
+> **执行环境（2026-07-30 覆盖）：** Cursor 云端 VM / `Grok 4.5 High Fast` 负责工作副本、SSOT 注入、图表、编译和一致性修复；本地 GPT Desktop / `GPT-5.6 Sol High` 负责论证结构、负结果叙事、Threats、claim–evidence 对齐与全文终审。完整职责与交接规则见 `docs/superpowers/specs/2026-07-29-p3-phase3-5-dual-model-execution-design.md`。
 
 **Master plan（规格权威）:** `docs/superpowers/plans/2026-07-28-p3-argumentation-uplift.md`。开工前必读其 §0（标识系统——正文假设/实验一律用 H-/EXP- 语义标签，统计符号首现限定词规则见 §0.2）、§1.1（对象集合语义命名 KER-*/POOL-*/MRSET-*/DEF-*，正文对象命名口径）、§1.2（RQ→假设→对象→方法→指标 链路总表，claim-evidence map 骨架）、§1.3.1（两段式标识，§3 外部协议小节素材）、§1.4（对象构建原则 P1–P7，§3 写作素材）。另必读理论计划 §0.2 符号总表（正文数学符号闭集）。内容冲突以 master 为准。
 

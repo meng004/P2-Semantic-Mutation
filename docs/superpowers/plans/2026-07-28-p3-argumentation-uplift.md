@@ -12,18 +12,20 @@
 
 **执行分派（按模型拆分）:** 本计划为规格权威（§0 符号与标识、§1 实验规格总表、任务定义源）；逐阶段执行在下列拆分文件中进行（checkbox 在拆分文件中打勾），内容冲突以本计划为准，修订先改本计划再同步拆分文件。
 
-**分派原则（三类，两计划共用）:** ① **最强推理**（证明起草、方法学/统计设计、手稿写作）→ `claude-fable-5-thinking-max`；② **逻辑评审或审计**（符号审计、独立交叉检验、整合核对、准入重裁）→ `gpt-5.6-terra-max`（跨家族独立视角，审计者与被审产出不同源）；③ **执行**（跑批、脚本、管线、构建打包）→ `cursor-grok-4.5-high-fast`。同类阶段可由同一模型的多个实例并行执行。
+**原分派原则（Phase 0–2 历史执行记录）:** ① **最强推理**（证明起草、方法学/统计设计、手稿写作）→ `claude-fable-5-thinking-max`；② **逻辑评审或审计**（符号审计、独立交叉检验、整合核对、准入重裁）→ `gpt-5.6-terra-max`；③ **执行**（跑批、脚本、管线、构建打包）→ `cursor-grok-4.5-high-fast`。Phase 3–5 改用下表的双环境交叉门禁。
 
 | Phase | 拆分文件 | 模型（类别） | 前置 | 可并行于 |
 |---|---|---|---|---|
 | 0 SSOT | `论证提升-phase0-grok.md` | cursor-grok-4.5-high-fast（执行） | — | 理论 T0 |
 | 1 预注册 | `论证提升-phase1-fable.md` | claude-fable-5-thinking-max（推理） | Phase 0；Task 1.3 另需理论 CHECKPOINT T2 | 理论 T1–T5（Task 1.1/1.2/1.4 先行） |
 | 2 构念线 | `论证提升-phase2-grok.md` | cursor-grok-4.5-high-fast（执行） | Phase 1（prereg tag） | Phase 3；理论 T6 审计窗口 |
-| 3 外部线 | `论证提升-phase3-terra.md` | gpt-5.6-terra-max（审计） | Task 1.4 冻结（3.1/3.2）；理论 Phase T3（3.3） | Phase 2 |
-| 4 写作 | `论证提升-phase4-fable.md` | claude-fable-5-thinking-max（推理） | CHECKPOINT 2 + Task 3.3；理论 T6.1 整合 | Phase 3 尾部 |
-| 5 流水线 | `论证提升-phase5-grok.md` | cursor-grok-4.5-high-fast（执行） | Phase 4（CHECKPOINT 4） | —（终末串行） |
+| 3 外部线 | `论证提升-phase3-terra.md` | Cursor VM / Grok 4.5 High Fast（执行）+ 本地 GPT Desktop / GPT-5.6 Sol High（审计/集成） | Task 1.4 冻结（3.1/3.2）；理论 Phase T3（3.3） | Phase 2 |
+| 4 写作 | `论证提升-phase4-fable.md` | Cursor VM / Grok 4.5 High Fast（机械执行）+ 本地 GPT Desktop / GPT-5.6 Sol High（论证/终审） | CHECKPOINT 2 + Task 3.3；理论 T6.1 整合 | Phase 3 尾部 |
+| 5 流水线 | `论证提升-phase5-grok.md` | Cursor VM / Grok 4.5 High Fast（流水线）+ 本地 GPT Desktop / GPT-5.6 Sol High（最终审计） | Phase 4（CHECKPOINT 4） | —（终末串行） |
 
 ---
+
+> **2026-07-30 Phase 3–5 执行覆盖：** 剩余阶段的模型、环境、分支所有权与交叉门禁以 `docs/superpowers/specs/2026-07-29-p3-phase3-5-dual-model-execution-design.md` 为准。Phase 0–2 的原模型分派保留为历史执行记录。
 
 ## 0. 符号与标识系统（第 0 节为符号说明；数学符号唯一权威=理论计划 §0.2 总表）
 
@@ -74,7 +76,7 @@
 | 语义变异体池（POOL-SEM，v5 lineage） | 5 语义算子在 applicable cell 内对 KER 全集生成的变异体 | 密度由 Task 1.2 功效模拟在成本约束内锁定（cell=算子×PUT，§0.3；算术表：applicable cell 数 × 密度 = 总量，预算区间约 300–840） | 本计划 Task 2.1 生成（generator 版本/seed/prompt 哈希入台账） | 生成漏斗+三态归档+统一标识（§1.3.2） | EXP-CON/DIS 确认性分母 |
 | 剂量梯度池（POOL-DOSE） | HP（超参幅度）、CE（守恒侵蚀）两参数化算子 × 每类一核（Lorenz、MC 积分、GPR、LogReg）× ≥6 档 × 模拟锁定重复数 | ≤960 次执行（上限；实际配置由 Task 1.2 Step 2c 锁定，F-4） | 本计划 Task 2.3 实现 | 档位 \(\varepsilon_{\mathrm{viol}}(m_{\mathrm{mut}})\) 标定+统一标识（§1.3.3） | EXP-DOSE |
 | MR 条件集（MRSET-ALN / MRSET-CRS / MRSET-RND） | aligned / cross / seeded-random 三组 | 判别线每 cell 2 条件（ALN/CRS，F-6）；外部线 4 条件（ALN/CRS/v5/RND） | v4 kill 结果数据=development-only；v4 出处 MR 集=EXP-EXT 的 treatment 条件（允许进确认性，响应变量全新采，F-9）；v5 held-out provider=判别线确认性 | 对称清单核对+prescreen（§1.3.4）；RND 仅外部线生成（F-6） | EXP-DIS（ALN/CRS）/ EXP-EXT（4 条件）处理与对照 |
-| 真实缺陷对集（DEF-REAL） | 数值语义缺陷的 buggy/fixed 程序对 | 就绪 n≥20、项目 ≥8 | Defect4MR 64 池（P12 仓库 `/Users/limeng/Papers/P12-Defect4MR`）重裁 + 主流权威仓库补充挖掘（白名单见 §1.3.1） | **issue 挖掘+双臂复现+两段式统一标识（§1.3.1，核心预处理）** | EXP-EXT validation |
+| 真实缺陷对集（DEF-REAL） | 数值语义缺陷的 buggy/fixed 程序对 | 就绪 n≥20、项目 ≥8 | Defect4MR 64 池（私有仓库 `https://github.com/meng004/P12-Defect4MR`，固定 commit `2bf7c2401c846544e715d879eb639e8c3bf44067`，SSOT=`data/ledgers/candidates.json`）重裁 + 主流权威仓库补充挖掘（白名单见 §1.3.1） | **issue 挖掘+双臂复现+两段式统一标识（§1.3.1，核心预处理）** | EXP-EXT validation |
 | 校准缺陷集（DEF-CAL） | verified_full 中预注册抽取的 10 例（映射训练子集；seeded 简单随机或按 repo 分层，禁以 fiber 标签为分层变量，F-1a）+ 全 35 例历史检出率（仅作功效先验） | 10 训练 / 35 先验 | P12 Defect4MR `verified_full` | 无新预处理；仅 fiber 映射训练与功效先验 | EXP-EXT development only；训练 10 例以排除码 `MAPPING_TRAIN` 从确认性 DEF-REAL 扣除（F-1） |
 | 语法变异体参照池（POOL-SYN） | cosmic-ray 一阶变异体（1,250，既有；真实模块 MS 基线新跑） | 单引擎全量 + 算子族文档论证（R-10） | cosmic-ray 官方默认配置（版本号入台账）；mutmut 不运行，其公开算子清单作构造性覆盖论证材料 | AST 归一化（§1.3.5） | EXP-STR 参照 + MS 排序基线 |
 

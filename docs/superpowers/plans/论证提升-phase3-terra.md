@@ -1,7 +1,7 @@
 # 论证提升-phase3-terra：外部线（EXP-EXT，准入重裁 → 盲化映射 → 冻结预测 → 执行揭盲）
 
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans。任务用 checkbox 跟踪；REVIEW CHECKPOINT 必须停下等作者拍板。
-> **执行模型:** `gpt-5.6-terra-max`（分派类别：**逻辑评审或审计**——64 例缺陷准入重裁逐案判断 + 盲化映射仲裁 + 冻结预测纪律核验，判断密度全计划最高；附带的跑臂/揭盲执行步骤一并完成）。非此模型请勿执行本文件。
+> **执行环境（2026-07-30 覆盖）：** Cursor 云端 VM / `Grok 4.5 High Fast` 负责导入、复现、跑批、预测候选与机械分析；本地 GPT Desktop / `GPT-5.6 Sol High` 负责准入审计、盲化与预测冻结审计、结果复核和单一 lineage 集成。完整职责与交接规则见 `docs/superpowers/specs/2026-07-29-p3-phase3-5-dual-model-execution-design.md`。
 
 **Master plan（规格权威）:** `docs/superpowers/plans/2026-07-28-p3-argumentation-uplift.md`。开工前必读其 §0（标识系统——结果编码 `REPRO_FAILED`/`PROTOCOL_AMBIGUOUS` 等）、§1.1（DEF-REAL/DEF-CAL 集合定义）、§1.2（链路总表——H-CAL/H-RANK 判据与 κ 门禁公式）、**§1.3.1（挖掘白名单 + 两段式统一标识 `EXT-<repo>-<序号>` → `bug-<算子代号>-<序号>`，本阶段核心纪律）**、§1.4（构建原则 P3/P5）。内容冲突以 master 为准。
 
@@ -17,9 +17,9 @@
 
 ## Task 3.1：重裁与就绪检查
 
-> **状态（2026-07-29，执行=gpt-5.6-sol-xhigh 代 terra，已披露）：** Defect4MR 64 池工件不在本工作区（作者本地 P12 仓库 / Zenodo 版本不可取）→ 64 池重裁 **BLOCKED**；补充挖掘试点已真实执行（gh 只读，44 次调用）：admission_sheet 9 行（6 ADMIT_PENDING_REPRO：numpy 1 / scipy 1 / sklearn 1 / statsmodels 3；3 EXCLUDED 带理由），中性纪律 grep 零违例，analysis_id 全空。复现（双臂构建+触发）为下一步可执行项。挖掘规程=`docs/review_20260728/external_admission_runbook.md`。
+> **状态（2026-07-30）：** Defect4MR 64 池已定位并核验于私有仓库 `https://github.com/meng004/P12-Defect4MR`，固定输入 commit=`2bf7c2401c846544e715d879eb639e8c3bf44067`，权威台账=`data/ledgers/candidates.json`（blob=`1469a2e2b15dcb2cdf59d185f3ec92f58fb77189`；64 条=35 verified_full + 16 candidate_full + 12 rejected + 1 candidate_needs_oracle）。64 池重裁已**解除工件 blocker、尚未执行**。补充挖掘试点已有 9 行（6 ADMIT_PENDING_REPRO；3 EXCLUDED），作为 supplemental source 保留。双环境分派：Cursor VM / Grok 4.5 High Fast 执行导入、复现、跑批；本地 GPT Desktop / GPT-5.6 Sol High 执行审计、集成与门禁。挖掘及 sanitize 规程=`docs/review_20260728/external_admission_runbook.md`；仓库审计=`docs/review_20260730/defect4mr_64_pool_audit.md`。
 
-- [ ] **Step 1:** 对 Defect4MR 64 候选按 Task 1.4 三条准入重裁，产出 `data/external_slice/admission_sheet.csv`（列：neutral_id=`EXT-<repo>-<序号>`、issue_url、buggy_sha、fixed_sha、三条判定、纳入/排除理由；analysis_id 列此阶段留空，Task 3.2 映射冻结后回填）；预期可纳入池 ≥25（verified_full 35 − 10 映射训练例=25 去掉 oracle 条件后基本全过 + candidate_full 16 部分过；训练例以 `MAPPING_TRAIN` 单列，F-1）——**64 池部分待工件；补充挖掘已开动（见上）**
+- [ ] **Step 1:** 从固定 Defect4MR commit 机械生成 sanitized 64-pool manifest（原台账的 `mr_mapping`/`proposed_mr_oracle`/mutation/kill 信息不得进入 admission 会话），再对全部 64 候选按 Task 1.4 三条准入重裁，产出 `data/external_slice/admission_sheet.csv`（列：neutral_id=`EXT-<repo>-<序号>`、issue_url、buggy_sha、fixed_sha、三条判定、纳入/排除理由；analysis_id 列此阶段留空，Task 3.2 映射冻结后回填）；预期可纳入池 ≥25（verified_full 35 − 10 映射训练例=25 去掉 oracle 条件后基本全过 + candidate_full 16 部分过；训练例以 `MAPPING_TRAIN` 单列，F-1）。仓库原 status 仅作来源记录，不自动等于本研究 admission 裁决；补充挖掘 9 行作为 supplemental source 保留。
 - [ ] **Step 2:** 就绪检查：逐案跑双臂构建+触发冒烟（复用 `reproducers/`），失败案标 `REPRO_FAILED` 保留不替换；目标就绪 n≥20、≥8 项目（其中入 \(\bar\tau\) 分析的项目需就绪缺陷 ≥3，计入补充挖掘目标），不足则按 master §1.3.1 白名单+检索信号词启动补充挖掘（准入判定同 Task 1.4 三条）
 - [ ] **Step 3:** **切片冻结**：名单 SHA256 入 `data/external_slice/FREEZE.sha256`；Commit
 

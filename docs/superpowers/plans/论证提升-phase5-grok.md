@@ -1,7 +1,7 @@
 # 论证提升-phase5-grok：投稿前流水线（CLAUDE.md §3 五步）
 
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans。任务用 checkbox 跟踪。
-> **执行模型:** `cursor-grok-4.5-high-fast`（分派类别：**执行**——引文逐条核验（paper-search MCP 批量调用）、构建门禁、打包等工具驱动步骤为主，速度优先；humanizer/proofread 按既有 skill 规则执行，不做开放式改写）。非此模型请勿执行本文件。
+> **执行环境（2026-07-30 覆盖）：** Cursor 云端 VM / `Grok 4.5 High Fast` 负责 academic-pipeline 调度、引文批量审计、编译与打包；本地 GPT Desktop / `GPT-5.6 Sol High` 负责引用充分性、humanizer 语义漂移、符号与主张强度最终审计。完整职责与交接规则见 `docs/superpowers/specs/2026-07-29-p3-phase3-5-dual-model-execution-design.md`。
 
 **Master plan（规格权威）:** `docs/superpowers/plans/2026-07-28-p3-argumentation-uplift.md`。开工前必读其 §1.7（Phase 5 验收：引文审计 ✗=0、△≤5；`Missing character`=0；em-dash=0；arXiv tarball 含 .bbl）。另遵守 CLAUDE.md §3 提交前流水线与 §7 文献检索优先级（paper-search-mcp 优先，Web 兜底）。内容冲突以 master 为准。
 
