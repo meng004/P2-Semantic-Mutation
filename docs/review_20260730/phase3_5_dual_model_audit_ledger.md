@@ -83,7 +83,7 @@ S0 台账建立提交前实测：
 
 | Gate | Cursor commit | Verdict | 本地集成 commit | 后继任务是否解锁 |
 |---|---|---|---|---|
-| Gate A0 — Defect4MR sanitized import | `785a95a4ba9f0b98403b6c65445f7f2eef602391`（仅盘点到任务指令；不是有效 handoff） | `BLOCKED` | `N/A`（未集成 Cursor 产出） | 否；Gate A1 及以后均未解锁 |
+| Gate A0 — Defect4MR sanitized import | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` | `PASS_WITH_DISCLOSURE` | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` | 是；C2 / Gate A1 admission execution 可在新 session 启动 |
 
 ## 5. 交接审计记录
 
@@ -134,3 +134,67 @@ rtk git diff --name-status d91083af4b368457245adbcc4d55ac2b2f786822..785a95a4ba9
 #### 判定
 
 当前不存在可审计的 Gate A0 Cursor handoff，不能验证 provenance、64 条计数、35/16/12/1 状态分布、字段 allowlist、泄漏隔离或导入测试。Gate A0 判定为 `BLOCKED`。不创建 `gate_a0_defect4mr_import.md`；Gate A1 及以后保持锁定，直至新的 Cursor commit 提供完整交接并通过独立审计。
+
+### 5.2 Gate A0 首次审计：C1 sanitized import handoff
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A0 — Defect4MR sanitized import |
+| 记录类型 | 首次审计；关闭 §5.1 的三项 intake blocker |
+| 交接/复核时间 | `2026-07-31T22:38:33+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-5-execution` |
+| Cursor commit | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` |
+| Cursor baseline | `785a95a4ba9f0b98403b6c65445f7f2eef602391` |
+| Handoff manifest | `data/external_slice/HANDOFF_IMPORT.json` at `e72faa2d7b7469eba75b8a4e240083dc76de90dd`; final SHA256 `e96cf128d2642a139b10503163129e827ad0d38de9346cfd0bd518a8b3c2e3ef` |
+| 输入 hash | `meng004/P12-Defect4MR@2bf7c2401c846544e715d879eb639e8c3bf44067:data/ledgers/candidates.json`; blob `1469a2e2b15dcb2cdf59d185f3ec92f58fb77189`; SHA256 `0f797c10da5e7b3e12656f0062aa55b0dc3e31c701249ee5f05f4e744171786e` |
+| 输出 hash | `scripts/external_slice/import_defect4mr_pool.py` = `292a8da4840060a26dac8cc844ee52dff4d3d179828f93d3f5a88fa74658f16f`; `tests/external_slice/test_import_defect4mr_pool.py` = `7ba189e6039abe63de3368349bd565daed4a6f7e7b2d6c18decc1aa156d5de5c`; `data/external_slice/defect4mr_import/candidates_sanitized.json` = `34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac`; `data/external_slice/defect4mr_import/PROVENANCE.json` = `af7e9c522967bcccaba02db2361a1aadaf11fb64219b4a5bafcaab4cc89de152`; `data/external_slice/defect4mr_import/IMPORT_LOG.md` = `384134afddba35ca8e5e08d5965474ac9996a38e0d344165ce60dfe6af0834fe`; `data/external_slice/CURSOR_EXECUTION_LEDGER.md` = `ca034af0cfeda092efce50524fc4165a453722bc70c6583fce402087e1acb74e`; `data/external_slice/HANDOFF_IMPORT.json` = `e96cf128d2642a139b10503163129e827ad0d38de9346cfd0bd518a8b3c2e3ef` |
+| 审计命令 | 下方“精确审计命令与退出码”完整记录 |
+| Findings | `A0-INTAKE-001`–`003` 已由新 handoff 关闭；`A0-HANDOFF-SPLIT-001` 为非阻塞披露；`STARTUP-CONFLICT-001` 仍仅约束 Gate A2 |
+| Verdict | `PASS_WITH_DISCLOSURE` |
+| 本地集成 commit | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` |
+| 后继任务是否解锁 | 是。C2 / Gate A1 admission execution 可在新 session 启动；C1 VM/session 退役。 |
+
+#### 精确审计命令与退出码
+
+```text
+rtk git show --stat --oneline e72faa2d
+# exit 0
+rtk git show --stat --oneline a789bcec
+# exit 0
+rtk git diff 785a95a4ba9f0b98403b6c65445f7f2eef602391..e72faa2d --name-status
+# exit 0; seven added A0 handoff/payload paths
+rtk gh api 'repos/meng004/P12-Defect4MR/contents/data/ledgers/candidates.json?ref=2bf7c2401c846544e715d879eb639e8c3bf44067' --jq '.sha + " " + .path'
+# exit 0; path resolves to blob 1469a2e2b15dcb2cdf59d185f3ec92f58fb77189
+rtk gh api repos/meng004/P12-Defect4MR/git/blobs/1469a2e2b15dcb2cdf59d185f3ec92f58fb77189 --jq .content | rtk base64 --decode | rtk shasum -a 256
+# exit 0; input SHA256 0f797c10da5e7b3e12656f0062aa55b0dc3e31c701249ee5f05f4e744171786e
+rtk shasum -a 256 scripts/external_slice/import_defect4mr_pool.py tests/external_slice/test_import_defect4mr_pool.py data/external_slice/defect4mr_import/candidates_sanitized.json data/external_slice/defect4mr_import/PROVENANCE.json data/external_slice/defect4mr_import/IMPORT_LOG.md data/external_slice/CURSOR_EXECUTION_LEDGER.md data/external_slice/HANDOFF_IMPORT.json
+# exit 0; values recorded above
+rtk jq 'length' data/external_slice/defect4mr_import/candidates_sanitized.json
+# exit 0; 64
+rtk jq 'group_by(.status) | map({status: .[0].status, count: length})' data/external_slice/defect4mr_import/candidates_sanitized.json
+# exit 0; 35/16/12/1
+rtk jq '{rows:length, unique_ids:([.[].provisional_id]|unique|length), all_key_sets:([.[]|keys]|unique)}' data/external_slice/defect4mr_import/candidates_sanitized.json
+# exit 0; 64 rows, 64 unique IDs, exact eight-key allowlist
+rtk rg -n -i 'mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|kill|fiber|analysis_id' data/external_slice/defect4mr_import
+# exit 1; no output (required clean result)
+rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python scripts/external_slice/import_defect4mr_pool.py --repo meng004/P12-Defect4MR --commit 2bf7c2401c846544e715d879eb639e8c3bf44067 --output /private/tmp/p3-a0-audit.6PXs1N/regen/candidates_sanitized.json --source-file /private/tmp/p3-a0-audit.6PXs1N/candidates.raw.json
+# exit 0; sanitized SHA256 34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac
+rtk cmp data/external_slice/defect4mr_import/candidates_sanitized.json /private/tmp/p3-a0-audit.6PXs1N/regen/candidates_sanitized.json
+# exit 0; byte-identical
+rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest tests/external_slice/test_import_defect4mr_pool.py -q
+# exit 0; 8 passed
+rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest -q
+# exit 0; 241 passed, 10 warnings
+```
+
+#### 独立复算结果
+
+- 固定私有路径解析到 blob `1469a2e2...`，原始 bytes SHA256 为 `0f797c10...`。
+- sanitized manifest 为 64 行、64 个唯一 `provisional_id`，状态分布 35/16/12/1。
+- 每行顶层 key 严格等于八项 allowlist；规定泄漏扫描 exit 1、无输出。
+- 固定原始 blob 的离线重放得到 SHA256 `34e819cc...`，与提交产物逐字节一致。
+- import 专项测试 `8 passed`；完整测试 `241 passed, 10 warnings`。
+
+#### 判定
+
+Gate A0 零 blocker，按 `PASS_WITH_DISCLOSURE` 解锁后继。唯一披露为 payload commit `a789bcec...` 与最终 handoff commit `e72faa2d` 的双提交表达；五个规定 A0 工件在两提交间未变化。详细证据见 `docs/review_20260730/gate_a0_defect4mr_import.md`。
