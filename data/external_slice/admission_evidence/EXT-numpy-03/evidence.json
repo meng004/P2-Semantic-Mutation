@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-numpy-03",
+  "source_pool": "defect4mr_64",
+  "source_index": 14,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/numpy/numpy/issues/25679",
+  "fix_url": "https://github.com/numpy/numpy/commit/5112fa07aab50daa2a615ac4c8f055f626a66d17",
+  "buggy_sha": "57684c06258ad61891df4aee1b617ee1764307ab",
+  "fixed_sha": "5112fa07aab50daa2a615ac4c8f055f626a66d17",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/numpy/numpy/issues/25679",
+    "https://github.com/numpy/numpy/commit/5112fa07aab50daa2a615ac4c8f055f626a66d17"
+  ],
+  "mechanism_sentence": "returns the correct inverse real transform when the requested length differs from the input-derived length."
+}

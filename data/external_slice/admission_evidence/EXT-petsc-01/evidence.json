@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-petsc-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 21,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://gitlab.com/petsc/petsc/-/issues/1618",
+  "fix_url": "https://gitlab.com/petsc/petsc/-/commit/b07ab1d94b3b556e52636876d50f19ae1cf0398a",
+  "buggy_sha": "9a09e8def163a44622f84940b489fcfb2a000881",
+  "fixed_sha": "b07ab1d94b3b556e52636876d50f19ae1cf0398a",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://gitlab.com/petsc/petsc/-/issues/1618",
+    "https://gitlab.com/petsc/petsc/-/commit/b07ab1d94b3b556e52636876d50f19ae1cf0398a"
+  ],
+  "mechanism_sentence": "corrects Schur-complement construction for transpose and conjugate-transpose matrices."
+}

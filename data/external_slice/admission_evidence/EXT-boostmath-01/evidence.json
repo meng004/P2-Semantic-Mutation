@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-boostmath-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 53,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/boostorg/math/issues/184",
+  "fix_url": "https://github.com/boostorg/math/commit/03ea9c8d7dff1083facd134c8f641e006b68fdae",
+  "buggy_sha": "75dcb3e3d560663be7e4e04dc4556d12fe54e348",
+  "fixed_sha": "03ea9c8d7dff1083facd134c8f641e006b68fdae",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/boostorg/math/issues/184",
+    "https://github.com/boostorg/math/commit/03ea9c8d7dff1083facd134c8f641e006b68fdae"
+  ],
+  "mechanism_sentence": "bounds root-finder jumps so interior skew-normal quantiles remain finite."
+}

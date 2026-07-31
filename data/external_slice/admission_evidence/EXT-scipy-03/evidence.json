@@ -1,0 +1,18 @@
+{
+  "neutral_id": "EXT-scipy-03",
+  "source_pool": "defect4mr_64",
+  "source_index": 49,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/scipy/scipy/issues/5326",
+  "fix_url": "https://github.com/scipy/scipy/commit/b127884e79ef5f10e0ba6d0ec58ebd6a799a8878",
+  "buggy_sha": "723f3c4e4e5e62b6290f99f9972d13382c00b28f",
+  "fixed_sha": "b127884e79ef5f10e0ba6d0ec58ebd6a799a8878",
+  "criteria": {"real_defect": "PASS", "dual_arm_repro": "PENDING", "in_scope": "PASS"},
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": ["https://github.com/scipy/scipy/issues/5326", "https://github.com/scipy/scipy/commit/b127884e79ef5f10e0ba6d0ec58ebd6a799a8878"],
+  "mechanism_sentence": "computes shape-preserving interpolation slopes according to the published formula."
+}

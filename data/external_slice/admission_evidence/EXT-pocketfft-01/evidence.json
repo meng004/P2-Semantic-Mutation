@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-pocketfft-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 11,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/scipy/scipy/issues/21693",
+  "fix_url": "https://github.com/mreineck/pocketfft/commit/fb21e4016b96f50a83c516fc0acabe8def4b3bb5",
+  "buggy_sha": "076cb3d2536b7c5d0629093ad886e10ac05f3623",
+  "fixed_sha": "fb21e4016b96f50a83c516fc0acabe8def4b3bb5",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/scipy/scipy/issues/21693",
+    "https://github.com/mreineck/pocketfft/commit/fb21e4016b96f50a83c516fc0acabe8def4b3bb5"
+  ],
+  "mechanism_sentence": "restores orthonormal scaling for the affected sine transforms."
+}
