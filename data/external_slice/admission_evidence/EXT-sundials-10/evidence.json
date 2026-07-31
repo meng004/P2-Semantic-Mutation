@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-sundials-10",
+  "source_pool": "defect4mr_64",
+  "source_index": 51,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/LLNL/sundials/issues/311",
+  "fix_url": "https://github.com/LLNL/sundials/commit/da23565f8240a78999e8c0e253afb8f3fab85b77",
+  "buggy_sha": "4e5de4c054c658adae5326e7d08d9f6ad570ca88",
+  "fixed_sha": "da23565f8240a78999e8c0e253afb8f3fab85b77",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/LLNL/sundials/issues/311",
+    "https://github.com/LLNL/sundials/commit/da23565f8240a78999e8c0e253afb8f3fab85b77"
+  ],
+  "mechanism_sentence": "recognises first-same-as-last methods only when the final stage equals the output weights."
+}

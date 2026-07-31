@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-dealii-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 50,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/dealii/dealii/issues/3874",
+  "fix_url": "https://github.com/dealii/dealii/commit/92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f",
+  "buggy_sha": "834e865e44ee273361dbdf11bbce986f6be78407",
+  "fixed_sha": "92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/dealii/dealii/issues/3874",
+    "https://github.com/dealii/dealii/commit/92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f"
+  ],
+  "mechanism_sentence": "interpolates manifold support points from the correct surrounding points."
+}

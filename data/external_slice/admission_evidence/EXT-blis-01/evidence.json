@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-blis-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 16,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/flame/blis/issues/380",
+  "fix_url": "https://github.com/flame/blis/commit/e186d7141a51f2d7196c580e24e7b7db8f209db9",
+  "buggy_sha": "c01d249d7c546fe2e3cee3fe071cd4c4c88b9115",
+  "fixed_sha": "e186d7141a51f2d7196c580e24e7b7db8f209db9",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/flame/blis/issues/380",
+    "https://github.com/flame/blis/commit/e186d7141a51f2d7196c580e24e7b7db8f209db9"
+  ],
+  "mechanism_sentence": "returns the first maximum-magnitude or not-a-number index in the vector reduction."
+}

@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-lapack-02",
+  "source_pool": "defect4mr_64",
+  "source_index": 27,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/Reference-LAPACK/lapack/issues/379",
+  "fix_url": "https://github.com/Reference-LAPACK/lapack/commit/9b24deea0a32a401f15025def2e9ba1c0871dc0d",
+  "buggy_sha": "799ef93faa5878aa8702f7cf9980cfc649cc39cc",
+  "fixed_sha": "9b24deea0a32a401f15025def2e9ba1c0871dc0d",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/Reference-LAPACK/lapack/issues/379",
+    "https://github.com/Reference-LAPACK/lapack/commit/9b24deea0a32a401f15025def2e9ba1c0871dc0d"
+  ],
+  "mechanism_sentence": "preserves complex eigenvectors during row-major interface conversion."
+}

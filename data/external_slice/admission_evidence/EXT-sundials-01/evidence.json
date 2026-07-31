@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-sundials-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 34,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "issue_url": "https://github.com/LLNL/sundials/issues/702",
+  "fix_url": "https://github.com/LLNL/sundials/commit/6be6202c97c72ace4bb9d62b58263484ee61d9b4",
+  "buggy_sha": "fe37795322f0450b3f52224a880c3d99d30aa564",
+  "fixed_sha": "6be6202c97c72ace4bb9d62b58263484ee61d9b4",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+  },
+  "evidence_urls": [
+    "https://github.com/LLNL/sundials/issues/702",
+    "https://github.com/LLNL/sundials/commit/6be6202c97c72ace4bb9d62b58263484ee61d9b4"
+  ],
+  "mechanism_sentence": "computes the inequality-constraint step reduction from the prior solution."
+}
