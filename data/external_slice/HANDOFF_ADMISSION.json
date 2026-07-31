@@ -1,0 +1,88 @@
+{
+  "task": "C2",
+  "gate_requested": "A1",
+  "created_at": "2026-07-31T23:17:26+08:00",
+  "branch": "codex/gpt-desktop-phase3-5-c2-admission",
+  "baseline_commit": "e5737f3c1c88641bc783bf8449fd7c53a6178df9",
+  "output_commit": "90640368d21fe2087a266d8726ec81c2e9c2c124",
+  "handoff_commit_semantics": "This manifest is committed as the direct child of output_commit; the payload paths and hashes below belong to output_commit and are unchanged in the handoff child.",
+  "a0_verdict": "PASS_WITH_DISCLOSURE",
+  "a0_disclosure": "C1 used payload a789bcecbd9d0544c223d4401fa101909694fbbb and handoff e72faa2d7b7469eba75b8a4e240083dc76de90dd; the sanitized manifest is identical across them.",
+  "candidate_summary": {
+    "defect4mr_rows": 64,
+    "supplemental_pilot_rows": 9,
+    "real_defect": {"PASS": 35, "FAIL": 29},
+    "dual_arm_repro": {"PENDING": 64, "PASS": 0, "REPRO_FAILED": 0},
+    "in_scope": {"PASS": 59, "FAIL": 5},
+    "decision": {"ADMIT_PENDING_REPRO": 35, "EXCLUDED": 29},
+    "analysis_id_nonblank": 0,
+    "note": "The nine-row pilot remains in admission_sheet.csv as a separate supplemental source and is not counted among the 64 Defect4MR rows. Source status was not used as an admission verdict."
+  },
+  "environment": {
+    "os": "Darwin 24.6.0 arm64",
+    "python": "3.11.9",
+    "pytest": "9.0.3",
+    "compiler": "Apple clang 17.0.0",
+    "python_executable": "/Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python"
+  },
+  "inputs": [
+    {"path": "data/external_slice/defect4mr_import/candidates_sanitized.json", "sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac"},
+    {"path": "data/external_slice/admission_sheet.csv", "role": "separate supplemental pilot", "sha256": "77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a"},
+    {"path": "docs/review_20260730/gate_a0_defect4mr_import.md", "sha256": "c10cb3663f331bb58a2648a0327bd443e4ca47cfd4a4c7863091f34b49cfe0d7"},
+    {"path": "docs/review_20260730/phase3_5_dual_model_audit_ledger.md", "sha256": "c8cd80bf4d30d699cc05d34d33fb608d0e4606ba4dbd9834abb011e4858f1598"},
+    {"path": "research/prereg_v2/external_slice_protocol.md", "sha256": "186b9734077035f63a1819569ecf45e645545862d045cb5ee899a7dd8f2841ca"},
+    {"path": "docs/review_20260728/external_admission_runbook.md", "sha256": "a3ced473d0d4ab91c39480bb59e7032c05bd15f68e57ee277da71582b3256f05"},
+    {"path": "e72faa2d7b7469eba75b8a4e240083dc76de90dd:docs/task-instructions/2026-07-30-cursor-vm-phase3-5.md", "sha256": "c040d6499514ddd0e0add474e339973df012663c208262808d91d49d26677e1a"}
+  ],
+  "outputs": [
+    {"path": "data/external_slice/admission_sheet.cursor_candidate.csv", "sha256": "79eb9de7f9d53d4b4b574aeace93f4b474849d13c686e94c3c005ed3e8aae802"},
+    {"path": "data/external_slice/admission_evidence", "sha256": "84823edab5dfb72e35c8f2c21af35e97f415937cba28fdab20f4c24c8f85d122", "hash_algorithm": "SHA256 of the sorted per-file 'shasum -a 256' stream", "file_count": 64},
+    {"path": "scripts/check_external_admission.py", "sha256": "cd84515e5247cb4a18640839a6048611b799353a8a5cb23aef742034f6c7d92e"},
+    {"path": "tests/external_slice/test_check_external_admission.py", "sha256": "21ef6abb7a9130fc5ef94df6e152a33cb40ecc49d35d0f3640f2989423d421b4"}
+  ],
+  "commands": [
+    {"command": "rtk git status --short --branch", "exit_code": 0, "result": "clean detached HEAD at startup"},
+    {"command": "rtk git rev-parse HEAD", "exit_code": 0, "result": "e5737f3c1c88641bc783bf8449fd7c53a6178df9"},
+    {"command": "rtk git show e72faa2d7b7469eba75b8a4e240083dc76de90dd:docs/task-instructions/2026-07-30-cursor-vm-phase3-5.md", "exit_code": 0, "result": "complete C2 contract read"},
+    {"command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest tests/external_slice/test_check_external_admission.py -q", "exit_code": 0, "result": "14 passed"},
+    {"command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python scripts/check_external_admission.py --sheet data/external_slice/admission_sheet.cursor_candidate.csv", "exit_code": 0, "result": "64 candidate rows, 64 evidence records, and 9 separate pilot rows valid"},
+    {"command": "rtk rg -n -i 'mr_mapping|proposed_mr_oracle|kill|fiber|analysis_id[^,]*[^,[:space:]]' data/external_slice/admission_sheet.cursor_candidate.csv data/external_slice/admission_evidence", "exit_code": 1, "result": "expected clean result; no output"},
+    {"command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -c '<join sanitized source statuses to candidate rows and assert all 16 candidate_full rows have crit_dual_arm_repro != PASS>'", "exit_code": 0, "result": "all 16 source candidate_full rows are non-PASS"},
+    {"command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest -q", "exit_code": 0, "result": "255 passed, 10 warnings"},
+    {"command": "rtk git diff --check", "exit_code": 0, "result": "no whitespace errors"},
+    {"command": "rtk rg --files data/external_slice/admission_evidence | rtk sort | rtk xargs rtk shasum -a 256 | rtk shasum -a 256", "exit_code": 0, "result": "84823edab5dfb72e35c8f2c21af35e97f415937cba28fdab20f4c24c8f85d122"}
+  ],
+  "public_evidence_resolution": {
+    "github_pr_command": "rtk gh api repos/<owner>/<repo>/pulls/<number> --jq '[.state,.merged_at,.merge_commit_sha,.head.sha,.html_url,.title]|@tsv'",
+    "github_commit_command": "rtk gh api repos/<owner>/<repo>/commits/<sha> --jq '[.sha,.parents[0].sha,.html_url,.commit.message]|@tsv'",
+    "gitlab_commit_command": "rtk curl -sS https://gitlab.com/api/v4/projects/<url-encoded-project>/repository/commits/<sha>",
+    "result": "Public fix commits and their immutable first parents were resolved for every A1 PASS row; unresolved or unlinked fixes remain A1 FAIL."
+  },
+  "failures": [
+    {"stage": "initial test environment", "command": "rtk env PYTHONPATH=src python3 -m pytest tests/external_slice/test_check_external_admission.py -q", "exit_code": 1, "detail": "system Python 3.14.5 had no pytest"},
+    {"stage": "TDD initial RED", "exit_code": 1, "detail": "5 tests failed because scripts/check_external_admission.py did not exist"},
+    {"stage": "public API sandbox attempt", "exit_code": 1, "detail": "proxy connection to 127.0.0.1:7890 was denied inside the sandbox"},
+    {"stage": "candidate identity check", "exit_code": 1, "detail": "NumPy/SciPy neutral IDs initially overlapped the separate pilot"},
+    {"stage": "evidence identity check", "exit_code": 1, "detail": "empty pre-rename directories were detected and removed with exact rmdir targets"},
+    {"stage": "evidence binding check", "exit_code": 1, "detail": "two SciPy evidence files were corrected after a rename collision"},
+    {"stage": "candidate_full anti-masquerade check", "exit_code": 1, "detail": "first assertion overconstrained fixed-text wording; the retry correctly covered all 16 candidate_full rows"},
+    {"stage": "review-driven TDD RED cycles", "exit_code": 1, "detail": "negative tests intentionally failed before implementing dual-arm proof, exact schema, leakage, source binding, extra-file, and mandatory-manifest checks"}
+  ],
+  "retries": [
+    {"stage": "test environment", "resolution": "used the audited Python 3.11.9 virtual environment", "result": "success"},
+    {"stage": "public API access", "resolution": "repeated read-only rtk gh api / rtk curl calls with approved network escalation", "result": "success"},
+    {"stage": "neutral identifiers", "resolution": "allocated next unused NumPy/SciPy sequence values after the nine-row pilot", "result": "success"},
+    {"stage": "independent review", "resolution": "added seven reviewer-requested contract checks and reran targeted plus full tests", "result": "success"}
+  ],
+  "unresolved_findings": [
+    {"id": "STARTUP-CONFLICT-001", "status": "unchanged", "scope": "Gate A2 precondition only", "action": "not processed or used to alter C2 sampling"},
+    {"id": "C2-DUAL-ARM-PENDING", "status": "expected candidate state", "detail": "All 64 rows remain PENDING until an auditable same-trigger buggy/fixed reproduction is available; C3 was not started."}
+  ],
+  "forbidden_actions_confirmed_absent": [
+    "No FREEZE.sha256 was created or modified.",
+    "No Gate A1 audit was executed.",
+    "No C3 or later task was started.",
+    "No failed case was replaced.",
+    "No analysis alias was assigned."
+  ]
+}
