@@ -85,7 +85,7 @@ S0 台账建立提交前实测：
 |---|---|---|---|---|
 | Gate A0 — Defect4MR sanitized import | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` | `PASS_WITH_DISCLOSURE` | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` | 是；C2 / Gate A1 admission execution 可在新 session 启动 |
 | Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
-| Gate A1b — C3 readiness Batch 1 | handoff `607acb044856101d8744f62cd2f7173a396c99b5`；payload `4ac5dab0f1692a2c2c46486c763abcce9d27984d` | `BLOCKED` | N/A（未集成 Batch 1） | 否；Batch 2、canonical freeze 与 A2/C4 继续锁定 |
+| Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 
 ## 5. 交接审计记录
 
@@ -295,3 +295,33 @@ Gate A1a 判定为 `BLOCKED`。A2 全部 `PENDING` 是 C2 的预期状态而非 
 #### 判定
 
 行为对比仅记为 case-local `observed`，不足以晋升 A2 `PASS`。Gate A1b Batch 1 判定为 `BLOCKED`；本地不 cherry-pick payload/handoff，不改 candidate/canonical sheet，不解锁 Batch 2。完整 findings 与修复合同见 `docs/review_20260730/gate_a1b_readiness_batch1_audit.md`。
+
+### 5.6 Gate A1b finding 修复复核：C3 readiness Batch 1 correction
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1b — C3 readiness Batch 1 |
+| 记录类型 | finding 修复复核；关闭 §5.5 的两个 blocker |
+| 交接/复核时间 | `2026-08-01T21:15:43+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness` |
+| Cursor commit | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` |
+| Cursor ancestry | `4ac5dab0...` → `607acb04...` → `764840f3...` → `09da03a4...`；每个 handoff 均为对应 payload 的 direct child |
+| Handoff manifest | `data/external_slice/HANDOFF_REPRO_BATCH1.json` at `09da03a4585130dfb57428983f05ef7a4fb914bc` |
+| Findings | `A1B-HANDOFF-CMD-001` CLOSED；`A1B-LOCK-PROVENANCE-001` CLOSED；non-blocking disclosures：original GHCR 403 / correction Docker socket denial、复用已验证 CPython 3.9.18 toolchain |
+| Verdict | `PASS_WITH_DISCLOSURE` |
+| 本地集成 commit | original payload `061e1891`；original handoff `66b8ca9d`；correction payload `a7bdaa05`；correction handoff `1a6d6f35` |
+| 后继任务是否解锁 | 是，但仅 C3 Batch 2。Candidate sheet A2 保持 PENDING；canonical admission freeze、A2/C4、fiber、prediction、kill/result execution 继续锁定。 |
+
+#### 独立复算结果
+
+- Global command log 61 条；handoff 精确包含相同 61 条（去 retained tails）+ 4 条验证命令，共 65 条。Per-case 子集精确为 NumPy 30、SUNDIALS 17、SciPy 10。
+- 三例 trigger exit 均为 buggy `1` / fixed `0`；same seed/input/property 与 3/3 contrast 不变。
+- 全部 handoff individual 与 directory aggregate hash 匹配；两个 NumPy、两个 SUNDIALS GitHub archive hash 由新下载独立复算一致。
+- SciPy/NumPy 三个 pinned-release wheel hash 与 PyPI 权威 metadata 一致；NumPy build lock 的双臂 `--require-hashes` 安装、SciPy 双 lock 安装均 exit 0。
+- SUNDIALS exact-source、build tools、CMake flags、compile/run 命令完整；NumPy exact SHA、submodule pins 与 build closure 完整。
+- admission checker exit 0；py_compile exit 0；leak scan clean；完整测试 `260 passed, 10 warnings`。
+- Candidate sheet/canonical freeze 未变，Batch 2 与后继任务未启动。
+
+#### 判定
+
+两个 blocker 全部关闭。Gate A1b Batch 1 以 `PASS_WITH_DISCLOSURE` 接受三例 case-local A2 `PASS` readiness 证据，并按顺序集成 original/correction 四个 commit。仅 C3 Batch 2 解锁；A2 字段的 canonical 回填与切片 freeze 继续等待全部 readiness 批次及后续门禁。完整复核见更新后的 `docs/review_20260730/gate_a1b_readiness_batch1_audit.md`。

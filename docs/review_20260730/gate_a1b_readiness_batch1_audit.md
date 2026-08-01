@@ -1,10 +1,12 @@
 # Gate A1b — C3 Readiness Batch 1 Audit
 
-- **Audit time:** `2026-08-01T20:46:14+08:00`
+- **Initial audit time:** `2026-08-01T20:46:14+08:00`
+- **Finding-closure re-review:** `2026-08-01T21:15:43+08:00`
 - **Scope:** first C3 dual-arm readiness batch; three digest-pinned cases in the Gate A1a-approved 32-row queue
-- **Current verdict:** `BLOCKED`
-- **Observed contrast status:** three case-local contrasts are `observed`; none is promoted to A2 `PASS` until the reproduction contract is closed
-- **Successor state:** Batch 2, canonical admission freeze, A2/C4, fiber mapping, predictions, and result execution remain locked
+- **Current verdict:** `PASS_WITH_DISCLOSURE`
+- **Open blockers:** 0; both initial provenance blockers are closed
+- **Observed contrast status:** three case-local contrasts are accepted as readiness A2 `PASS` evidence; the candidate sheet remains `PENDING` until later canonical admission integration
+- **Successor state:** C3 Batch 2 is unlocked in a new Cursor session; canonical admission freeze, A2/C4, fiber mapping, predictions, and result execution remain locked
 
 ## 1. Audited lineage
 
@@ -108,9 +110,10 @@ Consequently, the claimed build provenance cannot be independently reconstructed
 from the committed evidence package. This is a blocker even though the stored
 behavioural contrasts agree with the prior verification reports.
 
-## 4. Verdict and required correction
+## 4. Initial verdict and required correction (historical)
 
-Gate A1b Batch 1 is `BLOCKED`. The three contrasts remain valid as narrowly
+At audit commit `6419fbe3ffb6fd57116ad2586a40365e370321e4`, Gate A1b
+Batch 1 was `BLOCKED`. The three contrasts remained valid as narrowly
 scoped observations, but A2 remains `PENDING`; the payload/handoff are not
 integrated into the local lineage, and Batch 2 remains locked.
 
@@ -131,3 +134,92 @@ A correction handoff must:
 Only a zero-blocker re-review may integrate the Batch 1 artifacts and promote
 the three case-local A2 values to `PASS` in the later canonical admission
 integration.
+
+## 5. Finding-closure re-review
+
+### 5.1 Correction lineage and local integration
+
+| Role | Commit |
+|---|---|
+| Correction baseline | `607acb044856101d8744f62cd2f7173a396c99b5` |
+| Correction payload | `764840f3ad61e8f12ec2ead59422498082a462be` |
+| Correction handoff | `09da03a4585130dfb57428983f05ef7a4fb914bc` |
+| Local original payload integration | `061e1891` |
+| Local original handoff integration | `66b8ca9d` |
+| Local correction payload integration | `a7bdaa05` |
+| Local correction handoff integration | `1a6d6f35` |
+
+The correction payload is the direct child of the blocked handoff, and the
+correction handoff is the direct child of the correction payload. PR #4 and
+the remote Cursor branch resolve to the correction handoff. The four Batch 1
+commits were integrated into the local lineage in immutable order only after
+this re-review found zero blockers.
+
+### 5.2 Closure of `A1B-HANDOFF-CMD-001`
+
+- `BATCH1_COMMAND_LOG.json` contains 61 executed reconstruction commands.
+- The correction handoff contains those same 61 commands after removal of the
+  retained stdout/stderr tails, plus four explicit verification commands, for
+  65 total.
+- Per-case `COMMANDS.json` files exactly equal their filtered global-log
+  subsets: NumPy 30, SUNDIALS 17, and SciPy 10 commands.
+- All commands carry command text, working directory, label, and exit code;
+  the global log additionally retains stdout/stderr tails.
+- Trigger exits are explicitly and consistently recorded as buggy `1` and
+  fixed `0` for all three cases.
+- Source materialisation, interpreter/environment preparation, dependency
+  installation, compilation, trigger execution, raw harness capture, retries,
+  and the three failed GHCR attempts are represented in the command history.
+
+Finding `A1B-HANDOFF-CMD-001` is **CLOSED**.
+
+### 5.3 Closure of `A1B-LOCK-PROVENANCE-001`
+
+- SciPy uses two committed `--require-hashes` locks. The NumPy 1.19.5,
+  SciPy 1.5.4, and SciPy 1.6.0 wheel hashes independently match current
+  authoritative PyPI metadata.
+- NumPy uses a shared eight-package hash-locked build closure for both arms.
+  Both `pip install --require-hashes` commands exit `0`.
+- NumPy records archive hashes, exact checkout heads, submodule SHAs, and
+  completed-tree hashes. Fresh downloads of both pinned GitHub archives
+  independently reproduce the committed archive hashes.
+- SUNDIALS records both pinned archive hashes, compiler/CMake/make versions,
+  complete CMake flags, configure/build/install commands, and identical
+  buggy-tree harness-source compilation against each arm. Fresh downloads of
+  both archives independently reproduce the committed hashes.
+- All corrected individual outputs and the three eight-file directory
+  aggregates reproduce the handoff SHA256 values.
+
+Finding `A1B-LOCK-PROVENANCE-001` is **CLOSED**.
+
+### 5.4 Behavioural and repository re-verification
+
+- The approved three-case selection, neutral IDs, issue URLs, and buggy/fixed
+  SHAs are unchanged.
+- Seed, semantic input, expected property, arm status, and contrast remain
+  consistent for all three cases: buggy fails, fixed holds.
+- Candidate-sheet A2 remains `PENDING`, aliases remain blank, and no canonical
+  sheet or freeze was written.
+- Admission checker exits `0`; all reproducers and the reconstruction script
+  compile; the intended leakage scan is clean.
+- Full test suite from an immutable correction-handoff archive:
+  `260 passed, 10 warnings`.
+- Batch 2 and all later locked tasks were not started.
+
+### 5.5 Disclosures and verdict
+
+Two non-blocking environment disclosures remain:
+
+1. the original Batch 1 session recorded authenticated GHCR blob `403`; the
+   correction session's fresh pull attempts instead failed earlier on Docker
+   socket permission. Both failures are preserved, and the audited evidence
+   comes from the permitted host-rebuild routes;
+2. the correction created fresh SciPy arm venvs but reused the previously
+   verified SSL-enabled CPython 3.9.18 toolchain. Both arms share it, its
+   version/path and upstream tarball hash are recorded, and the hash-locked
+   wheels independently match PyPI.
+
+Gate A1b Batch 1 is `PASS_WITH_DISCLOSURE`. The three case-local dual-arm
+readiness results are accepted as A2 `PASS` evidence for later canonical
+integration. C3 Batch 2 is unlocked; canonical admission freeze, A2/C4,
+fiber mapping, predictions, kill execution, and all later phases remain locked.
