@@ -1,0 +1,28 @@
+{
+  "batch": 2,
+  "buggy_sha": "834e865e44ee273361dbdf11bbce986f6be78407",
+  "dual_arm_contrast": false,
+  "failure_detail": "REPRO_FAILED:build  -  dealii full dual-arm build/trigger exceeds reliable completion on this 4-core/15GiB host within Batch 2; source archives hash-locked; no replacement.",
+  "failure_stage": "build",
+  "fixed_sha": "92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f",
+  "issue_url": "https://github.com/dealii/dealii/issues/3874",
+  "neutral_id": "EXT-dealii-01",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "julia": "julia version 1.10.5",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": "Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026 x86_64 x86_64"
+  },
+  "proposed_crit_dual_arm_repro": "REPRO_FAILED",
+  "repo": "dealii/dealii",
+  "route": "exact-source-cmake",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {}
+}

@@ -1,0 +1,36 @@
+{
+  "commands": [
+    {
+      "command": "curl -fsSL -L -H \"Authorization: Bearer <REDACTED_GITHUB_TOKEN>\" -o /tmp/c3_batch2/work/EXT-trilinos-01/buggy.tar.gz https://github.com/trilinos/Trilinos/archive/4209d0dd46e86c40d32d878b844ab86978c9280b.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-trilinos-01:buggy:download-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-trilinos-01/buggy.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-trilinos-01/buggy-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-trilinos-01:buggy:extract-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "curl -fsSL -L -H \"Authorization: Bearer <REDACTED_GITHUB_TOKEN>\" -o /tmp/c3_batch2/work/EXT-trilinos-01/fixed.tar.gz https://github.com/trilinos/Trilinos/archive/c7f0d9210b154e8f090d8c72363058885f7d674a.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-trilinos-01:fixed:download-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-trilinos-01/fixed.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-trilinos-01/fixed-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-trilinos-01:fixed:extract-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    }
+  ]
+}

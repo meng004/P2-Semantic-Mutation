@@ -1,0 +1,12 @@
+{
+  "arm": "fixed",
+  "exit_status": 0,
+  "expected_property": "round-trip max error < 1e-2 with no crashes",
+  "neutral_id": "EXT-freia-01",
+  "observed_output": {
+    "returncode": 0,
+    "stdout_tail": "scale=0.5: roundtrip max|x - f^-1(f(x))| = 4.500e-11\nscale=1.0: roundtrip max|x - f^-1(f(x))| = 8.021e-09\nscale=2.0: roundtrip max|x - f^-1(f(x))| = 1.579e-07\nscale=4.0: roundtrip max|x - f^-1(f(x))| = 1.478e-06\nscale=8.0: roundtrip max|x - f^-1(f(x))| = 5.078e-04\n### FrEIA arm=fixed worst=5.078e-04 crashes=0/5\n### VERDICT: PASS\n\n"
+  },
+  "property_holds": true,
+  "seed": 0
+}

@@ -1,0 +1,7 @@
+scale=0.5: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=1.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=2.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=4.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=8.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+### FrEIA arm=buggy worst=0.000e+00 crashes=5/5
+### VERDICT: VIOLATED

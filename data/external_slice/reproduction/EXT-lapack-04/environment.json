@@ -1,0 +1,28 @@
+{
+  "batch": 2,
+  "buggy_sha": "2491c9367a9c5e827a935679a4755387b348e159",
+  "dual_arm_contrast": false,
+  "failure_detail": "command failed (1): gcc -O2 /workspace/data/external_slice/reproducers/harnesses/lapack_stedc_order.c -I/tmp/c3_batch2/work/EXT-lapack-04/install-buggy/include -L/tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib -Wl,-rpath,/tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib -llapacke -llapack -lblas -lgfortran -lquadmath -lm -o /tmp/c3_batch2/work/EXT-lapack-04/harness_buggy\nstdout:\n\nstderr:\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_Zge_nancheck'\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_csb_nancheck'\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_Zge_trans'\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_zsb_nancheck'\ncollect2: error: ld returned 1 exit status\n",
+  "failure_stage": "build_or_trigger",
+  "fixed_sha": "6d3c6b3d719c4fa38f8321e398a8ab142c124f22",
+  "issue_url": "https://www.netlib.org/lapack/bug_list.html",
+  "neutral_id": "EXT-lapack-04",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "julia": "julia version 1.10.5",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": "Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026 x86_64 x86_64"
+  },
+  "proposed_crit_dual_arm_repro": "REPRO_FAILED",
+  "repo": "Reference-LAPACK/lapack",
+  "route": "exact-source-cmake",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {}
+}

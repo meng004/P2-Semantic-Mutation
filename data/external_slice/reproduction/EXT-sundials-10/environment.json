@@ -1,0 +1,28 @@
+{
+  "batch": 2,
+  "buggy_sha": "4e5de4c054c658adae5326e7d08d9f6ad570ca88",
+  "dual_arm_contrast": false,
+  "failure_detail": "command failed (1): gcc -O2 /workspace/data/external_slice/reproducers/harnesses/sundials_erk_fsal_order_sweep.c -I/tmp/c3_batch2/work/EXT-sundials-10/install-buggy/include -L/tmp/c3_batch2/work/EXT-sundials-10/install-buggy/lib -Wl,-rpath,/tmp/c3_batch2/work/EXT-sundials-10/install-buggy/lib -lsundials_arkode -lsundials_nvecserial -lsundials_core -lm -o /tmp/c3_batch2/work/EXT-sundials-10/harness_buggy\nstdout:\n\nstderr:\n/usr/bin/ld: cannot find -lsundials_core: No such file or directory\ncollect2: error: ld returned 1 exit status\n",
+  "failure_stage": "build_or_trigger",
+  "fixed_sha": "da23565f8240a78999e8c0e253afb8f3fab85b77",
+  "issue_url": "https://github.com/LLNL/sundials/issues/311",
+  "neutral_id": "EXT-sundials-10",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "julia": "julia version 1.10.5",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": "Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026 x86_64 x86_64"
+  },
+  "proposed_crit_dual_arm_repro": "REPRO_FAILED",
+  "repo": "LLNL/sundials",
+  "route": "exact-source-cmake",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {}
+}

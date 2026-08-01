@@ -1,0 +1,11 @@
+{
+  "exit_status": 1,
+  "expected_property": "KINSOL Anderson depth resets so repeated solves from the same x0 agree.",
+  "neutral_id": "EXT-sundials-08",
+  "observed_output": {
+    "returncode": 1,
+    "stdout_tail": "{\"property_holds\": false}\n"
+  },
+  "property_holds": false,
+  "seed": 0
+}

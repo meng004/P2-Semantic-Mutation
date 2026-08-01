@@ -51,3 +51,16 @@ After push of C1, this VM/session requests local Gate A0 and must not start C2 a
 - Hash-locked requirements + source archive/tree hashes + SUNDIALS build-tool pins committed under each case `locks/`
 - Candidate-sheet A2 remains PENDING; no Batch 2
 
+
+## C3 Batch 2 — remaining 29-queue readiness (this session)
+
+| task/gate | VM/session | baseline commit | exact command | environment | input hash | output hash | exit code | failure/retry | output commit | auditor verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| C3 / A1c batch2 | bc-1d216e6e-25c0-46ef-9f68-b1d417f18f57 | 09da03a4585130dfb57428983f05ef7a4fb914bc | `python3 scripts/external_slice/run_c3_batch2_readiness.py`; see HANDOFF_REPRO_BATCH2.json + per-case COMMANDS.json | host dual-arm; Python 3.12.3 / 3.9.18; g++/gfortran/cmake; Julia 1.10.5; no GPU; no riscv qemu | BATCH2_MEMBERSHIP.json frozen from Gate A1a queue minus Batch 1 | readiness_batch2.json + reproduction/<id>/* + reproducers/harnesses | see per-case trigger exits; platform gates recorded | no replacement; freia/eigen retries; sheet A2 PENDING | see handoff after push | pending Gate A1c |
+
+### Batch 2 snapshot
+
+- Queue source: Gate A1a corrected 32-row A1∧A3 queue minus Batch 1 three digest-pinned cases (29 frozen members)
+- Membership freeze commit: c94684faadbb4b02f8685360255cc374c15183c8
+- Results: proposed PASS/REPRO_FAILED only in readiness_batch2.json; candidate sheet A2 left PENDING
+- Stopped after Batch 2 push; C4 / labelling / category-map freeze / predictive freeze / detection runs not started

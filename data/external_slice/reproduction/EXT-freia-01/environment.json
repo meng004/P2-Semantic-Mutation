@@ -1,0 +1,32 @@
+{
+  "batch": 2,
+  "buggy_sha": "0f100e008deda5c8521a4ba7014f0376ed5a0eb7",
+  "deps_lock": "data/external_slice/reproduction/EXT-freia-01/locks/requirements.deps.txt",
+  "dual_arm_contrast": true,
+  "failure_detail": null,
+  "failure_stage": null,
+  "fixed_sha": "fa7b45d91710f9113bc000298b4a8e6aecdbcb23",
+  "issue_url": "https://github.com/vislearn/FrEIA/issues/140",
+  "neutral_id": "EXT-freia-01",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "julia": "julia version 1.10.5",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": "Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026 x86_64 x86_64"
+  },
+  "proposed_crit_dual_arm_repro": "PASS",
+  "repo": "vislearn/FrEIA",
+  "route": "exact-source-python",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {
+    "buggy": 1,
+    "fixed": 0
+  }
+}
