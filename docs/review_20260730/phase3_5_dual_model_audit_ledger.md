@@ -85,6 +85,7 @@ S0 台账建立提交前实测：
 |---|---|---|---|---|
 | Gate A0 — Defect4MR sanitized import | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` | `PASS_WITH_DISCLOSURE` | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` | 是；C2 / Gate A1 admission execution 可在新 session 启动 |
 | Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
+| Gate A1b — C3 readiness Batch 1 | handoff `607acb044856101d8744f62cd2f7173a396c99b5`；payload `4ac5dab0f1692a2c2c46486c763abcce9d27984d` | `BLOCKED` | N/A（未集成 Batch 1） | 否；Batch 2、canonical freeze 与 A2/C4 继续锁定 |
 
 ## 5. 交接审计记录
 
@@ -263,3 +264,34 @@ Gate A1a 判定为 `BLOCKED`。A2 全部 `PENDING` 是 C2 的预期状态而非 
 #### 判定
 
 四项 blocker 全部关闭，Gate A1a 以 `PASS_WITH_DISCLOSURE` 解锁 corrected 32-row queue 的 C3 readiness。该判定不是 final admission：64 行 A2 仍为 PENDING，不创建 canonical `admission_sheet.csv` 或 `FREEZE.sha256`，不解锁 A2/C4 或更晚任务。详细复核证据见更新后的 `docs/review_20260730/gate_a1_admission_audit.md` 与 `docs/review_20260730/gate_a1_findings.csv`。
+
+### 5.5 Gate A1b 首次审计：C3 readiness Batch 1
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1b — C3 readiness Batch 1 |
+| 记录类型 | 首次审计 |
+| 交接/复核时间 | `2026-08-01T20:46:14+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness` |
+| Cursor commit | handoff `607acb044856101d8744f62cd2f7173a396c99b5`；payload `4ac5dab0f1692a2c2c46486c763abcce9d27984d` |
+| Cursor baseline | `533f8e26cd7d87e48afaceaa9424a3f7ed38a997` |
+| Handoff manifest | `data/external_slice/HANDOFF_REPRO_BATCH1.json` at `607acb044856101d8744f62cd2f7173a396c99b5` |
+| 输入 hash | candidate sheet `4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8`；sanitized manifest `34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac`；Gate A1a report `77f0515bf24985e5df12369bd52389751cf8757b6a82109aee9f35ddc66a58b3`；runbook `a3ced473d0d4ab91c39480bb59e7032c05bd15f68e57ee277da71582b3256f05` |
+| 输出 hash | readiness JSON `7400824048a3b3ea614a97d2cb275f0d479fc2fefcb9d839a41db6b5c55d3613`；NumPy aggregate `63f9928f4a69822ae552ee38a1f0e619761dd55a0ecc9cda4910d546d24885b7`；SUNDIALS aggregate `9b623dd7efb9fe5111cba5ad4478241bc5b16b1629b31e9d4fea55085a200a9b`；SciPy aggregate `77f23a54daa1cee92535a14e27df4a38c69bef0dea28b91a7b1b3e0f75b636d8`；全部 individual hash 匹配 handoff |
+| Findings | blockers: `A1B-HANDOFF-CMD-001`、`A1B-LOCK-PROVENANCE-001`；non-blocking disclosure: `C3-GHCR-403` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（BLOCKED；未集成 Batch 1 payload/handoff）` |
+| 后继任务是否解锁 | 否。Batch 2、canonical admission freeze、A2/C4、fiber、prediction 与结果执行均保持锁定。 |
+
+#### 独立复算结果
+
+- payload/handoff 父子关系、远端分支与 PR head 均匹配；diff 仅包含 Batch 1 readiness 工件、reproducer、日志、ledger 与 `.gitignore` 日志例外。
+- 固定 Defect4MR registry 的三个非空 digest 与 Batch 1 三个案例及 digest 精确对应；三例均属于 Gate A1a 批准的 32-row queue。
+- 全部输入、individual 输出和三目录 aggregate SHA256 匹配。
+- 三例的 seed、语义输入、expected property 与 arm 状态一致；stored observations 均为 buggy fail / fixed hold，并与固定验证报告吻合。
+- admission checker exit 0；三个 reproducer 均可编译；结构化 selection/schema/arm 检查 PASS；完整测试 `260 passed, 10 warnings`。
+- Handoff 未记录逐臂精确构建/运行命令与实际 exit code；三个案例均无 runbook §6.2 要求的带 hash lock 文件及足够的 source/package/build provenance，因而不能独立重放历史环境。
+
+#### 判定
+
+行为对比仅记为 case-local `observed`，不足以晋升 A2 `PASS`。Gate A1b Batch 1 判定为 `BLOCKED`；本地不 cherry-pick payload/handoff，不改 candidate/canonical sheet，不解锁 Batch 2。完整 findings 与修复合同见 `docs/review_20260730/gate_a1b_readiness_batch1_audit.md`。
