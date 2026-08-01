@@ -84,6 +84,7 @@ S0 台账建立提交前实测：
 | Gate | Cursor commit | Verdict | 本地集成 commit | 后继任务是否解锁 |
 |---|---|---|---|---|
 | Gate A0 — Defect4MR sanitized import | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` | `PASS_WITH_DISCLOSURE` | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` | 是；C2 / Gate A1 admission execution 可在新 session 启动 |
+| Gate A1a — C2 admission candidate audit（pre-readiness） | handoff `f31a508ae6409c18dca8229fbabdf77598e0345d`；payload `90640368d21fe2087a266d8726ec81c2e9c2c124` | `BLOCKED` | `N/A（未集成 C2 payload/handoff）` | 否；C3 readiness、canonical admission freeze 与 A2/C4 均保持锁定 |
 
 ## 5. 交接审计记录
 
@@ -198,3 +199,36 @@ rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python
 #### 判定
 
 Gate A0 零 blocker，按 `PASS_WITH_DISCLOSURE` 解锁后继。唯一披露为 payload commit `a789bcec...` 与最终 handoff commit `e72faa2d` 的双提交表达；五个规定 A0 工件在两提交间未变化。详细证据见 `docs/review_20260730/gate_a0_defect4mr_import.md`。
+
+### 5.3 Gate A1a 首次审计：C2 admission candidate handoff（pre-readiness）
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1a — C2 admission candidate audit（pre-readiness） |
+| 记录类型 | 首次审计 |
+| 交接/复核时间 | `2026-08-01T10:08:35+08:00` |
+| C2 分支 | `origin/codex/gpt-desktop-phase3-5-c2-admission` |
+| C2 commit | handoff `f31a508ae6409c18dca8229fbabdf77598e0345d`；payload `90640368d21fe2087a266d8726ec81c2e9c2c124` |
+| C2 baseline | `e5737f3c1c88641bc783bf8449fd7c53a6178df9` |
+| Handoff manifest | `data/external_slice/HANDOFF_ADMISSION.json` at `f31a508ae6409c18dca8229fbabdf77598e0345d`；SHA256 `c244ef61d0fa11eb39b8e797a308d35cb0e5becca4b5cc44459a41d4a2baa847` |
+| 输入 hash | sanitized 64-row manifest = `34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac`；separate 9-row pilot = `77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a`；protocol = `186b9734077035f63a1819569ecf45e645545862d045cb5ee899a7dd8f2841ca`；runbook = `a3ced473d0d4ab91c39480bb59e7032c05bd15f68e57ee277da71582b3256f05` |
+| 输出 hash | candidate sheet = `79eb9de7f9d53d4b4b574aeace93f4b474849d13c686e94c3c005ed3e8aae802`；64-file evidence aggregate = `84823edab5dfb72e35c8f2c21af35e97f415937cba28fdab20f4c24c8f85d122`；checker = `cd84515e5247cb4a18640839a6048611b799353a8a5cb23aef742034f6c7d92e`；checker tests = `21ef6abb7a9130fc5ef94df6e152a33cb40ecc49d35d0f3640f2989423d421b4` |
+| 审计命令 | 见 `docs/review_20260730/gate_a1_admission_audit.md` §6；全部结构、hash、公开证据与测试结果逐项记录 |
+| Findings | blockers: `A1-SCOPE-001`、`A1-SCOPE-002`、`A1-SCOPE-003`、`A1-SOURCE-BINDING-001`；非阻塞：`A1-A2-PENDING-001`、`A1-EXECUTOR-SEPARATION-001`、`A1-VALIDATOR-SCOPE-001`、`A1-REAL-DEFECT-CHECK-001`、`A1-NEUTRAL-ID-CHECK-001`；`STARTUP-CONFLICT-001` 仍仅约束 Gate A2 |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（BLOCKED；未集成 C2 payload/handoff）` |
+| 后继任务是否解锁 | 否。C3 readiness、canonical admission freeze 与 A2/C4 均保持锁定。 |
+
+#### 独立复算结果
+
+- payload/handoff 父子关系及 A0 baseline ancestry 精确匹配；远端 tracking ref 指向 handoff commit。
+- handoff 声明的候选、证据树、checker、tests 及输入 hash 全部复算一致。
+- 64 行、64 evidence、9-row supplemental 隔离、0 nonblank `analysis_id`；A1=35/29、A2=64 PENDING、submitted A3=59/5、decision=35/29。
+- 35/35 public fixed commit 可解析，且 35/35 的第一父提交等于记录的 buggy SHA；35/35 public tracker entry 可访问。
+- targeted tests `14 passed`；完整测试 `255 passed, 10 warnings`；规定泄漏扫描 exit 1、无输出。
+- 三个 submitted A3 PASS 案例的实际输出分别为整数 transform size、整数 maximum index、communicator/permutation index sets，违反冻结的 float-vector → float/few-float A3 定义。
+- checker 仅用 source row position 与 aggregate manifest hash，不能把每个 neutral row 绑定到对应 sanitized member；swap/rename 可逃逸。
+
+#### 判定
+
+Gate A1a 判定为 `BLOCKED`。A2 全部 `PENDING` 是 C2 的预期状态而非 blocker，但它意味着本阶段只能审核 pre-readiness queue，不能生成 canonical admission freeze。因存在三项 A3 错判和源成员绑定 blocker，本地不集成 C2 payload/handoff、不写 `FREEZE.sha256`、不启动 C3。修复要求与完整逐案记录见 `docs/review_20260730/gate_a1_admission_audit.md` 和 `docs/review_20260730/gate_a1_findings.csv`。
