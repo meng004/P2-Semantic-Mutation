@@ -84,7 +84,7 @@ S0 台账建立提交前实测：
 | Gate | Cursor commit | Verdict | 本地集成 commit | 后继任务是否解锁 |
 |---|---|---|---|---|
 | Gate A0 — Defect4MR sanitized import | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` | `PASS_WITH_DISCLOSURE` | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` | 是；C2 / Gate A1 admission execution 可在新 session 启动 |
-| Gate A1a — C2 admission candidate audit（pre-readiness） | handoff `f31a508ae6409c18dca8229fbabdf77598e0345d`；payload `90640368d21fe2087a266d8726ec81c2e9c2c124` | `BLOCKED` | `N/A（未集成 C2 payload/handoff）` | 否；C3 readiness、canonical admission freeze 与 A2/C4 均保持锁定 |
+| Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
 
 ## 5. 交接审计记录
 
@@ -232,3 +232,34 @@ Gate A0 零 blocker，按 `PASS_WITH_DISCLOSURE` 解锁后继。唯一披露为 
 #### 判定
 
 Gate A1a 判定为 `BLOCKED`。A2 全部 `PENDING` 是 C2 的预期状态而非 blocker，但它意味着本阶段只能审核 pre-readiness queue，不能生成 canonical admission freeze。因存在三项 A3 错判和源成员绑定 blocker，本地不集成 C2 payload/handoff、不写 `FREEZE.sha256`、不启动 C3。修复要求与完整逐案记录见 `docs/review_20260730/gate_a1_admission_audit.md` 和 `docs/review_20260730/gate_a1_findings.csv`。
+
+### 5.4 Gate A1a finding 修复复核：C2 correction handoff
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1a — C2 admission candidate audit（pre-readiness） |
+| 记录类型 | finding 修复复核；关闭 §5.3 的四项 blocker |
+| 交接/复核时间 | `2026-08-01T11:17:18+08:00` |
+| C2 分支 | `origin/codex/gpt-desktop-phase3-5-c2-admission` |
+| C2 commit | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` |
+| C2 ancestry | `90640368...` → `f31a508a...` → `964fcafc...` → `d4967e1c...`，每个 handoff 均为对应 payload 的 direct child |
+| Handoff manifest | `data/external_slice/HANDOFF_ADMISSION.json` at `d4967e1c8221318ab624957f29955dd323cc49d9`；SHA256 `d366e8271b2dab4f2f8aa0927df02212ef7decf807f699f85240a876ddb5ce13` |
+| 输入 hash | sanitized manifest = `34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac`；9-row pilot = `77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a`；blocked report = `2aa9efd7353e33a8405af538533f3a4715fee5ef4973cec141a9f4c3ba960c75`；blocked findings = `13d24a6ff1212c8b5635697900d35395fdf79e31edcf2016ef474c734eef926f` |
+| 输出 hash | corrected sheet = `4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8`；corrected evidence aggregate = `854a2e06f97a2cf2928504be4a4d55afd327be2da31ad3cc7975924b45bc43ae`；checker = `4fed32a87ac22c4e17ea13c735cfd65430e1abcf41e139484172320d59df1428`；tests = `ddcef0dd58c0e11b82aa4666ce38c6419661787b00fb97da59808e372d76b50e` |
+| Findings | `A1-SCOPE-001`、`A1-SCOPE-002`、`A1-SCOPE-003`、`A1-SOURCE-BINDING-001` 全部 CLOSED；`A1-SCOPE-004` 记录 `EXT-fftw-05` 的新增保守排除；fixed-parent 在线关系仍由独立审计验证，为非阻塞披露；`STARTUP-CONFLICT-001` 仍仅约束 Gate A2 |
+| Verdict | `PASS_WITH_DISCLOSURE` |
+| 本地集成 commit | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` |
+| 后继任务是否解锁 | 是，但仅 corrected 32-row A1∧A3 queue 可进入 C3 readiness。canonical admission freeze、A2/C4、预测与结果执行仍锁定。 |
+
+#### 独立复算结果
+
+- correction handoff SHA 与所有输入/输出 hash 匹配；correction diff 未触及 canonical sheet、freeze、C3 reproduction、runs 或审计文档。
+- checker exit 0；targeted tests `19 passed`；完整测试 `260 passed, 10 warnings`；泄漏扫描 exit 1、无输出。
+- 64 个 evidence 的 `source_record_sha256` 全部对对应 sanitized record 独立重算匹配且互异；swap-negative test 覆盖原 source-binding blocker。
+- 64 个 case-specific A3 rationale 全部不同；三项原 A3 错判改为 FAIL/EXCLUDED，额外保守排除 `EXT-fftw-05` 合理且未替换样本。
+- 修正后 A1=35/29、A2=64 PENDING、A3=55/9、decision=32/32、analysis aliases=0。
+- initial/corrected sheet 的 64 个 ID、顺序、repo、issue、buggy/fixed SHA、mechanism、A1、A2 与 blank alias 均不变；只有四行 A3 及派生字段变化。
+
+#### 判定
+
+四项 blocker 全部关闭，Gate A1a 以 `PASS_WITH_DISCLOSURE` 解锁 corrected 32-row queue 的 C3 readiness。该判定不是 final admission：64 行 A2 仍为 PENDING，不创建 canonical `admission_sheet.csv` 或 `FREEZE.sha256`，不解锁 A2/C4 或更晚任务。详细复核证据见更新后的 `docs/review_20260730/gate_a1_admission_audit.md` 与 `docs/review_20260730/gate_a1_findings.csv`。

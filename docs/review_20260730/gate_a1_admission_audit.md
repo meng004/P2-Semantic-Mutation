@@ -1,10 +1,11 @@
 # Gate A1a — C2 Admission Candidate Audit (Pre-readiness)
 
-- **Audit time:** 2026-08-01T10:08:35+08:00
+- **Initial audit time:** 2026-08-01T10:08:35+08:00
+- **Finding-closure re-review:** 2026-08-01T11:17:18+08:00
 - **Scope:** C2 candidate adjudication before dual-arm readiness execution
-- **Verdict:** `BLOCKED`
-- **Blockers:** 4 findings: three A3 miscategorizations and one source-binding verifier defect
-- **Successor state:** C3 remains locked. No canonical admission sheet or freeze was created.
+- **Current verdict:** `PASS_WITH_DISCLOSURE`
+- **Open blockers:** 0; all four initial blockers are closed
+- **Successor state:** The corrected 32-row A1∧A3 queue is unlocked for C3 readiness only. No row is finally admitted and no canonical admission freeze exists.
 
 ## 1. Audited lineage
 
@@ -12,21 +13,27 @@
 |---|---|
 | C2 branch | `origin/codex/gpt-desktop-phase3-5-c2-admission` |
 | C2 baseline | `e5737f3c1c88641bc783bf8449fd7c53a6178df9` |
-| C2 payload commit | `90640368d21fe2087a266d8726ec81c2e9c2c124` |
-| C2 handoff commit | `f31a508ae6409c18dca8229fbabdf77598e0345d` |
-| Local payload integration | `N/A (BLOCKED; not integrated)` |
-| Local handoff integration | `N/A (BLOCKED; not integrated)` |
-| Handoff manifest | `data/external_slice/HANDOFF_ADMISSION.json` at `f31a508ae6409c18dca8229fbabdf77598e0345d` |
-| Handoff SHA256 | `c244ef61d0fa11eb39b8e797a308d35cb0e5becca4b5cc44459a41d4a2baa847` |
+| Initial C2 payload commit | `90640368d21fe2087a266d8726ec81c2e9c2c124` |
+| Initial C2 handoff commit | `f31a508ae6409c18dca8229fbabdf77598e0345d` |
+| Correction payload commit | `964fcafcbd977004536979fab950aec88cec7b32` |
+| Correction handoff commit | `d4967e1c8221318ab624957f29955dd323cc49d9` |
+| Local initial payload integration | `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e` |
+| Local initial handoff integration | `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258` |
+| Local correction payload integration | `7da7599b1db873bb9058126c907ced93f033157b` |
+| Local correction handoff integration | `25ae6f5d364823722ac7e29999412972153f8518` |
+| Current handoff manifest | `data/external_slice/HANDOFF_ADMISSION.json` at `d4967e1c8221318ab624957f29955dd323cc49d9` |
+| Current handoff SHA256 | `d366e8271b2dab4f2f8aa0927df02212ef7decf807f699f85240a876ddb5ce13` |
 
-The handoff commit is the direct child of the payload commit, and the payload
-commit is the direct child of the passed Gate A0 local lineage. The remote C2
-tracking ref resolves to the handoff commit. The user explicitly authorized C2
-to run in a new Codex task/worktree; therefore the departure from the original
-Cursor/Grok executor assignment is recorded as a non-blocking disclosure, not
-an unapproved executor substitution.
+Each handoff is the direct child of its payload, and the correction payload is
+the direct child of the initial handoff. The full immutable C2 chain was
+integrated in order after the correction passed re-review. The user explicitly
+authorized C2 to run in a new Codex task/worktree; therefore the departure from
+the original Cursor/Grok executor assignment remains a non-blocking disclosure,
+not an unapproved executor substitution.
 
 ## 2. Hash, structure, and execution verification
+
+### 2.1 Initial handoff
 
 | Artifact | Independently verified SHA256 |
 |---|---|
@@ -39,8 +46,24 @@ an unapproved executor substitution.
 | Frozen external-slice protocol | `186b9734077035f63a1819569ecf45e645545862d045cb5ee899a7dd8f2841ca` |
 | Admission runbook | `a3ced473d0d4ab91c39480bb59e7032c05bd15f68e57ee277da71582b3256f05` |
 
-The payload was archived into an isolated temporary directory before running
-the checker and tests. The independent results were:
+### 2.2 Correction handoff
+
+| Artifact | Independently verified SHA256 |
+|---|---|
+| Sanitized 64-row input | `34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac` |
+| Separate 9-row supplemental input | `77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a` |
+| Corrected candidate sheet | `4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8` |
+| Corrected evidence tree | `854a2e06f97a2cf2928504be4a4d55afd327be2da31ad3cc7975924b45bc43ae` |
+| Corrected candidate checker | `4fed32a87ac22c4e17ea13c735cfd65430e1abcf41e139484172320d59df1428` |
+| Corrected checker tests | `ddcef0dd58c0e11b82aa4666ce38c6419661787b00fb97da59808e372d76b50e` |
+| Correction handoff | `d366e8271b2dab4f2f8aa0927df02212ef7decf807f699f85240a876ddb5ce13` |
+
+The correction evidence-tree hash uses paths relative to
+`data/external_slice`, followed by NUL, each file SHA256, and newline, in sorted
+order. Independent recomputation over 64 files reproduced `854a2e06...`.
+
+The initial payload was archived into an isolated temporary directory before
+running the checker and tests. The independent initial results were:
 
 - exact 12-column schema;
 - 64 Defect4MR rows, 64 unique neutral IDs, and 64 evidence directories;
@@ -86,9 +109,9 @@ A1 ∧ A2 ∧ A3 after an auditable same-trigger two-arm reproduction. Until the
 no row is `ready`, no canonical admission freeze exists, and A2/C4 remains
 locked.
 
-## 4. Blockers
+## 4. Initial blockers and closure status
 
-### A1-SCOPE-001 — `EXT-pocketfft-02`
+### A1-SCOPE-001 — `EXT-pocketfft-02` — CLOSED
 
 The submitted mechanism is integer overflow in `good_size_*`, whose input and
 output are `size_t`. The public fix adds typed unsigned-integer bounds and may
@@ -97,7 +120,7 @@ helper, not a callable adaptable from float-vector input to float/few-float
 output under the frozen A3 definition. Submitted `A3=PASS` and
 `ADMIT_PENDING_REPRO` must become `A3=FAIL` and `EXCLUDED`.
 
-### A1-SCOPE-002 — `EXT-blis-01`
+### A1-SCOPE-002 — `EXT-blis-01` — CLOSED
 
 The repaired BLIS `amaxv` contract returns the index of the first
 maximum-magnitude or NaN element. Its observable result is an integer index, not
@@ -106,14 +129,14 @@ be admitted without an explicit amendment authorizing integer-index outputs.
 Submitted `A3=PASS` and `ADMIT_PENDING_REPRO` must become `A3=FAIL` and
 `EXCLUDED`, or the authors must amend the protocol before re-review.
 
-### A1-SCOPE-003 — `EXT-petsc-04`
+### A1-SCOPE-003 — `EXT-petsc-04` — CLOSED
 
 The public issue and fix concern the MPI communicator attached to ordering index
 sets and dispatch of `MatGetOrdering`. The output is communicator/permutation
 metadata, not a float/few-float numerical-kernel result. Submitted `A3=PASS` and
 `ADMIT_PENDING_REPRO` must become `A3=FAIL` and `EXCLUDED`.
 
-### A1-SOURCE-BINDING-001 — checker cannot prove 64-member identity
+### A1-SOURCE-BINDING-001 — checker cannot prove 64-member identity — CLOSED
 
 `check_external_admission.py` confirms only that `source_index` equals the CSV
 row position and that every evidence record carries the aggregate sanitized
@@ -124,10 +147,13 @@ the 64 source members was adjudicated exactly once. Add a non-leaking per-record
 binding (for example a hash of the exact sanitized record) and negative tests
 that swap two members; then rerun the full case audit.
 
-The generic A3 rationale is identical across submitted PASS cases and did not
-surface the three mechanism/rationale contradictions above. The correction
-handoff must re-review all submitted A3-pass rows and provide case-specific scope
-rationales, not only patch these three rows.
+Correction payload `964fcafc...` changes the three submitted A3 values to FAIL,
+derives EXCLUDED decisions, adds per-record canonical source hashes with a
+swap-negative test, and replaces the generic scope text with 64 case-specific
+rationales. Independent recomputation confirmed 64 distinct record hashes and
+64 distinct scope rationales. The required all-case review additionally found
+`EXT-fftw-05`; its integer MPI size metadata was conservatively changed to A3
+FAIL while its pre-existing A1 FAIL / EXCLUDED decision remained unchanged.
 
 ## 5. Non-blocking disclosures and hardening findings
 
@@ -137,18 +163,16 @@ rationales, not only patch these three rows.
 - `A1-EXECUTOR-SEPARATION-001`: the C2 branch/environment differs from the
   original Cursor/Grok assignment, but the user explicitly authorized a new
   Codex session for C2. Preserve this authorization disclosure downstream.
-- `A1-VALIDATOR-SCOPE-001`: the current decision token remains
-  `ADMIT_PENDING_REPRO` even if A2 later becomes `PASS`. The checker is valid only
-  for the pre-readiness candidate stage and must not be reused to assert final
-  admission or canonical freeze.
-- `A1-REAL-DEFECT-CHECK-001`: the checker requires a fix URL for A1 PASS but does
-  not enforce a nonblank public issue/equivalent tracker or independently verify
-  `buggy_sha == first_parent(fixed_sha)`. The present payload passed those checks
-  through this independent audit, but the correction should encode the structural
-  requirements where possible and retain immutable resolution evidence.
-- `A1-NEUTRAL-ID-CHECK-001`: the prohibited-prefix regex blocks `EXT-A-*` through
-  `EXT-F-*` but not the actual frozen category aliases. Current IDs are clean;
-  add negative tests for all frozen category/analysis aliases before re-review.
+- `A1-VALIDATOR-SCOPE-001` — closed: the checker now rejects every non-PENDING
+  A2 value and explicitly states that it cannot establish final admission or a
+  canonical freeze.
+- `A1-REAL-DEFECT-CHECK-001` — partially hardened and non-blocking: the checker
+  now requires public issue/equivalent-tracker and fix URLs for A1 PASS. Hosting
+  API resolution and `buggy_sha == first_parent(fixed_sha)` remain independent
+  audit checks; all 35 current PASS rows were already verified.
+- `A1-NEUTRAL-ID-CHECK-001` — closed for the current contract: negative tests
+  reject the frozen category and analysis-alias prefixes, and all 64 current IDs
+  remain neutral.
 - `STARTUP-CONFLICT-001` remains unchanged and applies only before the Gate A2
   DEF-CAL draw; it does not alter this verdict.
 
@@ -179,10 +203,26 @@ rtk curl -sS https://gitlab.com/api/v4/projects/<project>/repository/commits/<fi
 # 3/3 GitLab fixed commits resolved; 3/3 first parents matched buggy_sha
 ```
 
-## 7. Verdict and required correction
+Correction re-review commands:
 
-Gate A1a is `BLOCKED`. The C2 payload and handoff are not integrated, C3 is not
-unlocked, and no canonical admission artifact or freeze is generated.
+```text
+rtk shasum -a 256 data/external_slice/HANDOFF_ADMISSION.json data/external_slice/admission_sheet.cursor_candidate.csv scripts/check_external_admission.py tests/external_slice/test_check_external_admission.py
+# exit 0; correction hashes matched handoff
+rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python scripts/check_external_admission.py --sheet data/external_slice/admission_sheet.cursor_candidate.csv
+# exit 0; pre-readiness C2 candidate only; 64 rows, 64 bound evidence records, 9 separate pilot rows
+rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest tests/external_slice/test_check_external_admission.py -q
+# exit 0; 19 passed
+rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest -q
+# exit 0; 260 passed, 10 warnings
+rtk rg -n -i 'mr_mapping|proposed_mr_oracle|\bkill\b|\bfiber\b|\boperator\b|prediction|analysis_id[^,]*[^,[:space:]]' data/external_slice/admission_sheet.cursor_candidate.csv data/external_slice/admission_evidence
+# exit 1; no output (expected clean result)
+```
+
+## 7. Initial verdict and required correction (historical)
+
+At audit commit `c18d9cdb...`, Gate A1a was `BLOCKED`. The C2 payload and handoff
+were not integrated, C3 was not unlocked, and no canonical admission artifact or
+freeze was generated.
 
 A correction handoff must:
 
@@ -198,3 +238,40 @@ A correction handoff must:
 Only a zero-blocker re-review may integrate the candidate payload and authorize
 the corrected A1∧A3 queue to enter C3. Canonical `admission_sheet.csv` and
 `FREEZE.sha256` remain deferred until C3 supplies final A2 evidence.
+
+## 8. Finding-closure re-review
+
+### 8.1 Reproduced results
+
+The correction handoff was independently archived and tested. Results:
+
+- exact handoff SHA256 `d366e827...` and all declared output hashes matched;
+- checker passed with its explicit pre-readiness-only notice;
+- targeted tests: `19 passed`;
+- full suite: `260 passed, 10 warnings`;
+- leakage scan: no output, expected exit 1;
+- 64 candidate rows, 64 bound evidence files, 64 distinct per-record source
+  hashes, and 64 distinct case-specific scope rationales;
+- corrected distributions: A1 35/29, A2 64 PENDING, A3 55/9, decisions 32/32,
+  and zero nonblank `analysis_id` values;
+- the initial and corrected sheets retain identical row order, IDs, repositories,
+  issue URLs, buggy/fixed SHAs, mechanisms, A1, A2, and blank aliases; only the
+  four audited A3 rows and their derived fields changed;
+- no canonical sheet, freeze file, C3 reproduction, run artifact, Gate A1 report,
+  or audit-ledger path changed in the correction branch.
+
+The 35 public fixed-parent relationships verified during the initial audit were
+unchanged by the correction. The offline checker still does not query hosting
+APIs to prove those relationships; current-case parent verification therefore
+remains an auditor responsibility and is carried as a disclosure, not a blocker.
+
+### 8.2 Current verdict and unlock
+
+Gate A1a now has zero open blockers and is `PASS_WITH_DISCLOSURE`.
+
+The 32 rows satisfying submitted A1 PASS and corrected A3 PASS are authorized
+only to enter C3 dual-arm readiness. All 64 rows remain A2 PENDING. No row is
+finally admitted, no ready-count claim is permitted, and canonical
+`admission_sheet.csv` / `FREEZE.sha256` remain deferred until C3 evidence has
+been audited. A2/C4, fiber mapping, predictions, kill execution, and later gates
+remain locked.
