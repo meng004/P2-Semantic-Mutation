@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 45,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "7b1018e33d58544e88457681db92b50ea2935ac8bd9a99f1fe15cf63c0e6ba2c",
   "issue_url": "https://github.com/LLNL/sundials/pull/764",
   "fix_url": "https://github.com/LLNL/sundials/commit/49763f35da7bacd3a384b12ec46feb1f83422807",
   "buggy_sha": "5f5a8c3facdd413e54e02361afc47a2032091175",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "A public defect report and an identifiable public fix commit are linked.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The nonlinear solve accepts numeric state and can expose stale acceleration depth through one selected floating-point residual or solution value."
   },
   "evidence_urls": [
     "https://github.com/LLNL/sundials/pull/764",

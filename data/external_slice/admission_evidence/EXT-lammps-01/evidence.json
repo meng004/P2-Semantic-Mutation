@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 61,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "84c3f0519f7ecebd37857d4b160fd5f056be2ab976431ffe58d23ac15140a954",
   "issue_url": "https://github.com/lammps/lammps/pull/4781",
   "fix_url": "https://github.com/lammps/lammps/commit/596e439c20624417e85493a7f8a993443b74288c",
   "buggy_sha": "4376fa4bcc35f40d0534a5decaf983895956ac27",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "A public defect report and an identifiable public fix commit are linked.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The shear-flow integration accepts numeric particle state and can expose the reversibility defect in one selected floating-point position or velocity component."
   },
   "evidence_urls": [
     "https://github.com/lammps/lammps/pull/4781",

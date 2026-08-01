@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 10,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "9d1f5f19baaabf7a0f837dfcf078a8ea28cb61ca533f47d209113819c00482a1",
   "issue_url": "https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1018",
   "fix_url": "",
   "buggy_sha": "",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "no identifiable merged public fix commit.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour does not meet the float or few-float numerical-kernel contract."
+    "in_scope": "The reported platform-specific graph calculation returns structural graph data rather than float or few-float numerical output."
   },
   "evidence_urls": [
     "https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1018"

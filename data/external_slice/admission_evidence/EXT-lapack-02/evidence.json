@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 27,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "7f34e7c410f5ca3eb437b6d66f698c75ae9a8190688f5e3f271812a279416805",
   "issue_url": "https://github.com/Reference-LAPACK/lapack/issues/379",
   "fix_url": "https://github.com/Reference-LAPACK/lapack/commit/9b24deea0a32a401f15025def2e9ba1c0871dc0d",
   "buggy_sha": "799ef93faa5878aa8702f7cf9980cfc649cc39cc",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "A public defect report and an identifiable public fix commit are linked.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The Hermitian eigensolver accepts complex matrix entries and can expose the conversion defect in one selected eigenvector component."
   },
   "evidence_urls": [
     "https://github.com/Reference-LAPACK/lapack/issues/379",

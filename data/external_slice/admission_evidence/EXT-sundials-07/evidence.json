@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 44,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "1e3e17deda5c411d7880a1bfc3bb9badcadff51d0c627f4319e825475de7bdee",
   "issue_url": "https://github.com/LLNL/sundials/pull/763",
   "fix_url": "https://github.com/LLNL/sundials/commit/5f5a8c3facdd413e54e02361afc47a2032091175",
   "buggy_sha": "b577f273a5704a8e32fa053061166689349fdfbe",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "A public defect report and an identifiable public fix commit are linked.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The multirate step calculation accepts floating-point error data and can expose the missing scale in one accumulated error value."
   },
   "evidence_urls": [
     "https://github.com/LLNL/sundials/pull/763",
