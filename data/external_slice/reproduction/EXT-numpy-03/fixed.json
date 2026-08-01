@@ -1,0 +1,119 @@
+{
+  "exit_status": 0,
+  "expected_property": "numpy.fft.hfft/irfft with explicit n not equal to the input-derived length match a naive DFT reference within tolerance; implied-size round-trips also succeed.",
+  "input": {
+    "hfft_input_len": 5,
+    "hfft_n_values": [
+      6,
+      8,
+      10,
+      12
+    ],
+    "irfft_cases": [
+      [
+        5,
+        6
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        5,
+        12
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        20
+      ]
+    ],
+    "roundtrip_n_values": [
+      7,
+      8,
+      16,
+      33
+    ]
+  },
+  "neutral_id": "EXT-numpy-03",
+  "observed_output": {
+    "all_ok": true,
+    "checks": [
+      {
+        "maxdiff": 5.329070518200751e-15,
+        "name": "hfft_len5_n6",
+        "ok": true
+      },
+      {
+        "maxdiff": 8.43769498715119e-15,
+        "name": "hfft_len5_n8",
+        "ok": true
+      },
+      {
+        "maxdiff": 1.865174681370263e-14,
+        "name": "hfft_len5_n10",
+        "ok": true
+      },
+      {
+        "maxdiff": 2.842170943040401e-14,
+        "name": "hfft_len5_n12",
+        "ok": true
+      },
+      {
+        "maxdiff": 4.0245584642661925e-16,
+        "name": "irfft_len5_n6",
+        "ok": true
+      },
+      {
+        "maxdiff": 7.91033905045424e-16,
+        "name": "irfft_len5_n10",
+        "ok": true
+      },
+      {
+        "maxdiff": 1.7208456881689926e-15,
+        "name": "irfft_len5_n12",
+        "ok": true
+      },
+      {
+        "maxdiff": 5.551115123125783e-16,
+        "name": "irfft_len8_n8",
+        "ok": true
+      },
+      {
+        "maxdiff": 1.4155343563970746e-15,
+        "name": "irfft_len8_n20",
+        "ok": true
+      },
+      {
+        "maxdiff": 3.3306690738754696e-16,
+        "name": "roundtrip_n7",
+        "ok": true
+      },
+      {
+        "maxdiff": 2.220446049250313e-16,
+        "name": "roundtrip_n8",
+        "ok": true
+      },
+      {
+        "maxdiff": 2.220446049250313e-16,
+        "name": "roundtrip_n16",
+        "ok": true
+      },
+      {
+        "maxdiff": 4.440892098500626e-16,
+        "name": "roundtrip_n33",
+        "ok": true
+      }
+    ]
+  },
+  "package_version": {
+    "numpy": "2.0.0.dev0",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "property_holds": true,
+  "seed": 0
+}

@@ -1,0 +1,56 @@
+{
+  "buggy_sha": "57684c06258ad61891df4aee1b617ee1764307ab",
+  "build": {
+    "buggy_src": "/tmp/c3_batch1/work/numpy/buggy-src",
+    "fixed_src": "/tmp/c3_batch1/work/numpy/fixed-src",
+    "installed_version_label": "2.0.0.dev0"
+  },
+  "docker_digest_route": {
+    "attempted": true,
+    "digest": "sha256:dd9463df9c14944a8071ef760d89cef8ff39171061eb77454f8b4f915e794b31",
+    "registry_case": "b-pocketfft-004",
+    "result": "GHCR pull 403 Forbidden after docker login; rebuilt from exact sheet SHAs"
+  },
+  "dual_arm_contrast": true,
+  "fixed_sha": "5112fa07aab50daa2a615ac4c8f055f626a66d17",
+  "neutral_id": "EXT-numpy-03",
+  "pip_freeze": {
+    "buggy": [
+      "Cython==3.0.12",
+      "meson==1.11.2",
+      "meson-python==0.20.0",
+      "ninja==1.13.0",
+      "numpy @ file:///tmp/c3_batch1/work/numpy/buggy-src",
+      "packaging==26.2",
+      "patchelf==0.17.2.4",
+      "pkgconfig==1.6.0",
+      "pyproject-metadata==0.12.1",
+      "setuptools==83.0.0",
+      "wheel==0.47.0"
+    ],
+    "fixed": [
+      "Cython==3.0.12",
+      "meson==1.11.2",
+      "meson-python==0.20.0",
+      "ninja==1.13.0",
+      "numpy @ file:///tmp/c3_batch1/work/numpy/fixed-src",
+      "packaging==26.2",
+      "patchelf==0.17.2.4",
+      "pkgconfig==1.6.0",
+      "pyproject-metadata==0.12.1",
+      "setuptools==83.0.0",
+      "wheel==0.47.0"
+    ]
+  },
+  "platform": {
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gxx": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "recorded_at_utc": "2026-08-01T12:36:15Z",
+  "route": "exact-source",
+  "same_trigger_input_seed": true,
+  "seed": 0,
+  "trigger": "data/external_slice/reproducers/EXT-numpy-03.py"
+}

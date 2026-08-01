@@ -21,3 +21,18 @@ Cloud agent: `bc-0bd9c61b-5482-450b-8739-2da3e98dff82`
 ## Session retirement
 
 After push of C1, this VM/session requests local Gate A0 and must not start C2 admission in-session.
+
+
+## C3 Batch 1 — digest-pinned readiness (this session)
+
+| task/gate | VM/session | baseline commit | exact command | environment | input hash | output hash | exit code | failure/retry | output commit | auditor verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| C3 / A1b batch1 | bc-1d216e6e-25c0-46ef-9f68-b1d417f18f57 | 533f8e26cd7d87e48afaceaa9424a3f7ed38a997 | dual-arm rebuild for EXT-numpy-03, EXT-sundials-07, EXT-scipy-04; see HANDOFF_REPRO_BATCH1.json | Python host 3.12.3 + CPython 3.9.18; gcc 13.3; cmake 3.28.3; docker 29.1.3 (GHCR 403) | admission candidate sheet + Gate A1a unlock | readiness_batch1.json + reproduction/<id>/* + reproducers | 0 for host rebuilds; 1 for GHCR pull | GHCR 403 → host rebuild; py39 ssl rebuild; numpy submodule retry | see handoff after push | pending Gate A1b |
+
+### Batch 1 snapshot
+
+- Queue source: Gate A1a corrected 32-row A1∧A3 queue only
+- Selected: 3 digest-pinned cases in that queue (content-matched)
+- Results: 3/3 proposed `crit_dual_arm_repro=PASS` with same trigger/input/seed=0
+- Candidate sheet A2 left `PENDING` (C2 checker contract); promotion deferred to Gate A1b
+- Stopped after batch 1 push; C4 / labelling / category-map freeze / predictive freeze / detection runs not started
