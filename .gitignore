@@ -134,6 +134,9 @@ data/operator_campaign/v1_archive/raw/
 *.bbl
 *.blg
 *.log
+# C3 dual-arm readiness retains per-case stdout/stderr evidence
+!data/external_slice/reproduction/**/stdout.log
+!data/external_slice/reproduction/**/stderr.log
 *.out
 *.toc
 *.spl
