@@ -1,6 +1,7 @@
 {
-  "baseline_commit": "533f8e26cd7d87e48afaceaa9424a3f7ed38a997",
+  "baseline_commit": "607acb044856101d8744f62cd2f7173a396c99b5",
   "batch": {
+    "batch2_started": false,
     "cases": [
       "EXT-numpy-03",
       "EXT-sundials-07",
@@ -10,59 +11,500 @@
     "selection": "digest-pinned registry cases intersect Gate A1a approved 32-row queue",
     "stop_after_push": true
   },
+  "blocked_audit_commit": "6419fbe3ffb6fd57116ad2586a40365e370321e4",
   "branch": "cursor/grok-phase3-c3-readiness",
+  "closed_findings": [
+    "A1B-HANDOFF-CMD-001",
+    "A1B-LOCK-PROVENANCE-001"
+  ],
   "cloud_agent": "bc-1d216e6e-25c0-46ef-9f68-b1d417f18f57",
   "commands": [
     {
-      "command": "git rev-parse HEAD",
+      "command": "docker pull ghcr.io/meng004/d4mr-c-scipy-002@sha256:78a2247a5c46bdef645f80471a774ceb8c46ac94f26d2a5366e8792630d52fed",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "ghcr:pull:d4mr-c-scipy-002"
+    },
+    {
+      "command": "docker pull ghcr.io/meng004/d4mr-b-pocketfft-004@sha256:dd9463df9c14944a8071ef760d89cef8ff39171061eb77454f8b4f915e794b31",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "ghcr:pull:d4mr-b-pocketfft-004"
+    },
+    {
+      "command": "docker pull ghcr.io/meng004/d4mr-e-sundials-007@sha256:c28ba71804fd7faef1bc6bf2c446cc0cbdbc431d4d9f915841fe4c21b0373c20",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "ghcr:pull:d4mr-e-sundials-007"
+    },
+    {
+      "command": "/tmp/c3_batch1/work/python39/install/bin/python3.9 -c \"import ssl; print(ssl.OPENSSL_VERSION)\"",
+      "cwd": "/workspace",
       "exit_code": 0,
-      "result": "533f8e26cd7d87e48afaceaa9424a3f7ed38a997"
+      "label": "py39:ssl-check"
+    },
+    {
+      "command": "/tmp/c3_batch1/work/python39/install/bin/python3.9 -m venv /tmp/c3_batch1_fix/scipy/venv-buggy",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:venv"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python -m pip install -U pip wheel setuptools",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:bootstrap-pip"
+    },
+    {
+      "command": "/tmp/c3_batch1/work/python39/install/bin/python3.9 -m venv /tmp/c3_batch1_fix/scipy/venv-fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:venv"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python -m pip install -U pip wheel setuptools",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:bootstrap-pip"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python -m pip download -d /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.buggy numpy==1.19.5 scipy==1.5.4",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:pip-download"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python -m pip download -d /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.fixed numpy==1.19.5 scipy==1.6.0",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:pip-download"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python -m pip install --require-hashes -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.buggy.txt",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:pip-install-require-hashes"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python -m pip install --require-hashes -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.fixed.txt",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:pip-install-require-hashes"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-scipy-04.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-scipy-04/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "scipy:buggy:trigger"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-scipy-04.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-scipy-04/fixed.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:trigger"
+    },
+    {
+      "command": "curl -fsSL -L -o /tmp/c3_batch1_fix/numpy/buggy.tar.gz https://github.com/numpy/numpy/archive/57684c06258ad61891df4aee1b617ee1764307ab.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:buggy:download-archive"
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch1_fix/numpy/buggy.tar.gz --strip-components=1 -C /tmp/c3_batch1_fix/numpy/buggy-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:buggy:extract-archive"
+    },
+    {
+      "command": "curl -fsSL -L -o /tmp/c3_batch1_fix/numpy/fixed.tar.gz https://github.com/numpy/numpy/archive/5112fa07aab50daa2a615ac4c8f055f626a66d17.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:fixed:download-archive"
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch1_fix/numpy/fixed.tar.gz --strip-components=1 -C /tmp/c3_batch1_fix/numpy/fixed-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:fixed:extract-archive"
+    },
+    {
+      "command": "git clone --filter=blob:none https://github.com/numpy/numpy.git /tmp/c3_batch1_fix/numpy/src.git",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:git-clone"
+    },
+    {
+      "command": "git fetch origin 57684c06258ad61891df4aee1b617ee1764307ab",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:buggy:git-fetch"
+    },
+    {
+      "command": "git checkout --detach 57684c06258ad61891df4aee1b617ee1764307ab",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:buggy:git-checkout"
+    },
+    {
+      "command": "git rev-parse HEAD",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:buggy:git-rev-parse"
+    },
+    {
+      "command": "git submodule update --init",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:buggy:git-submodule-update"
+    },
+    {
+      "command": "git submodule status",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:buggy:git-submodule-status"
+    },
+    {
+      "command": "tar -czf /tmp/c3_batch1_fix/numpy/buggy-src-complete.tar.gz -C /tmp/c3_batch1_fix/numpy/buggy-src .",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:buggy:hash-tree-tar"
+    },
+    {
+      "command": "git fetch origin 5112fa07aab50daa2a615ac4c8f055f626a66d17",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:fixed:git-fetch"
+    },
+    {
+      "command": "git checkout --detach 5112fa07aab50daa2a615ac4c8f055f626a66d17",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:fixed:git-checkout"
+    },
+    {
+      "command": "git rev-parse HEAD",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:fixed:git-rev-parse"
+    },
+    {
+      "command": "git submodule update --init",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:fixed:git-submodule-update"
+    },
+    {
+      "command": "git submodule status",
+      "cwd": "/tmp/c3_batch1_fix/numpy/src.git",
+      "exit_code": 0,
+      "label": "numpy:fixed:git-submodule-status"
+    },
+    {
+      "command": "tar -czf /tmp/c3_batch1_fix/numpy/fixed-src-complete.tar.gz -C /tmp/c3_batch1_fix/numpy/fixed-src .",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:fixed:hash-tree-tar"
+    },
+    {
+      "command": "/usr/bin/python3 -m venv /tmp/c3_batch1_fix/numpy/venv-buggy",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:buggy:venv"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python -m pip install -U pip wheel setuptools",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:buggy:bootstrap-pip"
+    },
+    {
+      "command": "/usr/bin/python3 -m venv /tmp/c3_batch1_fix/numpy/venv-fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:fixed:venv"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-fixed/bin/python -m pip install -U pip wheel setuptools",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:fixed:bootstrap-pip"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python -m pip install cython<3.1 meson-python ninja pkgconfig patchelf",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:build:probe-install"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python -m pip freeze",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:build:probe-freeze"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python -m pip download -d /workspace/data/external_slice/reproduction/EXT-numpy-03/locks/.download-requirements.build Cython==3.0.12 meson==1.11.2 meson-python==0.20.0 ninja==1.13.0 packaging==26.2 patchelf==0.17.2.4 pkgconfig==1.6.0 pyproject-metadata==0.12.1",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:build:pip-download"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python -m pip install --require-hashes -r /workspace/data/external_slice/reproduction/EXT-numpy-03/locks/requirements.build.txt",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:buggy:pip-install-build-reqs"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python -m pip install --no-deps --no-build-isolation /tmp/c3_batch1_fix/numpy/buggy-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:buggy:pip-install-source"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-fixed/bin/python -m pip install --require-hashes -r /workspace/data/external_slice/reproduction/EXT-numpy-03/locks/requirements.build.txt",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:fixed:pip-install-build-reqs"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-fixed/bin/python -m pip install --no-deps --no-build-isolation /tmp/c3_batch1_fix/numpy/fixed-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "numpy:fixed:pip-install-source"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-03.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-03/buggy.json",
+      "cwd": "/tmp",
+      "exit_code": 1,
+      "label": "numpy:buggy:trigger"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/numpy/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-03.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-03/fixed.json",
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "label": "numpy:fixed:trigger"
+    },
+    {
+      "command": "curl -fsSL -L -o /tmp/c3_batch1_fix/sundials/buggy.tar.gz https://github.com/LLNL/sundials/archive/b577f273a5704a8e32fa053061166689349fdfbe.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:buggy:download-archive"
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch1_fix/sundials/buggy.tar.gz --strip-components=1 -C /tmp/c3_batch1_fix/sundials/buggy-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:buggy:extract-archive"
+    },
+    {
+      "command": "curl -fsSL -L -o /tmp/c3_batch1_fix/sundials/fixed.tar.gz https://github.com/LLNL/sundials/archive/5f5a8c3facdd413e54e02361afc47a2032091175.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:download-archive"
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch1_fix/sundials/fixed.tar.gz --strip-components=1 -C /tmp/c3_batch1_fix/sundials/fixed-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:extract-archive"
+    },
+    {
+      "command": "cmake -S /tmp/c3_batch1_fix/sundials/buggy-src -B /tmp/c3_batch1_fix/sundials/build-buggy -DCMAKE_INSTALL_PREFIX=/tmp/c3_batch1_fix/sundials/install-buggy -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DENABLE_MPI=OFF -DEXAMPLES_ENABLE_C=OFF -DEXAMPLES_ENABLE_CXX=OFF -DBUILD_ARKODE=ON -DBUILD_CVODE=OFF -DBUILD_CVODES=OFF -DBUILD_IDA=OFF -DBUILD_IDAS=OFF -DBUILD_KINSOL=OFF",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:buggy:cmake-configure"
+    },
+    {
+      "command": "cmake --build /tmp/c3_batch1_fix/sundials/build-buggy -j4",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:buggy:cmake-build"
+    },
+    {
+      "command": "cmake --install /tmp/c3_batch1_fix/sundials/build-buggy",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:buggy:cmake-install"
+    },
+    {
+      "command": "cmake -S /tmp/c3_batch1_fix/sundials/fixed-src -B /tmp/c3_batch1_fix/sundials/build-fixed -DCMAKE_INSTALL_PREFIX=/tmp/c3_batch1_fix/sundials/install-fixed -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DENABLE_MPI=OFF -DEXAMPLES_ENABLE_C=OFF -DEXAMPLES_ENABLE_CXX=OFF -DBUILD_ARKODE=ON -DBUILD_CVODE=OFF -DBUILD_CVODES=OFF -DBUILD_IDA=OFF -DBUILD_IDAS=OFF -DBUILD_KINSOL=OFF",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:cmake-configure"
+    },
+    {
+      "command": "cmake --build /tmp/c3_batch1_fix/sundials/build-fixed -j4",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:cmake-build"
+    },
+    {
+      "command": "cmake --install /tmp/c3_batch1_fix/sundials/build-fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:cmake-install"
+    },
+    {
+      "command": "sed -i s#../../utilities/#../utilities/#g /tmp/c3_batch1_fix/sundials/kprsrc/ark_test_kpr_mriadapt.cpp",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:harness:fix-include-path"
+    },
+    {
+      "command": "g++ -O2 -o /tmp/c3_batch1_fix/sundials/kprmri-buggy /tmp/c3_batch1_fix/sundials/kprsrc/ark_test_kpr_mriadapt.cpp -I/tmp/c3_batch1_fix/sundials/install-buggy/include -I/tmp/c3_batch1_fix/sundials -L/tmp/c3_batch1_fix/sundials/install-buggy/lib -Wl,-rpath,/tmp/c3_batch1_fix/sundials/install-buggy/lib -lsundials_arkode -lsundials_nvecserial -lsundials_core -lm",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:buggy:compile-harness"
+    },
+    {
+      "command": "g++ -O2 -o /tmp/c3_batch1_fix/sundials/kprmri-fixed /tmp/c3_batch1_fix/sundials/kprsrc/ark_test_kpr_mriadapt.cpp -I/tmp/c3_batch1_fix/sundials/install-fixed/include -I/tmp/c3_batch1_fix/sundials -L/tmp/c3_batch1_fix/sundials/install-fixed/lib -Wl,-rpath,/tmp/c3_batch1_fix/sundials/install-fixed/lib -lsundials_arkode -lsundials_nvecserial -lsundials_core -lm",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:compile-harness"
+    },
+    {
+      "command": "/usr/bin/python3 /workspace/data/external_slice/reproducers/EXT-sundials-07.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-sundials-07/buggy.json --harness /tmp/c3_batch1_fix/sundials/kprmri-buggy",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "sundials:buggy:trigger"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/sundials/kprmri-buggy --scontrol 5 --faccum 1 --w 100000 --rtol 1e-5",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:buggy:harness-raw"
+    },
+    {
+      "command": "/usr/bin/python3 /workspace/data/external_slice/reproducers/EXT-sundials-07.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-sundials-07/fixed.json --harness /tmp/c3_batch1_fix/sundials/kprmri-fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:trigger"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/sundials/kprmri-fixed --scontrol 5 --faccum 1 --w 100000 --rtol 1e-5",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "sundials:fixed:harness-raw"
     },
     {
       "command": "env PYTHONPATH=src python3 -m pytest -q",
+      "cwd": "/workspace",
       "exit_code": 0,
+      "label": "verify:pytest",
       "result": "260 passed, 10 warnings"
     },
     {
       "command": "env PYTHONPATH=src python3 scripts/check_external_admission.py --sheet data/external_slice/admission_sheet.cursor_candidate.csv",
+      "cwd": "/workspace",
       "exit_code": 0,
+      "label": "verify:admission-checker",
       "result": "PASS pre-readiness C2 candidate only"
     },
     {
-      "command": "docker pull digest-pinned ghcr images",
-      "exit_code": 1,
-      "result": "login succeeded; blob fetch 403 Forbidden; fell back to host rebuild"
+      "command": "python3 -m py_compile data/external_slice/reproducers/EXT-*.py scripts/external_slice/rebuild_c3_batch1_provenance.py",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "verify:py_compile"
     },
     {
-      "command": "exact-source/pinned-release dual-arm triggers for batch-1 cases",
-      "exit_code": 0,
-      "result": "3/3 dual_arm_contrast True; proposed A2 PASS"
+      "command": "rg -n -i 'mr_mapping|proposed_mr_oracle|\\bkill\\b|\\bfiber\\b|\\boperator\\b|prediction' data/external_slice/reproduction data/external_slice/reproducers data/external_slice/readiness_batch1.json scripts/external_slice/rebuild_c3_batch1_provenance.py",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "verify:leak-scan",
+      "result": "no matches"
     }
   ],
-  "created_at": "2026-08-01T12:37:43+00:00",
+  "correction_payload_commit": {
+    "direct_parent_required_for_handoff": "764840f3ad61e8f12ec2ead59422498082a462be",
+    "value": "764840f3ad61e8f12ec2ead59422498082a462be"
+  },
+  "created_at": "2026-08-01T12:59:50+00:00",
   "environment": {
     "cmake": "cmake version 3.28.3",
     "docker": "Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2",
     "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gxx": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
     "pytest_baseline": "260 passed",
-    "python_host": "3.12.3"
+    "python_host": "3.12.3",
+    "work_root": "/tmp/c3_batch1_fix"
   },
   "exit_codes": [
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
     0,
     0,
     0,
     1,
-    0
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
   ],
   "failures": [
     {
-      "detail": "Digest-pinned GHCR images are registered but this VM token cannot pull blobs (403). Batch 1 rebuilt on-host from sheet SHAs / mapped releases.",
+      "detail": "Digest-pinned GHCR images remain unreadable (docker pull exit 1 / 403). Host rebuild with hash locks is the auditable route.",
       "id": "C3-GHCR-403",
+      "retained": true,
       "severity": "disclosure"
     }
   ],
   "forbidden_actions_not_started": [
+    "Batch 2",
     "C4",
     "human labelling",
     "category-map freeze",
@@ -71,7 +513,7 @@
   ],
   "gate_requested": "A1b",
   "handoff_commit": {
-    "direct_parent_required": "4ac5dab0f1692a2c2c46486c763abcce9d27984d",
+    "direct_parent_required": "764840f3ad61e8f12ec2ead59422498082a462be",
     "resolution": "Resolve immutable handoff SHA with git rev-parse HEAD after this commit.",
     "value": "SELF"
   },
@@ -85,8 +527,12 @@
       "sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac"
     },
     {
-      "path": "docs/review_20260730/gate_a1_admission_audit.md",
-      "sha256": "77f0515bf24985e5df12369bd52389751cf8757b6a82109aee9f35ddc66a58b3"
+      "path": "6419fbe3ffb6fd57116ad2586a40365e370321e4:docs/review_20260730/gate_a1b_readiness_batch1_audit.md",
+      "sha256": "61257a9ba5d08ded68ad87ce5eded6459a7cc12dd9ee87a59d8b9303fe33390e"
+    },
+    {
+      "path": "607acb044856101d8744f62cd2f7173a396c99b5:data/external_slice/HANDOFF_REPRO_BATCH1.json",
+      "sha256": "7207442e4b2b52bfd632b8b5c2c790c4dfa4324540dc3c71752e43fa6009361f"
     },
     {
       "path": "docs/review_20260728/external_admission_runbook.md",
@@ -96,38 +542,30 @@
   "model": "Grok 4.5 High Fast / cursor-grok-4.5-high-fast",
   "outputs": [
     {
-      "path": ".gitignore",
-      "sha256": "72117a851f99d82f08279906ee1f0f944aa6ebb23060cf50506d7021cfa58ce6"
+      "path": "scripts/external_slice/rebuild_c3_batch1_provenance.py",
+      "sha256": "b21e7ef58e608a53e18884bdbd276739b8bf4957a3e59e0427dc07e43af54393"
     },
     {
       "path": "data/external_slice/readiness_batch1.json",
-      "sha256": "7400824048a3b3ea614a97d2cb275f0d479fc2fefcb9d839a41db6b5c55d3613"
+      "sha256": "9e56eef3d8e6fe4d908cf9c4d097835cb44303ee59ca2e1f10a3e35ea3df4a50"
     },
     {
       "path": "data/external_slice/CURSOR_EXECUTION_LEDGER.md",
-      "sha256": "d5db47f0022c968a5c57d50aae19216078365f44d6f89d1ee7487b2d10bbdbbc"
+      "sha256": "adadc1490955346fdd699724c30223cf059c4435d215c483a3cd817a1e90460c"
     },
     {
-      "path": "data/external_slice/reproducers/EXT-numpy-03.py",
-      "sha256": "36dceea81280212178a0835e2f347040721421261fae103da4a6a1173b576f81"
+      "path": "data/external_slice/reproduction/BATCH1_COMMAND_LOG.json",
+      "sha256": "a6d0873f3b8088bc8ef580b8253ac91f1b9f87fe2c3bb0acea9d0a3889999dd7"
     },
     {
-      "path": "data/external_slice/reproducers/EXT-sundials-07.py",
-      "sha256": "8d6292df5c6c4bacd6d5e219c5566d8ca77a2d00f76f377bdc6cff9725875581"
-    },
-    {
-      "path": "data/external_slice/reproducers/EXT-scipy-04.py",
-      "sha256": "104640cd3b7c1370d3f6b7b75c620041915d637ecab8f274c8a7b2cd0ec6e0f4"
-    },
-    {
-      "file_count": 5,
+      "file_count": 8,
       "hash_algorithm": "SHA256 of concatenated sorted relative-path + NUL + per-file-SHA256 + newline records",
       "path": "data/external_slice/reproduction/EXT-numpy-03",
-      "sha256": "63f9928f4a69822ae552ee38a1f0e619761dd55a0ecc9cda4910d546d24885b7"
+      "sha256": "dfc5017cb9f38b77c51efd07b18f97293365bc43b8f449c09edeb95797b26d43"
     },
     {
       "path": "data/external_slice/reproduction/EXT-numpy-03/environment.json",
-      "sha256": "0d2cbfbf385f642060a1885c66aa3f52c882e1cef311680474035f3198751218"
+      "sha256": "4276f21cb40cd7ace3747f3b9d0781bb16fcc2c42b9400d61a8623cdcc8fd2d3"
     },
     {
       "path": "data/external_slice/reproduction/EXT-numpy-03/buggy.json",
@@ -139,47 +577,71 @@
     },
     {
       "path": "data/external_slice/reproduction/EXT-numpy-03/stdout.log",
-      "sha256": "d6f5820f84e79ff4e35f0e35c99b22a920ca66fc29bf322371d4c81c84d692b3"
+      "sha256": "5db5e64e4ffdeff482addb80ce84c65064d3a55031ac7d6a88c684be02ed8602"
     },
     {
       "path": "data/external_slice/reproduction/EXT-numpy-03/stderr.log",
-      "sha256": "51f08d5d9188e6cfaa8e3acf4bd0058b52041aaa3b70cb6dcc4f43f3b8a3b7d1"
+      "sha256": "a43e94d1f5dbedcf1ca07a7d0f868ea47259144194a457f431478bbba947c3d2"
     },
     {
-      "file_count": 5,
+      "path": "data/external_slice/reproduction/EXT-numpy-03/COMMANDS.json",
+      "sha256": "896487f5b0e8fc65477011b3f3aa4becedaed5f30c570fd36740e945e8051f6f"
+    },
+    {
+      "path": "data/external_slice/reproduction/EXT-numpy-03/locks/SOURCE_HASHES.json",
+      "sha256": "fe35b20479465134d4b4235d060fe9172e8c525e0c6007a2a5a35c3e85949220"
+    },
+    {
+      "path": "data/external_slice/reproduction/EXT-numpy-03/locks/requirements.build.txt",
+      "sha256": "ed7aa71cba3e15dfb568261244448a7bb51239adac4638c733d1f0557879de3a"
+    },
+    {
+      "file_count": 8,
       "hash_algorithm": "SHA256 of concatenated sorted relative-path + NUL + per-file-SHA256 + newline records",
       "path": "data/external_slice/reproduction/EXT-sundials-07",
-      "sha256": "9b623dd7efb9fe5111cba5ad4478241bc5b16b1629b31e9d4fea55085a200a9b"
+      "sha256": "8983bfeb7f130c4ab27fc9048a072019cdb1c60166e6be576ed0fce265983df8"
     },
     {
       "path": "data/external_slice/reproduction/EXT-sundials-07/environment.json",
-      "sha256": "a3e167858099b425d6690d919c2b49e87164ba9a0507453beb098f05fd6aab7e"
+      "sha256": "57b6671c4a7310ab2c59fe90feda1220dc06bb63b67c61c259063d958162a730"
     },
     {
       "path": "data/external_slice/reproduction/EXT-sundials-07/buggy.json",
-      "sha256": "bef7fc50236da8b5419d9876f4580659319150f6e8c6b31a5d76d64741c14699"
+      "sha256": "ce1151e129274532a77d794ac2144af78882ec7c559867352255c994b330938a"
     },
     {
       "path": "data/external_slice/reproduction/EXT-sundials-07/fixed.json",
-      "sha256": "77febee34ac8f826962ab20224558879335f89335a2e7f9d1553ad46724f8f00"
+      "sha256": "483c8af59673941ec99c729e03a783e0d78e65601b5f4a29a9debabba4441636"
     },
     {
       "path": "data/external_slice/reproduction/EXT-sundials-07/stdout.log",
-      "sha256": "c2a871b4a9e309f36eb3f6a1a9b0b67855fcc293470a23395c21efea543e16e8"
+      "sha256": "c14e803fccf5ca52759c5295b91172ed9d2f4b6cb4764def239d50ef3d07c0b0"
     },
     {
       "path": "data/external_slice/reproduction/EXT-sundials-07/stderr.log",
-      "sha256": "f62f3781b2c97cd30f0712ef73f31019ba70e7d8d5adffb8e8534627ef1a016c"
+      "sha256": "a493c957ac0480aa8f120edcb2aafe4a351816dfd115724abe85e89fec8e645d"
     },
     {
-      "file_count": 5,
+      "path": "data/external_slice/reproduction/EXT-sundials-07/COMMANDS.json",
+      "sha256": "1320886e143acfb3ff81c55b0fcf9aafc2d91510370fa61161699920022ba106"
+    },
+    {
+      "path": "data/external_slice/reproduction/EXT-sundials-07/locks/BUILD_TOOLS.json",
+      "sha256": "e7a5c6b280064361e70a6660e5dd2f436e83a34afcaae765985fa6e199e5aba2"
+    },
+    {
+      "path": "data/external_slice/reproduction/EXT-sundials-07/locks/SOURCE_HASHES.json",
+      "sha256": "a09a3cd59a5121650103db5221a630be9494418bd311edaf66a9bb9fe96b7d2b"
+    },
+    {
+      "file_count": 8,
       "hash_algorithm": "SHA256 of concatenated sorted relative-path + NUL + per-file-SHA256 + newline records",
       "path": "data/external_slice/reproduction/EXT-scipy-04",
-      "sha256": "77f23a54daa1cee92535a14e27df4a38c69bef0dea28b91a7b1b3e0f75b636d8"
+      "sha256": "41b31b3f1d742c7f83690bd0eb387a1a4f2c45d69a4bd5546c83cb7aff754695"
     },
     {
       "path": "data/external_slice/reproduction/EXT-scipy-04/environment.json",
-      "sha256": "1524367fceac9256a3121507cc202fd55e953ee7460a2c7ef3450579506a90e1"
+      "sha256": "79127c22249d020ec5d5efd3db2164e44264fbf61643636f6a451786ece873e8"
     },
     {
       "path": "data/external_slice/reproduction/EXT-scipy-04/buggy.json",
@@ -191,31 +653,67 @@
     },
     {
       "path": "data/external_slice/reproduction/EXT-scipy-04/stdout.log",
-      "sha256": "a43cfaadf8433ef8ecd163509da5f9e446a3bf70788467b4b658702a38001e1c"
+      "sha256": "1c3a54bd582b398dfc4d876c63560b5aa580dd85b5484a3b6d91becb1d39512a"
     },
     {
       "path": "data/external_slice/reproduction/EXT-scipy-04/stderr.log",
-      "sha256": "51f08d5d9188e6cfaa8e3acf4bd0058b52041aaa3b70cb6dcc4f43f3b8a3b7d1"
+      "sha256": "a43e94d1f5dbedcf1ca07a7d0f868ea47259144194a457f431478bbba947c3d2"
+    },
+    {
+      "path": "data/external_slice/reproduction/EXT-scipy-04/COMMANDS.json",
+      "sha256": "24fca16cfe0af3aa21b39b64b2abac34a9859f2af479799898cfa34971c7da7e"
+    },
+    {
+      "path": "data/external_slice/reproduction/EXT-scipy-04/locks/requirements.buggy.txt",
+      "sha256": "5f838aa1b01a09e8c26a621ea22842cbb12968fb3fd23a9292e2a5d916ac7402"
+    },
+    {
+      "path": "data/external_slice/reproduction/EXT-scipy-04/locks/requirements.fixed.txt",
+      "sha256": "638ac2ebce66a8004e8a87ee189acdc9ad6dd9ff5c03a6e74fd6250952057446"
     }
   ],
-  "payload_commit": {
-    "direct_parent_required_for_handoff": "4ac5dab0f1692a2c2c46486c763abcce9d27984d",
-    "value": "4ac5dab0f1692a2c2c46486c763abcce9d27984d"
-  },
+  "prior_handoff_commit": "607acb044856101d8744f62cd2f7173a396c99b5",
+  "prior_payload_commit": "4ac5dab0f1692a2c2c46486c763abcce9d27984d",
   "retries": [
     {
       "item": "Python 3.9 build",
-      "reason": "first build lacked ssl module; rebuilt with libssl-dev"
+      "reason": "retained history: first build lacked ssl; current reconstruction reused ssl-enabled interpreter after check"
     },
     {
-      "item": "numpy fixed arm source tree",
-      "reason": "vendored-meson missing until submodule refresh"
+      "item": "numpy submodule overlay",
+      "reason": "retained history: GitHub archives omit submodules; reconstruction records submodule status SHAs and complete source-tree hashes"
     }
   ],
   "sheet_policy": {
-    "admission_sheet.cursor_candidate.csv": "A2 fields intentionally left PENDING so the frozen C2 pre-readiness checker remains green; proposed A2 outcomes are in readiness_batch1.json for Gate A1b.",
+    "admission_sheet.cursor_candidate.csv": "A2 fields intentionally left PENDING pending Gate A1b zero-blocker re-review and later canonical integration.",
     "canonical_freeze": "not written"
   },
-  "task": "C3_BATCH1",
+  "task": "C3_BATCH1_CORRECTION",
+  "trigger_exit_codes": [
+    {
+      "exit_code": 1,
+      "label": "scipy:buggy:trigger"
+    },
+    {
+      "exit_code": 0,
+      "label": "scipy:fixed:trigger"
+    },
+    {
+      "exit_code": 1,
+      "label": "numpy:buggy:trigger"
+    },
+    {
+      "exit_code": 0,
+      "label": "numpy:fixed:trigger"
+    },
+    {
+      "exit_code": 1,
+      "label": "sundials:buggy:trigger"
+    },
+    {
+      "exit_code": 0,
+      "label": "sundials:fixed:trigger"
+    }
+  ],
   "unresolved_findings": []
 }
