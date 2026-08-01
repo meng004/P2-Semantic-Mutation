@@ -1,0 +1,132 @@
+{
+  "commands": [
+    {
+      "command": "curl -fsSL -L -H \"Authorization: Bearer <REDACTED_GITHUB_TOKEN>\" -o /tmp/c3_batch2/work/EXT-boostmath-01/buggy-math.tar.gz https://github.com/boostorg/math/archive/75dcb3e3d560663be7e4e04dc4556d12fe54e348.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:buggy:download-math",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-boostmath-01/buggy-math.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-boostmath-01/buggy-math",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:buggy:extract-math",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "curl -fsSL -L -H \"Authorization: Bearer <REDACTED_GITHUB_TOKEN>\" -o /tmp/c3_batch2/work/EXT-boostmath-01/fixed-math.tar.gz https://github.com/boostorg/math/archive/03ea9c8d7dff1083facd134c8f641e006b68fdae.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:fixed:download-math",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-boostmath-01/fixed-math.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-boostmath-01/fixed-math",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:fixed:extract-math",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "curl -fsSL -L -o /tmp/c3_batch2/work/EXT-boostmath-01/boost_1_84_0.tar.gz https://archives.boost.io/release/1.84.0/source/boost_1_84_0.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:download-boost-release",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-boostmath-01/boost_1_84_0.tar.gz -C /tmp/c3_batch2/work/EXT-boostmath-01",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:extract-boost-release",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "cp -a /tmp/c3_batch2/work/EXT-boostmath-01/boost_1_84_0 /tmp/c3_batch2/work/EXT-boostmath-01/boost-tree-buggy",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:buggy:copy-boost-tree",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "cp -a /tmp/c3_batch2/work/EXT-boostmath-01/buggy-math/include/boost/math /tmp/c3_batch2/work/EXT-boostmath-01/boost-tree-buggy/boost/math",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:buggy:overlay-math-headers",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "g++ -std=c++14 -O2 -I/tmp/c3_batch2/work/EXT-boostmath-01/boost-tree-buggy /workspace/data/external_slice/reproducers/harnesses/boostmath_skew_normal_quantile.cpp -o /tmp/c3_batch2/work/EXT-boostmath-01/harness_buggy",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:buggy:compile-harness",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "/usr/bin/python3 /workspace/data/external_slice/reproducers/EXT-boostmath-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-boostmath-01/buggy.json --harness /tmp/c3_batch2/work/EXT-boostmath-01/harness_buggy",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-boostmath-01:buggy:trigger",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": false}\n"
+    },
+    {
+      "command": "# property_holds=False normalized_exit=1",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-boostmath-01:buggy:trigger-normalized-exit",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": false}\n"
+    },
+    {
+      "command": "cp -a /tmp/c3_batch2/work/EXT-boostmath-01/boost_1_84_0 /tmp/c3_batch2/work/EXT-boostmath-01/boost-tree-fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:fixed:copy-boost-tree",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "cp -a /tmp/c3_batch2/work/EXT-boostmath-01/fixed-math/include/boost/math /tmp/c3_batch2/work/EXT-boostmath-01/boost-tree-fixed/boost/math",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:fixed:overlay-math-headers",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "g++ -std=c++14 -O2 -I/tmp/c3_batch2/work/EXT-boostmath-01/boost-tree-fixed /workspace/data/external_slice/reproducers/harnesses/boostmath_skew_normal_quantile.cpp -o /tmp/c3_batch2/work/EXT-boostmath-01/harness_fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:fixed:compile-harness",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "/usr/bin/python3 /workspace/data/external_slice/reproducers/EXT-boostmath-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-boostmath-01/fixed.json --harness /tmp/c3_batch2/work/EXT-boostmath-01/harness_fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:fixed:trigger",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true}\n"
+    },
+    {
+      "command": "# property_holds=True normalized_exit=0",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-boostmath-01:fixed:trigger-normalized-exit",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true}\n"
+    }
+  ]
+}

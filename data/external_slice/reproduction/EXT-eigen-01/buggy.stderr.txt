@@ -1,0 +1,365 @@
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/Core:295,
+                 from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/SparseCore:4,
+                 from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/Sparse:19,
+                 from /workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:13:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:61:39: warning: ignoring attributes on template argument ‘__m128’ [-Wignored-attributes]
+   61 | template<> struct is_arithmetic<__m128>  { enum { value = true }; };
+      |                                       ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:62:40: warning: ignoring attributes on template argument ‘__m128i’ [-Wignored-attributes]
+   62 | template<> struct is_arithmetic<__m128i> { enum { value = true }; };
+      |                                        ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:63:40: warning: ignoring attributes on template argument ‘__m128d’ [-Wignored-attributes]
+   63 | template<> struct is_arithmetic<__m128d> { enum { value = true }; };
+      |                                        ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:142:43: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4f’ {aka ‘__m128’} [-Wignored-attributes]
+  142 | template<> struct unpacket_traits<Packet4f> { typedef float  type; enum {size=4}; typedef Packet4f half; };
+      |                                           ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:143:43: warning: ignoring attributes on template argument ‘Eigen::internal::Packet2d’ {aka ‘__m128d’} [-Wignored-attributes]
+  143 | template<> struct unpacket_traits<Packet2d> { typedef double type; enum {size=2}; typedef Packet2d half; };
+      |                                           ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:144:43: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4i’ {aka ‘__m128i’} [-Wignored-attributes]
+  144 | template<> struct unpacket_traits<Packet4i> { typedef int    type; enum {size=4}; typedef Packet4i half; };
+      |                                           ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:728:35: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4f’ {aka ‘__m128’} [-Wignored-attributes]
+  728 | struct palign_impl<Offset,Packet4f>
+      |                                   ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:751:35: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4i’ {aka ‘__m128i’} [-Wignored-attributes]
+  751 | struct palign_impl<Offset,Packet4i>
+      |                                   ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:774:35: warning: ignoring attributes on template argument ‘Eigen::internal::Packet2d’ {aka ‘__m128d’} [-Wignored-attributes]
+  774 | struct palign_impl<Offset,Packet2d>
+      |                                   ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:788:34: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4f’ {aka ‘__m128’} [-Wignored-attributes]
+  788 | ptranspose(PacketBlock<Packet4f,4>& kernel) {
+      |                                  ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:793:34: warning: ignoring attributes on template argument ‘Eigen::internal::Packet2d’ {aka ‘__m128d’} [-Wignored-attributes]
+  793 | ptranspose(PacketBlock<Packet2d,2>& kernel) {
+      |                                  ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/PacketMath.h:800:34: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4i’ {aka ‘__m128i’} [-Wignored-attributes]
+  800 | ptranspose(PacketBlock<Packet4i,4>& kernel) {
+      |                                  ^
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/Core:297:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/Complex.h:232:63: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4f’ {aka ‘__m128’} [-Wignored-attributes]
+  232 | template<> struct conj_helper<Packet4f, Packet2cf, false,false>
+      |                                                               ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/Complex.h:241:63: warning: ignoring attributes on template argument ‘Eigen::internal::Packet4f’ {aka ‘__m128’} [-Wignored-attributes]
+  241 | template<> struct conj_helper<Packet2cf, Packet4f, false,false>
+      |                                                               ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/Complex.h:434:63: warning: ignoring attributes on template argument ‘Eigen::internal::Packet2d’ {aka ‘__m128d’} [-Wignored-attributes]
+  434 | template<> struct conj_helper<Packet2d, Packet1cd, false,false>
+      |                                                               ^
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/arch/SSE/Complex.h:443:63: warning: ignoring attributes on template argument ‘Eigen::internal::Packet2d’ {aka ‘__m128d’} [-Wignored-attributes]
+  443 | template<> struct conj_helper<Packet1cd, Packet2d, false,false>
+      |                                                               ^
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/Core:311:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/functors/StlFunctors.h:76:28: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+   76 | struct functor_traits<std::binder2nd<T> >
+      |                            ^~~~~~~~~
+In file included from /usr/include/c++/13/bits/stl_function.h:1438,
+                 from /usr/include/c++/13/bits/refwrap.h:39,
+                 from /usr/include/c++/13/vector:68,
+                 from /workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:10:
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/functors/StlFunctors.h:80:28: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+   80 | struct functor_traits<std::binder1st<T> >
+      |                            ^~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/MatrixBase.h:139,
+                 from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/Core:316:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/MatrixCwiseUnaryOps.h:17:27: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+   17 | typedef CwiseUnaryOp<std::binder1st<std::equal_to<Scalar> >, const Derived> CwiseScalarEqualReturnType;
+      |                           ^~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/ArrayBase.h:107,
+                 from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/Core:328:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/MatrixCwiseUnaryOps.h:17:27: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+   17 | typedef CwiseUnaryOp<std::binder1st<std::equal_to<Scalar> >, const Derived> CwiseScalarEqualReturnType;
+      |                           ^~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/ArrayBase.h:108:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:251:34: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  251 |   inline const CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                                  ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:262:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  262 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op==,  std::equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:256:41: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  256 |   friend inline const CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                         ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:262:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  262 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op==,  std::equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:251:34: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  251 |   inline const CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                                  ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:263:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  263 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op!=,  std::not_equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:256:41: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  256 |   friend inline const CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                         ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:263:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  263 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op!=,  std::not_equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:251:34: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  251 |   inline const CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                                  ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:264:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  264 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<,   std::less)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:256:41: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  256 |   friend inline const CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                         ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:264:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  264 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<,   std::less)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:251:34: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  251 |   inline const CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                                  ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:265:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  265 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<=,  std::less_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:256:41: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  256 |   friend inline const CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                         ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:265:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  265 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<=,  std::less_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:251:34: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  251 |   inline const CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                                  ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:266:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  266 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>,   std::greater)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:256:41: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  256 |   friend inline const CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                         ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:266:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  266 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>,   std::greater)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:251:34: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  251 |   inline const CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                                  ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:267:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  267 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>=,  std::greater_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:256:41: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  256 |   friend inline const CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                         ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:267:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  267 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>=,  std::greater_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In member function ‘const Eigen::CwiseUnaryOp<std::binder2nd<std::equal_to<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::ArrayBase<Derived>::op==(const Scalar&) const’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:253:30: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  253 |     return CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                              ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:262:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  262 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op==,  std::equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In function ‘const Eigen::CwiseUnaryOp<std::binder1st<std::equal_to<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::op==(const ArrayBase<Derived>::Scalar&, const Derived&)’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:258:36: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  258 |           return CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                    ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:262:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  262 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op==,  std::equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In member function ‘const Eigen::CwiseUnaryOp<std::binder2nd<std::not_equal_to<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::ArrayBase<Derived>::op!=(const Scalar&) const’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:253:30: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  253 |     return CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                              ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:263:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  263 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op!=,  std::not_equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In function ‘const Eigen::CwiseUnaryOp<std::binder1st<std::not_equal_to<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::op!=(const ArrayBase<Derived>::Scalar&, const Derived&)’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:258:36: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  258 |           return CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                    ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:263:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  263 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op!=,  std::not_equal_to)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In member function ‘const Eigen::CwiseUnaryOp<std::binder2nd<std::less<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::ArrayBase<Derived>::op<(const Scalar&) const’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:253:30: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  253 |     return CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                              ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:264:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  264 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<,   std::less)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In function ‘const Eigen::CwiseUnaryOp<std::binder1st<std::less<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::op<(const ArrayBase<Derived>::Scalar&, const Derived&)’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:258:36: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  258 |           return CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                    ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:264:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  264 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<,   std::less)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In member function ‘const Eigen::CwiseUnaryOp<std::binder2nd<std::less_equal<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::ArrayBase<Derived>::op<=(const Scalar&) const’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:253:30: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  253 |     return CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                              ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:265:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  265 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<=,  std::less_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In function ‘const Eigen::CwiseUnaryOp<std::binder1st<std::less_equal<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::op<=(const ArrayBase<Derived>::Scalar&, const Derived&)’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:258:36: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  258 |           return CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                    ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:265:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  265 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op<=,  std::less_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In member function ‘const Eigen::CwiseUnaryOp<std::binder2nd<std::greater<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::ArrayBase<Derived>::op>(const Scalar&) const’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:253:30: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  253 |     return CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                              ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:266:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  266 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>,   std::greater)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In function ‘const Eigen::CwiseUnaryOp<std::binder1st<std::greater<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::op>(const ArrayBase<Derived>::Scalar&, const Derived&)’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:258:36: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  258 |           return CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                    ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:266:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  266 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>,   std::greater)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In member function ‘const Eigen::CwiseUnaryOp<std::binder2nd<std::greater_equal<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::ArrayBase<Derived>::op>=(const Scalar&) const’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:253:30: warning: ‘template<class _Operation> class std::binder2nd’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  253 |     return CwiseUnaryOp<std::binder2nd<FUNCTOR<Scalar> >, const Derived> \
+      |                              ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:267:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  267 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>=,  std::greater_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:144:11: note: declared here
+  144 |     class binder2nd
+      |           ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h: In function ‘const Eigen::CwiseUnaryOp<std::binder1st<std::greater_equal<typename Eigen::internal::traits<T>::Scalar> >, const Derived> Eigen::op>=(const ArrayBase<Derived>::Scalar&, const Derived&)’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:258:36: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+  258 |           return CwiseUnaryOp<std::binder1st<FUNCTOR<Scalar> >, const Derived> \
+      |                                    ^~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/../plugins/ArrayCwiseUnaryOps.h:267:1: note: in expansion of macro ‘EIGEN_MAKE_SCALAR_CWISE_UNARY_OP’
+  267 | EIGEN_MAKE_SCALAR_CWISE_UNARY_OP(op>=,  std::greater_equal)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h:135,
+                 from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/SparseCore:30:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/../plugins/MatrixCwiseUnaryOps.h: At global scope:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/../plugins/MatrixCwiseUnaryOps.h:17:27: warning: ‘template<class _Operation> class std::binder1st’ is deprecated: use 'std::bind' instead [-Wdeprecated-declarations]
+   17 | typedef CwiseUnaryOp<std::binder1st<std::equal_to<Scalar> >, const Derived> CwiseScalarEqualReturnType;
+      |                           ^~~~~~~~~
+/usr/include/c++/13/backward/binders.h:108:11: note: declared here
+  108 |     class binder1st
+      |           ^~~~~~~~~
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/Core:314:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h: In instantiation of ‘class Eigen::DenseCoeffsBase<Eigen::Matrix<int, -1, 1>, 0>’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h:283:7:   required from ‘class Eigen::DenseCoeffsBase<Eigen::Matrix<int, -1, 1>, 1>’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h:522:7:   required from ‘class Eigen::DenseCoeffsBase<Eigen::Matrix<int, -1, 1>, 3>’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/util/XprHelper.h:410:8:   required from ‘struct Eigen::internal::special_scalar_op_base<Eigen::Matrix<int, -1, 1>, int, int, false>’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseBase.h:41:34:   required from ‘class Eigen::DenseBase<Eigen::Matrix<int, -1, 1> >’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/MatrixBase.h:48:34:   required from ‘class Eigen::MatrixBase<Eigen::Matrix<int, -1, 1> >’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/PlainObjectBase.h:90:7:   required from ‘class Eigen::PlainObjectBase<Eigen::Matrix<int, -1, 1> >’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/Matrix.h:128:7:   required from ‘class Eigen::Matrix<int, -1, 1>’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCholesky/SimplicialCholesky.h:253:14:   required from here
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h:56:30: warning: ignoring attributes on template argument ‘Eigen::internal::packet_traits<int>::type’ {aka ‘__m128i’} [-Wignored-attributes]
+   56 |                      >::type PacketReturnType;
+      |                              ^~~~~~~~~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h: In instantiation of ‘class Eigen::SparseMatrixBase<Eigen::SparseMatrix<float> >’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:92:7:   required from ‘class Eigen::SparseMatrix<float>’
+/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:19:24:   required from here
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h:36:30: warning: ignoring attributes on template argument ‘Eigen::internal::packet_traits<float>::type’ {aka ‘__m128’} [-Wignored-attributes]
+   36 |                      >::type PacketReturnType;
+      |                              ^~~~~~~~~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h: In instantiation of ‘class Eigen::SparseMatrixBase<Eigen::SparseMatrix<float, 1> >’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:92:7:   required from ‘class Eigen::SparseMatrix<float, 1>’
+/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:23:33:   required from here
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h:36:30: warning: ignoring attributes on template argument ‘Eigen::internal::packet_traits<float>::type’ {aka ‘__m128’} [-Wignored-attributes]
+/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp: In function ‘int main()’:
+/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:38:51: error: ‘Eigen::SparseMatrix<_Scalar, _Flags, _Index>::InnerIterator::InnerIterator(const Eigen::SparseMatrixBase<OtherDerived>&, Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Index) [with T = Eigen::SparseMatrix<float, 1>; Scalar = float; int _Options = 0; _Index = int; Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Index = int]’ is private within this context
+   38 |     for (SparseMatrix<float>::InnerIterator it(A,k); it; ++it)
+      |                                                   ^
+In file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/SparseCore:34:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:913:26: note: declared private here
+  913 |     template<typename T> InnerIterator(const SparseMatrixBase<T>&,Index outer);
+      |                          ^~~~~~~~~~~~~
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h: In instantiation of ‘class Eigen::DenseCoeffsBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >, 0>’:
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/util/XprHelper.h:410:8:   required from ‘struct Eigen::internal::special_scalar_op_base<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >, int, int, false>’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseBase.h:41:34:   required from ‘class Eigen::DenseBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/MatrixBase.h:48:34:   required from ‘class Eigen::MatrixBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/CwiseNullaryOp.h:44:7:   required from ‘class Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >’
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:237:50:   required from ‘Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Scalar& Eigen::SparseMatrix<_Scalar, _Flags, _Index>::insert(Index, Index) [with _Scalar = float; int _Options = 0; _Index = int; Scalar = float; Index = int]’
+/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:19:39:   required from here
+/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h:56:30: warning: ignoring attributes on template argument ‘Eigen::internal::packet_traits<int>::type’ {aka ‘__m128i’} [-Wignored-attributes]
+   56 |                      >::type PacketReturnType;
+      |                              ^~~~~~~~~~~~~~~~

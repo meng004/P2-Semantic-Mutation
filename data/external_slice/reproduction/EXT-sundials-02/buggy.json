@@ -1,0 +1,11 @@
+{
+  "exit_status": 1,
+  "expected_property": "Adaptivity controller hnew is strictly monotone in the error estimate dsm.",
+  "neutral_id": "EXT-sundials-02",
+  "observed_output": {
+    "returncode": 1,
+    "stdout_tail": "{\"property_holds\": false}\n"
+  },
+  "property_holds": false,
+  "seed": 0
+}

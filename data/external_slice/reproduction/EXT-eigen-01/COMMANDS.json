@@ -1,0 +1,68 @@
+{
+  "commands": [
+    {
+      "command": "# reuse /tmp/c3_batch2/work/EXT-eigen-01/buggy.tar.gz sha256=159c550fe9d1c372ffe4e66f6cc2d3e7b9b623566ddcf094f36e20372a93b70c",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-eigen-01:buggy:download-archive:cache-hit",
+      "stderr_tail": "",
+      "stdout_tail": "159c550fe9d1c372ffe4e66f6cc2d3e7b9b623566ddcf094f36e20372a93b70c"
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-eigen-01/buggy.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-eigen-01/buggy-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-eigen-01:buggy:extract-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "g++ -std=c++14 -O2 -I/tmp/c3_batch2/work/EXT-eigen-01/buggy-src -DTRY_ISSUE_CODE /workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp -o /tmp/c3_batch2/work/EXT-eigen-01/harness_buggy",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-eigen-01:buggy:compile-harness-issue-pattern",
+      "stderr_tail": "ed from \u2018class Eigen::SparseMatrix<float>\u2019\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:19:24:   required from here\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h:36:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<float>::type\u2019 {aka \u2018__m128\u2019} [-Wignored-attributes]\n   36 |                      >::type PacketReturnType;\n      |                              ^~~~~~~~~~~~~~~~\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h: In instantiation of \u2018class Eigen::SparseMatrixBase<Eigen::SparseMatrix<float, 1> >\u2019:\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:92:7:   required from \u2018class Eigen::SparseMatrix<float, 1>\u2019\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:23:33:   required from here\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrixBase.h:36:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<float>::type\u2019 {aka \u2018__m128\u2019} [-Wignored-attributes]\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp: In function \u2018int main()\u2019:\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:38:51: error: \u2018Eigen::SparseMatrix<_Scalar, _Flags, _Index>::InnerIterator::InnerIterator(const Eigen::SparseMatrixBase<OtherDerived>&, Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Index) [with T = Eigen::SparseMatrix<float, 1>; Scalar = float; int _Options = 0; _Index = int; Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Index = int]\u2019 is private within this context\n   38 |     for (SparseMatrix<float>::InnerIterator it(A,k); it; ++it)\n      |                                                   ^\nIn file included from /tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/SparseCore:34:\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:913:26: note: declared private here\n  913 |     template<typename T> InnerIterator(const SparseMatrixBase<T>&,Index outer);\n      |                          ^~~~~~~~~~~~~\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h: In instantiation of \u2018class Eigen::DenseCoeffsBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >, 0>\u2019:\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/util/XprHelper.h:410:8:   required from \u2018struct Eigen::internal::special_scalar_op_base<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >, int, int, false>\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseBase.h:41:34:   required from \u2018class Eigen::DenseBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/MatrixBase.h:48:34:   required from \u2018class Eigen::MatrixBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/CwiseNullaryOp.h:44:7:   required from \u2018class Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:237:50:   required from \u2018Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Scalar& Eigen::SparseMatrix<_Scalar, _Flags, _Index>::insert(Index, Index) [with _Scalar = float; int _Options = 0; _Index = int; Scalar = float; Index = int]\u2019\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:19:39:   required from here\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h:56:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<int>::type\u2019 {aka \u2018__m128i\u2019} [-Wignored-attributes]\n   56 |                      >::type PacketReturnType;\n      |                              ^~~~~~~~~~~~~~~~\n",
+      "stdout_tail": ""
+    },
+    {
+      "command": "# compile-fail exit=1",
+      "cwd": "/workspace",
+      "exit_code": 2,
+      "label": "EXT-eigen-01:buggy:compile-fail-issue-pattern",
+      "stderr_tail": "l::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/CwiseNullaryOp.h:44:7:   required from \u2018class Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/SparseCore/SparseMatrix.h:237:50:   required from \u2018Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Scalar& Eigen::SparseMatrix<_Scalar, _Flags, _Index>::insert(Index, Index) [with _Scalar = float; int _Options = 0; _Index = int; Scalar = float; Index = int]\u2019\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:19:39:   required from here\n/tmp/c3_batch2/work/EXT-eigen-01/buggy-src/Eigen/src/Core/DenseCoeffsBase.h:56:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<int>::type\u2019 {aka \u2018__m128i\u2019} [-Wignored-attributes]\n   56 |                      >::type PacketReturnType;\n      |                              ^~~~~~~~~~~~~~~~\n",
+      "stdout_tail": ""
+    },
+    {
+      "command": "# reuse /tmp/c3_batch2/work/EXT-eigen-01/fixed.tar.gz sha256=ede600d913d81205a006084a45f783e1f0f4c2fed52858eab6e5345b30d4c846",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-eigen-01:fixed:download-archive:cache-hit",
+      "stderr_tail": "",
+      "stdout_tail": "ede600d913d81205a006084a45f783e1f0f4c2fed52858eab6e5345b30d4c846"
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-eigen-01/fixed.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-eigen-01/fixed-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-eigen-01:fixed:extract-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "g++ -std=c++14 -O2 -I/tmp/c3_batch2/work/EXT-eigen-01/fixed-src -DTRY_ISSUE_CODE /workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp -o /tmp/c3_batch2/work/EXT-eigen-01/harness_fixed",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-eigen-01:fixed:compile-harness-issue-pattern",
+      "stderr_tail": "\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseMatrixBase.h:36:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<float>::type\u2019 {aka \u2018__m128\u2019} [-Wignored-attributes]\n   36 |                      >::type PacketReturnType;\n      |                              ^~~~~~~~~~~~~~~~\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseMatrixBase.h: In instantiation of \u2018class Eigen::SparseMatrixBase<Eigen::SparseMatrix<float, 1> >\u2019:\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseCompressedBase.h:26:7:   required from \u2018class Eigen::SparseCompressedBase<Eigen::SparseMatrix<float, 1> >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseMatrix.h:92:7:   required from \u2018class Eigen::SparseMatrix<float, 1>\u2019\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:23:33:   required from here\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseMatrixBase.h:36:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<float>::type\u2019 {aka \u2018__m128\u2019} [-Wignored-attributes]\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp: In function \u2018int main()\u2019:\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:38:51: error: \u2018Eigen::SparseCompressedBase<Derived>::InnerIterator::InnerIterator(const Eigen::SparseMatrixBase<OtherDerived>&, Eigen::SparseCompressedBase<Derived>::Index) [with T = Eigen::SparseMatrix<float, 1>; Derived = Eigen::SparseMatrix<float>; Eigen::SparseCompressedBase<Derived>::Index = int]\u2019 is private within this context\n   38 |     for (SparseMatrix<float>::InnerIterator it(A,k); it; ++it)\n      |                                                   ^\nIn file included from /tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/SparseCore:34:\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseCompressedBase.h:114:26: note: declared private here\n  114 |     template<typename T> InnerIterator(const SparseMatrixBase<T>&,Index outer);\n      |                          ^~~~~~~~~~~~~\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/DenseCoeffsBase.h: In instantiation of \u2018class Eigen::DenseCoeffsBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >, 0>\u2019:\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/util/XprHelper.h:410:8:   required from \u2018struct Eigen::internal::special_scalar_op_base<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >, int, int, false>\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/DenseBase.h:41:34:   required from \u2018class Eigen::DenseBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/MatrixBase.h:48:34:   required from \u2018class Eigen::MatrixBase<Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/CwiseNullaryOp.h:44:7:   required from \u2018class Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseMatrix.h:238:50:   required from \u2018Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Scalar& Eigen::SparseMatrix<_Scalar, _Flags, _Index>::insert(Index, Index) [with _Scalar = float; int _Options = 0; _Index = int; Scalar = float; Index = int]\u2019\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:19:39:   required from here\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/DenseCoeffsBase.h:56:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<int>::type\u2019 {aka \u2018__m128i\u2019} [-Wignored-attributes]\n   56 |                      >::type PacketReturnType;\n      |                              ^~~~~~~~~~~~~~~~\n",
+      "stdout_tail": ""
+    },
+    {
+      "command": "# compile-fail exit=1",
+      "cwd": "/workspace",
+      "exit_code": 2,
+      "label": "EXT-eigen-01:fixed:compile-fail-issue-pattern",
+      "stderr_tail": "l::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> > >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/CwiseNullaryOp.h:44:7:   required from \u2018class Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<int>, Eigen::Matrix<int, -1, 1> >\u2019\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/SparseCore/SparseMatrix.h:238:50:   required from \u2018Eigen::SparseMatrix<_Scalar, _Flags, _Index>::Scalar& Eigen::SparseMatrix<_Scalar, _Flags, _Index>::insert(Index, Index) [with _Scalar = float; int _Options = 0; _Index = int; Scalar = float; Index = int]\u2019\n/workspace/data/external_slice/reproducers/harnesses/eigen_sparse_inner_iter.cpp:19:39:   required from here\n/tmp/c3_batch2/work/EXT-eigen-01/fixed-src/Eigen/src/Core/DenseCoeffsBase.h:56:30: warning: ignoring attributes on template argument \u2018Eigen::internal::packet_traits<int>::type\u2019 {aka \u2018__m128i\u2019} [-Wignored-attributes]\n   56 |                      >::type PacketReturnType;\n      |                              ^~~~~~~~~~~~~~~~\n",
+      "stdout_tail": ""
+    }
+  ]
+}

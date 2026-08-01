@@ -1,0 +1,31 @@
+{
+  "batch": 2,
+  "buggy_sha": "09f8a3be90ef0fff3fe04e612dc178a43e3975cc",
+  "dual_arm_contrast": false,
+  "failure_detail": "buggy_holds=True fixed_holds=True exits={'buggy': 0, 'fixed': 0}",
+  "failure_stage": "contrast",
+  "fixed_sha": "a7393b501a621b9caeca698485140b0e9bc63850",
+  "issue_url": "https://github.com/LLNL/sundials/pull/888",
+  "neutral_id": "EXT-sundials-03",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "julia": "julia version 1.10.5",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": "Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026 x86_64 x86_64"
+  },
+  "proposed_crit_dual_arm_repro": "REPRO_FAILED",
+  "repo": "LLNL/sundials",
+  "route": "exact-source-cmake",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {
+    "buggy": 0,
+    "fixed": 0
+  }
+}

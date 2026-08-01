@@ -1,0 +1,18 @@
+=== buggy stdout ===
+scale=0.5: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=1.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=2.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=4.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+scale=8.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9
+### FrEIA arm=buggy worst=0.000e+00 crashes=5/5
+### VERDICT: VIOLATED
+
+=== fixed stdout ===
+scale=0.5: roundtrip max|x - f^-1(f(x))| = 4.500e-11
+scale=1.0: roundtrip max|x - f^-1(f(x))| = 8.021e-09
+scale=2.0: roundtrip max|x - f^-1(f(x))| = 1.579e-07
+scale=4.0: roundtrip max|x - f^-1(f(x))| = 1.478e-06
+scale=8.0: roundtrip max|x - f^-1(f(x))| = 5.078e-04
+### FrEIA arm=fixed worst=5.078e-04 crashes=0/5
+### VERDICT: PASS
+

@@ -1,0 +1,12 @@
+{
+  "commands": [
+    {
+      "command": "bash -lc \"command -v nvidia-smi && nvidia-smi || exit 127\"",
+      "cwd": "/workspace",
+      "exit_code": 127,
+      "label": "EXT-cupy-03:platform:nvidia-smi",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "exit_status": 0,
+  "expected_property": "DST-II and DST-III orthonormal transforms are mutual transposes for sizes in {4,5,8,9,16,17}.",
+  "input": {
+    "args": [],
+    "harness": "/tmp/c3_batch2/work/EXT-pocketfft-01/dst_check_fixed"
+  },
+  "neutral_id": "EXT-pocketfft-01",
+  "observed_output": {
+    "returncode": 0,
+    "stderr_tail": "",
+    "stdout_tail": "N= 4 max|D3 - D2^T| = 0.000000e+00  PASS\nN= 5 max|D3 - D2^T| = 3.330669e-16  PASS\nN= 8 max|D3 - D2^T| = 4.440892e-16  PASS\nN= 9 max|D3 - D2^T| = 4.440892e-16  PASS\nN=16 max|D3 - D2^T| = 4.440892e-16  PASS\nN=17 max|D3 - D2^T| = 6.661338e-16  PASS\nOVERALL: PASS\n"
+  },
+  "package_version": {
+    "harness_env": {
+      "HARNESS_BIN": "/tmp/c3_batch2/work/EXT-pocketfft-01/dst_check_fixed",
+      "PKG_CONFIG_PATH": "",
+      "SUNDIALS_INSTALL": ""
+    },
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "property_holds": true,
+  "seed": 0
+}

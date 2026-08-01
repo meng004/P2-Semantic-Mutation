@@ -1,0 +1,11 @@
+{
+  "exit_status": 0,
+  "expected_property": "STEMR RANGE='I' returns the k-th smallest eigenvalue in order.",
+  "neutral_id": "EXT-lapack-01",
+  "observed_output": {
+    "returncode": 0,
+    "stdout_tail": "{\"property_holds\": true}\n"
+  },
+  "property_holds": true,
+  "seed": 0
+}

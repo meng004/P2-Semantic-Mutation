@@ -1,0 +1,44 @@
+{
+  "commands": [
+    {
+      "command": "bash -lc \"command -v qemu-riscv64-static\"",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-openblas-01:platform:which:qemu-riscv64-static",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "bash -lc \"command -v qemu-riscv64\"",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-openblas-01:platform:which:qemu-riscv64",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "bash -lc \"command -v riscv64-linux-gnu-gcc\"",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-openblas-01:platform:which:riscv64-linux-gnu-gcc",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "bash -lc \"command -v riscv64-linux-gnu-gcc-14\"",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-openblas-01:platform:which:riscv64-linux-gnu-gcc-14",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "uname -m",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-openblas-01:platform:uname-m",
+      "stderr_tail": "",
+      "stdout_tail": "x86_64\n"
+    }
+  ]
+}

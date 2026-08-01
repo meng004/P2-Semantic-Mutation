@@ -1,0 +1,33 @@
+# C-LAMMPS-001 time-reversal issue-property: forward N steps under SLLOD shear, negate
+# velocities and deform rate, run N back; unwrapped coords must return to
+# the initial state (short horizons keep Lyapunov amplification of roundoff
+# below the integrator's own irreversibility).  variable N set via -var.
+units       lj
+atom_style  atomic
+lattice     fcc 0.8442
+region      box prism 0 6 0 6 0 6 0 0 0
+create_box  1 box
+create_atoms 1 box
+mass        1 1.0
+pair_style  lj/cut 2.5
+pair_coeff  1 1 1.0 1.0 2.5
+velocity    all create 1.0 87287 loop geom
+compute     ctd all temp/deform
+fix         1 all nvt/sllod temp 1.0 1.0 1000.0
+fix_modify  1 temp ctd
+fix         2 all deform 1 xy erate 0.2 remap v
+timestep    0.004
+write_dump  all custom start_${N}.dump id xu yu zu
+run         ${N}
+unfix 1
+unfix 2
+variable nvx atom -vx
+variable nvy atom -vy
+variable nvz atom -vz
+velocity   all set v_nvx v_nvy v_nvz
+compute    ctd2 all temp/deform
+fix        1 all nvt/sllod temp 1.0 1.0 1000.0
+fix_modify 1 temp ctd2
+fix        2 all deform 1 xy erate -0.2 remap v
+run        ${N}
+write_dump all custom end_${N}.dump id xu yu zu

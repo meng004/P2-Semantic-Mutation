@@ -1,0 +1,12 @@
+{
+  "arm": "buggy",
+  "exit_status": 1,
+  "expected_property": "round-trip max error < 1e-2 with no crashes",
+  "neutral_id": "EXT-freia-01",
+  "observed_output": {
+    "returncode": 1,
+    "stdout_tail": "scale=0.5: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9\nscale=1.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9\nscale=2.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9\nscale=4.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9\nscale=8.0: CRASH in round-trip: RuntimeError: index 9 is out of bounds for dimension 1 with size 9\n### FrEIA arm=buggy worst=0.000e+00 crashes=5/5\n### VERDICT: VIOLATED\n\n"
+  },
+  "property_holds": false,
+  "seed": 0
+}
