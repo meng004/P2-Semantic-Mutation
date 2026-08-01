@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 23,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "6d8bcdfa4892aa08018e809ed71b9fa7ee98558b82d854f82e557e2b44477b79",
   "issue_url": "https://gitlab.com/petsc/petsc/-/issues/1862",
   "fix_url": "",
   "buggy_sha": "",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "no identifiable merged public fix commit.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The pipelined solver accepts numeric system data and can expose the breakdown defect in a selected residual or solution value."
   },
   "evidence_urls": [
     "https://gitlab.com/petsc/petsc/-/issues/1862"

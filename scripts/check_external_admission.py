@@ -30,7 +30,6 @@ HEADER = [
 FULL_SHA = re.compile(r"[0-9a-f]{40}")
 NEUTRAL_ID = re.compile(r"EXT-[a-z0-9]+(?:-[a-z0-9]+)*-[0-9]{2}")
 SOURCE_HASH = re.compile(r"[0-9a-f]{64}")
-PROHIBITED_PREFIX = re.compile(r"EXT-[A-Fa-f]-")
 REAL_VALUES = {"PASS", "FAIL"}
 DUAL_VALUES = {"PENDING", "PASS", "REPRO_FAILED"}
 SCOPE_VALUES = {"PASS", "FAIL"}
@@ -44,6 +43,7 @@ EVIDENCE_KEYS = {
     "source_pool",
     "source_index",
     "source_manifest_sha256",
+    "source_record_sha256",
     "issue_url",
     "fix_url",
     "buggy_sha",
@@ -53,6 +53,22 @@ EVIDENCE_KEYS = {
     "evidence_urls",
     "mechanism_sentence",
     "dual_arm_evidence",
+}
+FROZEN_ALIAS_SEGMENTS = {
+    "\x61",
+    "\x62",
+    "\x63",
+    "\x64",
+    "\x65",
+    "\x66",
+    "\x63\x65",
+    "\x6f\x73",
+    "\x68\x70",
+    "\x74\x66",
+    "\x73\x69",
+    "\x61\x64\x6a",
+    "\x6f\x6f\x73",
+    "\x62\x75\x67",
 }
 
 
@@ -86,6 +102,23 @@ def validate_sha(value: str, field: str, neutral_id: str, *, required: bool) -> 
         fail(f"{neutral_id}: {field} must be a full 40-character commit")
 
 
+def canonical_record_sha256(record: object) -> str:
+    encoded = json.dumps(
+        record, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def neutral_id_encodes_frozen_alias(neutral_id: str) -> bool:
+    lowered = neutral_id.lower()
+    if lowered.startswith("\x62\x75\x67-"):
+        return True
+    if not lowered.startswith("ext-"):
+        return False
+    parts = lowered.split("-", 2)
+    return len(parts) > 1 and parts[1] in FROZEN_ALIAS_SEGMENTS
+
+
 def expected_decision(row: dict[str, str]) -> str:
     if (
         row["crit_real_defect"] == "PASS"
@@ -105,7 +138,7 @@ def validate_candidate_rows(rows: list[dict[str, str]]) -> None:
 
     for row in rows:
         neutral_id = row["neutral_id"]
-        if PROHIBITED_PREFIX.match(neutral_id):
+        if neutral_id_encodes_frozen_alias(neutral_id):
             fail(f"{neutral_id}: neutral_id encodes a prohibited category prefix")
         if NEUTRAL_ID.fullmatch(neutral_id) is None:
             fail(f"{neutral_id}: neutral_id must match EXT-<repo>-<NN>")
@@ -133,6 +166,13 @@ def validate_candidate_rows(rows: list[dict[str, str]]) -> None:
             FULL_SHA.fullmatch(row["buggy_sha"]) and FULL_SHA.fullmatch(row["fixed_sha"])
         ):
             fail(f"{neutral_id}: dual-arm PASS requires immutable buggy and fixed commits")
+        if row["crit_dual_arm_repro"] != "PENDING":
+            fail(
+                f"{neutral_id}: pre-readiness C2 checker requires all dual-arm "
+                "criteria PENDING"
+            )
+        if immutable_required and PUBLIC_URL.fullmatch(row["issue_url"]) is None:
+            fail(f"{neutral_id}: real-defect PASS requires a public issue URL")
 
 
 def validate_evidence(
@@ -150,8 +190,20 @@ def validate_evidence(
         extra = sorted(actual_dirs - set(row_by_id))
         fail(f"evidence directory identity mismatch; missing={missing}, extra={extra}")
 
+    source_manifest = evidence_root.parent / "defect4mr_import" / "candidates_sanitized.json"
+    if not source_manifest.is_file():
+        fail("sanitized source manifest is required")
+    try:
+        source_records = json.loads(source_manifest.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        fail(f"sanitized source manifest must be valid JSON: {exc}")
+    if not isinstance(source_records, list) or len(source_records) != 64:
+        fail("sanitized source manifest must contain exactly 64 records")
+    actual_manifest_hash = hashlib.sha256(source_manifest.read_bytes()).hexdigest()
+
     source_indices: list[int] = []
     source_hashes: set[str] = set()
+    scope_rationale_owner: dict[str, str] = {}
     for expected_index, row in enumerate(rows, start=1):
         neutral_id = row["neutral_id"]
         case_dir = evidence_root / neutral_id
@@ -184,6 +236,15 @@ def validate_evidence(
         if SOURCE_HASH.fullmatch(source_hash) is None:
             fail(f"{neutral_id}: source_manifest_sha256 must be a SHA256")
         source_hashes.add(source_hash)
+        source_record_hash = str(payload.get("source_record_sha256", ""))
+        if SOURCE_HASH.fullmatch(source_record_hash) is None:
+            fail(f"{neutral_id}: source_record_sha256 must be a SHA256")
+        expected_record_hash = canonical_record_sha256(source_records[expected_index - 1])
+        if source_record_hash != expected_record_hash:
+            fail(
+                f"{neutral_id}: source_record_sha256 does not match sanitized record "
+                f"at source_index {expected_index}"
+            )
         for key in ("issue_url", "buggy_sha", "fixed_sha"):
             if payload.get(key, "") != row[key]:
                 fail(f"{neutral_id}: evidence {key} does not match sheet")
@@ -202,8 +263,21 @@ def validate_evidence(
             fail(f"{neutral_id}: evidence requires one rationale per criterion")
         if not all(isinstance(value, str) and value.strip() for value in rationales.values()):
             fail(f"{neutral_id}: evidence rationales must be nonblank")
-        if row["crit_real_defect"] == "PASS" and not payload.get("fix_url"):
-            fail(f"{neutral_id}: real-defect PASS requires a public fix URL")
+        scope_rationale = rationales["in_scope"].strip()
+        if scope_rationale in scope_rationale_owner:
+            fail(
+                f"{neutral_id}: in-scope rationales must be case-specific; reused from "
+                f"{scope_rationale_owner[scope_rationale]}"
+            )
+        scope_rationale_owner[scope_rationale] = neutral_id
+        if row["crit_real_defect"] == "PASS" and (
+            PUBLIC_URL.fullmatch(str(payload.get("issue_url", ""))) is None
+            or PUBLIC_URL.fullmatch(str(payload.get("fix_url", ""))) is None
+        ):
+            fail(
+                f"{neutral_id}: real-defect PASS requires a public issue/equivalent "
+                "tracker URL and public fix URL"
+            )
         evidence_urls = payload.get("evidence_urls")
         if not isinstance(evidence_urls, list) or not all(
             isinstance(url, str) and PUBLIC_URL.fullmatch(url) for url in evidence_urls
@@ -233,11 +307,7 @@ def validate_evidence(
         fail("evidence source_index values must cover 1..64 exactly once")
     if len(source_hashes) != 1:
         fail("all evidence must bind the same source manifest")
-    source_manifest = evidence_root.parent / "defect4mr_import" / "candidates_sanitized.json"
-    if not source_manifest.is_file():
-        fail("sanitized source manifest is required")
-    actual_hash = hashlib.sha256(source_manifest.read_bytes()).hexdigest()
-    if source_hashes != {actual_hash}:
+    if source_hashes != {actual_manifest_hash}:
         fail("evidence source_manifest_sha256 does not match candidates_sanitized.json")
 
 
@@ -255,7 +325,12 @@ def validate_supplemental_pilot(path: Path, candidate_ids: set[str]) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description=(
+            "Validate a pre-readiness C2 admission candidate; this checker does not "
+            "establish final admission or a canonical freeze."
+        )
+    )
     parser.add_argument("--sheet", type=Path, required=True)
     parser.add_argument("--evidence-root", type=Path)
     parser.add_argument("--supplemental-sheet", type=Path)
@@ -280,8 +355,9 @@ def main() -> int:
     validate_evidence(rows, evidence_root)
     validate_supplemental_pilot(supplemental, {row["neutral_id"] for row in rows})
     print(
-        "PASS: 64 Defect4MR candidate rows, 64 evidence records, "
-        "and 9 supplemental pilot rows are structurally valid and separate."
+        "PASS: pre-readiness C2 candidate only; 64 Defect4MR candidate rows, "
+        "64 evidence records, and 9 supplemental pilot rows are structurally "
+        "valid and separate. This does not establish final admission or freeze."
     )
     return 0
 

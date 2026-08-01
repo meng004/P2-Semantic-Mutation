@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 36,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "7f57a2c540197bb9c309fb9aaf345b2dbf6fa4a2a3665f82cf58526562779f72",
   "issue_url": "https://github.com/LLNL/sundials/pull/888",
   "fix_url": "https://github.com/LLNL/sundials/commit/a7393b501a621b9caeca698485140b0e9bc63850",
   "buggy_sha": "09f8a3be90ef0fff3fe04e612dc178a43e3975cc",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "A public defect report and an identifiable public fix commit are linked.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The quadrature solver accepts numeric state and can expose the reinitialisation defect in one selected floating-point quadrature value."
   },
   "evidence_urls": [
     "https://github.com/LLNL/sundials/pull/888",

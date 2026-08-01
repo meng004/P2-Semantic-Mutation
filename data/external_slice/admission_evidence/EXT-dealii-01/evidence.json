@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 50,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "0f20e7343412c55e01473a7b7567ba1a62340e6e5f0f3b93353d91d480567859",
   "issue_url": "https://github.com/dealii/dealii/issues/3874",
   "fix_url": "https://github.com/dealii/dealii/commit/92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f",
   "buggy_sha": "834e865e44ee273361dbdf11bbce986f6be78407",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "A public defect report and an identifiable public fix commit are linked.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The manifold interpolation accepts numeric support-point coordinates and can expose the neighborhood defect in one selected floating-point coordinate."
   },
   "evidence_urls": [
     "https://github.com/dealii/dealii/issues/3874",

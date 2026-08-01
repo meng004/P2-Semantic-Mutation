@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 32,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "a0a933618457b50b7572a631981261c97d8af067443a625d35d5dea8a2db27d4",
   "issue_url": "",
   "fix_url": "https://github.com/icl-utk-edu/magma/commit/39cbc109a371446ef03d613f214f86cbd10ce223",
   "buggy_sha": "cab872dd25255b33b074f01cf10576647ee41c38",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "no public issue or equivalent tracker entry linked to the fix.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The complex LQ factorisation accepts numeric matrix entries and can expose the update defect in one selected factor entry."
   },
   "evidence_urls": [
     "https://github.com/icl-utk-edu/magma/commit/39cbc109a371446ef03d613f214f86cbd10ce223"

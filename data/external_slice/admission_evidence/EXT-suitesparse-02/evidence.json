@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 7,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "4bd22bef95cdc6f67af4d97bcb77cc38d6ca1504ca8b826a35cfd3cc60b52e27",
   "issue_url": "",
   "fix_url": "https://github.com/DrTimothyAldenDavis/SuiteSparse/commit/b6ed7c905e32c46c20285e8582dbdb95e439ef17",
   "buggy_sha": "c0b141a984939884df4067df9994833c93547d22",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "no public issue or equivalent tracker entry linked to the fix.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The supernodal Cholesky update accepts numeric matrix data and can expose the error through a selected floating-point factor entry."
   },
   "evidence_urls": [
     "https://github.com/DrTimothyAldenDavis/SuiteSparse/commit/b6ed7c905e32c46c20285e8582dbdb95e439ef17"

@@ -5,6 +5,7 @@ import hashlib
 import json
 import subprocess
 import sys
+from collections import Counter
 from pathlib import Path
 
 
@@ -26,6 +27,13 @@ HEADER = [
 ]
 FULL_SHA = "a" * 40
 FIXED_SHA = "b" * 40
+
+
+def _canonical_record_sha256(record: dict[str, object]) -> str:
+    encoded = json.dumps(
+        record, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _write_sheet(path: Path, rows: list[dict[str, str]]) -> None:
@@ -68,10 +76,19 @@ def _write_valid_fixture(tmp_path: Path) -> tuple[Path, Path]:
     _write_sheet(external / "admission_sheet.csv", [_pilot_row(i) for i in range(1, 10)])
 
     evidence_root = external / "admission_evidence"
-    manifest_hash = hashlib.sha256(b"sanitized-manifest").hexdigest()
+    source_records = [
+        {
+            "provisional_id": f"SOURCE-{index:02d}",
+            "project": f"project-{index:02d}",
+        }
+        for index in range(1, 65)
+    ]
     source_manifest = external / "defect4mr_import" / "candidates_sanitized.json"
     source_manifest.parent.mkdir(parents=True)
-    source_manifest.write_bytes(b"sanitized-manifest")
+    source_manifest.write_text(
+        json.dumps(source_records, indent=2) + "\n", encoding="utf-8"
+    )
+    manifest_hash = hashlib.sha256(source_manifest.read_bytes()).hexdigest()
     for index, row in enumerate(rows, start=1):
         case_dir = evidence_root / row["neutral_id"]
         case_dir.mkdir(parents=True)
@@ -80,6 +97,9 @@ def _write_valid_fixture(tmp_path: Path) -> tuple[Path, Path]:
             "source_pool": "defect4mr_64",
             "source_index": index,
             "source_manifest_sha256": manifest_hash,
+            "source_record_sha256": _canonical_record_sha256(
+                source_records[index - 1]
+            ),
             "issue_url": row["issue_url"],
             "fix_url": f"https://github.com/owner/project/commit/{FIXED_SHA}",
             "buggy_sha": row["buggy_sha"],
@@ -92,7 +112,10 @@ def _write_valid_fixture(tmp_path: Path) -> tuple[Path, Path]:
             "rationales": {
                 "real_defect": "The public issue identifies wrong numerical behaviour and the commit fixes it.",
                 "dual_arm_repro": "No public same-trigger two-version execution record was available at admission.",
-                "in_scope": "The changed callable maps numerical input to one numerical output.",
+                "in_scope": (
+                    "The changed callable maps numerical input to one numerical output "
+                    f"for fixture case {index}."
+                ),
             },
             "evidence_urls": [
                 row["issue_url"],
@@ -131,6 +154,8 @@ def test_accepts_64_row_candidate_and_separate_nine_row_pilot(tmp_path: Path) ->
     assert result.returncode == 0, result.stderr
     assert "64 Defect4MR candidate rows" in result.stdout
     assert "9 supplemental pilot rows" in result.stdout
+    assert "pre-readiness C2 candidate only" in result.stdout
+    assert "does not establish final admission or freeze" in result.stdout
 
 
 def test_rejects_nonblank_analysis_alias(tmp_path: Path) -> None:
@@ -181,16 +206,70 @@ def test_rejects_dual_arm_pass_without_fixed_arm(tmp_path: Path) -> None:
     assert "dual-arm PASS requires immutable buggy and fixed commits" in result.stderr
 
 
-def test_rejects_category_encoded_or_missing_evidence_identity(tmp_path: Path) -> None:
-    sheet, evidence_root = _write_valid_fixture(tmp_path)
+def test_rejects_frozen_category_or_analysis_alias_prefixes(tmp_path: Path) -> None:
+    prefixes = [
+        "\x41",
+        "\x43\x45",
+        "\x4f\x53",
+        "\x48\x50",
+        "\x54\x46",
+        "\x53\x49",
+        "\x41\x44\x4a",
+        "\x4f\x4f\x53",
+        "\x62\x75\x67",
+    ]
+    for ordinal, prefix in enumerate(prefixes, start=1):
+        sheet, evidence_root = _write_valid_fixture(tmp_path / f"case-{ordinal}")
+        rows = list(csv.DictReader(sheet.open(newline="", encoding="utf-8")))
+        if prefix == "\x62\x75\x67":
+            rows[0]["neutral_id"] = f"{prefix}-\x43\x45-01"
+        else:
+            rows[0]["neutral_id"] = f"EXT-{prefix}-project-01"
+        _write_sheet(sheet, rows)
+
+        result = _run(sheet, evidence_root)
+
+        assert result.returncode != 0
+        assert "neutral_id encodes a prohibited category prefix" in result.stderr
+
+    sheet, evidence_root = _write_valid_fixture(tmp_path / "extended-analysis-prefix")
     rows = list(csv.DictReader(sheet.open(newline="", encoding="utf-8")))
-    rows[0]["neutral_id"] = "EXT-A-project-01"
+    rows[0]["neutral_id"] = "EXT-\x62\x75\x67-project-01"
     _write_sheet(sheet, rows)
 
     result = _run(sheet, evidence_root)
 
     assert result.returncode != 0
     assert "neutral_id encodes a prohibited category prefix" in result.stderr
+
+
+def test_rejects_real_defect_pass_without_public_issue_url(tmp_path: Path) -> None:
+    sheet, evidence_root = _write_valid_fixture(tmp_path)
+    rows = list(csv.DictReader(sheet.open(newline="", encoding="utf-8")))
+    rows[0]["issue_url"] = ""
+    _write_sheet(sheet, rows)
+    evidence = evidence_root / rows[0]["neutral_id"] / "evidence.json"
+    payload = json.loads(evidence.read_text(encoding="utf-8"))
+    payload["issue_url"] = ""
+    payload["evidence_urls"] = [payload["fix_url"]]
+    evidence.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+    result = _run(sheet, evidence_root)
+
+    assert result.returncode != 0
+    assert "real-defect PASS requires a public issue" in result.stderr
+
+
+def test_rejects_nonpending_dual_arm_at_c2_pre_readiness(tmp_path: Path) -> None:
+    sheet, evidence_root = _write_valid_fixture(tmp_path)
+    rows = list(csv.DictReader(sheet.open(newline="", encoding="utf-8")))
+    rows[0]["crit_dual_arm_repro"] = "PASS"
+    _write_sheet(sheet, rows)
+
+    result = _run(sheet, evidence_root)
+
+    assert result.returncode != 0
+    assert "pre-readiness C2 checker requires all dual-arm criteria PENDING" in result.stderr
 
 
 def test_rejects_dual_arm_pass_without_public_execution_record(tmp_path: Path) -> None:
@@ -206,7 +285,7 @@ def test_rejects_dual_arm_pass_without_public_execution_record(tmp_path: Path) -
     result = _run(sheet, evidence_root)
 
     assert result.returncode != 0
-    assert "dual-arm PASS requires public execution evidence for both arms" in result.stderr
+    assert "pre-readiness C2 checker requires all dual-arm criteria PENDING" in result.stderr
 
 
 def test_rejects_unbound_evidence_url(tmp_path: Path) -> None:
@@ -237,6 +316,40 @@ def test_rejects_source_index_not_bound_to_candidate_row(tmp_path: Path) -> None
 
     assert result.returncode != 0
     assert "source_index must match candidate row position" in result.stderr
+
+
+def test_rejects_swapped_per_record_source_bindings(tmp_path: Path) -> None:
+    sheet, evidence_root = _write_valid_fixture(tmp_path)
+    first = evidence_root / "EXT-project-01" / "evidence.json"
+    second = evidence_root / "EXT-project-02" / "evidence.json"
+    first_payload = json.loads(first.read_text(encoding="utf-8"))
+    second_payload = json.loads(second.read_text(encoding="utf-8"))
+    first_payload["source_record_sha256"], second_payload["source_record_sha256"] = (
+        second_payload["source_record_sha256"],
+        first_payload["source_record_sha256"],
+    )
+    first.write_text(json.dumps(first_payload, indent=2) + "\n", encoding="utf-8")
+    second.write_text(json.dumps(second_payload, indent=2) + "\n", encoding="utf-8")
+
+    result = _run(sheet, evidence_root)
+
+    assert result.returncode != 0
+    assert "source_record_sha256 does not match sanitized record" in result.stderr
+
+
+def test_rejects_reused_scope_rationale(tmp_path: Path) -> None:
+    sheet, evidence_root = _write_valid_fixture(tmp_path)
+    first = evidence_root / "EXT-project-01" / "evidence.json"
+    second = evidence_root / "EXT-project-02" / "evidence.json"
+    first_payload = json.loads(first.read_text(encoding="utf-8"))
+    second_payload = json.loads(second.read_text(encoding="utf-8"))
+    second_payload["rationales"]["in_scope"] = first_payload["rationales"]["in_scope"]
+    second.write_text(json.dumps(second_payload, indent=2) + "\n", encoding="utf-8")
+
+    result = _run(sheet, evidence_root)
+
+    assert result.returncode != 0
+    assert "in-scope rationales must be case-specific" in result.stderr
 
 
 def test_rejects_mixed_source_manifest_hashes(tmp_path: Path) -> None:
@@ -310,3 +423,35 @@ def test_rejects_dual_arm_object_when_criterion_is_not_pass(tmp_path: Path) -> N
 
     assert result.returncode != 0
     assert "dual_arm_evidence is forbidden unless the criterion is PASS" in result.stderr
+
+
+def test_repository_candidate_closes_gate_a1_scope_findings() -> None:
+    sheet = ROOT / "data" / "external_slice" / "admission_sheet.cursor_candidate.csv"
+    rows = list(csv.DictReader(sheet.open(newline="", encoding="utf-8")))
+    by_id = {row["neutral_id"]: row for row in rows}
+    corrected_ids = {
+        "EXT-pocketfft-02",
+        "EXT-blis-01",
+        "EXT-petsc-04",
+        "EXT-fftw-05",
+    }
+
+    assert len(rows) == 64
+    for neutral_id in corrected_ids:
+        assert by_id[neutral_id]["crit_in_scope"] == "FAIL"
+        assert by_id[neutral_id]["decision"] == "EXCLUDED"
+        assert by_id[neutral_id]["exclusion_reason"]
+    assert Counter(row["crit_real_defect"] for row in rows) == {
+        "PASS": 35,
+        "FAIL": 29,
+    }
+    assert Counter(row["crit_dual_arm_repro"] for row in rows) == {"PENDING": 64}
+    assert Counter(row["crit_in_scope"] for row in rows) == {
+        "PASS": 55,
+        "FAIL": 9,
+    }
+    assert Counter(row["decision"] for row in rows) == {
+        "ADMIT_PENDING_REPRO": 32,
+        "EXCLUDED": 32,
+    }
+    assert all(row["analysis_id"] == "" for row in rows)

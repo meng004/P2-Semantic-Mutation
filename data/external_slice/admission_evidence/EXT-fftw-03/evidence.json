@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 3,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "f839298375659bef5f47c71825d42ff27b9ad3f88c981f77e96bb499aa0020db",
   "issue_url": "https://github.com/FFTW/fftw3/issues/327",
   "fix_url": "",
   "buggy_sha": "",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "no identifiable merged public fix commit.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The reported transform consumes a numeric array and can expose the discrepancy through one selected floating-point coefficient."
   },
   "evidence_urls": [
     "https://github.com/FFTW/fftw3/issues/327"

@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 2,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "3148fc5f503e9b302c80482ee3d1bf3f77126a39b17ede776eb0351da7c4c80a",
   "issue_url": "https://github.com/FFTW/fftw3/issues/294",
   "fix_url": "",
   "buggy_sha": "",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "no identifiable merged public fix commit.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The SIMD-planned transform accepts floating-point samples and can expose the inconsistency in one transformed coefficient."
   },
   "evidence_urls": [
     "https://github.com/FFTW/fftw3/issues/294"

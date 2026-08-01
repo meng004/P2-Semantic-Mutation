@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 62,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "f466d06a0da8a1371b792b73bf96ae37a3e33fd285fceb5c1bffbc87d6248f76",
   "issue_url": "https://github.com/hannorein/rebound/issues/615",
   "fix_url": "",
   "buggy_sha": "",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "no identifiable merged public fix commit.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The simulation synchronisation accepts numeric body state and can expose the discrepancy in one selected floating-point coordinate or velocity component."
   },
   "evidence_urls": [
     "https://github.com/hannorein/rebound/issues/615"

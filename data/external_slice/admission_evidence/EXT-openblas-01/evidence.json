@@ -3,6 +3,7 @@
   "source_pool": "defect4mr_64",
   "source_index": 15,
   "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "3a8d1738a39a895b27f040ec218cfbb7d1deec932c5b39d7e1de9fc79855298d",
   "issue_url": "https://github.com/OpenMathLib/OpenBLAS/issues/5811",
   "fix_url": "https://github.com/OpenMathLib/OpenBLAS/commit/70a5a5374743ec985ccd38fe81a442951ba76e07",
   "buggy_sha": "fda55ad25909c6c34eca104c6fc2e9b4acd20ad9",
@@ -15,7 +16,7 @@
   "rationales": {
     "real_defect": "A public defect report and an identifiable public fix commit are linked.",
     "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
-    "in_scope": "The reported behaviour is reducible to a float or few-float numerical-kernel observation."
+    "in_scope": "The matrix-multiplication kernel accepts flattened floating-point matrices and can expose the addressing defect in one selected product entry."
   },
   "evidence_urls": [
     "https://github.com/OpenMathLib/OpenBLAS/issues/5811",
