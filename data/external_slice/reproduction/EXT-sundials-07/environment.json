@@ -1,34 +1,56 @@
 {
   "buggy_sha": "b577f273a5704a8e32fa053061166689349fdfbe",
-  "build": {
-    "buggy_install": "/tmp/c3_batch1/work/sundials/install-buggy",
-    "decisive_config": {
-      "faccum": 1,
-      "rtol": 1e-05,
-      "scontrol": 5,
-      "w": 100000
-    },
-    "fixed_install": "/tmp/c3_batch1/work/sundials/install-fixed",
-    "harness_source": "ark_test_kpr_mriadapt.cpp from buggy tree compiled against both installs"
+  "cmake_flags": [
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DBUILD_SHARED_LIBS=ON",
+    "-DENABLE_MPI=OFF",
+    "-DEXAMPLES_ENABLE_C=OFF",
+    "-DEXAMPLES_ENABLE_CXX=OFF",
+    "-DBUILD_ARKODE=ON",
+    "-DBUILD_CVODE=OFF",
+    "-DBUILD_CVODES=OFF",
+    "-DBUILD_IDA=OFF",
+    "-DBUILD_IDAS=OFF",
+    "-DBUILD_KINSOL=OFF"
+  ],
+  "decisive_config": {
+    "faccum": 1,
+    "rtol": "1e-5",
+    "scontrol": 5,
+    "w": 100000
   },
   "docker_digest_route": {
     "attempted": true,
     "digest": "sha256:c28ba71804fd7faef1bc6bf2c446cc0cbdbc431d4d9f915841fe4c21b0373c20",
     "registry_case": "e-sundials-007",
-    "result": "GHCR pull 403 Forbidden after docker login; rebuilt from exact sheet SHAs"
+    "result": "GHCR pull 403 Forbidden after docker login; host exact-source rebuild used"
   },
   "dual_arm_contrast": true,
   "fixed_sha": "5f5a8c3facdd413e54e02361afc47a2032091175",
+  "harness": {
+    "note": "Identical buggy-tree harness source compiled against each arm install",
+    "source": "test/unit_tests/arkode/CXX_serial/ark_test_kpr_mriadapt.cpp"
+  },
+  "locks": {
+    "build_tools": "data/external_slice/reproduction/EXT-sundials-07/locks/BUILD_TOOLS.json",
+    "source_hashes": "data/external_slice/reproduction/EXT-sundials-07/locks/SOURCE_HASHES.json"
+  },
   "neutral_id": "EXT-sundials-07",
   "platform": {
     "cmake": "cmake version 3.28.3",
-    "gcc": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
-    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gxx": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "host_platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "make": "GNU Make 4.3",
     "python": "3.12.3"
   },
-  "recorded_at_utc": "2026-08-01T12:31:57Z",
+  "recorded_at_utc": "2026-08-01T12:58:37Z",
   "route": "exact-source",
   "same_trigger_input_seed": true,
   "seed": 0,
-  "trigger": "data/external_slice/reproducers/EXT-sundials-07.py"
+  "trigger": "data/external_slice/reproducers/EXT-sundials-07.py",
+  "trigger_exit_codes": {
+    "buggy": 1,
+    "fixed": 0
+  }
 }

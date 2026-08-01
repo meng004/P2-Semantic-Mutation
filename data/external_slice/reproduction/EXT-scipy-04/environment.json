@@ -4,28 +4,50 @@
     "attempted": true,
     "digest": "sha256:78a2247a5c46bdef645f80471a774ceb8c46ac94f26d2a5366e8792630d52fed",
     "registry_case": "c-scipy-002",
-    "result": "GHCR pull 403 Forbidden after docker login; rebuilt via pinned releases corresponding to sheet SHAs"
+    "result": "GHCR pull 403 Forbidden after docker login; host pinned-release rebuild used"
   },
   "dual_arm_contrast": true,
   "fixed_sha": "1caf2339491aa8a1f9d018d1b202228ea85b022c",
-  "neutral_id": "EXT-scipy-04",
-  "pip_freeze": {
-    "buggy": [
-      "numpy==1.19.5",
-      "packaging==26.2",
-      "scipy==1.5.4"
-    ],
-    "fixed": [
-      "numpy==1.19.5",
-      "packaging==26.2",
-      "scipy==1.6.0"
-    ]
+  "locks": {
+    "buggy": {
+      "artifacts": {
+        "numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl": "400580cbd3cff6ffa6293df2278c75aef2d58d8d93d3c5614cd67981dae68ceb",
+        "scipy-1.5.4-cp39-cp39-manylinux1_x86_64.whl": "ed572470af2438b526ea574ff8f05e7f39b44ac37f712105e57fc4d53a6fb660"
+      },
+      "lock_file": "data/external_slice/reproduction/EXT-scipy-04/locks/requirements.buggy.txt",
+      "packages": [
+        "numpy==1.19.5",
+        "scipy==1.5.4"
+      ],
+      "resolved_requirements": [
+        "numpy==1.19.5",
+        "scipy==1.5.4"
+      ]
+    },
+    "fixed": {
+      "artifacts": {
+        "numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl": "400580cbd3cff6ffa6293df2278c75aef2d58d8d93d3c5614cd67981dae68ceb",
+        "scipy-1.6.0-cp39-cp39-manylinux1_x86_64.whl": "d902d3a5ad7f28874c0a82db95246d24ca07ad932741df668595fe00a4819870"
+      },
+      "lock_file": "data/external_slice/reproduction/EXT-scipy-04/locks/requirements.fixed.txt",
+      "packages": [
+        "numpy==1.19.5",
+        "scipy==1.6.0"
+      ],
+      "resolved_requirements": [
+        "numpy==1.19.5",
+        "scipy==1.6.0"
+      ]
+    }
   },
+  "neutral_id": "EXT-scipy-04",
   "platform": {
     "host_platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
-    "python_build": "CPython 3.9.18 built from python.org tarball sha256 504ce8cfd59addc04c22f590377c6be454ae7406cb1ebf6f5a350149225a9354"
+    "python": "3.9.18",
+    "python_executable": "/tmp/c3_batch1/work/python39/install/bin/python3.9",
+    "python_tarball_sha256": "504ce8cfd59addc04c22f590377c6be454ae7406cb1ebf6f5a350149225a9354"
   },
-  "recorded_at_utc": "2026-08-01T12:31:04Z",
+  "recorded_at_utc": "2026-08-01T12:53:43Z",
   "release_mapping": {
     "buggy_packages": {
       "numpy": "1.19.5",
@@ -37,10 +59,14 @@
       "python": "3.9.18",
       "scipy": "1.6.0"
     },
-    "note": "fixed_sha is the merge commit of PR #12640 (first in scipy 1.6.0); buggy_sha is its first parent. Arms use real PyPI wheels on CPython 3.9.18."
+    "note": "fixed_sha is PR #12640 merge (first in scipy 1.6.0); buggy_sha is its first parent."
   },
-  "route": "pinned-release-mapped-from-sheet-shas",
+  "route": "pinned-release",
   "same_trigger_input_seed": true,
   "seed": 0,
-  "trigger": "data/external_slice/reproducers/EXT-scipy-04.py"
+  "trigger": "data/external_slice/reproducers/EXT-scipy-04.py",
+  "trigger_exit_codes": {
+    "buggy": 1,
+    "fixed": 0
+  }
 }

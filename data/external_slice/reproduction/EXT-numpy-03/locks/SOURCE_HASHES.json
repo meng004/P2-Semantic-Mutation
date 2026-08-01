@@ -1,0 +1,51 @@
+{
+  "case": "EXT-numpy-03",
+  "hashes": {
+    "buggy_archive": {
+      "bytes": 9466426,
+      "sha": "57684c06258ad61891df4aee1b617ee1764307ab",
+      "sha256": "bb9cfd859aab5689653bd51c081e08f967ae8811e0c1170684772879389b906c",
+      "url": "https://github.com/numpy/numpy/archive/57684c06258ad61891df4aee1b617ee1764307ab.tar.gz"
+    },
+    "buggy_source_tree": {
+      "bytes": 18273115,
+      "includes_submodules": true,
+      "sha": "57684c06258ad61891df4aee1b617ee1764307ab",
+      "sha256": "c55df292f5d4e660431dc7f97c04803c11223a4928043bd13f57773fe988ec64"
+    },
+    "fixed_archive": {
+      "bytes": 9469557,
+      "sha": "5112fa07aab50daa2a615ac4c8f055f626a66d17",
+      "sha256": "e08a0aa979eeae03cbb8db266585da28229223b1b9f4bed981389e85cdd33d3b",
+      "url": "https://github.com/numpy/numpy/archive/5112fa07aab50daa2a615ac4c8f055f626a66d17.tar.gz"
+    },
+    "fixed_source_tree": {
+      "bytes": 18273597,
+      "includes_submodules": true,
+      "sha": "5112fa07aab50daa2a615ac4c8f055f626a66d17",
+      "sha256": "10fedef2274ae9ea73ad353968cf7ae4354b906830117f9212da3fca2428b26a"
+    }
+  },
+  "submodules": {
+    "buggy": {
+      "head": "57684c06258ad61891df4aee1b617ee1764307ab",
+      "submodule_status": [
+        "36f4c898f2255e0c98eb6949cd67381552d5ffea doc/source/_static/scipy-mathjax (heads/master)",
+        " ba0900a4957b929390ab73827235557959234fea numpy/_core/src/highway (1.0.7)",
+        " 868696d22ad84c5cd46bf9c2a4dac65e60a9213a numpy/_core/src/npysort/x86-simd-sort (v3.0-250-g868696d)",
+        " 32bf2a98420762a63ab418aaa0a7d6e17eb9627a numpy/_core/src/umath/svml (32bf2a9)",
+        " 4e370ca8ab73c07f7b84abe8a4b937caace050a4 vendored-meson/meson (remotes/origin/module_feature-125-g4e370ca8a)"
+      ]
+    },
+    "fixed": {
+      "head": "5112fa07aab50daa2a615ac4c8f055f626a66d17",
+      "submodule_status": [
+        "36f4c898f2255e0c98eb6949cd67381552d5ffea doc/source/_static/scipy-mathjax (heads/master)",
+        " ba0900a4957b929390ab73827235557959234fea numpy/_core/src/highway (1.0.7)",
+        " 868696d22ad84c5cd46bf9c2a4dac65e60a9213a numpy/_core/src/npysort/x86-simd-sort (v3.0-250-g868696d)",
+        " 32bf2a98420762a63ab418aaa0a7d6e17eb9627a numpy/_core/src/umath/svml (32bf2a9)",
+        " 4e370ca8ab73c07f7b84abe8a4b937caace050a4 vendored-meson/meson (remotes/origin/module_feature-125-g4e370ca8a)"
+      ]
+    }
+  }
+}

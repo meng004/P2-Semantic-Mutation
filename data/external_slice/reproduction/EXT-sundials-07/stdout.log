@@ -1,7 +1,9 @@
 === buggy trigger stdout ===
-{"property_holds": false, "package_version": {"python": "3.12.3", "platform": "Linux-6.12.94+-x86_64-with-glibc2.39", "harness_env": {"SUNDIALS_INSTALL": "", "HARNESS_BIN": "/tmp/c3_batch1/work/sundials/kprmri-buggy"}}}
+{"property_holds": false, "package_version": {"python": "3.12.3", "platform": "Linux-6.12.94+-x86_64-with-glibc2.39", "harness_env": {"SUNDIALS_INSTALL": "", "HARNESS_BIN": "/tmp/c3_batch1_fix/sundials/kprmri-buggy"}}}
+
 === fixed trigger stdout ===
-{"property_holds": true, "package_version": {"python": "3.12.3", "platform": "Linux-6.12.94+-x86_64-with-glibc2.39", "harness_env": {"SUNDIALS_INSTALL": "", "HARNESS_BIN": "/tmp/c3_batch1/work/sundials/kprmri-fixed"}}}
+{"property_holds": true, "package_version": {"python": "3.12.3", "platform": "Linux-6.12.94+-x86_64-with-glibc2.39", "harness_env": {"SUNDIALS_INSTALL": "", "HARNESS_BIN": "/tmp/c3_batch1_fix/sundials/kprmri-fixed"}}}
+
 === buggy harness stdout ===
 
 Adaptive multirate nonlinear Kvaerno-Prothero-Robinson test problem:
@@ -49,6 +51,7 @@ Final Solver Statistics:
    u error = 2.52062e-05, v error = 0.00139067, total error = 0.000983514
    Relative accuracy = 7228.26
    Total RHS evals:  Fse = 24357, Fsi = 0, Ff = 20269628
+
 === fixed harness stdout ===
 
 Adaptive multirate nonlinear Kvaerno-Prothero-Robinson test problem:

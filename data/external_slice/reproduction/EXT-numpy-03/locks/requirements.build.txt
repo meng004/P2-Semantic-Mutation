@@ -1,0 +1,20 @@
+# Hash-locked requirements generated for C3 Batch 1 Gate A1b correction
+# python=/tmp/c3_batch1_fix/numpy/venv-buggy/bin/python
+# root_packages=['Cython==3.0.12', 'meson==1.11.2', 'meson-python==0.20.0', 'ninja==1.13.0', 'packaging==26.2', 'patchelf==0.17.2.4', 'pkgconfig==1.6.0', 'pyproject-metadata==0.12.1']
+# with_deps=True
+Cython==3.0.12 \
+    --hash=sha256:0faa5e39e5c8cdf6f9c3b1c3f24972826e45911e7f5b99cf99453fca5432f45e
+meson==1.11.2 \
+    --hash=sha256:7e4f6e83fec83e3eaac928e058b073c7557b282c35b6a2024cea143a39926a39
+meson-python==0.20.0 \
+    --hash=sha256:6a744cf0c09e76ecbdc58cfa374b48c8902dac1b74479628238634efbf36aec9
+ninja==1.13.0 \
+    --hash=sha256:fb46acf6b93b8dd0322adc3a4945452a4e774b75b91293bafcc7b7f8e6517dfa
+packaging==26.2 \
+    --hash=sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e
+patchelf==0.17.2.4 \
+    --hash=sha256:d9b35ebfada70c02679ad036407d9724ffe1255122ba4ac5e4be5868618a5689
+pkgconfig==1.6.0 \
+    --hash=sha256:98e71754855e9563838d952a160eb577edabb57782e49853edb5381927e6bea1
+pyproject-metadata==0.12.1 \
+    --hash=sha256:f7162d580a96386a8eb096da06215f981f547d1490f03055ef99e323bc2da427
