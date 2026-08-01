@@ -6,57 +6,84 @@
       "artifact_dir": "data/external_slice/reproduction/EXT-numpy-03",
       "buggy_property_holds": false,
       "buggy_sha": "57684c06258ad61891df4aee1b617ee1764307ab",
+      "command_count": 30,
       "dual_arm_contrast": true,
       "fixed_property_holds": true,
       "fixed_sha": "5112fa07aab50daa2a615ac4c8f055f626a66d17",
       "issue_url": "https://github.com/numpy/numpy/issues/25679",
+      "locks_dir": "data/external_slice/reproduction/EXT-numpy-03/locks",
       "neutral_id": "EXT-numpy-03",
-      "note": "Candidate sheet A2 left PENDING for C2 checker contract; Gate A1b may promote after audit.",
+      "note": "Candidate sheet A2 left PENDING; Gate A1b may promote after zero-blocker re-review.",
+      "observation_status": "case-local observed pending Gate A1b re-review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "numpy/numpy",
       "seed": 0,
       "sheet_crit_dual_arm_repro_unchanged": "PENDING",
-      "trigger": "data/external_slice/reproducers/EXT-numpy-03.py"
+      "trigger": "data/external_slice/reproducers/EXT-numpy-03.py",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
     },
     {
       "artifact_dir": "data/external_slice/reproduction/EXT-sundials-07",
       "buggy_property_holds": false,
       "buggy_sha": "b577f273a5704a8e32fa053061166689349fdfbe",
+      "command_count": 17,
       "dual_arm_contrast": true,
       "fixed_property_holds": true,
       "fixed_sha": "5f5a8c3facdd413e54e02361afc47a2032091175",
       "issue_url": "https://github.com/LLNL/sundials/pull/763",
+      "locks_dir": "data/external_slice/reproduction/EXT-sundials-07/locks",
       "neutral_id": "EXT-sundials-07",
-      "note": "Candidate sheet A2 left PENDING for C2 checker contract; Gate A1b may promote after audit.",
+      "note": "Candidate sheet A2 left PENDING; Gate A1b may promote after zero-blocker re-review.",
+      "observation_status": "case-local observed pending Gate A1b re-review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "LLNL/sundials",
       "seed": 0,
       "sheet_crit_dual_arm_repro_unchanged": "PENDING",
-      "trigger": "data/external_slice/reproducers/EXT-sundials-07.py"
+      "trigger": "data/external_slice/reproducers/EXT-sundials-07.py",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
     },
     {
       "artifact_dir": "data/external_slice/reproduction/EXT-scipy-04",
       "buggy_property_holds": false,
       "buggy_sha": "5621f933e8434ebc6123dcb485e9836bf43e7be1",
+      "command_count": 10,
       "dual_arm_contrast": true,
       "fixed_property_holds": true,
       "fixed_sha": "1caf2339491aa8a1f9d018d1b202228ea85b022c",
       "issue_url": "https://github.com/scipy/scipy/issues/11186",
+      "locks_dir": "data/external_slice/reproduction/EXT-scipy-04/locks",
       "neutral_id": "EXT-scipy-04",
-      "note": "Candidate sheet A2 left PENDING for C2 checker contract; Gate A1b may promote after audit.",
+      "note": "Candidate sheet A2 left PENDING; Gate A1b may promote after zero-blocker re-review.",
+      "observation_status": "case-local observed pending Gate A1b re-review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "scipy/scipy",
       "seed": 0,
       "sheet_crit_dual_arm_repro_unchanged": "PENDING",
-      "trigger": "data/external_slice/reproducers/EXT-scipy-04.py"
+      "trigger": "data/external_slice/reproducers/EXT-scipy-04.py",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
     }
   ],
+  "closed_findings": [
+    "A1B-HANDOFF-CMD-001",
+    "A1B-LOCK-PROVENANCE-001"
+  ],
+  "correction_of": "607acb044856101d8744f62cd2f7173a396c99b5",
   "counts": {
     "batch_size": 3,
     "proposed_PASS": 3,
     "proposed_REPRO_FAILED": 0
   },
   "not_started": [
+    "Batch 2",
     "C4 annotation support",
     "human labelling",
     "category-map freeze",
@@ -64,5 +91,5 @@
     "detection-run execution",
     "canonical admission freeze"
   ],
-  "selection_rule": "C3 \u00a78 priority 1: registry digest-pinned cases that are also in the Gate A1a approved 32-row A1\u2227A3 queue, matched by public issue/SHA content (b-pocketfft-004\u2192EXT-numpy-03, e-sundials-007\u2192EXT-sundials-07, c-scipy-002\u2192EXT-scipy-04). Remaining 29 queue rows deferred."
+  "selection_rule": "C3 \u00a78 priority 1: registry digest-pinned cases that are also in the Gate A1a approved 32-row A1\u2227A3 queue, matched by public issue/SHA content (b-pocketfft-004\u2192EXT-numpy-03, e-sundials-007\u2192EXT-sundials-07, c-scipy-002\u2192EXT-scipy-04). Remaining 29 queue rows deferred; Batch 2 locked."
 }

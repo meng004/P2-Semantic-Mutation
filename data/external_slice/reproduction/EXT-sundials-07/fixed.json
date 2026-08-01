@@ -12,7 +12,7 @@
       "--rtol",
       "1e-5"
     ],
-    "harness": "/tmp/c3_batch1/work/sundials/kprmri-fixed",
+    "harness": "/tmp/c3_batch1_fix/sundials/kprmri-fixed",
     "relative_accuracy_bound": 500.0
   },
   "neutral_id": "EXT-sundials-07",
@@ -24,7 +24,7 @@
   },
   "package_version": {
     "harness_env": {
-      "HARNESS_BIN": "/tmp/c3_batch1/work/sundials/kprmri-fixed",
+      "HARNESS_BIN": "/tmp/c3_batch1_fix/sundials/kprmri-fixed",
       "SUNDIALS_INSTALL": ""
     },
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",

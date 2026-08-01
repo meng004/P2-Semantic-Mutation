@@ -36,3 +36,18 @@ After push of C1, this VM/session requests local Gate A0 and must not start C2 a
 - Results: 3/3 proposed `crit_dual_arm_repro=PASS` with same trigger/input/seed=0
 - Candidate sheet A2 left `PENDING` (C2 checker contract); promotion deferred to Gate A1b
 - Stopped after batch 1 push; C4 / labelling / category-map freeze / predictive freeze / detection runs not started
+
+
+## C3 Batch 1 correction — Gate A1b finding fix (this session)
+
+| task/gate | VM/session | baseline commit | exact command | environment | input hash | output hash | exit code | failure/retry | output commit | auditor verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| C3 / A1b batch1 correction | bc-1d216e6e-25c0-46ef-9f68-b1d417f18f57 | 607acb044856101d8744f62cd2f7173a396c99b5 | `python3 scripts/external_slice/rebuild_c3_batch1_provenance.py`; see per-case COMMANDS.json + BATCH1_COMMAND_LOG.json | host rebuild with hash locks; Python 3.9.18 / 3.12.3; gcc/g++/cmake recorded | blocked A1b report @6419fbe3 + prior batch1 artifacts | corrected reproduction locks/commands/environment + readiness_batch1.json | per-arm trigger exits buggy=1 fixed=0; GHCR pulls exit=1 | closes A1B-HANDOFF-CMD-001 and A1B-LOCK-PROVENANCE-001; Batch 2 still locked | see correction handoff after push | pending Gate A1b re-review |
+
+### Correction snapshot
+
+- Fresh reconstruction in `/tmp/c3_batch1_fix`
+- Exact per-arm source/download/build/install/trigger/capture commands with exit codes committed
+- Hash-locked requirements + source archive/tree hashes + SUNDIALS build-tool pins committed under each case `locks/`
+- Candidate-sheet A2 remains PENDING; no Batch 2
+
