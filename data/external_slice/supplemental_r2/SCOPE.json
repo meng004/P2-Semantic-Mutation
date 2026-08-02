@@ -1,0 +1,109 @@
+{
+  "baseline_commit": "d95d6277ee09479d638bb83d75562e9dc4348031",
+  "created_cutoff": "2026-08-01T23:59:59Z",
+  "design_plan": "docs/superpowers/plans/2026-08-02-supplemental-mining-r2.md",
+  "exclusion_classes": [
+    "crash-only",
+    "build/packaging",
+    "API misuse",
+    "documentation",
+    "performance-only",
+    "test-infrastructure",
+    "behaviour change that is intended API redesign"
+  ],
+  "forbidden_actions": [
+    "A2 build or trigger execution",
+    "reproducer creation",
+    "MR or mutation/kill inspection",
+    "category or analysis alias assignment",
+    "prediction or detection-result access",
+    "modification of existing admission, readiness, freeze, annotation, prediction, reproduction, or run artifacts",
+    "Search API, GraphQL search, REST issue listing, manual search, or PR-to-issue resolution",
+    "merge or cherry-pick of PR #6"
+  ],
+  "forbidden_transports": [
+    "REST /search/issues",
+    "gh search issues",
+    "GraphQL search(...)",
+    "GraphQL SearchResultItemConnection",
+    "REST /repos/{owner}/{repo}/issues",
+    "browser/manual search as queue membership evidence"
+  ],
+  "input_sha256": {
+    "docs/review_20260730/gate_a1d_readiness_batch3_audit.md": "2b744e504e60508dec5c59539804b7fe13915d41b752c6048503d50c2290833c",
+    "docs/review_20260730/gate_supplemental_admission_r1_audit.md": "b8e5cf3019c5032a80ff1356ffe18f8b73cbca63d7f088a5f0d8783fd06a256b",
+    "docs/review_20260730/phase3_5_dual_model_audit_ledger.md": "21df540c097fcd126a27f20797ac16daf787a43b4aba6b15e960b18c949bd3a0",
+    "docs/superpowers/plans/2026-08-02-supplemental-mining-r1.md": "1c2df1d7f2516d58385e1cee6688c6633bf4307cf2328059a5e86e35923e7af5",
+    "docs/superpowers/plans/2026-08-02-supplemental-mining-r2.md": "04b6b08c344b550c9ce11b8bb0fca57a0cb00fcb5f7bffceb4d49ab71155e8d5",
+    "research/prereg_v2/external_slice_protocol.md": "186b9734077035f63a1819569ecf45e645545862d045cb5ee899a7dd8f2841ca",
+    "research/prereg_v2/hypotheses.md": "c3622e0f20e7a43278eac5e7847479d07e85ed086765303d3f5812510202806c"
+  },
+  "max_results_per_phrase": 20,
+  "max_reviewed_per_repo": 20,
+  "phrases": [
+    "wrong result",
+    "incorrect value",
+    "numerical regression",
+    "precision loss",
+    "convergence failure",
+    "conservation violation",
+    "biased estimate",
+    "wrong sign",
+    "off by a factor",
+    "accuracy regression",
+    "numerical instability"
+  ],
+  "repositories": [
+    {
+      "id_prefix": "EXT-pymc-",
+      "name": "pymc",
+      "order": 1,
+      "owner": "pymc-devs",
+      "repo": "pymc-devs/pymc",
+      "restriction": "numerical kernels only"
+    },
+    {
+      "id_prefix": "EXT-gpytorch-",
+      "name": "gpytorch",
+      "order": 2,
+      "owner": "cornellius-gp",
+      "repo": "cornellius-gp/gpytorch",
+      "restriction": "numerical kernels only"
+    },
+    {
+      "id_prefix": "EXT-chaospy-",
+      "name": "chaospy",
+      "order": 3,
+      "owner": "jonathf",
+      "repo": "jonathf/chaospy",
+      "restriction": "numerical kernels only"
+    },
+    {
+      "id_prefix": "EXT-salib-",
+      "name": "SALib",
+      "order": 4,
+      "owner": "SALib",
+      "repo": "SALib/SALib",
+      "restriction": "numerical kernels only"
+    },
+    {
+      "id_prefix": "EXT-pytorch-",
+      "name": "pytorch",
+      "order": 5,
+      "owner": "pytorch",
+      "repo": "pytorch/pytorch",
+      "restriction": "linalg, optim, or special-function numerical components only"
+    },
+    {
+      "id_prefix": "EXT-jax-",
+      "name": "jax",
+      "order": 6,
+      "owner": "jax-ml",
+      "repo": "jax-ml/jax",
+      "restriction": "linalg, optim, or special-function numerical components only"
+    }
+  ],
+  "schema_version": 1,
+  "target_pending_per_repo": 5,
+  "task": "SUPPLEMENTAL_MINING_R2"
+}

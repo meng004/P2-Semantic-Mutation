@@ -1,0 +1,62 @@
+{
+  "cli": [
+    "gh",
+    "api",
+    "graphql"
+  ],
+  "created_cutoff": "2026-08-01T23:59:59Z",
+  "forbid_pull_request_nodes": true,
+  "hard_fail_on": [
+    "nonzero_exit",
+    "timeout",
+    "malformed_json",
+    "graphql_errors",
+    "null_repository",
+    "null_issues",
+    "typename_not_issue",
+    "state_not_closed",
+    "null_closed_at",
+    "pull_url",
+    "incomplete_labels",
+    "cursor_drift",
+    "total_count_drift",
+    "incomplete_pagination",
+    "query_identity_drift",
+    "forbidden_transport"
+  ],
+  "label_page_size": 100,
+  "operation_name": "SupplementalR2RepositoryIssues",
+  "order_by": {
+    "direction": "DESC",
+    "field": "CREATED_AT"
+  },
+  "page_size": 100,
+  "query_document": "query SupplementalR2RepositoryIssues($owner: String!, $name: String!, $after: String) {\n  repository(owner: $owner, name: $name) {\n    issues(\n      first: 100,\n      after: $after,\n      states: [CLOSED],\n      orderBy: {field: CREATED_AT, direction: DESC}\n    ) {\n      totalCount\n      pageInfo { hasNextPage endCursor }\n      nodes {\n        __typename\n        id\n        number\n        url\n        state\n        title\n        bodyText\n        createdAt\n        updatedAt\n        closedAt\n        labels(first: 100) {\n          pageInfo { hasNextPage endCursor }\n          nodes { name }\n        }\n      }\n    }\n  }\n}\n",
+  "query_document_sha256": "9dfcc0b1f21c7b6334ac372a16083fbe57835931e6a6fc1fef54ff6b1e7d0e09",
+  "require_complete_label_pagination": true,
+  "require_typename_issue": true,
+  "schema_version": 1,
+  "selected_fields": [
+    "__typename",
+    "id",
+    "number",
+    "url",
+    "state",
+    "title",
+    "bodyText",
+    "createdAt",
+    "updatedAt",
+    "closedAt",
+    "labels.pageInfo.hasNextPage",
+    "labels.pageInfo.endCursor",
+    "labels.nodes.name",
+    "issues.totalCount",
+    "issues.pageInfo.hasNextPage",
+    "issues.pageInfo.endCursor"
+  ],
+  "states": [
+    "CLOSED"
+  ],
+  "task": "SUPPLEMENTAL_MINING_R2",
+  "transport": "github_graphql_repository_issues"
+}

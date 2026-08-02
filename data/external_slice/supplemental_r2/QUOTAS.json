@@ -1,0 +1,64 @@
+{
+  "projection_if_quotas_met": {
+    "qualifying_project_names": [
+      "pymc-devs/pymc",
+      "cornellius-gp/gpytorch",
+      "jonathf/chaospy",
+      "SALib/SALib",
+      "LLNL/sundials",
+      "statsmodels/statsmodels"
+    ],
+    "qualifying_projects": 6,
+    "ready_defects_lower_bound": 30
+  },
+  "readiness_quota_order": [
+    {
+      "additional_ready_target": 3,
+      "repo": "pymc-devs/pymc",
+      "resulting_project_count": 3
+    },
+    {
+      "additional_ready_target": 3,
+      "repo": "cornellius-gp/gpytorch",
+      "resulting_project_count": 3
+    },
+    {
+      "additional_ready_target": 3,
+      "repo": "jonathf/chaospy",
+      "resulting_project_count": 3
+    },
+    {
+      "additional_ready_target": 3,
+      "repo": "SALib/SALib",
+      "resulting_project_count": 3
+    },
+    {
+      "additional_ready_target": 0,
+      "repo": "pytorch/pytorch",
+      "resulting_project_count": 0
+    },
+    {
+      "additional_ready_target": 0,
+      "repo": "jax-ml/jax",
+      "resulting_project_count": 0
+    }
+  ],
+  "replacement_policy": "forbidden",
+  "review_stopping_rule": {
+    "after_stop_status": "NOT_REVIEWED_AFTER_STOP",
+    "max_reviewed_per_repo": 20,
+    "target_admit_pending_repro_per_repo": 5
+  },
+  "schema_version": 1,
+  "shortfall_status": "DISTRIBUTION_TARGET_AT_RISK",
+  "starting_state": {
+    "accepted_ready_defects": 18,
+    "note": "Gate A1d-r3 accepted 18 ready defects across 11 projects; two qualify at >=3.",
+    "qualifying_project_names": [
+      "LLNL/sundials",
+      "statsmodels/statsmodels"
+    ],
+    "qualifying_projects": 2
+  },
+  "task": "SUPPLEMENTAL_MINING_R2"
+}
