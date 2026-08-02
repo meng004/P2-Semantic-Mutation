@@ -87,7 +87,7 @@ S0 台账建立提交前实测：
 | Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
-| Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R2 handoff `e007042074956e6c57a089cfed1ecc404b5723a4`；payload `bc3a4e30f57f38f728b4f3971c05c07e6285f643` | `BLOCKED` | N/A（未集成） | 否；仅 R3 correction 解锁，已撤回集合及任何新 supplemental row 不得进入 readiness |
+| Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R3 handoff `e6110b104e3271dc31c74c6346eff808e0239048`；payload `72a11bc0bf39c9d667bbaab9aa198b85c48c13af` | `BLOCKED` | N/A（未集成） | 否；仅 R4 correction 解锁，已撤回集合及任何新 supplemental row 不得进入 readiness |
 
 ## 5. 交接审计记录
 
@@ -479,3 +479,33 @@ Gate `SUPPLEMENTAL_ADMISSION_R1` 为 `BLOCKED`。不 cherry-pick PR #5 的三项
 #### 判定
 
 `SUPP-R1-SEARCH-SEMANTICS-001` 与原 handoff disclosure finding 关闭；`SUPP-R1-QUEUE-BINDING-001` 仍为 OPEN/PARTIAL。Gate R2 保持 `BLOCKED`，不集成 payload/handoff，不认可或恢复任何 supplemental row。仅允许按 `gate_supplemental_admission_r1_audit.md` §7.4 在新 Cursor VM/session 执行 R3 correction。
+
+### 5.12 Gate SUPPLEMENTAL_ADMISSION_R1-r3 finding 修复复核
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate SUPPLEMENTAL_ADMISSION_R1-r3 |
+| 记录类型 | finding 修复复核 |
+| 交接/复核时间 | `2026-08-02T11:30:27+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r1`；draft PR #5 |
+| Cursor commit | handoff `e6110b104e3271dc31c74c6346eff808e0239048`；payload `72a11bc0bf39c9d667bbaab9aa198b85c48c13af` |
+| Cursor ancestry | `e0070420...` → `72a11bc0...` → `e6110b10...`；PR 与远端 branch head 均为 handoff |
+| Handoff manifest | `data/external_slice/supplemental_r1/HANDOFF_SUPPLEMENTAL_R1.json`；SHA256 `66f6e7823b756437fc19ac039e3b710e5ecb988f1525a540b4be8a5a471a5a44` |
+| 输出 hash | diagnostic withdrawal `0086087502b7365fdbf32925d2eab800fe0b15a370f32bae1ebfb494e137e7d2`；hard fail `2652f4923b31fd6438c9371b675edcf235e9d30d4a81ad22c66d570615af7184`；withdrawal `42ad107522d910b53ef816561eb400857428bf4aa0d98ec7279e594dd973544a`；command log `4770c0c2dff70b60288a6381f7a88eb7bd034434dc05310933b19af1076d3e76`；verification log `2d72e9e8dd1d096f4b871538a6e480235e4a2c0098b11686d7812f4011837a22` |
+| Findings | blocker `SUPP-R1-R3-PHRASE-PROVENANCE-001`；medium/non-blocking `SUPP-R1-R3-NEGATIVE-COVERAGE-001`；low/non-blocking `SUPP-R1-R3-STYLE-001` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（BLOCKED；未集成 R3 payload/handoff）` |
+| 后继任务是否解锁 | 否。仅从 `e6110b10...` 开始 R4 correction；readiness、A2 promotion、canonical freeze 及下游任务全部锁定。 |
+
+#### 独立复算结果
+
+- R3 ancestry、远端 branch 与 draft PR #5 head 一致；handoff hash checker `HASH_CHECK_OK`。
+- 两个 R2 exit-0 负向探针现均 exit 1；旧 56 项 withdrawal hash 仍精确一致；无候选或 readiness 工件恢复。
+- targeted tests `33 passed`；完整测试 `293 passed, 10 warnings`；compileall、token scan、immutable-path 与 diff check 通过。
+- R2 diagnostic 文件和 66-query claim 已撤回；首个 Cursor VM query 与 official wrapper exit 2 的命令、时间、hash/tail 已记录并限定环境范围。
+- 新 phrase-provenance 探针将 snapshot item phrase 改为未冻结字符串后，checker 仍错误 exit 0/PASS；`setdefault` 保留了被篡改的 item phrase。
+- “every cross-artifact field mismatch” negative coverage 仍不完整，但现有比较代码覆盖多数未单测字段。
+
+#### 判定
+
+R3 关闭两个旧 concrete escape 与 diagnostic provenance finding，但 phrase provenance 仍未绑定冻结查询。Gate 保持 `BLOCKED`，不集成 R3 payload/handoff，不认可或恢复任何 supplemental row。仅允许按 `gate_supplemental_admission_r1_audit.md` §8.4 在新 Cursor VM/session 执行 R4 correction。

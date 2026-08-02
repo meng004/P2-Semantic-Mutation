@@ -7,7 +7,7 @@
 - **Verdict:** `BLOCKED`
 - **Integration:** none; the three Cursor commits are not cherry-picked
 - **Successor state:** supplemental readiness, A2 promotion, canonical admission freeze, C4, labelling, prediction, and detection remain locked
-- **R2 re-audit:** handoff `e007042074956e6c57a089cfed1ecc404b5723a4`; current verdict remains `BLOCKED`
+- **R3 re-audit:** handoff `e6110b104e3271dc31c74c6346eff808e0239048`; current verdict remains `BLOCKED`
 
 ## 1. Independent verification
 
@@ -194,3 +194,107 @@ R2 remains `BLOCKED`. The safe withdrawal is verified, but the correction
 payload/handoff are not integrated because the central full-binding claim is
 false and the 66-query diagnostic claim is not command-auditable. Only the R3
 correction contract above is unlocked.
+
+## 8. R3 correction re-audit
+
+### 8.1 Intake and verification
+
+R3 lineage is consecutive and remotely pinned:
+
+```text
+e007042074956e6c57a089cfed1ecc404b5723a4
+  -> 72a11bc0bf39c9d667bbaab9aa198b85c48c13af  correction payload
+  -> e6110b104e3271dc31c74c6346eff808e0239048  correction handoff
+```
+
+Draft PR #5 and the remote Cursor branch both point to the handoff. Independent
+verification produced:
+
+| Check | Result |
+|---|---|
+| Handoff hash checker | `HASH_CHECK_OK`; six files, zero trees/evidence |
+| Two R2 exit-0 probes | both now exit 1 with the expected binding error |
+| Withdrawal equality | canonical `(neutral_id, decision)` SHA256 remains `878d6851...` |
+| Inadmissible artifacts | old candidate/search/queue/decision/evidence and R2 diagnostic all absent |
+| Targeted tests | `33 passed` |
+| Full R3 tests | `293 passed, 10 warnings` |
+| Compileall | exit 0 |
+| Token scan | raw `rg` exit 1, no output |
+| Immutable admission/readiness/downstream paths | exit 0; unchanged |
+| Diff whitespace | exit 0 |
+
+R3 deletes the unauditable 66-query diagnostic claim, retains a scoped Cursor
+VM first-query hard failure with exact wrapper command/exit provenance, and
+keeps the full withdrawal. No candidate or readiness artifact is restored.
+
+### 8.2 R3 findings
+
+#### `SUPP-R1-R3-PHRASE-PROVENANCE-001` — BLOCKER
+
+The checker reconstructs queue records from snapshot items, but uses
+`cloned.setdefault("phrase", query.get("phrase"))`. This preserves an arbitrary
+item-level phrase instead of deriving or validating it against the enclosing
+frozen query. Snapshot validation checks the query identity but never checks
+`item.phrase == query.phrase`.
+
+An independent negative probe changed the sole snapshot item's phrase to
+`"tampered phrase"`, rebuilt the queue and hashes through the R3 helper, and
+left all scientific fields otherwise valid. The checker exited 0 and printed:
+
+```text
+PASS: supplemental mining R1 admission structural check (full binding)
+```
+
+Thus queue phrase provenance is still trusted rather than bound to the frozen
+query. This directly violates R3 contract §7.4(1), so
+`SUPP-R1-R2-FULL-BINDING-001` remains `OPEN/PARTIAL`.
+
+#### `SUPP-R1-R3-NEGATIVE-COVERAGE-001` — MEDIUM / NON-BLOCKING
+
+R3 adds the two required escape regressions plus missing/duplicate query,
+queue-order, fixed-SHA, mechanism, rationale, fix-URL, exclusion, and alias
+negatives. It does not add explicit tests for every promised cross-artifact
+field mismatch, including evidence neutral ID/issue URL, sheet repository,
+buggy SHA, verdict, the three criteria individually, evidence mechanism/SHAs,
+and evidence URLs. Most bindings are present in code, but the R3 “every mismatch
+negative” test requirement is only partial.
+
+#### `SUPP-R1-R3-STYLE-001` — LOW / NON-BLOCKING
+
+Standards review found no hard violation. It noted low-risk raw-dictionary data
+clumps in the cross-artifact comparison helper and duplicated dynamic-module
+loading in tests.
+
+### 8.3 Finding disposition
+
+| Finding | R3 disposition |
+|---|---|
+| `SUPP-R1-R2-DIAGNOSTIC-PROVENANCE-001` | `CLOSED`: claim/artifact withdrawn; scoped wrapper command and exit 2 logged |
+| Two R2 concrete binding escapes | `CLOSED`: independent probes now exit 1 |
+| `SUPP-R1-R2-FULL-BINDING-001` | `OPEN/PARTIAL`: phrase provenance escape remains |
+
+### 8.4 R4 correction contract
+
+Use a new Cursor VM/session without `rtk`, on the same branch starting from
+`e6110b104e3271dc31c74c6346eff808e0239048`.
+
+1. For every snapshot item, require item repository and phrase to equal the
+   enclosing exact query, or derive those fields exclusively from the query.
+   Reject an explicit mismatch rather than silently preserving it.
+2. Add a regression reproducing the exact `"tampered phrase"` exit-0 probe and
+   require nonzero exit. Add the remaining explicit field-mismatch negatives
+   listed in `SUPP-R1-R3-NEGATIVE-COVERAGE-001`.
+3. Preserve the now-correct queue reconstruction, full field comparisons,
+   diagnostic withdrawal, wrapper provenance, old-set withdrawal, and all
+   candidate/readiness absences.
+4. Update the handoff to close the R3 phrase-provenance finding without making
+   any new search or candidate claim.
+5. Commit correction payload and direct-child handoff separately, push, and
+   stop for `SUPPLEMENTAL_ADMISSION_R1-r4`. Do not start readiness.
+
+### 8.5 R3 decision
+
+R3 remains `BLOCKED`. The two R2 escape findings and diagnostic-provenance gap
+are closed, but frozen phrase provenance can still pass with a tampered item.
+The R3 payload/handoff are not integrated; only the R4 correction above is
+unlocked.
