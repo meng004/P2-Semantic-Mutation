@@ -87,6 +87,7 @@ S0 台账建立提交前实测：
 | Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
+| Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | handoff `ac887e8a4a980dafca31c9ee803ec971a57698bc`；payload `a1cc795f340c38b340550c6789ece72a00c4c316`；scope `e108b82d38e53d89991960266385edf62da9eefc` | `BLOCKED` | N/A（未集成） | 否；仅 R1 correction 解锁，12 条 proposed rows 不得进入 readiness |
 
 ## 5. 交接审计记录
 
@@ -417,3 +418,34 @@ Gate A1c 判定为 `BLOCKED`。本地不 cherry-pick Batch 2 三个 commit，不
 #### 判定
 
 四项原 blocker 全部关闭，Gate A1c 以 `PASS_WITH_DISCLOSURE` 接受并按不可变顺序集成全部 Batch 2 lineage。披露项仅为 PR #4 标题仍写 Batch 1，以及保留两轮 correction lineage。Batch 1+2 合计 12 ready / 20 retained failures，尚未达到协议 `n >= 20` 目标；因此下一任务不是 canonical freeze，而是新 Cursor VM 的 C3 Batch 3，范围严格限定为独立 supplemental pilot 中六行 A1/A3 PASS、A2 PENDING 案例。
+
+### 5.10 Gate SUPPLEMENTAL_ADMISSION_R1 首次审计：supplemental mining R1
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining R1 |
+| 记录类型 | 首次审计 |
+| 交接/复核时间 | `2026-08-02T09:55:39+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r1`；draft PR #5 |
+| Cursor commit | handoff `ac887e8a4a980dafca31c9ee803ec971a57698bc`；payload `a1cc795f340c38b340550c6789ece72a00c4c316`；scope `e108b82d38e53d89991960266385edf62da9eefc` |
+| Cursor baseline | `0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a` |
+| Handoff manifest | `data/external_slice/supplemental_r1/HANDOFF_SUPPLEMENTAL_R1.json`；SHA256 `4a57cb082203de0e79105e248e00e07b89d6762aa305dbc95871d5a91f8b3aab` |
+| 输入 hash | plan `1c2df1d7f2516d58385e1cee6688c6633bf4307cf2328059a5e86e35923e7af5`；scope `e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7`；其余六项 immutable input 与 frozen scope 声明一致 |
+| 输出 hash | search `df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c`；queue `e110811b6b8fceb24242597a8b4d5cd969ea877aef4c9728cd0ae9e7c7e09c7a`；evidence snapshot `50a1c86149f8043130d0f012418abdac7670d2438b0231ff6dedf1b033e4b914`；decisions `e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7`；sheet `ae347f4868731425f78b94d2532d0234bc5b089dae040f9b08ee7e9db334a6f0` |
+| Findings | blockers `SUPP-R1-SEARCH-SEMANTICS-001`、`SUPP-R1-QUEUE-BINDING-001`；high `SUPP-R1-HANDOFF-DISCLOSURE-001`；non-blocking `SUPP-R1-CODE-QUALITY-001` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（BLOCKED；未集成 scope/payload/handoff）` |
+| 后继任务是否解锁 | 否。仅从 blocked handoff 新开 correction session；supplemental readiness、A2 promotion、canonical freeze、C4、标注、预测和 detection runs 均锁定。 |
+
+#### 独立复算结果
+
+- 三段 ancestry 与 draft PR #5 head 正确；handoff hash checker `HASH_CHECK_OK`；structural checker exit 0。
+- targeted tests `18 passed`；完整测试 `278 passed, 10 warnings`；reserved/token/prohibited scans raw exit 1、无输出；既有 admission/readiness/downstream 路径未变。
+- 搜索快照的 262 hits 全部为 PR、issue 为零；实现通过未冻结的 PR→issue 回溯构造 128-row queue，其中 21 条为 open。
+- exact first frozen query 独立重放返回 20 issue / 0 PR，因此现有 queue、neutral-ID 顺序、56 个决策与 12 个 proposed pending 均不属于冻结搜索总体。
+- checker 不接收 queue；decision validator 只比较 ID 存在性，对错误 review order 执行 no-op，不能证明严格选择顺序。
+- handoff 的 unresolved findings 未记录上述搜索语义偏离和 open-item 污染。
+
+#### 判定
+
+Gate `SUPPLEMENTAL_ADMISSION_R1` 为 `BLOCKED`。不 cherry-pick PR #5 的三项 commit，不认可其 12 条 proposed rows，不启动其 readiness。仅允许在新 Cursor VM/session 中从 blocked handoff 执行 correction，移除 PR fallback、重跑 direct issue-only 搜索、重新分配 ID/评审并补齐 queue binding 与 handoff disclosure。完整修复合同见 `docs/review_20260730/gate_supplemental_admission_r1_audit.md`。
