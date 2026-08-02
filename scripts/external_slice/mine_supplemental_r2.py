@@ -169,6 +169,9 @@ def refuse_forbidden_transport(command_text: str) -> None:
 
 
 def default_graphql_runner(query: str, variables: dict[str, Any]) -> tuple[int, str, str]:
+    import os
+    import time
+
     refuse_forbidden_transport(query)
     cmd = ["gh", "api", "graphql", "-f", f"query={query}"]
     for key in ("owner", "name"):
@@ -179,6 +182,10 @@ def default_graphql_runner(query: str, variables: dict[str, Any]) -> tuple[int, 
     if after is not None:
         cmd.extend(["-F", f"after={after}"])
     refuse_forbidden_transport(" ".join(cmd))
+    # Pace live requests to reduce secondary rate-limit hard-fails.
+    delay = float(os.environ.get("SUPPLEMENTAL_R2_GRAPHQL_DELAY_S", "0.35"))
+    if delay > 0:
+        time.sleep(delay)
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
     return proc.returncode, proc.stdout or "", proc.stderr or ""
 
