@@ -305,7 +305,7 @@
       "artifact_dir": "data/external_slice/reproduction/EXT-freia-01",
       "buggy_property_holds": false,
       "buggy_sha": "0f100e008deda5c8521a4ba7014f0376ed5a0eb7",
-      "command_count": 17,
+      "command_count": 18,
       "dual_arm_contrast": true,
       "failure_detail": null,
       "failure_stage": null,
@@ -318,7 +318,7 @@
       "observation_status": "case-local observed pending Gate A1c re-review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "vislearn/FrEIA",
-      "route": "exact-source-python-hashlocked",
+      "route": "exact-source-python-hashlocked-no-build-isolation",
       "seed": 0,
       "sheet_crit_dual_arm_repro_unchanged": "PENDING",
       "trigger": "data/external_slice/reproducers/EXT-freia-01.py",
@@ -726,7 +726,7 @@
     "A1C-BUILD-EVIDENCE-001",
     "A1C-HANDOFF-VERIFY-CMD-001"
   ],
-  "correction_of": "1f1586e66712ff220386e7c29e98593cda7e48ba",
+  "correction_of": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
   "counts": {
     "batch_size": 29,
     "proposed_PASS": 9,

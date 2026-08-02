@@ -1,6 +1,7 @@
 {
   "batch": 2,
   "buggy_sha": "0f100e008deda5c8521a4ba7014f0376ed5a0eb7",
+  "build_lock": "data/external_slice/reproduction/EXT-freia-01/locks/requirements.build.txt",
   "closed_findings": [
     "A1C-FREIA-LOCK-001"
   ],
@@ -10,9 +11,11 @@
   "failure_detail": null,
   "failure_stage": null,
   "fixed_sha": "fa7b45d91710f9113bc000298b4a8e6aecdbcb23",
+  "hash_locked_build_closure": true,
   "hash_locked_install": true,
   "issue_url": "https://github.com/vislearn/FrEIA/issues/140",
   "neutral_id": "EXT-freia-01",
+  "no_build_isolation": true,
   "platform": {
     "cmake": "cmake version 3.28.3",
     "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
@@ -25,7 +28,7 @@
   },
   "proposed_crit_dual_arm_repro": "PASS",
   "repo": "vislearn/FrEIA",
-  "route": "exact-source-python-hashlocked",
+  "route": "exact-source-python-hashlocked-no-build-isolation",
   "seed": 0,
   "sheet_crit_dual_arm_repro_unchanged": "PENDING",
   "trigger_exit_codes": {
