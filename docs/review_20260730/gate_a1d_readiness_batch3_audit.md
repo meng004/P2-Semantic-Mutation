@@ -2,7 +2,7 @@
 
 - **Audit time:** `2026-08-02T13:44:43+08:00`
 - **Cursor branch:** `origin/cursor/grok-phase3-c3-readiness-batch3`
-- **Draft PR:** #6; OPEN; head `da70fa676ebcab8ef1e98f532aa711c2d01f0c84`
+- **Draft PR:** #6; OPEN; head `4287ea4a1c782030d34af2162355fd459d50a563`
 - **Baseline:** `0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a`
 - **Verdict:** `BLOCKED`
 - **Integration:** none
@@ -182,3 +182,108 @@ from `da70fa676ebcab8ef1e98f532aa711c2d01f0c84`.
 9. Commit a correction payload and direct-child correction handoff separately,
    push, and stop for `Gate A1d-r1`. Do not start supplementary mining,
    canonical freeze, C4, annotation, prediction, or detection.
+
+## 7. Gate A1d-r1 re-review
+
+- **Re-review time:** `2026-08-02T19:21:36+08:00`
+- **Correction lineage:** `da70fa67` → matrix `64568960` → payload
+  `dfc94736` → handoff `4287ea4a`
+- **Verdict:** `BLOCKED`
+- **Integration:** none
+- **Accepted ready count:** remains 12; the six Batch 3 rows remain proposed only
+
+### 7.1 Closed original findings and retained evidence
+
+The correction closes the three original empirical-evidence findings:
+
+- membership remains byte-identical at
+  `02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853`;
+- the frozen matrix specifies smoke seed 0 and formal seeds 0–4, and all 72
+  retained arm executions are present (12 smoke plus 60 formal);
+- an independent reconstruction found every formal pair input-identical with
+  buggy `property_holds=false`/raw RC 1 and fixed
+  `property_holds=true`/raw RC 0;
+- `EXT-statsmodels-03` now requires both two-sample success and one-sample
+  explicit-value rejection; the prior escape probe now returns property false
+  and exit 1;
+- all 12 per-arm BLAS/LAPACK records exit 0, identify OpenBLAS, retain raw
+  command/stdout/stderr/return-code artifacts, and are included in the
+  handoff per-case hash trees.
+
+Independent checks produced:
+
+| Check | Result |
+|---|---|
+| Lineage and remote head | exact direct ancestry; PR #6 head equals `4287ea4a...` |
+| Handoff checker | `HASH_CHECK_OK` |
+| Tampered formal RC artifact | checker exit 1 with exact file hash mismatch |
+| Independent evidence probe | `A1D_R1_INDEPENDENT_PROBE_OK cases=6 formal_runs=30 smoke_runs=6 arms=72` |
+| Admission checker | exit 0; pre-readiness structure only |
+| Targeted A1d-r1 tests | `7 passed` |
+| Full test suite | `267 passed, 10 warnings` |
+| Compileall | exit 0 |
+| Reserved/token scans | raw `rg` exit 1, no output |
+| Membership and both sheets | membership unchanged; A2 remains `PENDING` |
+
+Correction hashes:
+
+| Artifact | SHA256 |
+|---|---|
+| handoff | `58b7d370a5e299c3920a1cee253fa6327a8e0ceaa9413c517c39516471828041` |
+| execution matrix | `addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6` |
+| readiness | `c9d3d57bd4d5c6d5120c1d92e64b094b47bbd3635e26af817ab24fd80dffc016` |
+| command log | `a2bbaa97d3038bf8982a0c425300e5b289f80be70f945b4f4643921e0814fb8c` |
+| verification log | `de7343c65a4b1090eb12ada6f18894e13a5872067dd5f4eeb1a8c94e8ab824de` |
+| runner | `8cb40a1446b9a556a6a5b2ce3838298a10ca646639ea93abd97f42f786cd91ee` |
+| aggregation helper | `45ede051685b5d837b103d4bac5724e0160f42c8a26702d66ce087531336aa59` |
+
+### 7.2 `A1D-R1-MATRIX-AGGREGATION-FAILOPEN-001` — BLOCKER
+
+The retained observations are correct, but the code that turns them into a
+decision remains fail-open. In `batch3_a1d_r1.py`, absent
+`input_parity_ok` defaults to true, and buggy/fixed raw return codes are copied
+into output rows without participating in the contrast predicate. Two
+independent negative probes supplied all five formal rows and obtained `PASS`
+when:
+
+1. every `input_parity_ok` field was absent; and
+2. raw return codes were reversed to buggy 0 / fixed 1.
+
+The standalone membership/matrix verifier also trusts the summarized
+`all_seeds_contrasted` flag instead of reconstructing the five seed rows and
+binding properties, explicit parity, and raw RCs. The targeted tests do not
+cover either escape. This violates correction-contract items 2, 3, and 6, so
+the six proposed verdicts cannot yet be accepted even though the retained
+evidence happens to meet the intended rule.
+
+### 7.3 Standards axis — FAIL
+
+`ruff check --select E,F,I,E501 --ignore-noqa` reports four violations in
+`run_c3_batch3_readiness.py`: E402 and I001 for the post-path-mutation import,
+plus 114- and 107-character lines at current lines 1224 and 1631. The three
+new commit subjects are imperative and `git diff --check` is clean.
+
+### 7.4 Decision and A1d-r2 correction contract
+
+Gate A1d-r1 remains `BLOCKED`. Do not integrate PR #6, count the six rows as
+accepted ready cases, or begin supplementary mining/canonical freeze/C4. The
+only unlocked task is an in-place A1d-r2 correction on the same Cursor branch:
+
+1. Make formal aggregation fail closed: every seed 0–4 must be present,
+   `input_parity_ok is True`, buggy property false with raw RC 1, and fixed
+   property true with raw RC 0. Any absent or mismatched value must produce
+   `REPRO_FAILED` and remain visible in `failing_seeds`.
+2. Make the standalone verifier reconstruct all five formal rows from the
+   hash-bound per-execution JSON and return-code files; do not trust a summary
+   flag alone. Cross-check reconstructed rows against the repetition matrix,
+   readiness, and handoff verdict.
+3. Add negative regressions for absent parity and reversed raw return codes,
+   alongside the existing missing-seed and statsmodels-03 escape tests.
+4. Fix all four reported PEP 8/import/100-character violations and require the
+   exact Ruff command above to pass without relying on `noqa` for the import.
+5. Preserve the matrix, membership, sheets, and retained execution/provider
+   evidence. Re-running dual-arm experiments is unnecessary unless those raw
+   artifacts are changed. Recompute derived decision files, verification log,
+   hashes, and handoff.
+6. Commit a correction payload and direct-child handoff, push, and stop at
+   `Gate A1d-r2`; do not start any later empirical stage.

@@ -88,7 +88,7 @@ S0 台账建立提交前实测：
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
-| Gate A1d — C3 readiness Batch 3 | handoff `da70fa676ebcab8ef1e98f532aa711c2d01f0c84`；payload `00d1ca3fdfaa582f831f89589aabcfb51667c3c0`；membership `cc3321da3a9e6f1f7d67e5b90cdf21d6fb9001c1` | `BLOCKED` | N/A（未集成） | 否；仅原分支 A1d-r1 correction 解锁，accepted ready 仍为 12 |
+| Gate A1d — C3 readiness Batch 3 | A1d-r1 handoff `4287ea4a1c782030d34af2162355fd459d50a563`；payload `dfc94736fa9722cd1ab5ab6a61f8ad6f677138e2`；matrix `64568960ec5ccfeb12571ab01a1b9aeacbf48da2` | `BLOCKED` | N/A（未集成） | 否；仅原分支 A1d-r2 correction 解锁，accepted ready 仍为 12 |
 
 ## 5. 交接审计记录
 
@@ -569,3 +569,34 @@ R3 关闭两个旧 concrete escape 与 diagnostic provenance finding，但 phras
 #### 判定
 
 Gate A1d 为 `BLOCKED`。六个单次对比只能记为 case-local observed，不能接受为 A2 PASS；accepted ready 数保持 Batch 1+2 的 12。不得集成 PR #6 或进入新的 mining/freeze。唯一解锁任务是在原 Cursor 分支按 `gate_a1d_readiness_batch3_audit.md` §6 完成 correction，固定 smoke+seeds 0–4 的重复矩阵、修复 statsmodels-03 完整 predicate、补 per-arm BLAS/LAPACK provenance 和 targeted negative tests，然后停在 Gate A1d-r1。
+
+### 5.15 Gate A1d-r1 复审：C3 readiness Batch 3
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1d-r1 — C3 readiness Batch 3 correction |
+| 记录类型 | finding-closure 复审 |
+| 交接/复核时间 | `2026-08-02T19:21:36+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness-batch3`；draft PR #6 |
+| Cursor commit | handoff `4287ea4a1c782030d34af2162355fd459d50a563`；payload `dfc94736fa9722cd1ab5ab6a61f8ad6f677138e2`；matrix `64568960ec5ccfeb12571ab01a1b9aeacbf48da2` |
+| Cursor baseline | blocked handoff `da70fa676ebcab8ef1e98f532aa711c2d01f0c84` |
+| Handoff manifest | `data/external_slice/HANDOFF_REPRO_BATCH3.json`；SHA256 `58b7d370a5e299c3920a1cee253fa6327a8e0ceaa9413c517c39516471828041` |
+| 输入 hash | membership `02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853`；matrix `addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6`；source sheet `77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a` |
+| 输出 hash | readiness `c9d3d57bd4d5c6d5120c1d92e64b094b47bbd3635e26af817ab24fd80dffc016`；command log `a2bbaa97d3038bf8982a0c425300e5b289f80be70f945b4f4643921e0814fb8c`；verification log `de7343c65a4b1090eb12ada6f18894e13a5872067dd5f4eeb1a8c94e8ab824de` |
+| Findings | 原三项 empirical blocker 已关闭；新增 blocker `A1D-R1-MATRIX-AGGREGATION-FAILOPEN-001`；Standards axis FAIL |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（未集成 PR #6）` |
+| 后继任务是否解锁 | 否。仅从 `4287ea4a...` 启动 A1d-r2 correction；accepted ready 仍为 12，supplementary mining、canonical freeze、C4、标注、category map、prediction、detection 均锁定。 |
+
+#### 独立复算结果
+
+- lineage 是连续的 matrix → payload → handoff，PR #6 与远端 branch head 均固定到 handoff；membership 与 sheets 未变。
+- handoff checker 为 `HASH_CHECK_OK`；篡改一个 formal raw RC 后 checker exit 1 并指出精确文件；独立重构验证 6 cases、30 formal pairs、6 smoke pairs 和 72 arm executions。
+- retained evidence 全部符合预期：每个 formal pair 输入相同，buggy false/RC1，fixed true/RC0；12 个 provider 记录均 exit 0、识别 OpenBLAS 并被 per-case hash tree 绑定。
+- statsmodels-03 旧逃逸已关闭；admission checker exit 0；targeted `7 passed`；full suite `267 passed, 10 warnings`；compileall exit 0；reserved/token raw scans exit 1。
+- 但独立负测证明 formal aggregator 对缺失 parity 和反转 RC 均返回 `PASS`；standalone verifier 只信 summary，未从 raw files fail-closed 重构。
+- Standards 独立复审发现 runner 的 E402、I001 和两处 E501；新提交 subject 与 `git diff --check` 合格。
+
+#### 判定
+
+Gate A1d-r1 仍为 `BLOCKED`。当前 6/6 是证据层面的 observed contrast，但 decision code 存在可复现 fail-open，不能晋升为 accepted A2，ready 数仍为 12。唯一解锁任务是在同一 Cursor 分支完成 A1d-r2：显式要求每 seed parity 为 true 且 raw RC 为 1/0，由 verifier 从 hash-bound raw artifacts 重构五个 seed，加入缺失 parity/反转 RC 负测，修复四个 Ruff violations，重算 derived files/handoff 后停止复审。无需重跑未变的 dual-arm evidence。
