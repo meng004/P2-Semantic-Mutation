@@ -88,7 +88,7 @@ S0 台账建立提交前实测：
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
-| Gate A1d — C3 readiness Batch 3 | A1d-r2 handoff `8ef20d26ea0a785bd0209b922a94e7f3bc1e8064`；payload `eab67f3ab08329d1d38feb6ed445d138d14d2f2f` | `BLOCKED` | N/A（未集成） | 否；仅原分支 A1d-r3 correction 解锁，accepted ready 仍为 12 |
+| Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
 
 ## 5. 交接审计记录
 
@@ -629,3 +629,35 @@ Gate A1d-r1 仍为 `BLOCKED`。当前 6/6 是证据层面的 observed contrast�
 #### 判定
 
 Gate A1d-r2 仍为 `BLOCKED`。当前提交的六个 handoff verdict 虽与 raw evidence 一致，但不存在 fail-closed 的 handoff semantic binding，因此不能晋升为 accepted A2。唯一解锁任务是在同一 Cursor 分支完成 A1d-r3：verifier 读取 handoff，逐案绑定 reconstructed/readiness/repetition/handoff verdict 与 seeds/RC/failure metadata，重算 counts/failures，并增加 handoff-only verdict/count tamper 负测。无需重跑 dual-arm evidence。
+
+### 5.17 Gate A1d-r3 复审与最终判定：C3 readiness Batch 3
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1d-r3 — C3 readiness Batch 3 correction |
+| 记录类型 | finding-closure 最终复审 |
+| 交接/复核时间 | `2026-08-02T20:41:22+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness-batch3`；draft PR #6 |
+| Cursor commit | handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` |
+| Cursor baseline | blocked A1d-r2 handoff `8ef20d26ea0a785bd0209b922a94e7f3bc1e8064` |
+| Handoff manifest | `data/external_slice/HANDOFF_REPRO_BATCH3.json`；SHA256 `e192ee839a08bd71d8e682b44fad4e7defec68f8998d08e07e3292d3ec0ec64b` |
+| 输入 hash | membership `02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853`；matrix `addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6` |
+| 输出 hash | readiness `628cde0104906a8a0a92578ce989fe487f20eee4ac184e6f5fa2850410df9fba`；verification log `6862812d89a296b96a0c325c521ad84c406bc49dea96061aead0b1d738298224`；verifier `b21eea2724b3f5782167c9f6d78dfe5e0a5bd58e9b51f4c374a98185447e0da3` |
+| Findings | `A1D-R2-HANDOFF-VERDICT-BINDING-001` 已关闭；Standards PASS；Spec PASS |
+| Verdict | `PASS_WITH_DISCLOSURE` |
+| 本地集成 commit | `N/A（PR #6 integration 等待显式授权）` |
+| 后继任务是否解锁 | accepted ready=18；canonical freeze/C4/标注/prediction/detection 仍锁定。仅 Local Desktop Supplemental Mining R2 协议修订与设计解锁。 |
+
+#### 独立复算结果
+
+- verifier 现读取 handoff，严格绑定六案 ID/order、五个 formal seeds、verdict、smoke/formal seeds、seed-0 RC、failure stage、counts 和 failures。
+- handoff-only verdict、counts、failures 三个独立篡改分别触发对应 AssertionError 并 exit 1；正向 verifier 为 `membership_matrix_ok 6`，hash checker 为 `HASH_CHECK_OK`。
+- previous aggregation escapes 继续得到 `REPRO_FAILED`；独立证据重构为 6 cases、30 formal pairs、6 smoke pairs、72 arms。
+- membership、matrix、sheets、raw executions 与 provider artifacts 相对 r2 无变化；无 dual-arm rerun或 downstream artifact。
+- targeted `12 passed`；full suite `272 passed, 10 warnings`；Ruff、admission、compileall、`git diff --check` 均 exit 0；reserved/token raw scans exit 1。
+
+#### 判定与扩样状态
+
+Gate A1d-r3 以 `PASS_WITH_DISCLOSURE` 关闭。Batch 3 六案可计入 accepted ready，使累计从 12 增至 18，覆盖 11 个 projects。两张 sheet 的 A2 仍按 pre-freeze 合同保持 `PENDING`，PR #6 是否集成等待作者显式决定。
+
+样本仍不满足冻结协议：n=18<20，且只有 SUNDIALS(4) 与 statsmodels(3) 两个 projects 达到“每项目至少 3 ready”的 H-RANK qualification floor，要求为 6 个。最低分布感知补样是新增 6 个 ready：NumPy +1、SciPy +1，并在两个当前单例项目各 +2，达到 n=24。Supplemental R1/R4 的旧候选已全部撤回且不可复用，因此下一任务必须先在 Local Desktop 冻结 Supplemental Mining R2 的 issue-typed retrieval 协议修订；不得直接在 Cursor 重启 mining，也不得进入 canonical freeze/C4。

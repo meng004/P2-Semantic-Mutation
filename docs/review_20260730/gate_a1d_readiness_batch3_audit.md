@@ -2,7 +2,7 @@
 
 - **Audit time:** `2026-08-02T13:44:43+08:00`
 - **Cursor branch:** `origin/cursor/grok-phase3-c3-readiness-batch3`
-- **Draft PR:** #6; OPEN; head `8ef20d26ea0a785bd0209b922a94e7f3bc1e8064`
+- **Draft PR:** #6; OPEN; head `f6f1888f361a524a481cc9505e567a8bc414b9ea`
 - **Baseline:** `0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a`
 - **Verdict:** `BLOCKED`
 - **Integration:** none
@@ -387,3 +387,87 @@ proposed cases. The only unlocked task is an in-place A1d-r3 correction:
 6. Recompute derived verification/handoff artifacts, commit a payload and its
    direct-child handoff, push, and stop at `Gate A1d-r3` without starting later
    stages.
+
+## 9. Gate A1d-r3 re-review and final decision
+
+- **Re-review time:** `2026-08-02T20:41:22+08:00`
+- **Correction lineage:** `8ef20d26` → payload `82863d58` → handoff
+  `f6f1888f`
+- **Verdict:** `PASS_WITH_DISCLOSURE`
+- **Integration:** pending explicit authorization; PR #6 not integrated here
+- **Accepted ready count:** 18 across 11 projects
+
+### 9.1 Independent verification
+
+The A1d-r3 verifier loads the handoff, enforces exact case identity/order, and
+binds every case to reconstructed formal seeds, repetition matrix, readiness,
+seed-0 return codes, failure metadata, handoff counts, and handoff failures.
+Independent handoff-only probes produced the required failures:
+
+| Tamper | Result |
+|---|---|
+| first case handoff verdict `PASS` → `REPRO_FAILED` | verifier exit 1 at verdict binding |
+| handoff counts `6/0` → `5/1` | verifier exit 1 at recomputed counts |
+| handoff failures `[]` → `[{}]` | verifier exit 1 at exact failures binding |
+
+All positive and immutability checks pass:
+
+| Check | Result |
+|---|---|
+| Lineage / remote / PR #6 head | exact payload → direct-child handoff; all point to `f6f1888f...` |
+| Handoff hash checker | `HASH_CHECK_OK` |
+| Standalone semantic verifier | `membership_matrix_ok 6` |
+| Previous aggregation escape probes | both `REPRO_FAILED` |
+| Independent evidence reconstruction | `A1D_R1_INDEPENDENT_PROBE_OK cases=6 formal_runs=30 smoke_runs=6 arms=72` |
+| Targeted A1d tests | `12 passed` |
+| Full test suite | `272 passed, 10 warnings` |
+| Ruff exact command | `All checks passed!` |
+| Admission / compileall / `git diff --check` | exit 0 |
+| Reserved/token scans | raw `rg` exit 1, no output |
+| Immutable evidence diff from r2 | membership, matrix, sheets, raw executions, and provider artifacts unchanged |
+
+Final hashes:
+
+| Artifact | SHA256 |
+|---|---|
+| handoff | `e192ee839a08bd71d8e682b44fad4e7defec68f8998d08e07e3292d3ec0ec64b` |
+| membership | `02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853` |
+| execution matrix | `addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6` |
+| readiness | `628cde0104906a8a0a92578ce989fe487f20eee4ac184e6f5fa2850410df9fba` |
+| command log | `a2bbaa97d3038bf8982a0c425300e5b289f80be70f945b4f4643921e0814fb8c` |
+| verification log | `6862812d89a296b96a0c325c521ad84c406bc49dea96061aead0b1d738298224` |
+| semantic verifier | `b21eea2724b3f5782167c9f6d78dfe5e0a5bd58e9b51f4c374a98185447e0da3` |
+| runner | `b6d36b42fdbf838e0d8024b7eabb62cabe7236029c94f691c05596e1ab0c7533` |
+
+### 9.2 Standards and Spec disposition
+
+Both axes pass with no blocker. Standards found no documented violation; only
+non-gating maintainability observations around the large verifier, raw-dict
+data clumps, and duplicated count derivation. Spec found the A1d-r3 contract
+fully implemented. A non-gating hardening observation is that
+`handoff.inputs.smoke_seeds` is not separately checked, while the matrix,
+readiness, batch-level handoff, and all case-level smoke seed surfaces are
+already bound and agree.
+
+### 9.3 Gate decision and remaining sample shortfall
+
+Gate A1d-r3 is `PASS_WITH_DISCLOSURE`. The six Batch 3 cases may now be counted
+as accepted ready evidence, raising Batch 1+2+3 from 12 to 18. This gate verdict
+does not itself authorize PR integration or mutate sheet A2; both sheets remain
+`PENDING` by design.
+
+The protocol still forbids canonical freeze. The 18 cases cover 11 projects,
+meeting the project-count floor, but only two projects currently have at least
+three ready defects: SUNDIALS (4) and statsmodels (3). The frozen H-RANK floor
+requires six such projects. The minimum distribution-aware supplement is six
+additional ready defects: one each for NumPy and SciPy, plus two each for two
+currently one-case projects, yielding the comfortable n=24 configuration.
+
+Supplemental Mining R1/R4 admitted zero reusable rows because its issue-search
+transport hard-failed and the old candidate set was withdrawn. Therefore the
+next scientific task is not C4 or canonical freeze. It is a Local Desktop
+protocol-amendment/design task for Supplemental Mining R2 that preserves the
+frozen repository whitelist, phrases, exclusions, blinding, and stopping rule,
+while defining an auditable issue-typed retrieval transport and the
+distribution-aware n=24 target. Cursor execution can begin only after that
+amendment is locally reviewed and frozen.
