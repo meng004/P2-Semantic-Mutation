@@ -1,9 +1,10 @@
 # Gate A1c — C3 Readiness Batch 2 Audit
 
 - **Audit time:** `2026-08-01T23:54:40+08:00`
+- **Correction re-review:** `2026-08-02T08:22:24+08:00`
 - **Scope:** the 29 Gate A1a-approved queue rows remaining after Batch 1
 - **Verdict:** `BLOCKED`
-- **Open blockers:** 4
+- **Open blockers:** 2; handoff-hash and heavy-build findings are closed, while FrEIA build isolation and verification-scan correctness remain open
 - **Successor state:** correction work only; Batch 3+, canonical admission freeze, A2/C4, fibre mapping, prediction, and detection runs remain locked
 
 ## 1. Audited lineage
@@ -134,7 +135,7 @@ Correction contract:
 2. Record every exact command, working directory, exit code, and sufficient
    output in the corrected handoff or a referenced verification log.
 
-## 4. Gate decision
+## 4. Initial gate decision
 
 Gate A1c is `BLOCKED`. The 29-row membership freeze and no-substitution rule are
 accepted, and eight non-FrEIA proposed-PASS contrasts are provisionally
@@ -146,3 +147,102 @@ No Batch 2 commit is cherry-picked into the local lineage. Batch 3+, candidate
 A2 promotion, canonical admission freeze, C4, fibre/category work, prediction,
 and detection runs remain locked. The only unlocked work is a new Cursor
 correction session based on `1f1586e66712ff220386e7c29e98593cda7e48ba`.
+
+## 5. Correction re-review
+
+### 5.1 Correction lineage and unchanged boundaries
+
+| Role | Commit / value |
+|---|---|
+| Blocked handoff | `1f1586e66712ff220386e7c29e98593cda7e48ba` |
+| Correction payload | `9f6f65afae8d9849b485dde94865a613d9d14269` |
+| Correction handoff | `01acdbbf6ffd220f9b768ffd386f02cc7fff591b` |
+| PR state | `#4`, OPEN, head `01acdbbf6ffd220f9b768ffd386f02cc7fff591b` |
+
+The correction payload is the direct child of the blocked handoff and the
+correction handoff is the direct child of the payload. The 29-row membership
+and candidate sheet are unchanged; A2 remains `PENDING`, and the diff contains
+no Batch 3+, annotation, freeze, prediction, or result artifacts.
+
+### 5.2 Findings closed by the correction
+
+#### `A1C-HANDOFF-HASH-001` — CLOSED
+
+- Final-byte hashing now occurs after command/log redaction.
+- The independent auditor recomputed every top-level and per-case declared hash:
+  zero mismatches.
+- `check_batch2_handoff_hashes.py` independently exits 0 with
+  `HASH_CHECK_OK` on the immutable correction handoff.
+
+#### `A1C-BUILD-EVIDENCE-001` — CLOSED
+
+- Trilinos buggy/fixed configure commands each exit 0; both bounded build
+  commands exit 2 with 900-second limits and retained compiler output.
+- deal.II buggy/fixed configure commands each exit 0; both bounded build
+  commands exit 2 with 900-second limits and retained compiler output.
+- Castro buggy/fixed clean/build commands and triggers all exit 0. Both arms
+  satisfy the same property, so the case is conservatively recoded from
+  `REPRO_FAILED:build` to `REPRO_FAILED:contrast`.
+- The total remains 9 PASS / 20 REPRO_FAILED; the failure-stage distribution is
+  now build 2 and contrast 4, with all other categories unchanged.
+
+### 5.3 Findings not yet closed
+
+#### `A1C-FREIA-LOCK-001` — PARTIALLY FIXED, STILL OPEN
+
+Both fresh FrEIA arms now run the runtime dependency command with
+`--require-hashes` and the required PyTorch/PyPI index arguments; both commands
+exit 0, no dependency fallback is present, and the behavioural contrast remains
+buggy 1 / fixed 0. Source and wheel hashes are retained.
+
+However, the build path is still outside the exact-source contract:
+
+- each fresh venv first runs unpinned, un-hashed
+  `pip install -U pip wheel setuptools`;
+- `pip install --no-deps <source>` omits `--no-build-isolation`;
+- its retained stdout explicitly says `Installing build dependencies`, meaning
+  pip created an isolated build environment and resolved build requirements not
+  covered by `requirements.deps.txt` or `WHEEL_ARTIFACT_HASHES.json`.
+
+The fixed runtime dependency closure therefore does not yet establish a fully
+hash-locked exact-source build. To close the finding, place the packaging/build
+closure (including the actually used pip/setuptools/wheel/packaging versions as
+applicable) under hashes, install it identically in both arms, run the source
+installation with `--no-build-isolation`, and rerun both triggers from new
+venvs. The source-install commands must exit 0 without any isolated dependency
+resolution.
+
+#### `A1C-HANDOFF-VERIFY-CMD-001` — PARTIALLY FIXED, STILL OPEN
+
+`BATCH2_VERIFICATION_LOG.json` now records seven commands with cwd, exit,
+stdout, and stderr, and admission/pytest/compile/membership/hash checks are
+auditable. The neutral-leak command is nevertheless non-functional:
+
+- the stored regex contains double backslashes such as
+  `\\boperator\\b`, so ripgrep searches for literal backslash sequences instead
+  of word boundaries;
+- on a retained compiler log known to contain `operator`, the stored expression
+  exits 1 with no match, while the correctly escaped `\boperator\b` expression
+  returns 45 matches;
+- scanning raw compiler/source logs for the generic C++ word `operator` would
+  be a false-positive-prone scope in any case. The actual runbook reserved-term
+  scan over the decision-level Batch 2 artifacts independently exits 1 with no
+  output.
+
+The token scan also checks only `ghp_`; it omits `github_pat_` and an
+unredacted `Bearer` pattern. The independent broader scan currently finds no
+leak, but the committed verification command does not prove that claim.
+
+To close the finding, replace the neutral scan with the exact runbook reserved
+pattern and an appropriate decision-artifact scope, and broaden the token scan
+to all supported token forms. Record the expected clean exit semantics, rerun
+both scans, update the verification log, rehash the handoff, and rerun the hash
+checker.
+
+### 5.4 Correction re-review decision
+
+Gate A1c remains `BLOCKED` with two open blockers. The correction commits are
+not cherry-picked locally. Only a second correction session based on
+`01acdbbf6ffd220f9b768ffd386f02cc7fff591b` is unlocked; Batch 3+, candidate A2
+promotion, canonical admission freeze, C4, fibre/category work, prediction, and
+detection runs remain locked.

@@ -86,7 +86,7 @@ S0 台账建立提交前实测：
 | Gate A0 — Defect4MR sanitized import | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` | `PASS_WITH_DISCLOSURE` | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` | 是；C2 / Gate A1 admission execution 可在新 session 启动 |
 | Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
-| Gate A1c — C3 readiness Batch 2 | handoff `1f1586e66712ff220386e7c29e98593cda7e48ba`；payload `20c445d7aa50f377e1aeb87f73774142f9d75cff`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `BLOCKED` | `N/A（未集成 Batch 2）` | 否；仅 finding correction 解锁；Batch 3+、canonical freeze 与 A2/C4 仍锁定 |
+| Gate A1c — C3 readiness Batch 2 | correction handoff `01acdbbf6ffd220f9b768ffd386f02cc7fff591b`；correction payload `9f6f65afae8d9849b485dde94865a613d9d14269`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `BLOCKED` | `N/A（未集成 Batch 2/correction）` | 否；仅第二次 finding correction 解锁；Batch 3+、canonical freeze 与 A2/C4 仍锁定 |
 
 ## 5. 交接审计记录
 
@@ -358,3 +358,31 @@ Gate A1a 判定为 `BLOCKED`。A2 全部 `PENDING` 是 C2 的预期状态而非 
 #### 判定
 
 Gate A1c 判定为 `BLOCKED`。本地不 cherry-pick Batch 2 三个 commit，不回填 candidate A2，不解锁 Batch 3+ 或任何后继门禁。仅允许 Cursor 从 `1f1586e6...` 新开 correction session，按四项 finding 合同修复后重新提交 Gate A1c。完整审计与修复合同见 `docs/review_20260730/gate_a1c_readiness_batch2_audit.md`。
+
+### 5.8 Gate A1c finding 修复复核：C3 readiness Batch 2 correction
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1c — C3 readiness Batch 2 |
+| 记录类型 | finding 修复复核 |
+| 交接/复核时间 | `2026-08-02T08:22:24+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness` |
+| Cursor commit | correction handoff `01acdbbf6ffd220f9b768ffd386f02cc7fff591b`；correction payload `9f6f65afae8d9849b485dde94865a613d9d14269` |
+| Cursor ancestry | `1f1586e6...` → `9f6f65af...` → `01acdbbf...`；远端分支与 OPEN PR #4 head 均为 correction handoff |
+| Findings | `A1C-HANDOFF-HASH-001` CLOSED；`A1C-BUILD-EVIDENCE-001` CLOSED；`A1C-FREIA-LOCK-001` PARTIAL/OPEN；`A1C-HANDOFF-VERIFY-CMD-001` PARTIAL/OPEN |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（未集成 Batch 2 或 correction commits）` |
+| 后继任务是否解锁 | 否。仅从 `01acdbbf...` 启动第二次 finding correction；Batch 3+、candidate A2 promotion、canonical freeze、A2/C4、fiber、prediction 与 detection runs 均锁定。 |
+
+#### 独立复算结果
+
+- membership 与 candidate sheet 相对 blocked handoff 无变化；29行顺序、无换例规则和 A2 PENDING 均保持。
+- 280条 global commands 精确等于29个 per-case command 数组的顺序拼接；全部 handoff individual hash 独立复算为零 mismatch；hash checker exit 0。
+- Trilinos/deal.II 双臂 configure 均 exit 0、build 均 exit 2；Castro 双臂 build/trigger 均 exit 0且无 contrast，因此 heavy-build finding 关闭，统计仍为9/20。
+- FrEIA 双臂 runtime `--require-hashes` 均 exit 0且无 fallback；但 source install 未使用 `--no-build-isolation`，日志确认另行安装未纳入 hash lock 的 build dependencies，故 lock finding 尚未关闭。
+- Verification log 已记录7条命令，但 neutral regex 的双反斜线使词边界失效，token scan 也只覆盖 `ghp_`；独立正确表达式证明扫描器缺陷，实际 runbook reserved-term scan 与 broader token scan均无真实泄漏。
+- 独立 admission checker exit 0；compileall exit 0；handoff hash checker exit 0；完整测试 `260 passed, 10 warnings`。
+
+#### 判定
+
+四项原 blocker 中两项关闭、两项仍开。Gate A1c 继续 `BLOCKED`，不 cherry-pick correction，不回填 candidate A2，不解锁 Batch 3+。修复要求见 `docs/review_20260730/gate_a1c_readiness_batch2_audit.md` §5.3。
