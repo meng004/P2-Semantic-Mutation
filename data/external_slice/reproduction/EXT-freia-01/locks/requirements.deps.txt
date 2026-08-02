@@ -1,5 +1,5 @@
-# Hash-locked FrEIA deps for Gate A1c correction
-# python=/tmp/c3_a1c_fix/EXT-freia-01/venv-buggy/bin/python
+# Hash-locked FrEIA runtime deps for Gate A1c correction
+# python=/tmp/c3_a1c_r2/EXT-freia-01/venv-buggy/bin/python
 # root_packages=['numpy==2.2.6', 'scipy==1.15.3', 'torch==2.7.1']
 # install_with: pip install --require-hashes --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple -r requirements.deps.txt
 numpy==2.2.6 \

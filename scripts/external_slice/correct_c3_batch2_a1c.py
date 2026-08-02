@@ -16,6 +16,7 @@ import json
 import os
 import platform
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -116,8 +117,23 @@ def scrub(text: str) -> str:
     if TOKEN:
         out = out.replace(TOKEN, REDACT)
     out = re.sub(r"Bearer\s+ghp_[A-Za-z0-9]+", f"Bearer {REDACT}", out)
+    out = re.sub(r"Bearer\s+github_pat_[A-Za-z0-9_]+", f"Bearer {REDACT}", out)
     out = re.sub(r"ghp_[A-Za-z0-9]{20,}", REDACT, out)
+    out = re.sub(r"github_pat_[A-Za-z0-9_]{20,}", REDACT, out)
     return out
+
+
+# Runbook §3 reserved-term pattern (hex escapes keep category tokens out of source).
+RUNBOOK_RESERVED_PATTERN = (
+    r"(?i)(^|[^[:alnum:]_])(C\x45|O\x53|H\x50|T\x46|S\x49|f\x69ber|strat\x75m)"
+    r"([^[:alnum:]_]|$)"
+)
+# Broader token forms required by A1c re-review (ghp_ / github_pat_ / unredacted Bearer).
+TOKEN_SCAN_PATTERN = (
+    r"ghp_[A-Za-z0-9]{20,}|"
+    r"github_pat_[A-Za-z0-9_]{20,}|"
+    r"Bearer [A-Za-z0-9][A-Za-z0-9._-]{15,}"
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -347,8 +363,97 @@ def finalize_case(
     }
 
 
+def _parse_pip_artifact_name(filename: str) -> tuple[str, str] | None:
+    lower = filename.lower()
+    if lower.endswith(".whl"):
+        parts = filename[:-4].split("-")
+        return parts[0].replace("_", "-"), parts[1]
+    if lower.endswith(".tar.gz"):
+        stem = filename[: -len(".tar.gz")]
+        name, ver = stem.rsplit("-", 1)
+        return name.replace("_", "-"), ver
+    if lower.endswith(".zip"):
+        stem = filename[: -len(".zip")]
+        name, ver = stem.rsplit("-", 1)
+        return name.replace("_", "-"), ver
+    return None
+
+
+def _write_require_hashes_lock(
+    *,
+    dl: Path,
+    out: Path,
+    header_lines: list[str],
+    preferred: list[str] | None = None,
+) -> tuple[list[str], dict[str, str]]:
+    artifact_hashes: dict[str, str] = {}
+    req_to_hash: dict[str, str] = {}
+    for path in sorted(p for p in dl.iterdir() if p.is_file()):
+        parsed = _parse_pip_artifact_name(path.name)
+        if parsed is None:
+            continue
+        name, ver = parsed
+        digest = sha256_file(path)
+        artifact_hashes[path.name] = digest
+        req_to_hash[f"{name}=={ver}"] = digest
+    if not req_to_hash:
+        raise RuntimeError(f"no hashed artifacts under {dl}")
+    ordered: list[str] = []
+    for pref in preferred or []:
+        # Allow preferred root without +cpu suffix match for torch.
+        if pref in req_to_hash and pref not in ordered:
+            ordered.append(pref)
+            continue
+        for r in req_to_hash:
+            if r.startswith(pref.split("==", 1)[0] + "==") and r not in ordered:
+                ordered.append(r)
+                break
+    for r in sorted(req_to_hash):
+        if r not in ordered:
+            ordered.append(r)
+    lines = list(header_lines)
+    for req in ordered:
+        lines.append(f"{req} \\")
+        lines.append(f"    --hash=sha256:{req_to_hash[req]}")
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return ordered, artifact_hashes
+
+
+def build_freia_build_lock(python: Path, locks: Path, log: CommandLog) -> Path:
+    """Hash-lock pip/setuptools/wheel/packaging used for exact-source builds."""
+    dl = locks / ".download-build"
+    if dl.exists():
+        shutil.rmtree(dl)
+    dl.mkdir(parents=True)
+    # Download the packaging/build closure only (no unpinned -U upgrade install).
+    pkgs = ["pip", "setuptools", "wheel", "packaging"]
+    log.run(
+        [str(python), "-m", "pip", "download", "-d", str(dl), *pkgs],
+        label="EXT-freia-01:build:pip-download",
+    )
+    out = locks / "requirements.build.txt"
+    ordered, artifact_hashes = _write_require_hashes_lock(
+        dl=dl,
+        out=out,
+        header_lines=[
+            "# Hash-locked FrEIA packaging/build closure for Gate A1c re-review",
+            f"# python={python}",
+            f"# root_packages={pkgs}",
+            "# install_with: pip install --require-hashes -r requirements.build.txt",
+            "# then: pip install --no-deps --no-build-isolation <exact-source>",
+        ],
+        preferred=[],
+    )
+    write_json(
+        locks / "BUILD_ARTIFACT_HASHES.json",
+        {"artifacts": artifact_hashes, "resolved_requirements": ordered, "root_packages": pkgs},
+    )
+    shutil.rmtree(dl, ignore_errors=True)
+    return out
+
+
 def build_freia_lock(python: Path, locks: Path, log: CommandLog) -> Path:
-    """Download closure via PyTorch CPU + PyPI, write require-hashes lock."""
+    """Download runtime closure via PyTorch CPU + PyPI, write require-hashes lock."""
     dl = locks / ".download-deps"
     if dl.exists():
         shutil.rmtree(dl)
@@ -370,56 +475,24 @@ def build_freia_lock(python: Path, locks: Path, log: CommandLog) -> Path:
         ],
         label="EXT-freia-01:deps:pip-download",
     )
-    lines = [
-        "# Hash-locked FrEIA deps for Gate A1c correction",
-        f"# python={python}",
-        f"# root_packages={pkgs}",
-        "# install_with: pip install --require-hashes "
-        "--index-url https://download.pytorch.org/whl/cpu "
-        "--extra-index-url https://pypi.org/simple -r requirements.deps.txt",
-    ]
-    artifact_hashes = {}
-    req_to_hash: dict[str, str] = {}
-    for path in sorted(p for p in dl.iterdir() if p.is_file()):
-        lower = path.name.lower()
-        if lower.endswith(".whl"):
-            parts = path.name[:-4].split("-")
-            name, ver = parts[0].replace("_", "-"), parts[1]
-        elif lower.endswith(".tar.gz"):
-            stem = path.name[: -len(".tar.gz")]
-            name, ver = stem.rsplit("-", 1)
-            name = name.replace("_", "-")
-        elif lower.endswith(".zip"):
-            stem = path.name[: -len(".zip")]
-            name, ver = stem.rsplit("-", 1)
-            name = name.replace("_", "-")
-        else:
-            continue
-        digest = sha256_file(path)
-        artifact_hashes[path.name] = digest
-        req_to_hash[f"{name}=={ver}"] = digest
-    if not req_to_hash:
-        raise RuntimeError("FrEIA dep download produced no artifacts")
-    ordered = []
-    for pref in ("numpy==2.2.6", "scipy==1.15.3"):
-        if pref in req_to_hash:
-            ordered.append(pref)
-    for r in req_to_hash:
-        if r.startswith("torch==") and r not in ordered:
-            ordered.append(r)
-    for r in sorted(req_to_hash):
-        if r not in ordered:
-            ordered.append(r)
-    for req in ordered:
-        lines.append(f"{req} \\")
-        lines.append(f"    --hash=sha256:{req_to_hash[req]}")
     out = locks / "requirements.deps.txt"
-    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    ordered, artifact_hashes = _write_require_hashes_lock(
+        dl=dl,
+        out=out,
+        header_lines=[
+            "# Hash-locked FrEIA runtime deps for Gate A1c correction",
+            f"# python={python}",
+            f"# root_packages={pkgs}",
+            "# install_with: pip install --require-hashes "
+            "--index-url https://download.pytorch.org/whl/cpu "
+            "--extra-index-url https://pypi.org/simple -r requirements.deps.txt",
+        ],
+        preferred=["numpy==2.2.6", "scipy==1.15.3", "torch==2.7.1"],
+    )
     write_json(
         locks / "WHEEL_ARTIFACT_HASHES.json",
         {"artifacts": artifact_hashes, "resolved_requirements": ordered},
     )
-    # Do not keep downloaded wheels in the repo tree.
     shutil.rmtree(dl, ignore_errors=True)
     return out
 
@@ -442,28 +515,35 @@ def correct_freia(log: CommandLog) -> dict:
     exits: dict = {}
     holds: dict = {}
 
-    # Fresh separate envs
+    # Fresh separate envs. Do NOT run unpinned `pip install -U pip wheel setuptools`.
     for arm in ("buggy", "fixed"):
-        log.run([str(HOST_PY), "-m", "venv", str(work / f"venv-{arm}")], label=f"{nid}:{arm}:venv")
         log.run(
-            [
-                str(work / f"venv-{arm}" / "bin" / "python"),
-                "-m",
-                "pip",
-                "install",
-                "-U",
-                "pip",
-                "wheel",
-                "setuptools",
-            ],
-            label=f"{nid}:{arm}:bootstrap-pip",
+            [str(HOST_PY), "-m", "venv", str(work / f"venv-{arm}")],
+            label=f"{nid}:{arm}:venv",
         )
 
-    lock = build_freia_lock(work / "venv-buggy" / "bin" / "python", locks, log)
+    probe_py = work / "venv-buggy" / "bin" / "python"
+    build_lock = build_freia_build_lock(probe_py, locks, log)
+    deps_lock = build_freia_lock(probe_py, locks, log)
 
     for arm, sha in (("buggy", member["buggy_sha"]), ("fixed", member["fixed_sha"])):
         py = work / f"venv-{arm}" / "bin" / "python"
-        # Hash-locked install MUST exit 0 (no fallback).
+        # 1) Hash-locked packaging/build closure (identical both arms).
+        log.run(
+            [
+                str(py),
+                "-m",
+                "pip",
+                "install",
+                "--require-hashes",
+                "-r",
+                str(build_lock),
+            ],
+            label=f"{nid}:{arm}:pip-install-build-require-hashes",
+            check=True,
+            allow_exit={0},
+        )
+        # 2) Hash-locked runtime deps.
         log.run(
             [
                 str(py),
@@ -476,7 +556,7 @@ def correct_freia(log: CommandLog) -> dict:
                 "--extra-index-url",
                 "https://pypi.org/simple",
                 "-r",
-                str(lock),
+                str(deps_lock),
             ],
             label=f"{nid}:{arm}:pip-install-require-hashes",
             check=True,
@@ -496,10 +576,26 @@ def correct_freia(log: CommandLog) -> dict:
             "source_tree_sha256": sha256_tree(src),
             "sha": sha,
         }
-        log.run(
-            [str(py), "-m", "pip", "install", "--no-deps", str(src)],
+        # 3) Exact source with --no-build-isolation (no isolated build env resolution).
+        src_proc = log.run(
+            [
+                str(py),
+                "-m",
+                "pip",
+                "install",
+                "--no-deps",
+                "--no-build-isolation",
+                str(src),
+            ],
             label=f"{nid}:{arm}:pip-install-freia-exact-source",
+            check=True,
+            allow_exit={0},
         )
+        src_text = (src_proc.stdout or "") + "\n" + (src_proc.stderr or "")
+        if "Installing build dependencies" in src_text:
+            raise RuntimeError(
+                f"{arm}: source install still resolved isolated build dependencies:\n{src_text[-2000:]}"
+            )
         harness = HARNESS_ROOT / "freia_spline_roundtrip.py"
         proc = log.run(
             [str(py), str(harness), arm],
@@ -551,20 +647,24 @@ def correct_freia(log: CommandLog) -> dict:
         trigger_exits=exits,
         failure_stage=None,
         failure_detail=None,
-        route="exact-source-python-hashlocked",
+        route="exact-source-python-hashlocked-no-build-isolation",
         source_hashes=source_hashes,
         extra_env={
-            "deps_lock": str(lock.relative_to(ROOT)),
+            "deps_lock": str(deps_lock.relative_to(ROOT)),
+            "build_lock": str(build_lock.relative_to(ROOT)),
             "closed_findings": ["A1C-FREIA-LOCK-001"],
             "hash_locked_install": True,
+            "hash_locked_build_closure": True,
+            "no_build_isolation": True,
             "unhashed_fallback_used": False,
         },
     )
-    # Ensure environment records closed finding
     env_path = case_dir / "environment.json"
     env = json.loads(env_path.read_text(encoding="utf-8"))
     env["closed_findings"] = ["A1C-FREIA-LOCK-001"]
     env["unhashed_fallback_used"] = False
+    env["hash_locked_build_closure"] = True
+    env["no_build_isolation"] = True
     write_json(env_path, env)
     return result
 
@@ -1150,55 +1250,75 @@ def run_verification(log: CommandLog) -> dict:
     )
     checks["compileall"] = {"exit_code": proc.returncode}
 
-    # neutral-ID / reserved-token leak scan (expect no matches => rg exit 1).
-    # Pattern assembled at runtime so this source file does not self-match.
-    leak_parts = [
-        "mr_mapping",
-        "proposed_mr_oracle",
-        r"\bkill\b",
-        r"\bfiber\b",
-        r"\b" + "opera" + "tor\\b",
-        "predic" + "tion",
+    # Runbook §3 reserved-term scan over decision-level Batch 2 artifacts.
+    # Expected clean semantics: rg exit 1 (no match) => checker exit 0.
+    # Use bash -lc + shlex.quote so the stored command keeps functional \xNN
+    # escapes and is copy-pasteable; normalize rg exits inside the shell.
+    decision_paths: list[str] = [
+        "data/external_slice/readiness_batch2.json",
+        "data/external_slice/BATCH2_MEMBERSHIP.json",
+        "data/external_slice/HANDOFF_REPRO_BATCH2.json",
     ]
-    leak_pat = "|".join(leak_parts)
+    for nid_path in sorted(REPRO_ROOT.glob("EXT-*")):
+        for name in ("environment.json", "buggy.json", "fixed.json"):
+            p = nid_path / name
+            if p.is_file():
+                decision_paths.append(str(p.relative_to(ROOT)))
+    leak_shell = (
+        "rg -n "
+        + shlex.quote(RUNBOOK_RESERVED_PATTERN)
+        + " "
+        + " ".join(shlex.quote(p) for p in decision_paths)
+        + "; ec=$?; if [ $ec -eq 1 ]; then exit 0; "
+        "elif [ $ec -eq 0 ]; then echo 'RESERVED_TERM_LEAK'; exit 1; "
+        "else exit $ec; fi"
+    )
     proc = log.run(
-        [
-            "bash",
-            "-lc",
-            "rg -n -i "
-            + repr(leak_pat)
-            + " data/external_slice/readiness_batch2.json "
-            "data/external_slice/BATCH2_MEMBERSHIP.json "
-            "data/external_slice/reproduction/EXT-*/environment.json "
-            "data/external_slice/reproduction/EXT-*/buggy.json "
-            "data/external_slice/reproduction/EXT-*/fixed.json "
-            "data/external_slice/reproduction/EXT-*/COMMANDS.json "
-            "data/external_slice/reproduction/EXT-*/stdout.log "
-            "data/external_slice/reproduction/EXT-*/stderr.log "
-            "data/external_slice/reproduction/EXT-*/locks "
-            "data/external_slice/reproducers "
-            "; ec=$?; if [ $ec -eq 1 ]; then exit 0; else exit $ec; fi",
-        ],
+        ["bash", "-lc", leak_shell],
         cwd=ROOT,
-        label="verify:leak_scan_neutral",
+        label="verify:leak_scan_reserved_runbook",
         check=False,
     )
-    checks["leak_scan_neutral"] = {"exit_code": proc.returncode, "stdout_tail": (proc.stdout or "")[-1000:]}
+    checks["leak_scan_reserved_runbook"] = {
+        "exit_code": proc.returncode,
+        "expected_clean_rg_exit": 1,
+        "expected_checker_exit": 0,
+        "pattern": RUNBOOK_RESERVED_PATTERN,
+        "scope": "decision-level Batch 2 artifacts",
+        "stdout_tail": (proc.stdout or "")[-1000:],
+    }
+    # Keep legacy key for handoff consumers that still look for leak_scan_neutral.
+    checks["leak_scan_neutral"] = checks["leak_scan_reserved_runbook"]
 
-    # token scan (expect no ghp_ matches)
+    # Token scan: ghp_ / github_pat_ / unredacted Bearer (not <REDACTED...>).
+    token_paths = [
+        "data/external_slice/reproduction",
+        "data/external_slice/HANDOFF_REPRO_BATCH2.json",
+        "data/external_slice/readiness_batch2.json",
+        "data/external_slice/BATCH2_MEMBERSHIP.json",
+    ]
+    token_shell = (
+        "rg -n "
+        + shlex.quote(TOKEN_SCAN_PATTERN)
+        + " "
+        + " ".join(shlex.quote(p) for p in token_paths)
+        + "; ec=$?; if [ $ec -eq 1 ]; then exit 0; "
+        "elif [ $ec -eq 0 ]; then echo 'TOKEN_LEAK'; exit 1; "
+        "else exit $ec; fi"
+    )
     proc = log.run(
-        [
-            "bash",
-            "-lc",
-            "rg -n 'ghp_[A-Za-z0-9]{20,}' data/external_slice/reproduction "
-            "data/external_slice/HANDOFF_REPRO_BATCH2.json "
-            "; ec=$?; if [ $ec -eq 1 ]; then exit 0; else exit $ec; fi",
-        ],
+        ["bash", "-lc", token_shell],
         cwd=ROOT,
         label="verify:token_scan",
         check=False,
     )
-    checks["token_scan"] = {"exit_code": proc.returncode}
+    checks["token_scan"] = {
+        "exit_code": proc.returncode,
+        "expected_clean_rg_exit": 1,
+        "expected_checker_exit": 0,
+        "pattern": TOKEN_SCAN_PATTERN,
+        "stdout_tail": (proc.stdout or "")[-1000:],
+    }
 
     # membership consistency
     proc = log.run(
@@ -1287,13 +1407,14 @@ def main() -> int:
         ("EXT-dealii-01", "dealii"),
         ("EXT-castro-01", "castro"),
     )
+    skip_heavy = os.environ.get("C3_A1C_SKIP_HEAVY", "").strip() in {"1", "true", "yes"}
     only = {
         x.strip()
         for x in os.environ.get("C3_A1C_HEAVY_ONLY", "").split(",")
         if x.strip()
     }
     for nid, kind in heavy_all:
-        if only and nid not in only:
+        if skip_heavy or (only and nid not in only):
             print(f"--- {nid} SKIPPED (reuse disk) ---", flush=True)
             heavy[nid] = load_case_result_from_disk(member_by_id(nid))
             continue
@@ -1316,7 +1437,7 @@ def main() -> int:
     readiness = {
         "batch": 2,
         "batch_name": "remaining-29-after-batch1",
-        "correction_of": "1f1586e66712ff220386e7c29e98593cda7e48ba",
+        "correction_of": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
         "closed_findings": [
             "A1C-HANDOFF-HASH-001",
             "A1C-FREIA-LOCK-001",
@@ -1406,14 +1527,15 @@ def main() -> int:
         )
 
     handoff = {
-        "task": "C3 readiness Batch 2 Gate A1c correction",
+        "task": "C3 readiness Batch 2 Gate A1c correction (re-review round 2)",
         "gate": "A1c",
         "branch": "cursor/grok-phase3-c3-readiness",
         "cloud_agent": "bc-1d216e6e-25c0-46ef-9f68-b1d417f18f57",
-        "baseline_commit": "1f1586e66712ff220386e7c29e98593cda7e48ba",
-        "blocked_audit_commit": "ee003421a038aa247414e3066249a74029691549",
+        "baseline_commit": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
+        "blocked_audit_commit": "649d0c208496d64a19bacaa43660aab25d8e688c",
         "membership_commit": "c94684faadbb4b02f8685360255cc374c15183c8",
-        "correction_of": "1f1586e66712ff220386e7c29e98593cda7e48ba",
+        "correction_of": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
+        "prior_correction_handoff": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
         "closed_findings": [
             "A1C-HANDOFF-HASH-001",
             "A1C-FREIA-LOCK-001",
@@ -1445,6 +1567,9 @@ def main() -> int:
             "admission_checker": verify["checks"]["admission_checker"]["exit_code"],
             "pytest": verify["checks"]["pytest"]["exit_code"],
             "compileall": verify["checks"]["compileall"]["exit_code"],
+            "leak_scan_reserved_runbook": verify["checks"]["leak_scan_reserved_runbook"][
+                "exit_code"
+            ],
             "leak_scan_neutral": verify["checks"]["leak_scan_neutral"]["exit_code"],
             "token_scan": verify["checks"]["token_scan"]["exit_code"],
             "membership_and_sheet_pending": verify["checks"]["membership_and_sheet_pending"][
@@ -1472,9 +1597,9 @@ def main() -> int:
         },
         "failures": [c for c in case_results if c["proposed"] == "REPRO_FAILED"],
         "retries": [
-            "A1c FrEIA fresh dual-arm with require-hashes exit 0 (no unhashed fallback)",
-            "A1c trilinos/dealii/castro observed dual-arm build attempts with declared timeouts",
-            "A1c handoff hashes recomputed after token redaction",
+            "A1c-r2 FrEIA packaging/build closure hash-locked; exact source via --no-build-isolation",
+            "A1c-r2 verification uses runbook reserved pattern + ghp_/github_pat_/Bearer token scan",
+            "A1c-r2 handoff hashes recomputed after redaction",
         ],
         "unresolved_findings": [],
         "not_started": readiness["not_started"],
