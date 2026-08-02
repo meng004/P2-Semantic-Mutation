@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "703abdc7275635e5bbd3593736143e6f40d5511d",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL",
+    "real_defect": "PASS"
+  },
+  "evidence_urls": [
+    "https://github.com/pytorch/pytorch/issues/187301",
+    "https://github.com/pytorch/pytorch/pull/187302"
+  ],
+  "fix_url": "https://github.com/pytorch/pytorch/pull/187302",
+  "fixed_sha": "24705ce4738b6bb7dbaba80dbeafd7bda9f3909a",
+  "issue_url": "https://github.com/pytorch/pytorch/issues/187301",
+  "mechanism_sentence": "loads timm models that reject drop_rate in the dynamo benchmark harness.",
+  "neutral_id": "EXT-pytorch-20",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The defect is benchmark model loading rather than a linalg, optim, or special-function numerical kernel.",
+    "real_defect": "A public defect report and an identifiable public fix commit are linked."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

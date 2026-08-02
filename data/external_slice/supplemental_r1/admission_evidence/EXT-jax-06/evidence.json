@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "53d6b35036b4ede5a7baa030858556d8325eeb23",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS",
+    "real_defect": "PASS"
+  },
+  "evidence_urls": [
+    "https://github.com/jax-ml/jax/issues/34139",
+    "https://github.com/jax-ml/jax/pull/35305"
+  ],
+  "fix_url": "https://github.com/jax-ml/jax/pull/35305",
+  "fixed_sha": "37e6224fa4e7ff7c8b8845e53b7e67cc595431a9",
+  "issue_url": "https://github.com/jax-ml/jax/issues/34139",
+  "mechanism_sentence": "returns accurate first derivatives of the sinc special function near large inputs.",
+  "neutral_id": "EXT-jax-06",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The sinc function and its derivative are special-function numerical maps from float inputs to float outputs.",
+    "real_defect": "A public defect report and an identifiable public fix commit are linked."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

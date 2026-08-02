@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "5179642eb5572b8fbec01dca5e03e2a636e513c2",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL",
+    "real_defect": "PASS"
+  },
+  "evidence_urls": [
+    "https://github.com/jax-ml/jax/issues/26888",
+    "https://github.com/jax-ml/jax/pull/26895"
+  ],
+  "fix_url": "https://github.com/jax-ml/jax/pull/26895",
+  "fixed_sha": "439c412cd4c928c124d776b4c73fe72e3aabd7be",
+  "issue_url": "https://github.com/jax-ml/jax/issues/26888",
+  "mechanism_sentence": "matches NumPy constant-pad outputs for the reported pad widths.",
+  "neutral_id": "EXT-jax-11",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The defect is in generic array padding rather than a linalg, optim, or special-function numerical component.",
+    "real_defect": "A public defect report and an identifiable public fix commit are linked."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

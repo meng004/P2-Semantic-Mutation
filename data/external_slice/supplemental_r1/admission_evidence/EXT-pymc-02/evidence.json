@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "b06d6c38908b00f0600b453fc74fd93014c91132",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL",
+    "real_defect": "FAIL"
+  },
+  "evidence_urls": [
+    "https://github.com/pymc-devs/pymc/issues/6909",
+    "https://github.com/pymc-devs/pymc/pull/7491"
+  ],
+  "fix_url": "https://github.com/pymc-devs/pymc/pull/7491",
+  "fixed_sha": "97df9c3d3b14e951d423fe5dd8bd974a066799e9",
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/6909",
+  "mechanism_sentence": "repairs scan log-density evaluation when unvalued stochastic outputs are returned.",
+  "neutral_id": "EXT-pymc-02",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The changed logprob IR machinery is not a float-vector to few-float numerical kernel.",
+    "real_defect": "The issue remains open and the linked PR is a broad IR rewrite, so this row lacks an isolated identifiable public fix for the reported defect."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

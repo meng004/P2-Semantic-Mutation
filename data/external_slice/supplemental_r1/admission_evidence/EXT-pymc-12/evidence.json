@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "9e8975f098d0dc848b7555ca5ef4c2746e88e46a",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS",
+    "real_defect": "PASS"
+  },
+  "evidence_urls": [
+    "https://github.com/pymc-devs/pymc/issues/3987",
+    "https://github.com/pymc-devs/pymc/pull/3989"
+  ],
+  "fix_url": "https://github.com/pymc-devs/pymc/pull/3989",
+  "fixed_sha": "28a4621254ffb7f7b5c6c1a71eea6c3e2e4ba0ed",
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/3987",
+  "mechanism_sentence": "returns periodic covariance values from the standard kernel formula.",
+  "neutral_id": "EXT-pymc-12",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The periodic covariance kernel maps numeric inputs to numeric covariance values and is a numerical kernel.",
+    "real_defect": "A public defect report and an identifiable public fix commit are linked."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

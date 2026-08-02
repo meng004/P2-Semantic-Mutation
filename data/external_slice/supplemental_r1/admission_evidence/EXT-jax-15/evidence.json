@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "c49955f28daa266227d09b098592ab63b80b702e",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL",
+    "real_defect": "PASS"
+  },
+  "evidence_urls": [
+    "https://github.com/jax-ml/jax/issues/13027",
+    "https://github.com/jax-ml/jax/pull/39427"
+  ],
+  "fix_url": "https://github.com/jax-ml/jax/pull/39427",
+  "fixed_sha": "0ea030e26a763dffed39dc7775bfea9703806dcf",
+  "issue_url": "https://github.com/jax-ml/jax/issues/13027",
+  "mechanism_sentence": "rejects unhashable pytree metadata in the C++ pytree implementation.",
+  "neutral_id": "EXT-jax-15",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The defect is pytree metadata handling rather than a linalg, optim, or special-function numerical kernel.",
+    "real_defect": "A public defect report and an identifiable public fix commit are linked."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

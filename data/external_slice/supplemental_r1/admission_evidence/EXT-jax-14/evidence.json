@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "613fc9c8b9dd2d566397d45e843ddd3ccccb22e9",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL",
+    "real_defect": "FAIL"
+  },
+  "evidence_urls": [
+    "https://github.com/jax-ml/jax/issues/13680",
+    "https://github.com/jax-ml/jax/pull/36481"
+  ],
+  "fix_url": "https://github.com/jax-ml/jax/pull/36481",
+  "fixed_sha": "4ba338365402e69dfb2e1ffeeefc9bcbd0a91bb2",
+  "issue_url": "https://github.com/jax-ml/jax/issues/13680",
+  "mechanism_sentence": "adds a Lambert W special-function implementation.",
+  "neutral_id": "EXT-jax-14",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "No existing special-function value defect is established for this row.",
+    "real_defect": "The linked record is a feature request for new special-function support rather than a defective existing result with a dedicated repair."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

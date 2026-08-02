@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "90847591e411bd639b963b2d6545a1f3c2faa76a",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL",
+    "real_defect": "FAIL"
+  },
+  "evidence_urls": [
+    "https://github.com/pytorch/pytorch/issues/189287",
+    "https://github.com/pytorch/pytorch/pull/190349"
+  ],
+  "fix_url": "https://github.com/pytorch/pytorch/pull/190349",
+  "fixed_sha": "fb41d36f4fba29ad07428eb1ac3d201904790d4e",
+  "issue_url": "https://github.com/pytorch/pytorch/issues/189287",
+  "mechanism_sentence": "restores CUDA driver initialization for multimodal pooling tests after a Triton pin bump.",
+  "neutral_id": "EXT-pytorch-07",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The changed artifact is a CI pin rather than a linalg, optim, or special-function numerical component.",
+    "real_defect": "The report is a CI/driver failure and does not establish a public numerical-kernel defect with a dedicated in-scope fix."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}

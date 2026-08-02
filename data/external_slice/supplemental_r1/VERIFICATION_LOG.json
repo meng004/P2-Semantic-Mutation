@@ -1,0 +1,207 @@
+{
+  "created_utc": "2026-08-02T01:39:15Z",
+  "entries": [
+    {
+      "command": [
+        "rg",
+        "-n",
+        "(?i)(^|[^[:alnum:]_])(C\\x45|O\\x53|H\\x50|T\\x46|S\\x49|f\\x69ber|strat\\x75m)([^[:alnum:]_]|$)",
+        "data/external_slice/supplemental_r1/admission_sheet.cursor_candidate.csv",
+        "data/external_slice/supplemental_r1/REVIEW_DECISIONS.json",
+        "data/external_slice/supplemental_r1/admission_evidence"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "expected_raw_exit": 1,
+      "label": "verify:reserved_runbook_scan",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "timestamp_utc": "2026-08-02T01:38:00Z"
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|Bearer [A-Za-z0-9][A-Za-z0-9._-]{15,}",
+        "data/external_slice/supplemental_r1"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "expected_raw_exit": 1,
+      "label": "verify:token_scan",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "timestamp_utc": "2026-08-02T01:38:00Z"
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "-i",
+        "mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|\\bkill\\b|prediction|detection_result",
+        "data/external_slice/supplemental_r1/admission_sheet.cursor_candidate.csv",
+        "data/external_slice/supplemental_r1/REVIEW_DECISIONS.json",
+        "data/external_slice/supplemental_r1/admission_evidence"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "expected_raw_exit": 1,
+      "label": "verify:prohibited_downstream_scan",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "timestamp_utc": "2026-08-02T01:38:00Z"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--quiet",
+        "0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a",
+        "--",
+        "data/external_slice/admission_sheet.csv"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:immutable_pilot_sheet",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "timestamp_utc": "2026-08-02T01:38:00Z"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--quiet",
+        "0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a",
+        "--",
+        "data/external_slice/admission_sheet.cursor_candidate.csv"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:immutable_candidate_sheet",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "timestamp_utc": "2026-08-02T01:38:00Z"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--quiet",
+        "0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a",
+        "--",
+        "data/external_slice/readiness_batch1.json",
+        "data/external_slice/readiness_batch2.json",
+        "data/external_slice/reproduction",
+        "data/external_slice/FREEZE.sha256",
+        "data/external_slice/annotation",
+        "data/external_slice/predictions_frozen.json",
+        "data/external_slice/runs"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:immutable_downstream_paths",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "timestamp_utc": "2026-08-02T01:38:00Z"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/external_slice/check_supplemental_r1_admission.py",
+        "--scope",
+        "data/external_slice/supplemental_r1/SCOPE.json",
+        "--snapshot",
+        "data/external_slice/supplemental_r1/SEARCH_SNAPSHOT.json",
+        "--decisions",
+        "data/external_slice/supplemental_r1/REVIEW_DECISIONS.json",
+        "--sheet",
+        "data/external_slice/supplemental_r1/admission_sheet.cursor_candidate.csv",
+        "--evidence-root",
+        "data/external_slice/supplemental_r1/admission_evidence",
+        "--existing-sheet",
+        "data/external_slice/admission_sheet.cursor_candidate.csv",
+        "--pilot-sheet",
+        "data/external_slice/admission_sheet.csv"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:admission_checker",
+      "normalized_result": "PASS",
+      "stderr_tail": "",
+      "stdout_tail": "PASS: supplemental mining R1 admission structural check\n{\"excluded\": {\"cornellius-gp/gpytorch\": 5, \"jax-ml/jax\": 12, \"jonathf/chaospy\": 1, \"pymc-devs/pymc\": 8, \"pytorch/pytorch\": 18}, \"pending\": {\"jax-ml/jax\": 5, \"pymc-devs/pymc\": 5, \"pytorch/pytorch\": 2}, \"reviewed\": {\"cornellius-gp/gpytorch\": 5, \"jax-ml/jax\": 17, \"jonathf/chaospy\": 1, \"pymc-devs/pymc\": 13, \"pytorch/pytorch\": 20}, \"rows\": 56, \"searched_hits\": {\"SALib/SALib\": 0, \"cornellius-gp/gpytorch\": 9, \"jax-ml/jax\": 64, \"jonathf/chaospy\": 2, \"pymc-devs/pymc\": 41, \"pytorch/pytorch\": 146}}\n",
+      "timestamp_utc": "2026-08-02T01:38:00Z"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "tests/external_slice/test_mine_supplemental_r1.py",
+        "tests/external_slice/test_check_supplemental_r1_admission.py",
+        "-q"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:targeted_pytest",
+      "stderr_tail": "",
+      "stdout_tail": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: hydra-core-1.3.4, anyio-4.14.2\ncollected 18 items\n\ntests/external_slice/test_mine_supplemental_r1.py ......                 [ 33%]\ntests/external_slice/test_check_supplemental_r1_admission.py ........... [ 94%]\n.                                                                        [100%]\n\n============================= 18 passed in 33.41s ==============================\n",
+      "timestamp_utc": "2026-08-02T01:38:34Z"
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONPATH=src",
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:full_pytest",
+      "stderr_tail": "",
+      "stdout_tail": "dule_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/gaussian_process/kernels.py:445: ConvergenceWarning: The optimal value found for dimension 0 of parameter k2__noise_level is close to the specified lower bound 1e-05. Decreasing the bound and calling fit again may find a better value.\n    warnings.warn(\n\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/svm/_base.py:239: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`\n    warnings.warn(\n\ntests/stats/test_mixed_effects.py::test_fit_returns_class_means_and_p_values\n  /home/ubuntu/.local/lib/python3.12/site-packages/statsmodels/regression/mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 278 passed, 19 warnings in 40.48s =======================\n",
+      "timestamp_utc": "2026-08-02T01:39:15Z"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:git_diff_check",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "timestamp_utc": "2026-08-02T01:39:15Z"
+    }
+  ],
+  "environment": {
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": {
+      "machine": "x86_64",
+      "node": "cursor",
+      "processor": "x86_64",
+      "release": "6.12.94+",
+      "system": "Linux",
+      "version": "#1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026"
+    }
+  },
+  "notes": [
+    "Reserved/token/prohibited scans claim cleanliness only from raw rg exit code 1 with empty output.",
+    "All A2 values remain PENDING; no reproducer or dual-arm execution was performed.",
+    "Existing admission/readiness/freeze/downstream artifacts remain unchanged from baseline."
+  ],
+  "schema_version": 1,
+  "task": "SUPPLEMENTAL_MINING_R1"
+}

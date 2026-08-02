@@ -1,0 +1,26 @@
+{
+  "buggy_sha": "e5b0896b6e32383ef11d5dfe6546f6503114195d",
+  "criteria": {
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL",
+    "real_defect": "FAIL"
+  },
+  "evidence_urls": [
+    "https://github.com/cornellius-gp/gpytorch/issues/1185",
+    "https://github.com/cornellius-gp/gpytorch/pull/1186"
+  ],
+  "fix_url": "https://github.com/cornellius-gp/gpytorch/pull/1186",
+  "fixed_sha": "98fee8ca03285cbaa41dd888807570932cd87908",
+  "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/1185",
+  "mechanism_sentence": "adds distributional-input kernel implementations.",
+  "neutral_id": "EXT-gpytorch-03",
+  "rationales": {
+    "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+    "in_scope": "The change introduces new kernel features rather than repairing a float-vector to few-float numerical defect.",
+    "real_defect": "The linked record is a feature request for new kernels rather than a defective existing numerical kernel with an identifiable repair."
+  },
+  "review_decisions_sha256": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+  "scope_sha256": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+  "search_snapshot_sha256": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+  "source_pool": "supplemental_mining_r1"
+}
