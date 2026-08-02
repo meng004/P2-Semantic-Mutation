@@ -86,7 +86,7 @@ S0 台账建立提交前实测：
 | Gate A0 — Defect4MR sanitized import | handoff `e72faa2d7b7469eba75b8a4e240083dc76de90dd`；payload `a789bcecbd9d0544c223d4401fa101909694fbbb` | `PASS_WITH_DISCLOSURE` | payload `e3d9cdc673f92072ffefdcd1baafa295f1ee2cbb`；handoff `2b35fd30fd96091ad835d194fc63a72b24794b02` | 是；C2 / Gate A1 admission execution 可在新 session 启动 |
 | Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
-| Gate A1c — C3 readiness Batch 2 | correction handoff `01acdbbf6ffd220f9b768ffd386f02cc7fff591b`；correction payload `9f6f65afae8d9849b485dde94865a613d9d14269`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `BLOCKED` | `N/A（未集成 Batch 2/correction）` | 否；仅第二次 finding correction 解锁；Batch 3+、canonical freeze 与 A2/C4 仍锁定 |
+| Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
 
 ## 5. 交接审计记录
 
@@ -386,3 +386,34 @@ Gate A1c 判定为 `BLOCKED`。本地不 cherry-pick Batch 2 三个 commit，不
 #### 判定
 
 四项原 blocker 中两项关闭、两项仍开。Gate A1c 继续 `BLOCKED`，不 cherry-pick correction，不回填 candidate A2，不解锁 Batch 3+。修复要求见 `docs/review_20260730/gate_a1c_readiness_batch2_audit.md` §5.3。
+
+### 5.9 Gate A1c 第二次 finding 修复复核：C3 readiness Batch 2 A1c-r2
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1c — C3 readiness Batch 2 |
+| 记录类型 | 第二次 finding 修复复核；关闭 §5.8 剩余两项 blocker |
+| 交接/复核时间 | `2026-08-02T08:43:52+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness` |
+| Cursor commit | handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98` |
+| Cursor ancestry | `01acdbbf...` → `70c4ae05...` → `929e93f8...`；远端分支与 OPEN draft PR #4 head 均为 handoff |
+| Handoff manifest | `data/external_slice/HANDOFF_REPRO_BATCH2.json`；SHA256 `2fab1703566db004a6a121e382c039e39cf21bb0ecdc9b3f2312b373573ed4e9` |
+| 输入 hash | membership `b6bb4a45219b1e65c13d78f93c46bae4c972b9873942cc75bfc831f38a0c0153`；candidate sheet 与 first-correction baseline byte-identical |
+| 输出 hash | readiness `7d922fca1cf87b6070c29173ad98003db5c70db182cad16755b77d35a06b1150`；command log `71b02141ca47094663d2ad2023e69201afdadbf2ac965e5e9ba3f4f895c78a4c`；verification log `a38666aef17838138074d7ce7025bacae1bd207bad656676079f4499d575e80b`；FrEIA build lock `f4554c8497a56b5af72ffaf4072318a8620534dc90d4248f5553eb66a35ddaa5`；build-artifact manifest `2d215761c5a2b50f15b28b325b6c1c31b4ac765006c50ddfb2e28fe6a66c615a` |
+| Findings | `A1C-FREIA-LOCK-001` CLOSED；`A1C-HANDOFF-VERIFY-CMD-001` CLOSED；四项原 blocker 全部关闭 |
+| Verdict | `PASS_WITH_DISCLOSURE` |
+| 本地集成 commit | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction payload/handoff `406f507d`/`b1f24356`；second correction payload/handoff `29df0ac9`/`a3c07e34` |
+| 后继任务是否解锁 | 是，但仅新 Cursor VM/session 中对 supplemental pilot 六行 A1/A3 PASS、A2 PENDING 队列执行 C3 Batch 3。Candidate/canonical A2 回填、admission freeze、C4、标注、fiber、prediction 与 detection runs 继续锁定。 |
+
+#### 独立复算结果
+
+- FrEIA 双臂 fresh venv 的 build/runtime hash-lock 安装与 exact-source `--no-deps --no-build-isolation` 安装均 exit 0；build lock 与四项 artifact hash 对齐，无 isolated build dependency 日志；contrast 仍为 buggy 1 / fixed 0。
+- Runbook §3 reserved pattern 的正控 exit 0 并命中；decision-level 正式扫描 raw `rg` exit 1、无输出。`ghp_` / `github_pat_` / unredacted `Bearer` 扫描 raw exit 1、无输出；committed checker 均规范化为 exit 0。
+- 281 条 global commands 精确等于 29 个 per-case 数组顺序拼接；membership 仍为 approved 32 减 Batch 1 三行，无换例。
+- 结果为 9 PASS / 20 REPRO_FAILED；failure stage 为 build_or_trigger 8、contrast 4、build 2、era-Julia 3、GPU 2、arch 1。
+- Handoff 顶层与逐案所有 SHA256 零 mismatch；checker exit 0、`HASH_CHECK_OK`。Admission checker exit 0；compileall exit 0；完整测试 `260 passed, 10 warnings`。
+- Candidate sheet A2 仍全 PENDING；Batch 3、canonical freeze、标注、alias、prediction 与 detection/result 路径相对 correction baseline 均未变。
+
+#### 判定
+
+四项原 blocker 全部关闭，Gate A1c 以 `PASS_WITH_DISCLOSURE` 接受并按不可变顺序集成全部 Batch 2 lineage。披露项仅为 PR #4 标题仍写 Batch 1，以及保留两轮 correction lineage。Batch 1+2 合计 12 ready / 20 retained failures，尚未达到协议 `n >= 20` 目标；因此下一任务不是 canonical freeze，而是新 Cursor VM 的 C3 Batch 3，范围严格限定为独立 supplemental pilot 中六行 A1/A3 PASS、A2 PENDING 案例。

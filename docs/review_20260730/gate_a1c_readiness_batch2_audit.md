@@ -1,11 +1,12 @@
 # Gate A1c — C3 Readiness Batch 2 Audit
 
 - **Audit time:** `2026-08-01T23:54:40+08:00`
-- **Correction re-review:** `2026-08-02T08:22:24+08:00`
+- **First correction re-review:** `2026-08-02T08:22:24+08:00`
+- **Second correction re-review:** `2026-08-02T08:43:52+08:00`
 - **Scope:** the 29 Gate A1a-approved queue rows remaining after Batch 1
-- **Verdict:** `BLOCKED`
-- **Open blockers:** 2; handoff-hash and heavy-build findings are closed, while FrEIA build isolation and verification-scan correctness remain open
-- **Successor state:** correction work only; Batch 3+, canonical admission freeze, A2/C4, fibre mapping, prediction, and detection runs remain locked
+- **Verdict:** `PASS_WITH_DISCLOSURE`
+- **Open blockers:** 0; all four original findings are closed after two correction rounds
+- **Successor state:** only C3 Batch 3 for the six A1/A3-passing supplemental-pilot rows is unlocked; canonical admission freeze, A2/C4, fibre mapping, prediction, and detection runs remain locked
 
 ## 1. Audited lineage
 
@@ -246,3 +247,85 @@ not cherry-picked locally. Only a second correction session based on
 `01acdbbf6ffd220f9b768ffd386f02cc7fff591b` is unlocked; Batch 3+, candidate A2
 promotion, canonical admission freeze, C4, fibre/category work, prediction, and
 detection runs remain locked.
+
+## 6. Second correction re-review and final decision
+
+### 6.1 Lineage, boundary preservation, and local integration
+
+| Role | Commit / value |
+|---|---|
+| Second-correction baseline | `01acdbbf6ffd220f9b768ffd386f02cc7fff591b` |
+| Second-correction payload | `70c4ae0546d98267edfd80ee7023d94ad8111b98` |
+| Second-correction handoff | `929e93f8a50cd8aedea618ad7016aada72e0cc16` |
+| PR state at audit | `#4`, OPEN draft, head `929e93f8a50cd8aedea618ad7016aada72e0cc16` |
+| Local membership integration | `543dd90f` |
+| Local original payload / handoff | `ddaac13c` / `f0256427` |
+| Local first-correction payload / handoff | `406f507d` / `b1f24356` |
+| Local second-correction payload / handoff | `29df0ac9` / `a3c07e34` |
+
+The two new commits are consecutive descendants of the first correction. The
+29-row membership file, the 64-row candidate sheet, the nine-row supplemental
+pilot sheet, and all later-stage freeze/result paths are unchanged by the
+second correction. Every candidate-sheet A2 value remains `PENDING`; no Batch
+3, annotation, alias, prediction, or detection artifact was created.
+
+### 6.2 `A1C-FREIA-LOCK-001` — CLOSED
+
+- Both arms were recreated as distinct venvs.
+- Both arms installed the packaging/build closure from
+  `requirements.build.txt` with `--require-hashes`; the lock covers exact
+  `pip`, `setuptools`, `wheel`, and `packaging` versions and four artifact
+  hashes. The artifact manifest and lock agree.
+- Both arms installed the runtime closure with `--require-hashes` and no
+  fallback, then installed their exact source tree with both `--no-deps` and
+  `--no-build-isolation`. All six install commands exited 0.
+- Neither retained source-install output contains `Installing build
+  dependencies`; no isolated resolver route remains.
+- The deterministic contrast is unchanged: buggy normalized exit 1 and fixed
+  normalized exit 0 at seed 0.
+
+### 6.3 `A1C-HANDOFF-VERIFY-CMD-001` — CLOSED
+
+- The committed reserved-term expression equals runbook §3's hexadecimal
+  expression and is scoped to decision-level Batch 2 artifacts. An independent
+  positive control matched retained `fiber` text, proving the expression is
+  functional; the decision-artifact scan then returned raw `rg` exit 1 with no
+  output.
+- The committed token scan covers `ghp_`, `github_pat_`, and unredacted
+  `Bearer` values. The independent raw scan returned exit 1 with no output.
+- The verification log records the clean raw-exit contract (`rg=1`) and the
+  normalized checker exit (`0`) for both scans. Admission, pytest, compileall,
+  membership, and handoff-hash commands and exits remain present.
+
+### 6.4 Independent final verification
+
+- Frozen membership equals the approved 32-row queue minus the three Batch 1
+  IDs, in sheet order: 29 unique members, no substitution or overlap.
+- The global command log contains 281 entries and exactly equals the ordered
+  concatenation of all 29 per-case command arrays.
+- Results remain 9 proposed `PASS` and 20 `REPRO_FAILED`. Failure stages are
+  `build_or_trigger` 8, `contrast` 4, `build` 2,
+  `PLATFORM_GATE:era-julia` 3, `PLATFORM_GATE:gpu` 2, and
+  `PLATFORM_GATE:arch` 1.
+- Every top-level and per-case handoff SHA256 matches; the committed checker
+  exits 0 with `HASH_CHECK_OK`.
+- The admission checker exits 0 with its explicit pre-readiness-only notice;
+  compileall exits 0; the complete immutable-snapshot suite reports
+  `260 passed, 10 warnings`.
+
+### 6.5 Verdict and next boundary
+
+All four original Gate A1c blockers are closed. Gate A1c is therefore
+`PASS_WITH_DISCLOSURE`. The disclosures are procedural only: PR #4's title
+still names Batch 1 although its head contains Batch 2, and the accepted
+lineage preserves two auditable correction rounds rather than squashing them.
+
+The 29-case Batch 2 evidence is accepted as case-local readiness evidence; it
+is integrated without modifying the candidate sheet. Together with Batch 1,
+the frozen 32-row queue has 12 proposed ready cases and 20 retained failures.
+This is below the protocol's ready `n >= 20` target, and the separate
+nine-row supplemental pilot still has six A1/A3-passing rows with A2
+`PENDING`. Consequently, the only unlocked successor is a fresh Cursor VM
+session for C3 Batch 3 over exactly those six rows. Canonical admission freeze,
+human annotation/C4, category mapping, prediction, and detection execution stay
+locked pending that handoff and its next local gate.
