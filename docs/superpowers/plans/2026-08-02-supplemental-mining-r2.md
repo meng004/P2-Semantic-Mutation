@@ -54,6 +54,10 @@ It is not authorized to:
 The design branch and its commit are not an admission or readiness artifact.
 No scientific count changes merely because this plan is frozen.
 
+**Command-prefix policy (frozen):** Cursor VM commands must not use `rtk`.
+Only Local Desktop commands use the `rtk` prefix. Every command shown in the
+future Cursor execution tasks in section 7 is therefore intentionally plain.
+
 ## 1. Frozen authority and inherited invariants
 
 ### 1.1 Immutable design baseline
@@ -573,10 +577,10 @@ commit, not by a branch name.
 ### Task 1: Create the fresh Cursor VM execution branch
 
 ```bash
-rtk git fetch origin
-rtk git switch -c cursor/grok-phase3-supplemental-mining-r2 <R2_DESIGN_FREEZE_COMMIT>
-rtk git rev-parse HEAD
-rtk git status --short --branch
+git fetch origin
+git switch -c cursor/grok-phase3-supplemental-mining-r2 <R2_DESIGN_FREEZE_COMMIT>
+git rev-parse HEAD
+git status --short --branch
 ```
 
 Expected: HEAD equals the audited design commit and the worktree is clean.
@@ -589,12 +593,12 @@ exact semantic values in sections 1-3 and the authoritative hashes in section
 1. Commit them together before any network request:
 
 ```bash
-rtk python3 -m json.tool data/external_slice/supplemental_r2/SCOPE.json
-rtk python3 -m json.tool data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json
-rtk python3 -m json.tool data/external_slice/supplemental_r2/QUOTAS.json
-rtk git diff --check
-rtk git add data/external_slice/supplemental_r2/SCOPE.json data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json data/external_slice/supplemental_r2/QUOTAS.json
-rtk git commit -m "data(external): freeze supplemental mining R2 contract"
+python3 -m json.tool data/external_slice/supplemental_r2/SCOPE.json
+python3 -m json.tool data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json
+python3 -m json.tool data/external_slice/supplemental_r2/QUOTAS.json
+git diff --check
+git add data/external_slice/supplemental_r2/SCOPE.json data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json data/external_slice/supplemental_r2/QUOTAS.json
+git commit -m "data(external): freeze supplemental mining R2 contract"
 ```
 
 ### Task 3: Implement the transport and validators test-first
@@ -604,9 +608,9 @@ implement the minimum production code, then confirm GREEN. No live retrieval
 is allowed while tests are being authored.
 
 ```bash
-rtk env PYTHONPATH=src python3 -m pytest tests/external_slice/test_mine_supplemental_r2.py -q
-rtk env PYTHONPATH=src python3 -m pytest tests/external_slice/test_check_supplemental_r2_admission.py -q
-rtk git diff --check
+env PYTHONPATH=src python3 -m pytest tests/external_slice/test_mine_supplemental_r2.py -q
+env PYTHONPATH=src python3 -m pytest tests/external_slice/test_check_supplemental_r2_admission.py -q
+git diff --check
 ```
 
 The code commit must precede the first live retrieval command and must include
@@ -632,12 +636,12 @@ checker and every negative test.
 ### Task 6: Verify, commit, push, and stop
 
 ```bash
-rtk env PYTHONPATH=src python3 -m pytest tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py -q
-rtk env PYTHONPATH=src python3 -m pytest -q
-rtk python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2
-rtk python3 scripts/external_slice/check_supplemental_r2_handoff_hashes.py --handoff data/external_slice/supplemental_r2/HANDOFF_SUPPLEMENTAL_R2.json
-rtk git diff --check
-rtk git status --short --branch
+env PYTHONPATH=src python3 -m pytest tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py -q
+env PYTHONPATH=src python3 -m pytest -q
+python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2
+python3 scripts/external_slice/check_supplemental_r2_handoff_hashes.py --handoff data/external_slice/supplemental_r2/HANDOFF_SUPPLEMENTAL_R2.json
+git diff --check
+git status --short --branch
 ```
 
 Commit payload and handoff separately. Push the Cursor branch and stop at
