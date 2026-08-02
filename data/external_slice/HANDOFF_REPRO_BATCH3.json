@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "4287ea4a1c782030d34af2162355fd459d50a563",
+  "baseline_commit": "8ef20d26ea0a785bd0209b922a94e7f3bc1e8064",
   "batch": {
     "batch4_started": false,
     "c4_started": false,
@@ -28,6 +28,7 @@
   "branch": "cursor/grok-phase3-c3-readiness-batch3",
   "case_results": [
     {
+      "failure_detail": null,
       "failure_stage": null,
       "formal_seeds": [
         0,
@@ -47,6 +48,7 @@
       }
     },
     {
+      "failure_detail": null,
       "failure_stage": null,
       "formal_seeds": [
         0,
@@ -66,6 +68,7 @@
       }
     },
     {
+      "failure_detail": null,
       "failure_stage": null,
       "formal_seeds": [
         0,
@@ -85,6 +88,7 @@
       }
     },
     {
+      "failure_detail": null,
       "failure_stage": null,
       "formal_seeds": [
         0,
@@ -104,6 +108,7 @@
       }
     },
     {
+      "failure_detail": null,
       "failure_stage": null,
       "formal_seeds": [
         0,
@@ -123,6 +128,7 @@
       }
     },
     {
+      "failure_detail": null,
       "failure_stage": null,
       "formal_seeds": [
         0,
@@ -154,8 +160,8 @@
     "proposed_PASS": 6,
     "proposed_REPRO_FAILED": 0
   },
-  "created_at": "2026-08-02T12:20:43.643658+00:00",
-  "cumulative_note": "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; Gate A1d-r2 cannot unlock canonical freeze; supplementary-mining loop required.",
+  "created_at": "2026-08-02T12:32:56.994794+00:00",
+  "cumulative_note": "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; Gate A1d-r3 cannot unlock canonical freeze; supplementary-mining loop required.",
   "environment": {
     "machine": "x86_64",
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
@@ -205,7 +211,7 @@
     "token_scan": 0
   },
   "failures": [],
-  "gate": "A1d-r2",
+  "gate": "A1d-r3",
   "inputs": {
     "BATCH3_EXECUTION_MATRIX.json": "addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6",
     "BATCH3_MEMBERSHIP.json": "02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853",
@@ -237,10 +243,10 @@
       "BATCH3_COMMAND_LOG.json": "a2bbaa97d3038bf8982a0c425300e5b289f80be70f945b4f4643921e0814fb8c",
       "BATCH3_EXECUTION_MATRIX.json": "addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6",
       "BATCH3_MEMBERSHIP.json": "02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853",
-      "BATCH3_VERIFICATION_LOG.json": "e0613d4ae5bda8d622f233d06491715cb6c893c516d7221b8ed6ba89d1f2a911",
+      "BATCH3_VERIFICATION_LOG.json": "6862812d89a296b96a0c325c521ad84c406bc49dea96061aead0b1d738298224",
       "admission_sheet.csv": "77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a",
       "admission_sheet.cursor_candidate.csv": "4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8",
-      "readiness_batch3.json": "7446ea002d131797ac9f9ac77397fcf1b59389c668dd854a3241831f2b8fcb02",
+      "readiness_batch3.json": "628cde0104906a8a0a92578ce989fe487f20eee4ac184e6f5fa2850410df9fba",
       "reproduction/EXT-numpy-01/locks/BLAS_LAPACK_PROVIDER.json": "6404b705d714000907567a1a3224d2bfb5342f9ddc94103800f7f3a8a85b52e9",
       "reproduction/EXT-scikit-learn-01/locks/BLAS_LAPACK_PROVIDER.json": "bbc7024827c3802557a4a88af61d9610a83884ccadc844d08e053c5602a36d4a",
       "reproduction/EXT-scipy-01/locks/BLAS_LAPACK_PROVIDER.json": "e0c8adaa47fcbe8d544d6a44580b8a0775f2eee082c9f18ae73f50fcea2bbeea",
@@ -693,6 +699,6 @@
       }
     }
   },
-  "parent_handoff_commit": "4287ea4a1c782030d34af2162355fd459d50a563",
-  "task": "C3 readiness Batch 3 A1d-r2 correction"
+  "parent_handoff_commit": "8ef20d26ea0a785bd0209b922a94e7f3bc1e8064",
+  "task": "C3 readiness Batch 3 A1d-r3 correction"
 }
