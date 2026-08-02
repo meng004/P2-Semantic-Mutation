@@ -1,10 +1,13 @@
-# Hash-locked requirements generated for C3 Batch 2
-# python=/tmp/c3_batch2/work/EXT-freia-01/venv-buggy/bin/python
+# Hash-locked FrEIA deps for Gate A1c correction
+# python=/tmp/c3_a1c_fix/EXT-freia-01/venv-buggy/bin/python
 # root_packages=['numpy==2.2.6', 'scipy==1.15.3', 'torch==2.7.1']
+# install_with: pip install --require-hashes --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple -r requirements.deps.txt
 numpy==2.2.6 \
     --hash=sha256:fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249
 scipy==1.15.3 \
     --hash=sha256:271e3713e645149ea5ea3e97b57fdab61ce61333f97cfae392c28ba786f9bb49
+torch==2.7.1+cpu \
+    --hash=sha256:8f8b3cfc53010a4b4a3c7ecb88c212e9decc4f5eeb6af75c3c803937d2d60947
 filelock==3.32.2 \
     --hash=sha256:87dd94cf281e586d135fa51132b8e3d9a598b316e90377a288663c9321036c82
 fsspec==2026.7.0 \
@@ -21,7 +24,5 @@ setuptools==83.0.0 \
     --hash=sha256:29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3
 sympy==1.14.0 \
     --hash=sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5
-torch==2.7.1+cpu \
-    --hash=sha256:8f8b3cfc53010a4b4a3c7ecb88c212e9decc4f5eeb6af75c3c803937d2d60947
 typing-extensions==4.16.0 \
     --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8
