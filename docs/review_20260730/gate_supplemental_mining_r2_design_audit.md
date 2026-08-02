@@ -99,3 +99,56 @@ fresh Cursor VM/session may create
 `cursor/grok-phase3-supplemental-mining-r2` from the immutable freeze commit
 and execute the plan. It does not unlock readiness, canonical freeze, C4,
 annotation, category mapping, prediction, detection, or PR #6 integration.
+
+## 7. SUPPLEMENTAL_MINING_R2_DESIGN-r1 correction handoff
+
+- **Record type:** append-only correction handoff; the original audit record
+  above is unchanged.
+- **Correction baseline:** `6fc5b6fde8d87b284b60b46033ce6632b979e456`
+- **Correction payload:** `1ed9fb2dc2714cb452bba4016d6093cefb36204d`
+- **Correction audit commit:** `SELF`; its direct parent must be
+  `1ed9fb2dc2714cb452bba4016d6093cefb36204d`.
+- **Corrected plan SHA-256:**
+  `04b6b08c344b550c9ce11b8bb0fca57a0cb00fcb5f7bffceb4d49ab71155e8d5`
+- **Gate requested:** `SUPPLEMENTAL_MINING_R2_DESIGN-r1`
+- **Review state:** `PENDING_LOCAL_R1_REVIEW`
+
+### 7.1 Correction scope
+
+The payload closes `R2-DESIGN-CURSOR-RTK-001`: every `rtk` prefix was removed
+from the Cursor VM commands in section 7 Tasks 1, 2, 3, and 6. The plan now
+freezes the environment rule explicitly: Cursor VM commands must not use
+`rtk`; only Local Desktop commands use `rtk`.
+
+No repository, phrase, cutoff, exclusion, blind-policy rule, quota, stopping
+rule, transport invariant, field binding, negative test, or successor gate was
+changed. No Cursor branch was created, and no search, candidate generation, or
+readiness command ran.
+
+### 7.2 Correction verification
+
+| Check | Result |
+|---|---|
+| Cursor command-prefix scan | raw exit 1, no output |
+| `git diff --check` | exit 0 |
+| Requested bare `rtk python3 -m pytest -q` | exit 1: system Python has no `pytest` module |
+| Repository `.venv` without src layout | exit 2: nine collection errors for missing `p2` |
+| Repository-mandated full suite with `.venv` and `PYTHONPATH=src` | `260 passed, 10 warnings` in 16.31 s |
+| Corrected plan hash | `04b6b08c344b550c9ce11b8bb0fca57a0cb00fcb5f7bffceb4d49ab71155e8d5` |
+
+The authoritative full-suite command was:
+
+```bash
+rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest -q
+```
+
+The two earlier test invocations failed only because they omitted repository
+environment prerequisites; they did not execute or modify scientific data.
+
+### 7.3 Locked successor
+
+Push the correction payload and this direct-child audit commit, then stop.
+Creation of `cursor/grok-phase3-supplemental-mining-r2` remains locked until a
+new Local Desktop session independently verifies this handoff and records
+`SUPPLEMENTAL_MINING_R2_DESIGN-r1` as passing. PR #6 integration remains a
+separate explicit decision.
