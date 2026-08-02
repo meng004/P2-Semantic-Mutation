@@ -7,6 +7,7 @@
 - **Verdict:** `BLOCKED`
 - **Integration:** none; the three Cursor commits are not cherry-picked
 - **Successor state:** supplemental readiness, A2 promotion, canonical admission freeze, C4, labelling, prediction, and detection remain locked
+- **R2 re-audit:** handoff `e007042074956e6c57a089cfed1ecc404b5723a4`; current verdict remains `BLOCKED`
 
 ## 1. Independent verification
 
@@ -77,3 +78,119 @@ Correction must remain on the same Cursor branch and start from `ac887e8a4a980da
 ## 6. Decision
 
 PR #5 remains open but unaccepted. The twelve proposed rows are not approved candidates and must not enter readiness. Only the correction task in §5 is unlocked.
+
+## 7. R2 correction re-audit
+
+### 7.1 Intake and verification
+
+R2 lineage is consecutive and remotely pinned:
+
+```text
+ac887e8a4a980dafca31c9ee803ec971a57698bc
+  -> bc3a4e30f57f38f728b4f3971c05c07e6285f643  correction payload
+  -> e007042074956e6c57a089cfed1ecc404b5723a4  correction handoff
+```
+
+Draft PR #5 and `origin/cursor/grok-phase3-supplemental-mining-r1` both point to
+the correction handoff. Independent verification produced:
+
+| Check | Result |
+|---|---|
+| Handoff hash checker | `HASH_CHECK_OK`; six files, zero trees/evidence |
+| Withdrawal equality | old 56 `(neutral_id, decision)` pairs and R2 withdrawal pairs have identical canonical SHA256 `878d6851...` |
+| Withdrawn artifacts | old snapshot, queue, decisions, sheet, evidence snapshot/tree all absent |
+| Targeted tests | `22 passed` |
+| Full R2 tests | `282 passed, 10 warnings` |
+| Compileall | exit 0 |
+| Token scan | raw `rg` exit 1, no output |
+| Immutable admission/readiness/downstream paths | exit 0; unchanged from `0e208929...` |
+| Diff whitespace | exit 0 |
+
+The PR→issue fallback is removed and the official miner hard-fails on the first
+PR-typed response. The previous 128 queue rows, 56 decisions, 12 pending IDs,
+and 44 exclusions are withdrawn without substitution. No new candidate or
+downstream artifact exists.
+
+### 7.2 R2 findings
+
+#### `SUPP-R1-R2-FULL-BINDING-001` — BLOCKER
+
+`SUPP-R1-QUEUE-BINDING-001` is only partially fixed. The checker verifies query
+identity and header hashes, but it does not reconstruct the deduplicated ordered
+queue from `SEARCH_SNAPSHOT.json`. It also does not require complete field
+equality between sheet, decision, and evidence records.
+
+Two independent negative probes against `e0070420` both exited 0:
+
+1. The snapshot retained issue 1 while queue, decision, sheet, and evidence were
+   consistently replaced with issue 999. The checker printed `PASS`.
+2. Only the sheet `fixed_sha` was changed while the decision and evidence kept
+   the original SHA. The checker again printed `PASS`.
+
+Therefore the claimed exact
+scope→search→queue→decision→sheet→evidence binding is not established. The
+committed tests cover several queue/decision mismatches, but do not cover
+queue-vs-snapshot membership/order or general sheet/decision/evidence field
+divergence.
+
+#### `SUPP-R1-R2-DIAGNOSTIC-PROVENANCE-001` — HIGH
+
+`SEARCH_DIAGNOSTIC_R2.json` lists 66 exact query strings and aggregate counts of
+0 issues / 262 PRs, but `COMMAND_LOG.json` contains only the first official
+`gh api` request. The diagnostic rows contain neither returned identifiers nor
+response hashes, timestamps, or per-query command provenance. The critical
+wrapper command that produced official exit 2 is also absent from the command
+and verification logs.
+
+The “fresh 66-query diagnostic” claim is therefore `insufficient`, not a cleared
+result. Local Desktop replay of the exact first query on 2026-08-02 returned 20
+issue objects and zero PRs. This does not negate the recorded Cursor VM hard
+failure, but requires the claim to be scoped to that VM and prevents a broad
+claim that no admissible GitHub issue union exists.
+
+#### `SUPP-R1-R2-STYLE-001` — LOW / NON-BLOCKING
+
+Standards review found four changed Python lines over the documented 100-column
+limit and a judgement-call duplication risk because query/stop policies are
+implemented independently in miner and checker. The independent checker may
+intentionally duplicate policy; if so, equivalence tests should make that
+choice explicit.
+
+### 7.3 Finding disposition
+
+| Original finding | R2 disposition |
+|---|---|
+| `SUPP-R1-SEARCH-SEMANTICS-001` | `CLOSED`: fallback removed; hard fail implemented; invalid set withdrawn |
+| `SUPP-R1-HANDOFF-DISCLOSURE-001` | `CLOSED`: blocked lineage and withdrawal are disclosed |
+| `SUPP-R1-QUEUE-BINDING-001` | `OPEN/PARTIAL`: promoted to `SUPP-R1-R2-FULL-BINDING-001` |
+
+### 7.4 R3 correction contract
+
+Use a new Cursor VM/session without `rtk`, on the same branch starting from
+`e007042074956e6c57a089cfed1ecc404b5723a4`.
+
+1. Reconstruct the expected queue mechanically from snapshot direct issue
+   items using the frozen deduplication, ordering, neutral-ID, and phrase
+   provenance rules. Require exact record equality with `REVIEW_QUEUE.json`.
+2. Require exact equality for all duplicated fields across queue, decision,
+   sheet, and evidence: ID, repository, issue number/URL, fix URL, buggy/fixed
+   SHAs, mechanism, A1/A2/A3, verdict, exclusion reason, alias, rationales, and
+   evidence URLs. Hash equality alone is not field binding.
+3. Add regression tests that reproduce both exit-0 escapes above. Also add
+   explicit missing-query, duplicate-query, queue-vs-snapshot membership/order,
+   and every cross-artifact field-mismatch negative test.
+4. Either remove the 66-query diagnostic claim or generate it with a committed
+   diagnostic command that logs all 66 exact commands, exits, timestamps, and
+   response hashes/identifiers. Scope any anomalous response claim to the exact
+   Cursor VM environment; record the official wrapper command and exit 2.
+5. Retain the withdrawal and artifact absences. Do not restore or reuse any R1
+   candidate membership and do not start readiness.
+6. Commit a correction payload and direct-child handoff separately, push, and
+   stop for `SUPPLEMENTAL_ADMISSION_R1-r3`.
+
+### 7.5 R2 decision
+
+R2 remains `BLOCKED`. The safe withdrawal is verified, but the correction
+payload/handoff are not integrated because the central full-binding claim is
+false and the 66-query diagnostic claim is not command-auditable. Only the R3
+correction contract above is unlocked.
