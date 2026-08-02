@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Admission checker for supplemental mining R1 candidate payload (R1-r2)."""
+"""Admission checker for supplemental mining R1 candidate payload (R1-r3)."""
 
 from __future__ import annotations
 
 import argparse
 import csv
 import hashlib
+import importlib.util
 import json
 import re
 import sys
@@ -119,6 +120,50 @@ def build_expected_queries(scope: dict[str, Any]) -> list[dict[str, str]]:
     return out
 
 
+def _load_miner_assign_queue():
+    path = Path(__file__).resolve().parent / "mine_supplemental_r1.py"
+    spec = importlib.util.spec_from_file_location("mine_supplemental_r1_for_checker", path)
+    if spec is None or spec.loader is None:
+        fail(f"unable to load miner module from {path}")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.assign_queue
+
+
+def reconstruct_queue_records(
+    scope: dict[str, Any], snapshot: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Mechanically rebuild queue records from snapshot direct issue items."""
+    assign_queue = _load_miner_assign_queue()
+    hits_by_repo: dict[str, list[dict[str, Any]]] = {
+        r["repo"]: [] for r in scope["repositories"]
+    }
+    allowed = set(hits_by_repo)
+    for query in snapshot.get("queries") or []:
+        repo = query.get("repo")
+        if repo not in allowed:
+            fail(f"snapshot repository outside SCOPE repositories list: {repo}")
+        for item in query.get("items") or []:
+            cloned = dict(item)
+            cloned.setdefault("phrase", query.get("phrase"))
+            cloned.setdefault("repo", repo)
+            hits_by_repo[repo].append(cloned)
+    return assign_queue(scope, hits_by_repo)
+
+
+def require_queue_snapshot_equality(
+    scope: dict[str, Any], snapshot: dict[str, Any], queue: dict[str, Any]
+) -> None:
+    expected = reconstruct_queue_records(scope, snapshot)
+    got = queue.get("records") or []
+    if got != expected:
+        fail(
+            "REVIEW_QUEUE.json records are not exactly equal to the queue "
+            "mechanically reconstructed from SEARCH_SNAPSHOT.json items "
+            f"(expected_count={len(expected)}, got_count={len(got)})"
+        )
+
+
 def apply_review_stop(
     records: list[dict[str, Any]],
     decisions: list[dict[str, Any]],
@@ -139,6 +184,69 @@ def apply_review_stop(
         if pending >= target_pending or len(reviewed_ids) >= max_reviewed:
             break
     return reviewed_ids
+
+
+def require_cross_artifact_field_equality(
+    *,
+    nid: str,
+    qrec: dict[str, Any],
+    decision: dict[str, Any],
+    row: dict[str, str],
+    evidence: dict[str, Any],
+) -> None:
+    """Require exact equality for every duplicated field across artifacts."""
+    if qrec.get("neutral_id") != nid or decision.get("neutral_id") != nid:
+        fail(f"{nid}: neutral_id mismatch across queue/decision")
+    if evidence.get("neutral_id") != nid:
+        fail(f"{nid}: evidence neutral_id mismatch")
+
+    if qrec.get("repo") != decision.get("repo"):
+        fail(f"{nid}: queue/decision repository mismatch")
+    repo_short = decision["repo"].split("/")[-1]
+    if row.get("repo") not in {repo_short, decision["repo"]}:
+        fail(f"{nid}: sheet/decision repository mismatch")
+
+    if int(qrec.get("issue_number")) != int(decision.get("issue_number")):
+        fail(f"{nid}: queue/decision issue_number mismatch")
+    sheet_issue = int(str(row.get("issue_url") or "").rstrip("/").rsplit("/", 1)[-1])
+    if sheet_issue != int(decision.get("issue_number")):
+        fail(f"{nid}: sheet/decision issue_number mismatch")
+
+    if qrec.get("issue_url") != decision.get("issue_url") or qrec.get("issue_url") != row.get(
+        "issue_url"
+    ):
+        fail(f"{nid}: queue/decision/sheet issue_url mismatch")
+    if evidence.get("issue_url") != row.get("issue_url"):
+        fail(f"{nid}: evidence/sheet issue_url mismatch")
+
+    if (decision.get("fix_url") or "") != (evidence.get("fix_url") or ""):
+        fail(f"{nid}: decision/evidence fix_url mismatch")
+
+    for field in ("buggy_sha", "fixed_sha", "mechanism_sentence", "decision", "exclusion_reason"):
+        if (row.get(field) or "") != (decision.get(field) or ""):
+            fail(f"{nid}: sheet/decision {field} mismatch")
+    for field in ("buggy_sha", "fixed_sha", "mechanism_sentence"):
+        if (row.get(field) or "") != (evidence.get(field) or ""):
+            fail(f"{nid}: sheet/evidence {field} mismatch")
+
+    for sheet_key, crit_key in (
+        ("crit_real_defect", "real_defect"),
+        ("crit_dual_arm_repro", "dual_arm_repro"),
+        ("crit_in_scope", "in_scope"),
+    ):
+        if row.get(sheet_key) != decision.get(sheet_key):
+            fail(f"{nid}: sheet/decision {sheet_key} mismatch")
+        criteria = evidence.get("criteria") or {}
+        if row.get(sheet_key) != criteria.get(crit_key):
+            fail(f"{nid}: sheet/evidence criteria.{crit_key} mismatch")
+
+    if (row.get("analysis_id") or "") != (decision.get("analysis_id") or ""):
+        fail(f"{nid}: sheet/decision analysis_id mismatch")
+
+    if decision.get("rationales") != evidence.get("rationales"):
+        fail(f"{nid}: decision/evidence rationales mismatch")
+    if decision.get("evidence_urls") != evidence.get("evidence_urls"):
+        fail(f"{nid}: decision/evidence evidence_urls mismatch")
 
 
 def main() -> int:
@@ -180,9 +288,14 @@ def main() -> int:
     expected_queries = build_expected_queries(scope)
     got_queries = snapshot.get("queries") or []
     if len(got_queries) != len(expected_queries):
-        fail("snapshot query count differs from SCOPE cartesian product")
+        fail(
+            "snapshot query count differs from SCOPE cartesian product "
+            f"(missing or duplicate query; expected {len(expected_queries)}, "
+            f"got {len(got_queries)})"
+        )
     phrases = set(scope["phrases"])
     allowed_repos = {r["repo"] for r in scope["repositories"]}
+    seen_query_keys: set[tuple[str, str, str]] = set()
     for exp, got in zip(expected_queries, got_queries):
         if got.get("repo") not in allowed_repos:
             fail(f"snapshot repository outside SCOPE: {got.get('repo')}")
@@ -194,6 +307,10 @@ def main() -> int:
             or got.get("q") != exp["q"]
         ):
             fail(f"snapshot query identity/order mismatch for {exp}")
+        key = (got.get("repo") or "", got.get("phrase") or "", got.get("q") or "")
+        if key in seen_query_keys:
+            fail(f"duplicate snapshot query for {key}")
+        seen_query_keys.add(key)
         if got.get("incomplete_results") is True:
             fail(f"incomplete_results in snapshot for {exp['repo']}/{exp['phrase']}")
         if int(got.get("pull_count") or 0) != 0:
@@ -204,6 +321,9 @@ def main() -> int:
             url = item.get("issue_url") or item.get("html_url") or ""
             if "/pull/" in url or item.get("is_pull_request") is True:
                 fail(f"PR item in snapshot: {url}")
+
+    # Mechanical snapshot → queue reconstruction with exact record equality.
+    require_queue_snapshot_equality(scope, snapshot, queue)
 
     prefix_by_repo = {r["repo"]: r["id_prefix"] for r in scope["repositories"]}
     allowed_short = {r["repo"].split("/")[-1] for r in scope["repositories"]}
@@ -261,12 +381,21 @@ def main() -> int:
         qrec = queue_by_id.get(nid)
         if qrec is None:
             fail(f"{nid}: sheet/decision row missing from queue")
-        if qrec["repo"] != decision["repo"]:
-            fail(f"{nid}: queue/decision repository mismatch")
-        if int(qrec["issue_number"]) != int(decision["issue_number"]):
-            fail(f"{nid}: queue/decision issue_number mismatch")
-        if qrec["issue_url"] != decision["issue_url"] or qrec["issue_url"] != row["issue_url"]:
-            fail(f"{nid}: queue/decision/sheet issue_url mismatch")
+
+        evidence_path = args.evidence_root / nid / "evidence.json"
+        if not evidence_path.is_file():
+            fail(f"{nid}: sheet row without a matching evidence record")
+        payload = load_json(evidence_path)
+        if not EVIDENCE_REQUIRED.issubset(set(payload)):
+            fail(f"{nid}: evidence record missing required keys")
+
+        require_cross_artifact_field_equality(
+            nid=nid,
+            qrec=qrec,
+            decision=decision,
+            row=row,
+            evidence=payload,
+        )
 
         repo_full = decision["repo"]
         repo_short = row["repo"]
@@ -322,12 +451,6 @@ def main() -> int:
                 fail(f"{nid}: duplicate nonblank buggy/fixed pair across any pool")
             seen_pairs.add(pair)
 
-        evidence_path = args.evidence_root / nid / "evidence.json"
-        if not evidence_path.is_file():
-            fail(f"{nid}: sheet row without a matching evidence record")
-        payload = load_json(evidence_path)
-        if not EVIDENCE_REQUIRED.issubset(set(payload)):
-            fail(f"{nid}: evidence record missing required keys")
         if payload.get("source_pool") != "supplemental_mining_r1":
             fail(f"{nid}: source_pool must be supplemental_mining_r1")
         if payload.get("scope_sha256") != scope_sha:
@@ -336,8 +459,6 @@ def main() -> int:
             fail(f"{nid}: evidence search hash mismatch")
         if payload.get("review_decisions_sha256") != decisions_sha:
             fail(f"{nid}: evidence decision hash mismatch")
-        if payload.get("issue_url") != row["issue_url"]:
-            fail(f"{nid}: evidence issue_url mismatch")
         reviewed_by_repo[repo_full] += 1
 
     for repo, count in pending_by_repo.items():
@@ -353,7 +474,7 @@ def main() -> int:
     for query in snapshot.get("queries", []):
         searched[query.get("repo")] += int(query.get("returned") or 0)
 
-    print("PASS: supplemental mining R1 admission structural check")
+    print("PASS: supplemental mining R1 admission structural check (full binding)")
     print(
         json.dumps(
             {

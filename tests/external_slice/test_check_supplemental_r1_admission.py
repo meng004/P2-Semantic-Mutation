@@ -1,9 +1,10 @@
-"""TDD tests for supplemental mining R1 admission checker (R1-r2 queue binding)."""
+"""TDD tests for supplemental mining R1 admission checker (R1-r3 full binding)."""
 
 from __future__ import annotations
 
 import csv
 import hashlib
+import importlib.util
 import json
 import subprocess
 import sys
@@ -12,6 +13,23 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 CHECKER = ROOT / "scripts" / "external_slice" / "check_supplemental_r1_admission.py"
+MINER = ROOT / "scripts" / "external_slice" / "mine_supplemental_r1.py"
+
+
+def _load_miner():
+    spec = importlib.util.spec_from_file_location("mine_supplemental_r1", MINER)
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _load_checker_mod():
+    spec = importlib.util.spec_from_file_location("check_supplemental_r1_admission", CHECKER)
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 HEADER = [
     "neutral_id",
     "repo",
@@ -146,9 +164,12 @@ def _write_evidence(
     scope_sha: str,
     search_sha: str,
     decisions_sha: str,
+    decision: dict[str, Any] | None = None,
 ) -> None:
     case_dir = root / row["neutral_id"]
     case_dir.mkdir(parents=True, exist_ok=True)
+    if decision is None:
+        decision = _decision_from_row(row)
     payload = {
         "neutral_id": row["neutral_id"],
         "source_pool": "supplemental_mining_r1",
@@ -156,9 +177,7 @@ def _write_evidence(
         "search_snapshot_sha256": search_sha,
         "review_decisions_sha256": decisions_sha,
         "issue_url": row["issue_url"],
-        "fix_url": f"https://github.com/pymc-devs/pymc/commit/{row['fixed_sha']}"
-        if row["fixed_sha"]
-        else "",
+        "fix_url": decision.get("fix_url") or "",
         "buggy_sha": row["buggy_sha"],
         "fixed_sha": row["fixed_sha"],
         "criteria": {
@@ -166,18 +185,26 @@ def _write_evidence(
             "dual_arm_repro": row["crit_dual_arm_repro"],
             "in_scope": row["crit_in_scope"],
         },
-        "rationales": {
-            "real_defect": "A public defect report and an identifiable public fix commit are linked.",
-            "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
-            "in_scope": "The changed callable maps float-vector input to a float numerical output.",
-        },
-        "evidence_urls": [row["issue_url"]],
+        "rationales": decision["rationales"],
+        "evidence_urls": decision["evidence_urls"],
         "mechanism_sentence": row["mechanism_sentence"],
     }
     (case_dir / "evidence.json").write_text(
         json.dumps(payload, sort_keys=True, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
+
+
+def _queue_from_snapshot(scope: dict[str, Any], snapshot: dict[str, Any]) -> list[dict[str, Any]]:
+    miner = _load_miner()
+    hits_by_repo = {r["repo"]: [] for r in scope["repositories"]}
+    for query in snapshot.get("queries") or []:
+        for item in query.get("items") or []:
+            cloned = dict(item)
+            cloned.setdefault("phrase", query["phrase"])
+            cloned.setdefault("repo", query["repo"])
+            hits_by_repo[query["repo"]].append(cloned)
+    return miner.assign_queue(scope, hits_by_repo)
 
 
 def _valid_fixture(tmp_path: Path) -> dict[str, Path]:
@@ -234,21 +261,11 @@ def _valid_fixture(tmp_path: Path) -> dict[str, Path]:
         "schema_version": 1,
         "scope_sha256": scope_sha,
         "search_snapshot_sha256": search_sha,
-        "records": [
-            {
-                "neutral_id": "EXT-pymc-01",
-                "repo": "pymc-devs/pymc",
-                "issue_number": 1,
-                "issue_url": row["issue_url"],
-                "state": "closed",
-                "created_at": "2026-01-01T00:00:00Z",
-                "phrases": ["wrong result"],
-                "review_status": "PENDING_REVIEW",
-            }
-        ],
+        "records": _queue_from_snapshot(scope, snapshot),
     }
     _write_json(queue_path, queue)
-    decisions = {"schema_version": 1, "decisions": [_decision_from_row(row)]}
+    decision = _decision_from_row(row)
+    decisions = {"schema_version": 1, "decisions": [decision]}
     _write_json(decisions_path, decisions)
     _write_sheet(sheet_path, [row])
     decisions_sha = _sha256_file(decisions_path)
@@ -258,6 +275,7 @@ def _valid_fixture(tmp_path: Path) -> dict[str, Path]:
         scope_sha=scope_sha,
         search_sha=search_sha,
         decisions_sha=decisions_sha,
+        decision=decision,
     )
     _write_sheet(existing, [_row(neutral_id="EXT-fftw-01", repo="FFTW/fftw3", issue=20)])
     _write_sheet(pilot, [_row(neutral_id="EXT-numpy-01", repo="numpy/numpy", issue=1)])
@@ -355,37 +373,62 @@ def test_rejects_decision_issue_number_mismatch(tmp_path: Path) -> None:
     assert "issue_number mismatch" in result.stderr
 
 
-def test_rejects_swapped_review_order(tmp_path: Path) -> None:
-    paths = _valid_fixture(tmp_path)
-    # Add a second queue head and swapped decisions.
-    row1 = _row(neutral_id="EXT-pymc-01", issue=1)
-    row2 = _row(neutral_id="EXT-pymc-02", issue=2, buggy="c" * 40, fixed="d" * 40)
+def _set_snapshot_items(
+    paths: dict[str, Path],
+    items: list[dict[str, Any]],
+    *,
+    scope: dict[str, Any] | None = None,
+) -> tuple[str, str]:
+    if scope is None:
+        scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
     scope_sha = _sha256_file(paths["scope"])
+    snapshot = json.loads(paths["snapshot"].read_text(encoding="utf-8"))
+    snapshot["scope_sha256"] = scope_sha
+    snapshot["queries"][0]["items"] = items
+    snapshot["queries"][0]["returned"] = len(items)
+    snapshot["queries"][0]["issue_count"] = len(items)
+    snapshot["queries"][0]["total_count"] = len(items)
+    snapshot["queries"][0]["pull_count"] = 0
+    _write_json(paths["snapshot"], snapshot)
+    search_sha = _sha256_file(paths["snapshot"])
     queue = {
         "schema_version": 1,
         "scope_sha256": scope_sha,
-        "search_snapshot_sha256": _sha256_file(paths["snapshot"]),
-        "records": [
+        "search_snapshot_sha256": search_sha,
+        "records": _queue_from_snapshot(scope, snapshot),
+    }
+    _write_json(paths["queue"], queue)
+    return scope_sha, search_sha
+
+
+def test_rejects_swapped_review_order(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    row1 = _row(neutral_id="EXT-pymc-01", issue=1)
+    row2 = _row(neutral_id="EXT-pymc-02", issue=2, buggy="c" * 40, fixed="d" * 40)
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    scope_sha, search_sha = _set_snapshot_items(
+        paths,
+        [
             {
-                "neutral_id": "EXT-pymc-01",
                 "repo": "pymc-devs/pymc",
+                "phrase": "wrong result",
                 "issue_number": 1,
                 "issue_url": row1["issue_url"],
                 "state": "closed",
                 "created_at": "2026-01-02T00:00:00Z",
             },
             {
-                "neutral_id": "EXT-pymc-02",
                 "repo": "pymc-devs/pymc",
+                "phrase": "wrong result",
                 "issue_number": 2,
                 "issue_url": row2["issue_url"],
                 "state": "closed",
                 "created_at": "2026-01-01T00:00:00Z",
             },
         ],
-    }
-    _write_json(paths["queue"], queue)
-    # Intentionally assign review_order swapped relative to queue head order.
+        scope=scope,
+    )
+    # Queue order is created_at desc: issue 1 then issue 2. Swap decision orders.
     decisions = {
         "schema_version": 1,
         "decisions": [
@@ -396,14 +439,14 @@ def test_rejects_swapped_review_order(tmp_path: Path) -> None:
     _write_json(paths["decisions"], decisions)
     _write_sheet(paths["sheet"], [row2, row1])
     decisions_sha = _sha256_file(paths["decisions"])
-    search_sha = _sha256_file(paths["snapshot"])
-    for row in (row1, row2):
+    for row, decision in zip((row1, row2), decisions["decisions"]):
         _write_evidence(
             paths["evidence_root"],
             row,
             scope_sha=scope_sha,
             search_sha=search_sha,
             decisions_sha=decisions_sha,
+            decision=decision,
         )
     result = _run(paths)
     assert result.returncode != 0
@@ -414,33 +457,31 @@ def test_rejects_skipped_queue_head(tmp_path: Path) -> None:
     paths = _valid_fixture(tmp_path)
     row1 = _row(neutral_id="EXT-pymc-01", issue=1)
     row2 = _row(neutral_id="EXT-pymc-02", issue=2, buggy="c" * 40, fixed="d" * 40)
-    scope_sha = _sha256_file(paths["scope"])
-    queue = {
-        "schema_version": 1,
-        "scope_sha256": scope_sha,
-        "search_snapshot_sha256": _sha256_file(paths["snapshot"]),
-        "records": [
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    scope_sha, search_sha = _set_snapshot_items(
+        paths,
+        [
             {
-                "neutral_id": "EXT-pymc-01",
                 "repo": "pymc-devs/pymc",
+                "phrase": "wrong result",
                 "issue_number": 1,
                 "issue_url": row1["issue_url"],
                 "state": "closed",
                 "created_at": "2026-01-02T00:00:00Z",
             },
             {
-                "neutral_id": "EXT-pymc-02",
                 "repo": "pymc-devs/pymc",
+                "phrase": "wrong result",
                 "issue_number": 2,
                 "issue_url": row2["issue_url"],
                 "state": "closed",
                 "created_at": "2026-01-01T00:00:00Z",
             },
         ],
-    }
-    _write_json(paths["queue"], queue)
-    # Skip queue head 01; only decide 02.
-    decisions = {"schema_version": 1, "decisions": [_decision_from_row(row2, order=1)]}
+        scope=scope,
+    )
+    decision = _decision_from_row(row2, order=1)
+    decisions = {"schema_version": 1, "decisions": [decision]}
     _write_json(paths["decisions"], decisions)
     _write_sheet(paths["sheet"], [row2])
     decisions_sha = _sha256_file(paths["decisions"])
@@ -448,8 +489,9 @@ def test_rejects_skipped_queue_head(tmp_path: Path) -> None:
         paths["evidence_root"],
         row2,
         scope_sha=scope_sha,
-        search_sha=_sha256_file(paths["snapshot"]),
+        search_sha=search_sha,
         decisions_sha=decisions_sha,
+        decision=decision,
     )
     result = _run(paths)
     assert result.returncode != 0
@@ -470,44 +512,53 @@ def test_rejects_decisions_beyond_stop_boundary(tmp_path: Path) -> None:
     scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
     scope["target_pending_per_repo"] = 2
     _write_json(paths["scope"], scope)
-    scope_sha = _sha256_file(paths["scope"])
-    # Rewrite snapshot scope hash.
-    snapshot = json.loads(paths["snapshot"].read_text(encoding="utf-8"))
-    snapshot["scope_sha256"] = scope_sha
-    _write_json(paths["snapshot"], snapshot)
-    search_sha = _sha256_file(paths["snapshot"])
-    queue = {
-        "schema_version": 1,
-        "scope_sha256": scope_sha,
-        "search_snapshot_sha256": search_sha,
-        "records": [
+    # Newer created_at first so queue order matches EXT-pymc-01..06 by issue number desc...
+    # Use descending created_at aligned to issue numbers so IDs map issue i -> EXT-pymc-(7-i) unless
+    # we set created_at so issue 1 is newest. Keep issue i created_at day i with reverse sort:
+    # issue 6 newest -> EXT-pymc-01. Simpler: one item order by created_at desc = rows order.
+    items = []
+    for i, row in enumerate(rows, start=1):
+        items.append(
             {
-                "neutral_id": row["neutral_id"],
                 "repo": "pymc-devs/pymc",
-                "issue_number": int(row["issue_url"].rsplit("/", 1)[-1]),
+                "phrase": "wrong result",
+                "issue_number": i,
                 "issue_url": row["issue_url"],
                 "state": "closed",
-                "created_at": f"2026-01-{i:02d}T00:00:00Z",
+                "created_at": f"2026-01-{22 - i:02d}T00:00:00Z",
             }
-            for i, row in enumerate(rows, start=1)
-        ],
-    }
-    _write_json(paths["queue"], queue)
+        )
+    scope_sha, search_sha = _set_snapshot_items(paths, items, scope=scope)
+    queue_records = json.loads(paths["queue"].read_text(encoding="utf-8"))["records"]
+    # Rebuild rows to match allocated neutral_ids / issue numbers.
+    rows_by_issue = {int(r["issue_url"].rsplit("/", 1)[-1]): r for r in rows}
+    ordered_rows = []
+    for rec in queue_records:
+        src = rows_by_issue[int(rec["issue_number"])]
+        ordered_rows.append(
+            _row(
+                neutral_id=rec["neutral_id"],
+                issue=int(rec["issue_number"]),
+                buggy=src["buggy_sha"],
+                fixed=src["fixed_sha"],
+            )
+        )
     # 3 pending admits exceeds stop after 2 pending.
-    decisions = {
-        "schema_version": 1,
-        "decisions": [_decision_from_row(row, order=i) for i, row in enumerate(rows[:3], 1)],
-    }
+    decisions_list = [
+        _decision_from_row(row, order=i) for i, row in enumerate(ordered_rows[:3], 1)
+    ]
+    decisions = {"schema_version": 1, "decisions": decisions_list}
     _write_json(paths["decisions"], decisions)
-    _write_sheet(paths["sheet"], rows[:3])
+    _write_sheet(paths["sheet"], ordered_rows[:3])
     decisions_sha = _sha256_file(paths["decisions"])
-    for row in rows[:3]:
+    for row, decision in zip(ordered_rows[:3], decisions_list):
         _write_evidence(
             paths["evidence_root"],
             row,
             scope_sha=scope_sha,
             search_sha=search_sha,
             decisions_sha=decisions_sha,
+            decision=decision,
         )
     result = _run(paths)
     assert result.returncode != 0
@@ -517,9 +568,17 @@ def test_rejects_decisions_beyond_stop_boundary(tmp_path: Path) -> None:
 def test_rejects_a2_not_pending(tmp_path: Path) -> None:
     paths = _valid_fixture(tmp_path)
     row = _row(a2="PASS")
+    decision = _decision_from_row(row)
     _write_sheet(paths["sheet"], [row])
-    decisions = {"schema_version": 1, "decisions": [_decision_from_row(row)]}
-    _write_json(paths["decisions"], decisions)
+    _write_json(paths["decisions"], {"schema_version": 1, "decisions": [decision]})
+    _write_evidence(
+        paths["evidence_root"],
+        row,
+        scope_sha=_sha256_file(paths["scope"]),
+        search_sha=_sha256_file(paths["snapshot"]),
+        decisions_sha=_sha256_file(paths["decisions"]),
+        decision=decision,
+    )
     result = _run(paths)
     assert result.returncode != 0
     assert "PENDING" in result.stderr
@@ -541,3 +600,253 @@ def test_rejects_changed_input_hash(tmp_path: Path) -> None:
     _write_json(paths["scope"], scope)
     result = _run(paths)
     assert result.returncode != 0
+
+
+def test_rejects_snapshot_queue_membership_escape(tmp_path: Path) -> None:
+    """R3 escape #1: queue/decision/sheet/evidence consistently use issue 999 while
+    snapshot retains issue 1. Must fail (previously exited 0)."""
+    paths = _valid_fixture(tmp_path)
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    scope_sha = _sha256_file(paths["scope"])
+    search_sha = _sha256_file(paths["snapshot"])
+    row = _row(issue=999)
+    queue = {
+        "schema_version": 1,
+        "scope_sha256": scope_sha,
+        "search_snapshot_sha256": search_sha,
+        "records": [
+            {
+                "neutral_id": "EXT-pymc-01",
+                "repo": "pymc-devs/pymc",
+                "phrase": "wrong result",
+                "issue_number": 999,
+                "issue_url": row["issue_url"],
+                "state": "closed",
+                "created_at": "2026-01-01T00:00:00Z",
+                "phrases": ["wrong result"],
+                "id_prefix": "EXT-pymc-",
+                "review_status": "PENDING_REVIEW",
+            }
+        ],
+    }
+    _write_json(paths["queue"], queue)
+    decision = _decision_from_row(row)
+    _write_json(paths["decisions"], {"schema_version": 1, "decisions": [decision]})
+    _write_sheet(paths["sheet"], [row])
+    decisions_sha = _sha256_file(paths["decisions"])
+    _write_evidence(
+        paths["evidence_root"],
+        row,
+        scope_sha=scope_sha,
+        search_sha=search_sha,
+        decisions_sha=decisions_sha,
+        decision=decision,
+    )
+    result = _run(paths)
+    assert result.returncode != 0, result.stdout
+    assert "queue" in result.stderr.lower() and (
+        "snapshot" in result.stderr.lower() or "equality" in result.stderr.lower()
+        or "mismatch" in result.stderr.lower()
+    )
+
+
+def test_rejects_sheet_fixed_sha_divergence_escape(tmp_path: Path) -> None:
+    """R3 escape #2: only sheet fixed_sha changes; decision/evidence keep original.
+    Must fail (previously exited 0)."""
+    paths = _valid_fixture(tmp_path)
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["fixed_sha"] = "c" * 40
+    _write_sheet(paths["sheet"], rows)
+    result = _run(paths)
+    assert result.returncode != 0, result.stdout
+    assert "fixed_sha" in result.stderr
+
+
+def test_rejects_missing_snapshot_query(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    scope["phrases"] = ["wrong result", "incorrect value"]
+    _write_json(paths["scope"], scope)
+    scope_sha = _sha256_file(paths["scope"])
+    # Snapshot still has only one query → missing query.
+    snapshot = json.loads(paths["snapshot"].read_text(encoding="utf-8"))
+    snapshot["scope_sha256"] = scope_sha
+    _write_json(paths["snapshot"], snapshot)
+    search_sha = _sha256_file(paths["snapshot"])
+    queue = json.loads(paths["queue"].read_text(encoding="utf-8"))
+    queue["scope_sha256"] = scope_sha
+    queue["search_snapshot_sha256"] = search_sha
+    _write_json(paths["queue"], queue)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "query" in result.stderr.lower()
+
+
+def test_rejects_duplicate_snapshot_query(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    snapshot = json.loads(paths["snapshot"].read_text(encoding="utf-8"))
+    snapshot["queries"].append(dict(snapshot["queries"][0]))
+    _write_json(paths["snapshot"], snapshot)
+    search_sha = _sha256_file(paths["snapshot"])
+    queue = json.loads(paths["queue"].read_text(encoding="utf-8"))
+    queue["search_snapshot_sha256"] = search_sha
+    _write_json(paths["queue"], queue)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "query" in result.stderr.lower()
+
+
+def test_rejects_queue_vs_snapshot_order_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    row1 = _row(neutral_id="EXT-pymc-01", issue=1)
+    row2 = _row(neutral_id="EXT-pymc-02", issue=2, buggy="c" * 40, fixed="d" * 40)
+    scope_sha, search_sha = _set_snapshot_items(
+        paths,
+        [
+            {
+                "repo": "pymc-devs/pymc",
+                "phrase": "wrong result",
+                "issue_number": 1,
+                "issue_url": row1["issue_url"],
+                "state": "closed",
+                "created_at": "2026-01-02T00:00:00Z",
+            },
+            {
+                "repo": "pymc-devs/pymc",
+                "phrase": "wrong result",
+                "issue_number": 2,
+                "issue_url": row2["issue_url"],
+                "state": "closed",
+                "created_at": "2026-01-01T00:00:00Z",
+            },
+        ],
+        scope=scope,
+    )
+    queue = json.loads(paths["queue"].read_text(encoding="utf-8"))
+    # Swap record order without changing IDs/contents correctly — reverse list.
+    queue["records"] = list(reversed(queue["records"]))
+    _write_json(paths["queue"], queue)
+    # Keep only first reviewed id after reverse so decision set is smaller; just check
+    # queue equality fails even before decisions.
+    decision = _decision_from_row(
+        _row(
+            neutral_id=queue["records"][0]["neutral_id"],
+            issue=int(queue["records"][0]["issue_number"]),
+            buggy="c" * 40 if int(queue["records"][0]["issue_number"]) == 2 else FULL_A,
+            fixed="d" * 40 if int(queue["records"][0]["issue_number"]) == 2 else FULL_B,
+        )
+    )
+    _write_json(paths["decisions"], {"schema_version": 1, "decisions": [decision]})
+    row = _row(
+        neutral_id=decision["neutral_id"],
+        issue=decision["issue_number"],
+        buggy=decision["buggy_sha"],
+        fixed=decision["fixed_sha"],
+    )
+    _write_sheet(paths["sheet"], [row])
+    decisions_sha = _sha256_file(paths["decisions"])
+    _write_evidence(
+        paths["evidence_root"],
+        row,
+        scope_sha=scope_sha,
+        search_sha=search_sha,
+        decisions_sha=decisions_sha,
+        decision=decision,
+    )
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "queue" in result.stderr.lower()
+
+
+def test_rejects_decision_sheet_mechanism_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    payload = json.loads(paths["decisions"].read_text(encoding="utf-8"))
+    payload["decisions"][0]["mechanism_sentence"] = "different mechanism sentence."
+    _write_json(paths["decisions"], payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "mechanism" in result.stderr.lower()
+
+
+def test_rejects_decision_evidence_rationale_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["rationales"]["real_defect"] = "tampered rationale"
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "rationale" in result.stderr.lower()
+
+
+def test_rejects_decision_evidence_fix_url_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["fix_url"] = f"https://github.com/pymc-devs/pymc/commit/{'e' * 40}"
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "fix_url" in result.stderr
+
+
+def test_rejects_sheet_decision_exclusion_reason_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    row = _row(decision="EXCLUDED", a1="FAIL", a3="FAIL", buggy="", fixed="", exclusion="no fix")
+    decision = _decision_from_row(row)
+    decision["fix_url"] = ""
+    decision["evidence_urls"] = [row["issue_url"]]
+    decision["rationales"] = {
+        "real_defect": "No identifiable public fix commit is linked.",
+        "dual_arm_repro": "No same-trigger dual-arm result is claimed in this task.",
+        "in_scope": "Scope not established for an excluded row.",
+    }
+    _write_json(paths["decisions"], {"schema_version": 1, "decisions": [decision]})
+    bad = dict(row)
+    bad["exclusion_reason"] = "different exclusion"
+    _write_sheet(paths["sheet"], [bad])
+    scope_sha = _sha256_file(paths["scope"])
+    search_sha = _sha256_file(paths["snapshot"])
+    decisions_sha = _sha256_file(paths["decisions"])
+    _write_evidence(
+        paths["evidence_root"],
+        row,
+        scope_sha=scope_sha,
+        search_sha=search_sha,
+        decisions_sha=decisions_sha,
+        decision=decision,
+    )
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "exclusion" in result.stderr.lower()
+
+
+def test_rejects_sheet_decision_analysis_id_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    payload = json.loads(paths["decisions"].read_text(encoding="utf-8"))
+    # analysis_id must stay blank for admission, but field equality should catch drift first.
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["analysis_id"] = "ALIAS-1"
+    _write_sheet(paths["sheet"], rows)
+    # Keep decision blank → mismatch (also violates blank rule).
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "analysis_id" in result.stderr
+
+
+def test_checker_queue_reconstruction_matches_miner_assign_queue(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    snapshot = json.loads(paths["snapshot"].read_text(encoding="utf-8"))
+    checker = _load_checker_mod()
+    miner = _load_miner()
+    expected = checker.reconstruct_queue_records(scope, snapshot)
+    hits_by_repo = {r["repo"]: [] for r in scope["repositories"]}
+    for query in snapshot["queries"]:
+        for item in query["items"]:
+            cloned = dict(item)
+            cloned.setdefault("phrase", query["phrase"])
+            cloned.setdefault("repo", query["repo"])
+            hits_by_repo[query["repo"]].append(cloned)
+    assert expected == miner.assign_queue(scope, hits_by_repo)
