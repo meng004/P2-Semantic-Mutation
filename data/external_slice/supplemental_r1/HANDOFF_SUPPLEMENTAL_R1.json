@@ -1,0 +1,609 @@
+{
+  "baseline_commit": "0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a",
+  "branch": "cursor/grok-phase3-supplemental-mining-r1",
+  "command_log_path": "data/external_slice/supplemental_r1/COMMAND_LOG.json",
+  "confirmations": {
+    "a2_entirely_pending": true,
+    "forbidden_actions_absent": true,
+    "no_existing_admission_readiness_freeze_downstream_changed": true,
+    "successor_lock": "no readiness for new rows before local gate PASS"
+  },
+  "created_utc": "2026-08-02T01:39:42Z",
+  "environment": {
+    "gh": "gh version 2.91.0 (2026-04-22)",
+    "git": "git version 2.43.0",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "evidence_sha256": {
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-chaospy-01/evidence.json": "15c3414b92b21d0d6971df9441785e4fbac241e060a759cecb2d614331b3804d",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-gpytorch-01/evidence.json": "8b3e575662e991d56eb8f26abd46408068c79b6f199e1dfbe15cfd25acf4d88d",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-gpytorch-02/evidence.json": "da1fb45bba48eba03d38b8697bce17a278977360798a965a4e70074e836ceb66",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-gpytorch-03/evidence.json": "442b669ed18b94058f6afbb627c09fffeccdc6b97ac496badd4d37b9cd100d9a",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-gpytorch-04/evidence.json": "9648cf518634290edb89f20b0dace48ddd148529d7c4a072d96f35a43b4f88a5",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-gpytorch-05/evidence.json": "20ec37b372715a324f0a6cca60fa2e659c57f92ffdc6226607da0f7a29b962a9",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-01/evidence.json": "efc5da2f1f38aa07e996561cf366deb68cd3f3abcf4aa2a1cd77d63fd1b986d7",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-02/evidence.json": "c0168d575a2badb2249fb68657ace56b24d03af00aa9e5210e063b8a0dafa98e",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-03/evidence.json": "b66ca629ce422cfea5f9def806b021e08aad0333c57facb613b1462330275192",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-04/evidence.json": "c8c24a3549f24c065feba10622195ae4d48fe2d3540b18b8f204ce3dd7c8eab7",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-05/evidence.json": "8547cc21d963c371a88a98f14d3d45a116d4ab40d5333cf48b47e591486fac19",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-06/evidence.json": "c8c238aa42a1c507e8cbd01d3b52b1878cdfd657411be88a6b8d94cc16eb253d",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-07/evidence.json": "e8f73143a4e9364094cdd63ce2e31f8f85fffe629226e8cbc0c9e0d8f95c25c4",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-08/evidence.json": "7853cd1abb624a14eb82ed4218932f790ae58a5dc5d480373757fe4b206065f3",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-09/evidence.json": "c624531a8d01c3ebac5252a71c2c8748e111f31624b3fccb9185c51c33386c2c",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-10/evidence.json": "a0bf8248c7c1276ef1331491fc595b94b44513b69af02762866d8664ebf54510",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-11/evidence.json": "f6c9967cddc6a1a9ae224b387656b7b5357e1aecb8d3a4618624e2b43d67ab75",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-12/evidence.json": "8f00fed753ae71546862a4412adc55422e5c3d7b629161b4cd2d0c6128888d24",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-13/evidence.json": "619d01c7db04f0968a60f63ff3e0780d2babe92dd745ae70f1828d5314fb6dc5",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-14/evidence.json": "b57e8a659b781d4ac836beaf31cdbc49d7d1789fa124d4fb4e87f783acb6dcab",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-15/evidence.json": "3b604c47eceb1da878e20a571f76e65e91a54d0104b0c2b1a1359146615288bb",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-16/evidence.json": "111ac63592e4354bd56d5008caed4c7077bca4fad32e9502a7932a4e9bfc1a85",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-jax-17/evidence.json": "5bf81cdb7592b4ddc4918b23146261537ab14421516330ec6a5d4cde9e071c39",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-01/evidence.json": "dfbe8e3d8aa985c3cea9207c6e9c56b226f88f82c1cbc5d581ede2b7eecbd69f",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-02/evidence.json": "b330f4c2ec3f1e57bbd77b875b1b11d183e6a1a61d7529ba4a722785b1ddddc5",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-03/evidence.json": "6e2d7e1c226e8f40109b47570c7a945dc5c200727e7adf8017fe95c62cfe047e",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-04/evidence.json": "c6812f82066b14117c49910c95b318fea0f95e830ecc9f7fa07f81f4f88d33f8",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-05/evidence.json": "a5491128b00586e7afca6aff1b8d1c2ad30dcb14080fd542d466c50d3366a23a",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-06/evidence.json": "a11a311c2e7f16d9f5aac29e997fc1e4fe48c25e707ac173cb36f568a74993f6",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-07/evidence.json": "5b32288426e0be28c7902ca46d6b7d5999cf6cb0172b97e8a7bd8d31761f2c11",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-08/evidence.json": "0c07cf17f62786ef6ec1a45366f50d92bb38564ede4d5b7eef0b9cb0419f5638",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-09/evidence.json": "6ce15820a2f742d252eae1a2894c5387d88efdf61473e7f1da9d14889acad0b8",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-10/evidence.json": "2bedd5204aedc4b3c202a1b194ed6df8e054e790743810b1b82e9ff40ea5318c",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-11/evidence.json": "114eab85e66cf36b5b84613c904b5da00227bdea13cc761ac4144124f25c2b2b",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-12/evidence.json": "847efd15bfb5c4dd0a0d95ff991eabef41a87aaf30ccf84a07de97dd068c7f08",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pymc-13/evidence.json": "8039ccf9e310671709bab0261ea007014cb3226b1ed7ff0abbf00c0786a90e81",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-01/evidence.json": "8c028b565f9c702af1bc7ea394ce203dcf49343e02fd75ae4a5ff7869cbcaad0",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-02/evidence.json": "55eefc0fe007a830fcff2175029b500afc5aed6301a0a662e36359ec4e4a4fa4",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-03/evidence.json": "66fb6fa37f29c57c6ca5a21f23beee272b443b7c2498cb531894b74d19b274ff",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-04/evidence.json": "db70fcd7bf638a91fad07a3be5f2221d3f6986318c2e5f0a15a111e0369f14f2",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-05/evidence.json": "fa966c16c2471b449c2f406312f4149f41348fda1721fdc08ba954e66da75e3b",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-06/evidence.json": "6a2d69385371d75dd74b7b18c4de2b22f8a0f7cf4afbc989a74c43ad517e677e",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-07/evidence.json": "3edbb98a359b20a819ee1d191709191cfc50927538a5d44dfe9b9e680c980548",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-08/evidence.json": "ec6acdcff1dc170723f7c1ab5fd9eba6171285cf16672f207f9dc5e1f1297669",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-09/evidence.json": "07e570e0eba9a2061161b4d643cd5482f84d1d9be2cd8c4eda12e10accc42628",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-10/evidence.json": "b8e5d034633388a6b990ad7bb57a436ee73c090aa2c50356b66f1a3ea7f72a77",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-11/evidence.json": "600415507cd0f985392b5280c2917a3a4d8f476932b30e665f767cd13a487214",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-12/evidence.json": "2bb4fa9f34fcf1b9bf216b82cf71b8ef12d624fa447c50f5e77865324352a4e0",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-13/evidence.json": "2195796d9413c22bc53395bc71fba6b63150e2b87018fb72d4218c0e509c1257",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-14/evidence.json": "3a88b290582c0268a308db99ffe1871017953c2a9a6949697f206314b87b72d0",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-15/evidence.json": "621eeef1995fbbe839c1313d13596ff4c48460abf46fbb05ae66514e2e6ed9df",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-16/evidence.json": "92cb75c804ef92e0123adbc807266884378a1f7a7716fb8b918a4bac16d4f477",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-17/evidence.json": "6276491d529ff266182079af1fd038196aafa07ba4886a6b93c87eeb115d8436",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-18/evidence.json": "e47c8ab3793da7860576eee44ccdfe557042ff5912302bd3001ae6526f8345d9",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-19/evidence.json": "06bbb972ca21041ed76b6f8bac351423f866f57dcc0045653a249665fabe9870",
+    "data/external_slice/supplemental_r1/admission_evidence/EXT-pytorch-20/evidence.json": "1902998858c81c542ea3663cf68ffacb379bc68529649d178c18b4b6b9027998"
+  },
+  "failed_or_retried_commands": [
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "issue:jonathf/chaospy#19268",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "issue:jonathf/chaospy#19269",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "issue:jonathf/chaospy#19280",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "issue:jonathf/chaospy#19283",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "issue:pytorch/pytorch#197267",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "issue:pytorch/pytorch#203770",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@86d5c016ff4c",
+      "stderr_tail": "gh: No commit found for SHA: 86d5c016ff4c3eacd4f226ccf39f2392071f5c6e (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@86d5c016ff4c",
+      "stderr_tail": "gh: No commit found for SHA: 86d5c016ff4c3eacd4f226ccf39f2392071f5c6e (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@d5b4b34a5e5a",
+      "stderr_tail": "gh: No commit found for SHA: d5b4b34a5e5ae4801c8caa22b0ac3ae84d82b190 (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@d5b4b34a5e5a",
+      "stderr_tail": "gh: No commit found for SHA: d5b4b34a5e5ae4801c8caa22b0ac3ae84d82b190 (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@3e21e9248687",
+      "stderr_tail": "gh: No commit found for SHA: 3e21e9248687550d50eb3a99bf8ac0890e7eb465 (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@9a2da91e775e",
+      "stderr_tail": "gh: No commit found for SHA: 9a2da91e775e32fbf40df7592ed982df1c3a18fe (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@2ed5620074de",
+      "stderr_tail": "gh: No commit found for SHA: 2ed5620074de3970276a96d07a752f65e6bde27c (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pymc-devs/pymc@87df62820314",
+      "stderr_tail": "gh: No commit found for SHA: 87df62820314c1e7bdb94155172d8632b947dd9c (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pytorch/pytorch@9db6b95d67d9",
+      "stderr_tail": "gh: No commit found for SHA: 9db6b95d67d9c778c0d695038db4e0fb682f7ca0 (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:pytorch/pytorch@4774139fe59e",
+      "stderr_tail": "gh: No commit found for SHA: 4774139fe59ed0a3adbdd8590a41f5295ad7d5eb (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "pull:jax-ml/jax#177",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:jax-ml/jax@d1f18a1ce9c9",
+      "stderr_tail": "gh: No commit found for SHA: d1f18a1ce9c9a9a9cb75932315ed3fabe82da12a (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:jax-ml/jax@757a10cd496a",
+      "stderr_tail": "gh: No commit found for SHA: 757a10cd496ac24800f03491891ff6bba2d4807a (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "pull:jax-ml/jax#51",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "pull:jax-ml/jax#43813",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "pull:jax-ml/jax#120458",
+      "stderr_tail": "gh: Not Found (HTTP 404)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:jax-ml/jax@c93e71bd2eb6",
+      "stderr_tail": "gh: No commit found for SHA: c93e71bd2eb6c3fcd69656eb62aed7607c4ddf7a (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:jax-ml/jax@f4bbcf55daed",
+      "stderr_tail": "gh: No commit found for SHA: f4bbcf55daeded5196801c1a7bef5dbd53be87ff (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:jax-ml/jax@04f9948304bf",
+      "stderr_tail": "gh: No commit found for SHA: 04f9948304bf062b91d441598fcb29e1cb878b58 (HTTP 422)\n"
+    },
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "label": "commit:jax-ml/jax@66f215ecb1ee",
+      "stderr_tail": "gh: No commit found for SHA: 66f215ecb1ee2ee7cea12decfa48d8616fdf470b (HTTP 422)\n"
+    },
+    {
+      "attempt": null,
+      "exit_code": 1,
+      "label": "TDD_RED",
+      "stderr_tail": "recorded historically: tests initially failed before CLI implementation existed"
+    }
+  ],
+  "file_sha256": {
+    "data/external_slice/supplemental_r1/COMMAND_LOG.json": "6a5829e9d9b22e152f65ae4caecc6d8312c81b1cf6c0f1a250c3d0b5e9d6560c",
+    "data/external_slice/supplemental_r1/EVIDENCE_SNAPSHOT.json": "50a1c86149f8043130d0f012418abdac7670d2438b0231ff6dedf1b033e4b914",
+    "data/external_slice/supplemental_r1/REVIEW_DECISIONS.json": "e8c60c34a4806f80f044ec855a4c73397330d379c240b1bf41a0743ffb6513c7",
+    "data/external_slice/supplemental_r1/REVIEW_QUEUE.json": "e110811b6b8fceb24242597a8b4d5cd969ea877aef4c9728cd0ae9e7c7e09c7a",
+    "data/external_slice/supplemental_r1/SCOPE.json": "e90b084bf74152ea4836d04773a8b117e4b24577cf03e2d8d4269c22f3fa51e7",
+    "data/external_slice/supplemental_r1/SEARCH_SNAPSHOT.json": "df9fa7158ce65eda35b2f984257a54e650682a91c2431d2acb8a68403cf7451c",
+    "data/external_slice/supplemental_r1/VERIFICATION_LOG.json": "dc6b6d7ff69a228d53e10e052c2efec9866e70778d528ea7cd9b3af0e943ff80",
+    "data/external_slice/supplemental_r1/admission_sheet.cursor_candidate.csv": "ae347f4868731425f78b94d2532d0234bc5b089dae040f9b08ee7e9db334a6f0"
+  },
+  "forbidden_actions_confirmed_absent": [
+    "A2 build or trigger execution",
+    "reproducer creation",
+    "MR or mutation/kill inspection",
+    "category or analysis alias assignment",
+    "prediction or detection-result access",
+    "modification of existing admission, readiness, freeze, annotation, prediction, reproduction, or run artifacts"
+  ],
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R1",
+  "handoff_commit": {
+    "required_parent": "a1cc795f340c38b340550c6789ece72a00c4c316",
+    "resolution": "rtk git rev-parse HEAD after this commit; direct parent must equal payload_commit",
+    "value": "SELF"
+  },
+  "payload_commit": "a1cc795f340c38b340550c6789ece72a00c4c316",
+  "repository_counts": {
+    "SALib/SALib": {
+      "deduplicated": 0,
+      "excluded": 0,
+      "not_reviewed_after_stop": 0,
+      "pending": 0,
+      "reviewed": 0,
+      "searched_hits": 0,
+      "stopped_by": "queue_exhausted"
+    },
+    "cornellius-gp/gpytorch": {
+      "deduplicated": 5,
+      "excluded": 5,
+      "not_reviewed_after_stop": 0,
+      "pending": 0,
+      "reviewed": 5,
+      "searched_hits": 9,
+      "stopped_by": "queue_exhausted"
+    },
+    "jax-ml/jax": {
+      "deduplicated": 23,
+      "excluded": 12,
+      "not_reviewed_after_stop": 6,
+      "pending": 5,
+      "reviewed": 17,
+      "searched_hits": 64,
+      "stopped_by": "target_pending_reached"
+    },
+    "jonathf/chaospy": {
+      "deduplicated": 1,
+      "excluded": 1,
+      "not_reviewed_after_stop": 0,
+      "pending": 0,
+      "reviewed": 1,
+      "searched_hits": 2,
+      "stopped_by": "queue_exhausted"
+    },
+    "pymc-devs/pymc": {
+      "deduplicated": 22,
+      "excluded": 8,
+      "not_reviewed_after_stop": 9,
+      "pending": 5,
+      "reviewed": 13,
+      "searched_hits": 41,
+      "stopped_by": "target_pending_reached"
+    },
+    "pytorch/pytorch": {
+      "deduplicated": 77,
+      "excluded": 18,
+      "not_reviewed_after_stop": 57,
+      "pending": 2,
+      "reviewed": 20,
+      "searched_hits": 146,
+      "stopped_by": "max_reviewed_reached"
+    }
+  },
+  "reviewed_exclusions": [
+    {
+      "exclusion_reason": "logprob IR rewrite is not a few-output numerical kernel",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/6917",
+      "neutral_id": "EXT-pymc-01",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "open issue with broad IR rewrite rather than an isolated numerical-kernel fix",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/6909",
+      "neutral_id": "EXT-pymc-02",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "documentation-only defect",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/6798",
+      "neutral_id": "EXT-pymc-03",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "no resolvable buggy parent commit for the linked unmerged fix",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/5659",
+      "neutral_id": "EXT-pymc-04",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "distribution implementation refactor without a few-output numerical-kernel contract",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/5560",
+      "neutral_id": "EXT-pymc-05",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "test-infrastructure defect",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/4425",
+      "neutral_id": "EXT-pymc-07",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "crash-only failure on invalid InverseGamma log-CDF parameters",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/4340",
+      "neutral_id": "EXT-pymc-10",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "API type-acceptance defect rather than a numerical-kernel value error",
+      "issue_url": "https://github.com/pymc-devs/pymc/issues/3999",
+      "neutral_id": "EXT-pymc-11",
+      "repo": "pymc-devs/pymc"
+    },
+    {
+      "exclusion_reason": "module prior-registration bug rather than a numerical kernel",
+      "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/2263",
+      "neutral_id": "EXT-gpytorch-01",
+      "repo": "cornellius-gp/gpytorch"
+    },
+    {
+      "exclusion_reason": "API event-shape incompatibility when constructing an LKJ prior",
+      "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/1690",
+      "neutral_id": "EXT-gpytorch-02",
+      "repo": "cornellius-gp/gpytorch"
+    },
+    {
+      "exclusion_reason": "feature request rather than a public defect plus fix pair for an existing kernel",
+      "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/1185",
+      "neutral_id": "EXT-gpytorch-03",
+      "repo": "cornellius-gp/gpytorch"
+    },
+    {
+      "exclusion_reason": "performance feature request for Kronecker log-determinant",
+      "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/725",
+      "neutral_id": "EXT-gpytorch-04",
+      "repo": "cornellius-gp/gpytorch"
+    },
+    {
+      "exclusion_reason": "documentation/example request without an identifiable numerical-kernel defect",
+      "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/256",
+      "neutral_id": "EXT-gpytorch-05",
+      "repo": "cornellius-gp/gpytorch"
+    },
+    {
+      "exclusion_reason": "dependency suggestion rather than a public numerical defect with a dedicated fix",
+      "issue_url": "https://github.com/jonathf/chaospy/issues/149",
+      "neutral_id": "EXT-chaospy-01",
+      "repo": "jonathf/chaospy"
+    },
+    {
+      "exclusion_reason": "Inductor codegen defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/190765",
+      "neutral_id": "EXT-pytorch-01",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "Inductor codegen defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/190764",
+      "neutral_id": "EXT-pytorch-02",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "Inductor fusion defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/189895",
+      "neutral_id": "EXT-pytorch-03",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "performance-only MPS linear-path defect",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/189847",
+      "neutral_id": "EXT-pytorch-04",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "Inductor pattern-rewrite defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/189518",
+      "neutral_id": "EXT-pytorch-05",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "CI driver/import failure rather than an in-scope numerical-kernel defect",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/189287",
+      "neutral_id": "EXT-pytorch-07",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "FlexAttention backend defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188878",
+      "neutral_id": "EXT-pytorch-08",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "FlexAttention compile dtype mismatch outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188871",
+      "neutral_id": "EXT-pytorch-09",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "CI import expectation update rather than an in-scope numerical-kernel defect",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188851",
+      "neutral_id": "EXT-pytorch-10",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "benchmark harness accuracy triage rather than an in-scope numerical-kernel fix",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188835",
+      "neutral_id": "EXT-pytorch-11",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "benchmark expectation update rather than an in-scope numerical-kernel fix",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188514",
+      "neutral_id": "EXT-pytorch-12",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "CI Triton pin issue rather than an in-scope numerical-kernel fix",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188492",
+      "neutral_id": "EXT-pytorch-13",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "distributed compile-cache hashing defect outside numerical-kernel scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188390",
+      "neutral_id": "EXT-pytorch-14",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "Dynamo typing helper defect outside numerical-kernel scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188325",
+      "neutral_id": "EXT-pytorch-15",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "FlexAttention backend defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188322",
+      "neutral_id": "EXT-pytorch-16",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "Inductor lowering assertion outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/188213",
+      "neutral_id": "EXT-pytorch-17",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "CI Triton pin status issue rather than an in-scope numerical-kernel fix",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/187401",
+      "neutral_id": "EXT-pytorch-19",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "benchmark model-loading defect outside numerical-kernel scope",
+      "issue_url": "https://github.com/pytorch/pytorch/issues/187301",
+      "neutral_id": "EXT-pytorch-20",
+      "repo": "pytorch/pytorch"
+    },
+    {
+      "exclusion_reason": "performance improvement request rather than a defective numerical result",
+      "issue_url": "https://github.com/jax-ml/jax/issues/39312",
+      "neutral_id": "EXT-jax-01",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "numpy reduction defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/jax-ml/jax/issues/37991",
+      "neutral_id": "EXT-jax-03",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "tracing/API defect outside numerical-kernel scope",
+      "issue_url": "https://github.com/jax-ml/jax/issues/34193",
+      "neutral_id": "EXT-jax-05",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "pytree metadata registration defect outside numerical-kernel scope",
+      "issue_url": "https://github.com/jax-ml/jax/issues/34079",
+      "neutral_id": "EXT-jax-07",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "performance algorithm request for associated Legendre evaluation",
+      "issue_url": "https://github.com/jax-ml/jax/issues/33370",
+      "neutral_id": "EXT-jax-08",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "compile-time constant-folding defect outside numerical-kernel scope",
+      "issue_url": "https://github.com/jax-ml/jax/issues/32542",
+      "neutral_id": "EXT-jax-09",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "deprecation-warning request rather than a numerical-kernel defect",
+      "issue_url": "https://github.com/jax-ml/jax/issues/31426",
+      "neutral_id": "EXT-jax-10",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "numpy pad defect outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/jax-ml/jax/issues/26888",
+      "neutral_id": "EXT-jax-11",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "feature request for a tridiagonal_solve differentiation rule",
+      "issue_url": "https://github.com/jax-ml/jax/issues/25693",
+      "neutral_id": "EXT-jax-12",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "feature request to add lambertw support",
+      "issue_url": "https://github.com/jax-ml/jax/issues/13680",
+      "neutral_id": "EXT-jax-14",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "pytree metadata hashing defect outside numerical-kernel scope",
+      "issue_url": "https://github.com/jax-ml/jax/issues/13027",
+      "neutral_id": "EXT-jax-15",
+      "repo": "jax-ml/jax"
+    },
+    {
+      "exclusion_reason": "integer ufunc edge-case outside linalg/optim/special-function scope",
+      "issue_url": "https://github.com/jax-ml/jax/issues/11990",
+      "neutral_id": "EXT-jax-16",
+      "repo": "jax-ml/jax"
+    }
+  ],
+  "schema_version": 1,
+  "scope_commit": "e108b82d38e53d89991960266385edf62da9eefc",
+  "stop_for_local_audit": true,
+  "task": "SUPPLEMENTAL_MINING_R1",
+  "totals": {
+    "deduplicated_issues": 128,
+    "excluded": 44,
+    "pending": 12,
+    "reviewed": 56,
+    "searched_hits": 262,
+    "searched_queries": 66
+  },
+  "tree_sha256": {
+    "data/external_slice/supplemental_r1/admission_evidence": "0497c2c9252453261f9600209ea8107ab44c4440c135f93e50c3c5162737ebf7"
+  },
+  "unresolved_findings": [
+    "SALib/SALib produced zero search hits under the frozen phrase set; repository exhausted with no review rows.",
+    "pytorch/pytorch reached the 20-review cap with only 2 ADMIT_PENDING_REPRO rows under the linalg/optim/special-function restriction.",
+    "cornellius-gp/gpytorch queue exhausted with zero ADMIT_PENDING_REPRO rows.",
+    "jonathf/chaospy queue exhausted with zero ADMIT_PENDING_REPRO rows."
+  ],
+  "verification_log_path": "data/external_slice/supplemental_r1/VERIFICATION_LOG.json"
+}
