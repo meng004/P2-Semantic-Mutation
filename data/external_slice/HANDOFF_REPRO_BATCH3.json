@@ -1,9 +1,10 @@
 {
-  "baseline_commit": "da70fa676ebcab8ef1e98f532aa711c2d01f0c84",
+  "baseline_commit": "4287ea4a1c782030d34af2162355fd459d50a563",
   "batch": {
     "batch4_started": false,
     "c4_started": false,
     "canonical_freeze_started": false,
+    "dual_arm_rerun": false,
     "execution_matrix": "data/external_slice/BATCH3_EXECUTION_MATRIX.json",
     "formal_seeds": [
       0,
@@ -14,6 +15,7 @@
     ],
     "member_count": 6,
     "number": 3,
+    "rederived_from_artifacts": true,
     "replacement_policy": "forbidden",
     "selection": "fixed six supplemental-pilot A1/A3 PASS A2 PENDING rows; no substitution",
     "sheet_a2_policy": "PENDING unchanged on supplemental and candidate sheets",
@@ -152,8 +154,8 @@
     "proposed_PASS": 6,
     "proposed_REPRO_FAILED": 0
   },
-  "created_at": "2026-08-02T09:06:04.502983+00:00",
-  "cumulative_note": "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; Gate A1d-r1 cannot unlock canonical freeze; supplementary-mining loop required.",
+  "created_at": "2026-08-02T12:20:43.643658+00:00",
+  "cumulative_note": "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; Gate A1d-r2 cannot unlock canonical freeze; supplementary-mining loop required.",
   "environment": {
     "machine": "x86_64",
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
@@ -203,7 +205,7 @@
     "token_scan": 0
   },
   "failures": [],
-  "gate": "A1d-r1",
+  "gate": "A1d-r2",
   "inputs": {
     "BATCH3_EXECUTION_MATRIX.json": "addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6",
     "BATCH3_MEMBERSHIP.json": "02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853",
@@ -235,10 +237,10 @@
       "BATCH3_COMMAND_LOG.json": "a2bbaa97d3038bf8982a0c425300e5b289f80be70f945b4f4643921e0814fb8c",
       "BATCH3_EXECUTION_MATRIX.json": "addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6",
       "BATCH3_MEMBERSHIP.json": "02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853",
-      "BATCH3_VERIFICATION_LOG.json": "de7343c65a4b1090eb12ada6f18894e13a5872067dd5f4eeb1a8c94e8ab824de",
+      "BATCH3_VERIFICATION_LOG.json": "e0613d4ae5bda8d622f233d06491715cb6c893c516d7221b8ed6ba89d1f2a911",
       "admission_sheet.csv": "77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a",
       "admission_sheet.cursor_candidate.csv": "4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8",
-      "readiness_batch3.json": "c9d3d57bd4d5c6d5120c1d92e64b094b47bbd3635e26af817ab24fd80dffc016",
+      "readiness_batch3.json": "7446ea002d131797ac9f9ac77397fcf1b59389c668dd854a3241831f2b8fcb02",
       "reproduction/EXT-numpy-01/locks/BLAS_LAPACK_PROVIDER.json": "6404b705d714000907567a1a3224d2bfb5342f9ddc94103800f7f3a8a85b52e9",
       "reproduction/EXT-scikit-learn-01/locks/BLAS_LAPACK_PROVIDER.json": "bbc7024827c3802557a4a88af61d9610a83884ccadc844d08e053c5602a36d4a",
       "reproduction/EXT-scipy-01/locks/BLAS_LAPACK_PROVIDER.json": "e0c8adaa47fcbe8d544d6a44580b8a0775f2eee082c9f18ae73f50fcea2bbeea",
@@ -249,9 +251,9 @@
     "per_case_artifact_sha256": {
       "EXT-numpy-01": {
         "COMMANDS.json": "74295b3b8896f92a8c27caa1e0583675f9768c4d769a8dc91414c4f53323caba",
-        "REPETITION_MATRIX.json": "b6e37a2a5ce34a55ec19dec905e179fce23aec48b3dfc26bd10efcd366e92c68",
+        "REPETITION_MATRIX.json": "04125f582cd9d4af589c25863570ceb71090a9452abc7ace17262e057cf6b0f5",
         "buggy.json": "338758ac4987e4baa510753716430c7e6c2e3ef5c7b04434eb28d7c999e4f3c2",
-        "environment.json": "64c64aa657fcde9e636034e1a71176a1143f5e57730619fd4a0ddf835b401e0d",
+        "environment.json": "ef5fae79c73b5fd88a66bdbcd4c8db0d138390d217459d3cbea4cb8ade66513e",
         "fixed.json": "8466d9c4459ec753bf28bb4313714098a3662c880c04e30435d3f3d8faf7b12f",
         "locks/BLAS_LAPACK_PROVIDER.json": "6404b705d714000907567a1a3224d2bfb5342f9ddc94103800f7f3a8a85b52e9",
         "locks/BUILD_ARTIFACT_HASHES.json": "cf1a941114d654e8df29d5df503e4cd63cd8a71dc691377ad696e6ee95239ed1",
@@ -321,9 +323,9 @@
       },
       "EXT-scikit-learn-01": {
         "COMMANDS.json": "7ebb9f7ebcc46eac8a4b5f2828ae107cf7c5b34f35dc85b688c3a4248e01400a",
-        "REPETITION_MATRIX.json": "d9e9abb995d9a4d8b21d599f8bc2fb8498a811e135f05bb1df743b26080bfcdf",
+        "REPETITION_MATRIX.json": "e42ef309a0ee0297d2eb8d2240f9e9711b8b453c671da40719187dfd90c75043",
         "buggy.json": "6c8a9a075ae19149442fe7395c0eeace6744142a47710121fb02f1a0461e0c10",
-        "environment.json": "b71fbb30ba77ca1840d5b90dd6ca377157ac07cb0c916a4c8b7f4c9d476ea633",
+        "environment.json": "6b1bbbb3de32f7862b84def81f52feb4879fdba0c4f37c33f40cdd8575d0e741",
         "fixed.json": "c7298281dc51eebaa3d3b3b24d55fe57a58c35e8f7ff880ae685765e3c8430be",
         "locks/BLAS_LAPACK_PROVIDER.json": "bbc7024827c3802557a4a88af61d9610a83884ccadc844d08e053c5602a36d4a",
         "locks/BUILD_ARTIFACT_HASHES.json": "e811f343e788d569238e1137177138839db6df25d81684848a4cde3d6ba50998",
@@ -395,9 +397,9 @@
       },
       "EXT-scipy-01": {
         "COMMANDS.json": "96ba9bd54adb214ea053442444a4bff03985040c38ad90eb06c966b495a8cc67",
-        "REPETITION_MATRIX.json": "273c192e4f990be6e15cd34542fe3770caddd43f6a95233c5614c140f7efc030",
+        "REPETITION_MATRIX.json": "1ede36904be7de108693509cbbf96b963f42a89cf18c9c64b08cb384a05a6e27",
         "buggy.json": "2b794593a62b740fb380507a5e51be9d5da7bd99380cea10439287951e8cec2d",
-        "environment.json": "4c5ac2b184c6839b1bdb29e220b8e7645cd29bb1276f13078fe2e2b84931d7be",
+        "environment.json": "d15cf52821d3f9dba3d051dd6c08aa0b71ae045711d859afaf310eab3fb90e31",
         "fixed.json": "007e5bed55ed56b110e7296fcb17091d24202810928445213938a3c57e4813f9",
         "locks/BLAS_LAPACK_PROVIDER.json": "e0c8adaa47fcbe8d544d6a44580b8a0775f2eee082c9f18ae73f50fcea2bbeea",
         "locks/BUILD_ARTIFACT_HASHES.json": "6cfe1031e6642aadfa09bace3a8a0161433e4346f5f508f6555558dbc280784b",
@@ -469,9 +471,9 @@
       },
       "EXT-statsmodels-01": {
         "COMMANDS.json": "272666d6809fcfd7926c97f5748e1f05b2127eec9ce24061dbddb70749d3e8b4",
-        "REPETITION_MATRIX.json": "a3ff75e52a3bb1d20af8fb60bd141364d16d0b4291d81902af52fb8079e22468",
+        "REPETITION_MATRIX.json": "dfb2158266589fdb852f7b7bd3947155fea05d28d3f20131bcc0ae87705b1f2e",
         "buggy.json": "d9f432a76e422048fed2dc252c908d782d3b942d4f7e9cf6e136571ccc018456",
-        "environment.json": "b5b055928e51416c1ba965cb0ac264e47ea9f4ab7870e3cd26e65e18ceff46b3",
+        "environment.json": "94df341af4064258bd6277b318305f992466af80cbb41e3a2ca45d4cbc0df9f2",
         "fixed.json": "405b5acb5c068b4c82a99825a035e787d1ff4eb196f1bce3ed02969fb8c029ea",
         "locks/BLAS_LAPACK_PROVIDER.json": "5432f3d52789dd305b2c014fb1f1ae0d5fb8bba5bbb7cf9f1cd464a3452a020e",
         "locks/BUILD_ARTIFACT_HASHES.json": "73e15b0d57d358256e4dfc37664b2e6d7ef424b24be89ca2361ca95858b68669",
@@ -543,9 +545,9 @@
       },
       "EXT-statsmodels-02": {
         "COMMANDS.json": "b99d2fecd45f5509d4a27fcca796742f8d273e76cc709844f0ac9de950635c17",
-        "REPETITION_MATRIX.json": "4335db423de5894b2d7ae132fceec4ba6f7ff00b162e4223c09de1a6ad4367e9",
+        "REPETITION_MATRIX.json": "347ad8d55705293431d094fd8225752109905f7b03d6d92f17d867c2dc5d7f53",
         "buggy.json": "3a6ab7090e059c6233da110488f81f285db1734903f933519d56bd006e3f40ec",
-        "environment.json": "8a4067398d798bb244694371b5138ed4a9500bb1919ba7d26e4c51ebfba75c02",
+        "environment.json": "16e1a0cf4512ccc60646228522b3c650d5835416b57fa58eded6c5d4859c175b",
         "fixed.json": "ae9b94e5a2467f711ef65980391aa51388a5829d34dd31ca20ee16506f85938d",
         "locks/BLAS_LAPACK_PROVIDER.json": "8b5f82126815bc2dfb7a26d6a8dd5fa2e913e67d460d460e0ae747a7bfea9e43",
         "locks/BUILD_ARTIFACT_HASHES.json": "f61467457ddcdf2610520f7ee0405d8abf7fa3570f6d6920c10c0d26ef6a6621",
@@ -617,9 +619,9 @@
       },
       "EXT-statsmodels-03": {
         "COMMANDS.json": "5d29ca79faeb05d4bafffc2d4a3ca5855114ae7d5283ab73ea3cb76e7742905d",
-        "REPETITION_MATRIX.json": "aa4bddbd0947a28b10c601288ee15ef69c13836b40220b7c18575802ae484fc4",
+        "REPETITION_MATRIX.json": "d3c33e5b253f4f41fdbf23f109939d340f634df166af0343400676f2cf432463",
         "buggy.json": "ae37b7a32560373f2a02594e67134907e4646a901b5badf3977e08725ed8bf58",
-        "environment.json": "4a6eab8e71b3befbcee0f68629fa9920b25416d3ac36e0f3af63d9b13cbaa230",
+        "environment.json": "db2fcc6a487b522fde66282926f5a5f98849519c0f7c88451de67f367f727ffa",
         "fixed.json": "89ba4b931201840fa3351e81b501600daf859174579e6b0d0d5df629aa2a6f06",
         "locks/BLAS_LAPACK_PROVIDER.json": "0898114d3cc9609de636b788d0f68cd12dfcda56721fdfaf295a0780d8eaef21",
         "locks/BUILD_ARTIFACT_HASHES.json": "d6f210a8ad8d5ceed4e5fb54911297ca9ef878d192d05b582c4b92be0d13efa8",
@@ -691,6 +693,6 @@
       }
     }
   },
-  "parent_handoff_commit": "da70fa676ebcab8ef1e98f532aa711c2d01f0c84",
-  "task": "C3 readiness Batch 3 A1d-r1 correction"
+  "parent_handoff_commit": "4287ea4a1c782030d34af2162355fd459d50a563",
+  "task": "C3 readiness Batch 3 A1d-r2 correction"
 }
