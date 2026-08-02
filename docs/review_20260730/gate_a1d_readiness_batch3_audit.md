@@ -2,7 +2,7 @@
 
 - **Audit time:** `2026-08-02T13:44:43+08:00`
 - **Cursor branch:** `origin/cursor/grok-phase3-c3-readiness-batch3`
-- **Draft PR:** #6; OPEN; head `4287ea4a1c782030d34af2162355fd459d50a563`
+- **Draft PR:** #6; OPEN; head `8ef20d26ea0a785bd0209b922a94e7f3bc1e8064`
 - **Baseline:** `0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a`
 - **Verdict:** `BLOCKED`
 - **Integration:** none
@@ -287,3 +287,103 @@ only unlocked task is an in-place A1d-r2 correction on the same Cursor branch:
    hashes, and handoff.
 6. Commit a correction payload and direct-child handoff, push, and stop at
    `Gate A1d-r2`; do not start any later empirical stage.
+
+## 8. Gate A1d-r2 re-review
+
+- **Re-review time:** `2026-08-02T20:27:44+08:00`
+- **Correction lineage:** `4287ea4a` → payload `eab67f3a` → handoff
+  `8ef20d26`
+- **Verdict:** `BLOCKED`
+- **Integration:** none
+- **Accepted ready count:** remains 12; the six Batch 3 rows remain proposed
+
+### 8.1 Closed A1d-r1 finding and retained evidence
+
+The A1d-r2 implementation closes the prior aggregation escapes. Independent
+probes now obtain `REPRO_FAILED` for both an absent `input_parity_ok` field and
+reversed buggy/fixed raw return codes. Each seed now requires explicit parity
+true, buggy property false/RC1, and fixed property true/RC0. The verifier
+reconstructs five formal rows from per-execution JSON and return-code files and
+cross-checks the repetition matrix and readiness verdict.
+
+The immutable-evidence diff from `4287ea4a` is empty for membership, execution
+matrix, both sheets, all smoke/formal execution files, and all per-arm provider
+artifacts. No dual-arm rerun occurred. Independent reconstruction again found
+6 cases, 30 formal pairs, 6 smoke pairs, and 72 total arm executions with the
+intended contrasts.
+
+| Check | Result |
+|---|---|
+| Handoff hash checker | `HASH_CHECK_OK` |
+| Previous fail-open probes | both return `REPRO_FAILED` |
+| Independent evidence reconstruction | `A1D_R1_INDEPENDENT_PROBE_OK cases=6 formal_runs=30 smoke_runs=6 arms=72` |
+| Admission / membership checker | exit 0 |
+| Targeted A1d tests | `10 passed` |
+| Full test suite | `270 passed, 10 warnings` |
+| Ruff exact correction command | `All checks passed!` |
+| Compileall / `git diff --check` | exit 0 |
+| Reserved/token scans | raw `rg` exit 1, no output |
+
+Correction hashes:
+
+| Artifact | SHA256 |
+|---|---|
+| handoff | `c8c47cee21e2d0bcdfcc306a019028dc50ff6ab12a8f9da46117835660afb108` |
+| membership | `02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853` |
+| execution matrix | `addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6` |
+| readiness | `7446ea002d131797ac9f9ac77397fcf1b59389c668dd854a3241831f2b8fcb02` |
+| command log | `a2bbaa97d3038bf8982a0c425300e5b289f80be70f945b4f4643921e0814fb8c` |
+| verification log | `e0613d4ae5bda8d622f233d06491715cb6c893c516d7221b8ed6ba89d1f2a911` |
+| aggregation helper | `bf24c6b339bccc6d3ed8ef8ee687db805fa319d59e0162546634613ec03df97e` |
+| standalone verifier | `cca164b6bd2dcade90ed8a5de0a82b28366d6e6d6b87b4c1b1105a28cee90602` |
+
+### 8.2 `A1D-R2-HANDOFF-VERDICT-BINDING-001` — BLOCKER
+
+The A1d-r2 contract required the reconstructed formal verdict to be
+cross-checked against the repetition matrix, readiness, **and handoff**. The
+standalone verifier never reads `HANDOFF_REPRO_BATCH3.json`; the handoff hash
+checker validates only files named by the handoff and cannot validate the
+handoff's own semantic fields.
+
+An independent negative probe changed only the first handoff
+`case_results[].proposed` value from `PASS` to `REPRO_FAILED`. Both commands
+still returned exit 0:
+
+```text
+verify_batch3_membership_matrix.py  -> membership_matrix_ok 6
+check_batch3_handoff_hashes.py      -> HASH_CHECK_OK
+```
+
+Thus a handoff verdict can disagree with the hash-bound raw evidence,
+repetition matrix, and readiness without rejection. This is a direct,
+reproducible miss of correction-contract item 2. The submitted handoff happens
+to contain six matching PASS values, but the gate requires the decision path to
+fail closed under this inconsistency.
+
+### 8.3 Standards axis — PASS
+
+The exact required Ruff command and `git diff --check` pass. All four previous
+violations are closed, and both new commit subjects are imperative. The
+reviewer noted only non-gating design smells: duplicated dynamic helper loading,
+raw-dictionary data clumps, and scattered `rederive_from_artifacts` mode
+branches.
+
+### 8.4 Decision and A1d-r3 correction contract
+
+Gate A1d-r2 remains `BLOCKED`. Do not integrate PR #6 or promote the six
+proposed cases. The only unlocked task is an in-place A1d-r3 correction:
+
+1. Load the handoff in the standalone verifier and require exact case ID/order.
+2. For each case, cross-check the reconstructed verdict, failure stage,
+   formal/smoke seeds, and seed-0 trigger exit codes against both readiness and
+   the corresponding handoff `case_results` entry.
+3. Recompute and cross-check handoff counts and failures from reconstructed
+   case results; reject missing, duplicate, extra, or inconsistent entries.
+4. Add a regression that mutates only a handoff case verdict and requires the
+   verifier or semantic handoff checker to exit nonzero. Also cover handoff
+   count/failure mismatch.
+5. Preserve membership, matrix, sheets, raw execution/provider evidence, and
+   current fail-closed aggregation. No dual-arm rerun is required.
+6. Recompute derived verification/handoff artifacts, commit a payload and its
+   direct-child handoff, push, and stop at `Gate A1d-r3` without starting later
+   stages.

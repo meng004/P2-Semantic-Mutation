@@ -88,7 +88,7 @@ S0 台账建立提交前实测：
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
-| Gate A1d — C3 readiness Batch 3 | A1d-r1 handoff `4287ea4a1c782030d34af2162355fd459d50a563`；payload `dfc94736fa9722cd1ab5ab6a61f8ad6f677138e2`；matrix `64568960ec5ccfeb12571ab01a1b9aeacbf48da2` | `BLOCKED` | N/A（未集成） | 否；仅原分支 A1d-r2 correction 解锁，accepted ready 仍为 12 |
+| Gate A1d — C3 readiness Batch 3 | A1d-r2 handoff `8ef20d26ea0a785bd0209b922a94e7f3bc1e8064`；payload `eab67f3ab08329d1d38feb6ed445d138d14d2f2f` | `BLOCKED` | N/A（未集成） | 否；仅原分支 A1d-r3 correction 解锁，accepted ready 仍为 12 |
 
 ## 5. 交接审计记录
 
@@ -600,3 +600,32 @@ Gate A1d 为 `BLOCKED`。六个单次对比只能记为 case-local observed，�
 #### 判定
 
 Gate A1d-r1 仍为 `BLOCKED`。当前 6/6 是证据层面的 observed contrast，但 decision code 存在可复现 fail-open，不能晋升为 accepted A2，ready 数仍为 12。唯一解锁任务是在同一 Cursor 分支完成 A1d-r2：显式要求每 seed parity 为 true 且 raw RC 为 1/0，由 verifier 从 hash-bound raw artifacts 重构五个 seed，加入缺失 parity/反转 RC 负测，修复四个 Ruff violations，重算 derived files/handoff 后停止复审。无需重跑未变的 dual-arm evidence。
+
+### 5.16 Gate A1d-r2 复审：C3 readiness Batch 3
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1d-r2 — C3 readiness Batch 3 correction |
+| 记录类型 | finding-closure 复审 |
+| 交接/复核时间 | `2026-08-02T20:27:44+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness-batch3`；draft PR #6 |
+| Cursor commit | handoff `8ef20d26ea0a785bd0209b922a94e7f3bc1e8064`；payload `eab67f3ab08329d1d38feb6ed445d138d14d2f2f` |
+| Cursor baseline | blocked A1d-r1 handoff `4287ea4a1c782030d34af2162355fd459d50a563` |
+| Handoff manifest | `data/external_slice/HANDOFF_REPRO_BATCH3.json`；SHA256 `c8c47cee21e2d0bcdfcc306a019028dc50ff6ab12a8f9da46117835660afb108` |
+| 输入 hash | membership `02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853`；matrix `addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6` |
+| 输出 hash | readiness `7446ea002d131797ac9f9ac77397fcf1b59389c668dd854a3241831f2b8fcb02`；verification log `e0613d4ae5bda8d622f233d06491715cb6c893c516d7221b8ed6ba89d1f2a911`；verifier `cca164b6bd2dcade90ed8a5de0a82b28366d6e6d6b87b4c1b1105a28cee90602` |
+| Findings | `A1D-R1-MATRIX-AGGREGATION-FAILOPEN-001` 已关闭；新增 blocker `A1D-R2-HANDOFF-VERDICT-BINDING-001`；Standards axis PASS |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（未集成 PR #6）` |
+| 后继任务是否解锁 | 否。仅从 `8ef20d26...` 启动 A1d-r3 correction；accepted ready 仍为 12，supplementary mining、canonical freeze、C4、标注、category map、prediction、detection 均锁定。 |
+
+#### 独立复算结果
+
+- r1 的两条 aggregation escape 已关闭：缺失 parity 和反转 RC 均得到 `REPRO_FAILED`；verifier 从五个 raw JSON/RC 重构并核对 repetition matrix 与 readiness。
+- membership、matrix、sheets、smoke/formal raw executions 和 provider evidence 相对 `4287ea4a` 无变化；无 dual-arm rerun；独立证据重构仍为 6 cases、30 formal pairs、6 smoke pairs、72 arms。
+- handoff checker `HASH_CHECK_OK`；admission/membership/compileall/Ruff 均 exit 0；targeted `10 passed`；full suite `270 passed, 10 warnings`；reserved/token raw scans exit 1。
+- 但 verifier 完全未读取 handoff；只将一个 handoff case verdict 从 PASS 改为 REPRO_FAILED 后，verifier 与 hash checker 均 exit 0。这违反 A1d-r2 明确的 handoff cross-check 合同。
+
+#### 判定
+
+Gate A1d-r2 仍为 `BLOCKED`。当前提交的六个 handoff verdict 虽与 raw evidence 一致，但不存在 fail-closed 的 handoff semantic binding，因此不能晋升为 accepted A2。唯一解锁任务是在同一 Cursor 分支完成 A1d-r3：verifier 读取 handoff，逐案绑定 reconstructed/readiness/repetition/handoff verdict 与 seeds/RC/failure metadata，重算 counts/failures，并增加 handoff-only verdict/count tamper 负测。无需重跑 dual-arm evidence。
