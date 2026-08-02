@@ -1,4 +1,4 @@
-"""Targeted Gate A1d-r1/r2 checks for C3 Batch 3 repetition matrix."""
+"""Targeted Gate A1d-r1/r2/r3 checks for C3 Batch 3 repetition matrix."""
 from __future__ import annotations
 
 import hashlib
@@ -11,6 +11,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 HELPER = ROOT / "scripts" / "external_slice" / "batch3_a1d_r1.py"
+VERIFIER = (
+    ROOT / "scripts" / "external_slice" / "verify_batch3_membership_matrix.py"
+)
 MATRIX = ROOT / "data" / "external_slice" / "BATCH3_EXECUTION_MATRIX.json"
 MEMBERSHIP = ROOT / "data" / "external_slice" / "BATCH3_MEMBERSHIP.json"
 HANDOFF = ROOT / "data" / "external_slice" / "HANDOFF_REPRO_BATCH3.json"
@@ -191,3 +194,60 @@ def test_handoff_artifact_tamper_rejection():
     finally:
         target.write_text(original, encoding="utf-8")
     assert runner_mod.handoff_hash_checker(HANDOFF) == 0
+
+
+@pytest.fixture(scope="module")
+def verifier():
+    return _load(VERIFIER, "verify_batch3_membership_matrix_under_test")
+
+
+def test_handoff_only_verdict_tamper_rejected(verifier, tmp_path):
+    """A1d-r3 negative: handoff verdict rewrite without readiness change fails."""
+    if not HANDOFF.is_file():
+        pytest.skip("handoff not regenerated yet")
+    handoff = json.loads(HANDOFF.read_text(encoding="utf-8"))
+    if not handoff.get("case_results"):
+        pytest.skip("handoff case_results missing")
+    # Flip only the handoff proposed field; readiness/artifacts stay PASS.
+    handoff["case_results"][0]["proposed"] = "REPRO_FAILED"
+    handoff["case_results"][0]["failure_stage"] = "contrast"
+    handoff["failures"] = [handoff["case_results"][0]]
+    handoff["counts"] = {
+        "batch_size": 6,
+        "proposed_PASS": 5,
+        "proposed_REPRO_FAILED": 1,
+    }
+    tampered = tmp_path / "HANDOFF_REPRO_BATCH3.tampered_verdict.json"
+    tampered.write_text(
+        json.dumps(handoff, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    with pytest.raises(AssertionError):
+        verifier.verify_batch3_state(handoff_path=tampered)
+
+
+def test_handoff_count_failure_tamper_rejected(verifier, tmp_path):
+    """A1d-r3 negative: handoff counts/failures must match reconstructed verdicts."""
+    if not HANDOFF.is_file():
+        pytest.skip("handoff not regenerated yet")
+    handoff = json.loads(HANDOFF.read_text(encoding="utf-8"))
+    if not handoff.get("case_results"):
+        pytest.skip("handoff case_results missing")
+    # Keep per-case proposed PASS, but inflate failure counts/list.
+    handoff["counts"] = {
+        "batch_size": 6,
+        "proposed_PASS": 5,
+        "proposed_REPRO_FAILED": 1,
+    }
+    handoff["failures"] = [
+        {
+            **handoff["case_results"][0],
+            "proposed": "REPRO_FAILED",
+            "failure_stage": "contrast",
+        }
+    ]
+    tampered = tmp_path / "HANDOFF_REPRO_BATCH3.tampered_counts.json"
+    tampered.write_text(
+        json.dumps(handoff, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    with pytest.raises(AssertionError):
+        verifier.verify_batch3_state(handoff_path=tampered)

@@ -572,7 +572,7 @@ def finalize_case(
         "proposed_crit_dual_arm_repro": proposed,
         "sheet_crit_dual_arm_repro_unchanged": "PENDING",
         "observation_status": (
-            "case-local observed pending Gate A1d-r2 review"
+            "case-local observed pending Gate A1d-r3 review"
         ),
         "note": (
             "Supplemental and candidate sheet A2 left PENDING; "
@@ -1441,7 +1441,7 @@ def rederive_case_from_artifacts(
         "proposed_crit_dual_arm_repro": proposed,
         "sheet_crit_dual_arm_repro_unchanged": "PENDING",
         "observation_status": (
-            "case-local observed pending Gate A1d-r2 review"
+            "case-local observed pending Gate A1d-r3 review"
         ),
         "note": (
             "Supplemental and candidate sheet A2 left PENDING; "
@@ -1480,7 +1480,7 @@ def main() -> int:
     parser.add_argument(
         "--rederive-from-artifacts",
         action="store_true",
-        help="Gate A1d-r2: rebuild derived verdicts/handoff without dual-arm rerun",
+        help="Rebuild derived verdicts/handoff without dual-arm rerun",
     )
     args = parser.parse_args()
     args.sheet = args.sheet.resolve()
@@ -1549,7 +1549,7 @@ def main() -> int:
     if not args.only:
         assert [r["neutral_id"] for r in results] == expected
 
-    gate_name = "A1d-r2" if args.rederive_from_artifacts else "A1d-r1"
+    gate_name = "A1d-r3" if args.rederive_from_artifacts else "A1d-r1"
     readiness = {
         "batch": 3,
         "batch_name": "supplemental-pilot-six",
@@ -1673,6 +1673,7 @@ def main() -> int:
             "proposed": r["proposed_crit_dual_arm_repro"],
             "trigger_exit_codes": r.get("trigger_exit_codes"),
             "failure_stage": r.get("failure_stage"),
+            "failure_detail": r.get("failure_detail"),
             "formal_seeds": list(matrix["formal_repetitions"]["seeds"]),
             "smoke_seeds": list(matrix["smoke"]["seeds"]),
         }
@@ -1680,10 +1681,10 @@ def main() -> int:
     ]
 
     if args.rederive_from_artifacts:
-        handoff_task = "C3 readiness Batch 3 A1d-r2 correction"
-        handoff_gate = "A1d-r2"
-        baseline_commit = "4287ea4a1c782030d34af2162355fd459d50a563"
-        parent_handoff_commit = "4287ea4a1c782030d34af2162355fd459d50a563"
+        handoff_task = "C3 readiness Batch 3 A1d-r3 correction"
+        handoff_gate = "A1d-r3"
+        baseline_commit = "8ef20d26ea0a785bd0209b922a94e7f3bc1e8064"
+        parent_handoff_commit = "8ef20d26ea0a785bd0209b922a94e7f3bc1e8064"
     else:
         handoff_task = "C3 readiness Batch 3 A1d-r1 correction"
         handoff_gate = "A1d-r1"
