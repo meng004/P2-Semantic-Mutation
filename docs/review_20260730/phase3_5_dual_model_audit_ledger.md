@@ -87,7 +87,7 @@ S0 台账建立提交前实测：
 | Gate A1a — C2 admission candidate audit（pre-readiness） | correction handoff `d4967e1c8221318ab624957f29955dd323cc49d9`；correction payload `964fcafcbd977004536979fab950aec88cec7b32` | `PASS_WITH_DISCLOSURE` | initial payload `c5425d51fbe4bc878634c44ec2386fe7fb78dc6e`；initial handoff `2ad1d40dd103fb1469dc8c9f5c05fa1a308ff258`；correction payload `7da7599b1db873bb9058126c907ced93f033157b`；correction handoff `25ae6f5d364823722ac7e29999412972153f8518` | 是；仅 corrected 32-row queue 解锁 C3 readiness；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
-| Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R3 handoff `e6110b104e3271dc31c74c6346eff808e0239048`；payload `72a11bc0bf39c9d667bbaab9aa198b85c48c13af` | `BLOCKED` | N/A（未集成） | 否；仅 R4 correction 解锁，已撤回集合及任何新 supplemental row 不得进入 readiness |
+| Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 
 ## 5. 交接审计记录
 
@@ -509,3 +509,32 @@ Gate `SUPPLEMENTAL_ADMISSION_R1` 为 `BLOCKED`。不 cherry-pick PR #5 的三项
 #### 判定
 
 R3 关闭两个旧 concrete escape 与 diagnostic provenance finding，但 phrase provenance 仍未绑定冻结查询。Gate 保持 `BLOCKED`，不集成 R3 payload/handoff，不认可或恢复任何 supplemental row。仅允许按 `gate_supplemental_admission_r1_audit.md` §8.4 在新 Cursor VM/session 执行 R4 correction。
+
+### 5.13 Gate SUPPLEMENTAL_ADMISSION_R1-r4 finding 修复复核
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate SUPPLEMENTAL_ADMISSION_R1-r4 |
+| 记录类型 | finding 修复复核；关闭 R3 phrase provenance 与 negative-coverage findings |
+| 交接/复核时间 | `2026-08-02T13:29:19+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r1`；draft PR #5 |
+| Cursor commit | handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` |
+| Cursor ancestry | `e6110b10...` → `f78288df...` → `8b52441f...`；远端 branch 与 PR #5 head 均为 handoff |
+| Handoff manifest | `data/external_slice/supplemental_r1/HANDOFF_SUPPLEMENTAL_R1.json`；SHA256 `ef6cef595220e01402542472df7288d72d4729dda714183fb1e27cb5d21e8085` |
+| 输出 hash | verification log `2b00039806e5d314035e4fa760afabaf5505fbc176693dfa52a9ef9e787ff3dc`；withdrawal `42ad107522d910b53ef816561eb400857428bf4aa0d98ec7279e594dd973544a`；checker `d18b0b684109b99fed257f7dfa695b00b1017adc5e1c04f95715d5d4fd9001ce`；checker tests `5eaff7aacfe3336351bbc9ba5a44f837fbf969716872be51c41036a2060fb3b4` |
+| Findings | `SUPP-R1-R3-PHRASE-PROVENANCE-001` CLOSED；`SUPP-R1-R3-NEGATIVE-COVERAGE-001` CLOSED；`SUPP-R1-R2-FULL-BINDING-001` CLOSED；style observations low/non-blocking |
+| Verdict | `PASS_WITH_DISCLOSURE`：接受安全 hard-fail、withdrawal 与审计工具修复；不产生 admitted candidate |
+| 本地集成 commit | `N/A（PR #5 correction lineage 等待显式 integration 决策）` |
+| 后继任务是否解锁 | supplemental readiness 不解锁；旧 12 rows 不得复用。下一门禁是已独立完成并 push 的 PR #6 / C3 Batch 3 本地 Gate A1d 审计。 |
+
+#### 独立复算结果
+
+- R4 ancestry 连续，远端分支和 PR #5 head 为 `8b52441f...`；handoff hash checker `HASH_CHECK_OK`（6 files，0 tree/evidence）。
+- exact tampered-phrase 探针和两个既有 full-binding 探针均 exit 1；item repository/phrase 现与 enclosing frozen query 强绑定。
+- targeted tests `47 passed`；完整测试 `307 passed, 10 warnings`；compileall、immutable-path 与 diff check exit 0；token scan raw exit 1、无输出。
+- 原 R1 的 12 pending IDs 与 44 excluded IDs 分别与 withdrawal 清单逐项一致；snapshot、R2 diagnostic、queue、decisions、sheet、evidence、readiness 均不存在。
+- 没有新搜索、候选、A2、dual-arm 或 downstream 产物；Cursor VM Search API 异常仍仅作环境限定披露。
+
+#### 判定
+
+所有 R4 blocker 关闭。Gate 以 `PASS_WITH_DISCLOSURE` 接受“正确停止且完整撤回”的状态，但该结论不等于 supplemental admission 成功：admitted row 数仍为 0，旧 12 rows 不可复用，supplemental readiness 不解锁。PR #5 是否集成由作者显式决定。仓库远端已存在此前独立授权的 C3 Batch 3 handoff `da70fa67...`（PR #6，6/6 proposed PASS），因此下一任务应在 Local Desktop 对其执行 Gate A1d 审计，而不是重新运行 Batch 3 或进入 canonical freeze。

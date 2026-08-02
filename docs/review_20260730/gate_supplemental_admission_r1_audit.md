@@ -4,10 +4,10 @@
 - **Cursor branch:** `origin/cursor/grok-phase3-supplemental-mining-r1`
 - **Cursor lineage:** baseline `0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a` → scope `e108b82d38e53d89991960266385edf62da9eefc` → payload `a1cc795f340c38b340550c6789ece72a00c4c316` → handoff `ac887e8a4a980dafca31c9ee803ec971a57698bc`
 - **Draft PR:** #5, with head equal to the handoff commit
-- **Verdict:** `BLOCKED`
-- **Integration:** none; the three Cursor commits are not cherry-picked
-- **Successor state:** supplemental readiness, A2 promotion, canonical admission freeze, C4, labelling, prediction, and detection remain locked
-- **R3 re-audit:** handoff `e6110b104e3271dc31c74c6346eff808e0239048`; current verdict remains `BLOCKED`
+- **Verdict:** `PASS_WITH_DISCLOSURE` for the R4 correction/withdrawal state; zero supplemental candidates were admitted
+- **Integration:** pending an explicit integration decision; PR #5 lineage is not yet cherry-picked
+- **Successor state:** no readiness work is unlocked from this supplemental gate; the already completed independent Batch 3 handoff may proceed to Gate A1d audit
+- **R4 re-audit:** `2026-08-02T13:29:19+08:00`; handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`; zero open blockers
 
 ## 1. Independent verification
 
@@ -298,3 +298,73 @@ R3 remains `BLOCKED`. The two R2 escape findings and diagnostic-provenance gap
 are closed, but frozen phrase provenance can still pass with a tampered item.
 The R3 payload/handoff are not integrated; only the R4 correction above is
 unlocked.
+
+## 9. R4 correction re-audit and final decision
+
+### 9.1 Intake and independent verification
+
+R4 is a consecutive, remotely pinned correction:
+
+```text
+e6110b104e3271dc31c74c6346eff808e0239048
+  -> f78288df3c4676d5e66fc508dcba7912eda65d23  correction payload
+  -> 8b52441fbbcfee36ce0945f53e0f532f59657583  correction handoff
+```
+
+Draft PR #5 and the remote Cursor branch both point to the handoff. Independent
+verification produced:
+
+| Check | Result |
+|---|---|
+| Handoff hash checker | `HASH_CHECK_OK`; six files, zero trees/evidence |
+| R3 tampered-phrase probe | exit 1 with explicit item/query phrase mismatch |
+| Two prior full-binding probes | both exit 1 with the expected binding error |
+| Targeted tests | `47 passed` |
+| Full tests | `307 passed, 10 warnings` |
+| Compileall / diff whitespace | exit 0 / exit 0 |
+| Token scan | raw `rg` exit 1, no output |
+| Immutable admission/readiness/downstream paths | exit 0; unchanged from `0e208929...` |
+| Withdrawal identity | all 12 pending IDs and 44 excluded IDs equal the withdrawn R1 sets |
+| Inadmissible artifacts | snapshot, R2 diagnostic, queue, decisions, sheet, evidence, and readiness all absent |
+
+The handoff manifest SHA256 is
+`ef6cef595220e01402542472df7288d72d4729dda714183fb1e27cb5d21e8085`.
+The checker and its negative-test file hashes are respectively
+`d18b0b684109b99fed257f7dfa695b00b1017adc5e1c04f95715d5d4fd9001ce`
+and `5eaff7aacfe3336351bbc9ba5a44f837fbf969716872be51c41036a2060fb3b4`.
+
+### 9.2 Finding closure
+
+`bind_item_to_enclosing_query` now rejects an explicit item repository or
+phrase that differs from its enclosing frozen query, then derives both fields
+only from that query. Snapshot validation and exact queue reconstruction both
+call this binder. The exact `"tampered phrase"` escape is therefore closed.
+
+R4 also adds the remaining explicit negatives promised by R3: evidence ID and
+issue URL; sheet repository, buggy SHA, verdict, and each of A1/A2/A3; evidence
+mechanism, buggy/fixed SHAs, and evidence URLs. Standards and specification
+reviews found no blocker. The remaining raw-dictionary and repetitive-test
+data clumps are low-risk maintainability observations only.
+
+| Finding | R4 disposition |
+|---|---|
+| `SUPP-R1-R3-PHRASE-PROVENANCE-001` | `CLOSED` |
+| `SUPP-R1-R3-NEGATIVE-COVERAGE-001` | `CLOSED` |
+| `SUPP-R1-R2-FULL-BINDING-001` | `CLOSED` |
+| `SUPP-R1-R3-STYLE-001` | retained as low/non-blocking |
+
+### 9.3 Final decision and disclosure
+
+Gate `SUPPLEMENTAL_ADMISSION_R1-r4` is `PASS_WITH_DISCLOSURE` for the safe
+hard-fail, complete withdrawal, and corrected audit machinery. This verdict
+does **not** admit a supplemental candidate: the old 128-row queue, 56
+decisions, and 12 proposed rows remain withdrawn and non-reusable. No direct
+closed-issue search union was produced, and the Search API anomaly remains a
+Cursor-VM-scoped observation rather than a generalized GitHub claim.
+
+Consequently this gate unlocks no supplemental readiness or downstream
+scientific task. PR #5 integration is an audit-lineage decision and remains
+pending explicit authorization. Independently, PR #6 already contains the
+previously authorized six-row C3 Batch 3 handoff at `da70fa67...`; the next
+evidence gate is therefore local Gate A1d audit, not another Cursor readiness
+run and not canonical freeze.
