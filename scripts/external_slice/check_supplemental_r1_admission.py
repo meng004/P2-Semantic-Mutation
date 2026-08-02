@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Admission checker for supplemental mining R1 candidate payload."""
+"""Admission checker for supplemental mining R1 candidate payload (R1-r2)."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import hashlib
 import json
 import re
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 from typing import Any, NoReturn
 
@@ -103,25 +103,60 @@ def verify_input_hashes(scope: dict[str, Any], *, fixture_root: Path | None) -> 
         fail("baseline_commit mismatch in SCOPE.json")
 
 
+def build_expected_queries(scope: dict[str, Any]) -> list[dict[str, str]]:
+    cutoff = scope["created_cutoff"]
+    out: list[dict[str, str]] = []
+    for repo_entry in scope["repositories"]:
+        repo = repo_entry["repo"]
+        for phrase in scope["phrases"]:
+            out.append(
+                {
+                    "repo": repo,
+                    "phrase": phrase,
+                    "q": f'repo:{repo} is:issue is:closed created:<={cutoff} "{phrase}"',
+                }
+            )
+    return out
+
+
+def apply_review_stop(
+    records: list[dict[str, Any]],
+    decisions: list[dict[str, Any]],
+    *,
+    max_reviewed: int,
+    target_pending: int,
+) -> list[str]:
+    decision_by_id = {d["neutral_id"]: d for d in decisions}
+    pending = 0
+    reviewed_ids: list[str] = []
+    for record in records:
+        if pending >= target_pending or len(reviewed_ids) >= max_reviewed:
+            break
+        reviewed_ids.append(record["neutral_id"])
+        if decision_by_id.get(record["neutral_id"], {}).get("decision") == "ADMIT_PENDING_REPRO":
+            pending += 1
+        # Stop after appending the decision that reaches the quota.
+        if pending >= target_pending or len(reviewed_ids) >= max_reviewed:
+            break
+    return reviewed_ids
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scope", type=Path, required=True)
     parser.add_argument("--snapshot", type=Path, required=True)
+    parser.add_argument("--queue", type=Path, required=True)
     parser.add_argument("--decisions", type=Path, required=True)
     parser.add_argument("--sheet", type=Path, required=True)
     parser.add_argument("--evidence-root", type=Path, required=True)
     parser.add_argument("--existing-sheet", type=Path, required=True)
     parser.add_argument("--pilot-sheet", type=Path, required=True)
-    parser.add_argument(
-        "--fixture-root",
-        type=Path,
-        default=None,
-        help="optional root for resolving SCOPE input_sha256 paths in tests",
-    )
+    parser.add_argument("--fixture-root", type=Path, default=None)
     args = parser.parse_args()
 
     scope = load_json(args.scope)
     snapshot = load_json(args.snapshot)
+    queue = load_json(args.queue)
     decisions_payload = load_json(args.decisions)
     decisions = decisions_payload.get("decisions") or []
     rows = read_sheet(args.sheet)
@@ -130,18 +165,48 @@ def main() -> int:
 
     verify_input_hashes(scope, fixture_root=args.fixture_root)
 
-    allowed_repos = {r["repo"] for r in scope["repositories"]}
-    allowed_short = {r["repo"].split("/")[-1] for r in scope["repositories"]}
+    scope_sha = sha256_file(args.scope)
+    search_sha = sha256_file(args.snapshot)
+    queue_sha = sha256_file(args.queue)
+    decisions_sha = sha256_file(args.decisions)
+
+    if snapshot.get("scope_sha256") != scope_sha:
+        fail("snapshot scope_sha256 does not match SCOPE.json")
+    if queue.get("scope_sha256") != scope_sha:
+        fail("queue scope_sha256 does not match SCOPE.json")
+    if queue.get("search_snapshot_sha256") != search_sha:
+        fail("queue search_snapshot_sha256 does not match SEARCH_SNAPSHOT.json")
+
+    expected_queries = build_expected_queries(scope)
+    got_queries = snapshot.get("queries") or []
+    if len(got_queries) != len(expected_queries):
+        fail("snapshot query count differs from SCOPE cartesian product")
     phrases = set(scope["phrases"])
+    allowed_repos = {r["repo"] for r in scope["repositories"]}
+    for exp, got in zip(expected_queries, got_queries):
+        if got.get("repo") not in allowed_repos:
+            fail(f"snapshot repository outside SCOPE: {got.get('repo')}")
+        if got.get("phrase") not in phrases:
+            fail(f"snapshot phrase outside SCOPE: {got.get('phrase')}")
+        if (
+            got.get("repo") != exp["repo"]
+            or got.get("phrase") != exp["phrase"]
+            or got.get("q") != exp["q"]
+        ):
+            fail(f"snapshot query identity/order mismatch for {exp}")
+        if got.get("incomplete_results") is True:
+            fail(f"incomplete_results in snapshot for {exp['repo']}/{exp['phrase']}")
+        if int(got.get("pull_count") or 0) != 0:
+            fail(f"pull_count nonzero in snapshot for {exp['repo']}/{exp['phrase']}")
+        for item in got.get("items") or []:
+            if item.get("state") != "closed":
+                fail(f"non-closed item in snapshot: {item.get('issue_url')}")
+            url = item.get("issue_url") or item.get("html_url") or ""
+            if "/pull/" in url or item.get("is_pull_request") is True:
+                fail(f"PR item in snapshot: {url}")
+
     prefix_by_repo = {r["repo"]: r["id_prefix"] for r in scope["repositories"]}
-    short_to_full = {r["repo"].split("/")[-1]: r["repo"] for r in scope["repositories"]}
-
-    for query in snapshot.get("queries", []):
-        if query.get("repo") not in allowed_repos:
-            fail(f"snapshot repository outside SCOPE: {query.get('repo')}")
-        if query.get("phrase") not in phrases:
-            fail(f"snapshot phrase outside SCOPE: {query.get('phrase')}")
-
+    allowed_short = {r["repo"].split("/")[-1] for r in scope["repositories"]}
     existing_ids = {r["neutral_id"] for r in existing} | {r["neutral_id"] for r in pilot}
     existing_urls = {r["issue_url"] for r in existing} | {r["issue_url"] for r in pilot}
     existing_pairs = {
@@ -150,15 +215,39 @@ def main() -> int:
         if r.get("buggy_sha") and r.get("fixed_sha")
     }
 
+    queue_by_id = {r["neutral_id"]: r for r in queue.get("records") or []}
     decision_by_id = {d["neutral_id"]: d for d in decisions}
     if len(decision_by_id) != len(decisions):
         fail("duplicate neutral_id in decisions")
     if {r["neutral_id"] for r in rows} != set(decision_by_id):
         fail("sheet rows and decisions are not 1:1")
 
-    scope_sha = sha256_file(args.scope)
-    search_sha = sha256_file(args.snapshot)
-    decisions_sha = sha256_file(args.decisions)
+    # Queue-head / order binding per repository.
+    for repo_entry in scope["repositories"]:
+        repo = repo_entry["repo"]
+        repo_queue = [r for r in queue.get("records") or [] if r["repo"] == repo]
+        repo_decisions = sorted(
+            [d for d in decisions if d["repo"] == repo],
+            key=lambda d: d["review_order"],
+        )
+        expected_reviewed = apply_review_stop(
+            repo_queue,
+            repo_decisions,
+            max_reviewed=int(scope["max_reviewed_per_repo"]),
+            target_pending=int(scope["target_pending_per_repo"]),
+        )
+        got_reviewed = [d["neutral_id"] for d in repo_decisions]
+        if got_reviewed != expected_reviewed:
+            fail(
+                f"{repo}: decisions are not the exact reviewed queue-head prefix "
+                f"(expected {expected_reviewed}, got {got_reviewed})"
+            )
+        for index, decision in enumerate(repo_decisions, start=1):
+            if int(decision["review_order"]) != index:
+                fail(
+                    f"{decision['neutral_id']}: review_order "
+                    f"{decision['review_order']} != {index}"
+                )
 
     pending_by_repo: Counter[str] = Counter()
     reviewed_by_repo: Counter[str] = Counter()
@@ -169,8 +258,18 @@ def main() -> int:
     for row in rows:
         nid = row["neutral_id"]
         decision = decision_by_id[nid]
-        repo_short = row["repo"]
+        qrec = queue_by_id.get(nid)
+        if qrec is None:
+            fail(f"{nid}: sheet/decision row missing from queue")
+        if qrec["repo"] != decision["repo"]:
+            fail(f"{nid}: queue/decision repository mismatch")
+        if int(qrec["issue_number"]) != int(decision["issue_number"]):
+            fail(f"{nid}: queue/decision issue_number mismatch")
+        if qrec["issue_url"] != decision["issue_url"] or qrec["issue_url"] != row["issue_url"]:
+            fail(f"{nid}: queue/decision/sheet issue_url mismatch")
+
         repo_full = decision["repo"]
+        repo_short = row["repo"]
         if repo_full not in allowed_repos:
             fail(f"{nid}: repository outside SCOPE")
         if repo_short not in allowed_short and repo_short not in allowed_repos:
@@ -237,6 +336,8 @@ def main() -> int:
             fail(f"{nid}: evidence search hash mismatch")
         if payload.get("review_decisions_sha256") != decisions_sha:
             fail(f"{nid}: evidence decision hash mismatch")
+        if payload.get("issue_url") != row["issue_url"]:
+            fail(f"{nid}: evidence issue_url mismatch")
         reviewed_by_repo[repo_full] += 1
 
     for repo, count in pending_by_repo.items():
@@ -245,8 +346,6 @@ def main() -> int:
     for repo, count in reviewed_by_repo.items():
         if count > int(scope["max_reviewed_per_repo"]):
             fail(f"{repo}: more than 20 reviewed rows ({count})")
-
-    # Loss of reviewed exclusion: every decision must appear in sheet.
     if len(rows) != len(decisions):
         fail("loss of reviewed exclusion: sheet/decision count mismatch")
 
@@ -258,6 +357,7 @@ def main() -> int:
     print(
         json.dumps(
             {
+                "queue_sha256": queue_sha,
                 "searched_hits": dict(searched),
                 "reviewed": dict(reviewed_by_repo),
                 "pending": dict(pending_by_repo),

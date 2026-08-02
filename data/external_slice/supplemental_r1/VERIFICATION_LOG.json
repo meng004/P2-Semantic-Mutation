@@ -1,55 +1,91 @@
 {
-  "created_utc": "2026-08-02T01:39:15Z",
+  "created_utc": "2026-08-02T02:48:48Z",
+  "diagnostic_summary": {
+    "queries_empty": 37,
+    "queries_with_issue": 0,
+    "queries_with_pr": 29,
+    "total_issue_items": 0,
+    "total_pr_items": 262
+  },
   "entries": [
     {
       "command": [
         "rg",
         "-n",
-        "(?i)(^|[^[:alnum:]_])(C\\x45|O\\x53|H\\x50|T\\x46|S\\x49|f\\x69ber|strat\\x75m)([^[:alnum:]_]|$)",
-        "data/external_slice/supplemental_r1/admission_sheet.cursor_candidate.csv",
-        "data/external_slice/supplemental_r1/REVIEW_DECISIONS.json",
-        "data/external_slice/supplemental_r1/admission_evidence"
+        "resolve_issues_from_pr|pr_issue_cache|pilot-compatible",
+        "scripts/external_slice/mine_supplemental_r1.py"
       ],
       "cwd": "/workspace",
       "exit_code": 1,
       "expected_raw_exit": 1,
-      "label": "verify:reserved_runbook_scan",
+      "label": "verify:no_pr_issue_fallback",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T01:38:00Z"
+      "timestamp_utc": "2026-08-02T02:47:33Z"
     },
     {
       "command": [
         "rg",
         "-n",
-        "ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|Bearer [A-Za-z0-9][A-Za-z0-9._-]{15,}",
-        "data/external_slice/supplemental_r1"
+        "Allow explicit order values as long as unique",
+        "scripts/external_slice/mine_supplemental_r1.py"
       ],
       "cwd": "/workspace",
       "exit_code": 1,
       "expected_raw_exit": 1,
-      "label": "verify:token_scan",
+      "label": "verify:no_review_order_noop",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T01:38:00Z"
+      "timestamp_utc": "2026-08-02T02:47:33Z"
     },
     {
       "command": [
-        "rg",
-        "-n",
-        "-i",
-        "mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|\\bkill\\b|prediction|detection_result",
-        "data/external_slice/supplemental_r1/admission_sheet.cursor_candidate.csv",
-        "data/external_slice/supplemental_r1/REVIEW_DECISIONS.json",
-        "data/external_slice/supplemental_r1/admission_evidence"
+        "/usr/bin/python3",
+        "scripts/external_slice/check_supplemental_r1_admission.py",
+        "--help"
       ],
       "cwd": "/workspace",
-      "exit_code": 1,
-      "expected_raw_exit": 1,
-      "label": "verify:prohibited_downstream_scan",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:checker_has_queue_arg",
+      "normalized_result": "PASS",
       "stderr_tail": "",
-      "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T01:38:00Z"
+      "stdout_tail": "usage: check_supplemental_r1_admission.py [-h] --scope SCOPE --snapshot\n                                          SNAPSHOT --queue QUEUE --decisions\n                                          DECISIONS --sheet SHEET\n                                          --evidence-root EVIDENCE_ROOT\n                                          --existing-sheet EXISTING_SHEET\n                                          --pilot-sheet PILOT_SHEET\n                                          [--fixture-root FIXTURE_ROOT]\n\nAdmission checker for supplemental mining R1 candidate payload (R1-r2).\n\noptions:\n  -h, --help            show this help message and exit\n  --scope SCOPE\n  --snapshot SNAPSHOT\n  --queue QUEUE\n  --decisions DECISIONS\n  --sheet SHEET\n  --evidence-root EVIDENCE_ROOT\n  --existing-sheet EXISTING_SHEET\n  --pilot-sheet PILOT_SHEET\n  --fixture-root FIXTURE_ROOT\n",
+      "timestamp_utc": "2026-08-02T02:47:33Z"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "tests/external_slice/test_mine_supplemental_r1.py",
+        "tests/external_slice/test_check_supplemental_r1_admission.py",
+        "-q"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:targeted_pytest",
+      "stderr_tail": "",
+      "stdout_tail": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: hydra-core-1.3.4, anyio-4.14.2\ncollected 22 items\n\ntests/external_slice/test_mine_supplemental_r1.py ...........            [ 50%]\ntests/external_slice/test_check_supplemental_r1_admission.py ........... [100%]\n\n============================= 22 passed in 33.39s ==============================\n",
+      "timestamp_utc": "2026-08-02T02:48:07Z"
+    },
+    {
+      "command": [
+        "env",
+        "PYTHONPATH=src",
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "expected_raw_exit": 0,
+      "label": "verify:full_pytest",
+      "stderr_tail": "",
+      "stdout_tail": "dule_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/gaussian_process/kernels.py:445: ConvergenceWarning: The optimal value found for dimension 0 of parameter k2__noise_level is close to the specified lower bound 1e-05. Decreasing the bound and calling fit again may find a better value.\n    warnings.warn(\n\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/svm/_base.py:239: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`\n    warnings.warn(\n\ntests/stats/test_mixed_effects.py::test_fit_returns_class_means_and_p_values\n  /home/ubuntu/.local/lib/python3.12/site-packages/statsmodels/regression/mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 282 passed, 19 warnings in 40.44s =======================\n",
+      "timestamp_utc": "2026-08-02T02:48:48Z"
     },
     {
       "command": [
@@ -66,7 +102,7 @@
       "label": "verify:immutable_pilot_sheet",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T01:38:00Z"
+      "timestamp_utc": "2026-08-02T02:48:48Z"
     },
     {
       "command": [
@@ -83,7 +119,7 @@
       "label": "verify:immutable_candidate_sheet",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T01:38:00Z"
+      "timestamp_utc": "2026-08-02T02:48:48Z"
     },
     {
       "command": [
@@ -106,102 +142,42 @@
       "label": "verify:immutable_downstream_paths",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T01:38:00Z"
+      "timestamp_utc": "2026-08-02T02:48:48Z"
     },
     {
       "command": [
-        "/usr/bin/python3",
-        "scripts/external_slice/check_supplemental_r1_admission.py",
-        "--scope",
-        "data/external_slice/supplemental_r1/SCOPE.json",
-        "--snapshot",
-        "data/external_slice/supplemental_r1/SEARCH_SNAPSHOT.json",
-        "--decisions",
-        "data/external_slice/supplemental_r1/REVIEW_DECISIONS.json",
-        "--sheet",
-        "data/external_slice/supplemental_r1/admission_sheet.cursor_candidate.csv",
-        "--evidence-root",
-        "data/external_slice/supplemental_r1/admission_evidence",
-        "--existing-sheet",
-        "data/external_slice/admission_sheet.cursor_candidate.csv",
-        "--pilot-sheet",
-        "data/external_slice/admission_sheet.csv"
+        "python",
+        "-c",
+        "check absences"
       ],
       "cwd": "/workspace",
       "exit_code": 0,
       "expected_raw_exit": 0,
-      "label": "verify:admission_checker",
-      "normalized_result": "PASS",
+      "label": "verify:inadmissible_artifacts_absent",
       "stderr_tail": "",
-      "stdout_tail": "PASS: supplemental mining R1 admission structural check\n{\"excluded\": {\"cornellius-gp/gpytorch\": 5, \"jax-ml/jax\": 12, \"jonathf/chaospy\": 1, \"pymc-devs/pymc\": 8, \"pytorch/pytorch\": 18}, \"pending\": {\"jax-ml/jax\": 5, \"pymc-devs/pymc\": 5, \"pytorch/pytorch\": 2}, \"reviewed\": {\"cornellius-gp/gpytorch\": 5, \"jax-ml/jax\": 17, \"jonathf/chaospy\": 1, \"pymc-devs/pymc\": 13, \"pytorch/pytorch\": 20}, \"rows\": 56, \"searched_hits\": {\"SALib/SALib\": 0, \"cornellius-gp/gpytorch\": 9, \"jax-ml/jax\": 64, \"jonathf/chaospy\": 2, \"pymc-devs/pymc\": 41, \"pytorch/pytorch\": 146}}\n",
-      "timestamp_utc": "2026-08-02T01:38:00Z"
-    },
-    {
-      "command": [
-        "/usr/bin/python3",
-        "-m",
-        "pytest",
-        "tests/external_slice/test_mine_supplemental_r1.py",
-        "tests/external_slice/test_check_supplemental_r1_admission.py",
-        "-q"
-      ],
-      "cwd": "/workspace",
-      "exit_code": 0,
-      "expected_raw_exit": 0,
-      "label": "verify:targeted_pytest",
-      "stderr_tail": "",
-      "stdout_tail": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: hydra-core-1.3.4, anyio-4.14.2\ncollected 18 items\n\ntests/external_slice/test_mine_supplemental_r1.py ......                 [ 33%]\ntests/external_slice/test_check_supplemental_r1_admission.py ........... [ 94%]\n.                                                                        [100%]\n\n============================= 18 passed in 33.41s ==============================\n",
-      "timestamp_utc": "2026-08-02T01:38:34Z"
-    },
-    {
-      "command": [
-        "env",
-        "PYTHONPATH=src",
-        "/usr/bin/python3",
-        "-m",
-        "pytest",
-        "-q"
-      ],
-      "cwd": "/workspace",
-      "exit_code": 0,
-      "expected_raw_exit": 0,
-      "label": "verify:full_pytest",
-      "stderr_tail": "",
-      "stdout_tail": "dule_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/gaussian_process/kernels.py:445: ConvergenceWarning: The optimal value found for dimension 0 of parameter k2__noise_level is close to the specified lower bound 1e-05. Decreasing the bound and calling fit again may find a better value.\n    warnings.warn(\n\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_every_put_has_loadable_program\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\ntests/integration/test_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/svm/_base.py:239: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`\n    warnings.warn(\n\ntests/stats/test_mixed_effects.py::test_fit_returns_class_means_and_p_values\n  /home/ubuntu/.local/lib/python3.12/site-packages/statsmodels/regression/mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 278 passed, 19 warnings in 40.48s =======================\n",
-      "timestamp_utc": "2026-08-02T01:39:15Z"
-    },
-    {
-      "command": [
-        "git",
-        "diff",
-        "--check"
-      ],
-      "cwd": "/workspace",
-      "exit_code": 0,
-      "expected_raw_exit": 0,
-      "label": "verify:git_diff_check",
-      "stderr_tail": "",
-      "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T01:39:15Z"
+      "stdout_tail": "{\"REVIEW_DECISIONS.json\": true, \"REVIEW_QUEUE.json\": true, \"SEARCH_SNAPSHOT.json\": true, \"admission_evidence\": true, \"admission_sheet.cursor_candidate.csv\": true}",
+      "timestamp_utc": "2026-08-02T02:48:48Z"
     }
   ],
   "environment": {
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
-    "python": "3.12.3",
-    "uname": {
-      "machine": "x86_64",
-      "node": "cursor",
-      "processor": "x86_64",
-      "release": "6.12.94+",
-      "system": "Linux",
-      "version": "#1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026"
-    }
+    "python": "3.12.3"
   },
   "notes": [
-    "Reserved/token/prohibited scans claim cleanliness only from raw rg exit code 1 with empty output.",
-    "All A2 values remain PENDING; no reproducer or dual-arm execution was performed.",
-    "Existing admission/readiness/freeze/downstream artifacts remain unchanged from baseline."
+    "No new candidate sheet was minted because the frozen issue-only search hard-failed on PR-typed hits.",
+    "All A2 dual-arm readiness remains locked; no reproducer work was started.",
+    "Previous PR-derived queue/decisions/pending rows are withdrawn."
   ],
+  "official_search": {
+    "exit_code": 2,
+    "result": "SEARCH_HARD_FAIL"
+  },
   "schema_version": 1,
-  "task": "SUPPLEMENTAL_MINING_R1"
+  "task": "SUPPLEMENTAL_ADMISSION_R1_R2",
+  "withdrawal_counts": {
+    "excluded_rows": 44,
+    "pending_rows": 12,
+    "queue_rows": 128,
+    "reviewed_rows": 56
+  }
 }

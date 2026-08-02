@@ -1,0 +1,10 @@
+{
+  "created_utc": "2026-08-02T02:47:10Z",
+  "official_search_exit_code": 2,
+  "reason": "GitHub search/issues returned PR-typed items for the exact frozen is:issue is:closed queries; PR\u2192issue fallback is forbidden.",
+  "result": "SEARCH_HARD_FAIL",
+  "schema_version": 1,
+  "stderr_tail": "ERROR: SEARCH_HARD_FAIL: PR returned for frozen issue-only query repo=pymc-devs/pymc phrase='wrong result' url=https://github.com/pymc-devs/pymc/pull/7491\n",
+  "stdout_tail": "",
+  "task": "SUPPLEMENTAL_ADMISSION_R1_R2"
+}

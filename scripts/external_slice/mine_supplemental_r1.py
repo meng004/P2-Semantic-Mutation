@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic supplemental mining R1 search / evidence / build CLI."""
+"""Deterministic supplemental mining R1 search / evidence / build CLI (R1-r2 hard-fail)."""
 
 from __future__ import annotations
 
@@ -65,6 +65,10 @@ PROHIBITED_RE = re.compile(
     r"(?i)(mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|"
     r"\bkill\b|prediction|detection_result|\bfiber\b|\boperator\b)"
 )
+
+
+class SearchHardFail(RuntimeError):
+    """Frozen search produced a non-admissible response."""
 
 
 def utc_now() -> str:
@@ -147,20 +151,16 @@ def run_gh(
             append_command_log(command_log, entry)
         if proc.returncode == 0:
             return json.loads(stdout) if stdout.strip() else {}
-        rate_limited = (
-            proc.returncode in {1, 8}
-            and (
-                "rate limit" in stderr.lower()
-                or "API rate limit exceeded" in stderr
-                or "secondary rate limit" in stderr.lower()
-                or "403" in stderr
-            )
+        rate_limited = proc.returncode in {1, 8} and (
+            "rate limit" in stderr.lower()
+            or "API rate limit exceeded" in stderr
+            or "secondary rate limit" in stderr.lower()
         )
         if rate_limited and attempt <= max_retries:
             time.sleep(min(60, 8 * attempt))
             continue
-        raise RuntimeError(
-            f"command failed ({proc.returncode}): {' '.join(cmd)}\n{stderr[-2000:]}"
+        raise SearchHardFail(
+            f"nonzero GitHub request ({proc.returncode}) for {label}: {stderr[-500:]}"
         )
 
 
@@ -170,193 +170,43 @@ def build_queries(scope: dict[str, Any]) -> list[dict[str, str]]:
     for repo_entry in scope["repositories"]:
         repo = repo_entry["repo"]
         for phrase in scope["phrases"]:
-            q = (
-                f'repo:{repo} is:issue is:closed created:<={cutoff} "{phrase}"'
-            )
+            q = f'repo:{repo} is:issue is:closed created:<={cutoff} "{phrase}"'
             queries.append({"repo": repo, "phrase": phrase, "q": q})
     return queries
 
 
-ISSUE_REF_RE = re.compile(
-    r"(?i)(?:clos(?:e|es|ed)|fix(?:es|ed)|resolve(?:s|d)|see|toward)\s+#(\d+)|#(\d+)"
-)
-
-
-def hit_record_from_item(item: dict[str, Any], *, repo: str, phrase: str) -> dict[str, Any]:
-    html_url = item["html_url"]
-    is_pr = item.get("pull_request") is not None or "/pull/" in html_url
+def issue_record_from_item(item: dict[str, Any], *, repo: str, phrase: str) -> dict[str, Any]:
+    """Accept only closed non-PR issue objects. Hard-fail otherwise."""
+    html_url = item.get("html_url") or ""
+    if item.get("pull_request") is not None or "/pull/" in html_url:
+        raise SearchHardFail(
+            f"PR returned for frozen issue-only query repo={repo} phrase={phrase!r} url={html_url}"
+        )
+    state = (item.get("state") or "").lower()
+    if state != "closed":
+        raise SearchHardFail(
+            f"non-closed item returned for frozen query repo={repo} phrase={phrase!r} "
+            f"state={state!r} url={html_url}"
+        )
+    if "/issues/" not in html_url:
+        raise SearchHardFail(
+            f"issue URL missing /issues/ for repo={repo} phrase={phrase!r} url={html_url}"
+        )
     body = item.get("body") or ""
     title = item.get("title") or ""
     return {
         "repo": repo,
         "phrase": phrase,
-        "number": int(item["number"]),
-        "html_url": html_url,
-        "is_pull_request": is_pr,
-        "state": item.get("state", ""),
+        "issue_number": int(item["number"]),
+        "issue_url": html_url,
+        "state": state,
         "created_at": item.get("created_at", ""),
         "updated_at": item.get("updated_at", ""),
         "closed_at": item.get("closed_at", ""),
         "title_sha256": sha256_text(title),
         "body_sha256": sha256_text(body),
         "api_id": item.get("id"),
-        "title_issue_refs": sorted(
-            {
-                int(a or b)
-                for a, b in ISSUE_REF_RE.findall(f"{title}\n{body}")
-                if (a or b)
-            }
-        ),
     }
-
-
-def extract_issue_numbers_from_text(text: str) -> list[int]:
-    found: list[int] = []
-    seen: set[int] = set()
-    for a, b in ISSUE_REF_RE.findall(text or ""):
-        number = int(a or b)
-        if number not in seen:
-            seen.add(number)
-            found.append(number)
-    return found
-
-
-def resolve_issues_from_pr(
-    repo: str,
-    pr_number: int,
-    *,
-    command_log: Path,
-    seed_refs: list[int] | None = None,
-) -> list[dict[str, Any]]:
-    owner, name = repo.split("/", 1)
-    linked: dict[int, dict[str, Any]] = {}
-    for number in seed_refs or []:
-        linked[number] = {"issue_number": number, "source": "title_or_body_ref"}
-
-    # GraphQL closing issue references (may be empty for older events).
-    try:
-        gql = run_gh(
-            [
-                "api",
-                "graphql",
-                "-f",
-                (
-                    "query=query($o:String!,$n:String!,$p:Int!){"
-                    "repository(owner:$o,name:$n){pullRequest(number:$p){"
-                    "number url title body merged mergeCommit{oid} headRefOid "
-                    "closingIssuesReferences(first:20){nodes{number url state createdAt closedAt}}"
-                    "}}}"
-                ),
-                "-f",
-                f"o={owner}",
-                "-f",
-                f"n={name}",
-                "-F",
-                f"p={pr_number}",
-            ],
-            command_log=command_log,
-            label=f"graphql-pr-links:{repo}#{pr_number}",
-        )
-        pr = (((gql.get("data") or {}).get("repository") or {}).get("pullRequest")) or {}
-        title = pr.get("title") or ""
-        body = pr.get("body") or ""
-        for number in extract_issue_numbers_from_text(f"{title}\n{body}"):
-            linked.setdefault(number, {"issue_number": number, "source": "pr_text_ref"})
-        for node in ((pr.get("closingIssuesReferences") or {}).get("nodes") or []):
-            number = int(node["number"])
-            linked[number] = {
-                "issue_number": number,
-                "issue_url": node.get("url") or f"https://github.com/{repo}/issues/{number}",
-                "state": node.get("state", "").lower(),
-                "created_at": node.get("createdAt", ""),
-                "closed_at": node.get("closedAt", ""),
-                "source": "closingIssuesReferences",
-                "title_sha256": "",
-                "body_sha256": "",
-            }
-        pr_meta = {
-            "pr_number": pr_number,
-            "pr_url": pr.get("url") or f"https://github.com/{repo}/pull/{pr_number}",
-            "merged": bool(pr.get("merged")),
-            "merge_commit_sha": ((pr.get("mergeCommit") or {}).get("oid")) or "",
-            "head_sha": pr.get("headRefOid") or "",
-            "title_sha256": sha256_text(title),
-            "body_sha256": sha256_text(body),
-        }
-    except RuntimeError:
-        pr_meta = {
-            "pr_number": pr_number,
-            "pr_url": f"https://github.com/{repo}/pull/{pr_number}",
-            "merged": False,
-            "merge_commit_sha": "",
-            "head_sha": "",
-            "title_sha256": "",
-            "body_sha256": "",
-        }
-        try:
-            pr = _gh_json(
-                f"repos/{repo}/pulls/{pr_number}",
-                command_log,
-                f"pull:{repo}#{pr_number}",
-            )
-            title = pr.get("title") or ""
-            body = pr.get("body") or ""
-            for number in extract_issue_numbers_from_text(f"{title}\n{body}"):
-                linked.setdefault(number, {"issue_number": number, "source": "pr_text_ref"})
-            pr_meta.update(
-                {
-                    "pr_url": pr.get("html_url") or pr_meta["pr_url"],
-                    "merged": bool(pr.get("merged")),
-                    "merge_commit_sha": pr.get("merge_commit_sha") or "",
-                    "head_sha": ((pr.get("head") or {}).get("sha")) or "",
-                    "title_sha256": sha256_text(title),
-                    "body_sha256": sha256_text(body),
-                }
-            )
-        except RuntimeError:
-            pass
-
-    issues: list[dict[str, Any]] = []
-    for number, meta in sorted(linked.items()):
-        if meta.get("issue_url") and meta.get("created_at"):
-            record = {
-                "repo": repo,
-                "issue_number": number,
-                "issue_url": meta["issue_url"],
-                "state": meta.get("state", ""),
-                "created_at": meta.get("created_at", ""),
-                "closed_at": meta.get("closed_at", ""),
-                "title_sha256": meta.get("title_sha256", ""),
-                "body_sha256": meta.get("body_sha256", ""),
-                "source_pr": pr_meta,
-            }
-            issues.append(record)
-            continue
-        try:
-            issue = _gh_json(
-                f"repos/{repo}/issues/{number}",
-                command_log,
-                f"issue:{repo}#{number}",
-            )
-        except RuntimeError:
-            continue
-        if issue.get("pull_request") is not None:
-            continue
-        issues.append(
-            {
-                "repo": repo,
-                "issue_number": number,
-                "issue_url": issue.get("html_url")
-                or f"https://github.com/{repo}/issues/{number}",
-                "state": issue.get("state", ""),
-                "created_at": issue.get("created_at", ""),
-                "closed_at": issue.get("closed_at", ""),
-                "title_sha256": sha256_text(issue.get("title") or ""),
-                "body_sha256": sha256_text(issue.get("body") or ""),
-                "source_pr": pr_meta,
-            }
-        )
-    return issues
 
 
 def apply_review_stop(
@@ -397,30 +247,15 @@ def assign_queue(
         repo = repo_entry["repo"]
         prefix = repo_entry["id_prefix"]
         items = hits_by_repo.get(repo, [])
-        # Deduplicate by URL, keep first-seen provenance phrases as list.
         by_url: dict[str, dict[str, Any]] = {}
         for item in items:
             url = item["issue_url"]
             if url not in by_url:
                 cloned = dict(item)
-                cloned["phrases"] = list(item.get("phrases") or ([item["phrase"]] if item.get("phrase") else []))
-                source_prs = []
-                if item.get("source_pr"):
-                    source_prs.append(item["source_pr"])
-                cloned["source_prs"] = source_prs
+                cloned["phrases"] = [item["phrase"]]
                 by_url[url] = cloned
-            else:
-                phrase = item.get("phrase")
-                if phrase and phrase not in by_url[url]["phrases"]:
-                    by_url[url]["phrases"].append(phrase)
-                for p in item.get("phrases") or []:
-                    if p not in by_url[url]["phrases"]:
-                        by_url[url]["phrases"].append(p)
-                if item.get("source_pr"):
-                    pr_url = item["source_pr"].get("pr_url")
-                    existing = {p.get("pr_url") for p in by_url[url]["source_prs"]}
-                    if pr_url not in existing:
-                        by_url[url]["source_prs"].append(item["source_pr"])
+            elif item["phrase"] not in by_url[url]["phrases"]:
+                by_url[url]["phrases"].append(item["phrase"])
         ordered = sorted(
             by_url.values(),
             key=lambda r: (r.get("created_at") or "", r["issue_number"]),
@@ -442,15 +277,14 @@ def cmd_search(
     command_log_path: Path,
 ) -> None:
     scope = load_scope(scope_path)
-    queries = build_queries(scope)
+    expected_queries = build_queries(scope)
     query_results: list[dict[str, Any]] = []
-    issue_hits_by_repo: dict[str, list[dict[str, Any]]] = {
+    hits_by_repo: dict[str, list[dict[str, Any]]] = {
         r["repo"]: [] for r in scope["repositories"]
     }
 
-    for index, query in enumerate(queries):
+    for index, query in enumerate(expected_queries):
         if index:
-            # Stay under the authenticated search budget (30 requests/minute).
             time.sleep(2.2)
         label = f"search:{query['repo']}:{query['phrase']}"
         payload = run_gh(
@@ -471,68 +305,46 @@ def cmd_search(
             command_log=command_log_path,
             label=label,
         )
-        items = []
+        if payload.get("incomplete_results") is True:
+            raise SearchHardFail(
+                f"incomplete_results=true for {query['repo']} / {query['phrase']!r}"
+            )
+        items_out: list[dict[str, Any]] = []
         for raw in payload.get("items", []):
-            record = hit_record_from_item(raw, repo=query["repo"], phrase=query["phrase"])
-            items.append(record)
-            if not record["is_pull_request"]:
-                issue_hits_by_repo[query["repo"]].append(
-                    {
-                        "repo": query["repo"],
-                        "phrase": query["phrase"],
-                        "phrases": [query["phrase"]],
-                        "issue_number": record["number"],
-                        "issue_url": record["html_url"].replace("/pull/", "/issues/"),
-                        "state": record["state"],
-                        "created_at": record["created_at"],
-                        "closed_at": record["closed_at"],
-                        "title_sha256": record["title_sha256"],
-                        "body_sha256": record["body_sha256"],
-                        "source_pr": None,
-                    }
-                )
+            record = issue_record_from_item(
+                raw, repo=query["repo"], phrase=query["phrase"]
+            )
+            items_out.append(record)
+            hits_by_repo[query["repo"]].append(record)
         query_results.append(
             {
                 "repo": query["repo"],
                 "phrase": query["phrase"],
                 "q": query["q"],
                 "total_count": payload.get("total_count", 0),
-                "incomplete_results": payload.get("incomplete_results", False),
-                "returned": len(items),
-                "issue_count": sum(1 for i in items if not i["is_pull_request"]),
-                "pull_count": sum(1 for i in items if i["is_pull_request"]),
-                "items": items,
+                "incomplete_results": False,
+                "returned": len(items_out),
+                "issue_count": len(items_out),
+                "pull_count": 0,
+                "items": items_out,
             }
         )
 
-    # Pilot-compatible follow-up: GitHub search often surfaces PRs for these phrases.
-    # Resolve public linked issues from those fix records before queue assignment.
-    pr_issue_cache: dict[tuple[str, int], list[dict[str, Any]]] = {}
-    for query in query_results:
-        repo = query["repo"]
-        phrase = query["phrase"]
-        for hit in query["items"]:
-            if not hit["is_pull_request"]:
-                continue
-            key = (repo, int(hit["number"]))
-            if key not in pr_issue_cache:
-                pr_issue_cache[key] = resolve_issues_from_pr(
-                    repo,
-                    int(hit["number"]),
-                    command_log=command_log_path,
-                    seed_refs=list(hit.get("title_issue_refs") or []),
-                )
-                time.sleep(0.25)
-            for issue in pr_issue_cache[key]:
-                issue_hits_by_repo[repo].append(
-                    {
-                        **issue,
-                        "phrase": phrase,
-                        "phrases": [phrase],
-                    }
-                )
+    # Exact query identity checks.
+    if len(query_results) != len(expected_queries):
+        raise SearchHardFail(
+            f"query count mismatch: got {len(query_results)} expected {len(expected_queries)}"
+        )
+    for got, exp in zip(query_results, expected_queries):
+        if got["repo"] != exp["repo"] or got["phrase"] != exp["phrase"] or got["q"] != exp["q"]:
+            raise SearchHardFail(
+                f"query identity/order changed: expected {exp} got "
+                f"repo={got['repo']} phrase={got['phrase']!r} q={got['q']!r}"
+            )
+        if got.get("pull_count", 0) != 0:
+            raise SearchHardFail(f"pull_count nonzero for {got['repo']} / {got['phrase']!r}")
 
-    queue_records = assign_queue(scope, issue_hits_by_repo)
+    queue_records = assign_queue(scope, hits_by_repo)
     snapshot = {
         "schema_version": 1,
         "task": "SUPPLEMENTAL_MINING_R1",
@@ -540,17 +352,17 @@ def cmd_search(
         "created_utc": utc_now(),
         "query_count": len(query_results),
         "queries": query_results,
+        "selection_rule": "direct_closed_issue_hits_only",
     }
+    write_json(snapshot_path, snapshot)
     queue = {
         "schema_version": 1,
         "task": "SUPPLEMENTAL_MINING_R1",
         "scope_sha256": sha256_file(scope_path),
-        "search_snapshot_sha256": "",  # filled after snapshot write
+        "search_snapshot_sha256": sha256_file(snapshot_path),
         "created_utc": utc_now(),
         "records": queue_records,
     }
-    write_json(snapshot_path, snapshot)
-    queue["search_snapshot_sha256"] = sha256_file(snapshot_path)
     write_json(queue_path, queue)
     append_command_log(
         command_log_path,
@@ -596,7 +408,6 @@ def _extract_fix_refs(issue: dict[str, Any], timeline: list[dict[str, Any]]) -> 
         body,
     ):
         refs.append(match)
-    # Preserve order, unique.
     seen: set[str] = set()
     out: list[str] = []
     for ref in refs:
@@ -626,18 +437,17 @@ def _fix_candidate_from_pr(
     pr_number: int,
     *,
     command_log: Path,
-    prefetched: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     try:
-        pr = prefetched or _gh_json(
+        pr = _gh_json(
             f"repos/{repo}/pulls/{pr_number}",
             command_log,
             f"pull:{repo}#{pr_number}",
         )
-    except RuntimeError:
+    except (RuntimeError, SearchHardFail):
         return None
     merge_commit = pr.get("merge_commit_sha") or ""
-    head_sha = ((pr.get("head") or {}).get("sha")) or pr.get("head_sha") or ""
+    head_sha = ((pr.get("head") or {}).get("sha")) or ""
     fixed_sha = merge_commit or head_sha
     if not fixed_sha:
         return None
@@ -651,9 +461,7 @@ def _fix_candidate_from_pr(
         )
         parents = [p.get("sha", "") for p in commit.get("parents", [])]
         files = _commit_files_meta(commit)
-    except RuntimeError:
-        # Keep the PR identity even when the merge commit is unavailable in-repo
-        # (e.g. cross-repo or rewritten history). Parent SHAs then remain blank.
+    except (RuntimeError, SearchHardFail):
         parents = []
         files = []
     return {
@@ -671,11 +479,7 @@ def _fix_candidate_from_pr(
     }
 
 
-def collect_one(
-    record: dict[str, Any],
-    *,
-    command_log: Path,
-) -> dict[str, Any]:
+def collect_one(record: dict[str, Any], *, command_log: Path) -> dict[str, Any]:
     repo = record["repo"]
     number = record["issue_number"]
     issue = _gh_json(
@@ -683,6 +487,8 @@ def collect_one(
         command_log,
         f"issue:{repo}#{number}",
     )
+    if issue.get("pull_request") is not None:
+        raise SearchHardFail(f"queue record resolved to a pull request: {repo}#{number}")
     try:
         timeline = run_gh(
             [
@@ -698,50 +504,13 @@ def collect_one(
             command_log=command_log,
             label=f"timeline:{repo}#{number}",
         )
-        if isinstance(timeline, dict):
-            timeline_items = timeline.get("items") or []
-        else:
-            timeline_items = timeline
-    except RuntimeError:
+        timeline_items = timeline if isinstance(timeline, list) else (timeline.get("items") or [])
+    except (RuntimeError, SearchHardFail):
         timeline_items = []
 
     fix_refs = _extract_fix_refs(issue, timeline_items if isinstance(timeline_items, list) else [])
-    for source_pr in record.get("source_prs") or []:
-        pr_url = source_pr.get("pr_url")
-        if pr_url and pr_url not in fix_refs:
-            fix_refs.insert(0, pr_url)
-
     fix_candidates: list[dict[str, Any]] = []
     seen_fix_urls: set[str] = set()
-
-    # Prefer provenance PRs captured during search resolution.
-    for source_pr in record.get("source_prs") or []:
-        pr_number = int(source_pr.get("pr_number") or 0)
-        if not pr_number:
-            continue
-        candidate = _fix_candidate_from_pr(repo, pr_number, command_log=command_log)
-        if candidate and candidate["fix_url"] not in seen_fix_urls:
-            # If REST lacked merge metadata, fall back to GraphQL fields from search.
-            if not candidate.get("buggy_sha") and source_pr.get("merge_commit_sha"):
-                candidate["fixed_sha"] = source_pr.get("merge_commit_sha") or candidate["fixed_sha"]
-                candidate["merge_commit_sha"] = source_pr.get("merge_commit_sha") or ""
-                candidate["head_sha"] = source_pr.get("head_sha") or candidate.get("head_sha") or ""
-                candidate["merged"] = bool(source_pr.get("merged"))
-                try:
-                    commit = _gh_json(
-                        f"repos/{repo}/commits/{candidate['fixed_sha']}",
-                        command_log,
-                        f"commit:{repo}@{candidate['fixed_sha'][:12]}",
-                    )
-                    parents = [p.get("sha", "") for p in commit.get("parents", [])]
-                    candidate["parent_shas"] = parents
-                    candidate["buggy_sha"] = parents[0] if parents else ""
-                    candidate["files"] = _commit_files_meta(commit)
-                except RuntimeError:
-                    pass
-            seen_fix_urls.add(candidate["fix_url"])
-            fix_candidates.append(candidate)
-
     for ref in fix_refs:
         if "/pull/" in ref:
             pr_number = int(ref.rstrip("/").rsplit("/", 1)[-1])
@@ -757,7 +526,7 @@ def collect_one(
                     command_log,
                     f"commit:{repo}@{sha[:12]}",
                 )
-            except RuntimeError:
+            except (RuntimeError, SearchHardFail):
                 continue
             parents = [p.get("sha", "") for p in commit.get("parents", [])]
             html = commit.get("html_url") or f"https://github.com/{repo}/commit/{commit.get('sha', sha)}"
@@ -807,16 +576,9 @@ def cmd_collect_evidence(
 ) -> None:
     scope = load_scope(scope_path)
     queue = load_json(queue_path)
-    # Collect for all queue records; review stop is applied later during decisions.
-    records = queue["records"]
-    evidence_rows = []
-    for record in records:
-        # Bound network: collect only up to max_reviewed_per_repo in queue order per repo.
-        pass
-    # Determine which records need evidence: first max_reviewed per repo.
     selected: list[dict[str, Any]] = []
     per_repo_count: dict[str, int] = {}
-    for record in records:
+    for record in queue["records"]:
         repo = record["repo"]
         count = per_repo_count.get(repo, 0)
         if count >= int(scope["max_reviewed_per_repo"]):
@@ -824,19 +586,19 @@ def cmd_collect_evidence(
         per_repo_count[repo] = count + 1
         selected.append(record)
 
-    for record in selected:
-        evidence_rows.append(collect_one(record, command_log=command_log_path))
-
-    payload = {
-        "schema_version": 1,
-        "task": "SUPPLEMENTAL_MINING_R1",
-        "scope_sha256": sha256_file(scope_path),
-        "search_snapshot_sha256": sha256_file(snapshot_path),
-        "review_queue_sha256": sha256_file(queue_path),
-        "created_utc": utc_now(),
-        "records": evidence_rows,
-    }
-    write_json(output_path, payload)
+    evidence_rows = [collect_one(record, command_log=command_log_path) for record in selected]
+    write_json(
+        output_path,
+        {
+            "schema_version": 1,
+            "task": "SUPPLEMENTAL_MINING_R1",
+            "scope_sha256": sha256_file(scope_path),
+            "search_snapshot_sha256": sha256_file(snapshot_path),
+            "review_queue_sha256": sha256_file(queue_path),
+            "created_utc": utc_now(),
+            "records": evidence_rows,
+        },
+    )
 
 
 def _read_sheet_ids(path: Path) -> set[str]:
@@ -864,34 +626,63 @@ def cmd_validate_decisions(
     pilot_sheet: Path,
 ) -> None:
     scope = load_scope(scope_path)
+    snapshot = load_json(snapshot_path)
     queue = load_json(queue_path)
-    decisions_payload = load_json(decisions_path)
-    decisions = decisions_payload.get("decisions") or []
+    decisions = (load_json(decisions_path).get("decisions") or [])
     errors: list[str] = []
+
+    if queue.get("scope_sha256") != sha256_file(scope_path):
+        errors.append("queue scope_sha256 does not match SCOPE.json")
+    if queue.get("search_snapshot_sha256") != sha256_file(snapshot_path):
+        errors.append("queue search_snapshot_sha256 does not match SEARCH_SNAPSHOT.json")
+    if snapshot.get("scope_sha256") != sha256_file(scope_path):
+        errors.append("snapshot scope_sha256 does not match SCOPE.json")
+
+    expected_queries = build_queries(scope)
+    got_queries = snapshot.get("queries") or []
+    if len(got_queries) != len(expected_queries):
+        errors.append("snapshot query count differs from SCOPE cartesian product")
+    for exp, got in zip(expected_queries, got_queries):
+        if got.get("repo") != exp["repo"] or got.get("phrase") != exp["phrase"] or got.get("q") != exp["q"]:
+            errors.append(f"snapshot query mismatch for expected {exp}")
+        if got.get("incomplete_results") is True:
+            errors.append(f"snapshot incomplete_results for {exp['repo']}/{exp['phrase']}")
+        if int(got.get("pull_count") or 0) != 0:
+            errors.append(f"snapshot pull_count nonzero for {exp['repo']}/{exp['phrase']}")
 
     allowed_repos = {r["repo"] for r in scope["repositories"]}
     prefix_by_repo = {r["repo"]: r["id_prefix"] for r in scope["repositories"]}
     existing_ids = _read_sheet_ids(existing_sheet) | _read_sheet_ids(pilot_sheet)
     existing_pairs = _read_sheet_pairs(existing_sheet) | _read_sheet_pairs(pilot_sheet)
-
     queue_by_id = {r["neutral_id"]: r for r in queue["records"]}
+
     seen_ids: set[str] = set()
     seen_urls: set[str] = set()
     seen_pairs: set[tuple[str, str, str]] = set()
     pending_by_repo: dict[str, int] = {}
     reviewed_by_repo: dict[str, int] = {}
 
-    for index, decision in enumerate(decisions, start=1):
+    for decision in decisions:
         missing = [field for field in DECISION_FIELDS if field not in decision]
         if missing:
-            errors.append(f"decision[{index}] missing fields: {missing}")
+            errors.append(f"{decision.get('neutral_id')}: missing fields {missing}")
             continue
         nid = decision["neutral_id"]
         repo = decision["repo"]
+        qrec = queue_by_id.get(nid)
+        if qrec is None:
+            errors.append(f"{nid}: not present in review queue")
+        else:
+            if qrec["repo"] != repo:
+                errors.append(f"{nid}: decision repo mismatches queue repo")
+            if int(qrec["issue_number"]) != int(decision["issue_number"]):
+                errors.append(f"{nid}: decision issue_number mismatches queue")
+            if qrec["issue_url"] != decision["issue_url"]:
+                errors.append(f"{nid}: decision issue_url mismatches queue")
         if repo not in allowed_repos:
             errors.append(f"{nid}: repo outside SCOPE")
         if not nid.startswith(prefix_by_repo.get(repo, "")):
-            errors.append(f"{nid}: neutral_id prefix mismatch for {repo}")
+            errors.append(f"{nid}: neutral_id prefix mismatch")
         if nid in existing_ids:
             errors.append(f"{nid}: neutral-ID collision with existing admission sheet")
         if nid in seen_ids:
@@ -900,8 +691,6 @@ def cmd_validate_decisions(
         if decision["issue_url"] in seen_urls:
             errors.append(f"{nid}: duplicate issue URL")
         seen_urls.add(decision["issue_url"])
-        if nid not in queue_by_id:
-            errors.append(f"{nid}: not present in review queue")
         if decision["analysis_id"] != "":
             errors.append(f"{nid}: analysis_id must be blank")
         if decision["crit_dual_arm_repro"] != "PENDING":
@@ -911,18 +700,15 @@ def cmd_validate_decisions(
         if decision["decision"] == "ADMIT_PENDING_REPRO":
             if decision["crit_real_defect"] != "PASS" or decision["crit_in_scope"] != "PASS":
                 errors.append(f"{nid}: ADMIT_PENDING_REPRO requires A1 and A3 PASS")
-            if not FULL_SHA.fullmatch(decision["buggy_sha"] or ""):
+            if not FULL_SHA.fullmatch(decision.get("buggy_sha") or ""):
                 errors.append(f"{nid}: missing full buggy_sha on A1 PASS")
-            if not FULL_SHA.fullmatch(decision["fixed_sha"] or ""):
+            if not FULL_SHA.fullmatch(decision.get("fixed_sha") or ""):
                 errors.append(f"{nid}: missing full fixed_sha on A1 PASS")
             if not decision["issue_url"] or not decision["fix_url"]:
                 errors.append(f"{nid}: missing public issue/fix URL on A1 PASS")
             pending_by_repo[repo] = pending_by_repo.get(repo, 0) + 1
-        else:
-            if decision["decision"] != "EXCLUDED":
-                errors.append(f"{nid}: decision must be ADMIT_PENDING_REPRO or EXCLUDED")
-            if decision["crit_real_defect"] == "PASS" and decision["crit_in_scope"] == "PASS":
-                errors.append(f"{nid}: EXCLUDED despite A1 and A3 PASS")
+        elif decision["decision"] != "EXCLUDED":
+            errors.append(f"{nid}: decision must be ADMIT_PENDING_REPRO or EXCLUDED")
         if decision["crit_real_defect"] == "PASS":
             if not FULL_SHA.fullmatch(decision.get("buggy_sha") or ""):
                 errors.append(f"{nid}: A1 PASS requires full buggy_sha")
@@ -945,9 +731,6 @@ def cmd_validate_decisions(
                 errors.append(f"{nid}: duplicate buggy/fixed pair")
             seen_pairs.add(pair)
         reviewed_by_repo[repo] = reviewed_by_repo.get(repo, 0) + 1
-        if decision["review_order"] != reviewed_by_repo[repo]:
-            # Allow explicit order values as long as unique increasing per repo.
-            pass
 
     for repo, count in pending_by_repo.items():
         if count > int(scope["target_pending_per_repo"]):
@@ -956,13 +739,13 @@ def cmd_validate_decisions(
         if count > int(scope["max_reviewed_per_repo"]):
             errors.append(f"{repo}: reviewed cap exceeded ({count})")
 
-    # Ensure reviewed exclusions retained: every REVIEWED queue head through stop must
-    # have a decision. Reconstruct stop using decisions order.
     for repo_entry in scope["repositories"]:
         repo = repo_entry["repo"]
         repo_queue = [r for r in queue["records"] if r["repo"] == repo]
-        repo_decisions = [d for d in decisions if d["repo"] == repo]
-        repo_decisions_sorted = sorted(repo_decisions, key=lambda d: d["review_order"])
+        repo_decisions = sorted(
+            [d for d in decisions if d["repo"] == repo],
+            key=lambda d: d["review_order"],
+        )
         annotated = apply_review_stop(
             [
                 {
@@ -974,24 +757,43 @@ def cmd_validate_decisions(
                 }
                 for r in repo_queue
             ],
-            repo_decisions_sorted,
+            repo_decisions,
             max_reviewed=int(scope["max_reviewed_per_repo"]),
             target_pending=int(scope["target_pending_per_repo"]),
         )
-        reviewed_ids = {r["neutral_id"] for r in annotated if r["review_status"] == "REVIEWED"}
-        decision_ids = {d["neutral_id"] for d in repo_decisions}
-        missing = sorted(reviewed_ids - decision_ids)
-        if missing:
-            errors.append(f"{repo}: missing decisions for reviewed ids {missing}")
-        extra = sorted(decision_ids - reviewed_ids)
-        if extra:
-            errors.append(f"{repo}: decisions beyond stop boundary {extra}")
+        reviewed_ids = [r["neutral_id"] for r in annotated if r["review_status"] == "REVIEWED"]
+        decision_ids = [d["neutral_id"] for d in repo_decisions]
+        if decision_ids != reviewed_ids:
+            errors.append(
+                f"{repo}: decisions must equal reviewed queue-head prefix in order; "
+                f"expected {reviewed_ids}, got {decision_ids}"
+            )
+        for index, decision in enumerate(repo_decisions, start=1):
+            if int(decision["review_order"]) != index:
+                errors.append(
+                    f"{decision['neutral_id']}: review_order {decision['review_order']} "
+                    f"!= expected {index}"
+                )
+            qrec = queue_by_id.get(decision["neutral_id"])
+            if qrec is not None and reviewed_ids and decision["neutral_id"] in reviewed_ids:
+                expected_pos = reviewed_ids.index(decision["neutral_id"])
+                # Queue-head prefix: decision i must be queue record i in repo order.
+                if repo_queue[expected_pos]["neutral_id"] != decision["neutral_id"]:
+                    errors.append(f"{decision['neutral_id']}: breaks queue-head order")
 
     if errors:
         for err in errors:
             print(f"ERROR: {err}", file=sys.stderr)
         raise SystemExit(1)
     print("VALIDATE_DECISIONS_OK")
+
+
+def _sorted_decisions(scope: dict[str, Any], decisions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    repo_order = [r["repo"] for r in scope["repositories"]]
+    return sorted(
+        decisions,
+        key=lambda d: (repo_order.index(d["repo"]), d["review_order"]),
+    )
 
 
 def cmd_build(
@@ -1002,49 +804,26 @@ def cmd_build(
     evidence_root: Path,
 ) -> None:
     scope = load_scope(scope_path)
-    decisions = load_json(decisions_path)["decisions"]
+    decisions = _sorted_decisions(scope, load_json(decisions_path)["decisions"])
     scope_sha = sha256_file(scope_path)
     search_sha = sha256_file(snapshot_path)
-    # Write sheet first without evidence hashes dependency on decisions file hash.
-    rows: list[dict[str, str]] = []
-    for decision in sorted(
-        decisions,
-        key=lambda d: (
-            [r["repo"] for r in scope["repositories"]].index(d["repo"]),
-            d["review_order"],
-        ),
-    ):
-        rows.append(
-            {
-                "neutral_id": decision["neutral_id"],
-                "repo": decision["repo"].split("/")[-1]
-                if decision["repo"] in {r["repo"] for r in scope["repositories"]}
-                else decision["repo"],
-                # Keep short repo label like pilot sheet for whitelist projects? Pilot uses
-                # short names (numpy). Cursor candidate uses short project names too.
-                # Use final path segment for consistency with existing sheets.
-                "issue_url": decision["issue_url"],
-                "buggy_sha": decision.get("buggy_sha") or "",
-                "fixed_sha": decision.get("fixed_sha") or "",
-                "mechanism_sentence": decision["mechanism_sentence"],
-                "crit_real_defect": decision["crit_real_defect"],
-                "crit_dual_arm_repro": decision["crit_dual_arm_repro"],
-                "crit_in_scope": decision["crit_in_scope"],
-                "decision": decision["decision"],
-                "exclusion_reason": decision.get("exclusion_reason") or "",
-                "analysis_id": decision.get("analysis_id") or "",
-            }
-        )
-    # Fix repo field properly: use short name from full repo path.
-    for row, decision in zip(rows, sorted(
-        decisions,
-        key=lambda d: (
-            [r["repo"] for r in scope["repositories"]].index(d["repo"]),
-            d["review_order"],
-        ),
-    )):
-        row["repo"] = decision["repo"].split("/")[-1]
-
+    rows = [
+        {
+            "neutral_id": decision["neutral_id"],
+            "repo": decision["repo"].split("/")[-1],
+            "issue_url": decision["issue_url"],
+            "buggy_sha": decision.get("buggy_sha") or "",
+            "fixed_sha": decision.get("fixed_sha") or "",
+            "mechanism_sentence": decision["mechanism_sentence"],
+            "crit_real_defect": decision["crit_real_defect"],
+            "crit_dual_arm_repro": decision["crit_dual_arm_repro"],
+            "crit_in_scope": decision["crit_in_scope"],
+            "decision": decision["decision"],
+            "exclusion_reason": decision.get("exclusion_reason") or "",
+            "analysis_id": decision.get("analysis_id") or "",
+        }
+        for decision in decisions
+    ]
     sheet_path.parent.mkdir(parents=True, exist_ok=True)
     with sheet_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=HEADER)
@@ -1061,26 +840,28 @@ def cmd_build(
     for decision in decisions:
         case_dir = evidence_root / decision["neutral_id"]
         case_dir.mkdir(parents=True, exist_ok=True)
-        payload = {
-            "neutral_id": decision["neutral_id"],
-            "source_pool": "supplemental_mining_r1",
-            "scope_sha256": scope_sha,
-            "search_snapshot_sha256": search_sha,
-            "review_decisions_sha256": decisions_sha,
-            "issue_url": decision["issue_url"],
-            "fix_url": decision.get("fix_url") or "",
-            "buggy_sha": decision.get("buggy_sha") or "",
-            "fixed_sha": decision.get("fixed_sha") or "",
-            "criteria": {
-                "real_defect": decision["crit_real_defect"],
-                "dual_arm_repro": decision["crit_dual_arm_repro"],
-                "in_scope": decision["crit_in_scope"],
+        write_json(
+            case_dir / "evidence.json",
+            {
+                "neutral_id": decision["neutral_id"],
+                "source_pool": "supplemental_mining_r1",
+                "scope_sha256": scope_sha,
+                "search_snapshot_sha256": search_sha,
+                "review_decisions_sha256": decisions_sha,
+                "issue_url": decision["issue_url"],
+                "fix_url": decision.get("fix_url") or "",
+                "buggy_sha": decision.get("buggy_sha") or "",
+                "fixed_sha": decision.get("fixed_sha") or "",
+                "criteria": {
+                    "real_defect": decision["crit_real_defect"],
+                    "dual_arm_repro": decision["crit_dual_arm_repro"],
+                    "in_scope": decision["crit_in_scope"],
+                },
+                "rationales": decision["rationales"],
+                "evidence_urls": decision["evidence_urls"],
+                "mechanism_sentence": decision["mechanism_sentence"],
             },
-            "rationales": decision["rationales"],
-            "evidence_urls": decision["evidence_urls"],
-            "mechanism_sentence": decision["mechanism_sentence"],
-        }
-        write_json(case_dir / "evidence.json", payload)
+        )
     print(f"BUILD_OK rows={len(rows)}")
 
 
@@ -1121,35 +902,35 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
-    if args.command == "search":
-        cmd_search(args.scope, args.snapshot, args.queue, args.command_log)
-    elif args.command == "collect-evidence":
-        cmd_collect_evidence(
-            args.scope,
-            args.queue,
-            args.snapshot,
-            args.output,
-            args.command_log,
-        )
-    elif args.command == "validate-decisions":
-        cmd_validate_decisions(
-            args.scope,
-            args.snapshot,
-            args.queue,
-            args.decisions,
-            args.existing_sheet,
-            args.pilot_sheet,
-        )
-    elif args.command == "build":
-        cmd_build(
-            args.scope,
-            args.snapshot,
-            args.decisions,
-            args.sheet,
-            args.evidence_root,
-        )
-    else:
-        parser.error(f"unknown command {args.command}")
+    try:
+        if args.command == "search":
+            cmd_search(args.scope, args.snapshot, args.queue, args.command_log)
+        elif args.command == "collect-evidence":
+            cmd_collect_evidence(
+                args.scope, args.queue, args.snapshot, args.output, args.command_log
+            )
+        elif args.command == "validate-decisions":
+            cmd_validate_decisions(
+                args.scope,
+                args.snapshot,
+                args.queue,
+                args.decisions,
+                args.existing_sheet,
+                args.pilot_sheet,
+            )
+        elif args.command == "build":
+            cmd_build(
+                args.scope,
+                args.snapshot,
+                args.decisions,
+                args.sheet,
+                args.evidence_root,
+            )
+        else:
+            parser.error(f"unknown command {args.command}")
+    except SearchHardFail as exc:
+        print(f"ERROR: SEARCH_HARD_FAIL: {exc}", file=sys.stderr)
+        return 2
     return 0
 
 
