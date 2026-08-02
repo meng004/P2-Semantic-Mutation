@@ -48,6 +48,13 @@
           4
         ],
         "proposed_crit_dual_arm_repro": "PASS",
+        "requirements": {
+          "buggy_property_holds": false,
+          "buggy_raw_return_code": 1,
+          "fixed_property_holds": true,
+          "fixed_raw_return_code": 0,
+          "input_parity_ok": true
+        },
         "seed_rows": [
           {
             "buggy_property_holds": false,
@@ -56,8 +63,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 0
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 0,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -66,8 +77,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 1
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 1,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -76,8 +91,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 2
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 2,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -86,8 +105,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 3
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 3,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -96,8 +119,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 4
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 4,
+            "seed_ok": true
           }
         ]
       },
@@ -105,7 +132,7 @@
       "locks_dir": "data/external_slice/reproduction/EXT-numpy-01/locks",
       "neutral_id": "EXT-numpy-01",
       "note": "Supplemental and candidate sheet A2 left PENDING; proposed verdict only here.",
-      "observation_status": "case-local observed pending Gate A1d-r1 review",
+      "observation_status": "case-local observed pending Gate A1d-r2 review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "numpy/numpy",
       "route": "exact-source-numpy-setuptools-py39",
@@ -163,6 +190,13 @@
           4
         ],
         "proposed_crit_dual_arm_repro": "PASS",
+        "requirements": {
+          "buggy_property_holds": false,
+          "buggy_raw_return_code": 1,
+          "fixed_property_holds": true,
+          "fixed_raw_return_code": 0,
+          "input_parity_ok": true
+        },
         "seed_rows": [
           {
             "buggy_property_holds": false,
@@ -171,8 +205,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 0
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 0,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -181,8 +219,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 1
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 1,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -191,8 +233,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 2
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 2,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -201,8 +247,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 3
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 3,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -211,8 +261,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 4
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 4,
+            "seed_ok": true
           }
         ]
       },
@@ -220,7 +274,7 @@
       "locks_dir": "data/external_slice/reproduction/EXT-scipy-01/locks",
       "neutral_id": "EXT-scipy-01",
       "note": "Supplemental and candidate sheet A2 left PENDING; proposed verdict only here.",
-      "observation_status": "case-local observed pending Gate A1d-r1 review",
+      "observation_status": "case-local observed pending Gate A1d-r2 review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "scipy/scipy",
       "route": "exact-source-scipy-meson",
@@ -278,6 +332,13 @@
           4
         ],
         "proposed_crit_dual_arm_repro": "PASS",
+        "requirements": {
+          "buggy_property_holds": false,
+          "buggy_raw_return_code": 1,
+          "fixed_property_holds": true,
+          "fixed_raw_return_code": 0,
+          "input_parity_ok": true
+        },
         "seed_rows": [
           {
             "buggy_property_holds": false,
@@ -286,8 +347,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 0
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 0,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -296,8 +361,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 1
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 1,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -306,8 +375,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 2
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 2,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -316,8 +389,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 3
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 3,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -326,8 +403,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 4
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 4,
+            "seed_ok": true
           }
         ]
       },
@@ -335,7 +416,7 @@
       "locks_dir": "data/external_slice/reproduction/EXT-scikit-learn-01/locks",
       "neutral_id": "EXT-scikit-learn-01",
       "note": "Supplemental and candidate sheet A2 left PENDING; proposed verdict only here.",
-      "observation_status": "case-local observed pending Gate A1d-r1 review",
+      "observation_status": "case-local observed pending Gate A1d-r2 review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "scikit-learn/scikit-learn",
       "route": "exact-source-sklearn-setuptools-py39",
@@ -393,6 +474,13 @@
           4
         ],
         "proposed_crit_dual_arm_repro": "PASS",
+        "requirements": {
+          "buggy_property_holds": false,
+          "buggy_raw_return_code": 1,
+          "fixed_property_holds": true,
+          "fixed_raw_return_code": 0,
+          "input_parity_ok": true
+        },
         "seed_rows": [
           {
             "buggy_property_holds": false,
@@ -401,8 +489,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 0
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 0,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -411,8 +503,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 1
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 1,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -421,8 +517,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 2
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 2,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -431,8 +531,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 3
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 3,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -441,8 +545,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 4
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 4,
+            "seed_ok": true
           }
         ]
       },
@@ -450,7 +558,7 @@
       "locks_dir": "data/external_slice/reproduction/EXT-statsmodels-01/locks",
       "neutral_id": "EXT-statsmodels-01",
       "note": "Supplemental and candidate sheet A2 left PENDING; proposed verdict only here.",
-      "observation_status": "case-local observed pending Gate A1d-r1 review",
+      "observation_status": "case-local observed pending Gate A1d-r2 review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "statsmodels/statsmodels",
       "route": "exact-source-statsmodels-meson",
@@ -508,6 +616,13 @@
           4
         ],
         "proposed_crit_dual_arm_repro": "PASS",
+        "requirements": {
+          "buggy_property_holds": false,
+          "buggy_raw_return_code": 1,
+          "fixed_property_holds": true,
+          "fixed_raw_return_code": 0,
+          "input_parity_ok": true
+        },
         "seed_rows": [
           {
             "buggy_property_holds": false,
@@ -516,8 +631,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 0
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 0,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -526,8 +645,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 1
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 1,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -536,8 +659,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 2
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 2,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -546,8 +673,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 3
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 3,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -556,8 +687,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 4
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 4,
+            "seed_ok": true
           }
         ]
       },
@@ -565,7 +700,7 @@
       "locks_dir": "data/external_slice/reproduction/EXT-statsmodels-02/locks",
       "neutral_id": "EXT-statsmodels-02",
       "note": "Supplemental and candidate sheet A2 left PENDING; proposed verdict only here.",
-      "observation_status": "case-local observed pending Gate A1d-r1 review",
+      "observation_status": "case-local observed pending Gate A1d-r2 review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "statsmodels/statsmodels",
       "route": "exact-source-statsmodels-meson",
@@ -623,6 +758,13 @@
           4
         ],
         "proposed_crit_dual_arm_repro": "PASS",
+        "requirements": {
+          "buggy_property_holds": false,
+          "buggy_raw_return_code": 1,
+          "fixed_property_holds": true,
+          "fixed_raw_return_code": 0,
+          "input_parity_ok": true
+        },
         "seed_rows": [
           {
             "buggy_property_holds": false,
@@ -631,8 +773,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 0
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 0,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -641,8 +787,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 1
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 1,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -651,8 +801,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 2
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 2,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -661,8 +815,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 3
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 3,
+            "seed_ok": true
           },
           {
             "buggy_property_holds": false,
@@ -671,8 +829,12 @@
             "fixed_property_holds": true,
             "fixed_raw_return_code": 0,
             "input_parity_ok": true,
+            "parity_ok": true,
             "present": true,
-            "seed": 4
+            "property_ok": true,
+            "return_code_ok": true,
+            "seed": 4,
+            "seed_ok": true
           }
         ]
       },
@@ -680,7 +842,7 @@
       "locks_dir": "data/external_slice/reproduction/EXT-statsmodels-03/locks",
       "neutral_id": "EXT-statsmodels-03",
       "note": "Supplemental and candidate sheet A2 left PENDING; proposed verdict only here.",
-      "observation_status": "case-local observed pending Gate A1d-r1 review",
+      "observation_status": "case-local observed pending Gate A1d-r2 review",
       "proposed_crit_dual_arm_repro": "PASS",
       "repo": "statsmodels/statsmodels",
       "route": "exact-source-statsmodels-legacy-py39",
@@ -698,7 +860,7 @@
     "proposed_PASS": 6,
     "proposed_REPRO_FAILED": 0
   },
-  "cumulative_note": "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; Gate A1d-r1 cannot unlock canonical freeze; supplementary-mining loop required.",
+  "cumulative_note": "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; Gate A1d-r2 cannot unlock canonical freeze; supplementary-mining loop required.",
   "formal_seeds": [
     0,
     1,
@@ -711,7 +873,7 @@
   "frozen_execution_matrix_sha256": "addab92a9ab0643c4ecf89d056c910088180cf5c4651ba1beee543d8bfa776d6",
   "frozen_membership": "data/external_slice/BATCH3_MEMBERSHIP.json",
   "frozen_membership_sha256": "02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853",
-  "gate": "A1d-r1",
+  "gate": "A1d-r2",
   "gate_a1c_verdict": "PASS_WITH_DISCLOSURE",
   "not_started": [
     "C4 annotation support",
@@ -722,6 +884,7 @@
     "canonical admission freeze",
     "Batch 4+"
   ],
+  "rederived_from_artifacts": true,
   "seed": 0,
   "selection_rule": "exactly the six A1/A3-PASS A2-PENDING supplemental-pilot rows unlocked by Gate A1c PASS_WITH_DISCLOSURE; no substitution",
   "sheet_mutation_policy": "supplemental and candidate sheet A2 fields remain PENDING",

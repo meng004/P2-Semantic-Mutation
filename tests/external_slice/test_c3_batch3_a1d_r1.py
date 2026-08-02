@@ -1,4 +1,4 @@
-"""Targeted Gate A1d-r1 checks for C3 Batch 3 repetition matrix."""
+"""Targeted Gate A1d-r1/r2 checks for C3 Batch 3 repetition matrix."""
 from __future__ import annotations
 
 import hashlib
@@ -15,6 +15,7 @@ MATRIX = ROOT / "data" / "external_slice" / "BATCH3_EXECUTION_MATRIX.json"
 MEMBERSHIP = ROOT / "data" / "external_slice" / "BATCH3_MEMBERSHIP.json"
 HANDOFF = ROOT / "data" / "external_slice" / "HANDOFF_REPRO_BATCH3.json"
 SM03 = ROOT / "data" / "external_slice" / "reproducers" / "EXT-statsmodels-03.py"
+REPRO = ROOT / "data" / "external_slice" / "reproduction"
 
 
 def _load(path: Path, name: str):
@@ -34,6 +35,16 @@ def helpers():
 @pytest.fixture(scope="module")
 def sm03():
     return _load(SM03, "ext_statsmodels_03_under_test")
+
+
+def _good_seed_row():
+    return {
+        "buggy_property_holds": False,
+        "fixed_property_holds": True,
+        "buggy_raw_return_code": 1,
+        "fixed_raw_return_code": 0,
+        "input_parity_ok": True,
+    }
 
 
 def test_execution_matrix_smoke_and_formal_seeds(helpers):
@@ -62,20 +73,12 @@ def test_per_seed_arm_parity_helper(helpers):
 
 
 def test_full_verdict_aggregation_requires_every_seed(helpers):
-    good = {
-        seed: {
-            "buggy_property_holds": False,
-            "fixed_property_holds": True,
-            "buggy_raw_return_code": 1,
-            "fixed_raw_return_code": 0,
-            "input_parity_ok": True,
-        }
-        for seed in [0, 1, 2, 3, 4]
-    }
+    good = {seed: _good_seed_row() for seed in [0, 1, 2, 3, 4]}
     ok = helpers.aggregate_formal_verdict(good)
     assert ok["proposed_crit_dual_arm_repro"] == "PASS"
     assert ok["failing_seeds"] == []
     assert ok["all_seeds_contrasted"] is True
+    assert all(row["seed_ok"] is True for row in ok["seed_rows"])
 
     bad = dict(good)
     bad[3] = {
@@ -93,17 +96,55 @@ def test_full_verdict_aggregation_requires_every_seed(helpers):
 
 
 def test_aggregation_rejects_missing_seed(helpers):
-    partial = {
-        0: {
-            "buggy_property_holds": False,
-            "fixed_property_holds": True,
-            "input_parity_ok": True,
-        }
-    }
+    partial = {0: _good_seed_row()}
     out = helpers.aggregate_formal_verdict(partial)
     assert out["proposed_crit_dual_arm_repro"] == "REPRO_FAILED"
-    assert out["failing_seeds"] == [1, 2, 3, 4] or 0 not in out["failing_seeds"]
     assert set(out["failing_seeds"]) >= {1, 2, 3, 4}
+
+
+def test_aggregation_rejects_parity_missing(helpers):
+    """A1d-r2 negative: missing input_parity_ok must fail the seed."""
+    rows = {seed: _good_seed_row() for seed in [0, 1, 2, 3, 4]}
+    del rows[2]["input_parity_ok"]
+    out = helpers.aggregate_formal_verdict(rows)
+    assert out["proposed_crit_dual_arm_repro"] == "REPRO_FAILED"
+    assert out["failing_seeds"] == [2]
+    seed2 = next(r for r in out["seed_rows"] if r["seed"] == 2)
+    assert seed2["parity_ok"] is False
+    assert seed2["seed_ok"] is False
+    assert seed2["input_parity_ok"] is None
+
+
+def test_aggregation_rejects_raw_rc_inversion(helpers):
+    """A1d-r2 negative: buggy RC0 / fixed RC1 must fail even if props contrast."""
+    rows = {seed: _good_seed_row() for seed in [0, 1, 2, 3, 4]}
+    rows[4] = {
+        "buggy_property_holds": False,
+        "fixed_property_holds": True,
+        "buggy_raw_return_code": 0,
+        "fixed_raw_return_code": 1,
+        "input_parity_ok": True,
+    }
+    out = helpers.aggregate_formal_verdict(rows)
+    assert out["proposed_crit_dual_arm_repro"] == "REPRO_FAILED"
+    assert out["failing_seeds"] == [4]
+    seed4 = next(r for r in out["seed_rows"] if r["seed"] == 4)
+    assert seed4["property_ok"] is True
+    assert seed4["return_code_ok"] is False
+    assert seed4["seed_ok"] is False
+
+
+def test_reconstruct_formal_seeds_from_hash_bound_artifacts(helpers):
+    case_dir = REPRO / "EXT-numpy-01"
+    if not (case_dir / "repetitions" / "seed-0" / "buggy.json").is_file():
+        pytest.skip("execution artifacts not present")
+    reconstructed = helpers.reconstruct_formal_per_seed_from_artifacts(
+        case_dir, formal_seeds=[0, 1, 2, 3, 4]
+    )
+    assert set(reconstructed) == {0, 1, 2, 3, 4}
+    aggregation = helpers.aggregate_formal_verdict(reconstructed)
+    assert aggregation["proposed_crit_dual_arm_repro"] == "PASS"
+    assert aggregation["failing_seeds"] == []
 
 
 def test_statsmodels_03_exit_zero_escape(sm03, monkeypatch):

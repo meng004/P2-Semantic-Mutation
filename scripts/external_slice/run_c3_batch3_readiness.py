@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import platform
@@ -21,18 +22,30 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+
+def _load_batch3_helpers():
+    path = Path(__file__).resolve().parent / "batch3_a1d_r1.py"
+    spec = importlib.util.spec_from_file_location("batch3_a1d_r1", path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_helpers = _load_batch3_helpers()
+NUMERIC_BLAS_CASES = _helpers.NUMERIC_BLAS_CASES
+aggregate_formal_verdict = _helpers.aggregate_formal_verdict
+assert_arm_input_parity = _helpers.assert_arm_input_parity
+assert_membership_byte_identical = _helpers.assert_membership_byte_identical
+discover_blas_lapack_provider = _helpers.discover_blas_lapack_provider
+load_execution_matrix = _helpers.load_execution_matrix
+reconstruct_formal_per_seed_from_artifacts = (
+    _helpers.reconstruct_formal_per_seed_from_artifacts
+)
+save_execution_outputs = _helpers.save_execution_outputs
+
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MATRIX = ROOT / "data" / "external_slice" / "BATCH3_EXECUTION_MATRIX.json"
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from batch3_a1d_r1 import (  # noqa: E402
-    NUMERIC_BLAS_CASES,
-    aggregate_formal_verdict,
-    assert_arm_input_parity,
-    assert_membership_byte_identical,
-    discover_blas_lapack_provider,
-    load_execution_matrix,
-    save_execution_outputs,
-)
 WORK = Path(os.environ.get("C3_BATCH3_WORK", "/tmp/c3_batch3"))
 REPRO_ROOT = ROOT / "data" / "external_slice" / "reproduction"
 TRIG_ROOT = ROOT / "data" / "external_slice" / "reproducers"
@@ -559,7 +572,7 @@ def finalize_case(
         "proposed_crit_dual_arm_repro": proposed,
         "sheet_crit_dual_arm_repro_unchanged": "PENDING",
         "observation_status": (
-            "case-local observed pending Gate A1d-r1 review"
+            "case-local observed pending Gate A1d-r2 review"
         ),
         "note": (
             "Supplemental and candidate sheet A2 left PENDING; "
@@ -1220,8 +1233,12 @@ def run_verification(log: CommandLog, membership_path: Path, readiness_path: Pat
                 "EXT-statsmodels-03",
             }:
                 decision_paths.append(str(p.relative_to(ROOT)))
-    # Handoff may not exist yet during first verify pass; create empty placeholder skip.
-    decision_paths = [p for p in decision_paths if (ROOT / p).exists() or p.endswith("HANDOFF_REPRO_BATCH3.json")]
+    # Handoff may not exist yet during first verify pass; create empty skip.
+    decision_paths = [
+        p
+        for p in decision_paths
+        if (ROOT / p).exists() or p.endswith("HANDOFF_REPRO_BATCH3.json")
+    ]
     existing = [p for p in decision_paths if (ROOT / p).exists()]
     leak_shell = (
         "rg -n "
@@ -1333,6 +1350,116 @@ def handoff_hash_checker(handoff_path: Path) -> int:
     return 0
 
 
+def rederive_case_from_artifacts(
+    member: dict,
+    *,
+    matrix: dict,
+) -> dict:
+    """Rebuild derived verdict fields from frozen execution artifacts.
+
+    Does not rerun dual-arm builds or mutate smoke/repetitions/provider files.
+    """
+    nid = member["neutral_id"]
+    case_dir = REPRO_ROOT / nid
+    formal_seeds = list(matrix["formal_repetitions"]["seeds"])
+    smoke_seeds = list(matrix["smoke"]["seeds"])
+    per_seed = reconstruct_formal_per_seed_from_artifacts(
+        case_dir, formal_seeds=formal_seeds
+    )
+    aggregation = aggregate_formal_verdict(per_seed, formal_seeds=formal_seeds)
+    proposed = aggregation["proposed_crit_dual_arm_repro"]
+    failure_stage = None if proposed == "PASS" else "contrast"
+    failure_detail = None
+    if failure_stage:
+        failure_detail = (
+            "REPRO_FAILED:contrast - formal matrix failing_seeds="
+            f"{aggregation['failing_seeds']}"
+        )
+
+    seed0 = per_seed.get(0, {})
+    buggy_holds = seed0.get("buggy_property_holds")
+    fixed_holds = seed0.get("fixed_property_holds")
+    trigger_exits = {
+        "buggy": seed0.get("buggy_raw_return_code"),
+        "fixed": seed0.get("fixed_raw_return_code"),
+    }
+
+    # Refresh derived aggregation surfaces only.
+    prior_matrix = {}
+    matrix_path = case_dir / "REPETITION_MATRIX.json"
+    if matrix_path.is_file():
+        prior_matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
+    write_json(
+        matrix_path,
+        {
+            "neutral_id": nid,
+            "smoke_seeds": prior_matrix.get("smoke_seeds", smoke_seeds),
+            "formal_seeds": formal_seeds,
+            "per_seed": {str(k): v for k, v in sorted(per_seed.items())},
+            "aggregation": aggregation,
+        },
+    )
+
+    env_path = case_dir / "environment.json"
+    env = json.loads(env_path.read_text(encoding="utf-8"))
+    env["formal_aggregation"] = aggregation
+    env["proposed_crit_dual_arm_repro"] = proposed
+    env["failure_stage"] = failure_stage
+    env["failure_detail"] = failure_detail
+    env["dual_arm_contrast"] = proposed == "PASS"
+    env["trigger_exit_codes"] = trigger_exits
+    env["execution_matrix"] = {
+        "smoke_seeds": smoke_seeds,
+        "formal_seeds": formal_seeds,
+    }
+    write_json(env_path, env)
+
+    commands_path = case_dir / "COMMANDS.json"
+    command_count = 0
+    if commands_path.is_file():
+        command_count = len(
+            json.loads(commands_path.read_text(encoding="utf-8")).get(
+                "commands", []
+            )
+        )
+    locks = case_dir / "locks"
+    return {
+        "neutral_id": nid,
+        "repo": member["repo"],
+        "issue_url": member["issue_url"],
+        "buggy_sha": member["buggy_sha"],
+        "fixed_sha": member["fixed_sha"],
+        "seed": 0,
+        "trigger": str((TRIG_ROOT / f"{nid}.py").relative_to(ROOT)),
+        "artifact_dir": str(case_dir.relative_to(ROOT)),
+        "locks_dir": str(locks.relative_to(ROOT)),
+        "command_count": command_count,
+        "buggy_property_holds": buggy_holds,
+        "fixed_property_holds": fixed_holds,
+        "dual_arm_contrast": proposed == "PASS",
+        "trigger_exit_codes": trigger_exits,
+        "proposed_crit_dual_arm_repro": proposed,
+        "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+        "observation_status": (
+            "case-local observed pending Gate A1d-r2 review"
+        ),
+        "note": (
+            "Supplemental and candidate sheet A2 left PENDING; "
+            "proposed verdict only here."
+        ),
+        "failure_stage": failure_stage,
+        "failure_detail": failure_detail,
+        "route": env.get("route", CASE_SPECS[nid]["route"]),
+        "cohort": "supplemental-pilot",
+        "execution_matrix": {
+            "smoke_seeds": smoke_seeds,
+            "formal_seeds": formal_seeds,
+        },
+        "formal_aggregation": aggregation,
+        "blas_lapack_providers": env.get("blas_lapack_providers"),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--sheet", type=Path, default=DEFAULT_SHEET)
@@ -1350,6 +1477,11 @@ def main() -> int:
         help="Ignored for formal aggregation; matrix seeds govern verdicts",
     )
     parser.add_argument("--only", nargs="*", help="Optional subset of neutral_ids")
+    parser.add_argument(
+        "--rederive-from-artifacts",
+        action="store_true",
+        help="Gate A1d-r2: rebuild derived verdicts/handoff without dual-arm rerun",
+    )
     args = parser.parse_args()
     args.sheet = args.sheet.resolve()
     args.membership = args.membership.resolve()
@@ -1376,6 +1508,19 @@ def main() -> int:
     for member in members:
         nid = member["neutral_id"]
         if args.only and nid not in args.only:
+            continue
+        if args.rederive_from_artifacts:
+            print(f"===== {nid} rederive-from-artifacts =====", flush=True)
+            t0 = time.time()
+            result = rederive_case_from_artifacts(member, matrix=matrix)
+            print(
+                nid,
+                result["proposed_crit_dual_arm_repro"],
+                result.get("failure_stage"),
+                f"elapsed={time.time()-t0:.1f}s",
+                flush=True,
+            )
+            results.append(result)
             continue
         spec = CASE_SPECS[nid]
         py = choose_python(nid)
@@ -1404,10 +1549,11 @@ def main() -> int:
     if not args.only:
         assert [r["neutral_id"] for r in results] == expected
 
+    gate_name = "A1d-r2" if args.rederive_from_artifacts else "A1d-r1"
     readiness = {
         "batch": 3,
         "batch_name": "supplemental-pilot-six",
-        "gate": "A1d-r1",
+        "gate": gate_name,
         "frozen_membership": str(args.membership.relative_to(ROOT)),
         "frozen_membership_sha256": membership_sha,
         "frozen_execution_matrix": str(args.matrix.relative_to(ROOT)),
@@ -1436,13 +1582,14 @@ def main() -> int:
         },
         "cumulative_note": (
             "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; "
-            "Gate A1d-r1 cannot unlock canonical freeze; "
+            f"Gate {gate_name} cannot unlock canonical freeze; "
             "supplementary-mining loop required."
         ),
         "not_started": membership.get("not_started", []),
         "sheet_mutation_policy": (
             "supplemental and candidate sheet A2 fields remain PENDING"
         ),
+        "rederived_from_artifacts": bool(args.rederive_from_artifacts),
     }
     readiness_path = ROOT / "data" / "external_slice" / "readiness_batch3.json"
     write_json(readiness_path, readiness)
@@ -1532,12 +1679,22 @@ def main() -> int:
         for r in results
     ]
 
+    if args.rederive_from_artifacts:
+        handoff_task = "C3 readiness Batch 3 A1d-r2 correction"
+        handoff_gate = "A1d-r2"
+        baseline_commit = "4287ea4a1c782030d34af2162355fd459d50a563"
+        parent_handoff_commit = "4287ea4a1c782030d34af2162355fd459d50a563"
+    else:
+        handoff_task = "C3 readiness Batch 3 A1d-r1 correction"
+        handoff_gate = "A1d-r1"
+        baseline_commit = "da70fa676ebcab8ef1e98f532aa711c2d01f0c84"
+        parent_handoff_commit = "da70fa676ebcab8ef1e98f532aa711c2d01f0c84"
     handoff = {
-        "task": "C3 readiness Batch 3 A1d-r1 correction",
-        "gate": "A1d-r1",
+        "task": handoff_task,
+        "gate": handoff_gate,
         "branch": "cursor/grok-phase3-c3-readiness-batch3",
-        "baseline_commit": "da70fa676ebcab8ef1e98f532aa711c2d01f0c84",
-        "parent_handoff_commit": "da70fa676ebcab8ef1e98f532aa711c2d01f0c84",
+        "baseline_commit": baseline_commit,
+        "parent_handoff_commit": parent_handoff_commit,
         "membership_commit": "cc3321da3a9e6f1f7d67e5b90cdf21d6fb9001c1",
         "batch": {
             "number": 3,
@@ -1558,6 +1715,8 @@ def main() -> int:
             "c4_started": False,
             "supplementary_mining_started": False,
             "canonical_freeze_started": False,
+            "rederived_from_artifacts": bool(args.rederive_from_artifacts),
+            "dual_arm_rerun": (not args.rederive_from_artifacts),
         },
         "counts": readiness["counts"],
         "case_results": case_results,
@@ -1622,13 +1781,14 @@ def main() -> int:
     write_json(handoff_path, handoff)
 
     checker = ROOT / "scripts" / "external_slice" / "check_batch3_handoff_hashes.py"
+    handoff_rel = "data/external_slice/HANDOFF_REPRO_BATCH3.json"
     checker.write_text(
         "#!/usr/bin/env python3\n"
         "from pathlib import Path\n"
         "import sys\n"
         "sys.path.insert(0, str(Path(__file__).resolve().parent))\n"
         "from run_c3_batch3_readiness import handoff_hash_checker, ROOT\n"
-        "raise SystemExit(handoff_hash_checker(ROOT / 'data/external_slice/HANDOFF_REPRO_BATCH3.json'))\n",
+        f"raise SystemExit(handoff_hash_checker(ROOT / {handoff_rel!r}))\n",
         encoding="utf-8",
     )
     checker.chmod(0o755)

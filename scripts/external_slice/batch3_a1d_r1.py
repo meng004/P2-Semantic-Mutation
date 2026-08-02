@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A1d-r1 helpers for C3 Batch 3 repetition matrix and BLAS provenance."""
+"""A1d-r1/r2 helpers for C3 Batch 3 repetition matrix and BLAS provenance."""
 from __future__ import annotations
 
 import json
@@ -78,55 +78,86 @@ def seed_exhibits_contrast(buggy_holds: bool | None, fixed_holds: bool | None) -
     return buggy_holds is False and fixed_holds is True
 
 
+def seed_satisfies_formal_requirements(row: dict[str, Any] | None) -> dict[str, Any]:
+    """Gate A1d-r2 per-seed requirements.
+
+    Requires explicit input_parity_ok is True, buggy property False with raw RC 1,
+    and fixed property True with raw RC 0. Missing fields are failures.
+    """
+    if row is None:
+        return {
+            "present": False,
+            "parity_ok": False,
+            "property_ok": False,
+            "return_code_ok": False,
+            "seed_ok": False,
+            "buggy_property_holds": None,
+            "fixed_property_holds": None,
+            "buggy_raw_return_code": None,
+            "fixed_raw_return_code": None,
+            "input_parity_ok": None,
+        }
+    # Missing parity key must fail; do not default to True.
+    if "input_parity_ok" not in row:
+        parity_ok = False
+        parity_value: bool | None = None
+    else:
+        parity_value = row.get("input_parity_ok")
+        parity_ok = parity_value is True
+    buggy_holds = row.get("buggy_property_holds")
+    fixed_holds = row.get("fixed_property_holds")
+    buggy_rc = row.get("buggy_raw_return_code")
+    fixed_rc = row.get("fixed_raw_return_code")
+    property_ok = buggy_holds is False and fixed_holds is True
+    return_code_ok = buggy_rc == 1 and fixed_rc == 0
+    seed_ok = parity_ok and property_ok and return_code_ok
+    return {
+        "present": True,
+        "parity_ok": parity_ok,
+        "property_ok": property_ok,
+        "return_code_ok": return_code_ok,
+        "seed_ok": seed_ok,
+        "buggy_property_holds": buggy_holds,
+        "fixed_property_holds": fixed_holds,
+        "buggy_raw_return_code": buggy_rc,
+        "fixed_raw_return_code": fixed_rc,
+        "input_parity_ok": parity_value,
+    }
+
+
 def aggregate_formal_verdict(
     per_seed: dict[int, dict[str, Any]],
     formal_seeds: list[int] | None = None,
 ) -> dict[str, Any]:
     """Aggregate dual-arm contrast across the full formal seed matrix.
 
-    Any missing seed or non-contrast seed yields REPRO_FAILED. Failed seeds
-    are never dropped from the report.
+    Gate A1d-r2: each formal seed must have parity True, buggy False/RC1, and
+    fixed True/RC0. Any missing seed or mismatched field yields REPRO_FAILED.
+    Failed seeds are never dropped from the report.
     """
     seeds = formal_seeds or [0, 1, 2, 3, 4]
     seed_rows: list[dict[str, Any]] = []
     failing: list[int] = []
     for seed in seeds:
-        row = per_seed.get(seed)
-        if row is None:
-            failing.append(seed)
-            seed_rows.append(
-                {
-                    "seed": seed,
-                    "present": False,
-                    "contrast": False,
-                    "buggy_property_holds": None,
-                    "fixed_property_holds": None,
-                    "buggy_raw_return_code": None,
-                    "fixed_raw_return_code": None,
-                }
-            )
-            continue
-        contrast = seed_exhibits_contrast(
-            row.get("buggy_property_holds"),
-            row.get("fixed_property_holds"),
-        )
-        if not contrast:
+        checked = seed_satisfies_formal_requirements(per_seed.get(seed))
+        if not checked["seed_ok"]:
             failing.append(seed)
         seed_rows.append(
             {
                 "seed": seed,
-                "present": True,
-                "contrast": contrast,
-                "buggy_property_holds": row.get("buggy_property_holds"),
-                "fixed_property_holds": row.get("fixed_property_holds"),
-                "buggy_raw_return_code": row.get("buggy_raw_return_code"),
-                "fixed_raw_return_code": row.get("fixed_raw_return_code"),
-                "input_parity_ok": bool(row.get("input_parity_ok", True)),
+                "present": checked["present"],
+                "contrast": checked["property_ok"],
+                "parity_ok": checked["parity_ok"],
+                "property_ok": checked["property_ok"],
+                "return_code_ok": checked["return_code_ok"],
+                "seed_ok": checked["seed_ok"],
+                "buggy_property_holds": checked["buggy_property_holds"],
+                "fixed_property_holds": checked["fixed_property_holds"],
+                "buggy_raw_return_code": checked["buggy_raw_return_code"],
+                "fixed_raw_return_code": checked["fixed_raw_return_code"],
+                "input_parity_ok": checked["input_parity_ok"],
             }
         )
-        if not row.get("input_parity_ok", True):
-            if seed not in failing:
-                failing.append(seed)
     proposed = "PASS" if not failing else "REPRO_FAILED"
     return {
         "proposed_crit_dual_arm_repro": proposed,
@@ -134,7 +165,57 @@ def aggregate_formal_verdict(
         "seed_rows": seed_rows,
         "formal_seeds": seeds,
         "all_seeds_contrasted": not failing,
+        "requirements": {
+            "input_parity_ok": True,
+            "buggy_property_holds": False,
+            "buggy_raw_return_code": 1,
+            "fixed_property_holds": True,
+            "fixed_raw_return_code": 0,
+        },
     }
+
+
+def read_raw_return_code(path: Path) -> int | None:
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8").strip()
+    try:
+        return int(text)
+    except ValueError:
+        return None
+
+
+def reconstruct_formal_per_seed_from_artifacts(
+    case_dir: Path,
+    formal_seeds: list[int] | None = None,
+) -> dict[int, dict[str, Any]]:
+    """Rebuild per-seed rows from hash-bound JSON + return-code files.
+
+    Does not trust REPETITION_MATRIX / readiness summaries.
+    """
+    seeds = formal_seeds or [0, 1, 2, 3, 4]
+    per_seed: dict[int, dict[str, Any]] = {}
+    for seed in seeds:
+        seed_dir = case_dir / "repetitions" / f"seed-{seed}"
+        buggy_json = seed_dir / "buggy.json"
+        fixed_json = seed_dir / "fixed.json"
+        buggy_rc_path = seed_dir / "buggy.returncode.txt"
+        fixed_rc_path = seed_dir / "fixed.returncode.txt"
+        required = (buggy_json, fixed_json, buggy_rc_path, fixed_rc_path)
+        if not all(path.is_file() for path in required):
+            continue
+        buggy_payload = json.loads(buggy_json.read_text(encoding="utf-8"))
+        fixed_payload = json.loads(fixed_json.read_text(encoding="utf-8"))
+        per_seed[seed] = {
+            "buggy_property_holds": buggy_payload.get("property_holds"),
+            "fixed_property_holds": fixed_payload.get("property_holds"),
+            "buggy_raw_return_code": read_raw_return_code(buggy_rc_path),
+            "fixed_raw_return_code": read_raw_return_code(fixed_rc_path),
+            "input_parity_ok": assert_arm_input_parity(
+                buggy_payload, fixed_payload, seed
+            ),
+        }
+    return per_seed
 
 
 def save_execution_outputs(

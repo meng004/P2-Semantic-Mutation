@@ -10,6 +10,13 @@
       4
     ],
     "proposed_crit_dual_arm_repro": "PASS",
+    "requirements": {
+      "buggy_property_holds": false,
+      "buggy_raw_return_code": 1,
+      "fixed_property_holds": true,
+      "fixed_raw_return_code": 0,
+      "input_parity_ok": true
+    },
     "seed_rows": [
       {
         "buggy_property_holds": false,
@@ -18,8 +25,12 @@
         "fixed_property_holds": true,
         "fixed_raw_return_code": 0,
         "input_parity_ok": true,
+        "parity_ok": true,
         "present": true,
-        "seed": 0
+        "property_ok": true,
+        "return_code_ok": true,
+        "seed": 0,
+        "seed_ok": true
       },
       {
         "buggy_property_holds": false,
@@ -28,8 +39,12 @@
         "fixed_property_holds": true,
         "fixed_raw_return_code": 0,
         "input_parity_ok": true,
+        "parity_ok": true,
         "present": true,
-        "seed": 1
+        "property_ok": true,
+        "return_code_ok": true,
+        "seed": 1,
+        "seed_ok": true
       },
       {
         "buggy_property_holds": false,
@@ -38,8 +53,12 @@
         "fixed_property_holds": true,
         "fixed_raw_return_code": 0,
         "input_parity_ok": true,
+        "parity_ok": true,
         "present": true,
-        "seed": 2
+        "property_ok": true,
+        "return_code_ok": true,
+        "seed": 2,
+        "seed_ok": true
       },
       {
         "buggy_property_holds": false,
@@ -48,8 +67,12 @@
         "fixed_property_holds": true,
         "fixed_raw_return_code": 0,
         "input_parity_ok": true,
+        "parity_ok": true,
         "present": true,
-        "seed": 3
+        "property_ok": true,
+        "return_code_ok": true,
+        "seed": 3,
+        "seed_ok": true
       },
       {
         "buggy_property_holds": false,
@@ -58,8 +81,12 @@
         "fixed_property_holds": true,
         "fixed_raw_return_code": 0,
         "input_parity_ok": true,
+        "parity_ok": true,
         "present": true,
-        "seed": 4
+        "property_ok": true,
+        "return_code_ok": true,
+        "seed": 4,
+        "seed_ok": true
       }
     ]
   },
