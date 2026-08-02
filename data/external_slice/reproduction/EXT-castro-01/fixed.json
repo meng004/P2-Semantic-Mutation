@@ -1,9 +1,8 @@
 {
   "arm": "fixed",
-  "exit_status": null,
-  "failure_detail": "REPRO_FAILED:build  -  castro full dual-arm build/trigger exceeds reliable completion on this 4-core/15GiB host within Batch 2; source archives hash-locked; no replacement.",
-  "failure_stage": "build",
+  "exit_status": 0,
   "neutral_id": "EXT-castro-01",
-  "property_holds": null,
+  "note": "trigger executed after observed successful dual-arm build",
+  "property_holds": true,
   "seed": 0
 }

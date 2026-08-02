@@ -1,7 +1,7 @@
 {
   "arm": "fixed",
   "exit_status": null,
-  "failure_detail": "REPRO_FAILED:build  -  dealii full dual-arm build/trigger exceeds reliable completion on this 4-core/15GiB host within Batch 2; source archives hash-locked; no replacement.",
+  "failure_detail": "REPRO_FAILED:build - observed configure/build failure on dual-arm attempt; outcomes={'buggy:configure': {'exit_code': 0, 'timeout_s': 600}, 'buggy:build': {'exit_code': 2, 'timeout_s': 900}, 'fixed:configure': {'exit_code': 0, 'timeout_s': 600}, 'fixed:build': {'exit_code': 2, 'timeout_s': 900}}",
   "failure_stage": "build",
   "neutral_id": "EXT-dealii-01",
   "property_holds": null,
