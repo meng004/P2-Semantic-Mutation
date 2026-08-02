@@ -201,8 +201,8 @@ def _queue_from_snapshot(scope: dict[str, Any], snapshot: dict[str, Any]) -> lis
     for query in snapshot.get("queries") or []:
         for item in query.get("items") or []:
             cloned = dict(item)
-            cloned.setdefault("phrase", query["phrase"])
-            cloned.setdefault("repo", query["repo"])
+            cloned["phrase"] = query["phrase"]
+            cloned["repo"] = query["repo"]
             hits_by_repo[query["repo"]].append(cloned)
     return miner.assign_queue(scope, hits_by_repo)
 
@@ -846,7 +846,219 @@ def test_checker_queue_reconstruction_matches_miner_assign_queue(tmp_path: Path)
     for query in snapshot["queries"]:
         for item in query["items"]:
             cloned = dict(item)
+            # Derive exclusively from enclosing query (R4 binding).
+            cloned["phrase"] = query["phrase"]
+            cloned["repo"] = query["repo"]
+            hits_by_repo[query["repo"]].append(cloned)
+    assert expected == miner.assign_queue(scope, hits_by_repo)
+
+
+def test_rejects_tampered_item_phrase_provenance_escape(tmp_path: Path) -> None:
+    """R4 escape: item.phrase='tampered phrase' while enclosing query stays frozen.
+    Previously exited 0 after queue rebuild; must hard-fail."""
+    paths = _valid_fixture(tmp_path)
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    snapshot = json.loads(paths["snapshot"].read_text(encoding="utf-8"))
+    snapshot["queries"][0]["items"][0]["phrase"] = "tampered phrase"
+    _write_json(paths["snapshot"], snapshot)
+    search_sha = _sha256_file(paths["snapshot"])
+    scope_sha = _sha256_file(paths["scope"])
+    # Rebuild queue preserving the tampered item phrase (the R3 helper escape path).
+    miner = _load_miner()
+    hits_by_repo = {r["repo"]: [] for r in scope["repositories"]}
+    for query in snapshot["queries"]:
+        for item in query.get("items") or []:
+            cloned = dict(item)
             cloned.setdefault("phrase", query["phrase"])
             cloned.setdefault("repo", query["repo"])
             hits_by_repo[query["repo"]].append(cloned)
-    assert expected == miner.assign_queue(scope, hits_by_repo)
+    queue = {
+        "schema_version": 1,
+        "scope_sha256": scope_sha,
+        "search_snapshot_sha256": search_sha,
+        "records": miner.assign_queue(scope, hits_by_repo),
+    }
+    _write_json(paths["queue"], queue)
+    decisions = json.loads(paths["decisions"].read_text(encoding="utf-8"))
+    decisions_sha = _sha256_file(paths["decisions"])
+    row = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))[0]
+    _write_evidence(
+        paths["evidence_root"],
+        row,
+        scope_sha=scope_sha,
+        search_sha=search_sha,
+        decisions_sha=decisions_sha,
+        decision=decisions["decisions"][0],
+    )
+    result = _run(paths)
+    assert result.returncode != 0, result.stdout
+    assert "phrase" in result.stderr.lower()
+
+
+def test_rejects_tampered_item_repo_vs_enclosing_query(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    snapshot = json.loads(paths["snapshot"].read_text(encoding="utf-8"))
+    snapshot["queries"][0]["items"][0]["repo"] = "numpy/numpy"
+    _write_json(paths["snapshot"], snapshot)
+    search_sha = _sha256_file(paths["snapshot"])
+    scope_sha = _sha256_file(paths["scope"])
+    scope = json.loads(paths["scope"].read_text(encoding="utf-8"))
+    miner = _load_miner()
+    hits_by_repo = {r["repo"]: [] for r in scope["repositories"]}
+    # Place the item under the query repo bucket while keeping tampered item.repo.
+    for query in snapshot["queries"]:
+        for item in query.get("items") or []:
+            cloned = dict(item)
+            cloned.setdefault("phrase", query["phrase"])
+            hits_by_repo[query["repo"]].append(cloned)
+    queue = {
+        "schema_version": 1,
+        "scope_sha256": scope_sha,
+        "search_snapshot_sha256": search_sha,
+        "records": miner.assign_queue(scope, hits_by_repo),
+    }
+    _write_json(paths["queue"], queue)
+    decisions = json.loads(paths["decisions"].read_text(encoding="utf-8"))
+    row = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))[0]
+    _write_evidence(
+        paths["evidence_root"],
+        row,
+        scope_sha=scope_sha,
+        search_sha=search_sha,
+        decisions_sha=_sha256_file(paths["decisions"]),
+        decision=decisions["decisions"][0],
+    )
+    result = _run(paths)
+    assert result.returncode != 0, result.stdout
+    assert "repo" in result.stderr.lower()
+
+
+def test_rejects_evidence_neutral_id_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["neutral_id"] = "EXT-pymc-99"
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "neutral_id" in result.stderr
+
+
+def test_rejects_evidence_issue_url_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["issue_url"] = "https://github.com/pymc-devs/pymc/issues/999"
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "issue_url" in result.stderr
+
+
+def test_rejects_sheet_repository_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["repo"] = "numpy"
+    _write_sheet(paths["sheet"], rows)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "repository" in result.stderr.lower() or "repo" in result.stderr.lower()
+
+
+def test_rejects_sheet_decision_buggy_sha_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["buggy_sha"] = "c" * 40
+    _write_sheet(paths["sheet"], rows)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "buggy_sha" in result.stderr
+
+
+def test_rejects_sheet_decision_verdict_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["decision"] = "EXCLUDED"
+    rows[0]["exclusion_reason"] = "sheet-only exclusion"
+    rows[0]["crit_real_defect"] = "FAIL"
+    rows[0]["crit_in_scope"] = "FAIL"
+    rows[0]["buggy_sha"] = ""
+    rows[0]["fixed_sha"] = ""
+    _write_sheet(paths["sheet"], rows)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "decision" in result.stderr.lower()
+
+
+def test_rejects_sheet_decision_crit_real_defect_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["crit_real_defect"] = "FAIL"
+    _write_sheet(paths["sheet"], rows)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "crit_real_defect" in result.stderr
+
+
+def test_rejects_sheet_decision_crit_dual_arm_repro_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["crit_dual_arm_repro"] = "FAIL"
+    _write_sheet(paths["sheet"], rows)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "crit_dual_arm_repro" in result.stderr
+
+
+def test_rejects_sheet_decision_crit_in_scope_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    rows = list(csv.DictReader(paths["sheet"].open(encoding="utf-8")))
+    rows[0]["crit_in_scope"] = "FAIL"
+    _write_sheet(paths["sheet"], rows)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "crit_in_scope" in result.stderr
+
+
+def test_rejects_evidence_mechanism_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["mechanism_sentence"] = "tampered evidence mechanism."
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "mechanism" in result.stderr.lower()
+
+
+def test_rejects_evidence_buggy_sha_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["buggy_sha"] = "c" * 40
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "buggy_sha" in result.stderr
+
+
+def test_rejects_evidence_fixed_sha_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["fixed_sha"] = "c" * 40
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "fixed_sha" in result.stderr
+
+
+def test_rejects_decision_evidence_urls_mismatch(tmp_path: Path) -> None:
+    paths = _valid_fixture(tmp_path)
+    evidence_path = paths["evidence_root"] / "EXT-pymc-01" / "evidence.json"
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+    payload["evidence_urls"] = ["https://github.com/pymc-devs/pymc/issues/999"]
+    _write_json(evidence_path, payload)
+    result = _run(paths)
+    assert result.returncode != 0
+    assert "evidence_urls" in result.stderr

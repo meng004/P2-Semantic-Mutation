@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Admission checker for supplemental mining R1 candidate payload (R1-r3)."""
+"""Admission checker for supplemental mining R1 candidate payload (R1-r4)."""
 
 from __future__ import annotations
 
@@ -130,6 +130,28 @@ def _load_miner_assign_queue():
     return mod.assign_queue
 
 
+def bind_item_to_enclosing_query(item: dict[str, Any], query: dict[str, Any]) -> dict[str, Any]:
+    """Require item repo/phrase to match the enclosing query; derive exclusively from it."""
+    repo = query.get("repo")
+    phrase = query.get("phrase")
+    item_repo = item.get("repo")
+    item_phrase = item.get("phrase")
+    if item_repo is not None and item_repo != repo:
+        fail(
+            f"snapshot item repo {item_repo!r} != enclosing query repo {repo!r} "
+            f"for phrase={phrase!r}"
+        )
+    if item_phrase is not None and item_phrase != phrase:
+        fail(
+            f"snapshot item phrase {item_phrase!r} != enclosing query phrase "
+            f"{phrase!r} for repo={repo!r}"
+        )
+    cloned = dict(item)
+    cloned["repo"] = repo
+    cloned["phrase"] = phrase
+    return cloned
+
+
 def reconstruct_queue_records(
     scope: dict[str, Any], snapshot: dict[str, Any]
 ) -> list[dict[str, Any]]:
@@ -144,10 +166,7 @@ def reconstruct_queue_records(
         if repo not in allowed:
             fail(f"snapshot repository outside SCOPE repositories list: {repo}")
         for item in query.get("items") or []:
-            cloned = dict(item)
-            cloned.setdefault("phrase", query.get("phrase"))
-            cloned.setdefault("repo", repo)
-            hits_by_repo[repo].append(cloned)
+            hits_by_repo[repo].append(bind_item_to_enclosing_query(item, query))
     return assign_queue(scope, hits_by_repo)
 
 
@@ -321,6 +340,8 @@ def main() -> int:
             url = item.get("issue_url") or item.get("html_url") or ""
             if "/pull/" in url or item.get("is_pull_request") is True:
                 fail(f"PR item in snapshot: {url}")
+            # Explicit item↔query binding; reject tampered phrase/repo provenance.
+            bind_item_to_enclosing_query(item, got)
 
     # Mechanical snapshot → queue reconstruction with exact record equality.
     require_queue_snapshot_equality(scope, snapshot, queue)

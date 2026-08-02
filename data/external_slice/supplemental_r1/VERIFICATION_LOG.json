@@ -1,5 +1,5 @@
 {
-  "created_utc": "2026-08-02T03:19:55Z",
+  "created_utc": "2026-08-02T04:32:06Z",
   "diagnostic_claim": {
     "path": "data/external_slice/supplemental_r1/DIAGNOSTIC_CLAIM_WITHDRAWN_R3.json",
     "status": "WITHDRAWN"
@@ -9,61 +9,46 @@
       "command": [
         "rg",
         "-n",
-        "resolve_issues_from_pr|pr_issue_cache|pilot-compatible",
-        "scripts/external_slice/mine_supplemental_r1.py"
+        "setdefault\\(\"phrase\"|setdefault\\(\"repo\"",
+        "scripts/external_slice/check_supplemental_r1_admission.py"
       ],
       "cwd": "/workspace",
       "exit_code": 1,
       "expected_raw_exit": 1,
-      "label": "verify:no_pr_issue_fallback",
+      "label": "verify:no_setdefault_phrase_repo",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T03:19:55Z"
+      "timestamp_utc": "2026-08-02T04:32:06Z"
     },
     {
       "command": [
         "rg",
         "-n",
-        "reconstruct_queue_records|require_cross_artifact_field_equality",
+        "bind_item_to_enclosing_query",
         "scripts/external_slice/check_supplemental_r1_admission.py"
       ],
       "cwd": "/workspace",
       "exit_code": 0,
       "expected_raw_exit": 0,
-      "label": "verify:full_binding_helpers_present",
+      "label": "verify:phrase_repo_binder_present",
       "stderr_tail": "",
-      "stdout_tail": "133:def reconstruct_queue_records(\n157:    expected = reconstruct_queue_records(scope, snapshot)\n189:def require_cross_artifact_field_equality(\n392:        require_cross_artifact_field_equality(\n",
-      "timestamp_utc": "2026-08-02T03:19:55Z"
+      "stdout_tail": "133:def bind_item_to_enclosing_query(item: dict[str, Any], query: dict[str, Any]) -> dict[str, Any]:\n169:            hits_by_repo[repo].append(bind_item_to_enclosing_query(item, query))\n344:            bind_item_to_enclosing_query(item, got)\n",
+      "timestamp_utc": "2026-08-02T04:32:06Z"
     },
     {
       "command": [
         "rg",
         "-n",
-        "SEARCH_DIAGNOSTIC_R2",
-        "data/external_slice/supplemental_r1"
+        "tampered phrase",
+        "tests/external_slice/test_check_supplemental_r1_admission.py"
       ],
       "cwd": "/workspace",
       "exit_code": 0,
       "expected_raw_exit": 0,
-      "label": "verify:diagnostic_r2_absent_from_supp_dir_refs",
+      "label": "verify:tampered_phrase_regression_present",
       "stderr_tail": "",
-      "stdout_tail": "data/external_slice/supplemental_r1/HANDOFF_SUPPLEMENTAL_R1.json:35:    \"data/external_slice/supplemental_r1/SEARCH_DIAGNOSTIC_R2.json\": \"04241a898c15ee81dec0b1da785b29313735fa1a6f372bd2e1b0a8d09e3b6f9b\",\ndata/external_slice/supplemental_r1/DIAGNOSTIC_CLAIM_WITHDRAWN_R3.json:5:  \"reason\": \"SEARCH_DIAGNOSTIC_R2.json listed 66 query strings and aggregate 0-issue/262-PR counts without per-query command provenance (commands, exits, timestamps, response hashes/identifiers). COMMAND_LOG.json contained only the first gh api request. Per SUPP-R1-R2-DIAGNOSTIC-PROVENANCE-001 the claim is removed rather than restated.\",\ndata/external_slice/supplemental_r1/DIAGNOSTIC_CLAIM_WITHDRAWN_R3.json:12:  \"withdrawn_artifact\": \"data/external_slice/supplemental_r1/SEARCH_DIAGNOSTIC_R2.json\",\n",
-      "timestamp_utc": "2026-08-02T03:19:55Z"
-    },
-    {
-      "command": [
-        "test",
-        "!",
-        "-f",
-        "data/external_slice/supplemental_r1/SEARCH_DIAGNOSTIC_R2.json"
-      ],
-      "cwd": "/workspace",
-      "exit_code": 0,
-      "expected_raw_exit": 0,
-      "label": "verify:diagnostic_r2_file_absent",
-      "stderr_tail": "",
-      "stdout_tail": "{\"absent\": true}",
-      "timestamp_utc": "2026-08-02T03:19:55Z"
+      "stdout_tail": "857:    \"\"\"R4 escape: item.phrase='tampered phrase' while enclosing query stays frozen.\n862:    snapshot[\"queries\"][0][\"items\"][0][\"phrase\"] = \"tampered phrase\"\n",
+      "timestamp_utc": "2026-08-02T04:32:06Z"
     },
     {
       "command": [
@@ -79,8 +64,8 @@
       "expected_raw_exit": 0,
       "label": "verify:targeted_pytest",
       "stderr_tail": "",
-      "stdout_tail": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: hydra-core-1.3.4, anyio-4.14.2\ncollected 33 items\n\ntests/external_slice/test_mine_supplemental_r1.py ...........            [ 33%]\ntests/external_slice/test_check_supplemental_r1_admission.py ........... [ 66%]\n...........                                                              [100%]\n\n============================= 33 passed in 33.82s ==============================\n",
-      "timestamp_utc": "2026-08-02T03:20:30Z"
+      "stdout_tail": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: hydra-core-1.3.4, anyio-4.14.2\ncollected 47 items\n\ntests/external_slice/test_mine_supplemental_r1.py ...........            [ 23%]\ntests/external_slice/test_check_supplemental_r1_admission.py ........... [ 46%]\n.........................                                                [100%]\n\n============================= 47 passed in 34.33s ==============================\n",
+      "timestamp_utc": "2026-08-02T04:32:41Z"
     },
     {
       "command": [
@@ -96,8 +81,8 @@
       "expected_raw_exit": 0,
       "label": "verify:full_pytest",
       "stderr_tail": "",
-      "stdout_tail": "_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/svm/_base.py:239: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`\n    warnings.warn(\n\ntests/stats/test_mixed_effects.py::test_fit_returns_class_means_and_p_values\n  /home/ubuntu/.local/lib/python3.12/site-packages/statsmodels/regression/mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 293 passed, 19 warnings in 40.83s =======================\n",
-      "timestamp_utc": "2026-08-02T03:21:11Z"
+      "stdout_tail": "_full_pipeline_smoke.py::test_validation_module_loads_each_put\n  /home/ubuntu/.local/lib/python3.12/site-packages/sklearn/svm/_base.py:239: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`\n    warnings.warn(\n\ntests/stats/test_mixed_effects.py::test_fit_returns_class_means_and_p_values\n  /home/ubuntu/.local/lib/python3.12/site-packages/statsmodels/regression/mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 307 passed, 19 warnings in 41.68s =======================\n",
+      "timestamp_utc": "2026-08-02T04:33:23Z"
     },
     {
       "command": [
@@ -114,7 +99,7 @@
       "label": "verify:immutable_admission_sheet.csv",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T03:21:11Z"
+      "timestamp_utc": "2026-08-02T04:33:23Z"
     },
     {
       "command": [
@@ -131,7 +116,7 @@
       "label": "verify:immutable_admission_sheet.cursor_candidate.csv",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T03:21:11Z"
+      "timestamp_utc": "2026-08-02T04:33:23Z"
     },
     {
       "command": [
@@ -154,7 +139,7 @@
       "label": "verify:immutable_downstream_paths",
       "stderr_tail": "",
       "stdout_tail": "",
-      "timestamp_utc": "2026-08-02T03:21:11Z"
+      "timestamp_utc": "2026-08-02T04:33:23Z"
     },
     {
       "command": [
@@ -167,30 +152,30 @@
       "expected_raw_exit": 0,
       "label": "verify:inadmissible_artifacts_absent",
       "stderr_tail": "",
-      "stdout_tail": "{\"REVIEW_DECISIONS.json\": true, \"REVIEW_QUEUE.json\": true, \"SEARCH_SNAPSHOT.json\": true, \"admission_evidence\": true, \"admission_sheet.cursor_candidate.csv\": true}",
-      "timestamp_utc": "2026-08-02T03:19:55Z"
+      "stdout_tail": "{\"REVIEW_DECISIONS.json\": true, \"REVIEW_QUEUE.json\": true, \"SEARCH_DIAGNOSTIC_R2.json\": true, \"SEARCH_SNAPSHOT.json\": true, \"admission_evidence\": true, \"admission_sheet.cursor_candidate.csv\": true}",
+      "timestamp_utc": "2026-08-02T04:32:06Z"
     }
   ],
   "environment": {
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
     "python": "3.12.3"
   },
-  "full_pytest_stdout_tail": "_class_means_and_p_values\n  /home/ubuntu/.local/lib/python3.12/site-packages/statsmodels/regression/mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 293 passed, 19 warnings in 40.83s =======================\n",
+  "full_pytest_stdout_tail": "_class_means_and_p_values\n  /home/ubuntu/.local/lib/python3.12/site-packages/statsmodels/regression/mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 307 passed, 19 warnings in 41.68s =======================\n",
   "notes": [
-    "Unproven 66-query diagnostic claim removed (insufficient command provenance).",
-    "Official search wrapper exit 2 re-recorded in COMMAND_LOG.json.",
-    "No candidate sheet/queue/decisions/evidence restored; withdrawal retained.",
-    "Checker now requires mechanical snapshot→queue equality and full cross-artifact field equality.",
+    "R4 binds snapshot item repo/phrase to enclosing query; explicit mismatch hard-fails.",
+    "Tampered-phrase exit-0 escape closed; remaining cross-artifact field mismatch negatives added.",
+    "No new search; no candidate restoration; diagnostic withdrawal and wrapper provenance retained.",
     "All A2 dual-arm readiness remains locked."
   ],
   "official_search": {
     "exit_code": 2,
+    "note": "R4 did not re-run search; retained R3 COMMAND_LOG wrapper provenance.",
     "result": "SEARCH_HARD_FAIL",
     "wrapper_logged": true
   },
   "schema_version": 1,
-  "targeted_pytest_stdout_tail": "e: pyproject.toml\nplugins: hydra-core-1.3.4, anyio-4.14.2\ncollected 33 items\n\ntests/external_slice/test_mine_supplemental_r1.py ...........            [ 33%]\ntests/external_slice/test_check_supplemental_r1_admission.py ........... [ 66%]\n...........                                                              [100%]\n\n============================= 33 passed in 33.82s ==============================\n",
-  "task": "SUPPLEMENTAL_ADMISSION_R1_R3",
+  "targeted_pytest_stdout_tail": "e: pyproject.toml\nplugins: hydra-core-1.3.4, anyio-4.14.2\ncollected 47 items\n\ntests/external_slice/test_mine_supplemental_r1.py ...........            [ 23%]\ntests/external_slice/test_check_supplemental_r1_admission.py ........... [ 46%]\n.........................                                                [100%]\n\n============================= 47 passed in 34.33s ==============================\n",
+  "task": "SUPPLEMENTAL_ADMISSION_R1_R4",
   "withdrawal_counts": {
     "excluded_rows": 44,
     "pending_rows": 12,
