@@ -88,6 +88,7 @@ S0 台账建立提交前实测：
 | Gate A1b — C3 readiness Batch 1 | correction handoff `09da03a4585130dfb57428983f05ef7a4fb914bc`；correction payload `764840f3ad61e8f12ec2ead59422498082a462be` | `PASS_WITH_DISCLOSURE` | original payload/handoff `061e1891`/`66b8ca9d`；correction payload/handoff `a7bdaa05`/`1a6d6f35` | 是；仅 C3 Batch 2 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
+| Gate A1d — C3 readiness Batch 3 | handoff `da70fa676ebcab8ef1e98f532aa711c2d01f0c84`；payload `00d1ca3fdfaa582f831f89589aabcfb51667c3c0`；membership `cc3321da3a9e6f1f7d67e5b90cdf21d6fb9001c1` | `BLOCKED` | N/A（未集成） | 否；仅原分支 A1d-r1 correction 解锁，accepted ready 仍为 12 |
 
 ## 5. 交接审计记录
 
@@ -538,3 +539,33 @@ R3 关闭两个旧 concrete escape 与 diagnostic provenance finding，但 phras
 #### 判定
 
 所有 R4 blocker 关闭。Gate 以 `PASS_WITH_DISCLOSURE` 接受“正确停止且完整撤回”的状态，但该结论不等于 supplemental admission 成功：admitted row 数仍为 0，旧 12 rows 不可复用，supplemental readiness 不解锁。PR #5 是否集成由作者显式决定。仓库远端已存在此前独立授权的 C3 Batch 3 handoff `da70fa67...`（PR #6，6/6 proposed PASS），因此下一任务应在 Local Desktop 对其执行 Gate A1d 审计，而不是重新运行 Batch 3 或进入 canonical freeze。
+
+### 5.14 Gate A1d 首次审计：C3 readiness Batch 3
+
+| 字段 | 记录 |
+|---|---|
+| Gate | Gate A1d — C3 readiness Batch 3 |
+| 记录类型 | 首次审计 |
+| 交接/复核时间 | `2026-08-02T13:44:43+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-c3-readiness-batch3`；draft PR #6 |
+| Cursor commit | handoff `da70fa676ebcab8ef1e98f532aa711c2d01f0c84`；payload `00d1ca3fdfaa582f831f89589aabcfb51667c3c0`；membership `cc3321da3a9e6f1f7d67e5b90cdf21d6fb9001c1` |
+| Cursor baseline | `0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a` |
+| Handoff manifest | `data/external_slice/HANDOFF_REPRO_BATCH3.json`；SHA256 `cc488df412eb0a709552f7e2559f230df702397f0f8818b793fd00a45665b421` |
+| 输入 hash | membership `02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853`；source sheet `77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a` |
+| 输出 hash | readiness `194e255aca7dc82c30dc00061c2e16233ed26cf9a6502669e37c80eb974238a2`；command log `28991dbb6236b6a4ca4d50144fad4faef154a7a85b3acc49807cdf3a950c58f2`；verification log `fbaed8e5f154ab13a89465211be2a9a39f9c957fa60629921d1472ab0f2904f8`；runner `10c2416415665a7d0748049adbfac04fa2d38368db859f0747708617bdc27c4a` |
+| Findings | blockers `A1D-REPETITION-001`、`A1D-SM03-CONTRACT-001`、`A1D-LINALG-PROVENANCE-001`；Standards axis FAIL |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | `N/A（未集成 PR #6 membership/payload/handoff）` |
+| 后继任务是否解锁 | 否。仅从 `da70fa67...` 启动 A1d-r1 correction；supplementary mining、canonical freeze、C4、标注、category map、prediction、detection 均锁定。 |
+
+#### 独立复算结果
+
+- lineage 连续，PR #6 和远端分支 head 均为 handoff；membership 精确等于 Gate A1c 授权六例，无换例。
+- handoff checker `HASH_CHECK_OK`；篡改一个 fixed JSON 后 checker exit 1；121 条 global commands 精确等于六个 per-case logs 的顺序拼接。
+- admission checker exit 0；独立绑定探针 `A1D_INDEPENDENT_PROBE_OK cases=6 commands=121`；完整测试 `260 passed, 10 warnings`；compileall exit 0；reserved/token scans raw exit 1、无输出。
+- 每案现有一个 seed=0 buggy/fixed 对比均为 1/0，source/build/dependency hashes 与 sheet SHAs 一致；A2 仍全 PENDING，downstream 路径未变。
+- 但 runbook 要求 smoke 加足够 seeded repetitions，当前每臂仅一次；statsmodels-03 的 PASS predicate 忽略单样本约束，独立探针证实该约束失败仍 exit 0；两个线性代数相关环境未记录 BLAS/LAPACK provider。
+
+#### 判定
+
+Gate A1d 为 `BLOCKED`。六个单次对比只能记为 case-local observed，不能接受为 A2 PASS；accepted ready 数保持 Batch 1+2 的 12。不得集成 PR #6 或进入新的 mining/freeze。唯一解锁任务是在原 Cursor 分支按 `gate_a1d_readiness_batch3_audit.md` §6 完成 correction，固定 smoke+seeds 0–4 的重复矩阵、修复 statsmodels-03 完整 predicate、补 per-arm BLAS/LAPACK provenance 和 targeted negative tests，然后停在 Gate A1d-r1。
