@@ -152,3 +152,25 @@ Creation of `cursor/grok-phase3-supplemental-mining-r2` remains locked until a
 new Local Desktop session independently verifies this handoff and records
 `SUPPLEMENTAL_MINING_R2_DESIGN-r1` as passing. PR #6 integration remains a
 separate explicit decision.
+
+## 8. SUPPLEMENTAL_MINING_R2_DESIGN-r1 independent re-review
+
+- **Reviewed commit:** `d95d6277ee09479d638bb83d75562e9dc4348031`
+- **Direct parent:** `1ed9fb2dc2714cb452bba4016d6093cefb36204d`
+- **Corrected plan SHA-256:**
+  `04b6b08c344b550c9ce11b8bb0fca57a0cb00fcb5f7bffceb4d49ab71155e8d5`
+- **Standards findings:** 0
+- **Specification findings:** 0
+- **Verdict:** `PASS_WITH_DISCLOSURE`
+
+The re-review independently confirmed the direct-child lineage, exact plan
+hash, clean diff, and Cursor command policy. The only occurrences of `rtk` in
+the plan are the policy sentences that prohibit it in Cursor VM and require it
+on Local Desktop; no Cursor command carries that prefix. The repository
+environment test command completed with `260 passed, 10 warnings`.
+
+The disclosure is procedural: Cursor execution was started before this
+independent result was recorded, contrary to section 7.3. This re-review closes
+the design correction itself but does not retroactively validate that execution
+or any artifact produced by it. Those artifacts require a separate execution
+gate.

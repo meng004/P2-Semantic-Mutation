@@ -89,6 +89,8 @@ S0 台账建立提交前实测：
 | Gate A1c — C3 readiness Batch 2 | second-correction handoff `929e93f8a50cd8aedea618ad7016aada72e0cc16`；payload `70c4ae0546d98267edfd80ee7023d94ad8111b98`；membership `c94684faadbb4b02f8685360255cc374c15183c8` | `PASS_WITH_DISCLOSURE` | membership `543dd90f`；original payload/handoff `ddaac13c`/`f0256427`；first correction `406f507d`/`b1f24356`；second correction `29df0ac9`/`a3c07e34` | 是；仅六行 supplemental-pilot C3 Batch 3 解锁；canonical freeze 与 A2/C4 仍锁定 |
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 | Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
+| Gate SUPPLEMENTAL_MINING_R2_DESIGN-r1 | correction audit `d95d6277ee09479d638bb83d75562e9dc4348031`；payload `1ed9fb2dc2714cb452bba4016d6093cefb36204d` | `PASS_WITH_DISCLOSURE` | N/A（设计分支，不含实验 payload） | 设计修订通过；但已发生的 Cursor Task 4 需独立执行审计，不能追溯通过 |
+| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | diagnostic `548702be000249bbb4262ffe3bf282f4e93b962c`；code `d989f713938d46b8a25519fafd5c465554d3da45` | `BLOCKED` | N/A（PR #7 未集成） | 否；仅解锁同分支 transport correction，不解锁 fresh retrieval 或 admission/readiness |
 
 ## 5. 交接审计记录
 
@@ -661,3 +663,34 @@ Gate A1d-r2 仍为 `BLOCKED`。当前提交的六个 handoff verdict 虽与 raw 
 Gate A1d-r3 以 `PASS_WITH_DISCLOSURE` 关闭。Batch 3 六案可计入 accepted ready，使累计从 12 增至 18，覆盖 11 个 projects。两张 sheet 的 A2 仍按 pre-freeze 合同保持 `PENDING`，PR #6 是否集成等待作者显式决定。
 
 样本仍不满足冻结协议：n=18<20，且只有 SUNDIALS(4) 与 statsmodels(3) 两个 projects 达到“每项目至少 3 ready”的 H-RANK qualification floor，要求为 6 个。最低分布感知补样是新增 6 个 ready：NumPy +1、SciPy +1，并在两个当前单例项目各 +2，达到 n=24。Supplemental R1/R4 的旧候选已全部撤回且不可复用，因此下一任务必须先在 Local Desktop 冻结 Supplemental Mining R2 的 issue-typed retrieval 协议修订；不得直接在 Cursor 重启 mining，也不得进入 canonical freeze/C4。
+
+### 5.18 SUPPLEMENTAL_MINING_R2_DESIGN-r1 独立复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_MINING_R2_DESIGN-r1` |
+| 记录类型 | correction handoff 独立复审 |
+| Local commit | `d95d6277ee09479d638bb83d75562e9dc4348031`；parent `1ed9fb2dc2714cb452bba4016d6093cefb36204d` |
+| Plan SHA-256 | `04b6b08c344b550c9ce11b8bb0fca57a0cb00fcb5f7bffceb4d49ab71155e8d5` |
+| Findings | Standards 0；Spec 0；Cursor 命令无 `rtk` 前缀 |
+| Verdict | `PASS_WITH_DISCLOSURE` |
+| 后继任务是否解锁 | 设计本身通过；已提前发生的 Cursor 执行不追溯通过，须独立审计。 |
+
+独立复核确认 direct-child、plan hash、clean diff 和 `260 passed, 10 warnings`。
+披露项是 Cursor branch 在该复核落盘前已创建并执行，违反设计 handoff 的停点；这不改变设计文本正确性，但其执行证据必须另行判定。
+
+### 5.19 SUPPLEMENTAL_ADMISSION_R2 Task 4 transport 审计
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2` — Task 4 transport |
+| 记录类型 | 首次 live retrieval hard-fail 审计 |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | diagnostic `548702be000249bbb4262ffe3bf282f4e93b962c`；code `d989f713938d46b8a25519fafd5c465554d3da45`；contract `7ede024f2605bd3497e16648e44beb589b984020` |
+| Cursor baseline | `d95d6277ee09479d638bb83d75562e9dc4348031` |
+| Findings | `SUPP-R2-RUN-ONCE-001`、`SUPP-R2-CODE-BEFORE-LIVE-001`、`SUPP-R2-UNEXPECTED-FAIL-CLEANUP-001`；Ruff F401 |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同一 Cursor 分支的 transport correction；fresh retrieval、admission、readiness 和全部 downstream 均锁定。 |
+
+最终树未铸造 snapshot、queue、decision、sheet、evidence 或 handoff，这一原子结果属实。但 `COMMAND_LOG.json` 有 992 条记录、六仓各两条 page 0、460 组重复 page/cursor；hard-fail 时间后仍有 26 个请求。首个请求早于 runner commit `519ab9ad...`，且 generic exception 未完整清理或写 terminal failure log。Targeted `109 passed`、full `369 passed, 10 warnings`、compileall 通过；精确 Ruff 因未使用 `hashlib` 失败。现有日志仅保留为失败证据，不得用于 mint payload。
