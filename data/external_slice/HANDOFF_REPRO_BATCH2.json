@@ -1,6 +1,6 @@
 {
   "admission_checker": "PASS: pre-readiness C2 candidate only; 64 Defect4MR candidate rows, 64 evidence records, and 9 supplemental pilot rows are structurally valid and separate. This does not establish final admission or freeze.\n",
-  "baseline_commit": "1f1586e66712ff220386e7c29e98593cda7e48ba",
+  "baseline_commit": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
   "batch": {
     "batch3_started": false,
     "member_count": 29,
@@ -10,7 +10,7 @@
     "sheet_a2_policy": "PENDING unchanged; proposed verdicts only in readiness_batch2.json",
     "stop_after_push": true
   },
-  "blocked_audit_commit": "ee003421a038aa247414e3066249a74029691549",
+  "blocked_audit_commit": "649d0c208496d64a19bacaa43660aab25d8e688c",
   "branch": "cursor/grok-phase3-c3-readiness",
   "case_results": [
     {
@@ -246,19 +246,19 @@
   ],
   "cloud_agent": "bc-1d216e6e-25c0-46ef-9f68-b1d417f18f57",
   "commands": {
-    "case_command_count": 280,
+    "case_command_count": 281,
     "case_execution_log": "data/external_slice/reproduction/BATCH2_COMMAND_LOG.json",
     "hash_check_script": "scripts/external_slice/check_batch2_handoff_hashes.py",
     "verification_command_count": 7,
     "verification_log": "data/external_slice/reproduction/BATCH2_VERIFICATION_LOG.json"
   },
-  "correction_of": "1f1586e66712ff220386e7c29e98593cda7e48ba",
+  "correction_of": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
   "counts": {
     "batch_size": 29,
     "proposed_PASS": 9,
     "proposed_REPRO_FAILED": 20
   },
-  "created_at": "2026-08-02T00:10:11.467128+00:00",
+  "created_at": "2026-08-02T00:34:28.129289+00:00",
   "environment": {
     "machine": "x86_64",
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
@@ -279,6 +279,7 @@
     "compileall": 0,
     "handoff_hash_checker": 0,
     "leak_scan_neutral": 0,
+    "leak_scan_reserved_runbook": 0,
     "membership_and_sheet_pending": 0,
     "per_case_trigger": {
       "EXT-blis-02": {
@@ -529,11 +530,11 @@
   ],
   "outputs": {
     "files": {
-      "BATCH2_COMMAND_LOG.json": "29bf82ea3316d91e640d5ecfe19c7ca276eebdf9d9d8b1b4a16af3c34240008b",
+      "BATCH2_COMMAND_LOG.json": "71b02141ca47094663d2ad2023e69201afdadbf2ac965e5e9ba3f4f895c78a4c",
       "BATCH2_MEMBERSHIP.json": "b6bb4a45219b1e65c13d78f93c46bae4c972b9873942cc75bfc831f38a0c0153",
-      "BATCH2_VERIFICATION_LOG.json": "ba60551369b301376b7ae2821a4c9524721b5915b315d08650c07a338f01aae6",
+      "BATCH2_VERIFICATION_LOG.json": "a38666aef17838138074d7ce7025bacae1bd207bad656676079f4499d575e80b",
       "admission_sheet.cursor_candidate.csv": "4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8",
-      "readiness_batch2.json": "b7ae7037ddb6c2b418540b1bba6651d9c735a564d814d7d5d7793615c9a45c15"
+      "readiness_batch2.json": "7d922fca1cf87b6070c29173ad98003db5c70db182cad16755b77d35a06b1150"
     },
     "per_case_artifact_sha256": {
       "EXT-blis-02": {
@@ -615,14 +616,16 @@
         "stdout.log": "ad62abc62966e7440b89af95426a7efd5d0dec9dd4afe59f6e152f4d223d46e7"
       },
       "EXT-freia-01": {
-        "COMMANDS.json": "912c6a8db7c1c855aef809d423d4777e3f4494c502dd7d229be9105269f3c7d8",
+        "COMMANDS.json": "62b1bd8de34f3ebbd5ea1b1a853ef40d17011e350f351b7959b6871c799bdd73",
         "buggy.json": "f4abbbeee36b752889ab65c867661806f07d7a068e215f3f8a8ed0c27c1df0dd",
-        "environment.json": "82a0222f6ed92a9f2254aec0c6c7fdde650721944b1cb4e67dfe98a9548ba18d",
+        "environment.json": "5d1db0c01d70d7b64bdc408cf3094e666ecf5f8fb561b587adcf97f02ea94762",
         "fixed.json": "dc60e7afa27c02ec925db0d1a1d6a9e8f6df8979c5d24c33b13c26ff5498bae7",
-        "locks/BUILD_TOOLS.json": "ae8d141cee4341c725e6f786d600ed539af8aa9075b85395e259a823057e2e26",
+        "locks/BUILD_ARTIFACT_HASHES.json": "2d215761c5a2b50f15b28b325b6c1c31b4ac765006c50ddfb2e28fe6a66c615a",
+        "locks/BUILD_TOOLS.json": "98cfaa33f33dc916ebc54837d453dc221c9e40af7ebcc4172c08af332623efa7",
         "locks/SOURCE_HASHES.json": "e1313f407f98f6c3565a7fe5695d6306a6af5a371c160981689e21590723b322",
         "locks/WHEEL_ARTIFACT_HASHES.json": "629d09fb4bf72000f0ee8a853ac54364cac59b1ac4612336245ddbd790d1defb",
-        "locks/requirements.deps.txt": "36a29c46357f11f3e109f96c34fe686ce1c2eaafe8767b131b4c18f99cb65eaa",
+        "locks/requirements.build.txt": "f4554c8497a56b5af72ffaf4072318a8620534dc90d4248f5553eb66a35ddaa5",
+        "locks/requirements.deps.txt": "70af31d20304c741328fb6e933d152ff8f89c6aebd300373ef6ce236bc76d90e",
         "stderr.log": "86315cc692f982f09bd79703f54871a7b1a511aa4955925e8794caa65f57bfbb",
         "stdout.log": "113351dda10289fc676bf2370c9e95db5862bf9f28fb99444c14ef57e11d3012"
       },
@@ -827,13 +830,14 @@
       }
     }
   },
-  "payload_commit": "9f6f65afae8d9849b485dde94865a613d9d14269",
-  "pytest": "mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================= 260 passed, 10 warnings in 6.39s =======================\n",
+  "payload_commit": "70c4ae0546d98267edfd80ee7023d94ad8111b98",
+  "prior_correction_handoff": "01acdbbf6ffd220f9b768ffd386f02cc7fff591b",
+  "pytest": "mixed_linear_model.py:2237: ConvergenceWarning: The MLE may be on the boundary of the parameter space.\n    warnings.warn(msg, ConvergenceWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================= 260 passed, 10 warnings in 6.44s =======================\n",
   "retries": [
-    "A1c FrEIA fresh dual-arm with require-hashes exit 0 (no unhashed fallback)",
-    "A1c trilinos/dealii/castro observed dual-arm build attempts with declared timeouts",
-    "A1c handoff hashes recomputed after token redaction"
+    "A1c-r2 FrEIA packaging/build closure hash-locked; exact source via --no-build-isolation",
+    "A1c-r2 verification uses runbook reserved pattern + ghp_/github_pat_/Bearer token scan",
+    "A1c-r2 handoff hashes recomputed after redaction"
   ],
-  "task": "C3 readiness Batch 2 Gate A1c correction",
+  "task": "C3 readiness Batch 2 Gate A1c correction (re-review round 2)",
   "unresolved_findings": []
 }
