@@ -96,26 +96,8 @@
       "exit_code": 0,
       "label": "EXT-numpy-01:buggy:pip-install-exact-source",
       "stderr_tail": "",
-      "stdout_tail": "Processing /tmp/c3_batch3/EXT-numpy-01/buggy-src\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: numpy\n  Building wheel for numpy (pyproject.toml): started\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): finished with status 'done'\n  Created wheel for numpy: filename=numpy-1.25.0.dev0+81.g8ff45c5bb-cp39-cp39-linux_x86_64.whl size=22146790 sha256=e35325632770c211027b88fd9a041dd663880c0566d1aec03da6671342710630\n  Stored in directory: /home/ubuntu/.cache/pip/wheels/42/59/77/c4785d73224685bc8490b73b933813f93ec92f50591ed1f661\nSuccessfully built numpy\nInstalling collected packages: numpy\nSuccessfully installed numpy-1.25.0.dev0+81.g8ff45c5bb\n",
+      "stdout_tail": "Processing /tmp/c3_batch3/EXT-numpy-01/buggy-src\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: numpy\n  Building wheel for numpy (pyproject.toml): started\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): finished with status 'done'\n  Created wheel for numpy: filename=numpy-1.25.0.dev0+81.g8ff45c5bb-cp39-cp39-linux_x86_64.whl size=22146790 sha256=109287d8ce77a5e908c2a499c8baaa345e6756648e3ed4901c1d2205ceb8c358\n  Stored in directory: /home/ubuntu/.cache/pip/wheels/42/59/77/c4785d73224685bc8490b73b933813f93ec92f50591ed1f661\nSuccessfully built numpy\nInstalling collected packages: numpy\nSuccessfully installed numpy-1.25.0.dev0+81.g8ff45c5bb\n",
       "timeout_s": 7200
-    },
-    {
-      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/buggy.json",
-      "cwd": "/workspace",
-      "exit_code": 1,
-      "label": "EXT-numpy-01:buggy:trigger",
-      "stderr_tail": "/workspace/data/external_slice/reproducers/EXT-numpy-01.py:19: RuntimeWarning: invalid value encountered in power\n  got = (0) ** np.array([1 - 1j])\n",
-      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
-      "timeout_s": 300
-    },
-    {
-      "command": "# property_holds=False normalized_exit=1",
-      "cwd": "/workspace",
-      "exit_code": 1,
-      "label": "EXT-numpy-01:buggy:trigger-normalized-exit",
-      "stderr_tail": "",
-      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
-      "timeout_s": null
     },
     {
       "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python -m pip install --require-hashes -r /workspace/data/external_slice/reproduction/EXT-numpy-01/locks/requirements.build.txt",
@@ -186,26 +168,134 @@
       "exit_code": 0,
       "label": "EXT-numpy-01:fixed:pip-install-exact-source",
       "stderr_tail": "",
-      "stdout_tail": "Processing /tmp/c3_batch3/EXT-numpy-01/fixed-src\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: numpy\n  Building wheel for numpy (pyproject.toml): started\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): finished with status 'done'\n  Created wheel for numpy: filename=numpy-1.25.0.dev0+96.g9989e1e43-cp39-cp39-linux_x86_64.whl size=22146657 sha256=bab5efd75792895fdab6258e6f39c00a01529ee24dc27980a611e3588885c008\n  Stored in directory: /home/ubuntu/.cache/pip/wheels/2c/3c/1b/8fca5c257ed1a488cac52654f3408c3d1bb446743da9d98b60\nSuccessfully built numpy\nInstalling collected packages: numpy\nSuccessfully installed numpy-1.25.0.dev0+96.g9989e1e43\n",
+      "stdout_tail": "Processing /tmp/c3_batch3/EXT-numpy-01/fixed-src\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: numpy\n  Building wheel for numpy (pyproject.toml): started\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): still running...\n  Building wheel for numpy (pyproject.toml): finished with status 'done'\n  Created wheel for numpy: filename=numpy-1.25.0.dev0+96.g9989e1e43-cp39-cp39-linux_x86_64.whl size=22146664 sha256=7fc945adc78a9dd8456da37cee82a55da1db59279a8a02620f5e38994c664aee\n  Stored in directory: /home/ubuntu/.cache/pip/wheels/2c/3c/1b/8fca5c257ed1a488cac52654f3408c3d1bb446743da9d98b60\nSuccessfully built numpy\nInstalling collected packages: numpy\nSuccessfully installed numpy-1.25.0.dev0+96.g9989e1e43\n",
       "timeout_s": 7200
     },
     {
-      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/fixed.json",
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python -c \"\nimport json\nimport sys\nout = {\n    \\\"python\\\": sys.version.split()[0],\n    \\\"numpy\\\": None,\n    \\\"scipy\\\": None,\n    \\\"numpy_show_config\\\": \\\"\\\",\n    \\\"scipy_show_config\\\": \\\"\\\",\n    \\\"numpy_config_keys\\\": [],\n    \\\"errors\\\": [],\n}\ntry:\n    import numpy as np\n    out[\\\"numpy\\\"] = getattr(np, \\\"__version__\\\", None)\n    try:\n        from io import StringIO\n        buf = StringIO()\n        np.show_config(stream=buf)\n        out[\\\"numpy_show_config\\\"] = buf.getvalue()\n    except TypeError:\n        from io import StringIO\n        import contextlib\n        buf = StringIO()\n        with contextlib.redirect_stdout(buf):\n            np.show_config()\n        out[\\\"numpy_show_config\\\"] = buf.getvalue()\n    cfg = getattr(np, \\\"__config__\\\", None)\n    if cfg is not None and hasattr(cfg, \\\"get_info\\\"):\n        for key in (\n            \\\"blas_opt_info\\\",\n            \\\"lapack_opt_info\\\",\n            \\\"blas_mkl_info\\\",\n            \\\"openblas_info\\\",\n            \\\"blas_ilp64_opt_info\\\",\n        ):\n            try:\n                info = cfg.get_info(key)\n            except Exception as exc:  # noqa: BLE001\n                out[\\\"errors\\\"].append(f\\\"{key}:{exc!r}\\\")\n                continue\n            if info:\n                out[\\\"numpy_config_keys\\\"].append(\n                    {\\\"key\\\": key, \\\"libraries\\\": info.get(\\\"libraries\\\"),\n                     \\\"library_dirs\\\": info.get(\\\"library_dirs\\\")}\n                )\nexcept Exception as exc:  # noqa: BLE001\n    out[\\\"errors\\\"].append(f\\\"numpy:{exc!r}\\\")\ntry:\n    import scipy\n    out[\\\"scipy\\\"] = getattr(scipy, \\\"__version__\\\", None)\n    from io import StringIO\n    import contextlib\n    buf = StringIO()\n    with contextlib.redirect_stdout(buf):\n        scipy.show_config()\n    out[\\\"scipy_show_config\\\"] = buf.getvalue()\nexcept Exception as exc:  # noqa: BLE001\n    out[\\\"errors\\\"].append(f\\\"scipy:{exc!r}\\\")\nprint(json.dumps(out, sort_keys=True))\n\"",
       "cwd": "/workspace",
       "exit_code": 0,
-      "label": "EXT-numpy-01:fixed:trigger",
+      "label": "EXT-numpy-01:buggy:blas-lapack-provider",
+      "stderr_tail": "",
+      "stdout_tail": "{\"errors\": [\"scipy:ModuleNotFoundError(\\\"No module named 'scipy'\\\")\"], \"numpy\": \"1.25.0.dev0+81.g8ff45c5bb\", \"numpy_config_keys\": [{\"key\": \"blas_opt_info\", \"libraries\": [\"openblas\", \"openblas\"], \"library_dirs\": [\"/usr/lib/x86_64-linux-gnu\"]}, {\"key\": \"lapack_opt_info\", \"libraries\": [\"openblas\", \"openblas\"], \"library_dirs\": [\"/usr/lib/x86_64-linux-gnu\"]}, {\"key\": \"openblas_info\", \"libraries\": [\"openblas\", \"openblas\"], \"library_dirs\": [\"/usr/lib/x86_64-linux-gnu\"]}], \"numpy_show_config\": \"blas_armpl_info:\\n  NOT AVAILABLE\\nblas_mkl_info:\\n  NOT AVAILABLE\\nblis_info:\\n  NOT AVAILABLE\\nopenblas_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nblas_opt_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nlapack_armpl_info:\\n  NOT AVAILABLE\\nlapack_mkl_info:\\n  NOT AVAILABLE\\nopenblas_lapack_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nlapack_opt_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nSupported SIMD extensions in this NumPy install:\\n    baseline = SSE,SSE2,SSE3\\n    found = SSSE3,SSE41,POPCNT,SSE42,AVX,F16C,FMA3,AVX2,AVX512F,AVX512CD,AVX512_SKX,AVX512_CLX,AVX512_CNL,AVX512_ICL\\n    not found = \\n\", \"python\": \"3.9.18\", \"scipy\": null, \"scipy_show_config\": \"\"}\n",
+      "timeout_s": 120
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python -c \"\nimport json\nimport sys\nout = {\n    \\\"python\\\": sys.version.split()[0],\n    \\\"numpy\\\": None,\n    \\\"scipy\\\": None,\n    \\\"numpy_show_config\\\": \\\"\\\",\n    \\\"scipy_show_config\\\": \\\"\\\",\n    \\\"numpy_config_keys\\\": [],\n    \\\"errors\\\": [],\n}\ntry:\n    import numpy as np\n    out[\\\"numpy\\\"] = getattr(np, \\\"__version__\\\", None)\n    try:\n        from io import StringIO\n        buf = StringIO()\n        np.show_config(stream=buf)\n        out[\\\"numpy_show_config\\\"] = buf.getvalue()\n    except TypeError:\n        from io import StringIO\n        import contextlib\n        buf = StringIO()\n        with contextlib.redirect_stdout(buf):\n            np.show_config()\n        out[\\\"numpy_show_config\\\"] = buf.getvalue()\n    cfg = getattr(np, \\\"__config__\\\", None)\n    if cfg is not None and hasattr(cfg, \\\"get_info\\\"):\n        for key in (\n            \\\"blas_opt_info\\\",\n            \\\"lapack_opt_info\\\",\n            \\\"blas_mkl_info\\\",\n            \\\"openblas_info\\\",\n            \\\"blas_ilp64_opt_info\\\",\n        ):\n            try:\n                info = cfg.get_info(key)\n            except Exception as exc:  # noqa: BLE001\n                out[\\\"errors\\\"].append(f\\\"{key}:{exc!r}\\\")\n                continue\n            if info:\n                out[\\\"numpy_config_keys\\\"].append(\n                    {\\\"key\\\": key, \\\"libraries\\\": info.get(\\\"libraries\\\"),\n                     \\\"library_dirs\\\": info.get(\\\"library_dirs\\\")}\n                )\nexcept Exception as exc:  # noqa: BLE001\n    out[\\\"errors\\\"].append(f\\\"numpy:{exc!r}\\\")\ntry:\n    import scipy\n    out[\\\"scipy\\\"] = getattr(scipy, \\\"__version__\\\", None)\n    from io import StringIO\n    import contextlib\n    buf = StringIO()\n    with contextlib.redirect_stdout(buf):\n        scipy.show_config()\n    out[\\\"scipy_show_config\\\"] = buf.getvalue()\nexcept Exception as exc:  # noqa: BLE001\n    out[\\\"errors\\\"].append(f\\\"scipy:{exc!r}\\\")\nprint(json.dumps(out, sort_keys=True))\n\"",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-numpy-01:fixed:blas-lapack-provider",
+      "stderr_tail": "",
+      "stdout_tail": "{\"errors\": [\"scipy:ModuleNotFoundError(\\\"No module named 'scipy'\\\")\"], \"numpy\": \"1.25.0.dev0+96.g9989e1e43\", \"numpy_config_keys\": [{\"key\": \"blas_opt_info\", \"libraries\": [\"openblas\", \"openblas\"], \"library_dirs\": [\"/usr/lib/x86_64-linux-gnu\"]}, {\"key\": \"lapack_opt_info\", \"libraries\": [\"openblas\", \"openblas\"], \"library_dirs\": [\"/usr/lib/x86_64-linux-gnu\"]}, {\"key\": \"openblas_info\", \"libraries\": [\"openblas\", \"openblas\"], \"library_dirs\": [\"/usr/lib/x86_64-linux-gnu\"]}], \"numpy_show_config\": \"blas_armpl_info:\\n  NOT AVAILABLE\\nblas_mkl_info:\\n  NOT AVAILABLE\\nblis_info:\\n  NOT AVAILABLE\\nopenblas_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nblas_opt_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nlapack_armpl_info:\\n  NOT AVAILABLE\\nlapack_mkl_info:\\n  NOT AVAILABLE\\nopenblas_lapack_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nlapack_opt_info:\\n    libraries = ['openblas', 'openblas']\\n    library_dirs = ['/usr/lib/x86_64-linux-gnu']\\n    language = c\\n    define_macros = [('HAVE_CBLAS', None)]\\nSupported SIMD extensions in this NumPy install:\\n    baseline = SSE,SSE2,SSE3\\n    found = SSSE3,SSE41,POPCNT,SSE42,AVX,F16C,FMA3,AVX2,AVX512F,AVX512CD,AVX512_SKX,AVX512_CLX,AVX512_CNL,AVX512_ICL\\n    not found = \\n\", \"python\": \"3.9.18\", \"scipy\": null, \"scipy_show_config\": \"\"}\n",
+      "timeout_s": 120
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/smoke/seed-0/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-numpy-01:buggy:smoke-seed-0",
+      "stderr_tail": "/workspace/data/external_slice/reproducers/EXT-numpy-01.py:19: RuntimeWarning: invalid value encountered in power\n  got = (0) ** np.array([1 - 1j])\n",
+      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/smoke/seed-0/fixed.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-numpy-01:fixed:smoke-seed-0",
       "stderr_tail": "",
       "stdout_tail": "{\"property_holds\": true, \"exit_status\": 0}\n",
       "timeout_s": 300
     },
     {
-      "command": "# property_holds=True normalized_exit=0",
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-0/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-numpy-01:buggy:formal-seed-0",
+      "stderr_tail": "/workspace/data/external_slice/reproducers/EXT-numpy-01.py:19: RuntimeWarning: invalid value encountered in power\n  got = (0) ** np.array([1 - 1j])\n",
+      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-0/fixed.json",
       "cwd": "/workspace",
       "exit_code": 0,
-      "label": "EXT-numpy-01:fixed:trigger-normalized-exit",
+      "label": "EXT-numpy-01:fixed:formal-seed-0",
       "stderr_tail": "",
       "stdout_tail": "{\"property_holds\": true, \"exit_status\": 0}\n",
-      "timeout_s": null
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 1 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-1/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-numpy-01:buggy:formal-seed-1",
+      "stderr_tail": "/workspace/data/external_slice/reproducers/EXT-numpy-01.py:19: RuntimeWarning: invalid value encountered in power\n  got = (0) ** np.array([1 - 1j])\n",
+      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 1 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-1/fixed.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-numpy-01:fixed:formal-seed-1",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true, \"exit_status\": 0}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 2 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-2/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-numpy-01:buggy:formal-seed-2",
+      "stderr_tail": "/workspace/data/external_slice/reproducers/EXT-numpy-01.py:19: RuntimeWarning: invalid value encountered in power\n  got = (0) ** np.array([1 - 1j])\n",
+      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 2 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-2/fixed.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-numpy-01:fixed:formal-seed-2",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true, \"exit_status\": 0}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 3 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-3/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-numpy-01:buggy:formal-seed-3",
+      "stderr_tail": "/workspace/data/external_slice/reproducers/EXT-numpy-01.py:19: RuntimeWarning: invalid value encountered in power\n  got = (0) ** np.array([1 - 1j])\n",
+      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 3 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-3/fixed.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-numpy-01:fixed:formal-seed-3",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true, \"exit_status\": 0}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 4 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-4/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-numpy-01:buggy:formal-seed-4",
+      "stderr_tail": "/workspace/data/external_slice/reproducers/EXT-numpy-01.py:19: RuntimeWarning: invalid value encountered in power\n  got = (0) ** np.array([1 - 1j])\n",
+      "stdout_tail": "{\"property_holds\": false, \"exit_status\": 1}\n",
+      "timeout_s": 300
+    },
+    {
+      "command": "/tmp/c3_batch3/EXT-numpy-01/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-numpy-01.py --seed 4 --json-out /workspace/data/external_slice/reproduction/EXT-numpy-01/repetitions/seed-4/fixed.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-numpy-01:fixed:formal-seed-4",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true, \"exit_status\": 0}\n",
+      "timeout_s": 300
     }
   ]
 }

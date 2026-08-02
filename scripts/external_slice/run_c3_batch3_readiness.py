@@ -22,6 +22,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_MATRIX = ROOT / "data" / "external_slice" / "BATCH3_EXECUTION_MATRIX.json"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from batch3_a1d_r1 import (  # noqa: E402
+    NUMERIC_BLAS_CASES,
+    aggregate_formal_verdict,
+    assert_arm_input_parity,
+    assert_membership_byte_identical,
+    discover_blas_lapack_provider,
+    load_execution_matrix,
+    save_execution_outputs,
+)
 WORK = Path(os.environ.get("C3_BATCH3_WORK", "/tmp/c3_batch3"))
 REPRO_ROOT = ROOT / "data" / "external_slice" / "reproduction"
 TRIG_ROOT = ROOT / "data" / "external_slice" / "reproducers"
@@ -530,7 +541,7 @@ def finalize_case(
     (case_dir / "stdout.log").write_text("\n".join(stdout_parts) + "\n", encoding="utf-8")
     (case_dir / "stderr.log").write_text("\n".join(stderr_parts) + "\n", encoding="utf-8")
 
-    return {
+    out = {
         "neutral_id": nid,
         "repo": member["repo"],
         "issue_url": member["issue_url"],
@@ -547,20 +558,70 @@ def finalize_case(
         "trigger_exit_codes": trigger_exits,
         "proposed_crit_dual_arm_repro": proposed,
         "sheet_crit_dual_arm_repro_unchanged": "PENDING",
-        "observation_status": "case-local observed pending Gate A1d review",
-        "note": "Supplemental and candidate sheet A2 left PENDING; proposed verdict only here.",
+        "observation_status": (
+            "case-local observed pending Gate A1d-r1 review"
+        ),
+        "note": (
+            "Supplemental and candidate sheet A2 left PENDING; "
+            "proposed verdict only here."
+        ),
         "failure_stage": failure_stage,
         "failure_detail": failure_detail,
         "route": route,
         "cohort": "supplemental-pilot",
     }
+    if extra_env:
+        if extra_env.get("execution_matrix"):
+            out["execution_matrix"] = extra_env["execution_matrix"]
+        if extra_env.get("formal_aggregation") is not None:
+            out["formal_aggregation"] = extra_env["formal_aggregation"]
+        if extra_env.get("blas_lapack_providers"):
+            out["blas_lapack_providers"] = extra_env["blas_lapack_providers"]
+    return out
+
+
+def _run_trigger_once(
+    log: CommandLog,
+    *,
+    py: Path,
+    nid: str,
+    arm: str,
+    seed: int,
+    out_json: Path,
+    label: str,
+) -> tuple[subprocess.CompletedProcess, dict | None, bool | None]:
+    trig = log.run(
+        [
+            str(py),
+            str(TRIG_ROOT / f"{nid}.py"),
+            "--seed",
+            str(seed),
+            "--json-out",
+            str(out_json),
+        ],
+        label=label,
+        check=False,
+        timeout=300,
+    )
+    payload = None
+    if out_json.is_file():
+        try:
+            payload = json.loads(out_json.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            payload = None
+    prop = None
+    if payload is not None and "property_holds" in payload:
+        prop = bool(payload.get("property_holds"))
+    elif trig.returncode in (0, 1):
+        prop = trig.returncode == 0
+    return trig, payload, prop
 
 
 def run_dual_arm_python_case(
     log: CommandLog,
     member: dict,
     *,
-    seed: int,
+    matrix: dict,
     runtime_pkgs: list[str],
     build_pkgs: list[str],
     python: Path,
@@ -568,6 +629,10 @@ def run_dual_arm_python_case(
     source_mode: str = "archive",
 ) -> dict:
     nid = member["neutral_id"]
+    smoke_seeds = list(matrix["smoke"]["seeds"])
+    formal_seeds = list(matrix["formal_repetitions"]["seeds"])
+    # Canonical seed for top-level artifact aliases remains smoke/formal seed 0.
+    seed = 0
     start = len(log.entries)
     case_dir = REPRO_ROOT / nid
     if case_dir.exists():
@@ -585,10 +650,16 @@ def run_dual_arm_python_case(
     holds: dict = {}
     failure_stage = None
     failure_detail = None
+    built_arms: set[str] = set()
+    blas_records: dict = {}
+    per_seed: dict[int, dict] = {}
 
     try:
         for arm in ("buggy", "fixed"):
-            log.run([str(python), "-m", "venv", str(work / f"venv-{arm}")], label=f"{nid}:{arm}:venv")
+            log.run(
+                [str(python), "-m", "venv", str(work / f"venv-{arm}")],
+                label=f"{nid}:{arm}:venv",
+            )
 
         probe = work / "venv-buggy" / "bin" / "python"
         build_lock = locks / "requirements.build.txt"
@@ -599,32 +670,54 @@ def run_dual_arm_python_case(
                 "lock": str(build_lock.relative_to(ROOT)),
                 "packages": build_pkgs,
                 "artifacts": build_meta.get("artifacts", {}),
-                "resolved_requirements": build_meta.get("resolved_requirements", []),
+                "resolved_requirements": build_meta.get(
+                    "resolved_requirements", []
+                ),
             },
         )
         runtime_lock = locks / "requirements.deps.txt"
         if runtime_pkgs:
-            deps_meta = pip_hash_lock(probe, runtime_pkgs, runtime_lock, log, f"{nid}:deps")
+            deps_meta = pip_hash_lock(
+                probe, runtime_pkgs, runtime_lock, log, f"{nid}:deps"
+            )
             write_json(
                 locks / "WHEEL_ARTIFACT_HASHES.json",
                 {
                     "lock": str(runtime_lock.relative_to(ROOT)),
                     "packages": runtime_pkgs,
                     "artifacts": deps_meta.get("artifacts", {}),
-                    "resolved_requirements": deps_meta.get("resolved_requirements", []),
+                    "resolved_requirements": deps_meta.get(
+                        "resolved_requirements", []
+                    ),
                 },
             )
 
         for arm, sha in (("buggy", member["buggy_sha"]), ("fixed", member["fixed_sha"])):
             py = work / f"venv-{arm}" / "bin" / "python"
             log.run(
-                [str(py), "-m", "pip", "install", "--require-hashes", "-r", str(build_lock)],
+                [
+                    str(py),
+                    "-m",
+                    "pip",
+                    "install",
+                    "--require-hashes",
+                    "-r",
+                    str(build_lock),
+                ],
                 label=f"{nid}:{arm}:pip-install-build-require-hashes",
                 timeout=BUILD_TIMEOUT,
             )
             if runtime_pkgs:
                 log.run(
-                    [str(py), "-m", "pip", "install", "--require-hashes", "-r", str(runtime_lock)],
+                    [
+                        str(py),
+                        "-m",
+                        "pip",
+                        "install",
+                        "--require-hashes",
+                        "-r",
+                        str(runtime_lock),
+                    ],
                     label=f"{nid}:{arm}:pip-install-require-hashes",
                     timeout=BUILD_TIMEOUT,
                 )
@@ -643,9 +736,11 @@ def run_dual_arm_python_case(
             env = {
                 "CC": "gcc",
                 "CXX": "g++",
-                "PATH": f"{work / f'venv-{arm}' / 'bin'}:{os.environ.get('PATH','')}",
+                "PATH": (
+                    f"{work / f'venv-{arm}' / 'bin'}:"
+                    f"{os.environ.get('PATH', '')}"
+                ),
                 "NINJA_NUM_JOBS": NJOBS,
-                # GitHub archives lack .git metadata required by setuptools_scm.
                 "SETUPTOOLS_SCM_PRETEND_VERSION": pretend,
                 "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_STATSMODELS": pretend,
                 "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_SCIPY": pretend,
@@ -671,62 +766,215 @@ def run_dual_arm_python_case(
             if src_proc.returncode != 0:
                 failure_stage = "build"
                 failure_detail = (
-                    f"REPRO_FAILED:build - exact-source install exit {src_proc.returncode} on {arm}"
+                    "REPRO_FAILED:build - exact-source install exit "
+                    f"{src_proc.returncode} on {arm}"
                 )
-                (case_dir / f"{arm}.stdout.txt").write_text(src_proc.stdout or "", encoding="utf-8")
-                (case_dir / f"{arm}.stderr.txt").write_text(src_proc.stderr or "", encoding="utf-8")
+                (case_dir / f"{arm}.stdout.txt").write_text(
+                    src_proc.stdout or "", encoding="utf-8"
+                )
+                (case_dir / f"{arm}.stderr.txt").write_text(
+                    src_proc.stderr or "", encoding="utf-8"
+                )
                 exits[arm] = src_proc.returncode
                 holds[arm] = None
                 continue
             if "Installing build dependencies" in text:
                 failure_stage = "build"
-                failure_detail = "REPRO_FAILED:build - isolated build dependency resolution observed"
+                failure_detail = (
+                    "REPRO_FAILED:build - isolated build dependency "
+                    "resolution observed"
+                )
                 exits[arm] = 1
                 holds[arm] = None
                 continue
+            built_arms.add(arm)
 
-            out_json = case_dir / f"{arm}.json"
-            trig = log.run(
-                [
-                    str(py),
-                    str(TRIG_ROOT / f"{nid}.py"),
-                    "--seed",
-                    str(seed),
-                    "--json-out",
-                    str(out_json),
-                ],
-                label=f"{nid}:{arm}:trigger",
-                check=False,
-                timeout=300,
-            )
-            (case_dir / f"{arm}.stdout.txt").write_text(trig.stdout or "", encoding="utf-8")
-            (case_dir / f"{arm}.stderr.txt").write_text(trig.stderr or "", encoding="utf-8")
-            prop = None
-            if out_json.is_file():
-                prop = json.loads(out_json.read_text(encoding="utf-8")).get("property_holds")
-            if prop is None:
-                prop = trig.returncode == 0
-            exits[arm] = 0 if prop else 1
-            holds[arm] = bool(prop)
-            log.entries.append(
-                {
-                    "label": f"{nid}:{arm}:trigger-normalized-exit",
-                    "command": f"# property_holds={prop} normalized_exit={exits[arm]}",
-                    "cwd": str(ROOT),
-                    "exit_code": exits[arm],
-                    "stdout_tail": (trig.stdout or "")[-1000:],
-                    "stderr_tail": "",
-                    "timeout_s": None,
-                }
-            )
-
-        if failure_stage is None and not (
-            holds.get("buggy") is False and holds.get("fixed") is True
-        ):
-            failure_stage = "contrast"
+        if failure_stage is None and built_arms != {"buggy", "fixed"}:
+            failure_stage = "build"
             failure_detail = (
-                f"builds/triggers completed without issue contrast; holds={holds} exits={exits}"
+                f"REPRO_FAILED:build - incomplete arms built={sorted(built_arms)}"
             )
+
+        if failure_stage is None and nid in NUMERIC_BLAS_CASES:
+            for arm in ("buggy", "fixed"):
+                py = work / f"venv-{arm}" / "bin" / "python"
+                rec = discover_blas_lapack_provider(
+                    py, label=f"{nid}:{arm}:blas-lapack-provider"
+                )
+                # Persist full discovery command/stdout/stderr/exit.
+                prov_dir = locks / "blas_lapack" / arm
+                prov_dir.mkdir(parents=True, exist_ok=True)
+                (prov_dir / "command.txt").write_text(
+                    subprocess.list2cmdline(rec["command"]) + "\n",
+                    encoding="utf-8",
+                )
+                (prov_dir / "stdout.txt").write_text(
+                    rec["stdout"], encoding="utf-8"
+                )
+                (prov_dir / "stderr.txt").write_text(
+                    rec["stderr"], encoding="utf-8"
+                )
+                (prov_dir / "exit_code.txt").write_text(
+                    f"{rec['exit_code']}\n", encoding="utf-8"
+                )
+                write_json(
+                    prov_dir / "provider.json",
+                    {
+                        "provider_summary": rec["provider_summary"],
+                        "parsed": rec["parsed"],
+                        "exit_code": rec["exit_code"],
+                    },
+                )
+                log.entries.append(
+                    {
+                        "label": rec["label"],
+                        "command": subprocess.list2cmdline(rec["command"]),
+                        "cwd": str(ROOT),
+                        "exit_code": rec["exit_code"],
+                        "stdout_tail": scrub((rec["stdout"] or "")[-4000:]),
+                        "stderr_tail": scrub((rec["stderr"] or "")[-4000:]),
+                        "timeout_s": 120,
+                    }
+                )
+                blas_records[arm] = {
+                    "provider_summary": rec["provider_summary"],
+                    "exit_code": rec["exit_code"],
+                    "artifact_dir": str(
+                        (prov_dir).relative_to(ROOT)
+                    ),
+                }
+            write_json(
+                locks / "BLAS_LAPACK_PROVIDER.json",
+                {"neutral_id": nid, "arms": blas_records},
+            )
+
+        if failure_stage is None:
+            # Per-arm smoke (seed=0) before formal repetitions.
+            for arm in ("buggy", "fixed"):
+                py = work / f"venv-{arm}" / "bin" / "python"
+                for smoke_seed in smoke_seeds:
+                    smoke_dir = case_dir / "smoke" / f"seed-{smoke_seed}"
+                    out_json = smoke_dir / f"{arm}.json"
+                    trig, payload, prop = _run_trigger_once(
+                        log,
+                        py=py,
+                        nid=nid,
+                        arm=arm,
+                        seed=smoke_seed,
+                        out_json=out_json,
+                        label=f"{nid}:{arm}:smoke-seed-{smoke_seed}",
+                    )
+                    save_execution_outputs(
+                        smoke_dir,
+                        arm,
+                        payload=payload,
+                        stdout=trig.stdout or "",
+                        stderr=trig.stderr or "",
+                        raw_return_code=trig.returncode,
+                    )
+                    if prop is None:
+                        failure_stage = "smoke"
+                        failure_detail = (
+                            f"REPRO_FAILED:smoke - {arm} seed={smoke_seed} "
+                            "missing property_holds"
+                        )
+
+        if failure_stage is None:
+            # Formal repetition matrix with buggy/fixed input parity.
+            for formal_seed in formal_seeds:
+                seed_dir = case_dir / "repetitions" / f"seed-{formal_seed}"
+                arm_payloads: dict[str, dict | None] = {}
+                arm_props: dict[str, bool | None] = {}
+                arm_rcs: dict[str, int] = {}
+                for arm in ("buggy", "fixed"):
+                    py = work / f"venv-{arm}" / "bin" / "python"
+                    out_json = seed_dir / f"{arm}.json"
+                    trig, payload, prop = _run_trigger_once(
+                        log,
+                        py=py,
+                        nid=nid,
+                        arm=arm,
+                        seed=formal_seed,
+                        out_json=out_json,
+                        label=(
+                            f"{nid}:{arm}:formal-seed-{formal_seed}"
+                        ),
+                    )
+                    save_execution_outputs(
+                        seed_dir,
+                        arm,
+                        payload=payload,
+                        stdout=trig.stdout or "",
+                        stderr=trig.stderr or "",
+                        raw_return_code=trig.returncode,
+                    )
+                    arm_payloads[arm] = payload
+                    arm_props[arm] = prop
+                    arm_rcs[arm] = trig.returncode
+                parity = assert_arm_input_parity(
+                    arm_payloads.get("buggy"),
+                    arm_payloads.get("fixed"),
+                    formal_seed,
+                )
+                per_seed[formal_seed] = {
+                    "buggy_property_holds": arm_props.get("buggy"),
+                    "fixed_property_holds": arm_props.get("fixed"),
+                    "buggy_raw_return_code": arm_rcs.get("buggy"),
+                    "fixed_raw_return_code": arm_rcs.get("fixed"),
+                    "input_parity_ok": parity,
+                }
+                # Keep seed-0 top-level aliases for prior consumers.
+                if formal_seed == 0:
+                    for arm in ("buggy", "fixed"):
+                        src_json = seed_dir / f"{arm}.json"
+                        if src_json.is_file():
+                            shutil.copy2(src_json, case_dir / f"{arm}.json")
+                        (case_dir / f"{arm}.stdout.txt").write_text(
+                            (seed_dir / f"{arm}.stdout.txt").read_text(
+                                encoding="utf-8"
+                            ),
+                            encoding="utf-8",
+                        )
+                        (case_dir / f"{arm}.stderr.txt").write_text(
+                            (seed_dir / f"{arm}.stderr.txt").read_text(
+                                encoding="utf-8"
+                            ),
+                            encoding="utf-8",
+                        )
+                    holds = {
+                        "buggy": arm_props.get("buggy"),
+                        "fixed": arm_props.get("fixed"),
+                    }
+                    exits = {
+                        "buggy": (
+                            0 if arm_props.get("buggy") else 1
+                        ),
+                        "fixed": (
+                            0 if arm_props.get("fixed") else 1
+                        ),
+                    }
+
+            aggregation = aggregate_formal_verdict(
+                per_seed, formal_seeds=formal_seeds
+            )
+            write_json(
+                case_dir / "REPETITION_MATRIX.json",
+                {
+                    "neutral_id": nid,
+                    "smoke_seeds": smoke_seeds,
+                    "formal_seeds": formal_seeds,
+                    "per_seed": {
+                        str(k): v for k, v in sorted(per_seed.items())
+                    },
+                    "aggregation": aggregation,
+                },
+            )
+            if aggregation["proposed_crit_dual_arm_repro"] != "PASS":
+                failure_stage = "contrast"
+                failure_detail = (
+                    "REPRO_FAILED:contrast - formal matrix failing_seeds="
+                    f"{aggregation['failing_seeds']}"
+                )
 
         return finalize_case(
             member=member,
@@ -743,6 +991,18 @@ def run_dual_arm_python_case(
                 "hash_locked_build_closure": True,
                 "no_build_isolation": True,
                 "python_for_case": str(python),
+                "execution_matrix": {
+                    "smoke_seeds": smoke_seeds,
+                    "formal_seeds": formal_seeds,
+                },
+                "blas_lapack_providers": blas_records,
+                "formal_aggregation": (
+                    aggregate_formal_verdict(
+                        per_seed, formal_seeds=formal_seeds
+                    )
+                    if per_seed
+                    else None
+                ),
             },
         )
     except Exception as exc:  # noqa: BLE001
@@ -873,15 +1133,19 @@ def hash_tree_files(case_dir: Path) -> dict:
         "fixed.json",
         "stdout.log",
         "stderr.log",
+        "REPETITION_MATRIX.json",
     ]:
         p = case_dir / name
         if p.exists():
             files[name] = sha256_file(p)
-    locks = case_dir / "locks"
-    if locks.exists():
-        for p in sorted(locks.rglob("*")):
+    for sub in ("locks", "smoke", "repetitions"):
+        root = case_dir / sub
+        if not root.exists():
+            continue
+        for p in sorted(root.rglob("*")):
             if p.is_file() and not p.name.startswith("."):
-                files[f"locks/{p.relative_to(locks).as_posix()}"] = sha256_file(p)
+                rel = f"{sub}/{p.relative_to(root).as_posix()}"
+                files[rel] = sha256_file(p)
     return files
 
 
@@ -1016,23 +1280,7 @@ def run_verification(log: CommandLog, membership_path: Path, readiness_path: Pat
     proc = log.run(
         [
             str(HOST_PY),
-            "-c",
-            "import csv,json,hashlib; "
-            "from pathlib import Path; "
-            "m=json.load(open('data/external_slice/BATCH3_MEMBERSHIP.json')); "
-            "r=json.load(open('data/external_slice/readiness_batch3.json')); "
-            "ids=[x['neutral_id'] for x in m['members']]; "
-            "assert ids==['EXT-numpy-01','EXT-scipy-01','EXT-scikit-learn-01',"
-            "'EXT-statsmodels-01','EXT-statsmodels-02','EXT-statsmodels-03']; "
-            "assert [c['neutral_id'] for c in r['cases']]==ids; "
-            "sheet=Path('data/external_slice/admission_sheet.csv').read_bytes(); "
-            "assert hashlib.sha256(sheet).hexdigest()=="
-            "'77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a'; "
-            "rows=list(csv.DictReader(open('data/external_slice/admission_sheet.csv'))); "
-            "assert all(row['crit_dual_arm_repro']=='PENDING' for row in rows if row['neutral_id'] in set(ids)); "
-            "crows=list(csv.DictReader(open('data/external_slice/admission_sheet.cursor_candidate.csv'))); "
-            "assert all(row['crit_dual_arm_repro']=='PENDING' for row in crows); "
-            "print('membership_ok', len(ids))",
+            "scripts/external_slice/verify_batch3_membership_matrix.py",
         ],
         cwd=ROOT,
         label="verify:membership_and_sheet_pending",
@@ -1089,23 +1337,32 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--sheet", type=Path, default=DEFAULT_SHEET)
     parser.add_argument("--membership", type=Path, default=DEFAULT_MEMBERSHIP)
-    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--matrix",
+        type=Path,
+        default=DEFAULT_MATRIX,
+        help="Frozen A1d-r1 execution matrix",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=0,
+        help="Ignored for formal aggregation; matrix seeds govern verdicts",
+    )
     parser.add_argument("--only", nargs="*", help="Optional subset of neutral_ids")
     args = parser.parse_args()
     args.sheet = args.sheet.resolve()
     args.membership = args.membership.resolve()
+    args.matrix = args.matrix.resolve()
 
     WORK.mkdir(parents=True, exist_ok=True)
+    matrix = load_execution_matrix(args.matrix)
+    membership_sha = assert_membership_byte_identical(
+        args.membership, matrix=matrix
+    )
     membership = json.loads(args.membership.read_text(encoding="utf-8"))
     members = membership["members"]
-    expected = [
-        "EXT-numpy-01",
-        "EXT-scipy-01",
-        "EXT-scikit-learn-01",
-        "EXT-statsmodels-01",
-        "EXT-statsmodels-02",
-        "EXT-statsmodels-03",
-    ]
+    expected = list(matrix["members"])
     got = [m["neutral_id"] for m in members]
     if got != expected:
         raise SystemExit(f"membership IDs must be exactly {expected}, got {got}")
@@ -1127,7 +1384,7 @@ def main() -> int:
         result = run_dual_arm_python_case(
             log,
             member,
-            seed=args.seed,
+            matrix=matrix,
             runtime_pkgs=list(spec["runtime_pkgs"]),
             build_pkgs=list(spec["build_pkgs"]),
             python=py,
@@ -1150,27 +1407,42 @@ def main() -> int:
     readiness = {
         "batch": 3,
         "batch_name": "supplemental-pilot-six",
+        "gate": "A1d-r1",
         "frozen_membership": str(args.membership.relative_to(ROOT)),
+        "frozen_membership_sha256": membership_sha,
+        "frozen_execution_matrix": str(args.matrix.relative_to(ROOT)),
+        "frozen_execution_matrix_sha256": sha256_file(args.matrix),
         "frozen_at_commit": membership.get("frozen_at_commit"),
         "gate_a1c_verdict": membership.get("gate_a1c_verdict"),
         "selection_rule": membership.get("selection_rule"),
         "source_sheet": str(args.sheet.relative_to(ROOT)),
         "source_sheet_sha256": sheet_sha,
-        "seed": args.seed,
+        "smoke_seeds": list(matrix["smoke"]["seeds"]),
+        "formal_seeds": list(matrix["formal_repetitions"]["seeds"]),
+        "seed": 0,
         "cases": results,
         "counts": {
             "batch_size": len(results),
-            "proposed_PASS": sum(1 for r in results if r.get("proposed_crit_dual_arm_repro") == "PASS"),
+            "proposed_PASS": sum(
+                1
+                for r in results
+                if r.get("proposed_crit_dual_arm_repro") == "PASS"
+            ),
             "proposed_REPRO_FAILED": sum(
-                1 for r in results if r.get("proposed_crit_dual_arm_repro") == "REPRO_FAILED"
+                1
+                for r in results
+                if r.get("proposed_crit_dual_arm_repro") == "REPRO_FAILED"
             ),
         },
         "cumulative_note": (
             "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; "
-            "Gate A1d cannot unlock canonical freeze; supplementary-mining loop required."
+            "Gate A1d-r1 cannot unlock canonical freeze; "
+            "supplementary-mining loop required."
         ),
         "not_started": membership.get("not_started", []),
-        "sheet_mutation_policy": "supplemental and candidate sheet A2 fields remain PENDING",
+        "sheet_mutation_policy": (
+            "supplemental and candidate sheet A2 fields remain PENDING"
+        ),
     }
     readiness_path = ROOT / "data" / "external_slice" / "readiness_batch3.json"
     write_json(readiness_path, readiness)
@@ -1216,14 +1488,37 @@ def main() -> int:
     outputs_files = {
         "readiness_batch3.json": sha256_file(readiness_path),
         "BATCH3_MEMBERSHIP.json": sha256_file(args.membership),
-        "BATCH3_COMMAND_LOG.json": sha256_file(REPRO_ROOT / "BATCH3_COMMAND_LOG.json"),
-        "BATCH3_VERIFICATION_LOG.json": sha256_file(REPRO_ROOT / "BATCH3_VERIFICATION_LOG.json"),
+        "BATCH3_EXECUTION_MATRIX.json": sha256_file(args.matrix),
+        "BATCH3_COMMAND_LOG.json": sha256_file(
+            REPRO_ROOT / "BATCH3_COMMAND_LOG.json"
+        ),
+        "BATCH3_VERIFICATION_LOG.json": sha256_file(
+            REPRO_ROOT / "BATCH3_VERIFICATION_LOG.json"
+        ),
         "admission_sheet.csv": sheet_sha,
         "admission_sheet.cursor_candidate.csv": sha256_file(
             ROOT / "data/external_slice/admission_sheet.cursor_candidate.csv"
         ),
     }
-    per_case = {m["neutral_id"]: hash_tree_files(REPRO_ROOT / m["neutral_id"]) for m in members if (not args.only or m["neutral_id"] in args.only)}
+    # Include per-case BLAS provider JSON files in the handoff digest set.
+    for m in members:
+        if args.only and m["neutral_id"] not in args.only:
+            continue
+        blas = (
+            REPRO_ROOT
+            / m["neutral_id"]
+            / "locks"
+            / "BLAS_LAPACK_PROVIDER.json"
+        )
+        if blas.is_file():
+            outputs_files[
+                f"reproduction/{m['neutral_id']}/locks/BLAS_LAPACK_PROVIDER.json"
+            ] = sha256_file(blas)
+    per_case = {
+        m["neutral_id"]: hash_tree_files(REPRO_ROOT / m["neutral_id"])
+        for m in members
+        if (not args.only or m["neutral_id"] in args.only)
+    }
 
     case_results = [
         {
@@ -1231,60 +1526,94 @@ def main() -> int:
             "proposed": r["proposed_crit_dual_arm_repro"],
             "trigger_exit_codes": r.get("trigger_exit_codes"),
             "failure_stage": r.get("failure_stage"),
+            "formal_seeds": list(matrix["formal_repetitions"]["seeds"]),
+            "smoke_seeds": list(matrix["smoke"]["seeds"]),
         }
         for r in results
     ]
 
     handoff = {
-        "task": "C3 readiness Batch 3 supplemental-pilot six",
-        "gate": "A1d",
+        "task": "C3 readiness Batch 3 A1d-r1 correction",
+        "gate": "A1d-r1",
         "branch": "cursor/grok-phase3-c3-readiness-batch3",
-        "baseline_commit": "0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a",
-        "membership_commit": None,  # filled by commit step if desired
+        "baseline_commit": "da70fa676ebcab8ef1e98f532aa711c2d01f0c84",
+        "parent_handoff_commit": "da70fa676ebcab8ef1e98f532aa711c2d01f0c84",
+        "membership_commit": "cc3321da3a9e6f1f7d67e5b90cdf21d6fb9001c1",
         "batch": {
             "number": 3,
             "member_count": len(results),
-            "selection": "fixed six supplemental-pilot A1/A3 PASS A2 PENDING rows; no substitution",
+            "selection": (
+                "fixed six supplemental-pilot A1/A3 PASS A2 PENDING rows; "
+                "no substitution"
+            ),
             "replacement_policy": "forbidden",
-            "sheet_a2_policy": "PENDING unchanged on supplemental and candidate sheets",
+            "sheet_a2_policy": (
+                "PENDING unchanged on supplemental and candidate sheets"
+            ),
+            "execution_matrix": str(args.matrix.relative_to(ROOT)),
+            "smoke_seeds": list(matrix["smoke"]["seeds"]),
+            "formal_seeds": list(matrix["formal_repetitions"]["seeds"]),
             "stop_after_push": True,
             "batch4_started": False,
             "c4_started": False,
+            "supplementary_mining_started": False,
+            "canonical_freeze_started": False,
         },
         "counts": readiness["counts"],
         "case_results": case_results,
         "commands": {
-            "case_execution_log": "data/external_slice/reproduction/BATCH3_COMMAND_LOG.json",
+            "case_execution_log": (
+                "data/external_slice/reproduction/BATCH3_COMMAND_LOG.json"
+            ),
             "case_command_count": len(all_cmds),
-            "verification_log": "data/external_slice/reproduction/BATCH3_VERIFICATION_LOG.json",
+            "verification_log": (
+                "data/external_slice/reproduction/BATCH3_VERIFICATION_LOG.json"
+            ),
             "verification_command_count": len(verify["commands"]),
-            "hash_check_script": "scripts/external_slice/check_batch3_handoff_hashes.py",
+            "hash_check_script": (
+                "scripts/external_slice/check_batch3_handoff_hashes.py"
+            ),
         },
         "exit_codes": {
-            "per_case_trigger": {c["neutral_id"]: c.get("trigger_exit_codes") for c in results},
-            "admission_checker": verify["checks"]["admission_checker"]["exit_code"],
-            "pytest": verify["checks"]["pytest"]["exit_code"],
-            "compileall": verify["checks"]["compileall"]["exit_code"],
-            "leak_scan_reserved_runbook": verify["checks"]["leak_scan_reserved_runbook"]["exit_code"],
-            "token_scan": verify["checks"]["token_scan"]["exit_code"],
-            "membership_and_sheet_pending": verify["checks"]["membership_and_sheet_pending"][
+            "per_case_trigger": {
+                c["neutral_id"]: c.get("trigger_exit_codes") for c in results
+            },
+            "admission_checker": verify["checks"]["admission_checker"][
                 "exit_code"
             ],
+            "pytest": verify["checks"]["pytest"]["exit_code"],
+            "compileall": verify["checks"]["compileall"]["exit_code"],
+            "leak_scan_reserved_runbook": verify["checks"][
+                "leak_scan_reserved_runbook"
+            ]["exit_code"],
+            "token_scan": verify["checks"]["token_scan"]["exit_code"],
+            "membership_and_sheet_pending": verify["checks"][
+                "membership_and_sheet_pending"
+            ]["exit_code"],
         },
         "inputs": {
             "BATCH3_MEMBERSHIP.json": outputs_files["BATCH3_MEMBERSHIP.json"],
+            "BATCH3_EXECUTION_MATRIX.json": outputs_files[
+                "BATCH3_EXECUTION_MATRIX.json"
+            ],
             "admission_sheet.csv": sheet_sha,
-            "seed": args.seed,
+            "smoke_seeds": list(matrix["smoke"]["seeds"]),
+            "formal_seeds": list(matrix["formal_repetitions"]["seeds"]),
             "build_timeout_s": BUILD_TIMEOUT,
         },
-        "outputs": {"files": outputs_files, "per_case_artifact_sha256": per_case},
+        "outputs": {
+            "files": outputs_files,
+            "per_case_artifact_sha256": per_case,
+        },
         "environment": {
             "python": platform.python_version(),
             "platform": platform.platform(),
             "machine": platform.machine(),
             "tools": tool_versions(),
         },
-        "failures": [c for c in case_results if c["proposed"] == "REPRO_FAILED"],
+        "failures": [
+            c for c in case_results if c["proposed"] == "REPRO_FAILED"
+        ],
         "not_started": readiness["not_started"],
         "cumulative_note": readiness["cumulative_note"],
         "created_at": datetime.now(timezone.utc).isoformat(),
