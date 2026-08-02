@@ -1,0 +1,245 @@
+{
+  "baseline_commit": "0e208929ec4b6fc6ef8e49f6312c489be7ed4f8a",
+  "batch": {
+    "batch4_started": false,
+    "c4_started": false,
+    "member_count": 6,
+    "number": 3,
+    "replacement_policy": "forbidden",
+    "selection": "fixed six supplemental-pilot A1/A3 PASS A2 PENDING rows; no substitution",
+    "sheet_a2_policy": "PENDING unchanged on supplemental and candidate sheets",
+    "stop_after_push": true
+  },
+  "branch": "cursor/grok-phase3-c3-readiness-batch3",
+  "case_results": [
+    {
+      "failure_stage": null,
+      "neutral_id": "EXT-numpy-01",
+      "proposed": "PASS",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
+    },
+    {
+      "failure_stage": null,
+      "neutral_id": "EXT-scipy-01",
+      "proposed": "PASS",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
+    },
+    {
+      "failure_stage": null,
+      "neutral_id": "EXT-scikit-learn-01",
+      "proposed": "PASS",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
+    },
+    {
+      "failure_stage": null,
+      "neutral_id": "EXT-statsmodels-01",
+      "proposed": "PASS",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
+    },
+    {
+      "failure_stage": null,
+      "neutral_id": "EXT-statsmodels-02",
+      "proposed": "PASS",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
+    },
+    {
+      "failure_stage": null,
+      "neutral_id": "EXT-statsmodels-03",
+      "proposed": "PASS",
+      "trigger_exit_codes": {
+        "buggy": 1,
+        "fixed": 0
+      }
+    }
+  ],
+  "commands": {
+    "case_command_count": 121,
+    "case_execution_log": "data/external_slice/reproduction/BATCH3_COMMAND_LOG.json",
+    "hash_check_script": "scripts/external_slice/check_batch3_handoff_hashes.py",
+    "verification_command_count": 7,
+    "verification_log": "data/external_slice/reproduction/BATCH3_VERIFICATION_LOG.json"
+  },
+  "counts": {
+    "batch_size": 6,
+    "proposed_PASS": 6,
+    "proposed_REPRO_FAILED": 0
+  },
+  "created_at": "2026-08-02T03:20:45.626119+00:00",
+  "cumulative_note": "Even if all six PASS, Batch1+2+3 ready <= 18 < protocol n>=20; Gate A1d cannot unlock canonical freeze; supplementary-mining loop required.",
+  "environment": {
+    "machine": "x86_64",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "tools": {
+      "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "machine": "x86_64",
+      "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "python39": "/tmp/c3_batch1/work/python39/install/bin/python3.9"
+    }
+  },
+  "exit_codes": {
+    "admission_checker": 0,
+    "compileall": 0,
+    "handoff_hash_checker": 0,
+    "leak_scan_reserved_runbook": 0,
+    "membership_and_sheet_pending": 0,
+    "per_case_trigger": {
+      "EXT-numpy-01": {
+        "buggy": 1,
+        "fixed": 0
+      },
+      "EXT-scikit-learn-01": {
+        "buggy": 1,
+        "fixed": 0
+      },
+      "EXT-scipy-01": {
+        "buggy": 1,
+        "fixed": 0
+      },
+      "EXT-statsmodels-01": {
+        "buggy": 1,
+        "fixed": 0
+      },
+      "EXT-statsmodels-02": {
+        "buggy": 1,
+        "fixed": 0
+      },
+      "EXT-statsmodels-03": {
+        "buggy": 1,
+        "fixed": 0
+      }
+    },
+    "pytest": 0,
+    "token_scan": 0
+  },
+  "failures": [],
+  "gate": "A1d",
+  "inputs": {
+    "BATCH3_MEMBERSHIP.json": "02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853",
+    "admission_sheet.csv": "77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a",
+    "build_timeout_s": 7200,
+    "seed": 0
+  },
+  "membership_commit": "cc3321da3a9e6f1f7d67e5b90cdf21d6fb9001c1",
+  "not_started": [
+    "C4 annotation support",
+    "human labelling",
+    "category-map freeze",
+    "predictive freeze",
+    "detection-run execution",
+    "canonical admission freeze",
+    "Batch 4+"
+  ],
+  "outputs": {
+    "files": {
+      "BATCH3_COMMAND_LOG.json": "28991dbb6236b6a4ca4d50144fad4faef154a7a85b3acc49807cdf3a950c58f2",
+      "BATCH3_MEMBERSHIP.json": "02d47656f6fc5a528c9f1cf747bba8025440914e12873fcc8975a8f54e6da853",
+      "BATCH3_VERIFICATION_LOG.json": "fbaed8e5f154ab13a89465211be2a9a39f9c957fa60629921d1472ab0f2904f8",
+      "admission_sheet.csv": "77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a",
+      "admission_sheet.cursor_candidate.csv": "4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8",
+      "readiness_batch3.json": "194e255aca7dc82c30dc00061c2e16233ed26cf9a6502669e37c80eb974238a2"
+    },
+    "per_case_artifact_sha256": {
+      "EXT-numpy-01": {
+        "COMMANDS.json": "8b359f862f84b7a623db252e126ba914454da89dd6e41ce207384bf2a8f45109",
+        "buggy.json": "338758ac4987e4baa510753716430c7e6c2e3ef5c7b04434eb28d7c999e4f3c2",
+        "environment.json": "4d5e2dd241aeb25726ad61c7d1d5a85be57bbf1f1b2e7af9eb0124114d785bca",
+        "fixed.json": "8466d9c4459ec753bf28bb4313714098a3662c880c04e30435d3f3d8faf7b12f",
+        "locks/BUILD_ARTIFACT_HASHES.json": "cf1a941114d654e8df29d5df503e4cd63cd8a71dc691377ad696e6ee95239ed1",
+        "locks/BUILD_TOOLS.json": "d05eba4efde113fb8fe31de3e5aeeff4b8a10853cf7bfbf0a3db739726ee427a",
+        "locks/SOURCE_HASHES.json": "b694d5e0c4e63d4a4bf9eaea39d0173fb3cc6c61ba5d0c95378cc93e8a3e5e39",
+        "locks/requirements.build.txt": "7106a84e3f1b73f92fbe8e18dc5d74db702c55891872389162f4af1831642f05",
+        "stderr.log": "a25231c3d586a03509635943d1c098932eab6a13921ea15bfb73da5b840064bb",
+        "stdout.log": "33f58426d22551ec8d94a3adedcd09b8e72e1dfbaa4918aa229be3d21afdba3b"
+      },
+      "EXT-scikit-learn-01": {
+        "COMMANDS.json": "0a2fdf4660696177fd170e57265e7a7cca0830e1acbddb2d880a8918ee2bf24e",
+        "buggy.json": "6c8a9a075ae19149442fe7395c0eeace6744142a47710121fb02f1a0461e0c10",
+        "environment.json": "007abfe3b0d04f250973ffc00b592b4bfb568d1a6b5152e556c24cbe1447ef31",
+        "fixed.json": "c7298281dc51eebaa3d3b3b24d55fe57a58c35e8f7ff880ae685765e3c8430be",
+        "locks/BUILD_ARTIFACT_HASHES.json": "e811f343e788d569238e1137177138839db6df25d81684848a4cde3d6ba50998",
+        "locks/BUILD_TOOLS.json": "fdc33c4af05447983a57b89d272e7d24107ef9f6da7929426a5a7553b9cac25f",
+        "locks/SOURCE_HASHES.json": "3bec8a2df2bbe856d3b4ffcdf7db9007c729f8ccaddb252d0d7c4b241a3a6925",
+        "locks/WHEEL_ARTIFACT_HASHES.json": "cf338d09cbd9cc3f6e7a4cb3aaefae95967089bc0b4448ede2649691969b4cb7",
+        "locks/requirements.build.txt": "b9b41b27ce05dbb52e2331944fdc714065abbe8babc6b9929e3fd9b0494c49c8",
+        "locks/requirements.deps.txt": "25a4a04fb32a2f7b57668e5c58cd31232d43481cac97b772b7b6f701524ea66e",
+        "stderr.log": "86315cc692f982f09bd79703f54871a7b1a511aa4955925e8794caa65f57bfbb",
+        "stdout.log": "33f58426d22551ec8d94a3adedcd09b8e72e1dfbaa4918aa229be3d21afdba3b"
+      },
+      "EXT-scipy-01": {
+        "COMMANDS.json": "999ed16b8fbbcb326a58c7ce8590ccb3e6c132cd47931a12527941a6640f2e5c",
+        "buggy.json": "2b794593a62b740fb380507a5e51be9d5da7bd99380cea10439287951e8cec2d",
+        "environment.json": "8af24a77587743b58f53dd2ea182e260017cfd61b522ab158a3f42ee6c9e9645",
+        "fixed.json": "007e5bed55ed56b110e7296fcb17091d24202810928445213938a3c57e4813f9",
+        "locks/BUILD_ARTIFACT_HASHES.json": "6cfe1031e6642aadfa09bace3a8a0161433e4346f5f508f6555558dbc280784b",
+        "locks/BUILD_TOOLS.json": "2cbdc77b0df83dea1fda3f14089d2635dc75c6b52c453d08b83403bf3304f345",
+        "locks/SOURCE_HASHES.json": "d6ed4626f897bcf27f5cf3cca360fa74a8a9cd5cf26e11810f4f7fa7d8b2d8c1",
+        "locks/WHEEL_ARTIFACT_HASHES.json": "2699fdc7e0be7e659623fced6a2f6fbf972b2e57b1f63c2755e9e1025a85db0e",
+        "locks/requirements.build.txt": "19c256f9aade983e0de67fae7c21d7127d46281d1c16a9bb612fa48d7090dd7f",
+        "locks/requirements.deps.txt": "b04cff47a9669aeceb1bf62c4f4299766338ab6338c2efad49cff407cd1af90d",
+        "stderr.log": "a9dad432570171eae940f7b7043173d66df4912c78867be258e8db4d5fb285e2",
+        "stdout.log": "33f58426d22551ec8d94a3adedcd09b8e72e1dfbaa4918aa229be3d21afdba3b"
+      },
+      "EXT-statsmodels-01": {
+        "COMMANDS.json": "0934f557886f6571363a7a64e1660b88fbe41fe841d8f57ecc27534b53f4f492",
+        "buggy.json": "d9f432a76e422048fed2dc252c908d782d3b942d4f7e9cf6e136571ccc018456",
+        "environment.json": "f066b42ca5a1852528d9bbc31e1bb0b4e61ab0d49307ce487091bec00f63b65b",
+        "fixed.json": "405b5acb5c068b4c82a99825a035e787d1ff4eb196f1bce3ed02969fb8c029ea",
+        "locks/BUILD_ARTIFACT_HASHES.json": "73e15b0d57d358256e4dfc37664b2e6d7ef424b24be89ca2361ca95858b68669",
+        "locks/BUILD_TOOLS.json": "eee5b93dafc8ee3cc981ed64516faff48189da68454d79cf274e6ca2c4233ec3",
+        "locks/SOURCE_HASHES.json": "46900870dad3fff917df8eb8390427fa96e1a2611590932868f578a242796c2b",
+        "locks/WHEEL_ARTIFACT_HASHES.json": "9532ddb38fd7b47b340886d23e8991c19cffe5182da929823dd071ab4d40c8b2",
+        "locks/requirements.build.txt": "2c1a7a3c1b5779b854815057b23d1bc24912fbf5098c0558f521c3027fd24169",
+        "locks/requirements.deps.txt": "23cea83fff7f567ecd1393a58c8ac4735166c2cd1a6dbf93a7815df5c0afca1a",
+        "stderr.log": "86315cc692f982f09bd79703f54871a7b1a511aa4955925e8794caa65f57bfbb",
+        "stdout.log": "33f58426d22551ec8d94a3adedcd09b8e72e1dfbaa4918aa229be3d21afdba3b"
+      },
+      "EXT-statsmodels-02": {
+        "COMMANDS.json": "dc9ae0fbcb763b4189fc0b84463b9a605a9932cb0c120e1a786cb3fed09175b6",
+        "buggy.json": "3a6ab7090e059c6233da110488f81f285db1734903f933519d56bd006e3f40ec",
+        "environment.json": "82bf0aef06531cfe7e19f23e8ee00e40b476b6df9dc3f1fda03c38de8a2fe107",
+        "fixed.json": "ae9b94e5a2467f711ef65980391aa51388a5829d34dd31ca20ee16506f85938d",
+        "locks/BUILD_ARTIFACT_HASHES.json": "f61467457ddcdf2610520f7ee0405d8abf7fa3570f6d6920c10c0d26ef6a6621",
+        "locks/BUILD_TOOLS.json": "cf1e52e21f89fe8011d443bcbc2053ced0c71ce19906c122f2275e6d68afa320",
+        "locks/SOURCE_HASHES.json": "101a11ca6aba67c6d501429d8d538bea526ff1f10ab4c0b10dbc89167c624908",
+        "locks/WHEEL_ARTIFACT_HASHES.json": "04d331fa283ddf0bd08bb3e8867e085f4f1e5ddac7940bbc180f051b4a1acc99",
+        "locks/requirements.build.txt": "21585770f430ea22698a5d7f7b06ccddbd277f00df849f8788d503d42dd6d789",
+        "locks/requirements.deps.txt": "032bd79c1d5dcf554857e33288df1cfd39fe6c1a774700ff6c913b460a4b27e7",
+        "stderr.log": "86315cc692f982f09bd79703f54871a7b1a511aa4955925e8794caa65f57bfbb",
+        "stdout.log": "33f58426d22551ec8d94a3adedcd09b8e72e1dfbaa4918aa229be3d21afdba3b"
+      },
+      "EXT-statsmodels-03": {
+        "COMMANDS.json": "f967a36bba519a7375c6e7f2cb7dece6ce6c3fcaa1664724904fda5cefee3b19",
+        "buggy.json": "78662bd1b4cb4d6b32341b24fb2c15504172c82264cc778a3d937424daf45c86",
+        "environment.json": "92d4b3e113fd8fd7471879c295458270322eaf215e688c8ac7ff3be1e83a4a3a",
+        "fixed.json": "4d3bd38f7f64fe1e028a031357c05f3194ff85496fa02137beb8ff868f6d54a8",
+        "locks/BUILD_ARTIFACT_HASHES.json": "d6f210a8ad8d5ceed4e5fb54911297ca9ef878d192d05b582c4b92be0d13efa8",
+        "locks/BUILD_TOOLS.json": "45a13883b68db549db2f0b03ec5aba7173d2a1410d94e9e123a9eb4ec50b7f68",
+        "locks/SOURCE_HASHES.json": "44be0d0ab94b5dcad5db20604b21c93218d3e1f6b0b1a7253a2f4d36606b8ff9",
+        "locks/WHEEL_ARTIFACT_HASHES.json": "3369611fb726add9686f6a51dd9804a1b1c49258df26eb8d90454f7dd6801ae9",
+        "locks/requirements.build.txt": "27de489d7eaa59955ad66c10118658944f7c91c86ce24844fd38ebc64d521ba3",
+        "locks/requirements.deps.txt": "d56fc4bed33df3b173ee9b7bd038bee3d541bc35e267c80732bdd1acb18095f9",
+        "stderr.log": "86315cc692f982f09bd79703f54871a7b1a511aa4955925e8794caa65f57bfbb",
+        "stdout.log": "33f58426d22551ec8d94a3adedcd09b8e72e1dfbaa4918aa229be3d21afdba3b"
+      }
+    }
+  },
+  "task": "C3 readiness Batch 3 supplemental-pilot six"
+}
