@@ -7,11 +7,13 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
@@ -169,9 +171,6 @@ def refuse_forbidden_transport(command_text: str) -> None:
 
 
 def default_graphql_runner(query: str, variables: dict[str, Any]) -> tuple[int, str, str]:
-    import os
-    import time
-
     refuse_forbidden_transport(query)
     cmd = ["gh", "api", "graphql", "-f", f"query={query}"]
     for key in ("owner", "name"):
