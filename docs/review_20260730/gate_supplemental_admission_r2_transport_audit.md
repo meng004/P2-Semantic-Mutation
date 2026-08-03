@@ -650,3 +650,97 @@ review. It must:
    attacks; and
 5. preserve all live data byte-for-byte, pass targeted/full verification,
    commit, push, and stop for Local Desktop r2 re-review.
+
+## 13. `SUPPLEMENTAL_ADMISSION_R2-transport-result-r2` re-review
+
+- **Correction baseline:** `1e5aee2329c9549ef665cc5cb6d487ebbab74b63`
+- **Correction commit:** `8076d82f8c02209ad33416594ee30e7183e8b7c6`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live-data baseline:** `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc`
+- **Live data:** byte-identical to baseline
+- **Verdict:** `BLOCKED`
+
+### 13.1 Closed implementation findings
+
+The checker now owns cutoff parsing, NFC/casefold normalization, phrase-surface
+matching, per-phrase top-20 selection, URL deduplication, repository ordering,
+and full snapshot-record construction. A test replaces all corresponding
+producer functions with exceptions while the checker still verifies the valid
+payload. The previous `SUPP-R2-CHECKER-INDEPENDENCE-001` finding is therefore
+closed.
+
+The checker also adds explicit raw-node checks for Issue typename, CLOSED state,
+non-null `closedAt`, canonical issue URL, required fields, and label nodes. A
+fully synchronized and resealed independent probe confirms that a raw
+`PullRequest` mutation is rejected after updating the page hash, manifest,
+snapshot source hashes and record hashes and rebuilding queue, decisions,
+sheet, evidence, and the publish seal. The previous raw-type symptom is closed.
+
+### 13.2 `SUPP-R2-LABEL-PAGINATION-FAILOPEN-001`
+
+The complete-label check remains fail-open. At
+`check_supplemental_r2_admission.py:240-245`, missing `pageInfo` is replaced by
+an empty dictionary and the checker rejects only when `hasNextPage is True`.
+Consequently a missing field, JSON `null`, or another non-boolean value is
+accepted, although the frozen contract requires the exact condition
+`labels.pageInfo.hasNextPage == false`.
+
+The independent probe changed a selected raw issue first by deleting
+`hasNextPage` and then by setting it to `null`. For each mutation it updated the
+raw-page SHA, page manifest, all affected snapshot source hashes and record
+hashes, rebuilt queue, decisions, candidate sheet and evidence, and recomputed
+`PUBLISH_COMMIT.json`. In both cases the complete checker printed
+`ADMISSION_CHECK_OK` and returned 0. Controls using `PullRequest` and literal
+boolean `true` returned nonzero under the same full rebuild. This isolates a
+real semantic fail-open rather than a stale-hash rejection.
+
+### 13.3 Negative-test isolation remains incomplete
+
+The committed `PullRequest` and incomplete-label tests call
+`fully_reseal_snapshot`, but that helper refreshes only manifest page hashes and
+the publish seal. It does not synchronize snapshot `source_page_sha256`, record
+hashes, or downstream queue/decision/sheet/evidence artifacts. Both tests
+therefore remain green on stale binding mismatches even if the intended
+raw-node validator is disabled. They do not satisfy section 12.5(4)'s isolated,
+fully resealed negative-test requirement.
+
+The real frozen-but-absent phrase test does rebuild all downstream bindings and
+is valid. The test-quality finding is confined to the two raw-page semantic
+attacks.
+
+### 13.4 Verification evidence
+
+The correction is a single direct child of r1 and changes only the checker and
+checker tests. Fresh Local Desktop verification produced `172 passed` in the
+targeted R2 suite and `432 passed, 10 warnings` in the full suite. Exact Ruff,
+compileall, `git diff --check`, and the live-data byte check all returned zero.
+
+Standards and Specification both report `FAIL` because the complete-label
+contract is still fail-open and the named negative tests do not isolate their
+target semantic guards. Passing the committed suites does not override these
+adversarial results.
+
+### 13.5 Gate decision and r3 correction scope
+
+A1/A3 and every downstream task remain locked. The 552 live pages, 156-row
+snapshot and queue, command log, publish seal, frozen files, and historical
+failed-run archive remain immutable observed evidence. Retrieval must not be
+rerun. The structural chaospy/SALib shortfall and required
+`DISTRIBUTION_TARGET_AT_RISK` disclosure are unchanged.
+
+The only unlocked task is
+`SUPPLEMENTAL_ADMISSION_R2-transport-result-r3` on the same Cursor branch,
+without `rtk`, network access, retrieval, A1/A3 review, or downstream work. It
+must:
+
+1. require `labels` and `labels.pageInfo` to be dictionaries and require
+   `labels.pageInfo.hasNextPage is False` exactly;
+2. replace the `PullRequest` and incomplete-label negatives with isolated
+   helpers that synchronize raw-page/manifest/snapshot hashes and rebuild every
+   downstream binding before invoking the full checker;
+3. cover missing, `null`, non-boolean, and literal `true` `hasNextPage` values,
+   plus a positive literal `false` control;
+4. prove that disabling the intended typename or label guard makes its
+   corresponding negative fail, so no stale-hash check can self-confirm it;
+5. preserve live data byte-for-byte, pass targeted/full/static verification,
+   commit, push, and stop for Local Desktop r3 re-review.
