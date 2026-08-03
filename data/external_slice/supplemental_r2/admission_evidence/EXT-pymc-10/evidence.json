@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "a3c20606753726e09799f05721e68101e637df72",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "test-infrastructure",
+  "fixed_sha": "89916ad724ae88ebb4c1af3d65919b87b318f180",
+  "issue_node_id": "MDU6SXNzdWU3Nzc0NTI1NTQ=",
+  "issue_number": 4399,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/4399",
+  "mechanism": "expands invalid-parameter logcdf test coverage.",
+  "neutral_id": "EXT-pymc-10",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/89916ad724ae88ebb4c1af3d65919b87b318f180",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/4399",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0010",
+  "snapshot_record_sha256": "d63e04165dadcb0704ceb444a56ad65f6e635782230849a567d692150513f06b",
+  "source_cohort": "supplemental_r2"
+}

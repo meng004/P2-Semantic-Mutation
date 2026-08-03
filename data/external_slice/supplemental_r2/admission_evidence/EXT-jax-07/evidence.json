@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOCTkjjc8AAAABBWPhBg",
+  "issue_number": 37389,
+  "issue_url": "https://github.com/jax-ml/jax/issues/37389",
+  "mechanism": "custom_jvp nondeterminism outside frozen numerical scope.",
+  "neutral_id": "EXT-jax-07",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/jax-ml/jax/issues/37389",
+  "repository": "jax-ml/jax",
+  "snapshot_record_id": "SSR2-06-0007",
+  "snapshot_record_sha256": "c2f2e35b2e838d766eece3abeafe6d537444c90b1cd1eecc4fae94b087f58a88",
+  "source_cohort": "supplemental_r2"
+}

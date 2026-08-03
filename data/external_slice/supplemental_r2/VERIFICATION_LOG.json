@@ -1,0 +1,166 @@
+{
+  "baseline_commit": "020b60fb83f7eb1d34f143458fca62beab5aa398",
+  "commands": [
+    {
+      "command": "python3 -m json.tool data/external_slice/supplemental_r2/REVIEW_DECISIONS.json >/dev/null",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "JSON_OK"
+    },
+    {
+      "command": "env PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py validate-decisions --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "DECISIONS_OK"
+    },
+    {
+      "command": "env PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py build-payload --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "PAYLOAD_OK"
+    },
+    {
+      "command": "env PYTHONPATH=src python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "ADMISSION_CHECK_OK"
+    },
+    {
+      "command": "env PYTHONPATH=src python3 -m pytest -q tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "============================= 182 passed in 24.20s ============================="
+    },
+    {
+      "command": "env PYTHONPATH=src python3 -m pytest -q",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "====================== 442 passed, 10 warnings in 30.72s ======================="
+    },
+    {
+      "command": "git diff --exit-code 020b60fb83f7eb1d34f143458fca62beab5aa398 -- data/external_slice/supplemental_r2/SCOPE.json data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json data/external_slice/supplemental_r2/QUOTAS.json data/external_slice/supplemental_r2/ISSUE_SNAPSHOT.json data/external_slice/supplemental_r2/COMMAND_LOG.json data/external_slice/supplemental_r2/PUBLISH_COMMIT.json data/external_slice/supplemental_r2/transport_pages data/external_slice/supplemental_r2/failed_runs",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "immutable transport evidence unchanged"
+    },
+    {
+      "command": "git diff --check",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "no whitespace errors"
+    }
+  ],
+  "confirmations": {
+    "a2_all_pending": true,
+    "analysis_id_all_blank": true,
+    "immutable_transport_unchanged": true,
+    "no_readiness": true,
+    "no_retrieval_rerun": true
+  },
+  "created_at_utc": "2026-08-03T14:21:48Z",
+  "environment": {
+    "cwd": "/workspace",
+    "gh": "gh version 2.91.0 (2026-04-22)",
+    "git": "git version 2.43.0",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "Python 3.12.3"
+  },
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2",
+  "quota_disclosure_status": "DISTRIBUTION_TARGET_AT_RISK",
+  "repository_review_counts": {
+    "SALib/SALib": {
+      "admit_pending_repro": 0,
+      "excluded": 0,
+      "exclusion_class_counts": {},
+      "queue_size": 0,
+      "review_status_counts": {},
+      "reviewed": 0,
+      "stop_reason": "queue_exhausted"
+    },
+    "cornellius-gp/gpytorch": {
+      "admit_pending_repro": 2,
+      "excluded": 3,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 1,
+        "behaviour change that is intended API redesign": 2
+      },
+      "queue_size": 5,
+      "review_status_counts": {
+        "REVIEWED": 5
+      },
+      "reviewed": 5,
+      "stop_reason": "queue_exhausted"
+    },
+    "jax-ml/jax": {
+      "admit_pending_repro": 1,
+      "excluded": 19,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 14,
+        "behaviour change that is intended API redesign": 2,
+        "build/packaging": 1,
+        "crash-only": 1,
+        "test-infrastructure": 1
+      },
+      "queue_size": 34,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 14,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "twenty_reviewed"
+    },
+    "jonathf/chaospy": {
+      "admit_pending_repro": 0,
+      "excluded": 2,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 1,
+        "behaviour change that is intended API redesign": 1
+      },
+      "queue_size": 2,
+      "review_status_counts": {
+        "REVIEWED": 2
+      },
+      "reviewed": 2,
+      "stop_reason": "queue_exhausted"
+    },
+    "pymc-devs/pymc": {
+      "admit_pending_repro": 5,
+      "excluded": 11,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 3,
+        "behaviour change that is intended API redesign": 1,
+        "build/packaging": 3,
+        "documentation": 3,
+        "test-infrastructure": 1
+      },
+      "queue_size": 24,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 8,
+        "REVIEWED": 16
+      },
+      "reviewed": 16,
+      "stop_reason": "five_admit_pending_repro"
+    },
+    "pytorch/pytorch": {
+      "admit_pending_repro": 2,
+      "excluded": 18,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 18
+      },
+      "queue_size": 91,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 71,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "twenty_reviewed"
+    }
+  },
+  "schema_version": 1,
+  "task": "SUPPLEMENTAL_MINING_R2",
+  "totals": {
+    "admit_pending_repro": 10,
+    "decisions": 63,
+    "excluded": 53
+  }
+}

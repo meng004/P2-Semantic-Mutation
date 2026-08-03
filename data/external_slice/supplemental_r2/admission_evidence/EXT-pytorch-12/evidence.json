@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "97b208b0869e42dd3cd7aaf2d2276412184e3529",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "fbc71f5503c520ddb26e6dcbb13f75997603140e",
+  "issue_node_id": "I_kwDOA-j9z88AAAABG6Qs2w",
+  "issue_number": 188335,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/188335",
+  "mechanism": "MPS Conv2d correctness fix outside linalg/optim/special-function scope.",
+  "neutral_id": "EXT-pytorch-12",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/fbc71f5503c520ddb26e6dcbb13f75997603140e",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/188335",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0012",
+  "snapshot_record_sha256": "f090980be841162e0a8e2628a7f02852e34c7f8526ee24a0acebcdb9b6de75f2",
+  "source_cohort": "supplemental_r2"
+}

@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "e9434450f196f0c32b5500574534bdf4534187f2",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "f2a2c90de1455c8b3d6fb90f880523a9a301b0c0",
+  "issue_node_id": "I_kwDOA-j9z88AAAABIOiU2A",
+  "issue_number": 189401,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/189401",
+  "mechanism": "Inductor reduction view lowering outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-07",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/f2a2c90de1455c8b3d6fb90f880523a9a301b0c0",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/189401",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0007",
+  "snapshot_record_sha256": "84e1cf5ed02d2e17df72b2d345afc98b70f5d419799e644e1c1ec62c1cf53a88",
+  "source_cohort": "supplemental_r2"
+}

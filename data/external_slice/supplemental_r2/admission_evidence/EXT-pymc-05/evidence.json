@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "82eae9a2991a1ac2d5595c325c090bce1f4e9d81",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "documentation",
+  "fixed_sha": "3729614ea38b36dee7be2641dda7200a35acd185",
+  "issue_node_id": "I_kwDOAALxiM5WtHvZ",
+  "issue_number": 6310,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/6310",
+  "mechanism": "adds a warning about hessian sign without restoring the prior sign.",
+  "neutral_id": "EXT-pymc-05",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/3729614ea38b36dee7be2641dda7200a35acd185",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/6310",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0005",
+  "snapshot_record_sha256": "81bfbf310c6c0c5e7adfffec4f1f51b63f6c192318b09ea4704e0c8af395826b",
+  "source_cohort": "supplemental_r2"
+}

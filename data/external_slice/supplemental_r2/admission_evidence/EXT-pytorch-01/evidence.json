@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABKDF7Wg",
+  "issue_number": 191014,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/191014",
+  "mechanism": "ONNX TorchScript export path outside linalg/optim/special-function scope.",
+  "neutral_id": "EXT-pytorch-01",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/191014",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0001",
+  "snapshot_record_sha256": "9f64c09582af5895f0e06223b701ed0016cacd8170f80b30d791a90a35610f48",
+  "source_cohort": "supplemental_r2"
+}

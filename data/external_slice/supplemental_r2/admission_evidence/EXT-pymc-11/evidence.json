@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "0ec65e52a701e437780eb5c50b5f063886309ac1",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "0402aab9594ec7c4f63c4ea35a52428d424652b4",
+  "issue_node_id": "MDU6SXNzdWU3NzIzMTg0OTk=",
+  "issue_number": 4366,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/4366",
+  "mechanism": "restores HyperGeometric logp bounds for previously wrong values.",
+  "neutral_id": "EXT-pymc-11",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/0402aab9594ec7c4f63c4ea35a52428d424652b4",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/4366",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0011",
+  "snapshot_record_sha256": "c4104ee3062d35f5966e4e63bbeec2f430b0a5308fdefeab1fd0bf42a62dd0a9",
+  "source_cohort": "supplemental_r2"
+}

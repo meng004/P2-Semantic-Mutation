@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABIBuRmg",
+  "issue_number": 189225,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/189225",
+  "mechanism": "ONNX dynamo GRU export outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-08",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/189225",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0008",
+  "snapshot_record_sha256": "07ed4f15ee084d79dc7a01eafa78dee9afc00885f5668db5ffcb1a42b699e78d",
+  "source_cohort": "supplemental_r2"
+}

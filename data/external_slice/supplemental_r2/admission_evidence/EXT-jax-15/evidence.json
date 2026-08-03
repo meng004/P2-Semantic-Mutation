@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "5179642eb5572b8fbec01dca5e03e2a636e513c2",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "439c412cd4c928c124d776b4c73fe72e3aabd7be",
+  "issue_node_id": "I_kwDOCTkjjc6sXJqP",
+  "issue_number": 26888,
+  "issue_url": "https://github.com/jax-ml/jax/issues/26888",
+  "mechanism": "multidimensional pad fix outside linalg/optim/special-function scope.",
+  "neutral_id": "EXT-jax-15",
+  "public_fix_url": "https://github.com/jax-ml/jax/commit/439c412cd4c928c124d776b4c73fe72e3aabd7be",
+  "public_issue_url": "https://github.com/jax-ml/jax/issues/26888",
+  "repository": "jax-ml/jax",
+  "snapshot_record_id": "SSR2-06-0015",
+  "snapshot_record_sha256": "116f8bc5e8101d051aa0e0371e1b0c45906601018b0b1022c788c74f7ff06e5b",
+  "source_cohort": "supplemental_r2"
+}

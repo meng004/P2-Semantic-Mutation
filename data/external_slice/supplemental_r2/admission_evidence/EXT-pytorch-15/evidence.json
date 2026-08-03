@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "ce97d365f9875eea9d0d4151607762def0bd2d5c",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "ef129df4d67252e63e3429da07ac4333c8ce8d3a",
+  "issue_node_id": "I_kwDOA-j9z88AAAABFHARsg",
+  "issue_number": 187018,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/187018",
+  "mechanism": "Inductor uint8 abs codegen outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-15",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/ef129df4d67252e63e3429da07ac4333c8ce8d3a",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/187018",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0015",
+  "snapshot_record_sha256": "cc8d9468129a7191a9fbd3da590ca2737c5b34e14abc0fde1c2e008c0239ad34",
+  "source_cohort": "supplemental_r2"
+}

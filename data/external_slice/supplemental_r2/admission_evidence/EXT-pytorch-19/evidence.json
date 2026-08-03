@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "eb80dd583a7b531e3beef0af664b40416c98e325",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "554aee00865e54f08389c9f2fa755ccaa322a59b",
+  "issue_node_id": "I_kwDOA-j9z88AAAABDqjv8A",
+  "issue_number": 185517,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/185517",
+  "mechanism": "Inductor bf16 scalar rounding for a ranking loss outside frozen scope.",
+  "neutral_id": "EXT-pytorch-19",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/554aee00865e54f08389c9f2fa755ccaa322a59b",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/185517",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0019",
+  "snapshot_record_sha256": "6da4e1868650b9dca70c39a522587b485a1fdd53047dbb9aac34da6d7d1bc6b0",
+  "source_cohort": "supplemental_r2"
+}

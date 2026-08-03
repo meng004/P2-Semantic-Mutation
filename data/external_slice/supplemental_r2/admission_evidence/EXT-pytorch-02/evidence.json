@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABJtZC5w",
+  "issue_number": 190764,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/190764",
+  "mechanism": "Inductor integer-graph disagreement outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-02",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/190764",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0002",
+  "snapshot_record_sha256": "37cb5096900a06187dcab52e422f1fb1533e3f097ca89b64f96407ada75cf609",
+  "source_cohort": "supplemental_r2"
+}

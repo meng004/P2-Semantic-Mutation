@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABGskr9Q",
+  "issue_number": 188152,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/188152",
+  "mechanism": "fp8 MoE kernel mismatch outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-13",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/188152",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0013",
+  "snapshot_record_sha256": "e1c93f25705afd71737d343d8eccdfff15894a2c12e02f3c3a2388c2afc41734",
+  "source_cohort": "supplemental_r2"
+}

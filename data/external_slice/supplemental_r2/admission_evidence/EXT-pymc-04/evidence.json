@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "fa82fef054ee0b09965741c6bf166611317d2221",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "23572e1495883db59babb518aadb88079b1d3afa",
+  "issue_node_id": "I_kwDOAALxiM5igqQR",
+  "issue_number": 6648,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/6648",
+  "mechanism": "restores probability dtype casting in the icdf path.",
+  "neutral_id": "EXT-pymc-04",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/23572e1495883db59babb518aadb88079b1d3afa",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/6648",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0004",
+  "snapshot_record_sha256": "60986730c980bc4c50cff186e88d84559dcf32d80c7d2801d7bac15035856fd4",
+  "source_cohort": "supplemental_r2"
+}
