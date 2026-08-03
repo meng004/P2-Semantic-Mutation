@@ -204,3 +204,90 @@ Cursor branch, without `rtk` and without network retrieval. It must:
    overwriting them; and
 7. commit, verify, push, and stop for local transport-r2 review before any live
    retrieval.
+
+## 7. `SUPPLEMENTAL_ADMISSION_R2-transport-r2` re-review
+
+- **Correction baseline:** `62fe052d017d66c9ac054442ee31cd9e3303705b`
+- **Correction commit:** `ebbafad20859c6f6fbb6990ca63e3af8703a3773`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live retrieval:** not run
+- **Verdict:** `BLOCKED`
+
+### 7.1 Closed findings and positive verification
+
+The correction is the direct child of transport-r1. Independent probes confirm
+that a lock loser now performs zero network and zero filesystem mutation;
+run/code conflicts and illegal code commits fail before ownership; queue rebuild
+and payload generation retain run/code; and the admission checker rejects
+one-field run/code changes in log entries, snapshot, and queue.
+
+The sealed archive contains the unchanged 992-entry log and original diagnostic.
+Its two archived SHA-256 values exactly match the live originals and its manifest
+records the correct count, timestamp, and invariant. The live files are
+byte-unchanged relative to transport-r1.
+
+Fresh verification produced `128 passed` in the targeted suite and
+`388 passed, 10 warnings` in the full suite. Exact Ruff, compileall, and
+`git diff --check` returned zero. Standards is `PASS` with no hard finding.
+
+### 7.2 `SUPP-R2-ENDCURSOR-BINDING-001`
+
+Successful page entries now record the verified `endCursor`, but the checker
+validates only run/code fields. It does not reconstruct log-to-page-manifest
+identity or compare repository/page order, `after`, `endCursor`, variables hash,
+response-page hash, or next-request cursor continuity.
+
+An independent positive payload passed. Changing only the first page log
+entry's `endCursor` to `TAMPERED` still produced `ADMISSION_CHECK_OK` and exit 0.
+The generation-side field therefore is not yet an auditable binding.
+
+### 7.3 `SUPP-R2-FAILED-PAGE-PROVENANCE-001`
+
+For nonzero exits and malformed JSON, the attempted command is logged. For a
+parseable response that fails `validate_page`, however, the exception occurs
+before either `base_entry` or `success_entry` is appended. A probe changed only
+the first node typename to `PullRequest`; retrieval returned 1, but the command
+log contained only `retrieve_start` and `retrieve_terminal_failure`, with zero
+page entries. The executed request, response hash, variables, and timestamps
+were therefore absent from the failed-run provenance.
+
+Every runner invocation must create exactly one page command record. Validation
+failures should retain the base fields plus explicit failed validation status
+and invariant; only successful validation may mark `endCursor` as verified.
+
+### 7.4 `SUPP-R2-PUBLISH-CRASH-ATOMICITY-001`
+
+`crash_safe_publish` stages data but promotes `transport_pages` first and then
+writes final snapshot and queue separately. The regression test raises an
+ordinary `OSError`, so the outer exception handler runs cleanup; it does not
+simulate process death.
+
+An independent forked probe called `os._exit(77)` immediately after page
+promotion and before the final snapshot write. The resulting root contained
+`transport_pages/` and `.publish_staging/`, while snapshot and queue were absent.
+Thus publication is neither one atomic unit nor covered at every real crash
+boundary.
+
+Use a run-scoped immutable publish directory plus one atomically replaced,
+hash-bound commit pointer/manifest, or an explicit journal with rollback. Add
+child-process death tests at every promotion boundary; checker acceptance must
+depend on the single committed publish identity.
+
+### 7.5 Gate decision and r3 correction scope
+
+Standards is `PASS`; Specification is `FAIL`. Accepted-ready remains 18. No
+fresh retrieval, candidate generation, A1/A3 review, readiness, canonical
+freeze, C4, labelling, prediction, or detection work is unlocked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-transport-r3` on the same
+Cursor branch, without `rtk` and without network retrieval. It must:
+
+1. independently reconstruct command-log/page-manifest/next-request pagination
+   and fail on one-field mutations of every bound page field;
+2. record exactly one page command entry for every runner invocation, including
+   every `validate_page` failure;
+3. replace sequential final publication with one fail-closed committed publish
+   identity and test real process death at every boundary;
+4. retain all r2 lock, run/code, archive, lint, and test guarantees; and
+5. commit, verify, push, and stop for transport-r3 local review before any live
+   retrieval.
