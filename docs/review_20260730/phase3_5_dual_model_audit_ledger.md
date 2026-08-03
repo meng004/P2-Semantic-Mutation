@@ -90,7 +90,7 @@ S0 台账建立提交前实测：
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 | Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
 | Gate SUPPLEMENTAL_MINING_R2_DESIGN-r1 | correction audit `d95d6277ee09479d638bb83d75562e9dc4348031`；payload `1ed9fb2dc2714cb452bba4016d6093cefb36204d` | `PASS_WITH_DISCLOSURE` | N/A（设计分支，不含实验 payload） | 设计修订通过；但已发生的 Cursor Task 4 需独立执行审计，不能追溯通过 |
-| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | diagnostic `548702be000249bbb4262ffe3bf282f4e93b962c`；code `d989f713938d46b8a25519fafd5c465554d3da45` | `BLOCKED` | N/A（PR #7 未集成） | 否；仅解锁同分支 transport correction，不解锁 fresh retrieval 或 admission/readiness |
+| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-r1 `62fe052d017d66c9ac054442ee31cd9e3303705b`；blocked diagnostic `548702be000249bbb4262ffe3bf282f4e93b962c` | `BLOCKED` | N/A（PR #7 未集成） | 否；仅解锁同分支 transport-r2 correction，不解锁 fresh retrieval 或 admission/readiness |
 
 ## 5. 交接审计记录
 
@@ -694,3 +694,21 @@ Gate A1d-r3 以 `PASS_WITH_DISCLOSURE` 关闭。Batch 3 六案可计入 accepted
 | 后继任务是否解锁 | 否；仅同一 Cursor 分支的 transport correction；fresh retrieval、admission、readiness 和全部 downstream 均锁定。 |
 
 最终树未铸造 snapshot、queue、decision、sheet、evidence 或 handoff，这一原子结果属实。但 `COMMAND_LOG.json` 有 992 条记录、六仓各两条 page 0、460 组重复 page/cursor；hard-fail 时间后仍有 26 个请求。首个请求早于 runner commit `519ab9ad...`，且 generic exception 未完整清理或写 terminal failure log。Targeted `109 passed`、full `369 passed, 10 warnings`、compileall 通过；精确 Ruff 因未使用 `hashlib` 失败。现有日志仅保留为失败证据，不得用于 mint payload。
+
+### 5.20 SUPPLEMENTAL_ADMISSION_R2 transport-r1 复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-transport-r1` |
+| 记录类型 | transport correction 独立复审 |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | `62fe052d017d66c9ac054442ee31cd9e3303705b` |
+| Cursor baseline | `548702be000249bbb4262ffe3bf282f4e93b962c` |
+| Findings | Standards PASS；`SUPP-R2-LOCK-LOSER-MUTATION-001`、`SUPP-R2-RUN-BINDING-FAILOPEN-001`；endCursor、atomic publish、failed-run preservation 未闭环 |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同一 Cursor 分支 transport-r2 correction；fresh retrieval 及所有 downstream 均锁定。 |
+
+Correction 是 blocked baseline 的 direct child；旧 992-entry log 和 diagnostic 未变；diff 仅 miner/tests。独立验证为 targeted `113 passed`、full `373 passed, 10 warnings`，Ruff、compileall、diff-check 均通过。
+
+但锁失败者会在零网络调用后删除 owner snapshot/queue；checker 对 snapshot `run_id` 和 queue `code_commit` 的独立篡改仍 exit 0；queue rebuild 丢失绑定；page command log 缺少 `endCursor`；最终 pages/snapshot/queue 发布并非 atomic rename；下一次 retrieval 还会覆盖应保留的失败日志。因此不得运行 fresh retrieval。

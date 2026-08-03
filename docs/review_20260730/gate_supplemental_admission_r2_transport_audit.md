@@ -113,3 +113,94 @@ The only unlocked action is a correction on the same Cursor VM branch from
 
 A fresh live retrieval is not authorized by this gate. It may run exactly once
 only after the correction commit receives a separate local re-review pass.
+
+## 6. `SUPPLEMENTAL_ADMISSION_R2-transport-r1` re-review
+
+- **Correction baseline:** `548702be000249bbb4262ffe3bf282f4e93b962c`
+- **Correction commit:** `62fe052d017d66c9ac054442ee31cd9e3303705b`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live retrieval:** not run
+- **Verdict:** `BLOCKED`
+
+### 6.1 Closed findings and positive verification
+
+The correction is the direct child of the blocked baseline. It adds a
+non-blocking POSIX lock before runner invocation, same-directory atomic command
+log replacement, shared owner-side failure cleanup and terminal logging, and
+run/code fields. The prior F401 is closed. The original 992-entry command log
+and retrieval diagnostic are byte-unchanged, and the diff contains only the
+miner and its tests.
+
+Independent verification produced `113 passed` in the targeted suite and
+`373 passed, 10 warnings` in the full suite. Exact Ruff, compileall, and
+`git diff --check` all returned zero.
+
+### 6.2 `SUPP-R2-LOCK-LOSER-MUTATION-001`
+
+Lock acquisition correctly precedes every network call, but a lock loser still
+executes global cleanup at `mine_supplemental_r2.py:1171-1186`. An independent
+probe held `RETRIEVE.lock`, created owner snapshot/queue sentinels, and invoked
+a second retrieval. The loser returned 1 with zero runner calls but deleted
+both sentinels. A real second process can therefore remove artifacts published
+by the active owner before that owner releases its lock.
+
+The lock-loser path must be non-mutating with respect to the owner's command
+log, diagnostic, snapshot, queue, pages, and downstream artifacts. It may emit
+stderr or write a run-scoped rejection outside the owner's namespace.
+
+### 6.3 `SUPP-R2-RUN-BINDING-FAILOPEN-001`
+
+The new run/code fields are present but not fail-closed:
+
+- `append_command_log` uses `setdefault` for entry fields, so an entry can keep
+  run/code values that conflict with the authoritative arguments;
+- `resolve_code_commit` accepts an arbitrary environment string without a
+  full-SHA/current-HEAD check;
+- `cmd_build_queue` rewrites the queue without preserving run/code fields; and
+- neither supplemental checker reads or validates run/code fields or command
+  log identity.
+
+An independent positive payload passed the admission checker. After changing
+the snapshot `run_id`, the checker still returned 0; after independently
+changing the queue `code_commit`, it again returned 0. The added success test
+checks only that correctly supplied values are copied; it is not the claimed
+negative binding test.
+
+### 6.4 Remaining frozen-transport defects
+
+Two pre-existing transport requirements also remain unsafe for a fresh run:
+
+1. Page command-log entries are written before response validation and never
+   receive the returned `endCursor`, although the frozen plan requires every
+   page log entry to bind it. A synthetic successful run confirmed the field is
+   absent.
+2. Lines 1117-1146 label publication atomic but remove/create/copy the final
+   page directory and then write snapshot and queue non-atomically. A process
+   death during this sequence can leave partial published artifacts. This is
+   not the temporary-directory atomic rename required by section 3.3.
+
+In addition, `init_command_log` targets the canonical path directly and would
+overwrite the retained 992-entry failed-run evidence on the next retrieval.
+The failed run needs an immutable archived namespace/hash manifest before a new
+run can be authorized; it cannot be silently replaced.
+
+### 6.5 Gate decision and r2 correction scope
+
+Standards is `PASS`; Specification is `FAIL`. Fresh retrieval remains locked,
+and accepted-ready remains 18. No candidate, A1/A3 review, readiness, freeze,
+C4, labelling, prediction, or detection task is unlocked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-transport-r2` on the same
+Cursor branch, without `rtk` and without network retrieval. It must:
+
+1. make lock-loser handling non-mutating;
+2. validate one full-SHA code commit equal to the executing checkout and enforce
+   exact run/code equality across log entries, diagnostic, snapshot, queue, and
+   checker reconstruction;
+3. preserve run/code during every rebuild and add one-field mutation negatives;
+4. log validated returned `endCursor` on every page;
+5. implement crash-safe atomic publication of pages, snapshot, and queue;
+6. preserve the existing failed-run log/diagnostic immutably rather than
+   overwriting them; and
+7. commit, verify, push, and stop for local transport-r2 review before any live
+   retrieval.
