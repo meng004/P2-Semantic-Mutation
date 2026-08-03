@@ -358,3 +358,66 @@ Cursor branch, without `rtk` and without network retrieval. It must:
    and missing/duplicate nodes; and
 6. retain all r2/r3 guarantees, commit, verify, push, and stop for transport-r4
    local review before any live retrieval.
+
+## 9. `SUPPLEMENTAL_ADMISSION_R2-transport-r4` re-review
+
+- **Correction baseline:** `e3973bf7e0cf5af47598cd79c04a8a6b689f59d6`
+- **Correction commit:** `be88a04ae55058f49ac52ec1a9aa28eb17aa6e70`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live retrieval:** not run
+- **Verdict:** `BLOCKED`
+
+### 9.1 Closed finding and positive verification
+
+The correction is the direct child of transport-r3. The checker now derives
+the exact six-repository sequence from `SCOPE.json`, requires one nonempty and
+contiguous page block per repository in that order, binds raw
+`pageInfo.hasNextPage` and `endCursor` to the manifest and command log, enforces
+intermediate/final page terminality, and checks stable `totalCount`, contiguous
+page indices, retained node counts, and per-repository node identity.
+
+The resealed missing-repository escape from r3 is closed: deleting the complete
+PyMC block and recomputing the manifest and `PUBLISH_COMMIT` now returns exit 1
+with the exact five-versus-six repository mismatch. The correction changes only
+the miner, checker, and their tests; no retrieval or data artifact changed.
+
+Fresh verification produced `155 passed` in the targeted suite and
+`415 passed, 10 warnings` in the full suite. Exact Ruff, compileall,
+`git diff --check`, and the no-data-change check returned zero. Standards is
+`PASS`; the non-gating maintainability smells are abbreviated local names,
+two-pass raw-page decoding, and repeated primitive field bundles.
+
+### 9.2 `SUPP-R2-CROSS-REPOSITORY-IDENTITY-001`
+
+`verify_scope_page_coverage` recreates its node-ID, issue-number, and URL sets
+inside each repository block. It therefore proves uniqueness only within one
+repository, even though GitHub node IDs and canonical URLs are global
+identities across the frozen six-repository corpus. It also does not require a
+node URL's owner/repository path to match the enclosing `SCOPE.json`
+repository.
+
+An independent fully resealed probe copied the retained PyMC nodes into the
+GPyTorch page while preserving that page's count, then recomputed the response
+hash, manifest hash, and `PUBLISH_COMMIT`. The complete admission checker still
+printed `ADMISSION_CHECK_OK` and returned 0. Thus a corpus containing duplicate
+global IDs/URLs and nodes attributed to the wrong repository remains
+admissible.
+
+### 9.3 Gate decision and r5 correction scope
+
+Standards is `PASS`; Specification is `FAIL`. Accepted-ready remains 18. No
+fresh retrieval, candidate generation, A1/A3 review, readiness, canonical
+freeze, C4, labelling, prediction, or detection work is unlocked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-transport-r5` on the same
+Cursor branch, without `rtk` and without network retrieval. It must:
+
+1. maintain node-ID and canonical-URL uniqueness sets across all six repository
+   blocks, while issue-number uniqueness may remain repository-scoped;
+2. parse every retained issue URL and require its owner/repository to equal the
+   enclosing frozen SCOPE repository;
+3. add fully resealed negative tests for a cross-repository duplicate ID/URL
+   and a wrong-repository canonical URL;
+4. retain every r2-r4 regression and verification guarantee; and
+5. commit, verify, push, and stop for transport-r5 local review before any live
+   retrieval.
