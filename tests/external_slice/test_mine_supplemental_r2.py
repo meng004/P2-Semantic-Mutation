@@ -37,6 +37,19 @@ def load_miner():
 
 miner = load_miner()
 
+FIXED_CODE_COMMIT = "a" * 40
+
+
+@pytest.fixture
+def bind_code_commit(monkeypatch: pytest.MonkeyPatch):
+    """Force retrieve code_commit to a stable full SHA for deterministic tests."""
+
+    def _bind(sha: str = FIXED_CODE_COMMIT) -> str:
+        monkeypatch.setattr(miner, "current_checkout_code_commit", lambda: sha)
+        return sha
+
+    return _bind
+
 
 def _write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -323,15 +336,27 @@ def test_positive_retrieve_builds_snapshot_and_queue(tmp_path: Path) -> None:
     assert "wrong result" in queue["records"][0]["matched_phrases"]
 
 
-def test_build_queue_pure_reconstruction(tmp_path: Path) -> None:
+def test_build_queue_pure_reconstruction(
+    tmp_path: Path, bind_code_commit: Any
+) -> None:
+    code_commit = bind_code_commit("e" * 40)
     root = seed_root(tmp_path)
-    assert miner.cmd_retrieve(root, runner=build_complete_runner()) == 0
+    assert miner.cmd_retrieve(
+        root,
+        runner=build_complete_runner(),
+        run_id="rebuild-run",
+        code_commit=code_commit,
+    ) == 0
     (root / "REVIEW_QUEUE.json").unlink()
     assert miner.cmd_build_queue(root) == 0
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text())
     snapshot = json.loads((root / "ISSUE_SNAPSHOT.json").read_text())
     scope = json.loads((root / "SCOPE.json").read_text())
     assert queue["records"] == miner.build_queue_from_snapshot(scope, snapshot)
+    assert queue["run_id"] == "rebuild-run"
+    assert queue["code_commit"] == code_commit
+    assert queue["run_id"] == snapshot["run_id"]
+    assert queue["code_commit"] == snapshot["code_commit"]
 
 
 @pytest.mark.parametrize(
@@ -647,7 +672,10 @@ def test_hard_fail_does_not_mint_snapshot(tmp_path: Path) -> None:
     assert_hard_fail_no_candidates(root, code)
 
 
-def test_concurrent_retrieve_second_process_zero_network(tmp_path: Path) -> None:
+def test_concurrent_retrieve_second_process_zero_network(
+    tmp_path: Path, bind_code_commit: Any
+) -> None:
+    code_commit = bind_code_commit("c" * 40)
     root = seed_root(tmp_path)
     prior_log = {
         "schema_version": 1,
@@ -655,6 +683,12 @@ def test_concurrent_retrieve_second_process_zero_network(tmp_path: Path) -> None
         "entries": [{"keep": True, "idx": i} for i in range(3)],
     }
     _write_json(root / "COMMAND_LOG.json", prior_log)
+    _write_json(
+        root / "ISSUE_SNAPSHOT.json",
+        {"schema_version": 1, "records": [{"keep": True}]},
+    )
+    (root / "transport_pages").mkdir()
+    (root / "transport_pages" / "keep.json").write_text("{}\n", encoding="utf-8")
     holder = miner.RetrieveLock(root)
     holder.acquire()
     calls: list[int] = []
@@ -663,24 +697,29 @@ def test_concurrent_retrieve_second_process_zero_network(tmp_path: Path) -> None
         calls.append(1)
         return 0, "{}", ""
 
+    before_names = sorted(p.name for p in root.iterdir())
+    before_log = (root / "COMMAND_LOG.json").read_bytes()
+    before_snap = (root / "ISSUE_SNAPSHOT.json").read_bytes()
+    before_page = (root / "transport_pages" / "keep.json").read_bytes()
     code = miner.cmd_retrieve(
         root,
         runner=runner,
         run_id="lock-run",
-        code_commit="c" * 40,
+        code_commit=code_commit,
     )
     holder.release()
     assert code == 1
     assert calls == []
-    # Prior command log must remain untouched when lock is not owned.
+    # Lock loser: zero filesystem mutations on owner artifacts.
+    assert sorted(p.name for p in root.iterdir()) == before_names
+    assert (root / "COMMAND_LOG.json").read_bytes() == before_log
+    assert (root / "ISSUE_SNAPSHOT.json").read_bytes() == before_snap
+    assert (root / "transport_pages" / "keep.json").read_bytes() == before_page
+    assert not (root / "RETRIEVAL_HARD_FAIL.json").exists()
+    assert not (root / ".publish_staging").exists()
     kept = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
     assert kept == prior_log
-    fail = json.loads((root / "RETRIEVAL_HARD_FAIL.json").read_text(encoding="utf-8"))
-    assert fail["invariant"] == "retrieve_lock_held"
-    assert fail["run_id"] == "lock-run"
-    assert fail["code_commit"] == "c" * 40
-    assert fail["terminal"] is True
-    assert candidate_artifacts(root) == []
+    assert candidate_artifacts(root) == ["ISSUE_SNAPSHOT.json", "transport_pages"]
 
 
 def test_atomic_command_log_rejects_partial_temp(
@@ -718,7 +757,10 @@ def test_atomic_command_log_rejects_partial_temp(
     assert not path.read_text(encoding="utf-8").startswith("{truncated")
 
 
-def test_generic_exception_full_cleanup_and_terminal(tmp_path: Path) -> None:
+def test_generic_exception_full_cleanup_and_terminal(
+    tmp_path: Path, bind_code_commit: Any
+) -> None:
+    code_commit = bind_code_commit("b" * 40)
     root = seed_root(tmp_path)
     _write_json(root / "ISSUE_SNAPSHOT.json", {"records": []})
     _write_json(root / "REVIEW_QUEUE.json", {"records": []})
@@ -737,7 +779,7 @@ def test_generic_exception_full_cleanup_and_terminal(tmp_path: Path) -> None:
         root,
         runner=runner,
         run_id="gen-run",
-        code_commit="b" * 40,
+        code_commit=code_commit,
     )
     assert code == 1
     assert candidate_artifacts(root) == []
@@ -745,38 +787,200 @@ def test_generic_exception_full_cleanup_and_terminal(tmp_path: Path) -> None:
     assert fail["invariant"] == "unexpected_error"
     assert "injected generic failure" in fail["detail"]
     assert fail["run_id"] == "gen-run"
-    assert fail["code_commit"] == "b" * 40
+    assert fail["code_commit"] == code_commit
     assert fail["terminal"] is True
     log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
     assert log["run_id"] == "gen-run"
-    assert log["code_commit"] == "b" * 40
+    assert log["code_commit"] == code_commit
     labels = [e.get("label") for e in log["entries"]]
     assert "retrieve_terminal_failure" in labels
     terminal = next(
         e for e in log["entries"] if e.get("label") == "retrieve_terminal_failure"
     )
     assert terminal["run_id"] == "gen-run"
-    assert terminal["code_commit"] == "b" * 40
+    assert terminal["code_commit"] == code_commit
     assert terminal["terminal"] is True
 
 
-def test_run_and_code_commit_binding_on_success(tmp_path: Path) -> None:
+def test_run_and_code_commit_binding_on_success(
+    tmp_path: Path, bind_code_commit: Any
+) -> None:
+    code_commit = bind_code_commit("d" * 40)
     root = seed_root(tmp_path)
     code = miner.cmd_retrieve(
         root,
         runner=build_complete_runner(),
         run_id="ok-run",
-        code_commit="d" * 40,
+        code_commit=code_commit,
     )
     assert code == 0
     log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
     assert log["run_id"] == "ok-run"
-    assert log["code_commit"] == "d" * 40
+    assert log["code_commit"] == code_commit
     assert all(e.get("run_id") == "ok-run" for e in log["entries"])
-    assert all(e.get("code_commit") == "d" * 40 for e in log["entries"])
+    assert all(e.get("code_commit") == code_commit for e in log["entries"])
+    page_entries = [
+        e
+        for e in log["entries"]
+        if isinstance(e.get("page_index"), int) and e.get("exit_code") == 0
+    ]
+    assert page_entries
+    assert all("endCursor" in e for e in page_entries)
     snapshot = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
     assert snapshot["run_id"] == "ok-run"
-    assert snapshot["code_commit"] == "d" * 40
+    assert snapshot["code_commit"] == code_commit
     assert queue["run_id"] == "ok-run"
-    assert queue["code_commit"] == "d" * 40
+    assert queue["code_commit"] == code_commit
+
+
+def test_code_commit_must_match_checkout(
+    tmp_path: Path, bind_code_commit: Any
+) -> None:
+    bind_code_commit("1" * 40)
+    root = seed_root(tmp_path)
+    calls: list[int] = []
+
+    def runner(query: str, variables: dict[str, Any]) -> tuple[int, str, str]:
+        calls.append(1)
+        return 0, "{}", ""
+
+    code = miner.cmd_retrieve(
+        root,
+        runner=runner,
+        run_id="conflict-run",
+        code_commit="2" * 40,
+    )
+    assert code == 1
+    assert calls == []
+    assert not (root / "COMMAND_LOG.json").exists()
+    assert not (root / "RETRIEVAL_HARD_FAIL.json").exists()
+    assert candidate_artifacts(root) == []
+
+
+def test_illegal_code_commit_rejected(
+    tmp_path: Path, bind_code_commit: Any
+) -> None:
+    bind_code_commit("not-a-full-sha")
+    root = seed_root(tmp_path)
+    code = miner.cmd_retrieve(root, runner=build_complete_runner(), run_id="bad-code")
+    assert code == 1
+    assert not (root / "COMMAND_LOG.json").exists()
+    assert candidate_artifacts(root) == []
+
+
+def test_append_command_log_rejects_run_code_conflict(tmp_path: Path) -> None:
+    path = tmp_path / "COMMAND_LOG.json"
+    miner.init_command_log(path, run_id="run-a", code_commit="a" * 40)
+    with pytest.raises(miner.HardFail, match="run_id_conflict"):
+        miner.append_command_log(
+            path,
+            {"label": "x", "exit_code": 0},
+            run_id="run-b",
+            code_commit="a" * 40,
+        )
+    with pytest.raises(miner.HardFail, match="code_commit_conflict"):
+        miner.append_command_log(
+            path,
+            {"label": "y", "exit_code": 0, "code_commit": "b" * 40},
+            run_id="run-a",
+            code_commit="a" * 40,
+        )
+
+
+def test_crash_safe_publish_and_failure_recovery(
+    tmp_path: Path, bind_code_commit: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    code_commit = bind_code_commit("f" * 40)
+    root = seed_root(tmp_path)
+
+    # Orphan staging from a prior crash must be cleared by a successful owner run.
+    orphan = root / ".publish_staging" / "old-run"
+    orphan.mkdir(parents=True)
+    (orphan / "leftover.json").write_text("{}\n", encoding="utf-8")
+    assert miner.cmd_retrieve(
+        root,
+        runner=build_complete_runner(),
+        run_id="recover-run",
+        code_commit=code_commit,
+    ) == 0
+    assert not (root / ".publish_staging").exists()
+    assert (root / "ISSUE_SNAPSHOT.json").is_file()
+    assert (root / "transport_pages").is_dir()
+
+    # Mid-promote crash: pages swapped, snapshot write fails → no consistent publish.
+    root2 = seed_root(tmp_path / "crash")
+    real_atomic = miner.atomic_write_json
+    snap_attempts = {"n": 0}
+
+    def flaky_atomic(path: Path, payload: Any) -> None:
+        if path.name == "ISSUE_SNAPSHOT.json" and ".publish_staging" not in path.parts:
+            snap_attempts["n"] += 1
+            if snap_attempts["n"] == 1:
+                raise OSError("simulated crash during final snapshot publish")
+        real_atomic(path, payload)
+
+    monkeypatch.setattr(miner, "atomic_write_json", flaky_atomic)
+    code = miner.cmd_retrieve(
+        root2,
+        runner=build_complete_runner(),
+        run_id="crash-run",
+        code_commit=code_commit,
+    )
+    assert code == 1
+    assert not (root2 / "ISSUE_SNAPSHOT.json").exists()
+    assert not (root2 / "REVIEW_QUEUE.json").exists()
+    assert candidate_artifacts(root2) == []
+    fail = json.loads((root2 / "RETRIEVAL_HARD_FAIL.json").read_text(encoding="utf-8"))
+    assert fail["invariant"] == "unexpected_error"
+    assert fail["run_id"] == "crash-run"
+    assert fail["code_commit"] == code_commit
+
+    # Failure recovery: subsequent owner retrieve clears leftovers and publishes.
+    monkeypatch.setattr(miner, "atomic_write_json", real_atomic)
+    assert miner.cmd_retrieve(
+        root2,
+        runner=build_complete_runner(),
+        run_id="after-crash",
+        code_commit=code_commit,
+    ) == 0
+    assert (root2 / "ISSUE_SNAPSHOT.json").is_file()
+    assert (root2 / "REVIEW_QUEUE.json").is_file()
+    assert not list(root2.glob(".transport_pages.*"))
+    assert not (root2 / ".publish_staging").exists()
+    assert not (root2 / "RETRIEVAL_HARD_FAIL.json").exists()
+
+
+def test_seal_failed_run_archive_write_once(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    log = {
+        "schema_version": 1,
+        "task": "SUPPLEMENTAL_MINING_R2",
+        "entries": [{"page_index": i, "exit_code": 0} for i in range(3)],
+    }
+    diag = {
+        "schema_version": 1,
+        "task": "SUPPLEMENTAL_MINING_R2",
+        "invariant": "unexpected_error",
+        "detail": "boom",
+        "timestamp_utc": "2026-08-02T14:14:29Z",
+    }
+    _write_json(root / "COMMAND_LOG.json", log)
+    _write_json(root / "RETRIEVAL_HARD_FAIL.json", diag)
+    archive_id = "20260802T141429Z_unexpected_error"
+    dest = miner.seal_failed_run_archive(root, archive_id=archive_id)
+    assert dest == root / "failed_runs" / archive_id
+    manifest = json.loads((dest / "ARCHIVE_MANIFEST.json").read_text(encoding="utf-8"))
+    assert manifest["sealed"] is True
+    assert manifest["write_once"] is True
+    assert manifest["artifacts"]["COMMAND_LOG.json"]["entry_count"] == 3
+    assert manifest["artifacts"]["COMMAND_LOG.json"]["sha256"] == miner.sha256_file(
+        dest / "COMMAND_LOG.json"
+    )
+    assert manifest["artifacts"]["RETRIEVAL_HARD_FAIL.json"]["sha256"] == (
+        miner.sha256_file(dest / "RETRIEVAL_HARD_FAIL.json")
+    )
+    # Live originals remain; archive is a sealed copy.
+    assert (root / "COMMAND_LOG.json").is_file()
+    with pytest.raises(miner.HardFail, match="archive_exists"):
+        miner.seal_failed_run_archive(root, archive_id=archive_id)

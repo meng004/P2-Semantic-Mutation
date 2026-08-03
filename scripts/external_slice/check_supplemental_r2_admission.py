@@ -248,9 +248,93 @@ def verify_snapshot_records(scope: dict[str, Any], snapshot: dict[str, Any]) -> 
             fail(f"repository outside scope: {rec['repository']}")
 
 
+def verify_run_code_binding(root: Path, snapshot: dict[str, Any]) -> tuple[str, str]:
+    """Field-by-field run_id/code_commit consistency across owner artifacts."""
+    run_id = snapshot.get("run_id")
+    code_commit = snapshot.get("code_commit")
+    if not isinstance(run_id, str) or not run_id.strip():
+        fail("snapshot missing run_id")
+    if not isinstance(code_commit, str) or not FULL_SHA.fullmatch(code_commit):
+        fail(f"snapshot illegal code_commit: {code_commit!r}")
+
+    log_path = root / "COMMAND_LOG.json"
+    if not log_path.is_file():
+        fail("COMMAND_LOG.json missing")
+    log = load_json(log_path)
+    if log.get("run_id") != run_id:
+        fail(
+            f"command log run_id mismatch: log={log.get('run_id')!r} "
+            f"snapshot={run_id!r}"
+        )
+    if log.get("code_commit") != code_commit:
+        fail(
+            f"command log code_commit mismatch: log={log.get('code_commit')!r} "
+            f"snapshot={code_commit!r}"
+        )
+    entries = log.get("entries")
+    if not isinstance(entries, list):
+        fail("command log entries must be a list")
+    for idx, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            fail(f"command log entry[{idx}] is not an object")
+        if entry.get("run_id") != run_id:
+            fail(
+                f"command log entry[{idx}] run_id mismatch: "
+                f"{entry.get('run_id')!r} != {run_id!r}"
+            )
+        if entry.get("code_commit") != code_commit:
+            fail(
+                f"command log entry[{idx}] code_commit mismatch: "
+                f"{entry.get('code_commit')!r} != {code_commit!r}"
+            )
+
+    queue_path = root / "REVIEW_QUEUE.json"
+    if not queue_path.is_file():
+        fail("REVIEW_QUEUE.json missing")
+    queue = load_json(queue_path)
+    if queue.get("run_id") != run_id:
+        fail(
+            f"queue run_id mismatch: queue={queue.get('run_id')!r} "
+            f"snapshot={run_id!r}"
+        )
+    if queue.get("code_commit") != code_commit:
+        fail(
+            f"queue code_commit mismatch: queue={queue.get('code_commit')!r} "
+            f"snapshot={code_commit!r}"
+        )
+
+    diag_path = root / "RETRIEVAL_HARD_FAIL.json"
+    if diag_path.is_file():
+        diag = load_json(diag_path)
+        if diag.get("run_id") != run_id:
+            fail(
+                f"diagnostic run_id mismatch: diag={diag.get('run_id')!r} "
+                f"snapshot={run_id!r}"
+            )
+        if diag.get("code_commit") != code_commit:
+            fail(
+                f"diagnostic code_commit mismatch: "
+                f"diag={diag.get('code_commit')!r} snapshot={code_commit!r}"
+            )
+        fail("success admission root must not contain RETRIEVAL_HARD_FAIL.json")
+
+    return run_id, code_commit
+
+
 def verify_queue_binding(
     miner: Any, scope: dict[str, Any], snapshot: dict[str, Any], queue: dict[str, Any]
 ) -> list[dict[str, Any]]:
+    if queue.get("run_id") != snapshot.get("run_id"):
+        fail(
+            f"queue/snapshot run_id mismatch: queue={queue.get('run_id')!r} "
+            f"snapshot={snapshot.get('run_id')!r}"
+        )
+    if queue.get("code_commit") != snapshot.get("code_commit"):
+        fail(
+            f"queue/snapshot code_commit mismatch: "
+            f"queue={queue.get('code_commit')!r} "
+            f"snapshot={snapshot.get('code_commit')!r}"
+        )
     expected = miner.build_queue_from_snapshot(scope, snapshot)
     got = queue.get("records") or []
     if len(got) != len(expected):
@@ -517,6 +601,7 @@ def verify_admission(root: Path) -> int:
         verify_frozen_inputs(root, scope)
         miner = _load_miner()
         snapshot = load_json(root / "ISSUE_SNAPSHOT.json")
+        verify_run_code_binding(root, snapshot)
         verify_snapshot_records(scope, snapshot)
         queue_payload = load_json(root / "REVIEW_QUEUE.json")
         queue = verify_queue_binding(miner, scope, snapshot, queue_payload)

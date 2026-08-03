@@ -150,10 +150,8 @@ def normalize_match_text(text: str) -> str:
     return unicodedata.normalize("NFC", text or "").casefold()
 
 
-def resolve_code_commit() -> str:
-    env = os.environ.get("SUPPLEMENTAL_R2_CODE_COMMIT", "").strip()
-    if env:
-        return env
+def current_checkout_code_commit() -> str:
+    """Return the full 40-hex SHA of the current checkout (git HEAD)."""
     try:
         proc = subprocess.run(
             ["git", "rev-parse", "HEAD"],
@@ -161,11 +159,39 @@ def resolve_code_commit() -> str:
             text=True,
             check=False,
         )
-        if proc.returncode == 0 and proc.stdout.strip():
-            return proc.stdout.strip()
-    except OSError:
-        pass
-    return "UNKNOWN"
+    except OSError as exc:
+        raise HardFail("illegal_code_commit", f"git rev-parse failed: {exc}") from exc
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "").strip() or "git rev-parse failed"
+        raise HardFail("illegal_code_commit", detail)
+    sha = proc.stdout.strip()
+    if not FULL_SHA.fullmatch(sha):
+        raise HardFail("illegal_code_commit", f"HEAD is not a full SHA: {sha!r}")
+    return sha
+
+
+def resolve_code_commit(cli_value: str | None = None) -> str:
+    """Force code_commit to the current checkout SHA; reject conflicts/illegal values."""
+    head = current_checkout_code_commit()
+    if cli_value is None or cli_value == "":
+        return head
+    if not isinstance(cli_value, str) or not FULL_SHA.fullmatch(cli_value):
+        raise HardFail("illegal_code_commit", f"illegal code_commit: {cli_value!r}")
+    if cli_value != head:
+        raise HardFail(
+            "code_commit_conflict",
+            f"cli code_commit {cli_value} != checkout {head}",
+        )
+    return head
+
+
+def validate_run_id(run_id: str | None) -> str:
+    if not isinstance(run_id, str) or not run_id.strip():
+        raise HardFail("illegal_run_id", f"illegal run_id: {run_id!r}")
+    text = run_id.strip()
+    if any(ch.isspace() for ch in text):
+        raise HardFail("illegal_run_id", f"illegal run_id: {run_id!r}")
+    return text
 
 
 def new_run_id() -> str:
@@ -178,6 +204,9 @@ def init_command_log(
     run_id: str,
     code_commit: str,
 ) -> None:
+    run_id = validate_run_id(run_id)
+    if not FULL_SHA.fullmatch(code_commit):
+        raise HardFail("illegal_code_commit", f"illegal code_commit: {code_commit!r}")
     atomic_write_json(
         path,
         {
@@ -208,15 +237,46 @@ def append_command_log(
     payload.setdefault("schema_version", 1)
     payload.setdefault("task", "SUPPLEMENTAL_MINING_R2")
     payload.setdefault("entries", [])
-    if run_id is not None:
-        payload["run_id"] = run_id
-    if code_commit is not None:
-        payload["code_commit"] = code_commit
+
+    bound_run = validate_run_id(run_id) if run_id is not None else payload.get("run_id")
+    bound_code = code_commit if code_commit is not None else payload.get("code_commit")
+    if bound_run is None or bound_code is None:
+        raise HardFail("run_code_unbound", "command log missing run_id/code_commit")
+    bound_run = validate_run_id(str(bound_run))
+    if not FULL_SHA.fullmatch(str(bound_code)):
+        raise HardFail("illegal_code_commit", f"illegal code_commit: {bound_code!r}")
+
+    existing_run = payload.get("run_id")
+    existing_code = payload.get("code_commit")
+    if existing_run is not None and existing_run != bound_run:
+        raise HardFail(
+            "run_id_conflict",
+            f"log run_id {existing_run} != {bound_run}",
+        )
+    if existing_code is not None and existing_code != bound_code:
+        raise HardFail(
+            "code_commit_conflict",
+            f"log code_commit {existing_code} != {bound_code}",
+        )
+
+    entry_run = entry.get("run_id", bound_run)
+    entry_code = entry.get("code_commit", bound_code)
+    if entry_run != bound_run:
+        raise HardFail(
+            "run_id_conflict",
+            f"entry run_id {entry_run} != {bound_run}",
+        )
+    if entry_code != bound_code:
+        raise HardFail(
+            "code_commit_conflict",
+            f"entry code_commit {entry_code} != {bound_code}",
+        )
+
+    payload["run_id"] = bound_run
+    payload["code_commit"] = bound_code
     bound = dict(entry)
-    if run_id is not None:
-        bound.setdefault("run_id", run_id)
-    if code_commit is not None:
-        bound.setdefault("code_commit", code_commit)
+    bound["run_id"] = bound_run
+    bound["code_commit"] = bound_code
     payload["entries"].append(bound)
     atomic_write_json(path, payload)
 
@@ -230,6 +290,7 @@ CANDIDATE_CLEANUP_NAMES = (
     "HANDOFF_SUPPLEMENTAL_R2.json",
     "transport_pages",
     "admission_evidence",
+    ".publish_staging",
 )
 
 
@@ -240,6 +301,147 @@ def cleanup_candidate_artifacts(root: Path) -> None:
             shutil.rmtree(path)
         elif path.exists():
             path.unlink()
+    # Promote leftovers from interrupted crash-safe publish.
+    for leftover in root.glob(".transport_pages.*"):
+        if leftover.is_dir():
+            shutil.rmtree(leftover)
+        elif leftover.exists():
+            leftover.unlink()
+
+
+def publish_staging_root(root: Path) -> Path:
+    return root / ".publish_staging"
+
+
+def clear_orphan_publish_staging(root: Path, *, keep_run_id: str | None = None) -> None:
+    staging_root = publish_staging_root(root)
+    if not staging_root.is_dir():
+        return
+    for child in list(staging_root.iterdir()):
+        if keep_run_id is not None and child.name == keep_run_id:
+            continue
+        if child.is_dir():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+
+
+def crash_safe_publish(
+    root: Path,
+    *,
+    run_id: str,
+    code_commit: str,
+    temp_pages: Path,
+    snapshot: dict[str, Any],
+    queue_payload: dict[str, Any],
+) -> None:
+    """Stage pages/snapshot/queue, then atomically promote into the owner root.
+
+    Failure before promotion leaves only `.publish_staging/<run_id>/`.
+    Failure mid-promotion leaves detectable `.transport_pages.*` leftovers that
+    subsequent owner cleanup / recovery removes; final snapshot/queue are only
+    written after pages are swapped into place.
+    """
+    if snapshot.get("run_id") != run_id or snapshot.get("code_commit") != code_commit:
+        raise HardFail("run_code_unbound", "snapshot binding mismatch at publish")
+    if (
+        queue_payload.get("run_id") != run_id
+        or queue_payload.get("code_commit") != code_commit
+    ):
+        raise HardFail("run_code_unbound", "queue binding mismatch at publish")
+
+    staging = publish_staging_root(root) / run_id
+    if staging.exists():
+        shutil.rmtree(staging)
+    staging.mkdir(parents=True)
+    staged_pages = staging / "transport_pages"
+    staged_pages.mkdir(parents=True)
+    for page_file in sorted(temp_pages.glob("*.json")):
+        shutil.copy2(page_file, staged_pages / page_file.name)
+    atomic_write_json(staging / "ISSUE_SNAPSHOT.json", snapshot)
+    atomic_write_json(staging / "REVIEW_QUEUE.json", queue_payload)
+
+    promoting = root / f".transport_pages.{run_id}.promoting"
+    old_pages = root / f".transport_pages.{run_id}.old"
+    final_pages = root / "transport_pages"
+    if promoting.exists():
+        shutil.rmtree(promoting)
+    shutil.copytree(staged_pages, promoting)
+    if old_pages.exists():
+        shutil.rmtree(old_pages)
+    if final_pages.exists():
+        final_pages.rename(old_pages)
+    promoting.rename(final_pages)
+    atomic_write_json(root / "ISSUE_SNAPSHOT.json", snapshot)
+    atomic_write_json(root / "REVIEW_QUEUE.json", queue_payload)
+    if old_pages.exists():
+        shutil.rmtree(old_pages)
+    shutil.rmtree(staging)
+    staging_root = publish_staging_root(root)
+    if staging_root.is_dir() and not any(staging_root.iterdir()):
+        staging_root.rmdir()
+
+
+def seal_failed_run_archive(
+    root: Path,
+    *,
+    archive_id: str,
+    command_log: Path | None = None,
+    diagnostic: Path | None = None,
+) -> Path:
+    """Write-once, hash-bound archive of a failed retrieve log + diagnostic."""
+    if not archive_id or any(ch in archive_id for ch in ("/", "\\", "..")):
+        raise HardFail("illegal_archive_id", f"illegal archive_id: {archive_id!r}")
+    dest = root / "failed_runs" / archive_id
+    if dest.exists():
+        raise HardFail(
+            "archive_exists",
+            f"refusing overwrite of sealed archive: {dest.as_posix()}",
+        )
+    log_src = command_log or (root / "COMMAND_LOG.json")
+    diag_src = diagnostic or (root / "RETRIEVAL_HARD_FAIL.json")
+    if not log_src.is_file():
+        raise HardFail("archive_missing_log", str(log_src))
+    if not diag_src.is_file():
+        raise HardFail("archive_missing_diagnostic", str(diag_src))
+
+    dest.mkdir(parents=True, exist_ok=False)
+    log_dest = dest / "COMMAND_LOG.json"
+    diag_dest = dest / "RETRIEVAL_HARD_FAIL.json"
+    shutil.copy2(log_src, log_dest)
+    shutil.copy2(diag_src, diag_dest)
+    log_sha = sha256_file(log_dest)
+    diag_sha = sha256_file(diag_dest)
+    log_payload = load_json(log_dest)
+    diag_payload = load_json(diag_dest)
+    entries = log_payload.get("entries") if isinstance(log_payload, dict) else None
+    manifest = {
+        "schema_version": 1,
+        "task": "SUPPLEMENTAL_MINING_R2",
+        "archive_id": archive_id,
+        "sealed": True,
+        "write_once": True,
+        "source_timestamp_utc": diag_payload.get("timestamp_utc"),
+        "invariant": diag_payload.get("invariant"),
+        "artifacts": {
+            "COMMAND_LOG.json": {
+                "sha256": log_sha,
+                "entry_count": len(entries) if isinstance(entries, list) else None,
+            },
+            "RETRIEVAL_HARD_FAIL.json": {
+                "sha256": diag_sha,
+            },
+        },
+        "sealed_at_utc": utc_now(),
+    }
+    atomic_write_json(dest / "ARCHIVE_MANIFEST.json", manifest)
+    for path in (log_dest, diag_dest, dest / "ARCHIVE_MANIFEST.json"):
+        os.chmod(path, 0o444)
+    try:
+        os.chmod(dest, 0o555)
+    except OSError:
+        pass
+    return dest
 
 
 def write_terminal_failure(
@@ -933,7 +1135,7 @@ def retrieve_repository_pages(
         stdout_s = sanitize(stdout)
         stderr_s = sanitize(stderr)
         response_sha = sha256_text(stdout_s)
-        entry = {
+        base_entry = {
             "repository": repository,
             "page_index": page_index,
             "operation_name": contract["operation_name"],
@@ -948,18 +1150,24 @@ def retrieve_repository_pages(
             "ended_at_utc": ended,
             "cli": list(contract["cli"]),
         }
-        append_command_log(
-            command_log,
-            entry,
-            run_id=run_id,
-            code_commit=code_commit,
-        )
 
         if exit_code != 0:
+            append_command_log(
+                command_log,
+                base_entry,
+                run_id=run_id,
+                code_commit=code_commit,
+            )
             raise HardFail("nonzero_exit", f"{repository} page {page_index}: {exit_code}")
         try:
             payload = json.loads(stdout)
         except json.JSONDecodeError as exc:
+            append_command_log(
+                command_log,
+                base_entry,
+                run_id=run_id,
+                code_commit=code_commit,
+            )
             raise HardFail("malformed_json", str(exc)) from exc
 
         issues, nodes, end_cursor, has_next, total_count = validate_page(
@@ -972,6 +1180,15 @@ def retrieve_repository_pages(
             seen_ids=seen_ids,
             seen_numbers=seen_numbers,
             seen_urls=seen_urls,
+        )
+        # Successful page log only after validate_page; bind verified endCursor.
+        success_entry = dict(base_entry)
+        success_entry["endCursor"] = end_cursor
+        append_command_log(
+            command_log,
+            success_entry,
+            run_id=run_id,
+            code_commit=code_commit,
         )
         if first_total is None:
             first_total = total_count
@@ -1039,21 +1256,32 @@ def cmd_retrieve(
 ) -> int:
     command_log = root / "COMMAND_LOG.json"
     hard_fail_path = root / "RETRIEVAL_HARD_FAIL.json"
-    snapshot_path = root / "ISSUE_SNAPSHOT.json"
-    queue_path = root / "REVIEW_QUEUE.json"
-    pages_dir = root / "transport_pages"
 
     active_runner = runner or default_graphql_runner
-    bound_run_id = run_id or new_run_id()
-    bound_code_commit = code_commit or resolve_code_commit()
     lock = RetrieveLock(root)
     lock_acquired = False
     log_owned = False
+    bound_run_id: str | None = None
+    bound_code_commit: str | None = None
 
     try:
-        # Non-blocking single-writer lock before any network call.
+        # Resolve binding before lock so illegal/conflicting code_commit fails
+        # closed without claiming the writer lock when possible. Lock losers
+        # still must perform zero filesystem mutations (see except paths).
+        bound_run_id = validate_run_id(run_id or new_run_id())
+        bound_code_commit = resolve_code_commit(code_commit)
+
+        # Non-blocking single-writer lock before any network call / owner write.
         lock.acquire()
         lock_acquired = True
+
+        # Owner recovers orphan staging / promote leftovers from prior crashes.
+        clear_orphan_publish_staging(root)
+        for leftover in root.glob(".transport_pages.*"):
+            if leftover.is_dir():
+                shutil.rmtree(leftover)
+            elif leftover.exists():
+                leftover.unlink()
 
         # Fresh per-run log bound to immutable run_id + code_commit.
         # Only the lock holder may create/replace this run's command log.
@@ -1114,13 +1342,6 @@ def cmd_retrieve(
                 )
                 all_records.extend(records)
 
-            # Atomic publish only after all repos complete.
-            if pages_dir.exists():
-                shutil.rmtree(pages_dir)
-            pages_dir.mkdir(parents=True, exist_ok=True)
-            for page_file in sorted(temp_pages.glob("*.json")):
-                shutil.copy2(page_file, pages_dir / page_file.name)
-
             snapshot = {
                 "schema_version": 1,
                 "task": "SUPPLEMENTAL_MINING_R2",
@@ -1132,17 +1353,20 @@ def cmd_retrieve(
                 "page_manifest_sha256": canonical_sha256(all_manifest),
                 "records": all_records,
             }
-            write_json(snapshot_path, snapshot)
-            queue_records = build_queue_from_snapshot(scope, snapshot)
-            write_json(
-                queue_path,
-                {
-                    "schema_version": 1,
-                    "task": "SUPPLEMENTAL_MINING_R2",
-                    "run_id": bound_run_id,
-                    "code_commit": bound_code_commit,
-                    "records": queue_records,
-                },
+            queue_payload = {
+                "schema_version": 1,
+                "task": "SUPPLEMENTAL_MINING_R2",
+                "run_id": bound_run_id,
+                "code_commit": bound_code_commit,
+                "records": build_queue_from_snapshot(scope, snapshot),
+            }
+            crash_safe_publish(
+                root,
+                run_id=bound_run_id,
+                code_commit=bound_code_commit,
+                temp_pages=temp_pages,
+                snapshot=snapshot,
+                queue_payload=queue_payload,
             )
         if hard_fail_path.exists():
             hard_fail_path.unlink()
@@ -1160,6 +1384,7 @@ def cmd_retrieve(
         return 0
     except HardFail as exc:
         if log_owned:
+            assert bound_run_id is not None and bound_code_commit is not None
             write_terminal_failure(
                 root,
                 invariant=exc.invariant,
@@ -1168,26 +1393,12 @@ def cmd_retrieve(
                 code_commit=bound_code_commit,
                 command_log=command_log,
             )
-        else:
-            # Lock not held / log not owned: do not mutate a prior COMMAND_LOG.
-            atomic_write_json(
-                hard_fail_path,
-                {
-                    "schema_version": 1,
-                    "task": "SUPPLEMENTAL_MINING_R2",
-                    "invariant": exc.invariant,
-                    "detail": sanitize(exc.detail),
-                    "timestamp_utc": utc_now(),
-                    "run_id": bound_run_id,
-                    "code_commit": bound_code_commit,
-                    "terminal": True,
-                },
-            )
-            cleanup_candidate_artifacts(root)
+        # Lock loser / pre-ownership failure: zero filesystem mutations.
         print(f"ERROR: {exc.invariant}: {exc.detail}", file=sys.stderr)
         return 1
     except Exception as exc:  # noqa: BLE001 — fail closed
         if log_owned:
+            assert bound_run_id is not None and bound_code_commit is not None
             write_terminal_failure(
                 root,
                 invariant="unexpected_error",
@@ -1196,21 +1407,7 @@ def cmd_retrieve(
                 code_commit=bound_code_commit,
                 command_log=command_log,
             )
-        else:
-            atomic_write_json(
-                hard_fail_path,
-                {
-                    "schema_version": 1,
-                    "task": "SUPPLEMENTAL_MINING_R2",
-                    "invariant": "unexpected_error",
-                    "detail": sanitize(str(exc)),
-                    "timestamp_utc": utc_now(),
-                    "run_id": bound_run_id,
-                    "code_commit": bound_code_commit,
-                    "terminal": True,
-                },
-            )
-            cleanup_candidate_artifacts(root)
+        # Lock loser / pre-ownership failure: zero filesystem mutations.
         print(f"ERROR: unexpected_error: {exc}", file=sys.stderr)
         return 1
     finally:
@@ -1222,12 +1419,21 @@ def cmd_build_queue(root: Path) -> int:
     try:
         scope = load_scope(root)
         snapshot = load_json(root / "ISSUE_SNAPSHOT.json")
+        run_id = validate_run_id(snapshot.get("run_id"))
+        code_commit = snapshot.get("code_commit")
+        if not isinstance(code_commit, str) or not FULL_SHA.fullmatch(code_commit):
+            raise HardFail(
+                "illegal_code_commit",
+                f"snapshot illegal code_commit: {code_commit!r}",
+            )
         records = build_queue_from_snapshot(scope, snapshot)
-        write_json(
+        atomic_write_json(
             root / "REVIEW_QUEUE.json",
             {
                 "schema_version": 1,
                 "task": "SUPPLEMENTAL_MINING_R2",
+                "run_id": run_id,
+                "code_commit": code_commit,
                 "records": records,
             },
         )
@@ -1274,11 +1480,20 @@ def cmd_build_payload(root: Path) -> int:
             if status_by_id.get(d["neutral_id"]) == "NOT_REVIEWED_AFTER_STOP":
                 raise HardFail("decision_for_unreviewed", d["neutral_id"])
 
-        write_json(
+        run_id = validate_run_id(queue_payload.get("run_id"))
+        code_commit = queue_payload.get("code_commit")
+        if not isinstance(code_commit, str) or not FULL_SHA.fullmatch(code_commit):
+            raise HardFail(
+                "illegal_code_commit",
+                f"queue illegal code_commit: {code_commit!r}",
+            )
+        atomic_write_json(
             root / "REVIEW_QUEUE.json",
             {
                 "schema_version": 1,
                 "task": "SUPPLEMENTAL_MINING_R2",
+                "run_id": run_id,
+                "code_commit": code_commit,
                 "records": updated_queue,
             },
         )

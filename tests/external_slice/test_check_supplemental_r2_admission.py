@@ -256,6 +256,79 @@ def test_positive_admission_check(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize(
+    "target,field",
+    [
+        ("log_top", "run_id"),
+        ("log_top", "code_commit"),
+        ("log_entry", "run_id"),
+        ("log_entry", "code_commit"),
+        ("snapshot", "run_id"),
+        ("snapshot", "code_commit"),
+        ("queue", "run_id"),
+        ("queue", "code_commit"),
+    ],
+)
+def test_run_code_binding_field_tamper(
+    tmp_path: Path, target: str, field: str
+) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    if target == "log_top":
+        payload = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+        payload[field] = "0" * 40 if field == "code_commit" else "tampered-run"
+        _write_json(root / "COMMAND_LOG.json", payload)
+    elif target == "log_entry":
+        payload = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+        payload["entries"][0][field] = (
+            "0" * 40 if field == "code_commit" else "tampered-run"
+        )
+        _write_json(root / "COMMAND_LOG.json", payload)
+    elif target == "snapshot":
+        payload = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+        payload[field] = "0" * 40 if field == "code_commit" else "tampered-run"
+        _write_json(root / "ISSUE_SNAPSHOT.json", payload)
+    else:
+        payload = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
+        payload[field] = "0" * 40 if field == "code_commit" else "tampered-run"
+        _write_json(root / "REVIEW_QUEUE.json", payload)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_queue_rebuild_preserves_run_code_binding(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    snapshot = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    (root / "REVIEW_QUEUE.json").unlink()
+    assert miner.cmd_build_queue(root) == 0
+    queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
+    assert queue["run_id"] == snapshot["run_id"]
+    assert queue["code_commit"] == snapshot["code_commit"]
+    assert checker.verify_admission(root) == 0
+
+
+def test_diagnostic_run_code_mismatch_rejected(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    _write_json(
+        root / "RETRIEVAL_HARD_FAIL.json",
+        {
+            "schema_version": 1,
+            "task": "SUPPLEMENTAL_MINING_R2",
+            "invariant": "unexpected_error",
+            "detail": "stale",
+            "timestamp_utc": "2026-08-02T14:14:29Z",
+            "run_id": "other-run",
+            "code_commit": snap["code_commit"],
+            "terminal": True,
+        },
+    )
+    assert_checker_fails_without_new_mint(root, before)
+
+
+@pytest.mark.parametrize(
     "field",
     [
         "snapshot_record_id",
