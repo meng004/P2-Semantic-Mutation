@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import fcntl
 import hashlib
 import json
 import os
@@ -15,6 +16,7 @@ import sys
 import tempfile
 import time
 import unicodedata
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -112,6 +114,34 @@ def write_json(path: Path, payload: Any) -> None:
     )
 
 
+def atomic_write_json(path: Path, payload: Any) -> None:
+    """Write JSON via same-dir tempfile + fsync + os.replace."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    text = json.dumps(payload, sort_keys=True, indent=2, ensure_ascii=False) + "\n"
+    fd, tmp_name = tempfile.mkstemp(
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+        dir=str(path.parent),
+    )
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(text)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp_path, path)
+        # Fsync directory entry for durability on POSIX.
+        dir_fd = os.open(str(path.parent), os.O_RDONLY)
+        try:
+            os.fsync(dir_fd)
+        finally:
+            os.close(dir_fd)
+    except Exception:
+        if tmp_path.exists():
+            tmp_path.unlink()
+        raise
+
+
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -120,16 +150,169 @@ def normalize_match_text(text: str) -> str:
     return unicodedata.normalize("NFC", text or "").casefold()
 
 
-def append_command_log(path: Path, entry: dict[str, Any]) -> None:
+def resolve_code_commit() -> str:
+    env = os.environ.get("SUPPLEMENTAL_R2_CODE_COMMIT", "").strip()
+    if env:
+        return env
+    try:
+        proc = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if proc.returncode == 0 and proc.stdout.strip():
+            return proc.stdout.strip()
+    except OSError:
+        pass
+    return "UNKNOWN"
+
+
+def new_run_id() -> str:
+    return str(uuid.uuid4())
+
+
+def init_command_log(
+    path: Path,
+    *,
+    run_id: str,
+    code_commit: str,
+) -> None:
+    atomic_write_json(
+        path,
+        {
+            "schema_version": 1,
+            "task": "SUPPLEMENTAL_MINING_R2",
+            "run_id": run_id,
+            "code_commit": code_commit,
+            "entries": [],
+        },
+    )
+
+
+def append_command_log(
+    path: Path,
+    entry: dict[str, Any],
+    *,
+    run_id: str | None = None,
+    code_commit: str | None = None,
+) -> None:
     if path.exists():
         payload = load_json(path)
     else:
-        payload = {"schema_version": 1, "task": "SUPPLEMENTAL_MINING_R2", "entries": []}
+        payload = {
+            "schema_version": 1,
+            "task": "SUPPLEMENTAL_MINING_R2",
+            "entries": [],
+        }
     payload.setdefault("schema_version", 1)
     payload.setdefault("task", "SUPPLEMENTAL_MINING_R2")
     payload.setdefault("entries", [])
-    payload["entries"].append(entry)
-    write_json(path, payload)
+    if run_id is not None:
+        payload["run_id"] = run_id
+    if code_commit is not None:
+        payload["code_commit"] = code_commit
+    bound = dict(entry)
+    if run_id is not None:
+        bound.setdefault("run_id", run_id)
+    if code_commit is not None:
+        bound.setdefault("code_commit", code_commit)
+    payload["entries"].append(bound)
+    atomic_write_json(path, payload)
+
+
+CANDIDATE_CLEANUP_NAMES = (
+    "ISSUE_SNAPSHOT.json",
+    "REVIEW_QUEUE.json",
+    "REVIEW_DECISIONS.json",
+    "EVIDENCE_SNAPSHOT.json",
+    "admission_sheet.cursor_candidate.csv",
+    "HANDOFF_SUPPLEMENTAL_R2.json",
+    "transport_pages",
+    "admission_evidence",
+)
+
+
+def cleanup_candidate_artifacts(root: Path) -> None:
+    for name in CANDIDATE_CLEANUP_NAMES:
+        path = root / name
+        if path.is_dir():
+            shutil.rmtree(path)
+        elif path.exists():
+            path.unlink()
+
+
+def write_terminal_failure(
+    root: Path,
+    *,
+    invariant: str,
+    detail: str,
+    run_id: str,
+    code_commit: str,
+    command_log: Path,
+) -> None:
+    hard_fail_path = root / "RETRIEVAL_HARD_FAIL.json"
+    record = {
+        "schema_version": 1,
+        "task": "SUPPLEMENTAL_MINING_R2",
+        "invariant": invariant,
+        "detail": sanitize(detail),
+        "timestamp_utc": utc_now(),
+        "run_id": run_id,
+        "code_commit": code_commit,
+        "terminal": True,
+    }
+    atomic_write_json(hard_fail_path, record)
+    cleanup_candidate_artifacts(root)
+    append_command_log(
+        command_log,
+        {
+            "label": "retrieve_terminal_failure",
+            "invariant": invariant,
+            "detail": sanitize(detail),
+            "timestamp_utc": utc_now(),
+            "exit_code": 1,
+            "terminal": True,
+        },
+        run_id=run_id,
+        code_commit=code_commit,
+    )
+
+
+class RetrieveLock:
+    """Non-blocking single-writer lock for live retrieve."""
+
+    def __init__(self, root: Path) -> None:
+        self.path = root / "RETRIEVE.lock"
+        self._fd: int | None = None
+
+    def acquire(self) -> None:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._fd = os.open(str(self.path), os.O_CREAT | os.O_RDWR, 0o644)
+        try:
+            fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            os.ftruncate(self._fd, 0)
+            os.write(
+                self._fd,
+                f"pid={os.getpid()} ts={utc_now()}\n".encode("utf-8"),
+            )
+            os.fsync(self._fd)
+        except BlockingIOError as exc:
+            os.close(self._fd)
+            self._fd = None
+            raise HardFail(
+                "retrieve_lock_held",
+                "another retrieve process holds RETRIEVE.lock",
+            ) from exc
+
+    def release(self) -> None:
+        if self._fd is None:
+            return
+        try:
+            fcntl.flock(self._fd, fcntl.LOCK_UN)
+        finally:
+            os.close(self._fd)
+            self._fd = None
 
 
 def load_scope(root: Path) -> dict[str, Any]:
@@ -717,6 +900,8 @@ def retrieve_repository_pages(
     runner: GraphQLRunner,
     command_log: Path,
     temp_pages: Path,
+    run_id: str,
+    code_commit: str,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     query = contract["query_document"]
     query_sha = contract["query_document_sha256"]
@@ -763,7 +948,12 @@ def retrieve_repository_pages(
             "ended_at_utc": ended,
             "cli": list(contract["cli"]),
         }
-        append_command_log(command_log, entry)
+        append_command_log(
+            command_log,
+            entry,
+            run_id=run_id,
+            code_commit=code_commit,
+        )
 
         if exit_code != 0:
             raise HardFail("nonzero_exit", f"{repository} page {page_index}: {exit_code}")
@@ -844,6 +1034,8 @@ def cmd_retrieve(
     root: Path,
     *,
     runner: GraphQLRunner | None = None,
+    run_id: str | None = None,
+    code_commit: str | None = None,
 ) -> int:
     command_log = root / "COMMAND_LOG.json"
     hard_fail_path = root / "RETRIEVAL_HARD_FAIL.json"
@@ -851,9 +1043,37 @@ def cmd_retrieve(
     queue_path = root / "REVIEW_QUEUE.json"
     pages_dir = root / "transport_pages"
 
-    # Do not leave prior candidate artifacts if we hard-fail mid-run.
     active_runner = runner or default_graphql_runner
+    bound_run_id = run_id or new_run_id()
+    bound_code_commit = code_commit or resolve_code_commit()
+    lock = RetrieveLock(root)
+    lock_acquired = False
+    log_owned = False
+
     try:
+        # Non-blocking single-writer lock before any network call.
+        lock.acquire()
+        lock_acquired = True
+
+        # Fresh per-run log bound to immutable run_id + code_commit.
+        # Only the lock holder may create/replace this run's command log.
+        init_command_log(
+            command_log,
+            run_id=bound_run_id,
+            code_commit=bound_code_commit,
+        )
+        log_owned = True
+        append_command_log(
+            command_log,
+            {
+                "label": "retrieve_start",
+                "timestamp_utc": utc_now(),
+                "exit_code": 0,
+            },
+            run_id=bound_run_id,
+            code_commit=bound_code_commit,
+        )
+
         scope = load_scope(root)
         contract = load_transport(root)
         load_quotas(root)
@@ -880,6 +1100,8 @@ def cmd_retrieve(
                     runner=active_runner,
                     command_log=command_log,
                     temp_pages=temp_pages,
+                    run_id=bound_run_id,
+                    code_commit=bound_code_commit,
                 )
                 all_manifest.extend(manifest)
                 records = select_phrase_union(
@@ -902,6 +1124,8 @@ def cmd_retrieve(
             snapshot = {
                 "schema_version": 1,
                 "task": "SUPPLEMENTAL_MINING_R2",
+                "run_id": bound_run_id,
+                "code_commit": bound_code_commit,
                 "query_document_sha256": contract["query_document_sha256"],
                 "created_cutoff": scope["created_cutoff"],
                 "page_manifest": all_manifest,
@@ -915,69 +1139,83 @@ def cmd_retrieve(
                 {
                     "schema_version": 1,
                     "task": "SUPPLEMENTAL_MINING_R2",
+                    "run_id": bound_run_id,
+                    "code_commit": bound_code_commit,
                     "records": queue_records,
                 },
             )
         if hard_fail_path.exists():
             hard_fail_path.unlink()
-        return 0
-    except HardFail as exc:
-        write_json(
-            hard_fail_path,
-            {
-                "schema_version": 1,
-                "task": "SUPPLEMENTAL_MINING_R2",
-                "invariant": exc.invariant,
-                "detail": exc.detail,
-                "timestamp_utc": utc_now(),
-            },
-        )
-        # Ensure no candidate payload artifacts remain from a partial success.
-        for path in (
-            snapshot_path,
-            queue_path,
-            root / "REVIEW_DECISIONS.json",
-            root / "EVIDENCE_SNAPSHOT.json",
-            root / "admission_sheet.cursor_candidate.csv",
-            root / "HANDOFF_SUPPLEMENTAL_R2.json",
-        ):
-            if path.exists():
-                path.unlink()
-        if pages_dir.exists():
-            shutil.rmtree(pages_dir)
-        evidence_dir = root / "admission_evidence"
-        if evidence_dir.exists():
-            shutil.rmtree(evidence_dir)
         append_command_log(
             command_log,
             {
-                "label": "retrieve_hard_fail",
-                "invariant": exc.invariant,
-                "detail": sanitize(exc.detail),
+                "label": "retrieve_success",
                 "timestamp_utc": utc_now(),
-                "exit_code": 1,
+                "exit_code": 0,
+                "terminal": True,
             },
+            run_id=bound_run_id,
+            code_commit=bound_code_commit,
         )
+        return 0
+    except HardFail as exc:
+        if log_owned:
+            write_terminal_failure(
+                root,
+                invariant=exc.invariant,
+                detail=exc.detail,
+                run_id=bound_run_id,
+                code_commit=bound_code_commit,
+                command_log=command_log,
+            )
+        else:
+            # Lock not held / log not owned: do not mutate a prior COMMAND_LOG.
+            atomic_write_json(
+                hard_fail_path,
+                {
+                    "schema_version": 1,
+                    "task": "SUPPLEMENTAL_MINING_R2",
+                    "invariant": exc.invariant,
+                    "detail": sanitize(exc.detail),
+                    "timestamp_utc": utc_now(),
+                    "run_id": bound_run_id,
+                    "code_commit": bound_code_commit,
+                    "terminal": True,
+                },
+            )
+            cleanup_candidate_artifacts(root)
         print(f"ERROR: {exc.invariant}: {exc.detail}", file=sys.stderr)
         return 1
     except Exception as exc:  # noqa: BLE001 — fail closed
-        write_json(
-            hard_fail_path,
-            {
-                "schema_version": 1,
-                "task": "SUPPLEMENTAL_MINING_R2",
-                "invariant": "unexpected_error",
-                "detail": sanitize(str(exc)),
-                "timestamp_utc": utc_now(),
-            },
-        )
-        for path in (snapshot_path, queue_path):
-            if path.exists():
-                path.unlink()
-        if pages_dir.exists():
-            shutil.rmtree(pages_dir)
+        if log_owned:
+            write_terminal_failure(
+                root,
+                invariant="unexpected_error",
+                detail=str(exc),
+                run_id=bound_run_id,
+                code_commit=bound_code_commit,
+                command_log=command_log,
+            )
+        else:
+            atomic_write_json(
+                hard_fail_path,
+                {
+                    "schema_version": 1,
+                    "task": "SUPPLEMENTAL_MINING_R2",
+                    "invariant": "unexpected_error",
+                    "detail": sanitize(str(exc)),
+                    "timestamp_utc": utc_now(),
+                    "run_id": bound_run_id,
+                    "code_commit": bound_code_commit,
+                    "terminal": True,
+                },
+            )
+            cleanup_candidate_artifacts(root)
         print(f"ERROR: unexpected_error: {exc}", file=sys.stderr)
         return 1
+    finally:
+        if lock_acquired:
+            lock.release()
 
 
 def cmd_build_queue(root: Path) -> int:
