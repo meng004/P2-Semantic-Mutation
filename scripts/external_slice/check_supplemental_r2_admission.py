@@ -10,6 +10,8 @@ import importlib.util
 import json
 import re
 import sys
+import unicodedata
+from datetime import datetime
 from pathlib import Path
 from typing import Any, NoReturn
 
@@ -186,14 +188,216 @@ def verify_frozen_inputs(root: Path, scope: dict[str, Any]) -> None:
         fail("incorrect n projection")
 
 
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def normalize_match_text(text: str) -> str:
+    """Checker-owned NFC/casefold normalization for phrase surfaces."""
+    return unicodedata.normalize("NFC", text or "").casefold()
+
+
+def parse_created_at(value: str) -> datetime:
+    # Python 3.11+ accepts trailing Z; keep checker-local and ruff-clean.
+    return datetime.fromisoformat(value)
+
+
+def validate_raw_issue_node(node: Any, *, repository: str) -> dict[str, Any]:
+    """Independently enforce Issue shape, CLOSED state, URL, and complete labels."""
+    if not isinstance(node, dict):
+        fail(f"{repository}: raw node is not an object")
+    typename = node.get("__typename")
+    if typename != "Issue":
+        fail(f"{repository}: typename not Issue: got {typename!r}")
+    state = node.get("state")
+    if state != "CLOSED":
+        fail(f"{repository}: state not CLOSED: got {state!r}")
+    closed_at = node.get("closedAt")
+    if closed_at in (None, ""):
+        fail(f"{repository}: closedAt missing/empty for issue {node.get('number')}")
+    number = node.get("number")
+    if not isinstance(number, int):
+        fail(f"{repository}: issue number missing or non-int")
+    if "/" not in repository:
+        fail(f"{repository}: bad repository identity")
+    owner, name = repository.split("/", 1)
+    expected_url = f"https://github.com/{owner}/{name}/issues/{number}"
+    url = node.get("url") or ""
+    if url != expected_url or "/pull/" in url:
+        fail(
+            f"{repository}: canonical URL mismatch: got {url!r} expected {expected_url!r}"
+        )
+    for required in (
+        "id",
+        "title",
+        "bodyText",
+        "createdAt",
+        "updatedAt",
+        "closedAt",
+    ):
+        if required not in node or node[required] is None:
+            fail(f"{repository}#{number}: missing required field {required}")
+    labels = node.get("labels") or {}
+    if not isinstance(labels, dict):
+        fail(f"{repository}#{number}: labels missing")
+    page_info = labels.get("pageInfo") or {}
+    if page_info.get("hasNextPage") is True:
+        fail(f"{repository}#{number}: incomplete labels (hasNextPage)")
+    label_nodes = labels.get("nodes")
+    if not isinstance(label_nodes, list):
+        fail(f"{repository}#{number}: labels.nodes missing")
+    for lab in label_nodes:
+        if not isinstance(lab, dict) or "name" not in lab:
+            fail(f"{repository}#{number}: incomplete label entry")
+    return node
+
+
+def match_surfaces(issue: dict[str, Any], phrase: str) -> list[str]:
+    """Checker-owned phrase surface matching over title/body/labels."""
+    norm_phrase = normalize_match_text(phrase)
+    surfaces: list[str] = []
+    if norm_phrase in normalize_match_text(issue.get("title") or ""):
+        surfaces.append("title")
+    if norm_phrase in normalize_match_text(issue.get("bodyText") or ""):
+        surfaces.append("body")
+    for lab in (issue.get("labels") or {}).get("nodes") or []:
+        name = lab.get("name") or ""
+        if norm_phrase in normalize_match_text(name):
+            surfaces.append(f"label:{name}")
+    return surfaces
+
+
+def build_snapshot_record(
+    *,
+    repository: str,
+    repository_order: int,
+    issue: dict[str, Any],
+    matched_phrases: list[str],
+    match_surfaces_map: dict[str, list[str]],
+    source_page_index: int,
+    source_page_sha256: str,
+    query_document_sha256: str,
+    variables_sha256: str,
+    node_index: int,
+    record_index: int,
+) -> dict[str, Any]:
+    """Checker-owned snapshot record construction and hashing."""
+    ordered_labels = [
+        lab["name"] for lab in (issue.get("labels") or {}).get("nodes") or []
+    ]
+    base = {
+        "snapshot_record_id": f"SSR2-{repository_order:02d}-{record_index:04d}",
+        "repository": repository,
+        "repository_order": repository_order,
+        "issue_node_id": issue["id"],
+        "issue_number": int(issue["number"]),
+        "issue_url": issue["url"],
+        "state": issue["state"],
+        "created_at": issue["createdAt"],
+        "updated_at": issue["updatedAt"],
+        "closed_at": issue["closedAt"],
+        "title_sha256": sha256_text(issue.get("title") or ""),
+        "body_text_sha256": sha256_text(issue.get("bodyText") or ""),
+        "ordered_labels": ordered_labels,
+        "matched_phrases": list(matched_phrases),
+        "match_surfaces": {
+            p: list(match_surfaces_map.get(p, [])) for p in matched_phrases
+        },
+        "source_page_index": source_page_index,
+        "source_page_sha256": source_page_sha256,
+        "query_document_sha256": query_document_sha256,
+        "variables_sha256": variables_sha256,
+        "node_index": node_index,
+    }
+    base["snapshot_record_sha256"] = canonical_sha256(base)
+    return base
+
+
+def select_phrase_union(
+    *,
+    scope: dict[str, Any],
+    repository: str,
+    repository_order: int,
+    issues_with_meta: list[dict[str, Any]],
+    query_document_sha256: str,
+) -> list[dict[str, Any]]:
+    """Checker-owned cutoff, per-phrase top-20, dedupe, ordering, and IDs."""
+    cutoff = parse_created_at(scope["created_cutoff"])
+    max_per_phrase = int(scope["max_results_per_phrase"])
+    phrases: list[str] = list(scope["phrases"])
+
+    eligible: list[dict[str, Any]] = []
+    for item in issues_with_meta:
+        created = parse_created_at(item["issue"]["createdAt"])
+        if created > cutoff:
+            continue
+        eligible.append(item)
+
+    phrase_lists: dict[str, list[dict[str, Any]]] = {p: [] for p in phrases}
+    for item in eligible:
+        issue = item["issue"]
+        for phrase in phrases:
+            surfaces = match_surfaces(issue, phrase)
+            if not surfaces:
+                continue
+            bucket = phrase_lists[phrase]
+            if len(bucket) >= max_per_phrase:
+                continue
+            bucket.append({**item, "match_surfaces_for_phrase": surfaces})
+
+    by_url: dict[str, dict[str, Any]] = {}
+    for phrase in phrases:
+        for item in phrase_lists[phrase]:
+            url = item["issue"]["url"]
+            if url not in by_url:
+                by_url[url] = {
+                    "item": item,
+                    "matched_phrases": [],
+                    "match_surfaces": {},
+                }
+            entry = by_url[url]
+            if phrase not in entry["matched_phrases"]:
+                entry["matched_phrases"].append(phrase)
+            entry["match_surfaces"][phrase] = list(item["match_surfaces_for_phrase"])
+
+    ordered = sorted(
+        by_url.values(),
+        key=lambda e: (
+            e["item"]["issue"]["createdAt"],
+            int(e["item"]["issue"]["number"]),
+        ),
+        reverse=True,
+    )
+
+    records: list[dict[str, Any]] = []
+    for idx, entry in enumerate(ordered, start=1):
+        item = entry["item"]
+        matched = [p for p in phrases if p in entry["matched_phrases"]]
+        records.append(
+            build_snapshot_record(
+                repository=repository,
+                repository_order=repository_order,
+                issue=item["issue"],
+                matched_phrases=matched,
+                match_surfaces_map=entry["match_surfaces"],
+                source_page_index=item["source_page_index"],
+                source_page_sha256=item["source_page_sha256"],
+                query_document_sha256=query_document_sha256,
+                variables_sha256=item["variables_sha256"],
+                node_index=item["node_index"],
+                record_index=idx,
+            )
+        )
+    return records
+
+
 def reconstruct_snapshot_records_from_raw_pages(
     root: Path,
     *,
     scope: dict[str, Any],
     snapshot: dict[str, Any],
-    miner: Any,
 ) -> list[dict[str, Any]]:
-    """Rebuild the full ordered snapshot records from hash-bound transport pages."""
+    """Rebuild ordered snapshot records from hash-bound pages without producer builders."""
     manifest = snapshot.get("page_manifest") or []
     if not isinstance(manifest, list) or not manifest:
         fail("snapshot page_manifest missing for reconstruction")
@@ -233,22 +437,20 @@ def reconstruct_snapshot_records_from_raw_pages(
             if not isinstance(variables_sha, str):
                 fail(f"{repo}: variables_sha256 missing in manifest page {page_index}")
             for node_index, node in enumerate(nodes):
-                if not isinstance(node, dict):
-                    fail(f"{repo}: raw node is not an object at {rel}[{node_index}]")
+                issue = validate_raw_issue_node(node, repository=repo)
                 issues_with_meta.append(
                     {
-                        "issue": node,
+                        "issue": issue,
                         "source_page_index": page_index,
                         "source_page_sha256": man["sha256"],
                         "variables_sha256": variables_sha,
                         "node_index": node_index,
                     }
                 )
-        records = miner.select_phrase_union(
+        records = select_phrase_union(
             scope=scope,
             repository=repo,
             repository_order=int(repo_entry["order"]),
-            id_prefix=str(repo_entry["id_prefix"]),
             issues_with_meta=issues_with_meta,
             query_document_sha256=query_sha,
         )
@@ -261,11 +463,10 @@ def verify_snapshot_bound_to_raw_pages(
     *,
     scope: dict[str, Any],
     snapshot: dict[str, Any],
-    miner: Any,
 ) -> None:
     """Exact field/order/cardinality compare vs independent raw-page reconstruction."""
     expected = reconstruct_snapshot_records_from_raw_pages(
-        root, scope=scope, snapshot=snapshot, miner=miner
+        root, scope=scope, snapshot=snapshot
     )
     got = snapshot.get("records")
     if not isinstance(got, list):
@@ -1014,9 +1215,7 @@ def verify_admission(root: Path) -> int:
             snapshot=snapshot,
             page_entries=page_entries,
         )
-        verify_snapshot_bound_to_raw_pages(
-            root, scope=scope, snapshot=snapshot, miner=miner
-        )
+        verify_snapshot_bound_to_raw_pages(root, scope=scope, snapshot=snapshot)
         verify_snapshot_records(scope, snapshot)
         queue_payload = load_json(root / "REVIEW_QUEUE.json")
         verify_publish_commit(root, snapshot=snapshot, miner=miner)

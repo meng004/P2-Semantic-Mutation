@@ -290,6 +290,49 @@ def fully_reseal_snapshot(root: Path) -> None:
     reseal_publish_commit(root)
 
 
+def rebuild_downstream_from_snapshot(root: Path) -> None:
+    """Reseal publish, rebuild queue/decisions/sheet/evidence from tampered snapshot."""
+    fully_reseal_snapshot(root)
+    assert miner.cmd_build_queue(root) == 0
+    queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
+    decisions_payload = json.loads(
+        (root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8")
+    )
+    by_neutral = {row["neutral_id"]: row for row in queue["records"]}
+    for decision in decisions_payload["decisions"]:
+        row = by_neutral[decision["neutral_id"]]
+        for field in (
+            "snapshot_record_id",
+            "snapshot_record_sha256",
+            "repository",
+            "issue_node_id",
+            "issue_number",
+            "issue_url",
+            "repository_review_order",
+            "matched_phrases",
+        ):
+            decision[field] = row[field]
+    _write_json(root / "REVIEW_DECISIONS.json", decisions_payload)
+    assert miner.cmd_build_payload(root) == 0
+
+
+def raw_page_node_for_record(
+    root: Path, rec: dict[str, Any]
+) -> tuple[Path, dict[str, Any], dict[str, Any]]:
+    """Locate the hash-bound raw page and node object for a snapshot record."""
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    man = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == rec["repository"]
+        and int(m["page_index"]) == int(rec["source_page_index"])
+    )
+    page_path = root / man["path"]
+    page = json.loads(page_path.read_text(encoding="utf-8"))
+    node = page["data"]["repository"]["issues"]["nodes"][int(rec["node_index"])]
+    return page_path, page, node
+
+
 def sync_page_log_from_manifest(root: Path) -> None:
     """Keep COMMAND_LOG page records aligned with tampered manifest fields."""
     snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
@@ -965,12 +1008,28 @@ def test_live_snapshot_reconstructs_from_raw_pages() -> None:
     scope = json.loads((root / "SCOPE.json").read_text(encoding="utf-8"))
     snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
     rebuilt = checker.reconstruct_snapshot_records_from_raw_pages(
-        root, scope=scope, snapshot=snap, miner=miner
+        root, scope=scope, snapshot=snap
     )
     assert rebuilt == snap["records"]
-    checker.verify_snapshot_bound_to_raw_pages(
-        root, scope=scope, snapshot=snap, miner=miner
-    )
+    checker.verify_snapshot_bound_to_raw_pages(root, scope=scope, snapshot=snap)
+
+
+def test_snapshot_reconstruction_does_not_call_producer_selection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    loaded = checker._load_miner()
+
+    def boom(*_args: Any, **_kwargs: Any) -> Any:
+        raise AssertionError("producer selection/builder must not be called")
+
+    monkeypatch.setattr(loaded, "select_phrase_union", boom)
+    monkeypatch.setattr(loaded, "build_snapshot_record", boom)
+    monkeypatch.setattr(loaded, "match_surfaces", boom)
+    monkeypatch.setattr(loaded, "normalize_match_text", boom)
+    monkeypatch.setattr(checker, "_load_miner", lambda: loaded)
+    assert checker.verify_admission(root) == 0
 
 
 def test_false_phrase_match(tmp_path: Path) -> None:
@@ -1005,6 +1064,62 @@ def test_fake_frozen_phrase_fails_after_full_reseal(tmp_path: Path) -> None:
     }
     rehash_snapshot_record(rec)
     _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_real_frozen_unmatched_phrase_fails_after_downstream_rebuild(
+    tmp_path: Path,
+) -> None:
+    """Inject a real SCOPE phrase absent from raw surfaces; rebuild downstream."""
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    scope = json.loads((root / "SCOPE.json").read_text(encoding="utf-8"))
+    phrases = list(scope["phrases"])
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    page_path, page, node = raw_page_node_for_record(root, rec)
+    unmatched = next(p for p in phrases if p not in rec["matched_phrases"])
+    assert checker.match_surfaces(node, unmatched) == []
+    rec["matched_phrases"] = [p for p in phrases if p in set(rec["matched_phrases"]) | {unmatched}]
+    rec["match_surfaces"] = {
+        **dict(rec.get("match_surfaces") or {}),
+        unmatched: ["title"],
+    }
+    rehash_snapshot_record(rec)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    # Keep raw page bytes unchanged; only reseal/rebuild derived artifacts.
+    assert page_path.is_file()
+    _ = page
+    rebuild_downstream_from_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_pullrequest_typename_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    page_path, page, node = raw_page_node_for_record(root, rec)
+    node["__typename"] = "PullRequest"
+    _write_json(page_path, page)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_incomplete_labels_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    page_path, page, node = raw_page_node_for_record(root, rec)
+    labels = node.setdefault("labels", {})
+    page_info = labels.setdefault("pageInfo", {})
+    page_info["hasNextPage"] = True
+    _write_json(page_path, page)
     fully_reseal_snapshot(root)
     assert_checker_fails_without_new_mint(root, before)
 
