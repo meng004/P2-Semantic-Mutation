@@ -90,7 +90,7 @@ S0 台账建立提交前实测：
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 | Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
 | Gate SUPPLEMENTAL_MINING_R2_DESIGN-r1 | correction audit `d95d6277ee09479d638bb83d75562e9dc4348031`；payload `1ed9fb2dc2714cb452bba4016d6093cefb36204d` | `PASS_WITH_DISCLOSURE` | N/A（设计分支，不含实验 payload） | 设计修订通过；但已发生的 Cursor Task 4 需独立执行审计，不能追溯通过 |
-| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-r4 `be88a04ae55058f49ac52ec1a9aa28eb17aa6e70`；blocked diagnostic `548702be000249bbb4262ffe3bf282f4e93b962c` | `BLOCKED` | N/A（PR #7 未集成） | 否；仅解锁同分支 transport-r5 correction，不解锁 fresh retrieval 或 admission/readiness |
+| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-r5 `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7`；历史 blocked diagnostic `548702be000249bbb4262ffe3bf282f4e93b962c` | `PASS_WITH_DISCLOSURE`（transport preflight） | N/A（PR #7 未集成） | 仅解锁同分支一次 fresh Task 4 retrieval；A1/A3、admission、readiness 与 downstream 仍锁定 |
 
 ## 5. 交接审计记录
 
@@ -767,3 +767,22 @@ r3 关闭了 page-record completeness、endCursor 单字段 binding 和 publish 
 r4 关闭了六仓覆盖与顺序、连续非空 page block、raw pageInfo 绑定、终止性、稳定 totalCount 和每仓节点计数问题。删除整段 PyMC 数据并完整 reseal 后，checker 已按预期 exit 1。独立验证 targeted `155 passed`、full `415 passed, 10 warnings`，Ruff、compileall、diff-check 和 no-data-change check 全部通过。
 
 但节点 ID/URL 的唯一性集合在每个 repository block 内重置。将 PyMC 节点复制到 GPyTorch retained page 并重算 page/manifest/`PUBLISH_COMMIT` 后，完整 checker 仍返回 `ADMISSION_CHECK_OK`。全局身份重复与 URL 所属仓库错误仍可进入语料，因此 fresh retrieval 不得启动；r5 只需补齐跨六仓 ID/URL 唯一性、URL-to-scope 绑定及两项 resealed 负测。
+
+### 5.24 SUPPLEMENTAL_ADMISSION_R2 transport-r5 最终复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-transport-r5` |
+| 记录类型 | transport correction 最终独立复审 |
+| 交接/复核时间 | `2026-08-03T12:02:34+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7` |
+| Cursor baseline | `be88a04ae55058f49ac52ec1a9aa28eb17aa6e70` |
+| Findings | `SUPP-R2-CROSS-REPOSITORY-IDENTITY-001` 已关闭；Standards PASS；Spec PASS |
+| Verdict | `PASS_WITH_DISCLOSURE`（仅 transport preflight） |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 仅同一 Cursor 分支一次 fresh Task 4 retrieval；A1/A3、admission、readiness 与所有 downstream 仍锁定。 |
+
+r5 在 miner 和独立 checker 中均实现六仓共享 node-ID/canonical-URL 唯一性，同时保持 issue number 仅仓库内唯一；URL 必须精确绑定 enclosing SCOPE owner/name。三项 fully resealed identity attacks 被拒绝，跨仓相同 issue number 的正向控制继续通过。
+
+独立验证 targeted `159 passed`、full `419 passed, 10 warnings`、四项 identity controls `4 passed`；Ruff、compileall、diff-check、no-data-change check 均通过。该 PASS 只授权一次正式 transport retrieval；它不代表 snapshot/admission 已通过，也不改变 accepted-ready=18。

@@ -421,3 +421,57 @@ Cursor branch, without `rtk` and without network retrieval. It must:
 4. retain every r2-r4 regression and verification guarantee; and
 5. commit, verify, push, and stop for transport-r5 local review before any live
    retrieval.
+
+## 10. `SUPPLEMENTAL_ADMISSION_R2-transport-r5` final re-review
+
+- **Correction baseline:** `be88a04ae55058f49ac52ec1a9aa28eb17aa6e70`
+- **Correction commit:** `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live retrieval:** not run
+- **Verdict:** `PASS_WITH_DISCLOSURE`
+
+### 10.1 Finding closure
+
+`SUPP-R2-CROSS-REPOSITORY-IDENTITY-001` is closed. The checker initializes
+node-ID and canonical-URL sets once before traversing the six repository blocks,
+while issue-number state is recreated inside each block. The miner likewise
+shares ID/URL state across all six retrieval calls and subtracts the shared-set
+size at repository entry when checking that repository's `totalCount`.
+
+Both producer and independent checker now require the exact canonical URL
+`https://github.com/<SCOPE owner>/<SCOPE name>/issues/<number>`. Fully resealed
+negative tests cover cross-repository duplicate ID, cross-repository duplicate
+URL, and wrong-repository URL; a positive test proves that equal issue numbers
+in different repositories remain allowed.
+
+### 10.2 Verification evidence
+
+The correction is the direct child of transport-r4, and the remote branch head
+equals the reviewed commit. The diff contains only the miner, admission
+checker, and checker tests; no retrieval or data artifact changed. No prior r2-r4
+test was removed.
+
+Fresh Local Desktop verification produced `159 passed` in the targeted suite,
+`419 passed, 10 warnings` in the full suite, and `4 passed` for the three
+resealed identity attacks plus the cross-repository-number positive control.
+Exact Ruff, compileall, `git diff --check`, and the no-data-change check all
+returned zero. Standards is `PASS`; Specification is `PASS`.
+
+Non-gating maintainability disclosures are duplicated canonical-URL validation
+between producer and checker, raw string/set identity bundles, existing
+`man`/`mans` abbreviations, and repeated reseal-test setup. Producer/checker
+duplication is intentional independence for this evidence boundary.
+
+### 10.3 Gate decision and only unlocked action
+
+The transport correction gate closes as `PASS_WITH_DISCLOSURE`: it proves the
+preflight implementation and synthetic fail-closed contracts, not a successful
+live snapshot or admission result. Accepted-ready therefore remains 18.
+
+Exactly one fresh Task 4 retrieval is now unlocked on the same Cursor VM branch
+at `5a76aa6a...`, without `rtk`. No human A1/A3 review may begin in that run.
+On hard failure, commit only the new diagnostic and command log, push, and stop
+for Local Desktop audit. On success, commit the immutable transport pages,
+snapshot, queue, publish seal, and command log, push, and stop for Local Desktop
+transport-result audit. Candidate adjudication, readiness, canonical freeze,
+C4, labelling, prediction, and detection remain locked.
