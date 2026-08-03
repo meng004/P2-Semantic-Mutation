@@ -370,12 +370,25 @@ def verify_publish_commit(
     return publish
 
 
+def _raw_issues_connection(page_payload: dict[str, Any]) -> dict[str, Any]:
+    data = page_payload.get("data")
+    if not isinstance(data, dict):
+        fail("transport page missing data")
+    repo_obj = data.get("repository")
+    if not isinstance(repo_obj, dict):
+        fail("transport page missing repository")
+    issues = repo_obj.get("issues")
+    if not isinstance(issues, dict):
+        fail("transport page missing issues connection")
+    return issues
+
+
 def verify_page_log_reconstruction(
     root: Path,
     *,
     snapshot: dict[str, Any],
     contract: dict[str, Any],
-) -> None:
+) -> list[dict[str, Any]]:
     """Reconstruct page logs against manifest, hashes, variables, and continuity."""
     log = load_json(root / "COMMAND_LOG.json")
     entries = log.get("entries") or []
@@ -404,6 +417,7 @@ def verify_page_log_reconstruction(
             "page_index",
             "after",
             "endCursor",
+            "hasNextPage",
             "variables_sha256",
             "response_page_sha256",
         ):
@@ -435,6 +449,8 @@ def verify_page_log_reconstruction(
             fail(f"page[{idx}] exit_code is nonzero in success log")
         if "endCursor" not in entry:
             fail(f"page[{idx}] missing verified endCursor")
+        if "hasNextPage" not in entry:
+            fail(f"page[{idx}] missing verified hasNextPage")
 
         repo = entry["repository"]
         prev = prev_by_repo.get(repo)
@@ -452,6 +468,131 @@ def verify_page_log_reconstruction(
             if entry.get("page_index") != int(prev.get("page_index")) + 1:
                 fail(f"page[{idx}] page_index discontinuity")
         prev_by_repo[repo] = entry
+    return page_entries
+
+
+def verify_scope_page_coverage(
+    root: Path,
+    *,
+    scope: dict[str, Any],
+    snapshot: dict[str, Any],
+    page_entries: list[dict[str, Any]],
+) -> None:
+    """Independently verify six-repo page blocks from SCOPE.json."""
+    repos = scope.get("repositories") or []
+    if not isinstance(repos, list) or len(repos) != 6:
+        fail("SCOPE must list exactly six repositories")
+    ordered = sorted(repos, key=lambda r: int(r.get("order", -1)))
+    expected_repos = [str(r["repo"]) for r in ordered]
+    if [int(r["order"]) for r in ordered] != [1, 2, 3, 4, 5, 6]:
+        fail("SCOPE repository order must be fixed 1..6")
+    if expected_repos != [str(r["repo"]) for r in repos]:
+        fail("SCOPE repositories must already be listed in fixed order")
+
+    manifest = snapshot.get("page_manifest") or []
+    blocks: list[tuple[str, list[dict[str, Any]], list[dict[str, Any]]]] = []
+    for man, entry in zip(manifest, page_entries):
+        repo = str(man.get("repository"))
+        if not blocks or blocks[-1][0] != repo:
+            blocks.append((repo, [man], [entry]))
+        else:
+            blocks[-1][1].append(man)
+            blocks[-1][2].append(entry)
+
+    if [repo for repo, _, _ in blocks] != expected_repos:
+        fail(
+            "page blocks must cover SCOPE repositories in fixed order: "
+            f"expected={expected_repos} got={[repo for repo, _, _ in blocks]}"
+        )
+    if any(repo != expected for (repo, _, _), expected in zip(blocks, expected_repos)):
+        fail("page block repository identity drift vs SCOPE")
+
+    for repo, mans, logs in blocks:
+        if not mans:
+            fail(f"empty page block for {repo}")
+        for i, (man, entry) in enumerate(zip(mans, logs)):
+            if int(man.get("page_index", -1)) != i or int(entry.get("page_index", -1)) != i:
+                fail(f"{repo}: page block must be contiguous starting at 0")
+            if man.get("repository_order") != ordered[expected_repos.index(repo)]["order"]:
+                fail(f"{repo}: repository_order mismatch vs SCOPE")
+
+            page_payload = load_json(root / man["path"])
+            issues = _raw_issues_connection(page_payload)
+            page_info = issues.get("pageInfo") or {}
+            raw_has_next = page_info.get("hasNextPage")
+            raw_end = page_info.get("endCursor")
+            if raw_has_next is not True and raw_has_next is not False:
+                fail(f"{repo} page {i}: raw hasNextPage must be boolean")
+            if man.get("hasNextPage") != raw_has_next:
+                fail(f"{repo} page {i}: manifest hasNextPage != raw pageInfo")
+            if entry.get("hasNextPage") != raw_has_next:
+                fail(f"{repo} page {i}: log hasNextPage != raw pageInfo")
+            if man.get("endCursor") != raw_end:
+                fail(f"{repo} page {i}: manifest endCursor != raw pageInfo")
+            if entry.get("endCursor") != raw_end:
+                fail(f"{repo} page {i}: log endCursor != raw pageInfo")
+
+            is_last = i == len(mans) - 1
+            if is_last:
+                if raw_has_next is not False:
+                    fail(f"{repo}: last page must terminate (hasNextPage=false)")
+            else:
+                if raw_has_next is not True:
+                    fail(f"{repo}: middle page {i} must continue (hasNextPage=true)")
+                if not raw_end:
+                    fail(f"{repo}: middle page {i} missing endCursor")
+
+        first_total: int | None = None
+        seen_ids: set[str] = set()
+        seen_numbers: set[int] = set()
+        seen_urls: set[str] = set()
+        node_total = 0
+        for i, man in enumerate(mans):
+            issues = _raw_issues_connection(load_json(root / man["path"]))
+            total_count = issues.get("totalCount")
+            if not isinstance(total_count, int):
+                fail(f"{repo} page {i}: totalCount missing")
+            if first_total is None:
+                first_total = total_count
+            elif total_count != first_total:
+                fail(
+                    f"{repo}: totalCount drift page {i}: "
+                    f"{total_count} != {first_total}"
+                )
+            if man.get("totalCount") != total_count:
+                fail(f"{repo} page {i}: manifest totalCount != raw")
+            nodes = issues.get("nodes")
+            if not isinstance(nodes, list):
+                fail(f"{repo} page {i}: nodes missing")
+            if man.get("node_count") != len(nodes):
+                fail(f"{repo} page {i}: manifest node_count != raw nodes")
+            node_total += len(nodes)
+            for node in nodes:
+                if not isinstance(node, dict):
+                    fail(f"{repo} page {i}: node is not an object")
+                node_id = node.get("id")
+                number = node.get("number")
+                url = node.get("url")
+                if not isinstance(node_id, str) or not node_id:
+                    fail(f"{repo} page {i}: node id missing")
+                if not isinstance(number, int):
+                    fail(f"{repo} page {i}: node number missing")
+                if not isinstance(url, str) or not url:
+                    fail(f"{repo} page {i}: node url missing")
+                if node_id in seen_ids:
+                    fail(f"{repo}: duplicate node id {node_id}")
+                if number in seen_numbers:
+                    fail(f"{repo}: duplicate node number {number}")
+                if url in seen_urls:
+                    fail(f"{repo}: duplicate node url {url}")
+                seen_ids.add(node_id)
+                seen_numbers.add(number)
+                seen_urls.add(url)
+        assert first_total is not None
+        if node_total != first_total:
+            fail(
+                f"{repo}: node total {node_total} != totalCount {first_total}"
+            )
 
 
 def verify_queue_binding(
@@ -736,7 +877,15 @@ def verify_admission(root: Path) -> int:
         snapshot = load_json(root / "ISSUE_SNAPSHOT.json")
         verify_run_code_binding(root, snapshot)
         contract = load_json(root / "TRANSPORT_CONTRACT.json")
-        verify_page_log_reconstruction(root, snapshot=snapshot, contract=contract)
+        page_entries = verify_page_log_reconstruction(
+            root, snapshot=snapshot, contract=contract
+        )
+        verify_scope_page_coverage(
+            root,
+            scope=scope,
+            snapshot=snapshot,
+            page_entries=page_entries,
+        )
         verify_snapshot_records(scope, snapshot)
         queue_payload = load_json(root / "REVIEW_QUEUE.json")
         verify_publish_commit(root, snapshot=snapshot, miner=miner)

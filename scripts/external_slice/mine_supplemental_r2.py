@@ -1273,8 +1273,9 @@ def retrieve_repository_pages(
                 hard_fail = exc
 
         if hard_fail is None:
-            # Verified endCursor only after validate_page succeeds.
+            # Verified pageInfo only after validate_page succeeds.
             page_entry["endCursor"] = end_cursor
+            page_entry["hasNextPage"] = has_next
             page_entry["page_ok"] = True
             if has_next and not end_cursor:
                 hard_fail = HardFail("cursor_drift", "hasNextPage without endCursor")
@@ -1316,6 +1317,7 @@ def retrieve_repository_pages(
                 "sha256": page_sha,
                 "after": after,
                 "endCursor": end_cursor,
+                "hasNextPage": has_next,
                 "totalCount": total_count,
                 "node_count": len(nodes),
                 "variables_sha256": variables_sha,

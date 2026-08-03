@@ -89,13 +89,21 @@ def make_issue(**kwargs: Any) -> dict[str, Any]:
     }
 
 
-def make_page(owner: str, name: str, nodes: list[dict[str, Any]]) -> dict[str, Any]:
+def make_page(
+    owner: str,
+    name: str,
+    nodes: list[dict[str, Any]],
+    *,
+    total_count: int | None = None,
+    has_next: bool = False,
+    end_cursor: str | None = "E",
+) -> dict[str, Any]:
     return {
         "data": {
             "repository": {
                 "issues": {
-                    "totalCount": len(nodes),
-                    "pageInfo": {"hasNextPage": False, "endCursor": "E"},
+                    "totalCount": total_count if total_count is not None else len(nodes),
+                    "pageInfo": {"hasNextPage": has_next, "endCursor": end_cursor},
                     "nodes": nodes,
                 }
             }
@@ -138,6 +146,165 @@ def write_sheet(path: Path, rows: list[dict[str, str]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=SHEET_HEADER)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def build_multipage_coverage_runner() -> Any:
+    """First SCOPE repo has 3 pages; remaining repos are single terminal pages."""
+    scope = json.loads((FROZEN / "SCOPE.json").read_text(encoding="utf-8"))
+    pages: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    first = scope["repositories"][0]
+    first_key = (first["owner"], first["name"])
+    first_nodes = [
+        [
+            make_issue(
+                number=30,
+                owner=first["owner"],
+                name=first["name"],
+                created_at="2025-06-01T00:00:00Z",
+                title="wrong result",
+            )
+        ],
+        [
+            make_issue(
+                number=29,
+                owner=first["owner"],
+                name=first["name"],
+                created_at="2025-05-01T00:00:00Z",
+                title="incorrect value",
+            )
+        ],
+        [
+            make_issue(
+                number=28,
+                owner=first["owner"],
+                name=first["name"],
+                created_at="2025-04-01T00:00:00Z",
+                title="precision loss",
+            ),
+            make_issue(
+                number=27,
+                owner=first["owner"],
+                name=first["name"],
+                created_at="2025-03-01T00:00:00Z",
+                title="docs only",
+            ),
+        ],
+    ]
+    pages[first_key] = [
+        make_page(
+            first["owner"],
+            first["name"],
+            first_nodes[0],
+            total_count=4,
+            has_next=True,
+            end_cursor="C1",
+        ),
+        make_page(
+            first["owner"],
+            first["name"],
+            first_nodes[1],
+            total_count=4,
+            has_next=True,
+            end_cursor="C2",
+        ),
+        make_page(
+            first["owner"],
+            first["name"],
+            first_nodes[2],
+            total_count=4,
+            has_next=False,
+            end_cursor="C3",
+        ),
+    ]
+    for repo in scope["repositories"][1:]:
+        nodes = [
+            make_issue(
+                number=30,
+                owner=repo["owner"],
+                name=repo["name"],
+                created_at="2025-06-01T00:00:00Z",
+                title="wrong result",
+            ),
+            make_issue(
+                number=29,
+                owner=repo["owner"],
+                name=repo["name"],
+                created_at="2025-05-01T00:00:00Z",
+                title="numerical regression",
+            ),
+            make_issue(
+                number=28,
+                owner=repo["owner"],
+                name=repo["name"],
+                created_at="2025-04-01T00:00:00Z",
+                title="docs only",
+            ),
+        ]
+        pages[(repo["owner"], repo["name"])] = [
+            make_page(repo["owner"], repo["name"], nodes, end_cursor="E")
+        ]
+
+    def runner(query: str, variables: dict[str, Any]) -> tuple[int, str, str]:
+        key = (variables["owner"], variables["name"])
+        after = variables.get("after")
+        repo_pages = pages[key]
+        if after is None:
+            return 0, json.dumps(repo_pages[0]), ""
+        for idx, page in enumerate(repo_pages[:-1]):
+            if after == page["data"]["repository"]["issues"]["pageInfo"]["endCursor"]:
+                return 0, json.dumps(repo_pages[idx + 1]), ""
+        return 1, "", f"unexpected after {after}"
+
+    return runner
+
+
+def reseal_publish_commit(root: Path) -> None:
+    """Refresh manifest page hashes + PUBLISH_COMMIT after intentional tamper."""
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    for man in snap["page_manifest"]:
+        page_path = root / man["path"]
+        if page_path.is_file():
+            man["sha256"] = miner.sha256_file(page_path)
+    snap["page_manifest_sha256"] = checker.canonical_sha256(snap["page_manifest"])
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    page_files = {
+        path.relative_to(root).as_posix(): miner.sha256_file(path)
+        for path in sorted((root / "transport_pages").glob("*.json"))
+    }
+    publish = miner.build_publish_commit_identity(
+        run_id=snap["run_id"],
+        code_commit=snap["code_commit"],
+        snapshot=snap,
+        transport_page_sha256=page_files,
+    )
+    _write_json(root / "PUBLISH_COMMIT.json", publish)
+
+
+def sync_page_log_from_manifest(root: Path) -> None:
+    """Keep COMMAND_LOG page records aligned with tampered manifest fields."""
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    page_entries = [e for e in log["entries"] if isinstance(e.get("page_index"), int)]
+    for entry, man in zip(page_entries, snap["page_manifest"]):
+        for field in (
+            "repository",
+            "page_index",
+            "after",
+            "endCursor",
+            "hasNextPage",
+            "variables_sha256",
+            "response_page_sha256",
+            "variables",
+        ):
+            if field in man:
+                entry[field] = man[field]
+    _write_json(root / "COMMAND_LOG.json", log)
+
+
+def load_first_repo_pages(root: Path) -> list[dict[str, Any]]:
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first_repo = snap["page_manifest"][0]["repository"]
+    return [m for m in snap["page_manifest"] if m["repository"] == first_repo]
 
 
 def build_decision_from_queue_row(
@@ -197,8 +364,13 @@ def build_decision_from_queue_row(
     }
 
 
-def build_valid_payload(root: Path, *, admits_per_quota_repo: int = 3) -> None:
-    assert miner.cmd_retrieve(root, runner=build_fixture_runner()) == 0
+def build_valid_payload(
+    root: Path,
+    *,
+    admits_per_quota_repo: int = 3,
+    runner: Any | None = None,
+) -> None:
+    assert miner.cmd_retrieve(root, runner=runner or build_fixture_runner()) == 0
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text())["records"]
     quotas = json.loads((root / "QUOTAS.json").read_text())
     positive = {
@@ -334,6 +506,7 @@ def test_diagnostic_run_code_mismatch_rejected(tmp_path: Path) -> None:
     [
         "after",
         "endCursor",
+        "hasNextPage",
         "variables_sha256",
         "response_page_sha256",
         "page_index",
@@ -350,6 +523,8 @@ def test_page_log_manifest_field_tamper(tmp_path: Path, field: str) -> None:
         page[field] = int(page[field]) + 7
     elif field in {"variables_sha256", "response_page_sha256"}:
         page[field] = "0" * 64
+    elif field == "hasNextPage":
+        page[field] = not bool(page.get(field))
     else:
         page[field] = f"TAMPERED-{page.get(field)}"
     _write_json(root / "COMMAND_LOG.json", log)
@@ -411,6 +586,226 @@ def test_sequential_snapshot_without_matching_publish_rejected(tmp_path: Path) -
     snap["records"] = list(snap["records"])  # touch identity without rebinding publish
     snap["created_cutoff"] = "1999-01-01T00:00:00Z"
     _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_positive_scope_page_coverage_multipage(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    assert checker.verify_admission(root) == 0
+    first_pages = load_first_repo_pages(root)
+    assert len(first_pages) == 3
+    assert first_pages[0]["hasNextPage"] is True
+    assert first_pages[1]["hasNextPage"] is True
+    assert first_pages[2]["hasNextPage"] is False
+
+
+def test_delete_repo_block_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    dropped = snap["page_manifest"][0]["repository"]
+    keep_manifest = [m for m in snap["page_manifest"] if m["repository"] != dropped]
+    for man in snap["page_manifest"]:
+        if man["repository"] == dropped:
+            path = root / man["path"]
+            if path.exists():
+                path.unlink()
+    snap["page_manifest"] = keep_manifest
+    snap["records"] = [r for r in snap["records"] if r["repository"] != dropped]
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    log["entries"] = [
+        e
+        for e in log["entries"]
+        if not (isinstance(e.get("page_index"), int) and e.get("repository") == dropped)
+    ]
+    _write_json(root / "COMMAND_LOG.json", log)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_reorder_repo_blocks_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    by_repo: dict[str, list[dict[str, Any]]] = {}
+    for man in snap["page_manifest"]:
+        by_repo.setdefault(man["repository"], []).append(man)
+    repos = list(by_repo)
+    # Swap first two repository blocks while keeping internal page order.
+    repos[0], repos[1] = repos[1], repos[0]
+    snap["page_manifest"] = [m for repo in repos for m in by_repo[repo]]
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    sync_page_log_from_manifest(root)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_missing_middle_page_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first_repo = snap["page_manifest"][0]["repository"]
+    middle = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == first_repo and m["page_index"] == 1
+    )
+    (root / middle["path"]).unlink()
+    snap["page_manifest"] = [m for m in snap["page_manifest"] if m is not middle]
+    # Leave page_index 0 then 2 → non-contiguous block.
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    log["entries"] = [
+        e
+        for e in log["entries"]
+        if not (
+            isinstance(e.get("page_index"), int)
+            and e.get("repository") == first_repo
+            and e.get("page_index") == 1
+        )
+    ]
+    _write_json(root / "COMMAND_LOG.json", log)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_missing_last_page_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first_repo = snap["page_manifest"][0]["repository"]
+    last = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == first_repo and m["page_index"] == 2
+    )
+    (root / last["path"]).unlink()
+    snap["page_manifest"] = [m for m in snap["page_manifest"] if m is not last]
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    log["entries"] = [
+        e
+        for e in log["entries"]
+        if not (
+            isinstance(e.get("page_index"), int)
+            and e.get("repository") == first_repo
+            and e.get("page_index") == 2
+        )
+    ]
+    _write_json(root / "COMMAND_LOG.json", log)
+    sync_page_log_from_manifest(root)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_fake_termination_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first_repo = snap["page_manifest"][0]["repository"]
+    # Drop trailing pages and falsely terminate page 0 while totalCount stays 4.
+    keep = []
+    for man in snap["page_manifest"]:
+        if man["repository"] != first_repo:
+            keep.append(man)
+            continue
+        if man["page_index"] == 0:
+            page = json.loads((root / man["path"]).read_text(encoding="utf-8"))
+            page["data"]["repository"]["issues"]["pageInfo"]["hasNextPage"] = False
+            _write_json(root / man["path"], page)
+            man["hasNextPage"] = False
+            man["node_count"] = len(page["data"]["repository"]["issues"]["nodes"])
+            keep.append(man)
+        else:
+            path = root / man["path"]
+            if path.exists():
+                path.unlink()
+    snap["page_manifest"] = keep
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    log["entries"] = [
+        e
+        for e in log["entries"]
+        if not (
+            isinstance(e.get("page_index"), int)
+            and e.get("repository") == first_repo
+            and int(e.get("page_index")) > 0
+        )
+    ]
+    _write_json(root / "COMMAND_LOG.json", log)
+    sync_page_log_from_manifest(root)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_total_count_drift_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    middle = next(
+        m for m in snap["page_manifest"] if m["page_index"] == 1
+    )
+    page = json.loads((root / middle["path"]).read_text(encoding="utf-8"))
+    page["data"]["repository"]["issues"]["totalCount"] = 99
+    _write_json(root / middle["path"], page)
+    middle["totalCount"] = 99
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    sync_page_log_from_manifest(root)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_missing_node_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first = snap["page_manifest"][0]
+    page = json.loads((root / first["path"]).read_text(encoding="utf-8"))
+    page["data"]["repository"]["issues"]["nodes"] = []
+    _write_json(root / first["path"], page)
+    first["node_count"] = 0
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    sync_page_log_from_manifest(root)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_duplicate_node_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first_repo = snap["page_manifest"][0]["repository"]
+    page0 = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == first_repo and m["page_index"] == 0
+    )
+    page1 = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == first_repo and m["page_index"] == 1
+    )
+    raw0 = json.loads((root / page0["path"]).read_text(encoding="utf-8"))
+    raw1 = json.loads((root / page1["path"]).read_text(encoding="utf-8"))
+    # Copy page0 node identity onto page1 → duplicate across the block.
+    raw1["data"]["repository"]["issues"]["nodes"] = json.loads(
+        json.dumps(raw0["data"]["repository"]["issues"]["nodes"])
+    )
+    _write_json(root / page1["path"], raw1)
+    page1["node_count"] = len(raw1["data"]["repository"]["issues"]["nodes"])
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    sync_page_log_from_manifest(root)
+    reseal_publish_commit(root)
     assert_checker_fails_without_new_mint(root, before)
 
 

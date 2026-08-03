@@ -864,6 +864,8 @@ def test_run_and_code_commit_binding_on_success(
     ]
     assert page_entries
     assert all("endCursor" in e for e in page_entries)
+    assert all("hasNextPage" in e for e in page_entries)
+    assert all(e["hasNextPage"] is False for e in page_entries)
     snapshot = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
     assert snapshot["run_id"] == "ok-run"
