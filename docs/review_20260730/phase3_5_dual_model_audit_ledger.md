@@ -90,7 +90,7 @@ S0 台账建立提交前实测：
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 | Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
 | Gate SUPPLEMENTAL_MINING_R2_DESIGN-r1 | correction audit `d95d6277ee09479d638bb83d75562e9dc4348031`；payload `1ed9fb2dc2714cb452bba4016d6093cefb36204d` | `PASS_WITH_DISCLOSURE` | N/A（设计分支，不含实验 payload） | 设计修订通过；但已发生的 Cursor Task 4 需独立执行审计，不能追溯通过 |
-| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-result-r3 `020b60fb83f7eb1d34f143458fca62beab5aa398`；live result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc` | `PASS_WITH_DISCLOSURE`（transport/result checker 完整；distribution structural shortfall） | N/A（PR #7 未集成） | 是；仅同分支 Task 5/6 A1+A3 admission review；不得重跑 retrieval，不解锁 readiness/downstream |
+| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | admission handoff `30c30a73f1544a2129505bb4ee26f87f7cf710bb`；payload `ca1c55c05d5f90d2140ad99d479e0c12f483b558` | `BLOCKED`（crash-only A3 错判；stop/handoff/provenance fail-open） | N/A（PR #7 未集成） | 否；仅同分支 `SUPPLEMENTAL_ADMISSION_R2-r1` correction；不解锁 readiness/downstream |
 
 ## 5. 交接审计记录
 
@@ -869,3 +869,26 @@ checker 现要求 labels/pageInfo 为对象且 `hasNextPage is False`。完整�
 独立验证 targeted `182 passed`、full `442 passed, 10 warnings`、focused matrix `12 passed`；Ruff、compileall、`git diff --check` 与 live-data byte check 全部通过。live pages/snapshot/queue 未变，未执行 retrieval、A1/A3 或 readiness。
 
 Gate 以 `PASS_WITH_DISCLOSURE` 关闭。披露仍为 immutable snapshot 的结构性配额不足：chaospy 最多 2、SALib 为 0，因此 frozen J=6 路径不可达，后继 handoff 必须保留 `DISTRIBUTION_TARGET_AT_RISK` 且不得以 PyTorch/JAX 补位。accepted-ready 仍为 18。唯一解锁动作是在同一 Cursor VM 分支按 queue/stop-rule 完成 public A1/A3 review，生成 bound admission payload 与 direct-child handoff 后停止本地审计；所有 readiness/downstream 继续锁定。
+
+### 5.29 SUPPLEMENTAL_ADMISSION_R2 payload/handoff 审计
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2` |
+| 记录类型 | A1/A3 admission payload 与 handoff 独立审计 |
+| 交接/复核时间 | `2026-08-03T23:31:56+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | payload `ca1c55c05d5f90d2140ad99d479e0c12f483b558`；handoff `30c30a73f1544a2129505bb4ee26f87f7cf710bb` |
+| Cursor baseline | `020b60fb83f7eb1d34f143458fca62beab5aa398` |
+| Findings | `SUPP-R2-A3-CRASH-ONLY-001`；`SUPP-R2-STOP-RULE-FAILOPEN-001`；`SUPP-R2-HANDOFF-SEMANTIC-COUNTS-001`；`SUPP-R2-VERIFICATION-PROVENANCE-001` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 `SUPPLEMENTAL_ADMISSION_R2-r1` correction；不得重跑 retrieval，不解锁 readiness 或 downstream。 |
+
+结构复算得到 63 decisions/sheet/evidence、10 pending、53 excluded，逐仓 reviewed 为 `16/5/2/0/20/20`，A2/aliases/blind scan、transport immutability、direct-child lineage 与 `DISTRIBUTION_TARGET_AT_RISK` 均一致。十个 submitted fix commits 均公开存在，且 buggy SHA 是 fixed commit first parent。Targeted `182 passed`、full `442 passed, 10 warnings`、admission 与 handoff checker 均 exit 0。
+
+但 public evidence 证明 `EXT-pymc-04`、`EXT-pymc-16` 与 `EXT-gpytorch-05` 只有 TypeError/RuntimeError 症状，违反冻结 crash-only exclusion；三行须 A3 FAIL/EXCLUDED。PyMC 因此仅 3 个有效 admit，row16 停止无效，必须继续 row17–20。GPyTorch 耗尽后仅 1 个有效 pending。
+
+Checker 还接受未到 5 admits/20 reviews/queue exhaustion 的 fully rebuilt early-stop payload；把 handoff decision total 从 63 改为 999 后 admission/hash checker 仍双双 exit 0。Verification log 未记录 handoff 阶段命令，且其 diff-check zero claim 在未披露 `cr-at-eol` 配置时不可复现：native Local Git 对 64 行 CRLF CSV 返回 2。
+
+Standards PASS，Spec FAIL。唯一 correction 是修正三行和 PyMC 后续 queue review，补严 stop-rule 与 handoff semantic reconstruction/负测，规范 LF/provenance，重发 payload+direct-child handoff；accepted-ready 保持 18，readiness/downstream 全部锁定。

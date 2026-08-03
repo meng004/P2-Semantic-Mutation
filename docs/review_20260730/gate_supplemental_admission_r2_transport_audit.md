@@ -807,3 +807,125 @@ stop for `SUPPLEMENTAL_ADMISSION_R2` local audit.
 
 Readiness, candidate replacement, new search/retrieval, canonical freeze, C4,
 labelling, prediction, and detection remain locked.
+
+## 15. `SUPPLEMENTAL_ADMISSION_R2` payload and handoff audit
+
+- **Execution baseline:** `020b60fb83f7eb1d34f143458fca62beab5aa398`
+- **Payload commit:** `ca1c55c05d5f90d2140ad99d479e0c12f483b558`
+- **Handoff commit:** `30c30a73f1544a2129505bb4ee26f87f7cf710bb`
+- **Remote binding:** handoff commit equals the Cursor branch head
+- **Lineage:** payload is a direct child of the baseline; handoff is a direct
+  child of the payload
+- **Verdict:** `BLOCKED`
+
+### 15.1 Observed-valid structure and public-fix evidence
+
+The committed payload contains 63 queue-prefix decisions, 63 sheet rows, and
+63 one-case evidence records: 10 `ADMIT_PENDING_REPRO` and 53 exclusions. The
+reviewed counts are PyMC 16, GPyTorch 5, chaospy 2, SALib 0, PyTorch 20, and
+JAX 20. Queue statuses and IDs form exact repository prefixes, all A2 values
+are `PENDING`, aliases are blank, blind scans are clean, immutable transport
+artifacts are unchanged, and no readiness/downstream artifact exists.
+
+Independent GitHub checks resolve all ten submitted fixed commits and confirm
+that each submitted buggy SHA is the fixed commit's first parent. The seven
+non-crash submitted cases have public issue/fix evidence consistent with their
+claimed numerical mechanisms: PyMC `EXT-pymc-11/14/15`, GPyTorch
+`EXT-gpytorch-03`, PyTorch `EXT-pytorch-06/09`, and JAX `EXT-jax-14`.
+
+The committed admission checker returns `ADMISSION_CHECK_OK`; the handoff
+checker returns `HASH_CHECK_OK`; targeted and full suites produce `182 passed`
+and `442 passed, 10 warnings`. These positive checks establish structural
+consistency but do not close the fail-open contracts below.
+
+### 15.2 `SUPP-R2-A3-CRASH-ONLY-001`
+
+Three submitted A3 passes conflict with the frozen `crash-only` exclusion and
+the float-vector-to-float/few-float A3 rule:
+
+- `EXT-pymc-04` issue 6648 reports a dtype `TypeError` when the ICDF input
+  probability cannot be stored in an integer tensor. The fix changes the input
+  dtype and adds a successful ICDF test, but the public defect report itself
+  supplies only an exception symptom.
+- `EXT-pymc-16` issue 2032 reports GPU float64/type errors. The fix tensorizes
+  transform bounds and casts example data; neither the issue nor the submitted
+  mechanism identifies a returned numerical-value defect.
+- `EXT-gpytorch-05` issue 955 reports an invalid gather index/RuntimeError. The
+  fix clamps interpolation grid spacing to avoid internal NaNs, but the public
+  report still provides only a crash and no non-crash returned-value defect.
+
+These rows may keep A1 `PASS`, but A3 must be `FAIL`, the decision must be
+`EXCLUDED`, and `exclusion_class` must be `crash-only` unless immutable public
+evidence of a non-crash numerical return defect is supplied. PyMC consequently
+has only three valid admits through row 16, so stopping there is invalid; rows
+17 onward must be reviewed in order until five valid admits, row 20, or queue
+exhaustion. GPyTorch is already exhausted and falls to one valid pending row.
+
+### 15.3 `SUPP-R2-STOP-RULE-FAILOPEN-001`
+
+The producer's review-status function treats
+`reviewed_n == len(decisions_for_repo)` as a stop condition, which is a
+tautology. Its decision validator reaches an invalid early prefix and executes
+`pass` instead of failing. The independent checker enforces upper bounds and
+prefix equality but does not independently require one of the three frozen
+stop conditions.
+
+An independent fully rebuilt synthetic payload stopped PyTorch and JAX after
+two of four queue rows with only one admit each: not five admits, not twenty
+reviews, and not exhaustion. `build-payload` succeeded and the complete checker
+returned `ADMISSION_CHECK_OK`. The required missing-decision, omitted-reviewed-
+exclusion, and invalid-early-stop negatives are absent. Thus the checker cannot
+prove that a submitted prefix retained every required exclusion.
+
+### 15.4 `SUPP-R2-HANDOFF-SEMANTIC-COUNTS-001`
+
+The handoff hash checker verifies referenced-file hashes and direct-parent
+lineage but does not reconstruct handoff semantic claims. The admission checker
+validates selected quota fields but not `decision_totals` or the full per-repo
+review/admit/exclusion/status/stop counts.
+
+Changing only `decision_totals.decisions` from 63 to 999 left every referenced
+artifact unchanged; both the admission checker and handoff hash checker still
+returned zero. This violates the frozen handoff and incorrect-artifact-count
+negative contracts.
+
+### 15.5 `SUPP-R2-VERIFICATION-PROVENANCE-001`
+
+`VERIFICATION_LOG.json` records eight pre-payload commands but omits the
+subsequent `write-handoff` and pre/post handoff-hash executions reported in the
+chat handoff. Its `git diff --check` zero exit is also configuration-dependent:
+native Local Desktop Git returns 2 because all 64 new CSV lines use CRLF and are
+reported as trailing whitespace; adding `core.whitespace=cr-at-eol` makes the
+same command return zero, but that configuration is not recorded.
+
+The CSV is semantically parseable, so this is not a row-binding error. It is a
+provenance blocker because the committed claim `no whitespace errors` is not
+independently reproducible from the recorded command/environment alone.
+
+### 15.6 Gate decision and only unlocked correction
+
+Standards is `PASS`; Specification is `FAIL`. Readiness, canonical freeze, C4,
+labelling, prediction, and detection remain locked. Accepted-ready remains 18.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-r1` on the same Cursor VM
+branch, without `rtk`, new retrieval, Search API use, replacement repositories,
+or readiness. It must:
+
+1. correct the three crash-only decisions and derived artifacts; continue the
+   frozen PyMC queue from row 17 until its valid stop;
+2. make producer and independent checker reject every decision prefix unless it
+   ends at five admits, twenty reviews, or exact queue exhaustion;
+3. add isolated, fully rebuilt negatives for missing/extra decisions, omitted
+   reviewed exclusion, invalid early stop, and later-row substitution;
+4. independently reconstruct every handoff total, per-repository count,
+   exclusion/status count, stop reason, pending count, shortfall, and claim, and
+   require both admission and handoff checkers to reject semantic tampering;
+5. normalize the generated CSV to LF or record and bind an explicit whitespace
+   policy, and produce complete reproducible command provenance without false
+   zero-exit claims;
+6. regenerate decision/queue/sheet/evidence/verification payload in one
+   correction payload commit, generate a direct-child correction handoff,
+   push, and stop for local r1 re-review.
+
+The worsened GPyTorch/chaospy/SALib shortfalls must remain disclosed; no
+PyTorch/JAX substitution is permitted.
