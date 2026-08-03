@@ -838,7 +838,7 @@ r5 在 miner 和独立 checker 中均实现六仓共享 node-ID/canonical-URL �
 | Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
 | Cursor commit | `8076d82f8c02209ad33416594ee30e7183e8b7c6` |
 | Cursor baseline | `1e5aee2329c9549ef665cc5cb6d487ebbab74b63` |
-| Findings | `SUPP-R2-CHECKER-INDEPENDENCE-001` 与 raw PullRequest symptom 已关闭；`SUPP-R2-LABEL-PAGINATION-FAILOPEN-001`；PullRequest/incomplete-label negatives 未隔离 |
+| Findings | `SUPP-R2-CHECKER-INDEPENDENCE-001` 与 raw PullRequest symptom 已关闭；`SUPP-R2-LABEL-PAGINATION-FAILOPEN-001`；`SUPP-R2-RAW-NEGATIVE-ISOLATION-001` |
 | Verdict | `BLOCKED` |
 | 本地集成 commit | N/A（PR #7 未集成） |
 | 后继任务是否解锁 | 否；仅同分支 transport-result-r3 checker correction；不得重跑 retrieval，不解锁 A1/A3、readiness 或 downstream。 |

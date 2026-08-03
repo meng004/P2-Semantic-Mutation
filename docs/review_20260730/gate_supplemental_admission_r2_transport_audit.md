@@ -694,7 +694,7 @@ hashes, rebuilt queue, decisions, candidate sheet and evidence, and recomputed
 boolean `true` returned nonzero under the same full rebuild. This isolates a
 real semantic fail-open rather than a stale-hash rejection.
 
-### 13.3 Negative-test isolation remains incomplete
+### 13.3 `SUPP-R2-RAW-NEGATIVE-ISOLATION-001`
 
 The committed `PullRequest` and incomplete-label tests call
 `fully_reseal_snapshot`, but that helper refreshes only manifest page hashes and
