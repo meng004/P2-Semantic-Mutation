@@ -507,9 +507,16 @@ def verify_scope_page_coverage(
     if any(repo != expected for (repo, _, _), expected in zip(blocks, expected_repos)):
         fail("page block repository identity drift vs SCOPE")
 
+    # Shared across all six repositories; issue numbers remain per-repo.
+    global_node_ids: set[str] = set()
+    global_urls: set[str] = set()
+
     for repo, mans, logs in blocks:
         if not mans:
             fail(f"empty page block for {repo}")
+        if "/" not in repo:
+            fail(f"SCOPE repository not owner/name: {repo}")
+        scope_owner, scope_name = repo.split("/", 1)
         for i, (man, entry) in enumerate(zip(mans, logs)):
             if int(man.get("page_index", -1)) != i or int(entry.get("page_index", -1)) != i:
                 fail(f"{repo}: page block must be contiguous starting at 0")
@@ -543,9 +550,7 @@ def verify_scope_page_coverage(
                     fail(f"{repo}: middle page {i} missing endCursor")
 
         first_total: int | None = None
-        seen_ids: set[str] = set()
         seen_numbers: set[int] = set()
-        seen_urls: set[str] = set()
         node_total = 0
         for i, man in enumerate(mans):
             issues = _raw_issues_connection(load_json(root / man["path"]))
@@ -579,15 +584,28 @@ def verify_scope_page_coverage(
                     fail(f"{repo} page {i}: node number missing")
                 if not isinstance(url, str) or not url:
                     fail(f"{repo} page {i}: node url missing")
-                if node_id in seen_ids:
-                    fail(f"{repo}: duplicate node id {node_id}")
+                # Shared six-repo uniqueness before per-repo URL binding.
+                if node_id in global_node_ids:
+                    fail(
+                        f"duplicate node id across SCOPE repositories: {node_id}"
+                    )
+                if url in global_urls:
+                    fail(
+                        f"duplicate node url across SCOPE repositories: {url}"
+                    )
                 if number in seen_numbers:
                     fail(f"{repo}: duplicate node number {number}")
-                if url in seen_urls:
-                    fail(f"{repo}: duplicate node url {url}")
-                seen_ids.add(node_id)
+                expected_url = (
+                    f"https://github.com/{scope_owner}/{scope_name}/issues/{number}"
+                )
+                if url != expected_url:
+                    fail(
+                        f"{repo} page {i}: URL owner/repository mismatch: "
+                        f"got {url!r} expected {expected_url!r}"
+                    )
+                global_node_ids.add(node_id)
+                global_urls.add(url)
                 seen_numbers.add(number)
-                seen_urls.add(url)
         assert first_total is not None
         if node_total != first_total:
             fail(

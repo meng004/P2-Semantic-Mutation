@@ -676,9 +676,15 @@ def validate_issue_node(node: Any, *, repository: str) -> dict[str, Any]:
     number = node.get("number")
     if not isinstance(number, int):
         raise HardFail("malformed_json", "issue number missing")
-    expected_suffix = f"/issues/{number}"
-    if not url.endswith(expected_suffix) or "/pull/" in url:
-        raise HardFail("pull_url", f"non-canonical issue URL: {url}")
+    if "/" not in repository:
+        raise HardFail("query_identity_drift", f"bad repository {repository!r}")
+    owner, name = repository.split("/", 1)
+    expected_url = f"https://github.com/{owner}/{name}/issues/{number}"
+    if url != expected_url or "/pull/" in url:
+        raise HardFail(
+            "url_repository_mismatch",
+            f"got {url!r} expected {expected_url!r}",
+        )
     labels = node.get("labels") or {}
     page_info = labels.get("pageInfo") or {}
     if page_info.get("hasNextPage") is True:
@@ -1173,6 +1179,8 @@ def retrieve_repository_pages(
     temp_pages: Path,
     run_id: str,
     code_commit: str,
+    seen_ids: set[str],
+    seen_urls: set[str],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     query = contract["query_document"]
     query_sha = contract["query_document_sha256"]
@@ -1188,9 +1196,9 @@ def retrieve_repository_pages(
     page_index = 0
     first_total: int | None = None
     seen_cursors: set[str] = set()
-    seen_ids: set[str] = set()
+    # Issue numbers are unique within a repository; IDs/URLs are global.
     seen_numbers: set[int] = set()
-    seen_urls: set[str] = set()
+    ids_before = len(seen_ids)
     issues_with_meta: list[dict[str, Any]] = []
     page_manifest: list[dict[str, Any]] = []
     has_next = True
@@ -1342,7 +1350,7 @@ def retrieve_repository_pages(
 
     if first_total is None:
         raise HardFail("incomplete_pagination", f"no pages for {repository}")
-    unique_count = len(seen_ids)
+    unique_count = len(seen_ids) - ids_before
     if unique_count != first_total:
         raise HardFail(
             "incomplete_pagination",
@@ -1425,6 +1433,8 @@ def cmd_retrieve(
             temp_pages = Path(tmp)
             all_manifest: list[dict[str, Any]] = []
             all_records: list[dict[str, Any]] = []
+            shared_node_ids: set[str] = set()
+            shared_urls: set[str] = set()
             for repo_entry in scope["repositories"]:
                 manifest, issues_meta = retrieve_repository_pages(
                     root=root,
@@ -1435,6 +1445,8 @@ def cmd_retrieve(
                     temp_pages=temp_pages,
                     run_id=bound_run_id,
                     code_commit=bound_code_commit,
+                    seen_ids=shared_node_ids,
+                    seen_urls=shared_urls,
                 )
                 all_manifest.extend(manifest)
                 records = select_phrase_union(

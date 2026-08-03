@@ -809,6 +809,98 @@ def test_duplicate_node_fails_after_reseal(tmp_path: Path) -> None:
     assert_checker_fails_without_new_mint(root, before)
 
 
+def test_cross_repo_duplicate_node_id_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first_repo = snap["page_manifest"][0]["repository"]
+    second_repo = next(
+        m["repository"]
+        for m in snap["page_manifest"]
+        if m["repository"] != first_repo
+    )
+    page_a = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == first_repo and m["page_index"] == 0
+    )
+    page_b = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == second_repo and m["page_index"] == 0
+    )
+    raw_a = json.loads((root / page_a["path"]).read_text(encoding="utf-8"))
+    raw_b = json.loads((root / page_b["path"]).read_text(encoding="utf-8"))
+    donor_id = raw_a["data"]["repository"]["issues"]["nodes"][0]["id"]
+    # Keep repo-B URL/number valid for SCOPE; only the GraphQL node id collides.
+    raw_b["data"]["repository"]["issues"]["nodes"][0]["id"] = donor_id
+    _write_json(root / page_b["path"], raw_b)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_cross_repo_duplicate_url_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first_repo = snap["page_manifest"][0]["repository"]
+    second_repo = next(
+        m["repository"]
+        for m in snap["page_manifest"]
+        if m["repository"] != first_repo
+    )
+    page_a = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == first_repo and m["page_index"] == 0
+    )
+    page_b = next(
+        m
+        for m in snap["page_manifest"]
+        if m["repository"] == second_repo and m["page_index"] == 0
+    )
+    raw_a = json.loads((root / page_a["path"]).read_text(encoding="utf-8"))
+    raw_b = json.loads((root / page_b["path"]).read_text(encoding="utf-8"))
+    donor_url = raw_a["data"]["repository"]["issues"]["nodes"][0]["url"]
+    raw_b["data"]["repository"]["issues"]["nodes"][0]["url"] = donor_url
+    _write_json(root / page_b["path"], raw_b)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_wrong_repo_url_fails_after_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    page = snap["page_manifest"][0]
+    raw = json.loads((root / page["path"]).read_text(encoding="utf-8"))
+    number = raw["data"]["repository"]["issues"]["nodes"][0]["number"]
+    raw["data"]["repository"]["issues"]["nodes"][0]["url"] = (
+        f"https://github.com/evil-org/evil-repo/issues/{number}"
+    )
+    _write_json(root / page["path"], raw)
+    reseal_publish_commit(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_same_issue_number_across_repos_allowed(tmp_path: Path) -> None:
+    """Issue numbers remain unique only within a repository."""
+    root = seed_root(tmp_path)
+    build_valid_payload(root, runner=build_multipage_coverage_runner())
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    numbers_by_repo: dict[str, set[int]] = {}
+    for man in snap["page_manifest"]:
+        page = json.loads((root / man["path"]).read_text(encoding="utf-8"))
+        for node in page["data"]["repository"]["issues"]["nodes"]:
+            numbers_by_repo.setdefault(man["repository"], set()).add(node["number"])
+    shared = set.intersection(*numbers_by_repo.values())
+    assert shared, "fixture should reuse issue numbers across repositories"
+    assert checker.verify_admission(root) == 0
+
+
 @pytest.mark.parametrize(
     "field",
     [
