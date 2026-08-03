@@ -288,10 +288,60 @@ CANDIDATE_CLEANUP_NAMES = (
     "EVIDENCE_SNAPSHOT.json",
     "admission_sheet.cursor_candidate.csv",
     "HANDOFF_SUPPLEMENTAL_R2.json",
+    "PUBLISH_COMMIT.json",
     "transport_pages",
     "admission_evidence",
     ".publish_staging",
 )
+
+PUBLISH_DEATH_ENV = "SUPPLEMENTAL_R2_PUBLISH_DEATH_AT"
+PUBLISH_DEATH_BOUNDARIES = (
+    "after_stage",
+    "after_pages_promote",
+    "after_snapshot",
+    "after_queue",
+    "after_publish_commit",
+    "after_cleanup",
+)
+
+
+def publish_death_checkpoint(boundary: str) -> None:
+    """Real-death hook for promotion-boundary recovery tests (subprocess os._exit)."""
+    if boundary not in PUBLISH_DEATH_BOUNDARIES:
+        raise HardFail("illegal_publish_boundary", boundary)
+    if os.environ.get(PUBLISH_DEATH_ENV, "") == boundary:
+        sys.stdout.flush()
+        sys.stderr.flush()
+        os._exit(70)
+
+
+def build_publish_commit_identity(
+    *,
+    run_id: str,
+    code_commit: str,
+    snapshot: dict[str, Any],
+    transport_page_sha256: dict[str, str],
+) -> dict[str, Any]:
+    """Single hash-bound identity sealing retrieve publish completeness.
+
+    Binds snapshot + transport pages (not mutable post-retrieve queue statuses),
+    so sequential page/snapshot writes without this seal cannot pass as complete.
+    """
+    ordered_pages = {
+        path: transport_page_sha256[path] for path in sorted(transport_page_sha256)
+    }
+    body = {
+        "schema_version": 1,
+        "task": "SUPPLEMENTAL_MINING_R2",
+        "run_id": run_id,
+        "code_commit": code_commit,
+        "snapshot_sha256": canonical_sha256(snapshot),
+        "page_manifest_sha256": snapshot.get("page_manifest_sha256"),
+        "transport_pages": ordered_pages,
+    }
+    identity = dict(body)
+    identity["publish_commit_sha256"] = canonical_sha256(body)
+    return identity
 
 
 def cleanup_candidate_artifacts(root: Path) -> None:
@@ -334,13 +384,11 @@ def crash_safe_publish(
     temp_pages: Path,
     snapshot: dict[str, Any],
     queue_payload: dict[str, Any],
-) -> None:
-    """Stage pages/snapshot/queue, then atomically promote into the owner root.
+) -> dict[str, Any]:
+    """Stage pages/snapshot/queue, promote, then seal with PUBLISH_COMMIT.json.
 
-    Failure before promotion leaves only `.publish_staging/<run_id>/`.
-    Failure mid-promotion leaves detectable `.transport_pages.*` leftovers that
-    subsequent owner cleanup / recovery removes; final snapshot/queue are only
-    written after pages are swapped into place.
+    PUBLISH_COMMIT is the sole completeness identity: snapshot/queue/pages written
+    sequentially without a matching commit must not be treated as a full result.
     """
     if snapshot.get("run_id") != run_id or snapshot.get("code_commit") != code_commit:
         raise HardFail("run_code_unbound", "snapshot binding mismatch at publish")
@@ -356,10 +404,21 @@ def crash_safe_publish(
     staging.mkdir(parents=True)
     staged_pages = staging / "transport_pages"
     staged_pages.mkdir(parents=True)
+    page_sha256: dict[str, str] = {}
     for page_file in sorted(temp_pages.glob("*.json")):
-        shutil.copy2(page_file, staged_pages / page_file.name)
+        dest = staged_pages / page_file.name
+        shutil.copy2(page_file, dest)
+        page_sha256[f"transport_pages/{page_file.name}"] = sha256_file(dest)
+    publish_commit = build_publish_commit_identity(
+        run_id=run_id,
+        code_commit=code_commit,
+        snapshot=snapshot,
+        transport_page_sha256=page_sha256,
+    )
     atomic_write_json(staging / "ISSUE_SNAPSHOT.json", snapshot)
     atomic_write_json(staging / "REVIEW_QUEUE.json", queue_payload)
+    atomic_write_json(staging / "PUBLISH_COMMIT.json", publish_commit)
+    publish_death_checkpoint("after_stage")
 
     promoting = root / f".transport_pages.{run_id}.promoting"
     old_pages = root / f".transport_pages.{run_id}.old"
@@ -372,14 +431,24 @@ def crash_safe_publish(
     if final_pages.exists():
         final_pages.rename(old_pages)
     promoting.rename(final_pages)
+    publish_death_checkpoint("after_pages_promote")
+
     atomic_write_json(root / "ISSUE_SNAPSHOT.json", snapshot)
+    publish_death_checkpoint("after_snapshot")
     atomic_write_json(root / "REVIEW_QUEUE.json", queue_payload)
+    publish_death_checkpoint("after_queue")
+    # Seal last: without this identity, sequential artifacts are incomplete.
+    atomic_write_json(root / "PUBLISH_COMMIT.json", publish_commit)
+    publish_death_checkpoint("after_publish_commit")
+
     if old_pages.exists():
         shutil.rmtree(old_pages)
     shutil.rmtree(staging)
     staging_root = publish_staging_root(root)
     if staging_root.is_dir() and not any(staging_root.iterdir()):
         staging_root.rmdir()
+    publish_death_checkpoint("after_cleanup")
+    return publish_commit
 
 
 def seal_failed_run_archive(
@@ -1130,12 +1199,27 @@ def retrieve_repository_pages(
         variables = {"owner": owner, "name": name, "after": after}
         variables_sha = canonical_sha256(variables)
         started = utc_now()
-        exit_code, stdout, stderr = runner(query, variables)
+        exit_code = 1
+        stdout = ""
+        stderr = ""
+        runner_fail: HardFail | None = None
+        try:
+            exit_code, stdout, stderr = runner(query, variables)
+        except HardFail as exc:
+            runner_fail = exc
+            exit_code = 1
+            stdout = ""
+            stderr = sanitize(str(exc))
+        except Exception as exc:  # noqa: BLE001 — still emit one page record
+            runner_fail = HardFail("unexpected_error", str(exc))
+            exit_code = 1
+            stdout = ""
+            stderr = sanitize(str(exc))
         ended = utc_now()
         stdout_s = sanitize(stdout)
         stderr_s = sanitize(stderr)
         response_sha = sha256_text(stdout_s)
-        base_entry = {
+        page_entry: dict[str, Any] = {
             "repository": repository,
             "page_index": page_index,
             "operation_name": contract["operation_name"],
@@ -1149,50 +1233,73 @@ def retrieve_repository_pages(
             "started_at_utc": started,
             "ended_at_utc": ended,
             "cli": list(contract["cli"]),
+            "page_ok": False,
         }
 
-        if exit_code != 0:
-            append_command_log(
-                command_log,
-                base_entry,
-                run_id=run_id,
-                code_commit=code_commit,
+        hard_fail: HardFail | None = runner_fail
+        payload: dict[str, Any] | None = None
+        nodes: list[dict[str, Any]] = []
+        end_cursor: str | None = None
+        total_count = 0
+        if hard_fail is None and exit_code != 0:
+            hard_fail = HardFail(
+                "nonzero_exit",
+                f"{repository} page {page_index}: {exit_code}",
             )
-            raise HardFail("nonzero_exit", f"{repository} page {page_index}: {exit_code}")
-        try:
-            payload = json.loads(stdout)
-        except json.JSONDecodeError as exc:
-            append_command_log(
-                command_log,
-                base_entry,
-                run_id=run_id,
-                code_commit=code_commit,
-            )
-            raise HardFail("malformed_json", str(exc)) from exc
+        if hard_fail is None:
+            try:
+                loaded = json.loads(stdout)
+            except json.JSONDecodeError as exc:
+                hard_fail = HardFail("malformed_json", str(exc))
+            else:
+                if not isinstance(loaded, dict):
+                    hard_fail = HardFail("malformed_json", "page payload not an object")
+                else:
+                    payload = loaded
+        if hard_fail is None and payload is not None:
+            try:
+                _issues, nodes, end_cursor, has_next, total_count = validate_page(
+                    payload,
+                    repository=repository,
+                    page_index=page_index,
+                    expected_after=after,
+                    first_total_count=first_total,
+                    seen_cursors=seen_cursors,
+                    seen_ids=seen_ids,
+                    seen_numbers=seen_numbers,
+                    seen_urls=seen_urls,
+                )
+            except HardFail as exc:
+                hard_fail = exc
 
-        issues, nodes, end_cursor, has_next, total_count = validate_page(
-            payload,
-            repository=repository,
-            page_index=page_index,
-            expected_after=after,
-            first_total_count=first_total,
-            seen_cursors=seen_cursors,
-            seen_ids=seen_ids,
-            seen_numbers=seen_numbers,
-            seen_urls=seen_urls,
-        )
-        # Successful page log only after validate_page; bind verified endCursor.
-        success_entry = dict(base_entry)
-        success_entry["endCursor"] = end_cursor
+        if hard_fail is None:
+            # Verified endCursor only after validate_page succeeds.
+            page_entry["endCursor"] = end_cursor
+            page_entry["page_ok"] = True
+            if has_next and not end_cursor:
+                hard_fail = HardFail("cursor_drift", "hasNextPage without endCursor")
+                page_entry["page_ok"] = False
+                page_entry["invariant"] = hard_fail.invariant
+                page_entry["detail"] = hard_fail.detail
+            else:
+                page_entry["invariant"] = None
+        else:
+            page_entry["invariant"] = hard_fail.invariant
+            page_entry["detail"] = sanitize(hard_fail.detail)
+
+        # Exactly one page record per runner invocation, including failures.
         append_command_log(
             command_log,
-            success_entry,
+            page_entry,
             run_id=run_id,
             code_commit=code_commit,
         )
+        if hard_fail is not None:
+            raise hard_fail
+
         if first_total is None:
             first_total = total_count
-        # Cursor continuity: next after must equal this endCursor when has_next.
+        assert payload is not None
         page_name = (
             f"{repo_entry['order']:02d}_{owner}_{name}_page_{page_index:04d}.json"
         )
@@ -1212,6 +1319,8 @@ def retrieve_repository_pages(
                 "totalCount": total_count,
                 "node_count": len(nodes),
                 "variables_sha256": variables_sha,
+                "response_page_sha256": response_sha,
+                "variables": variables,
             }
         )
         for node_index, node in enumerate(nodes):
@@ -1225,14 +1334,8 @@ def retrieve_repository_pages(
                 }
             )
         if has_next:
-            if not end_cursor:
-                raise HardFail("cursor_drift", "hasNextPage without endCursor")
-            # Bind next request after to this endCursor (continuity invariant).
+            # Bind next request after to this verified endCursor.
             after = end_cursor
-        else:
-            # Terminal page: after used for this page must equal the prior
-            # endCursor binding already applied by the loop.
-            pass
         page_index += 1
 
     if first_total is None:

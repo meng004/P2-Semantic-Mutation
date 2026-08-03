@@ -233,6 +233,7 @@ CANDIDATE_ARTIFACTS = (
     "admission_sheet.cursor_candidate.csv",
     "EVIDENCE_SNAPSHOT.json",
     "HANDOFF_SUPPLEMENTAL_R2.json",
+    "PUBLISH_COMMIT.json",
     "transport_pages",
     "admission_evidence",
 )
@@ -325,6 +326,91 @@ def test_diagnostic_run_code_mismatch_rejected(tmp_path: Path) -> None:
             "terminal": True,
         },
     )
+    assert_checker_fails_without_new_mint(root, before)
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "after",
+        "endCursor",
+        "variables_sha256",
+        "response_page_sha256",
+        "page_index",
+        "repository",
+    ],
+)
+def test_page_log_manifest_field_tamper(tmp_path: Path, field: str) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    page = next(e for e in log["entries"] if isinstance(e.get("page_index"), int))
+    if field in {"page_index"}:
+        page[field] = int(page[field]) + 7
+    elif field in {"variables_sha256", "response_page_sha256"}:
+        page[field] = "0" * 64
+    else:
+        page[field] = f"TAMPERED-{page.get(field)}"
+    _write_json(root / "COMMAND_LOG.json", log)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_page_continuity_break_rejected(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    assert miner.cmd_retrieve(root, runner=build_fixture_runner()) == 0
+    # Force a second page into the log/manifest reconstruction path via tamper.
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    first = next(e for e in log["entries"] if isinstance(e.get("page_index"), int))
+    twin = dict(first)
+    twin["page_index"] = 1
+    twin["after"] = "NOT_PREV_END"
+    twin["endCursor"] = "E2"
+    # Insert after first page entry.
+    idx = log["entries"].index(first)
+    log["entries"].insert(idx + 1, twin)
+    man = dict(snap["page_manifest"][0])
+    man["page_index"] = 1
+    man["after"] = "NOT_PREV_END"
+    man["endCursor"] = "E2"
+    snap["page_manifest"].insert(1, man)
+    snap["page_manifest_sha256"] = checker.canonical_sha256(snap["page_manifest"])
+    _write_json(root / "COMMAND_LOG.json", log)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    # Re-seal publish commit to the tampered snapshot so binding gets past publish hash
+    # only if we also refresh it; here we leave publish stale → either check may fail.
+    before = present_candidates(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_missing_publish_commit_rejected(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    (root / "PUBLISH_COMMIT.json").unlink()
+    before = before - {"PUBLISH_COMMIT.json"}
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_publish_commit_hash_tamper_rejected(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    publish = json.loads((root / "PUBLISH_COMMIT.json").read_text(encoding="utf-8"))
+    publish["publish_commit_sha256"] = "0" * 64
+    _write_json(root / "PUBLISH_COMMIT.json", publish)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_sequential_snapshot_without_matching_publish_rejected(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    snap["records"] = list(snap["records"])  # touch identity without rebinding publish
+    snap["created_cutoff"] = "1999-01-01T00:00:00Z"
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
     assert_checker_fails_without_new_mint(root, before)
 
 

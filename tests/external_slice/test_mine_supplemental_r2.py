@@ -6,6 +6,9 @@ import importlib.util
 import json
 import os
 import shutil
+import subprocess
+import sys
+import textwrap
 from pathlib import Path
 from typing import Any, Callable
 
@@ -22,6 +25,7 @@ CANDIDATE_NAMES = [
     "EVIDENCE_SNAPSHOT.json",
     "admission_sheet.cursor_candidate.csv",
     "HANDOFF_SUPPLEMENTAL_R2.json",
+    "PUBLISH_COMMIT.json",
     "transport_pages",
     "admission_evidence",
 ]
@@ -322,11 +326,13 @@ def test_positive_retrieve_builds_snapshot_and_queue(tmp_path: Path) -> None:
     assert code == 0
     assert (root / "ISSUE_SNAPSHOT.json").is_file()
     assert (root / "REVIEW_QUEUE.json").is_file()
+    assert (root / "PUBLISH_COMMIT.json").is_file()
     assert (root / "transport_pages").is_dir()
     assert not (root / "RETRIEVAL_HARD_FAIL.json").exists()
 
     snapshot = json.loads((root / "ISSUE_SNAPSHOT.json").read_text())
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text())
+    publish = json.loads((root / "PUBLISH_COMMIT.json").read_text())
     scope = json.loads((root / "SCOPE.json").read_text())
     rebuilt = miner.build_queue_from_snapshot(scope, snapshot)
     assert rebuilt == queue["records"]
@@ -334,6 +340,17 @@ def test_positive_retrieve_builds_snapshot_and_queue(tmp_path: Path) -> None:
     assert len(queue["records"]) == 6
     assert queue["records"][0]["neutral_id"] == "EXT-pymc-01"
     assert "wrong result" in queue["records"][0]["matched_phrases"]
+    page_files = {
+        p.relative_to(root).as_posix(): miner.sha256_file(p)
+        for p in sorted((root / "transport_pages").glob("*.json"))
+    }
+    expected = miner.build_publish_commit_identity(
+        run_id=snapshot["run_id"],
+        code_commit=snapshot["code_commit"],
+        snapshot=snapshot,
+        transport_page_sha256=page_files,
+    )
+    assert publish == expected
 
 
 def test_build_queue_pure_reconstruction(
@@ -448,24 +465,45 @@ def _set_total(payload: dict[str, Any], total: int) -> dict[str, Any]:
 
 def test_command_exit_nonzero(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
-    code = miner.cmd_retrieve(root, runner=build_complete_runner(exit_code=1))
+    calls: list[int] = []
+    base = build_complete_runner(exit_code=1)
+
+    def runner(query: str, variables: dict[str, Any]) -> tuple[int, str, str]:
+        calls.append(1)
+        return base(query, variables)
+
+    code = miner.cmd_retrieve(root, runner=runner)
     assert_hard_fail_no_candidates(root, code)
     fail = json.loads((root / "RETRIEVAL_HARD_FAIL.json").read_text())
     assert fail["invariant"] == "nonzero_exit"
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    page_entries = [e for e in log["entries"] if isinstance(e.get("page_index"), int)]
+    assert len(page_entries) == len(calls) == 1
+    assert page_entries[0]["page_ok"] is False
+    assert page_entries[0]["invariant"] == "nonzero_exit"
 
 
 def test_malformed_json(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
     first = scope_repos()[0]
-    code = miner.cmd_retrieve(
-        root,
-        runner=build_complete_runner(
-            malformed_for=(f"{first['owner']}/{first['name']}", 0)
-        ),
+    calls: list[int] = []
+    base = build_complete_runner(
+        malformed_for=(f"{first['owner']}/{first['name']}", 0)
     )
+
+    def runner(query: str, variables: dict[str, Any]) -> tuple[int, str, str]:
+        calls.append(1)
+        return base(query, variables)
+
+    code = miner.cmd_retrieve(root, runner=runner)
     assert_hard_fail_no_candidates(root, code)
     fail = json.loads((root / "RETRIEVAL_HARD_FAIL.json").read_text())
     assert fail["invariant"] == "malformed_json"
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    page_entries = [e for e in log["entries"] if isinstance(e.get("page_index"), int)]
+    assert len(page_entries) == len(calls) == 1
+    assert page_entries[0]["page_ok"] is False
+    assert page_entries[0]["invariant"] == "malformed_json"
 
 
 def test_middle_page_removed(tmp_path: Path) -> None:
@@ -889,7 +927,7 @@ def test_append_command_log_rejects_run_code_conflict(tmp_path: Path) -> None:
 
 
 def test_crash_safe_publish_and_failure_recovery(
-    tmp_path: Path, bind_code_commit: Any, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, bind_code_commit: Any
 ) -> None:
     code_commit = bind_code_commit("f" * 40)
     root = seed_root(tmp_path)
@@ -906,49 +944,150 @@ def test_crash_safe_publish_and_failure_recovery(
     ) == 0
     assert not (root / ".publish_staging").exists()
     assert (root / "ISSUE_SNAPSHOT.json").is_file()
+    assert (root / "PUBLISH_COMMIT.json").is_file()
     assert (root / "transport_pages").is_dir()
 
-    # Mid-promote crash: pages swapped, snapshot write fails → no consistent publish.
-    root2 = seed_root(tmp_path / "crash")
-    real_atomic = miner.atomic_write_json
-    snap_attempts = {"n": 0}
 
-    def flaky_atomic(path: Path, payload: Any) -> None:
-        if path.name == "ISSUE_SNAPSHOT.json" and ".publish_staging" not in path.parts:
-            snap_attempts["n"] += 1
-            if snap_attempts["n"] == 1:
-                raise OSError("simulated crash during final snapshot publish")
-        real_atomic(path, payload)
+def _run_retrieve_subprocess(
+    root: Path,
+    *,
+    run_id: str,
+    code_commit: str,
+    death_at: str | None,
+) -> subprocess.CompletedProcess[str]:
+    script = textwrap.dedent(
+        f"""
+        import importlib.util
+        import json
+        import os
+        import sys
+        from pathlib import Path
 
-    monkeypatch.setattr(miner, "atomic_write_json", flaky_atomic)
-    code = miner.cmd_retrieve(
-        root2,
-        runner=build_complete_runner(),
-        run_id="crash-run",
-        code_commit=code_commit,
+        root = Path({str(root)!r})
+        miner_path = Path({str(MINER_PATH)!r})
+        frozen = Path({str(FROZEN)!r})
+        spec = importlib.util.spec_from_file_location("mine_supplemental_r2", miner_path)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec and spec.loader
+        spec.loader.exec_module(mod)
+        mod.current_checkout_code_commit = lambda: {code_commit!r}
+
+        scope = json.loads((frozen / "SCOPE.json").read_text())
+        # Minimal complete fixture runner (one closed matching issue per repo).
+        pages = {{}}
+        for repo in scope["repositories"]:
+            owner, name = repo["owner"], repo["name"]
+            pages[(owner, name)] = {{
+                "data": {{
+                    "repository": {{
+                        "issues": {{
+                            "totalCount": 1,
+                            "pageInfo": {{"hasNextPage": False, "endCursor": "E"}},
+                            "nodes": [{{
+                                "__typename": "Issue",
+                                "id": f"ISSUE_{{owner}}_{{name}}_10",
+                                "number": 10,
+                                "url": f"https://github.com/{{owner}}/{{name}}/issues/10",
+                                "state": "CLOSED",
+                                "title": "wrong result",
+                                "bodyText": "",
+                                "createdAt": "2025-06-01T00:00:00Z",
+                                "updatedAt": "2025-06-01T00:00:00Z",
+                                "closedAt": "2026-01-02T00:00:00Z",
+                                "labels": {{
+                                    "pageInfo": {{"hasNextPage": False, "endCursor": None}},
+                                    "nodes": [],
+                                }},
+                            }}],
+                        }}
+                    }}
+                }}
+            }}
+
+        def runner(query, variables):
+            key = (variables["owner"], variables["name"])
+            return 0, json.dumps(pages[key]), ""
+
+        if {death_at!r}:
+            os.environ[{miner.PUBLISH_DEATH_ENV!r}] = {death_at!r}
+        else:
+            os.environ.pop({miner.PUBLISH_DEATH_ENV!r}, None)
+        raise SystemExit(
+            mod.cmd_retrieve(
+                root,
+                runner=runner,
+                run_id={run_id!r},
+                code_commit={code_commit!r},
+            )
+        )
+        """
     )
-    assert code == 1
-    assert not (root2 / "ISSUE_SNAPSHOT.json").exists()
-    assert not (root2 / "REVIEW_QUEUE.json").exists()
-    assert candidate_artifacts(root2) == []
-    fail = json.loads((root2 / "RETRIEVAL_HARD_FAIL.json").read_text(encoding="utf-8"))
-    assert fail["invariant"] == "unexpected_error"
-    assert fail["run_id"] == "crash-run"
-    assert fail["code_commit"] == code_commit
+    return subprocess.run(
+        [sys.executable, "-c", script],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
 
-    # Failure recovery: subsequent owner retrieve clears leftovers and publishes.
-    monkeypatch.setattr(miner, "atomic_write_json", real_atomic)
-    assert miner.cmd_retrieve(
-        root2,
-        runner=build_complete_runner(),
-        run_id="after-crash",
-        code_commit=code_commit,
-    ) == 0
-    assert (root2 / "ISSUE_SNAPSHOT.json").is_file()
-    assert (root2 / "REVIEW_QUEUE.json").is_file()
-    assert not list(root2.glob(".transport_pages.*"))
-    assert not (root2 / ".publish_staging").exists()
-    assert not (root2 / "RETRIEVAL_HARD_FAIL.json").exists()
+
+@pytest.mark.parametrize("boundary", list(miner.PUBLISH_DEATH_BOUNDARIES))
+def test_publish_boundary_os_exit_death_and_recovery(
+    tmp_path: Path, bind_code_commit: Any, boundary: str
+) -> None:
+    code_commit = bind_code_commit("9" * 40)
+    root = seed_root(tmp_path / boundary)
+    dead = _run_retrieve_subprocess(
+        root, run_id=f"die-{boundary}", code_commit=code_commit, death_at=boundary
+    )
+    assert dead.returncode == 70, dead.stderr
+
+    publish_path = root / "PUBLISH_COMMIT.json"
+    if boundary in {"after_publish_commit", "after_cleanup"}:
+        # Identity already sealed; leftovers may remain until recovery.
+        assert publish_path.is_file()
+    else:
+        # Sequential artifacts without the seal must not count as complete.
+        assert not publish_path.exists()
+
+    recovered = _run_retrieve_subprocess(
+        root, run_id=f"recover-{boundary}", code_commit=code_commit, death_at=None
+    )
+    assert recovered.returncode == 0, recovered.stderr
+    assert (root / "PUBLISH_COMMIT.json").is_file()
+    assert (root / "ISSUE_SNAPSHOT.json").is_file()
+    assert (root / "REVIEW_QUEUE.json").is_file()
+    assert (root / "transport_pages").is_dir()
+    assert not (root / "RETRIEVAL_HARD_FAIL.json").exists()
+    assert not list(root.glob(".transport_pages.*"))
+    assert not (root / ".publish_staging").exists()
+    publish = json.loads((root / "PUBLISH_COMMIT.json").read_text(encoding="utf-8"))
+    assert publish["run_id"] == f"recover-{boundary}"
+    assert publish["code_commit"] == code_commit
+
+
+def test_validation_failure_emits_one_page_record(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    calls: list[int] = []
+
+    def mutator(repo: str, idx: int, page: dict[str, Any]) -> dict[str, Any]:
+        return _set_node_field(page, "__typename", "PullRequest")
+
+    base = build_complete_runner(mutator=mutator)
+
+    def runner(query: str, variables: dict[str, Any]) -> tuple[int, str, str]:
+        calls.append(1)
+        return base(query, variables)
+
+    code = miner.cmd_retrieve(root, runner=runner)
+    assert_hard_fail_no_candidates(root, code)
+    fail = json.loads((root / "RETRIEVAL_HARD_FAIL.json").read_text(encoding="utf-8"))
+    assert fail["invariant"] == "typename_not_issue"
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    page_entries = [e for e in log["entries"] if isinstance(e.get("page_index"), int)]
+    assert len(page_entries) == len(calls) == 1
+    assert page_entries[0]["page_ok"] is False
+    assert page_entries[0]["invariant"] == "typename_not_issue"
+    assert "endCursor" not in page_entries[0]
 
 
 def test_seal_failed_run_archive_write_once(tmp_path: Path) -> None:

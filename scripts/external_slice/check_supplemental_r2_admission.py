@@ -303,6 +303,21 @@ def verify_run_code_binding(root: Path, snapshot: dict[str, Any]) -> tuple[str, 
             f"snapshot={code_commit!r}"
         )
 
+    publish_path = root / "PUBLISH_COMMIT.json"
+    if not publish_path.is_file():
+        fail("PUBLISH_COMMIT.json missing; sequential artifacts are incomplete")
+    publish = load_json(publish_path)
+    if publish.get("run_id") != run_id:
+        fail(
+            f"publish commit run_id mismatch: publish={publish.get('run_id')!r} "
+            f"snapshot={run_id!r}"
+        )
+    if publish.get("code_commit") != code_commit:
+        fail(
+            f"publish commit code_commit mismatch: "
+            f"publish={publish.get('code_commit')!r} snapshot={code_commit!r}"
+        )
+
     diag_path = root / "RETRIEVAL_HARD_FAIL.json"
     if diag_path.is_file():
         diag = load_json(diag_path)
@@ -319,6 +334,124 @@ def verify_run_code_binding(root: Path, snapshot: dict[str, Any]) -> tuple[str, 
         fail("success admission root must not contain RETRIEVAL_HARD_FAIL.json")
 
     return run_id, code_commit
+
+
+def verify_publish_commit(
+    root: Path,
+    *,
+    snapshot: dict[str, Any],
+    miner: Any,
+) -> dict[str, Any]:
+    """Reject sequential partial publishes lacking a matching hash-bound identity."""
+    publish_path = root / "PUBLISH_COMMIT.json"
+    if not publish_path.is_file():
+        fail("PUBLISH_COMMIT.json missing")
+    publish = load_json(publish_path)
+    page_files = {
+        path.relative_to(root).as_posix(): miner.sha256_file(path)
+        for path in sorted((root / "transport_pages").glob("*.json"))
+    }
+    expected = miner.build_publish_commit_identity(
+        run_id=snapshot["run_id"],
+        code_commit=snapshot["code_commit"],
+        snapshot=snapshot,
+        transport_page_sha256=page_files,
+    )
+    for field in (
+        "run_id",
+        "code_commit",
+        "snapshot_sha256",
+        "page_manifest_sha256",
+        "transport_pages",
+        "publish_commit_sha256",
+    ):
+        if publish.get(field) != expected.get(field):
+            fail(f"publish commit field mismatch: {field}")
+    return publish
+
+
+def verify_page_log_reconstruction(
+    root: Path,
+    *,
+    snapshot: dict[str, Any],
+    contract: dict[str, Any],
+) -> None:
+    """Reconstruct page logs against manifest, hashes, variables, and continuity."""
+    log = load_json(root / "COMMAND_LOG.json")
+    entries = log.get("entries") or []
+    page_entries = [e for e in entries if isinstance(e.get("page_index"), int)]
+    if not page_entries:
+        fail("command log has no page records")
+    if any(not e.get("page_ok", False) for e in page_entries):
+        fail("success admission root contains failed page log records")
+
+    manifest = snapshot.get("page_manifest") or []
+    if not isinstance(manifest, list) or not manifest:
+        fail("snapshot page_manifest missing")
+    if canonical_sha256(manifest) != snapshot.get("page_manifest_sha256"):
+        fail("page_manifest_sha256 mismatch")
+    if len(page_entries) != len(manifest):
+        fail(
+            f"page log/manifest cardinality mismatch: "
+            f"log={len(page_entries)} manifest={len(manifest)}"
+        )
+
+    query_sha = contract.get("query_document_sha256")
+    prev_by_repo: dict[str, dict[str, Any]] = {}
+    for idx, (entry, man) in enumerate(zip(page_entries, manifest)):
+        for field in (
+            "repository",
+            "page_index",
+            "after",
+            "endCursor",
+            "variables_sha256",
+            "response_page_sha256",
+        ):
+            if entry.get(field) != man.get(field):
+                fail(f"page[{idx}] log/manifest mismatch on {field}")
+        if entry.get("query_document_sha256") != query_sha:
+            fail(f"page[{idx}] query_document_sha256 drift")
+        if entry.get("operation_name") != contract.get("operation_name"):
+            fail(f"page[{idx}] operation_name drift")
+        variables = entry.get("variables")
+        if not isinstance(variables, dict):
+            fail(f"page[{idx}] variables missing")
+        if man.get("variables") != variables:
+            fail(f"page[{idx}] manifest variables mismatch")
+        if canonical_sha256(variables) != entry.get("variables_sha256"):
+            fail(f"page[{idx}] variables_sha256 reconstruction failed")
+        if variables.get("after") != entry.get("after"):
+            fail(f"page[{idx}] variables.after != after")
+        rel = man.get("path")
+        if not isinstance(rel, str) or not rel.startswith("transport_pages/"):
+            fail(f"page[{idx}] invalid manifest path")
+        page_path = root / rel
+        if not page_path.is_file():
+            fail(f"page[{idx}] missing transport page {rel}")
+        actual_page_sha = sha256_file(page_path)
+        if actual_page_sha != man.get("sha256"):
+            fail(f"page[{idx}] transport page sha256 mismatch")
+        if entry.get("exit_code") != 0:
+            fail(f"page[{idx}] exit_code is nonzero in success log")
+        if "endCursor" not in entry:
+            fail(f"page[{idx}] missing verified endCursor")
+
+        repo = entry["repository"]
+        prev = prev_by_repo.get(repo)
+        if prev is None:
+            if entry.get("after") is not None:
+                fail(f"page[{idx}] first page after must be null")
+            if entry.get("page_index") != 0:
+                fail(f"page[{idx}] first page_index must be 0")
+        else:
+            if entry.get("after") != prev.get("endCursor"):
+                fail(
+                    f"page[{idx}] continuity break: after={entry.get('after')!r} "
+                    f"prev.endCursor={prev.get('endCursor')!r}"
+                )
+            if entry.get("page_index") != int(prev.get("page_index")) + 1:
+                fail(f"page[{idx}] page_index discontinuity")
+        prev_by_repo[repo] = entry
 
 
 def verify_queue_binding(
@@ -602,8 +735,11 @@ def verify_admission(root: Path) -> int:
         miner = _load_miner()
         snapshot = load_json(root / "ISSUE_SNAPSHOT.json")
         verify_run_code_binding(root, snapshot)
+        contract = load_json(root / "TRANSPORT_CONTRACT.json")
+        verify_page_log_reconstruction(root, snapshot=snapshot, contract=contract)
         verify_snapshot_records(scope, snapshot)
         queue_payload = load_json(root / "REVIEW_QUEUE.json")
+        verify_publish_commit(root, snapshot=snapshot, miner=miner)
         queue = verify_queue_binding(miner, scope, snapshot, queue_payload)
         decisions_payload = load_json(root / "REVIEW_DECISIONS.json")
         decisions = verify_decisions(scope, queue, decisions_payload)
