@@ -237,12 +237,17 @@ def validate_raw_issue_node(node: Any, *, repository: str) -> dict[str, Any]:
     ):
         if required not in node or node[required] is None:
             fail(f"{repository}#{number}: missing required field {required}")
-    labels = node.get("labels") or {}
-    if not isinstance(labels, dict):
-        fail(f"{repository}#{number}: labels missing")
-    page_info = labels.get("pageInfo") or {}
-    if page_info.get("hasNextPage") is True:
-        fail(f"{repository}#{number}: incomplete labels (hasNextPage)")
+    if "labels" not in node or not isinstance(node["labels"], dict):
+        fail(f"{repository}#{number}: labels must be an object")
+    labels = node["labels"]
+    if "pageInfo" not in labels or not isinstance(labels["pageInfo"], dict):
+        fail(f"{repository}#{number}: labels.pageInfo must be an object")
+    page_info = labels["pageInfo"]
+    if "hasNextPage" not in page_info or page_info["hasNextPage"] is not False:
+        fail(
+            f"{repository}#{number}: incomplete labels "
+            f"(hasNextPage must be false, got {page_info.get('hasNextPage')!r})"
+        )
     label_nodes = labels.get("nodes")
     if not isinstance(label_nodes, list):
         fail(f"{repository}#{number}: labels.nodes missing")

@@ -290,10 +290,7 @@ def fully_reseal_snapshot(root: Path) -> None:
     reseal_publish_commit(root)
 
 
-def rebuild_downstream_from_snapshot(root: Path) -> None:
-    """Reseal publish, rebuild queue/decisions/sheet/evidence from tampered snapshot."""
-    fully_reseal_snapshot(root)
-    assert miner.cmd_build_queue(root) == 0
+def sync_decisions_from_queue(root: Path) -> None:
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
     decisions_payload = json.loads(
         (root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8")
@@ -313,6 +310,46 @@ def rebuild_downstream_from_snapshot(root: Path) -> None:
         ):
             decision[field] = row[field]
     _write_json(root / "REVIEW_DECISIONS.json", decisions_payload)
+
+
+def rebuild_downstream_from_snapshot(root: Path) -> None:
+    """Reseal publish, rebuild queue/decisions/sheet/evidence from tampered snapshot."""
+    fully_reseal_snapshot(root)
+    assert miner.cmd_build_queue(root) == 0
+    sync_decisions_from_queue(root)
+    assert miner.cmd_build_payload(root) == 0
+
+
+def fully_sync_raw_page_tamper_and_rebuild(root: Path) -> None:
+    """Sync raw-page/manifest/source/record hashes; rebuild queue→evidence→publish."""
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    for man in snap["page_manifest"]:
+        page_path = root / man["path"]
+        if page_path.is_file():
+            man["sha256"] = miner.sha256_file(page_path)
+    snap["page_manifest_sha256"] = checker.canonical_sha256(snap["page_manifest"])
+    man_by_key = {
+        (m["repository"], int(m["page_index"])): m for m in snap["page_manifest"]
+    }
+    for rec in snap["records"]:
+        man = man_by_key[(rec["repository"], int(rec["source_page_index"]))]
+        rec["source_page_sha256"] = man["sha256"]
+        rehash_snapshot_record(rec)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    sync_page_log_from_manifest(root)
+    page_files = {
+        path.relative_to(root).as_posix(): miner.sha256_file(path)
+        for path in sorted((root / "transport_pages").glob("*.json"))
+    }
+    publish = miner.build_publish_commit_identity(
+        run_id=snap["run_id"],
+        code_commit=snap["code_commit"],
+        snapshot=snap,
+        transport_page_sha256=page_files,
+    )
+    _write_json(root / "PUBLISH_COMMIT.json", publish)
+    assert miner.cmd_build_queue(root) == 0
+    sync_decisions_from_queue(root)
     assert miner.cmd_build_payload(root) == 0
 
 
@@ -1096,7 +1133,44 @@ def test_real_frozen_unmatched_phrase_fails_after_downstream_rebuild(
     assert_checker_fails_without_new_mint(root, before)
 
 
-def test_pullrequest_typename_fails_after_full_reseal(tmp_path: Path) -> None:
+def _apply_label_pageinfo_mutator(node: dict[str, Any], kind: str) -> None:
+    if kind == "labels_missing":
+        node.pop("labels", None)
+        return
+    if kind == "labels_null":
+        node["labels"] = None
+        return
+    if kind == "pageinfo_missing":
+        labels = node.setdefault("labels", {"nodes": []})
+        assert isinstance(labels, dict)
+        labels.pop("pageInfo", None)
+        return
+    if kind == "pageinfo_null":
+        labels = node.setdefault("labels", {"nodes": []})
+        assert isinstance(labels, dict)
+        labels["pageInfo"] = None
+        return
+    labels = node.setdefault("labels", {"nodes": []})
+    assert isinstance(labels, dict)
+    page_info = labels.get("pageInfo")
+    if not isinstance(page_info, dict):
+        page_info = {}
+        labels["pageInfo"] = page_info
+    if kind == "hasnext_missing":
+        page_info.pop("hasNextPage", None)
+    elif kind == "hasnext_null":
+        page_info["hasNextPage"] = None
+    elif kind == "hasnext_nonbool":
+        page_info["hasNextPage"] = "yes"
+    elif kind == "hasnext_true":
+        page_info["hasNextPage"] = True
+    elif kind == "hasnext_false":
+        page_info["hasNextPage"] = False
+    else:
+        raise AssertionError(f"unknown label mutator kind: {kind}")
+
+
+def test_pullrequest_typename_fails_after_full_sync_rebuild(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
     build_valid_payload(root)
     before = present_candidates(root)
@@ -1105,23 +1179,115 @@ def test_pullrequest_typename_fails_after_full_reseal(tmp_path: Path) -> None:
     page_path, page, node = raw_page_node_for_record(root, rec)
     node["__typename"] = "PullRequest"
     _write_json(page_path, page)
-    fully_reseal_snapshot(root)
+    fully_sync_raw_page_tamper_and_rebuild(root)
     assert_checker_fails_without_new_mint(root, before)
 
 
-def test_incomplete_labels_fails_after_full_reseal(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "kind",
+    [
+        "labels_missing",
+        "labels_null",
+        "pageinfo_missing",
+        "pageinfo_null",
+        "hasnext_missing",
+        "hasnext_null",
+        "hasnext_nonbool",
+        "hasnext_true",
+    ],
+)
+def test_incomplete_labels_fails_after_full_sync_rebuild(
+    tmp_path: Path, kind: str
+) -> None:
     root = seed_root(tmp_path)
     build_valid_payload(root)
     before = present_candidates(root)
     snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
     rec = snap["records"][0]
     page_path, page, node = raw_page_node_for_record(root, rec)
-    labels = node.setdefault("labels", {})
-    page_info = labels.setdefault("pageInfo", {})
-    page_info["hasNextPage"] = True
+    _apply_label_pageinfo_mutator(node, kind)
     _write_json(page_path, page)
-    fully_reseal_snapshot(root)
+    fully_sync_raw_page_tamper_and_rebuild(root)
     assert_checker_fails_without_new_mint(root, before)
+
+
+def test_hasnext_false_positive_control_after_full_sync_rebuild(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    page_path, page, node = raw_page_node_for_record(root, rec)
+    _apply_label_pageinfo_mutator(node, "hasnext_false")
+    _write_json(page_path, page)
+    fully_sync_raw_page_tamper_and_rebuild(root)
+    assert checker.verify_admission(root) == 0
+
+
+def test_removing_typename_guard_turns_pullrequest_negative_red(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Without typename guard, a fully synced PullRequest attack admits."""
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    page_path, page, node = raw_page_node_for_record(root, rec)
+    node["__typename"] = "PullRequest"
+    _write_json(page_path, page)
+    fully_sync_raw_page_tamper_and_rebuild(root)
+    assert checker.verify_admission(root) != 0
+
+    real = checker.validate_raw_issue_node
+
+    def without_typename_guard(raw_node: Any, *, repository: str) -> dict[str, Any]:
+        if isinstance(raw_node, dict) and raw_node.get("__typename") != "Issue":
+            patched = dict(raw_node)
+            patched["__typename"] = "Issue"
+            return real(patched, repository=repository)
+        return real(raw_node, repository=repository)
+
+    monkeypatch.setattr(checker, "validate_raw_issue_node", without_typename_guard)
+    assert checker.verify_admission(root) == 0
+
+
+def test_removing_label_guard_turns_incomplete_label_negative_red(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Without label completeness guard, fully synced hasNextPage=true admits."""
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    page_path, page, node = raw_page_node_for_record(root, rec)
+    _apply_label_pageinfo_mutator(node, "hasnext_true")
+    _write_json(page_path, page)
+    fully_sync_raw_page_tamper_and_rebuild(root)
+    assert checker.verify_admission(root) != 0
+
+    real = checker.validate_raw_issue_node
+
+    def without_label_guard(raw_node: Any, *, repository: str) -> dict[str, Any]:
+        if not isinstance(raw_node, dict):
+            return real(raw_node, repository=repository)
+        patched = json.loads(json.dumps(raw_node))
+        labels = patched.get("labels")
+        if not isinstance(labels, dict):
+            patched["labels"] = {
+                "pageInfo": {"hasNextPage": False, "endCursor": None},
+                "nodes": [],
+            }
+        else:
+            page_info = labels.get("pageInfo")
+            if not isinstance(page_info, dict):
+                labels["pageInfo"] = {"hasNextPage": False, "endCursor": None}
+            else:
+                page_info["hasNextPage"] = False
+            if not isinstance(labels.get("nodes"), list):
+                labels["nodes"] = []
+        return real(patched, repository=repository)
+
+    monkeypatch.setattr(checker, "validate_raw_issue_node", without_label_guard)
+    assert checker.verify_admission(root) == 0
 
 
 def test_fake_match_surface_fails_after_full_reseal(tmp_path: Path) -> None:
