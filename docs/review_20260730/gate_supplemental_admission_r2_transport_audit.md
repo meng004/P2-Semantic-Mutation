@@ -475,3 +475,95 @@ for Local Desktop audit. On success, commit the immutable transport pages,
 snapshot, queue, publish seal, and command log, push, and stop for Local Desktop
 transport-result audit. Candidate adjudication, readiness, canonical freeze,
 C4, labelling, prediction, and detection remain locked.
+
+## 11. Task 4 live transport-result audit
+
+- **Retrieval baseline/code commit:** `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7`
+- **Published result commit:** `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc`
+- **Remote binding:** result commit equals the Cursor branch head
+- **Run ID:** `0d76e415-0831-4417-b2fa-81b6ac046b2b`
+- **Retrieval exit:** 0
+- **Verdict:** `BLOCKED`
+
+### 11.1 Observed-valid live result
+
+The result commit is the single direct child of transport-r5. Its diff is
+confined to the successful Task 4 artifacts: command log, 552 transport pages,
+snapshot, queue, and publish seal; the obsolete live hard-fail diagnostic is
+deleted. Frozen scope/transport/quota files and the sealed 992-entry historical
+failed-run archive are byte-unchanged. No decision, evidence, candidate sheet,
+handoff, A1/A3, readiness, or downstream artifact exists.
+
+The live command log contains exactly one start, 552 unique and nonoverlapping
+page commands, and one terminal success. Every entry has exit 0 and the same
+run ID and producer code commit. Independent replay verifies six complete,
+created-descending repository blocks, with page/node counts:
+
+| Repository | Pages | Raw closed issues | Selected snapshot rows |
+|---|---:|---:|---:|
+| `pymc-devs/pymc` | 33 | 3,223 | 24 |
+| `cornellius-gp/gpytorch` | 11 | 1,005 | 5 |
+| `jonathf/chaospy` | 3 | 206 | 2 |
+| `SALib/SALib` | 3 | 293 | 0 |
+| `pytorch/pytorch` | 447 | 44,684 | 91 |
+| `jax-ml/jax` | 55 | 5,491 | 34 |
+
+All 54,902 raw nodes satisfy the accepted traversal checks. An independent
+implementation of the cutoff, NFC/casefold phrase matching, per-phrase top-20,
+union/deduplication, created-at/number ordering, source binding, record IDs, and
+record hashes reproduces the committed 156 snapshot records exactly. Pure queue
+reconstruction likewise reproduces all 156 rows, and `PUBLISH_COMMIT.json`
+seals exactly the same 552 pages and snapshot.
+
+Fresh verification produced `159 passed` in the targeted R2 suite and
+`419 passed, 10 warnings` in the full suite. All 562 JSON files parse;
+`git diff --check` and frozen/archive no-change checks return zero. The reserved
+credential scan returns raw exit 1 with no match. Standards is `PASS`.
+
+### 11.2 `SUPP-R2-RAW-SNAPSHOT-SEMANTIC-BINDING-001`
+
+The committed live data is semantically correct, but the admission checker
+does not prove that fact. `verify_scope_page_coverage` validates the raw
+traversal, while `verify_snapshot_records` separately validates field presence,
+self-hashes, frozen phrase membership/order, and nonempty claimed surfaces. It
+never resolves `source_page_index`/`node_index` and reconstructs the referenced
+raw issue's identity, timestamps, title/body hashes, labels, real phrase
+surfaces, top-20 membership, union order, or complete snapshot cardinality.
+
+A fully resealed synthetic probe changed a record whose raw title matched
+`wrong result` to the frozen but absent phrase `incorrect value`, claimed a
+fake title surface, recomputed the record hash, rebuilt queue/decision/evidence,
+and recomputed `PUBLISH_COMMIT`. The complete checker printed `PAYLOAD_OK` and
+`ADMISSION_CHECK_OK` and returned 0. This violates the frozen raw-page replay,
+five-layer binding, and false-phrase negative requirements in sections 3.2,
+4.1, 5(9), 6.2, and Task 4.
+
+### 11.3 Distribution disclosure
+
+The immutable snapshot already proves a structural quota shortfall before
+human review: chaospy has at most two candidates against a target of three, and
+SALib has zero against a target of three. Under the no-replacement rule, the
+frozen route to six qualifying projects is therefore infeasible. Any eventual
+R2 admission handoff must report `DISTRIBUTION_TARGET_AT_RISK`; PyTorch/JAX rows
+may not substitute for chaospy/SALib without a separately reviewed amendment.
+
+### 11.4 Gate decision and only unlocked correction
+
+Specification is `FAIL`; A1/A3 remains locked. The live pages, snapshot, queue,
+seal, and logs remain immutable observed evidence and must not be rerun or
+regenerated.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-transport-result-r1` on
+the same Cursor branch, without `rtk`, network access, or human review. It must:
+
+1. make the checker independently reconstruct the exact ordered snapshot from
+   the hash-bound raw pages using the frozen cutoff, matching, top-20, dedupe,
+   ordering, source, field, and record-hash rules;
+2. require exact full-record equality and cardinality against the committed
+   snapshot before queue validation;
+3. add fully resealed negatives for a frozen-but-false phrase/fake surface and
+   mutations of title/body hashes, ordered labels, source page/index, missing,
+   extra, and reordered snapshot records;
+4. retain all r2-r5 and live-result artifacts byte-for-byte, pass targeted/full
+   verification, commit, push, and stop for Local Desktop re-review; and
+5. preserve the unavoidable chaospy/SALib distribution shortfall disclosure.

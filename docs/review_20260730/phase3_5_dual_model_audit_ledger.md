@@ -90,7 +90,7 @@ S0 台账建立提交前实测：
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 | Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
 | Gate SUPPLEMENTAL_MINING_R2_DESIGN-r1 | correction audit `d95d6277ee09479d638bb83d75562e9dc4348031`；payload `1ed9fb2dc2714cb452bba4016d6093cefb36204d` | `PASS_WITH_DISCLOSURE` | N/A（设计分支，不含实验 payload） | 设计修订通过；但已发生的 Cursor Task 4 需独立执行审计，不能追溯通过 |
-| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-r5 `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7`；历史 blocked diagnostic `548702be000249bbb4262ffe3bf282f4e93b962c` | `PASS_WITH_DISCLOSURE`（transport preflight） | N/A（PR #7 未集成） | 仅解锁同分支一次 fresh Task 4 retrieval；A1/A3、admission、readiness 与 downstream 仍锁定 |
+| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | live result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc`；producer `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7` | `BLOCKED`（数据 observed-valid；checker fail-open） | N/A（PR #7 未集成） | 否；仅解锁同分支 transport-result-r1 checker correction，不重跑 retrieval，不解锁 A1/A3/readiness |
 
 ## 5. 交接审计记录
 
@@ -786,3 +786,25 @@ r4 关闭了六仓覆盖与顺序、连续非空 page block、raw pageInfo 绑�
 r5 在 miner 和独立 checker 中均实现六仓共享 node-ID/canonical-URL 唯一性，同时保持 issue number 仅仓库内唯一；URL 必须精确绑定 enclosing SCOPE owner/name。三项 fully resealed identity attacks 被拒绝，跨仓相同 issue number 的正向控制继续通过。
 
 独立验证 targeted `159 passed`、full `419 passed, 10 warnings`、四项 identity controls `4 passed`；Ruff、compileall、diff-check、no-data-change check 均通过。该 PASS 只授权一次正式 transport retrieval；它不代表 snapshot/admission 已通过，也不改变 accepted-ready=18。
+
+### 5.25 SUPPLEMENTAL_ADMISSION_R2 Task 4 live transport-result 审计
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-transport-result` |
+| 记录类型 | 唯一一次 live Task 4 retrieval 结果独立审计 |
+| 交接/复核时间 | `2026-08-03T12:51:33+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc`；producer `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7` |
+| Cursor baseline | `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7` |
+| Run ID | `0d76e415-0831-4417-b2fa-81b6ac046b2b`；retrieve exit 0 |
+| Findings | Standards PASS；live payload observed-valid；`SUPP-R2-RAW-SNAPSHOT-SEMANTIC-BINDING-001`；distribution structural shortfall |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 transport-result-r1 checker correction；不得重跑 retrieval，不解锁 A1/A3、readiness 或 downstream。 |
+
+独立算法从 552 页、54,902 个 raw closed issues 精确重建出相同的 156 条 snapshot 与 156 条 queue。六仓 page 数为 `33/11/3/3/447/55`，selected rows 为 `24/5/2/0/91/34`；run/code/log/page/seal、全局身份、terminality 和 992-entry 历史失败归档均一致。Targeted `159 passed`、full `419 passed, 10 warnings`，562 个 JSON 全部可解析，credential scan raw exit 1。
+
+但 fully resealed 的 frozen-but-false phrase 攻击在重建全部 downstream binding 后仍得到 `ADMISSION_CHECK_OK`。checker 没有从 source page/node 重建 snapshot 的 identity、timestamps、title/body hashes、labels、真实 phrase/surfaces、top-20、dedupe 与排序，违反冻结 raw-page replay 合同。live 数据无需重跑且保持 observed-valid；唯一修正是补齐独立 raw→snapshot reconstruction 及 resealed 负测后再次本地复审。
+
+此外 chaospy 只有 2 条候选、SALib 为 0，均低于各自 3-ready quota。no-replacement 下 J=6 路径已结构性不可达；任何后继 handoff 必须披露 `DISTRIBUTION_TARGET_AT_RISK`，不得用 PyTorch/JAX 补位。
