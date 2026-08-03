@@ -280,6 +280,16 @@ def reseal_publish_commit(root: Path) -> None:
     _write_json(root / "PUBLISH_COMMIT.json", publish)
 
 
+def rehash_snapshot_record(rec: dict[str, Any]) -> None:
+    body = {k: rec[k] for k in rec if k != "snapshot_record_sha256"}
+    rec["snapshot_record_sha256"] = checker.canonical_sha256(body)
+
+
+def fully_reseal_snapshot(root: Path) -> None:
+    """Persist snapshot tamper and refresh the hash-bound PUBLISH_COMMIT seal."""
+    reseal_publish_commit(root)
+
+
 def sync_page_log_from_manifest(root: Path) -> None:
     """Keep COMMAND_LOG page records aligned with tampered manifest fields."""
     snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
@@ -945,6 +955,24 @@ def test_snapshot_record_hash_mutation(tmp_path: Path) -> None:
     assert_checker_fails_without_new_mint(root, before)
 
 
+def test_live_snapshot_reconstructs_from_raw_pages() -> None:
+    """Committed Task-4 snapshot must equal independent raw-page reconstruction."""
+    root = FROZEN
+    if not (root / "ISSUE_SNAPSHOT.json").is_file():
+        pytest.skip("live ISSUE_SNAPSHOT.json absent")
+    if not (root / "transport_pages").is_dir():
+        pytest.skip("live transport_pages absent")
+    scope = json.loads((root / "SCOPE.json").read_text(encoding="utf-8"))
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rebuilt = checker.reconstruct_snapshot_records_from_raw_pages(
+        root, scope=scope, snapshot=snap, miner=miner
+    )
+    assert rebuilt == snap["records"]
+    checker.verify_snapshot_bound_to_raw_pages(
+        root, scope=scope, snapshot=snap, miner=miner
+    )
+
+
 def test_false_phrase_match(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
     build_valid_payload(root)
@@ -961,6 +989,122 @@ def test_false_phrase_match(tmp_path: Path) -> None:
         json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
     ).hexdigest()
     _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_fake_frozen_phrase_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    rec["matched_phrases"] = ["wrong result", "fabricated frozen phrase"]
+    rec["match_surfaces"] = {
+        "wrong result": list(rec["match_surfaces"].get("wrong result") or ["title"]),
+        "fabricated frozen phrase": ["title"],
+    }
+    rehash_snapshot_record(rec)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_fake_match_surface_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    phrase = rec["matched_phrases"][0]
+    rec["match_surfaces"][phrase] = ["body", "title", "label:fabricated"]
+    rehash_snapshot_record(rec)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_title_body_hash_tamper_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    rec["title_sha256"] = "a" * 64
+    rec["body_text_sha256"] = "b" * 64
+    rehash_snapshot_record(rec)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_ordered_labels_tamper_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    rec["ordered_labels"] = list(rec.get("ordered_labels") or []) + ["fabricated-label"]
+    rehash_snapshot_record(rec)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_source_page_binding_tamper_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    rec = snap["records"][0]
+    rec["source_page_index"] = int(rec["source_page_index"]) + 7
+    rec["source_page_sha256"] = "c" * 64
+    rehash_snapshot_record(rec)
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_missing_snapshot_record_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    assert len(snap["records"]) >= 2
+    snap["records"] = snap["records"][1:]
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_extra_snapshot_record_fails_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    clone = json.loads(json.dumps(snap["records"][0]))
+    clone["snapshot_record_id"] = "SSR2-99-9999"
+    clone["issue_node_id"] = "ISSUE_FABRICATED_EXTRA"
+    clone["issue_url"] = "https://github.com/pymc-devs/pymc/issues/999999"
+    clone["issue_number"] = 999999
+    rehash_snapshot_record(clone)
+    snap["records"] = list(snap["records"]) + [clone]
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_reordered_snapshot_records_fail_after_full_reseal(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    before = present_candidates(root)
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    repo = snap["records"][0]["repository"]
+    idxs = [i for i, r in enumerate(snap["records"]) if r["repository"] == repo]
+    assert len(idxs) >= 2
+    i0, i1 = idxs[0], idxs[1]
+    snap["records"][i0], snap["records"][i1] = snap["records"][i1], snap["records"][i0]
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    fully_reseal_snapshot(root)
     assert_checker_fails_without_new_mint(root, before)
 
 

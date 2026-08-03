@@ -186,6 +186,116 @@ def verify_frozen_inputs(root: Path, scope: dict[str, Any]) -> None:
         fail("incorrect n projection")
 
 
+def reconstruct_snapshot_records_from_raw_pages(
+    root: Path,
+    *,
+    scope: dict[str, Any],
+    snapshot: dict[str, Any],
+    miner: Any,
+) -> list[dict[str, Any]]:
+    """Rebuild the full ordered snapshot records from hash-bound transport pages."""
+    manifest = snapshot.get("page_manifest") or []
+    if not isinstance(manifest, list) or not manifest:
+        fail("snapshot page_manifest missing for reconstruction")
+    query_sha = snapshot.get("query_document_sha256")
+    if not isinstance(query_sha, str) or not query_sha:
+        fail("snapshot query_document_sha256 missing for reconstruction")
+
+    by_repo: dict[str, list[dict[str, Any]]] = {}
+    for man in manifest:
+        repo = str(man.get("repository"))
+        by_repo.setdefault(repo, []).append(man)
+
+    reconstructed: list[dict[str, Any]] = []
+    for repo_entry in scope["repositories"]:
+        repo = str(repo_entry["repo"])
+        mans = by_repo.get(repo, [])
+        issues_with_meta: list[dict[str, Any]] = []
+        for man in mans:
+            rel = man.get("path")
+            if not isinstance(rel, str):
+                fail(f"{repo}: manifest path missing")
+            page_path = root / rel
+            if not page_path.is_file():
+                fail(f"{repo}: missing raw page {rel}")
+            actual_sha = sha256_file(page_path)
+            if actual_sha != man.get("sha256"):
+                fail(f"{repo}: raw page sha256 drift for {rel}")
+            payload = load_json(page_path)
+            issues = _raw_issues_connection(payload)
+            nodes = issues.get("nodes")
+            if not isinstance(nodes, list):
+                fail(f"{repo}: raw page nodes missing in {rel}")
+            if len(nodes) != int(man.get("node_count", -1)):
+                fail(f"{repo}: raw node_count drift in {rel}")
+            page_index = int(man["page_index"])
+            variables_sha = man.get("variables_sha256")
+            if not isinstance(variables_sha, str):
+                fail(f"{repo}: variables_sha256 missing in manifest page {page_index}")
+            for node_index, node in enumerate(nodes):
+                if not isinstance(node, dict):
+                    fail(f"{repo}: raw node is not an object at {rel}[{node_index}]")
+                issues_with_meta.append(
+                    {
+                        "issue": node,
+                        "source_page_index": page_index,
+                        "source_page_sha256": man["sha256"],
+                        "variables_sha256": variables_sha,
+                        "node_index": node_index,
+                    }
+                )
+        records = miner.select_phrase_union(
+            scope=scope,
+            repository=repo,
+            repository_order=int(repo_entry["order"]),
+            id_prefix=str(repo_entry["id_prefix"]),
+            issues_with_meta=issues_with_meta,
+            query_document_sha256=query_sha,
+        )
+        reconstructed.extend(records)
+    return reconstructed
+
+
+def verify_snapshot_bound_to_raw_pages(
+    root: Path,
+    *,
+    scope: dict[str, Any],
+    snapshot: dict[str, Any],
+    miner: Any,
+) -> None:
+    """Exact field/order/cardinality compare vs independent raw-page reconstruction."""
+    expected = reconstruct_snapshot_records_from_raw_pages(
+        root, scope=scope, snapshot=snapshot, miner=miner
+    )
+    got = snapshot.get("records")
+    if not isinstance(got, list):
+        fail("snapshot records missing")
+    if len(got) != len(expected):
+        fail(
+            f"snapshot cardinality mismatch: reconstructed={len(expected)} "
+            f"committed={len(got)}"
+        )
+    for idx, (exp, rec) in enumerate(zip(expected, got)):
+        if not isinstance(rec, dict):
+            fail(f"snapshot record[{idx}] is not an object")
+        if exp == rec:
+            continue
+        exp_keys = sorted(exp)
+        got_keys = sorted(rec)
+        if exp_keys != got_keys:
+            fail(
+                f"snapshot record[{idx}] key mismatch: "
+                f"expected_keys={exp_keys} got_keys={got_keys}"
+            )
+        for key in exp_keys:
+            if exp.get(key) != rec.get(key):
+                fail(
+                    f"snapshot record[{idx}] field mismatch on {key}: "
+                    f"reconstructed={exp.get(key)!r} committed={rec.get(key)!r}"
+                )
+        fail(f"snapshot record[{idx}] mismatch without field delta")
+
+
 def verify_snapshot_records(scope: dict[str, Any], snapshot: dict[str, Any]) -> None:
     records = snapshot.get("records") or []
     if not isinstance(records, list):
@@ -903,6 +1013,9 @@ def verify_admission(root: Path) -> int:
             scope=scope,
             snapshot=snapshot,
             page_entries=page_entries,
+        )
+        verify_snapshot_bound_to_raw_pages(
+            root, scope=scope, snapshot=snapshot, miner=miner
         )
         verify_snapshot_records(scope, snapshot)
         queue_payload = load_json(root / "REVIEW_QUEUE.json")
