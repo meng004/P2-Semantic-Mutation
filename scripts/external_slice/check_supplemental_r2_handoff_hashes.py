@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Verify supplemental R2 handoff SHA-256 bindings and SELF parent relationship."""
+"""Verify supplemental R2 handoff SHA-256 bindings, counts, and SELF parent relationship."""
 
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import subprocess
@@ -48,7 +49,6 @@ def verify_parent_relationship(
         errors.append("missing direct_parent_required / payload_commit")
         return errors
     if handoff.get("payload_commit") and handoff["payload_commit"] != required_parent:
-        # payload_commit should equal required parent.
         if handoff["payload_commit"] != required_parent:
             errors.append("payload_commit != direct_parent_required")
     if not handoff_commit:
@@ -62,9 +62,6 @@ def verify_parent_relationship(
         check=False,
     )
     if proc.returncode != 0:
-        # When SELF points at a commit that is not yet created / or detached fixture,
-        # allow explicit provided parent check via optional skip only if git fails
-        # because HEAD has no parent — still report.
         errors.append(f"unable to resolve parent of {handoff_commit}")
         return errors
     actual_parent = proc.stdout.strip()
@@ -82,11 +79,259 @@ def _resolve_declared_path(rel: str, *, handoff_path: Path, cwd: Path) -> Path |
         cwd / rel,
         Path(__file__).resolve().parents[2] / rel,
     ]
-    # Also allow repo-prefixed keys written historically.
     if rel.startswith("data/external_slice/supplemental_r2/"):
         suffix = rel.split("data/external_slice/supplemental_r2/", 1)[1]
         candidates.insert(0, handoff_path.parent / suffix)
     return next((p for p in candidates if p.is_file()), None)
+
+
+def _review_stop_reason(
+    *,
+    decision_count: int,
+    queue_count: int,
+    pending_count: int,
+    max_reviewed: int,
+    target_pending: int,
+) -> str:
+    if decision_count == queue_count:
+        return "queue_exhausted"
+    if pending_count >= target_pending:
+        return "five_admit_pending_repro"
+    if decision_count >= max_reviewed:
+        return "twenty_reviewed"
+    return "invalid_early_stop"
+
+
+def _project_quota_feasibility(
+    quotas: dict[str, Any], decisions: list[dict[str, Any]]
+) -> dict[str, Any]:
+    pending_by_repo: dict[str, int] = {}
+    for d in decisions:
+        if d.get("decision") == "ADMIT_PENDING_REPRO":
+            pending_by_repo[d["repository"]] = pending_by_repo.get(d["repository"], 0) + 1
+    shortfalls: list[dict[str, Any]] = []
+    for entry in quotas["readiness_quota_order"]:
+        repo = entry["repo"]
+        target = int(entry["additional_ready_target"])
+        have = pending_by_repo.get(repo, 0)
+        if have < target:
+            shortfalls.append(
+                {
+                    "repo": repo,
+                    "additional_ready_target": target,
+                    "pending_admit_rows": have,
+                    "shortfall": target - have,
+                }
+            )
+    status = "FEASIBLE" if not shortfalls else quotas["shortfall_status"]
+    starting = quotas["starting_state"]
+    projection = quotas["projection_if_quotas_met"]
+    return {
+        "status": status,
+        "shortfalls": shortfalls,
+        "pending_by_repo": pending_by_repo,
+        "starting_accepted_ready_defects": starting["accepted_ready_defects"],
+        "starting_qualifying_projects": starting["qualifying_projects"],
+        "projection_if_quotas_met": projection,
+        "claims_ready_success": False,
+        "claims_readiness_executed": False,
+        "claims_canonical_freeze": False,
+    }
+
+
+def recompute_admission_summary(
+    *,
+    root: Path,
+    scope: dict[str, Any],
+    quotas: dict[str, Any],
+    queue: list[dict[str, Any]],
+    decisions: list[dict[str, Any]],
+    sheet_rows: list[dict[str, str]],
+    evidence_snapshot: dict[str, Any],
+) -> dict[str, Any]:
+    """Independently recompute handoff summary fields from artifacts."""
+    if len(sheet_rows) != len(decisions):
+        raise ValueError(
+            f"sheet/decision cardinality mismatch {len(sheet_rows)} != {len(decisions)}"
+        )
+    manifest = evidence_snapshot.get("records") or []
+    if len(manifest) != len(decisions):
+        raise ValueError("evidence manifest cardinality mismatch")
+    for decision, row, man in zip(decisions, sheet_rows, manifest):
+        nid = decision["neutral_id"]
+        if row.get("neutral_id") != nid or man.get("neutral_id") != nid:
+            raise ValueError(f"sheet/evidence order mismatch around {nid}")
+        if str(row.get("decision") or "") != str(decision.get("decision") or ""):
+            raise ValueError(f"sheet/decision mismatch {nid}:decision")
+
+    max_reviewed = int(scope["max_reviewed_per_repo"])
+    target_pending = int(scope["target_pending_per_repo"])
+    by_repo_q: dict[str, list[dict[str, Any]]] = {
+        r["repo"]: [] for r in scope["repositories"]
+    }
+    for row in queue:
+        by_repo_q.setdefault(row["repository"], []).append(row)
+    by_repo_d: dict[str, list[dict[str, Any]]] = {
+        r["repo"]: [] for r in scope["repositories"]
+    }
+    for decision in decisions:
+        by_repo_d.setdefault(decision["repository"], []).append(decision)
+
+    repository_review_counts: dict[str, Any] = {}
+    for repo_entry in scope["repositories"]:
+        repo = repo_entry["repo"]
+        qrows = by_repo_q.get(repo, [])
+        drows = by_repo_d.get(repo, [])
+        admits = sum(1 for d in drows if d.get("decision") == "ADMIT_PENDING_REPRO")
+        excluded = sum(1 for d in drows if d.get("decision") == "EXCLUDED")
+        excl_classes: dict[str, int] = {}
+        for d in drows:
+            if d.get("decision") != "EXCLUDED":
+                continue
+            key = d.get("exclusion_class") or "(A1/A3 fail)"
+            excl_classes[key] = excl_classes.get(key, 0) + 1
+        status_counts: dict[str, int] = {}
+        for row in qrows:
+            st = str(row.get("review_status") or "")
+            status_counts[st] = status_counts.get(st, 0) + 1
+        reason = _review_stop_reason(
+            decision_count=len(drows),
+            queue_count=len(qrows),
+            pending_count=admits,
+            max_reviewed=max_reviewed,
+            target_pending=target_pending,
+        )
+        repository_review_counts[repo] = {
+            "queue_size": len(qrows),
+            "reviewed": len(drows),
+            "admit_pending_repro": admits,
+            "excluded": excluded,
+            "exclusion_class_counts": excl_classes,
+            "review_status_counts": status_counts,
+            "stop_reason": reason,
+        }
+
+    feasibility = _project_quota_feasibility(quotas, decisions)
+    return {
+        "decision_totals": {
+            "decisions": len(decisions),
+            "admit_pending_repro": sum(
+                1 for d in decisions if d.get("decision") == "ADMIT_PENDING_REPRO"
+            ),
+            "excluded": sum(1 for d in decisions if d.get("decision") == "EXCLUDED"),
+        },
+        "repository_review_counts": repository_review_counts,
+        "quota_feasibility": feasibility,
+    }
+
+
+def _deep_equal(expected: Any, actual: Any, *, path: str) -> list[str]:
+    errors: list[str] = []
+    if type(expected) is not type(actual) and not (
+        isinstance(expected, (int, float)) and isinstance(actual, (int, float))
+    ):
+        # Allow dict key order differences only via recursive compare.
+        if not (isinstance(expected, dict) and isinstance(actual, dict)):
+            if expected != actual:
+                errors.append(f"{path}: expected {expected!r}, got {actual!r}")
+            return errors
+    if isinstance(expected, dict):
+        exp_keys = set(expected)
+        act_keys = set(actual)
+        for key in sorted(exp_keys - act_keys):
+            errors.append(f"{path}.{key}: missing in handoff")
+        for key in sorted(act_keys - exp_keys):
+            errors.append(f"{path}.{key}: unexpected in handoff")
+        for key in sorted(exp_keys & act_keys):
+            errors.extend(
+                _deep_equal(expected[key], actual[key], path=f"{path}.{key}")
+            )
+        return errors
+    if isinstance(expected, list):
+        if len(expected) != len(actual):
+            errors.append(
+                f"{path}: list length expected {len(expected)}, got {len(actual)}"
+            )
+            return errors
+        for idx, (exp_item, act_item) in enumerate(zip(expected, actual)):
+            errors.extend(_deep_equal(exp_item, act_item, path=f"{path}[{idx}]"))
+        return errors
+    if expected != actual:
+        errors.append(f"{path}: expected {expected!r}, got {actual!r}")
+    return errors
+
+
+def verify_handoff_summary_counts(
+    handoff: dict[str, Any], *, handoff_path: Path
+) -> list[str]:
+    """Recompute totals/stop/pending/shortfalls from artifacts and compare strictly."""
+    root = handoff_path.parent
+    required = [
+        "SCOPE.json",
+        "QUOTAS.json",
+        "REVIEW_QUEUE.json",
+        "REVIEW_DECISIONS.json",
+        "admission_sheet.cursor_candidate.csv",
+        "EVIDENCE_SNAPSHOT.json",
+    ]
+    has_artifacts = all((root / name).is_file() for name in required)
+    has_claims = any(
+        key in handoff
+        for key in ("decision_totals", "repository_review_counts", "quota_feasibility")
+    )
+    if not has_artifacts:
+        if has_claims:
+            return ["summary claims present but admission artifacts missing"]
+        # Hash/parent-only fixtures may omit the admission artifact set.
+        return []
+    errors: list[str] = []
+    if not has_claims:
+        return ["missing decision_totals / repository_review_counts / quota_feasibility"]
+
+    scope = load_json(root / "SCOPE.json")
+    quotas = load_json(root / "QUOTAS.json")
+    queue = load_json(root / "REVIEW_QUEUE.json")["records"]
+    decisions = load_json(root / "REVIEW_DECISIONS.json")["decisions"]
+    with (root / "admission_sheet.cursor_candidate.csv").open(
+        newline="", encoding="utf-8"
+    ) as handle:
+        sheet_rows = list(csv.DictReader(handle))
+    evidence_snapshot = load_json(root / "EVIDENCE_SNAPSHOT.json")
+    try:
+        expected = recompute_admission_summary(
+            root=root,
+            scope=scope,
+            quotas=quotas,
+            queue=queue,
+            decisions=decisions,
+            sheet_rows=sheet_rows,
+            evidence_snapshot=evidence_snapshot,
+        )
+    except ValueError as exc:
+        return [f"summary recompute failed: {exc}"]
+
+    errors.extend(
+        _deep_equal(
+            expected["decision_totals"],
+            handoff.get("decision_totals"),
+            path="decision_totals",
+        )
+    )
+    errors.extend(
+        _deep_equal(
+            expected["repository_review_counts"],
+            handoff.get("repository_review_counts"),
+            path="repository_review_counts",
+        )
+    )
+    errors.extend(
+        _deep_equal(
+            expected["quota_feasibility"],
+            handoff.get("quota_feasibility"),
+            path="quota_feasibility",
+        )
+    )
+    return errors
 
 
 def verify_handoff_hashes(
@@ -118,6 +363,8 @@ def verify_handoff_hashes(
         actual = sha256_file(path)
         if actual != expected:
             mismatches.append(f"{rel}: expected {expected}, got {actual}")
+
+    mismatches.extend(verify_handoff_summary_counts(handoff, handoff_path=handoff_path))
 
     # SELF resolution always attempted for reporting.
     resolved = resolve_self_commit(handoff, cwd=git_cwd)

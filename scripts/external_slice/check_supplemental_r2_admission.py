@@ -993,6 +993,24 @@ def verify_queue_binding(
     return got
 
 
+def review_stop_reason(
+    *,
+    decision_count: int,
+    queue_count: int,
+    pending_count: int,
+    max_reviewed: int,
+    target_pending: int,
+) -> str:
+    """Independent stop-reason classifier (mirrors producer; no producer import)."""
+    if decision_count == queue_count:
+        return "queue_exhausted"
+    if pending_count >= target_pending:
+        return "five_admit_pending_repro"
+    if decision_count >= max_reviewed:
+        return "twenty_reviewed"
+    return "invalid_early_stop"
+
+
 def verify_decisions(
     scope: dict[str, Any],
     queue: list[dict[str, Any]],
@@ -1012,6 +1030,8 @@ def verify_decisions(
 
     for repo, qrows in by_repo_q.items():
         dreviews = by_repo_d.get(repo, [])
+        if not dreviews and qrows:
+            fail(f"no decisions for non-empty queue: {repo}")
         for idx, decision in enumerate(dreviews):
             if idx >= len(qrows):
                 fail(f"extra decision for {repo}")
@@ -1051,11 +1071,50 @@ def verify_decisions(
                     fail(f"excluded without class/failure {decision.get('neutral_id')}")
             else:
                 fail(f"invalid decision {verdict}")
+
         pending = sum(1 for d in dreviews if d.get("decision") == "ADMIT_PENDING_REPRO")
-        if len(dreviews) > max_reviewed:
+        decision_count = len(dreviews)
+        queue_count = len(qrows)
+        if decision_count > max_reviewed:
             fail(f"reviewed over cap for {repo}")
         if pending > target_pending:
             fail(f"pending over cap for {repo}")
+        if decision_count > queue_count:
+            fail(f"extra decision for {repo}")
+        if decision_count < queue_count:
+            if not (
+                pending >= target_pending or decision_count >= max_reviewed
+            ):
+                fail(
+                    f"invalid early stop for {repo}: "
+                    f"decisions={decision_count}, queue={queue_count}, pending={pending}"
+                )
+        reason = review_stop_reason(
+            decision_count=decision_count,
+            queue_count=queue_count,
+            pending_count=pending,
+            max_reviewed=max_reviewed,
+            target_pending=target_pending,
+        )
+        if reason == "invalid_early_stop":
+            fail(f"invalid early stop for {repo}")
+
+        # Queue review_status may be PENDING_REVIEW before build-payload restamps,
+        # but must never claim REVIEWED beyond the decided prefix, nor leave a
+        # decided row marked NOT_REVIEWED_AFTER_STOP.
+        for idx, qrow in enumerate(qrows):
+            status = qrow.get("review_status")
+            if idx < decision_count:
+                if status == "NOT_REVIEWED_AFTER_STOP":
+                    fail(
+                        f"decision for NOT_REVIEWED_AFTER_STOP: "
+                        f"{qrow.get('neutral_id')}"
+                    )
+            elif status == "REVIEWED":
+                fail(
+                    f"omitted reviewed decision for {qrow.get('neutral_id')}: "
+                    "queue row marked REVIEWED without a decision"
+                )
 
     # Global decision order must equal concatenation of per-repo reviewed prefixes
     # in repository order.

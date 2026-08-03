@@ -1067,6 +1067,99 @@ def test_publish_boundary_os_exit_death_and_recovery(
     assert publish["code_commit"] == code_commit
 
 
+def test_review_stop_reason_and_assert_rule() -> None:
+    assert (
+        miner.review_stop_reason(
+            decision_count=5,
+            queue_count=5,
+            pending_count=1,
+            max_reviewed=20,
+            target_pending=5,
+        )
+        == "queue_exhausted"
+    )
+    assert (
+        miner.review_stop_reason(
+            decision_count=16,
+            queue_count=24,
+            pending_count=5,
+            max_reviewed=20,
+            target_pending=5,
+        )
+        == "five_admit_pending_repro"
+    )
+    assert (
+        miner.review_stop_reason(
+            decision_count=20,
+            queue_count=40,
+            pending_count=2,
+            max_reviewed=20,
+            target_pending=5,
+        )
+        == "twenty_reviewed"
+    )
+    assert (
+        miner.review_stop_reason(
+            decision_count=3,
+            queue_count=10,
+            pending_count=2,
+            max_reviewed=20,
+            target_pending=5,
+        )
+        == "invalid_early_stop"
+    )
+    with pytest.raises(miner.HardFail, match="review_stop_inconsistent"):
+        miner.assert_review_stop_rule(
+            "owner/repo",
+            queue_rows=[{"repository": "owner/repo"} for _ in range(10)],
+            decisions=[
+                {"decision": "ADMIT_PENDING_REPRO"},
+                {"decision": "EXCLUDED"},
+            ],
+            max_reviewed=20,
+            target_pending=5,
+        )
+    # Exhaustion is valid even with pending below target.
+    reviewed, pending, reason = miner.assert_review_stop_rule(
+        "owner/repo",
+        queue_rows=[{"repository": "owner/repo"} for _ in range(2)],
+        decisions=[
+            {"decision": "EXCLUDED"},
+            {"decision": "EXCLUDED"},
+        ],
+        max_reviewed=20,
+        target_pending=5,
+    )
+    assert (reviewed, pending, reason) == (2, 0, "queue_exhausted")
+
+
+def test_write_sheet_lf_only(tmp_path: Path) -> None:
+    path = tmp_path / "sheet.csv"
+    miner.write_sheet(
+        path,
+        [
+            {
+                "neutral_id": "EXT-x-01",
+                "source_cohort": "supplemental_r2",
+                "repository": "o/r",
+                "issue_url": "https://github.com/o/r/issues/1",
+                "buggy_sha": "",
+                "fixed_sha": "",
+                "mechanism": "m",
+                "crit_real_public_fix": "FAIL",
+                "crit_dual_arm_repro": "PENDING",
+                "crit_in_numerical_scope": "FAIL",
+                "decision": "EXCLUDED",
+                "decision_reason": "r",
+                "analysis_id": "",
+            }
+        ],
+    )
+    raw = path.read_bytes()
+    assert b"\r\n" not in raw
+    assert raw.endswith(b"\n")
+
+
 def test_validation_failure_emits_one_page_record(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
     calls: list[int] = []

@@ -963,6 +963,64 @@ def build_queue_from_snapshot(
     return queue
 
 
+def review_stop_reason(
+    *,
+    decision_count: int,
+    queue_count: int,
+    pending_count: int,
+    max_reviewed: int,
+    target_pending: int,
+) -> str:
+    """Return the stop reason for one repository's reviewed prefix."""
+    if decision_count == queue_count:
+        return "queue_exhausted"
+    if pending_count >= target_pending:
+        return "five_admit_pending_repro"
+    if decision_count >= max_reviewed:
+        return "twenty_reviewed"
+    return "invalid_early_stop"
+
+
+def assert_review_stop_rule(
+    repo: str,
+    *,
+    queue_rows: list[dict[str, Any]],
+    decisions: list[dict[str, Any]],
+    max_reviewed: int,
+    target_pending: int,
+) -> tuple[int, int, str]:
+    """Enforce stop rule: early stop only via pending>=5 or reviewed>=20."""
+    queue_count = len(queue_rows)
+    decision_count = len(decisions)
+    pending_count = sum(
+        1 for d in decisions if d.get("decision") == "ADMIT_PENDING_REPRO"
+    )
+    if decision_count > max_reviewed:
+        raise HardFail("reviewed_over_cap", repo)
+    if pending_count > target_pending:
+        raise HardFail("pending_over_cap", repo)
+    if decision_count > queue_count:
+        raise HardFail("extra_decision", repo)
+    if decision_count < queue_count:
+        if not (
+            pending_count >= target_pending or decision_count >= max_reviewed
+        ):
+            raise HardFail(
+                "review_stop_inconsistent",
+                f"{repo}: invalid early stop "
+                f"(decisions={decision_count}, queue={queue_count}, "
+                f"pending={pending_count})",
+            )
+    reason = review_stop_reason(
+        decision_count=decision_count,
+        queue_count=queue_count,
+        pending_count=pending_count,
+        max_reviewed=max_reviewed,
+        target_pending=target_pending,
+    )
+    return decision_count, pending_count, reason
+
+
 def apply_review_statuses(
     queue: list[dict[str, Any]],
     decisions: list[dict[str, Any]],
@@ -980,26 +1038,14 @@ def apply_review_statuses(
 
     updated: list[dict[str, Any]] = []
     for repo, rows in by_repo_q.items():
-        reviewed_n = len(by_repo_d.get(repo, []))
-        pending = sum(
-            1
-            for d in by_repo_d.get(repo, [])
-            if d.get("decision") == "ADMIT_PENDING_REPRO"
+        dreviews = by_repo_d.get(repo, [])
+        reviewed_n, _pending, _reason = assert_review_stop_rule(
+            repo,
+            queue_rows=rows,
+            decisions=dreviews,
+            max_reviewed=max_reviewed,
+            target_pending=target_pending,
         )
-        if reviewed_n > max_reviewed:
-            raise HardFail("reviewed_over_cap", repo)
-        if pending > target_pending:
-            raise HardFail("pending_over_cap", repo)
-        # If a proper prefix remains unreviewed, a stop condition must hold
-        # or the reviewed prefix must be exactly the decision list length.
-        if 0 < reviewed_n < len(rows):
-            stopped_ok = (
-                pending >= target_pending
-                or reviewed_n >= max_reviewed
-                or reviewed_n == len(by_repo_d.get(repo, []))
-            )
-            if not stopped_ok:
-                raise HardFail("review_stop_inconsistent", repo)
         for idx, row in enumerate(rows):
             clone = dict(row)
             if idx < reviewed_n:
@@ -1084,16 +1130,20 @@ def validate_decisions_payload(
 
     for repo, qrows in by_repo_queue.items():
         dreviews = decisions_by_repo.get(repo, [])
-        # Determine expected reviewed prefix from decisions length and stop rule.
         if not dreviews:
+            if qrows:
+                raise HardFail(
+                    "review_stop_inconsistent",
+                    f"{repo}: no decisions for non-empty queue",
+                )
             continue
         # Decision order must equal reviewed queue prefix.
         for idx, decision in enumerate(dreviews):
             if idx >= len(qrows):
                 raise HardFail("extra_decision", repo)
             qrow = qrows[idx]
-            if qrow.get("review_status") == "NOT_REVIEWED_AFTER_STOP":
-                raise HardFail("decision_for_unreviewed", decision.get("neutral_id"))
+            # Binding is against the queue prefix order. Prior review_status values
+            # may be stale until build-payload recomputes them from decisions.
             for field in copied_fields:
                 if decision.get(field) != qrow.get(field):
                     raise HardFail(
@@ -1102,21 +1152,13 @@ def validate_decisions_payload(
                     )
             decision_is_valid(decision, exclusion_classes=exclusion_classes)
 
-        # Stop-rule consistency: reviewed count and pending admits.
-        pending = sum(
-            1 for d in dreviews if d.get("decision") == "ADMIT_PENDING_REPRO"
+        assert_review_stop_rule(
+            repo,
+            queue_rows=qrows,
+            decisions=dreviews,
+            max_reviewed=max_reviewed,
+            target_pending=target_pending,
         )
-        if len(dreviews) > max_reviewed:
-            raise HardFail("reviewed_over_cap", repo)
-        if pending > target_pending:
-            raise HardFail("pending_over_cap", repo)
-        # If there are remaining queue rows, they must be after a valid stop.
-        if len(dreviews) < len(qrows):
-            stopped_ok = pending >= target_pending or len(dreviews) >= max_reviewed
-            if not stopped_ok and len(dreviews) != len(qrows):
-                # Exhaustion is also a stop; if decisions omit trailing without stop,
-                # allow only when decisions cover all reviewed before a stop marker.
-                pass
 
 
 def sheet_row_from_decision(decision: dict[str, Any]) -> dict[str, str]:
@@ -1162,9 +1204,12 @@ def evidence_from_decision(decision: dict[str, Any]) -> dict[str, Any]:
 
 
 def write_sheet(path: Path, rows: list[dict[str, str]]) -> None:
+    """Write admission CSV with fixed LF line endings (no CR)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=SHEET_HEADER)
+    with path.open("w", newline="\n", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle, fieldnames=SHEET_HEADER, lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -1689,13 +1734,81 @@ def project_quota_feasibility(
     }
 
 
+def compute_admission_summary(
+    *,
+    scope: dict[str, Any],
+    quotas: dict[str, Any],
+    queue: list[dict[str, Any]],
+    decisions: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Compute decision totals, per-repo counts, stop reasons, and shortfalls."""
+    max_reviewed = int(scope["max_reviewed_per_repo"])
+    target_pending = int(scope["target_pending_per_repo"])
+    by_repo_q: dict[str, list[dict[str, Any]]] = {r["repo"]: [] for r in scope["repositories"]}
+    for row in queue:
+        by_repo_q.setdefault(row["repository"], []).append(row)
+    by_repo_d: dict[str, list[dict[str, Any]]] = {r["repo"]: [] for r in scope["repositories"]}
+    for decision in decisions:
+        by_repo_d.setdefault(decision["repository"], []).append(decision)
+
+    repository_review_counts: dict[str, Any] = {}
+    for repo_entry in scope["repositories"]:
+        repo = repo_entry["repo"]
+        qrows = by_repo_q.get(repo, [])
+        drows = by_repo_d.get(repo, [])
+        admits = sum(1 for d in drows if d.get("decision") == "ADMIT_PENDING_REPRO")
+        excluded = sum(1 for d in drows if d.get("decision") == "EXCLUDED")
+        excl_classes: dict[str, int] = {}
+        for d in drows:
+            if d.get("decision") != "EXCLUDED":
+                continue
+            key = d.get("exclusion_class") or "(A1/A3 fail)"
+            excl_classes[key] = excl_classes.get(key, 0) + 1
+        status_counts: dict[str, int] = {}
+        for row in qrows:
+            st = str(row.get("review_status") or "")
+            status_counts[st] = status_counts.get(st, 0) + 1
+        reason = review_stop_reason(
+            decision_count=len(drows),
+            queue_count=len(qrows),
+            pending_count=admits,
+            max_reviewed=max_reviewed,
+            target_pending=target_pending,
+        )
+        repository_review_counts[repo] = {
+            "queue_size": len(qrows),
+            "reviewed": len(drows),
+            "admit_pending_repro": admits,
+            "excluded": excluded,
+            "exclusion_class_counts": excl_classes,
+            "review_status_counts": status_counts,
+            "stop_reason": reason,
+        }
+
+    feasibility = project_quota_feasibility(quotas, decisions)
+    return {
+        "decision_totals": {
+            "decisions": len(decisions),
+            "admit_pending_repro": sum(
+                1 for d in decisions if d.get("decision") == "ADMIT_PENDING_REPRO"
+            ),
+            "excluded": sum(1 for d in decisions if d.get("decision") == "EXCLUDED"),
+        },
+        "repository_review_counts": repository_review_counts,
+        "quota_feasibility": feasibility,
+    }
+
+
 def cmd_write_handoff(root: Path, payload_commit: str) -> int:
     try:
         scope = load_scope(root)
         contract = load_transport(root)
         quotas = load_quotas(root)
         decisions = load_json(root / "REVIEW_DECISIONS.json")["decisions"]
-        feasibility = project_quota_feasibility(quotas, decisions)
+        queue = load_json(root / "REVIEW_QUEUE.json")["records"]
+        summary = compute_admission_summary(
+            scope=scope, quotas=quotas, queue=queue, decisions=decisions
+        )
 
         def rel_sha(name: str) -> str:
             return sha256_file(root / name)
@@ -1729,6 +1842,8 @@ def cmd_write_handoff(root: Path, payload_commit: str) -> int:
                 repo_root / "tests/external_slice/test_check_supplemental_r2_admission.py"
             ),
         }
+        if (root / "VERIFICATION_LOG.json").is_file():
+            file_sha256["VERIFICATION_LOG.json"] = rel_sha("VERIFICATION_LOG.json")
         evidence_sha256 = {}
         for path in sorted((root / "admission_evidence").rglob("evidence.json")):
             rel = path.relative_to(root).as_posix()
@@ -1750,7 +1865,14 @@ def cmd_write_handoff(root: Path, payload_commit: str) -> int:
             },
             "file_sha256": file_sha256,
             "evidence_sha256": evidence_sha256,
-            "quota_feasibility": feasibility,
+            "quota_feasibility": summary["quota_feasibility"],
+            "decision_totals": summary["decision_totals"],
+            "repository_review_counts": summary["repository_review_counts"],
+            "verification_log": (
+                "VERIFICATION_LOG.json"
+                if (root / "VERIFICATION_LOG.json").is_file()
+                else ""
+            ),
             "confirmations": {
                 "a2_all_pending": True,
                 "analysis_id_all_blank": True,
