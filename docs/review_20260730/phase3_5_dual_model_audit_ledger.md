@@ -90,7 +90,7 @@ S0 台账建立提交前实测：
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 | Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
 | Gate SUPPLEMENTAL_MINING_R2_DESIGN-r1 | correction audit `d95d6277ee09479d638bb83d75562e9dc4348031`；payload `1ed9fb2dc2714cb452bba4016d6093cefb36204d` | `PASS_WITH_DISCLOSURE` | N/A（设计分支，不含实验 payload） | 设计修订通过；但已发生的 Cursor Task 4 需独立执行审计，不能追溯通过 |
-| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-result-r2 `8076d82f8c02209ad33416594ee30e7183e8b7c6`；live result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc` | `BLOCKED`（labels pagination fail-open；raw-negative tests 未隔离） | N/A（PR #7 未集成） | 否；仅解锁同分支 transport-result-r3 checker correction，不重跑 retrieval，不解锁 A1/A3/readiness |
+| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-result-r3 `020b60fb83f7eb1d34f143458fca62beab5aa398`；live result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc` | `PASS_WITH_DISCLOSURE`（transport/result checker 完整；distribution structural shortfall） | N/A（PR #7 未集成） | 是；仅同分支 Task 5/6 A1+A3 admission review；不得重跑 retrieval，不解锁 readiness/downstream |
 
 ## 5. 交接审计记录
 
@@ -848,3 +848,24 @@ r2 已实现 checker-owned cutoff、normalization、phrase matching、top-20、d
 但 checker 只拒绝 `hasNextPage is True`。删除该字段或设为 JSON `null` 后，完整重封并重建 queue、decisions、sheet、evidence 的独立攻击仍获得 `ADMISSION_CHECK_OK`/0，违反冻结的 exact-false label-pagination 合同。现有两条 raw 负测只刷新 manifest/PUBLISH，未同步 snapshot source hashes/record hashes 或 downstream，因此在禁用目标 semantic guard 后仍会因 stale binding 通过负测，不能证明目标检查。
 
 独立验证 targeted `172 passed`、full `432 passed, 10 warnings`；Ruff、compileall、`git diff --check`、live-data byte check 均通过。Standards 与 Spec 均为 FAIL。唯一 r3 修正是 exact `hasNextPage is False`、完整重建且 guard-isolated 的 PullRequest/label pagination negatives；live data、accepted-ready=18 与 `DISTRIBUTION_TARGET_AT_RISK` shortfall 不变。
+
+### 5.28 SUPPLEMENTAL_ADMISSION_R2 transport-result-r3 最终复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-transport-result-r3` |
+| 记录类型 | transport-result checker 最终独立复审 |
+| 交接/复核时间 | `2026-08-03T22:07:47+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | `020b60fb83f7eb1d34f143458fca62beab5aa398` |
+| Cursor baseline | `8076d82f8c02209ad33416594ee30e7183e8b7c6` |
+| Findings | `SUPP-R2-LABEL-PAGINATION-FAILOPEN-001` 已关闭；`SUPP-R2-RAW-NEGATIVE-ISOLATION-001` 已关闭；Standards 0；Spec 0 |
+| Verdict | `PASS_WITH_DISCLOSURE` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 是；仅同分支 Task 5/6 A1+A3 admission review；不得重跑 retrieval，不解锁 readiness 或 downstream。 |
+
+checker 现要求 labels/pageInfo 为对象且 `hasNextPage is False`。完整同步 raw-page、manifest、snapshot source/record hashes、command log、publish seal 并重建 queue/decisions/sheet/evidence 后，PullRequest 与八种 labels/pageInfo/hasNextPage 非法状态均被拒绝，literal false 正控通过。移除 typename 或 label 目标 guard 后，对应 fully synchronized negative 由拒绝转为接受，证明负测不再依赖 stale hash。
+
+独立验证 targeted `182 passed`、full `442 passed, 10 warnings`、focused matrix `12 passed`；Ruff、compileall、`git diff --check` 与 live-data byte check 全部通过。live pages/snapshot/queue 未变，未执行 retrieval、A1/A3 或 readiness。
+
+Gate 以 `PASS_WITH_DISCLOSURE` 关闭。披露仍为 immutable snapshot 的结构性配额不足：chaospy 最多 2、SALib 为 0，因此 frozen J=6 路径不可达，后继 handoff 必须保留 `DISTRIBUTION_TARGET_AT_RISK` 且不得以 PyTorch/JAX 补位。accepted-ready 仍为 18。唯一解锁动作是在同一 Cursor VM 分支按 queue/stop-rule 完成 public A1/A3 review，生成 bound admission payload 与 direct-child handoff 后停止本地审计；所有 readiness/downstream 继续锁定。

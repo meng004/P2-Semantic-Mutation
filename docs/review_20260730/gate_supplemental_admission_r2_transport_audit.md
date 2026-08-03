@@ -744,3 +744,66 @@ must:
    corresponding negative fail, so no stale-hash check can self-confirm it;
 5. preserve live data byte-for-byte, pass targeted/full/static verification,
    commit, push, and stop for Local Desktop r3 re-review.
+
+## 14. `SUPPLEMENTAL_ADMISSION_R2-transport-result-r3` re-review
+
+- **Correction baseline:** `8076d82f8c02209ad33416594ee30e7183e8b7c6`
+- **Correction commit:** `020b60fb83f7eb1d34f143458fca62beab5aa398`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live-data baseline:** `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc`
+- **Live data:** byte-identical to baseline
+- **Verdict:** `PASS_WITH_DISCLOSURE`
+
+### 14.1 Finding closure
+
+`SUPP-R2-LABEL-PAGINATION-FAILOPEN-001` is closed. The checker now requires
+`labels` and `labels.pageInfo` to be dictionaries, requires an explicit
+`hasNextPage` member, and accepts only the literal boolean `False`. Missing,
+null, string, and literal-true values fail closed.
+
+`SUPP-R2-RAW-NEGATIVE-ISOLATION-001` is also closed. The raw-page tamper helper
+updates page and manifest hashes, every affected snapshot source hash and
+record hash, command-log page bindings and the publish seal, then rebuilds the
+queue, decisions, sheet, and evidence. The focused matrix rejects a
+`PullRequest`; absent/null labels; absent/null pageInfo; and absent, null,
+non-boolean, or true `hasNextPage`. Literal false remains a passing positive
+control.
+
+The two guard-removal controls prove semantic isolation. With every other
+binding unchanged, mapping only the attacked typename back to Issue changes
+the fully synchronized PullRequest case from rejection to acceptance. Likewise,
+changing only the attacked true `hasNextPage` to false changes the label case
+from rejection to acceptance. The negative tests therefore no longer depend on
+stale hashes or unrelated downstream mismatches.
+
+### 14.2 Verification evidence
+
+The correction is the single direct child of r2 and changes only the admission
+checker and its tests. Fresh Local Desktop verification produced `182 passed`
+in the targeted R2 suite, `442 passed, 10 warnings` in the full suite, and
+`12 passed` in the focused raw-type/label/positive-control/guard-removal matrix.
+Exact Ruff, compileall, `git diff --check`, and the live-data byte check all
+returned zero. Standards is `PASS`; Specification is `PASS`.
+
+No retrieval, A1/A3 review, readiness, canonical freeze, or downstream work is
+present in the correction.
+
+### 14.3 Gate decision and only unlocked execution
+
+The transport-result correction gate closes as `PASS_WITH_DISCLOSURE`. The
+disclosure is not a checker defect: the immutable snapshot contains only two
+chaospy candidates and zero SALib candidates, so the frozen four-project quota
+and J=6 route are structurally infeasible. Every later handoff must retain
+`DISTRIBUTION_TARGET_AT_RISK`; PyTorch/JAX rows may not substitute for either
+shortfall. Accepted-ready remains 18 because no A2/readiness run has occurred.
+
+Only Task 5/6 A1+A3 admission review is now unlocked on the same Cursor VM
+branch at `020b60fb...`, without `rtk` and without network retrieval. Review
+must follow the exact six-repository queue order and frozen stop rule, retain
+every exclusion, use only public A1/A3 evidence, keep A2 `PENDING` and
+`analysis_id` blank, and build the decision, sheet, evidence, verification-log,
+payload, and direct-child handoff artifacts. After pushing those two commits,
+stop for `SUPPLEMENTAL_ADMISSION_R2` local audit.
+
+Readiness, candidate replacement, new search/retrieval, canonical freeze, C4,
+labelling, prediction, and detection remain locked.
