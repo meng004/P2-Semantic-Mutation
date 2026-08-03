@@ -291,3 +291,70 @@ Cursor branch, without `rtk` and without network retrieval. It must:
 4. retain all r2 lock, run/code, archive, lint, and test guarantees; and
 5. commit, verify, push, and stop for transport-r3 local review before any live
    retrieval.
+
+## 8. `SUPPLEMENTAL_ADMISSION_R2-transport-r3` re-review
+
+- **Correction baseline:** `ebbafad20859c6f6fbb6990ca63e3af8703a3773`
+- **Correction commit:** `e3973bf7e0cf5af47598cd79c04a8a6b689f59d6`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live retrieval:** not run
+- **Verdict:** `BLOCKED`
+
+### 8.1 Closed findings and positive verification
+
+The correction is the direct child of transport-r2. It emits exactly one page
+record for each runner invocation, including every validation failure. The
+checker now binds page log and manifest fields, response/variables hashes,
+`after`/`endCursor`, next-request continuity, and retained page hashes.
+`PUBLISH_COMMIT.json` is written last and seals the snapshot and complete page
+map; its absence or one-field hash change is rejected.
+
+The subprocess death suite uses real `os._exit(70)` checkpoints at every
+promotion boundary and exercises subsequent owner recovery. The r2 lock,
+run/code, queue rebuild, and failed-run archive tests remain green; no data file
+changed in the correction diff.
+
+Fresh verification produced `145 passed` in the targeted suite and
+`405 passed, 10 warnings` in the full suite. Exact Ruff, compileall, and
+`git diff --check` returned zero. Standards is `PASS` with no hard finding.
+
+### 8.2 `SUPP-R2-FULL-TRAVERSAL-COVERAGE-001`
+
+The checker reconstructs only repositories and pages present in the supplied
+log/manifest. It does not derive the required six-repository order from
+`SCOPE.json`, require one contiguous block for every repository, or parse each
+retained response's `issues.pageInfo` to prove terminal pagination.
+
+An independent positive payload was modified by removing every PyMC page entry
+from command log and manifest and deleting its retained page. After recomputing
+the manifest hash and `PUBLISH_COMMIT`, only five repositories remained, yet the
+checker still printed `ADMISSION_CHECK_OK` and returned 0. A second independent
+probe changed a retained page to `hasNextPage=true` with a new `endCursor`, then
+resealed the supplied set; it was likewise accepted.
+
+The publish seal proves integrity of the supplied set, not completeness against
+the frozen scope. Incomplete retrieval can therefore be resealed and admitted.
+
+### 8.3 Gate decision and r4 correction scope
+
+Standards is `PASS`; Specification is `FAIL`. Accepted-ready remains 18. No
+fresh retrieval, candidate generation, A1/A3 review, readiness, canonical
+freeze, C4, labelling, prediction, or detection work is unlocked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-transport-r4` on the same
+Cursor branch, without `rtk` and without network retrieval. It must:
+
+1. derive the exact repository sequence from `SCOPE.json` and require one
+   nonempty, contiguous page block for each of all six repositories in that
+   exact order;
+2. parse every retained transport response and bind raw `pageInfo.endCursor`
+   and `hasNextPage` to log/manifest values;
+3. require each intermediate page to continue and each repository's final page
+   to have `hasNextPage=false`;
+4. independently verify stable `totalCount`, contiguous indices/cursors, unique
+   issue identity, and total retained node count equal to `totalCount`;
+5. add resealed negative tests for missing repository, reordered repository
+   blocks, missing middle/terminal page, false terminality, total-count drift,
+   and missing/duplicate nodes; and
+6. retain all r2/r3 guarantees, commit, verify, push, and stop for transport-r4
+   local review before any live retrieval.
