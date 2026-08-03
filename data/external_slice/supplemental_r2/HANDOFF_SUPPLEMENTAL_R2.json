@@ -7,11 +7,11 @@
     "forbidden_data_absent": true,
     "readiness_ran": false
   },
-  "created_at_utc": "2026-08-03T14:22:08Z",
+  "created_at_utc": "2026-08-03T22:34:06Z",
   "decision_totals": {
-    "admit_pending_repro": 10,
-    "decisions": 63,
-    "excluded": 53
+    "admit_pending_repro": 9,
+    "decisions": 67,
+    "excluded": 58
   },
   "design_baseline_commit": "d95d6277ee09479d638bb83d75562e9dc4348031",
   "evidence_sha256": {
@@ -21,7 +21,7 @@
     "admission_evidence/EXT-gpytorch-02/evidence.json": "569a7136c07828515d4b5df49b96ae8fd19e20e5ef759267f07c8de72fe55275",
     "admission_evidence/EXT-gpytorch-03/evidence.json": "84fd1b02f83184897a4e14e996c21078a238866840aa7b94ce5a9048b09efd7e",
     "admission_evidence/EXT-gpytorch-04/evidence.json": "0ef2691d451f9179685a23a4208fc442ec17b7dfce4bfd5d852522df53ea5edb",
-    "admission_evidence/EXT-gpytorch-05/evidence.json": "29c760f024b5764241f742a1221bc8dc36f2d318e870ab510b5705aad3757a4e",
+    "admission_evidence/EXT-gpytorch-05/evidence.json": "c2522519db46686cce0fee916bcc4bf94704aa8eed26de0879887e3024106a24",
     "admission_evidence/EXT-jax-01/evidence.json": "474792de5098cf3684d7e498ed9603b622e8a55c4a46f23cca958053b3edf71a",
     "admission_evidence/EXT-jax-02/evidence.json": "0f3adc26c0eb70a02af03b467566ecdb3728ad4ac771ef5462a983fac4a0aa03",
     "admission_evidence/EXT-jax-03/evidence.json": "40e8761f2c62056642a1a4261a36ae6da9fef660f7319727896196b8efd116bf",
@@ -45,7 +45,7 @@
     "admission_evidence/EXT-pymc-01/evidence.json": "ad36a120bb7e647b36356dc6a6618c39ce05cf4ff5275e17da1fbf4063cbebe3",
     "admission_evidence/EXT-pymc-02/evidence.json": "43cedc0ca4768b9579ce044ab80af8c4368a1229e42bf2e8633297abdad5bf86",
     "admission_evidence/EXT-pymc-03/evidence.json": "ce2628e961cda6bc4de21d45129e8f53900daed149fbd5141907684a282a3623",
-    "admission_evidence/EXT-pymc-04/evidence.json": "5c6f7a506d83b9a42153127b74523b2249bd7f1a0a275e253000acad6d6fc119",
+    "admission_evidence/EXT-pymc-04/evidence.json": "a7312983981f4df289c61fa71c62c9168a8d8011a0309030b0860e01a21e5935",
     "admission_evidence/EXT-pymc-05/evidence.json": "63ca22f389ab3d69908a5e0210713f5ba31f7c00c8876e3f5fa7ad65afbb0ffe",
     "admission_evidence/EXT-pymc-06/evidence.json": "95fbe93a28b585a22a3b38a1cd052afa1d14e0736f216e1726360e2073cbb68a",
     "admission_evidence/EXT-pymc-07/evidence.json": "aebca64ae9058b37c44549ec11387715ebe4fce8cac8557c46edd2f33cbc274e",
@@ -57,7 +57,11 @@
     "admission_evidence/EXT-pymc-13/evidence.json": "a6ea950c8e30d32220d4cbd98648444ac4c7377bed76a4bd29d19200adcd77f4",
     "admission_evidence/EXT-pymc-14/evidence.json": "59ca863f6827b04d8fcbdfc1e52424b07b5ab7e40a438b601ffdf2616c72753e",
     "admission_evidence/EXT-pymc-15/evidence.json": "0bbe172bbbf4e0c6054cb967c12cad3ee4ab0a934798f1e60dcb3a07778badae",
-    "admission_evidence/EXT-pymc-16/evidence.json": "76ecfd6b029f54ac8f0039ed8c25e010f088f1a034e1ab71022be4360171b544",
+    "admission_evidence/EXT-pymc-16/evidence.json": "cd75cc3bc8cb4171bad00ad477fb6bbae827e2cd639397a60b612e21a9d56005",
+    "admission_evidence/EXT-pymc-17/evidence.json": "12a9fe8f25025e2a46161a9ec178fd01ef22fd51e99e9e2e5876e33f34efe6a1",
+    "admission_evidence/EXT-pymc-18/evidence.json": "fb4e46a11274723557c860e701097bab2360dc768dc3467682cfbb8114a2149c",
+    "admission_evidence/EXT-pymc-19/evidence.json": "93298d193b1d65fd58b8ec3b2a3a56f7e3a8cb103687c204ef17054a6ebf6913",
+    "admission_evidence/EXT-pymc-20/evidence.json": "6df6c338b4a4b51ac20df3053b956ac55f55cfc4efa3b1aa21416bdcc18c4550",
     "admission_evidence/EXT-pytorch-01/evidence.json": "d92a80657444eb1a5f0b6d297c2447e0dc96952aa98f4286dc299990744ae249",
     "admission_evidence/EXT-pytorch-02/evidence.json": "44b97b170411e677db00c31b3c65a4e36e939ad275b3ebfac887894f9efac42f",
     "admission_evidence/EXT-pytorch-03/evidence.json": "77e83d609a3f600825275589ab513ebdc4afc8021ea4155f57da1391f9282828",
@@ -81,34 +85,34 @@
   },
   "file_sha256": {
     "COMMAND_LOG.json": "e2b40d91a71840c703946c9d99e399259a0f849d8fbd3b027a1228935ed7a23d",
-    "EVIDENCE_SNAPSHOT.json": "174edaa801b50916317f520827b99be5da803541ba42acbd473a04976f78dff6",
+    "EVIDENCE_SNAPSHOT.json": "b863bef1666b03d5c29a178f9ff91770f5e2432063b89f55a3f9151dae0ed923",
     "ISSUE_SNAPSHOT.json": "5d99b98d3ab122ca7ef327c6913cd3bcbd2ebc2abf5c8f5a0fab8d9dcd18b060",
     "QUOTAS.json": "ffee858c21b29ec72e38695564b7e54d5baaea4ea3dd21c991b353ab6b3ea2f2",
-    "REVIEW_DECISIONS.json": "9dec76f09dccc7c19f83a8f6c6fb229ad0d5355c9fbe0635046f3bcd918c8e56",
-    "REVIEW_QUEUE.json": "0540b0ed94f18f17ca46e5aa75ce810e3d508024640331c7cc0fbd2f1085d5b6",
+    "REVIEW_DECISIONS.json": "355f4a0436221429802dfc7b17ce2a007ebc0ae99272bb6cd7c11dc61cc939cd",
+    "REVIEW_QUEUE.json": "5ae6038910fdc3ed7fa93502d0b92ec43b70f0f021663cd0d4468bead7c4344e",
     "SCOPE.json": "1f826d3a9c502b070e25b974841ef9d992046883b89521c91d8049a8607c8c26",
     "TRANSPORT_CONTRACT.json": "bc6bc443f3289dad51334026a670c3567478b11a975bcbb871a23d54a59feb24",
-    "VERIFICATION_LOG.json": "92aefcc4a2cf7ae292bfd2c87c760033f79a167d10ac291732411d1e465bdb87",
-    "admission_sheet.cursor_candidate.csv": "7da24ea6a8202742597cd2b59be8476f7430731374f94465e50e2ca9dc90f603",
-    "scripts/external_slice/check_supplemental_r2_admission.py": "6edff958d1a1ac41aa90b1b446e199bf76214cb1aefa83972bb7359a6673b246",
-    "scripts/external_slice/check_supplemental_r2_handoff_hashes.py": "f7111fc5e8647bacfb1f237a72fcdcf86ab7a45018a30e8012e016543fa60803",
-    "scripts/external_slice/mine_supplemental_r2.py": "491cecdc4b1c100641fef17f7a710d91d2a62d82472d8683812fca9f00bc101d",
-    "tests/external_slice/test_check_supplemental_r2_admission.py": "3ff6570ef01cb99908c82ec3b93dd9b1b600350faf47d131e932b827627cd445",
-    "tests/external_slice/test_mine_supplemental_r2.py": "128de3fc400c170433bd3ca387943fbc20c8d80dd2ee3b2b3b2f57ea3eabd648"
+    "VERIFICATION_LOG.json": "67c0895d3e3ba3292ac6a78879dd30d0de28d6ca07942fffa1acd4c46d2f8dc9",
+    "admission_sheet.cursor_candidate.csv": "067f4fa12ed6f9da522a36b50483478181d2944d6574f345eeb9ea7c5506141d",
+    "scripts/external_slice/check_supplemental_r2_admission.py": "ed8f6d12267e4439377165323301589cd27eec60879d02b7c287c03eac1cec8b",
+    "scripts/external_slice/check_supplemental_r2_handoff_hashes.py": "d99085ff81d8e4a3ce3dd68664d90b0ef8f5e1633bc7d70c4b121cbc519c56ad",
+    "scripts/external_slice/mine_supplemental_r2.py": "31800faffd03eaaf21ed63ce662c2f3119ae67158db61dd302921a6faa99d290",
+    "tests/external_slice/test_check_supplemental_r2_admission.py": "6c69a9780a8b87275fbccd7d8fe6808f0c8b012b73bba162e5a775d16cf990f2",
+    "tests/external_slice/test_mine_supplemental_r2.py": "04ad660c73b43e23895261c5d360253c1ba170a051b378dd71e78e17d5ce793b"
   },
   "gate_requested": "SUPPLEMENTAL_ADMISSION_R2",
   "handoff_commit": {
-    "direct_parent_required": "ca1c55c05d5f90d2140ad99d479e0c12f483b558",
+    "direct_parent_required": "48728c423be28de20951be24a22f905e42c8a1d7",
     "resolution": "Resolve immutable handoff SHA with `git rev-parse HEAD`; direct parent must equal payload_commit.",
     "value": "SELF"
   },
-  "payload_commit": "ca1c55c05d5f90d2140ad99d479e0c12f483b558",
+  "payload_commit": "48728c423be28de20951be24a22f905e42c8a1d7",
   "quota_feasibility": {
     "claims_canonical_freeze": false,
     "claims_readiness_executed": false,
     "claims_ready_success": false,
     "pending_by_repo": {
-      "cornellius-gp/gpytorch": 2,
+      "cornellius-gp/gpytorch": 1,
       "jax-ml/jax": 1,
       "pymc-devs/pymc": 5,
       "pytorch/pytorch": 2
@@ -128,9 +132,9 @@
     "shortfalls": [
       {
         "additional_ready_target": 3,
-        "pending_admit_rows": 2,
+        "pending_admit_rows": 1,
         "repo": "cornellius-gp/gpytorch",
-        "shortfall": 1
+        "shortfall": 2
       },
       {
         "additional_ready_target": 3,
@@ -160,11 +164,12 @@
       "stop_reason": "queue_exhausted"
     },
     "cornellius-gp/gpytorch": {
-      "admit_pending_repro": 2,
-      "excluded": 3,
+      "admit_pending_repro": 1,
+      "excluded": 4,
       "exclusion_class_counts": {
         "(A1/A3 fail)": 1,
-        "behaviour change that is intended API redesign": 2
+        "behaviour change that is intended API redesign": 2,
+        "crash-only": 1
       },
       "queue_size": 5,
       "review_status_counts": {
@@ -207,20 +212,21 @@
     },
     "pymc-devs/pymc": {
       "admit_pending_repro": 5,
-      "excluded": 11,
+      "excluded": 15,
       "exclusion_class_counts": {
-        "(A1/A3 fail)": 3,
+        "(A1/A3 fail)": 5,
         "behaviour change that is intended API redesign": 1,
         "build/packaging": 3,
+        "crash-only": 2,
         "documentation": 3,
         "test-infrastructure": 1
       },
       "queue_size": 24,
       "review_status_counts": {
-        "NOT_REVIEWED_AFTER_STOP": 8,
-        "REVIEWED": 16
+        "NOT_REVIEWED_AFTER_STOP": 4,
+        "REVIEWED": 20
       },
-      "reviewed": 16,
+      "reviewed": 20,
       "stop_reason": "five_admit_pending_repro"
     },
     "pytorch/pytorch": {
