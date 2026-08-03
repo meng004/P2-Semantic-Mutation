@@ -567,3 +567,86 @@ the same Cursor branch, without `rtk`, network access, or human review. It must:
 4. retain all r2-r5 and live-result artifacts byte-for-byte, pass targeted/full
    verification, commit, push, and stop for Local Desktop re-review; and
 5. preserve the unavoidable chaospy/SALib distribution shortfall disclosure.
+
+## 12. `SUPPLEMENTAL_ADMISSION_R2-transport-result-r1` re-review
+
+- **Correction baseline:** `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc`
+- **Correction commit:** `1e5aee2329c9549ef665cc5cb6d487ebbab74b63`
+- **Remote binding:** correction commit equals the Cursor branch head
+- **Live data:** byte-identical to baseline
+- **Verdict:** `BLOCKED`
+
+### 12.1 Closed symptom and positive verification
+
+The correction adds an ordered raw-page reconstruction before the existing
+snapshot and queue checks. The exact previous attack now fails: after replacing
+a real `wrong result` match with the frozen but absent phrase
+`incorrect value`, rebuilding queue/decision/evidence and resealing
+`PUBLISH_COMMIT`, the checker returns 1 at the `match_surfaces` field. The live
+156-row snapshot also reconstructs successfully.
+
+The diff contains only the checker and its tests. Retrieval pages, live log,
+snapshot, queue, seal, frozen files, and historical failed-run archive are
+unchanged. No network, retrieval, A1/A3, decision, evidence, or downstream work
+ran. Fresh verification produced `168 passed` in the targeted R2 suite and
+`428 passed, 10 warnings` in the full suite. Exact Ruff, compileall,
+`git diff --check`, and live-data no-change checks returned zero. Standards is
+`PASS`.
+
+### 12.2 `SUPP-R2-CHECKER-INDEPENDENCE-001`
+
+The checker does not independently implement cutoff handling, NFC/casefold
+matching, per-phrase top-20 selection, union/deduplication, ordering, or record
+construction. Its new reconstruction calls the producer's
+`miner.select_phrase_union` directly. A semantic error shared by the producer
+and this imported function therefore self-confirms instead of being detected by
+an independent evidence boundary.
+
+This does not satisfy the explicit transport-result-r1 requirement that the
+checker independently reconstruct the frozen selection and record semantics.
+
+### 12.3 `SUPP-R2-RAW-NODE-VALIDATION-001`
+
+The reconstruction checks that each raw node is a dictionary, while the
+existing coverage pass checks ID, number, canonical URL, and global identity.
+Neither pass independently requires `__typename == Issue`, `state == CLOSED`,
+non-null `closedAt`, or a complete label connection.
+
+An independent fully resealed probe changed one raw node's `__typename` to
+`PullRequest`, updated page/manifest/source hashes, rebuilt queue, decisions,
+sheet, evidence, and `PUBLISH_COMMIT`, and then ran the complete checker. It
+still printed `ADMISSION_CHECK_OK` and returned 0. The raw type and completeness
+contracts in frozen sections 3.2, 4.1, and 5(1-3,9) remain fail-open.
+
+### 12.4 Negative-test isolation gap
+
+The named frozen-phrase negative uses `fabricated frozen phrase`, which is not
+one of the eleven frozen phrases and is rejected by the old membership check.
+It does not reproduce the real frozen-but-absent-phrase attack. In addition,
+`fully_reseal_snapshot` only refreshes the snapshot and publish seal; it does
+not rebuild queue, decisions, sheet, or evidence. Most new negatives would
+therefore remain green through stale downstream mismatches even if the new raw
+binding were removed.
+
+### 12.5 Gate decision and r2 correction scope
+
+Specification is `FAIL`; live data remains immutable observed-valid evidence,
+and the structural chaospy/SALib shortfall disclosure remains unchanged. A1/A3
+and every downstream task stay locked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-transport-result-r2` on
+the same Cursor branch, without `rtk`, network access, retrieval, or human
+review. It must:
+
+1. implement checker-owned cutoff, normalization, phrase-surface matching,
+   per-phrase top-20, dedupe, ordering, and full record construction without
+   calling the producer selection/record builders;
+2. independently validate every raw node's Issue typename, CLOSED state,
+   non-null closure, canonical URL, required fields, and complete labels before
+   selection;
+3. make fully resealed tests use a real frozen-but-absent phrase and rebuild all
+   downstream bindings, so removing raw reconstruction makes the tests fail;
+4. add likewise isolated, fully resealed `PullRequest` and incomplete-label
+   attacks; and
+5. preserve all live data byte-for-byte, pass targeted/full verification,
+   commit, push, and stop for Local Desktop r2 re-review.

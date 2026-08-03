@@ -90,7 +90,7 @@ S0 台账建立提交前实测：
 | Gate SUPPLEMENTAL_ADMISSION_R1 — supplemental mining | R4 handoff `8b52441fbbcfee36ce0945f53e0f532f59657583`；payload `f78288df3c4676d5e66fc508dcba7912eda65d23` | `PASS_WITH_DISCLOSURE`（安全 hard-fail/withdrawal；零 admitted row） | N/A（等待显式 integration 决策） | supplemental 后继不解锁；下一门禁为已完成 PR #6 的本地 Gate A1d 审计 |
 | Gate A1d — C3 readiness Batch 3 | A1d-r3 handoff `f6f1888f361a524a481cc9505e567a8bc414b9ea`；payload `82863d5804d3a7e7eae1c1266092b3a467bddb8a` | `PASS_WITH_DISCLOSURE` | N/A（等待显式 integration 决策） | 是；accepted ready=18，但 canonical freeze 仍锁定；仅 Local Desktop Supplemental Mining R2 协议修订/设计解锁 |
 | Gate SUPPLEMENTAL_MINING_R2_DESIGN-r1 | correction audit `d95d6277ee09479d638bb83d75562e9dc4348031`；payload `1ed9fb2dc2714cb452bba4016d6093cefb36204d` | `PASS_WITH_DISCLOSURE` | N/A（设计分支，不含实验 payload） | 设计修订通过；但已发生的 Cursor Task 4 需独立执行审计，不能追溯通过 |
-| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | live result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc`；producer `5a76aa6a9032283f5dc086f94c0c2c098d80b4c7` | `BLOCKED`（数据 observed-valid；checker fail-open） | N/A（PR #7 未集成） | 否；仅解锁同分支 transport-result-r1 checker correction，不重跑 retrieval，不解锁 A1/A3/readiness |
+| Gate SUPPLEMENTAL_ADMISSION_R2 — Task 4 transport | transport-result-r1 `1e5aee2329c9549ef665cc5cb6d487ebbab74b63`；live result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc` | `BLOCKED`（共享 producer selector；raw type fail-open） | N/A（PR #7 未集成） | 否；仅解锁同分支 transport-result-r2 checker correction，不重跑 retrieval，不解锁 A1/A3/readiness |
 
 ## 5. 交接审计记录
 
@@ -808,3 +808,22 @@ r5 在 miner 和独立 checker 中均实现六仓共享 node-ID/canonical-URL �
 但 fully resealed 的 frozen-but-false phrase 攻击在重建全部 downstream binding 后仍得到 `ADMISSION_CHECK_OK`。checker 没有从 source page/node 重建 snapshot 的 identity、timestamps、title/body hashes、labels、真实 phrase/surfaces、top-20、dedupe 与排序，违反冻结 raw-page replay 合同。live 数据无需重跑且保持 observed-valid；唯一修正是补齐独立 raw→snapshot reconstruction 及 resealed 负测后再次本地复审。
 
 此外 chaospy 只有 2 条候选、SALib 为 0，均低于各自 3-ready quota。no-replacement 下 J=6 路径已结构性不可达；任何后继 handoff 必须披露 `DISTRIBUTION_TARGET_AT_RISK`，不得用 PyTorch/JAX 补位。
+
+### 5.26 SUPPLEMENTAL_ADMISSION_R2 transport-result-r1 复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-transport-result-r1` |
+| 记录类型 | raw-to-snapshot checker correction 独立复审 |
+| 交接/复核时间 | `2026-08-03T15:19:38+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | `1e5aee2329c9549ef665cc5cb6d487ebbab74b63` |
+| Cursor baseline | live result `bc6cab5c6dbc83ab2d1185a3dd9f822f81de96fc` |
+| Findings | Standards PASS；旧 frozen-but-false symptom 已关闭；`SUPP-R2-CHECKER-INDEPENDENCE-001`；`SUPP-R2-RAW-NODE-VALIDATION-001`；negative-test isolation gap |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 transport-result-r2 checker correction；不得重跑 retrieval，不解锁 A1/A3、readiness 或 downstream。 |
+
+旧攻击在完整重建 downstream 后现以 `match_surfaces` mismatch 返回 1，且 live 156-row snapshot 正向重建通过。Targeted `168 passed`、full `428 passed, 10 warnings`，Ruff、compileall、diff-check、live-data byte check 均通过。
+
+但 checker 直接调用 producer `miner.select_phrase_union`，不构成独立 selection replay；它也未验证 raw `__typename`、closed state/closedAt 和 labels pagination。将 raw node 改为 `PullRequest`、更新全部 hashes/bindings 并完整 reseal 后，checker 仍返回 `ADMISSION_CHECK_OK`。新增 phrase test 使用非冻结字符串，且 reseal helper 不重建 downstream，因此不能隔离证明新 binding。唯一 r2 修正是 checker-owned replay、raw node completeness validation 与真实 fully resealed negatives；live data 和 distribution shortfall 均不得改变。
