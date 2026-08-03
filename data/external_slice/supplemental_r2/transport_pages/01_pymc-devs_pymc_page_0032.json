@@ -1,0 +1,512 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently, the MvNormal object (as well as other multivariates) does not allow for vectors of multivariate normals; individual objects need to be created for each MVN variable.",
+            "closedAt": "2013-05-09T01:13:31Z",
+            "createdAt": "2011-04-12T02:13:26Z",
+            "id": "MDU6SXNzdWU3NTc0MTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 29,
+            "state": "CLOSED",
+            "title": "Allow for arrays of multivariate stochastics",
+            "updatedAt": "2013-05-09T01:13:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/29"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "At present, the DiscreteMetropolis step method works poorly with categorical stochastics. In particular, it proposes values that are outside the bounds of the discrete set of indices that comprises the support of such variables. Perhaps a subclass of DiscreteMetropolis is required that only proposes valid integer values (i.e. {0, 1, ..., len(p)}). See the koala example for this behavior.",
+            "closedAt": "2012-04-06T01:14:41Z",
+            "createdAt": "2011-04-12T02:11:44Z",
+            "id": "MDU6SXNzdWU3NTc0MTA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 28,
+            "state": "CLOSED",
+            "title": "Poor performance of DiscreteMetropolis with categorical stochastics",
+            "updatedAt": "2012-04-06T01:15:21Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/28"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "See this discussion on the Google Code tracker for details.",
+            "closedAt": "2011-04-12T02:25:40Z",
+            "createdAt": "2011-04-12T02:09:21Z",
+            "id": "MDU6SXNzdWU3NTczOTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 27,
+            "state": "CLOSED",
+            "title": "Convert PyMC extensions to numexpr or cython",
+            "updatedAt": "2011-04-12T02:25:40Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/27"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Need to add ufunc-like methods for Variables. See this issue on the Google Code tracker.",
+            "closedAt": "2011-08-09T01:53:47Z",
+            "createdAt": "2011-04-12T02:06:53Z",
+            "id": "MDU6SXNzdWU3NTczOTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 26,
+            "state": "CLOSED",
+            "title": "ArrayContainers don't like ufuncs",
+            "updatedAt": "2011-08-09T01:53:47Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/26"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "An apparent bug in AdaptiveMetropolis, detailed in this issue on Google Code.",
+            "closedAt": "2013-05-08T15:37:40Z",
+            "createdAt": "2011-04-12T02:04:15Z",
+            "id": "MDU6SXNzdWU3NTczODg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 25,
+            "state": "CLOSED",
+            "title": "Can we get past transient state in hierarchical model?\t",
+            "updatedAt": "2013-05-08T15:37:40Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/25"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In order to avoid difficult debugging of errors.",
+            "closedAt": "2011-08-09T01:39:58Z",
+            "createdAt": "2011-04-12T02:00:57Z",
+            "id": "MDU6SXNzdWU3NTczODI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24,
+            "state": "CLOSED",
+            "title": "Fortran likelihoods need to check shapes of input arguments",
+            "updatedAt": "2011-08-09T01:40:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/24"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Implement multi-processor support. Initially for running multiple chains simultaneously, but could\neventually share work on same chain.\nSee Issue 8 on Google Code for discussion to date.",
+            "closedAt": "2011-08-09T01:57:10Z",
+            "createdAt": "2011-04-12T01:58:38Z",
+            "id": "MDU6SXNzdWU3NTczNzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 23,
+            "state": "CLOSED",
+            "title": "Add multi-processor support",
+            "updatedAt": "2011-08-09T01:57:13Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/23"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "(This issue was moved from the Google Code tracker - #356)\nWhat steps will reproduce the problem?\nI've run the following:\nIn [1]: import pymc\n\nIn [3]: from pymc.examples import DisasterModel\n\nIn [4]: t = pymc.MCMC(DisasterModel)\n\nIn [5]: t.sample(50000, thin=100)\n\n\nwhile the sampler was running I opened a new python session in another terminal and got an error while trying to import pymc.\n\n\n$ ipython -q4thread\nEnthought Python Distribution -- http://www.enthought.com\n\nPython 2.7.1 |EPD 7.0-2 (64-bit)| (r271:86832, Dec  3 2010, 15:56:20) \nType \"copyright\", \"credits\" or \"license\" for more information.\n\nIPython 0.10.1 -- An enhanced Interactive Python.\n?         -> Introduction and overview of IPython's features.\n%quickref -> Quick reference.\nhelp      -> Python's own help system.\nobject?   -> Details about 'object'. ?object also works, ?? prints more.\n\nIn [1]: import pymc\n---------------------------------------------------------------------------\nIOError                                   Traceback (most recent call last)\n\n/Users/imrisofer/<ipython console> in <module>()\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/__init__.py in <module>()\n     16 \n     17 # Core modules\n\n---> 18 from threadpool import *\n     19 try:\n     20     import Container_values\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/threadpool.py in <module>()\n    310 except:\n    311     import multiprocessing\n--> 312     __PyMCThreadPool__ = ThreadPool(multiprocessing.cpu_count())\n    313 \n    314 class CountDownLatch(object):\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/multiprocessing/__init__.pyc in cpu_count()\n    118         try:\n    119             with os.popen('sysctl -n hw.ncpu') as p:\n--> 120                 num = int(p.read())\n    121         except ValueError:\n    122             num = 0\n\nIOError: [Errno 4] Interrupted system call\n\nWhat version of the product are you using? On what operating system?\nMac OS X 10.6.7\npymc 2.2grad\nPlease provide any additional information below.\nthis error occurs only while the Sampler is running in the first session and only when the second session is open with the q4thread flag (I did not check other threads, but without any flags there's no problem of importing pymc)",
+            "closedAt": "2011-08-09T02:01:27Z",
+            "createdAt": "2011-04-12T01:54:59Z",
+            "id": "MDU6SXNzdWU3NTczNjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 22,
+            "state": "CLOSED",
+            "title": "cannot import pymc while Sampler is running in another session",
+            "updatedAt": "2011-08-09T02:01:27Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/22"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When running a MCMC model 2+ times, the verbose setting for sampling is not properly changed after the initial sampling run. So, for example, using verbose=2 causes tuning feedback to be displayed, even when subsequent chains are run with a lower verbosity.",
+            "closedAt": "2011-06-30T20:53:36Z",
+            "createdAt": "2011-04-12T01:38:08Z",
+            "id": "MDU6SXNzdWU3NTczMjY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 21,
+            "state": "CLOSED",
+            "title": "verbose setting is not changed by sample() in multiple chains",
+            "updatedAt": "2011-06-30T20:53:36Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/21"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "On my system, the environment variable OMP_NUM_THREADS is not defined, so I get a KeyError when executing pymc.gp.observe.  A suggested patch is below, but I'm not sure whether this is consistent with the rest of the code in threadpool.py, for example lines 307-310 which appear to be there to handle this case.\nJohn\ndiff --git a/pymc/threadpool.py b/pymc/threadpool.py\nindex 7f06f8c..83e2907 100644\n--- a/pymc/threadpool.py\n+++ b/pymc/threadpool.py\n@@ -372,7 +372,7 @@ def get_threadpool_size():\ndef thread_partition_array(x):\n\"Partition work arrays for multithreaded addition and multiplication\"\n\nn_threads = int(os.environ['OMP_NUM_THREADS'])\nn_threads = int(os.environ.get('OMP_NUM_THREADS','1'))\nif len(x.shape)>1:\nmaxind = x.shape[1]\nelse:",
+            "closedAt": "2011-03-07T11:07:02Z",
+            "createdAt": "2011-03-05T17:06:41Z",
+            "id": "MDU6SXNzdWU2NDkyNDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 19,
+            "state": "CLOSED",
+            "title": "pymc.gp.observe doesn't handle undefined OMP_NUM_THREADS",
+            "updatedAt": "2011-03-07T11:07:02Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/19"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For those interested, these are the current timings for the likelihoods I've rewritten for numexpr.\nThe gist seems to be that at small sizes, numexpr is much slower. At larger sizes it is comparable and occasionally a bit faster. The problem with beta_like is (I think) that it requires numerous calls to gammaln which cannot be directly included in numexpr and must instead be precomputed.\nI looked into modifying numexpr to allow user functions, but it looks very nontrivial.\nI am additionally experimenting with automatically generating Cython code for the distributions given strings describing the calculation, and that seems somewhat promising. numpy.newiter appears to be coming out soon, and that comes with some relevant iteration improvements.\nGiven as numexpr_dist time/normal time:\nnumber of elements :  [1,           10,        100,  1000,  10000, 100000]\nbeta_like           [  106.779    55.677    63.131   100.663   421.671  3013.556]\nbetabin_like        [ 52.397  20.327   3.46    0.913   0.824   0.721]\ncauchy_like         [ 39.158  13.16   14.841   4.276   1.919   1.241]\nchi2_like           [ 28.572   9.255   5.228   1.697   0.931   0.759]\nexponential_like    [ 42.131  11.882   7.805   1.144   0.677   0.324]\ngamma_like      [ 16.13   12.087   7.695   1.901   0.979   0.728]\ngeometric_like      [ 28.92   18.659  16.294   5.197   2.161   1.235]\nhalf_cauchy_like    [ 3.568    2.686    1.298   0.991   0.993    0.976]\nhalf_normal_like        [ 70.651  33.408  28.134   9.692   2.772   1.295]\ninverse_gamma_like  [ 35.528  14.217   6.688   1.722   1.027   0.759]\nlaplace_like        [  5.171   5.481   3.755    1.37    0.658    0.425]\nlognormal_like      [ 112.921   56.943   27.621   12.079    3.219    2.084]\nnormal_like         [ 60.752  27.092  24.34    9.203   2.694   1.37 ]\nt_like              [ 28.571   9.71    4.602   1.392   0.952   0.832]\nnoncentral_t_like   [ 22.946   7.275   4.347   1.423   0.976   0.769]\nuniform_like        [  31.675   16.325   16.355   20.127   57.899  276.854]\nweibull_like        [ 71.362  39.418  18.42    4.069   1.639   0.876]\nTo run these yourselves, run pymc/tests/speed_test.py in numexpr_dist.",
+            "closedAt": "2013-02-05T22:09:32Z",
+            "createdAt": "2011-03-01T02:24:40Z",
+            "id": "MDU6SXNzdWU2MzYzNTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 18,
+            "state": "CLOSED",
+            "title": "likelihood function refactoring (numexpr_dist) ",
+            "updatedAt": "2013-02-05T22:09:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/18"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I get a lot of divide by zero in log errors and invalid value errors in TestMissing. I set numpy.seterr(divide = 'raise', invalid = 'raise') and it looks like the problem comes up in TWalk",
+            "closedAt": "2011-02-27T04:46:51Z",
+            "createdAt": "2011-02-27T03:48:41Z",
+            "id": "MDU6SXNzdWU2MzEyMDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 16,
+            "state": "CLOSED",
+            "title": "TestMissing test generates a lot of errors, looks related to TWalk",
+            "updatedAt": "2011-02-27T04:46:51Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/16"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "If you initialize a model using vars() and then plot it, the \"compound\" objects (e.g. MVN) don't use the specified path when saving.\na = pymc.MvNormalCov('a',[10,10],[[1,0],[0,1]])\nb = pymc.Normal('b',10,1)\nm = pymc.MCMC(vars())\nm.sample(10)\npymc.Matplot.plot(m.a, path='C:/tmp', format='pdf')\npymc.Matplot.plot(m.b, path='C:/tmp', format='pdf')\nIn this case b.pdf will be saved in C:/tmp, but a.pdf will be placed in the working directory. Tested in both 2.1alpha and latest dev version.",
+            "closedAt": "2011-02-26T15:59:12Z",
+            "createdAt": "2011-02-26T03:13:19Z",
+            "id": "MDU6SXNzdWU2Mjg3MzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 15,
+            "state": "CLOSED",
+            "title": "pymc.Matplot.plot sometimes ignore path argument",
+            "updatedAt": "2011-02-26T15:59:12Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/15"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently the estimation of (e.g.) time dependent states is super slow, requiring a costly loop to get from a state t-1 to state t (such as the surplus production example on the pymc page). If these could somehow be passed into something faster using a keyword or decorator it would be a big deal for many kinds of ecological (and I suspect econometric) models. Could this be done? Something like:\n@recursive(init=P0,size=nyears)\ndef P(k=k,r=r,value=Yi):\n    Pmean = log(P[i-1]+r*P[i-1]*(1-P[i-1])-k*catch)\n    return lognormal_like(value,mu=Pmean,tau=0.01)",
+            "closedAt": "2015-02-12T20:46:59Z",
+            "createdAt": "2011-02-25T12:25:41Z",
+            "id": "MDU6SXNzdWU2MjY1OTA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 14,
+            "state": "CLOSED",
+            "title": "Structured Recursives",
+            "updatedAt": "2015-02-12T20:46:59Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/14"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "seems to still have files missing in pymc/gp, 'gp_submodel.py' and 'step_methods.py'. Downloading and placing them in the folder seems to fix the issue.",
+            "closedAt": "2011-02-26T23:45:17Z",
+            "createdAt": "2011-02-23T08:14:19Z",
+            "id": "MDU6SXNzdWU2MjAyMTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 13,
+            "state": "CLOSED",
+            "title": "2.1alpha tarball",
+            "updatedAt": "2011-02-28T10:37:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/13"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "flib.normal (and normal_like) returns nan instead of -inf for very low values, resulting in sampler craching. For example: normal_like(-1e99,1e99,1e999)\nCould be fixed by modifying normal_like:\nres = flib.normal(x, mu, tau)\nif np.isnan(res): res = -np.Inf\nreturn res",
+            "closedAt": "2011-02-22T17:50:37Z",
+            "createdAt": "2011-02-22T17:34:36Z",
+            "id": "MDU6SXNzdWU2MTgyOTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 12,
+            "state": "CLOSED",
+            "title": "flib.normal (and normal_like) returns nan instead of -inf",
+            "updatedAt": "2011-02-22T17:50:37Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/12"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "categorical_like checks if vector of probabilities sums to one (Ln 849 in distributions.py) and prints out the vector if test fails. If the sum is slightly off this results in a massive text output and slowdown. Should the exact comparison be replaced with approximate (abs(np.sum(p, 1)-1)<0.00001)?",
+            "closedAt": "2011-02-22T14:27:24Z",
+            "createdAt": "2011-02-22T14:07:51Z",
+            "id": "MDU6SXNzdWU2MTc2ODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 11,
+            "state": "CLOSED",
+            "title": "Float comparison in categorical",
+            "updatedAt": "2011-02-22T14:27:24Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/11"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Many of the deterministic functions have the same names as numpy functions and builtins. I imagine this can cause problems sometimes. It has already caused one internal problem (with any() conflicting with builtin any()). The best way to deal with this seems to me to move them into a subpackage, but I am not sure what name it should have. Suggestions?",
+            "closedAt": "2011-02-22T15:48:03Z",
+            "createdAt": "2011-02-22T03:20:43Z",
+            "id": "MDU6SXNzdWU2MTY3NDA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 10,
+            "state": "CLOSED",
+            "title": "naming of numpy based deterministics functions",
+            "updatedAt": "2011-02-22T15:48:03Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/10"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "On Fedora 13, with the latest development version from github, I get this import error when importing pymc:\nIn [1]: import pymc\nImportError                               Traceback (most recent call last)\n/usr/lib/python2.6/site-packages/pymc/init.pyc in ()\n45 from CircularStochastic import *\n46 import distributions\n---> 47 import gp\n48\n49 # Optional modules\n/usr/lib/python2.6/site-packages/pymc/gp/init.py in ()\n20 from GPutils import *\n21 from Mean import *\n---> 22 from Covariance import *\n23 from BasisCovariance import *\n24 from FullRankCovariance import *\n/usr/lib/python2.6/site-packages/pymc/gp/Covariance.py in ()\n8 from numpy.linalg import cholesky, LinAlgError\n9 from GPutils import regularize_array, trisolve, square_and_sum\n---> 10 from linalg_utils import diag_call, dpotrf_wrap\n11 from incomplete_chol import ichol, ichol_continue\n12\nImportError: cannot import name dpotrf_wrap\nI can verify using nm that linalg_utils.so does not contain dpotrf_wrap.",
+            "closedAt": "2011-02-23T00:11:31Z",
+            "createdAt": "2011-02-18T21:52:35Z",
+            "id": "MDU6SXNzdWU2MTAzODk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 9,
+            "state": "CLOSED",
+            "title": "linalg_utils missing dpotrf_wrap",
+            "updatedAt": "2011-02-22T16:12:11Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/9"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I think this is due to a fortran/c array ordering issue.\nExample:\nIn [5]: x = array([[1, 2, 3],\n       [4, 5, 6]])\n\nIn [7]: reshape(flib.normal_grad_mu(x, zeros(x.shape), 1.0),x.shape)\nOut[7]: \narray([[ 1.,  4.,  2.],\n       [ 5.,  3.,  6.]])\n\nThis to me is another reason why moving to numexpr or similar is a good idea.",
+            "closedAt": "2013-09-16T16:52:50Z",
+            "createdAt": "2011-02-18T21:33:02Z",
+            "id": "MDU6SXNzdWU2MTAzMzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 8,
+            "state": "CLOSED",
+            "title": "gradient calculations in fortran sometimes permutes results with ndim > 2",
+            "updatedAt": "2013-09-16T16:52:50Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/8"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am no longer able to generate DAGs for any of 3 models attempted. Fails in the unit test as well. Here is the error reported:\n/Users/fonnescj/Code/pymc/pymc/PyMCObjects.pyc in gen_lazy_function(self)\n413\n414         self._jacobians = {}\n--> 415         for parameter, function in self._jacobian_functions.iteritems():\n416             lazy_jacobian = LazyFunction(fun = function,\n417                                             arguments = self.parents,\nAttributeError: 'NoneType' object has no attribute 'iteritems'",
+            "closedAt": "2011-02-22T03:29:47Z",
+            "createdAt": "2011-02-18T20:55:28Z",
+            "id": "MDU6SXNzdWU2MTAyMjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 7,
+            "state": "CLOSED",
+            "title": "graph.dag() broken",
+            "updatedAt": "2011-02-22T03:29:47Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/7"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently when getitem gets a scalar value, it returns an Index deterministic, otherwise it returns a regular deterministic that indexes into the array. My understanding is that Index exists so that linear models can be special cased. I would like to find a way to eliminate the special casing since it's a bit inelegant. Could Index be made to handle non-scalars?",
+            "closedAt": "2013-09-16T14:12:05Z",
+            "createdAt": "2011-02-18T03:17:55Z",
+            "id": "MDU6SXNzdWU2MDgzODM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 6,
+            "state": "CLOSED",
+            "title": "eliminating special casing in __getitem__",
+            "updatedAt": "2013-09-16T14:12:05Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/6"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It would be nice to incorporate some of the better examples posted on the website into the examples in the source tree. There isn't a great deal of variety in the current example set, and several are very similar. I invite proposals for models to remove from and add to the current set.",
+            "closedAt": "2012-04-16T21:04:31Z",
+            "createdAt": "2011-02-16T21:09:33Z",
+            "id": "MDU6SXNzdWU2MDQ3NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 5,
+            "state": "CLOSED",
+            "title": "Improve example model set",
+            "updatedAt": "2012-04-16T21:04:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/5"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxMS0wMi0xNlQyMTowOTozM1rOAAk6RQ==",
+          "hasNextPage": false
+        },
+        "totalCount": 3223
+      }
+    }
+  }
+}

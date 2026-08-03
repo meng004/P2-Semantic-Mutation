@@ -1,0 +1,114 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nthanks for releasing this repository - it's really cool 👍\nI was just wondering if you would be providing any minimal documentation? The examples are really nice, some extra comments though we be very helpful, especially for folks new to GPs.\nMaybe easier for you, perhaps references to tutorials/other learning materials/video lectures? I'm guessing a lot of newbies, will be drawn to this repo :)\nThanks.",
+            "closedAt": "2018-03-06T15:55:25Z",
+            "createdAt": "2017-08-20T19:52:47Z",
+            "id": "MDU6SXNzdWUyNTE1MTA0OTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 14,
+            "state": "CLOSED",
+            "title": "Minimal Documentation",
+            "updatedAt": "2018-03-06T15:55:25Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/14"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "from gpytorch.inference import Inference\ninfer = Inference(prior_observation_model)\nposterior_observation_model = infer.run(train_x, train_y, max_inference_steps=20)\n\nRuntimeError                              Traceback (most recent call last)\n in ()\n1 from gpytorch.inference import Inference\n2 infer = Inference(prior_observation_model)\n----> 3 posterior_observation_model = infer.run(train_x, train_y, max_inference_steps=20)\n/usr/local/lib/python3.5/dist-packages/gpytorch/inference/inference.py in run(self, train_x, train_y, optimize, **kwargs)\n77         orig_observation_model = self.observation_model\n78         self.observation_model = deepcopy(self.observation_model)\n---> 79         new_observation_model = self.run_(train_x, train_y, optimize=optimize, **kwargs)\n80         self.observation_model = orig_observation_model\n81         return new_observation_model\n/usr/local/lib/python3.5/dist-packages/gpytorch/inference/inference.py in run_(self, train_x, train_y, inducing_points, optimize, max_inference_steps, **kwargs)\n63             for i in range(max_inference_steps):\n64                 for param_group in param_groups:\n---> 65                     param_group.update(log_likelihood_closure)\n66\n67                 has_converged = all([param_group.has_converged(log_likelihood_closure) for param_group in param_groups])\n/usr/local/lib/python3.5/dist-packages/gpytorch/parameters/mle_parameter_group.py in update(self, log_likelihood_closure)\n36             return loss\n37\n---> 38         loss = optimizer.step(step_closure)\n39         if isinstance(loss, Variable):\n40             self.previous_loss = loss.data.squeeze()[0]\n/usr/local/lib/python3.5/dist-packages/gpytorch/utils/lbfgs.py in step(self, closure)\n99\n100         # evaluate initial f(x) and df/dx\n--> 101         orig_loss = closure()\n102         loss = orig_loss.data[0]\n103         current_evals = 1\n/usr/local/lib/python3.5/dist-packages/gpytorch/utils/init.py in wrapped_function(*args, **kwargs)\n31\n32                 else:\n---> 33                     raise e\n34\n35             return result\n/usr/local/lib/python3.5/dist-packages/gpytorch/utils/init.py in wrapped_function(*args, **kwargs)\n19         def wrapped_function(*args, **kwargs):\n20             try:\n---> 21                 result = function(*args, **kwargs)\n22                 self.n_trials = 0\n23\n/usr/local/lib/python3.5/dist-packages/gpytorch/parameters/mle_parameter_group.py in step_closure()\n32             optimizer.zero_grad()\n33             optimizer.n_iter += 1\n---> 34             loss = -log_likelihood_closure()\n35             loss.backward()\n36             return loss\n/usr/local/lib/python3.5/dist-packages/gpytorch/inference/inference.py in log_likelihood_closure()\n54                 self.observation_model.zero_grad()\n55                 output = self.observation_model.forward(*inducing_points)\n---> 56                 return self.observation_model.marginal_log_likelihood(output, train_y)\n57\n58         if optimize:\n/usr/local/lib/python3.5/dist-packages/gpytorch/inference/posterior_models.py in marginal_log_likelihood(self, output, train_y, num_samples)\n131\n132         kl_divergence = gpytorch.mvn_kl_divergence(self.variational_parameters.variational_mean,\n--> 133                                                    chol_var_covar, inducing_mean, inducing_covar)\n134\n135         return log_likelihood.squeeze() - kl_divergence\n/usr/local/lib/python3.5/dist-packages/gpytorch/init.py in mvn_kl_divergence(mean_1, chol_covar_1, mean_2, covar_2)\n35\n36 def mvn_kl_divergence(mean_1, chol_covar_1, mean_2, covar_2):\n---> 37     return MVNKLDivergence()(mean_1, chol_covar_1, mean_2, covar_2)\n/usr/local/lib/python3.5/dist-packages/gpytorch/math/functions/mvn_kl_divergence.py in call(self, mu1_var, chol_covar1_var, mu2_var, covar2_var)\n32         # Multiplying that by -2 gives us two of the terms in the KL divergence\n33         # (plus an unwanted constant that we can subtract out).\n---> 34         K_part = ExactGPMarginalLogLikelihood()(covar2_var, mu_diffs)\n35\n36         # Get logdet(\\Sigma_{1})\n/usr/local/lib/python3.5/dist-packages/gpytorch/math/functions/invmv.py in call(self, matrix_var, vector_var)\n7     \"\"\"\n8     def call(self, matrix_var, vector_var):\n----> 9         res = super(Invmv, self).call(matrix_var, vector_var.view(-1, 1))\n10         return res.view(-1)\n/usr/local/lib/python3.5/dist-packages/gpytorch/math/functions/invmm.py in call(self, input_1_var, input_2_var)\n48         orig_data = input_1_var.data\n49         input_1_var.data = input_1_var.chol_data\n---> 50         res = super(Invmm, self).call(input_1_var, input_2_var)\n51\n52         # Revert back to original data\n/usr/local/lib/python3.5/dist-packages/gpytorch/math/functions/exact_gp_marginal_log_likelihood.py in forward(self, chol_mat, y)\n7     def forward(self, chol_mat, y):\n8         mat_inv_y = y.potrs(chol_mat)\n----> 9         res = mat_inv_y.dot(y)  # Inverse quad\n10         res += chol_mat.diag().log_().sum() * 2  # Log determinant\n11         res += math.log(2 * math.pi) * len(y)\nRuntimeError: Expected argument self to have 1 dimension(s), but has 2 at /pytorch/torch/csrc/generic/TensorMethods.cpp:23020",
+            "closedAt": "2018-01-17T15:47:43Z",
+            "createdAt": "2017-08-17T03:23:44Z",
+            "id": "MDU6SXNzdWUyNTA4MTkyNTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 10,
+            "state": "CLOSED",
+            "title": "pytorch 0.2 problem",
+            "updatedAt": "2018-01-17T15:47:43Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/10"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import gpytorch\nTraceback (most recent call last):\nFile \"\", line 1, in \nFile \"/usr/local/lib/python3.5/dist-packages/gpytorch-0.1-py3.5.egg/gpytorch/init.py\", line 1, in \nFile \"/usr/local/lib/python3.5/dist-packages/gpytorch-0.1-py3.5.egg/gpytorch/distribution.py\", line 3, in \nImportError: No module named 'gpytorch.random_variables'",
+            "closedAt": "2017-08-17T01:26:10Z",
+            "createdAt": "2017-08-16T08:29:37Z",
+            "id": "MDU6SXNzdWUyNTA1NDk0NzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 8,
+            "state": "CLOSED",
+            "title": "ImportError: No module named 'gpytorch.random_variables'",
+            "updatedAt": "2017-08-17T01:26:10Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/8"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Just wondering, is this project just a hobby project to learn more about GP or does it provide a lot of speedups over existing GP library? I would expect so since it uses GPU. Is that right?",
+            "closedAt": "2017-07-25T13:04:24Z",
+            "createdAt": "2017-07-25T09:45:59Z",
+            "id": "MDU6SXNzdWUyNDUzNDQ5NDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2,
+            "state": "CLOSED",
+            "title": "Does GPytorch perform a lot of speedups over GPy or MATLAB's Gaussian Process?",
+            "updatedAt": "2017-07-25T13:04:24Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/2"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I run python -m  pytest one failure occurs.\ndef test_latent_multitask_gp_mean_abs_error():\n        prior_observation_model = LatentMultitaskGPModel(num_task_samples=3)\n\n        # Compute posterior distribution\n        infer = Inference(prior_observation_model)\n        posterior_observation_model = infer.run(\n            (torch.cat([train_x, train_x, train_x]), torch.cat([y11_inds, y12_inds, y2_inds])),\n            torch.cat([train_y11, train_y12, train_y2]),\n>           max_inference_steps=5\n        )\n\ntest/examples/latent_multitask_gp_regression_test.py:84:\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\ngpytorch/inference/inference.py:79: in run\n    new_observation_model = self.run_(train_x, train_y, optimize=optimize, **kwargs)\ngpytorch/inference/inference.py:65: in run_\n    param_group.update(log_likelihood_closure)\ngpytorch/parameters/mle_parameter_group.py:38: in update\n    loss = optimizer.step(step_closure)\ngpytorch/utils/lbfgs.py:203: in step\n    t = self._backtracking(closure, d)\ngpytorch/utils/lbfgs.py:305: in _backtracking\n    phi_k = closure().data[0]\ngpytorch/utils/__init__.py:33: in wrapped_function\n    raise e\ngpytorch/utils/__init__.py:21: in wrapped_function\n    result = function(*args, **kwargs)\ngpytorch/parameters/mle_parameter_group.py:34: in step_closure\n    loss = -log_likelihood_closure()\ngpytorch/inference/inference.py:45: in log_likelihood_closure\n    return self.observation_model.marginal_log_likelihood(output, train_y)\ngpytorch/inference/posterior_models.py:203: in marginal_log_likelihood\n    return gpytorch.exact_gp_marginal_log_likelihood(covar, train_y - mean)\ngpytorch/__init__.py:17: in exact_gp_marginal_log_likelihood\n    return ExactGPMarginalLogLikelihood()(covar, target)\ngpytorch/math/functions/invmv.py:9: in __call__\n    res = super(Invmv, self).__call__(matrix_var, vector_var.view(-1, 1))\ngpytorch/math/functions/invmm.py:45: in __call__\n    has_completed = chol_data_closure()\ngpytorch/utils/__init__.py:33: in wrapped_function\n    raise e\ngpytorch/utils/__init__.py:21: in wrapped_function\n    result = function(*args, **kwargs)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n    @pd_catcher(catch_function=add_jitter)\n    def chol_data_closure():\n>       input_1_var.chol_data = input_1_var.data.potrf()\nE       RuntimeError: Lapack Error in potrf : the leading minor of order 1 is not positive definite at /Users/soumith/code/builder/wheel/pytorch-src/torch/lib/TH/generic/THTensorLapack.c:608\n\ngpytorch/math/functions/invmm.py:40: RuntimeError",
+            "closedAt": "2017-08-16T05:31:24Z",
+            "createdAt": "2017-07-18T02:55:17Z",
+            "id": "MDU6SXNzdWUyNDM1ODUyOTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1,
+            "state": "CLOSED",
+            "title": "test_latent_multitask_gp_mean_abs_error",
+            "updatedAt": "2017-08-16T05:31:24Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/1"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxNy0wNy0xOFQwMjo1NToxN1rODoTRCw==",
+          "hasNextPage": false
+        },
+        "totalCount": 1005
+      }
+    }
+  }
+}

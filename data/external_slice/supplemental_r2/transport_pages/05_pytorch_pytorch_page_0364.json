@@ -1,0 +1,2846 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-18T16:23:11Z",
+            "createdAt": "2019-08-16T19:11:42Z",
+            "id": "MDU6SXNzdWU0ODE3NDY3MDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24554,
+            "state": "CLOSED",
+            "title": "Migrate `elu` and `elu_` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-12-18T16:23:11Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24554"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry",
+            "closedAt": "2020-11-18T20:15:04Z",
+            "createdAt": "2019-08-16T19:11:40Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2OTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24553,
+            "state": "CLOSED",
+            "title": "Migrate `eig` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T20:15:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24553"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:44:56Z",
+            "createdAt": "2019-08-16T19:11:38Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2ODY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24552,
+            "state": "CLOSED",
+            "title": "Migrate `dot` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T22:44:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24552"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-05-05T20:08:32Z",
+            "createdAt": "2019-08-16T19:11:36Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2NzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24551,
+            "state": "CLOSED",
+            "title": "Migrate `dist` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-05-05T20:08:32Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24551"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-06T02:49:44Z",
+            "createdAt": "2019-08-16T19:11:34Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2NjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24550,
+            "state": "CLOSED",
+            "title": "Migrate `digamma` and `digamma_` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-09-06T02:49:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24550"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-09T01:29:29Z",
+            "createdAt": "2019-08-16T19:11:32Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2NTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24549,
+            "state": "CLOSED",
+            "title": "Migrate `diag` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-06-09T01:29:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24549"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:43:29Z",
+            "createdAt": "2019-08-16T19:11:31Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24548,
+            "state": "CLOSED",
+            "title": "Migrate `cumsum` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T22:43:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24548"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:43:26Z",
+            "createdAt": "2019-08-16T19:11:29Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2MzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24547,
+            "state": "CLOSED",
+            "title": "Migrate `cumprod` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T22:43:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24547"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-04-22T17:17:56Z",
+            "createdAt": "2019-08-16T19:11:28Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2MTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24546,
+            "state": "CLOSED",
+            "title": "Migrate `cosh` and `cosh_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-04-22T17:17:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24546"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-04-29T22:54:04Z",
+            "createdAt": "2019-08-16T19:11:26Z",
+            "id": "MDU6SXNzdWU0ODE3NDY2MDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24545,
+            "state": "CLOSED",
+            "title": "Migrate `cos` and `cos_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-04-29T22:54:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24545"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-05-05T16:01:31Z",
+            "createdAt": "2019-08-16T19:11:24Z",
+            "id": "MDU6SXNzdWU0ODE3NDY1OTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24544,
+            "state": "CLOSED",
+            "title": "Migrate `clamp` and `clamp_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-05-05T16:01:31Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24544"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry @heitorschueroff",
+            "closedAt": "2021-01-29T00:28:05Z",
+            "createdAt": "2019-08-16T19:11:22Z",
+            "id": "MDU6SXNzdWU0ODE3NDY1ODY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24543,
+            "state": "CLOSED",
+            "title": "Migrate `cholesky_inverse` from the TH to Aten (CUDA)",
+            "updatedAt": "2021-01-29T00:28:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24543"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-08-29T15:48:42Z",
+            "createdAt": "2019-08-16T19:11:20Z",
+            "id": "MDU6SXNzdWU0ODE3NDY1NjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24542,
+            "state": "CLOSED",
+            "title": "Migrate `ceil` and `ceil_` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-08-29T15:48:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24542"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-30T19:30:31Z",
+            "createdAt": "2019-08-16T19:11:19Z",
+            "id": "MDU6SXNzdWU0ODE3NDY1NDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24541,
+            "state": "CLOSED",
+            "title": "Migrate `binary_cross_entropy_backward` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-30T19:30:31Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24541"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-30T19:30:28Z",
+            "createdAt": "2019-08-16T19:11:17Z",
+            "id": "MDU6SXNzdWU0ODE3NDY1Mzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24540,
+            "state": "CLOSED",
+            "title": "Migrate `binary_cross_entropy` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-30T19:30:28Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24540"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry @heitorschueroff",
+            "closedAt": "2020-11-12T16:01:00Z",
+            "createdAt": "2019-08-16T19:11:15Z",
+            "id": "MDU6SXNzdWU0ODE3NDY1MTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24539,
+            "state": "CLOSED",
+            "title": "Migrate `baddbmm` and `baddbmm_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-12T16:01:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24539"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-05-12T21:24:48Z",
+            "createdAt": "2019-08-16T19:11:13Z",
+            "id": "MDU6SXNzdWU0ODE3NDY1MDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24538,
+            "state": "CLOSED",
+            "title": "Migrate `atan` and `atan_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-05-12T21:24:48Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24538"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-10-30T17:57:29Z",
+            "createdAt": "2019-08-16T19:11:11Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0OTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24537,
+            "state": "CLOSED",
+            "title": "Migrate `asin` and `asin_` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-10-30T17:57:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24537"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-22T20:04:22Z",
+            "createdAt": "2019-08-16T19:11:09Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0ODM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24536,
+            "state": "CLOSED",
+            "title": "Migrate `addr` and `addr_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-06-22T20:04:22Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24536"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-04-23T16:45:34Z",
+            "createdAt": "2019-08-16T19:11:07Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0Njk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24535,
+            "state": "CLOSED",
+            "title": "Migrate `addmv` and `addmv_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-04-23T16:45:35Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24535"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @anjali411 @dylanbespalko",
+            "closedAt": "2020-06-22T20:04:22Z",
+            "createdAt": "2019-08-16T19:11:04Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0NjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "module: complex"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24534,
+            "state": "CLOSED",
+            "title": "Migrate `addmm` and `addmm_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-06-22T20:04:22Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24534"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-22T20:04:22Z",
+            "createdAt": "2019-08-16T19:11:02Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0NDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24533,
+            "state": "CLOSED",
+            "title": "Migrate `addbmm` and `addbmm_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-06-22T20:04:22Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24533"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-09T17:12:08Z",
+            "createdAt": "2019-08-16T19:11:00Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0Mzg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24532,
+            "state": "CLOSED",
+            "title": "Migrate `acos` and `acos_` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-11-09T17:12:08Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24532"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-19T22:39:23Z",
+            "createdAt": "2019-08-16T19:10:58Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0Mjg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24531,
+            "state": "CLOSED",
+            "title": "Migrate `abs` and `abs_` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-11-19T22:39:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24531"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-22T21:26:58Z",
+            "createdAt": "2019-08-16T19:10:56Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0MTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24530,
+            "state": "CLOSED",
+            "title": "Migrate `_var` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-06-22T21:26:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24530"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-22T21:26:57Z",
+            "createdAt": "2019-08-16T19:10:54Z",
+            "id": "MDU6SXNzdWU0ODE3NDY0MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24529,
+            "state": "CLOSED",
+            "title": "Migrate `_std` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-06-22T21:26:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24529"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-06-17T14:24:42Z",
+            "createdAt": "2019-08-16T19:10:53Z",
+            "id": "MDU6SXNzdWU0ODE3NDYzOTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24528,
+            "state": "CLOSED",
+            "title": "Migrate `_multinomial_alias_setup` from the TH to Aten (CUDA)",
+            "updatedAt": "2021-06-17T14:24:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24528"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-06-17T14:24:27Z",
+            "createdAt": "2019-08-16T19:10:51Z",
+            "id": "MDU6SXNzdWU0ODE3NDYzNzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24527,
+            "state": "CLOSED",
+            "title": "Migrate `_multinomial_alias_draw` from the TH to Aten (CUDA)",
+            "updatedAt": "2021-06-17T14:24:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24527"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @heitorschueroff",
+            "closedAt": "2021-04-15T12:15:56Z",
+            "createdAt": "2019-08-16T19:10:49Z",
+            "id": "MDU6SXNzdWU0ODE3NDYzNjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: sorting and selection"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24526,
+            "state": "CLOSED",
+            "title": "Migrate `_mode` from the TH to Aten (CUDA)",
+            "updatedAt": "2021-04-15T12:15:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24526"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:36:51Z",
+            "createdAt": "2019-08-16T19:10:47Z",
+            "id": "MDU6SXNzdWU0ODE3NDYzMzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24525,
+            "state": "CLOSED",
+            "title": "Migrate `_min` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T22:36:51Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24525"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:36:42Z",
+            "createdAt": "2019-08-16T19:10:45Z",
+            "id": "MDU6SXNzdWU0ODE3NDYzMjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24524,
+            "state": "CLOSED",
+            "title": "Migrate `_max` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T22:36:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24524"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-03-23T05:38:34Z",
+            "createdAt": "2019-08-16T19:10:43Z",
+            "id": "MDU6SXNzdWU0ODE3NDYzMTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24523,
+            "state": "CLOSED",
+            "title": "Migrate `_index_copy_` from the TH to Aten (CUDA)",
+            "updatedAt": "2021-03-23T05:38:34Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24523"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:34:59Z",
+            "createdAt": "2019-08-16T19:10:41Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyOTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24522,
+            "state": "CLOSED",
+            "title": "Migrate `_cumsum` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T22:34:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24522"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:34:57Z",
+            "createdAt": "2019-08-16T19:10:40Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyODU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24521,
+            "state": "CLOSED",
+            "title": "Migrate `_cumprod` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-11-18T22:34:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24521"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519",
+            "closedAt": "2020-02-25T01:43:00Z",
+            "createdAt": "2019-08-16T19:10:38Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyODA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24520,
+            "state": "CLOSED",
+            "title": "Migrate `_cat` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-02-25T01:43:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24520"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-10-10T09:35:21Z",
+            "createdAt": "2019-08-16T19:10:36Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyNzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24519,
+            "state": "CLOSED",
+            "title": "Migrate `_addr` and `_addr_` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-10-10T09:35:21Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24519"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-20T20:35:47Z",
+            "createdAt": "2019-08-16T19:10:34Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyNjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24518,
+            "state": "CLOSED",
+            "title": "Migrate `_addmm` and `_addmm_` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-09-20T20:35:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24518"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-13T00:14:15Z",
+            "createdAt": "2019-08-16T19:10:33Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyNTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24517,
+            "state": "CLOSED",
+            "title": "Migrate `__xor__` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-11-13T00:14:15Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24517"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:53:07Z",
+            "createdAt": "2019-08-16T19:10:31Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyNDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24516,
+            "state": "CLOSED",
+            "title": "Migrate `__rshift__` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-21T18:53:07Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24516"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:53:05Z",
+            "createdAt": "2019-08-16T19:10:29Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyMzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24515,
+            "state": "CLOSED",
+            "title": "Migrate `__or__` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-21T18:53:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24515"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:52:53Z",
+            "createdAt": "2019-08-16T19:10:27Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyMTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24514,
+            "state": "CLOSED",
+            "title": "Migrate `__lshift__` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-21T18:52:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24514"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-13T00:14:15Z",
+            "createdAt": "2019-08-16T19:10:26Z",
+            "id": "MDU6SXNzdWU0ODE3NDYyMDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24513,
+            "state": "CLOSED",
+            "title": "Migrate `__ixor__` from the TH to Aten (CUDA)",
+            "updatedAt": "2019-11-13T00:14:15Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24513"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-10T18:52:32Z",
+            "createdAt": "2019-08-16T19:10:23Z",
+            "id": "MDU6SXNzdWU0ODE3NDYxOTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24512,
+            "state": "CLOSED",
+            "title": "Migrate `__irshift__` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-10T18:52:32Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24512"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:52:46Z",
+            "createdAt": "2019-08-16T19:10:21Z",
+            "id": "MDU6SXNzdWU0ODE3NDYxODg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24511,
+            "state": "CLOSED",
+            "title": "Migrate `__ior__` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-21T18:52:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24511"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-06-24T18:39:24Z",
+            "createdAt": "2019-08-16T19:10:19Z",
+            "id": "MDU6SXNzdWU0ODE3NDYxNzg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24510,
+            "state": "CLOSED",
+            "title": "Migrate `__ilshift__` from the TH to Aten (CUDA)",
+            "updatedAt": "2021-06-24T18:39:24Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24510"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:52:26Z",
+            "createdAt": "2019-08-16T19:10:17Z",
+            "id": "MDU6SXNzdWU0ODE3NDYxNzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24509,
+            "state": "CLOSED",
+            "title": "Migrate `__iand__` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-21T18:52:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24509"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-03T18:32:50Z",
+            "createdAt": "2019-08-16T19:10:16Z",
+            "id": "MDU6SXNzdWU0ODE3NDYxNjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24508,
+            "state": "CLOSED",
+            "title": "Migrate `__and__` from the TH to Aten (CUDA)",
+            "updatedAt": "2020-01-03T18:32:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24508"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting guide: https://github.com/pytorch/pytorch/wiki/TH-to-ATen-porting-guide\nExample PR with porting of the adaptive_avg_pool2d: #14714\nExample PR with porting of the point-wise operator addcmul: #22874\nHow to use TensorIterator (if needed): https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nNotes:\n\nWhile porting operators please include [namedtensor ci] into commit message, it will start names propagation test.\n\nIssues were automatically generated based on legacy:: dispatch rules in native_functions.yaml and operators cname in Declarations.cwrap\nCUDA Ops\n\n\n #24523 Migrate _index_copy_ from the TH to Aten (CUDA)\n\n\n #24526 Migrate _mode from the TH to Aten (CUDA)\n\n\n #24527 Migrate _multinomial_alias_draw from the TH to Aten (CUDA)\n\n\n #24528 Migrate _multinomial_alias_setup from the TH to Aten (CUDA)\n\n\n #24543 Migrate cholesky_inverse from the TH to Aten (CUDA)\n\n\n #24565 Migrate fmod and fmod_ from the TH to Aten (CUDA)\n\n\n #24569 Migrate geqrf from the TH to Aten (CUDA)\n\n\n #24571 Migrate glu from the TH to Aten (CUDA)\n\n\n #24572 Migrate glu_backward from the TH to Aten (CUDA)\n\n\n #24577 Migrate index_fill_ from the TH to Aten (CUDA)\n\n\n #24590 Migrate log_sigmoid_backward from the TH to Aten (CUDA)\n\n\n #24591 Migrate log_sigmoid_forward from the TH to Aten (CUDA)\n\n\n #24592 Migrate lstsq from the TH to Aten (CUDA)\n\n\n #24597 Migrate mode from the TH to Aten (CUDA)\n\n\n #24600 Migrate multi_margin_loss from the TH to Aten (CUDA)\n\n\n #24601 Migrate multi_margin_loss_backward from the TH to Aten (CUDA)\n\n\n #24602 Migrate multilabel_margin_loss_backward from the TH to Aten (CUDA)\n\n\n #24603 Migrate multilabel_margin_loss_forward from the TH to Aten (CUDA)\n\n\n #24607 Migrate nll_loss2d_backward from the TH to Aten (CUDA)\n\n\n #24608 Migrate nll_loss2d_forward from the TH to Aten (CUDA)\n\n\n #24609 Migrate nll_loss_backward from the TH to Aten (CUDA)\n\n\n #24610 Migrate nll_loss_forward from the TH to Aten (CUDA)\n\n\n #24614 Migrate put_ from the TH to Aten (CUDA)\n\n\n #24616 Migrate renorm and renorm_ from the TH to Aten (CUDA)\n\n\n #24618 Migrate rrelu_with_noise and rrelu_with_noise_ from the TH to Aten (CUDA)\n\n\n #24625 Migrate sigmoid_backward from the TH to Aten (CUDA)\n\n\n #24637 Migrate sort from the TH to Aten (CUDA)\n\n\n #24640 Migrate take from the TH to Aten (CUDA)\n\n\n #24643 Migrate tanh_backward from the TH to Aten (CUDA)\n\n\n #24644 Migrate thnn_conv2d_backward from the TH to Aten (CUDA)\n\n\n #24645 Migrate thnn_conv2d_forward from the TH to Aten (CUDA)\n\n\n #24646 Migrate thnn_conv_depthwise2d_backward from the TH to Aten (CUDA)\n\n\n #24647 Migrate thnn_conv_depthwise2d_forward from the TH to Aten (CUDA)\n\n\n #24648 Migrate topk from the TH to Aten (CUDA)\n\n\n #24519 Migrate _addr and _addr_ from the TH to Aten (CUDA)\n\n\n #24520 Migrate _cat from the TH to Aten (CUDA)\n\n\n #24521 Migrate _cumprod from the TH to Aten (CUDA)\n\n\n #24522 Migrate _cumsum from the TH to Aten (CUDA)\n\n\n #24524 Migrate _max from the TH to Aten (CUDA)\n\n\n #24525 Migrate _min from the TH to Aten (CUDA)\n\n\n #24529 Migrate _std from the TH to Aten (CUDA)\n\n\n #24530 Migrate _var from the TH to Aten (CUDA)\n\n\n #24533 Migrate addbmm and addbmm_ from the TH to Aten (CUDA)\n\n\n #24534 Migrate addmm and addmm_ from the TH to Aten (CUDA)\n\n\n #24535 Migrate addmv and addmv_ from the TH to Aten (CUDA)\n\n\n #24536 Migrate addr and addr_ from the TH to Aten (CUDA)\n\n\n #24538 Migrate atan and atan_ from the TH to Aten (CUDA)\n\n\n #24539 Migrate baddbmm and baddbmm_ from the TH to Aten (CUDA)\n\n\n #24540 Migrate binary_cross_entropy from the TH to Aten (CUDA)\n\n\n #24541 Migrate binary_cross_entropy_backward from the TH to Aten (CUDA)\n\n\n #24544 Migrate clamp and clamp_ from the TH to Aten (CUDA)\n\n\n #24545 Migrate cos and cos_ from the TH to Aten (CUDA)\n\n\n #24546 Migrate cosh and cosh_ from the TH to Aten (CUDA)\n\n\n #24547 Migrate cumprod from the TH to Aten (CUDA)\n\n\n #24548 Migrate cumsum from the TH to Aten (CUDA)\n\n\n #24549 Migrate diag from the TH to Aten (CUDA)\n\n\n #24551 Migrate dist from the TH to Aten (CUDA)\n\n\n #24552 Migrate dot from the TH to Aten (CUDA)\n\n\n #24553 Migrate eig from the TH to Aten (CUDA)\n\n\n #24554 Migrate elu and elu_ from the TH to Aten (CUDA)\n\n\n #24555 Migrate elu_backward from the TH to Aten (CUDA)\n\n\n #24557 Migrate equal from the TH to Aten (CUDA)\n\n\n #24558 Migrate erf and erf_ from the TH to Aten (CUDA)\n\n\n #24559 Migrate erfc and erfc_ from the TH to Aten (CUDA)\n\n\n #24561 Migrate exp and exp_ from the TH to Aten (CUDA)\n\n\n #24567 Migrate gather from the TH to Aten (CUDA)\n\n\n #24570 Migrate ger from the TH to Aten (CUDA)\n\n\n #24574 Migrate hardtanh and hardtanh_ from the TH to Aten (CUDA)\n\n\n #24575 Migrate hardtanh_backward from the TH to Aten (CUDA)\n\n\n #24576 Migrate index_add_ from the TH to Aten (CUDA)\n\n\n #24578 Migrate index_select from the TH to Aten (CUDA)\n\n\n #24583 Migrate leaky_relu and leaky_relu_ from the TH to Aten (CUDA)\n\n\n #24584 Migrate leaky_relu_backward from the TH to Aten (CUDA)\n\n\n #33054 Migrate masked_select from TH to Aten (CUDA)\n\n\n #49542 Migrate masked_scatter from TH to Aten (CUDA)\n\n\n #49543  Migrate masked_fill from TH to Aten (CUDA)\n\n\n #24594 Migrate max from the TH to Aten (CUDA)\n\n\n #24595 Migrate min from the TH to Aten (CUDA)\n\n\n #24596 Migrate mm from the TH to Aten (CUDA)\n\n\n #24605 Migrate mv from the TH to Aten (CUDA)\n\n\n #24611 Migrate nonzero from the TH to Aten (CUDA)\n\n\n #24615 Migrate remainder and remainder_ from the TH to Aten (CUDA)\n\n\n #24619 Migrate rrelu_with_noise_backward from the TH to Aten (CUDA)\n\n\n #24621 Migrate scatter and scatter_ from the TH to Aten (CUDA)\n\n\n #24622 Migrate scatter_add_ from the TH to Aten (CUDA)\n\n\n #24623 Migrate set_ from the TH to Aten (CUDA)\n\n\n #24631 Migrate soft_margin_loss from the TH to Aten (CUDA)\n\n\n #24632 Migrate soft_margin_loss_backward from the TH to Aten (CUDA)\n\n\n #24633 Migrate softplus from the TH to Aten (CUDA)\n\n\n #24634 Migrate softplus_backward from the TH to Aten (CUDA)\n\n\n #24635 Migrate softshrink from the TH to Aten (CUDA)\n\n\n #24636 Migrate softshrink_backward from the TH to Aten (CUDA)\n\n\n #24639 Migrate std from the TH to Aten (CUDA)\n\n\n #24641 Migrate tan and tan_ from the TH to Aten (CUDA)\n\n\n #24642 Migrate tanh and tanh_ from the TH to Aten (CUDA)\n\n\n #24649 Migrate trace from the TH to Aten (CUDA)\n\n\n #24652 Migrate var from the TH to Aten (CUDA)\n\n\nCPU Ops\n\n #24679 Migrate _addmm and _addmm_ from the TH to Aten (CPU)\n #24666 Migrate _addr and _addr_ from the TH to Aten (CPU)\n #24667 Migrate _cat from the TH to Aten (CPU)\n #24668 Migrate _cumprod from the TH to Aten (CPU)\n #24669 Migrate _cumsum from the TH to Aten (CPU)\n #24670 Migrate _index_copy_ from the TH to Aten (CPU)\n #24671 Migrate _max from the TH to Aten (CPU)\n #24672 Migrate _min from the TH to Aten (CPU)\n #24673 Migrate _mode from the TH to Aten (CPU)\n #24674 Migrate _multinomial_alias_draw from the TH to Aten (CPU)\n #24675 Migrate _multinomial_alias_setup from the TH to Aten (CPU)\n #24676 Migrate _std from the TH to Aten (CPU)\n #24677 Migrate _var from the TH to Aten (CPU)\n #24678 Migrate addbmm and addbmm_ from the TH to Aten (CPU)\n #24679 Migrate addmm and addmm_ from the TH to Aten (CPU)\n #24680 Migrate addmv and addmv_ from the TH to Aten (CPU)\n #24681 Migrate addr and addr_ from the TH to Aten (CPU)\n #24682 Migrate binary_cross_entropy from the TH to Aten (CPU)\n #24683 Migrate binary_cross_entropy_backward from the TH to Aten (CPU)\n #24684 Migrate cauchy_ from the TH to Aten (CPU)\n #24685 Migrate cholesky_inverse from the TH to Aten (CPU)\n #24687 Migrate cumprod from the TH to Aten (CPU)\n #24688 Migrate cumsum from the TH to Aten (CPU)\n #24689 Migrate diag from the TH to Aten (CPU)\n #24691 Migrate dist from the TH to Aten (CPU)\n #24692 Migrate dot from the TH to Aten (CPU)\n #24693 Migrate eig from the TH to Aten (CPU)\n #24694 Migrate elu and elu_ from the TH to Aten (CPU)\n #24695 Migrate elu_backward from the TH to Aten (CPU)\n #24697 Migrate equal from the TH to Aten (CPU)\n #24699 Migrate exponential_ from the TH to Aten (CPU)\n #24701 Migrate fmod and fmod_ from the TH to Aten (CPU)\n #24702 Migrate gather from the TH to Aten (CPU)\n #24704 Migrate geometric_ from the TH to Aten (CPU)\n #24705 Migrate geqrf from the TH to Aten (CPU)\n #24706 Migrate ger from the TH to Aten (CPU)\n #24707 Migrate glu from the TH to Aten (CPU)\n #24708 Migrate glu_backward from the TH to Aten (CPU)\n #24710 Migrate hardtanh and hardtanh_ from the TH to Aten (CPU)\n #24711 Migrate hardtanh_backward from the TH to Aten (CPU)\n #24712 Migrate histc from the TH to Aten (CPU)\n #24713 Migrate index_add_ from the TH to Aten (CPU)\n #24714 Migrate index_fill_ from the TH to Aten (CPU)\n #24715 Migrate index_select from the TH to Aten (CPU)\n #24720 Migrate leaky_relu and leaky_relu_ from the TH to Aten (CPU)\n #24721 Migrate leaky_relu_backward from the TH to Aten (CPU)\n #24723 Migrate log_normal_ from the TH to Aten (CPU)\n #24724 Migrate log_sigmoid_backward from the TH to Aten (CPU)\n #24725 Migrate log_sigmoid_forward from the TH to Aten (CPU)\n #24726 Migrate lstsq from the TH to Aten (CPU)\n #33053 Migrate masked_select from TH to Aten (CPU)\n #49541  Migrate masked_scatter from TH to Aten (CPU)\n #24728 Migrate max from the TH to Aten (CPU)\n #24729 Migrate min from the TH to Aten (CPU)\n #24730 Migrate mm from the TH to Aten (CPU)\n #24731 Migrate mode from the TH to Aten (CPU)\n #24739 Migrate mv from the TH to Aten (CPU)\n #24745 Migrate nonzero from the TH to Aten (CPU)\n #24746 Migrate normal and normal_ from the TH to Aten (CPU)\n #24747 Migrate orgqr from the TH to Aten (CPU)\n #24748 Migrate ormqr from the TH to Aten (CPU)\n #24751 Migrate put_ from the TH to Aten (CPU)\n #24752 Migrate random_ from the TH to Aten (CPU)\n #24753 Migrate remainder and remainder_ from the TH to Aten (CPU)\n #24754 Migrate renorm and renorm_ from the TH to Aten (CPU)\n #24755 Migrate rrelu_with_noise and rrelu_with_noise_ from the TH to Aten (CPU)\n #24756 Migrate rrelu_with_noise_backward from the TH to Aten (CPU)\n #24757 Migrate scatter and scatter_ from the TH to Aten (CPU)\n #24758 Migrate scatter_add_ from the TH to Aten (CPU)\n #24759 Migrate set_ from the TH to Aten (CPU)\n #24760 Migrate sigmoid_backward from the TH to Aten (CPU)\n #24764 Migrate soft_margin_loss from the TH to Aten (CPU)\n #24765 Migrate soft_margin_loss_backward from the TH to Aten (CPU)\n #24766 Migrate softplus from the TH to Aten (CPU)\n #24767 Migrate softplus_backward from the TH to Aten (CPU)\n #24768 Migrate softshrink from the TH to Aten (CPU)\n #24769 Migrate softshrink_backward from the TH to Aten (CPU)\n #24770 Migrate sort from the TH to Aten (CPU)\n #24771 Migrate std from the TH to Aten (CPU)\n #24772 Migrate take from the TH to Aten (CPU)\n #24773 Migrate tanh_backward from the TH to Aten (CPU)\n #24779 Migrate trace from the TH to Aten (CPU)\n #24781 Migrate uniform_ from the TH to Aten (CPU)\n #24782 Migrate var from the TH to Aten (CPU)\n\nPointwise bit-ops\n\n #24508 Migrate __and__ from the TH to Aten (CUDA)\n #24509 Migrate __iand__ from the TH to Aten (CUDA)\n #24510 Migrate __ilshift__ from the TH to Aten (CUDA)\n #24511 Migrate __ior__ from the TH to Aten (CUDA)\n #24512 Migrate __irshift__ from the TH to Aten (CUDA)\n #24514 Migrate __lshift__ from the TH to Aten (CUDA)\n #24515 Migrate __or__ from the TH to Aten (CUDA)\n #24516 Migrate __rshift__ from the TH to Aten (CUDA)\n #24655 Migrate __and__ from the TH to Aten (CPU)\n #24656 Migrate __iand__ from the TH to Aten (CPU)\n #24657 Migrate __ilshift__ from the TH to Aten (CPU)\n #24658 Migrate __ior__ from the TH to Aten (CPU)\n #24659 Migrate __irshift__ from the TH to Aten (CPU)\n #24661 Migrate __lshift__ from the TH to Aten (CPU)\n #24662 Migrate __or__ from the TH to Aten (CPU)\n #24663 Migrate __rshift__ from the TH to Aten (CPU)\n\nCompleted (2019-11-20)\n\n #24606 Migrate ne and ne_ from the TH to Aten (CUDA)\n #24740 Migrate ne and ne_ from the TH to Aten (CPU)\n #24573 Migrate gt and gt_ from the TH to Aten (CUDA)\n #24709 Migrate gt and gt_ from the TH to Aten (CPU)\n #24593 Migrate lt and lt_ from the TH to Aten (CUDA)\n #24727 Migrate lt and lt_ from the TH to Aten (CPU)\n #24556 Migrate eq and eq_ from the TH to Aten (CUDA)\n #24696 Migrate eq and eq_ from the TH to Aten (CPU)\n #24568 Migrate ge and ge_ from the TH to Aten (CUDA)\n #24703 Migrate ge and ge_ from the TH to Aten (CPU)\n #24582 Migrate le and le_ from the TH to Aten (CUDA)\n #24719 Migrate le and le_ from the TH to Aten (CPU)\n #24660 Migrate __ixor__ from the TH to Aten (CPU)\n #24517 Migrate __xor__ from the TH to Aten (CUDA)\n #24664 Migrate __xor__ from the TH to Aten (CPU)\n #24513 Migrate __ixor__ from the TH to Aten (CUDA)\n #24716 Migrate is_set_to from the TH to Aten (CPU)\n #24717 Migrate l1_loss from the TH to Aten (CPU)\n #24718 Migrate l1_loss_backward from the TH to Aten (CPU)\n #24722 Migrate lgamma and lgamma_ from the TH to Aten (CPU)\n #24732 Migrate mse_loss from the TH to Aten (CPU)\n #24733 Migrate mse_loss_backward from the TH to Aten (CPU)\n #24734 Migrate multi_margin_loss from the TH to Aten (CPU)\n #24735 Migrate multi_margin_loss_backward from the TH to Aten (CPU)\n #24736 Migrate multilabel_margin_loss_backward from the TH to Aten (CPU)\n #24737 Migrate multilabel_margin_loss_forward from the TH to Aten (CPU)\n #24738 Migrate multinomial from the TH to Aten (CPU)\n #24749 Migrate polygamma and polygamma_ from the TH to Aten (CPU)\n #24750 Migrate pow and pow_ from the TH to Aten (CPU)\n #24741 Migrate nll_loss2d_backward from the TH to Aten (CPU)\n #24742 Migrate nll_loss2d_forward from the TH to Aten (CPU)\n #24743 Migrate nll_loss_backward from the TH to Aten (CPU)\n #24744 Migrate nll_loss_forward from the TH to Aten (CPU)\n #24783 Migrate zero_ from the TH to Aten (CPU)\n #24780 Migrate unfold from the TH to Aten (CPU)\n #24774 Migrate thnn_conv2d_backward from the TH to Aten (CPU)\n #24775 Migrate thnn_conv2d_forward from the TH to Aten (CPU)\n #24776 Migrate thnn_conv3d_backward from the TH to Aten (CPU)\n #24777 Migrate thnn_conv3d_forward from the TH to Aten (CPU)\n #24778 Migrate topk from the TH to Aten (CPU)\n #24761 Migrate sign and sign_ from the TH to Aten (CPU)\n #24762 Migrate smooth_l1_loss from the TH to Aten (CPU)\n #24763 Migrate smooth_l1_loss_backward from the TH to Aten (CPU)\n #24690 Migrate digamma and digamma_ from the TH to Aten (CPU)\n #24698 Migrate erfinv and erfinv_ from the TH to Aten (CPU)\n #24700 Migrate fill_ from the TH to Aten (CPU)\n #24686 Migrate clamp and clamp_ from the TH to Aten (CPU)\n #24650 Migrate trunc and trunc_ from the TH to Aten (CUDA)\n #24651 Migrate unfold from the TH to Aten (CUDA)\n #24638 Migrate sqrt and sqrt_ from the TH to Aten (CUDA)\n #24626 Migrate sign and sign_ from the TH to Aten (CUDA)\n #24627 Migrate sin and sin_ from the TH to Aten (CUDA)\n #24628 Migrate sinh and sinh_ from the TH to Aten (CUDA)\n #24629 Migrate smooth_l1_loss from the TH to Aten (CUDA)\n #24630 Migrate smooth_l1_loss_backward from the TH to Aten (CUDA)\n #24624 Migrate sigmoid and sigmoid_ from the TH to Aten (CUDA)\n #24653 Migrate zero_ from the TH to Aten (CUDA)\n #24531 Migrate abs and abs_ from the TH to Aten (CUDA)\n #24532 Migrate acos and acos_ from the TH to Aten (CUDA)\n #24518 Migrate _addmm and _addmm_ from the TH to Aten (CUDA)\n #24537 Migrate asin and asin_ from the TH to Aten (CUDA)\n #24542 Migrate ceil and ceil_ from the TH to Aten (CUDA)\n #24550 Migrate digamma and digamma_ from the TH to Aten (CUDA)\n #24566 Migrate frac and frac_ from the TH to Aten (CUDA)\n #24562 Migrate expm1 and expm1_ from the TH to Aten (CUDA)\n #24563 Migrate fill_ from the TH to Aten (CUDA)\n #24564 Migrate floor and floor_ from the TH to Aten (CUDA)\n #24560 Migrate erfinv and erfinv_ from the TH to Aten (CUDA)\n #24579 Migrate is_set_to from the TH to Aten (CUDA)\n #24580 Migrate l1_loss from the TH to Aten (CUDA)\n #24581 Migrate l1_loss_backward from the TH to Aten (CUDA)\n #24585 Migrate lgamma and lgamma_ from the TH to Aten (CUDA)\n #24586 Migrate log and log_ from the TH to Aten (CUDA)\n #24587 Migrate log10 and log10_ from the TH to Aten (CUDA)\n #24588 Migrate log1p and log1p_ from the TH to Aten (CUDA)\n #24589 Migrate log2 and log2_ from the TH to Aten (CUDA)\n #24598 Migrate mse_loss from the TH to Aten (CUDA)\n #24599 Migrate mse_loss_backward from the TH to Aten (CUDA)\n #24604 Migrate multinomial from the TH to Aten (CUDA)\n #24612 Migrate polygamma and polygamma_ from the TH to Aten (CUDA)\n #24613 Migrate pow and pow_ from the TH to Aten (CUDA)\n #24617 Migrate round and round_ from the TH to Aten (CUDA)\n #24620 Migrate rsqrt and rsqrt_ from the TH to Aten (CUDA)",
+            "closedAt": "2022-01-20T22:57:48Z",
+            "createdAt": "2019-08-16T18:54:23Z",
+            "id": "MDU6SXNzdWU0ODE3NDAzOTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24507,
+            "state": "CLOSED",
+            "title": "Port TH operators to Aten (umbrella issue)",
+            "updatedAt": "2022-01-20T22:57:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24507"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Reproduction:\nimport torch\nimport torch.nn.functional as F\n\ninputs = torch.randn(1, 1, 5, 5)\nprint(F.pad(inputs, [4,0,3,0], mode='circular').shape) # (1,1,5,5) (Wrong)\nprint(F.pad(inputs, [1,0,0,0], mode='circular').shape) # (1,1,5,5) (Wrong)\nprint(F.pad(inputs, [1,1,0,0], mode='circular').shape) # (1,1,5,7) (Correct)\nprint(F.pad(inputs, [2,1,0,0], mode='circular').shape) # (1,1,5,8) (Correct)\n\nCorrect results:\nimport torch\nimport torch.nn.functional as F\n\ninputs = torch.randn(1, 1, 5, 5)\nprint(F.pad(inputs, [4,0,3,0], mode='circular').shape) # (1,1,8,9)\nprint(F.pad(inputs, [1,0,0,0], mode='circular').shape) # (1,1,5,6)\nprint(F.pad(inputs, [1,1,0,0], mode='circular').shape) # (1,1,5,7)\nprint(F.pad(inputs, [2,1,0,0], mode='circular').shape) # (1,1,5,8)\n\ncc @ssnl",
+            "closedAt": "2020-12-06T03:59:23Z",
+            "createdAt": "2019-08-16T18:30:21Z",
+            "id": "MDU6SXNzdWU0ODE3MzE2NTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: nn"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24504,
+            "state": "CLOSED",
+            "title": "Circular padding doesn't work when the 'right' side is 0",
+            "updatedAt": "2020-12-06T04:00:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24504"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/TensorCompare.cpp\n    \n    \n         Line 18\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           at::CPU_tensor_apply4<scalar_t, uint8_t, scalar_t, scalar_t>( \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-09-10T17:32:27Z",
+            "createdAt": "2019-08-16T17:27:40Z",
+            "id": "MDU6SXNzdWU0ODE3MDkyMzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24497,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/TensorCompare.cpp:18",
+            "updatedAt": "2019-09-10T17:32:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24497"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 286\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply3<scalar_t, double , double>(ret, gamma, gamma_sum, \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:48Z",
+            "createdAt": "2019-08-16T17:27:38Z",
+            "id": "MDU6SXNzdWU0ODE3MDkyMjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24496,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:286",
+            "updatedAt": "2020-10-15T20:27:48Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24496"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 266\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<double, scalar_t>(gamma, alpha, \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:47Z",
+            "createdAt": "2019-08-16T17:27:37Z",
+            "id": "MDU6SXNzdWU0ODE3MDkyMTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24495,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:266",
+            "updatedAt": "2020-10-15T20:27:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24495"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 235\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<scalar_t, scalar_t>(ret, alpha, \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:47Z",
+            "createdAt": "2019-08-16T17:27:35Z",
+            "id": "MDU6SXNzdWU0ODE3MDkyMDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24494,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:235",
+            "updatedAt": "2020-10-15T20:27:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24494"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 220\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<scalar_t, scalar_t>(ret, lambda, \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:47Z",
+            "createdAt": "2019-08-16T17:27:34Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxODQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24493,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:220",
+            "updatedAt": "2020-10-15T20:27:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24493"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 201\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply4<scalar_t, scalar_t, scalar_t, scalar_t>(ret, x, alpha, total, \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:47Z",
+            "createdAt": "2019-08-16T17:27:32Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxNzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24492,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:201",
+            "updatedAt": "2020-10-15T20:27:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24492"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 189\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply3<scalar_t, scalar_t, scalar_t>(ret, self, output, \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:46Z",
+            "createdAt": "2019-08-16T17:27:31Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxNjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24491,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:189",
+            "updatedAt": "2020-10-15T20:27:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24491"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 176\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply1<scalar_t>( \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:46Z",
+            "createdAt": "2019-08-16T17:27:29Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxNTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24490,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:176",
+            "updatedAt": "2020-10-15T20:27:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24490"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 151\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<self_t, p_t>( \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:45Z",
+            "createdAt": "2019-08-16T17:27:28Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxNDI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24489,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:151",
+            "updatedAt": "2020-10-15T20:27:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24489"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Distributions.cpp\n    \n    \n         Line 142\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<self_t, double>( \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:45Z",
+            "createdAt": "2019-08-16T17:27:26Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxMzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24488,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Distributions.cpp:142",
+            "updatedAt": "2020-10-15T20:27:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24488"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Loss.cpp\n    \n    \n         Line 80\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           at::CPU_tensor_apply3<scalar_t, scalar_t, scalar_t>( \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2020-10-15T20:27:44Z",
+            "createdAt": "2019-08-16T17:27:25Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxMzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24487,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Loss.cpp:80",
+            "updatedAt": "2020-10-15T20:27:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24487"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 318\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<scalar_t,scalar_t>(grad_in, grad_out, [&](scalar_t& gi, const scalar_t& go) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:13:01Z",
+            "createdAt": "2019-08-16T17:27:24Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxMjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24486,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:318",
+            "updatedAt": "2019-10-11T23:13:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24486"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 310\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<scalar_t,scalar_t>(grad_in, grad_out, [&](scalar_t& gi, const scalar_t& go) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:12:06Z",
+            "createdAt": "2019-08-16T17:27:22Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxMDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24485,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:310",
+            "updatedAt": "2019-10-11T23:12:06Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24485"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 305\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<scalar_t,scalar_t>(grad_in, in, [&](scalar_t& gi, const scalar_t& i) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:12:11Z",
+            "createdAt": "2019-08-16T17:27:21Z",
+            "id": "MDU6SXNzdWU0ODE3MDkxMDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24484,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:305",
+            "updatedAt": "2019-10-11T23:12:11Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24484"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 290\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<scalar_t,scalar_t>(in, grad_out, [&](const scalar_t& i, const scalar_t& go) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:12:18Z",
+            "createdAt": "2019-08-16T17:27:19Z",
+            "id": "MDU6SXNzdWU0ODE3MDkwOTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24483,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:290",
+            "updatedAt": "2019-10-11T23:12:18Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24483"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 284\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply1<scalar_t>(grad_out, [&](const scalar_t& g) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:12:22Z",
+            "createdAt": "2019-08-16T17:27:18Z",
+            "id": "MDU6SXNzdWU0ODE3MDkwNzg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24482,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:284",
+            "updatedAt": "2019-10-11T23:12:22Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24482"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 213\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply1<scalar_t>(in, [&] (const scalar_t& i) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:12:29Z",
+            "createdAt": "2019-08-16T17:27:16Z",
+            "id": "MDU6SXNzdWU0ODE3MDkwNjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24481,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:213",
+            "updatedAt": "2019-10-11T23:12:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24481"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 205\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply1<scalar_t>(in, [&] (const scalar_t& i) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:12:39Z",
+            "createdAt": "2019-08-16T17:27:15Z",
+            "id": "MDU6SXNzdWU0ODE3MDkwNTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24480,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:205",
+            "updatedAt": "2019-10-11T23:12:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24480"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Migrate CPU_tensor_apply to TensorIterator\n\n  \n    \n      pytorch/aten/src/ATen/native/Normalization.cpp\n    \n    \n         Line 173\n      in\n      eabfca3\n    \n  \n  \n    \n\n        \n          \n           CPU_tensor_apply2<scalar_t,scalar_t>(out, in, [&](scalar_t& o, const scalar_t& i) { \n        \n    \n  \n\n\nHow to use TensorIterator: https://github.com/pytorch/pytorch/wiki/How-to-use-TensorIterator\nAdditional Instructions:#24478\nBlocked by:#24472",
+            "closedAt": "2019-10-11T23:12:44Z",
+            "createdAt": "2019-08-16T17:27:13Z",
+            "id": "MDU6SXNzdWU0ODE3MDkwNDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24479,
+            "state": "CLOSED",
+            "title": "Migrate CPU_tensor_apply to TensorIterator in aten/src/ATen/native/Normalization.cpp:173",
+            "updatedAt": "2019-10-11T23:12:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24479"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\n\nTo Reproduce\nSteps to reproduce the behavior:\n\nrun the following code and have the pt model saved\n\nimport torch\nimport torch.nn as nn\n\n\n# TODO: https://github.com/pytorch/pytorch/issues/23930\nclass test(torch.jit.ScriptModule):\n\n    def __init__(self, vocab_size=10, rnn_dims=512):\n        super().__init__()\n        self.word_embeds = nn.Embedding(vocab_size, rnn_dims)\n        self.emb_drop = nn.Dropout(0.1)\n        self.rnn = nn.LSTM(input_size=rnn_dims, hidden_size=rnn_dims, batch_first=True,\n                           num_layers=2, dropout=0.1)\n        # delattr(self.rnn, 'forward_packed')\n\n    @torch.jit.script_method\n    def forward(self, x):\n        h1 = (torch.zeros(2, 1, 512), torch.zeros(2, 1, 512))\n        embeds = self.emb_drop(self.word_embeds(x))\n        out, h1 = self.rnn(embeds, h1)\n\n        return h1\n\n\nmodel = test()\n\ninput = torch.ones((1,3)).long()\noutput = model(input)\nprint('output', output)\n\n# torch.onnx.export(model,  # model being run\n#                   input,\n#                   'test.onnx',\n#                   example_outputs=output)\n#torch.jit.trace(model, (torch.ones((1,3)).long(), torch.ones((3,1))), check_trace=False)\nmodel.save('lstm_test.pt')\n\nload the model using libtorch\n\n#include <torch/torch.h>\n#include <torch/script.h>\n#include <iostream>\n#include <memory>\n\nint main(int argc, const char* argv[]) {\n    torch::jit::script::Module module;\n    try {\n        // Deserialize the ScriptModule from a file using torch::jit::load().\n        module = torch::jit::load(argv[1]);\n    }\n    catch (const c10::Error& e) {\n        std::cerr << e.msg() << std::endl;\n        std::cerr << \"error loading the model\\n\";\n        return -1;\n    }\n}\nExpected behavior\nsuccessfully load the model in libtorch\nEnvironment\nI use pytorch1.2 and libtorch1.2\nI make the cpp project on linux subsystem under win10.",
+            "closedAt": "2019-08-17T10:25:01Z",
+            "createdAt": "2019-08-16T16:04:31Z",
+            "id": "MDU6SXNzdWU0ODE2Nzg4MzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 24473,
+            "state": "CLOSED",
+            "title": "Error while loading lstm model from libtorch",
+            "updatedAt": "2019-08-17T10:25:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24473"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There are ~20 instances of CPU_tensor_apply* use. They need to be converted to TensorIterator. We cannot do it without serial loops support.\nIdeally we also need gpu_serial loops. But it is low-pri.",
+            "closedAt": "2019-08-28T20:44:29Z",
+            "createdAt": "2019-08-16T15:58:36Z",
+            "id": "MDU6SXNzdWU0ODE2NzY0NDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: cpu"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: CPU_tensor_apply"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24472,
+            "state": "CLOSED",
+            "title": "Implement `cpu_serial_kernel` and `cpu_serial_kernel_vec` for TensorIterator",
+            "updatedAt": "2019-08-28T20:44:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24472"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nsymeig produces wrong eigenvalues on some matrix in torch.float precision, both on cuda and on cpu.\nTo Reproduce\nI'm not sure about what causes the unstability on some matrices.\nSteps to reproduce the behavior:\n\nClone this repository\nExecute the notebook to reproduce the behaviour\n\nYou can see the output of the notebook here, where float precision gives negative eigenvalues.\n\nExpected behavior\nfloat precision and double precision should give similar results\nEnvironment\nPyTorch version: 1.2.0\nIs debug build: No\nCUDA used to build PyTorch: 10.0.130\n\nOS: Manjaro Linux\nGCC version: (GCC) 9.1.0\nCMake version: version 3.15.1\n\nPython version: 3.7\nIs CUDA available: Yes\nCUDA runtime version: 10.1.168\nGPU models and configuration: GPU 0: GeForce RTX 2080 Ti\nNvidia driver version: 430.26\ncuDNN version: /usr/lib/libcudnn.so.7.6.1\n\nVersions of relevant libraries:\n[pip3] numpy==1.16.4\n[pip3] torch==1.2.0\n[pip3] torch-cluster==1.4.2\n[pip3] torch-geometric==1.3.0\n[pip3] torch-scatter==1.3.1\n[pip3] torch-sparse==0.4.0\n[pip3] torch-spline-conv==1.1.0\n[pip3] torchvision==0.4.0\n[conda] Could not collect\n\nAdditional context\nThe matrix is (theoretically) known to have positive eigenvalues and the first one should be (close to) zero.\ncc @vishwakftw @ssnl @jianyuh",
+            "closedAt": "2022-03-25T00:16:35Z",
+            "createdAt": "2019-08-16T13:50:20Z",
+            "id": "MDU6SXNzdWU0ODE2MTkxMzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24466,
+            "state": "CLOSED",
+            "title": "Symeig unstable in float precision",
+            "updatedAt": "2022-03-25T00:16:35Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24466"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🚀 Feature\nFor the type of  src_mask , memory_mask and  tgt_mask  in nn.Transformer module, I suggest using torch.bool  instead of  torch.float32 while torch.bool was already introduced in v1.2.\nMotivation\nDocument mentioned [src/tgt/memory] mask should be filled with float(‘-inf’) for the masked positions and float(0.0) else.\nFor the torch.float32 type  of masks , it is not very convenient when we set the mask.\nIf it is torch.bool, we can easily write:\nmask = ~ (src > 0)\ncc @ssnl",
+            "closedAt": "2019-08-27T05:26:23Z",
+            "createdAt": "2019-08-16T12:42:09Z",
+            "id": "MDU6SXNzdWU0ODE1OTE3MzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "feature"
+                },
+                {
+                  "name": "module: nn"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24465,
+            "state": "CLOSED",
+            "title": "Mask type in nn.transformer",
+            "updatedAt": "2019-08-27T05:26:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24465"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "❓ Questions and Help\nPlease note that this issue tracker is not a help form and this issue will be closed.\nWe have a set of listed resources available on the website. Our primary means of support is our discussion forum:\n\nDiscussion Forum\nmodel = torch.jit.script(MyModule())\ntrace, out = torch.jit.get_trace_graph(model, args)",
+            "closedAt": "2019-08-16T14:39:47Z",
+            "createdAt": "2019-08-16T09:05:28Z",
+            "id": "MDU6SXNzdWU0ODE1MTU0Mzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 24462,
+            "state": "CLOSED",
+            "title": "how can i get graph of scrip module",
+            "updatedAt": "2019-08-16T14:39:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24462"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🚀 Feature\nCurrently the Transformer decoder (v1.2.0) module support (T, S) mask for the memory. It would be nice if we can support (T, S, N) so that we can mask different source for different batch.\nMotivation\nThis is good where different masking of source is requested for different target batch. Use case: simultaneous translation system.\nAlternatives\nCurrently the only work around is to batch examples who have same memory masks or loop the example one by one.\ncc @ssnl",
+            "closedAt": "2021-05-11T09:57:34Z",
+            "createdAt": "2019-08-16T08:45:41Z",
+            "id": "MDU6SXNzdWU0ODE1MDgwMTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: nn"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24461,
+            "state": "CLOSED",
+            "title": "Transformer model memory mask to support Batching",
+            "updatedAt": "2024-04-25T12:10:43Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24461"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "❓ Issue while building 'torch._C' extension -  We would like to have Pytorch version 1.1.0 built for Windows using MinGW\nWe are facing same issue where compilation fails with following error for 'torch._C' extension\nSame error encountered with MinGW64 also.\nCopying extension caffe2.python.caffe2_pybind11_state\nCopying caffe2.python.caffe2_pybind11_state from torch\\Lib\\site-packages\\caffe2\\python\\caffe2_pybind11_state.cp36-win_amd64.pyd to E:\\GitHub\\pytorch\\build\\lib.win-amd64-3.6\\caffe2\\python\\caffe2_pybind11_state.cp36-win_amd64.pyd\ncopying torch\\Lib\\site-packages\\caffe2\\python\\caffe2_pybind11_state.cp36-win_amd64.pyd -> E:\\GitHub\\pytorch\\build\\lib.win-amd64-3.6\\caffe2\\python\nbuilding 'torch._C' extension\ncreating build\\temp.win-amd64-3.6\ncreating build\\temp.win-amd64-3.6\\Release\ncreating build\\temp.win-amd64-3.6\\Release\\torch\ncreating build\\temp.win-amd64-3.6\\Release\\torch\\csrc\nC:\\MinGW\\bin\\gcc.exe -mdll -O -Wall \"-IC:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Python36_64\\include\" \"-IC:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Python36_64\\include\" -c torch/csrc/stub.cpp -o build\\temp.win-amd64-3.6\\Release\\torch\\csrc\\stub.o /MD /Z7 /EHa /DNOMINMAX /wd4267 /wd4251 /wd4522 /wd4522 /wd4838 /wd4305 /wd4244 /wd4190 /wd4101 /wd4996 /wd4275\ngcc: error: /MD: No such file or directory\ngcc: error: /Z7: No such file or directory\ngcc: error: /EHa: No such file or directory\ngcc: error: /DNOMINMAX: No such file or directory\ngcc: error: /wd4267: No such file or directory\ngcc: error: /wd4251: No such file or directory\ngcc: error: /wd4522: No such file or directory\ngcc: error: /wd4522: No such file or directory\ngcc: error: /wd4838: No such file or directory\ngcc: error: /wd4305: No such file or directory\ngcc: error: /wd4244: No such file or directory\ngcc: error: /wd4190: No such file or directory\ngcc: error: /wd4101: No such file or directory\ngcc: error: /wd4996: No such file or directory\ngcc: error: /wd4275: No such file or directory\nerror: command 'C:\\MinGW\\bin\\gcc.exe' failed with exit status 1\ncc @peterjc123",
+            "closedAt": "2023-01-15T23:03:51Z",
+            "createdAt": "2019-08-16T07:40:13Z",
+            "id": "MDU6SXNzdWU0ODE0ODUyMjU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: windows"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24460,
+            "state": "CLOSED",
+            "title": "Issue while building 'torch._C' extension using MinGW in Windows 10",
+            "updatedAt": "2023-05-03T03:43:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24460"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "❓ Questions and Help\nI have about 4 to 10 models to execute serially，every model is 3D-convolutional model，I have tried TensorRT,but TensorRT only support 2 D conv,\nwhat else can I try?\nThe needs are: stable and fast",
+            "closedAt": "2019-08-19T16:09:10Z",
+            "createdAt": "2019-08-16T02:05:00Z",
+            "id": "MDU6SXNzdWU0ODE0MDk0ODU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 24452,
+            "state": "CLOSED",
+            "title": "model deployment ：Multiple serial models，using 3Dconv？？",
+            "updatedAt": "2019-08-19T16:09:10Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24452"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\ntorch.eig() segfaults when called inside an iterator. My first guess is a ref count bug.\nTo Reproduce\nimport torch\nxs = torch.randn(256,16,16)\n[x.eig() for x in xs]\nThis version sometimes raises a RuntimeError with an error message, sometime segfaults:\nimport torch\nxs = torch.randn(256,16,16).unbind(0)\n[x.eig() for x in xs]\n---------------------------------------------------------------------------\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-1-7946abf46d3c> in <module>\n      2 xs = torch.randn(256,16,16)\n      3 xs = xs.unbind(0)\n----> 4 [x.eig() for x in xs]\n\n<ipython-input-1-7946abf46d3c> in <listcomp>(.0)\n      2 xs = torch.randn(256,16,16)\n      3 xs = xs.unbind(0)\n----> 4 [x.eig() for x in xs]\n\nRuntimeError: found != registeredTypeIds_.end() INTERNAL ASSERT FAILED at ../c10/core/TensorTypeIdRegistration.cpp:47, please report a bug to PyTorch. \n\nHere's a different error message:\n---------------------------------------------------------------------------\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-1-5b578ed823df> in <module>\n      1 import torch\n      2 xs = torch.randn(256,16,16).unbind(0)\n----> 3 [x.eig() for x in xs]\n\n<ipython-input-1-5b578ed823df> in <listcomp>(.0)\n      1 import torch\n      2 xs = torch.randn(256,16,16).unbind(0)\n----> 3 [x.eig() for x in xs]\n\nRuntimeError: owning_ptr == NullType::singleton() || owning_ptr->refcount_.load() > 0 INTERNAL ASSERT FAILED at ../c10/util/intrusive_ptr.h:348, please report a bug to PyTorch. intrusive_ptr: Can only intrusive_ptr::reclaim() owning pointers that were created using intrusive_ptr::release().\n\nEnvironment\nPyTorch version: 1.2.0\nIs debug build: No\nCUDA used to build PyTorch: None\n\nOS: Mac OSX 10.14.5\nGCC version: Could not collect\nCMake version: version 3.12.0\n\nPython version: 3.7\nIs CUDA available: No\nCUDA runtime version: No CUDA\nGPU models and configuration: No CUDA\nNvidia driver version: No CUDA\ncuDNN version: No CUDA\n\nVersions of relevant libraries:\n[pip] numpy==1.16.3\n[pip] torch==1.2.0\n[pip] torchfile==0.1.0\n[pip] torchvision==0.4.0\n[conda] torch                     1.2.0                    pypi_0    pypi\n[conda] torchfile                 0.1.0                    pypi_0    pypi\n[conda] torchvision               0.4.0                    pypi_0    pypi\n\ncc @ezyang @gchanan @vishwakftw @ssnl @jianyuh",
+            "closedAt": "2019-09-12T21:09:37Z",
+            "createdAt": "2019-08-16T01:02:41Z",
+            "id": "MDU6SXNzdWU0ODEzOTc5NDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "needs reproduction"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24450,
+            "state": "CLOSED",
+            "title": "torch.eig() segfaults inside iterator",
+            "updatedAt": "2019-09-12T21:09:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24450"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nI'm trying to build PyTorch 1.2.0 from source. The CMake phase passes successfully, but building fails.\nTo Reproduce\nSteps to reproduce the behavior:\n$ python setup.py build\nIn file included from nt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/typeid.h:24:0^[[K,\n                 from nt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/core/DefaultDtype.cpp:1^[[K:\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:^[[K':\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:106:56:^[[K' was not declared in this scope\n           const uint32_t sign = w & UINT32_C(0x80000000);\n^[[K\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:138:72:^[[K' was not declared in this scope\n             ((int32_t)(nonsign + 0x04000000) >> 8) & INT32_C(0x7F800000);\n^[[K\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:^[[K':\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:197:56:^[[K' was not declared in this scope\n           const uint32_t sign = w & UINT32_C(0x80000000);\n^[[K\nIn file included from nt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/typeid.h:24:0^[[K,\n                 from nt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/core/DefaultDtype.cpp:1^[[K:\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:_fp32_value(float)^[[K':\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:308:56:^[[K' was not declared in this scope\n           const uint32_t sign = w & UINT32_C(0x80000000);\n^[[K\nnt/c/scratch/sciteam/stewart1/spack-stage/spack-stage-faGxK3/spack-src/c10/util/Half.h:319:81:^[[K' was not declared in this scope\n           return (sign >> 16) | (shl1_w > UINT32_C(0xFF000000) ? UINT16_C(0x7E00) : nonsign);\n^[[K\n[  4%] Generating python/data_parallel_model.py\ngmake[2]: *** [c10/CMakeFiles/c10.dir/core/DefaultDtype.cpp.o] Error 1\ngmake[1]: *** [c10/CMakeFiles/c10.dir/all] Error 2\ngmake[1]: *** Waiting for unfinished jobs....\nExpected behavior\nShould build fine.\nEnvironment\n\nPyTorch Version (e.g., 1.0): 1.2.0\nOS (e.g., Linux): Cray CNL5\nHow you installed PyTorch (conda, pip, source): source\nBuild command you used (if compiling from source): python setup.py build\nPython version: 3.7.4\nCUDA/cuDNN version: 9.1.85",
+            "closedAt": "2019-11-01T17:15:42Z",
+            "createdAt": "2019-08-15T21:06:57Z",
+            "id": "MDU6SXNzdWU0ODEzMzk0MDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: build"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24437,
+            "state": "CLOSED",
+            "title": "Build error: binary value not declared in scope",
+            "updatedAt": "2019-11-01T17:15:43Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24437"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\n\nTo Reproduce\nSteps to reproduce the behavior:\n\nGo to doc and check for code example\nCopy/paste into fresh install venv woth pytorch 1.2\n\n\nclass Net(nn.Module):\n    def __init__(self):\n        super(Net, self).__init__()\n        self.conv = nn.Conv2d(1, 1, 3)\n\n    def forward(self, x):\n        return self.conv(x)\n\n    def weighted_kernel_sum(self, weight):\n        return weight * self.conv.weight\n\nexample_weight = torch.rand(1, 1, 3, 3)\nexample_forward_input = torch.rand(1, 1, 3, 3)\nn = Net()\n# the following two calls are equivalent\nmodule = torch.jit.trace_module(n, example_forward_input)\nError message\n---------------------------------------------------------------------------\nAttributeError                            Traceback (most recent call last)\n<ipython-input-2-bd56084c5306> in <module>\n     14 n = Net()\n     15 # the following two calls are equivalent\n---> 16 module = torch.jit.trace_module(n, example_forward_input)\n     17 module = torch.jit.trace_module(n.forward, example_forward_input)\n\n~/miniconda3/envs/ai/lib/python3.7/site-packages/torch/jit/__init__.py in trace_module(mod, inputs, optimize, check_trace, check_inputs, check_tolerance, _force_outplace, _module_class, _compilation_unit)\n    894 \n    895     if not isinstance(inputs, dict):\n--> 896         raise AttributeError(\"expected a dictionary of (method_name, input) pairs\")\n    897 \n    898     module = make_module(mod, _module_class, _compilation_unit)\n\nAttributeError: expected a dictionary of (method_name, input) pairs\nExpected behavior\nDoc example to work :)\nEnvironment\nPyTorch version: 1.2.0\nIs debug build: No\nCUDA used to build PyTorch: 10.0.130\nOS: Ubuntu 18.04.3 LTS\nGCC version: (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0\nCMake version: version 3.10.2\nPython version: 3.7\nIs CUDA available: Yes\nCUDA runtime version: 10.0.130\nGPU models and configuration:\nGPU 0: GeForce GTX 1080 Ti\nGPU 1: GeForce GTX 1080 Ti\nNvidia driver version: 430.14\ncuDNN version: /usr/lib/x86_64-linux-gnu/libcudnn.so.7.6.0\nVersions of relevant libraries:\n[pip] numpy==1.16.4\n[pip] torch==1.2.0\n[pip] torchsummary==1.5.1\n[pip] torchvision==0.4.0a0+6b959ee\n[conda] Could not collect",
+            "closedAt": "2019-10-03T21:23:45Z",
+            "createdAt": "2019-08-15T18:59:41Z",
+            "id": "MDU6SXNzdWU0ODEyOTAyNjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "oncall: jit"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24429,
+            "state": "CLOSED",
+            "title": "Example in torchscript documentation does not work",
+            "updatedAt": "2019-10-03T21:23:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24429"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "PyTorch checks if tensors have been modified in-place to ensure correctness of the backward operation, with ctx.save_for_backward and ctx.saved_tensors in the forward and backward methods of subclasses of torch.autograd.Function. This check does not appear to function when the saved tensor is not the 'owner' of its storage, e.g. when it is the result of a view or transpose operation.\nTo reproduce:\nimport torch\n\nclass f(torch.autograd.Function):\n    @staticmethod\n    def forward(ctx, tensor1):\n        # make sure we don't share storage with our input\n        # (just to be clear that that's not what's going wrong)\n        tensor2 = tensor1.clone()\n        # tensor3 shares storage with tensor2\n        # tensor3 = tensor2.view(-1) etc. would also demonstrate the problem\n        tensor3 = tensor2.t()\n        ctx.save_for_backward(tensor3)\n        return tensor3\n    @staticmethod\n    def backward(ctx, grad):\n        # trigger correctness check\n        _ = ctx.saved_tensors\n        return grad.t().clone()\n\n\nx = torch.rand(2, 3, requires_grad=True)\ny = f.apply(x)\ny += 1\n# Does not raise an error; this is the bug.\ny.backward(torch.rand_like(y))\n\n\n# In constrast, the following code correctly raises an error.\nclass ff(torch.autograd.Function):\n    @staticmethod\n    def forward(ctx, tensor1):\n        tensor2 = tensor1.clone()\n        ctx.save_for_backward(tensor2)\n        return tensor2\n    @staticmethod\n    def backward(ctx, grad):\n        _ = ctx.saved_tensors\n        return grad.clone()\n\nxx = torch.rand(2, 3, requires_grad=True)\nyy = ff.apply(xx)\nyy += 1\nyy.backward(torch.rand_like(yy))\nExpected behaviour is for an exception to be raised on the line y.backward(torch.rand_like(y)), in the same manner as an exception is raised on the line yy.backward(torch.rand_like(yy)).\n\nPyTorch Version (e.g., 1.0): 1.2\nOS (e.g., Linux): Linux\nHow you installed PyTorch (conda, pip, source): conda\nPython version: 3.7.4\n\ncc @ezyang @ssnl @albanD",
+            "closedAt": "2020-02-07T20:46:27Z",
+            "createdAt": "2019-08-15T17:17:07Z",
+            "id": "MDU6SXNzdWU0ODEyNTAwMTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: autograd"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24413,
+            "state": "CLOSED",
+            "title": "In-place modification detection does not work if a Tensor does not own its storage",
+            "updatedAt": "2020-02-07T20:46:34Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24413"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Pyrotch Rollback Failure\nWhen trying to install pytorch version 0.1.2, the install fails because of an error in setup.py\nTo Reproduce\nSteps to reproduce the behavior:\n\npip install torch=0.1.2\n\nGives output\nCollecting torch==0.1.2\nUsing cached https://files.pythonhosted.org/packages/c0/66/2a0696bdac7ed0a99b65f6d8a5da7bc2583835ea04cac058bcd982cbb9ef/torch-0.1.2.tar.gz\nERROR: Complete output from command python setup.py egg_info:\nERROR: Traceback (most recent call last):\nFile \"\", line 1, in \nFile \"/tmp/pip-install-75pat8ja/torch/setup.py\", line 12, in \nfrom tools.setup_helpers.env import check_env_flag\nModuleNotFoundError: No module named 'tools.setup_helpers'\n----------------------------------------\nERROR: Command \"python setup.py egg_info\" failed with error code 1 in /tmp/pip-install-75pat8ja/torch/",
+            "closedAt": "2019-08-19T14:56:20Z",
+            "createdAt": "2019-08-15T15:40:45Z",
+            "id": "MDU6SXNzdWU0ODEyMTE2Njc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: binaries"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24406,
+            "state": "CLOSED",
+            "title": "Pytorch Rollback Failure",
+            "updatedAt": "2019-08-19T14:56:20Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24406"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\ntorch.cholesly raises [title error] when called with a batch size greater than (1 << 19) - 8.\nI noticed this behaviour before (see #22843) but now I realized that even though this is a CUDA limitation, it could be implemented with a for loop over the maximum permissible batch size.\nI'm doing something like this for now, but I'm not a PyTorch expert and I'm thinking that it can be made even faster.\ndef cholesky(x, *args, **kwargs):\n    shape = x.shape\n    batch_size = np.prod(shape[:-2])\n    cuda_batch_size = (1 << 19) - 8\n\n    if batch_size <= cuda_batch_size:\n        return torch.cholesky(x, *args, **kwargs)\n\n    x = x.view(-1, shape[-1], shape[-1])\n    acc = torch.empty_like(x)\n    for i in range(0, batch_size, cuda_batch_size):\n        indices = torch.arange(\n                i,\n                min(batch_size, i + cuda_batch_size),\n                device=x.device,\n                dtype=torch.int64)\n        acc[indices] = torch.cholesky(x[indices], *args, **kwargs)\n\n    return acc.view(shape)\nTo Reproduce\ntorch.cholesky(torch.eye(2, device='cuda').expand((1 << 19) - 7, -1, -1))\nEnvironment\nPyTorch 1.2.0, CUDA 10\ncc @vishwakftw",
+            "closedAt": "2019-09-04T00:35:48Z",
+            "createdAt": "2019-08-15T13:03:25Z",
+            "id": "MDU6SXNzdWU0ODExNDA5MzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: cuda"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24403,
+            "state": "CLOSED",
+            "title": "torch.cholesky throws CUDA error: invalid configuration argument",
+            "updatedAt": "2019-09-04T00:35:48Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24403"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Thanks for introducing torchaudio.\nHowever, I'm getting an error on Linux, Python 3.5, CUDA 10.\nWorks OK on Linux, Python 3.5, and CUDA 9.2\nHere is the error\nPython 3.5.2 (default, Nov 12 2018, 13:43:14)\n[GCC 5.4.0 20160609] on linux\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> import torch\n>>> import torchaudio\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torchaudio/__init__.py\", line 8, in <module>\n    from torchaudio import transforms, datasets, kaldi_io, sox_effects, compliance, _docs\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torchaudio/transforms.py\", line 6, in <module>\n    from . import functional as F\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torchaudio/functional.py\", line 175, in <module>\n    @torch.jit.script\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torch/jit/__init__.py\", line 1181, in script\n    return _compile_function(fn=obj, qualified_name=qualified_name, _frames_up=_frames_up + 1, _rcb=_rcb)\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torch/jit/__init__.py\", line 1077, in _compile_function\n    script_fn = torch._C._jit_script_compile(qualified_name, ast, _rcb, get_default_args(fn))\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torch/jit/annotations.py\", line 58, in get_signature\n    return parse_type_line(type_line)\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torch/jit/annotations.py\", line 110, in parse_type_line\n    arg_types = [ann_to_type(ann) for ann in arg_ann]\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torch/jit/annotations.py\", line 110, in <listcomp>\n    arg_types = [ann_to_type(ann) for ann in arg_ann]\n  File \"/home/abisw/pytorch-py35/lib/python3.5/site-packages/torch/jit/annotations.py\", line 227, in ann_to_type\n    raise ValueError(\"Unknown type annotation: '{}'\".format(ann))\nValueError: Unknown type annotation: 'typing.Union[int, NoneType]'\n>>>",
+            "closedAt": "2019-08-15T16:24:50Z",
+            "createdAt": "2019-08-15T11:34:53Z",
+            "id": "MDU6SXNzdWU0ODExMTE0MTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 24402,
+            "state": "CLOSED",
+            "title": "torchaudio error",
+            "updatedAt": "2019-08-15T16:24:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24402"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🚀 Feature\nI assume register_backward_hook should catch the gradients. At the moment I was not able to get the gradients, unless reading them from a loop. I am providing the complete example you can run and test.\nMotivation\nThis would be great feature for telemetry.\nAdditional context\nI am providing the gist https://gist.github.com/dejanbatanjac/86d02413118cd7fb10b479c1d4c8f318\ncc @ezyang @gchanan @ssnl @albanD",
+            "closedAt": "2019-09-10T20:30:20Z",
+            "createdAt": "2019-08-15T10:20:55Z",
+            "id": "MDU6SXNzdWU0ODEwODgyNjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "feature"
+                },
+                {
+                  "name": "module: autograd"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24400,
+            "state": "CLOSED",
+            "title": "Being able to read gradients from `register_backward_hook`",
+            "updatedAt": "2019-09-10T20:30:20Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24400"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import torch\nimport torch.nn as nn\nm = nn.LogSoftmax(dim=1)\nloss = nn.NLLLoss()\na=[[2.,  0.],\n[1.,  1.]]\ninput = torch.tensor(a, requires_grad=True)\ntarget = torch.tensor([1, 1])\noutput = loss(m(input), target)\noutput.backward()\nprint(input.grad)\ntensor([[ 0.4404, -0.4404],\n[ 0.2500, -0.2500]])\nHow to get input.grad?What's the formula？",
+            "closedAt": "2019-08-15T16:26:06Z",
+            "createdAt": "2019-08-15T09:07:53Z",
+            "id": "MDU6SXNzdWU0ODEwNjI2MTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 24399,
+            "state": "CLOSED",
+            "title": "How to get NLLLoss grad?",
+            "updatedAt": "2019-08-15T16:26:06Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24399"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🚀 Feature\nCurrently, the quantization flow insert the observer for non-supported operator module. In the runtime, the error message will be always something like the following:\n... \nself.min_val = torch.min(torch.min(x), self.min_val)\nRuntimeError: No function is registered for schema aten::min.other(Tensor self, Tensor other) -> Tensor on backend QuantizedCPU\n\nWe had better to report the corresponding unsupported operator module.\n\nMaybe a simple fix could be checking the mapping table and avoid the insertion of observer for non-supported operator module.\n\n## Motivation\n\n\nPitch\n\nAlternatives\n\nAdditional context\n\ncc @jerryzh168 @jianyuh @dzhulgakov @raghuramank100 @pytorch/quantization",
+            "closedAt": "2019-12-03T00:54:50Z",
+            "createdAt": "2019-08-15T07:29:18Z",
+            "id": "MDU6SXNzdWU0ODEwMzAwNjU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "oncall: quantization"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24395,
+            "state": "CLOSED",
+            "title": "Better error message when a quantized operator is not supported",
+            "updatedAt": "2019-12-03T00:54:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24395"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nIn current FloatFunctional module, it has self.observer = torch.nn.Identity(). The add_observer will not insert the observer. As a result, it will lead to the following error message:\nAttributeError: 'Identity' object has no attribute 'calculate_qparams'\nTo Reproduce\nSteps to reproduce the behavior:\n\n\n\n\n\n\nExpected behavior\n\nEnvironment\nPlease copy and paste the output from our\nenvironment collection script\n(or fill out the checklist below manually).\nYou can get the script and run it with:\nwget https://raw.githubusercontent.com/pytorch/pytorch/master/torch/utils/collect_env.py\n# For security purposes, please check the contents of collect_env.py before running it.\npython collect_env.py\n\n\nPyTorch Version (e.g., 1.0):\nOS (e.g., Linux):\nHow you installed PyTorch (conda, pip, source):\nBuild command you used (if compiling from source):\nPython version:\nCUDA/cuDNN version:\nGPU models and configuration:\nAny other relevant information:\n\nAdditional context",
+            "closedAt": "2019-08-16T00:29:55Z",
+            "createdAt": "2019-08-15T07:12:09Z",
+            "id": "MDU6SXNzdWU0ODEwMjUwNTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "oncall: quantization"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24394,
+            "state": "CLOSED",
+            "title": "Add_observer does work properly for FloatFunctional module",
+            "updatedAt": "2019-08-16T00:29:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24394"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nI have converted the ONNX models to Caffe2 models using convert-onnx-to-caffe2 and I got predict_net.pb and init_net.pb. However, when I try to convert the Caffe2 models back to ONNX models, I got the following error message:\nTraceback (most recent call last):\n  File \"/home/memo/.cache/bazel/_bazel_memo/74d5227f86e9c48dd23510319ac3d793/external/org_pocoo_werkzeug/werkzeug/serving.py\", line 205, in run_wsgi\n    execute(self.server.app)\n  File \"/home/memo/.cache/bazel/_bazel_memo/74d5227f86e9c48dd23510319ac3d793/external/org_pocoo_werkzeug/werkzeug/serving.py\", line 193, in execute\n    application_iter = app(environ, start_response)\n  File \"/media/memo/Mess/tensorboardplugins-master/tensorboard/backend/application.py\", line 349, in __call__\n    return self.data_applications[clean_path](environ, start_response)\n  File \"/home/memo/.cache/bazel/_bazel_memo/74d5227f86e9c48dd23510319ac3d793/external/org_pocoo_werkzeug/werkzeug/wrappers.py\", line 291, in application\n    return f(*args[:-2] + (request,))(*args[-2:])\n  File \"/media/memo/Mess/tensorboardplugins-master/tensorboard/plugins/convert/convert_plugin.py\", line 159, in convert_model\n    value_info=value_info)\n  File \"/home/memo/.local/lib/python3.6/site-packages/caffe2/python/onnx/frontend.py\", line 350, in caffe2_net_to_onnx_model\n    model = make_model(cls.caffe2_net_to_onnx_graph(*args, **kwargs),\n  File \"/home/memo/.local/lib/python3.6/site-packages/caffe2/python/onnx/frontend.py\", line 195, in caffe2_net_to_onnx_graph\n    cls._ssa_rewrite(predict_net, init_net, value_info)\n  File \"/home/memo/.local/lib/python3.6/site-packages/caffe2/python/onnx/frontend.py\", line 320, in _ssa_rewrite\n    assert re.match('GivenTensor.*Fill', op.type), \"type is {}, \\n{}\".format(op.type, op)\nAssertionError: type is ExpandDims, \ninput: \"497\"\noutput: \"499\"\nname: \"\"\ntype: \"ExpandDims\"\narg {\n  name: \"dims\"\n  ints: 0\n}\n\nThen I replaced the Caffe2 models to the models of https://github.com/caffe2/models and that works fine.\nI transformed the .pb to .pbtxt and compared them, then I found that the models in https://github.com/caffe2/models don't have the \"ExpandDims\" operator. In addition to resnet50, other models have the same error.\nSo what should I do to solve this problem?\nTo Reproduce\nSteps to reproduce the behavior:\n\nconvert the ONNX models to Caffe2 models using convert-onnx-to-caffe2\nconvert the Caffe2 models back to ONNX models using convert-caffe2-to-onnx or the code as follows:\n\nsource_path_pre = '/home/memo/PycharmProjects/ONNX/resnet50_pre.pb'\nsource_path_init = '/home/memo/PycharmProjects/ONNX/resnet50_init.pb'\ndestination_path = '/home/memo/PycharmProjects/ONNX/resnet50.onnx'\n\ndata_type = onnx.TensorProto.FLOAT\ndata_shape = (1, 3, 224, 224)\nvalue_info = {\n    'data': (data_type, data_shape)\n}\n\npredict_net = caffe2_pb2.NetDef()\nwith open(source_path_pre, \"rb\") as predict_stream:\n    predict_net.ParseFromString(predict_stream.read())\nif predict_net.name == '':\n\tpredict_net.name = 'modelName'\n\ninit_net = caffe2_pb2.NetDef()\nwith open(source_path_init, \"rb\") as init_stream:\n\tinit_net.ParseFromString(init_stream.read())\n\n\nonnx_model = c2_onnx.caffe2_net_to_onnx_model(predict_net=predict_net,\n                                              init_net=init_net,\n                                              value_info=value_info)\nwith open(destination_path, 'wb') as f:\n\tf.write(onnx_model.SerializeToString())\nnote: I followed the code in the instructions on https://github.com/onnx/tutorials/blob/master/tutorials/Caffe2OnnxExport.ipynb.\nExpected behavior\nConvert Caffe2 back to ONNX successfully\nEnvironment\nPyTorch version: 1.2.0\nIs debug build: No\nCUDA used to build PyTorch: 10.0.130\n\nOS: Deepin 15.11\nGCC version: (Debian 4.8.5-4) 4.8.5\nCMake version: version 3.11.2\n\nPython version: 3.6\nIs CUDA available: No\nCUDA runtime version: 8.0.61\nGPU models and configuration: GPU 0: GeForce GTX 970M\nNvidia driver version: 390.67\ncuDNN version: Could not collect\n\nVersions of relevant libraries:\n[pip3] numpy==1.16.2\n[pip3] torch==1.2.0\n[conda] torch                     1.1.0                     <pip>",
+            "closedAt": "2021-12-23T00:08:53Z",
+            "createdAt": "2019-08-15T06:33:32Z",
+            "id": "MDU6SXNzdWU0ODEwMTQwMTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: onnx"
+                },
+                {
+                  "name": "caffe2"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24392,
+            "state": "CLOSED",
+            "title": "Convert Caffe2 to ONNX error: AssertionError: type is \"ExpandDims\"",
+            "updatedAt": "2021-12-23T00:08:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24392"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nthe outputs for torch.nn.DataParallel is different from single GPU.\nTo Reproduce\nimport numpy as np\nimport torch\nfrom torch import nn\nimport torch.nn.init as init\n\ndef init_weights(modules):\n    for m in modules:\n        if isinstance(m, nn.Conv2d):\n            init.xavier_uniform_(m.weight.data)\n            if m.bias is not None:\n                m.bias.data.zero_()\n        elif isinstance(m, nn.BatchNorm2d):\n            m.weight.data.fill_(1)\n            m.bias.data.zero_()\n        elif isinstance(m, nn.Linear):\n            m.weight.data.normal_(0, 0.01)\n            m.bias.data.zero_()\n\n\nclass double_conv(nn.Module):\n    def __init__(self, in_ch, mid_ch, out_ch):\n        super(double_conv, self).__init__()\n        self.conv = nn.Sequential(\n            nn.Conv2d(in_ch, mid_ch, kernel_size=1),\n            nn.BatchNorm2d(mid_ch),\n            nn.ReLU(inplace=True),\n            nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1),\n            nn.BatchNorm2d(out_ch),\n            nn.ReLU(inplace=True)\n        )\n\n    def forward(self, x):\n        x = self.conv(x)\n        return x\n\ndef model():\n    return double_conv(3,4,4)\n\nif __name__ == '__main__':\n    model1 = model()\n    model2 = model()\n    model3 = model()\n    init_weights(model1.conv)\n    model2.load_state_dict(model1.state_dict())\n    model3.load_state_dict(model1.state_dict())\n    dummy = torch.tensor(np.random.uniform(size=(2,3,64,64)).astype(np.float32))\n\n    model1 = model1.to(0)\n    model2 = model2.to(1)\n    model3 = model3.to(1)\n    model3 = torch.nn.DataParallel(model3, device_ids=[1,2])\n    # model3 = torch.nn.DataParallel(model3, device_ids=[0,1])\n\n    out1 = model1(dummy.cuda(0))\n    out2 = model2(dummy.cuda(1))\n    out3 = model3(dummy.cuda(1))\n\n    diff1 = torch.abs(out1.cpu() - out2.cpu()).max()\n    diff2 = torch.abs(out1.cpu() - out3.cpu()).max()\n    print(diff1, diff2)\n\nSteps to reproduce the behavior:\n\npython to run\nthe diff 1 is zero , while diff2 is not\n\nEnvironment\nCollecting environment information...\nPyTorch version: 1.2.0\nIs debug build: No\nCUDA used to build PyTorch: 10.0.130\nOS: Ubuntu 18.04.2 LTS\nGCC version: (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0\nCMake version: Could not collect\nPython version: 3.6\nIs CUDA available: Yes\nCUDA runtime version: Could not collect\nGPU models and configuration:\nGPU 0: GeForce RTX 2080 Ti\nGPU 1: GeForce RTX 2080 Ti\nGPU 2: GeForce RTX 2080 Ti\nGPU 3: GeForce RTX 2080 Ti\nGPU 4: GeForce RTX 2080 Ti\nGPU 5: GeForce RTX 2080 Ti\nGPU 6: GeForce RTX 2080 Ti\nGPU 7: GeForce RTX 2080 Ti\nGPU 8: GeForce RTX 2080 Ti\nGPU 9: GeForce RTX 2080 Ti\nNvidia driver version: 418.39\ncuDNN version: Could not collect\nVersions of relevant libraries:\n[pip3] numpy==1.17.0\n[pip3] torch==1.2.0\n[pip3] torchvision==0.4.0\n[conda] Could not collect\nAdditional context",
+            "closedAt": "2019-08-15T20:04:31Z",
+            "createdAt": "2019-08-15T05:02:53Z",
+            "id": "MDU6SXNzdWU0ODA5OTU0NDM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: data parallel"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24391,
+            "state": "CLOSED",
+            "title": "torch.nn.DataParallel result differs from single GPU",
+            "updatedAt": "2019-08-15T20:04:31Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24391"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "A sufficient workaround is CMAKE_GENERATOR=Ninja and we'll be using this to work around the problem in the caffe2 build (which historically used the Visual Studio generator). However this VS generator really ought to work. This bug is to not forget to look into it.\ncc @peterjc123",
+            "closedAt": "2023-04-20T06:47:45Z",
+            "createdAt": "2019-08-15T03:36:27Z",
+            "id": "MDU6SXNzdWU0ODA5Nzk2NTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: windows"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24386,
+            "state": "CLOSED",
+            "title": "Windows build does not work with Visual Studio generator with recent Windows AMI",
+            "updatedAt": "2023-04-20T06:47:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24386"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems that the LibTorch download links on the PyTorch website are wrong for both Linux and Mac. When selecting Stable(1.2) the provided link points to nightly builds; specifically nightly latest, which will currently download a 1.3 dev build.\nExample download configuration:\n\nContents of build-version file:\n1.3.0.dev20190814+cpu\ncc @ezyang @gchanan",
+            "closedAt": "2019-08-20T21:05:11Z",
+            "createdAt": "2019-08-15T02:05:22Z",
+            "id": "MDU6SXNzdWU0ODA5NjIyMzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "module: docs"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24382,
+            "state": "CLOSED",
+            "title": "Incorrect LibTorch download links on pytorch.org",
+            "updatedAt": "2019-08-20T21:05:11Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24382"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I had an issue installing from source. I tried to install pytorch from source on both Windows and Ubuntu. The same issue appears in both tries. The issue is as follows:\nninja: build stopped: subcommand failed.\nTraceback (most recent call last):\nFile \"setup.py\", line 756, in \nbuild_deps()\nFile \"setup.py\", line 321, in build_deps\ncmake=cmake)\nFile \"C:\\Users\\Ganzorig\\pytorch\\tools\\build_pytorch_libs.py\", line 63, in build_caffe2\ncmake.build(my_env)\nFile \"C:\\Users\\Ganzorig\\pytorch\\tools\\setup_helpers\\cmake.py\", line 330, in build\nself.run(build_args, my_env)\nFile \"C:\\Users\\Ganzorig\\pytorch\\tools\\setup_helpers\\cmake.py\", line 143, in run\ncheck_call(command, cwd=self.build_dir, env=env)\nFile \"C:\\Users\\Ganzorig\\Anaconda3\\envs\\code\\lib\\subprocess.py\", line 291, in check_call\nraise CalledProcessError(retcode, cmd)\nsubprocess.CalledProcessError: Command '['cmake', '--build', '.', '--target', 'install', '--config', 'Release', '--', '-j', '8']' returned non-zero exit status 1.\nThanks in advance.",
+            "closedAt": "2019-08-21T15:11:16Z",
+            "createdAt": "2019-08-15T00:38:35Z",
+            "id": "MDU6SXNzdWU0ODA5NDYzOTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: build"
+                },
+                {
+                  "name": "module: windows"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24380,
+            "state": "CLOSED",
+            "title": "Issue on installation from source",
+            "updatedAt": "2019-08-21T15:11:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24380"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nTo Reproduce\nThis code:\n\nimport time\nimport torch\nimport numpy as np\n\ndata = [np.random.rand(8, 800, 1333) > 0.5 for _ in range(2)]\ndtype_np = np.bool\ndtype_pt = torch.bool\n\ndef f1():\n    return np.asarray(data, dtype=dtype_np)\n\ndef f2():\n    return np.stack(data)\n\ndef f3():\n    return torch.as_tensor(data, dtype=dtype_pt)\n\ndef f4():\n    return torch.stack([torch.from_numpy(x) for x in data])\n\ndef benchmark(f, iter, warmup):\n    for k in range(warmup): f()\n    start = time.perf_counter()\n    for k in range(iter): f()\n    torch.cuda.synchronize()\n    return time.perf_counter() - start\n\nprint(benchmark(f1, 10, 1))\nprint(benchmark(f2, 10, 1))\nprint(benchmark(f3, 10, 1))\nprint(benchmark(f4, 10, 1))\n\nprints\n0.2839105408638716\n0.013459203764796257\n20.43221192806959\n0.012655530124902725\n\nI don't expect torch.as_tensor to be 100x slower than np.asarray().\nEnvironment\nPyTorch version: 1.2.0.dev20190805\nIs debug build: No\nCUDA used to build PyTorch: 10.0.130\n\nOS: Ubuntu 18.04.2 LTS\nGCC version: (Ubuntu 7.4.0-1ubuntu1~18.04) 7.4.0\nCMake version: version 3.12.2\n\nPython version: 3.6\nIs CUDA available: Yes\nCUDA runtime version: 10.0.130\nGPU models and configuration: \nGPU 0: Quadro GP100\nGPU 1: Quadro GP100\n\nNvidia driver version: 410.79\ncuDNN version: Could not collect\n\nVersions of relevant libraries:\n[pip3] msgpack-numpy==0.4.4.3\n[pip3] numpy==1.16.4\n[pip3] numpydoc==0.7.0\n[pip3] torch-nightly==1.2.0.dev20190805\n[pip3] torchvision==0.4.0a0+6c7189f\n[conda] blas                      1.0                         mkl  \n[conda] mkl                       2019.1                      144  \n[conda] mkl-include               2019.1                      144  \n[conda] mkl-service               1.1.2            py36he904b0f_5  \n[conda] mkl_fft                   1.0.6            py36hd81dba3_0  \n[conda] mkl_random                1.0.2            py36hd81dba3_0",
+            "closedAt": "2019-08-15T16:58:43Z",
+            "createdAt": "2019-08-14T22:55:59Z",
+            "id": "MDU6SXNzdWU0ODA5MjM5MjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 24373,
+            "state": "CLOSED",
+            "title": "torch.as_tensor is very slow",
+            "updatedAt": "2019-08-15T16:58:43Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24373"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🚀 Feature\n\ncurrently the hierarchy looks like\ntorch.nn.modules.module.Module\nthis seems a bit weird, is it possible to make this look simpler,\nfor example, just\ntorch.nn.modules\nor\ntorch.nn.module\nanother example of such hierarchy\ntorch.nn.modules.activation.torch\ntorch inside torch?\nis it possible to make this hierarchy a bit more minimalist, so same names are not repeated multiple times, and even similar names do not appear multiple times within the hierarchy, so modules then module then Module, would become just modules, or just module, and so on?\nMotivation\n\nPitch\n\nAlternatives\n\nAdditional context",
+            "closedAt": "2019-08-15T20:13:15Z",
+            "createdAt": "2019-08-14T22:44:34Z",
+            "id": "MDU6SXNzdWU0ODA5MjA5MzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "needs reproduction"
+                },
+                {
+                  "name": "module: nn"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24372,
+            "state": "CLOSED",
+            "title": "regarding hierarchy",
+            "updatedAt": "2019-08-15T20:37:10Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24372"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug Cannot compile constant submodule with new API\nCompiling an nn.Module with a constant submodule attribute gives an error.\nTo Reproduce\nclass Mod(nn.Module):\n    __constants__ = ['downsample']\n\n    def __init__(self, downsample=None):\n        super(Mod, self).__init__()\n        self.downsample = nn.Sequential(downsample)\n\n    def forward(self, input):\n        if self.downsample is not None:\n            return self.downsample(forward)\n        return input\n\ntorch.jit.script(Mod(nn.Linear(10, 20)))\n\nGives:\n\nRuntimeError: attempting to re-assign constant 'downsample' in ScriptModule when i try to add it to constant\n\nExpected behavior\nCompiles without error.",
+            "closedAt": "2019-08-21T21:31:27Z",
+            "createdAt": "2019-08-14T22:15:25Z",
+            "id": "MDU6SXNzdWU0ODA5MTI4MzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "oncall: jit"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24369,
+            "state": "CLOSED",
+            "title": "[JIT] Cannot compile constant submodule with new API",
+            "updatedAt": "2019-08-21T21:31:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24369"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Current quantization conversion workflow does not support sequential modules well. We have a work around (#23753) but this is hard to maintain and debug. A simpler solution is to remove sequential modules in https://github.com/pytorch/pytorch/blob/master/torch/nn/_intrinsic/modules/fused.py. Specifically, replace:\nnn._intrinsic.ConvReLU2d with a single module that inherits from Conv2d\nnn._intrinsic.LinearReLU with a single module that inherits from Linear\nRemove nn._intrinsic.ConvBn and nn._intrinsic.ConvBnRelu.\nInstead have torch.quantization.fuse_module (\n  \n    \n      pytorch/torch/quantization/fuse_modules.py\n    \n    \n         Line 87\n      in\n      e94ba74\n    \n  \n  \n    \n\n        \n          \n           def fuse_modules(model, modules_to_fuse): \n        \n    \n  \n\n) do the following:\nfuse_module(['conv', 'bn']) => replaces bn with identity and returns a conv module with updated weights for eval.\nfuse_module(['conv', 'bn']) => replaces bn with identity and returns a qat.convbn module with updated weights for training.\nfuse_module(['conv', 'bn', 'relu']) => replaces bn and relu with identity and returns a convReLU2d module with updated weights for eval.\nfuse_module(['conv', 'bn', 'relu']) => replaces bn and relu with identity and returns a qat.convbnRelu module with updated weights for training.\nA side benefit of this approach is that module swaps are now done by fusion, so that prepare_qat will not need to do any module swaps, only insert fake-quants.\ncc @pytorch/quantization",
+            "closedAt": "2019-10-14T21:30:35Z",
+            "createdAt": "2019-08-14T19:59:33Z",
+            "id": "MDU6SXNzdWU0ODA4NjE3NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "oncall: quantization"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "quantization_release_1.3"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24359,
+            "state": "CLOSED",
+            "title": "Remove sequential modules for nn._intrinsic",
+            "updatedAt": "2019-10-14T21:30:35Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24359"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "https://people.freebsd.org/~yuri/py-pytorch-error.log",
+            "closedAt": "2019-08-15T17:39:39Z",
+            "createdAt": "2019-08-14T18:24:35Z",
+            "id": "MDU6SXNzdWU0ODA4MjI1MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: build"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 24346,
+            "state": "CLOSED",
+            "title": "Build fails on FreeBSD with the unclear cause, see the attached log",
+            "updatedAt": "2022-10-04T07:48:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24346"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nI was using cdist in pytorch 1.1.0, the backward pass worked perfectly. Now with the new version that supports batching (1.2.0) It shows a CUDA out of memory error !\nIt tried to allocate hundreds of GiB of memory, depending the size of the vector. For me It was cdist(emb, emb), with emb of size (196,16000).\n\nEnvironment\n\nPyTorch Version (e.g., 1.0): 1.2.0\nOS (e.g., Linux): Arch Linux\nHow you installed PyTorch (conda, pip, source): conda\nBuild command you used (if compiling from source):\nPython version: 3.7\nCUDA/cuDNN version: 10\nGPU models and configuration: Titan Xp\nAny other relevant information:\n\ncc @ngimel",
+            "closedAt": "2020-10-15T20:55:37Z",
+            "createdAt": "2019-08-14T18:13:13Z",
+            "id": "MDU6SXNzdWU0ODA4MTcwNjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: cuda"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: distance functions"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24345,
+            "state": "CLOSED",
+            "title": "cdist allocates a huge amount of memory in the bachward pass (pytorch 1.2.0)",
+            "updatedAt": "2020-12-25T15:36:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24345"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🚀 Feature\nWe discussed on 8/15/2019 that Domain APIs (torchaudio, torchtext, torchvision) should standardize and unify their CIs around PyTorch's. Opening topic to have a centralized discussion about this :)\nMotivation\n\nCover platforms requested by users (CPU/GPU and Linux/Mac/Windows)\nGenerate nightly binaries, and simplified release binaries\nExtend binary testing\nRun periodic exhaustive testing\nLeverage examples and tutorials for testing\nAutomated benchmarking\nIntegrate more smoothly with FB code\n\nAlternatives\n\n\nThe status quo: fragmented effort. What is the status for\n\ntorchvision? related PRs @fmassa\ntorchtext? related PRs @zhangguanheng66\ntorchaudio? related PRs @cpuhrsch @jamarshon\n\n\n\nIntegrate the domain APIs (or together outside) within PyTorch, so that all the developments tools for PyTorch are automatically available to Domain APIs (as done for torch.nn).\n\n\nMove such utilities outside of PyTorch, and import into each repository so that all the developments tools are available equally for each of PyTorch and Domain APIs.\n\n\nAdditional context\n@peterjc123 -- for Windows-related topics\n@ezyang -- We discussed that Circle replaces Travis, and is the one being currently for PyTorch due to the following support table. Please feel free to update it.\n\n\n\n\nLinux\nWindows\nMac\n\n\n\n\nCPU\nCircle, Azure\nCircle, Azure\nCircle, Azure\n\n\nGPU\nCircle\nJenkins (Circle might later)\n--\n\n\nBinaries\nCircle, Azure\nAzure (might be replaced by GitHub action)\nCircle, Azure\n\n\n\nThe only option currently for windows server appears to be Azure.\n#24859 -- for binaries discussion\n#24915 -- for dataset standardization\ncc @ezyang",
+            "closedAt": "2024-01-23T19:50:22Z",
+            "createdAt": "2019-08-14T18:12:13Z",
+            "id": "MDU6SXNzdWU0ODA4MTY2NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: binaries"
+                },
+                {
+                  "name": "module: build"
+                },
+                {
+                  "name": "module: ci"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24344,
+            "state": "CLOSED",
+            "title": "CI Standardization for Domain APIs",
+            "updatedAt": "2024-01-23T19:50:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24344"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Bug\nimport torch\nx = torch.tensor([1, 2, 3])\ny = torch.tensor([5, 6, 3])\ny in x  # True\n\nExpected behavior\nThis particular case should be False.  Related: #17733 #24156\nThe incorrect semantics was introduced in PyTorch 1.2 (May), but no one else has complained about it yet in the three months since.\nEnvironment\npytorch master.\ncc @mruberry @rgommers @heitorschueroff",
+            "closedAt": "2025-10-17T17:51:17Z",
+            "createdAt": "2019-08-14T16:59:03Z",
+            "id": "MDU6SXNzdWU0ODA3ODcxMTA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: numpy"
+                },
+                {
+                  "name": "module: ux"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24338,
+            "state": "CLOSED",
+            "title": "Consider changing the behavior of Tensor.__contains__(Tensor) to make more sense",
+            "updatedAt": "2025-10-17T17:51:17Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24338"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxOS0wOC0xNFQxNjo1OTowM1rOHKg6pg==",
+          "hasNextPage": true
+        },
+        "totalCount": 44684
+      }
+    }
+  }
+}

@@ -1,0 +1,1946 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm trying to fit a simple model to some data. The data are binary outcomes clearly being driven by a sigmoidal function, I want to find the parameters for the shape of that function (i.e., center and slope). The data look like this:\n\nHere is my code:\nimport numpy as np\nimport pandas as pd\nimport pymc3 as pm\nimport theano.tensor as T\nimport matplotlib.pyplot as plt\n\n\ndef normcdf(x):\n\n    return (1 + T.erf(x / T.sqrt(2))) / 2\n\n\nwith pm.Model() as model:\n\n    data = pd.read_csv('sample_data.csv')\n    a = pm.Normal(name='a', mu=0, sd=10)\n    b = pm.Normal(name='b', mu=0, sd=10)\n    x = (np.asarray(data.delta) - a) / T.exp(b)\n    p = normcdf(x)\n    X = pm.Bernoulli(name='X', p=p, observed=np.asarray(data.response))\n    trace = pm.sample(2000, njobs=3)\n    pm.traceplot(trace)\n    plt.savefig('traceplot.png')\nThe sampler seems to finish suspiciously quickly, and invariably produces nonsense, like this:",
+            "closedAt": "2018-12-22T12:19:19Z",
+            "createdAt": "2016-06-15T22:12:59Z",
+            "id": "MDU6SXNzdWUxNjA1MzYyMDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1190,
+            "state": "CLOSED",
+            "title": "Strange behavior with a Bernoulli/sigmoid model",
+            "updatedAt": "2018-12-22T12:19:19Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1190"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Calculating the covariance matrix on trace vectors triggers a NumPy deprecation warning. (NumPy 1.11.0)\nVisibleDeprecationWarning: using a non-integer number instead of an integer \nwill result in an error in the future \nreturn x.reshape((x.shape[0], np.prod(x.shape[1:])))\n\nThis is because the reshaping operation in pymc3\\tuning\\scaling.py uses a non-integer value in the new-shape argument.\nConsidering a vector of trace variable x, x.shape[1:] returns an empty array. And np.prod([]) returns 1.0.\nQuestion:\nUnder what circumstances do you end up with a trace variable that is not a vector?\ndef trace_cov(trace, vars=None):\n    \"\"\"\n    Calculate the flattened covariance matrix using a sample trace\n    Useful if you want to base your covariance matrix for further sampling on some initial samples.\n    Parameters\n    ----------\n    trace : Trace\n    vars : list\n        variables for which to calculate covariance matrix\n    Returns\n    -------\n    r : array (n,n)\n        covariance matrix\n    \"\"\"\n\n    if vars is None:\n        vars = trace.samples.keys\n\n    def flat_t(var):\n        x = trace[str(var)]\n        return x.reshape((x.shape[0], np.prod(x.shape[1:])))\n\n    return np.cov(np.concatenate(list(map(flat_t, vars)), 1).T)",
+            "closedAt": "2016-06-20T09:41:18Z",
+            "createdAt": "2016-06-15T09:04:04Z",
+            "id": "MDU6SXNzdWUxNjAzNzI0NDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1184,
+            "state": "CLOSED",
+            "title": "trace_cov() triggers NumPy deprecation warning",
+            "updatedAt": "2016-06-20T09:41:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1184"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Apologies if this isn't the right place for such a question but it seems like this is the de facto support forum for pymc3.\nI'm trying to implement a mixed-effects model in pymc3, and I thought the easiest way to do that would be to mimic the structure of the data in the arrays that I'm using. With N features, 2 conditions, and 2 replicates, I build a model of observed_data as a N * 2 * 2 array, where each axis reflects a different source of variation.\nThe replicate noise can vary by feature but shouldn't vary by condition or replicate, so I define the hyperprior as a length-N array and then broadcast it to the correct shape with [:, None, None]\nAll of this works in pymc but it seems like the transition to Theano doesn't allow advanced indexing so easily. I get complaints about being unable to broadcast to the correct shape.\nMaybe I'm just not going about this correctly--any advice there is welcome. But it seems like this is a current limitation in how Theano can interpret models. If there's some relatively straightforward way to fix this I can try to contribute, I'm very interested in getting pymc3 working for my application.",
+            "closedAt": "2016-06-11T14:16:51Z",
+            "createdAt": "2016-06-10T19:51:10Z",
+            "id": "MDU6SXNzdWUxNTk3MDk1Mzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1176,
+            "state": "CLOSED",
+            "title": "Issues/confusion using multidimensional arrays in a model",
+            "updatedAt": "2016-06-11T14:16:51Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1176"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Imagine if you wanted to fit the following model:\nimport numpy as np\nimport pymc3 as pm\ndef fit(data):\n    model = pm.Model()\n\n    with model:        \n        pm.Normal('x',mu=pm.Normal('mu',0,1), sd=pm.Exponential('sd',1),\n                               observed=data)\n\n    with model:\n        mu, sds, elbo = pm.variational.advi(n=10000)\n        step = pm.NUTS(scaling=model.dict_to_array(sds), is_cov=True)\n        trace = pm.sample(500, step, start=mu)       \n\nx = np.random.normal(size=100) * 1.2 + 0.5\nfit(x)\n\nHow can I efficiently fit this model to multiple series in parallel? e.g.\nwith Pool() as pool:\n  pool.map(fit,xs)\n\nIt seems the model needs to recompile on every thread and perfromance sucks (due to theano locking? I get lots of warnings) is there a way to avoid this?\nThanks in advance",
+            "closedAt": "2016-06-23T20:42:17Z",
+            "createdAt": "2016-06-10T14:36:23Z",
+            "id": "MDU6SXNzdWUxNTk2NDkzODY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1174,
+            "state": "CLOSED",
+            "title": "Parallelisation strategy, avoid recompiling?",
+            "updatedAt": "2016-06-23T20:50:34Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1174"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "ADVI presents auto-transformed estimates to users but does not report determinstics (including bounded  random variables on their original scale). This will be confusing to users (see #1170), and the determinsitic quantities are often of primary interest.\nOnce the refactoring of transformed variable names is complete (#1168) it may make this easier to do.",
+            "closedAt": "2016-09-28T07:33:40Z",
+            "createdAt": "2016-06-09T14:40:29Z",
+            "id": "MDU6SXNzdWUxNTk0MjUwMTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1172,
+            "state": "CLOSED",
+            "title": "ADVI should report estimates for deterministics and hide transformed RVs",
+            "updatedAt": "2016-09-28T07:33:40Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1172"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey @twiecki do you have any idea why this isn't in the docs - I thought it was a good example.",
+            "closedAt": "2016-07-08T07:34:31Z",
+            "createdAt": "2016-06-09T12:02:38Z",
+            "id": "MDU6SXNzdWUxNTkzOTEzMjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1171,
+            "state": "CLOSED",
+            "title": "Bayesian Logistic Regression",
+            "updatedAt": "2017-03-21T09:07:29Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1171"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm trying to sample from a complex hierarchical model with lots of variables. I'm thinking of applying ADVI to sample from the posterior because the model has potentially many variables. One of the variables has a bounded prior. In the process of learning how to write user-defined bounded distributions, I did some tests with simple distributions and, unless I'm doing something wrong, it looks that ADVI is not able to properly sample from bounded distributions. Here is the code I'm using:\nwith pm.Model() as model:\n    boundedNormal = pm.Bound(pm.Normal, upper=1.0)\n    th = boundedNormal('th', mu=0.0, sd=1.0)\n    v_params = pm.variational.advi(n=50000)\n    traceADVI = pm.variational.sample_vp(v_params, draws=5000)\n\nwith pm.Model() as model:\n    boundedNormal = pm.Bound(pm.Normal, upper=1.0)\n    th = boundedNormal('th', mu=0.0, sd=1.0)\n    traceNUTS = pm.sample(2000, pm.NUTS())\n\npm.traceplot(traceADVI)\npm.traceplot(traceNUTS)\n\nThe samples from the NUTS alg are shown in the following\n\nwhile those of ADVI are shown in the following:",
+            "closedAt": "2016-07-08T07:27:28Z",
+            "createdAt": "2016-06-09T09:04:09Z",
+            "id": "MDU6SXNzdWUxNTkzNTk3MTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1170,
+            "state": "CLOSED",
+            "title": "ADVI not properly sampling from Bounded distributions",
+            "updatedAt": "2016-07-08T07:27:28Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1170"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Does PyMC3 support directed and undirected edges within graphical models?\n(I've searched for the answer to this in the docs and source.)",
+            "closedAt": "2016-07-08T07:27:52Z",
+            "createdAt": "2016-06-09T01:36:47Z",
+            "id": "MDU6SXNzdWUxNTkzMTIyNjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1169,
+            "state": "CLOSED",
+            "title": "Markov and Bayesian networks",
+            "updatedAt": "2016-07-08T07:27:52Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1169"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "To revisit the issue of hiding variables generated by a particular sampling algorithm from the user, a better approach might be to modify the naming convention of the transformed variables, following the convention adopted by Scikit-learn -- appending an underscore to the name of the variable. This way, such variables would be automatically recognizable as quantities generated by the model or sampler, and would make it easy to filter them out without introspection, etc.\nSo, I'm proposing we change foo_log to foo_log_, for example.",
+            "closedAt": "2016-07-05T07:10:25Z",
+            "createdAt": "2016-06-08T18:55:35Z",
+            "id": "MDU6SXNzdWUxNTkyNDQ1MzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1168,
+            "state": "CLOSED",
+            "title": "Change naming convention of transformed variables",
+            "updatedAt": "2016-07-05T07:10:25Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1168"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is anyone interested in using pymc3 for a kaggle competition? It's a really good way to showcase the abilities of the library. The devs of the keras library did the same thing with keras. There's a good competition up on kaggle right now. Grupo Bimbo Inventory Demand",
+            "closedAt": "2016-09-05T19:27:38Z",
+            "createdAt": "2016-06-08T18:10:09Z",
+            "id": "MDU6SXNzdWUxNTkyMzUxMTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1167,
+            "state": "CLOSED",
+            "title": "Using pymc3 for Kaggle",
+            "updatedAt": "2017-02-15T12:14:49Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1167"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am currently preparing a manuscript for an article to be published in a scientific journal and want to refer to the pymc3 package properly. I know it is not officially released yet.\nWhat do you guys suggest how I cite it properly?\nSuch a statement in the DOCS or in the github repository would be good to have.",
+            "closedAt": "2016-06-08T06:01:12Z",
+            "createdAt": "2016-06-08T06:00:03Z",
+            "id": "MDU6SXNzdWUxNTkwODU1MDA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1165,
+            "state": "CLOSED",
+            "title": "Referencing the package? missing in DOCS",
+            "updatedAt": "2016-06-08T06:01:12Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1165"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "As requested in #1162 we should offer more guidance in the documentation regarding when to present data as Theano shared objects.\nSome packages have actual Data objects (e.g. edward) that ensure data are in the correct form for the model to use. We could do something similar in PyMC3 if we want to avoid using Theano objects directly. This point may be confusing for many users.",
+            "closedAt": "2018-01-13T13:49:50Z",
+            "createdAt": "2016-06-07T19:13:29Z",
+            "id": "MDU6SXNzdWUxNTkwMDE1Njc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "docs"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1164,
+            "state": "CLOSED",
+            "title": "DOCS: Provide guidance on the use of shared variables",
+            "updatedAt": "2018-01-13T13:49:50Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1164"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear PyMC developers,\nI am trying to develop simple mixed effect model using pymc (see the code below). I have tried NUTS, ADVI, Metropolis for inference. Aside from variations in speed for this  model (Time : AVDI ~= Metrolopis << NUTS ), the results are significantly different. To be more specific, I am interested to estimate $h^2$ which is basically proportion of variance explained by the random effect.\nThis is the code:\nimport numpy as np, pymc3 as pm, theano.tensor as T\n\n\nmixedEffect_model = pm.Model()\n\nwith pm.Model() as mixedEffect_model:\n    ### hyperpriors\n    tau = pm.Gamma('tau', 1.e-3, 1.e-3)\n    sigma2 = 1.0/tau\n    h2 = pm.Uniform('h2')\n    beta_0 = pm.Uniform('beta_0', lower=-1000, upper=1000)   # a replacement for improper prior\n    w = pm.Uniform('w', lower=-1000, upper=1000, shape=(M,1))   # a replacement for improper prior\n\n    z = pm.Normal('z', mu=0, sd= (h2*sigma2)**0.5 , shape=(N,1))\n    g = T.dot(L,z)\n\n    y = pm.Normal('y', mu = beta_0+g + T.dot(X,w), sd= ((1-h2)*sigma2)**0.5 , shape=(N,1) , observed=y )\n\n\nADVI:\nwith mixedEffect_model:\n    v_params = pm.variational.advi(n=5000)\n\nwith mixedEffect_model:\n    trace = pm.variational.sample_vp(v_params, draws=5000)\n\n_ = hist(trace['h2'],100)\n\n\nMetropolis:\nwith mixedEffect_model:\n    start = pm.find_MAP()\n    step = pm.Metropolis()\n    trace = pm.sample(5000, step, start=start)\n\n_ = hist(trace['h2'],100)\n\n\nNUTS (slow):\nwith mixedEffect_model:\n    start = pm.find_MAP()\n    step = pm.NUTS()\n    trace = pm.sample(5000, step, start=start)\n\n_ = hist(trace['h2'],100)    \n\n\nGiven that w and beta_0 are treated as parameter with (approximately) improper prior, I expect the results to be very close to maximum likelihood estimation.  Using maximum likelihood estimation (more specifically Restricted maximum Likelihood estimation), I expect values around 0.5 for $h^2$ with standard error of around 0.07. The results is very different. It is very different from ML and also very different across different inference engines. NUTS is closer to ML but given that the results are drastically different, I don't know how to explain it.\nAny idea?",
+            "closedAt": "2016-11-18T15:29:05Z",
+            "createdAt": "2016-06-07T04:55:46Z",
+            "id": "MDU6SXNzdWUxNTg4Mzg0MDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1163,
+            "state": "CLOSED",
+            "title": "ADVI, NUTS and Metropolis produce significantly different results",
+            "updatedAt": "2016-11-18T17:18:36Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1163"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nTrying out very simple model with many rows of data, and 10 factors.\n# Build model\nwith pm.Model() as speed_model:\n    intercept = pm.Normal('intercept', mu=0, sd=100.0)\n    beta = pm.Normal('beta', mu=0, sd=100.0, shape=x.shape[1])\n    eps = pm.Normal('eps', mu=0, sd=100.0)\n    eta = intercept + np.dot(beta, x.T)\n    model_like = pm.Normal('model_like', mu=eta, sd=eps, observed=y)\nThis is on a fairly fast i7 CPU with 16GB of RAM.\nThere are 300,000 rows of data in x.\nSo far, the code has been running for 3 hours, with the CPU pegged at 100% for the python3 process.\nI'm confused as to what pymc is doing, since I haven't asked for samples yet, but simply defined the model.\nThoughts?  Thanks!",
+            "closedAt": "2016-06-07T11:27:00Z",
+            "createdAt": "2016-06-06T07:01:36Z",
+            "id": "MDU6SXNzdWUxNTg2MTI0NjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1162,
+            "state": "CLOSED",
+            "title": "Code gets stuck when defining model",
+            "updatedAt": "2016-06-07T13:38:05Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1162"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear PyMC3 developers,\nThis is a great package. This is more like a question than an issue. I couldn't find PyMC3 usergroup and couldn't figure out the code are failing. Here is my question:\nI am trying to use pymc3 with ADVI inference engine. I have tried NUTS in pyStan but it too slow for my data. The model is very simple. It is a mixed effect model. When I try to use ADVI, I get strange error and cannot figure out what is wrong:\ncode:\nimport numpy as np, pymc3 as pm, theano.tensor as T\n\n# L is NxN numpy array\n# X is NxM numpy array (covariate)\n# y is Nx1\n# N is number of subject\n# M is number of covariates\n\nmixedEffect_model = pm.Model()\n\nwith pm.Model() as mixedEffect_model:\n    ### hyperpriors\n    tau = pm.Gamma('tau', 1.e-3, 1.e-3)\n    sigma2 = 1.0/tau\n    h2 = pm.Uniform('h2')\n    beta_0 = pm.Uniform('beta_0', lower=-100, upper=100)   # a replacement for improper prior\n    beta = pm.Uniform('beta_0', lower=-100, upper=100, shape=(M,1))   # a replacement for improper prior\n\n    # gaussian process\n    z = pm.Normal('z', mu=0, sd= (h2*sigma2)**0.5 , shape=(N,1))\n    g = T.dot(L,z)\n\n    y = pm.Normal('y', mu = beta_0+g + T.dot(X,beta), sd= ((1-h2)*sigma2)**0.5 , shape=(N,1) , observed=y )\n\n\noutput:\nApplied log-transform to tau and added transformed tau_log to model.\nApplied interval-transform to h2 and added transformed h2_interval to model.\nApplied interval-transform to beta_0 and added transformed beta_0_interval to model.\nApplied interval-transform to beta_0 and added transformed beta_0_interval to model.\n\ncode:\nwith mixedEffect_model:\n    v_params = pm.variational.advi(n=1000)\n#elbos = pm.variational.advi( \\\n#    model=mixedEffect_model, n=1000, learning_rate=1e-1)\n\noutput:\n---------------------------------------------------------------------------\nValueError                                Traceback (most recent call last)\n<ipython-input-62-b57950030c08> in <module>()\n      1 with mixedEffect_model:\n----> 2     pm.variational.advi(n=1000)\n      3 #elbos = pm.variational.advi( \\\n      4 #    model=mixedEffect_model, n=1000, learning_rate=1e-1)\n\n/home/batmanghelich/anaconda2/lib/python2.7/site-packages/pymc3/variational/advi.pyc in advi(vars, start, model, n, accurate_elbo, learning_rate, epsilon, random_seed, verbose)\n     87     uw = np.concatenate([u_start, w_start])\n     88 \n---> 89     result, elbos = run_adagrad(uw, grad, elbo, n, learning_rate=learning_rate, epsilon=epsilon, verbose=verbose)\n     90 \n     91     l = int(result.size / 2)\n\n/home/batmanghelich/anaconda2/lib/python2.7/site-packages/pymc3/variational/advi.pyc in run_adagrad(uw, grad, elbo, n, learning_rate, epsilon, verbose)\n    217     \"\"\"\n    218     shared_inarray = theano.shared(uw, 'uw_shared')\n--> 219     grad = CallableTensor(grad)(shared_inarray)\n    220     elbo = CallableTensor(elbo)(shared_inarray)\n    221 \n\n/home/batmanghelich/anaconda2/lib/python2.7/site-packages/pymc3/theanof.pyc in __call__(self, input)\n    211         input : TensorVariable\n    212         \"\"\"\n--> 213         oldinput, = inputvars(self.tensor)\n    214         return theano.clone(self.tensor, { oldinput : input }, strict=False)\n    215 \n\nValueError: too many values to unpack",
+            "closedAt": "2016-08-12T09:30:22Z",
+            "createdAt": "2016-06-05T23:29:10Z",
+            "id": "MDU6SXNzdWUxNTg1ODA5OTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1161,
+            "state": "CLOSED",
+            "title": "Better error message when variable names are used twice",
+            "updatedAt": "2016-08-12T09:30:22Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1161"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi all, I don't have time to port this example yet - https://github.com/fastforwardlabs/anomaly_detection/blob/master/Anomaly%20Detection%20Post.ipynb but it would be an easy example to port I think and a pretty cool application of Anomaly detection in Probabilistic Programming.",
+            "closedAt": "2016-07-08T07:30:06Z",
+            "createdAt": "2016-06-05T20:26:32Z",
+            "id": "MDU6SXNzdWUxNTg1NzI2Mjk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1159,
+            "state": "CLOSED",
+            "title": "To Port - Anomaly detection example",
+            "updatedAt": "2016-07-08T07:30:06Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1159"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I've been trying to implement a very simple logistic regression model, using a sparse design matrix of 0's and 1's (coming from one-hot encoded categorical data). I am seeing large spikes in memory usage.\nHere is a simple example demonstrating the problem (will briefly use 4GB of memory):\nfrom __future__ import division, print_function\n\nimport numpy as np\nimport pymc3 as pm\nfrom scipy import sparse as sp\nfrom scipy.optimize import fmin_l_bfgs_b\nfrom scipy.special import expit\nfrom theano import sparse as S\nnp.random.seed(0)\n\n# properties of sparse design matrix (taken from the real data)\nN = 100000  # number of samples\nM = 5000    # number of dimensions\nD = 0.002   # matrix density\n\n# fake data\nmu0, sd0 = 0.0, 1.0\nw = np.random.normal(mu0, sd0, M)\nX = sp.random(N, M, density=D, format='csr', data_rvs=np.ones)\ny = np.random.binomial(1, expit(X.dot(w)), N)\n\n# estimate memory usage\nsize = X.data.nbytes + X.indices.nbytes + X.indptr.nbytes + y.nbytes\nprint('{:.2f} MB of data'.format(size / 1024 ** 2))\n\n# model definition\nwith pm.Model() as model:\n    w = pm.Normal('w', mu0, sd=sd0, shape=M)\n\n    p = pm.sigmoid(S.dot(X, w.reshape((-1, 1)))).flatten()\n    pm.Bernoulli('y', p, observed=y)\n\n    print(pm.find_MAP(vars=[w], fmin=fmin_l_bfgs_b))\nThe sparse matrix occupies roughly 13MB. Incidentally, when it is converted into a dense matrix, it occupies 4GB which corresponds to the peaks in memory usage:\n\nI am aware the problem may well lie entirely in Theano, but I am not sure how to reproduce it outside the PyMC context. Hoping someone can point me in the right direction.",
+            "closedAt": "2016-06-06T23:57:45Z",
+            "createdAt": "2016-06-03T17:36:42Z",
+            "id": "MDU6SXNzdWUxNTg0MTY5OTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1157,
+            "state": "CLOSED",
+            "title": "Memory usage with sparse matrices",
+            "updatedAt": "2016-06-07T14:45:50Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1157"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Since we already have a function for this, it would be useful to report it with the parameter summaries.",
+            "closedAt": "2016-06-15T21:40:59Z",
+            "createdAt": "2016-06-01T16:41:58Z",
+            "id": "MDU6SXNzdWUxNTc5NTM3MjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1155,
+            "state": "CLOSED",
+            "title": "Add effective sample size to summary",
+            "updatedAt": "2016-06-15T21:40:59Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1155"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the model at the bottom of this comment, numsims, numconstraints and numtargets are \"experimental conditions\", while walltime is an observation.  Given a trace object sampled from the model using those four variables, I would like to compare a different set of walltime observations measured under the same set of experimental conditions.  One way to do this is by building a new model with new walltimes and querying its logp for the trace:\nnew_model = build_model(new_walltimes, numsims, numconstraints, numtargets)\ntotal_probability = logmeanexp(map(new_model.logp, trace))\nHowever, building a new model is quite slow... Is there a more performant way to do this calculation within the pymc3 framework?\nfrom pymc3 import Model, Normal, Gamma, Lognormal, Exponential\n\ndef LogNormalInvGamma(mu, alpha, beta, n, name, observed=None):\n    tau = Gamma('tau_' + name, alpha=alpha, beta=beta)\n    mu = Normal('mu_' + name, mu=mu, tau=(n * tau))\n    return Lognormal(name, mu=mu, tau=tau, observed=observed)\n\ndef build_model(walltime, numsims, numconstraints, numtargets, verbose=True):\n    model = Model(verbose=verbose)\n    with model:\n        C_1 = LogNormalInvGamma(mu=0, alpha=1, beta=1,\n                                n=Exponential('C_1_DOF',  1),\n                                name='constraints')\n        C_2 = LogNormalInvGamma(mu=0, alpha=1, beta=1,\n                                n=Exponential('C_2_DOF', 1),\n                                name='targets')\n        C_0_mu = (C_1 * numconstraints) + (C_2 * numsims * numtargets)\n        walltime_model = Lognormal('walltime',\n                                   mu=C_0_mu,\n                                   tau=Gamma('tau_const', 1, 1),\n                                   observed=walltime)\n        return model",
+            "closedAt": "2019-08-16T14:46:24Z",
+            "createdAt": "2016-06-01T15:01:16Z",
+            "id": "MDU6SXNzdWUxNTc5Mjk4MTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1154,
+            "state": "CLOSED",
+            "title": "Looking for a fast way to get total probability for a new set of observations",
+            "updatedAt": "2019-08-16T14:46:25Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1154"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I would like to make 2 (And eventually more) Categorical distributions in a single pymc3 variable, which I believe should have shape 2xK. In my data set each observation will come from one of the two different categories, so I can have data that looks like the following:\nimport numpy.random as nr\nimport pymc3 as pm\nfrom pandas import DataFrame\n\nnr.seed(0)\nN_groups = 2\nN_cats = 5\nn_obs = 10\ndata = DataFrame({'Data': nr.randint(0, N_cats, (n_obs)),\n                  'Group': nr.randint(0, N_groups, (n_obs))\n                 }\n                )\ndata  # =>\n''' \n       Data  Group\n0     4      0\n1     0      0\n2     3      0\n3     3      1\n4     3      0\n5     1      1\n6     3      1\n7     2      0\n8     4      0\n9     0      1\n'''\n\nWhen I try to sample from the following model, however, it hangs and doesn't finish after at least 10 minutes, which seems too long for such a small sample data set.\nmod = pm.Model()\n\ncat_shape = (N_groups, N_cats)\n\nwith mod:\n    a = np.ones(cat_shape, dtype=float)\n    p = pm.Dirichlet('p', a, shape=cat_shape, testval=None)\n    c = pm.Categorical('c', p[data.Group], shape=cat_shape, observed=data.Data)\n\nn = 1000\n\nwith mod:\n    step = pm.Slice()\n    trace = pm.sample(n, step)\n\nShould I expect it to take that long, or am I doing something wrong?",
+            "closedAt": "2019-02-28T10:24:18Z",
+            "createdAt": "2016-05-31T21:11:31Z",
+            "id": "MDU6SXNzdWUxNTc3NzE3MTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1153,
+            "state": "CLOSED",
+            "title": "Trouble sampling from Dirichlet with multiple groups",
+            "updatedAt": "2019-02-28T10:24:19Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1153"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is there a better way to calculate the log probability for each sample that this?\n  trace = pm.sample(10000)\n  logp = [model.logp(trace[i]) for i in range(len(trace))]\n\nSince this solution doesn't scale with increasing number of iterations.",
+            "closedAt": "2018-01-13T13:22:06Z",
+            "createdAt": "2016-05-27T12:55:13Z",
+            "id": "MDU6SXNzdWUxNTcyMDA1ODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1150,
+            "state": "CLOSED",
+            "title": "Log probability for each sample",
+            "updatedAt": "2018-01-13T13:22:30Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1150"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI've been testing out the new ADVI feature the last couple of days. If I only have a small number of features, it seems to produce good values, but if I increase the number of features, I keep getting NaNs.\nHere's a basic logistic regression based on one of your examples:\ndef invlogit(x):\n    return np.exp(x) / (1 + np.exp(x))\n\ndef tinvlogit(x):\n    return T.exp(x) / (1 + T.exp(x))\n\n# Set up basic parameters\nnum_features = 7\nn = 100000\n\n# Choose random values for the actual alpha and betas\nalpha_a = random.normal(size=1)\n\nbetas_a = random.normal(size = num_features)\n\n# Create fake predictor data\npredictors = random.normal(size=(n, num_features))\n\n# Calculate the outcomes\noutcomes = random.binomial(1, invlogit(alpha_a + np.sum(betas_a[None, :] * predictors, 1)))\n\nmodel = Model()\n\nwith model:\n    alpha = Normal(b'alpha', mu=0, tau=2.**-2, shape=(1))\n    betas = Normal(b'betas', mu=0, tau=2. ** -2, shape=(1, num_features))\n\n    p = tinvlogit(alpha+sum(betas * predictors, 1))\n\n    o = Bernoulli(b'o', p, observed=outcomes)\n\nwith model:\n    mu, sds, elbo = variational.advi(n=10000)\n\n\nThis is the output I get:\nIteration 0 [0%]: ELBO = -183969.24\nIteration 1000 [10%]: ELBO = nan\nIteration 2000 [20%]: ELBO = nan\nIteration 3000 [30%]: ELBO = nan\nIteration 4000 [40%]: ELBO = nan\nIteration 5000 [50%]: ELBO = nan\nIteration 6000 [60%]: ELBO = nan\nIteration 7000 [70%]: ELBO = nan\nIteration 8000 [80%]: ELBO = nan\nIteration 9000 [90%]: ELBO = nan\nFinished [100%]: ELBO = nan\n\nAs long as the number of features is fewer than 7, it seems to work ok, but as soon as I go up to 7 or more features, I only get NaNs back.\nAny idea what could be happening? It seems very strange that just going from 6 to 7 features could produce this behavior.",
+            "closedAt": "2016-05-27T15:28:58Z",
+            "createdAt": "2016-05-26T20:01:33Z",
+            "id": "MDU6SXNzdWUxNTcwNjY0OTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1147,
+            "state": "CLOSED",
+            "title": "ADVI returns NaN with many features",
+            "updatedAt": "2017-05-06T03:34:12Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1147"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi I'm trying to make a model, featuring scan in FreeRV logic. It works with default theano settings but fail when one of the following is set:\n\nfloatX=float32\nmode=DebugMode\n\nHere's the source code\nUsing pymc3 master branch with theano 0.8.2\nIn case of float32, the exception is:\n  File \"puppetmodel.py\", line 68, in main\n    step = pm.NUTS()\n  File \"python2.7/site-packages/pymc3/step_methods/nuts.py\", line 97, in __init__\n    self.leapfrog1_dE = leapfrog1_dE(model.logpt, vars, shared, self.potential, profile=profile)\n  File \"python2.7/site-packages/pymc3/step_methods/nuts.py\", line 209, in leapfrog1_dE\n    q1, p1 = leapfrog(H, q, p, 1, e)\n  File \"python2.7/site-packages/pymc3/step_methods/hmc.py\", line 123, in leapfrog\n    p = p - (e/2) * -dlogp(q)  # do a half step momentum update to finish off\n  File \"python2.7/site-packages/pymc3/theanof.py\", line 214, in __call__\n    return theano.clone(self.tensor, { oldinput : input }, strict=False)\n\n  ...\n  File \"python2.7/site-packages/theano/gof/op.py\", line 633, in __call__\n    (i, ins, node))\nValueError: Cannot compute test value: input 0 (Shape.0) of Op Subtensor{int64}(Shape.0, Constant{0}) missing default value\n\nwhile in DebugMode:\n  File \"puppetmodel.py\", line 73, in <module>\n    main()\n  File \"puppetmodel.py\", line 68, in main\n    step = pm.NUTS()\n  File \"python2.7/site-packages/pymc3/step_methods/nuts.py\", line 69, in __init__\n    scaling = guess_scaling(Point(scaling, model=model), model=model, vars = vars)\n  File \"python2.7/site-packages/pymc3/tuning/scaling.py\", line 109, in guess_scaling\n    h = find_hessian_diag(point, vars, model=model)\n  File \"python2.7/site-packages/pymc3/tuning/scaling.py\", line 103, in find_hessian_diag\n    H = model.fastfn(hessian_diag(model.logpt, vars))\n  File \"python2.7/site-packages/pymc3/memoize.py\", line 14, in memoizer\n    cache[key] = obj(*args, **kwargs)\n  File \"python2.7/site-packages/pymc3/theanof.py\", line 103, in hessian_diag\n    return -t.concatenate([hessian_diag1(f, v) for v in vars], axis=0)\n  File \"python2.7/site-packages/pymc3/theanof.py\", line 94, in hessian_diag1\n    return theano.map(hess_ii, idx)[0]\n  File \"python2.7/site-packages/theano/scan_module/scan_views.py\", line 69, in map\n    name=name)\n  File \"python2.7/site-packages/theano/scan_module/scan.py\", line 1041, in scan\n    scan_outs = local_op(*scan_inputs)\n  File \"python2.7/site-packages/theano/gof/op.py\", line 668, in __call__\n    required = thunk()\n  File \"python2.7/site-packages/theano/scan_module/scan_op.py\", line 951, in rval\n    r = p(n, [x[0] for x in i], o)\n  File \"python2.7/site-packages/theano/scan_module/scan_op.py\", line 940, in <lambda>\n    self, node)\n  File \"theano/scan_module/scan_perform.pyx\", line 415, in theano.scan_module.scan_perform.perform (/home/pp/.theano/compiledir_Linux-4.4--generic-x86_64-with-Ubuntu-16.04-xenial-x86_64-2.7.10-64/scan_perform/mod.cpp:4409)\n  File \"theano/scan_module/scan_perform.pyx\", line 397, in theano.scan_module.scan_perform.perform (/home/pp/.theano/compiledir_Linux-4.4--generic-x86_64-with-Ubuntu-16.04-xenial-x86_64-2.7.10-64/scan_perform/mod.cpp:4193)\n  File \"python2.7/site-packages/theano/compile/debugmode.py\", line 2279, in deco\n    return f()\n  File \"python2.7/site-packages/theano/compile/debugmode.py\", line 1936, in f\n    \"%s\" % (r, storage_map[r][0])))\ntheano.compile.debugmode.InvalidValueError: InvalidValueError\n        type(variable) = TensorType(float32, scalar)\n        variable       = TensorConstant{-inf}\n        type(value)    = <type 'numpy.ndarray'>\n        dtype(value)   = float32\n        shape(value)   = ()\n        value          = -inf\n        min(value)     = -inf\n        max(value)     = -inf\n        isfinite       = False\n        client_node    = None\n        hint           = Graph Input 'TensorConstant{-inf}' has invalid value -inf\n        specific_hint  = none\n        context        = ...\n  TensorConstant{-inf} [id A]\n\nIt would be very nice if somebody help me out, thanks.",
+            "closedAt": "2016-08-11T17:39:40Z",
+            "createdAt": "2016-05-26T10:09:32Z",
+            "id": "MDU6SXNzdWUxNTY5NDk1NDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1146,
+            "state": "CLOSED",
+            "title": "Model raises exception with floatX=float32",
+            "updatedAt": "2017-09-22T11:38:25Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1146"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there,\nI have been messing around with pymc3 recently and haven't been able to figure out how to do the following:\nIf I have two previously implemented distributions f(x|theta) and g(x|phi), is there an easy way to implement the new distribution p(x|theta,phi,b) which equals f when b = 0 and g when b = 1?",
+            "closedAt": "2016-05-26T02:08:08Z",
+            "createdAt": "2016-05-26T00:49:09Z",
+            "id": "MDU6SXNzdWUxNTY4ODEyMDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1145,
+            "state": "CLOSED",
+            "title": "Having trouble with custom distribution",
+            "updatedAt": "2016-05-26T02:17:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1145"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Create a helper function so ugly things like this don't need to be written.\nerr, _ = scan(fn=calc_next, sequences=dict(input=y, taps=[-1]), outputs_info=[dict(initial=err0, taps=[-1])], non_sequences=[mu, phi, theta])",
+            "closedAt": "2018-08-03T17:59:14Z",
+            "createdAt": "2016-05-25T21:54:27Z",
+            "id": "MDU6SXNzdWUxNTY4NTkyMDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1144,
+            "state": "CLOSED",
+            "title": "Create a helper function for scan",
+            "updatedAt": "2018-08-03T17:59:14Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1144"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Not having control over the stochasticity in sample_ppc can cause problems in a multiprocessing context.  E.g. in the code below the result 1 from the last line means that the exact same posterior predictive sample has been drawn in all four processes.\nfrom concurrent import futures\nfrom cPickle import load\n\nfrom pymc3.sampling import sample_ppc\n\nfrom fit import PKL_PATH\nimport model\n\nTRACE = load(open(PKL_PATH))\n\ndef gensim(n):\n    return sample_ppc(TRACE, samples=n)['walltime']\n\nwith futures.ProcessPoolExecutor() as executor:\n    with model.model:\n        probs = list(executor.map(gensim, [1] * 4))\n\nprint len(set(tuple(p[0]) for p in probs)) => 1",
+            "closedAt": "2018-01-13T12:25:16Z",
+            "createdAt": "2016-05-24T19:43:02Z",
+            "id": "MDU6SXNzdWUxNTY1OTI0OTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1136,
+            "state": "CLOSED",
+            "title": "sampling.sample_ppc should take a seed",
+            "updatedAt": "2018-01-13T12:25:17Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1136"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "plot_posterior fails when passed a vector-valued variable in varnames. For example, the rate vector in disaster_model:\n---------------------------------------------------------------------------\nValueError                                Traceback (most recent call last)\n<ipython-input-65-4a5dae961dfd> in <module>()\n----> 1 plot_posterior(trace_missing, varnames=['rate'])\n\n/Users/fonnescj/Repositories/pymc3/pymc3/plots.py in plot_posterior(trace, varnames, figsize, alpha_level, round_to, point_estimate, rope, ref_val, kde_plot, ax, **kwargs)\n    740         for a, v in zip(ax, varnames):\n    741             tr_values = trace.get_values(v, combine=True, squeeze=True)\n--> 742             plot_posterior_op(tr_values, ax=a)\n    743             a.set_title(v)\n    744 \n\n/Users/fonnescj/Repositories/pymc3/pymc3/plots.py in plot_posterior_op(trace_values, ax)\n    707 \n    708         format_axes()\n--> 709         display_hpd()\n    710         display_point_estimate()\n    711         if ref_val is not None:\n\n/Users/fonnescj/Repositories/pymc3/pymc3/plots.py in display_hpd()\n    668         def display_hpd():\n    669             hpd_intervals = hpd(trace_values, alpha=alpha_level)\n--> 670             ax.plot(hpd_intervals, (plot_height * 0.02, plot_height * 0.02), linewidth=4, color='k')\n    671             text_props = dict(size=16, horizontalalignment='center')\n    672             ax.text(hpd_intervals[0], plot_height * 0.07, hpd_intervals[0].round(round_to), **text_props)\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/__init__.py in inner(ax, *args, **kwargs)\n   1810                     warnings.warn(msg % (label_namer, func.__name__),\n   1811                                   RuntimeWarning, stacklevel=2)\n-> 1812             return func(ax, *args, **kwargs)\n   1813         pre_doc = inner.__doc__\n   1814         if pre_doc is None:\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/axes/_axes.py in plot(self, *args, **kwargs)\n   1422             kwargs['color'] = c\n   1423 \n-> 1424         for line in self._get_lines(*args, **kwargs):\n   1425             self.add_line(line)\n   1426             lines.append(line)\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/axes/_base.py in _grab_next_args(self, *args, **kwargs)\n    384                 return\n    385             if len(remaining) <= 3:\n--> 386                 for seg in self._plot_args(remaining, kwargs):\n    387                     yield seg\n    388                 return\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/axes/_base.py in _plot_args(self, tup, kwargs)\n    362             x, y = index_of(tup[-1])\n    363 \n--> 364         x, y = self._xy_from_xy(x, y)\n    365 \n    366         if self.command == 'plot':\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/axes/_base.py in _xy_from_xy(self, x, y)\n    221         y = _check_1d(y)\n    222         if x.shape[0] != y.shape[0]:\n--> 223             raise ValueError(\"x and y must have same first dimension\")\n    224         if x.ndim > 2 or y.ndim > 2:\n    225             raise ValueError(\"x and y can be no greater than 2-D\")\n\nValueError: x and y must have same first dimension\n\nSimilarly, for the missing values in the disasters model with missingness:\narray([<matplotlib.axes._subplots.AxesSubplot object at 0x124405940>], dtype=object)\nError in callback <function install_repl_displayhook.<locals>.post_execute at 0x105a75488> (for post_execute):\n---------------------------------------------------------------------------\nTypeError                                 Traceback (most recent call last)\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/pyplot.py in post_execute()\n    145             def post_execute():\n    146                 if matplotlib.is_interactive():\n--> 147                     draw_all()\n    148 \n    149             # IPython >= 2\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/_pylab_helpers.py in draw_all(cls, force)\n    148         for f_mgr in cls.get_all_fig_managers():\n    149             if force or f_mgr.canvas.figure.stale:\n--> 150                 f_mgr.canvas.draw_idle()\n    151 \n    152 atexit.register(Gcf.destroy_all)\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/backend_bases.py in draw_idle(self, *args, **kwargs)\n   2024         if not self._is_idle_drawing:\n   2025             with self._idle_draw_cntx():\n-> 2026                 self.draw(*args, **kwargs)\n   2027 \n   2028     def draw_cursor(self, event):\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/backends/backend_agg.py in draw(self)\n    472 \n    473         try:\n--> 474             self.figure.draw(self.renderer)\n    475         finally:\n    476             RendererAgg.lock.release()\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/artist.py in draw_wrapper(artist, renderer, *args, **kwargs)\n     59     def draw_wrapper(artist, renderer, *args, **kwargs):\n     60         before(artist, renderer)\n---> 61         draw(artist, renderer, *args, **kwargs)\n     62         after(artist, renderer)\n     63 \n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/figure.py in draw(self, renderer)\n   1157         dsu.sort(key=itemgetter(0))\n   1158         for zorder, a, func, args in dsu:\n-> 1159             func(*args)\n   1160 \n   1161         renderer.close_group('figure')\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/artist.py in draw_wrapper(artist, renderer, *args, **kwargs)\n     59     def draw_wrapper(artist, renderer, *args, **kwargs):\n     60         before(artist, renderer)\n---> 61         draw(artist, renderer, *args, **kwargs)\n     62         after(artist, renderer)\n     63 \n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/axes/_base.py in draw(self, renderer, inframe)\n   2322 \n   2323         for zorder, a in dsu:\n-> 2324             a.draw(renderer)\n   2325 \n   2326         renderer.close_group('axes')\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/artist.py in draw_wrapper(artist, renderer, *args, **kwargs)\n     59     def draw_wrapper(artist, renderer, *args, **kwargs):\n     60         before(artist, renderer)\n---> 61         draw(artist, renderer, *args, **kwargs)\n     62         after(artist, renderer)\n     63 \n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/text.py in draw(self, renderer)\n    747 \n    748         with _wrap_text(self) as textobj:\n--> 749             bbox, info, descent = textobj._get_layout(renderer)\n    750             trans = textobj.get_transform()\n    751 \n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/text.py in _get_layout(self, renderer)\n    332         of a rotated text when necessary.\n    333         \"\"\"\n--> 334         key = self.get_prop_tup()\n    335         if key in self._cached:\n    336             return self._cached[key]\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/text.py in get_prop_tup(self)\n    901         need to know if the text has changed.\n    902         \"\"\"\n--> 903         x, y = self.get_unitless_position()\n    904         return (x, y, self.get_text(), self._color,\n    905                 self._verticalalignment, self._horizontalalignment,\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/matplotlib/text.py in get_unitless_position(self)\n    883         # This will get the position with all unit information stripped away.\n    884         # This is here for convienience since it is done in several locations.\n--> 885         x = float(self.convert_xunits(self._x))\n    886         y = float(self.convert_yunits(self._y))\n    887         return x, y\n\nTypeError: only length-1 arrays can be converted to Python scalars\n\nIts fine if the function only supports scalar values (though it would be nice to just call itself recursively when presented by a multivariate node), but it should return an informative message when passed an incompatible variable name, rather than an obscure matplotlib exception.",
+            "closedAt": "2016-10-12T14:46:17Z",
+            "createdAt": "2016-05-24T02:48:17Z",
+            "id": "MDU6SXNzdWUxNTY0MDg5NDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1131,
+            "state": "CLOSED",
+            "title": "plot_posterior fails for vector-valued variables",
+            "updatedAt": "2016-10-12T14:46:17Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1131"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Not sure why this has resurfaced, but it may be time to thin out the number of examples that we include in CI. Perhaps those which have corresponding notebooks can be removed from the .py examples folder?",
+            "closedAt": "2016-06-15T19:47:05Z",
+            "createdAt": "2016-05-23T21:34:35Z",
+            "id": "MDU6SXNzdWUxNTYzNzIwMzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1130,
+            "state": "CLOSED",
+            "title": "TravisCI tests failing due to timeouts with examples",
+            "updatedAt": "2016-06-15T19:47:05Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1130"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm running the script below with 2,000 samples.  It's surprisingly slow, a bit under 9s / sample under Python 2.7.11 :: Anaconda custom (x86_64) on a Mid-2015 MacBook Pro with 2.5GHz CPUs (four of them, but the sampler seems to be single-threaded.)  I'd be grateful for any suggestions about how to speed it up.\nfrom pymc3 import Model, Normal, Gamma, Lognormal, Exponential, NUTS, sample, find_MAP, traceplot\n\nfrom load_table import walltime, numsims, numconstraints, numtargets\n\n\ndef LogNormalInvGamma(mu, alpha, beta, n, name):\n    tau = Gamma('tau_' + name, alpha=alpha, beta=beta)\n    mu = Normal('mu_' + name, mu=mu, tau=(n * tau))\n    return Lognormal(name, mu=mu, tau=tau)\n\n\nmodel = Model()\n\nwith model:\n\n    # Equation (3) in the doc string.  But remember, comments go stale!\n    C_1 = LogNormalInvGamma(mu=0, alpha=1, beta=1,\n                            n=Exponential('C_1_DOF', 1),\n                            name='constraints')\n\n    # Equation (4)\n    C_2 = LogNormalInvGamma(mu=0, alpha=1, beta=1,\n                            n=Exponential('C_2_DOF', 1),\n                            name='targets')\n\n    # Now we model C_0 as the Lognormal which varies around the rest of\n    # Equation (1) / Equation (5)\n    C_0_mu = (C_1 * numconstraints) + (C_2 * numsims * numtargets)\n    walltime_model = Lognormal('walltime',\n                               mu=C_0_mu,\n                               tau=Gamma('tau_const', 1, 1),  # 𝞽₀ in Equ (2)\n                               observed=walltime)\n\n    # The section below is run in a separate module, which imports the model constructed above.\n    # Probably not relevant, but I don't really know why it's taking so long.\n\n    # Rough computation of MAP for the model.\n    map_estimate = find_MAP(model=model.model, fmin=optimize.fmin_powell)\n\n    # Draw 2,000 posterior samples\n    trace = sample(2000, start=map_estimate)",
+            "closedAt": "2018-01-13T13:33:28Z",
+            "createdAt": "2016-05-23T19:21:37Z",
+            "id": "MDU6SXNzdWUxNTYzNDY3MDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1126,
+            "state": "CLOSED",
+            "title": "NUTS is slow",
+            "updatedAt": "2018-01-13T13:33:28Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1126"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "GLM-hierarchical-ADVI.ipynb is missing traces (indiv_traces) that are used in a key plot. They must have been accidentally deleted prior to checkin. cc @twiecki",
+            "closedAt": "2016-05-24T03:08:08Z",
+            "createdAt": "2016-05-19T16:22:45Z",
+            "id": "MDU6SXNzdWUxNTU3Nzg3MDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1119,
+            "state": "CLOSED",
+            "title": "Hierarchical ADVI example broken",
+            "updatedAt": "2016-05-24T03:08:08Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1119"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The hierarchical.ipynb example seems to have been committed in an intermediate state, and includes a lot of extraneous code. The example should include extensive annotation to explain what the example is trying to show. We should have a cleaner example for an illustration of hierarchical modeling, which is a core application of Bayesian modeling.",
+            "closedAt": "2016-05-20T14:26:34Z",
+            "createdAt": "2016-05-19T13:38:26Z",
+            "id": "MDU6SXNzdWUxNTU3Mzg4NTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1117,
+            "state": "CLOSED",
+            "title": "hierarchical example needs annotation",
+            "updatedAt": "2016-05-20T14:26:34Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1117"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The presence of automatically-transformed variables in the model and output has become a point of confusion in PyMC3. Though they have recently been hidden from the trace of MCMC samplers, they still arise in other places (e.g. MAP estimation). I'm increasingly of the opinion that if a particular sampler requires a transformed variable to improve the mechanics of its particular algorithm, then that transformed variable should be an attribute of that sampler, and not show up in the output in any permanent way (e.g. being tallied in the trace).",
+            "closedAt": "2020-09-18T14:09:07Z",
+            "createdAt": "2016-05-19T12:16:35Z",
+            "id": "MDU6SXNzdWUxNTU3MjI2MjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1116,
+            "state": "CLOSED",
+            "title": "Refactor transformed variables",
+            "updatedAt": "2020-09-18T14:09:52Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1116"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "As PyMC3 continues to grow, it would be nice to be able to choose backends eventually.  Theano is great but Tensorflow would be nice to use as well.  An example of this type of backend choice would be holoviews that can use either matplotlib or bokeh as a backend.  It also wouldn't hurt having backing by Google :)",
+            "closedAt": "2016-05-23T08:14:24Z",
+            "createdAt": "2016-05-18T22:09:19Z",
+            "id": "MDU6SXNzdWUxNTU2MTMxNjk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1115,
+            "state": "CLOSED",
+            "title": "Feature Request: Option between Theano & Tensorflow Backend (eventually)",
+            "updatedAt": "2016-05-23T08:14:24Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1115"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I'm trying to model a multivariate gaussian mixture model with priors on the means and the precisions, similar to https://github.com/pymc-devs/pymc3/blob/master/pymc3/examples/gaussian_mixture_model.ipynb\nThe problem is that it seems that MvNormal does not support passing more than one precision matrix (?).\nHere's my code:\nN_COMPONENTS = 5\nN_SAMPLES, N_DIMS = target_data.shape\n\n# Dirichilet prior.\nALPHA_0 = np.ones(N_COMPONENTS)\n# Component means prior.\nMU_0 = np.zeros(N_DIMS)\nLAMB_0 = 2. * np.eye(N_DIMS)\n# Components precision prior.\nBETA_0, BETA_1 = .1, 2.    # Covariance stds prior uniform limits.\nL_0 = 5.       # LKJ corr. shape. Larger shape -> more biased to identity.\n\n# In order to convert the upper triangular correlation values to a\n# complete correlation matrix, we need to construct an index matrix:\n# Source: http://stackoverflow.com/q/29759789/1901296\nN_ELEMS = N_DIMS * (N_DIMS - 1) / 2\ntri_index = np.zeros([N_DIMS, N_DIMS], dtype=int)\ntri_index[np.triu_indices(N_DIMS, k=1)] = np.arange(N_ELEMS)\ntri_index[np.triu_indices(N_DIMS, k=1)[::-1]] = np.arange(N_ELEMS)\n\nwith pm.Model() as model:\n    # Component weight prior.\n    pi = pm.Dirichlet('pi', ALPHA_0, testval=np.ones(N_COMPONENTS) / N_COMPONENTS)\n    #pi_potential = pm.Potential('pi_potential', tensor.switch(tensor.min(pi) < .01, -np.inf, 0))\n\n    ###################\n    # Components plate.\n    ###################\n    # Component means.\n    mus = [pm.MvNormal('mu_{}'.format(i), MU_0, LAMB_0, shape=N_DIMS)\n           for i in range(N_COMPONENTS)]\n\n    # Component precisions.\n    #lamb = diag(sigma) * corr(corr_shape) * diag(sigma)\n    corr_vecs = [\n            pm.LKJCorr('corr_vec_{}'.format(i), L_0, N_DIMS)\n            for i in range(N_COMPONENTS)\n    ]\n    # Transform the correlation vector representations to matrices.\n    corrs = [\n        tensor.fill_diagonal(corr_vecs[i][tri_index], 1.)\n        for i in range(N_COMPONENTS)\n    ]\n    # Stds for the correlation matrices.\n    cov_stds = pm.Uniform('cov_stds', BETA_0, BETA_1, shape=(N_COMPONENTS, N_DIMS))\n    # Finally re-compose the covariance matrices using diag(sigma) * corr * diag(sigma)\n    # Source http://austinrochford.com/posts/2015-09-16-mvn-pymc3-lkj.html\n    lambs = []\n    for i in range(N_COMPONENTS):\n        std_diag = tensor.diag(cov_stds[i])\n        cov = std_diag.dot(corrs[i]).dot(std_diag)\n        lambs.append(tensor.nlinalg.matrix_inverse(cov))\n\n    stacked_mus = tensor.stack(mus)\n    stacked_lambs = tensor.stack(lambs)\n\n    #####################\n    # Observations plate.\n    #####################\n    z = pm.Categorical('z', pi, shape=N_SAMPLES)\n\n    y = pm.MvNormal('y', stacked_mus[z], stacked_lambs[z], observed=target_data)\nThe exception I get:\nApplied stickbreaking-transform to pi and added transformed pi_stickbreaking to model.\nApplied interval-transform to cov_stds and added transformed cov_stds_interval to model.\n---------------------------------------------------------------------------\nAssertionError                            Traceback (most recent call last)\n<ipython-input-22-d039ddf4f27a> in <module>()\n     60     z = pm.Categorical('z', pi, shape=N_SAMPLES)\n     61 \n---> 62     y = pm.MvNormal('y', stacked_mus[z], stacked_lambs[z], observed=target_data)\n\n/usr/local/lib/python3.4/dist-packages/pymc3/distributions/distribution.py in __new__(cls, name, *args, **kwargs)\n     23             data = kwargs.pop('observed', None)\n     24             dist = cls.dist(*args, **kwargs)\n---> 25             return model.Var(name, dist, data)\n     26         elif name is None:\n     27             return object.__new__(cls)  # for pickle\n\n/usr/local/lib/python3.4/dist-packages/pymc3/model.py in Var(self, name, dist, data)\n    282                     self.named_vars[v.name] = v\n    283         else:\n--> 284             var = ObservedRV(name=name, data=data, distribution=dist, model=self)\n    285             self.observed_RVs.append(var)\n    286             if var.missing_values:\n\n/usr/local/lib/python3.4/dist-packages/pymc3/model.py in __init__(self, type, owner, index, name, data, distribution, model)\n    559             self.missing_values = data.missing_values\n    560 \n--> 561             self.logp_elemwiset = distribution.logp(data)\n    562             self.model = model\n    563             self.distribution = distribution\n\n/usr/local/lib/python3.4/dist-packages/pymc3/distributions/multivariate.py in logp(self, value)\n     66         k = tau.shape[0]\n     67 \n---> 68         result = k * T.log(2 * np.pi) + T.log(1./det(tau))\n     69         result += (delta.dot(tau) * delta).sum(axis=delta.ndim - 1)\n     70         return -1/2. * result\n\n/usr/local/lib/python3.4/dist-packages/theano/gof/op.py in __call__(self, *inputs, **kwargs)\n    609         \"\"\"\n    610         return_list = kwargs.pop('return_list', False)\n--> 611         node = self.make_node(*inputs, **kwargs)\n    612 \n    613         if config.compute_test_value != 'off':\n\n/usr/local/lib/python3.4/dist-packages/theano/tensor/nlinalg.py in make_node(self, x)\n    274     def make_node(self, x):\n    275         x = as_tensor_variable(x)\n--> 276         assert x.ndim == 2\n    277         o = theano.tensor.scalar(dtype=x.dtype)\n    278         return Apply(self, [x], [o])\n\nAssertionError: \nSo it seems the problem is that the precision matrix is not bidimensional.\nIf I print the precisions I'm passing to MvNormal:\ntensor.printing.Print('PRECISIONS')(stacked_lambs[z])\nI get:\nPRECISIONS __str__ = [[[ 0.90702948  0.        ]\n  [ 0.          0.90702948]]\n\n [[ 0.90702948  0.        ]\n  [ 0.          0.90702948]]\n\n [[ 0.90702948  0.        ]\n  [ 0.          0.90702948]]\n\n ..., \n [[ 0.90702948  0.        ]\n  [ 0.          0.90702948]]\n\n [[ 0.90702948  0.        ]\n  [ 0.          0.90702948]]\n\n [[ 0.90702948  0.        ]\n  [ 0.          0.90702948]]]\n\nSo MvNormal does not allow passing more than one precision matrix?\nIs this a bug or is there another way of doing what I want?\nI appreciate any help.\nThanks!",
+            "closedAt": "2020-07-27T09:52:21Z",
+            "createdAt": "2016-05-18T15:21:33Z",
+            "id": "MDU6SXNzdWUxNTU1Mjk5NTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1112,
+            "state": "CLOSED",
+            "title": "Multivariate Gaussian Mixture Model with precision prior",
+            "updatedAt": "2020-07-27T09:52:21Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1112"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear all!\nI have an imaging experiment which I want to model and infer some parameters.\nThe observed signal is the sum of two Poisson distributions, i.e. noise at a certain level, that I want to infer and some signal.\nHow to set up this sum? Something like:\nimage = pymc3.Poisson(\"image\", shape=two_d_shape,mu=image_ideal)\nnoise = pymc3.Poisson(\"noise\", shape=two_d_shape,mu=mu_noise)\nmodel = pymc3.DensityDist(\"model\", logp=noise+image)\n\ndoes not work. That's probably a simple question, but I have no idea. That might be related to my  missing knowledge of theano?\n----- 2.\nHowever, image_ideal is not so ideal. In fact, it is blurred and can be described by a convolution of the theoretical image and a blurring term. The kernel size of this blurring is generally smaller than the image. How to handle this convolution with pymc3.\nThanks a lot in advance for any help!\nBest wishes\nMarkus",
+            "closedAt": "2016-05-17T12:38:16Z",
+            "createdAt": "2016-05-17T09:52:04Z",
+            "id": "MDU6SXNzdWUxNTUyMTkzMzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1108,
+            "state": "CLOSED",
+            "title": "Two questions on sum of distributions/convolution",
+            "updatedAt": "2016-05-17T12:38:16Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1108"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi. What I want to do is to choose a covariance matrix according to the component assigned to sample. I have this:\npi = pm.Dirichlet('pi', ALPHA_0)\n\n# Component means.\nmus = [pm.MvNormal('mu_'.format(i + 1), MU_0, LAMB_0, shape=(N_DIMS, N_DIMS))\n            for i in range(N_COMPONENTS)]\n\n# Component precisions.\n # lamb = diag(sigma) * corr(corr_shape) * diag(sigma)\ncorr_vecs = [\n        pm.LKJCorr('corr_vec_{}'.format(i), L_0, N_DIMS)\n        for i in range(N_COMPONENTS)\n]\n# Transform the correlation vector representations to matrices.\ncorrs = [\n    tensor.fill_diagonal(corr_vecs[i][tri_index], 1.)\n    for i in range(N_COMPONENTS)\n]\n# Stds for the correlation matrices.\ncov_stds = pm.Lognormal('cov_stds', BETA_0, SIGMA_0, shape=(N_COMPONENTS, N_DIMS))\n# Finally re-compose the covariance matrices using diag(sigma) * corr * diag(sigma)\n# Source http://austinrochford.com/posts/2015-09-16-mvn-pymc3-lkj.html\nlambs = []\nfor i in range(N_COMPONENTS):\n    std_diag = tensor.diag(cov_stds[i])\n    cov = std_diag.dot(corrs[i]).dot(std_diag)\n    lambs.append(tensor.nlinalg.matrix_inverse(cov))\nlambs = np.array(lambs)\n\n# Observations\nz = pm.Categorical('z', pi, shape=N_SAMPLES)\ny = pm.MvNormal('y', mus[z], lambs[z], observed=target_data)\nIndexing mu works as expected, but because I have a list (or array) in lambs I get:\nIndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices\nI suppose this happens because lambs should be a theano Tensor, or something like that.\n2 . What's the correct way of doing this?\nI'd appreciate any help. Thanks!",
+            "closedAt": "2016-05-16T21:49:53Z",
+            "createdAt": "2016-05-16T21:33:03Z",
+            "id": "MDU6SXNzdWUxNTUxMjcxMjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1106,
+            "state": "CLOSED",
+            "title": "Shape of LKJ",
+            "updatedAt": "2016-05-16T21:49:53Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1106"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I tried to reproduce this http://nbviewer.jupyter.org/gist/fonnesbeck/1be22dba803645fcc949 and see if the recent changes in advi etc would work - it failed however.\nAny reason why this fails, is there anything we can fix?\ncc @fonnesbeck",
+            "closedAt": "2016-05-16T16:58:56Z",
+            "createdAt": "2016-05-15T23:04:00Z",
+            "id": "MDU6SXNzdWUxNTQ5MzYzOTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1105,
+            "state": "CLOSED",
+            "title": "Still errors with Cox model",
+            "updatedAt": "2016-05-16T18:11:55Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1105"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "At PyData London @twiecki and I chatted about what needed to be done for a release, and @jonsedar presented a nice advanced tutorial on it.\nAs I understand it there's just a few things left before a release candidate can be released.\n\n API docs in Sphinx\n  ADVI to be better documented\n\nAm I missing something major?",
+            "closedAt": "2016-09-07T07:13:30Z",
+            "createdAt": "2016-05-15T22:09:41Z",
+            "id": "MDU6SXNzdWUxNTQ5MzM1NDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "release"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1104,
+            "state": "CLOSED",
+            "title": "What needs to be done for a release?",
+            "updatedAt": "2016-09-07T07:13:30Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1104"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Bumped into this when creating a poisson regression model:\nExisting: the current glm.familes.Poisson class uses a log link function\nExpected: I think it ought to be an exponential link function, as per various docs e.g. wikipedia\nSuggest: changing:\nline 20 to exp = theano.tensor.exp, and\nline 97 to link = exp",
+            "closedAt": "2016-05-16T10:19:33Z",
+            "createdAt": "2016-05-15T16:31:30Z",
+            "id": "MDU6SXNzdWUxNTQ5MTcxMTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1100,
+            "state": "CLOSED",
+            "title": "minor bug in link fn for glm.families.Poisson",
+            "updatedAt": "2017-11-24T10:35:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1100"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The docstring for Categorical suggests that the parameters is a vector of probabilities:\np > 0 and the elements of p must sum to 1.\n\nHowever, when you specify a Categorical this way, it breaks:\nwith pm.Model() as model:\n    x_ = pm.Categorical('x_',  [0.25, 0.25, 0.25, 0.25])\n    trace = pm.sample(10000)\n\n---------------------------------------------------------------------------\nIndexError                                Traceback (most recent call last)\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/theano/compile/function_module.py in __call__(self, *args, **kwargs)\n    894             outputs =\\\n--> 895                 self.fn() if output_subset is None else\\\n    896                 self.fn(output_subset=output_subset)\n\nIndexError: index out of bounds\n\nDuring handling of the above exception, another exception occurred:\n\nIndexError                                Traceback (most recent call last)\n<ipython-input-15-3411f652c2ca> in <module>()\n----> 8     trace = pm.sample(10000)\n\n/Users/fonnescj/Repositories/pymc3/pymc3/sampling.py in sample(draws, step, start, trace, chain, njobs, tune, progressbar, model, random_seed)\n    148         sample_func = _sample\n    149 \n--> 150     return sample_func(**sample_args)\n    151 \n    152 \n\n/Users/fonnescj/Repositories/pymc3/pymc3/sampling.py in _sample(draws, step, start, trace, chain, tune, progressbar, model, random_seed)\n    157     progress = progress_bar(draws)\n    158     try:\n--> 159         for i, strace in enumerate(sampling):\n    160             if progressbar:\n    161                 progress.update(i)\n\n/Users/fonnescj/Repositories/pymc3/pymc3/sampling.py in _iter_sample(draws, step, start, trace, chain, tune, model, random_seed)\n    239         if i == tune:\n    240             step = stop_tuning(step)\n--> 241         point = step.step(point)\n    242         strace.record(point)\n    243         yield strace\n\n/Users/fonnescj/Repositories/pymc3/pymc3/step_methods/arraystep.py in step(self, point)\n    116         bij = DictToArrayBijection(self.ordering, point)\n    117 \n--> 118         apoint = self.astep(bij.map(point))\n    119         return bij.rmap(apoint)\n    120 \n\n/Users/fonnescj/Repositories/pymc3/pymc3/step_methods/metropolis.py in astep(self, q0)\n    123             q = q0 + delta\n    124 \n--> 125         q_new = metrop_select(self.delta_logp(q, q0), q, q0)\n    126 \n    127         if q_new is q:\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/theano/compile/function_module.py in __call__(self, *args, **kwargs)\n    906                     node=self.fn.nodes[self.fn.position_of_error],\n    907                     thunk=thunk,\n--> 908                     storage_map=getattr(self.fn, 'storage_map', None))\n    909             else:\n    910                 # old-style linkers raise their own exceptions\n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/theano/gof/link.py in raise_with_op(node, thunk, exc_info, storage_map)\n    312         # extra long error message in that case.\n    313         pass\n--> 314     reraise(exc_type, exc_value, exc_trace)\n    315 \n    316 \n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/six.py in reraise(tp, value, tb)\n    683             value = tp()\n    684         if value.__traceback__ is not tb:\n--> 685             raise value.with_traceback(tb)\n    686         raise value\n    687 \n\n/Users/fonnescj/anaconda3/lib/python3.5/site-packages/theano/compile/function_module.py in __call__(self, *args, **kwargs)\n    893         try:\n    894             outputs =\\\n--> 895                 self.fn() if output_subset is None else\\\n    896                 self.fn(output_subset=output_subset)\n    897         except Exception:\n\nIndexError: index out of bounds",
+            "closedAt": "2016-05-25T20:33:29Z",
+            "createdAt": "2016-05-14T16:14:19Z",
+            "id": "MDU6SXNzdWUxNTQ4NjE4NDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1098,
+            "state": "CLOSED",
+            "title": "Categorical distribution breaks when specified correctly",
+            "updatedAt": "2016-05-25T20:33:29Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1098"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "ElemwiseCategoricalStep appears not to be sampling validly. Here is a simple example:\nx_obs = [1, 1, 0, 0, 2, 2, 2]\n\nwith pm.Model() as model:\n    x = pm.Categorical('x',  [0.33, 0.33, 0.33], observed=x_obs)\n    x_ = pm.Categorical('x_',  [0.33, 0.33, 0.33], shape=1)\n    trace = pm.sample(1000)\n\nResults in:\n\nSomehow this step method was merged without a real test. The current test only checks whether assignment works as expected, and not the functionality of the sampler itself.",
+            "closedAt": "2016-05-25T20:16:57Z",
+            "createdAt": "2016-05-14T15:51:18Z",
+            "id": "MDU6SXNzdWUxNTQ4NjA2NDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1096,
+            "state": "CLOSED",
+            "title": "ElemwiseCategoricalStep is broken",
+            "updatedAt": "2016-05-27T12:01:29Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1096"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "If you specify a shape argument for an observed variable, this parameter is silently ignored in favor of the shape of the observed value. Specifying shape should return an error if specified and does not correspond to the passed data.",
+            "closedAt": "2020-07-27T09:52:09Z",
+            "createdAt": "2016-05-13T17:03:19Z",
+            "id": "MDU6SXNzdWUxNTQ3NTc5MDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "shape problem"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 1094,
+            "state": "CLOSED",
+            "title": "Shape argument passed to an observed variable is ignored",
+            "updatedAt": "2020-07-27T09:52:10Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1094"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the logp for the categorical distribution, the method rightly bounds the value at the appropriate index limits for the vector of probabilities, However, since the log-probability is calculated before the bound is checked, you can still get an IndexError. Unfortunately, Theano breaks the usual exception handling for this.",
+            "closedAt": "2019-02-28T10:24:33Z",
+            "createdAt": "2016-05-13T16:36:16Z",
+            "id": "MDU6SXNzdWUxNTQ3NTI5OTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1093,
+            "state": "CLOSED",
+            "title": "Categorical distribution bound not enforced early enough",
+            "updatedAt": "2019-02-28T10:24:34Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1093"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "One distribution I am particularly interested in is \"spike-and-slab prior\" which is contains a bernoulli spike and gaussian slab.  I've found an example an implementation in R (https://github.com/snowdj/BoomSpikeSlab/blob/master/R/spike.slab.prior.R) but would rather implement this in Python and PyMC3 seems to be like the perfect avenue.  If this feature is currently available, can someone direct me to a tutorial. Thanks :)",
+            "closedAt": "2016-05-16T10:24:25Z",
+            "createdAt": "2016-05-13T06:16:43Z",
+            "id": "MDU6SXNzdWUxNTQ2NDEzMTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1092,
+            "state": "CLOSED",
+            "title": "Feature Request: Add option for custom distributions",
+            "updatedAt": "2016-05-16T10:24:25Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1092"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I was experimenting with the missing values imputation (which is pretty awesome) for a variety of variable types.\nI stumbled across this problem: if I sample with a (useless) model in this way:\nx_obs = [1, 1, 0, 0, 2, 2, 2]\n\nwith pm.Model() as multin_model:\n    x = pm.Categorical('x',  [0.33, 0.33, 0.33], shape=3, observed=x_obs)\n    y = pm.Normal('y', shape=3)\n    v = y[x] * pm.Normal('z')\n    step = pm.Metropolis()\n    trace = pm.sample(1000, step=step)\nIt runs without exception, but as soon as I introduce missing values I get an IndexError exception:\nx_obs = np.ma.masked_equal([1, 1, 0, 0, 2, -1, -1], -1)\n\nwith pm.Model() as multin_model:\n    x = pm.Categorical('x',  [0.33, 0.33, 0.33], shape=3, observed=x_obs)\n    y = pm.Normal('y', shape=3)\n    v = y[x] * pm.Normal('z')\n    step = pm.Metropolis()\n    trace = pm.sample(1000, step=step)\n---------------------------------------------------------------------------\nIndexError                                Traceback (most recent call last)\n/home/gabriele/anaconda/envs/medschool/lib/python3.5/site-packages/theano/compile/function_module.py in __call__(self, *args, **kwargs)\n    858         try:\n--> 859             outputs = self.fn()\n    860         except Exception:\n\nIndexError: index 3 is out of bounds for size 3\n\nDuring handling of the above exception, another exception occurred:\n... long traceback\n\nIs the feature unsupported?",
+            "closedAt": "2016-05-17T12:49:54Z",
+            "createdAt": "2016-05-13T04:19:27Z",
+            "id": "MDU6SXNzdWUxNTQ2MzEwMDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1091,
+            "state": "CLOSED",
+            "title": "Exception on Categorical with missing value imputation",
+            "updatedAt": "2016-05-17T12:49:54Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1091"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In most examples we use find_MAP() to find a good starting position for NUTS. My experience which seems to match with many others is that find_MAP() does a really poor job at providing a good starting point. More often, a manual setting is better.\nI think STAN actually just starts multiple samplers at different points (sampled from the prior?) as they found the same thing.\nWe should probably start by changing the examples to not use find_MAP() as most people will just copy that approach. Another interesting avenue to explore is to use ADVI to find the starting point in complex models.",
+            "closedAt": "2016-11-18T15:22:58Z",
+            "createdAt": "2016-05-11T08:22:29Z",
+            "id": "MDU6SXNzdWUxNTQxODYzMTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "docs"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1087,
+            "state": "CLOSED",
+            "title": "Model initialization with find_MAP does not seem to work well",
+            "updatedAt": "2016-11-18T15:22:58Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1087"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have been unable to get the survival model to run when using the NUTS sampler. I have tried using reasonable testval values and find_MAP, but to no avail. This should be an appropriate model for NUTS, since all the model parameters are continuous. In general, I find find_MAP to be unreliable, as it either fails or produces poor initial values.",
+            "closedAt": "2016-05-10T23:33:45Z",
+            "createdAt": "2016-05-10T21:49:20Z",
+            "id": "MDU6SXNzdWUxNTQxMTQ5NDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1086,
+            "state": "CLOSED",
+            "title": "Survival model example fails with NUTS",
+            "updatedAt": "2016-05-11T00:00:04Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1086"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I try to use Metropolis sampling method for a simple hierarchical model, following is the code:\nimport pymc3 as pm\nimport numpy as np\n#%% generate synthetic data\nMU_PHI = -10\nSD_PHI = 2\nMU_THETA = 10.0\nSD_THETA = 2\nNUM_SUBJ = 20\nNUM_OBS = 60\nt_x = np.random.normal(size=(NUM_SUBJ, NUM_OBS))\nt_z = np.random.normal(size=(NUM_SUBJ, NUM_OBS))\nc_y = np.random.normal(size=(NUM_SUBJ, NUM_OBS))\n#%% Model\nbasic_model = pm.Model()\nwith basic_model:\n    # hyper-parameter\n    mu_phi = pm.Normal('mu_phi', mu=MU_PHI, sd=SD_PHI)\n    mu_theta = pm.Normal('mu_theta', mu=MU_THETA, sd=SD_THETA)\n    # parameter\n    phi = pm.Normal('phi', mu=mu_phi, sd=SD_PHI, shape=(NUM_SUBJ, 1))\n    theta = pm.Normal('theta', mu=mu_theta, sd=SD_THETA, shape=(NUM_SUBJ, 1))\n    # deterministic variable\n    mu_c_y = theta - phi\n    # observation\n    var_c_y = pm.Normal('c_y', mu=mu_c_y, sd=1.0, shape=(NUM_SUBJ, NUM_OBS), observed=c_y)\n    #\n    start = pm.find_MAP()\n    trace = pm.sample(10000, start=start, step=pm.Metropolis())\n\n[Case 1] When I directly run the above code, I get the following ValueError:\n\nValueError: Input dimension mis-match. (input[1].shape[1] = 60, input[3].shape[1] = 1)\nApply node that caused the error: Elemwise{Composite{(i0 + (-sqr((i1 - (i2 - i3)))))}}(TensorConstant{(1L, 1L) o..3787715435}, TensorConstant{[[-0.55792..13113699]]}, Reshape{2}.0, phi_shared)\nToposort index: 7\nInputs types: [TensorType(float64, (True, True)), TensorType(float64, matrix), TensorType(float64, col), TensorType(float64, matrix)]\nInputs shapes: [(1L, 1L), (20L, 60L), (20L, 1L), (20L, 1L)]\nInputs strides: [(8L, 8L), (480L, 8L), (8L, 8L), (8L, 8L)]\nInputs values: [array([[-1.83787715]]), 'not shown', 'not shown', 'not shown']\nOutputs clients: [[Sum{acc_dtype=float64}(Elemwise{Composite{(i0 + (-sqr((i1 - (i2 - i3)))))}}.0)]]\nI guess it's because theano requires indicating broadcastable dimensions in the graph before compilation, while numpy can do broadcasting at run time.\n\n[Case 2]  When I modify the \"deterministic variable\" from\n\nmu_c_y = theta - phi\nto\nmu_c_y = phi\nor\nmu_c_y = theta\nThen there's no error anymore, the sampling goes well. The question is that when the deterministic variable involves two different stochastic variable, there's broadcasting issue, but if only with one, there's no issues.\n\n[Case 3] With the original code, if I change to NUTS sampler, the sampling goes well without any issues.",
+            "closedAt": "2019-08-16T14:44:10Z",
+            "createdAt": "2016-05-05T15:41:11Z",
+            "id": "MDU6SXNzdWUxNTMyNTk3Mzg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1083,
+            "state": "CLOSED",
+            "title": "Metropolis broadcasting issue",
+            "updatedAt": "2019-08-16T14:44:10Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1083"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The definition of the summary function in stats.py seems to be incorrect. The description describes a function parameter called tofile but the name of the parameter in the function is to_file. Either the documentation should be changed to reflect the function or the function should be changed to reflect the documentation. One of the other parameters is called roundto so it would make sense to rename the to_file to tofile but that would not be backwards compatible.",
+            "closedAt": "2017-02-13T17:57:02Z",
+            "createdAt": "2016-05-02T19:09:14Z",
+            "id": "MDU6SXNzdWUxNTI2MjE2ODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1081,
+            "state": "CLOSED",
+            "title": "summy definition",
+            "updatedAt": "2017-02-13T17:57:02Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1081"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am currently playing around with PyMC3 and am trying to implement a simple mixture of categoricals. However, I have quite some troubles with achieving results I expect. I have summarized my individual attempts in a notebook: http://nbviewer.jupyter.org/gist/psinger/045bd92f0c096c69a4b8762cc6040ed1\nIn general, we can see that the results are really odd, when I am trying to use 2 or 3 clusters with some clustered data and then use symmetric Dirichlet priors for the categoricals. Only in one case I end up with the results I expect: When I have extreme data with corresponding extreme Dirichlet priors for two clusters (last experiment in notebook).\nAny idea what I am doing wrong here? Thanks!",
+            "closedAt": "2020-07-27T09:52:02Z",
+            "createdAt": "2016-04-26T17:45:57Z",
+            "id": "MDU6SXNzdWUxNTExOTYzNDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1080,
+            "state": "CLOSED",
+            "title": "Mixture of Categoricals",
+            "updatedAt": "2020-07-27T09:52:02Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1080"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There seems to be an inconsistency in the way samples are generated from a Dirichlet, and the way a Categorical interprets its p argument. When drawing multiple draws from a k-dimensional Dirichlet, the elements of one draw are along axis=1 (elements sum to 1 along axis=1), while Categorical seems to expect them to be along axis=0. I need to take the transpose of the Dirichlet stochastic to get the Categorical to work, without which it throws an error. I am guessing that the same would be true for Multinomial as well, although I haven't checked. This behavior is non-intuitive, especially considering how often Dirichlet is used as a prior for Multinomial/Categorical.\nHere is a basic model to reproduce the error (uncomment/comment the appropriate Categorical line)\n# artificial data\nk = 2\nndata = 10\ndata = np.array([1, 2.2, 2.5, 2.8, 4, 6, 7.2, 7.5, 7.8, 9])\n\n# model\nalpha = 0.1 * np.ones((k, ndata))\nwith pm.Model() as model:\n    p = pm.Dirichlet('p', alpha, shape=(k, ndata))\n    mu = pm.Normal('mu', mu=5, sd=3, shape=k)\n    sd = pm.Uniform('sd', lower=0.1, upper=0.5, shape=k)\n    categ = pm.Categorical('categ', p=p.T, shape=(1, ndata))   # works\n    # categ = pm.Categorical('categ', p=p, shape=(1, ndata))   # throws an error\n    obs = pm.Normal('obs',\n                    mu=mu[categ],\n                    sd=sd[categ],\n                    observed=data)\n\n    step1 = pm.Metropolis(vars=[p, sigma, mu, obs])\n    step2 = pm.ElemwiseCategoricalStep(vars=[categ])\n\n    tr = pm.sample(100, step=[step1, step2])\n    print tr['p'][0, :]\n\nFor reference, the trace for p looks like this:\n[[ 0.75233998  0.42171357  0.7272167   0.6370857   0.62833266  0.51940564 0.74280775  0.7106556   0.58151824  0.30892646] [ 0.24766002  0.57828643  0.2727833   0.3629143   0.37166734  0.48059436 0.25719225  0.2893444   0.41848176  0.69107354]]",
+            "closedAt": "2016-07-23T10:18:56Z",
+            "createdAt": "2016-04-26T16:44:12Z",
+            "id": "MDU6SXNzdWUxNTExODM0MzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1079,
+            "state": "CLOSED",
+            "title": "Inconsistency between Dirichlet samples and Categorical argument",
+            "updatedAt": "2016-07-23T10:18:56Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1079"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am trying to convert a stan example to pymc3 which uses HMM. The log likelihood is calculated (using the forward algorithm) as follows:\n    for (t in 2:N) {\n        for (k in 1:K) {\n            for (j in 1:K)\n                acc[j] <- lg_alpha[t-1,j] + log(theta[j,k]) + normal_log(y[t],mu[k],sigma[k]);\n            lg_alpha[t,k] <- log_sum_exp(acc);\n        }\n    }\n    increment_log_prob(log_sum_exp(lg_alpha[N]));\n\nI understand that I probably have to use DensityDist but I'm not too familiar with theano to write the above code efficiently. Could someone give me a starting point so that I could implement this? y[t] are the only obesrvations here.\nMy second question is that is there a way to ensure that mu[1]>mu[2]>mu[3]. This will avoid some of the problems of label switching and stan implements this with ordered variables.",
+            "closedAt": "2016-05-16T10:58:31Z",
+            "createdAt": "2016-04-26T01:31:07Z",
+            "id": "MDU6SXNzdWUxNTEwMTkyNzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1077,
+            "state": "CLOSED",
+            "title": "HMM in pymc3",
+            "updatedAt": "2016-05-16T10:58:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1077"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The following produces this TypeError in draw_value:\nimport numpy as np\nimport pymc3 as pm\nfrom theano import shared\nimport theano.tensor as T\nG_var = shared(value=np.atleast_2d(1.), broadcastable=(True, False), name=\"G\")\n\nwith pm.Model() as model:\n    theta0 = pm.Normal('theta0', mu=np.atleast_2d(0),\n                       tau=np.atleast_2d(1), shape=(1,1), testval=np.atleast_2d(1e-3))\n    theta = pm.Normal('theta', mu=T.dot(G_var, theta0)\n                      , tau=np.atleast_2d(1), shape=(1,1))\n\n    theta.random()\nLooks like it's related to #933.",
+            "closedAt": "2018-12-22T12:09:55Z",
+            "createdAt": "2016-04-26T00:35:34Z",
+            "id": "MDU6SXNzdWUxNTEwMTM1ODg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1076,
+            "state": "CLOSED",
+            "title": "Issue with shared, named Theano variable in `draw_value`",
+            "updatedAt": "2018-12-22T12:09:55Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1076"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey guys fantastic work.  I was reading the peerj publication and found some discrepancies between the code and figures there.  Basically, the figures are from the most recent \"Getting started\" notebook,\nbut the code to build the predictor (X) and observed data (Y) is not.  It is a simple change:\nThe code in the paper is:\n# Predictor variable\nX1 = np.linspace(0, 1, size)\nX2 = np.linspace(0,.2, size)\n\nbut should actually read:\n# Predictor variable\nX1 = np.random.randn(size)\nX2 = np.random.randn(size) * 0.2\n\nAfter this change, everything matches (the plots in figure 1 as well as the resulting trace).\nThanks for all your hard work, this is a fantastic package and the paper is extremely lucid as well!",
+            "closedAt": "2016-05-01T15:27:18Z",
+            "createdAt": "2016-04-22T15:37:44Z",
+            "id": "MDU6SXNzdWUxNTA0MDI5MTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1075,
+            "state": "CLOSED",
+            "title": "Error in PeerJ article",
+            "updatedAt": "2016-05-01T15:27:18Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1075"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Greetings pymc3 developers,\nI attempted to run the 'survival_analysis' notebook in pymc3/examples but was unsuccessful. Can anyone advise on a fix?\nHere's what I did. I installed pymc3 to a virtual environment:\nconda create -n pymc3_test_env python=2.7 ipython-notebook seaborn statsmodels\nsource activate pymc3_test_env\npip install git+https://github.com/pymc-devs/pymc3.git\n\nThe notebook runs as expected until we inspect mean of the traces of beta, where I obtain\nnp.exp(trace['beta'].mean())\nOut[17]:\n1.0\n\nimplying that the sampling for $\\beta$ is all zeros. The expected result is 1.645592148084472 (referenced from the original blog post).\nIssue #1072 suggests the model is misspecified. However, I'm unable to find any misspecifications in the model, and of course the notebook worked at some point. So I'm lead to believe that a bug has been introduced somewhere in development.\nA gist of my attempt at running the notebook can be found here.\nAlso, note that in the gist where this notebook was originally posted, several users have commented about the same problem.\nI'd be happy to dig into this further. Please let me know how I can help.",
+            "closedAt": "2016-05-11T15:36:12Z",
+            "createdAt": "2016-04-22T14:48:18Z",
+            "id": "MDU6SXNzdWUxNTAzODkyMDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1074,
+            "state": "CLOSED",
+            "title": "Broken example: survival_analysis",
+            "updatedAt": "2021-09-30T20:08:53Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1074"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am trying to implement MCMC using PyMC3. While trying to execute the program, the sampling part took more time to complete. I don't see any gpu utilization ( 0% ) via nvidia-smi command.\ntrace = sample(5000, start=start, njobs=4)\nIn the below code, I configured no. of chain is 4, but it utilize 4 cpu cores instead gpu while running the sampling part.\nHow to make gpu utilization effectively, invoking PyMC3 sampling ?\nimport numpy as np\nfrom pymc3 import Model, Normal, HalfNormal, summary, find_MAP, sample\n np.random.seed(123)\nalpha, sigma = 1, 1\nbeta = [1, 2.5]\nsize = 10000\nX1 = np.random.randn(size)\nX2 = np.random.randn(size) * 0.2\nY = alpha + beta[0]*X1 + beta[1]*X2 + np.random.randn(size)*sigma\nbasic_model = Model()\nwith basic_model:\n    alpha = Normal('alpha', mu=0, sd=10)\n    beta = Normal('beta', mu=0, sd=10, shape=2)\n    sigma = HalfNormal('sigma', sd=1)\n    mu = alpha + beta[0]*X1 + beta[1]*X2\n    Y_obs = Normal('Y_obs', mu=mu, sd=sigma, observed=Y)\n    start = find_MAP()\n    trace = sample(5000, start=start, njobs=4) \nsummary(trace)",
+            "closedAt": "2017-01-31T09:32:52Z",
+            "createdAt": "2016-04-20T16:43:58Z",
+            "id": "MDU6SXNzdWUxNDk4MjM5MTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1073,
+            "state": "CLOSED",
+            "title": "PyMC3 Sampling code not utilizing GPU cores",
+            "updatedAt": "2017-11-01T06:49:56Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1073"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I was trying to create what I though was a fairly simple model but I got interesting, and disappointing results.\nThe goal of the model is to fit a parameter c_to_h which is the percentage of people who are colonized with a disease who end up in the hospital because of that disease. There are 20 different strains of the disease (N in the model), and therefore 20 groups of colonized people, 20 groups of hospitalized people and 20 values of c_to_h.  The code of the model appears below\nimport pymc3 as pm\nimport numpy as np\nimport seaborn p\nimport matplotlib.pyplot as plt\n\nN = 20\nhospitalized_array = np.array([100] * N)\ncolonized_array = np.array([500] * N)\n\nbasic_model = pm.Model()\nwith basic_model:\n    colonized = pm.Dirichlet(name=\"colonized\", a=colonized_array, shape=N)\n    c_to_h = pm.Uniform(name=\"c_to_h\", lower=0, upper=1, shape=N)\n    model_h = colonized * c_to_h\n\n    hospitalized = pm.Dirichlet(name=\"hospitalized\", a=model_h, observed=hospitalized_array, shape=N)\n\n    trace = pm.sample(10000)\n\n    pm.traceplot(trace)\n    plt.show() # graph won't show otherwise\n    pm.summary(trace)\nWhen I run the code there is no error. The error occurs only in the figure and in the nonsensical summary. The figure appears below.\n\nThe output for the summary of c_to_h appears bellow\nc_to_h:\n\n  Mean             SD               MC Error         95% HPD interval\n  -------------------------------------------------------------------\n\n  0.500            0.000            0.000            [0.500, 0.500]\n.\n.\n.\n  0.500            0.000            0.000            [0.500, 0.500]\n\n  Posterior quantiles:\n  2.5            25             50             75             97.5\n  |--------------|==============|==============|--------------|\n\n  0.500          0.500          0.500          0.500          0.500\n.\n.\n.\n  0.500          0.500          0.500          0.500          0.500\n\nIt would make for sense for the mean to be at .2\nWhy would this be happening? What does KDE have to do with this?",
+            "closedAt": "2016-04-14T10:42:33Z",
+            "createdAt": "2016-04-13T22:04:15Z",
+            "id": "MDU6SXNzdWUxNDgxOTYzOTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1072,
+            "state": "CLOSED",
+            "title": "KDE plot failed",
+            "updatedAt": "2016-04-17T04:36:54Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1072"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am reading the source code to find out what approach do you use for checking convergence. The first one is to calculate the z-score. But when I search geweke on further, I can't find anything. I wonder how do you use the array zscores to determine whether the chain is convergent? Thanks in advance!",
+            "closedAt": "2016-04-15T08:48:15Z",
+            "createdAt": "2016-04-13T17:20:26Z",
+            "id": "MDU6SXNzdWUxNDgxMjY1MDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1071,
+            "state": "CLOSED",
+            "title": "How did you check convergence based on the z-score?",
+            "updatedAt": "2016-04-18T15:29:04Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1071"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have a model similar to a Guassian Mixture Model, with the modification that every observation has a separate probability distribution over the clusters (similar to the distribution of words over topics in LDA)\nk = 3\nndata = 30\nalpha =  np.array([0.1] * k)\nwith pm.Model() as model:\n        p = [pm.Dirichlet('p%d' % i, alpha, shape=k) for i in xrange(0, ndata)]\n\n        # Jeffrey's prior for sd\n        log_sigma = pm.Uniform('log_sigma', lower=-4, upper=-0.5, shape=k)\n        sigma = pm.Deterministic('sigma', pm.exp(log_sigma))\n\n        mu = pm.Normal('mu', mu=10, sd=2, shape=k)\n\n        categ = [pm.Categorical('categ%d' % i, p=p[i]) for i in xrange(0, ndata)]\n\n        obs = [pm.Normal('obs%d' % i,\n                      mu=mu[categ[i]],\n                      sd=sigma[categ[i]],\n                      observed=data[i]) for i in xrange(0, ndata)]\n\n        num_iter = 10000\n        num_burn = 5000\n        thin = 1\n\n        var_list = [sigma, mu]\n        for i in xrange(0, ndata):\n            var_list.append(p[i])\n            var_list.append(obs[i])\n\n        step1 = pm.Metropolis(vars=var_list)\n\n        categ_list = []\n        for i in xrange(0, ndata):\n            categ_list.append(categ[i])\n        step2 = pm.ElemwiseCategoricalStep(vars=categ_list, values=[0,1,2])\n\n        tr = pm.sample(num_iter, step=[step1, step2])\n\nThe above code throws the following error:\nTraceback (most recent call last):\n  File \"test.py\", line 72, in <module>\n    tr = pm.sample(num_iter, step=[step1, step2])\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/sampling.py\", line 150, in sample\n    return sample_func(**sample_args)\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/sampling.py\", line 159, in _sample\n    for i, strace in enumerate(sampling):\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/sampling.py\", line 241, in _iter_sample\n    point = step.step(point)\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/step_methods/compound.py\", line 14, in step\n    point = method.step(point)\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/step_methods/arraystep.py\", line 89, in step\n    apoint = self.astep(bij.map(point), *inputs)\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/step_methods/gibbs.py\", line 40, in astep\n    p = array([logp(v * self.sh) for v in self.values])\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/blocking.py\", line 119, in __call__\n    return self.fa(self.fb(x))\n  File \"/home/shobhit/.local/lib/python2.7/site-packages/pymc3/blocking.py\", line 64, in rmap\n    dpt[var] = np.atleast_1d(apt)[slc].reshape(shp).astype(dtyp)\nValueError: total size of new array must be unchanged\n\nwhich presumably indicates that there is some problem with the way I am assigning step methods to variables. Can someone point me to what I might be doing wrong?",
+            "closedAt": "2016-04-26T00:32:01Z",
+            "createdAt": "2016-04-13T14:38:11Z",
+            "id": "MDU6SXNzdWUxNDgwODE4NTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1070,
+            "state": "CLOSED",
+            "title": "Error in assigning step method to variables.",
+            "updatedAt": "2016-04-26T16:36:27Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1070"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I get errors when sampling a Bound'ed univariate scalar random variable with--effectively--non-scalar shape, e.g.\nimport numpy as np\nimport pymc3 as pm\n\nx_shape = (2,1)\nwith pm.Model() as model:\n    BoundedNormal = pm.Bound(pm.Normal, lower=0)\n    x_var = BoundedNormal('x', mu=np.zeros(shape=x_shape),\n            sd=np.ones(shape=x_shape), shape=x_shape)\n    x_var.random(size=(1,))\nThe errors look like this.\nFirst, is there anything fundamentally wrong about what's going on in that example?\nRegardless, I've hacked up a quick solution (assuming that the underlying bounded [tensor] variable is a collection of i.i.d. variables) and I'm sending a pull request.",
+            "closedAt": "2018-12-22T12:09:50Z",
+            "createdAt": "2016-04-13T01:31:53Z",
+            "id": "MDU6SXNzdWUxNDc5MjAxMDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1068,
+            "state": "CLOSED",
+            "title": "Sampling Bounded Variables",
+            "updatedAt": "2018-12-22T12:09:50Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1068"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First of all I am not sure if this belongs here or on stackoverflow but anyhow here is the problem.\nSuppose I have the following model\npi = pm.Dirichlet('pi', a=0.5 * np.ones(K))\nq_ij = pm.Categorical('q_ij', p=pi, shape=(N, 1))\nq_ji = pm.Categorical('q_ji', p=pi, shape=(1, N))\neta = pm.Beta('eta', alpha=1, beta=1, shape=(K, K))\n\nA = pm.Bernoulli('A', eta[q_ij, q_ji], shape=(N, N), observed=A_obs)\n\nThis works just fine with Metropolis and SequentialScanDiscreteMetropolis steps and I am able to learn the correct parameters.\nNow suppose I want to create an additional node A_prime such that:\nA_prime[i, j] = \n    Bernoulli (1 - theta)       if A[i, j] == 1\n    Bernoulli (theta)           if A[i, j] == 0\n\nwheretheta = pm.Beta('theta', alpha=1, beta=1).\nAnd then instead of providing the observations to A, I provided them to A_prime\nIn order to achieve that I tried the following:\nA_prime = pm.Bernoulli('A_prime', t.switch(t.eq(A, 1), 1 - theta, theta), shape=(N, N), observed=A_obs)\nwhere  t  is theano.tensor.\nBut with that change I am no longer able to learn the correct parameters. Any idea what might be going on?",
+            "closedAt": "2016-09-05T18:49:04Z",
+            "createdAt": "2016-04-08T11:03:45Z",
+            "id": "MDU6SXNzdWUxNDY4OTQ2MzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1067,
+            "state": "CLOSED",
+            "title": "Modeling question (Switch)",
+            "updatedAt": "2016-09-05T18:49:04Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1067"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm trying to play with a DP mixture where the mixture isn't compared to observed values but rather serves as a hyper prior. However, I'm getting a dimension mis-match that I cannot fully understand. The prior for the model:\nNdp = 10\nNobs = 500\nwith lcModel2:\n\n# Setting up the DP\nalpha = pm.Uniform('alpha', lower=0.5,upper=200)\na=ones(Ndp)*alpha/float(Ndp)\np = pm.Dirichlet('p', a=a, shape=Ndp)\ncategory = pm.Categorical('category',\n                       p=p,\n                       shape= Nobs)\n\nOmegaM = pm.Uniform(\"OmegaM\",lower=0,upper=1.)\n\n# The mixture parameters\nM0      = pm.Uniform(\"M0\",lower=-20.,upper=-18., shape=Ndp)\nsysScat_log = pm.Uniform(\"sysScat_log\",lower=-3,upper=1,shape=Ndp),\n\n\ntaninv_alpha = pm.Uniform(\"taninv_alpha\",lower=-.2,upper=.3)\ntaninv_beta = pm.Uniform(\"taninv_beta\",lower=-1.4,upper=1.4)\n\n\nxm=pm.Cauchy('xm',alpha=0,beta=1)\ncm=pm.Cauchy('cm',alpha=0,beta=0.3)\nRx_log=pm.Uniform('Rx_log',lower=-0.5,upper=0.5)\nRc_log=pm.Uniform('Rc_log',lower=-1.5,upper=1.5)\n\n# Transform variables\nalpha=pm.Deterministic('alpha',T.tan(taninv_alpha))\nbeta=pm.Deterministic('beta',T.tan(taninv_beta))\nRx=pm.Deterministic(\"Rx\",T.pow(10.,Rx_log))\nRc=pm.Deterministic(\"Rc\",T.pow(10.,Rc_log))\nsysScat = pm.Deterministic('sysScat',T.pow(10.,sysScat_log))\n\nx_true  = pm.Normal('x_true',mu=xm, sd=Rx,shape= Nobs)\nc_true  = pm.Normal('c_true',mu=cm, sd=Rc,shape= Nobs)\n\n# Here is the where the model fails.\nM_true  = pm.Normal('M_true',mu=M0[category],sd=sysScat[category],shape= Nobs)\n\nValueError: Input dimension mis-match. (input[0].shape[1] = 10, input[1].shape[1] = 500)\n\nNormally the M_true would be compared to observations, but that would also have shape=Nobs so I'm not sure how the category is handling dimensions.\nAm I missing something here?\nThanks!",
+            "closedAt": "2016-09-05T18:52:15Z",
+            "createdAt": "2016-04-07T06:49:19Z",
+            "id": "MDU6SXNzdWUxNDY1MjQwOTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1066,
+            "state": "CLOSED",
+            "title": "DP mixture in hierarchy",
+            "updatedAt": "2016-09-05T18:52:15Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1066"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When running pm.sample(..., njobs=None), I get a NameError.  Looks like this line wants to use mp as an alias for multiprocessing, but the import above it is missing the ... as mp portion.",
+            "closedAt": "2016-04-06T22:07:42Z",
+            "createdAt": "2016-04-06T20:58:45Z",
+            "id": "MDU6SXNzdWUxNDY0MzMyNzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1064,
+            "state": "CLOSED",
+            "title": "`njobs=None` Sampling Error",
+            "updatedAt": "2016-04-06T22:07:42Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1064"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Consider the following model:\nN = A_obs.shape[0]\nK = 2\nmodel = pm.Model()\nwith model:\n    pi = pm.Dirichlet('pi', a=0.5 * np.ones(K))\n    eta = pm.Beta('eta', alpha=1, beta=1, shape=(K, K))\n    q = pm.Categorical('q', p=pi, shape=(N,))\n\n    A = [pm.Bernoulli('A_{}_{}'.format(i, j), p=eta[q[i], q[j]])\n                                     for i in range(N) for j in range(N)]\n\n    step1 = pm.Metropolis(vars=A + [pi, eta])\n    step2 = pm.ElemwiseCategoricalStep(vars=[q], values=[0, 1])\n    tr = pm.sample(3000, step=[step1, step2])\n\nThe model takes extremly long time to run even for small values of N < 10. The actually sampling is fast, however building the model is not.\nI'm guessing because A is written as a list of N * N random variables. I tried to specify A with shape=(N, N) but without much success.\nAny suggestions?",
+            "closedAt": "2018-12-22T12:09:40Z",
+            "createdAt": "2016-04-06T15:03:02Z",
+            "id": "MDU6SXNzdWUxNDYzNDI0MTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1063,
+            "state": "CLOSED",
+            "title": "Extremly slow stochastic block model",
+            "updatedAt": "2018-12-22T12:09:40Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1063"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "No wonder Peadar had trouble predicting the result ;)\nhome_theta  = tt.exp(intercept + home + atts[away_team] + defs[home_team])\nshould really be:\nhome_theta  = tt.exp(intercept + home + atts[home_team] + defs[away_team])",
+            "closedAt": "2016-04-02T17:46:52Z",
+            "createdAt": "2016-04-02T01:17:11Z",
+            "id": "MDU6SXNzdWUxNDUzMjE4MDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1059,
+            "state": "CLOSED",
+            "title": "Rugby analytics example implementation is wrong",
+            "updatedAt": "2016-04-02T17:46:52Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1059"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I installed pymc3 through the default git branch with pip, when I am trying to import pymc3, I have this error (I use python 2.7):\nfrom pymc3 import Model, Normal, HalfNormal\nTraceback (most recent call last):\n  File \"<pyshell#55>\", line 1, in <module>\n    from pymc3 import Model, Normal, HalfNormal\n  File \"F:\\ApplySoftwareBase\\User\\Scripts\\Python\\lib\\site-packages\\pymc3\\__init__.py\", line 12, in <module>\n    from .variational import *\nImportError: No module named variational `\n\nI uninstalled Theano and reinstall it again and couldn't fix this problem",
+            "closedAt": "2016-04-01T18:24:54Z",
+            "createdAt": "2016-04-01T17:35:41Z",
+            "id": "MDU6SXNzdWUxNDUyMzg1NzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1056,
+            "state": "CLOSED",
+            "title": "ImportError: No module named variational",
+            "updatedAt": "2016-04-01T18:24:54Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1056"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I want to fit a series of Bayesian models where I have a unique prior. Each model will basically have its own vector of observations. For instance, let's say I want to find the conversion rate for each product in a website. I could use the website's conversion rate as a common prior for all items, and then update my likelihood based on the observed data for each items. So for instance, to come up with the posterior distribution for the conversion rate of Item A I will use all the data I've collected so far for Item A and the common prior (website conversion rate).\nThis is some code I borrowed from Twiecki's Europy presentation:\nnp.random.seed(9)\nalgo_a = sp.stats.bernoulli(.5).rvs(300) # 50% profitable days\nalgo_b = sp.stats.bernoulli(.6).rvs(300) # 60% profitable days\n\nimport pymc as pm\nmodel = pm.Model()\nwith model: # model specifications in PyMC3 are wrapped in a with-statement\n    # Define random variables\n    theta_a = pm.Beta('theta_a', alpha=5, beta=5) # prior\n    theta_b = pm.Beta('theta_b', alpha=5, beta=5) # prior\n\n    # Define how data relates to unknown causes\n    data_a = pm.Bernoulli('observed A',\n                          p=theta_a, \n                          observed=algo_a)\n\n    data_b = pm.Bernoulli('observed B', \n                          p=theta_b, \n                          observed=algo_b)\n\n    # Inference!\n    start = pm.find_MAP() # Find good starting point\n    step = pm.Slice() # Instantiate MCMC sampling algorithm\n    trace = pm.sample(10000, step, start=start, progressbar=False) # draw posterior samples using slice sampling \n\nWhat he is doing is to infer which sample perform better in an A/B test. This is kind of a similar problem from the one I have, with the only difference that I'm not comparing baseline and experiment, but items in a website.\nThis works great if we have only two samples, the baseline and the experiment. But what could we have done if for instance we had 100 experiments running at the same time? Is there a way to pass to the likelihood distribution (in this case Bernoulli) an array of observations? In this case it would be a 300x100 array, where 300 are the binary observations for each sample and 100 the number of samples.",
+            "closedAt": "2016-03-31T19:07:28Z",
+            "createdAt": "2016-03-30T17:12:26Z",
+            "id": "MDU6SXNzdWUxNDQ2NTY2MTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1051,
+            "state": "CLOSED",
+            "title": "Pass an array of observations to a probability distribution ",
+            "updatedAt": "2016-03-31T19:07:28Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1051"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We presently keep variables that have been auto-transformed by the sampler in the same data structures as the user-specified variables. This results in more variables in the trace than the user specified, which can be confusing for the user. Since these transformations are simply an internal tool for the sampler, we should keep them entirely separate from the rest of the variables in the model. In fact, do we even need to record traces for these? Seems like unnecessary overhead.",
+            "closedAt": "2016-09-05T18:56:26Z",
+            "createdAt": "2016-03-30T16:24:41Z",
+            "id": "MDU6SXNzdWUxNDQ2NDQzMzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1050,
+            "state": "CLOSED",
+            "title": "Hide auto-transformed variables",
+            "updatedAt": "2016-09-05T18:56:26Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1050"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am not sure if this is a bug or just bad implementation, but here goes.  My data consist of a series of binary triplets (for example, (1,0,0)).  The joint probability distribution for each triplet is modeled as e^{mu_C}/sum_{all non-trivial combinations of C's}(e^{mu_C}), where mu's are sampled from a multivariate normal and the C's are the binary triplets.  Here's my model:\n import pymc3 as pm\n import numpy as no\n import theano\n import theano.tensor as T\n import scipy.stats\n from scipy.stats import multivariate_normal\n import matplotlib.pyplot as plt\n import pandas as pd\n\n returns = pd.read_csv(\"returns.csv\",index_col=0)\n x_n = returns.columns[:-1]\n x_2 = returns[x_n].values\n y_2 = pd.Categorical(returns['Label']).labels\n\n covariance = np.matrix([[1, -0.1, 0.1], [-0.1, 1.,  0.1], [0.1, 0.1, 1]])\n prec = np.linalg.inv(covariance)\n\n S = np.eye(3)\n L = scipy.linalg.cholesky(S)\n nu = 5\n\n with pm.Model() as model:\n      prec = WishartBartlett('prec', S, nu)\n      cov = pm.Deterministic('cov', T.nlinalg.matrix_inverse(prec))\n      w = pm.MvNormal('w', mu=np.ones(3), tau=prec, shape=3)\n\n      theta = pm.dot(x_2, w)\n      p = pm.exp(theta)/(pm.exp(w[0]+w[1]+w[2]) + pm.exp(w[0]+w[1]) + pm.exp(w[1]+w[2]) + pm.exp(w[0]+w[2]) + pm.exp(w[0]) + pm.exp(w[1] + pm.exp(w[2])))\n\n      yl = pm.Categorical('yl', p=p, observed=y_2)\n\n      start = pm.find_MAP()\n      step = pm.Metropolis()\n      trace = pm.sample(1000, step, start)\n\nAnd here's the error:\n   ValueError                                Traceback (most recent call last)\n    <ipython-input-177-a81e3aedc3bf> in <module>()\n            83     yl = pm.Categorical('yl', p=p, observed=y_2)\n            84 \n     ---> 85     start = pm.find_MAP()\n            86     #step = pm.NUTS(scaling=start)\n            87     step = pm.Metropolis()\n\n            /usr/local/lib/python3.5/site-packages/pymc3/tuning/starting.py in find_MAP(start, vars, fmin, return_raw, model, *args, **kwargs)\n            125                          \"density. 2) your distribution logp's are \" +\n            126                          \"properly specified. Specific issues: \\n\" +\n       --> 127                          specific_errors)\n             128     mx = {v.name: mx[v.name].astype(v.dtype) for v in model.vars}\n             129 \n\n            ValueError: Optimization error: max, logp or dlogp at max have non-finite values. \n            Some values may be outside of distribution support. max: {'z': array([ 0.,  0.,  0.]), 'c_log': array([ 1.59861228,  1.19314717,  0.5       ]), 'w': array([ 1.,  1.,  1.])} logp: array(-inf) dlogp: array([-0.47308192, -0.14872127,  0.17563937,  0.        ,  0.        ,\n    0.        ,  0.        ,  0.        ,  0.        ])\n             Check that 1) you don't have hierarchical parameters, these will lead to points with infinite density. 2) your distribution logp's are properly specified. Specific issues: \n\nThanks for your help!",
+            "closedAt": "2016-03-31T13:22:03Z",
+            "createdAt": "2016-03-29T20:21:42Z",
+            "id": "MDU6SXNzdWUxNDQzNzY1MTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1046,
+            "state": "CLOSED",
+            "title": "Optimization error (softmax regression)",
+            "updatedAt": "2016-03-31T13:22:04Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1046"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The current behavior of PyMC3 when running parallel chains via the njobs argument is to sample k*n values from the posterior, where k is the number of chains and n the specified number of iterations, and concatenate them into a single trace. This is confusing, and I believe counter to what most users would expect. I see two potential alternatives that are preferable:\n\nSample k chains each of size n, but return samples as a multitrace with all k chains (i.e. do not concatenate them)\nSample k chains each of size n/k and concatenate them into a single chain\n\nThe latter might be the best for most users, as it simply says: \"Give me n samples, and use k cores to do it\", whereas the former is more useful for applying Gelman-Rubin diagnostics, or any other procedure that requires chains of the same model to be compared.",
+            "closedAt": "2016-03-29T03:52:44Z",
+            "createdAt": "2016-03-29T03:51:15Z",
+            "id": "MDU6SXNzdWUxNDQxNDkxMzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1045,
+            "state": "CLOSED",
+            "title": "Make traces from parallel chains consistent",
+            "updatedAt": "2016-03-29T03:52:44Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1045"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Now I start the pedantic housekeeping as @fonnesbeck called it\nAt the moment theano.tensor is imported in three different ways throughout the code:\nimport theano.tensor as t, T, tt\nI think we should agree on one version as @twiecki keeps track on that so nicely for numpy as np ;)\nI vote for (if I have a right for voting):\nimport theano.tensor as tt",
+            "closedAt": "2016-05-25T20:20:58Z",
+            "createdAt": "2016-03-28T15:12:22Z",
+            "id": "MDU6SXNzdWUxNDM5OTkyNTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1044,
+            "state": "CLOSED",
+            "title": "import convention theano.tensor",
+            "updatedAt": "2016-05-25T20:20:58Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1044"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "As we know, LKJ prior with parameters n, p defines a distribution over p-by-p correlation matrices. When n = 1, it is uniform over all such matrices. As n goes large, the distribution becomes more concentrated around the identity matrix.\nTo illustrate this bug, let's restrict our attention to the case where p = 2.\nFrom this paper (page 6), we know that Pr[R] \\propto |R|^(n-1). For 2-d correlation matrices, |R| is apparently maximized at R = I, when |R| = 1. All other R has 0 < |R| < 1.\nSo if we increase n (> 1), \\sum_{R} |R|^(n-1) decreases, and Pr[I] = (|I|^(n-1)) / (\\int_{R} |R|^(n-1)) should increase.\nHowever,\n>>> import pymc3 as pm\n>>> f = theano.function([], pm.LKJCorr.dist(1, 2).logp(np.array([0])))\n>>> f()\narray(0.6931471824645996)\n>>> f = theano.function([], pm.LKJCorr.dist(10, 2).logp(np.array([0])))\n>>> f()\narray(-0.5664327677286938)\n>>> f = theano.function([], pm.LKJCorr.dist(100, 2).logp(np.array([0])))\n>>> f()\narray(-1.728976562499895)",
+            "closedAt": "2018-08-04T13:27:32Z",
+            "createdAt": "2016-03-28T01:37:51Z",
+            "id": "MDU6SXNzdWUxNDM4NjkzNzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1042,
+            "state": "CLOSED",
+            "title": "Wrong logp in LKJ prior",
+            "updatedAt": "2018-08-04T13:49:55Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1042"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm going to implement mini-batch in advi (taku-y@0424b93; https://gist.github.com/taku-y/b4da34be310718a6ea02) and don't know how to implement the sample size correction; for fair comparison with full-batch estimation, log likelihood needs to be multiplied by (total sample size) / (mini-batch size), but I don't know the best way to do that. Do I need to modify logp methods in distribution classes, or is there another option?",
+            "closedAt": "2016-05-25T20:22:06Z",
+            "createdAt": "2016-03-25T16:59:01Z",
+            "id": "MDU6SXNzdWUxNDM1NDE2MzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1038,
+            "state": "CLOSED",
+            "title": "Mini-batch in ADVI",
+            "updatedAt": "2016-05-25T20:22:06Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1038"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "/apps/python3.5/bin/pip install --upgrade pymc\nCollecting pymc\n  Downloading pymc-2.3.6.tar.gz (348kB)\n    100% |████████████████████████████████| 358kB 2.8MB/s \n    Complete output from command python setup.py egg_info:\n    Traceback (most recent call last):\n      File \"<string>\", line 1, in <module>\n      File \"/tmp/pip-build-dxfgcfsw/pymc/setup.py\", line 8, in <module>\n        from numpy.distutils.misc_util import Configuration\n    ImportError: No module named 'numpy'",
+            "closedAt": "2016-03-24T20:00:20Z",
+            "createdAt": "2016-03-24T17:22:43Z",
+            "id": "MDU6SXNzdWUxNDMzMDg0Mzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1037,
+            "state": "CLOSED",
+            "title": "numpy not listed in module reqs",
+            "updatedAt": "2016-03-24T20:00:20Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1037"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "How is it intended that the PPC (#862) function works with randomwalk variables for prediction? I'm trying to get predictions out of a latent variable/state space model and I'm having trouble.\nI have the below model which tracks a simple mean over time with some added noise in the observations (based on this link) but because it sets the shape of the random walk based on the data at compile time, I can't find a way to predict outcomes for new data.\nThere are two problems here;\n\nYou can't use a TensorVariable (and hence a shared variable) to set a shape\nYou can't concatenate TensorVariables where you don't know the length of the output\n\n\nimport theano as th, pandas as pd, numpy as np, pymc3 as pm, theano.tensor as T, ggplot as gg\n\n#Create some simulated data - imagine a different mean for each day, where a variable number of \n#observations occurs for each day.\ndata = np.array([1,1,1,1,4,4,4,4,4,4,3,3,3,7,7,7,8,8,8,6,6,6,6,6])\ndata = pd.DataFrame({'nonoise': data})\ndata['vals'] = data.nonoise + np.random.normal(0, .3, size = len(data))\n\n#array counting number of rows for each \"day\"\ndata_repeats = data.groupby(by = 'nonoise').count().vals.values\n\n#try setting the shared variables with a numpy array instead of a pandas df\ndata_repeats = th.shared(data_repeats)\ndata = th.shared(data.values)\ntest_model = pm.Model()\n\nexpected_time_var = 10.0\nexpected_within_time_var = .3\n\nwith test_model:\n    sigma_alpha = pm.Exponential('sigma_alpha', 1/expected_time_var, testval = .5)\n\n    #First issue - leaving the data in a shared variable (which is advised in the PPC tutorial) \n    #means you can't use it to set the shape. simply using the argument shape = data.shape will fail with\n    #TypeError: Expected int elements in shape because the shape argument can't handle symbolic variables.\n\n    alpha = pm.GaussianRandomWalk('alpha', sd=sigma_alpha, mu=0, \n                                  shape = data_repeats.get_value().shape)    \n\n    #Second issue - using the below code gives an error: length not known: ARange{dtype='int64'} [id A] ''\n    #alpha_daily = [alpha[i].repeat(pattern[i]) for i in T.arange(0, data_repeats.shape[0])]    \n    #Using this code does work, but appears to set the computational graph for a dataset of a specific length at compile time?\n    alpha_daily = T.concatenate([alpha[i].repeat(data_repeats[i]) for i in range(0, data_repeats.shape[0].eval())])\n\n    sigma_L = pm.Exponential('sigma_L', 1/expected_within_time_var)\n\n    likelihood = pm.Normal('like', mu=alpha_daily, tau=sigma_L, \n                           observed = data[:,1]) #observed is the vals from the shared data set\n\n#Compute MAP\nfrom scipy import optimize\nwith test_model:\n    MAP = pm.find_MAP(vars = [alpha, sigma_L], fmin = optimize.fmin_bfgs)\n    ppc_MAP =  pm.sample_ppc(np.array([MAP]), size = 10000)\n\n##################################################################################################################\n##########################################All works OK up to here.################################################\n##################################################################################################################\n#construct some new data of length 8\nsteps = [np.random.normal() for i in range(0, 7)]\nnew_data = [reduce(lambda x, y: x+y, steps[i-2:i]) for i in range(2, len(steps)+2)]\nnew_data = pd.DataFrame({'nonoise': np.zeros(len(steps)), 'vals': new_data })\n\n#load data into the shared variable\ndata.set_value(new_data.values)\n\n#generate new predictions using the existing trace (which is actually just a MAP)\nwith test_model:\n    newdata_ppc =  pm.sample_ppc(np.array([MAP]), size = 10000)\n    newdata_pred = np.mean(ppc_MAP['like'], axis = 1)#.reshape(len(steps))\n\nnewdata_pred.shape # = (1L, 24L) - Not 8 as expected\n\n\nI think maybe this raises a more general question for me about how the shape argument works. Even in a simple situation where we have a piecewise linear model and wanted to infer the number of breakpoints as a random variable from the data, would this be possible to do without being able to pass a Stochastic to the shape parameter of another RV?\nI think pymc3 has amazing potential for creating really flexible models, but I keep encountering issues like this - I guess what Fonnesbeck calls show stoppers? Maybe my Theano knowledge just isn't good enough to see the solutions to this stuff, hopefully someone can give me some advice if there is a workaround?",
+            "closedAt": "2020-07-27T09:49:59Z",
+            "createdAt": "2016-03-24T03:52:51Z",
+            "id": "MDU6SXNzdWUxNDMxNDI1MDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1036,
+            "state": "CLOSED",
+            "title": "PPC Predictions for Randomwalk/Defining RV shape at runtime",
+            "updatedAt": "2020-07-27T09:49:59Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1036"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is horribly slow! That was a main surprise for me, especially for the Multivariate Proposal for a Covariance matrix of 450x450 it took 0,3s!!! For each step!\nFortunately, there is a solution to that. Just the initialisation of the RNG is so slow in Numpy!\nYou can call the function with a size argument and generate your proposal steps before the loop! That resulted for me in a sampling that is unbelievable 2 times faster! Maybe with the other distributions it is not as significant, but we might want to consider doing that for the other step_methods at least Metropolis as well. I dont know much about the other methods you guys implemented so far.\nDepending on your opinions, of course!\nAn example of how I did it in the ATMCMC, is in these commits:\n98ffaeb\nb4ff0e1",
+            "closedAt": "2017-10-20T15:52:30Z",
+            "createdAt": "2016-03-23T07:24:07Z",
+            "id": "MDU6SXNzdWUxNDI4ODUwODk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1034,
+            "state": "CLOSED",
+            "title": "Proposal generation",
+            "updatedAt": "2017-10-20T15:52:30Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1034"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Greetings!\nI'm trying to speed up a rather lengthy sampling process on a mixture model, first thing to try was simply using the njobs= flag in sample().  This is not working...\nAs a minimal example, if I alter the example provided here from:\n    tr = pm.sample(10000, step=[step1, step2])\n\nto\n   tr = pm.sample(10000, step=[step1, step2], njobs=3)\n\nthen I get:\nApplied stickbreaking-transform to p and added transformed p_stickbreaking to model.\nApplied interval-transform to sd and added transformed sd_interval to model.\n---------------------------------------------------------------------------\nRemoteTraceback                           Traceback (most recent call last)\nRemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.4/dist-packages/theano/compile/function_module.py\", line 859, in __call__\n    outputs = self.fn()\nIndexError: index 3 is out of bounds for size 3\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/usr/lib/python3.4/multiprocessing/pool.py\", line 119, in worker\n    result = (True, func(*args, **kwds))\n  File \"/usr/lib/python3.4/multiprocessing/pool.py\", line 44, in mapstar\n    return list(map(*args))\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/sampling.py\", line 296, in argsample\n    return _sample(*args)\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/sampling.py\", line 165, in _sample\n    for i, strace in enumerate(sampling):\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/sampling.py\", line 247, in _iter_sample\n    point = step.step(point)\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/step_methods/compound.py\", line 14, in step\n    point = method.step(point)\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/step_methods/compound.py\", line 14, in step\n    point = method.step(point)\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/step_methods/compound.py\", line 14, in step\n    point = method.step(point)\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/step_methods/arraystep.py\", line 118, in step\n    apoint = self.astep(bij.map(point))\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/step_methods/metropolis.py\", line 125, in astep\n    q_new = metrop_select(self.delta_logp(q,q0), q, q0)\n  File \"/usr/local/lib/python3.4/dist-packages/theano/compile/function_module.py\", line 871, in __call__\n    storage_map=getattr(self.fn, 'storage_map', None))\n  File \"/usr/local/lib/python3.4/dist-packages/theano/gof/link.py\", line 314, in raise_with_op\n    reraise(exc_type, exc_value, exc_trace)\n  File \"/usr/local/lib/python3.4/dist-packages/six.py\", line 685, in reraise\n    raise value.with_traceback(tb)\n  File \"/usr/local/lib/python3.4/dist-packages/theano/compile/function_module.py\", line 859, in __call__\n    outputs = self.fn()\nIndexError: index 3 is out of bounds for size 3\nApply node that caused the error: AdvancedSubtensor1(p, Subtensor{int64:int64:}.0)\nToposort index: 28\nInputs types: [TensorType(float64, vector), TensorType(int64, vector)]\nInputs shapes: [(3,), (2000,)]\nInputs strides: [(8,), (8,)]\nInputs values: [array([ 0.33333333,  0.33333333,  0.33333333]), 'not shown']\nOutputs clients: [[Elemwise{Composite{Switch((GE(i0, i1) * LE(i0, i2) * i3), log(i4), i5)}}[(0, 4)](Subtensor{int64:int64:}.0, TensorConstant{(1,) of 0}, Elemwise{Add}[(0, 1)].0, Elemwise{Composite{LE(Abs((i0 + i1)), i2)}}.0, AdvancedSubtensor1.0, TensorConstant{(1,) of -inf})]]\n\nBacktrace when the node is created:\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/distributions/discrete.py\", line 379, in logp\n    return bound(T.log(p[value]),\n\nHINT: Use the Theano flag 'exception_verbosity=high' for a debugprint and storage map footprint of this apply node.\n\"\"\"\n\nThe above exception was the direct cause of the following exception:\n\nIndexError                                Traceback (most recent call last)\n<ipython-input-15-6ee43e24a0b0> in <module>()\n     32     step1 = pm.Metropolis(vars=[p, sd, means])\n     33     step2 = pm.ElemwiseCategoricalStep(vars=[category], values=[0, 1, 2])\n---> 34     tr = pm.sample(2000, step=[step1, step2], njobs=3)\n\n/usr/local/lib/python3.4/dist-packages/pymc3/sampling.py in sample(draws, step, start, trace, chain, njobs, tune, progressbar, model, random_seed)\n    154         sample_args = [draws, step, start, trace, chain,\n    155                        tune, progressbar, model, random_seed]\n--> 156     return sample_func(*sample_args)\n    157 \n    158 \n\n/usr/local/lib/python3.4/dist-packages/pymc3/sampling.py in _mp_sample(njobs, args)\n    275 def _mp_sample(njobs, args):\n    276     p = mp.Pool(njobs)\n--> 277     traces = p.map(argsample, args)\n    278     p.close()\n    279     return merge_traces(traces)\n\n/usr/lib/python3.4/multiprocessing/pool.py in map(self, func, iterable, chunksize)\n    258         in a list that is returned.\n    259         '''\n--> 260         return self._map_async(func, iterable, mapstar, chunksize).get()\n    261 \n    262     def starmap(self, func, iterable, chunksize=None):\n\n/usr/lib/python3.4/multiprocessing/pool.py in get(self, timeout)\n    597             return self._value\n    598         else:\n--> 599             raise self._value\n    600 \n    601     def _set(self, i, obj):\n\nIndexError: index 3 is out of bounds for size 3\nApply node that caused the error: AdvancedSubtensor1(p, Subtensor{int64:int64:}.0)\nToposort index: 28\nInputs types: [TensorType(float64, vector), TensorType(int64, vector)]\nInputs shapes: [(3,), (2000,)]\nInputs strides: [(8,), (8,)]\nInputs values: [array([ 0.33333333,  0.33333333,  0.33333333]), 'not shown']\nOutputs clients: [[Elemwise{Composite{Switch((GE(i0, i1) * LE(i0, i2) * i3), log(i4), i5)}}[(0, 4)](Subtensor{int64:int64:}.0, TensorConstant{(1,) of 0}, Elemwise{Add}[(0, 1)].0, Elemwise{Composite{LE(Abs((i0 + i1)), i2)}}.0, AdvancedSubtensor1.0, TensorConstant{(1,) of -inf})]]\n\nBacktrace when the node is created:\n  File \"/usr/local/lib/python3.4/dist-packages/pymc3/distributions/discrete.py\", line 379, in logp\n    return bound(T.log(p[value]),\n\nHINT: Use the Theano flag 'exception_verbosity=high' for a debugprint and storage map footprint of this apply node.\n\nThat last hint is not very helpful to me BTW :-)\nAny ideas?",
+            "closedAt": "2016-11-28T21:49:09Z",
+            "createdAt": "2016-03-23T05:10:28Z",
+            "id": "MDU6SXNzdWUxNDI4NjM3MTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1033,
+            "state": "CLOSED",
+            "title": "mixture model failure with njobs > 1",
+            "updatedAt": "2016-11-28T22:45:33Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1033"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI get the following error on getting_started.ipynb. As I'm new to the module and it's on Python3.4.4 64bit/mingwpy/windows7/latest Theano trunk/no gpu (only cgohlke numpy-mkl), it may or may not be a new error, a bad user error, a Theano error; or a pymc3 error:\nfrom pymc3 import Metropolis \n\nwith disaster_model:\n    step1 = NUTS([early_rate, late_rate])\n\n    # Use Metropolis for switchpoint, and missing values since it accommodates discrete variables\n    step2 = Metropolis([switchpoint, disasters.missing_values[0]] )\n\n    trace = sample(10000, step=[step1, step2])\n\n`---------------------------------------------------------------------------\nTypeError                                 Traceback (most recent call last)\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\theano\\compile\\function_module.py in __call__(self, *args, **kwargs)\n    858         try:\n--> 859             outputs = self.fn()\n    860         except Exception:\n\nTypeError: expected type_num 9 (NPY_INT64) got 7\n\nDuring handling of the above exception, another exception occurred:\n\nTypeError                                 Traceback (most recent call last)\n<ipython-input-19-7d2f5d9a03b4> in <module>()\n      7     step2 = Metropolis([switchpoint, disasters.missing_values[0]] )\n      8 \n----> 9     trace = sample(10000, step=[step1, step2])\n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\sampling.py in sample(draws, step, start, trace, chain, njobs, tune, progressbar, model, random_seed)\n    147         sample_func = _sample\n    148 \n--> 149     return sample_func(**sample_args)\n    150 \n    151 \n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\sampling.py in _sample(draws, step, start, trace, chain, tune, progressbar, model, random_seed)\n    156     progress = progress_bar(draws)\n    157     try:\n--> 158         for i, strace in enumerate(sampling):\n    159             if progressbar:\n    160                 progress.update(i)\n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\sampling.py in _iter_sample(draws, step, start, trace, chain, tune, model, random_seed)\n    238         if i == tune:\n    239             step = stop_tuning(step)\n--> 240         point = step.step(point)\n    241         strace.record(point)\n    242         yield strace\n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\step_methods\\compound.py in step(self, point)\n     12     def step(self, point):\n     13         for method in self.methods:\n---> 14             point = method.step(point)\n     15         return point\n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\step_methods\\compound.py in step(self, point)\n     12     def step(self, point):\n     13         for method in self.methods:\n---> 14             point = method.step(point)\n     15         return point\n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\step_methods\\arraystep.py in step(self, point)\n    116         bij = DictToArrayBijection(self.ordering, point)\n    117 \n--> 118         apoint = self.astep(bij.map(point))\n    119         return bij.rmap(apoint)\n    120 \n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\step_methods\\metropolis.py in astep(self, q0)\n    123             q = q0 + delta\n    124 \n--> 125         q_new = metrop_select(self.delta_logp(q, q0), q, q0)\n    126 \n    127         if q_new is q:\n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\theano\\compile\\function_module.py in __call__(self, *args, **kwargs)\n    869                     node=self.fn.nodes[self.fn.position_of_error],\n    870                     thunk=thunk,\n--> 871                     storage_map=getattr(self.fn, 'storage_map', None))\n    872             else:\n    873                 # old-style linkers raise their own exceptions\n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\theano\\gof\\link.py in raise_with_op(node, thunk, exc_info, storage_map)\n    312         # extra long error message in that case.\n    313         pass\n--> 314     reraise(exc_type, exc_value, exc_trace)\n    315 \n    316 \n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\six.py in reraise(tp, value, tb)\n    683             value = tp()\n    684         if value.__traceback__ is not tb:\n--> 685             raise value.with_traceback(tb)\n    686         raise value\n    687 \n\nD:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\theano\\compile\\function_module.py in __call__(self, *args, **kwargs)\n    857         t0_fn = time.time()\n    858         try:\n--> 859             outputs = self.fn()\n    860         except Exception:\n    861             if hasattr(self.fn, 'position_of_error'):\n\nTypeError: expected type_num 9 (NPY_INT64) got 7\nApply node that caused the error: AdvancedIncSubtensor1{no_inplace,set}(TensorConstant{[   4    5..   0    1]}, Subtensor{int64:int64:}.0, TensorConstant{[39 83]})\nToposort index: 7\nInputs types: [TensorType(int64, vector), TensorType(int64, vector), TensorType(int64, vector)]\nInputs shapes: [(111,), (2,), (2,)]\nInputs strides: [(8,), (4,), (8,)]\nInputs values: ['not shown', array([0, 0]), array([39, 83], dtype=int64)]\nOutputs clients: [[Elemwise{Composite{Switch((i0 * GE(i1, i2)), ((Switch(i3, i4, (i1 * i5)) - scalar_gammaln((i6 + i1))) - i7), i4)}}(Elemwise{ge,no_inplace}.0, AdvancedIncSubtensor1{no_inplace,set}.0, TensorConstant{(1,) of 0}, InplaceDimShuffle{x}.0, TensorConstant{(1,) of -inf}, Elemwise{log,no_inplace}.0, TensorConstant{(1,) of 1}, Elemwise{Composite{Switch(GE(i0, i1), i2, i3)}}.0)]]\n\nBacktrace when the node is created(use Theano flag traceback.limit=N to make it longer):\n  File \"D:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\IPython\\core\\interactiveshell.py\", line 2723, in run_cell\n    interactivity=interactivity, compiler=compiler, result=result)\n  File \"D:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\IPython\\core\\interactiveshell.py\", line 2825, in run_ast_nodes\n    if self.run_code(code, result):\n  File \"D:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\IPython\\core\\interactiveshell.py\", line 2885, in run_code\n    exec(code_obj, self.user_global_ns, self.user_ns)\n  File \"<ipython-input-18-a2c400c3581a>\", line 14, in <module>\n    disasters = Poisson('disasters', rate, observed=disaster_data)\n  File \"D:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\distributions\\distribution.py\", line 25, in __new__\n    return model.Var(name, dist, data)\n  File \"D:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\model.py\", line 272, in Var\n    var = ObservedRV(name=name, data=data, distribution=dist, model=self)\n  File \"D:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\model.py\", line 544, in __init__\n    data = as_tensor(data, name,model,distribution.dtype)\n  File \"D:\\WinPython\\basedir34\\buildQt5\\winpython-64bit-3.4.x.2\\python-3.4.4.amd64\\lib\\site-packages\\pymc3\\model.py\", line 512, in as_tensor\n    missing_values)\n\nHINT: Use the Theano flag 'exception_verbosity=high' for a debugprint and storage map footprint of this apply node.",
+            "closedAt": "2016-09-06T07:02:17Z",
+            "createdAt": "2016-03-20T15:29:47Z",
+            "id": "MDU6SXNzdWUxNDIxNzQxNzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1029,
+            "state": "CLOSED",
+            "title": "issue on Metropolis with Theano0.8.0rc1 (master of 20160319) and Pymc3 (master of 20160319) getting_started.ipynb' on Windows",
+            "updatedAt": "2016-09-06T07:02:17Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1029"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Some PC are 10 times slower than the one used to build the getting_started.ipynb example.\nThis may comfort the new user discovering pymc3:\n\nplace progressbar=True everywhere on this first notebook ,\nsuggest in comments an 'SP500.csv'  with an alternate address that always works.\n\n# if  'SP500.csv' doesn't work, try with\n# returns = pd.read_csv(\n'https://raw.githubusercontent.com/pymc-devs/pymc3/master/docs/notebooks/data/SP500.csv', index_col=0, parse_dates=True)",
+            "closedAt": "2016-03-21T13:03:02Z",
+            "createdAt": "2016-03-20T14:35:18Z",
+            "id": "MDU6SXNzdWUxNDIxNjk1NTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1028,
+            "state": "CLOSED",
+            "title": "small tweak suggestion for `getting_started.ipynb` example",
+            "updatedAt": "2016-03-21T13:03:02Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1028"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Theano0.8.1rc1 is out, so a new pymc3 beta would be helpfull for me.",
+            "closedAt": "2017-03-13T22:49:38Z",
+            "createdAt": "2016-03-20T11:18:47Z",
+            "id": "MDU6SXNzdWUxNDIxNTI4NjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1027,
+            "state": "CLOSED",
+            "title": "wouldn't a v3.0.0b2 nicely fit with a Theano0.8.0 ?",
+            "updatedAt": "2017-03-13T22:49:38Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1027"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I try to use pymc3 with CUDA, I get the following message:\nUsing gpu device 0: GeForce GT 610 (CNMeM is disabled, CuDNN not available)\nTraceback (most recent call last):\n  File \"/media/ralfer/Soft/python_scripts/cpmodel_sw_simplified.py\", line 1, in <module>\n    from pymc3 import *\n  File \"/usr/local/lib/python2.7/dist-packages/pymc3/__init__.py\", line 4, in <module>\n    from .distributions import *\n  File \"/usr/local/lib/python2.7/dist-packages/pymc3/distributions/__init__.py\", line 1, in <module>\n    from . import meta\nImportError: cannot import name meta\n\nWhen CUDA is not used, there are no errors and theano tests show that CUDA is working fine. The same error appears on Kubuntu 15.10 and Windows 10.\nKubuntu info:\n$ nvcc --version\nnvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2014 NVIDIA Corporation\nBuilt on Thu_Jul_17_21:41:27_CDT_2014\nCuda compilation tools, release 6.5, V6.5.12\nTheano: '0.8.0rc1'\nPyMC3: 3.0",
+            "closedAt": "2016-03-29T13:55:33Z",
+            "createdAt": "2016-03-18T17:40:33Z",
+            "id": "MDU6SXNzdWUxNDE5MzI5OTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1026,
+            "state": "CLOSED",
+            "title": "`cannot import name meta` when CUDA is used",
+            "updatedAt": "2016-03-31T13:45:05Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1026"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I was chatting to someone about documentation for statsmodels.\n[2:49]\nCode is here\nGitHub\nstatsmodels/statsmodels\nstatsmodels - Statsmodels: statistical modeling and econometrics in Python\n[2:50]\nCalled here before sphinx\nGitHub\nstatsmodels/statsmodels\nstatsmodels - Statsmodels: statistical modeling and econometrics in Python\ncc @TomAugspurger",
+            "closedAt": "2016-05-23T19:11:31Z",
+            "createdAt": "2016-03-18T14:05:51Z",
+            "id": "MDU6SXNzdWUxNDE4NzU1OTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1023,
+            "state": "CLOSED",
+            "title": "Potential good tools for documentation",
+            "updatedAt": "2016-05-23T19:11:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1023"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Debugging NUTS with @jsalvatier yesterday we noticed that the computation of the energy E0 in NUTS, can be moved outside of the leapfrog loop: f332b1c to yield a potential speed-up. Unfortunately the code isn't quite working because of an issue with the logp function that requires a dict input rather than the array. It's probably easy to fix. I'll leave this here in case someone wants to pick it up.",
+            "closedAt": "2016-11-18T15:29:48Z",
+            "createdAt": "2016-03-17T11:46:36Z",
+            "id": "MDU6SXNzdWUxNDE1NTk5Njg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1020,
+            "state": "CLOSED",
+            "title": "Potential speed-up for NUTS",
+            "updatedAt": "2016-11-18T15:29:48Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1020"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello, this is probably simply a matter of having to wait, but I'm finding that the slice sampler can take an incredibly long time (in fact I have yet to get it started) to start when there are a large number of parameters. Metropolis starts right up very quickly, butI have hierarchical priors which need Gibbs sampling.\nMy model is below:\n`with lcModel2:\n# Light Curve Priors\n#t0 = pm.Uniform('t0',lower=0.,upper=100.,    shape=nData)\n#x0 = pm.Uniform('x0',lower=1E-7, upper=1E-1, shape=nData)\n#x1 = pm.Normal('x1',mu=0., sd=2.,            shape=nData)\n\n\n# Cosmology Priors\n#H0 = theano.shared#pm.Normal(\"H0\",mu=72.,sd=8.)\nOmegaM = pm.Uniform(\"OmegaM\",lower=0,upper=1.)\n\nM = pm.Uniform(\"M\",lower=-20.,upper=-18.)\ntaninv_alpha = pm.Uniform(\"taninv_alpha\",lower=-.2,upper=.3)\ntaninv_beta = pm.Uniform(\"taninv_beta\",lower=-1.4,upper=1.4)\nsysScat_log = pm.Uniform(\"sysScat_log\",lower=log10(0.05),upper=0)\n\n\n\n\n\nxm=pm.Cauchy('xm',alpha=0,beta=1)\ncm=pm.Cauchy('cm',alpha=0,beta=0.3)\nRx_log=pm.Uniform('Rx_log',lower=-0.5,upper=0.5)\nRc_log=pm.Uniform('Rc_log',lower=-1.5,upper=1.5)\n\n\nalpha=pm.Deterministic('alpha',T.tan(taninv_alpha))\nbeta=pm.Deterministic('beta',T.tan(taninv_beta))\nRx=pm.Deterministic(\"Rx\",10**Rx_log)\nRc=pm.Deterministic(\"Rc\",10**Rc_log)\nsysScat = pm.Deterministic('sysScat',10**sysScat_log)\n\n\n\nx_true  = pm.Normal('x_true',mu=xm, sd=Rx,shape=len(jlaSet['color']))\nc_true  = pm.Normal('c_true',mu=cm, sd=Rc,shape=len(jlaSet['color']))\n\ndm = get_distMod(OmegaM)\n\nmb = pm.Normal(\"mb\",mu=M + dm - alpha*x_true + beta*c_true,sd=sysScat,shape=len(jlaSet['color']))\n\nobsc=pm.Normal(\"obsc\",mu=c_true,sd=array(jlaSet['dcolor']), observed=jlaSet['color'])\nobsx=pm.Normal(\"obsx\",mu=x_true,sd=array(jlaSet['dx1']), observed=jlaSet['x1'])\n\nobsm = pm.Normal(\"obsm\",mu=mb,sd=array(jlaSet['dmb']),observed=jlaSet['mb'])\n`\n\nand\n`\nwith lcModel2:\nstart2=pm.find_MAP(fmin=optimize.fmin_powell)\nwith lcModel2:\nstep1=pm.Slice()\ntrace2=pm.sample(20000,step=step1,start=start2,progressbar=True,)`\n\nIs this just an issue of having to wait, or is there a more efficient way to start up the sampler?\nThanks in advance!",
+            "closedAt": "2018-12-22T12:09:02Z",
+            "createdAt": "2016-03-15T11:13:44Z",
+            "id": "MDU6SXNzdWUxNDA5NDEwMzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1019,
+            "state": "CLOSED",
+            "title": "Slice sample slow to start for large (~400) parameter models",
+            "updatedAt": "2018-12-22T12:09:02Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1019"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have been trying to implement a large categorical model in pymc3 but without much progress. The model I am trying to implement is detailed in the last chapter of Lee and Wagenmakers' Bayesian Cognitive Modeling book.\nIn brief, each entry of the response data is generated by a different categorical pdf (constructed under some hierarchical constraints).Thus the probability vector of these categorical pdf is trial/subject specific. I have the following difficulties:\n1, The model is very slow. I adapted the codes from the book (JAGS and STAN), both end up too many nodes for Theano. I hadn't manage to sample using NUTS - it took too long to compile.\n2, I can use Metropoli as step method but the sampling of categorical parameter is incorrect (the trace is nearly uniform). I also try pymc2 but the problem remains.\nIs there a working example of a similar problem? Or how should I build my model in this case (e.g., categorical response with a large sets of priors) to make it more efficient?\nAll my attempts could be found here: https://github.com/junpenglao/Bayesian-Cognitive-Modeling-in-Pymc3/blob/master/CaseStudies/NumberConceptDevelopment.ipynb\nedit: this might relate to #624",
+            "closedAt": "2017-04-15T15:55:00Z",
+            "createdAt": "2016-03-13T10:41:11Z",
+            "id": "MDU6SXNzdWUxNDA0NzM4MTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1018,
+            "state": "CLOSED",
+            "title": "Inefficient sampling of large categorical model",
+            "updatedAt": "2017-04-15T15:55:00Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1018"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello.\nI've been having a heck of a time getting Theano and pymc3 to play nicely together.  I think I made an example as simple and repeatable as I know how.\nI am running on a macbook air (Yosemite 10.10.5) with Python 2.7.10\nI have a super simple model in a file called test_pymc3.py that contains the following:\nimport pymc3\nimport sys\n\nsys.stdout.write('='*80 + '\\n')\nwith pymc3.Model() as model:\n    x = pymc3.Uniform('x', lower=-1, upper=1)\n    trace = pymc3.sample(500)\n    _ = pymc3.summary(trace)\nI then install an environment and run the test file by exectuing\nbash install_and_run.sh\non the following bash file\n<mac send]$ cat install_and_run.sh\nvirtualenv pymc3_test_env\n. ./pymc3_test_env/bin/activate\npip install --no-cache-dir -U pip\npip install --no-cache-dir -U git+https://github.com/pymc-devs/pymc3.git\npython test_pymc3.py\nThe test_pymc3.py script returns the following output to the console.\n===============================================================================\nApplied interval-transform to x and added transformed x_interval to model.\nAssigned NUTS to x_interval\nERROR (theano.gof.opt): SeqOptimizer apply <theano.tensor.opt.FusionOptimizer object at 0x111f99e10>\nERROR (theano.gof.opt): Traceback:\nERROR (theano.gof.opt): Traceback (most recent call last):\n  File \"/env/send/pymc3_test_env/lib/python2.7/site-packages/theano/gof/opt.py\", line 195, in apply\n    sub_prof = optimizer.optimize(fgraph)\n  File \"/env/send/pymc3_test_env/lib/python2.7/site-packages/theano/gof/opt.py\", line 81, in optimize\n    ret = self.apply(fgraph, *args, **kwargs)\n  File \"/env/send/pymc3_test_env/lib/python2.7/site-packages/theano/tensor/opt.py\", line 5498, in apply\n    new_outputs = self.optimizer(node)\n  File \"/env/send/pymc3_test_env/lib/python2.7/site-packages/theano/tensor/opt.py\", line 5433, in local_fuse\n    n = OP(C)(*inputs).owner\n  File \"/env/send/pymc3_test_env/lib/python2.7/site-packages/theano/tensor/elemwise.py\", line 496, in __init__\n    scalar_op.nout)\nValueError: Cannot construct a ufunc with more than 32 operands (requested number were: inputs = 34 and outputs = 1)\n\n[-----------------100%-----------------] 500 of 500 complete in 0.2 sec\n\nx_interval:\n\n  Mean             SD               MC Error         95% HPD interval\n  -------------------------------------------------------------------\n\n  -0.128           2.175            0.129            [-5.100, 3.946]\n\n  Posterior quantiles:\n  2.5            25             50             75             97.5\n  |--------------|==============|==============|--------------|\n\n  -5.060         -1.248         -0.016         1.128          4.179\n\n\nx:\n\n  Mean             SD               MC Error         95% HPD interval\n  -------------------------------------------------------------------\n\n  -0.007           0.607            0.036            [-1.000, 0.907]\n\n  Posterior quantiles:\n  2.5            25             50             75             97.5\n  |--------------|==============|==============|--------------|\n\n  -0.987         -0.554         -0.008         0.511          0.970\n\n(pymc3_test_env)<mac send]$\n\nI even completely removed the ~/.theano directory with the thought that some weird caching thing was happening, but no dice.  As far as I can tell, the distrubtion doesn't look wrong, but the ValueError makes me not trust it.  Any help you could provide would be greatly appreciated.\nOh... incidentally.  If I cange the modeled variable to be\nx = pymc3.Uniform('x', lower=-1, upper=1, shape=5)\neverything works fine.\nOne final note.  Here is the value of pip freeze on the env\n(pymc3_test_env)<mac send]$ pip freeze\ncycler==0.10.0\nenum34==1.1.2\njoblib==0.9.4\nmatplotlib==1.5.1\nnumpy==1.10.4\npandas==0.18.0\npatsy==0.4.1\npymc3==3.0\npyparsing==2.1.0\npython-dateutil==2.5.0\npytz==2015.7\nscipy==0.17.0\nsix==1.10.0\nTheano==0.7.0",
+            "closedAt": "2016-03-17T13:07:05Z",
+            "createdAt": "2016-03-13T00:59:44Z",
+            "id": "MDU6SXNzdWUxNDA0MzI3NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1017,
+            "state": "CLOSED",
+            "title": "NUTS seems broken in simple uniform model",
+            "updatedAt": "2016-03-17T13:07:05Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1017"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm seeing some unexpected behavior in generating uniform distributions which may or may not be related to issues with transforms.\nBasically, the sampled distribution looks as expected for shape=1, but is quite different when shape>1.\nI apologize if this is just me not properly understanding the role of the transform kwarg.\nSee  the following which was run with pymc3.__version__ ==  '3.0'\nhttps://gist.github.com/robdmc/9472cff61302a7b5c8f7",
+            "closedAt": "2016-03-12T03:00:20Z",
+            "createdAt": "2016-03-11T02:22:32Z",
+            "id": "MDU6SXNzdWUxNDAwNjY2NjI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1016,
+            "state": "CLOSED",
+            "title": "Unexpected behavior in uniform distribution with shape parameter",
+            "updatedAt": "2016-03-12T03:00:20Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1016"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Both the documentation and corresponding source code have a serious error in the parameters for the Beta distribution. The documentation incorrectly states that the relation between the alpha, beta parametrization and the mu, sigma parametrization is\nalpha = mu * sigma\nbeta = ( 1 - mu ) * sigma\nThe source code in distributions/continuous.py has implemented it in the same incorrect manner:\ndef get_alpha_beta(self, alpha=None, beta=None, mu=None, sd=None):\n    if (alpha is not None) and (beta is not None):\n        pass\n    elif (mu is not None) and (sd is not None):\n        alpha = mu * sd\n        beta = (1 - mu) * sd\n    else: ...\n\nThe correct relationship between the two parametrizations is\nalpha = mu * ( mu * ( 1 - mu ) / sd ** 2 - 1 )\nbeta = ( 1 - mu ) * ( mu * ( 1 - mu ) / sd ** 2 - 1 )",
+            "closedAt": "2016-03-09T19:44:04Z",
+            "createdAt": "2016-03-08T20:10:56Z",
+            "id": "MDU6SXNzdWUxMzkzODEwMDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1014,
+            "state": "CLOSED",
+            "title": "Incorrect parameters in Beta distribution",
+            "updatedAt": "2016-03-09T19:44:04Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1014"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am trying to implement the pmf model in the examples and it seems to work with you sample data. But when I tried my own data set, which has more than 20,000 lines of data, something happened:\n[2016-03-07 23:16:58,113]: splitting train/test sets\n[2016-03-07 23:16:58,201]: building the PMF model\n[2016-03-07 23:16:58,790]: done building PMF model\n[2016-03-07 23:16:58,791]: finding PMF MAP using Powell optimization\n[1]    29982 killed     python pmf2.py\n\nCould you please tell me what does it mean? And how can I solve this problem? Thank you in advance.",
+            "closedAt": "2018-12-22T12:08:58Z",
+            "createdAt": "2016-03-07T17:04:57Z",
+            "id": "MDU6SXNzdWUxMzkwMzM3MTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1013,
+            "state": "CLOSED",
+            "title": "Unknown error in the probabilistic matrix factorization ",
+            "updatedAt": "2018-12-22T12:08:58Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1013"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "harpone is going to implement logdet() in Theano (Theano/Theano#3959), though maybe not merged yet. What do you think of using this in PyMC3 multivariate normal distribution? It is numerically stable than using log(det()) as in the current implementation.\nWhen I used a sparse ARD regression model with ADVI, the current implementation of mvnormal failed to calculate its log probability because of using log(det()).",
+            "closedAt": "2017-02-17T11:29:40Z",
+            "createdAt": "2016-03-05T10:54:41Z",
+            "id": "MDU6SXNzdWUxMzg2NjkzNDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "beginner friendly"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1012,
+            "state": "CLOSED",
+            "title": "Use logdet() instead of log(det())",
+            "updatedAt": "2017-02-17T11:29:40Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1012"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For me this issue is not resolved yet. I still get the recursion error for complex models.\n#879\nIf I increase the recursion limit I get a segmentation fault(core dump) without any further error or traceback.",
+            "closedAt": "2016-03-03T13:52:27Z",
+            "createdAt": "2016-03-03T10:31:31Z",
+            "id": "MDU6SXNzdWUxMzgxMzkyNTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1011,
+            "state": "CLOSED",
+            "title": "parallel implementation recursion error njobs>1",
+            "updatedAt": "2016-03-03T13:52:27Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1011"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "While keeping all generated samples is fine for HMC/NUTS, it is not practical for Metropolis sampling. It is often necessary to run 100K+ iterations before convergence, and these values should not be stored.",
+            "closedAt": "2016-11-29T10:09:32Z",
+            "createdAt": "2016-03-02T22:51:31Z",
+            "id": "MDU6SXNzdWUxMzgwMTc4OTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1010,
+            "state": "CLOSED",
+            "title": "Specify burn-in to sample",
+            "updatedAt": "2016-11-30T16:11:43Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1010"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For very large models, one often wishes to exclude variables that are not of direct interest. It is currently possible to do this by passing the desired variables as the trace argument when calling sample. However, this argument is also used to specify the type of backend, so it is not possible to both specify the variables of interest and a non-RAM backend.\nWe should not overload the trace argument this way, but rather have a separate vars argument to specify variables to include.",
+            "closedAt": "2018-09-23T14:29:03Z",
+            "createdAt": "2016-03-02T22:21:28Z",
+            "id": "MDU6SXNzdWUxMzgwMDk3NzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1009,
+            "state": "CLOSED",
+            "title": "Selectively excluding variables from saving to trace",
+            "updatedAt": "2018-09-23T14:29:03Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1009"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Specifying 'text' or 'sqlite' as the trace backend for sample() always results in a trace called 'mcmc'. As a result, when running two different models in the same session with, say, a sqlite backend will result in both models' trace being included in the same file/database. The trace should be given a unique name.",
+            "closedAt": "2019-08-16T14:45:08Z",
+            "createdAt": "2016-03-02T21:54:33Z",
+            "id": "MDU6SXNzdWUxMzgwMDM5NDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1008,
+            "state": "CLOSED",
+            "title": "sqlite and text trace backends do not uniquely name traces",
+            "updatedAt": "2019-08-16T14:45:08Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1008"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The waic and dic functions currently issue warnings when the model contains transformed random variables. However, since it appears that the model is evaluated using the original (un-transformed) likelihood for the variable, this is should not be a relevant warning.",
+            "closedAt": "2016-03-18T09:55:03Z",
+            "createdAt": "2016-03-02T13:55:55Z",
+            "id": "MDU6SXNzdWUxMzc4Nzk5NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1007,
+            "state": "CLOSED",
+            "title": "Remove transformed variables warning from waic, dic",
+            "updatedAt": "2016-03-18T09:55:03Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1007"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I still didnt get how these variable transforms work.\nYou transform them to have -inf and +inf bounds and sample on this space then you dont have to care about the bounds, transform back and use that sample which will be in between its bounds to give to the likelihood calculation?\nBecause, for me this still doesnt work with transforms enabled. I still get values out of the bounds.\nI guess, because of the delta that is being added to q (for metropolis) and then it can land outside of the solution space! So I guess I will have to switch to my bound check again. Is there any suggestion how a bound check could be implemented more efficient than that one?\n#979\nCheers!\nHannes",
+            "closedAt": "2016-04-10T20:38:37Z",
+            "createdAt": "2016-03-02T11:02:16Z",
+            "id": "MDU6SXNzdWUxMzc4NDI0MDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1006,
+            "state": "CLOSED",
+            "title": "variable bounds and transforms",
+            "updatedAt": "2016-04-10T20:38:37Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1006"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear all,\nI know we had this already, but with the new way as it is implemented now in metropolis a new problem has been created:\nself.discrete = np.ravel([[v.dtype in discrete_types] * (v.dsize or 1) for v in vars])\n\nthe following lines rely on self.discrete\nself.discrete = self.discrete.any()\nself.discrete = self.discrete.all()\n\nThey are supposed to return booleans, but they return a list of booleans so that the if statements in astep of metropolis do not work properly and do always pass. So everything is always converted to integers. I didnt notie this before, because I was using discrete variables ;) . Now floats dont work anymore.\nThis could be easily fixed by:\nself.discrete = self.discrete.any()[0]\nself.discrete = self.discrete.all()[0]\n\nBut propably that is not professional enough for you guys? So you may want to fix it in the way how self.discrete is being created. @fonnesbeck didnt like my earlier proposal and changed to the way it is now. ;)\nI proposed, which was actually working here: #979\nself.discrete = np.hstack(np.ravel([[v.dtype in discrete_types ] * v.dsize for v in vars]))\n\nCheers!\nHannes",
+            "closedAt": "2016-04-10T20:37:38Z",
+            "createdAt": "2016-03-02T09:08:14Z",
+            "id": "MDU6SXNzdWUxMzc4MTU4Nzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1005,
+            "state": "CLOSED",
+            "title": "discrete types again",
+            "updatedAt": "2016-04-10T20:37:38Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1005"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am trying to implement a logistic multinomial regression (AKA softmax regression). In this example I am trying to classify the iris dataset.\nI have a problem specifying the model, I get an optimization error with find_MAP(). If I avoid using find_MAP() I get a \"sample” of all zero vectors for alfa and beta and  a vector of 0.33 for p if I use a Categorical for the likelihood. if I use Mutinomial(n=1, p=p) the posterior is exactly the same as the priors.\nimport pymc3 as pm\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nimport pandas as pd\n\niris = sns.load_dataset(\"iris\")\ny_2 = pd.Categorical(iris['species']).labels\nx_n = iris.columns[:-1]\nx_2 = iris[x_n].values\nx_2 = (x_2 - x_2.mean(axis=0))/x_2.std(axis=0)\nindice = list(set(y_2))\n\nwith pm.Model() as modelo_s:\n    alfa = pm.Normal('alfa', mu=0, sd=100, shape=3)\n    beta = pm.Normal('beta', mu=0, sd=100, shape=(4,3))\n\n    mu = (alfa[indice] + pm.dot(x_2, beta[:,indice])).T\n    p = pm.exp(mu)/pm.sum(pm.exp(mu), axis=0)\n\n    yl = pm.Categorical('yl', p=p, observed=y_2)\n    #yl = pm.Multinomial('yl', n=1, p=p, observed=y_2)\n\n    #start = {'alfa': np.random.rand(3), 'beta':np.random.rand(4,3)}\n    #start = pm.find_MAP(start)\n    #step = pm.NUTS(scaling=start)\n    start = pm.find_MAP()\n    step = pm.Metropolis()\n    trace_s = pm.sample(1000, step, start)\nThis is also an open question on stackoverflow",
+            "closedAt": "2016-04-12T13:19:28Z",
+            "createdAt": "2016-03-01T18:12:03Z",
+            "id": "MDU6SXNzdWUxMzc2NDcwNzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1004,
+            "state": "CLOSED",
+            "title": "Problem implementing Softmax Regression (Multinomial Logistic)",
+            "updatedAt": "2019-08-01T16:02:54Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1004"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Opening this to address issue raised in #789 whereby PyMC3 calculates the log-posterior based on the transformed variable rather than the original whenever variables are not supported on the entire real line. Since the transformation is purely a mechanistic convenience, for the purposes of calculating the deviance and derived values, the value based on the original variables should be used.",
+            "closedAt": "2016-03-03T04:17:10Z",
+            "createdAt": "2016-02-29T19:30:48Z",
+            "id": "MDU6SXNzdWUxMzczNDgxOTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1002,
+            "state": "CLOSED",
+            "title": "Calculate log-posterior based on original variables",
+            "updatedAt": "2016-03-03T04:17:10Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1002"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I've been experimenting with PPC on the hierarchical model for rugby prediction example to see if I can if it can be used to predict fictional games.\nFirst, I think there is a minor mistake in the example. Where\nhome_theta  = tt.exp(intercept + home + atts[away_team] + defs[home_team])\nit should be:\nhome_theta  = tt.exp(intercept + home + atts[home_team] + defs[away_team])\nSecond, when I run sample_ppc after replacing the home_team/away_team values, I receive the number of results that was used 'train'/sample the model, not the output expected:\nI split the data between train and test, and encapsulate train data in the shared theano object.\ndf_test = df[:5]\ndf_train = df[5:100]\nhome_team = shared(df_train.i_home.values)\naway_team = shared(df_train.i_away.values)\n\nAfter sampling the data I replace the data in the shared theano object with the new data.\nhome_team = shared(df_test.i_home.values)\naway_team = shared(df_test.i_away.values)\nppc = pm.sample_ppc(trace, model=model, samples=500)\n\nThe number of results I get are larger than I expect:\nppc['home_points'].shape\n(500, 95)",
+            "closedAt": "2016-03-01T02:49:05Z",
+            "createdAt": "2016-02-29T13:42:48Z",
+            "id": "MDU6SXNzdWUxMzcyNTg0ODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1001,
+            "state": "CLOSED",
+            "title": "PPC with the Hierarchical model for Rugby prediction exam[;e",
+            "updatedAt": "2016-03-01T08:26:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/1001"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxNi0wMi0yOVQxMzo0Mjo0OFrOCC5l9A==",
+          "hasNextPage": true
+        },
+        "totalCount": 3223
+      }
+    }
+  }
+}

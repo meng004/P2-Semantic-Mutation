@@ -1,0 +1,1947 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "While building the new version, 3.0.14, a test seems to fail:\n+ pytest-3.8 tests\n============================= test session starts ==============================\nplatform linux -- Python 3.8.0, pytest-4.6.6, py-1.8.0, pluggy-0.12.0\nrootdir: /builddir/build/BUILD/chaospy-3.0.14\nplugins: cov-2.8.1\ncollected 194 items\ntests/test_dist.py ..................................................... [ 27%]\n........................................................................ [ 64%]\n..................................                                       [ 81%]\ntests/test_orth.py .....                                                 [ 84%]\ntests/test_poly.py ..............                                        [ 91%]\ntests/test_stress.py ........                                            [ 95%]\ntests/quad/test_interface.py .F......                                    [100%]\n=================================== FAILURES ===================================\n_________________ test_1d_gauss_hermite_quadrature[chebyshev] __________________\nrecurrence_algorithm = 'chebyshev'\n    def test_1d_gauss_hermite_quadrature(recurrence_algorithm):\n        distribution = Normal(3, 4)\n>       abscissas, weights = quad_gaussian(\n            10, distribution, recurrence_algorithm=recurrence_algorithm)\n/builddir/build/BUILD/chaospy-3.0.14/tests/quad/test_interface.py:15: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/builddir/build/BUILD/chaospy-3.0.14/chaospy/quadrature/gaussian.py:184: in quad_gaussian\n    abscissas, weights = coefficients_to_quadrature(coefficients)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ncoeffs = array([[[ 3.00000000e+00,  3.00000000e+00,  3.00000000e+00,\n          3.00000000e+00,  3.00000000e+00,  3.00000000e+00...00000000e+01,\n          9.60000000e+01,  1.12000000e+02, -6.30700000e+03,\n          5.66481576e+03,  7.80097342e+01]]])\n    def coefficients_to_quadrature(coeffs):\n        \"\"\"\n        Construct Gaussian quadrature abscissas and weights from three terms\n        recurrence coefficients.\n    \n        Examples:\n            >>> distribution = chaospy.Normal(0, 1)\n            >>> coeffs = chaospy.construct_recurrence_coefficients(4, distribution)\n            >>> print(numpy.around(coeffs, 4))\n            [[[0. 0. 0. 0. 0.]\n              [0. 1. 2. 3. 4.]]]\n            >>> abscissas, weights = chaospy.coefficients_to_quadrature(coeffs)\n            >>> print(numpy.around(abscissas, 4))\n            [[-2.857  -1.3556 -0.      1.3556  2.857 ]]\n            >>> print(numpy.around(weights, 4))\n            [[0.0113 0.2221 0.5333 0.2221 0.0113]]\n        \"\"\"\n        coeffs = numpy.asfarray(coeffs)\n        if len(coeffs.shape) == 2:\n            coeffs = coeffs.reshape(1, 2, -1)\n        assert len(coeffs.shape) == 3, \"shape %s not allowed\" % coeffs.shape\n        assert coeffs.shape[-1] >= 1\n        abscissas = []\n        weights = []\n        for coeff in coeffs:\n    \n            if numpy.any(coeff[1] < 0) or numpy.any(numpy.isnan(coeff)):\n>               raise numpy.linalg.LinAlgError(\n                    \"Invalid recurrence coefficients can not be used for \"\n                    \"constructing Gaussian quadrature rule\")\nE               numpy.linalg.LinAlgError: Invalid recurrence coefficients can not be used for constructing Gaussian quadrature rule\n/builddir/build/BUILD/chaospy-3.0.14/chaospy/quadrature/recurrence/jacobi.py:33: LinAlgError\n=============================== warnings summary ===============================\ntests/test_dist.py::test_dist_add[ChiSquared]\ntests/test_dist.py::test_dist_sub[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/collection/chi_squared.py:18: RuntimeWarning: divide by zero encountered in true_divide\n    output *= (x/nc)**(0.25*df-0.5)\ntests/test_dist.py::test_dist_add[ChiSquared]\ntests/test_dist.py::test_dist_sub[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/collection/chi_squared.py:19: RuntimeWarning: invalid value encountered in multiply\n    output *= special.iv(0.5*df-1, (nc*x)**0.5)\ntests/test_dist.py::test_dist_add[GeneralizedExponential]\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_sub[GeneralizedExponential]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[Wald]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/quadrature/fejer.py:90: RuntimeWarning: invalid value encountered in true_divide\n    weights /= numpy.sum(weights)\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/collection/generalized_extreme.py:31: RuntimeWarning: invalid value encountered in true_divide\n    return numpy.where(c == 0, x, -numpy.expm1(-c*x)/c)\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/collection/generalized_extreme.py:31: RuntimeWarning: invalid value encountered in double_scalars\n    return numpy.where(c == 0, x, -numpy.expm1(-c*x)/c)\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/collection/generalized_extreme.py:19: RuntimeWarning: invalid value encountered in true_divide\n    logpex2 = numpy.where(c == 0, -x, logex2/c)\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/collection/wald.py:29: RuntimeWarning: invalid value encountered in multiply\n    out -= numpy.exp(2.0/mu)*special.ndtr(-isqx*trm2)\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/approximation.py:75: RuntimeWarning: invalid value encountered in greater\n    indices = forward(x_data=lower) > 0\ntests/test_stress.py::test_approx_quadrature\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/approximation.py:362: RuntimeWarning: invalid value encountered in true_divide\n    floc = numpy.abs(floc / eps)\ntests/test_stress.py::test_approx_quadrature\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/approximation.py:217: RuntimeWarning: invalid value encountered in less\n    (xloc_ < xupper[:, indices]) & (xloc_ > xlower[:, indices]),\ntests/test_stress.py::test_approx_quadrature\n  /builddir/build/BUILD/chaospy-3.0.14/chaospy/distributions/approximation.py:217: RuntimeWarning: invalid value encountered in greater\n    (xloc_ < xupper[:, indices]) & (xloc_ > xlower[:, indices]),\n-- Docs: https://docs.pytest.org/en/latest/warnings.html\n============== 1 failed, 193 passed, 30 warnings in 72.32 seconds ==============\n\nThis is using python3.8, numpy 1.17, scipy 1.2.1\nIt only seems to fails on arm7hl though: https://koji.fedoraproject.org/koji/taskinfo?taskID=38594760\nIt builds fine on x86_64: https://koji.fedoraproject.org/koji/taskinfo?taskID=38594895\nI don't know if this is a coincidence.",
+            "closedAt": "2019-11-04T14:54:12Z",
+            "createdAt": "2019-10-27T19:43:11Z",
+            "id": "MDU6SXNzdWU1MTMwMTE1ODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 183,
+            "state": "CLOSED",
+            "title": "Failing test: 3.0.14",
+            "updatedAt": "2019-11-04T14:54:12Z",
+            "url": "https://github.com/jonathf/chaospy/issues/183"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import chaospy as cp\nimport numpy as np\n\nx1 = cp.Normal(0.001, 0.00005)\nx2 = cp.Normal(0.001, 0.00005)\nx3 = cp.Normal(0.001, 0.00005)\nx4 = cp.Normal(0.001, 0.00005)\nx5 = cp.Normal(0.001, 0.00005)\nx6 = cp.Normal(0.001, 0.00005)\nx7 = cp.Normal(0.001, 0.00005)\nx8 = cp.Normal(0.001, 0.00005)\nx9 = cp.Normal(0.001, 0.00005)\nx10 = cp.Normal(0.001,0.00005)\n\nx11 = cp.Normal(80, 4)\nx12 = cp.Normal(10,0.5)\nx13 = cp.Normal(10, 0.5)\n\nx14 = cp.Normal(1, 0.05)\nx15 = cp.Normal(100,5)\n\na11 = (1/x1 + 1/x3 + 1/x5 + 2*np.sqrt(2)/x7 +2*np.sqrt(2)/x8)*x14/(2*x15)\na22 = (1/x2 + 1/x4 + 1/x5 + 1/x6 + 2*np.sqrt(2)/x9 +2*np.sqrt(2)/x10)*x14/(2*x15)\na12 = a21 = x14/(2*x5*x15)\nb1 = (x12/x1 - (2*x12 + x11 - x13)/x3 - x12/x5 - 2*np.sqrt(2)*(x12 + x11)/x7)*np.sqrt(2)*x14/(2*x15)\nb01 = (1/x1 - 2/x3 - 1/x5 - 2*np.sqrt(2)/x7)*np.sqrt(2)*x14/(2*x15)\nb2 = (np.sqrt(2)*(x13 - x12)/x4 - np.sqrt(2)*x12/x5 - 4*x12/x9)*x14/(2*x15)\nb02 = (-np.sqrt(2)/x4 - np.sqrt(2)/x5 - 4/x9)*x14/(2*x15)\n\nN8 = (a22*b1 -a12*b2)/(a11*a22 - a12*a21)\nN10 = (a11*b2 - a21*b1)/(a11*a22 - a12*a21)\nN1 = x12 - 0.5*np.sqrt(2)*N8\nN2 = -0.5*np.sqrt(2)*N10\nN3 = -x11 -2*x12 + x13 - 0.5*np.sqrt(2)*N8\nN4 = -x12 + x13 - 0.5*np.sqrt(2)*N10\nN5 = -x12 - 0.5*np.sqrt(2)*N8 - 0.5*np.sqrt(2)*N10\nN6 = - 0.5*np.sqrt(2)*N10\nN7 = np.sqrt(2)*(x11 + x12 ) + N8\nN9 = np.sqrt(2)*x12  + N10\n\n\nN08 = (a22*b01 -a12*b02)/(a11*a22 - a12*a21)\nN010 = (a11*b02 - a21*b01)/(a11*a22 - a12*a21)\nN01 = 1 - 0.5*np.sqrt(2)*N08\nN02 = -0.5*np.sqrt(2)*N010\nN03 = -2 - 0.5*np.sqrt(2)*N08\nN04 = -1 - 0.5*np.sqrt(2)*N010\nN05 = -1 - 0.5*np.sqrt(2)*N08 - 0.5*np.sqrt(2)*N010\nN06 = - 0.5*np.sqrt(2)*N010\nN07 = np.sqrt(2) + N08\nN09 = np.sqrt(2) + N010\n\ndef f(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15):\n    return (N01*N1/x1 +N02*N2/x2 + N03*N3/x3+N04*N4/x4 +N05*N5/x5 +N06*N6/x6 + np.sqrt(2)*( N07*N7/x7+N08*N8/x8+ N09*N9/x9+N010*N10/x10))*x14/x15\n\n\ndistribution = cp.J(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15)\n\nabscissas, weights = cp.generate_quadrature(\n    2, distribution, rule=\"Leja\",growth=True, sparse=True)\n\npolynomial_expansion = cp.orth_ttr(2, distribution)\nevals = [f(*x) for x in abscissas.T]\nf_approx = cp.fit_quadrature(\n     polynomial_expansion, abscissas, weights, evals)\n\nprint(cp.Sens_m(f_approx, distribution))\nprint(cp.Sens_t(f_approx, distribution))\n# expected = cp.E(f_approx, distribution)       #cp(chaospy)\n# deviation = cp.Std(f_approx, distribution)    #cp(chaospy)\n# print(expected,deviation)\nExcuse me,Sparse grid with Leja quadrature works effectively to handle high dimensions problems,\nHowever there still exists error using Sparse grid with Leja quadrature according to the tutorial,\nHow to solve it?",
+            "closedAt": "2019-11-29T02:17:16Z",
+            "createdAt": "2019-10-25T16:06:52Z",
+            "id": "MDU6SXNzdWU1MTI1OTg1Njc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 182,
+            "state": "CLOSED",
+            "title": "Sparse grid,Leja quadrature",
+            "updatedAt": "2019-11-29T02:17:16Z",
+            "url": "https://github.com/jonathf/chaospy/issues/182"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Pardon！There writes \"once PCE is built,Statistical Moment and Probability is easily got instantly\" in some papers.\nExcuse me,but how to compute Probability(y<3)?\nBest regards!",
+            "closedAt": "2019-11-29T02:17:03Z",
+            "createdAt": "2019-10-25T04:05:07Z",
+            "id": "MDU6SXNzdWU1MTIyOTEyMDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 181,
+            "state": "CLOSED",
+            "title": "How to compute Probability(y<3) or cdf(y<3)",
+            "updatedAt": "2019-11-29T07:08:18Z",
+            "url": "https://github.com/jonathf/chaospy/issues/181"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import numpy as np\nimport chaospy as cp\n\ndef f(x1,x2,x3):\n    return np.sin(x1) + 7*np.sin(x2)**2 + 0.1*np.power(x3,4)*np.sin(x1)\n\n\nx1 = cp.Uniform(-np.pi,np.pi)\nx2 = cp.Uniform(-np.pi,np.pi)\nx3 = cp.Uniform(-np.pi,np.pi)\ndistribution = cp.J(x1,x2,x3)\npolynomial_expansion = cp.orth_ttr(3, distribution)\n\nsamples = distribution.sample(2*len(polynomial_expansion), \"H\")    \nevals = [f(x[0], x[1],x[2]) for x in samples.T]\nf_approx = cp.fit_regression(\n         polynomial_expansion, samples, evals,\"T\")\nsens_first = cp.Sens_m_nataf(3,distribution,samples,evals)\nsens_total = cp.Sens_t_nataf(3,distribution,samples,evals)\n\nexpected = cp.E(f_approx, distribution)       #cp(chaospy)\ndeviation = cp.Std(f_approx, distribution)    #cp(chaospy)\nprint(expected,deviation,2*len(polynomial_expansion))\nprint(sens_first,sens_total)\n--------------------------------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"C:/Users/dell/PycharmProjects/untitled2/Ishigami.py\", line 18, in <module>\n    sens_first = cp.Sens_m_nataf(3,distribution,samples,evals)\n  File \"C:\\Users\\dell\\AppData\\Roaming\\Python\\Python37\\site-packages\\chaospy\\descriptives\\sensitivity\\nataf.py\", line 29, in Sens_m_nataf\n    assert dist.__class__.__name__ == \"Copula\"\nAssertionError\n---------------------------------------------------------------------------------------------------------\nExcuse me,I write the code according to the tourial,what is wrong?\nand then what does “Main order sensitivity indices”  mean in Main and total order sensitivity indices？\nBest regards!",
+            "closedAt": "2019-10-23T17:15:56Z",
+            "createdAt": "2019-10-17T04:06:02Z",
+            "id": "MDU6SXNzdWU1MDgyMjA5MDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 178,
+            "state": "CLOSED",
+            "title": "sensitivity,nataf",
+            "updatedAt": "2019-10-23T17:15:56Z",
+            "url": "https://github.com/jonathf/chaospy/issues/178"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "the computation of probability like P(y<6)",
+            "closedAt": "2019-10-11T09:36:11Z",
+            "createdAt": "2019-10-10T04:10:10Z",
+            "id": "MDU6SXNzdWU1MDUwMjExNzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 172,
+            "state": "CLOSED",
+            "title": "How to implement the computation of probability in Chaospy?",
+            "updatedAt": "2019-10-30T01:49:49Z",
+            "url": "https://github.com/jonathf/chaospy/issues/172"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "===>  Configuring for py36-chaospy-3.0.9\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"setup.py\", line 15, in <module>\n    LONG_DESCRIPTION = src.read()\n  File \"/usr/local/lib/python3.6/encodings/ascii.py\", line 26, in decode\n    return codecs.ascii_decode(input, self.errors)[0]\nUnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 4247: ordinal not in range(128)\n*** Error code 1\n\n\nThis is caused by non-ASCII characters in some files that it parses.\nFreeBSD 12",
+            "closedAt": "2019-11-04T14:55:54Z",
+            "createdAt": "2019-08-27T07:56:19Z",
+            "id": "MDU6SXNzdWU0ODU2NDc2NDA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 167,
+            "state": "CLOSED",
+            "title": "Build fails with python-3.6: 'ascii' codec can't decode byte 0xc3 in position 4247",
+            "updatedAt": "2019-11-04T14:55:54Z",
+            "url": "https://github.com/jonathf/chaospy/issues/167"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is it possible to obtain a polynomial approximation with regression using truncated distributions with cp.trunk()? I have the following warning constantly showing when trying to call cp.fit_regression(poly, samples, evaluations, rule = 'LS'):\n\nDistribution Trunc(0.0001, Normal(mu=0.32184, sigma=0.001)) has stochastic dependencies; Approximating moments with quadrature.\n\nThis message is printed in a loop and no solution is achieved. The way I define a truncated normal distribution in the lower limit:\ncp.trunk(lowerlimit, cp.Normal(mean,sigma)). \nI have tested the code without truncation in a basic scenario and everything works as expected, but truncation is necessary for the full case. Is there any way to work around this problem?\nThank you.",
+            "closedAt": "2019-08-26T18:03:21Z",
+            "createdAt": "2019-08-19T15:11:58Z",
+            "id": "MDU6SXNzdWU0ODIzNzAzODA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 165,
+            "state": "CLOSED",
+            "title": "Least Squares and truncated distributions",
+            "updatedAt": "2019-08-26T18:03:21Z",
+            "url": "https://github.com/jonathf/chaospy/issues/165"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello, with 3.0.5, we see some tests failing:\n+ pytest-3.7 tests\n============================= test session starts ==============================\nplatform linux -- Python 3.7.4, pytest-4.6.4, py-1.8.0, pluggy-0.12.0\nrootdir: /builddir/build/BUILD/chaospy-3.0.5, inifile: setup.cfg\nplugins: cov-2.7.1\ncollected 189 items\ntests/test_dist.py ..................................................... [ 28%]\n........................................................................ [ 66%]\n.....................................                                    [ 85%]\ntests/test_orth.py .....                                                 [ 88%]\ntests/test_poly.py ....FF..F.....                                        [ 95%]\ntests/test_stress.py ...F....                                            [100%]\n=================================== FAILURES ===================================\n_______________________________ test_poly_basis ________________________________\n    def test_poly_basis():\n        basis = cp.basis(1, 2, 2)\n>       assert str(basis) == \"[q0, q1, q0^2, q0q1, q1^2]\"\nE       AssertionError: assert '[q1, q0, q1^2, q0q1, q0^2]' == '[q0, q1, q0^2, q0q1, q1^2]'\nE         - [q1, q0, q1^2, q0q1, q0^2]\nE         ?        ----           ^\nE         + [q0, q1, q0^2, q0q1, q1^2]\nE         ?  ++++                 ^\n/builddir/build/BUILD/chaospy-3.0.5/tests/test_poly.py:32: AssertionError\n______________________________ test_poly_dimredux ______________________________\n    def test_poly_dimredux():\n        basis = cp.basis(1, 2, 2)\n        X = cp.variable()\n>       assert basis[0] == X\nE       assert <chaospy.poly...x7fff87b0d510> == <chaospy.poly....x7fff87b0d0d0>\nE         (pytest_assertion plugin: representation of details failed.  Probably an object has a faulty __repr__.)\nE         /builddir/build/BUILD/chaospy-3.0.5/chaospy/poly/base.py:239: ValueError: not iterable\n/builddir/build/BUILD/chaospy-3.0.5/tests/test_poly.py:38: AssertionError\n___________________________ test_poly_indirect_evals ___________________________\n    def test_poly_indirect_evals():\n        basis = cp.basis(1, 2, 2)\n        x, y = cp.variable(2)\n>       assert basis(q1=3)[1] == 3\nE       assert <chaospy.poly...x7fff879dad10> == 3\nE         (pytest_assertion plugin: representation of details failed.  Probably an object has a faulty __repr__.)\nE         /builddir/build/BUILD/chaospy-3.0.5/chaospy/poly/base.py:239: ValueError: not iterable\n/builddir/build/BUILD/chaospy-3.0.5/tests/test_poly.py:56: AssertionError\n_______________________________ test_quadrature ________________________________\n    def test_quadrature():\n        dist = cp.Iid(cp.Normal(), dim)\n        gq = cp.generate_quadrature\n        nodes, weights = gq(order, dist, rule=\"C\")\n        nodes, weights = gq(order, dist, rule=\"E\")\n        nodes, weights = gq(order, dist, rule=\"G\")\n>       nodes, weights = gq(order, dist, rule=\"C\", sparse=True)\n/builddir/build/BUILD/chaospy-3.0.5/tests/test_stress.py:67: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/builddir/build/BUILD/chaospy-3.0.5/chaospy/quad/interface.py:71: in generate_quadrature\n    abscissas, weights = sparse_grid.sparse_grid(quad_function, order, dim)\n/builddir/build/BUILD/chaospy-3.0.5/chaospy/quad/sparse_grid.py:73: in sparse_grid\n    return sparse_grid(func, m_order, dim, skew)\n/builddir/build/BUILD/chaospy-3.0.5/chaospy/quad/sparse_grid.py:86: in sparse_grid\n    - chaospy.bertran.terms(order-dim, dim)):\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \norder = -1, dim = 3\n    def terms(order, dim):\n        \"\"\"\n        Count the number of polynomials in an expansion.\n    \n        Args:\n            order (int):\n                The upper order for the expansion.\n            dim (int):\n                The number of dimensions of the expansion.\n    \n        Returns:\n            The number of terms in an expansion of upper order ``order`` and number\n            of dimensions ``dim``.\n        \"\"\"\n        return int(math.factorial(order+dim)/\n>                  (math.factorial(order)*math.factorial(dim)))\nE       ValueError: factorial() not defined for negative values\n/builddir/build/BUILD/chaospy-3.0.5/chaospy/bertran/operators.py:62: ValueError\n=============================== warnings summary ===============================\nchaospy/poly/__init__.py:95\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/poly/__init__.py:95: DeprecationWarning: invalid escape sequence \\_\n    \"\"\"\nchaospy/distributions/sampler/__init__.py:22\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/sampler/__init__.py:22: DeprecationWarning: invalid escape sequence \\s\n    \"\"\"\nchaospy/distributions/copulas/baseclass.py:62\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/copulas/baseclass.py:62: DeprecationWarning: invalid escape sequence \\i\n    \"\"\"\ntests/test_dist.py::test_dist_add[Alpha]\ntests/test_dist.py::test_dist_add[Alpha]\ntests/test_dist.py::test_dist_add[Alpha]\ntests/test_dist.py::test_dist_add[Anglit]\ntests/test_dist.py::test_dist_add[Anglit]\ntests/test_dist.py::test_dist_add[Anglit]\ntests/test_dist.py::test_dist_add[Bradford]\ntests/test_dist.py::test_dist_add[Bradford]\ntests/test_dist.py::test_dist_add[Bradford]\ntests/test_dist.py::test_dist_add[Cauchy]\ntests/test_dist.py::test_dist_add[Cauchy]\ntests/test_dist.py::test_dist_add[Cauchy]\ntests/test_dist.py::test_dist_add[ChiSquared]\ntests/test_dist.py::test_dist_add[ChiSquared]\ntests/test_dist.py::test_dist_add[ChiSquared]\ntests/test_dist.py::test_dist_add[DoubleGamma]\ntests/test_dist.py::test_dist_add[DoubleGamma]\ntests/test_dist.py::test_dist_add[DoubleGamma]\ntests/test_dist.py::test_dist_add[DoubleWeibull]\ntests/test_dist.py::test_dist_add[DoubleWeibull]\ntests/test_dist.py::test_dist_add[DoubleWeibull]\ntests/test_dist.py::test_dist_add[ExponentialPower]\ntests/test_dist.py::test_dist_add[ExponentialPower]\ntests/test_dist.py::test_dist_add[ExponentialPower]\ntests/test_dist.py::test_dist_add[ExponentialWeibull]\ntests/test_dist.py::test_dist_add[ExponentialWeibull]\ntests/test_dist.py::test_dist_add[ExponentialWeibull]\ntests/test_dist.py::test_dist_add[F]\ntests/test_dist.py::test_dist_add[F]\ntests/test_dist.py::test_dist_add[F]\ntests/test_dist.py::test_dist_add[FatigueLife]\ntests/test_dist.py::test_dist_add[FatigueLife]\ntests/test_dist.py::test_dist_add[FatigueLife]\ntests/test_dist.py::test_dist_add[Fisk]\ntests/test_dist.py::test_dist_add[Fisk]\ntests/test_dist.py::test_dist_add[Fisk]\ntests/test_dist.py::test_dist_add[FoldedCauchy]\ntests/test_dist.py::test_dist_add[FoldedCauchy]\ntests/test_dist.py::test_dist_add[FoldedCauchy]\ntests/test_dist.py::test_dist_add[FoldedNormal]\ntests/test_dist.py::test_dist_add[FoldedNormal]\ntests/test_dist.py::test_dist_add[FoldedNormal]\ntests/test_dist.py::test_dist_add[GeneralizedExponential]\ntests/test_dist.py::test_dist_add[GeneralizedExponential]\ntests/test_dist.py::test_dist_add[GeneralizedExponential]\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_add[Levy]\ntests/test_dist.py::test_dist_add[Levy]\ntests/test_dist.py::test_dist_add[Levy]\ntests/test_dist.py::test_dist_add[LogGamma]\ntests/test_dist.py::test_dist_add[LogGamma]\ntests/test_dist.py::test_dist_add[LogGamma]\ntests/test_dist.py::test_dist_add[LogLaplace]\ntests/test_dist.py::test_dist_add[LogLaplace]\ntests/test_dist.py::test_dist_add[LogLaplace]\ntests/test_dist.py::test_dist_add[LogWeibull]\ntests/test_dist.py::test_dist_add[LogWeibull]\ntests/test_dist.py::test_dist_add[LogWeibull]\ntests/test_dist.py::test_dist_add[Logistic]\ntests/test_dist.py::test_dist_add[Logistic]\ntests/test_dist.py::test_dist_add[Logistic]\ntests/test_dist.py::test_dist_add[Mielke]\ntests/test_dist.py::test_dist_add[Mielke]\ntests/test_dist.py::test_dist_add[Mielke]\ntests/test_dist.py::test_dist_add[Nakagami]\ntests/test_dist.py::test_dist_add[Nakagami]\ntests/test_dist.py::test_dist_add[Nakagami]\ntests/test_dist.py::test_dist_add[Pareto1]\ntests/test_dist.py::test_dist_add[Pareto1]\ntests/test_dist.py::test_dist_add[Pareto1]\ntests/test_dist.py::test_dist_add[Pareto2]\ntests/test_dist.py::test_dist_add[Pareto2]\ntests/test_dist.py::test_dist_add[Pareto2]\ntests/test_dist.py::test_dist_add[PowerLogNormal]\ntests/test_dist.py::test_dist_add[PowerLogNormal]\ntests/test_dist.py::test_dist_add[PowerLogNormal]\ntests/test_dist.py::test_dist_add[PowerNormal]\ntests/test_dist.py::test_dist_add[PowerNormal]\ntests/test_dist.py::test_dist_add[PowerNormal]\ntests/test_dist.py::test_dist_add[TruncExponential]\ntests/test_dist.py::test_dist_add[TruncExponential]\ntests/test_dist.py::test_dist_add[TruncExponential]\ntests/test_dist.py::test_dist_add[TruncNormal]\ntests/test_dist.py::test_dist_add[TruncNormal]\ntests/test_dist.py::test_dist_add[TruncNormal]\ntests/test_dist.py::test_dist_add[TukeyLambda]\ntests/test_dist.py::test_dist_add[TukeyLambda]\ntests/test_dist.py::test_dist_add[TukeyLambda]\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_add[WrappedCauchy]\ntests/test_dist.py::test_dist_add[WrappedCauchy]\ntests/test_dist.py::test_dist_add[WrappedCauchy]\ntests/test_dist.py::test_dist_sub[Alpha]\ntests/test_dist.py::test_dist_sub[Alpha]\ntests/test_dist.py::test_dist_sub[Alpha]\ntests/test_dist.py::test_dist_sub[Anglit]\ntests/test_dist.py::test_dist_sub[Anglit]\ntests/test_dist.py::test_dist_sub[Anglit]\ntests/test_dist.py::test_dist_sub[Bradford]\ntests/test_dist.py::test_dist_sub[Bradford]\ntests/test_dist.py::test_dist_sub[Bradford]\ntests/test_dist.py::test_dist_sub[Cauchy]\ntests/test_dist.py::test_dist_sub[Cauchy]\ntests/test_dist.py::test_dist_sub[Cauchy]\ntests/test_dist.py::test_dist_sub[ChiSquared]\ntests/test_dist.py::test_dist_sub[ChiSquared]\ntests/test_dist.py::test_dist_sub[ChiSquared]\ntests/test_dist.py::test_dist_sub[DoubleGamma]\ntests/test_dist.py::test_dist_sub[DoubleGamma]\ntests/test_dist.py::test_dist_sub[DoubleGamma]\ntests/test_dist.py::test_dist_sub[DoubleWeibull]\ntests/test_dist.py::test_dist_sub[DoubleWeibull]\ntests/test_dist.py::test_dist_sub[DoubleWeibull]\ntests/test_dist.py::test_dist_sub[ExponentialPower]\ntests/test_dist.py::test_dist_sub[ExponentialPower]\ntests/test_dist.py::test_dist_sub[ExponentialPower]\ntests/test_dist.py::test_dist_sub[ExponentialWeibull]\ntests/test_dist.py::test_dist_sub[ExponentialWeibull]\ntests/test_dist.py::test_dist_sub[ExponentialWeibull]\ntests/test_dist.py::test_dist_sub[F]\ntests/test_dist.py::test_dist_sub[F]\ntests/test_dist.py::test_dist_sub[F]\ntests/test_dist.py::test_dist_sub[FatigueLife]\ntests/test_dist.py::test_dist_sub[FatigueLife]\ntests/test_dist.py::test_dist_sub[FatigueLife]\ntests/test_dist.py::test_dist_sub[Fisk]\ntests/test_dist.py::test_dist_sub[Fisk]\ntests/test_dist.py::test_dist_sub[Fisk]\ntests/test_dist.py::test_dist_sub[FoldedCauchy]\ntests/test_dist.py::test_dist_sub[FoldedCauchy]\ntests/test_dist.py::test_dist_sub[FoldedCauchy]\ntests/test_dist.py::test_dist_sub[FoldedNormal]\ntests/test_dist.py::test_dist_sub[FoldedNormal]\ntests/test_dist.py::test_dist_sub[FoldedNormal]\ntests/test_dist.py::test_dist_sub[GeneralizedExponential]\ntests/test_dist.py::test_dist_sub[GeneralizedExponential]\ntests/test_dist.py::test_dist_sub[GeneralizedExponential]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[Levy]\ntests/test_dist.py::test_dist_sub[Levy]\ntests/test_dist.py::test_dist_sub[Levy]\ntests/test_dist.py::test_dist_sub[LogGamma]\ntests/test_dist.py::test_dist_sub[LogGamma]\ntests/test_dist.py::test_dist_sub[LogGamma]\ntests/test_dist.py::test_dist_sub[LogLaplace]\ntests/test_dist.py::test_dist_sub[LogLaplace]\ntests/test_dist.py::test_dist_sub[LogLaplace]\ntests/test_dist.py::test_dist_sub[LogWeibull]\ntests/test_dist.py::test_dist_sub[LogWeibull]\ntests/test_dist.py::test_dist_sub[LogWeibull]\ntests/test_dist.py::test_dist_sub[Logistic]\ntests/test_dist.py::test_dist_sub[Logistic]\ntests/test_dist.py::test_dist_sub[Logistic]\ntests/test_dist.py::test_dist_sub[Mielke]\ntests/test_dist.py::test_dist_sub[Mielke]\ntests/test_dist.py::test_dist_sub[Mielke]\ntests/test_dist.py::test_dist_sub[Nakagami]\ntests/test_dist.py::test_dist_sub[Nakagami]\ntests/test_dist.py::test_dist_sub[Nakagami]\ntests/test_dist.py::test_dist_sub[Pareto1]\ntests/test_dist.py::test_dist_sub[Pareto1]\ntests/test_dist.py::test_dist_sub[Pareto1]\ntests/test_dist.py::test_dist_sub[Pareto2]\ntests/test_dist.py::test_dist_sub[Pareto2]\ntests/test_dist.py::test_dist_sub[Pareto2]\ntests/test_dist.py::test_dist_sub[PowerLogNormal]\ntests/test_dist.py::test_dist_sub[PowerLogNormal]\ntests/test_dist.py::test_dist_sub[PowerLogNormal]\ntests/test_dist.py::test_dist_sub[PowerNormal]\ntests/test_dist.py::test_dist_sub[PowerNormal]\ntests/test_dist.py::test_dist_sub[PowerNormal]\ntests/test_dist.py::test_dist_sub[TruncExponential]\ntests/test_dist.py::test_dist_sub[TruncExponential]\ntests/test_dist.py::test_dist_sub[TruncExponential]\ntests/test_dist.py::test_dist_sub[TruncNormal]\ntests/test_dist.py::test_dist_sub[TruncNormal]\ntests/test_dist.py::test_dist_sub[TruncNormal]\ntests/test_dist.py::test_dist_sub[TukeyLambda]\ntests/test_dist.py::test_dist_sub[TukeyLambda]\ntests/test_dist.py::test_dist_sub[TukeyLambda]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_sub[WrappedCauchy]\ntests/test_dist.py::test_dist_sub[WrappedCauchy]\ntests/test_dist.py::test_dist_sub[WrappedCauchy]\ntests/test_dist.py::test_dist_mul[Alpha]\ntests/test_dist.py::test_dist_mul[Alpha]\ntests/test_dist.py::test_dist_mul[Alpha]\ntests/test_dist.py::test_dist_mul[Alpha]\ntests/test_dist.py::test_dist_mul[Alpha]\ntests/test_dist.py::test_dist_mul[Alpha]\ntests/test_dist.py::test_dist_mul[Anglit]\ntests/test_dist.py::test_dist_mul[Anglit]\ntests/test_dist.py::test_dist_mul[Anglit]\ntests/test_dist.py::test_dist_mul[Anglit]\ntests/test_dist.py::test_dist_mul[Anglit]\ntests/test_dist.py::test_dist_mul[Anglit]\ntests/test_dist.py::test_dist_mul[Bradford]\ntests/test_dist.py::test_dist_mul[Bradford]\ntests/test_dist.py::test_dist_mul[Bradford]\ntests/test_dist.py::test_dist_mul[Bradford]\ntests/test_dist.py::test_dist_mul[Bradford]\ntests/test_dist.py::test_dist_mul[Bradford]\ntests/test_dist.py::test_dist_mul[Cauchy]\ntests/test_dist.py::test_dist_mul[Cauchy]\ntests/test_dist.py::test_dist_mul[Cauchy]\ntests/test_dist.py::test_dist_mul[Cauchy]\ntests/test_dist.py::test_dist_mul[Cauchy]\ntests/test_dist.py::test_dist_mul[Cauchy]\ntests/test_dist.py::test_dist_mul[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\ntests/test_dist.py::test_dist_mul[DoubleGamma]\ntests/test_dist.py::test_dist_mul[DoubleGamma]\ntests/test_dist.py::test_dist_mul[DoubleGamma]\ntests/test_dist.py::test_dist_mul[DoubleGamma]\ntests/test_dist.py::test_dist_mul[DoubleGamma]\ntests/test_dist.py::test_dist_mul[DoubleGamma]\ntests/test_dist.py::test_dist_mul[DoubleWeibull]\ntests/test_dist.py::test_dist_mul[DoubleWeibull]\ntests/test_dist.py::test_dist_mul[DoubleWeibull]\ntests/test_dist.py::test_dist_mul[DoubleWeibull]\ntests/test_dist.py::test_dist_mul[DoubleWeibull]\ntests/test_dist.py::test_dist_mul[DoubleWeibull]\ntests/test_dist.py::test_dist_mul[ExponentialPower]\ntests/test_dist.py::test_dist_mul[ExponentialPower]\ntests/test_dist.py::test_dist_mul[ExponentialPower]\ntests/test_dist.py::test_dist_mul[ExponentialPower]\ntests/test_dist.py::test_dist_mul[ExponentialPower]\ntests/test_dist.py::test_dist_mul[ExponentialPower]\ntests/test_dist.py::test_dist_mul[ExponentialWeibull]\ntests/test_dist.py::test_dist_mul[ExponentialWeibull]\ntests/test_dist.py::test_dist_mul[ExponentialWeibull]\ntests/test_dist.py::test_dist_mul[ExponentialWeibull]\ntests/test_dist.py::test_dist_mul[ExponentialWeibull]\ntests/test_dist.py::test_dist_mul[ExponentialWeibull]\ntests/test_dist.py::test_dist_mul[F]\ntests/test_dist.py::test_dist_mul[F]\ntests/test_dist.py::test_dist_mul[F]\ntests/test_dist.py::test_dist_mul[F]\ntests/test_dist.py::test_dist_mul[F]\ntests/test_dist.py::test_dist_mul[F]\ntests/test_dist.py::test_dist_mul[FatigueLife]\ntests/test_dist.py::test_dist_mul[FatigueLife]\ntests/test_dist.py::test_dist_mul[FatigueLife]\ntests/test_dist.py::test_dist_mul[FatigueLife]\ntests/test_dist.py::test_dist_mul[FatigueLife]\ntests/test_dist.py::test_dist_mul[FatigueLife]\ntests/test_dist.py::test_dist_mul[Fisk]\ntests/test_dist.py::test_dist_mul[Fisk]\ntests/test_dist.py::test_dist_mul[Fisk]\ntests/test_dist.py::test_dist_mul[Fisk]\ntests/test_dist.py::test_dist_mul[Fisk]\ntests/test_dist.py::test_dist_mul[Fisk]\ntests/test_dist.py::test_dist_mul[FoldedCauchy]\ntests/test_dist.py::test_dist_mul[FoldedCauchy]\ntests/test_dist.py::test_dist_mul[FoldedCauchy]\ntests/test_dist.py::test_dist_mul[FoldedCauchy]\ntests/test_dist.py::test_dist_mul[FoldedCauchy]\ntests/test_dist.py::test_dist_mul[FoldedCauchy]\ntests/test_dist.py::test_dist_mul[FoldedNormal]\ntests/test_dist.py::test_dist_mul[FoldedNormal]\ntests/test_dist.py::test_dist_mul[FoldedNormal]\ntests/test_dist.py::test_dist_mul[FoldedNormal]\ntests/test_dist.py::test_dist_mul[FoldedNormal]\ntests/test_dist.py::test_dist_mul[FoldedNormal]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[Levy]\ntests/test_dist.py::test_dist_mul[Levy]\ntests/test_dist.py::test_dist_mul[Levy]\ntests/test_dist.py::test_dist_mul[Levy]\ntests/test_dist.py::test_dist_mul[Levy]\ntests/test_dist.py::test_dist_mul[Levy]\ntests/test_dist.py::test_dist_mul[LogGamma]\ntests/test_dist.py::test_dist_mul[LogGamma]\ntests/test_dist.py::test_dist_mul[LogGamma]\ntests/test_dist.py::test_dist_mul[LogGamma]\ntests/test_dist.py::test_dist_mul[LogGamma]\ntests/test_dist.py::test_dist_mul[LogGamma]\ntests/test_dist.py::test_dist_mul[LogLaplace]\ntests/test_dist.py::test_dist_mul[LogLaplace]\ntests/test_dist.py::test_dist_mul[LogLaplace]\ntests/test_dist.py::test_dist_mul[LogLaplace]\ntests/test_dist.py::test_dist_mul[LogLaplace]\ntests/test_dist.py::test_dist_mul[LogLaplace]\ntests/test_dist.py::test_dist_mul[LogWeibull]\ntests/test_dist.py::test_dist_mul[LogWeibull]\ntests/test_dist.py::test_dist_mul[LogWeibull]\ntests/test_dist.py::test_dist_mul[LogWeibull]\ntests/test_dist.py::test_dist_mul[LogWeibull]\ntests/test_dist.py::test_dist_mul[LogWeibull]\ntests/test_dist.py::test_dist_mul[Logistic]\ntests/test_dist.py::test_dist_mul[Logistic]\ntests/test_dist.py::test_dist_mul[Logistic]\ntests/test_dist.py::test_dist_mul[Logistic]\ntests/test_dist.py::test_dist_mul[Logistic]\ntests/test_dist.py::test_dist_mul[Logistic]\ntests/test_dist.py::test_dist_mul[Mielke]\ntests/test_dist.py::test_dist_mul[Mielke]\ntests/test_dist.py::test_dist_mul[Mielke]\ntests/test_dist.py::test_dist_mul[Mielke]\ntests/test_dist.py::test_dist_mul[Mielke]\ntests/test_dist.py::test_dist_mul[Mielke]\ntests/test_dist.py::test_dist_mul[Nakagami]\ntests/test_dist.py::test_dist_mul[Nakagami]\ntests/test_dist.py::test_dist_mul[Nakagami]\ntests/test_dist.py::test_dist_mul[Nakagami]\ntests/test_dist.py::test_dist_mul[Nakagami]\ntests/test_dist.py::test_dist_mul[Nakagami]\ntests/test_dist.py::test_dist_mul[Pareto1]\ntests/test_dist.py::test_dist_mul[Pareto1]\ntests/test_dist.py::test_dist_mul[Pareto1]\ntests/test_dist.py::test_dist_mul[Pareto1]\ntests/test_dist.py::test_dist_mul[Pareto1]\ntests/test_dist.py::test_dist_mul[Pareto1]\ntests/test_dist.py::test_dist_mul[Pareto2]\ntests/test_dist.py::test_dist_mul[Pareto2]\ntests/test_dist.py::test_dist_mul[Pareto2]\ntests/test_dist.py::test_dist_mul[Pareto2]\ntests/test_dist.py::test_dist_mul[Pareto2]\ntests/test_dist.py::test_dist_mul[Pareto2]\ntests/test_dist.py::test_dist_mul[PowerLogNormal]\ntests/test_dist.py::test_dist_mul[PowerLogNormal]\ntests/test_dist.py::test_dist_mul[PowerLogNormal]\ntests/test_dist.py::test_dist_mul[PowerLogNormal]\ntests/test_dist.py::test_dist_mul[PowerLogNormal]\ntests/test_dist.py::test_dist_mul[PowerLogNormal]\ntests/test_dist.py::test_dist_mul[PowerNormal]\ntests/test_dist.py::test_dist_mul[PowerNormal]\ntests/test_dist.py::test_dist_mul[PowerNormal]\ntests/test_dist.py::test_dist_mul[PowerNormal]\ntests/test_dist.py::test_dist_mul[PowerNormal]\ntests/test_dist.py::test_dist_mul[PowerNormal]\ntests/test_dist.py::test_dist_mul[TruncExponential]\ntests/test_dist.py::test_dist_mul[TruncExponential]\ntests/test_dist.py::test_dist_mul[TruncExponential]\ntests/test_dist.py::test_dist_mul[TruncExponential]\ntests/test_dist.py::test_dist_mul[TruncExponential]\ntests/test_dist.py::test_dist_mul[TruncExponential]\ntests/test_dist.py::test_dist_mul[TruncNormal]\ntests/test_dist.py::test_dist_mul[TruncNormal]\ntests/test_dist.py::test_dist_mul[TruncNormal]\ntests/test_dist.py::test_dist_mul[TruncNormal]\ntests/test_dist.py::test_dist_mul[TruncNormal]\ntests/test_dist.py::test_dist_mul[TruncNormal]\ntests/test_dist.py::test_dist_mul[TukeyLambda]\ntests/test_dist.py::test_dist_mul[TukeyLambda]\ntests/test_dist.py::test_dist_mul[TukeyLambda]\ntests/test_dist.py::test_dist_mul[TukeyLambda]\ntests/test_dist.py::test_dist_mul[TukeyLambda]\ntests/test_dist.py::test_dist_mul[TukeyLambda]\ntests/test_dist.py::test_dist_mul[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\ntests/test_dist.py::test_dist_mul[WrappedCauchy]\ntests/test_dist.py::test_dist_mul[WrappedCauchy]\ntests/test_dist.py::test_dist_mul[WrappedCauchy]\ntests/test_dist.py::test_dist_mul[WrappedCauchy]\ntests/test_dist.py::test_dist_mul[WrappedCauchy]\ntests/test_dist.py::test_dist_mul[WrappedCauchy]\ntests/test_stress.py::test_quadrature\ntests/test_stress.py::test_quadrature\ntests/test_stress.py::test_quadrature\ntests/test_stress.py::test_quadrature\ntests/test_stress.py::test_approx_quadrature\ntests/test_stress.py::test_integration\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/quad/collection/frontend.py:77: DeprecationWarning: inspect.getargspec() is deprecated since Python 3.0, use inspect.signature() or inspect.getfullargspec()\n    parameters_spec = inspect.getargspec(quad_function)[0]\ntests/test_dist.py::test_dist_add[ChiSquared]\ntests/test_dist.py::test_dist_sub[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/collection/chi_squared.py:18: RuntimeWarning: divide by zero encountered in true_divide\n    output *= (x/nc)**(0.25*df-0.5)\ntests/test_dist.py::test_dist_add[ChiSquared]\ntests/test_dist.py::test_dist_sub[ChiSquared]\ntests/test_dist.py::test_dist_mul[ChiSquared]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/collection/chi_squared.py:19: RuntimeWarning: invalid value encountered in multiply\n    output *= special.iv(0.5*df-1, (nc*x)**0.5)\ntests/test_dist.py::test_dist_add[GeneralizedExponential]\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_sub[GeneralizedExponential]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_mul[GeneralizedExponential]\ntests/test_dist.py::test_dist_mul[Wald]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/quad/collection/frontend.py:98: RuntimeWarning: invalid value encountered in true_divide\n    weights /= numpy.sum(weights)\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/collection/generalized_extreme.py:31: RuntimeWarning: invalid value encountered in true_divide\n    return numpy.where(c == 0, x, -numpy.expm1(-c*x)/c)\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\nBUILDSTDERR: tests/test_dist.py::test_dist_sub[Generror: Bad exit status from /var/tmp/rpm-tmp.cIvVRK (%check)\neralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/collection/generalized_extreme.py:31: RuntimeWarning: invalid value encountered in double_scalars\n    return numpy.where(c == 0, x, -numpy.expm1(-c*x)/c)\ntests/test_dist.py::test_dist_add[GeneralizedExtreme]\ntests/test_dist.py::test_dist_sub[GeneralizedExtreme]\ntests/test_dist.py::test_dist_mul[GeneralizedExtreme]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/collection/generalized_extreme.py:19: RuntimeWarning: invalid value encountered in true_divide\n    logpex2 = numpy.where(c == 0, -x, logex2/c)\ntests/test_dist.py::test_dist_add[RaisedCosine]\ntests/test_dist.py::test_dist_add[RaisedCosine]\ntests/test_dist.py::test_dist_add[RaisedCosine]\ntests/test_dist.py::test_dist_sub[RaisedCosine]\ntests/test_dist.py::test_dist_sub[RaisedCosine]\ntests/test_dist.py::test_dist_sub[RaisedCosine]\ntests/test_dist.py::test_dist_mul[RaisedCosine]\ntests/test_dist.py::test_dist_mul[RaisedCosine]\ntests/test_dist.py::test_dist_mul[RaisedCosine]\ntests/test_dist.py::test_dist_mul[RaisedCosine]\ntests/test_dist.py::test_dist_mul[RaisedCosine]\ntests/test_dist.py::test_dist_mul[RaisedCosine]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/collection/raised_cosine.py:27: DeprecationWarning: `hyp1f2` is deprecated!\n  hyp1f2 is deprecated in SciPy 1.2\n    for k_ in k.flatten()]).reshape(k.shape)\ntests/test_dist.py::test_dist_add[Wald]\ntests/test_dist.py::test_dist_sub[Wald]\ntests/test_dist.py::test_dist_mul[Wald]\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/collection/wald.py:29: RuntimeWarning: invalid value encountered in multiply\n    out -= numpy.exp(2.0/mu)*special.ndtr(-isqx*trm2)\ntests/test_stress.py::test_approx_quadrature\n  /builddir/build/BUILD/chaospy-3.0.5/chaospy/distributions/approximation.py:371: RuntimeWarning: invalid value encountered in true_divide\n    floc = numpy.abs(floc / eps)\n-- Docs: https://docs.pytest.org/en/latest/warnings.html\n============= 4 failed, 185 passed, 430 warnings in 30.12 seconds ==============\n\nAny hints on fixes/workarounds? Cheers.",
+            "closedAt": "2019-08-01T19:41:56Z",
+            "createdAt": "2019-08-01T16:43:58Z",
+            "id": "MDU6SXNzdWU0NzU3ODQzMzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 160,
+            "state": "CLOSED",
+            "title": "Failing tests: 3.0.5",
+            "updatedAt": "2019-08-01T19:41:56Z",
+            "url": "https://github.com/jonathf/chaospy/issues/160"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Trying to get sparse grid quadrature points in a 6D space of normally distributed variables fails in master, independent of quadrature rule and order. Up to 5D no error occurs. The example was still working in version 3.0.4 from pip.\nExample:\nparams = [Normal(mu=0.999,  sigma=0.0052), \n          Normal(mu=27.1,   sigma=17.0), \n          Normal(mu=0.318,  sigma=0.1), \n          Normal(mu=0.015,  sigma=0.0087),\n          Normal(mu=0.0817, sigma=0.0077),\n          Normal(mu=1.309,  sigma=0.086)]  \n\ndist = J(*params)\nnodes, weights = generate_quadrature(4, dist, rule='G', sparse=True)\n\nfails with\nTraceback (most recent call last):\n\n  File \"<ipython-input-28-535a68cc2876>\", line 2, in <module>\n    nodes, weights = generate_quadrature(4, dist, rule='G', sparse=True)\n\n  File \".../code/chaospy/chaospy/quad/interface.py\", line 67, in generate_quadrature\n    abscissas, weights = sparse_grid.sparse_grid(quad_function, order, dim)\n\n  File \".../chaospy/chaospy/quad/sparse_grid.py\", line 73, in sparse_grid\n    return sparse_grid(func, m_order, dim, skew)\n\n  File \".../chaospy/chaospy/quad/sparse_grid.py\", line 76, in sparse_grid\n    bindex = chaospy.bertran.bindex(order-dim+1, order, dim)\n\n  File \"/home/calbert/Nextcloud/code/chaospy/chaospy/bertran/operators.py\", line 194, in bindex\n    min(start), sum(stop), dim=dim) if include(midx)]\n  File \".../chaospy/chaospy/bertran/operators.py\", line 126, in bertran_indices\n    range(dim), start):\n\nValueError: r must be non-negative\n```.",
+            "closedAt": "2019-07-26T15:42:33Z",
+            "createdAt": "2019-07-26T08:27:17Z",
+            "id": "MDU6SXNzdWU0NzMyMzk1OTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 157,
+            "state": "CLOSED",
+            "title": "Sparse grid fails in dimension >5D for normal distribution",
+            "updatedAt": "2019-07-26T15:42:33Z",
+            "url": "https://github.com/jonathf/chaospy/issues/157"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear @jonathf ,\nI have another question. In Chaospy, the expected value and std. deviation are evaluated over the model's output samples. This evaluation returns a positive value (or null) for the std. deviation.\nAssume the following scenario you are measuring absolute temperatures. The expected value is positive always, but when we plot \"expected value plus minus one std.dev\" it can happen that negative \"shaded temps\" appear.... How do you avoid this situations?\nIs it there any way to tell ChaosPy, that the model's output behaves as lognormal. Something like this:\nE = cp.Mean(model_output_samples,\"lognormal\")\nS = cp.Std(model_output_samples,\"lognormal\")\nIf so I would appreciate an advice on how to do sth like this. I am having negative \"shaded\" values.",
+            "closedAt": "2019-07-21T15:52:33Z",
+            "createdAt": "2019-07-20T00:22:51Z",
+            "id": "MDU6SXNzdWU0NzA2MTMxOTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 156,
+            "state": "CLOSED",
+            "title": "Output's first and second statistical moments evaluations...",
+            "updatedAt": "2019-07-21T15:52:33Z",
+            "url": "https://github.com/jonathf/chaospy/issues/156"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have a random variable with uniform distribution in [a,b]. How can I use chaospy to estimate first 2 coefficients of the polynomial expansion of this random variable using the standard uniform distribution in [-1,1] as the germ along with the Legendre polynomials?\ndistr = chaospy.Normal(-1,1)\npoly = chaospy.orth_ttr(2, distr, normed=False)\n...?",
+            "closedAt": "2019-07-09T17:24:47Z",
+            "createdAt": "2019-07-08T13:37:27Z",
+            "id": "MDU6SXNzdWU0NjUyNjI3MjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 153,
+            "state": "CLOSED",
+            "title": "coefficients of the polynomial expansion of uniform random variable",
+            "updatedAt": "2019-07-09T17:24:48Z",
+            "url": "https://github.com/jonathf/chaospy/issues/153"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathan,\nHow I can create a bivariate Legendre basis of degree 6 with your code?\nFor example, in a polynomial basis I do the Pascal Triangle by:\n[ x6, y6, x5*y4,y5*x4,x5,y5,x4*y3,y4*x3,....,x, y, 1]\nThank you in advance!\nMarc",
+            "closedAt": "2019-06-17T14:13:14Z",
+            "createdAt": "2019-06-14T06:52:37Z",
+            "id": "MDU6SXNzdWU0NTYwODkyMzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 146,
+            "state": "CLOSED",
+            "title": "bivariate Legendre Polynomials",
+            "updatedAt": "2019-06-17T14:13:14Z",
+            "url": "https://github.com/jonathf/chaospy/issues/146"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I tried to find the mean of non-integral power of polynomials using -\ncp.E( poly[i] * poly[j] * ( poly[k] ** (1/2) ), distr )\nand I ran into the following error message -\nValueError: Power of Poly must be interger\nIs it somehow possible to do such operations on the polynomial before taking the expected value with respect to the distribution (distr)?\nIt would be great if you could help.",
+            "closedAt": "2019-05-31T13:10:37Z",
+            "createdAt": "2019-05-26T18:09:08Z",
+            "id": "MDU6SXNzdWU0NDg1OTE4NjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 142,
+            "state": "CLOSED",
+            "title": "Mean of non-integral power of polynomials",
+            "updatedAt": "2019-05-31T13:10:37Z",
+            "url": "https://github.com/jonathf/chaospy/issues/142"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "scipy.misc.comb has been deprecated for several releases now, but is now completely dropped.  chaospy cannot be used with scipy v1.3.0 because of this.  The new function is scipy.special.comb.  The special.comb function doesn't exist in versions prior to scipy v0.14 as well.",
+            "closedAt": "2019-05-24T09:54:33Z",
+            "createdAt": "2019-05-20T14:55:38Z",
+            "id": "MDU6SXNzdWU0NDYxNjMwODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 140,
+            "state": "CLOSED",
+            "title": "scipy.misc.comb no longer works with scipy v1.3.0",
+            "updatedAt": "2019-05-24T09:54:34Z",
+            "url": "https://github.com/jonathf/chaospy/issues/140"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi Jonathan,\nI just try to use the sparse grid quadrature functionality that is built-in in Chaospy through chaospy.generate_quadrature(q, dist, ..., sparse=True) and I observed some behaviour which I don't understand completely. I followed https://chaospy.readthedocs.io/en/master/quadrature/sparsegrid.html but with a higher order for q (dimension of collocation points for each parameter). You wrote that it does not work for rules that can not be nested.\nBut I also observed that it doesn't work with rule \"C\" (Clenshaw-Curtis) (it only works for q=3 for rule=\"C\") and \"G\" (Gaussian Quadrature - Golub Welsch).\nHere is my code that I tried:\nimport chaospy as cp\nimport numpy as np\nfrom tabulate import tabulate\n\nq_orders = range(2, 9)\nrules = [\"c\", \"e\", \"p\", \"g\", \"j\", \"f\"]\nnum_nodes = np.zeros((len(rules), len(q_orders), 2), dtype=np.int)\n\ndist = cp.J(cp.Uniform(0, 4), cp.Uniform(0, 4))\n#dist = cp.J(cp.Normal(0, 1), cp.Uniform(0, 1))\n\n# produce num_nodes matrix\nfor r_i, r in enumerate(rules):\n    for q_i, q in enumerate(q_orders):\n        nodes, weights = cp.generate_quadrature(q, dist, rule=r)\n        num_nodes[r_i][q_i][0] = len(nodes.T)\n\n        nodes, weights = cp.generate_quadrature(q, dist, rule=r, sparse=True)\n        num_nodes[r_i][q_i][1] = len(nodes.T)\n\n# create table\ntable = []\nfor r_i, r in enumerate(rules):\n    for q_i, q in enumerate(q_orders):\n        ok = num_nodes[r_i][q_i][1] < num_nodes[r_i][q_i][0]\n        table.append([r, q, num_nodes[r_i][q_i][0], num_nodes[r_i][q_i][1], \"ok\" if ok else \"nok\"])\n\nprint(tabulate(table, headers=[\"rule\", \"q\", \"#nodes full tensor\", \"#nodes sparse\", \"#nodes sparse < #nodes full tensor\"], numalign=\"right\"))\nHere is the result table:\nrule      q    #nodes full tensor    #nodes sparse  #nodes sparse < #nodes full tensor\n------  ---  --------------------  ---------------  ------------------------------------\nc         2                     9                9  nok\nc         3                    16               13  ok\nc         4                    25               25  nok\nc         5                    36               41  nok\nc         6                    49               65  nok\nc         7                    64               93  nok\nc         8                    81              141  nok\ne         2                    36               55  nok\ne         3                    64              119  nok\ne         4                   100              215  nok\ne         5                   144              359  nok\ne         6                   196              555  nok\ne         7                   256              811  nok\ne         8                   324             1134  nok\np         2                    49               17  ok\np         3                   225               49  ok\np         4                   961              129  ok\np         5                  3969              321  ok\np         6                 16129              769  ok\np         7                 65025             1793  ok\np         8                261121             4097  ok\ng         2                     9               14  nok\ng         3                    16               30  nok\ng         4                    25               54  nok\ng         5                    36               90  nok\ng         6                    49              139  nok\ng         7                    64              203  nok\ng         8                    81              285  nok\nj         2                     9                6  ok\nj         3                    16               10  ok\nj         4                    25               15  ok\nj         5                    36               21  ok\nj         6                    49               28  ok\nj         7                    64               36  ok\nj         8                    81               45  ok\nf         2                     9               13  nok\nf         3                    16               29  nok\nf         4                    25               49  nok\nf         5                    36               81  nok\nf         6                    49              125  nok\nf         7                    64              181  nok\nf         8                    81              249  nok\n\nDo you think that the results are OK? And can you help me with the interpretation? Which is the best rule for using it in combination with sparse=True?\nBest,\nFlorian",
+            "closedAt": "2019-05-14T08:29:08Z",
+            "createdAt": "2019-05-08T14:03:10Z",
+            "id": "MDU6SXNzdWU0NDE3NTIyMTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 139,
+            "state": "CLOSED",
+            "title": "Smolyak Sparse-Grid in Chaospy",
+            "updatedAt": "2019-05-14T08:29:08Z",
+            "url": "https://github.com/jonathf/chaospy/issues/139"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathf,\nHello I am trying to perform sensitivity analysis between the inputs and outputs of the model. I want to understand how a certain QoI changes assuming changes on the inputs.\nOnce defined the polynomial fitting I am trying to evaluate the correlation, between the fitted polynomial and the distribution that was used for the polynomial fitting. For example see the following excerpt  of a code:\ntrue_sample = np.array(true_sample)\npoly_expansion = cp.orth_ttr(deg, dist)\npoly = cp.fit_regression(poly_expansion, true_sample.T, sample)\nUntill here everything is ok... The next step produces an execution error:\ncorr = cp.Corr([poly, dist])\nThe example available in the example I tried to adapt it to my needs but still not able....",
+            "closedAt": "2019-06-17T14:28:39Z",
+            "createdAt": "2019-04-23T01:18:43Z",
+            "id": "MDU6SXNzdWU0MzU5NTU1ODk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 138,
+            "state": "CLOSED",
+            "title": "Correct usage of the Pearson’s Correlation Corr.",
+            "updatedAt": "2019-06-17T14:28:39Z",
+            "url": "https://github.com/jonathf/chaospy/issues/138"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nnow I am reading the tutorial 4 in your material. I don't understand a problem in tutorial 4.\nyour documentation say that \"All random variables can with aid of the Rosenblatt transformations be transformed to/from the uniform distribution\" what is this mean? please give me a example simplicity.\nthank you.",
+            "closedAt": "2019-06-17T14:41:05Z",
+            "createdAt": "2019-04-22T12:54:48Z",
+            "id": "MDU6SXNzdWU0MzU3MTY4ODM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 137,
+            "state": "CLOSED",
+            "title": "please explain for me the tutorial 4!!!",
+            "updatedAt": "2019-06-17T14:41:05Z",
+            "url": "https://github.com/jonathf/chaospy/issues/137"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi Jonathan,\nI am trying yo use chaospy with experimental data set which has 8 input random inputs and one output. I need to construct PCE with Legendre polynomials and use some truncation (q-norm or hyperbolic).\nFirst question is how to use my inputs in chaospy?\ndataPoints = dist.sample(noSamples) needs to replaced with my data? I imported cvs file as data frame using pandas.\nAfter that how to construct PCE and use hyperbolic truncation?\nThanks,",
+            "closedAt": "2019-04-27T10:38:11Z",
+            "createdAt": "2019-04-08T16:47:44Z",
+            "id": "MDU6SXNzdWU0MzA1NTI5ODU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 135,
+            "state": "CLOSED",
+            "title": " PCE with truncation",
+            "updatedAt": "2019-04-27T10:38:11Z",
+            "url": "https://github.com/jonathf/chaospy/issues/135"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I run the code below, I have an error message.\nimport chaospy as cp\ndist = cp.MvNormal([1, 2], [[1, 0.6], [0.6, 1]])\nX, W = cp.generate_quadrature(4, dist, rule=\"G\")\nError message is attached. Is there anyone who can figure out my problem?\nThanks in advance.\n---------------------------------------------------------------------------\nTypeError                                 Traceback (most recent call last)\n<ipython-input-144-6bbc4027a737> in <module>\n      1 import chaospy as cp\n      2 dist = cp.MvNormal([1, 2], [[1, 0.6], [0.6, 1]])\n----> 3 X, W = cp.generate_quadrature(4, dist, rule=\"G\")\n\n/anaconda3/envs/rode_control/lib/python3.7/site-packages/chaospy/quad/interface.py in generate_quadrature(order, domain, accuracy, sparse, rule, composite, growth, part, normalize, **kws)\n     72 \n     73     else:\n---> 74         abscissas, weights = quad_function(order)\n     75 \n     76     assert len(weights) == abscissas.shape[1]\n\n/anaconda3/envs/rode_control/lib/python3.7/site-packages/chaospy/quad/collection/frontend.py in _quad_function(order, *args, **kws)\n     87         params = parameters_spec.copy()\n     88         params.update(kws)\n---> 89         abscissas, weights = quad_function(order, *args, **params)\n     90 \n     91         # normalize if prudent:\n\n/anaconda3/envs/rode_control/lib/python3.7/site-packages/chaospy/quad/collection/golub_welsch.py in quad_golub_welsch(order, dist, accuracy, **kws)\n    131     order = numpy.array(order)*numpy.ones(len(dist), dtype=int)+1\n    132     _, _, coeff1, coeff2 = chaospy.quad.generate_stieltjes(\n--> 133         dist, numpy.max(order), accuracy=accuracy, retall=True, **kws)\n    134 \n    135     dimensions = len(dist)\n\n/anaconda3/envs/rode_control/lib/python3.7/site-packages/chaospy/quad/stieltjes.py in generate_stieltjes(dist, order, accuracy, normed, retall, **kws)\n     65         # one for each dimension:\n     66         orth, norms, coeff1, coeff2 = zip(*[generate_stieltjes(\n---> 67             _, order, accuracy, normed, retall=True, **kws) for _ in dist])\n     68 \n     69         # ensure each polynomial has its own dimension:\n\nTypeError: 'MvNormal' object is not iterable",
+            "closedAt": "2019-04-21T02:51:09Z",
+            "createdAt": "2019-03-25T13:48:39Z",
+            "id": "MDU6SXNzdWU0MjQ5MTE4MDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 134,
+            "state": "CLOSED",
+            "title": "Error when making quadrature points for Multivariate normal distribution",
+            "updatedAt": "2019-04-21T02:51:09Z",
+            "url": "https://github.com/jonathf/chaospy/issues/134"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "it is my code\nimport chaospy as cp\nimport numpy as np\n\nnodes2 = np.array([0.9486, 0.9095, 0.9856, 0.9318, 1.0477, 1.0489,1.0663, 0.9184, 0.9646, 1.0345, 1.0168, 1.0565, 0.9727, 0.9907, 0.9277, 0.9548, 1.0933, 1.0751,1.0026, 1.0231])\nnodes3 = np.array([51.813, 54.279, 52.659, 51.197 , 46.629, 49.791, 48.581, 54.799, 46.413, 47.078, 52.367, 48.204, 50.389, 45.402, 47.893, 50.796 , 49.332, 53.323, 53.713, 45.757])\n\ndistribution = cp.J(cp.Uniform(0.9, 1.1), cp.Uniform(45, 55))\n\nnodes = np.vstack([nodes2, nodes3])\n\nevals = np.array([0.0204232,0.0205054,0.0204971,0.0204463,0.0206686,0.0206678,0.0206883,0.0204627,0.020426,0.0206532,0.0206322,0.020677,0.0204431,0.0205319,0.0204508,0.0204115,0.020721,0.0206988,0.0206179,0.0206418])\n\npolynomial_expansion = cp.orth_ttr(2, distribution) \napprox = cp.fit_regression(polynomial_expansion, nodes, evals)\n\nprint (approx)\n\nin here I considered the degree of nodes 3 is 2 và nodes 2 is 3. So how to set up to approx equation have nodes3's degree maximum is 2 and nodes2's degree maximum is 3.\nbecause in my code  that I only can set up for nodes2 and nodes3 have similar order.",
+            "closedAt": "2019-06-17T14:40:12Z",
+            "createdAt": "2019-03-04T06:37:57Z",
+            "id": "MDU6SXNzdWU0MTY2NTI5MTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 133,
+            "state": "CLOSED",
+            "title": "How to set up the degree of a polynomial for each parameter?",
+            "updatedAt": "2019-06-17T14:40:12Z",
+            "url": "https://github.com/jonathf/chaospy/issues/133"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Not sure if this is a bug or a feature, maybe someone can shed light on this.\nThe quadrature weights don't seem to be scaled correctly when we feed in a chaospy distribution with non-standard boundaries. For example,\nX, W = chaospy.generate_quadrature(1, chaospy.Uniform(-1, 1), rule=\"G\")\nprint(W)\n\nproduces the correct abscissa (+/- 0.57735), but the weights are off by a factor of 2 (0.5 instead of 1). Any ideas as to why this behavior occurs?",
+            "closedAt": "2019-02-28T11:13:38Z",
+            "createdAt": "2019-02-28T09:30:36Z",
+            "id": "MDU6SXNzdWU0MTU1MjYxNDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 132,
+            "state": "CLOSED",
+            "title": "Quadrature weights incorrect when dist fed in",
+            "updatedAt": "2019-02-28T11:13:38Z",
+            "url": "https://github.com/jonathf/chaospy/issues/132"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The FreeBSD port only uses source tarballs, and most projects have them on PyPI.",
+            "closedAt": "2019-02-11T09:18:24Z",
+            "createdAt": "2019-02-10T18:48:01Z",
+            "id": "MDU6SXNzdWU0MDg1NjU0NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 126,
+            "state": "CLOSED",
+            "title": "PyPI page for version 3.0.0 doesn't have a source tarball",
+            "updatedAt": "2019-02-11T09:22:41Z",
+            "url": "https://github.com/jonathf/chaospy/issues/126"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nNow, I am using chaospy to estimate function by non-instructive point collocation method.\nI want to use the estimating function to apply to Bayesian.\nwhen I print the function. It is a kind of text not computer language.\nexample:\ny = -5q0+2q0q1+q2^2 (it is a text)\nhow to change the function to like that:\ny =-5q0+2q0*q1+q2**2\nthanks you",
+            "closedAt": "2019-06-17T14:39:51Z",
+            "createdAt": "2019-02-08T10:22:21Z",
+            "id": "MDU6SXNzdWU0MDgwODg0ODY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 125,
+            "state": "CLOSED",
+            "title": "How to print the estimating function to computer language?",
+            "updatedAt": "2019-06-17T14:39:51Z",
+            "url": "https://github.com/jonathf/chaospy/issues/125"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "chaospy.seed doesn't seem to work anymore",
+            "closedAt": "2019-06-17T14:36:39Z",
+            "createdAt": "2019-02-07T02:13:14Z",
+            "id": "MDU6SXNzdWU0MDc1MTQ4MDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 124,
+            "state": "CLOSED",
+            "title": "chaospy.seed()",
+            "updatedAt": "2019-06-17T14:36:39Z",
+            "url": "https://github.com/jonathf/chaospy/issues/124"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nis it possible to join a list of of distributions?\njointDistribution=[]\nfor idxLevel,level in self.levels.items():\nfor idxDist,dist in self.stochvar.items():\nif(dist['distribution']==\"uniform\"):\njointDistribution.append(cp.Uniform(dist[dist['distribution']][0],dist[dist['distribution']][1]))\nelif(dist['distribution']==\"normal\"):\njointDistribution.append(cp.Normal(dist[dist['distribution']][0],dist[dist['distribution']][1]))\njointDist = cp.J(jointDistribution)\nThank you,\nFabian",
+            "closedAt": "2019-02-07T09:01:22Z",
+            "createdAt": "2019-02-06T12:23:34Z",
+            "id": "MDU6SXNzdWU0MDcyMTA2MTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 123,
+            "state": "CLOSED",
+            "title": "join list of distributions",
+            "updatedAt": "2019-02-07T09:01:22Z",
+            "url": "https://github.com/jonathf/chaospy/issues/123"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have an array of random data with 5000 members. This is the output of a model. I want to fit a PCE to the distribution, however, I don't have any idea about the input.  The output distribution is normal. tried this (u is the output):\nnoSamples = 5000\nxi1= cp.Normal(0,1)\nxi2= cp.Normal(0,1)\ndist = cp.J(xi1,xi2)\ndataPoints = dist.sample(noSamples)\npolyOrder = 2\northPoly = cp.orth_ttr(polyOrder, dist)\napprox = cp.fit_regression(orthPoly, dataPoints, u)\nexpected = cp.E(approx, dist)\ndeviation = cp.Std(approx, dist)\nprint(expected,deviation)\nThe expected value matches the average of the output very well, but the standard deviation is much smaller (almost 1/10) of the output standard deviation. My guess is this is not a proper way when the input is not available. I have read a couple of papers about data-driven PCE such as [Oladyshkin, 2012] and [Torre, 2018]. Is there any way to implement data-driven PCE in Chaospy?\nThanks a lot for your help.\n[Oladyshkin, 2012] Data-driven uncertainty quantification using the arbitrary polynomial chaos expansion\n[Torre, 2018] Data-driven polynomial chaos expansion for machine learning regression",
+            "closedAt": "2019-06-17T14:38:55Z",
+            "createdAt": "2019-01-29T08:58:21Z",
+            "id": "MDU6SXNzdWU0MDQxODQyNjc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 122,
+            "state": "CLOSED",
+            "title": "Data-driven PCE",
+            "updatedAt": "2019-06-17T14:38:55Z",
+            "url": "https://github.com/jonathf/chaospy/issues/122"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nCould you helps me this problem? I have the data of the parameter from this data I get the output through the experiment. and then I have used the chaospy to consider the distribution of output. (Non-intrusive point collocation method) I have mean and the standard deviation. How to can I consider the function relative between parameter and output?\nThank you",
+            "closedAt": "2019-06-17T14:32:32Z",
+            "createdAt": "2019-01-18T05:52:12Z",
+            "id": "MDU6SXNzdWU0MDA1ODIwODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 121,
+            "state": "CLOSED",
+            "title": "How to get the general function relation between the unknown parameter and the observed data?",
+            "updatedAt": "2019-06-17T14:32:32Z",
+            "url": "https://github.com/jonathf/chaospy/issues/121"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there,\nI'm trying to find out what the difference between my UQlab implementation and my Chaospy implementation is and why I receive better results with UQlab.\nThe manual of UQlab for PCE can be found here: UQLab User Manual\nI have 15 inputs to my model being normally distributed and receive the following surrogate with UQLab:\npolynomial degree/order: 3\nmodified leave-one-out error: 0.1538\nR^2: 0.9148\nMSE: 2.3447e-09\nNumber of non-zero coefficients: 89\n\nWhen turning off the hybrid LARS (the first coefficient is set to the mean of the experimental design) the fit gets worse:\npolynomial degree/order: 3\nmodified leave-one-out error: 0.0052\nR^2: 0.8832\nMSE: 3.6880e-09\nNumber of non-zero coefficients: 89\n\nHere the main steps I do in Chaospy:\norder = 3\north_polynomials = cp.orth_ttr(order = order, dist = distribution, retall=False)\nlassolarscv = LassoLarsCV(fit_intercept=False)\ncp.fit_regression(orth_polynomials, X_train.T, Y_train, rule=lassolarscv)\n\nI also tried to use sklearn.linear_model.Lars and fixed n_nonzero_coefs to 89 since UQLab generates a polynomial with 89 non-zero coefficients. But had no success with obtaining same results.\nHere are the options I set in UQLab:\nMetaOpts.Method = 'LARS';\nMetaOpts.LARS.HybridLars = 0;\nMetaOpts.OLS.ModifiedLOO = 0;\n\nI would like to find out why exactly UQLab performs better so that I can get a equivalent fit with the Chaospy implementation.\nI think it depends on the adaptive algorithm UQLab uses. But I'm not too sure and any comments, suggestions and help would be very much appreciated.\nHere is the paper on the adaptive algorithm which UQLab generates the polynomials with:\nhttps://doi.org/10.1016/j.probengmech.2009.10.003",
+            "closedAt": "2019-06-17T14:32:13Z",
+            "createdAt": "2019-01-10T15:02:32Z",
+            "id": "MDU6SXNzdWUzOTc4NzA1NjE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 120,
+            "state": "CLOSED",
+            "title": "Results comparison between UQlab and Chaospy",
+            "updatedAt": "2019-06-17T14:32:13Z",
+            "url": "https://github.com/jonathf/chaospy/issues/120"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi Jonathan,\nUsing chaospy, I have obtained PCE approximation for stochastic response of a mechanical structure.\nThe problem at hand has 225 random variables with known PDFs for each of them.\nThe full PCE of order 2 will have 25651 terms and I evaluate the unknown coefficients using least-square regression. I use both the function values and gradients with respect to each of the 225 random variables to estimate the coefficients in PCE.\nHowever, when I try to obtain the standard deviation from the pce approximation using the command chaospy.Std(model_approx, dist) , I run into Memory Error.\nThe error points to line 115, in chaospy/descriptives/second1d.py,\nkeys2 = np.empty((dim,N,N))\nCould you please point me to any work around for this issue?\nI understand that once we obtain pce approximation, the statistical moments are analytically evaluated, so I hope there could be a possible way around this issue.\nI tried to use truncated PCE which will reduce the terms in the expansion to around 450, but then the standard deviation does not compare well with that obtained using Monte Carlo method.\nMany thanks for you time.\nRegards,\nRahul",
+            "closedAt": "2018-12-28T13:06:01Z",
+            "createdAt": "2018-12-23T11:07:46Z",
+            "id": "MDU6SXNzdWUzOTM3NDEzNTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 119,
+            "state": "CLOSED",
+            "title": "Memory error while calculating PCE based standard deviation  ",
+            "updatedAt": "2018-12-28T13:06:01Z",
+            "url": "https://github.com/jonathf/chaospy/issues/119"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi!\nThank you for your code! I use it a lot!\nI have a problem with generating samples from a joint probability distribution which contains kdedist.\nI receive AttributeError: 'Graph' object has no attribute 'K'.\nPlease see the code below.",
+            "closedAt": "2019-06-17T14:42:10Z",
+            "createdAt": "2018-12-13T17:14:06Z",
+            "id": "MDU6SXNzdWUzOTA3NzcwNzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 117,
+            "state": "CLOSED",
+            "title": "Problem with joint distribution and kde ",
+            "updatedAt": "2019-06-17T14:42:10Z",
+            "url": "https://github.com/jonathf/chaospy/issues/117"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "License in pypi source not found.\nCheers,",
+            "closedAt": "2018-12-09T16:28:00Z",
+            "createdAt": "2018-11-26T15:52:56Z",
+            "id": "MDU6SXNzdWUzODQzOTMxNDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 116,
+            "state": "CLOSED",
+            "title": "License in pypi not found",
+            "updatedAt": "2018-12-09T16:28:00Z",
+            "url": "https://github.com/jonathf/chaospy/issues/116"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Joanthan,\nThank you very much at first implementing a nice and reliable tool.\nI started to learn uncertainty quantification recently and accessed to chaospy through the Uncertainpy package.\nI am interested in computing a univariate effect, following Eqs. (31) and (32) in the paper below:\nDeman et al. (2018), Using sparse polynomial chaos expansions for the global sensitivity analysis of groundwater lifetime expectancy in a multi-layered hydrogeological model, DOI: 10.1016/j.ress.2015.11.005\nAccording to the paper, we can compute a univariate effect directly after post-processing the coefficients of PCE, which is similar to the Sobol' indexes.\nIs this function already implemented in chaospy?  I think no.  Is it easy to implement by myself?\nThank you in advance for your help and time.\nBest regards,\nTakafumi",
+            "closedAt": "2018-12-09T16:28:47Z",
+            "createdAt": "2018-11-22T21:44:07Z",
+            "id": "MDU6SXNzdWUzODM2NjA0MTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 115,
+            "state": "CLOSED",
+            "title": "Univariate effect",
+            "updatedAt": "2018-12-09T16:28:47Z",
+            "url": "https://github.com/jonathf/chaospy/issues/115"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathan,\nSuppose that I have a particular case with three random inputs with Gaussian behavior. Then, the appropiated orthogonal basis selected to these inputs are Hermite Polynomials.\nIf I want to probe another basis as for example Legenedre orthogonal polynomial basis for the same example. Which function from Chaospy I have to implement? Because I have not found any function to generate Legenedre Polynomials to test it.\nI want to implement another basis because my QoI output is a bimodal PDF. When I implement regression Polynomial Chaos with Hermite basis can not capture this bimodality behavior even if I use high order in polynomials. My idea is test the same example with a Legendre Basis because the weigth function in this case is one, and maybe it could describe better this bimodality.\nWhat do you think?\nThank you very much! :)\nMarc",
+            "closedAt": "2018-12-09T16:27:47Z",
+            "createdAt": "2018-11-07T13:02:52Z",
+            "id": "MDU6SXNzdWUzNzgyNzg0MDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 114,
+            "state": "CLOSED",
+            "title": "basis",
+            "updatedAt": "2018-12-09T16:27:47Z",
+            "url": "https://github.com/jonathf/chaospy/issues/114"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nNow I have the distribution by Uniform. I want to select the point int the this Distribution. How do I select the point three methods. for instance the distribution is A (1,5) and B (0.2,0.6).\nThank you",
+            "closedAt": "2018-12-09T16:29:02Z",
+            "createdAt": "2018-11-01T01:15:44Z",
+            "id": "MDU6SXNzdWUzNzYyMTcwMDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 112,
+            "state": "CLOSED",
+            "title": "How did we selected the point in the Monte Carlo, point collocation and Psuedo-spectral method ?",
+            "updatedAt": "2018-12-09T16:29:02Z",
+            "url": "https://github.com/jonathf/chaospy/issues/112"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Good morning Jonathan,\nI'm studing the theory about how it is created the multivariate basis of polynomials by the univariate basis of each random input. My issue is,  I can not understand the Tensor Porduct construction to determine the multi-indices. With the main objective to after develop the product betwen univariate polynomials of each stochastic input.\nI have different examples but I can not obtain and understand how to construct the pyramid of the polynomials with the algorithm of the Tensor Porduct construction:\np. order=3 and M(random inputs)=3----->\nI have attached a PNG image to understand better what I am explaining. You will look that I have imported snapshots of one of your presentacion of Chaospy.\nThanks you so much for your time :)\nMarc Rocas",
+            "closedAt": "2018-12-09T16:25:52Z",
+            "createdAt": "2018-10-23T07:53:41Z",
+            "id": "MDU6SXNzdWUzNzI4NTY0NDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 111,
+            "state": "CLOSED",
+            "title": "multivariate basis",
+            "updatedAt": "2018-12-09T16:25:52Z",
+            "url": "https://github.com/jonathf/chaospy/issues/111"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am running the following code in order to find the approximation for my function  based on different number of sample points and then find the first four central moments of the output. The variables with index 1 indicates inputs directly sampled from Lognormal distribution and the indices 2 refer to the input sampled from uniform distribution then transformed to lognormal distribution.\nas I use directly lognormal distribution the third and fourth moments are wrong and increase with the increase of sample points, whereas using uniform and transforming it to lognormal gives correct values so as far as I could say there is something wrong with approximation but still do not know if I am doing this correct or not.\nimport chaospy as cp\nfrom scipy import stats\nimport numpy as np\ndef kirby_function(x):\n    b = [0.9756, 0.2811, 0.9424, 0.0772, 0.8096]\n    y=(b[0]+b[1]*x+b[2]*x**2)/(1+b[3]*x+b[4]*x**2)\n    return y\nm = 1000\nwhile m <= 1000000:\n    d1 = cp.Lognormal(1.5, 0.37)\n    d2 = cp.Unifrom(0, 1)\n\n    samples1 = d1.sample(m-1, rule=\"S\")\n    samples2 = d2.sample(m-1, rule=\"S\")\n\n    solves1 = [kirby_function(sample) for sample in samples1.T]\n    solves2 = [kirby_function(stats.lognorm.ppf(stats.unifrom.cdf(sample,0,1), 0.37, loc=0, scale=np.exp(1.5))) for sample in samples2.T]\n    expansion1 = cp.orth_ttr(5, d1)\n    expansion2 = cp.orth_ttr(5, d2)\n    approx1 = cp.fit_regression(expansion1, samples1, solves1)\n    approx2 = cp.fit_regression(expansion2, samples2, solves2)\n    M1 = []\n    M2 = []\n    for n in range(4):\n        B1 = cp.E(approx1 ** (n + 1), d1)\n        M1.append(B1)\n        B2 = cp.E(approx2 ** (n + 1), d2)\n        M2.append(B2)\n\n    miu = M1[0]\n    std = abs(M1[1] - miu ** 2)**0.5\n    skw = (M1[2] - 3 * miu * std ** 2 - miu ** 3)/std ** 3\n    kurt = (M1[3] - 4 * miu * M1[2] + 6 * (miu ** 2) * M1[1] - 3 * miu ** 4)/std ** 4\n    print(miu, std, skw, kurt)\n\n    miu2 = M2[0]\n    std2 = abs(M2[1] - miu2 ** 2)**0.5\n    skw2 = (M2[2] - 3 * miu2 * std2 ** 2 - miu2 ** 3)/std2 ** 3\n    kurt2 = (M2[3] - 4 * miu2 * M2[2] + 6 * (miu2 ** 2) * M2[1] - 3 * miu2 ** 4)/std2 ** 4\n    print(miu2, std2, skw2, kurt2)\n    m+=1000\nBy the way as I do the same procedure for an other simple function like x^2 the results are vice-versa the first one gives correct moments in compare to the second way.\nI am using python 3.6",
+            "closedAt": "2018-12-09T16:25:16Z",
+            "createdAt": "2018-10-10T02:05:27Z",
+            "id": "MDU6SXNzdWUzNjg0NjUwODk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 110,
+            "state": "CLOSED",
+            "title": "problem with point collocation for log-normal distribution",
+            "updatedAt": "2018-12-09T16:25:16Z",
+            "url": "https://github.com/jonathf/chaospy/issues/110"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathan,\nI want to evaluate de residual in Point Collocation Polynomial Chaos. Chaospy have some function to known the orthogonal base matrix? I want to do this operation:\nBase Matrix * Fourier Coefficients - Evaluations = Residual\nThanks in advance,\nMarc",
+            "closedAt": "2018-10-10T11:06:34Z",
+            "createdAt": "2018-10-09T14:33:30Z",
+            "id": "MDU6SXNzdWUzNjgyNDIyOTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 109,
+            "state": "CLOSED",
+            "title": "Residue",
+            "updatedAt": "2018-10-10T11:06:34Z",
+            "url": "https://github.com/jonathf/chaospy/issues/109"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathan,\nFirst of all, thaks you for your time, I have an issue about which method it is implemented when you generate samples with \"RG\" (Regular grid). Do you have some literature explaining that?\nIn our case, I have gaussian input distributions. I have compared all the sampling techniques that Chaospy have in its portfolio to select the best sampling approach for a Gaussian distribution. With the main objective to use the minimal number of sampling points for the UQ approach.\nMy conclusions of that was that Regular Grid is the sampling technique that describes better a Gaussian distribution with respect to Hammerslsey, Halton, Latin, among others. I'm right?\nThanks you very much in advance,\nMarc Rocas",
+            "closedAt": "2018-12-09T16:21:57Z",
+            "createdAt": "2018-10-05T14:28:15Z",
+            "id": "MDU6SXNzdWUzNjcyMzU3NjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 108,
+            "state": "CLOSED",
+            "title": "Regular grid",
+            "updatedAt": "2018-12-09T16:21:57Z",
+            "url": "https://github.com/jonathf/chaospy/issues/108"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nI want to predict with non-instructive point collocation method and Non-intrusive spectral project method.\nI have read some theory about two method. The total number for non-instructive method is (n+p)!/(n!*p!) and non-instructive method is (p+1)^n  with p is the polynomial chao's order and n is the number of uncertain parameters). is it right with the Chaospy package?\nThe last time I have write the code to find the samples in the chaospy package.\n\"\nwith the code I can find the 10 values for order 2 of polynomial chao follow the above formula (point-collocation). How about Pseudo-spectral Projection method if I want to find with the order 2? if it is also use the this code then what is different between two method?\nthank you",
+            "closedAt": "2018-12-09T16:25:38Z",
+            "createdAt": "2018-10-02T08:39:00Z",
+            "id": "MDU6SXNzdWUzNjU3OTQ5Nzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 107,
+            "state": "CLOSED",
+            "title": "How many the number sample for non- Instructive point collocation method and Non-intrusive spectral Projection.?",
+            "updatedAt": "2018-12-09T16:25:38Z",
+            "url": "https://github.com/jonathf/chaospy/issues/107"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, Jonathan!\nI've been using your fantastic tool. And you might remember me issuing a problem a month ago.\nAnd now I've encountered another one when I tried to generate some samples.\nFirst, I defined a distribution and it ran just well:\ndist = cp.J(cp.Iid(cp.Normal(0, 0.0009), 8), cp.Normal(1, 0.0001))\n>>> <chaospy.distributions.joint.Joint at 0x293389ee278>\n\nThen I tried to make some samples, but a problem occurred and I don't know how to handle it:\nxTest = dist.sample(500)\n>>> ---------------------------------------------------------------------------\nAssertionError                            Traceback (most recent call last)\n<ipython-input-16-6e533ca5ee81> in <module>()\n      2 dist2 = cp.Normal(mu = 1, sigma = 0.0001)\n      3 dist = cp.J(dist1, dist2)\n----> 4 xTest = dist.sample(500)\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\baseclass.py in sample(self, size, rule, antithetic, verbose, **kws)\n    287         from . import sampler\n    288         out = sampler.generator.generate_samples(\n--> 289             order=size_, domain=self, rule=rule, antithetic=antithetic)\n    290         try:\n    291             out = out.reshape(shape)\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\sampler\\generator.py in generate_samples(order, domain, rule, antithetic)\n    137     assert rule in SAMPLERS, \"rule not recognised\"\n    138     sampler = SAMPLERS[rule]\n--> 139     x_data = trans(sampler(order=order, dim=dim))\n    140 \n    141     logger.debug(\"order: %d, dim: %d -> shape: %s\", order, dim, x_data.shape)\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\baseclass.py in inv(self, q, maxiter, tol, verbose, **kws)\n    207         \"\"\"\n    208         from . import rosenblatt\n--> 209         return rosenblatt.inv(self, q, maxiter, tol, **kws)\n    210 \n    211     def pdf(self, x, step=1e-7, verbose=0):\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\rosenblatt.py in inv(dist, q, maxiter, tol, **kws)\n     36 \n     37     try:\n---> 38         out, graph = dist.graph.run(q, \"inv\", maxiter=maxiter, tol=tol)\n     39 \n     40     except NotImplementedError:\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\graph\\baseclass.py in run(self, x, mode, **meta)\n    196     def run(self, x, mode, **meta):\n    197         \"\"\"Run through network to perform an operator.\"\"\"\n--> 198         return main.call(self, x, mode, **meta)\n    199 \n    200     def counting(self, dist, mode):\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\graph\\main.py in call(self, x_data, mode, **meta)\n     59         out = self(x_data)\n     60     else:\n---> 61         out = self(x_data, self.root)\n     62 \n     63     # if mode == \"ttr\":\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\graph\\baseclass.py in __call__(self, *args, **kwargs)\n    158 \n    159     def __call__(self, *args, **kwargs):\n--> 160         return self._call(self, *args, **kwargs)\n    161 \n    162     def __str__(self):\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\graph\\calling\\inv.py in inv_call(self, q_data, dist)\n     28     if hasattr(dist, \"_ppf\"):\n     29         if dist.advance:\n---> 30             out[:] = dist._ppf(q_data, self)\n     31         else:\n     32             out[:] = dist._ppf(q_data, **prm)\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\joint.py in _ppf(self, q, graph)\n    114                 out[i] = graph.keys[key]\n    115             else:\n--> 116                 out[i] = graph(q[i], graph.dists[key])\n    117 \n    118         return out.reshape(dim,size)\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\graph\\baseclass.py in __call__(self, *args, **kwargs)\n    158 \n    159     def __call__(self, *args, **kwargs):\n--> 160         return self._call(self, *args, **kwargs)\n    161 \n    162     def __str__(self):\n\n~\\Anaconda3\\lib\\site-packages\\chaospy\\distributions\\graph\\calling\\inv.py in inv_call(self, q_data, dist)\n     10 \n     11     self.counting(dist, \"inv\")\n---> 12     assert q_data.shape == (len(dist), self.size)\n     13     self.dist, dist_ = dist, self.dist\n     14 \n\nAssertionError: \n\nI'd be grateful if you can spend some time helping me out!\nYours\nDean",
+            "closedAt": "2018-09-27T11:20:28Z",
+            "createdAt": "2018-09-26T02:15:52Z",
+            "id": "MDU6SXNzdWUzNjM4MzE3MDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 106,
+            "state": "CLOSED",
+            "title": "Problem encountered trying to generate some samples",
+            "updatedAt": "2018-09-27T11:20:28Z",
+            "url": "https://github.com/jonathf/chaospy/issues/106"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The behavior of sampling is different when using rule='S' than with all other rules. Here is a quick comparison with random sampling\nimport chaospy as cp\n\nd = cp.Uniform(0,1)\n\nfor rule in ['R','S']:\n    print(rule)\n    print(d.sample(5, rule).shape)\n    print(d.sample((5,10), rule).shape)\n\nyields\nR\n(5,)\n(5, 10)\nS\n(6,)\n(51,)\n\nIn the scalar case, the Sobol output is one sample too many. In two or more dimensions, the output is flattened with Sobol but not with any other rule.\nUsing chaospy 2.3.3, python 3.6.4.",
+            "closedAt": "2018-09-17T16:10:29Z",
+            "createdAt": "2018-09-10T20:31:30Z",
+            "id": "MDU6SXNzdWUzNTg3ODI4ODc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 105,
+            "state": "CLOSED",
+            "title": "Inconsistent behavior when sampling with rule = 'S'",
+            "updatedAt": "2018-09-17T16:10:30Z",
+            "url": "https://github.com/jonathf/chaospy/issues/105"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Most Python modules have a __version__ string attribute, it would be cool to have one here too.",
+            "closedAt": "2018-09-09T13:46:31Z",
+            "createdAt": "2018-09-05T13:38:04Z",
+            "id": "MDU6SXNzdWUzNTcyMzM4MTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 104,
+            "state": "CLOSED",
+            "title": "No version string attribute",
+            "updatedAt": "2018-09-09T13:46:31Z",
+            "url": "https://github.com/jonathf/chaospy/issues/104"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you.\nI am doing a comparison between two method point collocation and spectral project method. What is different between the two methods? and which the method has the best result? when do we use them?\nI have read the tutorial of yours.  your conclusion is the spectral Project have the result more than point collocation. but when I try with my research then I have the opposite conclusion with you. have you the paper about this issue?\nI have been used the tool NISP on the Scilab software to implement the spectral Projection method to compare with the point collocation method in your tool.\n\"https://chaospy.readthedocs.io/en/master/tutorial.html\"\nI am also reading the paper may be the paper using your tool but it is not compared between the two methods.\n\"https://www.biorxiv.org/content/biorxiv/early/2018/03/05/274779.full.pdf\"\nthank you.\nHoaiThanh",
+            "closedAt": "2018-12-09T16:29:14Z",
+            "createdAt": "2018-09-04T03:26:57Z",
+            "id": "MDU6SXNzdWUzNTY2NDA1MjI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 103,
+            "state": "CLOSED",
+            "title": "What is different between point-collocation and spectral projection method? ",
+            "updatedAt": "2018-12-09T16:29:14Z",
+            "url": "https://github.com/jonathf/chaospy/issues/103"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathan:\nI've been recently using your fantastic toolbox chaospy and gained some satisfying results following your guide. But I have a problem and hope that you can help me.\nI typed these codes:\ndist1 = cp.Normal(0, 0.0009)\ndist2 = cp.Normal(0, 0.0009)\ndist3 = cp.Normal(0, 0.0009)\ndist4 = cp.Normal(0, 0.0009)\ndist = cp.J(dist1, dist2, dist3, dist4)\n\nP = cp.orth_ttr(3, dist)\n\nnodes, weights = cp.generate_quadrature(3, dist, rule = 'G')\n#nodes *= 0.03\nnp.savetxt('intsites_G.txt', nodes.T)\n\n# Matlab needed for evaluating the response\n\nresp = np.loadtxt('resp_gauss.txt')\nrespHat = cp.fit_quadrature(P, nodes, weights, resp)\n\nI see that respHat is a Poly object:\n>>> respHat\n>>> <chaospy.poly.base.Poly at 0x28db0fe9940>\n\nSo now I'm wondering if I can make some prediction with a set of new samples using this respHat result? Like say, I have 500 new samples, and I want to know what their responses look like.\nThank you if you can spend some time helping me with this!\nYours\nDean",
+            "closedAt": "2018-08-23T12:26:11Z",
+            "createdAt": "2018-08-22T07:49:19Z",
+            "id": "MDU6SXNzdWUzNTI4Mzk4OTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 102,
+            "state": "CLOSED",
+            "title": "How can I predict a new distribution using 'foo_approx'?",
+            "updatedAt": "2018-08-23T12:26:11Z",
+            "url": "https://github.com/jonathf/chaospy/issues/102"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I don't know how to specify which numerical integration I want to use in the code. don't know the key words. and on the other hand in part 4.3 of the paper it gives an example of using 'Gaussian' as a rule in generating quadrature but it is not working when using the same argument in the package and giving me error.",
+            "closedAt": "2018-09-09T13:47:05Z",
+            "createdAt": "2018-08-16T17:35:37Z",
+            "id": "MDU6SXNzdWUzNTEzMDExMjE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 101,
+            "state": "CLOSED",
+            "title": "numerical integration strategy",
+            "updatedAt": "2018-09-09T13:47:05Z",
+            "url": "https://github.com/jonathf/chaospy/issues/101"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "burr definition in cores.py is  Burr type III (aka inverse burr or dagum), which is ok and is same form as burr in scipy.stats. However it is not Burr XII (Singh Mandalla) as claimed in the inline comment in collections.py.\nTrying to use burr to calculate moments, samples etc gives error coming from _bnd method and exits. Reason seems to be that the method _bnd(self) in cores.py of burr class should have the c,d parameters as arguments, but it doesn't.\nAfter fixing the _bnd method to be _bnd(self, c, d), calculation of the expectation with cp.E gives wrong large number (5e9) instead of the correct mean. E.g for cp.E(cp.Burr(3,2))",
+            "closedAt": "2018-09-09T13:47:41Z",
+            "createdAt": "2018-07-28T04:44:09Z",
+            "id": "MDU6SXNzdWUzNDU0MTgzMDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 100,
+            "state": "CLOSED",
+            "title": "problems with burr distribtuion",
+            "updatedAt": "2018-09-09T13:47:41Z",
+            "url": "https://github.com/jonathf/chaospy/issues/100"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nHow to calculate Sobol index in Point colocation method?\nMy problem:\n+3 random parameters with Normal distribution.\nthank you",
+            "closedAt": "2018-12-09T16:21:19Z",
+            "createdAt": "2018-07-13T07:27:09Z",
+            "id": "MDU6SXNzdWUzNDA5MTExMzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 99,
+            "state": "CLOSED",
+            "title": "How to calculate Sobol index in Point-colocation-method?",
+            "updatedAt": "2018-12-09T16:21:19Z",
+            "url": "https://github.com/jonathf/chaospy/issues/99"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This script\nimport chaospy as ch\n\nd=ch.uniform()\nsum=d+d+d\nsum.pdf(0.8)\n\ngives\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/baseclass.py\", line 233, in pdf\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/graph/baseclass.py\", line 198, in run\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/graph/main.py\", line 61, in call\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/graph/baseclass.py\", line 160, in __call__\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/graph/calling/range_.py\", line 27, in range_call\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/operators/addition.py\", line 120, in _bnd\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/graph/containers.py\", line 65, in __getitem__\n  File \"/usr/lib/python3.5/site-packages/chaospy-2.3.2-py3.5.egg/chaospy/distributions/graph/containers.py\", line 113, in getitem\nKeyError\n\nRégis",
+            "closedAt": "2018-12-09T16:20:37Z",
+            "createdAt": "2018-06-26T06:44:46Z",
+            "id": "MDU6SXNzdWUzMzU2Nzk2ODk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 97,
+            "state": "CLOSED",
+            "title": "distribution addition fails",
+            "updatedAt": "2018-12-09T16:20:37Z",
+            "url": "https://github.com/jonathf/chaospy/issues/97"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am the main developer of the OpenTURNS platform and I noted many wrong assessments in the description of OpenTURNS in your theory guide:\n\nThe Rosenblatt transformation is available for nearly 10 years (see here)\nThe bootstrap resampling method is available for more than 8 years (see here)\nFrom its inception, OT has been designed to take into account dependence through copulas. In addition to the most standard copulas, it offers several mechanisms to combine or to define copulas (ComposedCopula, OrdinalSumCopula, SklarCopula, EmpiricalBernsteinCopula, ExtremeValueCopula, Mixture), most of them being available long before you wrote your guide. Note that SkarCopula allows to define a copula from any continuous joint distribution (eg. from multivariate mixtures of distributions). It is even possible to define your own copula in Python, thanks to the OpenTURNSPythonDistribution python class.\nYou wrongly assert that it is not possible to define a custom distribution in OT. It is the exact purpose of the OpenTURNSPythonDistribution python class, a 5 years old feature (see here). The minimal information needed is the definition of the joint CDF and the range of the (potentially multivariate) distribution, same as in chaospy.\nIt is of course possible to create a multivariate distribution from a set of univariate distributions and a copula in OT since the very first version of OT more than 11 years ago, see ComposedDistribution  here, but many more options are available (Mixture, ConditionalDistribution, BayesDistribution to name a few)\nVariance reduction sampling methods are available in OT since more than 11 years, and DirectionalSampling, LHS (with randomized version), ImportanceSampling, QuasiMonteCarlo (with randomized version) were available at the time you started chaospy.\nTwo orthonormalization algorithms were available in OT to compute 3 terms relation coefficients at the time you started chaospy, see GramSchmidtAlgorithm and ChebychevAlgorithm, the first one being the modified version of the algorithm to improve its stability and the second one being based on modified moments. An adaptive version of the Stieltjes algorithm has been introduced at the end of 2015, allowing to build the 3 terms relation for orthonormal polynomials associated to any continuous or discrete univariate distribution (assuming they have finite moments of any order)\nThe UnivariatePolynomial class implements the full algebra of 1D polynomials as well as many other features for nearly 10 years\nSpectral projection is available for more than 9 years using the IntegrationStrategy class\nThe collocation method (LeastSquaresStrategy) has always been available with all the sampling schemes for more than 10 years. There were 7 of them not counting variations (and not only 4) at the time you started chaospy\nThis report covers only the sections 1.1 and 1.2 of your guide. There are probably many more wrong assertions I will report soon.\nYou may have a look here to get some additional insights on isoprobabilistic transformation (title in French but content in English).\nRegards\nRégis LEBRUN",
+            "closedAt": "2018-12-09T16:20:50Z",
+            "createdAt": "2018-06-26T05:04:29Z",
+            "id": "MDU6SXNzdWUzMzU2NjA0NTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 96,
+            "state": "CLOSED",
+            "title": "Wrong assessments regarding OpenTURNS",
+            "updatedAt": "2018-12-09T16:20:50Z",
+            "url": "https://github.com/jonathf/chaospy/issues/96"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI would like to use PCE to perform the uncertainty quantification.  I wonder if Chaospy can help me solve the following problem:\nFor example, I have two input parameters subject to the uniform distribution. The output will be calculated by a black box software. I'd like to use the tensor-product expansion. Can chaospy help me figure out the input parameter values that need to do deterministic calculations, i.e. Gaussian quadrature points ?\nThen I will take these parameters into the software to calculate the output. After obtaining results, can Chaospy combine the quadrature points and output results to calculate the formula of PCE and get the mean, variance of the output and correlation coefficients between the input and output?\nThank you very much.",
+            "closedAt": "2019-06-17T14:30:21Z",
+            "createdAt": "2018-06-19T07:54:41Z",
+            "id": "MDU6SXNzdWUzMzM1NTc3OTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 95,
+            "state": "CLOSED",
+            "title": "How to use the PCE method?",
+            "updatedAt": "2020-01-01T16:56:24Z",
+            "url": "https://github.com/jonathf/chaospy/issues/95"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello!\nCould we calculate the expectation value on square root of orthogonal polynomial chaos basis? Something like:\ncp.E( sqrt( orth[1]*orth[2] ) * orth[4] ,  jointCDF)\nThanks for the great code by the way, it helps a lot indeed!",
+            "closedAt": "2018-06-14T06:55:41Z",
+            "createdAt": "2018-06-12T20:40:01Z",
+            "id": "MDU6SXNzdWUzMzE3NDUxOTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 94,
+            "state": "CLOSED",
+            "title": "Calculate Expectation on the square root of orthogonal polynomial basis function",
+            "updatedAt": "2018-06-14T06:55:41Z",
+            "url": "https://github.com/jonathf/chaospy/issues/94"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi!\nThank you for your great code. I use it a lot in my projects.\nI have a quick question regarding the non-intrusive polynomial chaos approach using quadratures. I need to generate samples for high polynomial order - above 25. However, when I run e.g.\nnodes, weights = generate_quadrature(29, dist, rule='G'),\nthe number of nodes is smaller than expected:\nnp.size(nodes) = 26.\nCould you let me know what's happening?\nThank you for your help!\nGosia",
+            "closedAt": "2018-06-14T17:16:50Z",
+            "createdAt": "2018-06-04T13:38:47Z",
+            "id": "MDU6SXNzdWUzMjkwNTk3OTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 93,
+            "state": "CLOSED",
+            "title": "Problem with nodes generation",
+            "updatedAt": "2018-06-28T15:47:17Z",
+            "url": "https://github.com/jonathf/chaospy/issues/93"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nI have a problem. I defined my parameter in the problem is Uniform (0.9,1.1). Via experiment, I have the output corresponding to (0.024,0.02456). And then when I use 3rd Order I have the value (0.9, 1.0, 1.1) the same as above step I have output corresponding to (0.024, 0.02435, 0.02456). Just like that, I have the output of the 8th order. I want to use Point collocation to calculate Mean and deviation of my problem.\nIn here, I don't know the function for relative between the Input parameter and Output It is only from experiment process.\nI hope you can give me the advice for my problem.\nThank you very much",
+            "closedAt": "2018-12-09T16:21:04Z",
+            "createdAt": "2018-06-03T04:19:41Z",
+            "id": "MDU6SXNzdWUzMjg3OTc5NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 92,
+            "state": "CLOSED",
+            "title": "Help me in the Non-Intrusive Polynomial Chaos Methods (Point collocation)",
+            "updatedAt": "2018-12-09T16:21:04Z",
+            "url": "https://github.com/jonathf/chaospy/issues/92"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathan,\nI have a doubt about probailbity density function(PDF).\nCurrently I'm using sns.distplot function from seaborn package to evaluate our surrogate polynomial model to plot the PDF,  and after compare the obtained distribution with the PDF from Monte-Carlo.\nI have a issue about how to plot a probability density function with the QoI_Dist Chaospy function, I think that maybe I could be easier to implement in comparison above method.\nThank you very much in advance.\nMarc R.",
+            "closedAt": "2018-12-09T16:29:39Z",
+            "createdAt": "2018-05-30T11:01:52Z",
+            "id": "MDU6SXNzdWUzMjc2ODAzNDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 91,
+            "state": "CLOSED",
+            "title": "Plot Probability density function ",
+            "updatedAt": "2018-12-09T16:29:39Z",
+            "url": "https://github.com/jonathf/chaospy/issues/91"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nNow, I run successfully with tutorial code for \"Point Collocation method\". But I have a problem. in the tutorial, you knew the function But with my problem, I don't know the function but I have the value of input and output. So How to can I calculate the expected and deviation.\nthank you",
+            "closedAt": "2018-06-07T21:24:35Z",
+            "createdAt": "2018-05-30T06:46:34Z",
+            "id": "MDU6SXNzdWUzMjc1OTQxODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 90,
+            "state": "CLOSED",
+            "title": "Point Collocation method ",
+            "updatedAt": "2018-06-07T21:24:35Z",
+            "url": "https://github.com/jonathf/chaospy/issues/90"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have practised run the tutorial but when I run this tutorial then it notified I need to install Odespy package. But Now, I am using the python 3.0 while Odespy only runs on the Python 2.7. So How way to install Odespy for python 3.0 on the Window.\nimport chaospy as cp\nimport numpy as np\nimport odespy\n#Intrusive Galerkin method\ndist_a = cp.Uniform(0, 0.1)\ndist_I = cp.Uniform(8, 10)\ndist = cp.J(dist_a, dist_I) # joint multivariate dist\nP, norms = cp.orth_ttr(2, dist, retall=True)\nvariable_a, variable_I = cp.variable(2)\nPP = cp.outer(P, P)\nE_aPP = cp.E(variable_aPP, dist)\nE_IP = cp.E(variable_IP, dist)\ndef right_hand_side(c, x):            # c' = right_hand_side(c, x)\nreturn -np.dot(E_aPP, c)/norms    # -M*c\ninitial_condition = E_IP/norms\nsolver = odespy.RK4(right_hand_side)\nsolver.set_initial_condition(initial_condition)\nx = np.linspace(0, 10, 1000)\nc = solver.solve(x)[0]\nu_hat = cp.dot(P, c)\n#Rosenblat transformation using point collocation\ndef u(x,a, I):\nreturn Inp.exp(-ax)\ndist_R = cp.J(cp.Normal(), cp.Normal())\nC = [[1, 0.5], [0.5, 1]]\nmu = [0, 0]\ndist_Q = cp.MvNormal(mu, C)\nP = cp.orth_ttr(2, dist_R)\nnodes_R = dist_R.sample(2*len(P), \"M\")\nnodes_Q = dist_Q.inv(dist_R.fwd(nodes_R))\nx = np.linspace(0, 1, 100)\nsamples_u = [u(x, *node) for node in nodes_Q.T]\nu_hat = cp.fit_regression(P, nodes_R, samples_u)\n#Rosenblat transformation using pseudo spectral\ndef u(x,a, I):\nreturn Inp.exp(-ax)\nC = [[1,0.5],[0.5,1]]\nmu = np.array([0, 0])\ndist_R = cp.J(cp.Normal(), cp.Normal())\ndist_Q = cp.MvNormal(mu, C)\nP = cp.orth_ttr(2, dist_R)\nnodes_R, weights_R = cp.generate_quadrature(3, dist_R)\nnodes_Q = dist_Q.inv(dist_R.fwd(nodes_R))\nweights_Q = weights_R*dist_Q.pdf(nodes_Q)/dist_R.pdf(nodes_R)\nx = np.linspace(0, 1, 100)\nsamples_u = [u(x, *node) for node in nodes_Q.T]\nu_hat = cp.fit_quadrature(P, nodes_R, weights_Q, samples_u)",
+            "closedAt": "2018-12-09T16:19:17Z",
+            "createdAt": "2018-05-28T11:30:33Z",
+            "id": "MDU6SXNzdWUzMjY5OTQ4OTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 89,
+            "state": "CLOSED",
+            "title": "which is the version python can run best for chaospy.",
+            "updatedAt": "2018-12-09T16:19:17Z",
+            "url": "https://github.com/jonathf/chaospy/issues/89"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi you,\nNow, I am studying about Probabilistic collation method. Do you have any example or the manual about the method. Please introduce to me. I really need it for my research.\nThank you very much",
+            "closedAt": "2018-12-09T16:18:35Z",
+            "createdAt": "2018-05-24T00:52:14Z",
+            "id": "MDU6SXNzdWUzMjU5MjU4OTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 88,
+            "state": "CLOSED",
+            "title": "example for probabilistic collation method.",
+            "updatedAt": "2018-12-09T16:18:35Z",
+            "url": "https://github.com/jonathf/chaospy/issues/88"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2018-06-03T17:24:07Z",
+            "createdAt": "2018-05-21T12:38:30Z",
+            "id": "MDU6SXNzdWUzMjQ5MDExMjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 87,
+            "state": "CLOSED",
+            "title": "How to I can get the licence ? Thank you",
+            "updatedAt": "2018-06-03T17:24:07Z",
+            "url": "https://github.com/jonathf/chaospy/issues/87"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm dealing with superstructure optimisation with surrogate models and use Chaospy for generating the surrogates. Unfortunately I receive also polynomials which have very low coefficients (order of 10^-5 to 10^-7) which cause problems for the optimisation step later on.\nA function similar to chaospy.poly.collection.core.cutoff (http://chaospy.readthedocs.io/en/master/polylist.html) would be nice to neglect all terms with very low coefficients.",
+            "closedAt": "2018-06-24T16:52:12Z",
+            "createdAt": "2018-05-12T17:11:51Z",
+            "id": "MDU6SXNzdWUzMjI1Mjc0NjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 86,
+            "state": "CLOSED",
+            "title": "Polynomial function which cuts off coefficients below certain boundary",
+            "updatedAt": "2018-06-24T16:52:23Z",
+            "url": "https://github.com/jonathf/chaospy/issues/86"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jonathf,\nI am trying to use the sensitivity indices functions from ChaosPy in a cardiac mechanics problem. Four parameters was considered as uncertain and a quantity of interest with a low variance was analysed. I am expecting that the main sensitivity indices would be close to zero for all parameters, due to the low variance (Var = 5.0549893493e-26). However, the main sensitivity index for the second parameter was 0.96500090321 when I used the function Sens_m.\nThen I tried to compute this index manually using the functions Var and E_cod. I found the same value for the index, but I could see that the conditional variance was Cond_Var = 5.28776503722e-28 and variance was Var = 5.0549893493e-26. So, when I computed the index Si = Cond_Var/Var, the result is 0.96500090321.\nShouldn't this sensitivity index be zero? If yes, how can I fix this error?\nSeeing your function:\ndef Sens_m(poly, dist, **kws):\n    \"\"\"\n    Variance-based decomposition\n    AKA Sobol' indices\n    First order sensitivity indices\n    \"\"\"\n    dim = len(dist)\n    if poly.dim<dim:\n        poly = chaospy.poly.setdim(poly, len(dist))\n\n    zero = [0]*dim\n    out = np.zeros((dim,) + poly.shape)\n    V = Var(poly, dist, **kws)\n    for i in range(dim):\n        zero[i] = 1\n        **out[i] = Var(E_cond(poly, zero, dist, **kws), dist, **kws)/(V+(V == 0))*(V != 0)**\n        zero[i] = 0\n    return out\n\nI thought in changing the bold line to:\nout[i] = Var(E_cond(poly, zero, dist, **kws), dist, **kws)/(V+(V < 1e-16))*(V > 1e-16)\nWhat do you think?",
+            "closedAt": "2018-05-11T14:53:48Z",
+            "createdAt": "2018-05-07T17:36:23Z",
+            "id": "MDU6SXNzdWUzMjA4ODk4OTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 85,
+            "state": "CLOSED",
+            "title": "Sobol sensitivity indices",
+            "updatedAt": "2018-05-11T14:53:48Z",
+            "url": "https://github.com/jonathf/chaospy/issues/85"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dr. Jonathf,\nFirst of all, thank you for your time.\nCurrently I'm trying to obtain same results as a example research paper about Uncertainty Quantification. With the main goal to compare results and be sure that the code are okey. The Paper is called \"Efficient Sampling for Non-Intrusive Polynomial Chaos Applications with Multiple Uncertain Input Variables\" and the example appears in the page 9.\nMy issue is that all the results (mean,variance,standard desv,) are equal between the Paper and my code and thats well. But when I want to campare the Confidence Interval(CI) of 95% with the  function cp.Perc from chaospy the result does not match with the Paper. However, I have implemented the Bootstrap method to compare two different approaches to obtain CI and with this approach the CI is so closely.\nDo you know how it works the cp.Perc function or what do you think about why I don't have the same results with Perc, bootstrap and the paper?\nIf you want I can send you the code.\nThank you very much for your time, cooperation in advance.",
+            "closedAt": "2018-05-15T20:08:07Z",
+            "createdAt": "2018-05-02T08:05:32Z",
+            "id": "MDU6SXNzdWUzMTk0NTA1MTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 84,
+            "state": "CLOSED",
+            "title": "Percentile function",
+            "updatedAt": "2018-05-15T20:08:08Z",
+            "url": "https://github.com/jonathf/chaospy/issues/84"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First of all, thank you for your time.\nI have a doubt with how to make Sobol Sensitivity analysis with Monte Carlo implementation because the Sobol function needs a polynomial surrogate model.\nI have for example:\n\n3 random parameters with Normal distribution.\n100 simulations of our QoI with above input parameters.\nQoI=[QoI_1,QoI_2,...,QoI_100]\nHow to make Sobol Indices of this 3 random inputs with respect QoI?\n\nthank you very much!!!",
+            "closedAt": "2018-12-09T16:18:11Z",
+            "createdAt": "2018-04-05T15:33:01Z",
+            "id": "MDU6SXNzdWUzMTE2NjA2NjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 81,
+            "state": "CLOSED",
+            "title": "Total effect Sobol Indices in Monte Carlo approach",
+            "updatedAt": "2018-12-09T16:18:11Z",
+            "url": "https://github.com/jonathf/chaospy/issues/81"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I would like to truncate a dependent distribution, but the following code doesn't work.\nimport numpy as np\nimport chaospy as cp\nimport matplotlib.pyplot as plt\n\ndist_1 = cp.Uniform(1, 2)\ndist_2 = cp.trunk(cp.Normal(5.0,dist_1), 6.0)\n\ndist_J = cp.J(dist_1, dist_2)\nsample_J = dist_J.sample(int(1e6))\n\nfig, ax = plt.subplots()\nplt.hist(sample_J[0,:], density=True, bins=4, ec='black')\nplt.hist(sample_J[1,:], density=True, bins=40, ec='black', alpha=0.7)\nplt.show()",
+            "closedAt": "2019-06-17T14:28:55Z",
+            "createdAt": "2018-03-27T08:26:27Z",
+            "id": "MDU6SXNzdWUzMDg4NjkwMTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 79,
+            "state": "CLOSED",
+            "title": "Bug with truncation on a dependent distribution",
+            "updatedAt": "2019-06-17T14:28:55Z",
+            "url": "https://github.com/jonathf/chaospy/issues/79"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I've tried to get a truncated distribution, but when I truncate to the left I get a negative pdf. However, the samples look correct. Here is an example, that I tested on the development branch.\nimport chaospy as cp\nimport matplotlib.pyplot as plt\nimport numpy as np\n\ndist_1 = cp.Normal(0, 5)\ndist_2 = cp.trunk(dist_1, 7)\ndist_3 = cp.trunk(-5, dist_1)\n\nsample_1 = dist_1.sample(int(1e3))\nsample_2 = dist_2.sample(int(1e3))\nsample_3 = dist_3.sample(int(1e3))\n\nx = np.linspace(-20, 20, int(1e5));\ny_1 = dist_1.pdf(x)\ny_2 = dist_2.pdf(x)\ny_3 = dist_3.pdf(x)\n\nfig, ax = plt.subplots()\nax.plot(x, y_1)\nax.plot(x, y_2)\nax.plot(x, y_3)\nplt.show()\n\nfig, ax = plt.subplots()\nplt.hist(sample_1, density=True, bins=40, ec='black')\nplt.hist(sample_2, density=True, bins=40, ec='black')\nplt.hist(sample_3, density=True, bins=40, ec='black')\nplt.show()",
+            "closedAt": "2018-03-23T09:43:01Z",
+            "createdAt": "2018-03-22T10:57:22Z",
+            "id": "MDU6SXNzdWUzMDc1OTQ5MzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 77,
+            "state": "CLOSED",
+            "title": "Bug: left truncation gives a negative pdf",
+            "updatedAt": "2018-03-23T09:43:01Z",
+            "url": "https://github.com/jonathf/chaospy/issues/77"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, the following code doesn't work when chaospy is installed from the development branch.\nimport chaospy as cp\ndist = cp.Uniform(-3, 3)\ns = dist.sample(100, 'H')\ns = dist.sample(100, 'M')",
+            "closedAt": "2018-03-21T15:48:49Z",
+            "createdAt": "2018-03-21T15:35:36Z",
+            "id": "MDU6SXNzdWUzMDcyOTc0ODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 76,
+            "state": "CLOSED",
+            "title": "Samples generation with some rules broken in the development branch",
+            "updatedAt": "2018-03-21T15:48:49Z",
+            "url": "https://github.com/jonathf/chaospy/issues/76"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi Jonathan,\nI receive the following  error message:\n\nMemoryError: Too large sets\n\nwhen I run the following script:\ndistribution = cp.J(cp.Normal(-1,1), cp.Weibull(1.1,90,-180), cp.Uniform(0,10), cp.Uniform(0,10))\norths, norms = cp.orth_ttr(2, distribution, normed=True, retall=True, cross_truncation=1.5)\n\n\nI figure that it is the Weibull distribution that's causing the error.\nThe above script is only a sample, for the problem at my hand I have many input variables having Weibull distribution.\nIt would be very helpful if you can suggest a work around for the problem.\nThank you.\nKind Regards,\nRahul",
+            "closedAt": "2018-03-19T22:44:46Z",
+            "createdAt": "2018-03-18T19:13:06Z",
+            "id": "MDU6SXNzdWUzMDYyNzE4ODk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 75,
+            "state": "CLOSED",
+            "title": "Issue obtaining orthogonal polynomials for multivariate function",
+            "updatedAt": "2018-03-19T22:44:46Z",
+            "url": "https://github.com/jonathf/chaospy/issues/75"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First of all, thanks you for your time.\nMy issue is how to determine or if exist a function to determine the Fourier coeffcients C_n from a Surrogate Model created with fit.quadrature function.\nFor example:\nSurrogate Model= 0.13q0+0.1q1-10\nHermite Polynomial =[1,q1-100,q0-25.13]\nY=QoI=C0Psi_0 + C1Psi_1 + C2Psi_2 = C0(1)+ C1*(q1-100) + C2*(q0-25.13)",
+            "closedAt": "2018-03-14T16:52:59Z",
+            "createdAt": "2018-03-14T16:41:44Z",
+            "id": "MDU6SXNzdWUzMDUyMzkyNDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 74,
+            "state": "CLOSED",
+            "title": "Extract the Fourier Coefficients",
+            "updatedAt": "2018-03-14T16:52:59Z",
+            "url": "https://github.com/jonathf/chaospy/issues/74"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI've recently started using chaospy, and I might have found a bug with the joint probability distributions.\nHere is an example.\nimport numpy as np\nimport chaospy as cp\n\ndist_1 = cp.Uniform(-7.0, 15.0)\ndist_2 = cp.Uniform(-3.0, 2.0)\n\ndist_J = cp.J(dist_1, dist_2)\n\ndist_J * 2.0\n\nChanging the last line into dist_J * np.array([[2.0]]) causes the code to crash somewhere else.\nBest regards,\nRiccardo",
+            "closedAt": "2018-03-13T12:55:37Z",
+            "createdAt": "2018-03-07T10:46:28Z",
+            "id": "MDU6SXNzdWUzMDMwNDkzMjg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 73,
+            "state": "CLOSED",
+            "title": "Bug with joint probability distribution",
+            "updatedAt": "2018-03-13T12:55:37Z",
+            "url": "https://github.com/jonathf/chaospy/issues/73"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "for example how to solve the PV=nRT gas equation for error analysis of different experimental variable errors in p, V and T measurements",
+            "closedAt": "2018-02-12T17:57:16Z",
+            "createdAt": "2018-02-06T23:46:18Z",
+            "id": "MDU6SXNzdWUyOTQ5NTQ1Njk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 72,
+            "state": "CLOSED",
+            "title": "how to solve differential equation using chaospy tool in py35 environment ?",
+            "updatedAt": "2018-02-12T17:57:16Z",
+            "url": "https://github.com/jonathf/chaospy/issues/72"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Sobolsindices.txt\nHi Jonathan,\nI found that the memory usage for my computer shoots up while calculating Sobol's Indices when the number of random variables is higher than 14.\nAs I understand the calculation of cartesian product in function E_cond() causes this problem.\nCould you please suggest a work-around for this problem.\nNote: Please see the file attached",
+            "closedAt": "2018-02-07T17:18:28Z",
+            "createdAt": "2018-02-03T17:36:36Z",
+            "id": "MDU6SXNzdWUyOTQxMjk3ODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 71,
+            "state": "CLOSED",
+            "title": "Concerning shoot-up in memory usage while calculating Sobol's Indices   ",
+            "updatedAt": "2018-02-07T17:18:28Z",
+            "url": "https://github.com/jonathf/chaospy/issues/71"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm in a situation where I want to be able to directly evaluate the polynomial surrogate. For example, I want to evaluate foo_approx at specified points in the uncertain space. Can this be done with chaospy?\nimport chaospy as cp\nimport numpy as np\n\ndef foo(coord, param):\n   return param[0] * np.sin(coord) + param[1] * np.sin(coord * 30)\n\ncoord = np.linspace(0, 10, 200)\ndistribution = cp.J(\n     cp.Normal(1, 0.6),\n     cp.Normal(2, 0.2)\n )\n\npolynomial_expansion = cp.orth_ttr(3, distribution)\n\nsamples = distribution.sample(50)\nevals = [foo(coord, sample) for sample in samples.T]\n\nfoo_approx = cp.fit_regression(polynomial_expansion, samples, evals, rule='T')\n\n# Now I want to evaluate the polynomial surrogate at param = [1.5, 1.5]",
+            "closedAt": "2018-01-30T21:35:53Z",
+            "createdAt": "2018-01-30T20:33:52Z",
+            "id": "MDU6SXNzdWUyOTI5Mjc3MTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 70,
+            "state": "CLOSED",
+            "title": "Is it possible to directly evaluate the polynomial surrogate?",
+            "updatedAt": "2020-07-10T05:11:57Z",
+            "url": "https://github.com/jonathf/chaospy/issues/70"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nIs there anyway I can save the Chaospy objects to the file? I couldn't pickle them.\nThanks,\nPayam",
+            "closedAt": "2018-01-15T18:24:09Z",
+            "createdAt": "2018-01-12T17:58:38Z",
+            "id": "MDU6SXNzdWUyODgxOTk3MjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 69,
+            "state": "CLOSED",
+            "title": "Saving Chaospy Objects to File",
+            "updatedAt": "2018-01-15T18:24:09Z",
+            "url": "https://github.com/jonathf/chaospy/issues/69"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I see that in your doctoral thesis you mentioned that -\n\nTo be able to incorporate partial derivatives of the response, the partial derivative of the polynomial expansion must be available as well. In both Turns and Chaospy, the derivative of a polynomial can be generated easily.\n\nI am using least square regression method to obtain the coefficients in polynomial chaos expansion, therefore, my objective is to obtain a set of linear algebraic equations of the form A.x = B. The coefficient matrix A will contain both shape functions and their partial derivatives evaluated at regression points.\nCould you please elaborate a bit on how I can obtain the partial derivative of shape functions if I want to use the gradient information of model response.",
+            "closedAt": "2017-11-25T13:19:36Z",
+            "createdAt": "2017-11-23T12:00:42Z",
+            "id": "MDU6SXNzdWUyNzYzNTA1MTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 68,
+            "state": "CLOSED",
+            "title": "Using partial derivatives of model response in polynomial expansion",
+            "updatedAt": "2017-11-25T13:19:37Z",
+            "url": "https://github.com/jonathf/chaospy/issues/68"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "after installing latest v2.2.4 I cannot even import chaospy, v2.2.3 seems ok though",
+            "closedAt": "2017-10-17T18:54:16Z",
+            "createdAt": "2017-10-17T14:41:19Z",
+            "id": "MDU6SXNzdWUyNjYxNTIzMzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 61,
+            "state": "CLOSED",
+            "title": "ModuleNotFoundError: No module named 'chaospy.quadrature'",
+            "updatedAt": "2017-10-17T18:54:16Z",
+            "url": "https://github.com/jonathf/chaospy/issues/61"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello Jonathan,\nI have installed chaospy and run the test as recommend. I get 113 passed tests but one failed test. I assume this is not the output that I'm supposed to get. Do you have any suggestions what I could try or where I could find more info?\nThank you very much for your help!\nMarion\n================================== FAILURES ===================================\n________________ [doctest] chaospy.poly.collection.core.cutoff ________________\n095                 Defaults to 0.\n096         high (int) : The upper threshold for the cutoff range.\n097\n098     Returns:\n099         (Poly) : The same as P, except that all terms that have a order not\n100                 within the bound low<=order<high are removed.\n101\n102     Examples:\n103         >>> poly = cp.prange(4, 1) + cp.prange(4, 2)[::-1]\n104         >>> print(poly)\nExpected:\n[q1^3+1, q1^2+q0, q0^2+q1, q0^3+1]\nGot:\n[q1^3+1, q0+q1^2, q0^2+q1, q0^3+1]\nD:\\Python\\chaospy\\chaospy\\src\\chaospy\\poly\\collection\\core.py:104: DocTestFailure\n==================== 1 failed, 113 passed in 9.14 seconds =====================",
+            "closedAt": "2017-10-14T12:56:44Z",
+            "createdAt": "2017-10-13T09:56:40Z",
+            "id": "MDU6SXNzdWUyNjUyMzM2MjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 60,
+            "state": "CLOSED",
+            "title": "Test local build - 1 Test failed (chaospy.poly.collection.core.cutoff)",
+            "updatedAt": "2017-10-14T13:55:08Z",
+            "url": "https://github.com/jonathf/chaospy/issues/60"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am a novel user and probably this question is very trivial - I'll try to ask it anyways.\nI would need to generate a distribution type (truncated gamma, having an upper threshold in addition to the lower) non included in the list of default distribution, from which I should select a sample according to the Sobol rule. I know I could simply generate the distribution with SciPy and then try to extract a sample coding the Sobol-rule algorithm it. However, I was wondering if there was any ChaosPy functionality that would allow to tackle this issue straightforwardly.\nMany thanks in advance for your help and apologies for my question, should it be too trivial. :)",
+            "closedAt": "2017-09-09T20:19:35Z",
+            "createdAt": "2017-09-08T09:29:18Z",
+            "id": "MDU6SXNzdWUyNTYxOTQ0Mzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 58,
+            "state": "CLOSED",
+            "title": "Truncated Gamma distribution?",
+            "updatedAt": "2017-09-09T20:19:35Z",
+            "url": "https://github.com/jonathf/chaospy/issues/58"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In 1.3 Tutorial of the Theory Guide there is a function called SerialLayers that I cannot find any reference or documentation for.  Can you add this to the example python code?",
+            "closedAt": "2017-10-22T08:54:40Z",
+            "createdAt": "2017-08-30T17:29:14Z",
+            "id": "MDU6SXNzdWUyNTQwNzc2NjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 57,
+            "state": "CLOSED",
+            "title": "Theory Guide - SerialLayers function",
+            "updatedAt": "2017-10-22T08:54:40Z",
+            "url": "https://github.com/jonathf/chaospy/issues/57"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nThanks for this contribution. It is simply a pleasure to use your package!\nI was wondering if there is a way to \"store\" a fitted regression for a point-collocated PCE.\nOn a long dataset, the regression can take a few minutes and I would like to avoid refitting whenever I would like to make use of the surrogate model.\nThanks in advance,\nBest regards",
+            "closedAt": "2017-07-13T19:07:53Z",
+            "createdAt": "2017-07-13T15:03:24Z",
+            "id": "MDU6SXNzdWUyNDI3MzE3OTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 56,
+            "state": "CLOSED",
+            "title": "Saving a PCE regression ",
+            "updatedAt": "2021-11-17T06:19:52Z",
+            "url": "https://github.com/jonathf/chaospy/issues/56"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi again,\nCould you please give some tips about how to build a folded normal distribution?\nI was expecting some parameters like mu,sigma and the location of the fold, however there are not\nsuch arguments in this function.\nThanks!",
+            "closedAt": "2017-07-10T08:44:56Z",
+            "createdAt": "2017-07-07T08:39:54Z",
+            "id": "MDU6SXNzdWUyNDExOTYzODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 55,
+            "state": "CLOSED",
+            "title": "folded normal distribution ",
+            "updatedAt": "2017-07-10T08:44:56Z",
+            "url": "https://github.com/jonathf/chaospy/issues/55"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "n = cp.Normal(0, 1)\npolynomial_order = 3\npoly = cp.orth_bert(polynomial_order, n, normed=True)\n\ndoesn't work for me.\nThe first issue was in chaospy/poly/basy.py line 200 was not checking for numpy.int types. I fixed this in my devbranch but now the error occurs when numpy's asarray calss iter . This seemed likely some special edge case for a 1D polynomial expansion, however, trying the following produces the same \"not iterable\" error. Any ideas on the correct way to fix this?\nn = cp.Normal(0, 1)\nn = cp.Iid(n,2)\npolynomial_order = 3\npoly = cp.orth_bert(polynomial_order, n, normed=True)",
+            "closedAt": "2017-06-22T09:48:23Z",
+            "createdAt": "2017-06-22T09:34:55Z",
+            "id": "MDU6SXNzdWUyMzc3ODYzNTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 54,
+            "state": "CLOSED",
+            "title": "errors in orth_bert",
+            "updatedAt": "2017-06-22T09:48:23Z",
+            "url": "https://github.com/jonathf/chaospy/issues/54"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello! Jonathan,\nThank you first of all about this program, it's very useful and helpful. Previously I install chaosy in linux machine successfully following the given steps. But things start fail when I try to install it in my macOS 10.12.5. Attachment is the stdout for running \"python setup.py test\". Could you provide any guidance about it?\nThank you,\nChen\nchaospy_test_stdout.txt",
+            "closedAt": "2017-10-22T08:54:02Z",
+            "createdAt": "2017-06-16T18:51:05Z",
+            "id": "MDU6SXNzdWUyMzY1NjQ0NjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 52,
+            "state": "CLOSED",
+            "title": "test failure during installing chaospy in mac OS version 10.12.5",
+            "updatedAt": "2017-10-22T08:54:02Z",
+            "url": "https://github.com/jonathf/chaospy/issues/52"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI was creating a conda-build file for chaospy and noticed there is no license file. It's stated in setup.py that it is a BSD license or a MIT compatible license, while most of the libraries included are GPL.  I think it would be good to have an explicit license file for chaospy, as well as to be clear which BSD or MIT compatible license actually applies.\nBest,\nJacob",
+            "closedAt": "2017-06-07T09:23:19Z",
+            "createdAt": "2017-06-07T09:17:15Z",
+            "id": "MDU6SXNzdWUyMzQxNDQxMzY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 50,
+            "state": "CLOSED",
+            "title": "License",
+            "updatedAt": "2017-06-07T09:23:19Z",
+            "url": "https://github.com/jonathf/chaospy/issues/50"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello there,\nI came across chaospy recently and it is really helpful. Just wanted to mention that one could easily improve the scalability of the regression approaches towards higher input dimensionality by limiting the number of polynomial basis functions a priori. For example, one could rely on some hyperbolic cross truncation scheme, or limit the number of interactions between the variables. Such features would make the software much more powerful.\nRegards\nBen",
+            "closedAt": "2017-10-22T08:53:10Z",
+            "createdAt": "2017-05-31T21:55:26Z",
+            "id": "MDU6SXNzdWUyMzI3MDg1NjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 49,
+            "state": "CLOSED",
+            "title": "New truncation schemes",
+            "updatedAt": "2017-10-22T08:53:10Z",
+            "url": "https://github.com/jonathf/chaospy/issues/49"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, Jonathan,\nFirst, thank you for this nice package, it's light and helpful! I am currently exploring it with fun!\nMy question is about using \"chaospy.poly.base.Poly\" object as python symbolic expression. Is that possible? Since we can do the following:\n\n\n\nprint orthpol[3]\nq1^2-2.0q1+0.986666666667\n\n\n\nI can change the result to a string by doing str(orthpol[3]), which is convenient for further symbolic integration. However, the expression presented above is not a valid python expression.  So is there any possibility that I can make use of the orthogonalized polynomials freely generated by chaospy? and how?\nThank you in advance for your time and consideration!\nCheers,\nChen",
+            "closedAt": "2017-06-07T10:33:18Z",
+            "createdAt": "2017-05-31T02:18:35Z",
+            "id": "MDU6SXNzdWUyMzI0MzQzNTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 48,
+            "state": "CLOSED",
+            "title": "any possibility of using \"chaospy.poly.base.Poly\" object as python symbolic expression",
+            "updatedAt": "2017-06-07T10:33:18Z",
+            "url": "https://github.com/jonathf/chaospy/issues/48"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nFirst of all, thanks for this amazing software, it is being very useful for my work!\nMy question regards the error (L2 norm) in the approximation of a quantity of interest by a polynomial expansion using the point collocation method. How to calculate it when the quantity of interest is a scalar? and what about a field? In neither of these cases an analytic expression is available for the qoi.\nIs there any specific function in chaospy to do so (or in any known python library)?\nThanks  for your help!",
+            "closedAt": "2017-07-05T06:58:20Z",
+            "createdAt": "2017-05-30T11:13:23Z",
+            "id": "MDU6SXNzdWUyMzIyMTg3OTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 47,
+            "state": "CLOSED",
+            "title": "absolute/relative error",
+            "updatedAt": "2017-07-05T06:58:20Z",
+            "url": "https://github.com/jonathf/chaospy/issues/47"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there!\nI was trying to use the lagrange_polynomial function which is in chaospy/orthogonal.py. I assume that those are the Lagrange basis polynomials. I have encountered the following issues:\n\n\nCalling chaospy.orthogonal.lagrange_polynomial([0,1]) (or with any number combination, as long as there is a zero in there) results in the error \"raise numpy.linalg.LinAlgError(\"invertable matrix\") LinAlgError: invertable matrix\".\n\n\nCalling chaospy.orthogonal.lagrange_polynomial([1, 2]) results in the polynomials [-q0^2+2.0q0, 0.5q0^2-0.5q0]. However, using the definition of Lagrange polynomials, e.g. https://en.wikipedia.org/wiki/Lagrange_polynomial, one should get [-q0+2.0, q0-1.0].\n\n\nTherefore, I would like to ask what exactly am I missing in how chaospy constructs Lagrange polynomials?\nBest regards,\nDimitris",
+            "closedAt": "2017-05-08T16:38:22Z",
+            "createdAt": "2017-05-04T09:43:45Z",
+            "id": "MDU6SXNzdWUyMjYyMjczNzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 45,
+            "state": "CLOSED",
+            "title": "Lagrange polynomials",
+            "updatedAt": "2017-05-08T16:38:22Z",
+            "url": "https://github.com/jonathf/chaospy/issues/45"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI want to make contours of QoI-distribution versus input-distribution after obtaining QoI-distribution using PCM. I am using cp.J(dist, qoi_dist) to join the distributions and make multivariate distribution. However, it seems cp.J does not properly create co-variance matrix between two distributions (I believe qoi_dist should be a dependent distribution with respect to input dist). Is there an easy way to obtain the joined distributions co-variance matrix using U_hat and P?\nI have copied the relevant part of my code here:\ndist = cp.Lognormal(-0.0408,0.012)\nnodes = dist.sample(nosamples,\"M\")\nP = cp.orth_ttr(order, dist)\nU_hat = cp.fit_regression(P, nodes, solves, rule=\"LS\")\nqoi_dist = cp.QoI_Dist(U_hat, dist)\njoined_prob = cp.J(dist, qoi_dist)\nx, y = np.meshgrid(x_range, y_range)\nprob_pdf = joined_prob.pdf([x, y])\nax.contour(x, y, prob_pdf)\n\nThanks,\nPayam",
+            "closedAt": "2017-10-22T08:52:42Z",
+            "createdAt": "2017-04-24T02:52:52Z",
+            "id": "MDU6SXNzdWUyMjM2OTIwMTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 44,
+            "state": "CLOSED",
+            "title": "Joining input dist and qoi_dist",
+            "updatedAt": "2017-10-22T08:52:42Z",
+            "url": "https://github.com/jonathf/chaospy/issues/44"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, may I ask if there is a typo in the installation readme?\ngit clone git@github.com:jonathf/chaospy.git\ncd chaospy\npip install -r requirements.txt\npython setupy.py install\nI wonder if the last line should be \"python setup.py install\" instead.\nThank you so much for your work :) I really appreciate it!",
+            "closedAt": "2017-03-29T14:58:07Z",
+            "createdAt": "2017-03-23T09:42:40Z",
+            "id": "MDU6SXNzdWUyMTYzNjU0NTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 43,
+            "state": "CLOSED",
+            "title": "Typo in README Installation?",
+            "updatedAt": "2017-03-29T14:58:07Z",
+            "url": "https://github.com/jonathf/chaospy/issues/43"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am trying to use chaospy for a 5d uncertainty analysis with point collocation method. My problem is that when I don't normalize the distribution to the reference values (don't divide by norm param), the standard deviations become very big, cp.Std(U_hat, dist), after fitting the polynomials with simulation results. cp.E(U_hat, dist) function works properly though. Maybe I don't quite understand the procedure, but shouldn't the method be independent of distribution normalizations?\nI have copied the code here:\nnorm = 11602.\nLn = cp.Normal(mu=0.565992, sigma=0.0807134)\nLTe = cp.Lognormal(mu=-1.46212, sigma=0.229387)\nTi0 = cp.Normal(mu=0.6, sigma=0.1816)\nTg0 = cp.Normal(mu=5801.0/norm, sigma=2106.9232/norm)\nTgb = cp.Uniform(300./norm,1160./norm)\ndist = cp.J(Ln,LTe,Ti0,Tg0,Tgb)\norder = 2\nP = cp.orth_ttr(order, dist)\nnodes = dist.sample(11, \"M\")\n#solve for nodes here...\nU_hat = cp.fit_regression(P, nodes, solves, rule=\"T\")\nmean = cp.E(U_hat, dist)\nstd = cp.Std(U_hat, dist)\n\n-Payam",
+            "closedAt": "2017-03-17T08:10:31Z",
+            "createdAt": "2017-03-16T02:11:44Z",
+            "id": "MDU6SXNzdWUyMTQ1NzkyOTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 42,
+            "state": "CLOSED",
+            "title": "Distribution normalization and cp.Std magnitude",
+            "updatedAt": "2017-03-17T08:10:31Z",
+            "url": "https://github.com/jonathf/chaospy/issues/42"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI would like to know if it was possible to use chaospy with discrete variables in the model.\nGreetings",
+            "closedAt": "2017-03-29T15:02:20Z",
+            "createdAt": "2017-03-07T10:21:48Z",
+            "id": "MDU6SXNzdWUyMTIzODg3Mzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 41,
+            "state": "CLOSED",
+            "title": "Handle categorical variables",
+            "updatedAt": "2017-03-29T15:02:20Z",
+            "url": "https://github.com/jonathf/chaospy/issues/41"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I  tried to construct the PCE using spectral projection method like this:\ndistribution = cp.Iid(cp.Normal(0, 1), 39)\nnodes, weights = cp.generate_quadrature(order = 1, domain = distribution)\nMy computer crashed directly, as there are too many parameters.  My question is I want to construct a PCE, which has 39 uncertainty parameters. Can  I use the spectral projection method? Are there any other way to using  spectral projection method to reduce the samples?\n\n\n\nI have construct PCE using the linear regression method with 4000 samples like this (P and Y are my samples and predictions):\ndistribution = cp.Iid(cp.Uniform(0, 1), 39)\npolynomial_expansion = cp.orth_ttr(2, distribution)\nfoo_approx = cp.fit_regression(polynomial_expansion, P, Y)\nand the relative accuracy is 1% which is acceptable for me.\nI want to compare  spectral projection and linear regression. Are they comparable at dealing with the high dimensional question, which has 39 model inputs?\nThank you very much.",
+            "closedAt": "2017-03-08T14:04:47Z",
+            "createdAt": "2017-03-03T02:05:41Z",
+            "id": "MDU6SXNzdWUyMTE1NzUxMDA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 40,
+            "state": "CLOSED",
+            "title": "How to deal with high-dimensional system?",
+            "updatedAt": "2017-03-08T14:04:47Z",
+            "url": "https://github.com/jonathf/chaospy/issues/40"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am trying to construct a joint distribution in which the second depends on the first. This is also used in the examples created here https://github.com/jp5000/PCE-4-WindEnergy/blob/master/Example/8)_Example.ipynb. I am running the development branch of my fork.\nimport numpy as np\nimport chaospy as cp\nfrom matplotlib import pyplot as plt\n\n# manually calculate the what np.poly1d is supposed to do\ndef calc_poly(poly, x):\n    exp = 0.0\n    degree = len(poly)\n    for i, coeff in enumerate(poly):\n        exp += (coeff*np.power(x, degree-i))\n    return exp\n\ndef p1(x):\n    return ( 1. + (1.4)**2./(0.75*x + 3.8)**2.0)**0.5\n\ndef p2(x):\n    return ( 1. + (1.4)**2./(0.75*x + 3.8)**2.0)\n\n# we have the following dependency\ndist1_x_rng = np.arange(0, 30, 1)\nmu = p1(dist1_x_rng)\nsigma = p2(dist1_x_rng)\n\n# fit a polynomial to it\nmu_pfit = np.poly1d(np.polyfit(dist1_x_rng, mu, 6))\nsigma_pfit = np.poly1d(np.polyfit(dist1_x_rng, sigma, 6))\n\n# is calc_poly doing what it is supposed to do?\nassert np.allclose(calc_poly(mu_pfit, dist1_x_rng), mu_pfit(dist1_x_rng))\n\n#plt.plot(dist1_x_rng, mu)\n#plt.plot(dist1_x_rng, calc_poly(mu_pfit, dist1_x_rng))\n#assert np.allclose(calc_poly(mu_pfit, dist1_x_rng), mu)\n\ndist_1 = cp.Normal()\n# indicate the dependency using the np.poly1d object\ndist_2a = cp.Lognormal(mu=mu_pfit(dist_1), sigma=sigma_pfit(dist_1))\n# or using calc_poly\ndist_2b = cp.Lognormal(mu=calc_poly(mu_pfit, dist_1), sigma=calc_poly(sigma_pfit, dist_1))\n# or using the polynomials directly\ndist_2c = cp.Lognormal(mu=p1(dist_1), sigma=p2(dist_1))\n\n# join the distribution and sample, but this will fail\ndist_Q_a = cp.J(dist_1, dist_2a)\nsample_Q_a = dist_Q_a.sample(size=512, rule='H')\n# see below for the lengthy traceback\n\n# works\ndist_Q_b = cp.J(dist_1, dist_2b)\nsample_Q_b = dist_Q_b.sample(size=512, rule='H')\n\n# works\ndist_Q_c = cp.J(dist_1, dist_2c)\nsample_Q_c = dist_Q_c.sample(size=512, rule='H')\nI think this example worked at some point with Chaospy but I haven't figured out when it broke. I will also add this as a test case in PR #31. I have not figured out yet why it fails with numpy.poly1d, but would like to create an issue for it in case someone knows already what is going on here.",
+            "closedAt": "2016-12-20T18:56:56Z",
+            "createdAt": "2016-12-15T12:33:06Z",
+            "id": "MDU6SXNzdWUxOTU3OTQ0Mzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "wontfix"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 38,
+            "state": "CLOSED",
+            "title": "Joint distributions with dependencies and numpy.poly1d",
+            "updatedAt": "2016-12-20T20:44:00Z",
+            "url": "https://github.com/jonathf/chaospy/issues/38"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import numpy as np\n\nprint 'version', np.version.version\na = np.longdouble(3)\nprint a\nb = np.longfloat(3)\nprint b\nc = np.longlong(3)\nprint c\nd = np.long128(3)\nprint d\nversion 1.11.2\n3.0\n3.0\n3\n\n---------------------------------------------------------------------------\nAttributeError                            Traceback (most recent call last)\n<ipython-input-22-77c371d67525> in <module>()\n      9 c = np.longlong(3)\n     10 print c\n---> 11 d = np.long128(3)\n     12 print d\n\nAttributeError: 'module' object has no attribute 'long128'",
+            "closedAt": "2016-12-15T09:04:16Z",
+            "createdAt": "2016-12-14T17:41:05Z",
+            "id": "MDU6SXNzdWUxOTU1OTczNTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 37,
+            "state": "CLOSED",
+            "title": "numpy 1.11 'module' object has no attribute 'long128'",
+            "updatedAt": "2016-12-20T16:39:11Z",
+            "url": "https://github.com/jonathf/chaospy/issues/37"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello again,\nI just want to share a piece of code and discuss the problem. I believe this is not actually a bug but rather a property of the method, but I am not completely sure.\nBasically the code below is producing very high values for the coefficients in the polynomial. This, I believe, results in nans in the estimation of standard deviation. The problem is a function of order and the parameters of the original distribution.\nfrom numpy import std\nfrom chaospy import Normal, generate_quadrature, orth_ttr, fit_quadrature, Std\n\n\ndef f(x):\n    return x\n\norder = 6\nrv = Normal(10, 0.1)\ndata = f(rv.sample(order+1))\n\nnodes, weights = generate_quadrature(order, rv, rule='G')\nP, norms = orth_ttr(order, rv, normed=False, retall=True)\nu_hat = fit_quadrature(P, nodes, weights, f(nodes[0]), norms=norms)\nprint(Std(u_hat, rv))\nprint(std(data))\nCan you make a suggestion on what may be causing the issue and how to verify it?",
+            "closedAt": "2016-12-21T17:45:03Z",
+            "createdAt": "2016-11-28T21:05:40Z",
+            "id": "MDU6SXNzdWUxOTIxMTY5MTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 36,
+            "state": "CLOSED",
+            "title": "High order gPC estimators derived from non-standard distributions are unstable",
+            "updatedAt": "2016-12-21T17:51:01Z",
+            "url": "https://github.com/jonathf/chaospy/issues/36"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I've looked at the documentations of both functions and tested it against the followign minimal example and I cannot find what's going wrong.\nfrom chaospy import Truncexpon\nfrom scipy.stats import truncexpon\nfrom pickle import load\n\nwith open('params.pickle', 'rb') as f:\n    p = load(f)[0]\n\nx = 0.00085\nprint(truncexpon.pdf(x, b=p[0], loc=p[1], scale=p[2]))\nprint(Truncexpon(up=p[0], shift=p[1], scale=p[2]).pdf(x))\nI believe these should be similar. What I am getting though is:\n$python2 test.py\n4518.666471\n2535.1745292\n\nparams.zip",
+            "closedAt": "2016-11-09T08:51:24Z",
+            "createdAt": "2016-11-08T19:07:16Z",
+            "id": "MDU6SXNzdWUxODgwNzY3NzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 34,
+            "state": "CLOSED",
+            "title": "Truncated exponents of scipy.stats and chaospy give different values",
+            "updatedAt": "2016-11-09T09:27:57Z",
+            "url": "https://github.com/jonathf/chaospy/issues/34"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am trying the following code\nviscosity_rv = 1.0 / Uniform(907, 1232)\nBut unfortunately generate_quadrature crashes with the following error:\n/home/rsa/.local/lib/python2.7/site-packages/chaospy/dist/operators.py:699: RuntimeWarning: divide by zero encountered in reciprocal\n  y = np.sign(x)*np.abs(x)**(1./num)\n/home/rsa/.local/lib/python2.7/site-packages/chaospy/dist/operators.py:699: RuntimeWarning: invalid value encountered in multiply\n  y = np.sign(x)*np.abs(x)**(1./num)",
+            "closedAt": "2016-11-17T15:37:40Z",
+            "createdAt": "2016-11-08T17:43:15Z",
+            "id": "MDU6SXNzdWUxODgwNTczNTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 33,
+            "state": "CLOSED",
+            "title": "Can't construct reciprocal of uniform distribution",
+            "updatedAt": "2016-11-17T15:37:40Z",
+            "url": "https://github.com/jonathf/chaospy/issues/33"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am trying to figure out how to get the cdf from a given distribution. For a pdf the interface is straight forward:\nimport numpy as np\nimport chaospy as cp\nrayleigh = cp.Rayleigh(scale=11)\nws = np.arange(0, 25, 0.1)\nrayleigh.pdf(ws)\n\nHowever, a similarly convenient interface for the cdf is not available (or is it?). Is this a deliberate choice, or is it something that remains to be implemented? Is there an obvious alternative that would give me the cdf for a given range of values that I am missing? I am a little confused here because I can clearly see that the cdf for each distribution is defined in the _cdf method in chaospy.dist.cores.",
+            "closedAt": "2016-10-23T21:46:24Z",
+            "createdAt": "2016-10-22T11:52:53Z",
+            "id": "MDU6SXNzdWUxODQ2MjYxNTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 30,
+            "state": "CLOSED",
+            "title": "convenient interface to the cdf of given distribution",
+            "updatedAt": "2016-10-23T21:46:24Z",
+            "url": "https://github.com/jonathf/chaospy/issues/30"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I was checking out the examples from jp5000/PCE-4-WindEnergy and noticed the usage of the expons attribute of Poly classes. This works for chaospy v1.0 (to be specific, at this commit: b6e236c, or as in this fork: jp5000/chaospy), but not for the latest version. If I understand it correctly, the exponents are now in the keys attribute and are ordered corresponding to Poly.coeffs. In chaospy v1.0 the ordering of Poly.expons and Poly.keys is different. It also seems that the ordering of chaospy v1.0 Poly.expons is different compared to the ordering of chaospy v2.0+ Poly.keys. I don't know if a certain ordering has any real practical usefulness (I am a PCE noob).\nAnd finally my question: was expons removed and replaced by keys for a specific reason, or is this a mistake?",
+            "closedAt": "2016-10-19T12:35:36Z",
+            "createdAt": "2016-10-19T09:50:56Z",
+            "id": "MDU6SXNzdWUxODM5MTU1MTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 28,
+            "state": "CLOSED",
+            "title": "former expons attribute of Poly class",
+            "updatedAt": "2016-10-19T15:53:47Z",
+            "url": "https://github.com/jonathf/chaospy/issues/28"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is it reasonable to expect dist.backend.Dist + 1 works, but 1 + dist.backend.Dist fails? I don't have any experience with overloading operators, but I would assume both left and right additions should be possible? Or am I missing something else here?\n>>> import chaospy as cp\n>>> cp.Uniform() + 1\n<chaospy.dist.operators.Add at 0x7fb40405e400> \n# but this fails\n>>> 1 + cp.Uniform()\nTraceback (most recent call last):\n  File \"chaospy/src/chaospy/dist/backend.py\", line 372, in __radd__\n    return add(X, self)\n  File \"chaospy/src/chaospy/dist/operators.py\", line 134, in add\n    return Add(A=A, B=B)\n  File \"chaospy/src/chaospy/dist/operators.py\", line 34, in __init__\n    _length=length, _advance=True)\n  File \"chaospy/src/chaospy/dist/backend.py\", line 115, in __init__\n    self.dependencies = self.G.run(self.length, \"dep\")[0]\n  File \"chaospy/src/chaospy/dist/graph.py\", line 266, in run\n    out = self(self.root)\n  File \"chaospy/src/chaospy/dist/graph.py\", line 158, in __call__\n    return self._call(*args, **kwargs)\n  File \"chaospy/src/chaospy/dist/graph.py\", line 526, in dep_call\n    out = dist._dep(self)\n  File \"chaospy/src/chaospy/dist/backend.py\", line 345, in _dep\n    if len(self)==1:\nTypeError: only integer arrays with one element can be converted to an index\nIf that would help, I can go and create a bunch of tests for a few things like adding/multiplying distributions, and sent it to you as a PR. Do you think creating a tests/test_dist.py file would be the right way to go?",
+            "closedAt": "2016-10-17T14:54:45Z",
+            "createdAt": "2016-10-17T14:21:55Z",
+            "id": "MDU6SXNzdWUxODM0Mjk3MDU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 25,
+            "state": "CLOSED",
+            "title": "distributions: add/mult and test coverage",
+            "updatedAt": "2016-10-17T14:54:45Z",
+            "url": "https://github.com/jonathf/chaospy/issues/25"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "@flo2k I am working on a refactor of the code, I am noticing that your code example for QoI_Dist is incomplete:\nExamples:\n    >>> cp.seed(1000)\n    >>> x = cp.variable(1)\n    >>> poly = cp.Poly([x])\n    >>> qoi_dist = cp.QoI_Dist(poly, dist)\n    >>> print(qoi_dist[0].pdf([-0.75, 0., 0.75]))\n    [  1.27794383e-123   3.99317083e+000   1.16692607e-100]\n\nWhat should dist be defined as to complete this example?",
+            "closedAt": "2016-09-29T07:53:21Z",
+            "createdAt": "2016-09-24T20:55:29Z",
+            "id": "MDU6SXNzdWUxNzkwNTEzNzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 15,
+            "state": "CLOSED",
+            "title": "QoI example broken",
+            "updatedAt": "2016-09-29T07:53:21Z",
+            "url": "https://github.com/jonathf/chaospy/issues/15"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxNi0wOS0yNFQyMDo1NToyOVrOCqwbbw==",
+          "hasNextPage": true
+        },
+        "totalCount": 206
+      }
+    }
+  }
+}

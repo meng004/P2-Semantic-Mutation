@@ -1,0 +1,2927 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_is_compiling_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:10:53Z",
+            "createdAt": "2023-01-18T06:55:40Z",
+            "id": "I_kwDOA-j9z85bpEMn",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92486,
+            "state": "CLOSED",
+            "title": "DISABLED test_is_compiling_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:10:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92486"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_item_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:10:55Z",
+            "createdAt": "2023-01-18T06:55:35Z",
+            "id": "I_kwDOA-j9z85bpELt",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92485,
+            "state": "CLOSED",
+            "title": "DISABLED test_item_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:10:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92485"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_list_append_return_none_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:10:57Z",
+            "createdAt": "2023-01-18T06:55:32Z",
+            "id": "I_kwDOA-j9z85bpEK5",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92484,
+            "state": "CLOSED",
+            "title": "DISABLED test_list_append_return_none_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:10:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92484"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_manual_seed_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:11:00Z",
+            "createdAt": "2023-01-18T06:55:29Z",
+            "id": "I_kwDOA-j9z85bpEKe",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92483,
+            "state": "CLOSED",
+            "title": "DISABLED test_manual_seed_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:11:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92483"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_item_changes_new_shape_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:11:02Z",
+            "createdAt": "2023-01-18T06:55:27Z",
+            "id": "I_kwDOA-j9z85bpEJ8",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92482,
+            "state": "CLOSED",
+            "title": "DISABLED test_item_changes_new_shape_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:11:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92482"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_setattr_mutation3_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:20Z",
+            "createdAt": "2023-01-18T06:55:23Z",
+            "id": "I_kwDOA-j9z85bpEJB",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92481,
+            "state": "CLOSED",
+            "title": "DISABLED test_setattr_mutation3_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:20Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92481"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_restore_graphstate_internals_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301\ncc @ezyang @soumith @msaroufim @wconstab @ngimel @bdhirsh @mlazos @voznesenskym @yanboliang @penguinwu @anijain2305 @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @Xia-Weiwen @wenzhe-nrv @jiayisunx @desertfire",
+            "closedAt": "2023-02-21T21:39:31Z",
+            "createdAt": "2023-01-18T06:55:23Z",
+            "id": "I_kwDOA-j9z85bpEJA",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: dynamic shapes"
+                },
+                {
+                  "name": "module: dynamo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Nw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92480,
+            "state": "CLOSED",
+            "title": "DISABLED test_restore_graphstate_internals_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-02-21T21:39:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92480"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_sample_input_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:11:05Z",
+            "createdAt": "2023-01-18T06:55:09Z",
+            "id": "I_kwDOA-j9z85bpEGA",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92479,
+            "state": "CLOSED",
+            "title": "DISABLED test_sample_input_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:11:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92479"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_setattr_mutation2_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:11:07Z",
+            "createdAt": "2023-01-18T06:55:07Z",
+            "id": "I_kwDOA-j9z85bpEFW",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92478,
+            "state": "CLOSED",
+            "title": "DISABLED test_setattr_mutation2_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:11:07Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92478"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_return_nested_function_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-08-11T22:20:41Z",
+            "createdAt": "2023-01-18T06:54:56Z",
+            "id": "I_kwDOA-j9z85bpEDI",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 92477,
+            "state": "CLOSED",
+            "title": "DISABLED test_return_nested_function_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-08-11T22:20:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92477"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_restore_graphstate_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:11:12Z",
+            "createdAt": "2023-01-18T06:54:53Z",
+            "id": "I_kwDOA-j9z85bpECY",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92476,
+            "state": "CLOSED",
+            "title": "DISABLED test_restore_graphstate_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:11:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92476"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_repro_graph_breaks_in__get_item_by_idx_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301\ncc @ezyang @soumith @msaroufim @wconstab @ngimel @bdhirsh",
+            "closedAt": "2023-02-28T15:40:32Z",
+            "createdAt": "2023-01-18T06:54:50Z",
+            "id": "I_kwDOA-j9z85bpEBy",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "oncall: pt2"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 92475,
+            "state": "CLOSED",
+            "title": "DISABLED test_repro_graph_breaks_in__get_item_by_idx_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-02-28T15:40:32Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92475"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_rand_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:11:16Z",
+            "createdAt": "2023-01-18T06:54:48Z",
+            "id": "I_kwDOA-j9z85bpEBO",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92473,
+            "state": "CLOSED",
+            "title": "DISABLED test_rand_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:11:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92473"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_recursive_inline_list_mutation_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:32Z",
+            "createdAt": "2023-01-18T06:54:48Z",
+            "id": "I_kwDOA-j9z85bpEBM",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92474,
+            "state": "CLOSED",
+            "title": "DISABLED test_recursive_inline_list_mutation_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:32Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92474"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_raises_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:05Z",
+            "createdAt": "2023-01-18T06:54:40Z",
+            "id": "I_kwDOA-j9z85bpD_m",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92472,
+            "state": "CLOSED",
+            "title": "DISABLED test_raises_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92472"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_python_slice_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:05Z",
+            "createdAt": "2023-01-18T06:54:35Z",
+            "id": "I_kwDOA-j9z85bpD-j",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92471,
+            "state": "CLOSED",
+            "title": "DISABLED test_python_slice_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92471"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_pair_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:04Z",
+            "createdAt": "2023-01-18T06:54:33Z",
+            "id": "I_kwDOA-j9z85bpD-L",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92470,
+            "state": "CLOSED",
+            "title": "DISABLED test_pair_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92470"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_onnx_shape_as_tensor_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:04Z",
+            "createdAt": "2023-01-18T06:54:32Z",
+            "id": "I_kwDOA-j9z85bpD90",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92469,
+            "state": "CLOSED",
+            "title": "DISABLED test_onnx_shape_as_tensor_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92469"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_object_staticmethod_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:03Z",
+            "createdAt": "2023-01-18T06:54:23Z",
+            "id": "I_kwDOA-j9z85bpD8A",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92468,
+            "state": "CLOSED",
+            "title": "DISABLED test_object_staticmethod_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92468"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_object_classmethod_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:03Z",
+            "createdAt": "2023-01-18T06:54:20Z",
+            "id": "I_kwDOA-j9z85bpD7d",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92467,
+            "state": "CLOSED",
+            "title": "DISABLED test_object_classmethod_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92467"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_numpy_variable_isinstance_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:02Z",
+            "createdAt": "2023-01-18T06:54:17Z",
+            "id": "I_kwDOA-j9z85bpD6s",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92466,
+            "state": "CLOSED",
+            "title": "DISABLED test_numpy_variable_isinstance_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92466"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nn_sequential_invocation_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:01Z",
+            "createdAt": "2023-01-18T06:54:14Z",
+            "id": "I_kwDOA-j9z85bpD57",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92465,
+            "state": "CLOSED",
+            "title": "DISABLED test_nn_sequential_invocation_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92465"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nn_sequential_invocation_reposition_indices_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:00Z",
+            "createdAt": "2023-01-18T06:54:14Z",
+            "id": "I_kwDOA-j9z85bpD55",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92464,
+            "state": "CLOSED",
+            "title": "DISABLED test_nn_sequential_invocation_reposition_indices_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92464"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nested_optimize_run_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:00Z",
+            "createdAt": "2023-01-18T06:54:05Z",
+            "id": "I_kwDOA-j9z85bpD4J",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92463,
+            "state": "CLOSED",
+            "title": "DISABLED test_nested_optimize_run_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92463"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nested_optimize_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:00Z",
+            "createdAt": "2023-01-18T06:54:02Z",
+            "id": "I_kwDOA-j9z85bpD3g",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92462,
+            "state": "CLOSED",
+            "title": "DISABLED test_nested_optimize_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92462"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nested_optimize_decorator_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:59Z",
+            "createdAt": "2023-01-18T06:53:59Z",
+            "id": "I_kwDOA-j9z85bpD21",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92461,
+            "state": "CLOSED",
+            "title": "DISABLED test_nested_optimize_decorator_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92461"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nested_closure_mutation_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:59Z",
+            "createdAt": "2023-01-18T06:53:57Z",
+            "id": "I_kwDOA-j9z85bpD2P",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92460,
+            "state": "CLOSED",
+            "title": "DISABLED test_nested_closure_mutation_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92460"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nested_disable_decorator_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:58Z",
+            "createdAt": "2023-01-18T06:53:57Z",
+            "id": "I_kwDOA-j9z85bpD2O",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92459,
+            "state": "CLOSED",
+            "title": "DISABLED test_nested_disable_decorator_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92459"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nested_closure_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:58Z",
+            "createdAt": "2023-01-18T06:53:50Z",
+            "id": "I_kwDOA-j9z85bpD0y",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92458,
+            "state": "CLOSED",
+            "title": "DISABLED test_nested_closure_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92458"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_nan_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:58Z",
+            "createdAt": "2023-01-18T06:53:50Z",
+            "id": "I_kwDOA-j9z85bpD0w",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92457,
+            "state": "CLOSED",
+            "title": "DISABLED test_nan_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92457"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_namedtuple3_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:57Z",
+            "createdAt": "2023-01-18T06:53:39Z",
+            "id": "I_kwDOA-j9z85bpDye",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92456,
+            "state": "CLOSED",
+            "title": "DISABLED test_namedtuple3_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92456"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_is_tensor_like_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:57Z",
+            "createdAt": "2023-01-18T06:53:36Z",
+            "id": "I_kwDOA-j9z85bpDx1",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92455,
+            "state": "CLOSED",
+            "title": "DISABLED test_is_tensor_like_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92455"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_inline_dict_mutation_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:56Z",
+            "createdAt": "2023-01-18T06:53:33Z",
+            "id": "I_kwDOA-j9z85bpDxJ",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92454,
+            "state": "CLOSED",
+            "title": "DISABLED test_inline_dict_mutation_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92454"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_is_tensor_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:56Z",
+            "createdAt": "2023-01-18T06:53:30Z",
+            "id": "I_kwDOA-j9z85bpDwe",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92453,
+            "state": "CLOSED",
+            "title": "DISABLED test_is_tensor_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92453"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_is_floating_point_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:56Z",
+            "createdAt": "2023-01-18T06:53:28Z",
+            "id": "I_kwDOA-j9z85bpDv3",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92452,
+            "state": "CLOSED",
+            "title": "DISABLED test_is_floating_point_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92452"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_inplace_param_update_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:55Z",
+            "createdAt": "2023-01-18T06:53:25Z",
+            "id": "I_kwDOA-j9z85bpDvh",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92451,
+            "state": "CLOSED",
+            "title": "DISABLED test_inplace_param_update_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92451"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_inline_list_mutation_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:55Z",
+            "createdAt": "2023-01-18T06:53:21Z",
+            "id": "I_kwDOA-j9z85bpDuw",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92450,
+            "state": "CLOSED",
+            "title": "DISABLED test_inline_list_mutation_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92450"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_inplace_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:54Z",
+            "createdAt": "2023-01-18T06:53:21Z",
+            "id": "I_kwDOA-j9z85bpDum",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92449,
+            "state": "CLOSED",
+            "title": "DISABLED test_inplace_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92449"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_inline_func_jump_on_tensor_condition_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:17:54Z",
+            "createdAt": "2023-01-18T06:53:08Z",
+            "id": "I_kwDOA-j9z85bpDrb",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92448,
+            "state": "CLOSED",
+            "title": "DISABLED test_inline_func_jump_on_tensor_condition_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:17:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92448"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_inference_mode_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:02Z",
+            "createdAt": "2023-01-18T06:53:05Z",
+            "id": "I_kwDOA-j9z85bpDqy",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92446,
+            "state": "CLOSED",
+            "title": "DISABLED test_inference_mode_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92446"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_if_cond_nn_mod_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:03Z",
+            "createdAt": "2023-01-18T06:53:05Z",
+            "id": "I_kwDOA-j9z85bpDqx",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92447,
+            "state": "CLOSED",
+            "title": "DISABLED test_if_cond_nn_mod_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92447"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_id_of_nn_module_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:02Z",
+            "createdAt": "2023-01-18T06:52:57Z",
+            "id": "I_kwDOA-j9z85bpDpO",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92445,
+            "state": "CLOSED",
+            "title": "DISABLED test_id_of_nn_module_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92445"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_guard_failure_fn_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:02Z",
+            "createdAt": "2023-01-18T06:52:54Z",
+            "id": "I_kwDOA-j9z85bpDol",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92444,
+            "state": "CLOSED",
+            "title": "DISABLED test_guard_failure_fn_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92444"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_graph_break_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:01Z",
+            "createdAt": "2023-01-18T06:52:48Z",
+            "id": "I_kwDOA-j9z85bpDnW",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92442,
+            "state": "CLOSED",
+            "title": "DISABLED test_graph_break_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92442"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_generate_tensor_from_list_of_numpy_primitive_type_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:01Z",
+            "createdAt": "2023-01-18T06:52:48Z",
+            "id": "I_kwDOA-j9z85bpDnV",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92443,
+            "state": "CLOSED",
+            "title": "DISABLED test_generate_tensor_from_list_of_numpy_primitive_type_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92443"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_grad_mode_guard_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:00Z",
+            "createdAt": "2023-01-18T06:52:32Z",
+            "id": "I_kwDOA-j9z85bpDjs",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92441,
+            "state": "CLOSED",
+            "title": "DISABLED test_grad_mode_guard_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92441"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_grad_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:19:00Z",
+            "createdAt": "2023-01-18T06:52:32Z",
+            "id": "I_kwDOA-j9z85bpDjq",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92440,
+            "state": "CLOSED",
+            "title": "DISABLED test_grad_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:19:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92440"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_get_device_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:59Z",
+            "createdAt": "2023-01-18T06:52:24Z",
+            "id": "I_kwDOA-j9z85bpDh6",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92439,
+            "state": "CLOSED",
+            "title": "DISABLED test_get_device_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92439"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_frozenset_torch_func_contains_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:59Z",
+            "createdAt": "2023-01-18T06:52:19Z",
+            "id": "I_kwDOA-j9z85bpDgs",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92438,
+            "state": "CLOSED",
+            "title": "DISABLED test_frozenset_torch_func_contains_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92438"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_function_annotation_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:58Z",
+            "createdAt": "2023-01-18T06:52:19Z",
+            "id": "I_kwDOA-j9z85bpDgr",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92437,
+            "state": "CLOSED",
+            "title": "DISABLED test_function_annotation_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92437"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_fold_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:58Z",
+            "createdAt": "2023-01-18T06:52:06Z",
+            "id": "I_kwDOA-j9z85bpDeF",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92436,
+            "state": "CLOSED",
+            "title": "DISABLED test_fold_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92436"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_error_on_nested_fx_trace_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:57Z",
+            "createdAt": "2023-01-18T06:52:03Z",
+            "id": "I_kwDOA-j9z85bpDdg",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92435,
+            "state": "CLOSED",
+            "title": "DISABLED test_error_on_nested_fx_trace_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92435"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_enum_no_graphbreaks_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:57Z",
+            "createdAt": "2023-01-18T06:52:00Z",
+            "id": "I_kwDOA-j9z85bpDc6",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92434,
+            "state": "CLOSED",
+            "title": "DISABLED test_enum_no_graphbreaks_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92434"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_empty_list_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:57Z",
+            "createdAt": "2023-01-18T06:51:57Z",
+            "id": "I_kwDOA-j9z85bpDcQ",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92433,
+            "state": "CLOSED",
+            "title": "DISABLED test_empty_list_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92433"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_dynamo_min_operator_with_shape_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:56Z",
+            "createdAt": "2023-01-18T06:51:51Z",
+            "id": "I_kwDOA-j9z85bpDbC",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92432,
+            "state": "CLOSED",
+            "title": "DISABLED test_dynamo_min_operator_with_shape_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92432"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_duplicate_graph_break_warning_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:56Z",
+            "createdAt": "2023-01-18T06:51:48Z",
+            "id": "I_kwDOA-j9z85bpDak",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92431,
+            "state": "CLOSED",
+            "title": "DISABLED test_duplicate_graph_break_warning_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92431"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_dunder_methods_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:55Z",
+            "createdAt": "2023-01-18T06:51:45Z",
+            "id": "I_kwDOA-j9z85bpDZ_",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92430,
+            "state": "CLOSED",
+            "title": "DISABLED test_dunder_methods_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92430"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_disallow_in_graph_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:55Z",
+            "createdAt": "2023-01-18T06:51:42Z",
+            "id": "I_kwDOA-j9z85bpDZU",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92429,
+            "state": "CLOSED",
+            "title": "DISABLED test_disallow_in_graph_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92429"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_dataclass_fields_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:54Z",
+            "createdAt": "2023-01-18T06:51:39Z",
+            "id": "I_kwDOA-j9z85bpDYt",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92427,
+            "state": "CLOSED",
+            "title": "DISABLED test_dataclass_fields_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92427"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_dict_mutation_side_effect_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:54Z",
+            "createdAt": "2023-01-18T06:51:39Z",
+            "id": "I_kwDOA-j9z85bpDYs",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92428,
+            "state": "CLOSED",
+            "title": "DISABLED test_dict_mutation_side_effect_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92428"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_config_log_level_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:53Z",
+            "createdAt": "2023-01-18T06:51:31Z",
+            "id": "I_kwDOA-j9z85bpDWw",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92426,
+            "state": "CLOSED",
+            "title": "DISABLED test_config_log_level_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92426"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_config_obj_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:53Z",
+            "createdAt": "2023-01-18T06:51:31Z",
+            "id": "I_kwDOA-j9z85bpDWv",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92425,
+            "state": "CLOSED",
+            "title": "DISABLED test_config_obj_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92425"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_config_getattr_default_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:52Z",
+            "createdAt": "2023-01-18T06:51:23Z",
+            "id": "I_kwDOA-j9z85bpDU-",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92424,
+            "state": "CLOSED",
+            "title": "DISABLED test_config_getattr_default_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:52Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92424"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_change_backends_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:18:52Z",
+            "createdAt": "2023-01-18T06:51:18Z",
+            "id": "I_kwDOA-j9z85bpDT7",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92423,
+            "state": "CLOSED",
+            "title": "DISABLED test_change_backends_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:18:52Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92423"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_cond_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:04Z",
+            "createdAt": "2023-01-18T06:51:18Z",
+            "id": "I_kwDOA-j9z85bpDT6",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92422,
+            "state": "CLOSED",
+            "title": "DISABLED test_cond_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92422"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_cell_output2_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:04Z",
+            "createdAt": "2023-01-18T06:50:28Z",
+            "id": "I_kwDOA-j9z85bpDIs",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92421,
+            "state": "CLOSED",
+            "title": "DISABLED test_cell_output2_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92421"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_cell_output1_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:03Z",
+            "createdAt": "2023-01-18T06:50:28Z",
+            "id": "I_kwDOA-j9z85bpDIr",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92420,
+            "state": "CLOSED",
+            "title": "DISABLED test_cell_output1_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92420"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_callpacked_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:03Z",
+            "createdAt": "2023-01-18T06:50:19Z",
+            "id": "I_kwDOA-j9z85bpDGY",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92419,
+            "state": "CLOSED",
+            "title": "DISABLED test_callpacked_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92419"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_call_parent_non_class_methods_from_child_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:02Z",
+            "createdAt": "2023-01-18T06:50:16Z",
+            "id": "I_kwDOA-j9z85bpDFw",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92418,
+            "state": "CLOSED",
+            "title": "DISABLED test_call_parent_non_class_methods_from_child_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92418"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_builtin_isinstance_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:02Z",
+            "createdAt": "2023-01-18T06:50:13Z",
+            "id": "I_kwDOA-j9z85bpDE6",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92417,
+            "state": "CLOSED",
+            "title": "DISABLED test_builtin_isinstance_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92417"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_builder_for_class_with_metaclass_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:01Z",
+            "createdAt": "2023-01-18T06:50:10Z",
+            "id": "I_kwDOA-j9z85bpDEX",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92416,
+            "state": "CLOSED",
+            "title": "DISABLED test_builder_for_class_with_metaclass_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92416"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_build_tuple_unpack_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:01Z",
+            "createdAt": "2023-01-18T06:50:07Z",
+            "id": "I_kwDOA-j9z85bpDDw",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92415,
+            "state": "CLOSED",
+            "title": "DISABLED test_build_tuple_unpack_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92415"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_boolarg_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:00Z",
+            "createdAt": "2023-01-18T06:50:04Z",
+            "id": "I_kwDOA-j9z85bpDDL",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92414,
+            "state": "CLOSED",
+            "title": "DISABLED test_boolarg_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92414"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_autograd_profiler_enabled_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:21:00Z",
+            "createdAt": "2023-01-18T06:50:02Z",
+            "id": "I_kwDOA-j9z85bpDC0",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92413,
+            "state": "CLOSED",
+            "title": "DISABLED test_autograd_profiler_enabled_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:21:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92413"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_autograd_profiler_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:59Z",
+            "createdAt": "2023-01-18T06:49:58Z",
+            "id": "I_kwDOA-j9z85bpDB9",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92412,
+            "state": "CLOSED",
+            "title": "DISABLED test_autograd_profiler_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92412"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_autograd_function_equivalence_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:59Z",
+            "createdAt": "2023-01-18T06:49:55Z",
+            "id": "I_kwDOA-j9z85bpDBR",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92411,
+            "state": "CLOSED",
+            "title": "DISABLED test_autograd_function_equivalence_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92411"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_autocast_float64_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:59Z",
+            "createdAt": "2023-01-18T06:49:52Z",
+            "id": "I_kwDOA-j9z85bpDAl",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92410,
+            "state": "CLOSED",
+            "title": "DISABLED test_autocast_float64_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92410"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_autocast_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:58Z",
+            "createdAt": "2023-01-18T06:49:49Z",
+            "id": "I_kwDOA-j9z85bpDAP",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92409,
+            "state": "CLOSED",
+            "title": "DISABLED test_autocast_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92409"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_autocast_device_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:58Z",
+            "createdAt": "2023-01-18T06:49:46Z",
+            "id": "I_kwDOA-j9z85bpC_l",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92408,
+            "state": "CLOSED",
+            "title": "DISABLED test_autocast_device_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92408"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_autocast_cpu_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:57Z",
+            "createdAt": "2023-01-18T06:49:46Z",
+            "id": "I_kwDOA-j9z85bpC_k",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92407,
+            "state": "CLOSED",
+            "title": "DISABLED test_autocast_cpu_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92407"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 3 hours, it has been determined flaky in 2 workflow(s) with 5 failures and 2 successes.\nDebugging instructions (after clicking on the recent samples link):\nDO NOT ASSUME THINGS ARE OKAY IF THE CI IS GREEN. We now shield flaky tests from developers so CI will thus be green but it will be harder to parse the logs.\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nClick on the Test step of the job so that it is expanded. Otherwise, the grepping will not work.\nGrep for test_cfgmod_dynamic_shapes\nThere should be several instances run (as flaky tests are rerun in CI) from which you can study the logs.\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:57Z",
+            "createdAt": "2023-01-18T06:49:28Z",
+            "id": "I_kwDOA-j9z85bpC7n",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92406,
+            "state": "CLOSED",
+            "title": "DISABLED test_cfgmod_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92406"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_allow_in_graph_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:20:56Z",
+            "createdAt": "2023-01-18T06:49:28Z",
+            "id": "I_kwDOA-j9z85bpC7m",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92405,
+            "state": "CLOSED",
+            "title": "DISABLED test_allow_in_graph_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92405"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_namedtuple1_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: ResponseTimeoutError: Response timeout for 5000ms, GET https://raw.githubusercontent.com/pytorch/pytorch/master/test//opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py -1 (connected: true, keepalive socket: false, socketHandledRequests: 1, socketHandledResponses: 0)\nheaders: {}",
+            "closedAt": "2023-01-18T23:20:56Z",
+            "createdAt": "2023-01-18T06:49:21Z",
+            "id": "I_kwDOA-j9z85bpC6L",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92404,
+            "state": "CLOSED",
+            "title": "DISABLED test_namedtuple1_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:20:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92404"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_user_property_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:33:00Z",
+            "createdAt": "2023-01-18T03:41:08Z",
+            "id": "I_kwDOA-j9z85bojHu",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92395,
+            "state": "CLOSED",
+            "title": "DISABLED test_user_property_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:33:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92395"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_user_defined_class_name_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:59Z",
+            "createdAt": "2023-01-18T03:41:05Z",
+            "id": "I_kwDOA-j9z85bojHT",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92394,
+            "state": "CLOSED",
+            "title": "DISABLED test_user_defined_class_name_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92394"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_user_function_variable_supports_function_argument_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:59Z",
+            "createdAt": "2023-01-18T03:41:02Z",
+            "id": "I_kwDOA-j9z85bojGx",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92393,
+            "state": "CLOSED",
+            "title": "DISABLED test_user_function_variable_supports_function_argument_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92393"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_user_getattr2_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:59Z",
+            "createdAt": "2023-01-18T03:41:02Z",
+            "id": "I_kwDOA-j9z85bojGv",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92392,
+            "state": "CLOSED",
+            "title": "DISABLED test_user_getattr2_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92392"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_access_by_keys_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:28:46Z",
+            "createdAt": "2023-01-18T03:40:37Z",
+            "id": "I_kwDOA-j9z85bojDH",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92391,
+            "state": "CLOSED",
+            "title": "DISABLED test_access_by_keys_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:28:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92391"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_update_locals_and_stack_uses_shared_cache_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:58Z",
+            "createdAt": "2023-01-18T03:40:34Z",
+            "id": "I_kwDOA-j9z85bojCs",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92390,
+            "state": "CLOSED",
+            "title": "DISABLED test_update_locals_and_stack_uses_shared_cache_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92390"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_usr_cls_classmethod_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:58Z",
+            "createdAt": "2023-01-18T03:40:31Z",
+            "id": "I_kwDOA-j9z85bojCV",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92389,
+            "state": "CLOSED",
+            "title": "DISABLED test_usr_cls_classmethod_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92389"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_unpack4_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:57Z",
+            "createdAt": "2023-01-18T03:40:28Z",
+            "id": "I_kwDOA-j9z85bojB6",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92388,
+            "state": "CLOSED",
+            "title": "DISABLED test_unpack4_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92388"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_unpack5_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:57Z",
+            "createdAt": "2023-01-18T03:40:25Z",
+            "id": "I_kwDOA-j9z85bojBj",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92387,
+            "state": "CLOSED",
+            "title": "DISABLED test_unpack5_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92387"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_user_getattr1_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:56Z",
+            "createdAt": "2023-01-18T03:40:24Z",
+            "id": "I_kwDOA-j9z85bojBR",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92386,
+            "state": "CLOSED",
+            "title": "DISABLED test_user_getattr1_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92386"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_call_fn_with_non_const_inputs_safe_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:28:55Z",
+            "createdAt": "2023-01-18T03:40:19Z",
+            "id": "I_kwDOA-j9z85bojAu",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92385,
+            "state": "CLOSED",
+            "title": "DISABLED test_call_fn_with_non_const_inputs_safe_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:28:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92385"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_user_function_variable_supports_type_abcmeta_argument_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:56Z",
+            "createdAt": "2023-01-18T03:40:16Z",
+            "id": "I_kwDOA-j9z85bojAS",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92384,
+            "state": "CLOSED",
+            "title": "DISABLED test_user_function_variable_supports_type_abcmeta_argument_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92384"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_usr_cls_staticmethod_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:55Z",
+            "createdAt": "2023-01-18T03:40:13Z",
+            "id": "I_kwDOA-j9z85boi__",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92383,
+            "state": "CLOSED",
+            "title": "DISABLED test_usr_cls_staticmethod_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92383"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 2 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_basicmodule1_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:28:59Z",
+            "createdAt": "2023-01-18T03:40:10Z",
+            "id": "I_kwDOA-j9z85boi_k",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92382,
+            "state": "CLOSED",
+            "title": "DISABLED test_basicmodule1_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:28:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92382"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Platforms: linux\nThis test was disabled because it is failing in CI. See recent examples and the most recent trunk workflow logs.\nOver the past 72 hours, it has flakily failed in 4 workflow(s).\nDebugging instructions (after clicking on the recent samples link):\nTo find relevant log snippets:\n\nClick on the workflow logs linked above\nGrep for test_write_to_closures_in_inlining_dynamic_shapes\n\nError retrieving /opt/conda/lib/python3.10/site-packages/torch/_dynamo/testing.py: Error: Statuscode 301",
+            "closedAt": "2023-01-18T23:32:55Z",
+            "createdAt": "2023-01-18T03:40:10Z",
+            "id": "I_kwDOA-j9z85boi_j",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: flaky-tests"
+                },
+                {
+                  "name": "skipped"
+                },
+                {
+                  "name": "module: unknown"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 92381,
+            "state": "CLOSED",
+            "title": "DISABLED test_write_to_closures_in_inlining_dynamic_shapes (torch._dynamo.testing.make_test_cls_with_patches.<locals>.DummyTestClass)",
+            "updatedAt": "2023-01-18T23:32:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92381"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Describe the bug\nThe following program leads to an error.\nimport torch\n\nclass Model(torch.nn.Module):\n    def __init__(self, ):\n        super().__init__()\n    \n    def forward(self, v1: torch.Tensor):\n        vx = v1.min(dim=1).values # works fine if we remove this operation\n        # vx has shape [10, 0]\n        v2 = torch.randn_like(vx)\n        return v2\n\nmodel = Model()\nx = torch.rand(10, 3, 0) # ERROR\n# x = torch.rand(10, 3, 1) # works fine\ncompiled = torch.compile(model, fullgraph=False)\nprint(compiled(x))\n\nError logs\n[2023-01-17 19:37:21,319] torch._inductor.graph: [WARNING] Creating implicit fallback for:\n  target: aten.randn_like.default\n  args[0]: TensorBox(StorageBox(\n    Pointwise(\n      'cpu',\n      torch.float32,\n      tmp0 = load(arg0_1, i1 + 3 * i0)\n      tmp1 = load(arg0_1, 1 + i1 + 3 * i0)\n      tmp2 = minimum(tmp0, tmp1)\n      tmp3 = load(arg0_1, 2 + i1 + 3 * i0)\n      tmp4 = minimum(tmp2, tmp3)\n      return tmp4\n      ,\n      ranges=[10, 0],\n      origins={arg0_1, min_1}\n    )\n  ))\n  kwargs: {'dtype': torch.float32, 'layout': torch.strided, 'device': device(type='cpu'), 'pin_memory': False}\n[2023-01-17 19:37:21,323] torch._inductor.ir: [WARNING] Using FallbackKernel: torch.ops.aten.randn_like.default\nTraceback (most recent call last):\n  File \"/JawTitan/colin-data/code/proj/tbug3.py\", line 16, in <module>\n    print(compiled(x))\n  File \"/home/colin/miniconda3/envs/py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1488, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/home/colin/miniconda3/envs/py39/lib/python3.9/site-packages/torch/_dynamo/eval_frame.py\", line 83, in forward\n    return self.dynamo_ctx(self._orig_mod.forward)(*args, **kwargs)\n  File \"/home/colin/miniconda3/envs/py39/lib/python3.9/site-packages/torch/_dynamo/eval_frame.py\", line 212, in _fn\n    return fn(*args, **kwargs)\n  File \"/JawTitan/colin-data/code/proj/tbug3.py\", line 7, in forward\n    def forward(self, v1: torch.Tensor):\n  File \"/home/colin/miniconda3/envs/py39/lib/python3.9/site-packages/torch/_dynamo/eval_frame.py\", line 212, in _fn\n    return fn(*args, **kwargs)\n  File \"/home/colin/miniconda3/envs/py39/lib/python3.9/site-packages/torch/_functorch/aot_autograd.py\", line 2457, in forward\n    return compiled_fn(full_args)\n  File \"/home/colin/miniconda3/envs/py39/lib/python3.9/site-packages/torch/_functorch/aot_autograd.py\", line 1056, in new_fn\n    fw_outs = call_func_with_args(compiled_fw, args, disable_amp=disable_amp)\n  File \"/home/colin/miniconda3/envs/py39/lib/python3.9/site-packages/torch/_functorch/aot_autograd.py\", line 1012, in call_func_with_args\n    out = normalize_as_list(f(args))\n  File \"/tmp/torchinductor_colin/rb/crbn2pnyv3fmlvwj4ig6xk4qljdmjvrqyrydlzyri2y353bu7yrh.py\", line 30, in call\n    assert_size_stride(buf2, (10, 0), (1, 1))\nAssertionError: expected size 10==10, stride 0==1 at dim=0\n\nIf we take a look at the AssertionError coming from a temporarily generated program that seems to do some profiling, we can find that the generated program has a mistake (see the comment in the following program).\nfrom ctypes import c_void_p, c_long\nimport torch\nimport random\nfrom torch import empty_strided, as_strided, device\nfrom torch._inductor.codecache import AsyncCompile\nfrom torch._inductor.select_algorithm import extern_kernels\n\naten = torch.ops.aten\nassert_size_stride = torch._C._dynamo.guards.assert_size_stride\nasync_compile = AsyncCompile()\n\nimport triton\nimport triton.language as tl\nfrom torch._inductor.triton_ops.autotune import grid\nfrom torch._C import _cuda_getCurrentRawStream as get_cuda_stream\n\n\nasync_compile.wait(globals())\ndel async_compile\n\ndef call(args):\n    arg0_1, = args\n    args.clear()\n    buf0 = empty_strided((10, 0), (0, 1), device='cpu', dtype=torch.float32)\n    del arg0_1\n    buf1 = torch.ops.aten.randn_like.default(buf0, dtype=torch.float32, layout=torch.strided, device=device(type='cpu'), pin_memory=False)\n    del buf0\n    buf2 = buf1\n    assert_size_stride(buf2, (10, 0), (1, 1)) # WRONG! should be (10, 0), (0, 1)\n    del buf1\n    return (buf2, )\n\n\nif __name__ == \"__main__\":\n    from torch._dynamo.testing import rand_strided\n    from torch._inductor.utils import print_performance\n    arg0_1 = rand_strided((10, 3, 0), (3, 1, 1), device='cpu', dtype=torch.float32)\n    print_performance(lambda: call([arg0_1]))\nSomething interesting is that, if we remove the min operation, it works fine, as the following program shows. Note that we give randn_like with an input tensor of the same shape as above.\nimport torch\n\nclass Model(torch.nn.Module):\n    def __init__(self, ):\n        super().__init__()\n    \n    def forward(self, v1: torch.Tensor):\n        # v1 has shape [10, 0]\n        v2 = torch.randn_like(v1)\n        return v2\n\nmodel = Model()\nx = torch.rand(10, 0) # works fine\ncompiled = torch.compile(model, fullgraph=False)\nprint(compiled(x))\nVersions\nversion info\nCollecting environment information...\nPyTorch version: 2.0.0.dev20230117+cu117\nIs debug build: False\nCUDA used to build PyTorch: 11.7\nROCM used to build PyTorch: N/A\n\nOS: Ubuntu 20.04.5 LTS (x86_64)\nGCC version: (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0\nClang version: 10.0.0-4ubuntu1 \nCMake version: version 3.25.0\nLibc version: glibc-2.31\n\nPython version: 3.9.15 (main, Nov 24 2022, 14:31:59)  [GCC 11.2.0] (64-bit runtime)\nPython platform: Linux-5.4.0-136-generic-x86_64-with-glibc2.31\nIs CUDA available: True\nCUDA runtime version: Could not collect\nCUDA_MODULE_LOADING set to: LAZY\nGPU models and configuration: \nGPU 0: NVIDIA RTX A6000\nGPU 1: NVIDIA RTX A6000\nGPU 2: NVIDIA RTX A6000\nGPU 3: NVIDIA RTX A6000\n\nNvidia driver version: 510.68.02\ncuDNN version: Probably one of the following:\n/usr/lib/x86_64-linux-gnu/libcudnn.so.8.2.2\n/usr/lib/x86_64-linux-gnu/libcudnn_adv_infer.so.8.2.2\n/usr/lib/x86_64-linux-gnu/libcudnn_adv_train.so.8.2.2\n/usr/lib/x86_64-linux-gnu/libcudnn_cnn_infer.so.8.2.2\n/usr/lib/x86_64-linux-gnu/libcudnn_cnn_train.so.8.2.2\n/usr/lib/x86_64-linux-gnu/libcudnn_ops_infer.so.8.2.2\n/usr/lib/x86_64-linux-gnu/libcudnn_ops_train.so.8.2.2\nHIP runtime version: N/A\nMIOpen runtime version: N/A\nIs XNNPACK available: True\n\nVersions of relevant libraries:\n[pip3] numpy==1.23.5\n[pip3] pytorch-triton==2.0.0+0d7e753227\n[pip3] torch==2.0.0.dev20230117+cu117\n[pip3] torchaudio==2.0.0.dev20230117+cu117\n[pip3] torchtriton==2.0.0+0d7e753227\n[pip3] torchvision==0.15.0.dev20230117+cu117\n[conda] numpy                     1.23.5                   pypi_0    pypi\n[conda] pytorch-triton            2.0.0+0d7e753227          pypi_0    pypi\n[conda] torch                     2.0.0.dev20230117+cu117          pypi_0    pypi\n[conda] torchaudio                2.0.0.dev20230117+cu117          pypi_0    pypi\n[conda] torchtriton               2.0.0+0d7e753227          pypi_0    pypi\n[conda] torchvision               0.15.0.dev20230117+cu117          pypi_0    pypi\n\ncc @ezyang @soumith @msaroufim @wconstab @ngimel @bdhirsh",
+            "closedAt": "2023-01-26T21:35:33Z",
+            "createdAt": "2023-01-18T01:56:55Z",
+            "id": "I_kwDOA-j9z85boQXB",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 92368,
+            "state": "CLOSED",
+            "title": "`torch.compile` generates wrong profiling program for `randn_like`",
+            "updatedAt": "2023-01-26T21:35:33Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92368"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "🐛 Describe the bug\nThere is a on-going effort #86225 to decouple the ProcessGroup and Backend abstraction so that a single process group object can map to several backends based on the device type of the input and output tensors.\ndistributed_c10d.py has been reworked as part of this effort. However, it seems like custom backends are not being handled correctly --\n\n  \n    \n      pytorch/torch/distributed/distributed_c10d.py\n    \n    \n         Line 1024\n      in\n      88942a3\n    \n  \n  \n    \n\n        \n          \n           backend_class = creator_fn(dist_backend_opts, pg_options) \n        \n    \n  \n\n\nAfter the above line, we never set backend_type for custom backends and that lead to an invalid reference error here:\n\n  \n    \n      pytorch/torch/distributed/distributed_c10d.py\n    \n    \n        Lines 1059 to 1064\n      in\n      88942a3\n    \n  \n  \n    \n\n        \n          \n           if backend in [Backend.GLOO, Backend.NCCL, Backend.UCC, Backend.MPI]: \n        \n\n        \n          \n               for device in backend_config.get_device_backend_map().keys(): \n        \n\n        \n          \n                   pg._register_backend(torch.device(device), backend_type, backend_class) \n        \n\n        \n          \n            \n        \n\n        \n          \n               # break out of outer loop to not create any more backends \n        \n\n        \n          \n               break \n        \n    \n  \n\n.\nAlso, notice the check on line 1059. We should add in custom backend to the list, so that for a given process group we can map both \"cpu\" and \"cuda\" device types to the same custom backend object.\nVersions\nmaster branch built from source\n[pip3] numpy==1.23.5\n[pip3] pytorch-triton==0.0.1\n[pip3] torch==2.0.0a0+git692fd63\n[pip3] torchaudio==2.0.0a0+4699ef2\n[pip3] torchdata==0.6.0a0+a1612ee\n[pip3] torchtext==0.15.0a0+f653dac\n[pip3] torchvision==0.15.0a0+32d254b\n[conda] magma-cuda117             2.6.1                         1    pytorch\n[conda] mkl                       2022.2.1         h84fe81f_16997    conda-forge\n[conda] mkl-include               2023.0.0         h84fe81f_25396    conda-forge\n[conda] numpy                     1.23.5                   pypi_0    pypi\n[conda] pytorch-triton            0.0.1                    pypi_0    pypi\n[conda] torch                     2.0.0a0+git692fd63          pypi_0    pypi\n[conda] torchaudio                2.0.0a0+4699ef2          pypi_0    pypi\n[conda] torchdata                 0.6.0a0+a1612ee          pypi_0    pypi\n[conda] torchtext                 0.15.0a0+f653dac          pypi_0    pypi\n[conda] torchvision               0.15.0a0+32d254b          pypi_0    pypi\n\ncc @mrshenli @pritamdamania87 @zhaojuanmao @satgera @rohan-varma @gqchen @aazzolini @osalpekar @jiayisuse @H-Huang @kwen2501 @awgu",
+            "closedAt": "2023-03-02T21:41:56Z",
+            "createdAt": "2023-01-17T22:10:30Z",
+            "id": "I_kwDOA-j9z85bnkYl",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "oncall: distributed"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 92344,
+            "state": "CLOSED",
+            "title": "distributed_c10d.py Does Not Handle Custom Backends Correctly",
+            "updatedAt": "2023-03-02T21:41:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/92344"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAyMy0wMS0xN1QyMjoxMDozMFrOW55GJQ==",
+          "hasNextPage": true
+        },
+        "totalCount": 44684
+      }
+    }
+  }
+}

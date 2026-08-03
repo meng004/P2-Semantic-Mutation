@@ -1,0 +1,3248 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_dlpack.py\nTest class: TestTorchDlPack\nTest name: test_dlpack_cuda_per_thread_stream\nDefined at line: 304\nParent issue: #168744\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_dlpack.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T12:01:53Z",
+            "createdAt": "2025-11-22T01:07:39Z",
+            "id": "I_kwDOA-j9z87ZxMqY",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168746,
+            "state": "CLOSED",
+            "title": "Test: TestTorchDlPack.test_dlpack_cuda_per_thread_stream",
+            "updatedAt": "2025-12-22T12:01:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168746"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_dlpack.py\nTest class: TestTorchDlPack\nTest name: test_dlpack_convert_default_stream\nDefined at line: 277\nParent issue: #168744\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_dlpack.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-07T18:37:39Z",
+            "createdAt": "2025-11-22T01:07:37Z",
+            "id": "I_kwDOA-j9z87ZxMp-",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168745,
+            "state": "CLOSED",
+            "title": "Test: TestTorchDlPack.test_dlpack_convert_default_stream",
+            "updatedAt": "2026-01-07T18:37:40Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168745"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_dlpack.py\nTest class: TestTorchDlPack\nROCm-skipped tests: 3\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_dlpack.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-07T18:37:40Z",
+            "createdAt": "2025-11-22T01:07:36Z",
+            "id": "I_kwDOA-j9z87ZxMpg",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168744,
+            "state": "CLOSED",
+            "title": "TestModule: test/test_dlpack.py::TestTorchDlPack",
+            "updatedAt": "2026-01-07T18:37:40Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168744"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCudaDeviceParametrized\nTest name: test_graph_external_wait_and_record\nDefined at line: 7363\nParent issue: #168740\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-05-11T17:33:38Z",
+            "createdAt": "2025-11-22T01:07:31Z",
+            "id": "I_kwDOA-j9z87ZxMoa",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168741,
+            "state": "CLOSED",
+            "title": "Test: TestCudaDeviceParametrized.test_graph_external_wait_and_record",
+            "updatedAt": "2026-05-11T17:33:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168741"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCudaDeviceParametrized\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-05-11T17:33:37Z",
+            "createdAt": "2025-11-22T01:07:30Z",
+            "id": "I_kwDOA-j9z87ZxMja",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168740,
+            "state": "CLOSED",
+            "title": "TestModule: test/test_cuda.py::TestCudaDeviceParametrized",
+            "updatedAt": "2026-05-11T17:33:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168740"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCompileKernel\nTest name: test_compile_kernel_advanced\nDefined at line: 7012\nParent issue: #168738\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-05-20T02:59:38Z",
+            "createdAt": "2025-11-22T01:07:29Z",
+            "id": "I_kwDOA-j9z87ZxMi1",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168739,
+            "state": "CLOSED",
+            "title": "Test: TestCompileKernel.test_compile_kernel_advanced",
+            "updatedAt": "2026-05-20T02:59:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168739"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCompileKernel\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-06-03T22:28:35Z",
+            "createdAt": "2025-11-22T01:07:27Z",
+            "id": "I_kwDOA-j9z87ZxMik",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168738,
+            "state": "CLOSED",
+            "title": "TestModule: test/test_cuda.py::TestCompileKernel",
+            "updatedAt": "2026-06-03T22:28:36Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168738"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestMemPool\nTest name: test_mempool_expandable\nDefined at line: 5858\nParent issue: #168736\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-03-13T23:29:11Z",
+            "createdAt": "2025-11-22T01:07:26Z",
+            "id": "I_kwDOA-j9z87ZxMiO",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168737,
+            "state": "CLOSED",
+            "title": "Test: TestMemPool.test_mempool_expandable",
+            "updatedAt": "2026-03-13T23:29:11Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168737"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestMemPool\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-03-13T23:29:12Z",
+            "createdAt": "2025-11-22T01:07:24Z",
+            "id": "I_kwDOA-j9z87ZxMhr",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168736,
+            "state": "CLOSED",
+            "title": "TestModule: test/test_cuda.py::TestMemPool",
+            "updatedAt": "2026-03-13T23:29:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168736"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_no_triton_on_import\nDefined at line: 5371\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:31Z",
+            "createdAt": "2025-11-22T01:07:23Z",
+            "id": "I_kwDOA-j9z87ZxMhR",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168735,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_no_triton_on_import",
+            "updatedAt": "2025-12-22T18:43:31Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168735"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_allocate_in_thread_to_pool\nDefined at line: 5297\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:30Z",
+            "createdAt": "2025-11-22T01:07:21Z",
+            "id": "I_kwDOA-j9z87ZxMg2",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168734,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_allocate_in_thread_to_pool",
+            "updatedAt": "2025-12-22T18:43:30Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168734"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_check_pool_live_allocations\nDefined at line: 5277\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:30Z",
+            "createdAt": "2025-11-22T01:07:20Z",
+            "id": "I_kwDOA-j9z87ZxMgk",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168733,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_check_pool_live_allocations",
+            "updatedAt": "2025-12-22T18:43:30Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168733"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_resnet\nDefined at line: 5267\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:29Z",
+            "createdAt": "2025-11-22T01:07:18Z",
+            "id": "I_kwDOA-j9z87ZxMgB",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168732,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_resnet",
+            "updatedAt": "2025-12-22T18:43:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168732"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_assigning_back_deleter_fns_to_tensor\nDefined at line: 5204\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:29Z",
+            "createdAt": "2025-11-22T01:07:16Z",
+            "id": "I_kwDOA-j9z87ZxMfs",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168731,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_assigning_back_deleter_fns_to_tensor",
+            "updatedAt": "2025-12-22T18:43:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168731"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_tensor_dies_after_checkpoint\nDefined at line: 5181\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:29Z",
+            "createdAt": "2025-11-22T01:07:15Z",
+            "id": "I_kwDOA-j9z87ZxMeK",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168730,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_tensor_dies_after_checkpoint",
+            "updatedAt": "2025-12-22T18:43:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168730"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_additional_free_following_checkpoint\nDefined at line: 5138\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:28Z",
+            "createdAt": "2025-11-22T01:07:13Z",
+            "id": "I_kwDOA-j9z87ZxMd1",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168729,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_additional_free_following_checkpoint",
+            "updatedAt": "2025-12-22T18:43:28Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168729"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_middle_allocations_contiguous\nDefined at line: 5131\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:28Z",
+            "createdAt": "2025-11-22T01:07:12Z",
+            "id": "I_kwDOA-j9z87ZxMdC",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168728,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_middle_allocations_contiguous",
+            "updatedAt": "2025-12-22T18:43:28Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168728"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_multiple_middle_allocations\nDefined at line: 5124\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:28Z",
+            "createdAt": "2025-11-22T01:07:10Z",
+            "id": "I_kwDOA-j9z87ZxMZj",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168727,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_multiple_middle_allocations",
+            "updatedAt": "2025-12-22T18:43:28Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168727"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_allocated_in_middle_of_segment\nDefined at line: 5117\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:27Z",
+            "createdAt": "2025-11-22T01:07:09Z",
+            "id": "I_kwDOA-j9z87ZxMZI",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168726,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_allocated_in_middle_of_segment",
+            "updatedAt": "2025-12-22T18:43:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168726"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nTest name: test_simple\nDefined at line: 5106\nParent issue: #168724\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:27Z",
+            "createdAt": "2025-11-22T01:07:07Z",
+            "id": "I_kwDOA-j9z87ZxMYs",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168725,
+            "state": "CLOSED",
+            "title": "Test: TestBlockStateAbsorption.test_simple",
+            "updatedAt": "2025-12-22T18:43:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168725"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestBlockStateAbsorption\nROCm-skipped tests: 11\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-20T15:14:13Z",
+            "createdAt": "2025-11-22T01:07:06Z",
+            "id": "I_kwDOA-j9z87ZxMYb",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168724,
+            "state": "CLOSED",
+            "title": "TestModule: test/test_cuda.py::TestBlockStateAbsorption",
+            "updatedAt": "2026-01-20T15:14:13Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168724"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCudaMallocAsync\nTest name: test_clock_speed\nDefined at line: 4870\nParent issue: #168720\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-05-01T22:12:29Z",
+            "createdAt": "2025-11-22T01:07:05Z",
+            "id": "I_kwDOA-j9z87ZxMX_",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168723,
+            "state": "CLOSED",
+            "title": "Test: TestCudaMallocAsync.test_clock_speed",
+            "updatedAt": "2026-05-01T22:12:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168723"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_graph_manual_seed_mismatch_raises\nDefined at line: 3157\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-23T00:21:12Z",
+            "createdAt": "2025-11-22T01:06:58Z",
+            "id": "I_kwDOA-j9z87ZxMVf",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168719,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_graph_manual_seed_mismatch_raises",
+            "updatedAt": "2025-12-23T00:21:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168719"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_graph_checkpoint_preserve_rng_state\nDefined at line: 3124\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-23T00:21:12Z",
+            "createdAt": "2025-11-22T01:06:57Z",
+            "id": "I_kwDOA-j9z87ZxMQ6",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168718,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_graph_checkpoint_preserve_rng_state",
+            "updatedAt": "2025-12-23T00:21:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168718"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_graph_cudnn_dropout\nDefined at line: 3095\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-23T00:21:12Z",
+            "createdAt": "2025-11-22T01:06:54Z",
+            "id": "I_kwDOA-j9z87ZxMP_",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168717,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_graph_cudnn_dropout",
+            "updatedAt": "2025-12-23T00:21:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168717"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_graph_warn_if_has_zero_nodes\nDefined at line: 2370\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-23T00:21:11Z",
+            "createdAt": "2025-11-22T01:06:52Z",
+            "id": "I_kwDOA-j9z87ZxMPp",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168716,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_graph_warn_if_has_zero_nodes",
+            "updatedAt": "2025-12-23T00:21:11Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168716"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_graph_timing\nDefined at line: 2311\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-05-11T17:33:36Z",
+            "createdAt": "2025-11-22T01:06:51Z",
+            "id": "I_kwDOA-j9z87ZxMPK",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168715,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_graph_timing",
+            "updatedAt": "2026-05-11T17:33:36Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168715"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_cudnn_multiple_threads_same_device\nDefined at line: 1926\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:26Z",
+            "createdAt": "2025-11-22T01:06:49Z",
+            "id": "I_kwDOA-j9z87ZxMOy",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168714,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_cudnn_multiple_threads_same_device",
+            "updatedAt": "2025-12-22T18:43:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168714"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_fixed_cuda_assert_async\nDefined at line: 1828\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-22T18:43:26Z",
+            "createdAt": "2025-11-22T01:06:48Z",
+            "id": "I_kwDOA-j9z87ZxMOb",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168713,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_fixed_cuda_assert_async",
+            "updatedAt": "2025-12-22T18:43:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168713"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_index_out_of_bounds_exception_cuda\nDefined at line: 1456\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-23T11:24:04Z",
+            "createdAt": "2025-11-22T01:06:46Z",
+            "id": "I_kwDOA-j9z87ZxMOK",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168712,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_index_out_of_bounds_exception_cuda",
+            "updatedAt": "2025-12-23T11:24:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168712"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nTest name: test_multinomial_invalid_probs_cuda\nDefined at line: 1425\nParent issue: #168710\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-23T11:24:03Z",
+            "createdAt": "2025-11-22T01:06:44Z",
+            "id": "I_kwDOA-j9z87ZxMNx",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168711,
+            "state": "CLOSED",
+            "title": "Test: TestCuda.test_multinomial_invalid_probs_cuda",
+            "updatedAt": "2025-12-23T11:24:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168711"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/test_cuda.py\nTest class: TestCuda\nROCm-skipped tests: 9\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/test_cuda.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-06-25T00:27:23Z",
+            "createdAt": "2025-11-22T01:06:43Z",
+            "id": "I_kwDOA-j9z87ZxMNe",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168710,
+            "state": "CLOSED",
+            "title": "TestModule: test/test_cuda.py::TestCuda",
+            "updatedAt": "2026-06-25T00:27:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168710"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/quantization/core/test_workflow_ops.py\nTest class: TestFakeQuantizeOps\nTest name: test_fake_quantize_per_tensor_affine_inf\nDefined at line: 1086\nParent issue: #168704\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/quantization/core/test_workflow_ops.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-06T22:22:02Z",
+            "createdAt": "2025-11-22T01:06:36Z",
+            "id": "I_kwDOA-j9z87ZxMLb",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168705,
+            "state": "CLOSED",
+            "title": "Test: TestFakeQuantizeOps.test_fake_quantize_per_tensor_affine_inf",
+            "updatedAt": "2026-01-06T22:22:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168705"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/quantization/core/test_workflow_ops.py\nTest class: TestFakeQuantizeOps\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/quantization/core/test_workflow_ops.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-06T22:22:01Z",
+            "createdAt": "2025-11-22T01:06:34Z",
+            "id": "I_kwDOA-j9z87ZxMLG",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168704,
+            "state": "CLOSED",
+            "title": "TestModule: test/quantization/core/test_workflow_ops.py::TestFakeQuantizeOps",
+            "updatedAt": "2026-01-06T22:22:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168704"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/quantization/core/experimental/test_bits.py\nTest class: TestBits\nTest name: test_types\nDefined at line: 55\nParent issue: #168702\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/quantization/core/experimental/test_bits.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-07T01:34:15Z",
+            "createdAt": "2025-11-22T01:06:33Z",
+            "id": "I_kwDOA-j9z87ZxMKC",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168703,
+            "state": "CLOSED",
+            "title": "Test: TestBits.test_types",
+            "updatedAt": "2026-01-07T01:34:15Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168703"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/quantization/core/experimental/test_bits.py\nTest class: TestBits\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/quantization/core/experimental/test_bits.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-07T01:34:16Z",
+            "createdAt": "2025-11-22T01:06:31Z",
+            "id": "I_kwDOA-j9z87ZxMJz",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168702,
+            "state": "CLOSED",
+            "title": "TestModule: test/quantization/core/experimental/test_bits.py::TestBits",
+            "updatedAt": "2026-01-07T01:34:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168702"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/profiler/test_profiler.py\nTest class: TestProfiler\nTest name: test_kineto_multigpu\nDefined at line: 545\nParent issue: #168700\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/profiler/test_profiler.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-06T23:47:50Z",
+            "createdAt": "2025-11-22T01:06:30Z",
+            "id": "I_kwDOA-j9z87ZxMJh",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168701,
+            "state": "CLOSED",
+            "title": "Test: TestProfiler.test_kineto_multigpu",
+            "updatedAt": "2026-01-06T23:47:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168701"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/profiler/test_profiler.py\nTest class: TestProfiler\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/profiler/test_profiler.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-06T23:47:50Z",
+            "createdAt": "2025-11-22T01:06:29Z",
+            "id": "I_kwDOA-j9z87ZxMJK",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168700,
+            "state": "CLOSED",
+            "title": "TestModule: test/profiler/test_profiler.py::TestProfiler",
+            "updatedAt": "2026-01-06T23:47:51Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168700"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/nn/test_pooling.py\nTest class: TestPoolingNNDeviceType\nTest name: test_MaxUnpool_index_errors\nDefined at line: 811\nParent issue: #168698\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/nn/test_pooling.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-21T06:16:23Z",
+            "createdAt": "2025-11-22T01:06:27Z",
+            "id": "I_kwDOA-j9z87ZxMIx",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168699,
+            "state": "CLOSED",
+            "title": "Test: TestPoolingNNDeviceType.test_MaxUnpool_index_errors",
+            "updatedAt": "2026-01-21T06:16:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168699"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/nn/test_pooling.py\nTest class: TestPoolingNNDeviceType\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/nn/test_pooling.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-22T10:39:39Z",
+            "createdAt": "2025-11-22T01:06:26Z",
+            "id": "I_kwDOA-j9z87ZxMIW",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168698,
+            "state": "CLOSED",
+            "title": "TestModule: test/nn/test_pooling.py::TestPoolingNNDeviceType",
+            "updatedAt": "2026-01-22T10:39:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168698"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/nn/test_convolution.py\nTest class: TestConvolutionNNDeviceType\nTest name: test_depthwise_conv_64bit_indexing\nDefined at line: 4232\nParent issue: #168692\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/nn/test_convolution.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-17T02:29:55Z",
+            "createdAt": "2025-11-22T01:06:24Z",
+            "id": "I_kwDOA-j9z87ZxMIA",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 168697,
+            "state": "CLOSED",
+            "title": "Test: TestConvolutionNNDeviceType.test_depthwise_conv_64bit_indexing",
+            "updatedAt": "2025-12-17T02:29:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168697"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/nn/test_convolution.py\nTest class: TestConvolutionNNDeviceType\nTest name: test_conv3d_64bit_indexing\nDefined at line: 4196\nParent issue: #168692\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/nn/test_convolution.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-01-10T04:34:04Z",
+            "createdAt": "2025-11-22T01:06:21Z",
+            "id": "I_kwDOA-j9z87ZxMCz",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 168695,
+            "state": "CLOSED",
+            "title": "Test: TestConvolutionNNDeviceType.test_conv3d_64bit_indexing",
+            "updatedAt": "2026-01-10T04:34:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168695"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/nn/test_convolution.py\nTest class: TestConvolutionNNDeviceType\nTest name: test_ConvTranspose2d_size_1_kernel\nDefined at line: 3449\nParent issue: #168692\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/nn/test_convolution.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-05-20T02:59:37Z",
+            "createdAt": "2025-11-22T01:06:19Z",
+            "id": "I_kwDOA-j9z87ZxMB-",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 168694,
+            "state": "CLOSED",
+            "title": "Test: TestConvolutionNNDeviceType.test_ConvTranspose2d_size_1_kernel",
+            "updatedAt": "2026-05-20T02:59:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168694"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/nn/test_convolution.py\nTest class: TestConvolutionNNDeviceType\nTest name: test_Conv2d_size_1_kernel\nDefined at line: 3416\nParent issue: #168692\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/nn/test_convolution.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2026-05-20T02:59:37Z",
+            "createdAt": "2025-11-22T01:06:17Z",
+            "id": "I_kwDOA-j9z87ZxMBf",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 168693,
+            "state": "CLOSED",
+            "title": "Test: TestConvolutionNNDeviceType.test_Conv2d_size_1_kernel",
+            "updatedAt": "2026-05-20T02:59:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168693"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/jit/test_freezing.py\nTest class: TestFrozenOptimizations\nTest name: test_freeze_conv_relu_fusion_not_forward\nDefined at line: 3032\nParent issue: #168689\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/jit/test_freezing.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-12T11:25:44Z",
+            "createdAt": "2025-11-22T01:06:14Z",
+            "id": "I_kwDOA-j9z87ZxMBA",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 168691,
+            "state": "CLOSED",
+            "title": "Test: TestFrozenOptimizations.test_freeze_conv_relu_fusion_not_forward",
+            "updatedAt": "2025-12-12T11:25:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168691"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/jit/test_freezing.py\nTest class: TestFrozenOptimizations\nTest name: test_freeze_conv_relu_fusion\nDefined at line: 2970\nParent issue: #168689\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/jit/test_freezing.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-12T11:25:43Z",
+            "createdAt": "2025-11-22T01:06:13Z",
+            "id": "I_kwDOA-j9z87ZxMAZ",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 168690,
+            "state": "CLOSED",
+            "title": "Test: TestFrozenOptimizations.test_freeze_conv_relu_fusion",
+            "updatedAt": "2025-12-12T11:25:43Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168690"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/jit/test_freezing.py\nTest class: TestFrozenOptimizations\nROCm-skipped tests: 2\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/jit/test_freezing.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-12T11:25:43Z",
+            "createdAt": "2025-11-22T01:06:11Z",
+            "id": "I_kwDOA-j9z87ZxMAD",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168689,
+            "state": "CLOSED",
+            "title": "TestModule: test/jit/test_freezing.py::TestFrozenOptimizations",
+            "updatedAt": "2025-12-12T11:25:43Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168689"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_triton_kernels.py\nTest class: KernelTests\nTest name: test_kernel_inline_asm\nDefined at line: 2552\nParent issue: #168687\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_triton_kernels.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-20T02:50:03Z",
+            "createdAt": "2025-11-22T01:06:09Z",
+            "id": "I_kwDOA-j9z87ZxL_f",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 168688,
+            "state": "CLOSED",
+            "title": "Test: KernelTests.test_kernel_inline_asm",
+            "updatedAt": "2025-12-20T02:50:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168688"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_triton_kernels.py\nTest class: KernelTests\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_triton_kernels.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-20T02:50:03Z",
+            "createdAt": "2025-11-22T01:06:08Z",
+            "id": "I_kwDOA-j9z87ZxL_E",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168687,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_triton_kernels.py::KernelTests",
+            "updatedAt": "2025-12-20T02:50:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168687"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_triton_heuristics.py\nTest class: TestTritonHeuristics\nTest name: test_prune_configs_over_shared_memory_limit\nDefined at line: 279\nParent issue: #168685\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_triton_heuristics.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-19T16:47:51Z",
+            "createdAt": "2025-11-22T01:06:06Z",
+            "id": "I_kwDOA-j9z87ZxL-n",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168686,
+            "state": "CLOSED",
+            "title": "Test: TestTritonHeuristics.test_prune_configs_over_shared_memory_limit",
+            "updatedAt": "2026-01-19T16:47:51Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168686"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_triton_heuristics.py\nTest class: TestTritonHeuristics\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_triton_heuristics.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-19T16:51:23Z",
+            "createdAt": "2025-11-22T01:06:05Z",
+            "id": "I_kwDOA-j9z87ZxL-O",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168685,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_triton_heuristics.py::TestTritonHeuristics",
+            "updatedAt": "2026-01-19T16:51:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168685"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test_conv_with_as_strided\nDefined at line: 11613\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:04Z",
+            "createdAt": "2025-11-22T01:06:03Z",
+            "id": "I_kwDOA-j9z87ZxL9z",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Ng",
+                "hasNextPage": false
+              }
+            },
+            "number": 168684,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test_conv_with_as_strided",
+            "updatedAt": "2025-12-05T06:02:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168684"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test_kwargs\nDefined at line: 10887\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:04Z",
+            "createdAt": "2025-11-22T01:06:01Z",
+            "id": "I_kwDOA-j9z87ZxL9Y",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168683,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test_kwargs",
+            "updatedAt": "2025-12-05T06:02:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168683"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test_cudnn_rnn\nDefined at line: 7384\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @dllehr-amd",
+            "closedAt": "2025-12-17T03:05:27Z",
+            "createdAt": "2025-11-22T01:06:00Z",
+            "id": "I_kwDOA-j9z87ZxL84",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 168682,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test_cudnn_rnn",
+            "updatedAt": "2025-12-17T03:05:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168682"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test_multi_gpu_device\nDefined at line: 4698\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:05Z",
+            "createdAt": "2025-11-22T01:05:58Z",
+            "id": "I_kwDOA-j9z87ZxL8f",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168681,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test_multi_gpu_device",
+            "updatedAt": "2025-12-05T06:02:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168681"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test_conv_inference_heuristics\nDefined at line: 4277\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-10T22:45:48Z",
+            "createdAt": "2025-11-22T01:05:56Z",
+            "id": "I_kwDOA-j9z87ZxL8N",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "module: convolution"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Ng",
+                "hasNextPage": false
+              }
+            },
+            "number": 168680,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test_conv_inference_heuristics",
+            "updatedAt": "2025-12-10T22:45:48Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168680"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test__dyn_quant_matmul_4bit_bf16_input\nDefined at line: 2611\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:04Z",
+            "createdAt": "2025-11-22T01:05:55Z",
+            "id": "I_kwDOA-j9z87ZxL77",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168679,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test__dyn_quant_matmul_4bit_bf16_input",
+            "updatedAt": "2025-12-05T06:02:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168679"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test__dyn_quant_matmul_4bit_fp32_input\nDefined at line: 2564\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:03Z",
+            "createdAt": "2025-11-22T01:05:53Z",
+            "id": "I_kwDOA-j9z87ZxL7h",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168678,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test__dyn_quant_matmul_4bit_fp32_input",
+            "updatedAt": "2025-12-05T06:02:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168678"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test__dyn_quant_pack_4bit_weight_bf16\nDefined at line: 2523\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:03Z",
+            "createdAt": "2025-11-22T01:05:51Z",
+            "id": "I_kwDOA-j9z87ZxL6X",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168677,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test__dyn_quant_pack_4bit_weight_bf16",
+            "updatedAt": "2025-12-05T06:02:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168677"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nTest name: test__dyn_quant_pack_4bit_weight_fp32\nDefined at line: 2486\nParent issue: #168675\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:03Z",
+            "createdAt": "2025-11-22T01:05:49Z",
+            "id": "I_kwDOA-j9z87ZxL40",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168676,
+            "state": "CLOSED",
+            "title": "Test: CommonTemplate.test__dyn_quant_pack_4bit_weight_fp32",
+            "updatedAt": "2025-12-05T06:02:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168676"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_torchinductor.py\nTest class: CommonTemplate\nROCm-skipped tests: 9\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_torchinductor.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-22T10:40:06Z",
+            "createdAt": "2025-11-22T01:05:48Z",
+            "id": "I_kwDOA-j9z87ZxL4X",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168675,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_torchinductor.py::CommonTemplate",
+            "updatedAt": "2026-01-22T10:40:06Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168675"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_subgraph_choice.py\nTest class: TestSubgraphChoice\nTest name: test_subgraph_freeze_layout\nDefined at line: 102\nParent issue: #168672\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_subgraph_choice.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:54:58Z",
+            "createdAt": "2025-11-22T01:05:46Z",
+            "id": "I_kwDOA-j9z87ZxL30",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168674,
+            "state": "CLOSED",
+            "title": "Test: TestSubgraphChoice.test_subgraph_freeze_layout",
+            "updatedAt": "2026-01-20T14:54:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168674"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_subgraph_choice.py\nTest class: TestSubgraphChoice\nTest name: test_subgraph_decompose_k\nDefined at line: 41\nParent issue: #168672\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_subgraph_choice.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:54:50Z",
+            "createdAt": "2025-11-22T01:05:44Z",
+            "id": "I_kwDOA-j9z87ZxLyl",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168673,
+            "state": "CLOSED",
+            "title": "Test: TestSubgraphChoice.test_subgraph_decompose_k",
+            "updatedAt": "2026-01-20T14:54:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168673"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_subgraph_choice.py\nTest class: TestSubgraphChoice\nROCm-skipped tests: 2\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_subgraph_choice.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:02Z",
+            "createdAt": "2025-11-22T01:05:43Z",
+            "id": "I_kwDOA-j9z87ZxLyK",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168672,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_subgraph_choice.py::TestSubgraphChoice",
+            "updatedAt": "2025-12-05T06:02:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168672"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticTritonCompileResult\nTest name: test_disable_static_cuda_launcher\nDefined at line: 496\nParent issue: #168665\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:46Z",
+            "createdAt": "2025-11-22T01:05:41Z",
+            "id": "I_kwDOA-j9z87ZxLxy",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168671,
+            "state": "CLOSED",
+            "title": "Test: TestStaticTritonCompileResult.test_disable_static_cuda_launcher",
+            "updatedAt": "2026-02-03T17:01:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168671"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticTritonCompileResult\nTest name: test_any\nDefined at line: 476\nParent issue: #168665\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:45Z",
+            "createdAt": "2025-11-22T01:05:39Z",
+            "id": "I_kwDOA-j9z87ZxLxY",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168670,
+            "state": "CLOSED",
+            "title": "Test: TestStaticTritonCompileResult.test_any",
+            "updatedAt": "2026-02-03T17:01:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168670"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticTritonCompileResult\nTest name: test_empty_tensor\nDefined at line: 464\nParent issue: #168665\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:44Z",
+            "createdAt": "2025-11-22T01:05:38Z",
+            "id": "I_kwDOA-j9z87ZxLw3",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168669,
+            "state": "CLOSED",
+            "title": "Test: TestStaticTritonCompileResult.test_empty_tensor",
+            "updatedAt": "2026-02-03T17:01:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168669"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticTritonCompileResult\nTest name: test_static_launch_user_defined_triton_kernels\nDefined at line: 446\nParent issue: #168665\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:44Z",
+            "createdAt": "2025-11-22T01:05:36Z",
+            "id": "I_kwDOA-j9z87ZxLwc",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168668,
+            "state": "CLOSED",
+            "title": "Test: TestStaticTritonCompileResult.test_static_launch_user_defined_triton_kernels",
+            "updatedAt": "2026-02-03T17:01:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168668"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticTritonCompileResult\nTest name: test_incompatible_code\nDefined at line: 421\nParent issue: #168665\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:43Z",
+            "createdAt": "2025-11-22T01:05:34Z",
+            "id": "I_kwDOA-j9z87ZxLv5",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168667,
+            "state": "CLOSED",
+            "title": "Test: TestStaticTritonCompileResult.test_incompatible_code",
+            "updatedAt": "2026-02-03T17:01:43Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168667"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticTritonCompileResult\nTest name: test_basic_compile\nDefined at line: 409\nParent issue: #168665\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:43Z",
+            "createdAt": "2025-11-22T01:05:32Z",
+            "id": "I_kwDOA-j9z87ZxLvS",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168666,
+            "state": "CLOSED",
+            "title": "Test: TestStaticTritonCompileResult.test_basic_compile",
+            "updatedAt": "2026-02-03T17:01:43Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168666"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticTritonCompileResult\nROCm-skipped tests: 6\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-04T17:52:10Z",
+            "createdAt": "2025-11-22T01:05:30Z",
+            "id": "I_kwDOA-j9z87ZxLu9",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168665,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_static_cuda_launcher.py::TestStaticTritonCompileResult",
+            "updatedAt": "2026-02-04T17:52:10Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168665"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_kernel_many_args\nDefined at line: 368\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:42Z",
+            "createdAt": "2025-11-22T01:05:29Z",
+            "id": "I_kwDOA-j9z87ZxLuf",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168664,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_kernel_many_args",
+            "updatedAt": "2026-02-03T17:01:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168664"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_kernel_empty_tensor\nDefined at line: 307\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:42Z",
+            "createdAt": "2025-11-22T01:05:27Z",
+            "id": "I_kwDOA-j9z87ZxLt-",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168663,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_kernel_empty_tensor",
+            "updatedAt": "2026-02-03T17:01:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168663"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_too_high_shared_mem\nDefined at line: 287\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:41Z",
+            "createdAt": "2025-11-22T01:05:25Z",
+            "id": "I_kwDOA-j9z87ZxLs1",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168662,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_too_high_shared_mem",
+            "updatedAt": "2026-02-03T17:01:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168662"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_high_shared_mem\nDefined at line: 263\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:40Z",
+            "createdAt": "2025-11-22T01:05:23Z",
+            "id": "I_kwDOA-j9z87ZxLsP",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168661,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_high_shared_mem",
+            "updatedAt": "2026-02-03T17:01:40Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168661"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_kernel_no_args\nDefined at line: 250\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:40Z",
+            "createdAt": "2025-11-22T01:05:21Z",
+            "id": "I_kwDOA-j9z87ZxLr0",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168660,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_kernel_no_args",
+            "updatedAt": "2026-02-03T17:01:40Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168660"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_implied_constant\nDefined at line: 197\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:39Z",
+            "createdAt": "2025-11-22T01:05:20Z",
+            "id": "I_kwDOA-j9z87ZxLrV",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168659,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_implied_constant",
+            "updatedAt": "2026-02-03T17:01:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168659"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_constexpr\nDefined at line: 168\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:38Z",
+            "createdAt": "2025-11-22T01:05:18Z",
+            "id": "I_kwDOA-j9z87ZxLq2",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168658,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_constexpr",
+            "updatedAt": "2026-02-03T17:01:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168658"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_basic_1arg\nDefined at line: 143\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:38Z",
+            "createdAt": "2025-11-22T01:05:17Z",
+            "id": "I_kwDOA-j9z87ZxLqj",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168657,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_basic_1arg",
+            "updatedAt": "2026-02-03T17:01:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168657"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_signed_integers\nDefined at line: 119\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:37Z",
+            "createdAt": "2025-11-22T01:05:15Z",
+            "id": "I_kwDOA-j9z87ZxLqC",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168656,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_signed_integers",
+            "updatedAt": "2026-02-03T17:01:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168656"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_unsigned_integers\nDefined at line: 95\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:37Z",
+            "createdAt": "2025-11-22T01:05:13Z",
+            "id": "I_kwDOA-j9z87ZxLpa",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168655,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_unsigned_integers",
+            "updatedAt": "2026-02-03T17:01:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168655"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nTest name: test_basic\nDefined at line: 68\nParent issue: #168653\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-03T17:01:36Z",
+            "createdAt": "2025-11-22T01:05:11Z",
+            "id": "I_kwDOA-j9z87ZxLo5",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168654,
+            "state": "CLOSED",
+            "title": "Test: TestStaticCudaLauncher.test_basic",
+            "updatedAt": "2026-02-03T17:01:36Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168654"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_static_cuda_launcher.py\nTest class: TestStaticCudaLauncher\nROCm-skipped tests: 11\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_static_cuda_launcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @voznesenskym @penguinwu @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @chauhang @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-02-04T17:52:18Z",
+            "createdAt": "2025-11-22T01:05:10Z",
+            "id": "I_kwDOA-j9z87ZxLol",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168653,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_static_cuda_launcher.py::TestStaticCudaLauncher",
+            "updatedAt": "2026-02-04T17:52:18Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168653"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_fused_int_mm_mul_gating\nDefined at line: 298\nParent issue: #168649\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:46:27Z",
+            "createdAt": "2025-11-22T01:05:05Z",
+            "id": "I_kwDOA-j9z87ZxLii",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168650,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_fused_int_mm_mul_gating",
+            "updatedAt": "2026-01-20T14:46:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168650"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_pattern_matcher.py\nTest class: TestPatternMatcher\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:02Z",
+            "createdAt": "2025-11-22T01:05:03Z",
+            "id": "I_kwDOA-j9z87ZxLiF",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168649,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_pattern_matcher.py::TestPatternMatcher",
+            "updatedAt": "2025-12-05T06:02:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168649"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_pad_mm.py\nTest class: PadMMTest\nTest name: test_pad_mm_bf16\nDefined at line: 483\nParent issue: #168647\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_pad_mm.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:46:10Z",
+            "createdAt": "2025-11-22T01:05:02Z",
+            "id": "I_kwDOA-j9z87ZxLho",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168648,
+            "state": "CLOSED",
+            "title": "Test: PadMMTest.test_pad_mm_bf16",
+            "updatedAt": "2026-01-20T14:46:10Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168648"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_pad_mm.py\nTest class: PadMMTest\nROCm-skipped tests: 1\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_pad_mm.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2025-12-05T06:02:01Z",
+            "createdAt": "2025-11-22T01:05:00Z",
+            "id": "I_kwDOA-j9z87ZxLhO",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168647,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_pad_mm.py::PadMMTest",
+            "updatedAt": "2025-12-05T06:02:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168647"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qconv2d_dequant_promotion_xpu\nDefined at line: 2288\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:59Z",
+            "createdAt": "2025-11-22T01:04:54Z",
+            "id": "I_kwDOA-j9z87ZxLfr",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168643,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qconv2d_dequant_promotion_xpu",
+            "updatedAt": "2026-04-24T21:51:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168643"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qconv2d_dequant_promotion_cpu\nDefined at line: 2281\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:59Z",
+            "createdAt": "2025-11-22T01:04:52Z",
+            "id": "I_kwDOA-j9z87ZxLfO",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168642,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qconv2d_dequant_promotion_cpu",
+            "updatedAt": "2026-04-24T21:51:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168642"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qat_qconv2d_add_relu\nDefined at line: 2141\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:58Z",
+            "createdAt": "2025-11-22T01:04:50Z",
+            "id": "I_kwDOA-j9z87ZxLez",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168641,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qat_qconv2d_add_relu",
+            "updatedAt": "2026-04-24T21:51:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168641"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qat_qconv2d_add\nDefined at line: 2075\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:58Z",
+            "createdAt": "2025-11-22T01:04:49Z",
+            "id": "I_kwDOA-j9z87ZxLeT",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168640,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qat_qconv2d_add",
+            "updatedAt": "2026-04-24T21:51:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168640"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qat_qconv2d\nDefined at line: 1932\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:58Z",
+            "createdAt": "2025-11-22T01:04:47Z",
+            "id": "I_kwDOA-j9z87ZxLd5",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168639,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qat_qconv2d",
+            "updatedAt": "2026-04-24T21:51:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168639"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qconv2d_int8_mixed_bf16_use_autocast\nDefined at line: 1199\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:57Z",
+            "createdAt": "2025-11-22T01:04:45Z",
+            "id": "I_kwDOA-j9z87ZxLdi",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168638,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qconv2d_int8_mixed_bf16_use_autocast",
+            "updatedAt": "2026-04-24T21:51:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168638"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qconv2d_int8_mixed_bf16\nDefined at line: 1189\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:57Z",
+            "createdAt": "2025-11-22T01:04:44Z",
+            "id": "I_kwDOA-j9z87ZxLdM",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168637,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qconv2d_int8_mixed_bf16",
+            "updatedAt": "2026-04-24T21:51:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168637"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nTest name: test_qconv2d_cpu\nDefined at line: 1170\nParent issue: #168635\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:56Z",
+            "createdAt": "2025-11-22T01:04:42Z",
+            "id": "I_kwDOA-j9z87ZxLcy",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168636,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcher.test_qconv2d_cpu",
+            "updatedAt": "2026-04-24T21:51:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168636"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcher\nROCm-skipped tests: 8\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-04-24T21:51:56Z",
+            "createdAt": "2025-11-22T01:04:40Z",
+            "id": "I_kwDOA-j9z87ZxLcS",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168635,
+            "state": "CLOSED",
+            "title": "TestModule: test/inductor/test_mkldnn_pattern_matcher.py::TestPatternMatcher",
+            "updatedAt": "2026-04-24T21:51:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168635"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcherGeneric\nTest name: test_conv2d_linear_add_broadcast_shapes\nDefined at line: 689\nParent issue: #168625\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:42:59Z",
+            "createdAt": "2025-11-22T01:04:39Z",
+            "id": "I_kwDOA-j9z87ZxLbw",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168634,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcherGeneric.test_conv2d_linear_add_broadcast_shapes",
+            "updatedAt": "2026-01-20T14:42:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168634"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcherGeneric\nTest name: test_conv3d_binary_broadcast_shapes\nDefined at line: 680\nParent issue: #168625\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:42:53Z",
+            "createdAt": "2025-11-22T01:04:37Z",
+            "id": "I_kwDOA-j9z87ZxLbR",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168633,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcherGeneric.test_conv3d_binary_broadcast_shapes",
+            "updatedAt": "2026-01-20T14:42:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168633"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcherGeneric\nTest name: test_conv2d_binary_broadcast_shapes\nDefined at line: 672\nParent issue: #168625\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:42:50Z",
+            "createdAt": "2025-11-22T01:04:35Z",
+            "id": "I_kwDOA-j9z87ZxLaw",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168632,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcherGeneric.test_conv2d_binary_broadcast_shapes",
+            "updatedAt": "2026-01-20T14:42:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168632"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Context\n\nSource file: test/inductor/test_mkldnn_pattern_matcher.py\nTest class: TestPatternMatcherGeneric\nTest name: test_conv3d_binary\nDefined at line: 573\nParent issue: #168625\nCode reference: https://github.com/pytorch/pytorch/blob/main/test/inductor/test_mkldnn_pattern_matcher.py\n\ncc @sunway513 @jithunnair-amd @pruthvistony @ROCmSupport @jataylo @hongxiayang @naromero77amd @pragupta @jerrymannil @xinyazhang @chauhang @penguinwu @voznesenskym @EikanWang @jgong5 @Guobing-Chen @XiaobingSuper @zhuhaozhe @blzheng @wenzhe-nrv @jiayisunx @ipiszy @kadeng @muchulee8 @amjames @aakhundov @coconutruben @dllehr-amd",
+            "closedAt": "2026-01-20T14:42:46Z",
+            "createdAt": "2025-11-22T01:04:34Z",
+            "id": "I_kwDOA-j9z87ZxLVj",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: rocm"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "oncall: pt2"
+                },
+                {
+                  "name": "module: inductor"
+                },
+                {
+                  "name": "rocm-skipped-tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 168631,
+            "state": "CLOSED",
+            "title": "Test: TestPatternMatcherGeneric.test_conv3d_binary",
+            "updatedAt": "2026-01-20T14:42:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/168631"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAyNS0xMS0yMlQwMTowNDozNFrO2cS1Yw==",
+          "hasNextPage": true
+        },
+        "totalCount": 44684
+      }
+    }
+  }
+}
