@@ -7,7 +7,7 @@
     "forbidden_data_absent": true,
     "readiness_ran": false
   },
-  "created_at_utc": "2026-08-04T10:39:36Z",
+  "created_at_utc": "2026-08-04T11:53:41Z",
   "decision_totals": {
     "admit_pending_repro": 9,
     "decisions": 67,
@@ -92,21 +92,21 @@
     "REVIEW_QUEUE.json": "5ae6038910fdc3ed7fa93502d0b92ec43b70f0f021663cd0d4468bead7c4344e",
     "SCOPE.json": "1f826d3a9c502b070e25b974841ef9d992046883b89521c91d8049a8607c8c26",
     "TRANSPORT_CONTRACT.json": "bc6bc443f3289dad51334026a670c3567478b11a975bcbb871a23d54a59feb24",
-    "VERIFICATION_LOG.json": "fcadf5e0c1467e417c43c50a83d7ee9a5ae5c56df223eccb97247130f3ef6f0b",
+    "VERIFICATION_LOG.json": "cb5e12b2be3c5b1afd1f51a003792e7f0a26bcf7a4ac5f41cdd9258e0f7b7b34",
     "admission_sheet.cursor_candidate.csv": "9d511403ada080de41e13f4fe14d1377fabde9685bd3bb0d7d5418672df7e187",
-    "scripts/external_slice/check_supplemental_r2_admission.py": "7c301b4b370dbcbcfa2bda8240e0e00909f375fdc60ee0951bafbee5be2229b4",
-    "scripts/external_slice/check_supplemental_r2_handoff_hashes.py": "3ee5388f4a49b7e53c3deb43fe01ad11c31c79fe6000457f2bd989ab9cc9893c",
-    "scripts/external_slice/mine_supplemental_r2.py": "ffeed2238c6df7c0b7051f7671a302007dd60fad18adf5f6089281cfee217823",
-    "tests/external_slice/test_check_supplemental_r2_admission.py": "989e99465c30ce38b4f36715830929936b8f624c8970e81a9de4192d66ea89e8",
+    "scripts/external_slice/check_supplemental_r2_admission.py": "58db239974d195b143bcad5df34f860c7b48dea7835963f269144ddd2cbe1a9d",
+    "scripts/external_slice/check_supplemental_r2_handoff_hashes.py": "c43be3249b696bf2123fc15300e7075916a294b98362c22226c0759d4e8b3ba7",
+    "scripts/external_slice/mine_supplemental_r2.py": "b63780dd1b2529ac98d4ff6016f751f8a442ef44f65d4c8ea31127a89325b1f1",
+    "tests/external_slice/test_check_supplemental_r2_admission.py": "46adf284d28fee9e483b5c29d74a65bf05274bf349975b34f145e07375555614",
     "tests/external_slice/test_mine_supplemental_r2.py": "27bd55a6cad28dbb9fa7d45597cfb4f5b52b17ca3d926a3abc6e3b88eb2fbaac"
   },
-  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r6",
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r7",
   "handoff_commit": {
-    "direct_parent_required": "7075b92b5f335796a9627ff58ab7a836de6bef77",
+    "direct_parent_required": "7d27f287601b45f895749fb507eaff72d746a4de",
     "resolution": "Resolve immutable handoff SHA with `git rev-parse HEAD`; direct parent must equal payload_commit.",
     "value": "SELF"
   },
-  "payload_commit": "7075b92b5f335796a9627ff58ab7a836de6bef77",
+  "payload_commit": "7d27f287601b45f895749fb507eaff72d746a4de",
   "quota_feasibility": {
     "claims_canonical_freeze": false,
     "claims_readiness_executed": false,
