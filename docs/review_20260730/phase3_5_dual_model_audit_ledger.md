@@ -913,3 +913,24 @@ Standards PASS，Spec FAIL。唯一 correction 是修正三行和 PyMC 后续 qu
 Spec 仍 FAIL。`EXT-pymc-20` 的 recorded buggy SHA 不是 fixed commit `09afc8e...` 的 first parent，违反 runbook A1；正确 parent 为 `5d2fe4f...`。Stop-rule 只验证最终 totals，会接受第五个 admit 后的额外 decision。更强的 fully rebuilt probe 还证明 out-of-scope `evil/repo` decision 可通过 producer、payload、admission 和 handoff 全链。Admission checker 未按要求重算完整 handoff semantics：把 total/reviewed 改为 999 并将 `analysis_id_all_blank` 设 false 仍返回 0。Verification log 仍未记录 write-handoff/hash commands，且 gate identity 仍为未带 `-r1` 的旧值。
 
 唯一 r2 correction 是修正 first-parent binding、实现 ordered earliest-stop、拒绝 out-of-scope/empty-queue decisions、让两个 checker 分别验证完整 handoff semantics、补 fully rebuilt isolated negatives 和 correction-gate provenance。accepted-ready 仍为 18；`DISTRIBUTION_TARGET_AT_RISK` 与 no-substitution 继续有效，readiness/downstream 全部锁定。
+
+### 5.31 SUPPLEMENTAL_ADMISSION_R2-r2 correction 复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-r2` |
+| 记录类型 | admission correction 独立复审 |
+| 交接/复核时间 | `2026-08-04T10:44:56+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | payload `6da4af6726cb14d29e89597a472fccbeae8bdb1a`；handoff `1e4004268016f9f4b0167fb392a6a4ff7ec116cf` |
+| Cursor baseline | `dc4060da182b60fa5175710000379659babcd4ea` |
+| Findings | first-parent、ordered stop、scope/empty/global prefix、summary tamper 已关闭；`SUPP-R2-GATE-IDENTITY-003`；`SUPP-R2-CONFIRMATION-EVIDENCE-001`；`SUPP-R2-NEGATIVE-E2E-001` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 `SUPPLEMENTAL_ADMISSION_R2-r3` correction；不得重跑 retrieval，不解锁 readiness 或 downstream。 |
+
+`EXT-pymc-20` 已绑定 verified first parent；producer/checker 现正确执行 ordered earliest stop、row20 tie、scope/empty/global exact-prefix guards。旧 `evil/repo` fully rebuilt attack 与 totals/per-repo/shortfall/confirmation tamper 均返回非零。提交计数保持 67/9/58，transport/no-downstream 不变。独立验证 targeted `200 passed`、full `460 passed, 10 warnings`，Ruff、compileall、admission/handoff/parent/transport checks 全通过。Standards PASS。
+
+Spec 仍 FAIL。Verification log 请求 `SUPPLEMENTAL_ADMISSION_R2-r2`，但 handoff 和 producer 仍硬编码旧 Gate，且两个 checker 接受该不一致。更深的 confirmation attack 给 frozen `SCOPE.json` 增加字段并同步当前 handoff hash 后，`existing_files_unchanged=true` 仍被两个 checker 接受；readiness sentinel 也不可见，因为三个非 decision confirmation 仍是共享硬编码常量。最后，after-fifth、out-of-scope、empty-queue 新测试只是内存函数测试，未按 r2 scope 完成 fully rebuilt/guard-isolated end-to-end regression。
+
+唯一 r3 correction 是绑定 exact gate identity、从 frozen hashes/command log/forbidden paths 真实证明 confirmation，并补六类 fully rebuilt isolated negatives。accepted-ready 仍为 18；`DISTRIBUTION_TARGET_AT_RISK` 和 no-substitution 保持，readiness/downstream 继续锁定。

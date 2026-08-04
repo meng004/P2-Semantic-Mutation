@@ -1059,3 +1059,116 @@ It must:
 The GPyTorch/chaospy/SALib shortfalls and
 `DISTRIBUTION_TARGET_AT_RISK` disclosure remain mandatory; PyTorch/JAX may not
 substitute.
+
+## 17. `SUPPLEMENTAL_ADMISSION_R2-r2` correction re-review
+
+- **Correction baseline:** `dc4060da182b60fa5175710000379659babcd4ea`
+- **Correction payload:** `6da4af6726cb14d29e89597a472fccbeae8bdb1a`
+- **Correction handoff:** `1e4004268016f9f4b0167fb392a6a4ff7ec116cf`
+- **Remote binding:** correction handoff equals the Cursor branch head
+- **Lineage:** payload is a direct child of the r1 handoff; correction handoff
+  is a direct child of the payload
+- **Verdict:** `BLOCKED`
+
+### 17.1 Closed findings and positive verification
+
+`SUPP-R2-A1-FIX-PARENT-001` is closed. `EXT-pymc-20` now records
+`5d2fe4f86b6447e112fc73db94f75427106a907e` consistently in decision, sheet,
+and evidence; fresh public GitHub metadata confirms that value is the first
+parent of fixed commit `09afc8e74ecc56644be26916911996470d020ab3`.
+
+The producer and independent admission checker now compute the ordered
+earliest stop, accept the row-20 fifth-admit/cap tie, and reject a decision
+after the fifth admit. They also reject out-of-scope and empty-queue decisions
+and require exact global equality with the concatenated legal prefixes. Fresh
+full-root probes confirm the previous `evil/repo` attack now returns nonzero in
+both producer and admission checker.
+
+Both checkers now deep-compare decision totals, per-repository counts,
+exclusion/status counts, stop reasons, quota feasibility, shortfalls, and the
+submitted confirmation object. Changing `decision_totals.decisions` to 999
+returns nonzero in both checkers. The committed payload remains 67 decisions,
+9 submitted and 58 excluded; A2 is all `PENDING`, aliases are blank, immutable
+transport paths are unchanged, and no readiness/downstream artifact appears in
+the diff.
+
+Fresh verification produced `200 passed` in the targeted R2 suite and
+`460 passed, 10 warnings` in the full suite. Ruff E/F/I/E501, compileall,
+producer validation, admission checking, handoff hash/parent checking,
+transport no-change, and native diff-check returned zero. Standards is `PASS`
+with zero findings.
+
+### 17.2 `SUPP-R2-GATE-IDENTITY-003`
+
+The verification log correctly records
+`gate_requested: SUPPLEMENTAL_ADMISSION_R2-r2`, but the handoff still records
+`SUPPLEMENTAL_ADMISSION_R2`. The producer continues to hard-code the old gate
+name, and neither checker compares the handoff gate with the verification-log
+gate or an expected correction-gate argument. Consequently the committed
+inconsistent artifact receives both `ADMISSION_CHECK_OK` and `HASH_CHECK_OK`.
+
+The handoff producer must emit the exact correction gate, and both checkers
+must bind it to the hash-bound verification log and reject a gate tamper or
+cross-file mismatch.
+
+### 17.3 `SUPP-R2-CONFIRMATION-EVIDENCE-001`
+
+The two checkers deep-compare the confirmation dictionary, but do not
+independently derive all of its truth values. `readiness_ran`,
+`canonical_freeze_claimed`, and `existing_files_unchanged` are hard-coded to
+false/false/true in producer and both checker implementations. This is shared
+constant agreement, not evidence reconstruction.
+
+An independent full-root attack added an unbound field to frozen `SCOPE.json`,
+updated only the handoff's current-file SHA, and retained
+`existing_files_unchanged: true`. Both admission and handoff checkers returned
+zero. An added readiness sentinel was likewise invisible to both. Thus the
+handoff can still claim frozen-file immutability or no readiness execution
+without the checker proving those claims from frozen hashes, command evidence,
+and forbidden-path absence.
+
+The correction must bind exact immutable baseline hashes and independently
+verify the allowed-path/diff boundary plus absence of readiness/freeze commands
+and artifacts. A fully resealed frozen-file mutation and a readiness/freeze
+sentinel must both fail in each checker.
+
+### 17.4 `SUPP-R2-NEGATIVE-E2E-001`
+
+The after-fifth-admit, out-of-scope, and empty-queue regression tests exercise
+only `validate_decisions_payload` and `verify_decisions` over in-memory
+fragments. They do not satisfy section 16.7's explicit requirement for
+fully rebuilt, guard-isolated negatives across queue -> decision -> sheet ->
+evidence -> handoff and the complete admission/handoff entry points.
+
+The guards themselves are effective in independent probes, but the requested
+regression contract remains partial. Each attack must rebuild or synchronize
+the complete payload, invoke the public commands/checkers, assert nonzero and
+no newly minted artifact, and demonstrate that removing only the target guard
+makes the synchronized attack escape.
+
+### 17.5 Gate decision and only unlocked correction
+
+Standards is `PASS`; Specification is `FAIL`. Accepted-ready remains 18.
+Readiness, canonical freeze, C4, labelling, prediction, and detection remain
+locked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-r3` on the same Cursor VM
+branch, without `rtk`, retrieval, search, candidate replacement, or readiness.
+It must:
+
+1. generate and bind the exact `SUPPLEMENTAL_ADMISSION_R2-r3` gate identity in
+   handoff and verification log, with independent checker validation;
+2. replace hard-coded immutability/readiness/freeze confirmations with concrete
+   frozen-hash, command-log, and forbidden-path evidence checks in both
+   checkers;
+3. add fully rebuilt, guard-isolated end-to-end negatives for after-fifth,
+   out-of-scope, empty-queue, immutable-file tamper, readiness/freeze sentinel,
+   and gate-identity mismatch;
+4. preserve the corrected first-parent binding, counts, transport freeze, and
+   shortfall disclosure;
+5. regenerate one payload commit and one direct-child handoff, push, and stop
+   for local r3 re-review.
+
+The GPyTorch/chaospy/SALib shortfalls and
+`DISTRIBUTION_TARGET_AT_RISK` disclosure remain mandatory; PyTorch/JAX may not
+substitute.
