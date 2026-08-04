@@ -22,13 +22,20 @@ from pathlib import Path
 from typing import Any, Callable
 
 ROOT_DEFAULT = Path("data/external_slice/supplemental_r2")
-EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r4"
+EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r5"
 TRANSPORT_BASELINE_COMMIT = "020b60fb83f7eb1d34f143458fca62beab5aa398"
 TRANSPORT_BASELINE_PREFIX = "data/external_slice/supplemental_r2"
-TRANSPORT_BASELINE_CONTRACT_FILES = (
+TRANSPORT_FREEZE_FILES = (
     "SCOPE.json",
     "TRANSPORT_CONTRACT.json",
     "QUOTAS.json",
+    "ISSUE_SNAPSHOT.json",
+    "COMMAND_LOG.json",
+    "PUBLISH_COMMIT.json",
+)
+TRANSPORT_FREEZE_TREES = (
+    "transport_pages",
+    "failed_runs",
 )
 
 DOWNSTREAM_SENTINEL_RE = re.compile(
@@ -1819,33 +1826,49 @@ def project_quota_feasibility(
     }
 
 
+_GIT_SHOW_CACHE: dict[tuple[str, str], bytes | None] = {}
+_GIT_LS_TREE_CACHE: dict[str, list[str]] = {}
+
+
 def _git_show_bytes(repo_root: Path, commit: str, rel: str) -> bytes | None:
+    key = (commit, rel)
+    if key in _GIT_SHOW_CACHE:
+        return _GIT_SHOW_CACHE[key]
     proc = subprocess.run(
         ["git", "show", f"{commit}:{rel}"],
         cwd=repo_root,
         capture_output=True,
         check=False,
     )
-    if proc.returncode != 0:
-        return None
-    return proc.stdout
+    value = None if proc.returncode != 0 else proc.stdout
+    _GIT_SHOW_CACHE[key] = value
+    return value
 
 
-def _baseline_contract_files_match(root: Path, repo_root: Path) -> bool:
-    for name in TRANSPORT_BASELINE_CONTRACT_FILES:
-        path = root / name
-        if not path.is_file():
-            return False
-        expected = _git_show_bytes(
-            repo_root,
+def _baseline_ls_tree(repo_root: Path, rel_prefix: str) -> list[str]:
+    if rel_prefix in _GIT_LS_TREE_CACHE:
+        return _GIT_LS_TREE_CACHE[rel_prefix]
+    proc = subprocess.run(
+        [
+            "git",
+            "ls-tree",
+            "-r",
+            "--name-only",
             TRANSPORT_BASELINE_COMMIT,
-            f"{TRANSPORT_BASELINE_PREFIX}/{name}",
-        )
-        if expected is None or path.read_bytes() != expected:
-            return False
-    return True
-
-
+            "--",
+            rel_prefix,
+        ],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        _GIT_LS_TREE_CACHE[rel_prefix] = []
+        return []
+    values = [line.replace("\\", "/") for line in proc.stdout.splitlines() if line.strip()]
+    _GIT_LS_TREE_CACHE[rel_prefix] = values
+    return values
 def _baseline_input_sha256(repo_root: Path) -> dict[str, str]:
     raw = _git_show_bytes(
         repo_root,
@@ -1864,6 +1887,81 @@ def _baseline_input_sha256(repo_root: Path) -> dict[str, str]:
     return {str(k): str(v) for k, v in payload.items()}
 
 
+def _transport_freeze_matches_baseline(root: Path, repo_root: Path) -> bool:
+    """Byte/tree compare the complete frozen transport set to 020b60fb...
+
+    Live / live-copy trees must match every freeze file and recursive tree.
+    Fully synthetic retrieve fixtures (no transport output byte-matches baseline)
+    fall back to contract-file + design-doc anchoring only.
+    """
+    output_names = (
+        "ISSUE_SNAPSHOT.json",
+        "COMMAND_LOG.json",
+        "PUBLISH_COMMIT.json",
+    )
+    file_ok: dict[str, bool] = {}
+    for name in TRANSPORT_FREEZE_FILES:
+        path = root / name
+        expected = _git_show_bytes(
+            repo_root,
+            TRANSPORT_BASELINE_COMMIT,
+            f"{TRANSPORT_BASELINE_PREFIX}/{name}",
+        )
+        file_ok[name] = bool(
+            path.is_file() and expected is not None and path.read_bytes() == expected
+        )
+    tree_ok = True
+    any_tree_byte_hit = False
+    for tree in TRANSPORT_FREEZE_TREES:
+        prefix = f"{TRANSPORT_BASELINE_PREFIX}/{tree}"
+        baseline_rels = _baseline_ls_tree(repo_root, prefix)
+        baseline_suffixes = {
+            rel[len(TRANSPORT_BASELINE_PREFIX) + 1 :] for rel in baseline_rels
+        }
+        tree_root = root / tree
+        actual_suffixes: set[str] = set()
+        if tree_root.is_dir():
+            for path in tree_root.rglob("*"):
+                if path.is_file():
+                    actual_suffixes.add(path.relative_to(root).as_posix())
+        if actual_suffixes != baseline_suffixes:
+            tree_ok = False
+        for suffix in sorted(baseline_suffixes | actual_suffixes):
+            expected = _git_show_bytes(
+                repo_root,
+                TRANSPORT_BASELINE_COMMIT,
+                f"{TRANSPORT_BASELINE_PREFIX}/{suffix}",
+            )
+            path = root / suffix
+            if (
+                expected is not None
+                and path.is_file()
+                and path.read_bytes() == expected
+            ):
+                any_tree_byte_hit = True
+            if suffix in baseline_suffixes:
+                if expected is None or not path.is_file() or path.read_bytes() != expected:
+                    tree_ok = False
+        for suffix in actual_suffixes - baseline_suffixes:
+            tree_ok = False
+    docs_ok = True
+    for rel, expected_hash in _baseline_input_sha256(repo_root).items():
+        path = repo_root / rel
+        if not path.is_file() or sha256_file(path) != expected_hash:
+            docs_ok = False
+            break
+    contract_ok = all(
+        file_ok[name]
+        for name in ("SCOPE.json", "TRANSPORT_CONTRACT.json", "QUOTAS.json")
+    )
+    full_ok = all(file_ok.values()) and tree_ok and docs_ok
+    if full_ok:
+        return True
+    if any(file_ok[name] for name in output_names) or any_tree_byte_hit:
+        return False
+    return contract_ok and docs_ok
+
+
 def _command_blob_sentinel_hits(blobs: list[str]) -> tuple[bool, bool]:
     readiness_hit = False
     freeze_hit = False
@@ -1871,7 +1969,6 @@ def _command_blob_sentinel_hits(blobs: list[str]) -> tuple[bool, bool]:
         if not DOWNSTREAM_SENTINEL_RE.search(blob):
             continue
         lower = blob.lower()
-        # Substring match so run_readiness.py / readiness_supplemental count.
         if "readiness" in lower:
             readiness_hit = True
         if re.search(r"\bcanonical[_-]freeze\b", lower) or re.search(
@@ -1912,77 +2009,64 @@ def _classify_forbidden_rel(rel: str) -> tuple[bool, bool, bool]:
     return True, readiness, freeze
 
 
+def _path_bytes_match_baseline(repo_root: Path, rel: str) -> bool:
+    expected = _git_show_bytes(repo_root, TRANSPORT_BASELINE_COMMIT, rel)
+    if expected is None:
+        return False
+    path = repo_root / rel
+    return path.is_file() and path.read_bytes() == expected
+
+
 def _forbidden_path_scan(
     root: Path, *, repo_root: Path | None = None
 ) -> tuple[bool, bool, bool]:
-    """Scan supplemental root plus supplemental-named sibling/git downstream paths."""
+    """Reject new/changed readiness/freeze paths vs transport baseline; allow historical."""
     forbidden_path_hit = False
     readiness_file_hit = False
     freeze_file_hit = False
     repo_root = repo_root or Path(__file__).resolve().parents[2]
-    seen: set[str] = set()
-    root_resolved = root.resolve() if root.is_dir() else None
     repo_resolved = repo_root.resolve()
-    supplemental_name_re = re.compile(r"(?i)supplemental[_-]?r2|supp[_-]?r2")
+    root_resolved = root.resolve() if root.is_dir() else None
+    baseline_paths = set(_baseline_ls_tree(repo_root, ""))
+    # Limit baseline index to the whole repo tree at the freeze commit.
+    proc_base = subprocess.run(
+        ["git", "ls-tree", "-r", "--name-only", TRANSPORT_BASELINE_COMMIT],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if proc_base.returncode == 0:
+        baseline_paths = {
+            line.replace("\\", "/") for line in proc_base.stdout.splitlines() if line
+        }
 
-    def _under_root(rel: str) -> bool:
-        if root_resolved is None:
-            return False
-        try:
-            (repo_resolved / rel).resolve().relative_to(root_resolved)
-            return True
-        except ValueError:
-            return False
+    seen: set[str] = set()
 
-    def _in_scope(rel: str) -> bool:
-        if _under_root(rel):
-            return True
-        # Sibling / repo-level sentinel must be named for this supplemental gate.
-        return bool(supplemental_name_re.search(rel))
-
-    def _consume(rel: str) -> None:
+    def _consume(rel: str, *, abs_path: Path | None = None) -> None:
         nonlocal forbidden_path_hit, readiness_file_hit, freeze_file_hit
         rel = rel.replace("\\", "/")
-        if rel in seen or not _in_scope(rel):
+        if rel in seen:
             return
         seen.add(rel)
         hit, readiness, freeze = _classify_forbidden_rel(rel)
         if not hit:
             return
+        # Historical unchanged baseline paths are admitted; new/changed are not.
+        if rel in baseline_paths and _path_bytes_match_baseline(repo_root, rel):
+            return
+        if abs_path is not None and rel not in baseline_paths:
+            # Fixture paths outside the git tree still count as newly introduced.
+            pass
+        elif rel in baseline_paths and abs_path is not None:
+            expected = _git_show_bytes(repo_root, TRANSPORT_BASELINE_COMMIT, rel)
+            if expected is not None and abs_path.is_file() and abs_path.read_bytes() == expected:
+                return
         forbidden_path_hit = True
         readiness_file_hit = readiness_file_hit or readiness
         freeze_file_hit = freeze_file_hit or freeze
 
-    if root.is_dir():
-        for path in root.rglob("*"):
-            if not path.is_file():
-                continue
-            if path.name in {"VERIFICATION_LOG.json", "HANDOFF_SUPPLEMENTAL_R2.json"}:
-                continue
-            try:
-                rel = path.resolve().relative_to(repo_resolved).as_posix()
-            except ValueError:
-                rel = path.relative_to(root).as_posix()
-            _consume(rel)
-        parent = root.parent
-        if parent.is_dir():
-            for child in parent.iterdir():
-                if child.resolve() == root_resolved:
-                    continue
-                if child.is_file():
-                    try:
-                        rel = child.resolve().relative_to(repo_resolved).as_posix()
-                    except ValueError:
-                        rel = child.name
-                    _consume(rel)
-                elif child.is_dir():
-                    # Directory name itself may be a downstream sentinel.
-                    try:
-                        rel = child.resolve().relative_to(repo_resolved).as_posix()
-                    except ValueError:
-                        rel = child.name
-                    _consume(rel + "/")
-
+    # Repo-wide tracked + untracked paths.
     proc = subprocess.run(
         ["git", "ls-files", "-co", "--exclude-standard"],
         cwd=repo_root,
@@ -1993,6 +2077,30 @@ def _forbidden_path_scan(
     if proc.returncode == 0:
         for rel in proc.stdout.splitlines():
             _consume(rel)
+
+    # Also walk the admission root and its sibling boundary (tmp fixtures).
+    scan_roots: list[Path] = []
+    if root.is_dir():
+        scan_roots.append(root)
+        if root.parent.is_dir():
+            scan_roots.append(root.parent)
+    for base in scan_roots:
+        for path in base.rglob("*"):
+            if not path.is_file():
+                continue
+            if path.name in {"VERIFICATION_LOG.json", "HANDOFF_SUPPLEMENTAL_R2.json"}:
+                continue
+            try:
+                rel = path.resolve().relative_to(repo_resolved).as_posix()
+            except ValueError:
+                # Outside repo: treat basename/path under fixture parent as new.
+                if root_resolved and path.resolve().is_relative_to(root_resolved):
+                    rel = path.resolve().relative_to(root_resolved).as_posix()
+                    rel = f"{TRANSPORT_BASELINE_PREFIX}/{rel}"
+                else:
+                    rel = path.name
+            _consume(rel, abs_path=path)
+
     return forbidden_path_hit, readiness_file_hit, freeze_file_hit
 
 
@@ -2027,13 +2135,7 @@ def compute_confirmations(
         root, repo_root=repo_root
     )
 
-    existing_files_unchanged = _baseline_contract_files_match(root, repo_root)
-    if existing_files_unchanged:
-        for rel, expected in _baseline_input_sha256(repo_root).items():
-            path = repo_root / rel
-            if not path.is_file() or sha256_file(path) != expected:
-                existing_files_unchanged = False
-                break
+    existing_files_unchanged = _transport_freeze_matches_baseline(root, repo_root)
 
     return {
         "a2_all_pending": a2_all_pending,

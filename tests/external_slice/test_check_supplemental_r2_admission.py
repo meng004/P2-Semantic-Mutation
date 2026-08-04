@@ -2453,17 +2453,34 @@ def test_full_chain_empty_queue_decision_rejected(
 def test_full_chain_verification_log_missing_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Same-attack VLOG deletion: guard removal alone must make the attack pass."""
     root = _copy_live_root(tmp_path)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
     (root / "VERIFICATION_LOG.json").unlink()
+    # Keep handoff file_sha256 binding identical (still declares the missing log).
     both_checkers_fail(root)
 
     monkeypatch.setattr(checker, "verify_gate_binding", lambda *a, **k: None)
     monkeypatch.setattr(handoff_mod, "verify_gate_binding", lambda *a, **k: [])
+    both_checkers_pass(root)
+
+
+def test_full_chain_verification_log_hash_tamper_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Same-attack VLOG hash tamper with all other bindings held fixed."""
+    root = _copy_live_root(tmp_path)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
     handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
-    handoff.get("file_sha256", {}).pop("VERIFICATION_LOG.json", None)
+    # Tamper only the declared hash; leave VERIFICATION_LOG bytes unchanged.
+    handoff["file_sha256"]["VERIFICATION_LOG.json"] = "0" * 64
     _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
+    both_checkers_fail(root)
+
+    monkeypatch.setattr(checker, "verify_gate_binding", lambda *a, **k: None)
+    monkeypatch.setattr(handoff_mod, "verify_gate_binding", lambda *a, **k: [])
     both_checkers_pass(root)
 
 
@@ -2516,6 +2533,30 @@ def test_full_chain_scope_self_tamper_rejected(
     both_checkers_pass(root)
 
 
+def test_full_chain_generic_readiness_path_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Repo-wide changed/untracked readiness path without supplemental_r2 in name."""
+    root = _copy_live_root(tmp_path)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+    sibling = root.parent / "readiness_batch99.json"
+    sibling.write_text("{}\n", encoding="utf-8")
+    # Same attack bytes across fail/pass: reseal only after path guard removal.
+    seal_handoff_bundle(root)
+    both_checkers_fail(root)
+
+    def no_path_hits(root_path: Path, *, repo_root: Path | None = None):
+        del root_path, repo_root
+        return False, False, False
+
+    monkeypatch.setattr(checker, "_forbidden_path_scan", no_path_hits)
+    monkeypatch.setattr(handoff_mod, "_forbidden_path_scan", no_path_hits)
+    monkeypatch.setattr(miner, "_forbidden_path_scan", no_path_hits)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+
+
 def test_full_chain_sibling_readiness_sentinel_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -2538,6 +2579,31 @@ def test_full_chain_sibling_readiness_sentinel_rejected(
     both_checkers_pass(root)
 
 
+def test_full_chain_transport_command_log_mutation_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Resealed COMMAND_LOG mutation must fail both checkers until freeze guard drops."""
+    root = _copy_live_root(tmp_path)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+    log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
+    log["unbound_transport_attack"] = "tamper"
+    _write_json(root / "COMMAND_LOG.json", log)
+    # Reseal so only baseline transport freeze remains as the failing guard.
+    seal_handoff_bundle(root)
+    both_checkers_fail(root)
+
+    def freeze_ok(root_path: Path, repo_root: Path | None = None) -> bool:
+        del root_path, repo_root
+        return True
+
+    monkeypatch.setattr(checker, "_transport_freeze_matches_baseline", freeze_ok)
+    monkeypatch.setattr(handoff_mod, "_transport_freeze_matches_baseline", freeze_ok)
+    monkeypatch.setattr(miner, "_transport_freeze_matches_baseline", freeze_ok)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+
+
 def test_full_chain_verification_log_readiness_command_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -2556,7 +2622,7 @@ def test_full_chain_verification_log_readiness_command_rejected(
         }
     ]
     _write_json(root / "VERIFICATION_LOG.json", vlog)
-    assert miner.cmd_write_handoff(root, payload_commit="r4" * 20) == 0
+    assert miner.cmd_write_handoff(root, payload_commit="r5" * 20) == 0
     both_checkers_fail(root)
 
     def no_command_hits(root_path: Path):
@@ -2566,15 +2632,15 @@ def test_full_chain_verification_log_readiness_command_rejected(
     monkeypatch.setattr(checker, "_command_sources_sentinel_hits", no_command_hits)
     monkeypatch.setattr(handoff_mod, "_command_sources_sentinel_hits", no_command_hits)
     monkeypatch.setattr(miner, "_command_sources_sentinel_hits", no_command_hits)
-    assert miner.cmd_write_handoff(root, payload_commit="r4" * 20) == 0
+    assert miner.cmd_write_handoff(root, payload_commit="r5" * 20) == 0
     both_checkers_pass(root)
 
 
 def test_full_chain_gate_mismatch_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root = seed_root(tmp_path)
-    build_valid_payload(root)
+    root = _copy_live_root(tmp_path)
+    seal_handoff_bundle(root)
     both_checkers_pass(root)
     handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
     assert handoff["gate_requested"] == checker.EXPECTED_GATE
@@ -2583,7 +2649,7 @@ def test_full_chain_gate_mismatch_rejected(
         {
             "schema_version": 1,
             "task": "SUPPLEMENTAL_MINING_R2",
-            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r3",
+            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r4",
             "commands": [],
         },
     )

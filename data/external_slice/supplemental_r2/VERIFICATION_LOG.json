@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "2e3520969035a2cc4078eeaea9a9fac4083819ae",
+  "baseline_commit": "0fb57206c105fe34111522f31e69c213cc0c4bdb",
   "commands": [
     {
       "command": "PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py validate-decisions --root data/external_slice/supplemental_r2",
@@ -9,17 +9,24 @@
       "phase": "payload"
     },
     {
+      "command": "PYTHONPATH=src python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "ADMISSION_CHECK_OK",
+      "phase": "payload"
+    },
+    {
       "command": "PYTHONPATH=src python3 -m pytest -q tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "208 passed",
+      "key_output": "211 passed",
       "phase": "payload"
     },
     {
       "command": "PYTHONPATH=src python3 -m pytest -q",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "468 passed, 19 warnings",
+      "key_output": "471 passed, 19 warnings",
       "phase": "payload"
     },
     {
@@ -59,9 +66,9 @@
     "forbidden_data_absent": true,
     "readiness_ran": false
   },
-  "created_at_utc": "2026-08-04T04:00:12Z",
+  "created_at_utc": "2026-08-04T05:20:10Z",
   "environment": "Cursor VM",
-  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r4",
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r5",
   "quota_disclosure_status": "DISTRIBUTION_TARGET_AT_RISK",
   "schema_version": 1,
   "task": "SUPPLEMENTAL_MINING_R2",
