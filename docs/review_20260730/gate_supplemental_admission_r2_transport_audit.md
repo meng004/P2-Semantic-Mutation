@@ -1279,3 +1279,111 @@ It must:
 The GPyTorch/chaospy/SALib shortfalls and
 `DISTRIBUTION_TARGET_AT_RISK` disclosure remain mandatory; PyTorch/JAX may not
 substitute.
+
+## 19. `SUPPLEMENTAL_ADMISSION_R2-r4` correction re-review
+
+- **Correction baseline:** `2e3520969035a2cc4078eeaea9a9fac4083819ae`
+- **Correction payload:** `4d00a365d027fdf0b84e9ac4018aa1291257fa4c`
+- **Correction handoff:** `0fb57206c105fe34111522f31e69c213cc0c4bdb`
+- **Remote binding:** correction handoff equals the Cursor branch head
+- **Lineage:** payload is a direct child of the r3 handoff; correction handoff
+  is a direct child of the payload
+- **Verdict:** `BLOCKED`
+
+### 19.1 Closed findings and positive verification
+
+`SUPP-R2-GATE-BINDING-004` is closed. Both checkers now require the handoff and
+verification log, validate the declared verification-log hash, and require the
+exact `SUPPLEMENTAL_ADMISSION_R2-r4` identity. The earlier SCOPE self-tamper,
+the explicitly named `readiness_supplemental_r2.json` sibling, and the
+verification-log `run_readiness.py` attack are rejected. The after-fifth,
+out-of-scope, and empty-queue tests now rebuild sheet/evidence/handoff and
+exercise both checkers with guard-removal controls.
+
+The committed payload remains 67 decisions, 9 `ADMIT_PENDING_REPRO`, and 58
+excluded; A2 remains all `PENDING`. `DISTRIBUTION_TARGET_AT_RISK` is preserved
+with shortfalls GPyTorch=2, chaospy=3, and SALib=3. The exact submitted
+transport no-change command returns zero, and no downstream file is present in
+the committed correction diff.
+
+Fresh verification produced `208 passed` in the targeted R2 suite and
+`468 passed, 10 warnings` in the full suite. Ruff E/F/I/E501, compileall,
+admission checking, handoff hash/parent checking, native diff-check, and the
+transport no-change command returned zero. Standards is `PASS` with zero hard
+findings; duplicated policy code across producer/two checkers is retained as a
+non-blocking independence trade-off.
+
+### 19.2 `SUPP-R2-PATH-BOUNDARY-003`
+
+The repository-wide downstream boundary remains partial. In all three
+implementations, `_forbidden_path_scan` accepts an external path only when its
+name matches `supplemental[_-]?r2|supp[_-]?r2`
+(`check_supplemental_r2_admission.py:1210-1225`). This checks the one example
+from r3 but not the specified repository-wide tracked/untracked boundary.
+
+An independent copy with the sibling
+`data/external_slice/readiness_batch99.json` retained
+`ADMISSION_CHECK_OK` and `HASH_CHECK_OK`. The r5 checker must instead compare
+the Git baseline/diff plus untracked paths and reject every newly introduced
+readiness/freeze/annotation/prediction/detection path regardless of whether its
+name contains `supplemental_r2`. Historical unchanged files may be admitted by
+the baseline, not by a naming exception.
+
+### 19.3 `SUPP-R2-TRANSPORT-FREEZE-ANCHOR-001`
+
+The fixed baseline anchor covers only `SCOPE.json`,
+`TRANSPORT_CONTRACT.json`, and `QUOTAS.json`. The additional hashes read from
+baseline SCOPE point to plans/protocol/audit documents, not the transport
+outputs. Consequently `ISSUE_SNAPSHOT.json`, `COMMAND_LOG.json`,
+`PUBLISH_COMMIT.json`, `transport_pages/`, and `failed_runs/` are protected by
+current self-declared hashes and internal consistency, but are not compared to
+the immutable `020b60fb...` Git object.
+
+Adding a harmless top-level field to frozen `COMMAND_LOG.json` and updating
+only its handoff hash produced `ADMISSION_CHECK_OK` and `HASH_CHECK_OK`. This
+directly contradicts the `existing_files_unchanged` confirmation. Both
+checkers must compare the exact byte/tree manifest for the complete frozen
+transport path set already listed in the verification command, including
+recursive page and failed-run paths, to commit
+`020b60fb83f7eb1d34f143458fca62beab5aa398`.
+
+### 19.4 `SUPP-R2-NEGATIVE-E2E-003`
+
+The required verification-log hash-tamper negative is absent. The deletion
+test also changes the attack after the first failure: after deleting the log,
+it removes `VERIFICATION_LOG.json` from handoff `file_sha256` before asserting
+the guard-disabled pass (`test_check_supplemental_r2_admission.py:2453-2467`).
+That does not prove the same synchronized attack escapes only when the named
+guard is removed.
+
+The r5 tests must keep attack bytes and all non-target bindings identical
+between red and guard-disabled controls. They must add separate deletion and
+hash-tamper tests, plus synchronized guard-isolated regressions for the generic
+repo-wide readiness path and a resealed frozen transport-file/tree mutation.
+Both public checker entry points must be asserted independently.
+
+### 19.5 Gate decision and only unlocked correction
+
+Standards is `PASS`; Specification is `FAIL`. Accepted-ready remains 18.
+Readiness, canonical freeze, C4, labelling, prediction, and detection remain
+locked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-r5` on the same Cursor VM
+branch, without `rtk`, retrieval, search, candidate replacement, or readiness.
+It must:
+
+1. replace supplemental-name filtering with a baseline-aware repository-wide
+   changed/untracked downstream path boundary;
+2. compare every frozen transport file and recursive tree to the fixed
+   `020b60fb...` Git object in both checkers;
+3. add fully synchronized, same-attack, both-checker, guard-isolated negatives
+   for verification-log deletion/hash tamper, generic readiness paths, and
+   frozen transport file/tree mutation;
+4. retain exact r5 gate/hash binding and the closed r4 negatives;
+5. preserve 67/9/58, transport bytes, A2=`PENDING`, shortfalls, and no
+   downstream execution; regenerate one payload commit and one direct-child
+   handoff, push, and stop for local r5 re-review.
+
+The GPyTorch/chaospy/SALib shortfalls and
+`DISTRIBUTION_TARGET_AT_RISK` disclosure remain mandatory; PyTorch/JAX may not
+substitute.

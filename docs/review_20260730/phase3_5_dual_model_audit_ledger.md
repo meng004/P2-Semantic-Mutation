@@ -955,3 +955,24 @@ Spec 仍 FAIL。Verification log 请求 `SUPPLEMENTAL_ADMISSION_R2-r2`，但 han
 Spec 仍 FAIL。Admission checker 删除 hash-bound verification log 后仍返回 0。SCOPE 自身加字段并同步 handoff hash、在 `data/external_slice/` 同级加入 readiness sentinel、或将 verification-log command 重封为 `run_readiness.py`，两套 checker 都仍返回 0。原因是 immutable hashes 来自可变 SCOPE、path scan 只覆盖 supplemental 子目录、command scan 只读旧 COMMAND_LOG。新增 full-chain tests 也未同步重建全部 downstream，且没有证明移除单一目标 guard 后攻击才逃逸。
 
 唯一 r4 correction 是强制两 checker 存在性与 hash-binding、用固定 transport baseline 锚定所有 immutable inputs、扫描两份 command log 与仓库级 downstream path boundary，并为全部攻击补 fully synchronized/both-checker/guard-isolated negatives。accepted-ready 仍为 18；shortfall/no-substitution 保持，readiness/downstream 全部锁定。
+
+### 5.33 SUPPLEMENTAL_ADMISSION_R2-r4 correction 复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-r4` |
+| 记录类型 | admission correction 独立复审 |
+| 交接/复核时间 | `2026-08-04T12:30:17+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | payload `4d00a365d027fdf0b84e9ac4018aa1291257fa4c`；handoff `0fb57206c105fe34111522f31e69c213cc0c4bdb` |
+| Cursor baseline | `2e3520969035a2cc4078eeaea9a9fac4083819ae` |
+| Findings | exact r4 Gate/VLOG、SCOPE/self、named sibling/VLOG-command、decision E2E 已关闭；`SUPP-R2-PATH-BOUNDARY-003`；`SUPP-R2-TRANSPORT-FREEZE-ANCHOR-001`；`SUPP-R2-NEGATIVE-E2E-003` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 `SUPPLEMENTAL_ADMISSION_R2-r5` correction；不得重跑 retrieval，不解锁 readiness 或 downstream。 |
+
+r4 正向工件保持 67/9/58、A2 全 PENDING、shortfall `2/3/3` 与 `DISTRIBUTION_TARGET_AT_RISK`；独立验证 targeted `208 passed`、full `468 passed, 10 warnings`，Ruff、compileall、admission/handoff/parent/transport checks 均通过。Standards PASS、0 hard findings。
+
+Spec 仍 FAIL。新增未带 supplemental 名称的同级 `readiness_batch99.json` 后，两 checker 仍返回 0；给 frozen `COMMAND_LOG.json` 增加字段并只同步 handoff hash 后也双双返回 0。前者来自 supplemental-name 过滤而非 baseline-aware repo diff，后者证明 baseline matcher 未覆盖 snapshot/log/publish/pages/failed-runs 全套 transport freeze。VLOG hash-tamper 负测缺失，删除测试还在 guard-disabled 阶段额外删除 handoff hash 声明，未保持 same attack。
+
+唯一 r5 correction 是完成 repo-wide changed/untracked path boundary、固定 Git object 下全 transport file/tree byte manifest、以及 VLOG deletion/hash、generic readiness path、transport mutation 的 fully synchronized/both-checker/guard-isolated negatives。accepted-ready 仍为 18；shortfall/no-substitution 保持，readiness/downstream 全部锁定。
