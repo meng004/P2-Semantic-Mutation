@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any, NoReturn
 
 FULL_SHA = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r6"
+EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r7"
 TRANSPORT_BASELINE_COMMIT = "020b60fb83f7eb1d34f143458fca62beab5aa398"
 TRANSPORT_BASELINE_PREFIX = "data/external_slice/supplemental_r2"
 TRANSPORT_FREEZE_FILES = (
@@ -49,8 +49,10 @@ DOWNSTREAM_SENTINEL_RE = re.compile(
     r")"
 )
 FORBIDDEN_PATH_NAME_RE = re.compile(
-    r"(?i)(^|[^A-Za-z0-9])(readiness|canonical_freeze|canonical-freeze|"
-    r"annotation|prediction|detection)([^A-Za-z0-9]|$)"
+    r"(?i)(?<![A-Za-z0-9])("
+    r"readiness|canonical_freeze|canonical-freeze|freeze|"
+    r"annotation|prediction|detection"
+    r")(?![A-Za-z0-9])"
 )
 
 SHEET_HEADER = [
@@ -1283,15 +1285,13 @@ def _command_sources_sentinel_hits(root: Path) -> tuple[bool, bool]:
 
 
 def _classify_forbidden_rel(rel: str) -> tuple[bool, bool, bool]:
-    if not FORBIDDEN_PATH_NAME_RE.search(rel):
+    tokens = {
+        match.group(1).lower() for match in FORBIDDEN_PATH_NAME_RE.finditer(rel)
+    }
+    if not tokens:
         return False, False, False
-    lower = rel.lower()
-    readiness = "readiness" in lower
-    freeze = (
-        "canonical_freeze" in lower
-        or "canonical-freeze" in lower
-        or any(token in lower for token in ("annotation", "prediction", "detection"))
-    )
+    readiness = "readiness" in tokens
+    freeze = bool(tokens - {"readiness"})
     return True, readiness, freeze
 
 

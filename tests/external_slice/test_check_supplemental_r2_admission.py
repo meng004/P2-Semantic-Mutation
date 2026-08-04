@@ -2670,6 +2670,10 @@ def test_full_chain_scope_self_tamper_rejected(
         "batch99_readiness.json",  # suffix token
         "foo_readiness_bar.json",  # infix token
         "readiness_supplemental_r2.json",  # sibling sentinel
+        "freeze.json",  # bare freeze token
+        "freeze_batch99.json",  # prefix freeze token
+        "batch99_freeze.json",  # suffix freeze token
+        "foo_freeze_bar.json",  # infix freeze token
     ],
 )
 def test_full_chain_downstream_token_filename_positions_rejected(
@@ -2692,6 +2696,26 @@ def test_full_chain_downstream_token_filename_positions_rejected(
     monkeypatch.setattr(checker, "_forbidden_path_scan", no_path_hits)
     monkeypatch.setattr(handoff_mod, "_forbidden_path_scan", no_path_hits)
     monkeypatch.setattr(miner, "_forbidden_path_scan", no_path_hits)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "prefreeze.json",
+        "freezeout.json",
+    ],
+)
+def test_full_chain_non_token_freeze_filename_allowed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, filename: str
+) -> None:
+    """Substring freeze inside a larger token must not trip the path guard."""
+    root = _copy_live_root(tmp_path, monkeypatch)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+    sibling = root.parent / filename
+    sibling.write_text("{}\n", encoding="utf-8")
     seal_handoff_bundle(root)
     both_checkers_pass(root)
 
@@ -2788,7 +2812,7 @@ def test_full_chain_gate_mismatch_rejected(
         {
             "schema_version": 1,
             "task": "SUPPLEMENTAL_MINING_R2",
-            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r5",
+            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r6",
             "commands": [],
         },
     )
