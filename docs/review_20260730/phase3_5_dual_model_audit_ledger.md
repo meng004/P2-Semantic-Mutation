@@ -934,3 +934,24 @@ Spec 仍 FAIL。`EXT-pymc-20` 的 recorded buggy SHA 不是 fixed commit `09afc8
 Spec 仍 FAIL。Verification log 请求 `SUPPLEMENTAL_ADMISSION_R2-r2`，但 handoff 和 producer 仍硬编码旧 Gate，且两个 checker 接受该不一致。更深的 confirmation attack 给 frozen `SCOPE.json` 增加字段并同步当前 handoff hash 后，`existing_files_unchanged=true` 仍被两个 checker 接受；readiness sentinel 也不可见，因为三个非 decision confirmation 仍是共享硬编码常量。最后，after-fifth、out-of-scope、empty-queue 新测试只是内存函数测试，未按 r2 scope 完成 fully rebuilt/guard-isolated end-to-end regression。
 
 唯一 r3 correction 是绑定 exact gate identity、从 frozen hashes/command log/forbidden paths 真实证明 confirmation，并补六类 fully rebuilt isolated negatives。accepted-ready 仍为 18；`DISTRIBUTION_TARGET_AT_RISK` 和 no-substitution 保持，readiness/downstream 继续锁定。
+
+### 5.32 SUPPLEMENTAL_ADMISSION_R2-r3 correction 复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-r3` |
+| 记录类型 | admission correction 独立复审 |
+| 交接/复核时间 | `2026-08-04T11:10:11+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | payload `8be5ac1dac12febe05afbb38d3afbc16d0d2732f`；handoff `2e3520969035a2cc4078eeaea9a9fac4083819ae` |
+| Cursor baseline | `1e4004268016f9f4b0167fb392a6a4ff7ec116cf` |
+| Findings | exact r3 label 已关闭；`SUPP-R2-GATE-BINDING-004`；`SUPP-R2-CONFIRMATION-EVIDENCE-002`；`SUPP-R2-NEGATIVE-E2E-002` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 `SUPPLEMENTAL_ADMISSION_R2-r4` correction；不得重跑 retrieval，不解锁 readiness 或 downstream。 |
+
+正向工件保持 67/9/58、A2 全 PENDING、transport freeze 和 `DISTRIBUTION_TARGET_AT_RISK`；独立验证 targeted `206 passed`、full `466 passed, 10 warnings`，Ruff、compileall、admission/handoff/parent/transport checks 均通过。Standards PASS、0 findings。
+
+Spec 仍 FAIL。Admission checker 删除 hash-bound verification log 后仍返回 0。SCOPE 自身加字段并同步 handoff hash、在 `data/external_slice/` 同级加入 readiness sentinel、或将 verification-log command 重封为 `run_readiness.py`，两套 checker 都仍返回 0。原因是 immutable hashes 来自可变 SCOPE、path scan 只覆盖 supplemental 子目录、command scan 只读旧 COMMAND_LOG。新增 full-chain tests 也未同步重建全部 downstream，且没有证明移除单一目标 guard 后攻击才逃逸。
+
+唯一 r4 correction 是强制两 checker 存在性与 hash-binding、用固定 transport baseline 锚定所有 immutable inputs、扫描两份 command log 与仓库级 downstream path boundary，并为全部攻击补 fully synchronized/both-checker/guard-isolated negatives。accepted-ready 仍为 18；shortfall/no-substitution 保持，readiness/downstream 全部锁定。
