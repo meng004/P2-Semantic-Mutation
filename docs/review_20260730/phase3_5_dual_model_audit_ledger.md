@@ -976,3 +976,22 @@ r4 正向工件保持 67/9/58、A2 全 PENDING、shortfall `2/3/3` 与 `DISTRIBU
 Spec 仍 FAIL。新增未带 supplemental 名称的同级 `readiness_batch99.json` 后，两 checker 仍返回 0；给 frozen `COMMAND_LOG.json` 增加字段并只同步 handoff hash 后也双双返回 0。前者来自 supplemental-name 过滤而非 baseline-aware repo diff，后者证明 baseline matcher 未覆盖 snapshot/log/publish/pages/failed-runs 全套 transport freeze。VLOG hash-tamper 负测缺失，删除测试还在 guard-disabled 阶段额外删除 handoff hash 声明，未保持 same attack。
 
 唯一 r5 correction 是完成 repo-wide changed/untracked path boundary、固定 Git object 下全 transport file/tree byte manifest、以及 VLOG deletion/hash、generic readiness path、transport mutation 的 fully synchronized/both-checker/guard-isolated negatives。accepted-ready 仍为 18；shortfall/no-substitution 保持，readiness/downstream 全部锁定。
+
+### 5.34 SUPPLEMENTAL_ADMISSION_R2-r5 correction 复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-r5` |
+| 记录类型 | admission correction 独立复审 |
+| 交接/复核时间 | `2026-08-04T17:52:44+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | payload `13e07f6c7dfa1e2c749f6b714b9e394badd9ce7d`；handoff `9452924c8a40cca494b3129114524cc4d8a1b2af` |
+| Cursor baseline | `0fb57206c105fe34111522f31e69c213cc0c4bdb` |
+| Findings | r5 VLOG deletion/hash、prefix-form generic readiness、single COMMAND_LOG mutation 已关闭；`SUPP-R2-TRANSPORT-FREEZE-FALLBACK-001`；`SUPP-R2-PATH-TOKEN-BOUNDARY-001` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 `SUPPLEMENTAL_ADMISSION_R2-r6` correction；不得重跑 retrieval，不解锁 readiness 或 downstream。 |
+
+r5 正向工件保持 67/9/58、A2 全 PENDING、shortfall `2/3/3` 与 `DISTRIBUTION_TARGET_AT_RISK`；独立验证 targeted `211 passed`、full `471 passed, 10 warnings`，Ruff、compileall、admission/handoff/parent/transport checks 均通过。Standards PASS、0 hard findings。
+
+Spec 仍 FAIL。所有 output/tree 文件都被修改并同步重封时，production synthetic-fixture fallback 将完整 transport replacement 当作 fixture，两个 public checker 都返回 0。另一个新 sibling `batch99_readiness.json` 也返回双 0，因为文件名 regex 只识别 segment prefix；r5 负测只覆盖了 `readiness_batch99.json`。唯一 r6 correction 是删除 production fallback、无条件比对完整 frozen tree、完成位置无关的 token 识别，并补 total-drift 与 prefix/suffix/infix filename 的 same-attack/both-checker/guard-isolated negatives。accepted-ready 仍为 18；shortfall/no-substitution 保持，readiness/downstream 全部锁定。

@@ -1387,3 +1387,88 @@ It must:
 The GPyTorch/chaospy/SALib shortfalls and
 `DISTRIBUTION_TARGET_AT_RISK` disclosure remain mandatory; PyTorch/JAX may not
 substitute.
+
+## 20. `SUPPLEMENTAL_ADMISSION_R2-r5` correction re-review
+
+- **Correction baseline:** `0fb57206c105fe34111522f31e69c213cc0c4bdb`
+- **Correction payload:** `13e07f6c7dfa1e2c749f6b714b9e394badd9ce7d`
+- **Correction handoff:** `9452924c8a40cca494b3129114524cc4d8a1b2af`
+- **Remote binding:** correction handoff equals the Cursor branch head
+- **Lineage:** payload is a direct child of the r4 handoff; correction handoff
+  is a direct child of the payload
+- **Verdict:** `BLOCKED`
+
+### 20.1 Closed findings and positive verification
+
+The exact r5 gate and handoff/verification-log binding are correct. The
+submitted `readiness_batch99.json` prefix-form sentinel, the resealed single
+`COMMAND_LOG.json` mutation, and separate verification-log deletion/hash
+tamper tests now reject in both checkers. The payload remains 67 decisions, 9
+`ADMIT_PENDING_REPRO`, and 58 excluded; A2 is all `PENDING`. The frozen
+shortfalls remain GPyTorch=2, chaospy=3, and SALib=3 with
+`DISTRIBUTION_TARGET_AT_RISK`.
+
+Fresh local verification produced `211 passed` in the targeted R2 suite and
+`471 passed, 10 warnings` in the full suite. Ruff E/F/I/E501, compileall,
+admission checking, handoff hash/parent checking, native diff-check, and the
+submitted transport no-change command returned zero. Standards is `PASS` with
+zero hard findings; the three independent policy implementations remain a
+non-blocking duplicated-code/shotgun-surgery trade-off.
+
+### 20.2 `SUPP-R2-TRANSPORT-FREEZE-FALLBACK-001`
+
+The production transport checker still accepts total frozen-output replacement.
+`_transport_freeze_matches_baseline` first compares the full file/tree set, but
+then falls back to `contract_ok and docs_ok` when no output byte/tree entry
+matches baseline (`check_supplemental_r2_admission.py:1191-1263`, with the same
+logic in handoff and producer). That fallback cannot distinguish a synthetic
+fixture from a fully resealed attack against a live-copy tree.
+
+An independent full-chain attack changed all 552 transport pages, all three
+failed-run archive files, `ISSUE_SNAPSHOT.json`, `COMMAND_LOG.json`, and
+`PUBLISH_COMMIT.json`; it rebuilt manifest/source/record hashes, queue,
+decisions, sheet, evidence, publish seal, and handoff. Both public commands
+then returned `ADMISSION_CHECK_OK` and `HASH_CHECK_OK`. This violates the
+unconditional full frozen-set comparison required by section 19.3.
+
+### 20.3 `SUPP-R2-PATH-TOKEN-BOUNDARY-001`
+
+The boundary scanner now compares changed/untracked paths to baseline, but its
+filename regex still recognizes a downstream token only at the beginning of a
+path segment (`FORBIDDEN_PATH_NAME_RE` at
+`check_supplemental_r2_admission.py:51-53`). The new sibling
+`batch99_readiness.json` therefore evades the check: both public checkers
+returned zero. The r5 regression only covers `readiness_batch99.json`, which
+has the token in the accepted position.
+
+The classifier must recognize readiness/freeze/annotation/prediction/detection
+tokens wherever they occur as underscore, hyphen, or path-component terms, not
+only as a component prefix; it must retain baseline-aware admission of
+unchanged historical files.
+
+### 20.4 Gate decision and only unlocked correction
+
+Standards is `PASS`; Specification is `FAIL`. Accepted-ready remains 18.
+Readiness, canonical freeze, C4, labelling, prediction, and detection remain
+locked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-r6` on the same Cursor VM
+branch, without `rtk`, retrieval, search, candidate replacement, or readiness.
+It must:
+
+1. remove the synthetic-fixture fallback from production code and require
+   unconditional full Git-object byte/tree equality for every frozen transport
+   path; test fixtures may inject a test-only baseline provider instead;
+2. make downstream token detection position-independent across path components
+   and separators, while allowing only byte-identical historical baseline paths;
+3. add fully synchronized, same-attack, both-checker, guard-isolated negatives
+   for total transport file/tree replacement and prefix/suffix/infix
+   downstream filenames;
+4. retain exact r6 gate/hash binding and every closed r5 negative;
+5. preserve 67/9/58, transport bytes, A2=`PENDING`, shortfalls, and no
+   downstream execution; regenerate one payload commit and one direct-child
+   handoff, push, and stop for local r6 re-review.
+
+The GPyTorch/chaospy/SALib shortfalls and
+`DISTRIBUTION_TARGET_AT_RISK` disclosure remain mandatory; PyTorch/JAX may not
+substitute.
