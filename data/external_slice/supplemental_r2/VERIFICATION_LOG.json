@@ -1,0 +1,206 @@
+{
+  "baseline_commit": "1e4004268016f9f4b0167fb392a6a4ff7ec116cf",
+  "commands": [
+    {
+      "command": "python3 scripts/external_slice/mine_supplemental_r2.py validate-decisions --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "DECISIONS_OK",
+      "phase": "payload"
+    },
+    {
+      "command": "python3 scripts/external_slice/mine_supplemental_r2.py build-payload --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "PAYLOAD_OK",
+      "phase": "payload"
+    },
+    {
+      "command": "python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "ADMISSION_CHECK_OK",
+      "phase": "payload"
+    },
+    {
+      "command": "python3 -m pytest -q tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "206 passed",
+      "phase": "payload"
+    },
+    {
+      "command": "python3 -m pytest -q",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "466 passed, 10 warnings",
+      "phase": "payload"
+    },
+    {
+      "command": ".venv/bin/python -m ruff check --select E,F,I,E501 scripts/external_slice/mine_supplemental_r2.py scripts/external_slice/check_supplemental_r2_admission.py scripts/external_slice/check_supplemental_r2_handoff_hashes.py tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "All checks passed!",
+      "phase": "payload"
+    },
+    {
+      "command": "python3 -m compileall -q scripts/external_slice tests/external_slice",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "compileall_ok",
+      "phase": "payload"
+    },
+    {
+      "command": "git diff --check",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "no whitespace errors",
+      "phase": "payload"
+    },
+    {
+      "command": "git diff --exit-code 020b60fb83f7eb1d34f143458fca62beab5aa398 -- data/external_slice/supplemental_r2/SCOPE.json data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json data/external_slice/supplemental_r2/QUOTAS.json data/external_slice/supplemental_r2/ISSUE_SNAPSHOT.json data/external_slice/supplemental_r2/COMMAND_LOG.json data/external_slice/supplemental_r2/PUBLISH_COMMIT.json data/external_slice/supplemental_r2/transport_pages data/external_slice/supplemental_r2/failed_runs",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "immutable transport evidence unchanged",
+      "phase": "payload"
+    },
+    {
+      "command": "env PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py write-handoff --root data/external_slice/supplemental_r2 --payload-commit 8be5ac1dac12febe05afbb38d3afbc16d0d2732f",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "HANDOFF_OK",
+      "phase": "handoff"
+    },
+    {
+      "command": "python3 scripts/external_slice/check_supplemental_r2_handoff_hashes.py --handoff data/external_slice/supplemental_r2/HANDOFF_SUPPLEMENTAL_R2.json --skip-parent-check",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "HASH_CHECK_OK",
+      "phase": "handoff"
+    }
+  ],
+  "confirmations": {
+    "a2_all_pending": true,
+    "analysis_id_all_blank": true,
+    "canonical_freeze_claimed": false,
+    "existing_files_unchanged": true,
+    "forbidden_data_absent": true,
+    "readiness_ran": false
+  },
+  "created_at_utc": "2026-08-04T02:55:11Z",
+  "environment": {
+    "cwd": "/workspace",
+    "gh": "gh version 2.91.0 (2026-04-22)",
+    "git": "git version 2.43.0",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "Python 3.12.3"
+  },
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r3",
+  "payload_commit": "8be5ac1dac12febe05afbb38d3afbc16d0d2732f",
+  "post_commit_evidence": {
+    "executed_before_handoff_commit": false,
+    "note": "Parent-check with handoff_commit SELF must run AFTER the handoff commit exists; it is not a pre-commit command.",
+    "planned_assertion": "test \"$(git rev-parse HEAD^)\" = \"8be5ac1dac12febe05afbb38d3afbc16d0d2732f\"",
+    "planned_command": "python3 scripts/external_slice/check_supplemental_r2_handoff_hashes.py --handoff data/external_slice/supplemental_r2/HANDOFF_SUPPLEMENTAL_R2.json"
+  },
+  "quota_disclosure_status": "DISTRIBUTION_TARGET_AT_RISK",
+  "repository_review_counts": {
+    "SALib/SALib": {
+      "admit_pending_repro": 0,
+      "excluded": 0,
+      "exclusion_class_counts": {},
+      "queue_size": 0,
+      "review_status_counts": {},
+      "reviewed": 0,
+      "stop_reason": "queue_exhausted"
+    },
+    "cornellius-gp/gpytorch": {
+      "admit_pending_repro": 1,
+      "excluded": 4,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 1,
+        "behaviour change that is intended API redesign": 2,
+        "crash-only": 1
+      },
+      "queue_size": 5,
+      "review_status_counts": {
+        "REVIEWED": 5
+      },
+      "reviewed": 5,
+      "stop_reason": "queue_exhausted"
+    },
+    "jax-ml/jax": {
+      "admit_pending_repro": 1,
+      "excluded": 19,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 14,
+        "behaviour change that is intended API redesign": 2,
+        "build/packaging": 1,
+        "crash-only": 1,
+        "test-infrastructure": 1
+      },
+      "queue_size": 34,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 14,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "twenty_reviewed"
+    },
+    "jonathf/chaospy": {
+      "admit_pending_repro": 0,
+      "excluded": 2,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 1,
+        "behaviour change that is intended API redesign": 1
+      },
+      "queue_size": 2,
+      "review_status_counts": {
+        "REVIEWED": 2
+      },
+      "reviewed": 2,
+      "stop_reason": "queue_exhausted"
+    },
+    "pymc-devs/pymc": {
+      "admit_pending_repro": 5,
+      "excluded": 15,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 5,
+        "behaviour change that is intended API redesign": 1,
+        "build/packaging": 3,
+        "crash-only": 2,
+        "documentation": 3,
+        "test-infrastructure": 1
+      },
+      "queue_size": 24,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 4,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "five_admit_pending_repro"
+    },
+    "pytorch/pytorch": {
+      "admit_pending_repro": 2,
+      "excluded": 18,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 18
+      },
+      "queue_size": 91,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 71,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "twenty_reviewed"
+    }
+  },
+  "schema_version": 1,
+  "task": "SUPPLEMENTAL_MINING_R2",
+  "totals": {
+    "admit_pending_repro": 9,
+    "decisions": 67,
+    "excluded": 58
+  },
+  "transport_freeze_commit": "020b60fb83f7eb1d34f143458fca62beab5aa398"
+}
