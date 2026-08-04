@@ -2226,3 +2226,155 @@ def test_sheet_uses_lf_line_endings(tmp_path: Path) -> None:
     raw = (root / "admission_sheet.cursor_candidate.csv").read_bytes()
     assert b"\r\n" not in raw
     assert b"\n" in raw
+
+
+def _copy_live_root(tmp_path: Path) -> Path:
+    """Full-chain fixture: copy live supplemental_r2 evidence tree."""
+    dest = tmp_path / "supplemental_r2"
+    shutil.copytree(FROZEN, dest)
+    for name in ("HANDOFF_SUPPLEMENTAL_R2.json", "VERIFICATION_LOG.json"):
+        path = dest / name
+        if path.exists():
+            path.unlink()
+    return dest
+
+
+def _align_queue_statuses(root: Path, decisions: list[dict[str, Any]]) -> None:
+    decided = {d["neutral_id"] for d in decisions}
+    queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
+    for row in queue["records"]:
+        row["review_status"] = (
+            "REVIEWED" if row["neutral_id"] in decided else "NOT_REVIEWED_AFTER_STOP"
+        )
+    _write_json(root / "REVIEW_QUEUE.json", queue)
+
+
+def test_full_chain_after_fifth_admit_rejected(tmp_path: Path) -> None:
+    root = _copy_live_root(tmp_path)
+    before = present_candidates(root)
+    payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
+    repo = "pymc-devs/pymc"
+    rows = _repo_rows(root, repo)
+    # Fifth admit at row 5, but keep reviewing through row 20.
+    rewritten = [
+        build_decision_from_queue_row(row, admit=idx < 5)
+        for idx, row in enumerate(rows[:20])
+    ]
+    _rewrite_repo_decisions(root, repo, rewritten)
+    payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
+    _align_queue_statuses(root, payload["decisions"])
+    assert miner.cmd_validate_decisions(root) != 0
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_full_chain_out_of_scope_decision_rejected(tmp_path: Path) -> None:
+    root = _copy_live_root(tmp_path)
+    before = present_candidates(root)
+    payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
+    donor = dict(payload["decisions"][0])
+    donor["repository"] = "evil/not-in-scope"
+    donor["neutral_id"] = "EXT-evil-01"
+    payload["decisions"].append(donor)
+    _write_json(root / "REVIEW_DECISIONS.json", payload)
+    assert miner.cmd_validate_decisions(root) != 0
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_full_chain_empty_queue_decision_rejected(tmp_path: Path) -> None:
+    root = _copy_live_root(tmp_path)
+    before = present_candidates(root)
+    # Live SALib queue is empty; injecting a decision must fail closed.
+    payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
+    payload["decisions"].append(
+        {
+            "neutral_id": "EXT-SALib-01",
+            "snapshot_record_id": "SSR2-SALib-1",
+            "snapshot_record_sha256": "c" * 64,
+            "repository": "SALib/SALib",
+            "issue_node_id": "NODE-SALib",
+            "issue_number": 1,
+            "issue_url": "https://github.com/SALib/SALib/issues/1",
+            "repository_review_order": 1,
+            "matched_phrases": ["wrong result"],
+            "buggy_sha": "",
+            "fixed_sha": "",
+            "public_issue_url": "https://github.com/SALib/SALib/issues/1",
+            "public_fix_url": "",
+            "mechanism": "empty-queue injection",
+            "exclusion_class": "documentation",
+            "crit_real_public_fix": "FAIL",
+            "crit_in_numerical_scope": "FAIL",
+            "crit_dual_arm_repro": "PENDING",
+            "decision": "EXCLUDED",
+            "decision_reason": "documentation exclusion class applies.",
+            "analysis_id": "",
+        }
+    )
+    _write_json(root / "REVIEW_DECISIONS.json", payload)
+    assert miner.cmd_validate_decisions(root) != 0
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_full_chain_frozen_file_tamper_rejected(tmp_path: Path) -> None:
+    root = _copy_live_root(tmp_path)
+    before = present_candidates(root)
+    # Tamper an immutable transport freeze file.
+    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    snap["run_id"] = "tampered-run-id"
+    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_full_chain_readiness_freeze_sentinel_rejected(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    assert miner.cmd_write_handoff(root, payload_commit="s1" * 20) == 0
+    before = present_candidates(root)
+    # Downstream readiness sentinel must flip evidence-backed confirmations.
+    (root / "READINESS_RUN.json").write_text("{}\n", encoding="utf-8")
+    assert_checker_fails_without_new_mint(root, before)
+    (root / "READINESS_RUN.json").unlink()
+    assert miner.cmd_write_handoff(root, payload_commit="s2" * 20) == 0
+    (root / "canonical_freeze.marker").write_text("x\n", encoding="utf-8")
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            root / "HANDOFF_SUPPLEMENTAL_R2.json",
+            cwd=root,
+            check_parent=False,
+            git_cwd=ROOT,
+        )
+        != 0
+    )
+
+
+def test_full_chain_gate_mismatch_rejected(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    assert miner.cmd_write_handoff(root, payload_commit="g1" * 20) == 0
+    before = present_candidates(root)
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    assert handoff["gate_requested"] == checker.EXPECTED_GATE
+    # Cross-file mismatch: verification log claims a different gate.
+    _write_json(
+        root / "VERIFICATION_LOG.json",
+        {
+            "schema_version": 1,
+            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r2",
+            "task": "SUPPLEMENTAL_MINING_R2",
+        },
+    )
+    assert_checker_fails_without_new_mint(root, before)
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            root / "HANDOFF_SUPPLEMENTAL_R2.json",
+            cwd=root,
+            check_parent=False,
+            git_cwd=ROOT,
+        )
+        != 0
+    )
+    # Handoff itself on the wrong gate is also rejected.
+    handoff["gate_requested"] = "SUPPLEMENTAL_ADMISSION_R2"
+    _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
+    (root / "VERIFICATION_LOG.json").unlink()
+    assert_checker_fails_without_new_mint(root, before)

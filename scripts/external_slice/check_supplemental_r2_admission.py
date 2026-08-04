@@ -16,10 +16,26 @@ from pathlib import Path
 from typing import Any, NoReturn
 
 FULL_SHA = re.compile(r"^[0-9a-f]{40}$")
+EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r3"
 PROHIBITED_VOCAB_RE = re.compile(
     r"(?i)(mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|"
     r"\bkill\b|prediction|detection_result|\bfiber\b|\boperator\b|"
     r"(^|[^A-Za-z0-9_])(CE|OS|HP|TF|SI|fiber|stratum)([^A-Za-z0-9_]|$))"
+)
+DOWNSTREAM_SENTINEL_RE = re.compile(
+    r"(?i)("
+    r"\breadiness\b|"
+    r"\bcanonical_freeze\b|"
+    r"\bcanonical-freeze\b|"
+    r"\bannotation\b|"
+    r"\bprediction\b|"
+    r"\bdetection_result\b|"
+    r"\bdetection-result\b"
+    r")"
+)
+FORBIDDEN_PATH_NAME_RE = re.compile(
+    r"(?i)(^|/)(readiness|canonical_freeze|canonical-freeze|"
+    r"annotation|prediction|detection)([._\-/]|$)"
 )
 
 SHEET_HEADER = [
@@ -1073,37 +1089,104 @@ def _project_quota_feasibility(
     }
 
 
-def _compute_confirmations(decisions: list[dict[str, Any]]) -> dict[str, bool]:
+def _command_log_sentinel_hits(command_log: dict[str, Any]) -> tuple[bool, bool]:
+    readiness_hit = False
+    freeze_hit = False
+    for entry in command_log.get("entries") or []:
+        blob = json.dumps(entry, sort_keys=True, ensure_ascii=False)
+        if not DOWNSTREAM_SENTINEL_RE.search(blob):
+            continue
+        lower = blob.lower()
+        if re.search(r"\breadiness\b", lower):
+            readiness_hit = True
+        if re.search(r"\bcanonical[_-]freeze\b", lower) or re.search(
+            r"\bcanonical\b.*\bfreeze\b", lower
+        ):
+            freeze_hit = True
+        if re.search(r"\bannotation\b|\bprediction\b|\bdetection_result\b", lower):
+            freeze_hit = True
+    return readiness_hit, freeze_hit
+
+
+def _forbidden_path_scan(root: Path) -> tuple[bool, bool, bool]:
+    forbidden_path_hit = False
+    readiness_file_hit = False
+    freeze_file_hit = False
+    if not root.is_dir():
+        return False, False, False
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(root).as_posix()
+        if rel in {"VERIFICATION_LOG.json", "HANDOFF_SUPPLEMENTAL_R2.json", "SCOPE.json"}:
+            continue
+        if FORBIDDEN_PATH_NAME_RE.search(rel):
+            forbidden_path_hit = True
+            lower = rel.lower()
+            if "readiness" in lower:
+                readiness_file_hit = True
+            if "canonical_freeze" in lower or "canonical-freeze" in lower:
+                freeze_file_hit = True
+            if any(
+                token in lower
+                for token in ("annotation", "prediction", "detection")
+            ):
+                freeze_file_hit = True
+    return forbidden_path_hit, readiness_file_hit, freeze_file_hit
+
+
+def _compute_confirmations(
+    *,
+    root: Path,
+    scope: dict[str, Any],
+    decisions: list[dict[str, Any]],
+    repo_root: Path | None = None,
+) -> dict[str, bool]:
+    """Independently prove confirmations (no producer import, no constants)."""
+    repo_root = repo_root or Path(__file__).resolve().parents[2]
     a2_all_pending = all(
         d.get("crit_dual_arm_repro") == "PENDING" for d in decisions
     )
     analysis_id_all_blank = all(
         d.get("analysis_id") in (None, "") for d in decisions
     )
-    forbidden_data_absent = True
+    vocab_clean = True
     for decision in decisions:
         for text_key in ("mechanism", "decision_reason"):
             if PROHIBITED_VOCAB_RE.search(decision.get(text_key) or ""):
-                forbidden_data_absent = False
+                vocab_clean = False
                 break
-        if not forbidden_data_absent:
+        if not vocab_clean:
+            break
+    command_log: dict[str, Any] = {}
+    if (root / "COMMAND_LOG.json").is_file():
+        command_log = load_json(root / "COMMAND_LOG.json")
+    readiness_cmd, freeze_cmd = _command_log_sentinel_hits(command_log)
+    path_hit, readiness_file, freeze_file = _forbidden_path_scan(root)
+    existing_files_unchanged = True
+    for rel, expected in (scope.get("input_sha256") or {}).items():
+        path = repo_root / rel
+        if not path.is_file() or sha256_file(path) != expected:
+            existing_files_unchanged = False
             break
     return {
         "a2_all_pending": a2_all_pending,
         "analysis_id_all_blank": analysis_id_all_blank,
-        "forbidden_data_absent": forbidden_data_absent,
-        "readiness_ran": False,
-        "canonical_freeze_claimed": False,
-        "existing_files_unchanged": True,
+        "forbidden_data_absent": vocab_clean and not path_hit,
+        "readiness_ran": bool(readiness_cmd or readiness_file),
+        "canonical_freeze_claimed": bool(freeze_cmd or freeze_file),
+        "existing_files_unchanged": existing_files_unchanged,
     }
 
 
 def recompute_admission_summary(
     *,
+    root: Path,
     scope: dict[str, Any],
     quotas: dict[str, Any],
     queue: list[dict[str, Any]],
     decisions: list[dict[str, Any]],
+    repo_root: Path | None = None,
 ) -> dict[str, Any]:
     """Independently recompute handoff summary fields (no producer import)."""
     max_reviewed = int(scope["max_reviewed_per_repo"])
@@ -1161,7 +1244,9 @@ def recompute_admission_summary(
         },
         "repository_review_counts": repository_review_counts,
         "quota_feasibility": _project_quota_feasibility(quotas, decisions),
-        "confirmations": _compute_confirmations(decisions),
+        "confirmations": _compute_confirmations(
+            root=root, scope=scope, decisions=decisions, repo_root=repo_root
+        ),
     }
 
 
@@ -1418,8 +1503,29 @@ def verify_sheet_and_evidence(
                 fail(f"sheet/evidence mismatch {nid}:{field}")
 
 
+def verify_gate_binding(root: Path, handoff: dict[str, Any] | None) -> None:
+    """Bind EXPECTED_GATE and reject handoff/verification-log mismatch."""
+    vlog_path = root / "VERIFICATION_LOG.json"
+    vlog = load_json(vlog_path) if vlog_path.is_file() else None
+    if handoff is not None:
+        gate = handoff.get("gate_requested")
+        if gate != EXPECTED_GATE:
+            fail(f"handoff gate_requested {gate!r} != {EXPECTED_GATE!r}")
+    if vlog is not None:
+        gate = vlog.get("gate_requested")
+        if gate != EXPECTED_GATE:
+            fail(f"verification_log gate_requested {gate!r} != {EXPECTED_GATE!r}")
+    if handoff is not None and vlog is not None:
+        if handoff.get("gate_requested") != vlog.get("gate_requested"):
+            fail(
+                "gate mismatch between handoff and verification_log: "
+                f"{handoff.get('gate_requested')!r} vs {vlog.get('gate_requested')!r}"
+            )
+
+
 def verify_handoff_summary(
     *,
+    root: Path,
     scope: dict[str, Any],
     quotas: dict[str, Any],
     queue: list[dict[str, Any]],
@@ -1428,7 +1534,7 @@ def verify_handoff_summary(
 ) -> None:
     """Independently recompute summary/confirmations and compare when handoff exists."""
     expected = recompute_admission_summary(
-        scope=scope, quotas=quotas, queue=queue, decisions=decisions
+        root=root, scope=scope, quotas=quotas, queue=queue, decisions=decisions
     )
     if handoff is None:
         return
@@ -1488,7 +1594,9 @@ def verify_admission(root: Path) -> int:
         quotas = load_json(root / "QUOTAS.json")
         handoff_path = root / "HANDOFF_SUPPLEMENTAL_R2.json"
         handoff = load_json(handoff_path) if handoff_path.is_file() else None
+        verify_gate_binding(root, handoff)
         verify_handoff_summary(
+            root=root,
             scope=scope,
             quotas=quotas,
             queue=queue,

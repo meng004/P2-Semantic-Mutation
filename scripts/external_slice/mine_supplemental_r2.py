@@ -22,6 +22,23 @@ from pathlib import Path
 from typing import Any, Callable
 
 ROOT_DEFAULT = Path("data/external_slice/supplemental_r2")
+EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r3"
+
+DOWNSTREAM_SENTINEL_RE = re.compile(
+    r"(?i)("
+    r"\breadiness\b|"
+    r"\bcanonical_freeze\b|"
+    r"\bcanonical-freeze\b|"
+    r"\bannotation\b|"
+    r"\bprediction\b|"
+    r"\bdetection_result\b|"
+    r"\bdetection-result\b"
+    r")"
+)
+FORBIDDEN_PATH_NAME_RE = re.compile(
+    r"(?i)(^|/)(readiness|canonical_freeze|canonical-freeze|"
+    r"annotation|prediction|detection)([._\-/]|$)"
+)
 
 SHEET_HEADER = [
     "neutral_id",
@@ -1795,38 +1812,116 @@ def project_quota_feasibility(
     }
 
 
-def compute_confirmations(decisions: list[dict[str, Any]]) -> dict[str, bool]:
-    """Derive handoff confirmation booleans from decision rows."""
+def _command_log_sentinel_hits(command_log: dict[str, Any]) -> tuple[bool, bool]:
+    """Return (readiness_hit, freeze_hit) from COMMAND_LOG evidence."""
+    readiness_hit = False
+    freeze_hit = False
+    for entry in command_log.get("entries") or []:
+        blob = json.dumps(entry, sort_keys=True, ensure_ascii=False)
+        if not DOWNSTREAM_SENTINEL_RE.search(blob):
+            continue
+        lower = blob.lower()
+        if re.search(r"\breadiness\b", lower):
+            readiness_hit = True
+        if re.search(r"\bcanonical[_-]freeze\b", lower) or re.search(
+            r"\bcanonical\b.*\bfreeze\b", lower
+        ):
+            freeze_hit = True
+        if re.search(r"\bannotation\b|\bprediction\b|\bdetection_result\b", lower):
+            # Downstream sentinels also prove forbidden-path / freeze-class drift.
+            freeze_hit = True
+    return readiness_hit, freeze_hit
+
+
+def _forbidden_path_scan(root: Path) -> tuple[bool, bool, bool]:
+    """Scan root paths for readiness/freeze/forbidden downstream filenames.
+
+    Returns (forbidden_path_hit, readiness_file_hit, freeze_file_hit).
+    """
+    forbidden_path_hit = False
+    readiness_file_hit = False
+    freeze_file_hit = False
+    if not root.is_dir():
+        return False, False, False
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(root).as_posix()
+        # Skip narrative logs that may mention confirmation keys.
+        if rel in {"VERIFICATION_LOG.json", "HANDOFF_SUPPLEMENTAL_R2.json", "SCOPE.json"}:
+            continue
+        if FORBIDDEN_PATH_NAME_RE.search(rel):
+            forbidden_path_hit = True
+            lower = rel.lower()
+            if "readiness" in lower:
+                readiness_file_hit = True
+            if "canonical_freeze" in lower or "canonical-freeze" in lower:
+                freeze_file_hit = True
+            if any(
+                token in lower
+                for token in ("annotation", "prediction", "detection")
+            ):
+                freeze_file_hit = True
+    return forbidden_path_hit, readiness_file_hit, freeze_file_hit
+
+
+def compute_confirmations(
+    *,
+    root: Path,
+    scope: dict[str, Any],
+    decisions: list[dict[str, Any]],
+    repo_root: Path | None = None,
+) -> dict[str, bool]:
+    """Prove confirmations from decisions, frozen hashes, command log, path scan."""
+    repo_root = repo_root or Path(__file__).resolve().parents[2]
     a2_all_pending = all(
         d.get("crit_dual_arm_repro") == "PENDING" for d in decisions
     )
     analysis_id_all_blank = all(
         d.get("analysis_id") in (None, "") for d in decisions
     )
-    forbidden_data_absent = True
+
+    vocab_clean = True
     for decision in decisions:
         for text_key in ("mechanism", "decision_reason"):
             if PROHIBITED_VOCAB_RE.search(decision.get(text_key) or ""):
-                forbidden_data_absent = False
+                vocab_clean = False
                 break
-        if not forbidden_data_absent:
+        if not vocab_clean:
             break
+
+    command_log: dict[str, Any] = {}
+    command_log_path = root / "COMMAND_LOG.json"
+    if command_log_path.is_file():
+        command_log = load_json(command_log_path)
+    readiness_cmd, freeze_cmd = _command_log_sentinel_hits(command_log)
+    path_hit, readiness_file, freeze_file = _forbidden_path_scan(root)
+
+    existing_files_unchanged = True
+    for rel, expected in (scope.get("input_sha256") or {}).items():
+        path = repo_root / rel
+        if not path.is_file() or sha256_file(path) != expected:
+            existing_files_unchanged = False
+            break
+
     return {
         "a2_all_pending": a2_all_pending,
         "analysis_id_all_blank": analysis_id_all_blank,
-        "forbidden_data_absent": forbidden_data_absent,
-        "readiness_ran": False,
-        "canonical_freeze_claimed": False,
-        "existing_files_unchanged": True,
+        "forbidden_data_absent": vocab_clean and not path_hit,
+        "readiness_ran": bool(readiness_cmd or readiness_file),
+        "canonical_freeze_claimed": bool(freeze_cmd or freeze_file),
+        "existing_files_unchanged": existing_files_unchanged,
     }
 
 
 def compute_admission_summary(
     *,
+    root: Path,
     scope: dict[str, Any],
     quotas: dict[str, Any],
     queue: list[dict[str, Any]],
     decisions: list[dict[str, Any]],
+    repo_root: Path | None = None,
 ) -> dict[str, Any]:
     """Compute decision totals, per-repo counts, stop reasons, and shortfalls."""
     max_reviewed = int(scope["max_reviewed_per_repo"])
@@ -1886,7 +1981,9 @@ def compute_admission_summary(
         },
         "repository_review_counts": repository_review_counts,
         "quota_feasibility": feasibility,
-        "confirmations": compute_confirmations(decisions),
+        "confirmations": compute_confirmations(
+            root=root, scope=scope, decisions=decisions, repo_root=repo_root
+        ),
     }
 
 
@@ -1897,14 +1994,19 @@ def cmd_write_handoff(root: Path, payload_commit: str) -> int:
         quotas = load_quotas(root)
         decisions = load_json(root / "REVIEW_DECISIONS.json")["decisions"]
         queue = load_json(root / "REVIEW_QUEUE.json")["records"]
+        repo_root = Path(__file__).resolve().parents[2]
         summary = compute_admission_summary(
-            scope=scope, quotas=quotas, queue=queue, decisions=decisions
+            root=root,
+            scope=scope,
+            quotas=quotas,
+            queue=queue,
+            decisions=decisions,
+            repo_root=repo_root,
         )
 
         def rel_sha(name: str) -> str:
             return sha256_file(root / name)
 
-        repo_root = Path(__file__).resolve().parents[2]
         file_sha256 = {
             "SCOPE.json": rel_sha("SCOPE.json"),
             "TRANSPORT_CONTRACT.json": rel_sha("TRANSPORT_CONTRACT.json"),
@@ -1943,7 +2045,7 @@ def cmd_write_handoff(root: Path, payload_commit: str) -> int:
         handoff = {
             "schema_version": 1,
             "task": "SUPPLEMENTAL_MINING_R2",
-            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2",
+            "gate_requested": EXPECTED_GATE,
             "design_baseline_commit": scope.get("baseline_commit"),
             "payload_commit": payload_commit,
             "handoff_commit": {
