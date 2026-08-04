@@ -10,12 +10,17 @@ jobs:
   pytest:
     name: Run pytest (Path-A cache replay smoke)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
+
+      - name: Fetch immutable transport baseline
+        run: >-
+          git fetch --no-tags --depth=1 origin
+          +020b60fb83f7eb1d34f143458fca62beab5aa398:refs/remotes/origin/transport-baseline
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
