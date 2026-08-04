@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any, NoReturn
 
 FULL_SHA = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r5"
+EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r6"
 TRANSPORT_BASELINE_COMMIT = "020b60fb83f7eb1d34f143458fca62beab5aa398"
 TRANSPORT_BASELINE_PREFIX = "data/external_slice/supplemental_r2"
 TRANSPORT_FREEZE_FILES = (
@@ -49,8 +49,8 @@ DOWNSTREAM_SENTINEL_RE = re.compile(
     r")"
 )
 FORBIDDEN_PATH_NAME_RE = re.compile(
-    r"(?i)(^|/)(readiness|canonical_freeze|canonical-freeze|"
-    r"annotation|prediction|detection)([._\-/]|$)"
+    r"(?i)(^|[^A-Za-z0-9])(readiness|canonical_freeze|canonical-freeze|"
+    r"annotation|prediction|detection)([^A-Za-z0-9]|$)"
 )
 
 SHEET_HEADER = [
@@ -1188,31 +1188,23 @@ def _baseline_input_sha256(repo_root: Path) -> dict[str, str]:
     return {str(k): str(v) for k, v in payload.items()}
 
 
-def _transport_freeze_matches_baseline(root: Path, repo_root: Path) -> bool:
-    """Byte/tree compare the complete frozen transport set to 020b60fb...
+# Test-only override; production must leave this None.
+_TEST_TRANSPORT_FREEZE_PROVIDER = None
 
-    Live / live-copy trees must match every freeze file and recursive tree.
-    Fully synthetic retrieve fixtures (no transport output byte-matches baseline)
-    fall back to contract-file + design-doc anchoring only.
-    """
-    output_names = (
-        "ISSUE_SNAPSHOT.json",
-        "COMMAND_LOG.json",
-        "PUBLISH_COMMIT.json",
-    )
-    file_ok: dict[str, bool] = {}
+
+def _full_transport_freeze_match(root: Path, repo_root: Path) -> bool:
+    """Unconditional byte/tree equality for every frozen transport path."""
     for name in TRANSPORT_FREEZE_FILES:
         path = root / name
+        if not path.is_file():
+            return False
         expected = _git_show_bytes(
             repo_root,
             TRANSPORT_BASELINE_COMMIT,
             f"{TRANSPORT_BASELINE_PREFIX}/{name}",
         )
-        file_ok[name] = bool(
-            path.is_file() and expected is not None and path.read_bytes() == expected
-        )
-    tree_ok = True
-    any_tree_byte_hit = False
+        if expected is None or path.read_bytes() != expected:
+            return False
     for tree in TRANSPORT_FREEZE_TREES:
         prefix = f"{TRANSPORT_BASELINE_PREFIX}/{tree}"
         baseline_rels = _baseline_ls_tree(repo_root, prefix)
@@ -1225,42 +1217,35 @@ def _transport_freeze_matches_baseline(root: Path, repo_root: Path) -> bool:
             for path in tree_root.rglob("*"):
                 if path.is_file():
                     actual_suffixes.add(path.relative_to(root).as_posix())
+        elif tree_root.exists():
+            return False
         if actual_suffixes != baseline_suffixes:
-            tree_ok = False
-        for suffix in sorted(baseline_suffixes | actual_suffixes):
+            return False
+        for suffix in sorted(baseline_suffixes):
             expected = _git_show_bytes(
                 repo_root,
                 TRANSPORT_BASELINE_COMMIT,
                 f"{TRANSPORT_BASELINE_PREFIX}/{suffix}",
             )
             path = root / suffix
-            if (
-                expected is not None
-                and path.is_file()
-                and path.read_bytes() == expected
-            ):
-                any_tree_byte_hit = True
-            if suffix in baseline_suffixes:
-                if expected is None or not path.is_file() or path.read_bytes() != expected:
-                    tree_ok = False
-        for suffix in actual_suffixes - baseline_suffixes:
-            tree_ok = False
-    docs_ok = True
+            if expected is None or not path.is_file() or path.read_bytes() != expected:
+                return False
     for rel, expected_hash in _baseline_input_sha256(repo_root).items():
         path = repo_root / rel
         if not path.is_file() or sha256_file(path) != expected_hash:
-            docs_ok = False
-            break
-    contract_ok = all(
-        file_ok[name]
-        for name in ("SCOPE.json", "TRANSPORT_CONTRACT.json", "QUOTAS.json")
-    )
-    full_ok = all(file_ok.values()) and tree_ok and docs_ok
-    if full_ok:
-        return True
-    if any(file_ok[name] for name in output_names) or any_tree_byte_hit:
-        return False
-    return contract_ok and docs_ok
+            return False
+    return True
+
+
+def _transport_freeze_matches_baseline(root: Path, repo_root: Path) -> bool:
+    """Compare the complete frozen transport set to 020b60fb... with no fallback.
+
+    Tests may install ``_TEST_TRANSPORT_FREEZE_PROVIDER``; production leaves it None.
+    """
+    provider = _TEST_TRANSPORT_FREEZE_PROVIDER
+    if callable(provider):
+        return bool(provider(root, repo_root))
+    return _full_transport_freeze_match(root, repo_root)
 
 
 def _command_blob_sentinel_hits(blobs: list[str]) -> tuple[bool, bool]:

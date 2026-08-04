@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import json
 import shutil
+import stat
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -47,6 +48,31 @@ def load_module(path: Path, name: str):
 miner = load_module(MINER_PATH, "mine_supplemental_r2")
 checker = load_module(CHECKER_PATH, "check_supplemental_r2_admission")
 handoff_mod = load_module(HANDOFF_PATH, "check_supplemental_r2_handoff_hashes")
+
+
+@pytest.fixture(autouse=True)
+def _install_synthetic_transport_freeze_provider(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Synthetic retrieve fixtures have no baseline transport bytes; opt in explicitly.
+
+    Live-copy / full-chain freeze tests must call ``_use_production_transport_freeze``.
+    """
+
+    def _provider(root: Path, repo_root: Path | None = None) -> bool:
+        del root, repo_root
+        return True
+
+    monkeypatch.setattr(miner, "_TEST_TRANSPORT_FREEZE_PROVIDER", _provider)
+    monkeypatch.setattr(checker, "_TEST_TRANSPORT_FREEZE_PROVIDER", _provider)
+    monkeypatch.setattr(handoff_mod, "_TEST_TRANSPORT_FREEZE_PROVIDER", _provider)
+
+
+def _use_production_transport_freeze(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Clear the test-only provider so Git-object freeze compare runs."""
+    monkeypatch.setattr(miner, "_TEST_TRANSPORT_FREEZE_PROVIDER", None)
+    monkeypatch.setattr(checker, "_TEST_TRANSPORT_FREEZE_PROVIDER", None)
+    monkeypatch.setattr(handoff_mod, "_TEST_TRANSPORT_FREEZE_PROVIDER", None)
 
 
 def _write_json(path: Path, payload: Any) -> None:
@@ -2272,8 +2298,9 @@ def test_sheet_uses_lf_line_endings(tmp_path: Path) -> None:
     assert b"\n" in raw
 
 
-def _copy_live_root(tmp_path: Path) -> Path:
+def _copy_live_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Full-chain fixture: copy live supplemental_r2 evidence tree."""
+    _use_production_transport_freeze(monkeypatch)
     dest = tmp_path / "supplemental_r2"
     shutil.copytree(FROZEN, dest)
     for name in ("HANDOFF_SUPPLEMENTAL_R2.json", "VERIFICATION_LOG.json"):
@@ -2281,6 +2308,109 @@ def _copy_live_root(tmp_path: Path) -> Path:
         if path.exists():
             path.unlink()
     return dest
+
+
+def _inject_top_level_json_marker(
+    path: Path, marker_key: str = "__total_transport_drift__"
+) -> None:
+    """Fast top-level object marker inject (avoids full dump of large page trees)."""
+    path.chmod(path.stat().st_mode | stat.S_IWUSR)
+    text = path.read_text(encoding="utf-8")
+    brace = text.find("{")
+    assert brace >= 0, path
+    mutated = (
+        text[: brace + 1]
+        + json.dumps(marker_key)
+        + ": true, "
+        + text[brace + 1 :]
+    )
+    json.loads(mutated)
+    path.write_text(mutated, encoding="utf-8")
+
+
+def _apply_total_transport_drift_attack(root: Path) -> None:
+    """Replace all transport outputs and resync internal seals (baseline freeze remains)."""
+    marker_key = "__total_transport_drift__"
+    page_shas: dict[str, str] = {}
+    for path in sorted((root / "transport_pages").glob("*.json")):
+        _inject_top_level_json_marker(path, marker_key)
+        page_shas[path.relative_to(root).as_posix()] = miner.sha256_file(path)
+    for path in (root / "failed_runs").rglob("*"):
+        if path.is_file():
+            _inject_top_level_json_marker(path, marker_key)
+    _inject_top_level_json_marker(root / "COMMAND_LOG.json", marker_key)
+
+    snapshot = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
+    old_to_new: dict[str, str] = {}
+    for man in snapshot["page_manifest"]:
+        rel = man["path"]
+        new_sha = page_shas[rel]
+        old_to_new[str(man["sha256"])] = new_sha
+        man["sha256"] = new_sha
+    snapshot["page_manifest_sha256"] = miner.canonical_sha256(snapshot["page_manifest"])
+    record_fields = [
+        "snapshot_record_id",
+        "repository",
+        "repository_order",
+        "issue_node_id",
+        "issue_number",
+        "issue_url",
+        "state",
+        "created_at",
+        "updated_at",
+        "closed_at",
+        "title_sha256",
+        "body_text_sha256",
+        "ordered_labels",
+        "matched_phrases",
+        "match_surfaces",
+        "source_page_index",
+        "source_page_sha256",
+        "query_document_sha256",
+        "variables_sha256",
+        "node_index",
+    ]
+    for rec in snapshot["records"]:
+        old_sha = str(rec["source_page_sha256"])
+        if old_sha in old_to_new:
+            rec["source_page_sha256"] = old_to_new[old_sha]
+        body = {key: rec[key] for key in record_fields}
+        rec["snapshot_record_sha256"] = miner.canonical_sha256(body)
+    snapshot[marker_key] = True
+    miner.write_json(root / "ISSUE_SNAPSHOT.json", snapshot)
+    publish = miner.build_publish_commit_identity(
+        run_id=snapshot["run_id"],
+        code_commit=snapshot["code_commit"],
+        snapshot=snapshot,
+        transport_page_sha256=page_shas,
+    )
+    miner.write_json(root / "PUBLISH_COMMIT.json", publish)
+
+    # Keep queue/decision bindings consistent with the resealed snapshot hashes.
+    scope = json.loads((root / "SCOPE.json").read_text(encoding="utf-8"))
+    queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
+    status_by_id = {
+        row["neutral_id"]: row.get("review_status", "PENDING_REVIEW")
+        for row in queue.get("records") or []
+    }
+    rebuilt = miner.build_queue_from_snapshot(scope, snapshot)
+    for row in rebuilt:
+        row["review_status"] = status_by_id.get(row["neutral_id"], "PENDING_REVIEW")
+    queue["records"] = rebuilt
+    miner.write_json(root / "REVIEW_QUEUE.json", queue)
+
+    snap_hash_by_id = {
+        rec["snapshot_record_id"]: rec["snapshot_record_sha256"]
+        for rec in snapshot["records"]
+    }
+    decisions_payload = json.loads(
+        (root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8")
+    )
+    for decision in decisions_payload["decisions"]:
+        sid = decision.get("snapshot_record_id")
+        if sid in snap_hash_by_id:
+            decision["snapshot_record_sha256"] = snap_hash_by_id[sid]
+    miner.write_json(root / "REVIEW_DECISIONS.json", decisions_payload)
 
 
 def _align_queue_statuses(root: Path, decisions: list[dict[str, Any]]) -> None:
@@ -2337,7 +2467,7 @@ def _sync_decisions_sheet_evidence_handoff(root: Path) -> None:
 def test_full_chain_after_fifth_admit_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     repo = "pymc-devs/pymc"
     rows = _repo_rows(root, repo)
     rewritten = [
@@ -2379,7 +2509,7 @@ def test_full_chain_after_fifth_admit_rejected(
 def test_full_chain_out_of_scope_decision_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
     payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
@@ -2409,7 +2539,7 @@ def test_full_chain_out_of_scope_decision_rejected(
 def test_full_chain_empty_queue_decision_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
     payload["decisions"].append(
@@ -2454,7 +2584,7 @@ def test_full_chain_verification_log_missing_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Same-attack VLOG deletion: guard removal alone must make the attack pass."""
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
     (root / "VERIFICATION_LOG.json").unlink()
@@ -2470,7 +2600,7 @@ def test_full_chain_verification_log_hash_tamper_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Same-attack VLOG hash tamper with all other bindings held fixed."""
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
     handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
@@ -2487,7 +2617,7 @@ def test_full_chain_verification_log_hash_tamper_rejected(
 def test_full_chain_scope_self_tamper_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
     scope = json.loads((root / "SCOPE.json").read_text(encoding="utf-8"))
@@ -2533,38 +2663,25 @@ def test_full_chain_scope_self_tamper_rejected(
     both_checkers_pass(root)
 
 
-def test_full_chain_generic_readiness_path_rejected(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "readiness_batch99.json",  # prefix token
+        "batch99_readiness.json",  # suffix token
+        "foo_readiness_bar.json",  # infix token
+        "readiness_supplemental_r2.json",  # sibling sentinel
+    ],
+)
+def test_full_chain_downstream_token_filename_positions_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, filename: str
 ) -> None:
-    """Repo-wide changed/untracked readiness path without supplemental_r2 in name."""
-    root = _copy_live_root(tmp_path)
+    """Position-independent downstream token in sibling filenames (same-attack)."""
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
-    sibling = root.parent / "readiness_batch99.json"
+    sibling = root.parent / filename
     sibling.write_text("{}\n", encoding="utf-8")
     # Same attack bytes across fail/pass: reseal only after path guard removal.
-    seal_handoff_bundle(root)
-    both_checkers_fail(root)
-
-    def no_path_hits(root_path: Path, *, repo_root: Path | None = None):
-        del root_path, repo_root
-        return False, False, False
-
-    monkeypatch.setattr(checker, "_forbidden_path_scan", no_path_hits)
-    monkeypatch.setattr(handoff_mod, "_forbidden_path_scan", no_path_hits)
-    monkeypatch.setattr(miner, "_forbidden_path_scan", no_path_hits)
-    seal_handoff_bundle(root)
-    both_checkers_pass(root)
-
-
-def test_full_chain_sibling_readiness_sentinel_rejected(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    root = _copy_live_root(tmp_path)
-    seal_handoff_bundle(root)
-    both_checkers_pass(root)
-    sibling = root.parent / "readiness_supplemental_r2.json"
-    sibling.write_text("{}\n", encoding="utf-8")
     seal_handoff_bundle(root)
     both_checkers_fail(root)
 
@@ -2583,7 +2700,7 @@ def test_full_chain_transport_command_log_mutation_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Resealed COMMAND_LOG mutation must fail both checkers until freeze guard drops."""
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
     log = json.loads((root / "COMMAND_LOG.json").read_text(encoding="utf-8"))
@@ -2604,10 +2721,32 @@ def test_full_chain_transport_command_log_mutation_rejected(
     both_checkers_pass(root)
 
 
+def test_full_chain_total_transport_drift_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Full transport output replacement must fail without synthetic fallback."""
+    root = _copy_live_root(tmp_path, monkeypatch)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+    _apply_total_transport_drift_attack(root)
+    _sync_decisions_sheet_evidence_handoff(root)
+    both_checkers_fail(root)
+
+    def freeze_ok(root_path: Path, repo_root: Path | None = None) -> bool:
+        del root_path, repo_root
+        return True
+
+    monkeypatch.setattr(checker, "_transport_freeze_matches_baseline", freeze_ok)
+    monkeypatch.setattr(handoff_mod, "_transport_freeze_matches_baseline", freeze_ok)
+    monkeypatch.setattr(miner, "_transport_freeze_matches_baseline", freeze_ok)
+    _sync_decisions_sheet_evidence_handoff(root)
+    both_checkers_pass(root)
+
+
 def test_full_chain_verification_log_readiness_command_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     vlog = json.loads((root / "VERIFICATION_LOG.json").read_text(encoding="utf-8"))
     vlog["commands"] = [
@@ -2622,7 +2761,7 @@ def test_full_chain_verification_log_readiness_command_rejected(
         }
     ]
     _write_json(root / "VERIFICATION_LOG.json", vlog)
-    assert miner.cmd_write_handoff(root, payload_commit="r5" * 20) == 0
+    assert miner.cmd_write_handoff(root, payload_commit="r6" * 20) == 0
     both_checkers_fail(root)
 
     def no_command_hits(root_path: Path):
@@ -2632,14 +2771,14 @@ def test_full_chain_verification_log_readiness_command_rejected(
     monkeypatch.setattr(checker, "_command_sources_sentinel_hits", no_command_hits)
     monkeypatch.setattr(handoff_mod, "_command_sources_sentinel_hits", no_command_hits)
     monkeypatch.setattr(miner, "_command_sources_sentinel_hits", no_command_hits)
-    assert miner.cmd_write_handoff(root, payload_commit="r5" * 20) == 0
+    assert miner.cmd_write_handoff(root, payload_commit="r6" * 20) == 0
     both_checkers_pass(root)
 
 
 def test_full_chain_gate_mismatch_rejected(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root = _copy_live_root(tmp_path)
+    root = _copy_live_root(tmp_path, monkeypatch)
     seal_handoff_bundle(root)
     both_checkers_pass(root)
     handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
@@ -2649,7 +2788,7 @@ def test_full_chain_gate_mismatch_rejected(
         {
             "schema_version": 1,
             "task": "SUPPLEMENTAL_MINING_R2",
-            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r4",
+            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r5",
             "commands": [],
         },
     )
