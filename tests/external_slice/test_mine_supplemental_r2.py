@@ -1068,45 +1068,36 @@ def test_publish_boundary_os_exit_death_and_recovery(
 
 
 def test_review_stop_reason_and_assert_rule() -> None:
+    exhausted = [{"decision": "EXCLUDED"} for _ in range(5)]
     assert (
-        miner.review_stop_reason(
-            decision_count=5,
-            queue_count=5,
-            pending_count=1,
-            max_reviewed=20,
-            target_pending=5,
+        miner.earliest_review_stop(
+            exhausted, queue_count=5, max_reviewed=20, target_pending=5
         )
-        == "queue_exhausted"
+        == (5, "queue_exhausted")
     )
+    five_admit = [{"decision": "EXCLUDED"} for _ in range(15)]
+    five_admit += [{"decision": "ADMIT_PENDING_REPRO"} for _ in range(5)]
     assert (
-        miner.review_stop_reason(
-            decision_count=16,
-            queue_count=24,
-            pending_count=5,
-            max_reviewed=20,
-            target_pending=5,
+        miner.earliest_review_stop(
+            five_admit, queue_count=24, max_reviewed=20, target_pending=5
         )
-        == "five_admit_pending_repro"
+        == (20, "five_admit_pending_repro")
     )
+    # Decision after fifth admit must not be kept: earliest is 16, not 20.
+    early_five = [{"decision": "ADMIT_PENDING_REPRO"} for _ in range(5)]
+    early_five += [{"decision": "EXCLUDED"} for _ in range(15)]
     assert (
-        miner.review_stop_reason(
-            decision_count=20,
-            queue_count=40,
-            pending_count=2,
-            max_reviewed=20,
-            target_pending=5,
+        miner.earliest_review_stop(
+            early_five, queue_count=40, max_reviewed=20, target_pending=5
         )
-        == "twenty_reviewed"
+        == (5, "five_admit_pending_repro")
     )
+    twenty = [{"decision": "EXCLUDED"} for _ in range(20)]
     assert (
-        miner.review_stop_reason(
-            decision_count=3,
-            queue_count=10,
-            pending_count=2,
-            max_reviewed=20,
-            target_pending=5,
+        miner.earliest_review_stop(
+            twenty, queue_count=40, max_reviewed=20, target_pending=5
         )
-        == "invalid_early_stop"
+        == (20, "twenty_reviewed")
     )
     with pytest.raises(miner.HardFail, match="review_stop_inconsistent"):
         miner.assert_review_stop_rule(
@@ -1119,7 +1110,14 @@ def test_review_stop_reason_and_assert_rule() -> None:
             max_reviewed=20,
             target_pending=5,
         )
-    # Exhaustion is valid even with pending below target.
+    with pytest.raises(miner.HardFail, match="earliest stop"):
+        miner.assert_review_stop_rule(
+            "owner/repo",
+            queue_rows=[{"repository": "owner/repo"} for _ in range(40)],
+            decisions=early_five,
+            max_reviewed=20,
+            target_pending=5,
+        )
     reviewed, pending, reason = miner.assert_review_stop_rule(
         "owner/repo",
         queue_rows=[{"repository": "owner/repo"} for _ in range(2)],

@@ -7,10 +7,17 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+
+PROHIBITED_VOCAB_RE = re.compile(
+    r"(?i)(mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|"
+    r"\bkill\b|prediction|detection_result|\bfiber\b|\boperator\b|"
+    r"(^|[^A-Za-z0-9_])(CE|OS|HP|TF|SI|fiber|stratum)([^A-Za-z0-9_]|$))"
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -85,21 +92,71 @@ def _resolve_declared_path(rel: str, *, handoff_path: Path, cwd: Path) -> Path |
     return next((p for p in candidates if p.is_file()), None)
 
 
-def _review_stop_reason(
+def _earliest_review_stop(
+    decisions: list[dict[str, Any]],
     *,
-    decision_count: int,
     queue_count: int,
-    pending_count: int,
+    max_reviewed: int,
+    target_pending: int,
+) -> tuple[int, str]:
+    if queue_count == 0:
+        return 0, "queue_exhausted"
+    pending = 0
+    for index, decision in enumerate(decisions, start=1):
+        if decision.get("decision") == "ADMIT_PENDING_REPRO":
+            pending += 1
+        hit_five = pending >= target_pending
+        hit_cap = index >= max_reviewed
+        hit_end = index >= queue_count
+        if not (hit_five or hit_cap or hit_end):
+            continue
+        if hit_end:
+            return index, "queue_exhausted"
+        if hit_five:
+            return index, "five_admit_pending_repro"
+        return index, "twenty_reviewed"
+    return -1, "invalid_early_stop"
+
+
+def _review_stop_reason(
+    decisions: list[dict[str, Any]],
+    *,
+    queue_count: int,
     max_reviewed: int,
     target_pending: int,
 ) -> str:
-    if decision_count == queue_count:
-        return "queue_exhausted"
-    if pending_count >= target_pending:
-        return "five_admit_pending_repro"
-    if decision_count >= max_reviewed:
-        return "twenty_reviewed"
-    return "invalid_early_stop"
+    _stop_at, reason = _earliest_review_stop(
+        decisions,
+        queue_count=queue_count,
+        max_reviewed=max_reviewed,
+        target_pending=target_pending,
+    )
+    return reason
+
+
+def _compute_confirmations(decisions: list[dict[str, Any]]) -> dict[str, bool]:
+    a2_all_pending = all(
+        d.get("crit_dual_arm_repro") == "PENDING" for d in decisions
+    )
+    analysis_id_all_blank = all(
+        d.get("analysis_id") in (None, "") for d in decisions
+    )
+    forbidden_data_absent = True
+    for decision in decisions:
+        for text_key in ("mechanism", "decision_reason"):
+            if PROHIBITED_VOCAB_RE.search(decision.get(text_key) or ""):
+                forbidden_data_absent = False
+                break
+        if not forbidden_data_absent:
+            break
+    return {
+        "a2_all_pending": a2_all_pending,
+        "analysis_id_all_blank": analysis_id_all_blank,
+        "forbidden_data_absent": forbidden_data_absent,
+        "readiness_ran": False,
+        "canonical_freeze_claimed": False,
+        "existing_files_unchanged": True,
+    }
 
 
 def _project_quota_feasibility(
@@ -195,9 +252,8 @@ def recompute_admission_summary(
             st = str(row.get("review_status") or "")
             status_counts[st] = status_counts.get(st, 0) + 1
         reason = _review_stop_reason(
-            decision_count=len(drows),
+            drows,
             queue_count=len(qrows),
-            pending_count=admits,
             max_reviewed=max_reviewed,
             target_pending=target_pending,
         )
@@ -222,6 +278,7 @@ def recompute_admission_summary(
         },
         "repository_review_counts": repository_review_counts,
         "quota_feasibility": feasibility,
+        "confirmations": _compute_confirmations(decisions),
     }
 
 
@@ -277,7 +334,12 @@ def verify_handoff_summary_counts(
     has_artifacts = all((root / name).is_file() for name in required)
     has_claims = any(
         key in handoff
-        for key in ("decision_totals", "repository_review_counts", "quota_feasibility")
+        for key in (
+            "decision_totals",
+            "repository_review_counts",
+            "quota_feasibility",
+            "confirmations",
+        )
     )
     if not has_artifacts:
         if has_claims:
@@ -286,7 +348,10 @@ def verify_handoff_summary_counts(
         return []
     errors: list[str] = []
     if not has_claims:
-        return ["missing decision_totals / repository_review_counts / quota_feasibility"]
+        return [
+            "missing decision_totals / repository_review_counts / "
+            "quota_feasibility / confirmations"
+        ]
 
     scope = load_json(root / "SCOPE.json")
     quotas = load_json(root / "QUOTAS.json")
@@ -329,6 +394,13 @@ def verify_handoff_summary_counts(
             expected["quota_feasibility"],
             handoff.get("quota_feasibility"),
             path="quota_feasibility",
+        )
+    )
+    errors.extend(
+        _deep_equal(
+            expected["confirmations"],
+            handoff.get("confirmations"),
+            path="confirmations",
         )
     )
     return errors

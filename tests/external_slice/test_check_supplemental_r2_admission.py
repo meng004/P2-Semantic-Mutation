@@ -463,6 +463,9 @@ def build_valid_payload(
     assert miner.cmd_retrieve(root, runner=runner or build_fixture_runner()) == 0
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text())["records"]
     quotas = json.loads((root / "QUOTAS.json").read_text())
+    scope = json.loads((root / "SCOPE.json").read_text())
+    max_reviewed = int(scope["max_reviewed_per_repo"])
+    target_pending = int(scope["target_pending_per_repo"])
     positive = {
         e["repo"]
         for e in quotas["readiness_quota_order"]
@@ -472,14 +475,26 @@ def build_valid_payload(
     by_repo: dict[str, list[dict[str, Any]]] = {}
     for row in queue:
         by_repo.setdefault(row["repository"], []).append(row)
-    for repo, rows in by_repo.items():
+    for repo_entry in scope["repositories"]:
+        repo = repo_entry["repo"]
+        rows = by_repo.get(repo, [])
+        if not rows:
+            continue
         admit_n = admits_per_quota_repo if repo in positive else 1
-        # Exhaust the queue prefix so decision_count == queue_count (valid stop).
+        repo_decisions: list[dict[str, Any]] = []
         for idx, row in enumerate(rows):
-            if idx < admit_n:
-                decisions.append(build_decision_from_queue_row(row, admit=True))
-            else:
-                decisions.append(build_decision_from_queue_row(row, admit=False))
+            repo_decisions.append(
+                build_decision_from_queue_row(row, admit=idx < admit_n)
+            )
+            stop_at, _reason = miner.earliest_review_stop(
+                repo_decisions,
+                queue_count=len(rows),
+                max_reviewed=max_reviewed,
+                target_pending=target_pending,
+            )
+            if stop_at == len(repo_decisions):
+                break
+        decisions.extend(repo_decisions)
     _write_json(
         root / "REVIEW_DECISIONS.json",
         {"schema_version": 1, "task": "SUPPLEMENTAL_MINING_R2", "decisions": decisions},
@@ -1893,6 +1908,125 @@ def _rewrite_repo_decisions(
     _write_json(root / "REVIEW_DECISIONS.json", payload)
 
 
+def _synthetic_queue_row(
+    *,
+    repo: str,
+    order: int,
+    prefix: str,
+) -> dict[str, Any]:
+    nid = f"{prefix}{order:02d}"
+    return {
+        "neutral_id": nid,
+        "snapshot_record_id": f"SSR2-{order:04d}",
+        "snapshot_record_sha256": "a" * 64,
+        "repository": repo,
+        "repository_order": 1,
+        "issue_node_id": f"NODE-{order}",
+        "issue_number": 1000 + order,
+        "issue_url": f"https://github.com/{repo}/issues/{1000 + order}",
+        "state": "CLOSED",
+        "created_at": "2025-01-01T00:00:00Z",
+        "matched_phrases": ["wrong result"],
+        "source_page_sha256": "b" * 64,
+        "repository_review_order": order,
+        "review_status": "REVIEWED",
+    }
+
+
+def test_decision_after_fifth_admit_rejected() -> None:
+    scope = json.loads((FROZEN / "SCOPE.json").read_text(encoding="utf-8"))
+    repo = "pymc-devs/pymc"
+    prefix = "EXT-pymc-"
+    queue = [
+        _synthetic_queue_row(repo=repo, order=i, prefix=prefix) for i in range(1, 25)
+    ]
+    for row in queue:
+        row["review_status"] = "PENDING_REVIEW"
+    # Fifth admit at row 5, but continue reviewing through row 20.
+    decisions = []
+    for idx, row in enumerate(queue[:20]):
+        decisions.append(build_decision_from_queue_row(row, admit=idx < 5))
+    with pytest.raises(checker.AdmissionError, match="earliest stop"):
+        checker.verify_decisions(scope, queue, {"decisions": decisions})
+    with pytest.raises(miner.HardFail, match="earliest stop"):
+        miner.validate_decisions_payload(
+            scope=scope, queue=queue, decisions=decisions
+        )
+
+
+def test_row20_fifth_admit_cap_tie_accepted() -> None:
+    scope = json.loads((FROZEN / "SCOPE.json").read_text(encoding="utf-8"))
+    repo = "pymc-devs/pymc"
+    prefix = "EXT-pymc-"
+    queue = [
+        _synthetic_queue_row(repo=repo, order=i, prefix=prefix) for i in range(1, 25)
+    ]
+    for row in queue:
+        row["review_status"] = "PENDING_REVIEW"
+    # Rows 1-15 excluded, 16-20 admit → fifth admit and 20-cap tie at index 20.
+    decisions = []
+    for idx, row in enumerate(queue[:20]):
+        decisions.append(build_decision_from_queue_row(row, admit=idx >= 15))
+    stop_at, reason = checker.earliest_review_stop(
+        decisions, queue_count=len(queue), max_reviewed=20, target_pending=5
+    )
+    assert (stop_at, reason) == (20, "five_admit_pending_repro")
+    assert (
+        checker.verify_decisions(scope, queue, {"decisions": decisions}) == decisions
+    )
+    miner.validate_decisions_payload(scope=scope, queue=queue, decisions=decisions)
+
+
+def test_out_of_scope_decision_rejected() -> None:
+    scope = json.loads((FROZEN / "SCOPE.json").read_text(encoding="utf-8"))
+    repo = "pymc-devs/pymc"
+    row = _synthetic_queue_row(repo=repo, order=1, prefix="EXT-pymc-")
+    ok = build_decision_from_queue_row(row, admit=False)
+    bad = dict(ok)
+    bad["repository"] = "evil/not-in-scope"
+    bad["neutral_id"] = "EXT-evil-01"
+    with pytest.raises(checker.AdmissionError, match="out-of-scope decision"):
+        checker.verify_decisions(scope, [row], {"decisions": [ok, bad]})
+    with pytest.raises(miner.HardFail, match="out_of_scope_decision"):
+        miner.validate_decisions_payload(
+            scope=scope, queue=[row], decisions=[ok, bad]
+        )
+
+
+def test_empty_queue_decision_rejected() -> None:
+    scope = json.loads((FROZEN / "SCOPE.json").read_text(encoding="utf-8"))
+    # SALib is in scope; leave its queue empty and inject a decision.
+    decision = {
+        "neutral_id": "EXT-SALib-01",
+        "snapshot_record_id": "SSR2-SALib-1",
+        "snapshot_record_sha256": "c" * 64,
+        "repository": "SALib/SALib",
+        "issue_node_id": "NODE-SALib",
+        "issue_number": 1,
+        "issue_url": "https://github.com/SALib/SALib/issues/1",
+        "repository_review_order": 1,
+        "matched_phrases": ["wrong result"],
+        "buggy_sha": "",
+        "fixed_sha": "",
+        "public_issue_url": "https://github.com/SALib/SALib/issues/1",
+        "public_fix_url": "",
+        "mechanism": "empty-queue injection",
+        "exclusion_class": "documentation",
+        "crit_real_public_fix": "FAIL",
+        "crit_in_numerical_scope": "FAIL",
+        "crit_dual_arm_repro": "PENDING",
+        "decision": "EXCLUDED",
+        "decision_reason": "documentation exclusion class applies.",
+        "analysis_id": "",
+    }
+    with pytest.raises(checker.AdmissionError, match="empty-queue decision"):
+        checker.verify_decisions(scope, [], {"decisions": [decision]})
+    with pytest.raises(miner.HardFail, match="empty_queue_decision"):
+        miner.validate_decisions_payload(
+            scope=scope, queue=[], decisions=[decision]
+        )
+
+
 def test_invalid_early_stop_rejected(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
     build_valid_payload(root)
@@ -1900,7 +2034,6 @@ def test_invalid_early_stop_rejected(tmp_path: Path) -> None:
     repo = "pymc-devs/pymc"
     rows = _repo_rows(root, repo)
     assert len(rows) >= 3
-    # Keep only two decisions while queue remains larger and pending < 5.
     _rewrite_repo_decisions(
         root,
         repo,
@@ -1909,7 +2042,6 @@ def test_invalid_early_stop_rejected(tmp_path: Path) -> None:
             build_decision_from_queue_row(rows[1], admit=False),
         ],
     )
-    # Align queue statuses to the truncated prefix so the failure is the stop rule.
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
     for row in queue["records"]:
         if row["repository"] != repo:
@@ -1921,43 +2053,11 @@ def test_invalid_early_stop_rejected(tmp_path: Path) -> None:
     assert_checker_fails_without_new_mint(root, before)
 
 
-def test_missing_decision_rejected(tmp_path: Path) -> None:
-    root = seed_root(tmp_path)
-    build_valid_payload(root)
-    before = present_candidates(root)
-    payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
-    # Drop one decision without shrinking the REVIEWED prefix.
-    dropped = payload["decisions"].pop()
-    _write_json(root / "REVIEW_DECISIONS.json", payload)
-    assert dropped
-    assert miner.cmd_validate_decisions(root) != 0
-    assert_checker_fails_without_new_mint(root, before)
-
-
-def test_extra_decision_rejected(tmp_path: Path) -> None:
-    root = seed_root(tmp_path)
-    build_valid_payload(root)
-    before = present_candidates(root)
-    repo = "pymc-devs/pymc"
-    rows = _repo_rows(root, repo)
-    payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
-    # Duplicate the last repo decision as an out-of-range extra.
-    last = [d for d in payload["decisions"] if d["repository"] == repo][-1]
-    extra = dict(last)
-    extra["neutral_id"] = rows[-1]["neutral_id"]
-    extra["repository_review_order"] = rows[-1]["repository_review_order"]
-    payload["decisions"].append(extra)
-    _write_json(root / "REVIEW_DECISIONS.json", payload)
-    assert miner.cmd_validate_decisions(root) != 0
-    assert_checker_fails_without_new_mint(root, before)
-
-
 def test_omitted_reviewed_exclusion_rejected(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
     build_valid_payload(root)
     before = present_candidates(root)
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
-    # Mark a row REVIEWED even though no decision exists for it after truncation.
     repo = "pymc-devs/pymc"
     rows = [r for r in queue["records"] if r["repository"] == repo]
     _rewrite_repo_decisions(
@@ -1968,7 +2068,6 @@ def test_omitted_reviewed_exclusion_rejected(tmp_path: Path) -> None:
     for row in queue["records"]:
         if row["repository"] != repo:
             continue
-        # Claim two reviewed rows while only one decision remains.
         row["review_status"] = (
             "REVIEWED"
             if int(row["repository_review_order"]) <= 2
@@ -1985,7 +2084,6 @@ def test_later_row_substitution_rejected(tmp_path: Path) -> None:
     repo = "pymc-devs/pymc"
     rows = _repo_rows(root, repo)
     assert len(rows) >= 3
-    # Contiguous-looking list that substitutes row 3 into slot 2.
     decisions = [
         build_decision_from_queue_row(rows[0], admit=True),
         build_decision_from_queue_row(rows[2], admit=False),
@@ -2006,28 +2104,120 @@ def test_later_row_substitution_rejected(tmp_path: Path) -> None:
     assert_checker_fails_without_new_mint(root, before)
 
 
-def test_wrong_stop_reason_status_count_rejected(tmp_path: Path) -> None:
+def test_admission_checker_rejects_totals_tamper(tmp_path: Path) -> None:
     root = seed_root(tmp_path)
     build_valid_payload(root)
-    assert miner.cmd_write_handoff(root, payload_commit="e" * 40) == 0
+    assert miner.cmd_write_handoff(root, payload_commit="a1" * 20) == 0
+    before = present_candidates(root)
     handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
-    # Tamper stop reason / counts / pending claims independently of artifacts.
-    repo = "pymc-devs/pymc"
-    counts = handoff["repository_review_counts"][repo]
-    counts["stop_reason"] = "twenty_reviewed"
-    counts["reviewed"] = int(counts["reviewed"]) + 1
-    counts["admit_pending_repro"] = int(counts["admit_pending_repro"]) + 3
     handoff["decision_totals"]["admit_pending_repro"] = (
-        int(handoff["decision_totals"]["admit_pending_repro"]) + 3
+        int(handoff["decision_totals"]["admit_pending_repro"]) + 1
     )
+    _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_admission_checker_rejects_per_repo_tamper(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    assert miner.cmd_write_handoff(root, payload_commit="a2" * 20) == 0
+    before = present_candidates(root)
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    repo = "pymc-devs/pymc"
+    handoff["repository_review_counts"][repo]["stop_reason"] = "twenty_reviewed"
+    handoff["repository_review_counts"][repo]["reviewed"] += 1
+    _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_admission_checker_rejects_shortfall_tamper(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, admits_per_quota_repo=1)
+    assert miner.cmd_write_handoff(root, payload_commit="a3" * 20) == 0
+    before = present_candidates(root)
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
     handoff["quota_feasibility"]["shortfalls"] = []
     handoff["quota_feasibility"]["status"] = "FEASIBLE"
+    _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_admission_checker_rejects_confirmation_tamper(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    assert miner.cmd_write_handoff(root, payload_commit="a4" * 20) == 0
+    before = present_candidates(root)
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    handoff["confirmations"]["readiness_ran"] = True
+    _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
+    assert_checker_fails_without_new_mint(root, before)
+
+
+def test_handoff_checker_rejects_totals_tamper(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    assert miner.cmd_write_handoff(root, payload_commit="h1" * 20) == 0
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    handoff["decision_totals"]["excluded"] = int(handoff["decision_totals"]["excluded"]) + 2
     path = root / "HANDOFF_SUPPLEMENTAL_R2.json"
     _write_json(path, handoff)
-    code = handoff_mod.verify_handoff_hashes(
-        path, cwd=root, check_parent=False, git_cwd=ROOT
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            path, cwd=root, check_parent=False, git_cwd=ROOT
+        )
+        != 0
     )
-    assert code != 0
+
+
+def test_handoff_checker_rejects_per_repo_tamper(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    assert miner.cmd_write_handoff(root, payload_commit="h2" * 20) == 0
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    repo = "pymc-devs/pymc"
+    handoff["repository_review_counts"][repo]["exclusion_class_counts"] = {
+        "documentation": 99
+    }
+    path = root / "HANDOFF_SUPPLEMENTAL_R2.json"
+    _write_json(path, handoff)
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            path, cwd=root, check_parent=False, git_cwd=ROOT
+        )
+        != 0
+    )
+
+
+def test_handoff_checker_rejects_shortfall_tamper(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root, admits_per_quota_repo=1)
+    assert miner.cmd_write_handoff(root, payload_commit="h3" * 20) == 0
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    handoff["quota_feasibility"]["pending_by_repo"] = {}
+    path = root / "HANDOFF_SUPPLEMENTAL_R2.json"
+    _write_json(path, handoff)
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            path, cwd=root, check_parent=False, git_cwd=ROOT
+        )
+        != 0
+    )
+
+
+def test_handoff_checker_rejects_confirmation_tamper(tmp_path: Path) -> None:
+    root = seed_root(tmp_path)
+    build_valid_payload(root)
+    assert miner.cmd_write_handoff(root, payload_commit="h4" * 20) == 0
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    handoff["confirmations"]["a2_all_pending"] = False
+    path = root / "HANDOFF_SUPPLEMENTAL_R2.json"
+    _write_json(path, handoff)
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            path, cwd=root, check_parent=False, git_cwd=ROOT
+        )
+        != 0
+    )
 
 
 def test_sheet_uses_lf_line_endings(tmp_path: Path) -> None:

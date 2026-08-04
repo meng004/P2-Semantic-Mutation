@@ -993,22 +993,197 @@ def verify_queue_binding(
     return got
 
 
-def review_stop_reason(
+def earliest_review_stop(
+    decisions: list[dict[str, Any]],
     *,
-    decision_count: int,
     queue_count: int,
-    pending_count: int,
+    max_reviewed: int,
+    target_pending: int,
+) -> tuple[int, str]:
+    """Independent earliest-stop index (no producer import)."""
+    if queue_count == 0:
+        return 0, "queue_exhausted"
+    pending = 0
+    for index, decision in enumerate(decisions, start=1):
+        if decision.get("decision") == "ADMIT_PENDING_REPRO":
+            pending += 1
+        hit_five = pending >= target_pending
+        hit_cap = index >= max_reviewed
+        hit_end = index >= queue_count
+        if not (hit_five or hit_cap or hit_end):
+            continue
+        if hit_end:
+            return index, "queue_exhausted"
+        if hit_five:
+            return index, "five_admit_pending_repro"
+        return index, "twenty_reviewed"
+    return -1, "invalid_early_stop"
+
+
+def review_stop_reason(
+    decisions: list[dict[str, Any]],
+    *,
+    queue_count: int,
     max_reviewed: int,
     target_pending: int,
 ) -> str:
-    """Independent stop-reason classifier (mirrors producer; no producer import)."""
-    if decision_count == queue_count:
-        return "queue_exhausted"
-    if pending_count >= target_pending:
-        return "five_admit_pending_repro"
-    if decision_count >= max_reviewed:
-        return "twenty_reviewed"
-    return "invalid_early_stop"
+    _stop_at, reason = earliest_review_stop(
+        decisions,
+        queue_count=queue_count,
+        max_reviewed=max_reviewed,
+        target_pending=target_pending,
+    )
+    return reason
+
+
+def _project_quota_feasibility(
+    quotas: dict[str, Any], decisions: list[dict[str, Any]]
+) -> dict[str, Any]:
+    pending_by_repo: dict[str, int] = {}
+    for decision in decisions:
+        if decision.get("decision") == "ADMIT_PENDING_REPRO":
+            repo = decision["repository"]
+            pending_by_repo[repo] = pending_by_repo.get(repo, 0) + 1
+    shortfalls: list[dict[str, Any]] = []
+    for entry in quotas["readiness_quota_order"]:
+        repo = entry["repo"]
+        target = int(entry["additional_ready_target"])
+        have = pending_by_repo.get(repo, 0)
+        if have < target:
+            shortfalls.append(
+                {
+                    "repo": repo,
+                    "additional_ready_target": target,
+                    "pending_admit_rows": have,
+                    "shortfall": target - have,
+                }
+            )
+    status = "FEASIBLE" if not shortfalls else quotas["shortfall_status"]
+    starting = quotas["starting_state"]
+    return {
+        "status": status,
+        "shortfalls": shortfalls,
+        "pending_by_repo": pending_by_repo,
+        "starting_accepted_ready_defects": starting["accepted_ready_defects"],
+        "starting_qualifying_projects": starting["qualifying_projects"],
+        "projection_if_quotas_met": quotas["projection_if_quotas_met"],
+        "claims_ready_success": False,
+        "claims_readiness_executed": False,
+        "claims_canonical_freeze": False,
+    }
+
+
+def _compute_confirmations(decisions: list[dict[str, Any]]) -> dict[str, bool]:
+    a2_all_pending = all(
+        d.get("crit_dual_arm_repro") == "PENDING" for d in decisions
+    )
+    analysis_id_all_blank = all(
+        d.get("analysis_id") in (None, "") for d in decisions
+    )
+    forbidden_data_absent = True
+    for decision in decisions:
+        for text_key in ("mechanism", "decision_reason"):
+            if PROHIBITED_VOCAB_RE.search(decision.get(text_key) or ""):
+                forbidden_data_absent = False
+                break
+        if not forbidden_data_absent:
+            break
+    return {
+        "a2_all_pending": a2_all_pending,
+        "analysis_id_all_blank": analysis_id_all_blank,
+        "forbidden_data_absent": forbidden_data_absent,
+        "readiness_ran": False,
+        "canonical_freeze_claimed": False,
+        "existing_files_unchanged": True,
+    }
+
+
+def recompute_admission_summary(
+    *,
+    scope: dict[str, Any],
+    quotas: dict[str, Any],
+    queue: list[dict[str, Any]],
+    decisions: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Independently recompute handoff summary fields (no producer import)."""
+    max_reviewed = int(scope["max_reviewed_per_repo"])
+    target_pending = int(scope["target_pending_per_repo"])
+    by_repo_q: dict[str, list[dict[str, Any]]] = {
+        r["repo"]: [] for r in scope["repositories"]
+    }
+    for row in queue:
+        by_repo_q.setdefault(row["repository"], []).append(row)
+    by_repo_d: dict[str, list[dict[str, Any]]] = {
+        r["repo"]: [] for r in scope["repositories"]
+    }
+    for decision in decisions:
+        by_repo_d.setdefault(decision["repository"], []).append(decision)
+
+    repository_review_counts: dict[str, Any] = {}
+    for repo_entry in scope["repositories"]:
+        repo = repo_entry["repo"]
+        qrows = by_repo_q.get(repo, [])
+        drows = by_repo_d.get(repo, [])
+        admits = sum(1 for d in drows if d.get("decision") == "ADMIT_PENDING_REPRO")
+        excluded = sum(1 for d in drows if d.get("decision") == "EXCLUDED")
+        excl_classes: dict[str, int] = {}
+        for d in drows:
+            if d.get("decision") != "EXCLUDED":
+                continue
+            key = d.get("exclusion_class") or "(A1/A3 fail)"
+            excl_classes[key] = excl_classes.get(key, 0) + 1
+        status_counts: dict[str, int] = {}
+        for row in qrows:
+            st = str(row.get("review_status") or "")
+            status_counts[st] = status_counts.get(st, 0) + 1
+        reason = review_stop_reason(
+            drows,
+            queue_count=len(qrows),
+            max_reviewed=max_reviewed,
+            target_pending=target_pending,
+        )
+        repository_review_counts[repo] = {
+            "queue_size": len(qrows),
+            "reviewed": len(drows),
+            "admit_pending_repro": admits,
+            "excluded": excluded,
+            "exclusion_class_counts": excl_classes,
+            "review_status_counts": status_counts,
+            "stop_reason": reason,
+        }
+    return {
+        "decision_totals": {
+            "decisions": len(decisions),
+            "admit_pending_repro": sum(
+                1 for d in decisions if d.get("decision") == "ADMIT_PENDING_REPRO"
+            ),
+            "excluded": sum(1 for d in decisions if d.get("decision") == "EXCLUDED"),
+        },
+        "repository_review_counts": repository_review_counts,
+        "quota_feasibility": _project_quota_feasibility(quotas, decisions),
+        "confirmations": _compute_confirmations(decisions),
+    }
+
+
+def _deep_equal(expected: Any, actual: Any, *, path: str) -> None:
+    if isinstance(expected, dict) and isinstance(actual, dict):
+        exp_keys = set(expected)
+        act_keys = set(actual)
+        for key in sorted(exp_keys - act_keys):
+            fail(f"{path}.{key}: missing")
+        for key in sorted(act_keys - exp_keys):
+            fail(f"{path}.{key}: unexpected")
+        for key in sorted(exp_keys & act_keys):
+            _deep_equal(expected[key], actual[key], path=f"{path}.{key}")
+        return
+    if isinstance(expected, list) and isinstance(actual, list):
+        if len(expected) != len(actual):
+            fail(f"{path}: list length expected {len(expected)}, got {len(actual)}")
+        for idx, (exp_item, act_item) in enumerate(zip(expected, actual)):
+            _deep_equal(exp_item, act_item, path=f"{path}[{idx}]")
+        return
+    if expected != actual:
+        fail(f"{path}: expected {expected!r}, got {actual!r}")
 
 
 def verify_decisions(
@@ -1020,24 +1195,40 @@ def verify_decisions(
     exclusion_classes = set(scope["exclusion_classes"])
     max_reviewed = int(scope["max_reviewed_per_repo"])
     target_pending = int(scope["target_pending_per_repo"])
+    scope_repos = [entry["repo"] for entry in scope["repositories"]]
+    scope_set = set(scope_repos)
 
-    by_repo_q: dict[str, list[dict[str, Any]]] = {}
+    by_repo_q: dict[str, list[dict[str, Any]]] = {repo: [] for repo in scope_repos}
     for row in queue:
-        by_repo_q.setdefault(row["repository"], []).append(row)
-    by_repo_d: dict[str, list[dict[str, Any]]] = {}
-    for d in decisions:
-        by_repo_d.setdefault(d["repository"], []).append(d)
+        repo = row["repository"]
+        if repo not in scope_set:
+            fail(f"out-of-scope queue row: {repo}")
+        by_repo_q[repo].append(row)
+    by_repo_d: dict[str, list[dict[str, Any]]] = {repo: [] for repo in scope_repos}
+    for decision in decisions:
+        repo = decision["repository"]
+        if repo not in scope_set:
+            fail(f"out-of-scope decision: {repo}")
+        by_repo_d[repo].append(decision)
 
-    for repo, qrows in by_repo_q.items():
-        dreviews = by_repo_d.get(repo, [])
-        if not dreviews and qrows:
+    expected: list[dict[str, Any]] = []
+    for repo in scope_repos:
+        qrows = by_repo_q[repo]
+        dreviews = by_repo_d[repo]
+        if not qrows:
+            if dreviews:
+                fail(f"empty-queue decision for {repo}")
+            continue
+        if not dreviews:
             fail(f"no decisions for non-empty queue: {repo}")
         for idx, decision in enumerate(dreviews):
             if idx >= len(qrows):
                 fail(f"extra decision for {repo}")
             qrow = qrows[idx]
             if qrow.get("review_status") == "NOT_REVIEWED_AFTER_STOP":
-                fail(f"decision for NOT_REVIEWED_AFTER_STOP: {decision.get('neutral_id')}")
+                fail(
+                    f"decision for NOT_REVIEWED_AFTER_STOP: {decision.get('neutral_id')}"
+                )
             for field in DECISION_COPIED:
                 if decision.get(field) != qrow.get(field):
                     fail(
@@ -1053,7 +1244,9 @@ def verify_decisions(
             excl = decision.get("exclusion_class") or ""
             for text_key in ("mechanism", "decision_reason"):
                 if PROHIBITED_VOCAB_RE.search(decision.get(text_key) or ""):
-                    fail(f"forbidden vocabulary in {decision.get('neutral_id')}:{text_key}")
+                    fail(
+                        f"forbidden vocabulary in {decision.get('neutral_id')}:{text_key}"
+                    )
             if a1 == "PASS":
                 for field in ("buggy_sha", "fixed_sha"):
                     if not FULL_SHA.match(str(decision.get(field) or "")):
@@ -1081,27 +1274,23 @@ def verify_decisions(
             fail(f"pending over cap for {repo}")
         if decision_count > queue_count:
             fail(f"extra decision for {repo}")
-        if decision_count < queue_count:
-            if not (
-                pending >= target_pending or decision_count >= max_reviewed
-            ):
-                fail(
-                    f"invalid early stop for {repo}: "
-                    f"decisions={decision_count}, queue={queue_count}, pending={pending}"
-                )
-        reason = review_stop_reason(
-            decision_count=decision_count,
+        stop_at, reason = earliest_review_stop(
+            dreviews,
             queue_count=queue_count,
-            pending_count=pending,
             max_reviewed=max_reviewed,
             target_pending=target_pending,
         )
-        if reason == "invalid_early_stop":
-            fail(f"invalid early stop for {repo}")
+        if stop_at < 0:
+            fail(
+                f"invalid early stop for {repo}: "
+                f"decisions={decision_count}, queue={queue_count}, pending={pending}"
+            )
+        if decision_count != stop_at:
+            fail(
+                f"submitted prefix {decision_count} != earliest stop {stop_at} "
+                f"({reason}) for {repo}"
+            )
 
-        # Queue review_status may be PENDING_REVIEW before build-payload restamps,
-        # but must never claim REVIEWED beyond the decided prefix, nor leave a
-        # decided row marked NOT_REVIEWED_AFTER_STOP.
         for idx, qrow in enumerate(qrows):
             status = qrow.get("review_status")
             if idx < decision_count:
@@ -1115,18 +1304,14 @@ def verify_decisions(
                     f"omitted reviewed decision for {qrow.get('neutral_id')}: "
                     "queue row marked REVIEWED without a decision"
                 )
+        expected.extend(dreviews)
 
-    # Global decision order must equal concatenation of per-repo reviewed prefixes
-    # in repository order.
-    expected_ids: list[str] = []
-    for repo_entry in scope["repositories"]:
-        repo = repo_entry["repo"]
-        expected_ids.extend(d["neutral_id"] for d in by_repo_d.get(repo, []))
     got_ids = [d["neutral_id"] for d in decisions]
+    expected_ids = [d["neutral_id"] for d in expected]
     if got_ids != expected_ids:
-        # Allow decisions list already in repo order; otherwise fail reorder.
-        if sorted(got_ids) == sorted(expected_ids) and got_ids != expected_ids:
-            fail("reordered decisions")
+        fail(
+            f"global decisions != legal per-repo prefixes: {got_ids!r} vs {expected_ids!r}"
+        )
     return decisions
 
 
@@ -1233,30 +1418,40 @@ def verify_sheet_and_evidence(
                 fail(f"sheet/evidence mismatch {nid}:{field}")
 
 
-def verify_quota_disclosure(
-    quotas: dict[str, Any], decisions: list[dict[str, Any]], handoff: dict[str, Any] | None
+def verify_handoff_summary(
+    *,
+    scope: dict[str, Any],
+    quotas: dict[str, Any],
+    queue: list[dict[str, Any]],
+    decisions: list[dict[str, Any]],
+    handoff: dict[str, Any] | None,
 ) -> None:
-    miner = _load_miner()
-    feasibility = miner.project_quota_feasibility(quotas, decisions)
+    """Independently recompute summary/confirmations and compare when handoff exists."""
+    expected = recompute_admission_summary(
+        scope=scope, quotas=quotas, queue=queue, decisions=decisions
+    )
     if handoff is None:
         return
-    claimed = handoff.get("quota_feasibility") or {}
-    if claimed.get("claims_ready_success"):
-        fail("handoff claims ready success")
-    if claimed.get("claims_readiness_executed"):
-        fail("handoff claims readiness execution")
-    if claimed.get("claims_canonical_freeze"):
-        fail("handoff claims canonical freeze")
-    if feasibility["status"] == quotas["shortfall_status"]:
-        if not claimed.get("shortfalls"):
-            fail("missing shortfall disclosure")
-    if claimed.get("starting_accepted_ready_defects") != 18:
-        fail("handoff starting count drift")
-    proj = claimed.get("projection_if_quotas_met") or {}
-    if int(proj.get("qualifying_projects", -1)) != 6:
-        fail("handoff incorrect J projection")
-    if int(proj.get("ready_defects_lower_bound", -1)) != 30:
-        fail("handoff incorrect n projection")
+    _deep_equal(
+        expected["decision_totals"],
+        handoff.get("decision_totals"),
+        path="decision_totals",
+    )
+    _deep_equal(
+        expected["repository_review_counts"],
+        handoff.get("repository_review_counts"),
+        path="repository_review_counts",
+    )
+    _deep_equal(
+        expected["quota_feasibility"],
+        handoff.get("quota_feasibility"),
+        path="quota_feasibility",
+    )
+    _deep_equal(
+        expected["confirmations"],
+        handoff.get("confirmations"),
+        path="confirmations",
+    )
 
 
 def verify_admission(root: Path) -> int:
@@ -1293,16 +1488,13 @@ def verify_admission(root: Path) -> int:
         quotas = load_json(root / "QUOTAS.json")
         handoff_path = root / "HANDOFF_SUPPLEMENTAL_R2.json"
         handoff = load_json(handoff_path) if handoff_path.is_file() else None
-        verify_quota_disclosure(quotas, decisions, handoff)
-        # Blind / forbidden confirmations when handoff present.
-        if handoff is not None:
-            conf = handoff.get("confirmations") or {}
-            if conf.get("readiness_ran"):
-                fail("handoff reports readiness ran")
-            if conf.get("canonical_freeze_claimed"):
-                fail("handoff reports canonical freeze")
-            if not conf.get("a2_all_pending", False):
-                fail("handoff missing a2_all_pending confirmation")
+        verify_handoff_summary(
+            scope=scope,
+            quotas=quotas,
+            queue=queue,
+            decisions=decisions,
+            handoff=handoff,
+        )
         print("ADMISSION_CHECK_OK")
         return 0
     except AdmissionError as exc:

@@ -963,22 +963,54 @@ def build_queue_from_snapshot(
     return queue
 
 
-def review_stop_reason(
+def earliest_review_stop(
+    decisions: list[dict[str, Any]],
     *,
-    decision_count: int,
     queue_count: int,
-    pending_count: int,
+    max_reviewed: int,
+    target_pending: int,
+) -> tuple[int, str]:
+    """Return (prefix_len, reason) at the earliest stop along decisions.
+
+    Stop candidates, in scan order: fifth ADMIT_PENDING_REPRO, 20th reviewed,
+    queue exhaustion. ``prefix_len`` is 1-based length; ``0`` means empty queue.
+    ``-1`` means the submitted prefix never reaches a stop.
+    """
+    if queue_count == 0:
+        return 0, "queue_exhausted"
+
+    pending = 0
+    for index, decision in enumerate(decisions, start=1):
+        if decision.get("decision") == "ADMIT_PENDING_REPRO":
+            pending += 1
+        hit_five = pending >= target_pending
+        hit_cap = index >= max_reviewed
+        hit_end = index >= queue_count
+        if not (hit_five or hit_cap or hit_end):
+            continue
+        if hit_end:
+            return index, "queue_exhausted"
+        if hit_five:
+            return index, "five_admit_pending_repro"
+        return index, "twenty_reviewed"
+    return -1, "invalid_early_stop"
+
+
+def review_stop_reason(
+    decisions: list[dict[str, Any]],
+    *,
+    queue_count: int,
     max_reviewed: int,
     target_pending: int,
 ) -> str:
-    """Return the stop reason for one repository's reviewed prefix."""
-    if decision_count == queue_count:
-        return "queue_exhausted"
-    if pending_count >= target_pending:
-        return "five_admit_pending_repro"
-    if decision_count >= max_reviewed:
-        return "twenty_reviewed"
-    return "invalid_early_stop"
+    """Return stop reason for a prefix that already matches earliest stop."""
+    _stop_at, reason = earliest_review_stop(
+        decisions,
+        queue_count=queue_count,
+        max_reviewed=max_reviewed,
+        target_pending=target_pending,
+    )
+    return reason
 
 
 def assert_review_stop_rule(
@@ -989,35 +1021,42 @@ def assert_review_stop_rule(
     max_reviewed: int,
     target_pending: int,
 ) -> tuple[int, int, str]:
-    """Enforce stop rule: early stop only via pending>=5 or reviewed>=20."""
+    """Enforce submitted prefix length equals the ordered earliest stop."""
     queue_count = len(queue_rows)
     decision_count = len(decisions)
     pending_count = sum(
         1 for d in decisions if d.get("decision") == "ADMIT_PENDING_REPRO"
     )
+    if queue_count == 0:
+        if decision_count:
+            raise HardFail("empty_queue_decision", repo)
+        return 0, 0, "queue_exhausted"
+    if decision_count > queue_count:
+        raise HardFail("extra_decision", repo)
     if decision_count > max_reviewed:
         raise HardFail("reviewed_over_cap", repo)
     if pending_count > target_pending:
         raise HardFail("pending_over_cap", repo)
-    if decision_count > queue_count:
-        raise HardFail("extra_decision", repo)
-    if decision_count < queue_count:
-        if not (
-            pending_count >= target_pending or decision_count >= max_reviewed
-        ):
-            raise HardFail(
-                "review_stop_inconsistent",
-                f"{repo}: invalid early stop "
-                f"(decisions={decision_count}, queue={queue_count}, "
-                f"pending={pending_count})",
-            )
-    reason = review_stop_reason(
-        decision_count=decision_count,
+
+    stop_at, reason = earliest_review_stop(
+        decisions,
         queue_count=queue_count,
-        pending_count=pending_count,
         max_reviewed=max_reviewed,
         target_pending=target_pending,
     )
+    if stop_at < 0:
+        raise HardFail(
+            "review_stop_inconsistent",
+            f"{repo}: invalid early stop "
+            f"(decisions={decision_count}, queue={queue_count}, "
+            f"pending={pending_count})",
+        )
+    if decision_count != stop_at:
+        raise HardFail(
+            "review_stop_inconsistent",
+            f"{repo}: submitted prefix {decision_count} != earliest stop "
+            f"{stop_at} ({reason})",
+        )
     return decision_count, pending_count, reason
 
 
@@ -1107,14 +1146,24 @@ def validate_decisions_payload(
     exclusion_classes = set(scope["exclusion_classes"])
     max_reviewed = int(scope["max_reviewed_per_repo"])
     target_pending = int(scope["target_pending_per_repo"])
+    scope_repos = [entry["repo"] for entry in scope["repositories"]]
+    scope_set = set(scope_repos)
 
-    by_repo_queue: dict[str, list[dict[str, Any]]] = {}
+    by_repo_queue: dict[str, list[dict[str, Any]]] = {repo: [] for repo in scope_repos}
     for row in queue:
-        by_repo_queue.setdefault(row["repository"], []).append(row)
+        repo = row["repository"]
+        if repo not in scope_set:
+            raise HardFail("out_of_scope_queue_row", repo)
+        by_repo_queue[repo].append(row)
 
-    decisions_by_repo: dict[str, list[dict[str, Any]]] = {}
-    for d in decisions:
-        decisions_by_repo.setdefault(d["repository"], []).append(d)
+    decisions_by_repo: dict[str, list[dict[str, Any]]] = {
+        repo: [] for repo in scope_repos
+    }
+    for decision in decisions:
+        repo = decision["repository"]
+        if repo not in scope_set:
+            raise HardFail("out_of_scope_decision", repo)
+        decisions_by_repo[repo].append(decision)
 
     copied_fields = [
         "neutral_id",
@@ -1128,22 +1177,25 @@ def validate_decisions_payload(
         "matched_phrases",
     ]
 
-    for repo, qrows in by_repo_queue.items():
-        dreviews = decisions_by_repo.get(repo, [])
-        if not dreviews:
-            if qrows:
-                raise HardFail(
-                    "review_stop_inconsistent",
-                    f"{repo}: no decisions for non-empty queue",
-                )
+    expected: list[dict[str, Any]] = []
+    for repo in scope_repos:
+        qrows = by_repo_queue[repo]
+        dreviews = decisions_by_repo[repo]
+        if not qrows:
+            if dreviews:
+                raise HardFail("empty_queue_decision", repo)
             continue
-        # Decision order must equal reviewed queue prefix.
+        if not dreviews:
+            raise HardFail(
+                "review_stop_inconsistent",
+                f"{repo}: no decisions for non-empty queue",
+            )
         for idx, decision in enumerate(dreviews):
             if idx >= len(qrows):
                 raise HardFail("extra_decision", repo)
             qrow = qrows[idx]
-            # Binding is against the queue prefix order. Prior review_status values
-            # may be stale until build-payload recomputes them from decisions.
+            # Binding is against the queue prefix order. Prior review_status
+            # values may be stale until build-payload recomputes them.
             for field in copied_fields:
                 if decision.get(field) != qrow.get(field):
                     raise HardFail(
@@ -1158,6 +1210,15 @@ def validate_decisions_payload(
             decisions=dreviews,
             max_reviewed=max_reviewed,
             target_pending=target_pending,
+        )
+        expected.extend(dreviews)
+
+    got_ids = [d.get("neutral_id") for d in decisions]
+    expected_ids = [d.get("neutral_id") for d in expected]
+    if got_ids != expected_ids:
+        raise HardFail(
+            "decision_prefix_order",
+            f"global decisions != legal per-repo prefixes: {got_ids!r} vs {expected_ids!r}",
         )
 
 
@@ -1734,6 +1795,32 @@ def project_quota_feasibility(
     }
 
 
+def compute_confirmations(decisions: list[dict[str, Any]]) -> dict[str, bool]:
+    """Derive handoff confirmation booleans from decision rows."""
+    a2_all_pending = all(
+        d.get("crit_dual_arm_repro") == "PENDING" for d in decisions
+    )
+    analysis_id_all_blank = all(
+        d.get("analysis_id") in (None, "") for d in decisions
+    )
+    forbidden_data_absent = True
+    for decision in decisions:
+        for text_key in ("mechanism", "decision_reason"):
+            if PROHIBITED_VOCAB_RE.search(decision.get(text_key) or ""):
+                forbidden_data_absent = False
+                break
+        if not forbidden_data_absent:
+            break
+    return {
+        "a2_all_pending": a2_all_pending,
+        "analysis_id_all_blank": analysis_id_all_blank,
+        "forbidden_data_absent": forbidden_data_absent,
+        "readiness_ran": False,
+        "canonical_freeze_claimed": False,
+        "existing_files_unchanged": True,
+    }
+
+
 def compute_admission_summary(
     *,
     scope: dict[str, Any],
@@ -1744,10 +1831,14 @@ def compute_admission_summary(
     """Compute decision totals, per-repo counts, stop reasons, and shortfalls."""
     max_reviewed = int(scope["max_reviewed_per_repo"])
     target_pending = int(scope["target_pending_per_repo"])
-    by_repo_q: dict[str, list[dict[str, Any]]] = {r["repo"]: [] for r in scope["repositories"]}
+    by_repo_q: dict[str, list[dict[str, Any]]] = {
+        r["repo"]: [] for r in scope["repositories"]
+    }
     for row in queue:
         by_repo_q.setdefault(row["repository"], []).append(row)
-    by_repo_d: dict[str, list[dict[str, Any]]] = {r["repo"]: [] for r in scope["repositories"]}
+    by_repo_d: dict[str, list[dict[str, Any]]] = {
+        r["repo"]: [] for r in scope["repositories"]
+    }
     for decision in decisions:
         by_repo_d.setdefault(decision["repository"], []).append(decision)
 
@@ -1769,9 +1860,8 @@ def compute_admission_summary(
             st = str(row.get("review_status") or "")
             status_counts[st] = status_counts.get(st, 0) + 1
         reason = review_stop_reason(
-            decision_count=len(drows),
+            drows,
             queue_count=len(qrows),
-            pending_count=admits,
             max_reviewed=max_reviewed,
             target_pending=target_pending,
         )
@@ -1796,6 +1886,7 @@ def compute_admission_summary(
         },
         "repository_review_counts": repository_review_counts,
         "quota_feasibility": feasibility,
+        "confirmations": compute_confirmations(decisions),
     }
 
 
@@ -1873,14 +1964,7 @@ def cmd_write_handoff(root: Path, payload_commit: str) -> int:
                 if (root / "VERIFICATION_LOG.json").is_file()
                 else ""
             ),
-            "confirmations": {
-                "a2_all_pending": True,
-                "analysis_id_all_blank": True,
-                "forbidden_data_absent": True,
-                "readiness_ran": False,
-                "canonical_freeze_claimed": False,
-                "existing_files_unchanged": True,
-            },
+            "confirmations": summary["confirmations"],
             "transport": contract.get("transport"),
             "created_at_utc": utc_now(),
         }
