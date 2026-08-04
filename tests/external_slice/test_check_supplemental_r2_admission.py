@@ -351,6 +351,7 @@ def fully_sync_raw_page_tamper_and_rebuild(root: Path) -> None:
     assert miner.cmd_build_queue(root) == 0
     sync_decisions_from_queue(root)
     assert miner.cmd_build_payload(root) == 0
+    seal_handoff_bundle(root)
 
 
 def raw_page_node_for_record(
@@ -500,6 +501,47 @@ def build_valid_payload(
         {"schema_version": 1, "task": "SUPPLEMENTAL_MINING_R2", "decisions": decisions},
     )
     assert miner.cmd_build_payload(root) == 0
+    seal_handoff_bundle(root)
+
+
+def seal_handoff_bundle(root: Path, *, payload_commit: str = "c0" * 20) -> None:
+    """Write gate-bound VERIFICATION_LOG + handoff for both-checker verification."""
+    _write_json(
+        root / "VERIFICATION_LOG.json",
+        {
+            "schema_version": 1,
+            "task": "SUPPLEMENTAL_MINING_R2",
+            "gate_requested": miner.EXPECTED_GATE,
+            "commands": [],
+        },
+    )
+    assert miner.cmd_write_handoff(root, payload_commit=payload_commit) == 0
+
+
+def both_checkers_fail(root: Path) -> None:
+    assert checker.verify_admission(root) != 0
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            root / "HANDOFF_SUPPLEMENTAL_R2.json",
+            cwd=root,
+            check_parent=False,
+            git_cwd=ROOT,
+        )
+        != 0
+    )
+
+
+def both_checkers_pass(root: Path) -> None:
+    assert checker.verify_admission(root) == 0
+    assert (
+        handoff_mod.verify_handoff_hashes(
+            root / "HANDOFF_SUPPLEMENTAL_R2.json",
+            cwd=root,
+            check_parent=False,
+            git_cwd=ROOT,
+        )
+        == 0
+    )
 
 
 CANDIDATE_ARTIFACTS = (
@@ -581,6 +623,8 @@ def test_queue_rebuild_preserves_run_code_binding(tmp_path: Path) -> None:
     queue = json.loads((root / "REVIEW_QUEUE.json").read_text(encoding="utf-8"))
     assert queue["run_id"] == snapshot["run_id"]
     assert queue["code_commit"] == snapshot["code_commit"]
+    # Queue rebuild refreshes review_status_counts; reseal handoff bindings.
+    seal_handoff_bundle(root)
     assert checker.verify_admission(root) == 0
 
 
@@ -2249,41 +2293,124 @@ def _align_queue_statuses(root: Path, decisions: list[dict[str, Any]]) -> None:
     _write_json(root / "REVIEW_QUEUE.json", queue)
 
 
-def test_full_chain_after_fifth_admit_rejected(tmp_path: Path) -> None:
-    root = _copy_live_root(tmp_path)
-    before = present_candidates(root)
+def _sync_decisions_sheet_evidence_handoff(root: Path) -> None:
+    """Fully rebuild sheet/evidence/handoff hashes after decision/queue edits.
+
+    Bypasses producer validation so synchronized illegal payloads can exercise
+    checker guards (validation itself is asserted separately).
+    """
     payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
+    decisions = payload["decisions"]
+    _align_queue_statuses(root, decisions)
+    sheet_rows = [miner.sheet_row_from_decision(d) for d in decisions]
+    miner.write_sheet(root / "admission_sheet.cursor_candidate.csv", sheet_rows)
+    evidence_root = root / "admission_evidence"
+    if evidence_root.exists():
+        shutil.rmtree(evidence_root)
+    evidence_root.mkdir(parents=True, exist_ok=True)
+    manifest: list[dict[str, Any]] = []
+    for decision in decisions:
+        evidence = miner.evidence_from_decision(decision)
+        case_dir = evidence_root / decision["neutral_id"]
+        case_dir.mkdir(parents=True, exist_ok=True)
+        path = case_dir / "evidence.json"
+        miner.write_json(path, evidence)
+        rel = f"admission_evidence/{decision['neutral_id']}/evidence.json"
+        manifest.append(
+            {
+                "neutral_id": decision["neutral_id"],
+                "path": rel,
+                "sha256": miner.sha256_file(path),
+            }
+        )
+    _write_json(
+        root / "EVIDENCE_SNAPSHOT.json",
+        {
+            "schema_version": 1,
+            "task": "SUPPLEMENTAL_MINING_R2",
+            "records": manifest,
+        },
+    )
+    seal_handoff_bundle(root)
+
+
+def test_full_chain_after_fifth_admit_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = _copy_live_root(tmp_path)
     repo = "pymc-devs/pymc"
     rows = _repo_rows(root, repo)
-    # Fifth admit at row 5, but keep reviewing through row 20.
     rewritten = [
         build_decision_from_queue_row(row, admit=idx < 5)
         for idx, row in enumerate(rows[:20])
     ]
     _rewrite_repo_decisions(root, repo, rewritten)
-    payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
-    _align_queue_statuses(root, payload["decisions"])
+    _sync_decisions_sheet_evidence_handoff(root)
     assert miner.cmd_validate_decisions(root) != 0
-    assert_checker_fails_without_new_mint(root, before)
+    both_checkers_fail(root)
+
+    def accept_submitted(
+        decisions: list[dict[str, Any]],
+        *,
+        queue_count: int,
+        max_reviewed: int,
+        target_pending: int,
+    ) -> tuple[int, str]:
+        n = len(decisions)
+        pending = sum(
+            1 for d in decisions if d.get("decision") == "ADMIT_PENDING_REPRO"
+        )
+        if n >= queue_count:
+            return n, "queue_exhausted"
+        if n >= max_reviewed:
+            return n, "twenty_reviewed"
+        if pending >= target_pending:
+            return n, "five_admit_pending_repro"
+        return n, "queue_exhausted"
+
+    monkeypatch.setattr(checker, "earliest_review_stop", accept_submitted)
+    monkeypatch.setattr(handoff_mod, "_earliest_review_stop", accept_submitted)
+    monkeypatch.setattr(miner, "earliest_review_stop", accept_submitted)
+    # Reseal under the removed guard so summary stop_reason labels stay consistent.
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
 
 
-def test_full_chain_out_of_scope_decision_rejected(tmp_path: Path) -> None:
+def test_full_chain_out_of_scope_decision_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     root = _copy_live_root(tmp_path)
-    before = present_candidates(root)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
     payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
     donor = dict(payload["decisions"][0])
     donor["repository"] = "evil/not-in-scope"
     donor["neutral_id"] = "EXT-evil-01"
     payload["decisions"].append(donor)
     _write_json(root / "REVIEW_DECISIONS.json", payload)
+    _sync_decisions_sheet_evidence_handoff(root)
     assert miner.cmd_validate_decisions(root) != 0
-    assert_checker_fails_without_new_mint(root, before)
+    both_checkers_fail(root)
+
+    def without_scope_guard(scope, queue, decisions_payload):
+        decisions = decisions_payload.get("decisions") or []
+        for decision in decisions:
+            if decision.get("crit_dual_arm_repro") != "PENDING":
+                checker.fail(f"non-PENDING A2 for {decision.get('neutral_id')}")
+            if decision.get("analysis_id") not in (None, ""):
+                checker.fail(f"nonblank analysis_id for {decision.get('neutral_id')}")
+        return decisions
+
+    monkeypatch.setattr(checker, "verify_decisions", without_scope_guard)
+    monkeypatch.setattr(handoff_mod, "verify_decision_guards", lambda *a, **k: [])
+    both_checkers_pass(root)
 
 
-def test_full_chain_empty_queue_decision_rejected(tmp_path: Path) -> None:
+def test_full_chain_empty_queue_decision_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     root = _copy_live_root(tmp_path)
-    before = present_candidates(root)
-    # Live SALib queue is empty; injecting a decision must fail closed.
+    seal_handoff_bundle(root)
     payload = json.loads((root / "REVIEW_DECISIONS.json").read_text(encoding="utf-8"))
     payload["decisions"].append(
         {
@@ -2300,7 +2427,7 @@ def test_full_chain_empty_queue_decision_rejected(tmp_path: Path) -> None:
             "fixed_sha": "",
             "public_issue_url": "https://github.com/SALib/SALib/issues/1",
             "public_fix_url": "",
-            "mechanism": "empty-queue injection",
+            "mechanism": "excluded as documentation-only report.",
             "exclusion_class": "documentation",
             "crit_real_public_fix": "FAIL",
             "crit_in_numerical_scope": "FAIL",
@@ -2311,70 +2438,161 @@ def test_full_chain_empty_queue_decision_rejected(tmp_path: Path) -> None:
         }
     )
     _write_json(root / "REVIEW_DECISIONS.json", payload)
+    _sync_decisions_sheet_evidence_handoff(root)
     assert miner.cmd_validate_decisions(root) != 0
-    assert_checker_fails_without_new_mint(root, before)
+    both_checkers_fail(root)
+
+    def without_empty_queue_guard(scope, queue, decisions_payload):
+        return decisions_payload.get("decisions") or []
+
+    monkeypatch.setattr(checker, "verify_decisions", without_empty_queue_guard)
+    monkeypatch.setattr(handoff_mod, "verify_decision_guards", lambda *a, **k: [])
+    both_checkers_pass(root)
 
 
-def test_full_chain_frozen_file_tamper_rejected(tmp_path: Path) -> None:
+def test_full_chain_verification_log_missing_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     root = _copy_live_root(tmp_path)
-    before = present_candidates(root)
-    # Tamper an immutable transport freeze file.
-    snap = json.loads((root / "ISSUE_SNAPSHOT.json").read_text(encoding="utf-8"))
-    snap["run_id"] = "tampered-run-id"
-    _write_json(root / "ISSUE_SNAPSHOT.json", snap)
-    assert_checker_fails_without_new_mint(root, before)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+    (root / "VERIFICATION_LOG.json").unlink()
+    both_checkers_fail(root)
+
+    monkeypatch.setattr(checker, "verify_gate_binding", lambda *a, **k: None)
+    monkeypatch.setattr(handoff_mod, "verify_gate_binding", lambda *a, **k: [])
+    handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
+    handoff.get("file_sha256", {}).pop("VERIFICATION_LOG.json", None)
+    _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
+    both_checkers_pass(root)
 
 
-def test_full_chain_readiness_freeze_sentinel_rejected(tmp_path: Path) -> None:
+def test_full_chain_scope_self_tamper_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = _copy_live_root(tmp_path)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+    scope = json.loads((root / "SCOPE.json").read_text(encoding="utf-8"))
+    scope["unbound_attack_field"] = "tamper"
+    _write_json(root / "SCOPE.json", scope)
+    seal_handoff_bundle(root)
+    both_checkers_fail(root)
+
+    def trust_mutable_scope(
+        *,
+        root: Path,
+        scope: dict[str, Any],
+        decisions: list[dict[str, Any]],
+        repo_root: Path | None = None,
+    ) -> dict[str, bool]:
+        repo_root = repo_root or ROOT
+        conf = {
+            "a2_all_pending": all(
+                d.get("crit_dual_arm_repro") == "PENDING" for d in decisions
+            ),
+            "analysis_id_all_blank": all(
+                d.get("analysis_id") in (None, "") for d in decisions
+            ),
+            "forbidden_data_absent": True,
+            "readiness_ran": False,
+            "canonical_freeze_claimed": False,
+            "existing_files_unchanged": True,
+        }
+        for rel, expected in (scope.get("input_sha256") or {}).items():
+            path = repo_root / rel
+            if not path.is_file() or miner.sha256_file(path) != expected:
+                conf["existing_files_unchanged"] = False
+                break
+        return conf
+
+    monkeypatch.setattr(checker, "_compute_confirmations", trust_mutable_scope)
+    monkeypatch.setattr(handoff_mod, "_compute_confirmations", trust_mutable_scope)
+    monkeypatch.setattr(miner, "compute_confirmations", trust_mutable_scope)
+    monkeypatch.setattr(checker, "verify_frozen_inputs", lambda *a, **k: None)
+    monkeypatch.setattr(checker, "verify_confirmation_policy", lambda *a, **k: None)
+    monkeypatch.setattr(handoff_mod, "verify_confirmation_policy", lambda *a, **k: [])
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+
+
+def test_full_chain_sibling_readiness_sentinel_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = _copy_live_root(tmp_path)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+    sibling = root.parent / "readiness_supplemental_r2.json"
+    sibling.write_text("{}\n", encoding="utf-8")
+    seal_handoff_bundle(root)
+    both_checkers_fail(root)
+
+    def no_path_hits(root_path: Path, *, repo_root: Path | None = None):
+        del root_path, repo_root
+        return False, False, False
+
+    monkeypatch.setattr(checker, "_forbidden_path_scan", no_path_hits)
+    monkeypatch.setattr(handoff_mod, "_forbidden_path_scan", no_path_hits)
+    monkeypatch.setattr(miner, "_forbidden_path_scan", no_path_hits)
+    seal_handoff_bundle(root)
+    both_checkers_pass(root)
+
+
+def test_full_chain_verification_log_readiness_command_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = _copy_live_root(tmp_path)
+    seal_handoff_bundle(root)
+    vlog = json.loads((root / "VERIFICATION_LOG.json").read_text(encoding="utf-8"))
+    vlog["commands"] = [
+        {
+            "command": (
+                "python3 run_readiness.py --root data/external_slice/supplemental_r2"
+            ),
+            "cwd": str(ROOT),
+            "exit_code": 0,
+            "key_output": "READINESS_OK",
+            "phase": "payload",
+        }
+    ]
+    _write_json(root / "VERIFICATION_LOG.json", vlog)
+    assert miner.cmd_write_handoff(root, payload_commit="r4" * 20) == 0
+    both_checkers_fail(root)
+
+    def no_command_hits(root_path: Path):
+        del root_path
+        return False, False
+
+    monkeypatch.setattr(checker, "_command_sources_sentinel_hits", no_command_hits)
+    monkeypatch.setattr(handoff_mod, "_command_sources_sentinel_hits", no_command_hits)
+    monkeypatch.setattr(miner, "_command_sources_sentinel_hits", no_command_hits)
+    assert miner.cmd_write_handoff(root, payload_commit="r4" * 20) == 0
+    both_checkers_pass(root)
+
+
+def test_full_chain_gate_mismatch_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     root = seed_root(tmp_path)
     build_valid_payload(root)
-    assert miner.cmd_write_handoff(root, payload_commit="s1" * 20) == 0
-    before = present_candidates(root)
-    # Downstream readiness sentinel must flip evidence-backed confirmations.
-    (root / "READINESS_RUN.json").write_text("{}\n", encoding="utf-8")
-    assert_checker_fails_without_new_mint(root, before)
-    (root / "READINESS_RUN.json").unlink()
-    assert miner.cmd_write_handoff(root, payload_commit="s2" * 20) == 0
-    (root / "canonical_freeze.marker").write_text("x\n", encoding="utf-8")
-    assert (
-        handoff_mod.verify_handoff_hashes(
-            root / "HANDOFF_SUPPLEMENTAL_R2.json",
-            cwd=root,
-            check_parent=False,
-            git_cwd=ROOT,
-        )
-        != 0
-    )
-
-
-def test_full_chain_gate_mismatch_rejected(tmp_path: Path) -> None:
-    root = seed_root(tmp_path)
-    build_valid_payload(root)
-    assert miner.cmd_write_handoff(root, payload_commit="g1" * 20) == 0
-    before = present_candidates(root)
+    both_checkers_pass(root)
     handoff = json.loads((root / "HANDOFF_SUPPLEMENTAL_R2.json").read_text())
     assert handoff["gate_requested"] == checker.EXPECTED_GATE
-    # Cross-file mismatch: verification log claims a different gate.
     _write_json(
         root / "VERIFICATION_LOG.json",
         {
             "schema_version": 1,
-            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r2",
             "task": "SUPPLEMENTAL_MINING_R2",
+            "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r3",
+            "commands": [],
         },
     )
-    assert_checker_fails_without_new_mint(root, before)
-    assert (
-        handoff_mod.verify_handoff_hashes(
-            root / "HANDOFF_SUPPLEMENTAL_R2.json",
-            cwd=root,
-            check_parent=False,
-            git_cwd=ROOT,
-        )
-        != 0
+    handoff["file_sha256"]["VERIFICATION_LOG.json"] = miner.sha256_file(
+        root / "VERIFICATION_LOG.json"
     )
-    # Handoff itself on the wrong gate is also rejected.
-    handoff["gate_requested"] = "SUPPLEMENTAL_ADMISSION_R2"
     _write_json(root / "HANDOFF_SUPPLEMENTAL_R2.json", handoff)
-    (root / "VERIFICATION_LOG.json").unlink()
-    assert_checker_fails_without_new_mint(root, before)
+    both_checkers_fail(root)
+
+    monkeypatch.setattr(checker, "verify_gate_binding", lambda *a, **k: None)
+    monkeypatch.setattr(handoff_mod, "verify_gate_binding", lambda *a, **k: [])
+    both_checkers_pass(root)

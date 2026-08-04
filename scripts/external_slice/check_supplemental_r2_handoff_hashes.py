@@ -13,7 +13,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
-EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r3"
+EXPECTED_GATE = "SUPPLEMENTAL_ADMISSION_R2-r4"
+TRANSPORT_BASELINE_COMMIT = "020b60fb83f7eb1d34f143458fca62beab5aa398"
+TRANSPORT_BASELINE_PREFIX = "data/external_slice/supplemental_r2"
+TRANSPORT_BASELINE_CONTRACT_FILES = (
+    "SCOPE.json",
+    "TRANSPORT_CONTRACT.json",
+    "QUOTAS.json",
+)
 PROHIBITED_VOCAB_RE = re.compile(
     r"(?i)(mr_mapping|proposed_mr_oracle|reviewer_note|reproduction_risk|"
     r"\bkill\b|prediction|detection_result|\bfiber\b|\boperator\b|"
@@ -21,7 +28,7 @@ PROHIBITED_VOCAB_RE = re.compile(
 )
 DOWNSTREAM_SENTINEL_RE = re.compile(
     r"(?i)("
-    r"\breadiness\b|"
+    r"readiness|"
     r"\bcanonical_freeze\b|"
     r"\bcanonical-freeze\b|"
     r"\bannotation\b|"
@@ -150,15 +157,60 @@ def _review_stop_reason(
     return reason
 
 
-def _command_log_sentinel_hits(command_log: dict[str, Any]) -> tuple[bool, bool]:
+def _git_show_bytes(repo_root: Path, commit: str, rel: str) -> bytes | None:
+    proc = subprocess.run(
+        ["git", "show", f"{commit}:{rel}"],
+        cwd=repo_root,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        return None
+    return proc.stdout
+
+
+def _baseline_contract_files_match(root: Path, repo_root: Path) -> bool:
+    for name in TRANSPORT_BASELINE_CONTRACT_FILES:
+        path = root / name
+        if not path.is_file():
+            return False
+        expected = _git_show_bytes(
+            repo_root,
+            TRANSPORT_BASELINE_COMMIT,
+            f"{TRANSPORT_BASELINE_PREFIX}/{name}",
+        )
+        if expected is None or path.read_bytes() != expected:
+            return False
+    return True
+
+
+def _baseline_input_sha256(repo_root: Path) -> dict[str, str]:
+    raw = _git_show_bytes(
+        repo_root,
+        TRANSPORT_BASELINE_COMMIT,
+        f"{TRANSPORT_BASELINE_PREFIX}/SCOPE.json",
+    )
+    if raw is None:
+        return {}
+    try:
+        scope = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return {}
+    payload = scope.get("input_sha256") or {}
+    if not isinstance(payload, dict):
+        return {}
+    return {str(k): str(v) for k, v in payload.items()}
+
+
+def _command_blob_sentinel_hits(blobs: list[str]) -> tuple[bool, bool]:
     readiness_hit = False
     freeze_hit = False
-    for entry in command_log.get("entries") or []:
-        blob = json.dumps(entry, sort_keys=True, ensure_ascii=False)
+    for blob in blobs:
         if not DOWNSTREAM_SENTINEL_RE.search(blob):
             continue
         lower = blob.lower()
-        if re.search(r"\breadiness\b", lower):
+        # Substring match so run_readiness.py / readiness_supplemental count.
+        if "readiness" in lower:
             readiness_hit = True
         if re.search(r"\bcanonical[_-]freeze\b", lower) or re.search(
             r"\bcanonical\b.*\bfreeze\b", lower
@@ -169,30 +221,116 @@ def _command_log_sentinel_hits(command_log: dict[str, Any]) -> tuple[bool, bool]
     return readiness_hit, freeze_hit
 
 
-def _forbidden_path_scan(root: Path) -> tuple[bool, bool, bool]:
+def _command_sources_sentinel_hits(root: Path) -> tuple[bool, bool]:
+    """Scan COMMAND_LOG.json and VERIFICATION_LOG.json for downstream sentinels."""
+    blobs: list[str] = []
+    command_log_path = root / "COMMAND_LOG.json"
+    if command_log_path.is_file():
+        command_log = load_json(command_log_path)
+        for entry in command_log.get("entries") or []:
+            blobs.append(json.dumps(entry, sort_keys=True, ensure_ascii=False))
+    vlog_path = root / "VERIFICATION_LOG.json"
+    if vlog_path.is_file():
+        vlog = load_json(vlog_path)
+        for entry in vlog.get("commands") or []:
+            blobs.append(json.dumps(entry, sort_keys=True, ensure_ascii=False))
+    return _command_blob_sentinel_hits(blobs)
+
+
+def _classify_forbidden_rel(rel: str) -> tuple[bool, bool, bool]:
+    if not FORBIDDEN_PATH_NAME_RE.search(rel):
+        return False, False, False
+    lower = rel.lower()
+    readiness = "readiness" in lower
+    freeze = (
+        "canonical_freeze" in lower
+        or "canonical-freeze" in lower
+        or any(token in lower for token in ("annotation", "prediction", "detection"))
+    )
+    return True, readiness, freeze
+
+
+def _forbidden_path_scan(
+    root: Path, *, repo_root: Path | None = None
+) -> tuple[bool, bool, bool]:
+    """Scan supplemental root plus supplemental-named sibling/git downstream paths."""
     forbidden_path_hit = False
     readiness_file_hit = False
     freeze_file_hit = False
-    if not root.is_dir():
-        return False, False, False
-    for path in root.rglob("*"):
-        if not path.is_file():
-            continue
-        rel = path.relative_to(root).as_posix()
-        if rel in {"VERIFICATION_LOG.json", "HANDOFF_SUPPLEMENTAL_R2.json", "SCOPE.json"}:
-            continue
-        if FORBIDDEN_PATH_NAME_RE.search(rel):
-            forbidden_path_hit = True
-            lower = rel.lower()
-            if "readiness" in lower:
-                readiness_file_hit = True
-            if "canonical_freeze" in lower or "canonical-freeze" in lower:
-                freeze_file_hit = True
-            if any(
-                token in lower
-                for token in ("annotation", "prediction", "detection")
-            ):
-                freeze_file_hit = True
+    repo_root = repo_root or Path(__file__).resolve().parents[2]
+    seen: set[str] = set()
+    root_resolved = root.resolve() if root.is_dir() else None
+    repo_resolved = repo_root.resolve()
+    supplemental_name_re = re.compile(r"(?i)supplemental[_-]?r2|supp[_-]?r2")
+
+    def _under_root(rel: str) -> bool:
+        if root_resolved is None:
+            return False
+        try:
+            (repo_resolved / rel).resolve().relative_to(root_resolved)
+            return True
+        except ValueError:
+            return False
+
+    def _in_scope(rel: str) -> bool:
+        if _under_root(rel):
+            return True
+        # Sibling / repo-level sentinel must be named for this supplemental gate.
+        return bool(supplemental_name_re.search(rel))
+
+    def _consume(rel: str) -> None:
+        nonlocal forbidden_path_hit, readiness_file_hit, freeze_file_hit
+        rel = rel.replace("\\", "/")
+        if rel in seen or not _in_scope(rel):
+            return
+        seen.add(rel)
+        hit, readiness, freeze = _classify_forbidden_rel(rel)
+        if not hit:
+            return
+        forbidden_path_hit = True
+        readiness_file_hit = readiness_file_hit or readiness
+        freeze_file_hit = freeze_file_hit or freeze
+
+    if root.is_dir():
+        for path in root.rglob("*"):
+            if not path.is_file():
+                continue
+            if path.name in {"VERIFICATION_LOG.json", "HANDOFF_SUPPLEMENTAL_R2.json"}:
+                continue
+            try:
+                rel = path.resolve().relative_to(repo_resolved).as_posix()
+            except ValueError:
+                rel = path.relative_to(root).as_posix()
+            _consume(rel)
+        parent = root.parent
+        if parent.is_dir():
+            for child in parent.iterdir():
+                if child.resolve() == root_resolved:
+                    continue
+                if child.is_file():
+                    try:
+                        rel = child.resolve().relative_to(repo_resolved).as_posix()
+                    except ValueError:
+                        rel = child.name
+                    _consume(rel)
+                elif child.is_dir():
+                    # Directory name itself may be a downstream sentinel.
+                    try:
+                        rel = child.resolve().relative_to(repo_resolved).as_posix()
+                    except ValueError:
+                        rel = child.name
+                    _consume(rel + "/")
+
+    proc = subprocess.run(
+        ["git", "ls-files", "-co", "--exclude-standard"],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if proc.returncode == 0:
+        for rel in proc.stdout.splitlines():
+            _consume(rel)
     return forbidden_path_hit, readiness_file_hit, freeze_file_hit
 
 
@@ -203,6 +341,8 @@ def _compute_confirmations(
     decisions: list[dict[str, Any]],
     repo_root: Path | None = None,
 ) -> dict[str, bool]:
+    """Independently prove confirmations from baseline hashes and command/path scans."""
+    del scope  # Never trust mutable SCOPE self-hashes; baseline is authoritative.
     repo_root = repo_root or Path(__file__).resolve().parents[2]
     a2_all_pending = all(
         d.get("crit_dual_arm_repro") == "PENDING" for d in decisions
@@ -218,17 +358,17 @@ def _compute_confirmations(
                 break
         if not vocab_clean:
             break
-    command_log: dict[str, Any] = {}
-    if (root / "COMMAND_LOG.json").is_file():
-        command_log = load_json(root / "COMMAND_LOG.json")
-    readiness_cmd, freeze_cmd = _command_log_sentinel_hits(command_log)
-    path_hit, readiness_file, freeze_file = _forbidden_path_scan(root)
-    existing_files_unchanged = True
-    for rel, expected in (scope.get("input_sha256") or {}).items():
-        path = repo_root / rel
-        if not path.is_file() or sha256_file(path) != expected:
-            existing_files_unchanged = False
-            break
+    readiness_cmd, freeze_cmd = _command_sources_sentinel_hits(root)
+    path_hit, readiness_file, freeze_file = _forbidden_path_scan(
+        root, repo_root=repo_root
+    )
+    existing_files_unchanged = _baseline_contract_files_match(root, repo_root)
+    if existing_files_unchanged:
+        for rel, expected in _baseline_input_sha256(repo_root).items():
+            path = repo_root / rel
+            if not path.is_file() or sha256_file(path) != expected:
+                existing_files_unchanged = False
+                break
     return {
         "a2_all_pending": a2_all_pending,
         "analysis_id_all_blank": analysis_id_all_blank,
@@ -400,6 +540,62 @@ def _deep_equal(expected: Any, actual: Any, *, path: str) -> list[str]:
     return errors
 
 
+def verify_decision_guards(
+    scope: dict[str, Any],
+    queue: list[dict[str, Any]],
+    decisions: list[dict[str, Any]],
+) -> list[str]:
+    """Reject out-of-scope, empty-queue, and post-stop decision prefixes."""
+    errors: list[str] = []
+    max_reviewed = int(scope["max_reviewed_per_repo"])
+    target_pending = int(scope["target_pending_per_repo"])
+    scope_repos = [entry["repo"] for entry in scope["repositories"]]
+    scope_set = set(scope_repos)
+    by_repo_q: dict[str, list[dict[str, Any]]] = {repo: [] for repo in scope_repos}
+    for row in queue:
+        repo = row["repository"]
+        if repo not in scope_set:
+            errors.append(f"out-of-scope queue row: {repo}")
+            continue
+        by_repo_q[repo].append(row)
+    by_repo_d: dict[str, list[dict[str, Any]]] = {repo: [] for repo in scope_repos}
+    for decision in decisions:
+        repo = decision["repository"]
+        if repo not in scope_set:
+            errors.append(f"out-of-scope decision: {repo}")
+            continue
+        by_repo_d[repo].append(decision)
+    legal_ids: list[str] = []
+    for repo in scope_repos:
+        qrows = by_repo_q.get(repo, [])
+        drows = by_repo_d.get(repo, [])
+        if not qrows:
+            if drows:
+                errors.append(f"empty-queue decision for {repo}")
+            continue
+        stop_at, reason = _earliest_review_stop(
+            drows,
+            queue_count=len(qrows),
+            max_reviewed=max_reviewed,
+            target_pending=target_pending,
+        )
+        if stop_at < 0:
+            errors.append(f"invalid early stop for {repo}")
+            continue
+        if len(drows) != stop_at:
+            errors.append(
+                f"submitted prefix {len(drows)} != earliest stop {stop_at} "
+                f"({reason}) for {repo}"
+            )
+        legal_ids.extend(d["neutral_id"] for d in drows[:stop_at])
+    got_ids = [d["neutral_id"] for d in decisions]
+    if got_ids != legal_ids:
+        errors.append(
+            f"global decisions != legal per-repo prefixes: {got_ids!r} vs {legal_ids!r}"
+        )
+    return errors
+
+
 def verify_handoff_summary_counts(
     handoff: dict[str, Any], *, handoff_path: Path
 ) -> list[str]:
@@ -439,6 +635,7 @@ def verify_handoff_summary_counts(
     quotas = load_json(root / "QUOTAS.json")
     queue = load_json(root / "REVIEW_QUEUE.json")["records"]
     decisions = load_json(root / "REVIEW_DECISIONS.json")["decisions"]
+    errors.extend(verify_decision_guards(scope, queue, decisions))
     with (root / "admission_sheet.cursor_candidate.csv").open(
         newline="", encoding="utf-8"
     ) as handle:
@@ -457,6 +654,7 @@ def verify_handoff_summary_counts(
     except ValueError as exc:
         return [f"summary recompute failed: {exc}"]
 
+    errors.extend(verify_confirmation_policy(expected["confirmations"]))
     errors.extend(
         _deep_equal(
             expected["decision_totals"],
@@ -493,10 +691,23 @@ def verify_gate_binding(handoff: dict[str, Any], *, handoff_path: Path) -> list[
     if handoff_path.name != "HANDOFF_SUPPLEMENTAL_R2.json":
         return []
     errors: list[str] = []
+    vlog_path = handoff_path.parent / "VERIFICATION_LOG.json"
+    if not vlog_path.is_file():
+        errors.append("missing VERIFICATION_LOG.json")
+    file_sha = handoff.get("file_sha256") or {}
+    expected_vl = file_sha.get("VERIFICATION_LOG.json")
+    if not expected_vl:
+        errors.append("handoff file_sha256 missing VERIFICATION_LOG.json")
+    elif vlog_path.is_file():
+        actual_vl = sha256_file(vlog_path)
+        if actual_vl != expected_vl:
+            errors.append(
+                "VERIFICATION_LOG.json hash mismatch: "
+                f"expected {expected_vl}, got {actual_vl}"
+            )
     gate = handoff.get("gate_requested")
     if gate != EXPECTED_GATE:
         errors.append(f"handoff gate_requested {gate!r} != {EXPECTED_GATE!r}")
-    vlog_path = handoff_path.parent / "VERIFICATION_LOG.json"
     if vlog_path.is_file():
         vlog = load_json(vlog_path)
         vgate = vlog.get("gate_requested")
@@ -509,6 +720,23 @@ def verify_gate_binding(handoff: dict[str, Any], *, handoff_path: Path) -> list[
                 f"gate mismatch between handoff and verification_log: "
                 f"{gate!r} vs {vgate!r}"
             )
+    return errors
+
+
+def verify_confirmation_policy(confirmations: dict[str, bool]) -> list[str]:
+    errors: list[str] = []
+    if not confirmations.get("a2_all_pending"):
+        errors.append("A2 is not all PENDING")
+    if not confirmations.get("analysis_id_all_blank"):
+        errors.append("analysis_id is not all blank")
+    if not confirmations.get("forbidden_data_absent"):
+        errors.append("forbidden data or downstream path present")
+    if confirmations.get("readiness_ran"):
+        errors.append("readiness sentinel detected")
+    if confirmations.get("canonical_freeze_claimed"):
+        errors.append("canonical freeze sentinel detected")
+    if not confirmations.get("existing_files_unchanged"):
+        errors.append("immutable inputs drifted from transport baseline")
     return errors
 
 
