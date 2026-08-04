@@ -892,3 +892,24 @@ Gate 以 `PASS_WITH_DISCLOSURE` 关闭。披露仍为 immutable snapshot 的结�
 Checker 还接受未到 5 admits/20 reviews/queue exhaustion 的 fully rebuilt early-stop payload；把 handoff decision total 从 63 改为 999 后 admission/hash checker 仍双双 exit 0。Verification log 未记录 handoff 阶段命令，且其 diff-check zero claim 在未披露 `cr-at-eol` 配置时不可复现：native Local Git 对 64 行 CRLF CSV 返回 2。
 
 Standards PASS，Spec FAIL。唯一 correction 是修正三行和 PyMC 后续 queue review，补严 stop-rule 与 handoff semantic reconstruction/负测，规范 LF/provenance，重发 payload+direct-child handoff；accepted-ready 保持 18，readiness/downstream 全部锁定。
+
+### 5.30 SUPPLEMENTAL_ADMISSION_R2-r1 correction 复审
+
+| 字段 | 记录 |
+|---|---|
+| Gate | `SUPPLEMENTAL_ADMISSION_R2-r1` |
+| 记录类型 | admission correction 独立复审 |
+| 交接/复核时间 | `2026-08-04T08:59:11+08:00` |
+| Cursor 分支 | `origin/cursor/grok-phase3-supplemental-mining-r2`；draft PR #7 |
+| Cursor commit | payload `48728c423be28de20951be24a22f905e42c8a1d7`；handoff `dc4060da182b60fa5175710000379659babcd4ea` |
+| Cursor baseline | `30c30a73f1544a2129505bb4ee26f87f7cf710bb` |
+| Findings | crash-only、LF、handoff-checker count tamper 已关闭；`SUPP-R2-A1-FIX-PARENT-001`；`SUPP-R2-STOP-FIRST-HIT-001`；`SUPP-R2-EXTRA-DECISION-SCOPE-001`；`SUPP-R2-ADMISSION-HANDOFF-SEMANTICS-001`；`SUPP-R2-VERIFICATION-PROVENANCE-002` |
+| Verdict | `BLOCKED` |
+| 本地集成 commit | N/A（PR #7 未集成） |
+| 后继任务是否解锁 | 否；仅同分支 `SUPPLEMENTAL_ADMISSION_R2-r2` correction；不得重跑 retrieval，不解锁 readiness 或 downstream。 |
+
+三条 crash-only 行已正确降级，PyMC 已顺序审到 row20；提交工件复算为 67 decisions/sheet/evidence、9 submitted、58 excluded，A2/aliases/transport/no-downstream 均保持。CSV 已为 LF，native diff-check 通过；handoff checker 已能重算 counts/stop/shortfall。独立验证 targeted `191 passed`、full `451 passed, 10 warnings`，Ruff、compileall、admission/handoff/transport checks 均通过。Standards PASS。
+
+Spec 仍 FAIL。`EXT-pymc-20` 的 recorded buggy SHA 不是 fixed commit `09afc8e...` 的 first parent，违反 runbook A1；正确 parent 为 `5d2fe4f...`。Stop-rule 只验证最终 totals，会接受第五个 admit 后的额外 decision。更强的 fully rebuilt probe 还证明 out-of-scope `evil/repo` decision 可通过 producer、payload、admission 和 handoff 全链。Admission checker 未按要求重算完整 handoff semantics：把 total/reviewed 改为 999 并将 `analysis_id_all_blank` 设 false 仍返回 0。Verification log 仍未记录 write-handoff/hash commands，且 gate identity 仍为未带 `-r1` 的旧值。
+
+唯一 r2 correction 是修正 first-parent binding、实现 ordered earliest-stop、拒绝 out-of-scope/empty-queue decisions、让两个 checker 分别验证完整 handoff semantics、补 fully rebuilt isolated negatives 和 correction-gate provenance。accepted-ready 仍为 18；`DISTRIBUTION_TARGET_AT_RISK` 与 no-substitution 继续有效，readiness/downstream 全部锁定。

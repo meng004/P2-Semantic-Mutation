@@ -929,3 +929,133 @@ or readiness. It must:
 
 The worsened GPyTorch/chaospy/SALib shortfalls must remain disclosed; no
 PyTorch/JAX substitution is permitted.
+
+## 16. `SUPPLEMENTAL_ADMISSION_R2-r1` correction re-review
+
+- **Correction baseline:** `30c30a73f1544a2129505bb4ee26f87f7cf710bb`
+- **Correction payload:** `48728c423be28de20951be24a22f905e42c8a1d7`
+- **Correction handoff:** `dc4060da182b60fa5175710000379659babcd4ea`
+- **Remote binding:** correction handoff equals the Cursor branch head
+- **Lineage:** payload is a direct child of the blocked handoff; correction
+  handoff is a direct child of the payload
+- **Verdict:** `BLOCKED`
+
+### 16.1 Closed findings and positive verification
+
+`SUPP-R2-A3-CRASH-ONLY-001` is closed for the three named rows:
+`EXT-pymc-04`, `EXT-pymc-16`, and `EXT-gpytorch-05` now retain A1 `PASS` but
+have A3 `FAIL`, decision `EXCLUDED`, and exclusion class `crash-only`. PyMC
+rows 17--20 were reviewed in frozen order; rows 17/18 are excluded and rows
+19/20 are submitted. The committed artifacts contain 67 decisions/sheet rows/
+evidence records, with 9 submitted and 58 excluded. A2 remains entirely
+`PENDING`, aliases remain blank, immutable transport evidence is unchanged,
+and no readiness or downstream artifact was created.
+
+The CSV is now LF-only and native `git diff --check` returns zero. The handoff
+checker independently reconstructs the committed totals, per-repository
+counts, stop reasons, status/exclusion counts, and quota shortfalls; the
+previous handoff-checker count-tamper symptom is closed. Fresh verification
+produced `191 passed` in the targeted suite and `451 passed, 10 warnings` in
+the full suite. Ruff E/F/I/E501, compileall, producer validation, the admission
+checker, the handoff checker, transport no-change check, and CSV LF check all
+returned zero. Standards is `PASS` with zero findings.
+
+### 16.2 `SUPP-R2-A1-FIX-PARENT-001`
+
+`EXT-pymc-20` records fixed commit
+`09afc8e74ecc56644be26916911996470d020ab3` but buggy commit
+`b01237ebf01e9f7bf299a06f789d8cb5122e8fb0`. Public GitHub metadata resolves
+the fixed commit's first parent as
+`5d2fe4f86b6447e112fc73db94f75427106a907e`, not the recorded buggy SHA. The
+recorded buggy commit is three commits behind the fix. This violates the
+admission runbook's exact A1 rule that `buggy_sha` is the first parent of the
+recorded fix commit. `EXT-pymc-19` has the correct first-parent relationship.
+
+The row may remain A1/A3 `PASS` after replacing `buggy_sha` with the verified
+first parent and regenerating every bound artifact. Until then the submitted
+count of nine is not admissible as recorded.
+
+### 16.3 `SUPP-R2-STOP-FIRST-HIT-001`
+
+The new stop classifier checks only final totals. It accepts a six-decision
+prefix whose first five decisions are admits and whose sixth is excluded,
+returning `five_admit_pending_repro`. The frozen rule is to stop at the
+**first** of five admits, twenty reviews, or exhaustion, so the sixth decision
+must be rejected. The new negative suite covers early stop, missing/extra,
+omitted exclusion, and later-row substitution, but it does not cover a
+decision after the fifth admit.
+
+The producer and independent checker must derive the earliest legal stop index
+from the ordered decision prefix, require exact equality with the submitted
+prefix length, and add a fully rebuilt after-fifth-admit negative plus a row-20
+tie control.
+
+### 16.4 `SUPP-R2-EXTRA-DECISION-SCOPE-001`
+
+The required extra-decision contract is still fail-open outside a nonempty
+queue repository. Both producer and checker iterate repositories present in
+the queue and fail to reject decisions whose repository has no queue rows or
+is outside the frozen scope. A fully rebuilt synthetic payload appended one
+`evil/repo` decision, regenerated sheet/evidence and handoff, and then obtained
+`DECISIONS_OK`, `PAYLOAD_OK`, `ADMISSION_CHECK_OK`, and `HASH_CHECK_OK`.
+
+Both validators must require that the decision repository-key set is a subset
+of the six exact scope repositories, reject any decision for an empty queue,
+and require the global decision IDs to equal exactly the concatenated legal
+per-repository prefixes. Fully rebuilt negatives must cover an out-of-scope
+repository and a frozen repository with an empty queue.
+
+### 16.5 `SUPP-R2-ADMISSION-HANDOFF-SEMANTICS-001`
+
+The correction strengthens only the handoff checker. Audit section 15.6
+required **both** admission and handoff checkers to reject semantic handoff
+tampering. The admission checker still verifies selected quota fields and only
+three confirmation flags; it does not reconstruct `decision_totals`, the full
+per-repository summary, all shortfalls/pending counts, or all confirmations.
+
+Changing handoff `decision_totals.decisions` and PyMC `reviewed` to 999 and
+setting `analysis_id_all_blank` false left the complete admission checker at
+`ADMISSION_CHECK_OK`/0. The admission checker must independently compare the
+same full semantic summary and confirmation contract, with isolated tamper
+tests that invoke each checker separately.
+
+### 16.6 `SUPP-R2-VERIFICATION-PROVENANCE-002`
+
+LF normalization closes the prior configuration-dependent diff-check symptom,
+but `VERIFICATION_LOG.json` still ends before handoff construction. It records
+neither `write-handoff` nor pre/post handoff-hash verification even though the
+chat handoff claims those checks. Both the verification log and handoff also
+retain `gate_requested: SUPPLEMENTAL_ADMISSION_R2` rather than the explicitly
+executed correction gate `SUPPLEMENTAL_ADMISSION_R2-r1`.
+
+The next correction must record the exact handoff-stage commands, cwd, exit
+codes, outputs, and environment, use the correct correction gate identity, and
+avoid claiming an unrecorded command. Any inherently post-commit parent check
+must be disclosed as post-commit audit evidence rather than backfilled into a
+pre-commit log.
+
+### 16.7 Gate decision and only unlocked correction
+
+Standards is `PASS`; Specification is `FAIL`. Accepted-ready remains 18.
+Readiness, canonical freeze, C4, labelling, prediction, and detection remain
+locked.
+
+The only unlocked task is `SUPPLEMENTAL_ADMISSION_R2-r2` on the same Cursor VM
+branch, without `rtk`, retrieval, search, candidate replacement, or readiness.
+It must:
+
+1. repair `EXT-pymc-20` to the fixed commit's first parent and regenerate all
+   bound artifacts;
+2. enforce the earliest stop index, including rejection of every row after the
+   fifth admit and a valid row-20 tie;
+3. reject out-of-scope and empty-queue decisions in producer and checker and
+   require exact global prefix equality;
+4. make both admission and handoff checkers independently reconstruct and
+   compare every handoff summary/confirmation claim;
+5. add fully rebuilt, guard-isolated negatives for all three fail-open classes;
+6. complete correction-gate provenance, regenerate one payload commit and one
+   direct-child handoff, push, and stop for local r2 re-review.
+
+The GPyTorch/chaospy/SALib shortfalls and
+`DISTRIBUTION_TARGET_AT_RISK` disclosure remain mandatory; PyTorch/JAX may not
+substitute.
