@@ -1,63 +1,94 @@
 {
-  "baseline_commit": "020b60fb83f7eb1d34f143458fca62beab5aa398",
+  "baseline_commit": "dc4060da182b60fa5175710000379659babcd4ea",
   "commands": [
     {
-      "command": "python3 -m json.tool data/external_slice/supplemental_r2/REVIEW_DECISIONS.json >/dev/null",
+      "command": "python3 scripts/external_slice/mine_supplemental_r2.py validate-decisions --root data/external_slice/supplemental_r2",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "JSON_OK"
+      "key_output": "DECISIONS_OK",
+      "phase": "payload"
     },
     {
-      "command": "env PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py validate-decisions --root data/external_slice/supplemental_r2",
+      "command": "python3 scripts/external_slice/mine_supplemental_r2.py build-payload --root data/external_slice/supplemental_r2",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "DECISIONS_OK"
+      "key_output": "PAYLOAD_OK",
+      "phase": "payload"
     },
     {
-      "command": "env PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py build-payload --root data/external_slice/supplemental_r2",
+      "command": "python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "PAYLOAD_OK"
+      "key_output": "ADMISSION_CHECK_OK",
+      "phase": "payload"
     },
     {
-      "command": "env PYTHONPATH=src python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2",
+      "command": "python3 -m pytest -q tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "ADMISSION_CHECK_OK"
+      "key_output": "200 passed",
+      "phase": "payload"
     },
     {
-      "command": "env PYTHONPATH=src python3 -m pytest -q tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
+      "command": "python3 -m pytest -q",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "============================= 191 passed in 23.64s ============================="
+      "key_output": "460 passed, 10 warnings",
+      "phase": "payload"
     },
     {
-      "command": "env PYTHONPATH=src python3 -m pytest -q",
+      "command": ".venv/bin/python -m ruff check --select E,F,I,E501 scripts/external_slice/mine_supplemental_r2.py scripts/external_slice/check_supplemental_r2_admission.py scripts/external_slice/check_supplemental_r2_handoff_hashes.py tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "====================== 451 passed, 10 warnings in 29.97s ======================="
+      "key_output": "All checks passed!",
+      "note": "Full scripts/external_slice+tests/external_slice still has pre-existing E501 outside R2 files (also present at baseline dc4060da).",
+      "phase": "payload"
     },
     {
-      "command": "git diff --exit-code 020b60fb83f7eb1d34f143458fca62beab5aa398 -- data/external_slice/supplemental_r2/SCOPE.json data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json data/external_slice/supplemental_r2/QUOTAS.json data/external_slice/supplemental_r2/ISSUE_SNAPSHOT.json data/external_slice/supplemental_r2/COMMAND_LOG.json data/external_slice/supplemental_r2/PUBLISH_COMMIT.json data/external_slice/supplemental_r2/transport_pages data/external_slice/supplemental_r2/failed_runs",
+      "command": "python3 -m compileall -q scripts/external_slice tests/external_slice",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "immutable transport evidence unchanged"
+      "key_output": "compileall_ok",
+      "phase": "payload"
     },
     {
       "command": "git diff --check",
       "cwd": "/workspace",
       "exit_code": 0,
-      "key_output": "no whitespace errors"
+      "key_output": "no whitespace errors",
+      "phase": "payload"
+    },
+    {
+      "command": "git diff --exit-code 020b60fb83f7eb1d34f143458fca62beab5aa398 -- data/external_slice/supplemental_r2/SCOPE.json data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json data/external_slice/supplemental_r2/QUOTAS.json data/external_slice/supplemental_r2/ISSUE_SNAPSHOT.json data/external_slice/supplemental_r2/COMMAND_LOG.json data/external_slice/supplemental_r2/PUBLISH_COMMIT.json data/external_slice/supplemental_r2/transport_pages data/external_slice/supplemental_r2/failed_runs",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "immutable transport evidence unchanged",
+      "phase": "payload"
+    },
+    {
+      "command": "env PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py write-handoff --root data/external_slice/supplemental_r2 --payload-commit 6da4af6726cb14d29e89597a472fccbeae8bdb1a",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "HANDOFF_OK",
+      "phase": "handoff"
+    },
+    {
+      "command": "python3 scripts/external_slice/check_supplemental_r2_handoff_hashes.py --handoff data/external_slice/supplemental_r2/HANDOFF_SUPPLEMENTAL_R2.json --skip-parent-check",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "handoff_commit_resolved=6da4af6726cb14d29e89597a472fccbeae8bdb1a",
+      "phase": "handoff"
     }
   ],
   "confirmations": {
     "a2_all_pending": true,
     "analysis_id_all_blank": true,
-    "immutable_transport_unchanged": true,
-    "no_readiness": true,
-    "no_retrieval_rerun": true
+    "canonical_freeze_claimed": false,
+    "existing_files_unchanged": true,
+    "forbidden_data_absent": true,
+    "readiness_ran": false
   },
-  "created_at_utc": "2026-08-03T22:33:46Z",
+  "created_at_utc": "2026-08-04T02:21:44Z",
   "environment": {
     "cwd": "/workspace",
     "gh": "gh version 2.91.0 (2026-04-22)",
@@ -65,7 +96,14 @@
     "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
     "python": "Python 3.12.3"
   },
-  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2",
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r2",
+  "payload_commit": "6da4af6726cb14d29e89597a472fccbeae8bdb1a",
+  "post_commit_evidence": {
+    "executed_before_handoff_commit": false,
+    "note": "Parent-check with handoff_commit SELF must run AFTER the handoff commit exists; it is not a pre-commit command.",
+    "planned_assertion": "test \"$(git rev-parse HEAD^)\" = \"6da4af6726cb14d29e89597a472fccbeae8bdb1a\"",
+    "planned_command": "python3 scripts/external_slice/check_supplemental_r2_handoff_hashes.py --handoff data/external_slice/supplemental_r2/HANDOFF_SUPPLEMENTAL_R2.json"
+  },
   "quota_disclosure_status": "DISTRIBUTION_TARGET_AT_RISK",
   "repository_review_counts": {
     "SALib/SALib": {
@@ -164,5 +202,6 @@
     "admit_pending_repro": 9,
     "decisions": 67,
     "excluded": 58
-  }
+  },
+  "transport_freeze_commit": "020b60fb83f7eb1d34f143458fca62beab5aa398"
 }
