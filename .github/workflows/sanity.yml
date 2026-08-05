@@ -10,7 +10,10 @@ jobs:
   pytest:
     name: Run pytest (Path-A cache replay smoke)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash --noprofile --norc -euo pipefail {0}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,14 +40,11 @@ jobs:
       - name: Run pytest
         env:
           PYTHONPATH: src
-        run: |
-          pytest -q --maxfail=5
+        run: pytest -q --maxfail=1
 
       - name: Verify SSOT regenerates without diff
         env:
           PYTHONPATH: src
           SMS_VERSION: v4
           P2_PRIMARY_VERSION: v3b
-        run: |
-          python scripts/build_paper_numbers.py --dry-run || \
-            echo "build_paper_numbers.py has no --dry-run flag; skipping SSOT check (CI only)."
+        run: python scripts/build_paper_numbers.py --dry-run
