@@ -2663,6 +2663,21 @@ def test_full_chain_scope_self_tamper_rejected(
     both_checkers_pass(root)
 
 
+def test_exact_r3_contract_freeze_audit_path_is_governance_not_downstream() -> None:
+    """The mandated R3 contract audit must not look like a downstream freeze."""
+    audit_path = (
+        "docs/review_20260805/"
+        "gate_supplemental_r3_contract_freeze_audit.md"
+    )
+    near_miss = (
+        "docs/review_20260805/"
+        "gate_supplemental_r3_contract_freeze_audit_copy.md"
+    )
+    for module in (miner, checker, handoff_mod):
+        assert module._classify_forbidden_rel(audit_path) == (False, False, False)
+        assert module._classify_forbidden_rel(near_miss) == (True, False, True)
+
+
 @pytest.mark.parametrize(
     "filename",
     [

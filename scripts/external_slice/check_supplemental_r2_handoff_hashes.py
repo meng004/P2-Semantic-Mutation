@@ -50,6 +50,12 @@ FORBIDDEN_PATH_NAME_RE = re.compile(
     r"annotation|prediction|detection"
     r")(?![A-Za-z0-9])"
 )
+GOVERNANCE_AUDIT_PATH_ALLOWLIST = frozenset(
+    {
+        "docs/review_20260805/"
+        "gate_supplemental_r3_contract_freeze_audit.md"
+    }
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -322,6 +328,8 @@ def _command_sources_sentinel_hits(root: Path) -> tuple[bool, bool]:
 
 
 def _classify_forbidden_rel(rel: str) -> tuple[bool, bool, bool]:
+    if rel.replace("\\", "/") in GOVERNANCE_AUDIT_PATH_ALLOWLIST:
+        return False, False, False
     tokens = {
         match.group(1).lower() for match in FORBIDDEN_PATH_NAME_RE.finditer(rel)
     }
