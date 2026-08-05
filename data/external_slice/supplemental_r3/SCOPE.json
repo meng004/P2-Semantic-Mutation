@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "protocol": "SUPPLEMENTAL_R3_EVIDENCE",
+  "baseline_commit": "b1981a0432d735de5a2a3892db514620e1376729",
+  "fixed_main": "3c518b8467f74c9a6efd11f2db267f9f30e1c822",
+  "created_cutoff": "2026-08-05T07:31:15Z",
+  "known_issue_urls": [],
+  "repositories": [
+    {
+      "order": 1,
+      "owner": "cornellius-gp",
+      "name": "gpytorch",
+      "repository": "cornellius-gp/gpytorch",
+      "id_prefix": "EXT-gpytorch-",
+      "id_start": 6,
+      "restriction": "numerical kernels only"
+    },
+    {
+      "order": 2,
+      "owner": "jonathf",
+      "name": "chaospy",
+      "repository": "jonathf/chaospy",
+      "id_prefix": "EXT-chaospy-",
+      "id_start": 3,
+      "restriction": "numerical kernels only"
+    },
+    {
+      "order": 3,
+      "owner": "SALib",
+      "name": "SALib",
+      "repository": "SALib/SALib",
+      "id_prefix": "EXT-salib-",
+      "id_start": 1,
+      "restriction": "numerical kernels only"
+    }
+  ],
+  "common_phrases": [
+    "incorrect result",
+    "wrong value",
+    "inaccurate result",
+    "inaccurate value",
+    "floating point error",
+    "rounding error",
+    "loss of precision",
+    "precision issue",
+    "overflow",
+    "underflow",
+    "returns nan",
+    "returns inf",
+    "fails to converge",
+    "convergence issue",
+    "unstable result",
+    "variance estimate",
+    "sensitivity index"
+  ],
+  "repository_phrases": {
+    "cornellius-gp/gpytorch": [
+      "cholesky",
+      "positive definite",
+      "covariance matrix",
+      "predictive variance",
+      "marginal log likelihood",
+      "posterior mean",
+      "kernel value"
+    ],
+    "jonathf/chaospy": [
+      "quadrature error",
+      "polynomial expansion",
+      "moment error",
+      "distribution parameter",
+      "recurrence coefficient",
+      "orthogonal polynomial",
+      "sample mismatch"
+    ],
+    "SALib/SALib": [
+      "sobol index",
+      "second order index",
+      "confidence interval",
+      "saltelli sample",
+      "morris measure",
+      "delta index",
+      "sensitivity estimate"
+    ]
+  },
+  "matching": {
+    "surfaces": ["title", "bodyText", "complete_label_name_set"],
+    "unicode_normalization": "NFC",
+    "casefold": true,
+    "fuzzy": false,
+    "stemming": false,
+    "synonym_expansion": false,
+    "comment_matching": false,
+    "post_retrieval_phrase_addition": false
+  },
+  "known_issue_urls_source": "empty_allowlist_only",
+  "collision_policy": {
+    "source": "COLLISION_UNIVERSE.json",
+    "keys": ["issue_node_id", "issue_number", "canonical_issue_url", "fixed_sha", "issue_fix_pair"],
+    "reuse": false
+  },
+  "blind_policy": {
+    "admission": "A1_plus_A3_only",
+    "A2": "PENDING",
+    "analysis_id": "",
+    "alias": "",
+    "downstream_execution": false
+  },
+  "batch3_denylist": {
+    "head_sha": "f6f1888f361a524a481cc9505e567a8bc414b9ea",
+    "allowed_occurrences": ["this_field", "contract_audit_explanation"]
+  },
+  "forbidden_sources": [
+    "PR #6 Batch 3 payload or lineage",
+    "manual browser search",
+    "reviewer-supplied issue URLs",
+    "GraphQL search",
+    "REST issue listing",
+    "Search API",
+    "cross-repository substitution"
+  ]
+}

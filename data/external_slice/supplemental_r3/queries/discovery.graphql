@@ -1,0 +1,30 @@
+query SupplementalR3RepositoryIssues($owner: String!, $name: String!, $after: String) {
+  repository(owner: $owner, name: $name) {
+    nameWithOwner
+    issues(
+      first: 100
+      after: $after
+      states: [CLOSED]
+      orderBy: { field: CREATED_AT, direction: DESC }
+    ) {
+      totalCount
+      pageInfo { hasNextPage endCursor }
+      nodes {
+        __typename
+        id
+        number
+        url
+        state
+        title
+        bodyText
+        createdAt
+        updatedAt
+        closedAt
+        labels(first: 100) {
+          pageInfo { hasNextPage endCursor }
+          nodes { name }
+        }
+      }
+    }
+  }
+}

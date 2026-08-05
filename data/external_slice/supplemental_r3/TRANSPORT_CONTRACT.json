@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "protocol": "SUPPLEMENTAL_R3_EVIDENCE",
+  "transport": "github_graphql",
+  "discovery_operation": "SupplementalR3RepositoryIssues",
+  "issue_operation": "SupplementalR3IssueEvidence",
+  "fix_operation": "SupplementalR3FixEvidence",
+  "query_files": {
+    "discovery": {
+      "path": "data/external_slice/supplemental_r3/queries/discovery.graphql",
+      "sha256": "80d1287f692c2b42f326ef364ddffe5ce44f3dd81fa1c03444d83e6ebb2996c6"
+    },
+    "issue_evidence": {
+      "path": "data/external_slice/supplemental_r3/queries/issue_evidence.graphql",
+      "sha256": "c9c6f583325b5530072f5df5779fae20e04974c62265305956421e75ad6bb862"
+    },
+    "fix_evidence": {
+      "path": "data/external_slice/supplemental_r3/queries/fix_evidence.graphql",
+      "sha256": "033173f0675b3bdbe69fa9911e2169557c2001e3f6c02541f4c699c6f16435eb"
+    }
+  },
+  "discovery": {
+    "connection": "Repository.issues",
+    "states": ["CLOSED"],
+    "order_by": {"field": "CREATED_AT", "direction": "DESC"},
+    "page_size": 100,
+    "variables": ["owner", "name", "after"],
+    "cursor_rule": "first page after=null; each subsequent after=previous endCursor; no repeats or skips; terminal hasNextPage=false",
+    "selected_fields": [
+      "repository.nameWithOwner",
+      "issues.totalCount",
+      "issues.pageInfo.hasNextPage",
+      "issues.pageInfo.endCursor",
+      "issues.nodes.__typename",
+      "issues.nodes.id",
+      "issues.nodes.number",
+      "issues.nodes.url",
+      "issues.nodes.state",
+      "issues.nodes.title",
+      "issues.nodes.bodyText",
+      "issues.nodes.createdAt",
+      "issues.nodes.updatedAt",
+      "issues.nodes.closedAt",
+      "issues.nodes.labels.pageInfo.hasNextPage",
+      "issues.nodes.labels.pageInfo.endCursor",
+      "issues.nodes.labels.nodes.name"
+    ],
+    "label_page_size": 100,
+    "label_cursor_rule": "labels must be complete in the captured node; hasNextPage=true is a hard failure"
+  },
+  "issue_evidence": {
+    "connection": "Repository.issue(number)",
+    "page_sizes": {"comments": 100, "timelineItems": 100, "labels": 100},
+    "variables": ["owner", "name", "number", "commentsAfter", "timelineAfter"],
+    "cursor_rule": "commentsAfter and timelineAfter advance independently from each connection endCursor; null on first page; no repeats or skips; both terminate with hasNextPage=false",
+    "timeline_item_types": ["CLOSED_EVENT", "CROSS_REFERENCED_EVENT", "CONNECTED_EVENT"],
+    "selected_fields": [
+      "issue.__typename",
+      "issue.id",
+      "issue.number",
+      "issue.url",
+      "issue.state",
+      "issue.title",
+      "issue.bodyText",
+      "issue.createdAt",
+      "issue.updatedAt",
+      "issue.closedAt",
+      "issue.labels.pageInfo",
+      "issue.labels.nodes.name",
+      "issue.comments.totalCount",
+      "issue.comments.pageInfo",
+      "issue.comments.nodes.{id,url,bodyText,author.login,createdAt,updatedAt}",
+      "issue.timelineItems.totalCount",
+      "issue.timelineItems.pageInfo",
+      "issue.timelineItems.nodes.__typename",
+      "issue.timelineItems.nodes.closedEvent",
+      "issue.timelineItems.nodes.crossReferencedEvent",
+      "issue.timelineItems.nodes.connectedEvent"
+    ]
+  },
+  "fix_evidence": {
+    "connection": "Repository.object(oid)",
+    "variables": ["owner", "name", "oid"],
+    "page_size": 100,
+    "cursor_rule": "parents must be complete; hasNextPage=true is a hard failure",
+    "selected_fields": [
+      "object.__typename",
+      "object.oid",
+      "object.url",
+      "object.committedDate",
+      "object.messageHeadline",
+      "object.repository.nameWithOwner",
+      "object.parents.pageInfo",
+      "object.parents.nodes.oid"
+    ]
+  },
+  "identity": {
+    "query_sha256_over": "exact UTF-8 query file bytes",
+    "variables_encoding": "UTF-8 canonical JSON, sorted keys, separators=(',', ':'), no trailing newline",
+    "response_sha256_over": "raw stdout bytes before parsing or formatting",
+    "stderr_sha256_over": "raw stderr bytes",
+    "page_manifest_sha256_over": "canonical JSON ordered manifest array",
+    "query_or_variables_drift": "hard failure"
+  },
+  "raw_storage": {
+    "discovery": "data/external_slice/supplemental_r3/transport_pages/{repo_order}_{owner}_{repo}_page_{index:04d}.json",
+    "issue": "data/external_slice/supplemental_r3/issue_pages/{neutral_id}/issue_page_{index:04d}.json",
+    "fix": "data/external_slice/supplemental_r3/fix_pages/{neutral_id}/fix_page_{index:04d}.json",
+    "raw_bytes_unchanged": true,
+    "publication": "temporary directory atomically renamed only after complete validation"
+  },
+  "forbidden_transports": [
+    "GraphQL search",
+    "REST /search/issues",
+    "REST repository issue listing",
+    "gh search issues",
+    "browser/manual membership search",
+    "PR-to-issue resolver"
+  ],
+  "hard_fail_on": [
+    "nonzero_exit",
+    "timeout",
+    "malformed_json",
+    "graphql_errors",
+    "null_repository",
+    "null_issue",
+    "typename_not_issue",
+    "state_not_closed",
+    "null_closed_at",
+    "pull_url",
+    "incomplete_labels",
+    "incomplete_comments",
+    "incomplete_timeline",
+    "incomplete_parents",
+    "cursor_drift",
+    "total_count_drift",
+    "query_identity_drift",
+    "forbidden_transport",
+    "collision",
+    "partial_payload"
+  ],
+  "r2_transport_freeze": {
+    "baseline_commit": "020b60fb83f7eb1d34f143458fca62beab5aa398",
+    "paths": [
+      "data/external_slice/supplemental_r2/SCOPE.json",
+      "data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json",
+      "data/external_slice/supplemental_r2/QUOTAS.json",
+      "data/external_slice/supplemental_r2/ISSUE_SNAPSHOT.json",
+      "data/external_slice/supplemental_r2/COMMAND_LOG.json",
+      "data/external_slice/supplemental_r2/PUBLISH_COMMIT.json",
+      "data/external_slice/supplemental_r2/transport_pages/**",
+      "data/external_slice/supplemental_r2/failed_runs/**"
+    ],
+    "comparison": "Git-object diff and byte/tree manifest must both be empty/equal"
+  },
+  "zero_network_boundary": "All three query files and all JSON contracts must be committed before any evidence request"
+}

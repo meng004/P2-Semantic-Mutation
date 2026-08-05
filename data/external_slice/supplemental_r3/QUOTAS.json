@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "protocol": "SUPPLEMENTAL_R3_EVIDENCE",
+  "replacement_policy": "forbidden",
+  "targets": [
+    {
+      "repository": "cornellius-gp/gpytorch",
+      "additional_admit_pending_repro": 2,
+      "id_prefix": "EXT-gpytorch-",
+      "stop_on": "2 distinct new rows or complete union exhaustion"
+    },
+    {
+      "repository": "jonathf/chaospy",
+      "additional_admit_pending_repro": 3,
+      "id_prefix": "EXT-chaospy-",
+      "stop_on": "3 distinct new rows or complete union exhaustion"
+    },
+    {
+      "repository": "SALib/SALib",
+      "additional_admit_pending_repro": 3,
+      "id_prefix": "EXT-salib-",
+      "stop_on": "3 distinct new rows or complete union exhaustion"
+    }
+  ],
+  "quota_vector": {
+    "cornellius-gp/gpytorch": 2,
+    "jonathf/chaospy": 3,
+    "SALib/SALib": 3
+  },
+  "substitution": {
+    "cross_repository": false,
+    "cross_issue": false,
+    "cross_fix": false,
+    "over_yield_reassignment": false
+  },
+  "failure_policy": {
+    "mode": "first-failure",
+    "retry": false,
+    "partial_payload": false,
+    "diagnostic_only": true,
+    "insufficient_repository_yield": "blocked"
+  },
+  "decision_policy": {
+    "admission": "ADMIT_PENDING_REPRO iff A1=PASS and A3=PASS",
+    "A2": "PENDING",
+    "analysis_id": "",
+    "alias": "",
+    "exclusion_classes": [
+      "crash-only",
+      "build/packaging",
+      "API misuse",
+      "documentation",
+      "performance-only",
+      "test-infrastructure",
+      "behaviour change that is intended API redesign"
+    ]
+  },
+  "uniqueness": {
+    "keys": ["issue_node_id", "issue_number", "canonical_issue_url", "fixed_sha", "issue_fix_pair"],
+    "max_quota_uses_per_key": 1
+  }
+}

@@ -1,0 +1,103 @@
+query SupplementalR3IssueEvidence(
+  $owner: String!
+  $name: String!
+  $number: Int!
+  $commentsAfter: String
+  $timelineAfter: String
+) {
+  repository(owner: $owner, name: $name) {
+    issue(number: $number) {
+      __typename
+      id
+      number
+      url
+      state
+      title
+      bodyText
+      createdAt
+      updatedAt
+      closedAt
+      labels(first: 100) {
+        pageInfo { hasNextPage endCursor }
+        nodes { name }
+      }
+      comments(first: 100, after: $commentsAfter) {
+        totalCount
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          id
+          url
+          bodyText
+          author { login }
+          createdAt
+          updatedAt
+        }
+      }
+      timelineItems(
+        first: 100
+        after: $timelineAfter
+        itemTypes: [CLOSED_EVENT, CROSS_REFERENCED_EVENT, CONNECTED_EVENT]
+      ) {
+        totalCount
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          __typename
+          ... on ClosedEvent {
+            createdAt
+            closer {
+              __typename
+              ... on PullRequest {
+                number
+                url
+                mergedAt
+                headRefOid
+                baseRefOid
+                mergeCommit { oid }
+              }
+            }
+          }
+          ... on CrossReferencedEvent {
+            createdAt
+            source {
+              __typename
+              ... on PullRequest {
+                number
+                url
+                title
+                state
+                mergedAt
+                mergeCommit { oid }
+              }
+              ... on Issue {
+                number
+                url
+                title
+                state
+              }
+            }
+          }
+          ... on ConnectedEvent {
+            createdAt
+            subject {
+              __typename
+              ... on PullRequest {
+                number
+                url
+                title
+                state
+                mergedAt
+                mergeCommit { oid }
+              }
+              ... on Issue {
+                number
+                url
+                title
+                state
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

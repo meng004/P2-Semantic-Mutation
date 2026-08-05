@@ -1,0 +1,18 @@
+query SupplementalR3FixEvidence($owner: String!, $name: String!, $oid: GitObjectID!) {
+  repository(owner: $owner, name: $name) {
+    object(oid: $oid) {
+      __typename
+      ... on Commit {
+        oid
+        url
+        committedDate
+        messageHeadline
+        repository { nameWithOwner }
+        parents(first: 100) {
+          pageInfo { hasNextPage endCursor }
+          nodes { oid }
+        }
+      }
+    }
+  }
+}
