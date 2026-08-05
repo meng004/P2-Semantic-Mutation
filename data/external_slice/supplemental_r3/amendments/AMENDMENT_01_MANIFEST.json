@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "protocol": "SUPPLEMENTAL_R3_EVIDENCE_AMENDMENT_01",
+  "amendment_id": "AMENDMENT_01_REF_ISOLATION",
+  "authority": {
+    "design_spec_commit": "e5bfb155fe3c2799da3bb51371db059153c68285",
+    "materialization_commit_resolution": "SELF",
+    "authorized_audit_commit_resolution": "SOLE_DIRECT_CHILD_LOCAL_AUDIT_COMMIT"
+  },
+  "design_spec": {
+    "path": "docs/superpowers/specs/2026-08-05-supplemental-r3-ref-isolation-amendment-design.md",
+    "sha256": "f81ca2a949ea6df0e2768386a9f188fff69fb52a2e46ae0abcb56094ee59c12a"
+  },
+  "amendment": {
+    "path": "data/external_slice/supplemental_r3/amendments/AMENDMENT_01_REF_ISOLATION.json",
+    "sha256": "272fd6cb1ac146627f5ea42d1db10cbb082277a6a0396d887abd1e5d6d202ade"
+  },
+  "original_contract_artifacts_sha256": {
+    "data/external_slice/supplemental_r3/SCOPE.json": "67d16148e1055ca9a96302ff737e7443ecf23bb1683badc1c1a13c49f99db0f1",
+    "data/external_slice/supplemental_r3/TRANSPORT_CONTRACT.json": "42188051bb12032037949a0052bb9f0b429a882a8dfd38a3d4074efcc7d5e107",
+    "data/external_slice/supplemental_r3/QUOTAS.json": "50742a93aca5d269d84303c82393e47de85746d6ba58bf079b27678d66574bb2",
+    "data/external_slice/supplemental_r3/COLLISION_UNIVERSE.json": "7633db6fb1a19f5a815e2870a6f112be0cc1be7903d26fe658df4b549a332d3a",
+    "data/external_slice/supplemental_r3/queries/discovery.graphql": "80d1287f692c2b42f326ef364ddffe5ce44f3dd81fa1c03444d83e6ebb2996c6",
+    "data/external_slice/supplemental_r3/queries/issue_evidence.graphql": "c9c6f583325b5530072f5df5779fae20e04974c62265305956421e75ad6bb862",
+    "data/external_slice/supplemental_r3/queries/fix_evidence.graphql": "033173f0675b3bdbe69fa9911e2169557c2001e3f6c02541f4c699c6f16435eb"
+  },
+  "failure_provenance_sha256": {
+    "data/external_slice/supplemental_r3/FIRST_FAILURE.json": "160621cfd947770008805452a80b2724e619036cb2771ed9c29fc626bb943f00",
+    "data/external_slice/supplemental_r3/COMMAND_LOG.json": "08eebe09a27ce442c316b36ff21223b3a65a46eb457f8a398b7feccaf822a234",
+    "docs/review_20260805/gate_supplemental_r3_evidence_failure_audit.md": "b31473e8167b888b392845abf7b128a3a65f9139d102258e1f3706bfbee46124"
+  },
+  "r2_collision_inputs_sha256": {
+    "data/external_slice/supplemental_r2/REVIEW_QUEUE.json": "5ae6038910fdc3ed7fa93502d0b92ec43b70f0f021663cd0d4468bead7c4344e",
+    "data/external_slice/admission_sheet.csv": "77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a"
+  },
+  "allowed_new_paths": [
+    "data/external_slice/supplemental_r3/amendments/AMENDMENT_01_MANIFEST.json",
+    "data/external_slice/supplemental_r3/amendments/AMENDMENT_01_REF_ISOLATION.json",
+    "docs/superpowers/plans/2026-08-05-supplemental-r3-ref-isolation-amendment.md"
+  ],
+  "forbidden_outputs": [
+    "transport_pages",
+    "issue_pages",
+    "fix_pages",
+    "snapshot",
+    "queue",
+    "decision",
+    "sheet",
+    "evidence",
+    "miner",
+    "checker",
+    "tests",
+    "payload",
+    "handoff",
+    "readiness",
+    "r8",
+    "canonical_freeze"
+  ],
+  "zero_network_confirmation": {
+    "evidence_request_count": 0,
+    "github_issue_requests": 0,
+    "graphql_requests": 0,
+    "rest_requests": 0,
+    "browser_requests": 0,
+    "manual_membership_search": false
+  }
+}

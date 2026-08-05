@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "protocol": "SUPPLEMENTAL_R3_EVIDENCE_AMENDMENT_01",
+  "amendment_id": "AMENDMENT_01_REF_ISOLATION",
+  "parent_protocol": "SUPPLEMENTAL_R3_EVIDENCE",
+  "authority": {
+    "fixed_main": "3c518b8467f74c9a6efd11f2db267f9f30e1c822",
+    "contract_audit": "0e85691391dd80228dcf1d584d68f2194a6077d0",
+    "failed_cursor_commit": "743f5552fd5912f2705f7f256dda0f5179393842",
+    "failure_audit": "641345ec4d06bd9735e972c997d5e32a4c7e22c3",
+    "design_spec_commit": "e5bfb155fe3c2799da3bb51371db059153c68285",
+    "materialization_commit_resolution": "SELF",
+    "authorized_audit_commit_resolution": "SOLE_DIRECT_CHILD_LOCAL_AUDIT_COMMIT"
+  },
+  "supersession": {
+    "scope": "global_ref_inventory_purity_only",
+    "replacement": "execution_input_closure",
+    "occurrence_policy_changed": false
+  },
+  "deny_identity_source": {
+    "path": "data/external_slice/supplemental_r3/SCOPE.json",
+    "json_pointer": "/batch3_denylist/head_sha",
+    "file_sha256": "67d16148e1055ca9a96302ff737e7443ecf23bb1683badc1c1a13c49f99db0f1",
+    "consistency_check": {
+      "path": "data/external_slice/supplemental_r3/CONTRACT_MANIFEST.json",
+      "json_pointer": "/batch3_denylist/head_sha"
+    },
+    "literal_repetition_in_amendment_forbidden": true
+  },
+  "bootstrap_gate": {
+    "observation_window_start": "first recorded command inside authorized Cursor task",
+    "platform_provisioned_checkout_before_window": true,
+    "record_platform_head_remote_and_fetch_refspecs": true,
+    "required_initial_head_source": "SOLE_DIRECT_CHILD_LOCAL_AUDIT_COMMIT",
+    "clean_worktree": true,
+    "fixed_main_is_ancestor": true,
+    "deny_identity_absent_from_rev_list_head": true,
+    "deny_object_resolution_forbidden": true,
+    "authorization_fetch": {
+      "count": 1,
+      "no_tags": true,
+      "wildcards": false,
+      "source_ref": "refs/heads/codex/phase3-supplemental-r3-ref-isolation-amendment",
+      "destination_ref": "refs/remotes/origin/codex/phase3-supplemental-r3-ref-isolation-amendment"
+    },
+    "evidence_request_count": 0
+  },
+  "pre_network_gate": {
+    "audit_commit_is_ancestor": true,
+    "clean_worktree": true,
+    "linear_authorized_suffix": true,
+    "merge_commits_forbidden": true,
+    "unlisted_commits_forbidden": true,
+    "authorized_commit_manifest_path": "data/external_slice/supplemental_r3/PRE_NETWORK_AUTHORITY.json",
+    "fixed_main_is_ancestor": true,
+    "deny_identity_absent_from_rev_list_head": true,
+    "all_frozen_hashes_match": true,
+    "all_required_pre_network_checks_pass": true,
+    "evidence_request_count": 0
+  },
+  "persistent_prohibitions": {
+    "global_ref_inventory_as_gate": false,
+    "forbidden_git_operations": [
+      "fetch deny ref or identity",
+      "show deny ref or identity",
+      "cat-file deny ref or identity",
+      "checkout deny ref or identity",
+      "switch deny ref or identity",
+      "merge deny ref or identity",
+      "rebase deny ref or identity",
+      "cherry-pick deny ref or identity",
+      "diff deny ref or identity",
+      "log deny ref or identity",
+      "branch --contains deny identity",
+      "merge-base deny identity"
+    ],
+    "batch3_ancestry_input_payload_lineage": false,
+    "preexisting_unrelated_refs_enumerated": false,
+    "preexisting_unrelated_refs_deleted": false,
+    "preexisting_unrelated_refs_resolved": false
+  },
+  "future_test_contract": {
+    "deny_value_loaded_from_scope": true,
+    "stale_ref_fixture": "in_memory_ref_map",
+    "command_runner_spy_required": true,
+    "ref_rename_invariance_required": true,
+    "negative_result": "fail_before_retrieval",
+    "negative_evidence_request_count": 0,
+    "partial_payload_forbidden": true,
+    "retry_forbidden": true
+  },
+  "preserved_invariants": {
+    "r2_state": {"total": 67, "admit_pending_repro": 9, "excluded": 58},
+    "shortfall": {"gpytorch": 2, "chaospy": 3, "salib": 3},
+    "status": "DISTRIBUTION_TARGET_AT_RISK",
+    "A2": "PENDING",
+    "analysis_id": "",
+    "alias": "",
+    "r2_transport_freeze": true,
+    "quota_replacement": false,
+    "readiness": false,
+    "r8": false,
+    "canonical_freeze": false,
+    "downstream_mutation": false
+  },
+  "failure_policy": {
+    "first_failure_stops": true,
+    "diagnostic_only": true,
+    "partial_payload": false,
+    "retry": false,
+    "resume_failed_execution": false
+  }
+}
