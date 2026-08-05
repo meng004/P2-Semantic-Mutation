@@ -1,0 +1,28 @@
+{
+  "batch": 2,
+  "buggy_sha": "9a09e8def163a44622f84940b489fcfb2a000881",
+  "dual_arm_contrast": false,
+  "failure_detail": "command failed (1): ./configure --with-mpi=0 --download-fblaslapack=1 --with-debugging=0 PETSC_ARCH=arch-linux-buggy\nstdout:\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nThe version of PETSc you are using is out-of-date, we recommend updating to the new release\n Available Version: 3.25.4   Installed Version: 3.21.3\nhttps://petsc.org/release/download/\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n=============================================================================================\n                         Configuring PETSc to compile on your system\n=============================================================================================\n=============================================================================================\n                                     ***** WARNING *****\n  Using default C optimization flags \"-g -O\". You might consider manually setting optimal\n  optimization flags for your system with COPTFLAGS=\"optimization flags\" see\n  config/examples/arch-*-opt.py for examples\n=============================================================================================\n=============================================================================================\n                                     ***** WARNING *****\n  Using default Cxx optimization flags \"-g -O\". You might consider manually setting optimal\n  optimization flags for your system with CXXOPTFLAGS=\"optimization flags\" see\n  config/examples/arch-*-opt.py for examples\n=============================================================================================\n=============================================================================================\n                                     ***** WARNING *****\n  Using default FC optimization flags \"-g -O\". You might consider manually setting optimal\n  optimization flags for your system with FOPTFLAGS=\"optimization flags\" see\n  config/examples/arch-*-opt.py for examples\n=============================================================================================\n=============================================================================================\n           Trying to download https://bitbucket.org/petsc/pkg-sowing.git for SOWING\n=============================================================================================\n=============================================================================================\n                  Running configure on SOWING; this may take several minutes\n=============================================================================================\n=============================================================================================\n                    Running make on SOWING; this may take several minutes\n=============================================================================================\n\n*********************************************************************************************\n           UNABLE to CONFIGURE with GIVEN OPTIONS (see configure.log for details):\n---------------------------------------------------------------------------------------------\n                          Error running make; make install on SOWING\n*********************************************************************************************\n\n\nstderr:\n",
+  "failure_stage": "build_or_trigger",
+  "fixed_sha": "b07ab1d94b3b556e52636876d50f19ae1cf0398a",
+  "issue_url": "https://gitlab.com/petsc/petsc/-/issues/1618",
+  "neutral_id": "EXT-petsc-01",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "julia": "julia version 1.10.5",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": "Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026 x86_64 x86_64"
+  },
+  "proposed_crit_dual_arm_repro": "REPRO_FAILED",
+  "repo": "petsc/petsc",
+  "route": "exact-source-cmake",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {}
+}

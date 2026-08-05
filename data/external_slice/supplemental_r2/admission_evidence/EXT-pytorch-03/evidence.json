@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABI1-emQ",
+  "issue_number": 189961,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/189961",
+  "mechanism": "MPS non-dense view copy path outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-03",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/189961",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0003",
+  "snapshot_record_sha256": "8e345a6c082a4477a51985e8ac9d2584480e456b322d7df33207993fe70468cb",
+  "source_cohort": "supplemental_r2"
+}

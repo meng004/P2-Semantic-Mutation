@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "3aa5aa759c7c75290f6c1d8c849a301b386bcdb7",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "6f201d8ad062e04da6d11d12dbf2a0339db2a51c",
+  "issue_node_id": "I_kwDOCTkjjc8AAAABDeXjQA",
+  "issue_number": 37991,
+  "issue_url": "https://github.com/jax-ml/jax/issues/37991",
+  "mechanism": "cumsum dtype=bool fix outside linalg/optim/special-function scope.",
+  "neutral_id": "EXT-jax-03",
+  "public_fix_url": "https://github.com/jax-ml/jax/commit/6f201d8ad062e04da6d11d12dbf2a0339db2a51c",
+  "public_issue_url": "https://github.com/jax-ml/jax/issues/37991",
+  "repository": "jax-ml/jax",
+  "snapshot_record_id": "SSR2-06-0003",
+  "snapshot_record_sha256": "fcbf9a5b57fc5d35a82cc026e86d5037462a800244b97896f84b66e1d8d0ab29",
+  "source_cohort": "supplemental_r2"
+}

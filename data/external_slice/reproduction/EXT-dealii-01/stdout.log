@@ -1,0 +1,1149 @@
+=== buggy stdout ===
+-- This is CMake 3.28.3
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_external_macros.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_add_flags.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_check_compiler_setup.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_check_cxx_compiler_bug.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_check_mpi_interface.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_clear_cmake_required.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_configure_feature.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_add_definitions.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_add_library.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_add_test.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_find_file.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_find_library.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_find_path.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_initialize_cached_variables.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_insource_setup_target.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_invoke_autopilot.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_package_handle.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_pickup_tests.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_query_git_information.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_deal_ii_setup_target.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_decorate_with_stars.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_enable_if_links.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_enable_if_supported.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_enable_language_optional.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_expand_instantiations.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_filter_system_libraries.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_find_package.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_find_system_library.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_item_matches.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_purge_feature.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_push_cmake_required.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_register_feature.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_remove_duplicates.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_replace_flag.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_reset_cmake_required.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_set_if_empty.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_strip_flag.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_switch_library_preference.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_to_string.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_to_string_and_add_prefix.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/macros/macro_verbose_include.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_cached_variables.cmake
+-- The CXX compiler identification is GNU 13.3.0
+-- The C compiler identification is GNU 13.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- The Fortran compiler identification is GNU 13.3.0
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /usr/bin/gfortran - skipped
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_deal_ii.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_compiler_flags.cmake
+-- Performing Test DEAL_II_HAVE_USABLE_USER_FLAGS_RELEASE
+-- Performing Test DEAL_II_HAVE_USABLE_USER_FLAGS_RELEASE - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_compiler_flags_gnu.cmake
+-- Performing Test DEAL_II_HAVE_FLAG_pedantic
+-- Performing Test DEAL_II_HAVE_FLAG_pedantic - Success
+-- Performing Test DEAL_II_HAVE_FLAG_fPIC
+-- Performing Test DEAL_II_HAVE_FLAG_fPIC - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wl__as_needed
+-- Performing Test DEAL_II_HAVE_FLAG_Wl__as_needed - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wall
+-- Performing Test DEAL_II_HAVE_FLAG_Wall - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wextra
+-- Performing Test DEAL_II_HAVE_FLAG_Wextra - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wpointer_arith
+-- Performing Test DEAL_II_HAVE_FLAG_Wpointer_arith - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wwrite_strings
+-- Performing Test DEAL_II_HAVE_FLAG_Wwrite_strings - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wsynth
+-- Performing Test DEAL_II_HAVE_FLAG_Wsynth - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wsign_compare
+-- Performing Test DEAL_II_HAVE_FLAG_Wsign_compare - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wswitch
+-- Performing Test DEAL_II_HAVE_FLAG_Wswitch - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Woverloaded_virtual
+-- Performing Test DEAL_II_HAVE_FLAG_Woverloaded_virtual - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wlong_long
+-- Performing Test DEAL_II_HAVE_FLAG_Wlong_long - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wplacement_new
+-- Performing Test DEAL_II_HAVE_FLAG_Wplacement_new - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wdeprecated_declarations
+-- Performing Test DEAL_II_HAVE_FLAG_Wdeprecated_declarations - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wliteral_suffix
+-- Performing Test DEAL_II_HAVE_FLAG_Wliteral_suffix - Success
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_loops
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_loops - Success
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_all_loops
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_all_loops - Success
+-- Performing Test DEAL_II_HAVE_FLAG_fstrict_aliasing
+-- Performing Test DEAL_II_HAVE_FLAG_fstrict_aliasing - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wunused_local_typedefs
+-- Performing Test DEAL_II_HAVE_FLAG_Wunused_local_typedefs - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/setup_bundled.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/checks/check_01_compiler_features.cmake
+-- Performing Test DEAL_II_COMPILER_USE_VECTOR_ARITHMETICS
+-- Performing Test DEAL_II_COMPILER_USE_VECTOR_ARITHMETICS - Success
+-- Performing Test DEAL_II_VECTOR_ITERATOR_IS_POINTER_OK
+-- Performing Test DEAL_II_VECTOR_ITERATOR_IS_POINTER_OK - Success
+-- Test successful, do not define DEAL_II_VECTOR_ITERATOR_IS_POINTER
+-- Performing Test DEAL_II_HAVE_BUILTIN_EXPECT
+-- Performing Test DEAL_II_HAVE_BUILTIN_EXPECT - Success
+-- Performing Test DEAL_II_HAVE_VERBOSE_TERMINATE
+-- Performing Test DEAL_II_HAVE_VERBOSE_TERMINATE - Success
+-- Performing Test DEAL_II_HAVE_GLIBC_STACKTRACE
+-- Performing Test DEAL_II_HAVE_GLIBC_STACKTRACE - Success
+-- Performing Test DEAL_II_HAVE_FLAG_rdynamic
+-- Performing Test DEAL_II_HAVE_FLAG_rdynamic - Success
+-- Performing Test DEAL_II_HAVE_LIBSTDCXX_DEMANGLER
+-- Performing Test DEAL_II_HAVE_LIBSTDCXX_DEMANGLER - Success
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_PRETTY_FUNCTION
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_PRETTY_FUNCTION - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wa__compress_debug_sections
+-- Performing Test DEAL_II_HAVE_FLAG_Wa__compress_debug_sections - Success
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_DEPRECATED
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_DEPRECATED - Success
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_ALWAYS_INLINE
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_ALWAYS_INLINE - Success
+-- Performing Test DEAL_II_COMPILER_HAS_DIAGNOSTIC_PRAGMA
+-- Performing Test DEAL_II_COMPILER_HAS_DIAGNOSTIC_PRAGMA - Success
+-- Performing Test DEAL_II_COMPILER_HAS_FUSE_LD_GOLD
+-- Performing Test DEAL_II_COMPILER_HAS_FUSE_LD_GOLD - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/checks/check_01_cpu_features.cmake
+-- Performing Test DEAL_II_HAVE_SSE2
+-- Performing Test DEAL_II_HAVE_SSE2 - Success
+-- Performing Test DEAL_II_HAVE_AVX
+-- Performing Test DEAL_II_HAVE_AVX - Failed
+-- Performing Test DEAL_II_HAVE_AVX512
+-- Performing Test DEAL_II_HAVE_AVX512 - Failed
+-- Performing Test DEAL_II_HAVE_OPENMP_SIMD
+-- Performing Test DEAL_II_HAVE_OPENMP_SIMD - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/checks/check_01_cxx_features.cmake
+-- Performing Test DEAL_II_HAVE_FLAG_stdcxx14
+-- Performing Test DEAL_II_HAVE_FLAG_stdcxx14 - Success
+-- Using C++ version flag "-std=c++14"
+-- Performing Test DEAL_II_HAVE_CXX14_MAKE_UNIQUE
+-- Performing Test DEAL_II_HAVE_CXX14_MAKE_UNIQUE - Success
+-- Performing Test DEAL_II_HAVE_CXX14_CLANGAUTODEBUG_BUG_OK
+-- Performing Test DEAL_II_HAVE_CXX14_CLANGAUTODEBUG_BUG_OK - Success
+-- Using C++ version flag "-std=c++14"
+-- Performing Test DEAL_II_HAVE_CXX11_ARRAY
+-- Performing Test DEAL_II_HAVE_CXX11_ARRAY - Success
+-- Performing Test DEAL_II_HAVE_CXX11_CONDITION_VARIABLE
+-- Performing Test DEAL_II_HAVE_CXX11_CONDITION_VARIABLE - Success
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL - Success
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_GCCBUG35569_OK
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_GCCBUG35569_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_LLVMBUG20084_OK
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_LLVMBUG20084_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_SHARED_PTR
+-- Performing Test DEAL_II_HAVE_CXX11_SHARED_PTR - Success
+-- Performing Test DEAL_II_HAVE_CXX11_THREAD
+-- Performing Test DEAL_II_HAVE_CXX11_THREAD - Success
+-- Performing Test DEAL_II_HAVE_CXX11_MUTEX
+-- Performing Test DEAL_II_HAVE_CXX11_MUTEX - Success
+-- Performing Test DEAL_II_HAVE_CXX11_TUPLE
+-- Performing Test DEAL_II_HAVE_CXX11_TUPLE - Success
+-- Performing Test DEAL_II_HAVE_CXX11_TYPE_TRAITS
+-- Performing Test DEAL_II_HAVE_CXX11_TYPE_TRAITS - Success
+-- Performing Test DEAL_II_HAVE_CXX11_MACOSXC99BUG_OK
+-- Performing Test DEAL_II_HAVE_CXX11_MACOSXC99BUG_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_ICCNUMERICLIMITSBUG_OK
+-- Performing Test DEAL_II_HAVE_CXX11_ICCNUMERICLIMITSBUG_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_ICCLIBSTDCPP47CXX11BUG_OK
+-- Performing Test DEAL_II_HAVE_CXX11_ICCLIBSTDCPP47CXX11BUG_OK - Success
+-- DEAL_II_WITH_CXX11 successfully set up
+-- DEAL_II_WITH_CXX14 successfully set up
+-- Performing Test DEAL_II_HAVE_CXX11_IS_TRIVIALLY_COPYABLE
+-- Performing Test DEAL_II_HAVE_CXX11_IS_TRIVIALLY_COPYABLE - Success
+-- Performing Test DEAL_II_HAVE_STD_ISNAN
+-- Performing Test DEAL_II_HAVE_STD_ISNAN - Success
+-- Performing Test DEAL_II_HAVE_ISNAN
+-- Performing Test DEAL_II_HAVE_ISNAN - Failed
+-- Performing Test DEAL_II_HAVE_UNDERSCORE_ISNAN
+-- Performing Test DEAL_II_HAVE_UNDERSCORE_ISNAN - Failed
+-- Performing Test DEAL_II_HAVE_ISFINITE
+-- Performing Test DEAL_II_HAVE_ISFINITE - Success
+-- Performing Test DEAL_II_HAVE_FP_EXCEPTIONS
+-- Performing Test DEAL_II_HAVE_FP_EXCEPTIONS - Success
+-- Performing Test DEAL_II_HAVE_COMPLEX_OPERATOR_OVERLOADS
+-- Performing Test DEAL_II_HAVE_COMPLEX_OPERATOR_OVERLOADS - Failed
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/checks/check_02_system_features.cmake
+-- Looking for C++ include sys/resource.h
+-- Looking for C++ include sys/resource.h - found
+-- Looking for C++ include sys/time.h
+-- Looking for C++ include sys/time.h - found
+-- Looking for C++ include sys/times.h
+-- Looking for C++ include sys/times.h - found
+-- Looking for times
+-- Looking for times - found
+-- Looking for C++ include sys/types.h
+-- Looking for C++ include sys/types.h - found
+-- Looking for C++ include unistd.h
+-- Looking for C++ include unistd.h - found
+-- Looking for gethostname
+-- Looking for gethostname - found
+-- Looking for getpid
+-- Looking for getpid - found
+-- Performing Test m_LIBRARY
+-- Performing Test m_LIBRARY - Success
+-- Looking for jn
+-- Looking for jn - found
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/checks/check_03_compiler_bugs.cmake
+-- Performing Test DEAL_II_WRETURN_TYPE_CONST_QUALIFIER_BUG_OK
+-- Performing Test DEAL_II_WRETURN_TYPE_CONST_QUALIFIER_BUG_OK - Success
+-- Test successful, do not define DEAL_II_WRETURN_TYPE_CONST_QUALIFIER_BUG
+-- Performing Test DEAL_II_TEMPL_SPEC_FRIEND_BUG_OK
+-- Performing Test DEAL_II_TEMPL_SPEC_FRIEND_BUG_OK - Success
+-- Test successful, do not define DEAL_II_TEMPL_SPEC_FRIEND_BUG
+-- Performing Test DEAL_II_MEMBER_ARRAY_SPECIALIZATION_BUG_OK
+-- Performing Test DEAL_II_MEMBER_ARRAY_SPECIALIZATION_BUG_OK - Success
+-- Test successful, do not define DEAL_II_MEMBER_ARRAY_SPECIALIZATION_BUG
+-- Performing Test DEAL_II_MEMBER_VAR_SPECIALIZATION_BUG_OK
+-- Performing Test DEAL_II_MEMBER_VAR_SPECIALIZATION_BUG_OK - Success
+-- Test successful, do not define DEAL_II_MEMBER_VAR_SPECIALIZATION_BUG
+-- Performing Test DEAL_II_EXPLICIT_CONSTRUCTOR_BUG
+-- Performing Test DEAL_II_EXPLICIT_CONSTRUCTOR_BUG - Failed
+-- Performing Test DEAL_II_CONST_MEMBER_DEDUCTION_BUG_OK
+-- Performing Test DEAL_II_CONST_MEMBER_DEDUCTION_BUG_OK - Success
+-- Test successful, do not define DEAL_II_CONST_MEMBER_DEDUCTION_BUG
+-- Performing Test DEAL_II_TYPE_QUALIFIER_BUG_OK
+-- Performing Test DEAL_II_TYPE_QUALIFIER_BUG_OK - Success
+-- Test successful, do not define DEAL_II_TYPE_QUALIFIER_BUG
+-- Performing Test DEAL_II_BOOST_BIND_COMPILER_BUG_OK
+-- Performing Test DEAL_II_BOOST_BIND_COMPILER_BUG_OK - Failed
+-- Test unsuccessful, define DEAL_II_BOOST_BIND_COMPILER_BUG
+-- Performing Test DEAL_II_BIND_NO_CONST_OP_PARENTHESES_OK
+-- Performing Test DEAL_II_BIND_NO_CONST_OP_PARENTHESES_OK - Success
+-- Test successful, do not define DEAL_II_BIND_NO_CONST_OP_PARENTHESES
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/checks/check_03_generator_bugs.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_1_bzip2.cmake
+-- Could NOT find BZip2 (missing: BZIP2_LIBRARIES BZIP2_INCLUDE_DIR) 
+--   BZIP2_LIBRARIES: *** Required variable "_bzip2_libraries" set to NOTFOUND ***
+--   BZIP2_INCLUDE_DIRS: *** Required variable "BZIP2_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find BZIP2
+-- DEAL_II_WITH_BZIP2 has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_1_cuda.cmake
+-- DEAL_II_WITH_CUDA is set to off.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_1_lapack.cmake
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - not found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Could NOT find BLAS (missing: BLAS_LIBRARIES) 
+-- Could NOT find LAPACK (missing: LAPACK_LIBRARIES) 
+    Reason given by package: LAPACK could not be found because dependency BLAS could not be found.
+
+-- Performing Test gfortran_LIBRARY
+-- Performing Test gfortran_LIBRARY - Success
+-- Performing Test gcc_s_LIBRARY
+-- Performing Test gcc_s_LIBRARY - Success
+-- Performing Test gcc_LIBRARY
+-- Performing Test gcc_LIBRARY - Success
+-- Performing Test quadmath_LIBRARY
+-- Performing Test quadmath_LIBRARY - Success
+-- Performing Test c_LIBRARY
+-- Performing Test c_LIBRARY - Success
+--   LAPACK_LIBRARIES: *** Required variable "_lapack_libraries" empty ***
+--   LAPACK_LINKER_FLAGS: 
+-- Could NOT find LAPACK
+-- DEAL_II_WITH_LAPACK has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_1_mpi.cmake
+-- DEAL_II_WITH_MPI is set to off.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_1_threads.cmake
+-- TBB_LIBRARY not found! Call:
+--     FIND_LIBRARY(TBB_LIBRARY NAMES tbb HINTS PATH_SUFFIXES lib lib64 lib)
+-- TBB_DEBUG_LIBRARY not found! Call:
+--     FIND_LIBRARY(TBB_DEBUG_LIBRARY NAMES tbb_debug HINTS PATH_SUFFIXES lib lib64 lib)
+-- TBB_INCLUDE_DIR not found! Call:
+--     FIND_PATH(TBB_INCLUDE_DIR tbb/tbb_stddef.h HINTS PATH_SUFFIXES include include/tbb tbb)
+--   TBB_LIBRARIES: *** Required variable "TBB_LIBRARY" set to NOTFOUND ***
+--   TBB_INCLUDE_DIRS: *** Required variable "TBB_INCLUDE_DIR" set to NOTFOUND ***
+--   TBB_USER_INCLUDE_DIRS: *** Required variable "TBB_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find TBB
+-- DEAL_II_WITH_THREADS has unmet external dependencies.
+-- Performing Test DEAL_II_HAVE_MT_POSIX_BARRIERS
+-- Performing Test DEAL_II_HAVE_MT_POSIX_BARRIERS - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wparentheses
+-- Performing Test DEAL_II_HAVE_FLAG_Wparentheses - Success
+-- DEAL_II_WITH_THREADS successfully set up with bundled packages.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_1_zlib.cmake
+-- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.3")  
+--   ZLIB_VERSION: 1.3
+--   ZLIB_LIBRARIES: /usr/lib/x86_64-linux-gnu/libz.so
+--   ZLIB_INCLUDE_DIRS: /usr/include
+-- Found ZLIB
+-- DEAL_II_WITH_ZLIB successfully set up with external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_2_metis.cmake
+-- METIS_LIBRARY not found! Call:
+--     FIND_LIBRARY(METIS_LIBRARY NAMES metis HINTS PATH_SUFFIXES lib lib64 lib build/Linux-x86_64/libmetis)
+-- METIS_INCLUDE_DIR not found! Call:
+--     FIND_PATH(METIS_INCLUDE_DIR metis.h HINTS PATH_SUFFIXES metis include/metis include)
+--   METIS_LIBRARIES: *** Required variable "METIS_LIBRARY" set to NOTFOUND ***
+--   METIS_INCLUDE_DIRS: *** Required variable "METIS_INCLUDE_DIR" set to NOTFOUND ***
+--   METIS_USER_INCLUDE_DIRS: *** Required variable "METIS_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find METIS
+-- DEAL_II_WITH_METIS has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_2_trilinos.cmake
+-- EPETRA_CONFIG_H not found! Call:
+--     FIND_FILE(EPETRA_CONFIG_H Epetra_config.h HINTS NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_CMAKE_FIND_ROOT_PATH)
+-- SACADO_CONFIG_H not found! Call:
+--     FIND_FILE(SACADO_CONFIG_H Sacado_config.h HINTS NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_CMAKE_FIND_ROOT_PATH)
+-- SACADO_CMATH_HPP not found! Call:
+--     FIND_FILE(SACADO_CMATH_HPP Sacado_cmath.hpp HINTS NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_CMAKE_FIND_ROOT_PATH)
+--   TRILINOS_LIBRARIES: 
+--   TRILINOS_INCLUDE_DIRS: *** Required variable "Trilinos_INCLUDE_DIRS" empty ***
+--   TRILINOS_USER_INCLUDE_DIRS: *** Required variable "Trilinos_INCLUDE_DIRS" empty ***
+-- Could NOT find TRILINOS
+-- DEAL_II_WITH_TRILINOS has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_2_umfpack.cmake
+-- DEAL_II_WITH_UMFPACK has unmet configuration requirements: DEAL_II_WITH_LAPACK has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_3_petsc.cmake
+-- PETSC_LIBRARY not found! Call:
+--     FIND_LIBRARY(PETSC_LIBRARY NAMES petsc HINTS / PATH_SUFFIXES lib lib64 lib)
+-- PETSC_INCLUDE_DIR_ARCH not found! Call:
+--     FIND_PATH(PETSC_INCLUDE_DIR_ARCH petscconf.h HINTS / PATH_SUFFIXES petsc include include/petsc)
+-- PETSC_INCLUDE_DIR_COMMON not found! Call:
+--     FIND_PATH(PETSC_INCLUDE_DIR_COMMON petscversion.h HINTS / PATH_SUFFIXES petsc include include/petsc)
+-- PETSC_PETSCVARIABLES not found! Call:
+--     FIND_FILE(PETSC_PETSCVARIABLES NAMES petscvariables HINTS / PATH_SUFFIXES conf lib/petsc/conf)
+--   PETSC_LIBRARIES: *** Required variable "PETSC_LIBRARY" set to NOTFOUND ***
+--   PETSC_INCLUDE_DIRS: *** Required variable "PETSC_INCLUDE_DIR_COMMON" set to NOTFOUND ***
+--   PETSC_USER_INCLUDE_DIRS: *** Required variable "PETSC_INCLUDE_DIR_COMMON" set to NOTFOUND ***
+-- Could NOT find PETSC
+-- DEAL_II_WITH_PETSC has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_arpack.cmake
+-- DEAL_II_WITH_ARPACK has unmet configuration requirements: DEAL_II_WITH_LAPACK has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_boost.cmake
+-- Could NOT find Boost (missing: Boost_INCLUDE_DIR iostreams serialization system thread) (Required is at least version "1.56")
+--   BOOST_LIBRARIES: *** Required variable "Boost_LIBRARIES" empty ***
+--   BOOST_INCLUDE_DIRS: *** Required variable "Boost_INCLUDE_DIRS" set to NOTFOUND ***
+--   BOOST_USER_INCLUDE_DIRS: *** Required variable "Boost_INCLUDE_DIRS" set to NOTFOUND ***
+-- Could NOT find BOOST
+-- DEAL_II_WITH_BOOST has unmet external dependencies.
+-- Performing Test rt_LIBRARY
+-- Performing Test rt_LIBRARY - Success
+-- DEAL_II_WITH_BOOST successfully set up with bundled packages.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_gsl.cmake
+-- GSL_LIBRARY not found! Call:
+--     FIND_LIBRARY(GSL_LIBRARY NAMES gsl HINTS PATH_SUFFIXES lib lib64 lib)
+-- GSL_CBLAS_LIBRARY not found! Call:
+--     FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES gslcblas cblas refcblas HINTS PATH_SUFFIXES lib lib64 lib)
+-- GSL_INCLUDE_DIR not found! Call:
+--     FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_version.h HINTS PATH_SUFFIXES include)
+--   GSL_LIBRARIES: *** Required variable "GSL_LIBRARY" set to NOTFOUND ***
+--   GSL_INCLUDE_DIRS: *** Required variable "GSL_INCLUDE_DIR" set to NOTFOUND ***
+--   GSL_USER_INCLUDE_DIRS: *** Required variable "GSL_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find GSL
+-- DEAL_II_WITH_GSL has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_hdf5.cmake
+-- HDF5_INCLUDE_DIR not found! Call:
+--     FIND_PATH(HDF5_INCLUDE_DIR hdf5.h HINTS PATH_SUFFIXES hdf5 hdf5/include include/hdf5 include)
+-- HDF5_LIBRARY not found! Call:
+--     FIND_LIBRARY(HDF5_LIBRARY NAMES hdf5 HINTS PATH_SUFFIXES hdf5/lib lib lib64 lib)
+-- HDF5_HL_LIBRARY not found! Call:
+--     FIND_LIBRARY(HDF5_HL_LIBRARY NAMES hdf5_hl HINTS PATH_SUFFIXES lib lib64 lib)
+-- HDF5_PUBCONF not found! Call:
+--     FIND_FILE(HDF5_PUBCONF NAMES H5pubconf.h H5pubconf-64.h HINTS HDF5_INCLUDE_DIR-NOTFOUND PATH_SUFFIXES hdf5 hdf5/include include/hdf5 include)
+--   HDF5_LIBRARIES: *** Required variable "HDF5_HL_LIBRARY" set to NOTFOUND ***
+--   HDF5_INCLUDE_DIRS: *** Required variable "HDF5_INCLUDE_DIR" set to NOTFOUND ***
+--   HDF5_USER_INCLUDE_DIRS: *** Required variable "HDF5_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find HDF5
+-- DEAL_II_WITH_HDF5 has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_muparser.cmake
+-- MUPARSER_LIBRARY not found! Call:
+--     FIND_LIBRARY(MUPARSER_LIBRARY NAMES muparser muparserd HINTS PATH_SUFFIXES lib lib64 lib)
+-- MUPARSER_INCLUDE_DIR not found! Call:
+--     FIND_PATH(MUPARSER_INCLUDE_DIR muParserDef.h HINTS PATH_SUFFIXES include)
+--   MUPARSER_LIBRARIES: *** Required variable "MUPARSER_LIBRARY" set to NOTFOUND ***
+--   MUPARSER_INCLUDE_DIRS: *** Required variable "MUPARSER_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find MUPARSER
+-- DEAL_II_WITH_MUPARSER has unmet external dependencies.
+-- DEAL_II_WITH_MUPARSER successfully set up with bundled packages.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_netcdf.cmake
+-- NETCDF_INCLUDE_DIR not found! Call:
+--     FIND_PATH(NETCDF_INCLUDE_DIR netcdfcpp.h HINTS PATH_SUFFIXES netcdf include)
+-- NETCDF_CPLUSPLUS_LIBRARY not found! Call:
+--     FIND_LIBRARY(NETCDF_CPLUSPLUS_LIBRARY NAMES netcdf_c++ netcdf_cpp HINTS PATH_SUFFIXES lib lib64 lib)
+-- NETCDF_C_LIBRARY not found! Call:
+--     FIND_LIBRARY(NETCDF_C_LIBRARY NAMES netcdf HINTS PATH_SUFFIXES lib lib64 lib)
+--   NETCDF_LIBRARIES: *** Required variable "NETCDF_CPLUSPLUS_LIBRARY" set to NOTFOUND ***
+--   NETCDF_INCLUDE_DIRS: *** Required variable "NETCDF_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find NETCDF
+-- DEAL_II_WITH_NETCDF has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_opencascade.cmake
+-- OPENCASCADE_INCLUDE_DIR not found! Call:
+--     FIND_PATH(OPENCASCADE_INCLUDE_DIR Standard_Version.hxx HINTS PATH_SUFFIXES include include/oce inc)
+-- OPENCASCADE_TKBO not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKBO NAMES TKBO HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKBool not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKBool NAMES TKBool HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKBRep not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKBRep NAMES TKBRep HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKernel not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKernel NAMES TKernel HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKFeat not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKFeat NAMES TKFeat HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKFillet not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKFillet NAMES TKFillet HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKG2d not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKG2d NAMES TKG2d HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKG3d not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKG3d NAMES TKG3d HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKGeomAlgo not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKGeomAlgo NAMES TKGeomAlgo HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKGeomBase not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKGeomBase NAMES TKGeomBase HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKHLR not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKHLR NAMES TKHLR HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKIGES not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKIGES NAMES TKIGES HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKMath not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKMath NAMES TKMath HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKMesh not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKMesh NAMES TKMesh HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKOffset not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKOffset NAMES TKOffset HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKPrim not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKPrim NAMES TKPrim HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKShHealing not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKShHealing NAMES TKShHealing HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTEP not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTEP NAMES TKSTEP HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTEPAttr not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTEPAttr NAMES TKSTEPAttr HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTEPBase not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTEPBase NAMES TKSTEPBase HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTL not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTL NAMES TKSTL HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKTopAlgo not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKTopAlgo NAMES TKTopAlgo HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKXSBase not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKXSBase NAMES TKXSBase HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+--   OPENCASCADE_LIBRARIES: *** Required variable "OPENCASCADE_TKBO" set to NOTFOUND ***
+--   OPENCASCADE_INCLUDE_DIRS: *** Required variable "OPENCASCADE_INCLUDE_DIR" set to NOTFOUND ***
+--   OPENCASCADE_USER_INCLUDE_DIRS: *** Required variable "OPENCASCADE_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find OPENCASCADE
+-- DEAL_II_WITH_OPENCASCADE has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_p4est.cmake
+-- DEAL_II_WITH_P4EST has unmet configuration requirements: DEAL_II_WITH_MPI has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/configure/configure_slepc.cmake
+-- DEAL_II_WITH_SLEPC has unmet configuration requirements: DEAL_II_WITH_PETSC has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_cpack.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_custom_targets.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_finalize.cmake
+-- Performing Test DEAL_II_HAVE_USABLE_FLAGS_RELEASE
+-- Performing Test DEAL_II_HAVE_USABLE_FLAGS_RELEASE - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/cmake/setup_write_config.cmake
+-- Query git repository information.
+-- Found Git: /usr/bin/git (found version "2.43.0") 
+-- 
+-- Configuring done. Proceed to target definitions now.
+-- Setting up bundled features
+-- BOOST::Iostreams will not support bz2'ed streams because libbz2 or its header files could not be found
+-- Performing Test DEAL_II_HAVE_FLAG_Wnested_anon_types
+-- Performing Test DEAL_II_HAVE_FLAG_Wnested_anon_types - Failed
+-- Setting up bundled features - Done
+-- Setting up library
+-- Setting up library - Done
+-- Setting up project configuration
+-- Setting up project configuration - Done
+-- Setting up quick_tests in RELEASE mode
+-- Setting up quick_tests in RELEASE mode - Done
+-- Setting up testsuite
+-- Setting up testsuite - Done
+-- Configuring done (8.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: /tmp/c3_a1c_fix/EXT-dealii-01/build-buggy
+
+[  1%] Building CXX object cmake/scripts/CMakeFiles/expand_instantiations_exe.dir/expand_instantiations.cc.o
+[  1%] Built target doxygen_headers
+[  2%] Building CXX object bundled/boost-1.62.0/libs/system/src/CMakeFiles/obj_boost_system_release.dir/error_code.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/archive_exception.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/file_descriptor.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_archive.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_iarchive.cpp.o
+[  3%] Built target obj_boost_system_release
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_iserializer.cpp.o
+[  3%] Building CXX object bundled/tbb41_20130401oss/src/CMakeFiles/obj_tbb_release.dir/rml/client/rml_tbb.cpp.o
+[  3%] Linking CXX executable ../../bin/expand_instantiations
+[  3%] Building CXX object bundled/tbb41_20130401oss/src/CMakeFiles/obj_tbb_release.dir/tbb/arena.cpp.o
+[  3%] Built target expand_instantiations_exe
+[  3%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/gzip.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_oarchive.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/mapped_file.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/zlib.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_oserializer.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_pointer_iserializer.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_pointer_oserializer.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_serializer_map.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_iprimitive.cpp.o
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_oprimitive.cpp.o
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_wiprimitive.cpp.o
+[  5%] Built target obj_boost_iostreams_release
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_woprimitive.cpp.o
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_xml_archive.cpp.o
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_iarchive.cpp.o
+[  6%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_oarchive.cpp.o
+[  6%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_wiarchive.cpp.o
+[  6%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_woarchive.cpp.o
+[  6%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/codecvt_null.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/extended_type_info.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/extended_type_info_no_rtti.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/extended_type_info_typeid.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/polymorphic_iarchive.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/polymorphic_oarchive.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/singleton.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/stl_port.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_iarchive.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_oarchive.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_wiarchive.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_woarchive.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/utf8_codecvt_facet.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/void_cast.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_archive_exception.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_grammar.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_iarchive.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_oarchive.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_wgrammar.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_wiarchive.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_woarchive.cpp.o
+[ 10%] Built target obj_boost_serialization_release
+
+=== fixed stdout ===
+-- This is CMake 3.28.3
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_external_macros.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_add_flags.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_check_compiler_setup.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_check_cxx_compiler_bug.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_check_mpi_interface.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_clear_cmake_required.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_configure_feature.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_add_definitions.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_add_library.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_add_test.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_find_file.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_find_library.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_find_path.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_initialize_cached_variables.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_insource_setup_target.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_invoke_autopilot.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_package_handle.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_pickup_tests.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_query_git_information.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_deal_ii_setup_target.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_decorate_with_stars.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_enable_if_links.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_enable_if_supported.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_enable_language_optional.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_expand_instantiations.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_filter_system_libraries.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_find_package.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_find_system_library.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_item_matches.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_purge_feature.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_push_cmake_required.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_register_feature.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_remove_duplicates.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_replace_flag.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_reset_cmake_required.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_set_if_empty.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_strip_flag.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_switch_library_preference.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_to_string.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_to_string_and_add_prefix.cmake
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/macros/macro_verbose_include.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_cached_variables.cmake
+-- The CXX compiler identification is GNU 13.3.0
+-- The C compiler identification is GNU 13.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- The Fortran compiler identification is GNU 13.3.0
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /usr/bin/gfortran - skipped
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_deal_ii.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_compiler_flags.cmake
+-- Performing Test DEAL_II_HAVE_USABLE_USER_FLAGS_RELEASE
+-- Performing Test DEAL_II_HAVE_USABLE_USER_FLAGS_RELEASE - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_compiler_flags_gnu.cmake
+-- Performing Test DEAL_II_HAVE_FLAG_pedantic
+-- Performing Test DEAL_II_HAVE_FLAG_pedantic - Success
+-- Performing Test DEAL_II_HAVE_FLAG_fPIC
+-- Performing Test DEAL_II_HAVE_FLAG_fPIC - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wl__as_needed
+-- Performing Test DEAL_II_HAVE_FLAG_Wl__as_needed - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wall
+-- Performing Test DEAL_II_HAVE_FLAG_Wall - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wextra
+-- Performing Test DEAL_II_HAVE_FLAG_Wextra - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wpointer_arith
+-- Performing Test DEAL_II_HAVE_FLAG_Wpointer_arith - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wwrite_strings
+-- Performing Test DEAL_II_HAVE_FLAG_Wwrite_strings - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wsynth
+-- Performing Test DEAL_II_HAVE_FLAG_Wsynth - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wsign_compare
+-- Performing Test DEAL_II_HAVE_FLAG_Wsign_compare - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wswitch
+-- Performing Test DEAL_II_HAVE_FLAG_Wswitch - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Woverloaded_virtual
+-- Performing Test DEAL_II_HAVE_FLAG_Woverloaded_virtual - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wlong_long
+-- Performing Test DEAL_II_HAVE_FLAG_Wlong_long - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wplacement_new
+-- Performing Test DEAL_II_HAVE_FLAG_Wplacement_new - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wdeprecated_declarations
+-- Performing Test DEAL_II_HAVE_FLAG_Wdeprecated_declarations - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wliteral_suffix
+-- Performing Test DEAL_II_HAVE_FLAG_Wliteral_suffix - Success
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_loops
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_loops - Success
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_all_loops
+-- Performing Test DEAL_II_HAVE_FLAG_funroll_all_loops - Success
+-- Performing Test DEAL_II_HAVE_FLAG_fstrict_aliasing
+-- Performing Test DEAL_II_HAVE_FLAG_fstrict_aliasing - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wunused_local_typedefs
+-- Performing Test DEAL_II_HAVE_FLAG_Wunused_local_typedefs - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/bundled/setup_bundled.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/checks/check_01_compiler_features.cmake
+-- Performing Test DEAL_II_COMPILER_USE_VECTOR_ARITHMETICS
+-- Performing Test DEAL_II_COMPILER_USE_VECTOR_ARITHMETICS - Success
+-- Performing Test DEAL_II_VECTOR_ITERATOR_IS_POINTER_OK
+-- Performing Test DEAL_II_VECTOR_ITERATOR_IS_POINTER_OK - Success
+-- Test successful, do not define DEAL_II_VECTOR_ITERATOR_IS_POINTER
+-- Performing Test DEAL_II_HAVE_BUILTIN_EXPECT
+-- Performing Test DEAL_II_HAVE_BUILTIN_EXPECT - Success
+-- Performing Test DEAL_II_HAVE_VERBOSE_TERMINATE
+-- Performing Test DEAL_II_HAVE_VERBOSE_TERMINATE - Success
+-- Performing Test DEAL_II_HAVE_GLIBC_STACKTRACE
+-- Performing Test DEAL_II_HAVE_GLIBC_STACKTRACE - Success
+-- Performing Test DEAL_II_HAVE_FLAG_rdynamic
+-- Performing Test DEAL_II_HAVE_FLAG_rdynamic - Success
+-- Performing Test DEAL_II_HAVE_LIBSTDCXX_DEMANGLER
+-- Performing Test DEAL_II_HAVE_LIBSTDCXX_DEMANGLER - Success
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_PRETTY_FUNCTION
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_PRETTY_FUNCTION - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wa__compress_debug_sections
+-- Performing Test DEAL_II_HAVE_FLAG_Wa__compress_debug_sections - Success
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_DEPRECATED
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_DEPRECATED - Success
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_ALWAYS_INLINE
+-- Performing Test DEAL_II_COMPILER_HAS_ATTRIBUTE_ALWAYS_INLINE - Success
+-- Performing Test DEAL_II_COMPILER_HAS_DIAGNOSTIC_PRAGMA
+-- Performing Test DEAL_II_COMPILER_HAS_DIAGNOSTIC_PRAGMA - Success
+-- Performing Test DEAL_II_COMPILER_HAS_FUSE_LD_GOLD
+-- Performing Test DEAL_II_COMPILER_HAS_FUSE_LD_GOLD - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/checks/check_01_cpu_features.cmake
+-- Performing Test DEAL_II_HAVE_SSE2
+-- Performing Test DEAL_II_HAVE_SSE2 - Success
+-- Performing Test DEAL_II_HAVE_AVX
+-- Performing Test DEAL_II_HAVE_AVX - Failed
+-- Performing Test DEAL_II_HAVE_AVX512
+-- Performing Test DEAL_II_HAVE_AVX512 - Failed
+-- Performing Test DEAL_II_HAVE_OPENMP_SIMD
+-- Performing Test DEAL_II_HAVE_OPENMP_SIMD - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/checks/check_01_cxx_features.cmake
+-- Performing Test DEAL_II_HAVE_FLAG_stdcxx14
+-- Performing Test DEAL_II_HAVE_FLAG_stdcxx14 - Success
+-- Using C++ version flag "-std=c++14"
+-- Performing Test DEAL_II_HAVE_CXX14_MAKE_UNIQUE
+-- Performing Test DEAL_II_HAVE_CXX14_MAKE_UNIQUE - Success
+-- Performing Test DEAL_II_HAVE_CXX14_CLANGAUTODEBUG_BUG_OK
+-- Performing Test DEAL_II_HAVE_CXX14_CLANGAUTODEBUG_BUG_OK - Success
+-- Using C++ version flag "-std=c++14"
+-- Performing Test DEAL_II_HAVE_CXX11_ARRAY
+-- Performing Test DEAL_II_HAVE_CXX11_ARRAY - Success
+-- Performing Test DEAL_II_HAVE_CXX11_CONDITION_VARIABLE
+-- Performing Test DEAL_II_HAVE_CXX11_CONDITION_VARIABLE - Success
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL - Success
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_GCCBUG35569_OK
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_GCCBUG35569_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_LLVMBUG20084_OK
+-- Performing Test DEAL_II_HAVE_CXX11_FUNCTIONAL_LLVMBUG20084_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_SHARED_PTR
+-- Performing Test DEAL_II_HAVE_CXX11_SHARED_PTR - Success
+-- Performing Test DEAL_II_HAVE_CXX11_THREAD
+-- Performing Test DEAL_II_HAVE_CXX11_THREAD - Success
+-- Performing Test DEAL_II_HAVE_CXX11_MUTEX
+-- Performing Test DEAL_II_HAVE_CXX11_MUTEX - Success
+-- Performing Test DEAL_II_HAVE_CXX11_TUPLE
+-- Performing Test DEAL_II_HAVE_CXX11_TUPLE - Success
+-- Performing Test DEAL_II_HAVE_CXX11_TYPE_TRAITS
+-- Performing Test DEAL_II_HAVE_CXX11_TYPE_TRAITS - Success
+-- Performing Test DEAL_II_HAVE_CXX11_MACOSXC99BUG_OK
+-- Performing Test DEAL_II_HAVE_CXX11_MACOSXC99BUG_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_ICCNUMERICLIMITSBUG_OK
+-- Performing Test DEAL_II_HAVE_CXX11_ICCNUMERICLIMITSBUG_OK - Success
+-- Performing Test DEAL_II_HAVE_CXX11_ICCLIBSTDCPP47CXX11BUG_OK
+-- Performing Test DEAL_II_HAVE_CXX11_ICCLIBSTDCPP47CXX11BUG_OK - Success
+-- DEAL_II_WITH_CXX11 successfully set up
+-- DEAL_II_WITH_CXX14 successfully set up
+-- Performing Test DEAL_II_HAVE_CXX11_IS_TRIVIALLY_COPYABLE
+-- Performing Test DEAL_II_HAVE_CXX11_IS_TRIVIALLY_COPYABLE - Success
+-- Performing Test DEAL_II_HAVE_STD_ISNAN
+-- Performing Test DEAL_II_HAVE_STD_ISNAN - Success
+-- Performing Test DEAL_II_HAVE_ISNAN
+-- Performing Test DEAL_II_HAVE_ISNAN - Failed
+-- Performing Test DEAL_II_HAVE_UNDERSCORE_ISNAN
+-- Performing Test DEAL_II_HAVE_UNDERSCORE_ISNAN - Failed
+-- Performing Test DEAL_II_HAVE_ISFINITE
+-- Performing Test DEAL_II_HAVE_ISFINITE - Success
+-- Performing Test DEAL_II_HAVE_FP_EXCEPTIONS
+-- Performing Test DEAL_II_HAVE_FP_EXCEPTIONS - Success
+-- Performing Test DEAL_II_HAVE_COMPLEX_OPERATOR_OVERLOADS
+-- Performing Test DEAL_II_HAVE_COMPLEX_OPERATOR_OVERLOADS - Failed
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/checks/check_02_system_features.cmake
+-- Looking for C++ include sys/resource.h
+-- Looking for C++ include sys/resource.h - found
+-- Looking for C++ include sys/time.h
+-- Looking for C++ include sys/time.h - found
+-- Looking for C++ include sys/times.h
+-- Looking for C++ include sys/times.h - found
+-- Looking for times
+-- Looking for times - found
+-- Looking for C++ include sys/types.h
+-- Looking for C++ include sys/types.h - found
+-- Looking for C++ include unistd.h
+-- Looking for C++ include unistd.h - found
+-- Looking for gethostname
+-- Looking for gethostname - found
+-- Looking for getpid
+-- Looking for getpid - found
+-- Performing Test m_LIBRARY
+-- Performing Test m_LIBRARY - Success
+-- Looking for jn
+-- Looking for jn - found
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/checks/check_03_compiler_bugs.cmake
+-- Performing Test DEAL_II_WRETURN_TYPE_CONST_QUALIFIER_BUG_OK
+-- Performing Test DEAL_II_WRETURN_TYPE_CONST_QUALIFIER_BUG_OK - Success
+-- Test successful, do not define DEAL_II_WRETURN_TYPE_CONST_QUALIFIER_BUG
+-- Performing Test DEAL_II_TEMPL_SPEC_FRIEND_BUG_OK
+-- Performing Test DEAL_II_TEMPL_SPEC_FRIEND_BUG_OK - Success
+-- Test successful, do not define DEAL_II_TEMPL_SPEC_FRIEND_BUG
+-- Performing Test DEAL_II_MEMBER_ARRAY_SPECIALIZATION_BUG_OK
+-- Performing Test DEAL_II_MEMBER_ARRAY_SPECIALIZATION_BUG_OK - Success
+-- Test successful, do not define DEAL_II_MEMBER_ARRAY_SPECIALIZATION_BUG
+-- Performing Test DEAL_II_MEMBER_VAR_SPECIALIZATION_BUG_OK
+-- Performing Test DEAL_II_MEMBER_VAR_SPECIALIZATION_BUG_OK - Success
+-- Test successful, do not define DEAL_II_MEMBER_VAR_SPECIALIZATION_BUG
+-- Performing Test DEAL_II_EXPLICIT_CONSTRUCTOR_BUG
+-- Performing Test DEAL_II_EXPLICIT_CONSTRUCTOR_BUG - Failed
+-- Performing Test DEAL_II_CONST_MEMBER_DEDUCTION_BUG_OK
+-- Performing Test DEAL_II_CONST_MEMBER_DEDUCTION_BUG_OK - Success
+-- Test successful, do not define DEAL_II_CONST_MEMBER_DEDUCTION_BUG
+-- Performing Test DEAL_II_TYPE_QUALIFIER_BUG_OK
+-- Performing Test DEAL_II_TYPE_QUALIFIER_BUG_OK - Success
+-- Test successful, do not define DEAL_II_TYPE_QUALIFIER_BUG
+-- Performing Test DEAL_II_BOOST_BIND_COMPILER_BUG_OK
+-- Performing Test DEAL_II_BOOST_BIND_COMPILER_BUG_OK - Failed
+-- Test unsuccessful, define DEAL_II_BOOST_BIND_COMPILER_BUG
+-- Performing Test DEAL_II_BIND_NO_CONST_OP_PARENTHESES_OK
+-- Performing Test DEAL_II_BIND_NO_CONST_OP_PARENTHESES_OK - Success
+-- Test successful, do not define DEAL_II_BIND_NO_CONST_OP_PARENTHESES
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/checks/check_03_generator_bugs.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_1_bzip2.cmake
+-- Could NOT find BZip2 (missing: BZIP2_LIBRARIES BZIP2_INCLUDE_DIR) 
+--   BZIP2_LIBRARIES: *** Required variable "_bzip2_libraries" set to NOTFOUND ***
+--   BZIP2_INCLUDE_DIRS: *** Required variable "BZIP2_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find BZIP2
+-- DEAL_II_WITH_BZIP2 has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_1_cuda.cmake
+-- DEAL_II_WITH_CUDA is set to off.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_1_lapack.cmake
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - not found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Could NOT find BLAS (missing: BLAS_LIBRARIES) 
+-- Could NOT find LAPACK (missing: LAPACK_LIBRARIES) 
+    Reason given by package: LAPACK could not be found because dependency BLAS could not be found.
+
+-- Performing Test gfortran_LIBRARY
+-- Performing Test gfortran_LIBRARY - Success
+-- Performing Test gcc_s_LIBRARY
+-- Performing Test gcc_s_LIBRARY - Success
+-- Performing Test gcc_LIBRARY
+-- Performing Test gcc_LIBRARY - Success
+-- Performing Test quadmath_LIBRARY
+-- Performing Test quadmath_LIBRARY - Success
+-- Performing Test c_LIBRARY
+-- Performing Test c_LIBRARY - Success
+--   LAPACK_LIBRARIES: *** Required variable "_lapack_libraries" empty ***
+--   LAPACK_LINKER_FLAGS: 
+-- Could NOT find LAPACK
+-- DEAL_II_WITH_LAPACK has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_1_mpi.cmake
+-- DEAL_II_WITH_MPI is set to off.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_1_threads.cmake
+-- TBB_LIBRARY not found! Call:
+--     FIND_LIBRARY(TBB_LIBRARY NAMES tbb HINTS PATH_SUFFIXES lib lib64 lib)
+-- TBB_DEBUG_LIBRARY not found! Call:
+--     FIND_LIBRARY(TBB_DEBUG_LIBRARY NAMES tbb_debug HINTS PATH_SUFFIXES lib lib64 lib)
+-- TBB_INCLUDE_DIR not found! Call:
+--     FIND_PATH(TBB_INCLUDE_DIR tbb/tbb_stddef.h HINTS PATH_SUFFIXES include include/tbb tbb)
+--   TBB_LIBRARIES: *** Required variable "TBB_LIBRARY" set to NOTFOUND ***
+--   TBB_INCLUDE_DIRS: *** Required variable "TBB_INCLUDE_DIR" set to NOTFOUND ***
+--   TBB_USER_INCLUDE_DIRS: *** Required variable "TBB_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find TBB
+-- DEAL_II_WITH_THREADS has unmet external dependencies.
+-- Performing Test DEAL_II_HAVE_MT_POSIX_BARRIERS
+-- Performing Test DEAL_II_HAVE_MT_POSIX_BARRIERS - Success
+-- Performing Test DEAL_II_HAVE_FLAG_Wparentheses
+-- Performing Test DEAL_II_HAVE_FLAG_Wparentheses - Success
+-- DEAL_II_WITH_THREADS successfully set up with bundled packages.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_1_zlib.cmake
+-- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.3")  
+--   ZLIB_VERSION: 1.3
+--   ZLIB_LIBRARIES: /usr/lib/x86_64-linux-gnu/libz.so
+--   ZLIB_INCLUDE_DIRS: /usr/include
+-- Found ZLIB
+-- DEAL_II_WITH_ZLIB successfully set up with external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_2_metis.cmake
+-- METIS_LIBRARY not found! Call:
+--     FIND_LIBRARY(METIS_LIBRARY NAMES metis HINTS PATH_SUFFIXES lib lib64 lib build/Linux-x86_64/libmetis)
+-- METIS_INCLUDE_DIR not found! Call:
+--     FIND_PATH(METIS_INCLUDE_DIR metis.h HINTS PATH_SUFFIXES metis include/metis include)
+--   METIS_LIBRARIES: *** Required variable "METIS_LIBRARY" set to NOTFOUND ***
+--   METIS_INCLUDE_DIRS: *** Required variable "METIS_INCLUDE_DIR" set to NOTFOUND ***
+--   METIS_USER_INCLUDE_DIRS: *** Required variable "METIS_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find METIS
+-- DEAL_II_WITH_METIS has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_2_trilinos.cmake
+-- EPETRA_CONFIG_H not found! Call:
+--     FIND_FILE(EPETRA_CONFIG_H Epetra_config.h HINTS NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_CMAKE_FIND_ROOT_PATH)
+-- SACADO_CONFIG_H not found! Call:
+--     FIND_FILE(SACADO_CONFIG_H Sacado_config.h HINTS NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_CMAKE_FIND_ROOT_PATH)
+-- SACADO_CMATH_HPP not found! Call:
+--     FIND_FILE(SACADO_CMATH_HPP Sacado_cmath.hpp HINTS NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_CMAKE_FIND_ROOT_PATH)
+--   TRILINOS_LIBRARIES: 
+--   TRILINOS_INCLUDE_DIRS: *** Required variable "Trilinos_INCLUDE_DIRS" empty ***
+--   TRILINOS_USER_INCLUDE_DIRS: *** Required variable "Trilinos_INCLUDE_DIRS" empty ***
+-- Could NOT find TRILINOS
+-- DEAL_II_WITH_TRILINOS has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_2_umfpack.cmake
+-- DEAL_II_WITH_UMFPACK has unmet configuration requirements: DEAL_II_WITH_LAPACK has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_3_petsc.cmake
+-- PETSC_LIBRARY not found! Call:
+--     FIND_LIBRARY(PETSC_LIBRARY NAMES petsc HINTS / PATH_SUFFIXES lib lib64 lib)
+-- PETSC_INCLUDE_DIR_ARCH not found! Call:
+--     FIND_PATH(PETSC_INCLUDE_DIR_ARCH petscconf.h HINTS / PATH_SUFFIXES petsc include include/petsc)
+-- PETSC_INCLUDE_DIR_COMMON not found! Call:
+--     FIND_PATH(PETSC_INCLUDE_DIR_COMMON petscversion.h HINTS / PATH_SUFFIXES petsc include include/petsc)
+-- PETSC_PETSCVARIABLES not found! Call:
+--     FIND_FILE(PETSC_PETSCVARIABLES NAMES petscvariables HINTS / PATH_SUFFIXES conf lib/petsc/conf)
+--   PETSC_LIBRARIES: *** Required variable "PETSC_LIBRARY" set to NOTFOUND ***
+--   PETSC_INCLUDE_DIRS: *** Required variable "PETSC_INCLUDE_DIR_COMMON" set to NOTFOUND ***
+--   PETSC_USER_INCLUDE_DIRS: *** Required variable "PETSC_INCLUDE_DIR_COMMON" set to NOTFOUND ***
+-- Could NOT find PETSC
+-- DEAL_II_WITH_PETSC has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_arpack.cmake
+-- DEAL_II_WITH_ARPACK has unmet configuration requirements: DEAL_II_WITH_LAPACK has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_boost.cmake
+-- Could NOT find Boost (missing: Boost_INCLUDE_DIR iostreams serialization system thread) (Required is at least version "1.56")
+--   BOOST_LIBRARIES: *** Required variable "Boost_LIBRARIES" empty ***
+--   BOOST_INCLUDE_DIRS: *** Required variable "Boost_INCLUDE_DIRS" set to NOTFOUND ***
+--   BOOST_USER_INCLUDE_DIRS: *** Required variable "Boost_INCLUDE_DIRS" set to NOTFOUND ***
+-- Could NOT find BOOST
+-- DEAL_II_WITH_BOOST has unmet external dependencies.
+-- Performing Test rt_LIBRARY
+-- Performing Test rt_LIBRARY - Success
+-- DEAL_II_WITH_BOOST successfully set up with bundled packages.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_gsl.cmake
+-- GSL_LIBRARY not found! Call:
+--     FIND_LIBRARY(GSL_LIBRARY NAMES gsl HINTS PATH_SUFFIXES lib lib64 lib)
+-- GSL_CBLAS_LIBRARY not found! Call:
+--     FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES gslcblas cblas refcblas HINTS PATH_SUFFIXES lib lib64 lib)
+-- GSL_INCLUDE_DIR not found! Call:
+--     FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_version.h HINTS PATH_SUFFIXES include)
+--   GSL_LIBRARIES: *** Required variable "GSL_LIBRARY" set to NOTFOUND ***
+--   GSL_INCLUDE_DIRS: *** Required variable "GSL_INCLUDE_DIR" set to NOTFOUND ***
+--   GSL_USER_INCLUDE_DIRS: *** Required variable "GSL_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find GSL
+-- DEAL_II_WITH_GSL has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_hdf5.cmake
+-- HDF5_INCLUDE_DIR not found! Call:
+--     FIND_PATH(HDF5_INCLUDE_DIR hdf5.h HINTS PATH_SUFFIXES hdf5 hdf5/include include/hdf5 include)
+-- HDF5_LIBRARY not found! Call:
+--     FIND_LIBRARY(HDF5_LIBRARY NAMES hdf5 HINTS PATH_SUFFIXES hdf5/lib lib lib64 lib)
+-- HDF5_HL_LIBRARY not found! Call:
+--     FIND_LIBRARY(HDF5_HL_LIBRARY NAMES hdf5_hl HINTS PATH_SUFFIXES lib lib64 lib)
+-- HDF5_PUBCONF not found! Call:
+--     FIND_FILE(HDF5_PUBCONF NAMES H5pubconf.h H5pubconf-64.h HINTS HDF5_INCLUDE_DIR-NOTFOUND PATH_SUFFIXES hdf5 hdf5/include include/hdf5 include)
+--   HDF5_LIBRARIES: *** Required variable "HDF5_HL_LIBRARY" set to NOTFOUND ***
+--   HDF5_INCLUDE_DIRS: *** Required variable "HDF5_INCLUDE_DIR" set to NOTFOUND ***
+--   HDF5_USER_INCLUDE_DIRS: *** Required variable "HDF5_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find HDF5
+-- DEAL_II_WITH_HDF5 has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_muparser.cmake
+-- MUPARSER_LIBRARY not found! Call:
+--     FIND_LIBRARY(MUPARSER_LIBRARY NAMES muparser muparserd HINTS PATH_SUFFIXES lib lib64 lib)
+-- MUPARSER_INCLUDE_DIR not found! Call:
+--     FIND_PATH(MUPARSER_INCLUDE_DIR muParserDef.h HINTS PATH_SUFFIXES include)
+--   MUPARSER_LIBRARIES: *** Required variable "MUPARSER_LIBRARY" set to NOTFOUND ***
+--   MUPARSER_INCLUDE_DIRS: *** Required variable "MUPARSER_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find MUPARSER
+-- DEAL_II_WITH_MUPARSER has unmet external dependencies.
+-- DEAL_II_WITH_MUPARSER successfully set up with bundled packages.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_netcdf.cmake
+-- NETCDF_INCLUDE_DIR not found! Call:
+--     FIND_PATH(NETCDF_INCLUDE_DIR netcdfcpp.h HINTS PATH_SUFFIXES netcdf include)
+-- NETCDF_CPLUSPLUS_LIBRARY not found! Call:
+--     FIND_LIBRARY(NETCDF_CPLUSPLUS_LIBRARY NAMES netcdf_c++ netcdf_cpp HINTS PATH_SUFFIXES lib lib64 lib)
+-- NETCDF_C_LIBRARY not found! Call:
+--     FIND_LIBRARY(NETCDF_C_LIBRARY NAMES netcdf HINTS PATH_SUFFIXES lib lib64 lib)
+--   NETCDF_LIBRARIES: *** Required variable "NETCDF_CPLUSPLUS_LIBRARY" set to NOTFOUND ***
+--   NETCDF_INCLUDE_DIRS: *** Required variable "NETCDF_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find NETCDF
+-- DEAL_II_WITH_NETCDF has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_opencascade.cmake
+-- OPENCASCADE_INCLUDE_DIR not found! Call:
+--     FIND_PATH(OPENCASCADE_INCLUDE_DIR Standard_Version.hxx HINTS PATH_SUFFIXES include include/oce inc)
+-- OPENCASCADE_TKBO not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKBO NAMES TKBO HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKBool not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKBool NAMES TKBool HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKBRep not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKBRep NAMES TKBRep HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKernel not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKernel NAMES TKernel HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKFeat not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKFeat NAMES TKFeat HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKFillet not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKFillet NAMES TKFillet HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKG2d not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKG2d NAMES TKG2d HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKG3d not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKG3d NAMES TKG3d HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKGeomAlgo not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKGeomAlgo NAMES TKGeomAlgo HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKGeomBase not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKGeomBase NAMES TKGeomBase HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKHLR not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKHLR NAMES TKHLR HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKIGES not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKIGES NAMES TKIGES HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKMath not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKMath NAMES TKMath HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKMesh not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKMesh NAMES TKMesh HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKOffset not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKOffset NAMES TKOffset HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKPrim not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKPrim NAMES TKPrim HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKShHealing not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKShHealing NAMES TKShHealing HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTEP not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTEP NAMES TKSTEP HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTEPAttr not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTEPAttr NAMES TKSTEPAttr HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTEPBase not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTEPBase NAMES TKSTEPBase HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKSTL not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKSTL NAMES TKSTL HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKTopAlgo not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKTopAlgo NAMES TKTopAlgo HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+-- OPENCASCADE_TKXSBase not found! Call:
+--     FIND_LIBRARY(OPENCASCADE_TKXSBase NAMES TKXSBase HINTS PATH_SUFFIXES lib lib64 lib mac64/clang/lib mac32/clang/lib lin64/gcc/lib lin32/gcc/lib)
+--   OPENCASCADE_LIBRARIES: *** Required variable "OPENCASCADE_TKBO" set to NOTFOUND ***
+--   OPENCASCADE_INCLUDE_DIRS: *** Required variable "OPENCASCADE_INCLUDE_DIR" set to NOTFOUND ***
+--   OPENCASCADE_USER_INCLUDE_DIRS: *** Required variable "OPENCASCADE_INCLUDE_DIR" set to NOTFOUND ***
+-- Could NOT find OPENCASCADE
+-- DEAL_II_WITH_OPENCASCADE has unmet external dependencies.
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_p4est.cmake
+-- DEAL_II_WITH_P4EST has unmet configuration requirements: DEAL_II_WITH_MPI has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/configure/configure_slepc.cmake
+-- DEAL_II_WITH_SLEPC has unmet configuration requirements: DEAL_II_WITH_PETSC has to be set to "ON".
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_cpack.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_custom_targets.cmake
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_finalize.cmake
+-- Performing Test DEAL_II_HAVE_USABLE_FLAGS_RELEASE
+-- Performing Test DEAL_II_HAVE_USABLE_FLAGS_RELEASE - Success
+-- 
+-- Include /tmp/c3_a1c_fix/EXT-dealii-01/fixed-src/cmake/setup_write_config.cmake
+-- Query git repository information.
+-- Found Git: /usr/bin/git (found version "2.43.0") 
+-- 
+-- Configuring done. Proceed to target definitions now.
+-- Setting up bundled features
+-- BOOST::Iostreams will not support bz2'ed streams because libbz2 or its header files could not be found
+-- Performing Test DEAL_II_HAVE_FLAG_Wnested_anon_types
+-- Performing Test DEAL_II_HAVE_FLAG_Wnested_anon_types - Failed
+-- Setting up bundled features - Done
+-- Setting up library
+-- Setting up library - Done
+-- Setting up project configuration
+-- Setting up project configuration - Done
+-- Setting up quick_tests in RELEASE mode
+-- Setting up quick_tests in RELEASE mode - Done
+-- Setting up testsuite
+-- Setting up testsuite - Done
+-- Configuring done (7.9s)
+-- Generating done (0.1s)
+-- Build files have been written to: /tmp/c3_a1c_fix/EXT-dealii-01/build-fixed
+
+[  1%] Building CXX object cmake/scripts/CMakeFiles/expand_instantiations_exe.dir/expand_instantiations.cc.o
+[  1%] Built target doxygen_headers
+[  2%] Building CXX object bundled/boost-1.62.0/libs/system/src/CMakeFiles/obj_boost_system_release.dir/error_code.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/archive_exception.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_archive.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/file_descriptor.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_iarchive.cpp.o
+[  3%] Built target obj_boost_system_release
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_iserializer.cpp.o
+[  3%] Building CXX object bundled/tbb41_20130401oss/src/CMakeFiles/obj_tbb_release.dir/rml/client/rml_tbb.cpp.o
+[  3%] Building CXX object bundled/tbb41_20130401oss/src/CMakeFiles/obj_tbb_release.dir/tbb/arena.cpp.o
+[  3%] Linking CXX executable ../../bin/expand_instantiations
+[  3%] Built target expand_instantiations_exe
+[  3%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParserBase.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/gzip.cpp.o
+[  3%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_oarchive.cpp.o
+[  3%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParserBytecode.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_oserializer.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_pointer_iserializer.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/mapped_file.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_pointer_oserializer.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_serializer_map.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/iostreams/src/CMakeFiles/obj_boost_iostreams_release.dir/zlib.cpp.o
+[  4%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_iprimitive.cpp.o
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_oprimitive.cpp.o
+[  5%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParserCallback.cpp.o
+[  5%] Built target obj_boost_iostreams_release
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_wiprimitive.cpp.o
+[  5%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_text_woprimitive.cpp.o
+[  5%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParser.cpp.o
+[  6%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParserError.cpp.o
+[  6%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/basic_xml_archive.cpp.o
+[  6%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParserInt.cpp.o
+[  6%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_iarchive.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_oarchive.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_wiarchive.cpp.o
+[  7%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParserTest.cpp.o
+[  7%] Building CXX object bundled/muparser_v2_2_4/CMakeFiles/obj_muparser_release.dir/src/muParserTokenReader.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/binary_woarchive.cpp.o
+[  7%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/codecvt_null.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/extended_type_info.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/extended_type_info_no_rtti.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/extended_type_info_typeid.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/polymorphic_iarchive.cpp.o
+[  8%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/polymorphic_oarchive.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/singleton.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/stl_port.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_iarchive.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_oarchive.cpp.o
+[  9%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_wiarchive.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/text_woarchive.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/utf8_codecvt_facet.cpp.o
+[ 10%] Built target obj_muparser_release
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/void_cast.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_archive_exception.cpp.o
+[ 10%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_grammar.cpp.o
+[ 11%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_iarchive.cpp.o
+[ 11%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_oarchive.cpp.o
+[ 11%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_wgrammar.cpp.o
+[ 11%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_wiarchive.cpp.o
+[ 11%] Building CXX object bundled/boost-1.62.0/libs/serialization/src/CMakeFiles/obj_boost_serialization_release.dir/xml_woarchive.cpp.o
+[ 11%] Built target obj_boost_serialization_release
+

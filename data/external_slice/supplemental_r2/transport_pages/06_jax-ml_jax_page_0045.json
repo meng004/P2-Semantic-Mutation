@@ -1,0 +1,2143 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Somehow JAX can't detect nans coming from operations on complex numbers:\nimport jax.numpy as jnp\n\ndef nan_with_complex(x):\n    return x * 0 / 0\n\nprint(nan_with_complex(jnp.array([42.j])))\n\nJAX_DEBUG_NANS=true python script.py\n\n[nan+nanj]",
+            "closedAt": "2020-04-06T12:15:40Z",
+            "createdAt": "2020-04-06T12:14:31Z",
+            "id": "MDU6SXNzdWU1OTUwNjQ4MTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2613,
+            "state": "CLOSED",
+            "title": "jax_debug_nans doesn't work with complex numbers",
+            "updatedAt": "2020-04-06T12:15:41Z",
+            "url": "https://github.com/jax-ml/jax/issues/2613"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Running with flag --jax_debug_nans:\nWith this this, I get no error (but I do get nans):\n  @jax.jit\n  def fn(x):\n    return (x * 0.) / jnp.zeros_like(x)\n  print(fn(1j * jnp.ones([2, 3])))\n\nbut with this, I get an error (as expected):\n  @jax.jit\n  def fn(x):\n    return (x * 0.) / jnp.zeros_like(x)\n  print(fn(jnp.ones([2, 3])))\n\nCould we add support for nan detection on complex numbers?",
+            "closedAt": "2020-04-06T18:48:43Z",
+            "createdAt": "2020-04-06T12:11:11Z",
+            "id": "MDU6SXNzdWU1OTUwNjI0OTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2612,
+            "state": "CLOSED",
+            "title": "jax_debug_nans does not work with complex numbers",
+            "updatedAt": "2020-04-06T18:48:43Z",
+            "url": "https://github.com/jax-ml/jax/issues/2612"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I ran the following script:\nfrom functools import partial\nimport jax\nimport jax.numpy as jnp\n\n\n@partial(jax.pmap, axis_name='i')\ndef nan_with_pmap(x):\n  return jnp.log(-x)\n\n\nprint(nan_with_pmap(jnp.array([42.])))\n\nusing\nJAX_DEBUG_NANS=true python script.py\n\nI expected it to crash at the point where the nan was produced, but instead the script prints:\n[nan]\n\nWould it be possible to add nan detection to pmap as well?",
+            "closedAt": "2026-03-31T14:00:25Z",
+            "createdAt": "2020-04-06T10:32:44Z",
+            "id": "MDU6SXNzdWU1OTQ5OTc0MDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2611,
+            "state": "CLOSED",
+            "title": "jax_debug_nans doesn't work with pmap",
+            "updatedAt": "2026-03-31T14:00:25Z",
+            "url": "https://github.com/jax-ml/jax/issues/2611"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This is my first issue post, so sorry if I say anything dumb! I'm really enjoying using Jax, it suits my current project perfectly and the performance is great.\nI'm not sure if this is a bug, but I've encountered prohibitively slow compilation when reverse-mode differentiating through a lax.scan, compared to jacfwd. The run-times after compilation are fast and make sense though (roughly equal between jacfwd and jacrev), so I'm not sure if it's an issue with XLA. Could it be an issue with ndtri?\nI've tried to illustrate it with a simplified self-contained version of my code below, but it's much worse in my actual code.\nimport jax.numpy as np\nfrom jax import grad, jit, vmap,jacfwd,jacrev\nfrom jax.scipy.stats import norm\nfrom jax.scipy.special import ndtri,erfc\nfrom jax.lax import scan\n\n@jit #Calculate normal copula cdf\ndef norm_copula_distribution(u,v,rho):\n    pu = ndtri(u)\n    pv = ndtri(v)\n    z = (pu - rho*pv)/np.sqrt(1- rho**2)\n    cop_dist = erfc(-z / np.sqrt(2)) / 2\n    return cop_dist\n\n@jit\ndef lax_f(carry,rng):\n    cop_dist,rho = carry\n    u = cop_dist\n    v = 0.9*cop_dist\n    cop_dist = norm_copula_distribution(u,v,rho)\n    return (cop_dist,rho),rng\n\n@jit\ndef lax_f_scan(carry,rng):\n    return scan(lax_f,carry,rng)\n\n@jit\ndef test(cop_dist,rho):\n    rng = np.array([0])\n    (cop_dist,rho),rng = lax_f_scan((cop_dist,rho),rng)\n    \n    #this is much faster to compile\n    #for i in range(1): \n    #    (cop_dist,rho),_ = lax_f((cop_dist,rho),i)\n    return cop_dist\n\ngrad_rev = jit(jacrev(test,(1)))\ngrad_fwd = jit(jacfwd(test,(1)))\nWith lax.scan, the compilation (first run) time for jacrev is much slower, shown below. It's even more noticeably in my main code (18s for jacfwd vs 95s for jacrev for one example).\ncop_dist =0.7\nrho = 0.95\n\n%time print(test(cop_dist,rho).block_until_ready()) 299 ms\n%time print(grad_fwd(cop_dist,rho).block_until_ready()) 1.07 s\n%time print(grad_rev(cop_dist,rho).block_until_ready()) 5.76 s\nIf I use a regular Python loop instead, commented out above, the compilation times are reasonable and equal between the two modes:\ncop_dist =0.7\nrho = 0.95\n\n%time print(test(cop_dist,rho).block_until_ready()) 157 ms\n%time print(grad_fwd(cop_dist,rho).block_until_ready()) 185 ms\n%time print(grad_rev(cop_dist,rho).block_until_ready()) 198 ms\nThese results are on CPU btw. I've tried on a GPU and it's not as bad but still noticeably slower.\nWould really appreciate some help with this! Thanks :)",
+            "closedAt": "2022-09-24T01:10:32Z",
+            "createdAt": "2020-04-05T20:41:26Z",
+            "id": "MDU6SXNzdWU1OTQ2MzM3NDM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "P1 (soon)"
+                },
+                {
+                  "name": "NVIDIA GPU"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 2609,
+            "state": "CLOSED",
+            "title": "grad with lax.scan causing slow compilation",
+            "updatedAt": "2022-09-24T01:10:32Z",
+            "url": "https://github.com/jax-ml/jax/issues/2609"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Description\nAt the moment, only the \"linear\" interpolation method from numpy.quantile and by extension numpy.percentile are implemented (as noted in Issue #70)\nhttps://github.com/google/jax/blob/1cf708ea77fae0fc1418e0b944f0115646f7f2ec/jax/numpy/lax_numpy.py#L3446-L3447\nIt would be useful to also have the \"nearest\" interpolation method, along with the others (\"lower\", \"higher\", \"midpoint\") implemented as well.\ncc @lukasheinrich @kratsg",
+            "closedAt": "2020-04-07T01:40:11Z",
+            "createdAt": "2020-04-05T05:41:10Z",
+            "id": "MDU6SXNzdWU1OTQyNzM2MDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "contributions welcome"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2607,
+            "state": "CLOSED",
+            "title": "Add all interpolation methods to quantile (and percentile)",
+            "updatedAt": "2020-04-07T01:40:11Z",
+            "url": "https://github.com/jax-ml/jax/issues/2607"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi There,\nI've just done an install of jax on a fresh install of Ubuntu 18.04 LTS --- as vanilla as possible.\nI followed the installation instructions for CPU+GPU support.\nWhen I try to import jax in python I get the following:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPython 3.6.9 (default, Nov  7 2019, 10:44:02)\nType \"copyright\", \"credits\" or \"license\" for more information.\nIPython 5.5.0 -- An enhanced Interactive Python.\n?         -> Introduction and overview of IPython's features.\n%quickref -> Quick reference.\nhelp      -> Python's own help system.\nobject?   -> Details about 'object', use 'object??' for extra details.\nIn [1]: import jax\nRuntimeError                              Traceback (most recent call last)\nRuntimeError: module compiled against API version 0xc but this version of numpy is 0xb\nRuntimeError                              Traceback (most recent call last)\nRuntimeError: module compiled against API version 0xc but this version of numpy is 0xb\nImportError                               Traceback (most recent call last)\n in ()\n----> 1 import jax\n/home/case/.local/lib/python3.6/site-packages/jax/init.py in ()\n17\n18 from jax.version import version\n---> 19 from jax.api import *\n20 from jax import nn\n21 from jax import random\n/home/case/.local/lib/python3.6/site-packages/jax/api.py in ()\n35 from contextlib import contextmanager\n36\n---> 37 from . import core\n38 from . import linear_util as lu\n39 from . import ad_util\n/home/case/.local/lib/python3.6/site-packages/jax/core.py in ()\n28 import numpy as onp\n29\n---> 30 from . import dtypes\n31 from . import linear_util as lu\n32\n/home/case/.local/lib/python3.6/site-packages/jax/dtypes.py in ()\n29 from . import util\n30 from .config import flags\n---> 31 from .lib import xla_client\n32\n33 FLAGS = flags.FLAGS\n/home/case/.local/lib/python3.6/site-packages/jax/lib/init.py in ()\n50 except:\n51   tpu_client = None\n---> 52 from jaxlib import xla_client\n53 from jaxlib import lapack\n54\n/home/case/.local/lib/python3.6/site-packages/jaxlib/xla_client.py in ()\n35 # and TensorFlow may fail with duplicate protocol buffer message definitions.\n36\n---> 37 from . import xla_extension as _xla\n38 from .xla_extension import ops\n39\nImportError: Unable to initialize Numpy API\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nI've tried searching for this issue and looking through these archives, but can't find anyone with this problem.\nAny idea where I should start with trying to figure out the install?\nAs mentioned, I tried to keep everything as vanilla as possible: fresh Ubuntu 18.04 install, installed nvidia drivers with no issue, installed cuda 10.1 with no issue, the install instructions appeared to worked for jax.\nSo it seems quite possible that others may run into the issue.\nAny help appreciated.",
+            "closedAt": "2020-04-05T15:38:04Z",
+            "createdAt": "2020-04-04T22:43:43Z",
+            "id": "MDU6SXNzdWU1OTQxNDE1ODc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2606,
+            "state": "CLOSED",
+            "title": "import jax fails on numpy version issue.",
+            "updatedAt": "2020-04-05T15:38:04Z",
+            "url": "https://github.com/jax-ml/jax/issues/2606"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI implemented a small NN in Jax to predict simple functions, like polynomials or trigonometric functions. I took the inspiration for the design of the NN from the colab. However, my NN always predicts the average of the train_labels (see figure below the code snippet). I have a quite big NN - [1, 17, 17, 1] - to learn e.g. f(x) = x^2. I don't have much experience with NN but I heard of the universial function approximation theorem and therefore thought this regression problem shouldn't be a big deal. I wasn't sure if this is the right format where one would post this question - but as it's related to jax I thought I give it a try (instead of using stackoverflow).\n\n\nNetwork architecture is [1, 17, 17, 1] (different architectures with the same amount of parameter failed either)\n\n\nActivation = ReLu (but others didn't work either)\n\n\nMy code:\ndef random_layer_params(m, n, key, scale=1e-2):\n  w_key, b_key = random.split(key)\n  return scale * random.normal(w_key, (n, m)), scale * random.normal(b_key, (n,))\n\ndef init_network_params(sizes, key):\n  keys = random.split(key, len(sizes))\n  return [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)]\n\nlayer_sizes = [1, 17, 17, 1]\nparams = init_network_params(layer_sizes, random.PRNGKey(0))\ninitial_params = params\nstep_size = 0.001\n\ntraining_generator = jnp.linspace(0, 2*jnp.pi, num=50)\ntrain_values = jnp.array(training_generator)\ntrain_labels = [x**2 for x in train_values]\ntrain_labels = jnp.array(train_labels)\ntrain_values = jnp.array(training_generator).reshape(-1,1)\n\ntest_generator = jnp.linspace(0, 2*jnp.pi, num=500)\ntest_values = jnp.array(test_generator)\ntest_labels = [x**2 for x in test_values]\ntest_labels = jnp.array(test_labels)\ntest_values = jnp.array(test_generator).reshape(-1,1)\n\ndef relu(x):\n    return jnp.maximum(0, x)\n\ndef predict(params, inputs):\n    activations = inputs\n    for w, b in params[:-1]:\n        outputs = jnp.dot(w, activations) + b\n        activations = relu(outputs)\n\n    final_w, final_b = params[-1]\n    result = jnp.dot(final_w, activations) + final_b\n    return result\n\nbatched_predict = vmap(predict, in_axes=(None, 0))\n\ndef loss(params, train_values, train_labels):\n    preds = batched_predict(params, train_values)[:, 0]\n    return jnp.sum(jnp.square(preds - train_labels))\n\n#@jit\ndef update(params, x, y):\n    grads = grad(loss)(params, x, y)\n    return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]\n\nfor i in range(10000):\n    params = update(params, train_values, train_labels)",
+            "closedAt": "2020-04-05T06:17:23Z",
+            "createdAt": "2020-04-04T20:33:31Z",
+            "id": "MDU6SXNzdWU1OTQwNzkyNjY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2605,
+            "state": "CLOSED",
+            "title": "Jax Neural Network Regression Always Predicts the Mean",
+            "updatedAt": "2020-04-05T06:17:50Z",
+            "url": "https://github.com/jax-ml/jax/issues/2605"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm running on 824ac86\nimport jax\nfrom jax import vmap\nfrom jax.experimental import ode\n\nwith jax.disable_jit():\n  t = jax.numpy.array([0.0, 1.0])\n  x0_eval = jax.numpy.zeros((5, 2))\n  vmap(lambda x0: ode.odeint(lambda x, _t: x, x0, t))(x0_eval)\nwithout the with jax.disable_jit(): works just fine but with it we get an error:\nTraceback (most recent call last):\n  File \"/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py\", line 193, in _run_module_as_main\n    \"__main__\", mod_spec)\n  File \"/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py\", line 85, in _run_code\n    exec(code, run_globals)\n  File \"/Users/skainswo/dev/research/research/odecontrol/jaxbug_disable_jit.py\", line 9, in <module>\n    vmap(lambda x0: ode.odeint(lambda x, _t: x, x0, t))(x0_eval)\n  File \"/Users/skainswo/dev/jax/jax/api.py\", line 724, in batched_fun\n    lambda: _flatten_axes(out_tree(), out_axes))\n  File \"/Users/skainswo/dev/jax/jax/interpreters/batching.py\", line 34, in batch\n    return batched_fun.call_wrapped(*in_vals)\n  File \"/Users/skainswo/dev/jax/jax/linear_util.py\", line 150, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/Users/skainswo/dev/research/research/odecontrol/jaxbug_disable_jit.py\", line 9, in <lambda>\n    vmap(lambda x0: ode.odeint(lambda x, _t: x, x0, t))(x0_eval)\n  File \"/Users/skainswo/dev/jax/jax/experimental/ode.py\", line 158, in odeint\n    return _odeint_wrapper(func, rtol, atol, mxstep, y0, t, *args)\n  File \"/Users/skainswo/dev/jax/jax/api.py\", line 135, in f_jitted\n    return fun(*args, **kwargs)\n  File \"/Users/skainswo/dev/jax/jax/experimental/ode.py\", line 164, in _odeint_wrapper\n    out = _odeint(func, rtol, atol, mxstep, y0, ts, *args)\n  File \"/Users/skainswo/dev/jax/jax/custom_derivatives.py\", line 456, in __call__\n    *args_flat, out_trees=out_trees)\n  File \"/Users/skainswo/dev/jax/jax/custom_derivatives.py\", line 504, in _custom_vjp_call_bind\n    out_trees=out_trees)\n  File \"/Users/skainswo/dev/jax/jax/interpreters/batching.py\", line 189, in process_custom_vjp_call\n    out_vals = prim.bind(fun, fwd, bwd, *in_vals, out_trees=out_trees)\n  File \"/Users/skainswo/dev/jax/jax/custom_derivatives.py\", line 500, in _custom_vjp_call_bind\n    outs = prim.impl(fun, fwd, bwd, *args, out_trees=out_trees)\n  File \"/Users/skainswo/dev/jax/jax/custom_derivatives.py\", line 510, in _custom_vjp_call_impl\n    return fun.call_wrapped(*args)\n  File \"/Users/skainswo/dev/jax/jax/linear_util.py\", line 150, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/Users/skainswo/dev/jax/jax/experimental/ode.py\", line 199, in _odeint\n    _, ys = lax.scan(scan_fun, init_carry, ts[1:])\n  File \"/Users/skainswo/dev/jax/jax/lax/lax_control_flow.py\", line 838, in scan\n    carry, y = f(carry, tree_unflatten(xs_tree, xs_slice))\n  File \"/Users/skainswo/dev/jax/jax/experimental/ode.py\", line 189, in scan_fun\n    _, *carry = lax.while_loop(cond_fun, body_fun, [0] + carry)\n  File \"/Users/skainswo/dev/jax/jax/lax/lax_control_flow.py\", line 221, in while_loop\n    while cond_fun(val):\n  File \"/Users/skainswo/dev/jax/jax/core.py\", line 421, in __bool__\n    def __bool__(self): return self.aval._bool(self)\n  File \"/Users/skainswo/dev/jax/jax/core.py\", line 709, in error\n    raise TypeError(concretization_err_msg(fun, context))\nTypeError: Abstract value passed to `bool`, which requires a concrete value. The function to be transformed can't be traced at the required level of abstraction. If using `jit`, try using `static_argnums` or applying `jit` to smaller subfunctions instead.",
+            "closedAt": "2020-05-20T01:14:11Z",
+            "createdAt": "2020-04-03T20:06:30Z",
+            "id": "MDU6SXNzdWU1OTM2MTE5MTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2598,
+            "state": "CLOSED",
+            "title": "working jit code, but jax.disable_jit() produces an error",
+            "updatedAt": "2020-05-20T01:14:11Z",
+            "url": "https://github.com/jax-ml/jax/issues/2598"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi JAX team,\nI'm interested in implementing efficient stratified resampling in JAX. This is a technique for variance reduction in sequential monte carlo algorithms (see section 2.2.1 in Naesseth, Lindsten, and Schön \"Elements of Sequential Monte Carlo\").\nThe algorithm provided looks like this\n# w.shape = (N, ) \n# x.shape = (N, )\n# assert np.sum(w) = 1\ndef stratified_resampling(key, w, x) :\n  N = w.shape[0]\n  u = (np.arange(N) + jax.random.uniform(key, (N, )) / N\n  bins = np.cumsum(w)\n  return x[np.digitize(u, bins)]\nalthough I'm also considering a version that doesn't actually do the shuffling in the last step (saving it for a \"decoding\" process later on which doesn't particularly need to be fast.\nThe immediate issue is that np.digitize is not implemented in JAX. As it were, I don't actually need the gradient for it, but as it's in the hot path and defeats the tracer it's causing some real pain. Even more ideally, I'd like to have something like the interface to jax.random.categorical where I can just use unnormalized logits.\nHow can I help implement at least tracing through np.digitize? Alternatively, is there a clever way of doing stratified resampling without using np.digitize?\nThanks",
+            "closedAt": "2020-05-09T12:36:10Z",
+            "createdAt": "2020-04-03T13:55:10Z",
+            "id": "MDU6SXNzdWU1OTM0MDAzNzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2595,
+            "state": "CLOSED",
+            "title": "Implement stratified resampling np.digitize in XLA",
+            "updatedAt": "2020-05-09T12:36:10Z",
+            "url": "https://github.com/jax-ml/jax/issues/2595"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nJax fails to find my GPU.\nfrom jax.lib import xla_bridge\nprint(xla_bridge.get_backend().platform)\n\ncpu\n/home/michelangelo/miniconda3/envs/nlp_36/\nlib/python3.7/site-packages/jax/lib/xla_bridge.py:123: UserWarning: No GPU/TPU found, falling back to CPU.\n  warnings.warn('No GPU/TPU found, falling back to CPU.')\n\nUsing the same environment and same IDE (Spyder) torch is able to find the GPU.\nimport torch\ntorch.cuda.is_available()\n\nTrue\n\nSince I am approaching Jax for the first time I am not able to debug this issue. I tried to look it up online without success.\nCould you provide some sort of guidance? I believe that this will also be useful for future reference.\nThe output of nvidia-smi is the following.\n+-----------------------------------------------------------------------------+\n| NVIDIA-SMI 435.21       Driver Version: 435.21       CUDA Version: 10.1     |\n|-------------------------------+----------------------+----------------------+\n| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |\n|===============================+======================+======================|\n|   0  GeForce GTX 1060    Off  | 00000000:01:00.0  On |                  N/A |\n| N/A   61C    P0    23W /  N/A |    396MiB /  6075MiB |      1%      Default |\n+-------------------------------+----------------------+----------------------+\n                                                                               \n+-----------------------------------------------------------------------------+\n| Processes:                                                       GPU Memory |\n|  GPU       PID   Type   Process name                             Usage      |\n|=============================================================================|\n|    0      1334      G   /usr/lib/xorg/Xorg                            26MiB |\n|    0      1374      G   /usr/bin/gnome-shell                          48MiB |\n|    0      2830      G   /usr/lib/xorg/Xorg                           175MiB |\n|    0      2995      G   /usr/bin/gnome-shell                         136MiB |\n|    0      5135      G   /usr/lib/firefox/firefox                       1MiB |\n|    0      6161      G   ...ngelo/miniconda3/envs/nlp_36/bin/python     2MiB |\n+-----------------------------------------------------------------------------+",
+            "closedAt": "2020-04-05T13:06:15Z",
+            "createdAt": "2020-04-03T10:26:18Z",
+            "id": "MDU6SXNzdWU1OTMyODA1NzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2594,
+            "state": "CLOSED",
+            "title": "GPU not found",
+            "updatedAt": "2020-04-05T13:06:15Z",
+            "url": "https://github.com/jax-ml/jax/issues/2594"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi JAX team,\nI'm attempting to translate an autograd algorithm to JAX, but am struggling to work around differentiating a call to np.digitize. In the original implementation, this is merely protected with a @notrace_primitive decorator—clearly the actual derivative contribution doesn't matter, which is good because digitize clearly won't have great derivatives.\nHow can I do something similar in JAX? Is there also a decorator? I could not find anything similar in the docs. I've considered adding a primitive to wrap digitize with some kind of no-op derivative, but I'm not sure how to do that either.\nAny help appreciated!",
+            "closedAt": "2020-04-03T05:53:38Z",
+            "createdAt": "2020-04-02T23:15:04Z",
+            "id": "MDU6SXNzdWU1OTI5NzM1Mzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2589,
+            "state": "CLOSED",
+            "title": "How to implement autograd's notrace_primitive in Jax",
+            "updatedAt": "2020-04-03T05:53:39Z",
+            "url": "https://github.com/jax-ml/jax/issues/2589"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "JAX on master (1bb9aaa) is perfectly content letting one write\nvmap(lambda y0: odeint(f, y0, timesteps))(y0_vec)\nBut it's not immediately clear to me what this means... Does this correspond to \"stacking\" the ODEs into one large one and then running the solver on that? That approach would have subtle behavior for adaptive time step choices and error tolerances. Or does it mean running them each in parallel but with their own adaptive time stepping? Or something else entirely?",
+            "closedAt": "2020-04-03T05:42:17Z",
+            "createdAt": "2020-04-02T22:39:19Z",
+            "id": "MDU6SXNzdWU1OTI5NjAwNjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2586,
+            "state": "CLOSED",
+            "title": "What does vmap(odeint) do?",
+            "updatedAt": "2020-04-03T08:29:37Z",
+            "url": "https://github.com/jax-ml/jax/issues/2586"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "#2512 caused some Google-internal tests to slow down. #2584 reverted the jnp.matmul part of that change, which fixed the issue. @hawkinsp feel free to close this if you think we can keep matmul as-is (I didn't look at the diff in detail).",
+            "closedAt": "2020-07-17T21:36:30Z",
+            "createdAt": "2020-04-02T20:26:06Z",
+            "id": "MDU6SXNzdWU1OTI5MDI5NDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2585,
+            "state": "CLOSED",
+            "title": "Investigate matmul slowdown caused by #2512",
+            "updatedAt": "2020-07-17T21:36:30Z",
+            "url": "https://github.com/jax-ml/jax/issues/2585"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We should consider changing the default of einsum to be optimized, as the search for the best contraction order will generally be faster than compilation anyway.\nThe contraction order calculation tends to only be slow when there are >10 tensors, which doesn't happen very often.",
+            "closedAt": "2020-04-22T00:18:59Z",
+            "createdAt": "2020-04-02T18:54:25Z",
+            "id": "MDU6SXNzdWU1OTI4NTQ4MTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2583,
+            "state": "CLOSED",
+            "title": "Consider setting optimize=True as default for einsum",
+            "updatedAt": "2020-04-22T00:18:59Z",
+            "url": "https://github.com/jax-ml/jax/issues/2583"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "On this commit (currently just a few commits behind head, none of which look relevant), I'm finding that\nimport jax\nimport jax.numpy as np\nimport collections\n\nclass F(collections.namedtuple(\"F\", [\"a\"])):\n  def __call__(self, x):\n    return jax.nn.relu(self.a) * x\n\n@jax.jit\ndef g(f, x):\n  return f(x)\n\njax.grad(F(2.0))(0.)  # works, returns DeviceArray(2., dtype=float32)\njax.grad(g, argnums=(1,))(F(2.0), 0.)  # AssertionError\nhits an AssertionError on this line: https://github.com/google/jax/blob/1bb9aaa88c09a90a115c0304c05b0fc25932523b/jax/interpreters/partial_eval.py#L239\nCommenting out the @jax.jit on g or replacing jax.nn.relu(self.a) with np.maximum(self.a, 0) both avoid the error.",
+            "closedAt": "2020-04-03T06:28:57Z",
+            "createdAt": "2020-04-02T00:14:23Z",
+            "id": "MDU6SXNzdWU1OTIyNzY0NDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2578,
+            "state": "CLOSED",
+            "title": "`AssertionError` with new `custom_jvp` for `jax.nn.relu`",
+            "updatedAt": "2020-04-03T06:28:57Z",
+            "url": "https://github.com/jax-ml/jax/issues/2578"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Trying the following import after reading the lovely custom derivatives notebook gives an import error:\nfrom jax import custom_vjp\n# ImportError: cannot import name 'custom_vjp' from 'jax'\nI'm using the latest JAX release (0.1.62), and am guessing custom_vjp just hasn't made it into there yet. Any sense of when it'll be available via pip?",
+            "closedAt": "2020-04-13T02:33:23Z",
+            "createdAt": "2020-04-01T22:55:30Z",
+            "id": "MDU6SXNzdWU1OTIyNTExMzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2576,
+            "state": "CLOSED",
+            "title": "from jax import custom_vjp, with latest pip install",
+            "updatedAt": "2020-04-14T14:53:36Z",
+            "url": "https://github.com/jax-ml/jax/issues/2576"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm not quite sure why, but a simple unit test with jtu.check_grads fails with even a generous tolerance.",
+            "closedAt": "2020-04-15T18:35:39Z",
+            "createdAt": "2020-04-01T17:57:17Z",
+            "id": "MDU6SXNzdWU1OTIwOTkyNTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2572,
+            "state": "CLOSED",
+            "title": "lax.custom_linear_solve appears to give incorrect gradients for complex dtypes",
+            "updatedAt": "2020-04-15T18:35:40Z",
+            "url": "https://github.com/jax-ml/jax/issues/2572"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'd like to separately profile the compilation and execution time of a Jitted function. Is there a way to force recompilation?",
+            "closedAt": "2020-04-01T15:43:31Z",
+            "createdAt": "2020-04-01T15:30:55Z",
+            "id": "MDU6SXNzdWU1OTIwMDY0MDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2570,
+            "state": "CLOSED",
+            "title": "Profile compilation time",
+            "updatedAt": "2020-04-01T15:43:31Z",
+            "url": "https://github.com/jax-ml/jax/issues/2570"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I want to implement fast convolution by stride_tricks of numpy, but It's missing in jax.numpy. Do you have plan to update or there is an alternative way? Please let me know, thanks.",
+            "closedAt": "2020-04-01T13:35:28Z",
+            "createdAt": "2020-04-01T13:30:57Z",
+            "id": "MDU6SXNzdWU1OTE5MTgyOTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2568,
+            "state": "CLOSED",
+            "title": "jax.numpy.lib.stride_tricks.as_stride is missing",
+            "updatedAt": "2020-04-01T13:35:28Z",
+            "url": "https://github.com/jax-ml/jax/issues/2568"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "With JAX 0.1.62 the following code:\nfrom jax.experimental import stax\nfrom jax.api import mask, vmap\nfrom jax import random\nimport jax.numpy as np\n\ninit_fn, fn = stax.Dense(1024)\n\nkey = random.PRNGKey(0)\n_, params = init_fn(key, (-1, 3))\n\nxs = np.array([[1, 2, 3], [4, 5, 6]])\n\ndef single_fn(xs):\n  return fn(params, np.reshape(xs, (1,) + xs.shape))[0]\n\nprint(mask(single_fn, ['n'], '_')([xs[1]], dict(n=2)))\nProduces the following error: https://pastebin.com/fiQ9Ux5d\nIf I am doing something wrong, please let me know!",
+            "closedAt": "2023-05-19T19:00:42Z",
+            "createdAt": "2020-04-01T05:00:33Z",
+            "id": "MDU6SXNzdWU1OTE2MjQ1NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2565,
+            "state": "CLOSED",
+            "title": "Masking \"reshape\" rule not found.",
+            "updatedAt": "2023-05-19T19:00:42Z",
+            "url": "https://github.com/jax-ml/jax/issues/2565"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi all,\nFollowing up on #2197, I was hoping to implement natural gradient descent or Gauss-Newton for DNNs, for which I have to invert a large p-by-p matrix, where p is the number of parameters of my neural network. I understand that if I only want to perform a small number of gradient steps, I could implement H^-1 * g by using conjugate gradient descent, but I'm not sure how to best do that in JAX. Is there an existing implementation of CG in JAX? I haven't been able to find one. In general, am I right to assume that using the full inverse Hessian as a preconditioner should be feasible with CG in JAX?\nThank you!",
+            "closedAt": "2020-04-03T20:37:12Z",
+            "createdAt": "2020-03-31T14:35:25Z",
+            "id": "MDU6SXNzdWU1OTExNjE5NTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2557,
+            "state": "CLOSED",
+            "title": "Inverse Fisher/Hessian as GD Preconditioner",
+            "updatedAt": "2020-04-03T20:38:41Z",
+            "url": "https://github.com/jax-ml/jax/issues/2557"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The test is lax_control_flow_tests.py:test_while_loop_of_pmap. It fails on CPU, GPU, and TPU.\nFor GPU the failure seems to be\nF0331 01:03:30.304149    7266 ir_emitter_unnested.cc:1766] Non-OK-status: body->Accept(&ir_emitter_body) status: Unimplemented: Requested AllReduce not implemented on GPU; replica_count: 8; operand_count: 1; IsCrossReplicaAllReduce: 1; NCCL support: 0; first operand array element-type: F64\n\nFor TPU the failure is perhaps related but shows up elsewhere:\n  File \"/build/work/c62b4eb2372c3477aa8032626244c507067f/google3/runfiles/google3/third_party/py/jax/interpreters/xla.py\", line 169, in apply_primitive\n    compiled_fun = xla_primitive_callable(prim, *map(arg_spec, args), **params)\n  File \"/build/work/c62b4eb2372c3477aa8032626244c507067f/google3/runfiles/google3/third_party/py/jax/interpreters/xla.py\", line 194, in xla_primitive_callable\n    compiled = built_c.Compile(compile_options=options, backend=backend)\n  File \"/build/work/c62b4eb2372c3477aa8032626244c507067f/google3/runfiles/google3/third_party/tensorflow/compiler/xla/python/xla_client.py\", line 571, in Compile\n    return backend.compile(self.computation, compile_options)\n  File \"/build/work/c62b4eb2372c3477aa8032626244c507067f/google3/runfiles/google3/third_party/tensorflow/compiler/xla/python/xla_client.py\", line 151, in compile\n    compile_options.tuple_arguments)\nRuntimeError: Invalid argument: Invalid (replica_count,computation_count) pair: (8,1)",
+            "closedAt": "2020-03-31T20:51:45Z",
+            "createdAt": "2020-03-31T09:10:34Z",
+            "id": "MDU6SXNzdWU1OTA5MzIwODA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2554,
+            "state": "CLOSED",
+            "title": "Error compiling while_of_pmap",
+            "updatedAt": "2020-03-31T20:52:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/2554"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi JAX team,\nOne issue I just ran into is that np.cumprod is not differentiable.\nExample:\ny = grad(np.cumprod)\ny(np.arange(1, 5))\ngives an error\nFor my pruposes, the vectors I input are all positive, so I can just do:\ndef cumprod_working(arr):\n  return(np.exp(np.cumsum(np.log(arr)))\nAnd that can be differentiated just fine.",
+            "closedAt": "2020-04-03T19:42:40Z",
+            "createdAt": "2020-03-30T18:48:17Z",
+            "id": "MDU6SXNzdWU1OTA1MTE3NDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2542,
+            "state": "CLOSED",
+            "title": "grad of cumprod gives errors",
+            "updatedAt": "2020-04-03T19:42:40Z",
+            "url": "https://github.com/jax-ml/jax/issues/2542"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello all!\nI can't make pmap work with pytrees objects. Although, jit and grad transformations work fine with it. I found #1486 and #1514, but that does't help much with solving the issue.\nHere is a simple MWE.\nThanks!",
+            "closedAt": "2020-03-31T05:00:25Z",
+            "createdAt": "2020-03-30T18:06:55Z",
+            "id": "MDU6SXNzdWU1OTA0ODY1NDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2540,
+            "state": "CLOSED",
+            "title": "Apply pmap to a list of pytrees",
+            "updatedAt": "2024-01-02T21:25:30Z",
+            "url": "https://github.com/jax-ml/jax/issues/2540"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello JAX team,\nI was surprised to see that ShardedDeviceArray collapses to a standard shaped array after applying a primitive function to it. Would it make sense to keep ShardedDeviceArray type as an output for functions like exp with the same type inputs? I think it would help to write clean and modular code.\nThanks",
+            "closedAt": "2023-05-19T18:59:45Z",
+            "createdAt": "2020-03-28T23:32:32Z",
+            "id": "MDU6SXNzdWU1ODk2ODA1Njg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "contributions welcome"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 2535,
+            "state": "CLOSED",
+            "title": "Primitive functions on ShardedDeviceArray",
+            "updatedAt": "2023-05-19T18:59:45Z",
+            "url": "https://github.com/jax-ml/jax/issues/2535"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello JAX team,\nFirst of all, thanks a lot for cool JAX. This is a great tool.\nThis issue contains a question about your plans regarding pmap and a feature request.\nWhat pmaped function receives as an input, is that a slice of input array or a full array? What happens in case of nested pmaps? Guess JAX traces a function and runs copies of it on sharded chunks of an input array. If so, that would super useful to have access to an index of that shard, that would allow encoding more complex algorithms. Otherwise, it still would be great to have an access to the shard index.\nExample\n\n@partial(pmap, axis_name='rows')\n@partial(pmap, axis_name='cols')\ndef f(x):\n  # Q:  When the code is running, what the `x.shape` actually is?\n  # \n  # Dummy example of how to get shard id:\n  # shard_row_id = __global_axis_name__[\"rows\"]\n  # shard_col_id = __global_axis_name__[\"cols\"]\n  #\n  # Do something smart with it! E.g. process tensor in `chess` like style - blacks are positive, whites are negative.\n  pass\n\n\nThanks",
+            "closedAt": "2020-03-29T21:43:43Z",
+            "createdAt": "2020-03-28T23:15:53Z",
+            "id": "MDU6SXNzdWU1ODk2NzgzNzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2534,
+            "state": "CLOSED",
+            "title": "document lax.axis_index to get mapped element index from axis name",
+            "updatedAt": "2020-03-29T21:43:43Z",
+            "url": "https://github.com/jax-ml/jax/issues/2534"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am doing an ode computation that I want to vectorize using vmap. I need gradients. This all works fine until I add vmap --- then I get an AssertionError.\nHere is a stripped-down script to reproduce it:\nimport jax\nimport jax.numpy as np\nfrom jax.experimental.ode import build_odeint\n\ndef dx_dt(x, *args):\n    return 0.1*x\n\node = build_odeint(dx_dt)\n\ndef f(x):\n    y0 = np.array([x, 0.1])\n    t = np.array([0., 5.])\n    y = ode(y0, t)\n    return y[-1].sum()\n\ndef g(x):\n    # Two initial values for the ODE\n    y0_arr = np.array([[x, 0.1],\n                       [x, 0.2]])\n    \n    # Run ODE twice\n    t = np.array([0., 5.])\n    y = jax.vmap(lambda y0: ode(y0, t))(y0_arr)\n    return y[:,-1].sum()\n\n# Works\nprint(f(1.))\nprint(jax.value_and_grad(f)(1.))\nprint(g(1.))\n\n# Doesn't work\nprint(jax.value_and_grad(g)(1.))\nHere is the output:\nDetails\n1.8135929\n(DeviceArray(1.8135929, dtype=float32), DeviceArray(1.6487213, dtype=float32))\n3.792058\n---------------------------------------------------------------------------\nAssertionError                            Traceback (most recent call last)\n<ipython-input-6-1446cf27a440> in <module>\n     30 # Doesn't work\n     31 print(g(1.))\n---> 32 print(jax.value_and_grad(g)(1.))\n\n~/opt/anaconda3/lib/python3.7/site-packages/jax/api.py in value_and_grad_f(*args, **kwargs)\n    416     f_partial, dyn_args = _argnums_partial(f, argnums, args)\n    417     if not has_aux:\n--> 418       ans, vjp_py = _vjp(f_partial, *dyn_args)\n    419     else:\n    420       ans, vjp_py, aux = _vjp(f_partial, *dyn_args, has_aux=True)\n\n~/opt/anaconda3/lib/python3.7/site-packages/jax/api.py in _vjp(fun, *primals, **kwargs)\n   1334   if not has_aux:\n   1335     flat_fun, out_tree = flatten_fun_nokwargs(fun, in_tree)\n-> 1336     out_primal, out_vjp = ad.vjp(flat_fun, primals_flat)\n   1337     out_tree = out_tree()\n   1338   else:\n\n~/opt/anaconda3/lib/python3.7/site-packages/jax/interpreters/ad.py in vjp(traceable, primals, has_aux)\n    104 def vjp(traceable, primals, has_aux=False):\n    105   if not has_aux:\n--> 106     out_primals, pvals, jaxpr, consts = linearize(traceable, *primals)\n    107   else:\n    108     out_primals, pvals, jaxpr, consts, aux = linearize(traceable, *primals, has_aux=True)\n\n~/opt/anaconda3/lib/python3.7/site-packages/jax/interpreters/ad.py in linearize(traceable, *primals, **kwargs)\n     96   pval_primals, pval_tangents = tree_unflatten(out_tree(), out_pvals)\n     97   aval_primals, const_primals = unzip2(pval_primals)\n---> 98   assert all(aval_primal is None for aval_primal in aval_primals)\n     99   if not has_aux:\n    100     return const_primals, pval_tangents, jaxpr, consts\n\nAssertionError: \n\n\nCan you let me know if I'm trying to do something that is not supported? Or is there some workaround?",
+            "closedAt": "2020-03-30T06:04:01Z",
+            "createdAt": "2020-03-28T16:16:29Z",
+            "id": "MDU6SXNzdWU1ODk2MDcxNjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2531,
+            "state": "CLOSED",
+            "title": "vmap + odeint + grad --> AssertionError",
+            "updatedAt": "2020-04-02T23:16:28Z",
+            "url": "https://github.com/jax-ml/jax/issues/2531"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This is a one-line fix at https://github.com/google/jax/blob/master/jax/lax/lax.py#L1503\nJust adding this as an issue as a reminder for @mattjj",
+            "closedAt": "2020-03-28T19:31:40Z",
+            "createdAt": "2020-03-28T13:49:44Z",
+            "id": "MDU6SXNzdWU1ODk1ODA5Njc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2529,
+            "state": "CLOSED",
+            "title": "Add pxla.ShardedDeviceArray to jaxval_zeros_likers",
+            "updatedAt": "2020-03-28T19:31:40Z",
+            "url": "https://github.com/jax-ml/jax/issues/2529"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello!\nI have a function:\n@jit \nremove_random_element(rng, arr):\n    n = arr.shape[0]\n     i = random.randint(rng, shape=(1,), minval=0, maxval=n)[0]\n    indices = np.hstack((np.arange(i), np.arange(i + 1, n)))\n    return arr[indices]\n\nwhich does not work because arange tries to convert i into an int when it is an abstract value (using astype did not solve this.\nI have tried other functional approaches such as:\nindices = np.where(np.arange(n) - i)\nbut I receive a boolean indices error.\nIs it possible to do this? Thanks!",
+            "closedAt": "2020-03-27T01:02:21Z",
+            "createdAt": "2020-03-26T23:36:20Z",
+            "id": "MDU6SXNzdWU1ODg3OTE0NTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2522,
+            "state": "CLOSED",
+            "title": "Index all but one element in an array",
+            "updatedAt": "2020-03-27T01:02:21Z",
+            "url": "https://github.com/jax-ml/jax/issues/2522"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm working with a function that computes a likelihood given a 1D array. The problem is that this array has variable length, and so the jit'ed function triggers recompilation when the length of this array changes, which happens frequently in my program, causing a significant hit in performance.\nI know that there are various levels of abstraction, and see the existence of an Unshaped arrays in the docs: \"JAX can also trace at higher levels of abstraction, like Unshaped, but that’s not currently the default for any transformation\".\nFirst, is it even possible with JAX to compile without declaring the shape a compile-time constant? Would using Unshaped arrays solve this? If so, how can I tell JAX to trace with this level of abstraction?\nThank you!",
+            "closedAt": "2020-03-27T00:51:18Z",
+            "createdAt": "2020-03-26T18:57:44Z",
+            "id": "MDU6SXNzdWU1ODg2NTQyMTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2521,
+            "state": "CLOSED",
+            "title": "Avoid recompilation caused by variably shaped arrays?",
+            "updatedAt": "2024-01-03T13:51:11Z",
+            "url": "https://github.com/jax-ml/jax/issues/2521"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For example, if we differentiate wrt closed-over values in the dynamics function of jax.experimental.odeint, we hit this:\n--> 520   assert all(t is zero for t in zero_tangents)\n\nWe can improve that!\nthanks @sharadmv",
+            "closedAt": "2020-10-24T00:24:55Z",
+            "createdAt": "2020-03-26T18:36:46Z",
+            "id": "MDU6SXNzdWU1ODg2Mzk2Nzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2520,
+            "state": "CLOSED",
+            "title": "better error when differentiating wrt closed-over values in custom_vjp",
+            "updatedAt": "2020-10-24T00:24:55Z",
+            "url": "https://github.com/jax-ml/jax/issues/2520"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI hope this is the correct place to post this: I'm new to JAX and am getting an error when trying to use grad. It seems like I am doing things correctly: the function g I define seems to be evaluating to the correct values, and when I call grad(g) no errors are thrown. However, if I try to evaluate grad(g) on an input, I get an AssertionError with no message. Not sure if I'm trying to use functions that are not automatically differentiable?\nMy code is:\nimport jax.numpy as np\nfrom jax import grad\nfrom jax.scipy.linalg import expm\nfrom jax.config import config\nconfig.update(\"jax_enable_x64\", True)\n\n# define some complex matrices\nX = -1j*np.array([[0, 1], [1, 0]], dtype=complex)\nY = -1j*np.array([[0, -1j], [1j, 0]], dtype=complex)\nZ = -1j*np.array([[1.,0],[0,-1]], dtype=complex)\n\n# ##############\n# construct function\n# ##############\n\n# computes hilbert-schmidt inner product between matrices\ndef hs_ip(x,y):\n    return (x.conj().transpose() @ y).trace()\n\n# computes |x|**2/4, for x = hs_ip(U,x), with U being a particular matrix defined below\nU = expm((X+Y)/np.sqrt(2))\ndef f(x):\n    y = hs_ip(U,x)\n    return (y*y.conj()).real/4\n\n# the function to be differentiated (takes in real array, returns real scalar)\ndef g(a):\n    return f(expm(a[0]*X + a[1]*Y + a[2]*Z))\n\nCalling g returns correct output (expected output is 1):\nprint(g(np.array([1,1,0], dtype=float)/np.sqrt(2)))\n1.0000000000000004\n\nAttempting to call grad(g) (expected output is 0):\ngrad(g)( np.array([1,1,0], dtype=float)/np.sqrt(2) )\n\nthrows error:\n---------------------------------------------------------------------------\nAssertionError                            Traceback (most recent call last)\n<ipython-input-14-a0a3eafaec5b> in <module>\n----> 1 grad(g)( np.array([1,1,0], dtype=float)/np.sqrt(2) )\n\n~/anaconda3/envs/QiskitDev/lib/python3.7/site-packages/jax/api.py in grad_f(*args, **kwargs)\n    360   @wraps(fun, docstr=docstr, argnums=argnums)\n    361   def grad_f(*args, **kwargs):\n--> 362     _, g = value_and_grad_f(*args, **kwargs)\n    363     return g\n    364 \n\n~/anaconda3/envs/QiskitDev/lib/python3.7/site-packages/jax/api.py in value_and_grad_f(*args, **kwargs)\n    416     f_partial, dyn_args = _argnums_partial(f, argnums, args)\n    417     if not has_aux:\n--> 418       ans, vjp_py = _vjp(f_partial, *dyn_args)\n    419     else:\n    420       ans, vjp_py, aux = _vjp(f_partial, *dyn_args, has_aux=True)\n\n~/anaconda3/envs/QiskitDev/lib/python3.7/site-packages/jax/api.py in _vjp(fun, *primals, **kwargs)\n   1334   if not has_aux:\n   1335     flat_fun, out_tree = flatten_fun_nokwargs(fun, in_tree)\n-> 1336     out_primal, out_vjp = ad.vjp(flat_fun, primals_flat)\n   1337     out_tree = out_tree()\n   1338   else:\n\n~/anaconda3/envs/QiskitDev/lib/python3.7/site-packages/jax/interpreters/ad.py in vjp(traceable, primals, has_aux)\n    104 def vjp(traceable, primals, has_aux=False):\n    105   if not has_aux:\n--> 106     out_primals, pvals, jaxpr, consts = linearize(traceable, *primals)\n    107   else:\n    108     out_primals, pvals, jaxpr, consts, aux = linearize(traceable, *primals, has_aux=True)\n\n~/anaconda3/envs/QiskitDev/lib/python3.7/site-packages/jax/interpreters/ad.py in linearize(traceable, *primals, **kwargs)\n     96   pval_primals, pval_tangents = tree_unflatten(out_tree(), out_pvals)\n     97   aval_primals, const_primals = unzip2(pval_primals)\n---> 98   assert all(aval_primal is None for aval_primal in aval_primals)\n     99   if not has_aux:\n    100     return const_primals, pval_tangents, jaxpr, consts\n\nAssertionError: \n\nNote I have not missed anything, this is the full output (there is no message with the AssertionError).\nThank you!",
+            "closedAt": "2020-04-02T13:25:28Z",
+            "createdAt": "2020-03-26T18:27:14Z",
+            "id": "MDU6SXNzdWU1ODg2MzM5MzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2519,
+            "state": "CLOSED",
+            "title": "New to JAX, grad(f) throwing AssertionError with no message",
+            "updatedAt": "2020-04-02T13:25:29Z",
+            "url": "https://github.com/jax-ml/jax/issues/2519"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "BatchNorm raises TypeError when using without center or scale or both. Seems pretty straightforward to fix (e.x. as a workaround I've set beta to None beta = None if not center else beta[ed] if center is False, the same for gamma but there might be some better solution).\nException:\nbeta = beta[ed] # ed=(None, slice(None, None, None))\nTypeError: tuple indices must be integers or slices, not tuple\nCode:\nfrom jax import np\nfrom jax import random\nfrom jax.experimental import stax\n\n\ninit_fn, apply_fn = stax.BatchNorm(axis=0, center=False, scale=False)\n_, params = init_fn(random.PRNGKey(0), (-1, 1))\n\nx = np.zeros((2, 1))\napply_fn(params, x)\n\nDetails:\njax==0.1.62\njaxlib==0.1.42",
+            "closedAt": "2020-04-03T06:53:40Z",
+            "createdAt": "2020-03-26T16:57:16Z",
+            "id": "MDU6SXNzdWU1ODg1NzQxNDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "good first issue"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 2518,
+            "state": "CLOSED",
+            "title": "BatchNorm doesn't work with center or scale turned off",
+            "updatedAt": "2020-04-03T06:53:40Z",
+            "url": "https://github.com/jax-ml/jax/issues/2518"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I was doing something like this\n...\nopt_init, opt_update = optix.adam(lr, b1=0)\nopt_state = opt_init(params)\n...\ngrads = jax.grad(loss)(params, data)\nupdates, opt_state = opt_update(grads, opt_state)\nparams = optix.apply_updates(params, updates)\n...\nand I got NaNs in updates but not in grads.\nThe problem was fixed by doing\nopt_init, opt_update = optix.adam(lr, b1=0.)\n(note the dot .)\nIt turns out that the NaNs in the former case came from this line: https://github.com/google/jax/blob/master/jax/experimental/optix.py#L233\nI suppose the issue stems from some implicit casting. Is there any chance to explicitly cast the hyper-parameters to the expected type so that sloppy users like me will not get the same trouble again?\nThanks!\nP.S. I encountered this issue after upgrading to the latest version. It was fine when I was using JAX 0.1.59.",
+            "closedAt": "2020-07-08T17:24:00Z",
+            "createdAt": "2020-03-26T16:30:57Z",
+            "id": "MDU6SXNzdWU1ODg1NTUwMzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2517,
+            "state": "CLOSED",
+            "title": "optix.adam produces NaNs with sloppy hyper-parameters",
+            "updatedAt": "2020-07-08T17:24:00Z",
+            "url": "https://github.com/jax-ml/jax/issues/2517"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2020-03-30T06:04:01Z",
+            "createdAt": "2020-03-26T13:41:51Z",
+            "id": "MDU6SXNzdWU1ODg0MzAzMzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2516,
+            "state": "CLOSED",
+            "title": "better error when custom_jvp jvp rule doesn't return a pair",
+            "updatedAt": "2020-03-30T06:04:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/2516"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In my situation , i want use jit to compile the function once , and the big numpy array can be compile in the jit . but  in next loop the big numpy array will be change to another numpy array\nfrom numpy import random\nfrom jax.numpy import sqrt, pi, exp, log\nimport matplotlib.pyplot as plt\nfrom jax import jit, grad\nimport iminuit\nfrom iminuit.util import make_func_code, describe\nsigma = 5.0\nmu = 100.0\nN = 100\ntries = 2\ns0 = sigma + random.randn(tries) * 0.5\ns1 = mu + random.randn(tries) * 10.0\ndef _Likelihood(s, m, w):\n    sum = 0\n    for _x in w:\n        term = -log(1 / (s * sqrt(2. * pi)) * exp(- ((_x - m) / s)**2 / 2.))\n        sum += term\n    return sum\n\ndef Likelihood(pars):\n    return jit(_Likelihood)(pars[0], pars[1], x)\n\ndef my_dev_likelihood(pars):\n    return jit(grad(_Likelihood))(pars[0], pars[1], x)\n\nfor ss, mm in zip(s0, s1):\n    x = random.randn(N) * sigma + mu\n    my_pars1 = (ss, mm)\n    my_pars2 = (ss+0.1, mm+0.1)\n    my_dev_likelihood(my_pars1)\n    my_dev_likelihood(my_pars2)\nin my code ,  i find that it is updata the x each loop in my_dev_likelihood , but the jit can not accelerate because x is a parameter , and x calculate in each loop in each  my_dev_likelihood . so i want some method that make the first  my_dev_likelihood the x is a const in function and be compile and in second my_dev_likelihood it will be fast ,and  in next loop the x will updata and creat new graph",
+            "closedAt": "2020-06-30T13:54:51Z",
+            "createdAt": "2020-03-26T07:21:19Z",
+            "id": "MDU6SXNzdWU1ODgyMDgyOTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2515,
+            "state": "CLOSED",
+            "title": "How to  accelerate use jit in loop",
+            "updatedAt": "2020-06-30T13:54:51Z",
+            "url": "https://github.com/jax-ml/jax/issues/2515"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": ">>> import numpy as onp\n>>> import jax.numpy as jnp\n>>> onp.take([], [])\narray([], dtype=float64)\n>>> jnp.take([], [])\nValueError: start_indices must have an integer type\n\nThis error is caused because jax converts the second array to an empty float array. But another error is raised even if you work around the first one:\n>>> jnp.take([], jnp.array([], dtype=int))\nRuntimeError: Invalid argument: Slice size at index 0 in gather op is out of range, must be within [0, 1), got 1.:\nThis is a bug in JAX's shape-checking rules; please report it!\nhttps://github.com/google/jax/issues",
+            "closedAt": "2020-07-14T16:02:27Z",
+            "createdAt": "2020-03-26T03:58:34Z",
+            "id": "MDU6SXNzdWU1ODgxMzcxNjI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2514,
+            "state": "CLOSED",
+            "title": "jax.numpy.take() fails on empty arrays (and np.take does not)",
+            "updatedAt": "2020-07-14T16:02:27Z",
+            "url": "https://github.com/jax-ml/jax/issues/2514"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The following code:\narr = np.ones((5, 2, 2))\nfoo = lambda x: jax.vmap(np.linalg.det, (0,))(x)\napi.jit(foo)(arr)\n\nresults in escaped tracer error. This seems to happen due to a combination of np.lingalg.det (which has custom derivatives), vmap, and jit. The latter can be replaced with other kinds of initial tracers, such as api.make_jaxpr.\nResults in\n  File \"/Users/necula/Source/jax/tests/anecula_tests2.py\", line 1120, in testBug2510\n    api.jit(foo)(arr)\n  File \"/Users/necula/Source/jax/jax/api.py\", line 151, in f_jitted\n    name=flat_fun.__name__)\n  File \"/Users/necula/Source/jax/jax/core.py\", line 920, in call_bind\n    outs = primitive.impl(f, *args, **params)\n  File \"/Users/necula/Source/jax/jax/interpreters/xla.py\", line 457, in _xla_call_impl\n    compiled_fun = _xla_callable(fun, device, backend, name, *map(arg_spec, args))\n  File \"/Users/necula/Source/jax/jax/linear_util.py\", line 221, in memoized_fun\n    ans = call(fun, *args)\n  File \"/Users/necula/Source/jax/jax/interpreters/xla.py\", line 474, in _xla_callable\n    fun, pvals, instantiate=False, stage_out_calls=True, bottom=True)\n  File \"/Users/necula/Source/jax/jax/interpreters/partial_eval.py\", line 356, in trace_to_jaxpr\n    jaxpr, (out_pvals, consts, env) = fun.call_wrapped(pvals)\n  File \"/Users/necula/Source/jax/jax/linear_util.py\", line 150, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/Users/necula/Source/jax/tests/anecula_tests2.py\", line 1119, in <lambda>\n    foo = lambda x: jax.vmap(np.linalg.det, (0,))(x)\n  File \"/Users/necula/Source/jax/jax/api.py\", line 718, in batched_fun\n    lambda: _flatten_axes(out_tree(), out_axes))\n  File \"/Users/necula/Source/jax/jax/interpreters/batching.py\", line 34, in batch\n    return batched_fun.call_wrapped(*in_vals)\n  File \"/Users/necula/Source/jax/jax/linear_util.py\", line 150, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/Users/necula/Source/jax/jax/numpy/linalg.py\", line 152, in det\n    sign, logdet = slogdet(a)\n  File \"/Users/necula/Source/jax/jax/custom_derivatives.py\", line 174, in __call__\n    out_flat = custom_jvp_call(flat_fun, *args_flat, jvp=flat_jvp)\n  File \"/Users/necula/Source/jax/jax/custom_derivatives.py\", line 217, in _custom_deriv_call_bind\n    outs = top_trace.process_call(primitive, f, tracers, params)\n  File \"/Users/necula/Source/jax/jax/interpreters/batching.py\", line 138, in process_call\n    return call_batching_rules[call_primitive](self, call_primitive, f, tracers, params)\n  File \"/Users/necula/Source/jax/jax/custom_derivatives.py\", line 244, in _custom_jvp_call_vmap\n    out_vals = custom_jvp_call(fun, *in_vals, jvp=jvp)\n  File \"/Users/necula/Source/jax/jax/custom_derivatives.py\", line 217, in _custom_deriv_call_bind\n    outs = top_trace.process_call(primitive, f, tracers, params)\n  File \"/Users/necula/Source/jax/jax/interpreters/partial_eval.py\", line 127, in process_call\n    return call_partial_eval_rules[call_primitive](self, call_primitive, f, tracers, params)\n  File \"/Users/necula/Source/jax/jax/custom_derivatives.py\", line 251, in _custom_jvp_call_partial_eval\n    return custom_jvp_call_jaxpr(fun, params['jvp'], *tracers)\n  File \"/Users/necula/Source/jax/jax/custom_derivatives.py\", line 257, in custom_jvp_call_jaxpr\n    jaxpr, consts = _initial_style_jaxpr(fun, in_avals)\n  File \"/Users/necula/Source/jax/jax/custom_derivatives.py\", line 49, in _initial_style_jaxpr\n    stage_out_calls=True)\n  File \"/Users/necula/Source/jax/jax/interpreters/partial_eval.py\", line 356, in trace_to_jaxpr\n    jaxpr, (out_pvals, consts, env) = fun.call_wrapped(pvals)\n  File \"/Users/necula/Source/jax/jax/linear_util.py\", line 150, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/Users/necula/Source/jax/jax/api.py\", line 151, in f_jitted\n    name=flat_fun.__name__)\n  File \"/Users/necula/Source/jax/jax/core.py\", line 923, in call_bind\n    outs = map(full_lower, top_trace.process_call(primitive, f, tracers, params))\n  File \"/Users/necula/Source/jax/jax/interpreters/batching.py\", line 147, in process_call\n    vals_out = call_primitive.bind(f, *vals, **params)\n  File \"/Users/necula/Source/jax/jax/core.py\", line 923, in call_bind\n    outs = map(full_lower, top_trace.process_call(primitive, f, tracers, params))\n  File \"/Users/necula/Source/jax/jax/interpreters/partial_eval.py\", line 132, in process_call\n    out_flat = call_primitive.bind(fun, *in_consts, **params)\n  File \"/Users/necula/Source/jax/jax/core.py\", line 920, in call_bind\n    outs = primitive.impl(f, *args, **params)\n  File \"/Users/necula/Source/jax/jax/interpreters/xla.py\", line 457, in _xla_call_impl\n    compiled_fun = _xla_callable(fun, device, backend, name, *map(arg_spec, args))\n  File \"/Users/necula/Source/jax/jax/linear_util.py\", line 221, in memoized_fun\n    ans = call(fun, *args)\n  File \"/Users/necula/Source/jax/jax/interpreters/xla.py\", line 474, in _xla_callable\n    fun, pvals, instantiate=False, stage_out_calls=True, bottom=True)\n  File \"/Users/necula/Source/jax/jax/interpreters/partial_eval.py\", line 356, in trace_to_jaxpr\n    jaxpr, (out_pvals, consts, env) = fun.call_wrapped(pvals)\n  File \"/Users/necula/Source/jax/jax/linear_util.py\", line 154, in call_wrapped\n    ans = gen.send(ans)\n  File \"/Users/necula/Source/jax/jax/core.py\", line 909, in process_env_traces\n    outs, cur_todo = trace.post_process_call(primitive, outs, params)\n  File \"/Users/necula/Source/jax/jax/interpreters/partial_eval.py\", line 177, in post_process_call\n    jaxpr, consts, env = tracers_to_jaxpr([], out_tracers)\n  File \"/Users/necula/Source/jax/jax/interpreters/partial_eval.py\", line 455, in tracers_to_jaxpr\n    core.escaped_tracer_error(\"Tracer not among input tracers {}\".format(t))\n  File \"/Users/necula/Source/jax/jax/core.py\", line 348, in escaped_tracer_error\n    raise UnexpectedTracerError(msg.format(detail))\njax.core.UnexpectedTracerError: Encountered an unexpected tracer. Perhaps this tracer escaped through global state from a previously traced function.\nThe functions being transformed should not save traced values to global state.\nDetails: Tracer not among input tracers Traced<ShapedArray(float32[5,2,2]):JaxprTrace(level=1/2)>.",
+            "closedAt": "2020-03-30T06:04:01Z",
+            "createdAt": "2020-03-25T18:28:43Z",
+            "id": "MDU6SXNzdWU1ODc5MDMwMDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2511,
+            "state": "CLOSED",
+            "title": "jit of vmap of np.linalg.det results in internal error (escaped tracer)",
+            "updatedAt": "2020-03-30T06:04:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/2511"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Running this on CPU (on Google hardware), the forward computation is fairly quick, but the gradient is bizarrely slow (like almost a minute):\nfoo = lambda x: jnp.sum(jax.vmap(jnp.linalg.det, (0,))(x))\ndata = np.random.randn(10, 5, 5)\nprint(foo(data)) # reasonable\nprint(jax.grad(foo)(data)) # slow\n\nIt seems slow on GPU as well, but either way it's bizarre that it would take so long for such a simple function.",
+            "closedAt": "2020-03-25T18:37:31Z",
+            "createdAt": "2020-03-25T17:51:23Z",
+            "id": "MDU6SXNzdWU1ODc4NzkyMDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "performance"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2510,
+            "state": "CLOSED",
+            "title": "Gradient of determinant is inexplicably slow",
+            "updatedAt": "2020-03-25T18:37:31Z",
+            "url": "https://github.com/jax-ml/jax/issues/2510"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This would allow scanning over an arbitrary axis, not just the leading one, and perhaps even different axes for the different arguments.\nThis was mentioned in #2491.",
+            "closedAt": "2025-04-07T08:04:50Z",
+            "createdAt": "2020-03-25T17:48:43Z",
+            "id": "MDU6SXNzdWU1ODc4Nzc1ODY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2509,
+            "state": "CLOSED",
+            "title": "Expand scan to take in_axes and out_axes parameters",
+            "updatedAt": "2025-06-05T19:13:03Z",
+            "url": "https://github.com/jax-ml/jax/issues/2509"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Sometimes in Travis we see the error below. It is suspicious because it sometimes only shows for x64 tests, and if I re-run the tests the error disappears. It is probably some state corruption somewhere.\nexamples/control.py:180: in lqr_predict\n    _, X, U = fori_loop(0, T, fwd_loop, (spec, X, U))\nexamples/control.py:76: in fori_loop\n    return lax.fori_loop(lo, hi, loop, init)\njax/lax/lax_control_flow.py:170: in fori_loop\n    (lower, upper, init_val))\njax/lax/lax_control_flow.py:227: in while_loop\n    body_jaxpr, body_consts, body_tree = _initial_style_jaxpr(body_fun, in_tree, init_avals)\njax/lax/lax_control_flow.py:61: in _initial_style_jaxpr\n    wrapped_fun, in_pvals, instantiate=True, stage_out_calls=True)\njax/interpreters/partial_eval.py:393: in trace_to_jaxpr\n    jaxpr, (out_pvals, consts, env) = fun.call_wrapped(pvals)\njax/linear_util.py:154: in call_wrapped\n    ans = gen.send(ans)\njax/interpreters/partial_eval.py:407: in trace_to_subjaxpr\n    out_tracers = map(trace.full_raise, map(core.full_lower, ans))\n    \nE     jax.core.UnexpectedTracerError: Encountered an unexpected tracer. Perhaps this tracer escaped through global state from a previously traced function.\nE     The functions being transformed should not save traced values to global state.\nE     Details: Can't lift level Traced<ShapedArray(float64[11,2]):JaxprTrace(level=11/0)> to JaxprTrace(level=8/0).\njax/core.py:348: UnexpectedTracerError\n=========================== short test summary info ============================\nFAILED examples/control_test.py::ControlExampleTest::testIlqrWithLqrProblemSpecifiedGenerally",
+            "closedAt": "2020-04-01T07:48:20Z",
+            "createdAt": "2020-03-25T10:47:49Z",
+            "id": "MDU6SXNzdWU1ODc2MDYwNTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2507,
+            "state": "CLOSED",
+            "title": "Transient bug in Travis about escaped tracers in examples/control_test",
+            "updatedAt": "2020-04-01T07:48:20Z",
+            "url": "https://github.com/jax-ml/jax/issues/2507"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the following code a traced value is passed to the num_or_indices parameter of numpy.split:\napi.jit(lambda idx: np.split(np.zeros((6,2)), idx)(2)\n\nThe error messages include a chain of exceptions, neither of which :\nIndexError: tuple index out of range\n\nlen() of unsized object\n\nTypeError: Abstract value passed to `bool`, which requires a concrete value. The function to be transformed can't be traced at the required level of abstraction. If using `jit`, try using `static_argnums` or applying `jit` to smaller subfunctions instead.",
+            "closedAt": "2020-04-22T07:25:07Z",
+            "createdAt": "2020-03-25T09:22:13Z",
+            "id": "MDU6SXNzdWU1ODc1NTU1Mzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2506,
+            "state": "CLOSED",
+            "title": "Confusing error message when passing a traced value to numpy.split",
+            "updatedAt": "2020-04-22T07:25:07Z",
+            "url": "https://github.com/jax-ml/jax/issues/2506"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI don't have a minimal example, but for the same code on the same machine,\nif I install jax from pip:\nconda list | grep jax\njax                       0.1.62                   pypi_0    pypi\njaxlib                    0.1.42                   pypi_0    pypi\n\nAnd I run my code I have nan in my gradient.\nHere is the error that I catch with the flag jax_debug_nans set to true\nInvalid value encountered in the output of a jit function. Calling the de-optimized version.\nInvalid value encountered in the output of a jit function. Calling the de-optimized version.\nInvalid value encountered in the output of a jit function. Calling the de-optimized version.\nInvalid value encountered in the output of a jit function. Calling the de-optimized version.\nTraceback (most recent call last):\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 459, in _xla_call_impl\n    return compiled_fun(*args)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 565, in _execute_compiled\n    if FLAGS.jax_debug_nans: check_nans(xla_call_p, out_bufs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 272, in check_nans\n    _check_nans(prim.name, buf.shape(), buf)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 279, in _check_nans\n    raise FloatingPointError(msg.format(name))\nFloatingPointError: invalid value (nan) encountered in xla_call\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 459, in _xla_call_impl\n    return compiled_fun(*args)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 565, in _execute_compiled\n    if FLAGS.jax_debug_nans: check_nans(xla_call_p, out_bufs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 272, in check_nans\n    _check_nans(prim.name, buf.shape(), buf)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 279, in _check_nans\n    raise FloatingPointError(msg.format(name))\nFloatingPointError: invalid value (nan) encountered in xla_call\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 459, in _xla_call_impl\n    return compiled_fun(*args)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 565, in _execute_compiled\n    if FLAGS.jax_debug_nans: check_nans(xla_call_p, out_bufs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 272, in check_nans\n    _check_nans(prim.name, buf.shape(), buf)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 279, in _check_nans\n    raise FloatingPointError(msg.format(name))\nFloatingPointError: invalid value (nan) encountered in xla_call\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 459, in _xla_call_impl\n    return compiled_fun(*args)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 565, in _execute_compiled\n    if FLAGS.jax_debug_nans: check_nans(xla_call_p, out_bufs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 272, in check_nans\n    _check_nans(prim.name, buf.shape(), buf)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 279, in _check_nans\n    raise FloatingPointError(msg.format(name))\nFloatingPointError: invalid value (nan) encountered in xla_call\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"src/mathmodrep/fit.py\", line 152, in <module>\n    g = grad(lossv)(chs0)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/api.py\", line 362, in grad_f\n    _, g = value_and_grad_f(*args, **kwargs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/api.py\", line 428, in value_and_grad_f\n    g = vjp_py(onp.ones((), dtype=dtype))\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/api.py\", line 1283, in _vjp_pullback_wrapper\n    ans = fun(*args)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 113, in vjp_\n    arg_cts = backward_pass(jaxpr, consts, dummy_args, dummy_primals_and_cts)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 205, in backward_pass\n    params, call_jaxpr, invals, cts_in)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 549, in call_transpose\n    out_flat = primitive.bind(fun, *all_args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/core.py\", line 895, in call_bind\n    outs = primitive.impl(f, *args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 463, in _xla_call_impl\n    return fun.call_wrapped(*args)  # probably won't return\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/linear_util.py\", line 149, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 205, in backward_pass\n    params, call_jaxpr, invals, cts_in)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 549, in call_transpose\n    out_flat = primitive.bind(fun, *all_args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/core.py\", line 895, in call_bind\n    outs = primitive.impl(f, *args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 463, in _xla_call_impl\n    return fun.call_wrapped(*args)  # probably won't return\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/linear_util.py\", line 149, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 205, in backward_pass\n    params, call_jaxpr, invals, cts_in)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 549, in call_transpose\n    out_flat = primitive.bind(fun, *all_args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/core.py\", line 895, in call_bind\n    outs = primitive.impl(f, *args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 463, in _xla_call_impl\n    return fun.call_wrapped(*args)  # probably won't return\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/linear_util.py\", line 149, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 205, in backward_pass\n    params, call_jaxpr, invals, cts_in)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 549, in call_transpose\n    out_flat = primitive.bind(fun, *all_args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/core.py\", line 895, in call_bind\n    outs = primitive.impl(f, *args, **params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 463, in _xla_call_impl\n    return fun.call_wrapped(*args)  # probably won't return\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/linear_util.py\", line 149, in call_wrapped\n    ans = self.f(*args, **dict(self.params, **kwargs))\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 207, in backward_pass\n    cts_out = get_primitive_transpose(eqn.primitive)(cts_in, *invals, **eqn.params)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 503, in bilinear_transpose\n    out = zero if cotangent is zero else lhs_rule(cotangent, y, **kwargs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/lax/lax.py\", line 282, in mul\n    return mul_p.bind(x, y)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/core.py\", line 199, in bind\n    return self.impl(*args, **kwargs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 170, in apply_primitive\n    return compiled_fun(*args)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 258, in _execute_compiled_primitive\n    check_nans(prim, out_bufs)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 272, in check_nans\n    _check_nans(prim.name, buf.shape(), buf)\n  File \"/home/jeanmichel/miniconda3/envs/mathmodrep_pip/lib/python3.7/site-packages/jax/interpreters/xla.py\", line 279, in _check_nans\n    raise FloatingPointError(msg.format(name))\nFloatingPointError: invalid value (nan) encountered in mul\n\nBut if I clone jax and install jaxlib from pip:\nconda list | grep jax\njax                       0.1.62                    dev_0    <develop>\njaxlib                    0.1.42                   pypi_0    pypi\n\n\nThe same code works perfectly.\nDo you have any idea what is happening?",
+            "closedAt": "2020-04-08T14:28:38Z",
+            "createdAt": "2020-03-25T08:22:35Z",
+            "id": "MDU6SXNzdWU1ODc1MjI2ODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2505,
+            "state": "CLOSED",
+            "title": "Problem with gradient for jax installed with pip, but working for jax install from git",
+            "updatedAt": "2020-04-08T14:28:38Z",
+            "url": "https://github.com/jax-ml/jax/issues/2505"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I cannot seem to make this minimum working example any smaller.  It seems like some combination of factors is causing this error, but I have no idea where to start.\nimport jax\nimport jax.scipy.special as jss\nfrom jax import numpy as jnp\n\n\n@jax.custom_jvp\ndef log_normalizer(q):\n    return jnp.logaddexp(q[0], 0.0)\n\n\ndef nat_to_exp(q):\n    return jss.expit(q)\n\n\n@log_normalizer.defjvp\ndef ln_jvp(primals, tangents):\n    x, = primals\n    x_dot, = tangents\n    y = log_normalizer(x)\n    y_dot = nat_to_exp(x) * x_dot\n    return y, y_dot\n\n\ndef cross_entropy_loss(p, q):\n    # Bernoulli cross_entropy(p, q)\n    p_dot_q = jnp.sum(p * q)\n    ln = log_normalizer(q)\n    return -p_dot_q + ln - jnp.zeros(())\n\n\n# p are expectation parameters of a Bernoulli distribution corresponding to\n# probability 0.4.\np = jnp.array([0.4])\n\n# q are natural parameters of a Bernoulli distribution corresponding to\n# log-odds 0, which is probability 0.5.\nq = jnp.array([0.0])\n\nprint(jax.grad(cross_entropy_loss, 1)(p, q))",
+            "closedAt": "2020-03-25T05:30:44Z",
+            "createdAt": "2020-03-25T02:46:49Z",
+            "id": "MDU6SXNzdWU1ODc0MDMzNDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2502,
+            "state": "CLOSED",
+            "title": "Spurious Exception: Tracer can't be used with raw numpy functions?",
+            "updatedAt": "2020-03-25T05:42:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/2502"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello everyone,\nI am trying to vectorize a function which takes 2 parameters: (model_params, x). Both of these parameters are list of numpy arrays.\nI would like to vectorize this function on the second parameter. My problem is that the shapes of the arrays in  x parameter are not fixed. I tried to fill them with zeros to have the same shape and get rid of the extra values once I am in the function but it didn't work.\nI would appreciate if you have any suggestions for me.\nThank you!",
+            "closedAt": "2020-05-21T22:09:33Z",
+            "createdAt": "2020-03-24T18:35:22Z",
+            "id": "MDU6SXNzdWU1ODcxOTY3MTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2499,
+            "state": "CLOSED",
+            "title": "how to vectorize custom functions with vmap",
+            "updatedAt": "2020-05-21T22:09:33Z",
+            "url": "https://github.com/jax-ml/jax/issues/2499"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It would be useful if parameters in stax were implemented as named tuples to make introspecting instantiated params easier. There may be another pattern to accomplish the same goal.\nFor an example, I implemented a simple gated residual connection, and I'd like to inspect the gate parameter for each layer to understand its progression:\nGateParams = namedtuple(\"GateParams\", \"alpha\")\n\ndef Gate(alpha_init=zeros):\n  def init_fun(rng, input_shape):\n    output_shape = input_shape\n    alpha = alpha_init(None, ())\n    return output_shape, GateParams(alpha)\n\n  def apply_fun(params, inputs, **kwargs):\n    alpha = params[0]\n    return inputs * alpha\n\n  return init_fun, apply_fun\n\nNow with some pattern matching I can pull out instances of GateParams from the pytree. Maybe there's an easier way but with nests of unnamed tuples it doesn't appear straightforward to extract this information.",
+            "closedAt": "2021-05-10T17:28:43Z",
+            "createdAt": "2020-03-24T18:13:27Z",
+            "id": "MDU6SXNzdWU1ODcxODA1OTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2498,
+            "state": "CLOSED",
+            "title": "Named params in stax",
+            "updatedAt": "2021-05-10T17:28:43Z",
+            "url": "https://github.com/jax-ml/jax/issues/2498"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Suggested by discussion in #2486\nThe code np.zeros(2)[0.] (indexing with a float), on numpy results in the error\nIndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices\n\nIn JAX it results in the less helpful error message\nTraceback (most recent call last):\n  File \"/Users/necula/Source/jax/jax/core.py\", line 758, in __len__\n    return self.shape[0]\nIndexError: tuple index out of range\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  ...\n  File \"/Users/necula/Source/jax/jax/core.py\", line 760, in __len__\n    raise TypeError(\"len() of unsized object\")  # same as numpy error\nTypeError: len() of unsized object",
+            "closedAt": "2020-03-25T09:07:50Z",
+            "createdAt": "2020-03-24T08:23:51Z",
+            "id": "MDU6SXNzdWU1ODY3Nzk2ODE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2495,
+            "state": "CLOSED",
+            "title": "Confusing error message when indexing arrays with floats",
+            "updatedAt": "2021-10-02T02:47:48Z",
+            "url": "https://github.com/jax-ml/jax/issues/2495"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I followed instructions on the README for installing with the following versions\nPYTHON_VERSION=cp36  # alternatives: cp36, cp37, cp38\nCUDA_VERSION=cuda101  # alternatives: cuda92, cuda100, cuda101, cuda102\nPLATFORM=linux_x86_64  # alternatives: linux_x86_64\nBASE_URL='https://storage.googleapis.com/jax-releases'\npip install --upgrade $BASE_URL/$CUDA_VERSION/jaxlib-0.1.42-$PYTHON_VERSION-none-$PLATFORM.whl\n\npip install --upgrade jax\n\nI set the following environment variables\nexport LD_LIBRARY_PATH=/pkgs/cuda-10.1/lib64:/pkgs/cudnn-10.0-v7.4.2/lib64:$LD_LIBRARY_PATH\nexport XLA_FLAGS=--xla_gpu_cuda_data_dir=/pkgs/cuda-10.1/                                                              \n\nI get the error message listed in the title as soon as I import jax.\nRelated issues include #989",
+            "closedAt": "2020-03-24T04:52:05Z",
+            "createdAt": "2020-03-24T02:29:32Z",
+            "id": "MDU6SXNzdWU1ODY2NDQ2MDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "build"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2494,
+            "state": "CLOSED",
+            "title": "ImportError: .../jaxlib/xla_extension.so: symbol cudnnSetCTCLossDescriptorEx version libcudnn.so.7 not defined in file libcudnn.so.7 with link time reference",
+            "updatedAt": "2020-05-15T03:08:09Z",
+            "url": "https://github.com/jax-ml/jax/issues/2494"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am building a larger application with Jax, and compiling all the kernels adds about a minute of overhead until we're ready to run.\nIt would be great if Jax were able to cache compilations, like Numba's cache=True argument to their JIT decorator.",
+            "closedAt": "2025-05-13T19:54:44Z",
+            "createdAt": "2020-03-23T08:11:28Z",
+            "id": "MDU6SXNzdWU1ODYwMTI1MTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "P2 (eventual)"
+                },
+                {
+                  "name": "NVIDIA GPU"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 2490,
+            "state": "CLOSED",
+            "title": "Feature request: cache compilations to the filesystem",
+            "updatedAt": "2025-05-13T19:54:45Z",
+            "url": "https://github.com/jax-ml/jax/issues/2490"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First of all, thank you for supporting complex numbers!  Other similar tools have spent years on this this problem and still don't have it working.  I was wondering if there's a good way to solve the problem below.\nBackground:  The exponential families are important families of probability distributions.  All exponential families are identified by a real-valued scalar function called a log-normalizer (among other things).  The gradient of the log-normalizer is also very important.  In particular, it shows up when optimizing a predictive distribution.  One example of a gradient log-normalizer is the logistic sigmoid function that shows up when optimizing a Bernoulli model.\nThe problem is that some exponential families like the complex normal distribution have a complex-valued gradient log-normalizer.  This causes a problem with custom_jvp:\nfrom jax import grad, custom_jvp\nimport jax.numpy as jnp\n\ndef f(q):\n    return jnp.real(jnp.sum(q))\n\ndef nat_to_exp(q):\n    return q\n\nif True:  # When false, no errors are produced.\n    f = custom_jvp(f)\n\n    @f.defjvp\n    def f_jvp(primals, tangents):\n        q, = primals\n        q_prime, = tangents\n        a = nat_to_exp(q)\n        return f(q), a * q_prime\n\n\nsome_q = jnp.array([2+1j, 1+1j], dtype=jnp.complex64)\nprint(grad(f)(some_q))\n\ngives\nTypeError: mul requires arguments to have the same dtypes, got float32, complex64.\n\nWhat is the best way to fix this?  One way would be to make the log-normalizer complex-valued, but this is unfortunate from both a usability standpoint (it shows up in many calculations that are real-valued like the cross entropy, and the density), and from an efficiency standpoint (complex numbers need twice the memory, etc.)\nI'm wondering if it's possible to relax the check in JVP evaluation to make the multiplication support widening from real to complex?",
+            "closedAt": "2020-11-26T04:36:01Z",
+            "createdAt": "2020-03-23T04:48:34Z",
+            "id": "MDU6SXNzdWU1ODU5MjcwMTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2488,
+            "state": "CLOSED",
+            "title": "cumtom_jvp fails when the function is real-valued and its gradient is complex-valued",
+            "updatedAt": "2020-11-26T18:44:20Z",
+            "url": "https://github.com/jax-ml/jax/issues/2488"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am not sure it is a bug as I am probably using lax.scan badly. When I pass integer and float data to the scan I have a shape exception.\nHere is the reproducible example\nimport jax.ops as jop\nfrom jax import jit\nimport jax.numpy as np\nimport jax.lax as lax\n\ndef get_loss(data):\n    one_array = np.zeros(2) \n    loss = 0\n\n    def inner_loop(carry, obsv):\n        (loss, one_array) = carry\n        val = one_array[obsv[0]]\n\n        loss += 1\n        return ((loss, one_array), None)\n\n    carry = (loss, one_array)\n\n    ((loss, one_array), _) = lax.scan(inner_loop, carry, data)\n\n    return loss\n\ndata = np.array([[0, 1], [0, 1]])\njit_get_loss = jit(get_loss)\njit_get_loss(data)\n\ndata = np.array([[0, 1.1], [0, 1.1]])\njit_get_loss = jit(get_loss)\n#jit_get_loss(data) # fail\n\nSo the question is how do you handle mixed datatype. Also, I guess it is not possible to pass a string in the data array?\nthanks",
+            "closedAt": "2020-03-23T17:05:06Z",
+            "createdAt": "2020-03-22T23:27:54Z",
+            "id": "MDU6SXNzdWU1ODU4NDA2NzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2486,
+            "state": "CLOSED",
+            "title": "Mixed dtype in lax.scan",
+            "updatedAt": "2020-03-23T17:05:06Z",
+            "url": "https://github.com/jax-ml/jax/issues/2486"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This is not exactly a bug report but something I noticed that might be good to know.\nThe random number generation in JAX is not just slower than e.g. PyTorch or TensorFlow (might be expected, though 10x compared to PyTorch seems large), it also has very different trade-offs. I compared two algorithms for random sampling from an n-dimensional ball and for all frameworks (NumPy, PyTorch, PyTorch GPU, TensorFlow GPU) one algorithm is faster than the other one, except for JAX, there it's the other way round.\nhttps://github.com/jonasrauber/uniformly-sampling-nd-ball\nFeel free to close this if you don't think it's worth any further consideration.",
+            "closedAt": "2022-06-23T23:29:51Z",
+            "createdAt": "2020-03-22T07:09:59Z",
+            "id": "MDU6SXNzdWU1ODU2NTk5ODg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2482,
+            "state": "CLOSED",
+            "title": "GitHub random number generator performance",
+            "updatedAt": "2022-06-23T23:29:52Z",
+            "url": "https://github.com/jax-ml/jax/issues/2482"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "when i use iminuit to fit the gaussian i find a different with use jit and no ues jit\nlook this\nwhen i use function  likelihood to fit it , it is look good (pull distribution),\nbut when i use function jitf to fit it , it look bad\nimport numpy as onp\nimport matplotlib.pyplot as plt\nfrom jax import grad,jit\nimport jax.numpy as np\nimport iminuit\nimport seaborn as sns\n\n# def gao(arg):\n#     return np.exp(-(x-arg[0])**2/(2*arg[1]*arg[1]))/(np.sqrt(2*np.pi)*arg[1])\n\n# def likelihood(arg):\n#     s = np.log(gao(arg))\n#     return -np.sum(s)\n    \ndef gao(m,w):\n    return np.exp(-(x-m)**2/(2*w*w))/(np.sqrt(2*np.pi)*w)\n\ndef likelihood(arg):\n#     print(\"likelihood\")\n    m,w = np.split(arg,2)\n    s = np.log(gao(m,w))\n    return -np.sum(s)\n    \nx = onp.random.normal(4.,0.7,1000)\nargs = np.asarray([4.,0.7])\n\n# def df(arg):\n#     return devf(arg)[0],devf(arg)[1]\n\nkwargs = {}\nkwargs['fix_x1'] = False\nmean = []\nwidth = []\nem = []\new = []\nranm = onp.random.randint(50,80,size=500) - 50\nfor i in range(100):\n    k = ranm[i] / 100\n#     print(k)\n    args = np.asarray([5.+k,0.6+k])\n    x = onp.random.normal(4.,0.7,1000)\n    jitf = jit(likelihood)\n    devf = jit(grad(likelihood))\n    m = iminuit.Minuit.from_array_func(likelihood, args, error=(0.1, 0.1), errordef=0.5, grad=devf)\n    m.migrad()\n    m.fitarg\n    value = m.values\n    error = m.errors\n    mean.append(value['x0'])\n    width.append(value['x1'])\n    em.append(error['x0'])\n    ew.append(error['x1'])\n\nmean = np.asarray(mean)\nwidth = np.asarray(width)\nem = np.asarray(em)\new = np.asarray(ew)\nom = (mean - 4) / em\now = (width - 0.7) / ew\nsns.distplot(om, kde=True)",
+            "closedAt": "2020-03-24T05:10:33Z",
+            "createdAt": "2020-03-21T17:12:43Z",
+            "id": "MDU6SXNzdWU1ODU1Mzk4NjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2479,
+            "state": "CLOSED",
+            "title": "it is different when use jit and without jit",
+            "updatedAt": "2020-03-24T05:10:33Z",
+            "url": "https://github.com/jax-ml/jax/issues/2479"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "As we start using type hints, we have to think about the various methods for enforcing them. At the moment, we use mypy in Travis, primarily because it is fast. But once we import the code into Google we will have to pass pytype checks. These two type checkers are not identical in coverage.\nTo start, I plan to add pytype to Travis checks. This will catch typing errors early.\nLonger term it may make sense to figure out how to make pytype fast for JAX.",
+            "closedAt": "2021-08-20T10:13:59Z",
+            "createdAt": "2020-03-21T12:44:40Z",
+            "id": "MDU6SXNzdWU1ODU0OTI1MTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2474,
+            "state": "CLOSED",
+            "title": "mypy and pytype for type hints",
+            "updatedAt": "2021-08-20T10:13:59Z",
+            "url": "https://github.com/jax-ml/jax/issues/2474"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm not sure why this doesn't work:\nimport jax\n\n\nclass C:\n\n    # Works:\n    # partial(jax.jit, static_argnums=(0,))\n    # Fails:\n    @jax.custom_transforms\n    def f(self, x):\n        return 2 * x\n\n\nC().f(4.0)\n\nI guess\n\njax.linear_utile.WrappedFun should maybe implement the descriptor protocol, and\njax.custom_transforms should maybe accept a static_argnums parameter?\n\nAs an aside, is it necessary to @jax.jit functions that are decorated with @jax.custom_transforms?",
+            "closedAt": "2020-03-21T13:55:57Z",
+            "createdAt": "2020-03-21T11:57:32Z",
+            "id": "MDU6SXNzdWU1ODU0ODUzNTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2473,
+            "state": "CLOSED",
+            "title": "Bug/feature request jax.custom_transforms cannot decorate a method",
+            "updatedAt": "2020-03-22T01:26:40Z",
+            "url": "https://github.com/jax-ml/jax/issues/2473"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "ShardedDeviceArrays do not nest. One simple illustration of this is indexing behavior:\n>>> assert jax.local_device_count() == 8\n>>> f = jax.pmap(jax.pmap(lambda x: x))\n>>> data = np.broadcast_to(np.arange(8).reshape(2, 4, 1), (2, 4, 2 ** 21))\n>>> out = f(data).block_until_ready()\n>>> out[0]\n... DeviceArray([[0, 0, 0, ..., 0, 0, 0],\n                 [1, 1, 1, ..., 1, 1, 1],\n                 [2, 2, 2, ..., 2, 2, 2],\n                 [3, 3, 3, ..., 3, 3, 3]], dtype=int32)\n\nWe're returning a DeviceArray with all the data here, instead of another ShardedDeviceArray. This means all the data is moving to one device.\nHow can I efficiently get an arbitrary single replica's data?\n# This collects all elements on the second axis to one device before indexing.\n>>> %timeit out[0][0].block_until_ready()\n... 1 loops, best of 3: 2.64 ms per loop\n# This collects all elements onto one device and indexes.\n>>> %timeit out[0, 0].block_until_ready()\n... 1 loops, best of 3: 19.4 ms per loop\n\nI could work around this by manually constructing the DeviceArray:\n>>> from jax import abstract_arrays\n>>> from jax.interpreters import xla\n>>> from jax import lazy\n>>> def get_from_arbitrary_buffer(sda):\n      aval = abstract_arrays.ShapedArray(sda.aval.shape[2:], sda.aval.dtype)\n      return xla.DeviceArray(aval, None, lazy.array(aval.shape), sda.device_buffers[0])\n>>> %timeit get_from_buffer(out).block_until_ready()\n... 100000 loops, best of 3: 6.87 µs per loop\n\nBut this seems to have weird downstream effects where the buffer doesn't actually match.",
+            "closedAt": "2022-05-17T22:20:45Z",
+            "createdAt": "2020-03-19T14:02:56Z",
+            "id": "MDU6SXNzdWU1ODQ0MzU1NTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2459,
+            "state": "CLOSED",
+            "title": "Improved support for nested ShardedDeviceArrays",
+            "updatedAt": "2022-05-17T22:20:45Z",
+            "url": "https://github.com/jax-ml/jax/issues/2459"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Initializing arrays from the jax.random module takes significantly longer time than its numpy equivalent np.random module. It can be reproduced with the code snippet below. I would appreciate if someone could give me an insight about why this is happening; particularly, I am interested to know in what ways the two initialisation strategies differ.\nThank you.\nimport jax\nimport numpy as np\nkey = jax.random.PRNGKey(0)\n\nstart = time.time()\nfor i in range(1000000):\n    a = np.random.randint(100, size=(100,))\nend = time.time()\nprint(\"np's randint: \", end-start)\n\nstart = time.time()\nfor i in range(1000000):\n    a = jax.random.randint(key, (100,), 0, 100)\nend = time.time()\nprint(\"jnp's randint: \", end-start)\n\nstart = time.time()\nfor i in range(1000000):\n    # a = np.random.randint(100, size=(100,))\n    a = np.random.randn(100,)\nend = time.time()\nprint(\"np's randn: \", end-start)\n\nstart = time.time()\nfor i in range(1000000):\n    a = jax.random.normal(key, shape=(100,))\nend = time.time()\nprint(\"jnp's normal: \", end-start)\nOutput\nnp's randint:  19.102942943572998\njnp's randint:  179.5605330467224\nnp's randn:  3.5840139389038086\njnp's normal:  102.20619702339172",
+            "closedAt": "2022-06-22T00:29:07Z",
+            "createdAt": "2020-03-19T12:04:04Z",
+            "id": "MDU6SXNzdWU1ODQzNjM3OTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2456,
+            "state": "CLOSED",
+            "title": "Initialising arrays using jax.random takes significantly longer than its numpy equivalent np.random.",
+            "updatedAt": "2022-06-22T00:31:19Z",
+            "url": "https://github.com/jax-ml/jax/issues/2456"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there,\nI'm not quite sure how people generally install the correct cuda version of jaxlib, but after some searching I found this notebook: https://www.kaggle.com/guillemkami/getting-started-with-nlp-using-jax\nIt explains pretty well how to install the correct version compatible with your CUDA installation.\nNow I was thinking, this process could be made much simpler by adding the different cuda versions to pypi. For instance, suppose my CUDA version is 10.1, then I install the right version of jaxlib by running:\n$ pip3 install jaxlib[cuda101]\n\nOr, in a CI/CD pipeline (like travis or github actions) I might choose to install the CPU version\n$ pip3 install jaxlib[nocuda]\n\nI believe that the square brackets are treated as ordinary characters in pypi, which would mean that you can upload a new cuda version simply by registering a new package name with pypi.org.\nI had another look, they are added through the extras_require=... kwarg in setup.py.\nAlso, JAX is awesome, keep up the good work!\n-Kris",
+            "closedAt": "2022-06-23T23:34:40Z",
+            "createdAt": "2020-03-19T02:09:03Z",
+            "id": "MDU6SXNzdWU1ODQxMTM0MDU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2453,
+            "state": "CLOSED",
+            "title": "Feature request: add jax[cudaversion] to pypi",
+            "updatedAt": "2022-06-23T23:34:40Z",
+            "url": "https://github.com/jax-ml/jax/issues/2453"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It'd be great if there was a way to monitor memory usage programmatically in jax? Something a bit like memory_stats.MaxBytesInUse()  from from google3.third_party.tensorflow.contrib import memory_stats. To start with, I'd like it to work on GPU, but if there's something that works on TPU, I'll take it too 🙂\nSome ideas proposed by others (not me):\nFor GPU, could we extract exactly the same thing that TF is exposing by adding some Python bindings to memory_stats_ops.cc in TF?\nMaybe on TPU, we could get equivalent things.",
+            "closedAt": "2020-07-13T08:31:18Z",
+            "createdAt": "2020-03-18T19:58:51Z",
+            "id": "MDU6SXNzdWU1ODM5NjkyMDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2451,
+            "state": "CLOSED",
+            "title": "Need to measure memory usage programmatically",
+            "updatedAt": "2020-07-13T08:31:19Z",
+            "url": "https://github.com/jax-ml/jax/issues/2451"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I found the following discrepancy between numpy and jax:\nIn [1]: import numpy as np                                                                                                                                                                 \n\nIn [2]: np.median([np.inf, np.inf, np.inf])                                                                                                                                                \nOut[2]: inf\n\nIn [3]: import jax.numpy as np                                                                                                                                                             \n\nIn [4]: np.median([np.inf, np.inf, np.inf])                                                                                                                                                \n/Users/stephentu/anaconda3/lib/python3.7/site-packages/jax/lib/xla_bridge.py:122: UserWarning: No GPU/TPU found, falling back to CPU.\n  warnings.warn('No GPU/TPU found, falling back to CPU.')\nOut[4]: DeviceArray(nan, dtype=float32)\n\nIn [5]: import jax                                                                                                                                                                         \n\nIn [6]: jax.__version__                                                                                                                                                                    \nOut[6]: '0.1.59'\n\nSeems like returning np.inf is the sensible thing to do here.\n@mattjj suggested the culprit might be here:\nhttps://github.com/google/jax/blob/75077a14414124c13decc65c4ab1c1ac74174b81/jax/numpy/lax_numpy.py#L3374-L3375",
+            "closedAt": "2020-04-07T12:56:24Z",
+            "createdAt": "2020-03-18T02:11:25Z",
+            "id": "MDU6SXNzdWU1ODM0MTI1MjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2446,
+            "state": "CLOSED",
+            "title": "np.median returns nan on a list of all inf",
+            "updatedAt": "2020-04-07T12:56:24Z",
+            "url": "https://github.com/jax-ml/jax/issues/2446"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "#2439 fixes Python 3.5 support in JAX.\nHowever, one test fails under Python 3.5, so I added code to skip it on Python 3.5. I'm guessing this is related to a dependency on set or dictionary ordering somewhere.",
+            "closedAt": "2020-03-19T09:38:14Z",
+            "createdAt": "2020-03-17T19:06:08Z",
+            "id": "MDU6SXNzdWU1ODMyMzQ3Mzg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2440,
+            "state": "CLOSED",
+            "title": "testExamplesJaxprDoc in api_test.py fails on Python 3.5",
+            "updatedAt": "2020-03-19T09:38:14Z",
+            "url": "https://github.com/jax-ml/jax/issues/2440"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "File \"/tmpfs/pip_test_virtualenv/lib/python3.5/site-packages/jax/__init__.py\", line 19, in <module>\n    from jax.api import *\n  File \"/tmpfs/pip_test_virtualenv/lib/python3.5/site-packages/jax/api.py\", line 31, in <module>\n    from typing import Any, Callable, Collection, Optional, Sequence, Tuple, Union\nImportError: cannot import name 'Collection'\n\nLooks likely related to #2387",
+            "closedAt": "2020-03-17T21:19:24Z",
+            "createdAt": "2020-03-17T16:06:48Z",
+            "id": "MDU6SXNzdWU1ODMxMjQ5MTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2438,
+            "state": "CLOSED",
+            "title": "JAX 0.1.60 has exception on import for python3.5",
+            "updatedAt": "2020-03-17T21:26:57Z",
+            "url": "https://github.com/jax-ml/jax/issues/2438"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I use jax via trax, and today I got an error AttributeError: 'jaxlib.tpu_client_extension.TpuExecutable' object has no attribute 'ExecutePerReplica'\nnormally jax in Colab I install it using:\n!pip install --upgrade -q jax\n\nimport requests\nimport os\nif 'TPU_DRIVER_MODE' not in globals():\n  url = 'http://' + os.environ['COLAB_TPU_ADDR'].split(':')[0] + ':8475/requestversion/tpu_driver0.1-dev20191206'\n  resp = requests.post(url)\n  TPU_DRIVER_MODE = 1\n\n# The following is required to use TPU Driver as JAX's backend.\nfrom jax.config import config\nconfig.FLAGS.jax_xla_backend = \"tpu_driver\"\nconfig.FLAGS.jax_backend_target = \"grpc://\" + os.environ['COLAB_TPU_ADDR']\n\nHowever, when I saw there has been a new release I rolled back to the old one. After doing that via !pip install --upgrade -q jax==0.1.39  jaxlib===0.1.39 I started getting ImportError: cannot import name 'xla_data_pb2' on import config from jax which I fixed temporarily by doing url = 'http://' + os.environ['COLAB_TPU_ADDR'].split(':')[0] + ':8475/requestversion/tpu_driver_nightly'. However, then I started getting an error on import jax instead\nI tried doing !pip upgrade pip but the best I could reach is ImportError: cannot import name 'xla_client' on import jax\nAnd again, I can install the current jax but that doesn't work with my version of trax, and I cannot install the older version of jax anymore at all.",
+            "closedAt": "2020-03-17T14:09:33Z",
+            "createdAt": "2020-03-17T11:49:02Z",
+            "id": "MDU6SXNzdWU1ODI5NTU2ODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2436,
+            "state": "CLOSED",
+            "title": "ImportError: cannot import name 'xla_data_pb2' - Jax, Broken on Colab after current release",
+            "updatedAt": "2020-03-17T14:13:10Z",
+            "url": "https://github.com/jax-ml/jax/issues/2436"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I played around with dynamic_update_slice and hit the following bug:\njax.vmap(jax.lax.dynamic_update_slice)(jnp.zeros((3, 10)), jnp.array([1., 1., 1.]), jnp.zeros((3, 1), dtype=jnp.int32))\nRuntimeError: Invalid argument: Scatter op has window of size 1; doesn't match operand of rank 2.:     @     0x55644e8c711f  xla::Scatter()\n@     0x7f629b6169ed  (unknown)\n@     0x7f629b61fd3d  (unknown)\n@     0x55645d6f942c  _PyCFunction_FastCallDict\n@     0x55645dc77759  _PyEval_EvalFrameDefault\n@     0x55645d87d10c  _PyEval_EvalCodeWithName.llvm.11722122052174390739\n@     0x55645dc778d9  _PyEval_EvalFrameDefault\n@     0x55645d87d10c  _PyEval_EvalCodeWithName.llvm.11722122052174390739\n@     0x556460ca00ff  function_call\n@     0x55645dc77f1b  _PyEval_EvalFrameDefault\n@     0x55645d87d10c  _PyEval_EvalCodeWithName.llvm.11722122052174390739\n@     0x556460ca00ff  function_call\n@     0x55645d89a89f  PyObject_Call\n@     0x556437c92b2f  bounded_lru_cache_wrapper\n@     0x55645dc77f1b  _PyEval_EvalFrameDefault\n@     0x55645d87d10c  _PyEval_EvalCodeWithName.llvm.11722122052174390739\n@     0x556460ca00ff  function_call\n@     0x55645d89a89f  PyObject_Call\n@     0x556437c92b2f  bounded_lru_cache_wrapper\n@     0x55645dc77f1b  _PyEval_EvalFrameDefault\n@     0x55645d87d10c  _PyEval_EvalCodeWithName.llvm.11722122052174390739\n@     0x556460ca00ff  function_call\n@     0x55645d89a89f  PyObject_Call\n@     0x556459088865  partial_call\n@     0x55645dc77f1b  _PyEval_EvalFrameDefault\n@     0x55645d87d10c  _PyEval_EvalCodeWithName.llvm.11722122052174390739\n@     0x55645dc77d79  _PyEval_EvalFrameDefault\n@     0x55645dc7770b  _PyEval_EvalFrameDefault\n@     0x55645dc7770b  _PyEval_EvalFrameDefault\n@     0x55645d87d10c  _PyEval_EvalCodeWithName.llvm.11722122052174390739\n@     0x556460ca00ff  function_call\n@     0x55645dc77f1b  _PyEval_EvalFrameDefault\nThis is a bug in JAX's shape-checking rules; please report it!\nhttps://github.com/google/jax/issues\nNote: The second argument has the wrong shape, so the code should not work, I report it anyway because the trace explicitly asks for it to be reported.",
+            "closedAt": "2020-08-27T09:29:04Z",
+            "createdAt": "2020-03-16T13:07:27Z",
+            "id": "MDU6SXNzdWU1ODIyODA3NDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2427,
+            "state": "CLOSED",
+            "title": "Bug in JAX's shape-checking rules for vmap on dynamic_update_slice.",
+            "updatedAt": "2020-08-27T09:29:04Z",
+            "url": "https://github.com/jax-ml/jax/issues/2427"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there,\nI'm still relatively new to JAX and I was wondering what the difference is between the jax.optix and jax.experimental.optimizers modules?\nIs there some added benefit in using one vs the other or is this just a redundancy in the API?\n(if it's an API redundancy, perhaps it might be good to nip this in the bud so as to avoid some of the tf pitfalls)",
+            "closedAt": "2020-03-16T22:31:17Z",
+            "createdAt": "2020-03-15T23:06:35Z",
+            "id": "MDU6SXNzdWU1ODE4NjI5Mzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2420,
+            "state": "CLOSED",
+            "title": "jax.optix vs jax.experimental.optimizers",
+            "updatedAt": "2020-03-22T03:27:50Z",
+            "url": "https://github.com/jax-ml/jax/issues/2420"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello everyone,\nI'm testing JAX framework speed and for that purpose, I wrote the Kalman filter. The gold standard is a Matlab version that performs an algorithm for 50k number of steps in ~0.1 sec. The TensorFlow 2.1 with tf.function gives ~2.0 sec. Unfortunately, JAX version hangs forever.\nThe JAX version of Kalman filter in Colab is here and TensorFlow 2.1 version is here. I would appreciate any help in resolving the issue or understanding what is wrong with the code.\nThanks,\nArtem",
+            "closedAt": "2020-03-17T09:09:00Z",
+            "createdAt": "2020-03-15T13:16:07Z",
+            "id": "MDU6SXNzdWU1ODE2NzA1NDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2419,
+            "state": "CLOSED",
+            "title": "Performance issue",
+            "updatedAt": "2020-03-17T09:09:00Z",
+            "url": "https://github.com/jax-ml/jax/issues/2419"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear jax team,\nI implemented np.unwrap by looking at the numpy source and changing the inplace-modification bits to np.where and np.concatenate.\nWhile the values are correct, the runtime explodes for x.size > 1e7 and is generally a lot worse than the numpy version. See repro below.\nNow, I don't want to waste your time with some micro-optimizations for my specific code. But are there some general performance tips here? I guess the where and concatenate are problematic, but I wouldn't know how to improve this in the JAX framework. Sorry for the code being so cryptic...\nRepro:\nimport jax\nimport jax.numpy as np\nimport numpy as onp\n\n\n@jax.partial(jax.jit, static_argnums=1)\ndef unwrap(p, axis):\n    nd = np.ndim(p)\n    dd = np.diff(p, axis=axis)\n\n    ddmod = np.mod(dd + np.pi, 2 * np.pi) - np.pi\n    ddmod = np.where(\n        np.isclose(ddmod, -np.pi) & (dd > 0),\n        np.pi,\n        ddmod)\n\n    ph_correct = np.where(\n        np.abs(dd) < np.pi,\n        0,\n        ddmod - dd)\n    \n    up = np.concatenate((\n        jax.lax.slice_in_dim(p, 0, 1, axis=axis),\n        jax.lax.slice_in_dim(p, 1, None, axis=axis) + np.cumsum(ph_correct, axis=axis)\n    ), axis=axis)\n\n    return up\n\n\n# OKAY\nx = onp.random.randn(1000) * 10\nassert onp.allclose(\n    onp.unwrap(x),\n    unwrap(x, 0),\n    atol=1e-3, rtol=1e-3\n)\n\n# NOT OKAY\nx = onp.random.randn(int(1e7)) * 10\nunwrap(x, 0).block_until_ready()",
+            "closedAt": "2020-04-03T19:42:32Z",
+            "createdAt": "2020-03-15T10:08:41Z",
+            "id": "MDU6SXNzdWU1ODE2MDgyNzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2418,
+            "state": "CLOSED",
+            "title": "np.unwrap runtime explodes",
+            "updatedAt": "2020-04-03T20:45:12Z",
+            "url": "https://github.com/jax-ml/jax/issues/2418"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey all, with 0.1.59 I'm seeing an error with both map and scan, where they can't handle an empty list:\njax.lax.map(lambda x: x * x, np.array([]))\njax.lax.scan(lambda i, j: (i, j), np.array([]), np.array([]))\nBoth result in this error:\nTypeError: slice slice_sizes must be less than or equal to operand shape, got slice_sizes (1,) for operand shape (0,).\n\nThis has been my workaround, though there is surely something more elegant and more correct:\ndef safe_map(f, xs):\n  if xs.shape[0] == 0:\n    return xs\n  else:\n    return jax.lax.map(f, xs)\nThank you!",
+            "closedAt": "2020-03-13T22:15:56Z",
+            "createdAt": "2020-03-13T16:27:29Z",
+            "id": "MDU6SXNzdWU1ODA3MTEzMzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2412,
+            "state": "CLOSED",
+            "title": "jax.lax.{scan, map} break when supplied with an empty array",
+            "updatedAt": "2020-03-13T22:15:56Z",
+            "url": "https://github.com/jax-ml/jax/issues/2412"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Compare:\nfor np in jnp, onp:\n  print(np)\n  print(np.array([1,2]) != [1,2])\n  print(np.array([1,2]) != [3,2])\n  print(np.array([1,2]) != np.array([1,2]))\n  print(np.array([1,2]) != np.array([3,2]))\nOuptut:\n<module 'jax.numpy' from '/usr/local/lib/python3.6/dist-packages/jax/numpy/__init__.py'>\nTrue\nTrue\n[False False]\n[ True False]\n<module 'numpy' from '/usr/local/lib/python3.6/dist-packages/numpy/__init__.py'>\n[False False]\n[ True False]\n[False False]\n[ True False]\n\nThe strange dynamically-shaped result results in some strange downstream exceptions when dropping in jax.numpy in place of numpy, such as:\nprint(any(onp.array([1,2]) != [1,2]))\nprint(any(jnp.array([1,2]) != [1,2]))\nOutput:\nFalse\n---------------------------------------------------------------------------\nTypeError                                 Traceback (most recent call last)\n<ipython-input-18-e89704e72507> in <module>()\n      1 print(any(onp.array([1,2]) != [1,2]))\n----> 2 print(any(jnp.array([1,2]) != [1,2]))\n\nTypeError: 'bool' object is not iterable\n\n(Of course the real use-case is some_fn_returns_array(x) != some_fn_returns_list(y))",
+            "closedAt": "2022-06-29T15:56:50Z",
+            "createdAt": "2020-03-12T14:52:53Z",
+            "id": "MDU6SXNzdWU1Nzk5OTY1MTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2406,
+            "state": "CLOSED",
+            "title": "Behavior of `!=` operator is confusing when rhs is a list",
+            "updatedAt": "2022-06-29T15:56:50Z",
+            "url": "https://github.com/jax-ml/jax/issues/2406"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "PR #2393 changes jax.test_util.tolerance to return 0 if given an explicit 0 argument (instead of using a default tolerance). It appears that a test for jax.lax.nextafter might have been passing accidentally by using a default tolerance when it was intended to use a tolerance of exactly 0; after the changes in that PR, there are some inconsistencies between the lax and numpy versions:\n__________ LaxTest.testOpAgainstNumpyNextafter_float64[3]_float64[3] ___________\n[gw0] linux -- Python 3.6.10 /home/travis/miniconda/bin/python\nself = <lax_test.LaxTest testMethod=testOpAgainstNumpyNextafter_float64[3]_float64[3]>\nop_name = 'nextafter', rng_factory = <function rand_default at 0x7f3fa5c38400>\nshapes = ((3,), (3,)), dtype = <class 'numpy.float64'>, tol = 0\n\n...\n\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \na = array([5.2921576, 1.2004718, 2.9362137], dtype=float32)\nb = array([5.29215704, 1.20047163, 2.93621395]), atol = 0, rtol = 0\n    def _assert_numpy_allclose(a, b, atol=None, rtol=None):\n      a = a.astype(onp.float32) if a.dtype == dtypes.bfloat16 else a\n      b = b.astype(onp.float32) if b.dtype == dtypes.bfloat16 else b\n      kw = {}\n      if atol: kw[\"atol\"] = atol\n      if rtol: kw[\"rtol\"] = rtol\n>     onp.testing.assert_allclose(a, b, **kw)\nE     AssertionError: \nE     Not equal to tolerance rtol=1e-07, atol=0\nE     \nE     Mismatched elements: 2 / 3 (66.7%)\nE     Max absolute difference: 6.12090903e-07\nE     Max relative difference: 1.15660004e-07\nE      x: array([5.292158, 1.200472, 2.936214], dtype=float32)\nE      y: array([5.292157, 1.200472, 2.936214])\n\nPR #2393 disables those tests for now.",
+            "closedAt": "2020-03-12T22:53:48Z",
+            "createdAt": "2020-03-11T19:04:50Z",
+            "id": "MDU6SXNzdWU1Nzk0ODI1NjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2403,
+            "state": "CLOSED",
+            "title": "jax.lax.nextafter is inconsistent with np.nextafter for float64",
+            "updatedAt": "2020-03-12T22:53:48Z",
+            "url": "https://github.com/jax-ml/jax/issues/2403"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Instead of requiring users to explicitly call register_pytree_node(), we could supply a base class that lets them instead define a pair of special methods for flattening/unflattening.\nThis looks slightly cleaner than calling functions on classes, but still avoids the evils of implementation inheritance.\nHere's a working example, adapted from the pytree docs:\nimport jax\nfrom jax import tree_util\n\n# baseclass that should go in tree_util.py\n\ndef _generic_flatten(tree):\n  aux, children = tree.tree_flatten()\n  return children, (type(tree), aux)\n\ndef _generic_unflatten(type_and_aux_data, children):\n  cls, aux_data = type_and_aux_data\n  return cls.tree_unflatten(aux_data, children)\n\n# https://stackoverflow.com/questions/18126552/how-to-run-code-when-a-class-is-subclassed\nclass _AutoRegister(type):\n  def __init__(cls, *args, **kwargs):\n    tree_util.register_pytree_node(cls, _generic_flatten, _generic_unflatten)\n    super().__init__(*args, **kwargs)\n\nclass PyTree(metaclass=_AutoRegister):\n  def tree_flatten(self):\n    \"\"\"Returns aux_data and children.\"\"\"\n    raise NotImplemented\n\n  @classmethod\n  def tree_unflatten(cls, aux_data, children):\n    \"\"\"Returns a new PyTree.\"\"\"\n    raise NotImplemented\n\n# example user code\n\nclass Special(PyTree):\n  def __init__(self, x, y):\n    self.x = x\n    self.y = y\n\n  def __repr__(self):\n    return \"Special(x={}, y={})\".format(self.x, self.y)\n\n  def tree_flatten(self):\n    return (None, (self.x, self.y))\n\n  @classmethod\n  def tree_unflatten(cls, aux_data, children):\n    return cls(*children)\n\n# example usage\n\ndef show_example(structured):\n  flat, tree = jax.tree_flatten(structured)\n  unflattened = jax.tree_unflatten(tree, flat)\n  print(\"structured={}\\n  flat={}\\n  tree={}\\n  unflattened={}\".format(\n      structured, flat, tree, unflattened))\n\nshow_example(Special(1, 2))\n# outputs:\n# structured=Special(x=1, y=2)\n#   flat=[1, 2]\n#   tree=PyTreeDef(<class '__main__.Special'>[(<class '__main__.Special'>, None)], [*,*])\n#   unflattened=Special(x=1, y=2)",
+            "closedAt": "2020-03-10T22:01:21Z",
+            "createdAt": "2020-03-10T18:14:50Z",
+            "id": "MDU6SXNzdWU1Nzg3NzE2NTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2396,
+            "state": "CLOSED",
+            "title": "Optional base class or class decorator for PyTree objects",
+            "updatedAt": "2020-03-10T22:01:21Z",
+            "url": "https://github.com/jax-ml/jax/issues/2396"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Consider the following code\nfrom jax import grad\nimport jax.numpy as np\n\nx = np.zeros(shape=(4,4))\nd = grad(np.linalg.det)\n\nprint(d(x))\nthe derivative of np.linalg.det(x) against x is obviously a zero matrix, but NaNs was outputted",
+            "closedAt": "2020-04-25T15:34:04Z",
+            "createdAt": "2020-03-08T12:56:13Z",
+            "id": "MDU6SXNzdWU1Nzc0OTY3MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2380,
+            "state": "CLOSED",
+            "title": "Derivative of the determinant of a singular matrix is NaN",
+            "updatedAt": "2020-04-25T15:34:05Z",
+            "url": "https://github.com/jax-ml/jax/issues/2380"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Here's a minimum example:\nimport jax.numpy as jnp\nfrom jax import grad\n\n\nx = 0.0\ntarget = 1.0\n\n\ndef loss1(w):\n    y = jnp.sqrt(((x * w) ** 2).sum())\n    return (y - target)**2\n\n\ndef loss2(w):\n    y = jnp.sqrt(jnp.square(x * w).sum())\n    return (y - target)**2\n\n\ndef loss3(w):\n    y = jnp.linalg.norm(x * w)\n    return (y - target)**2\n\n\nfor loss in [loss1, loss2, loss3]:\n    print(grad(loss)(1.0))\n\nPrints:\n0.0\nnan\nnan",
+            "closedAt": "2020-03-10T23:54:08Z",
+            "createdAt": "2020-03-07T19:46:51Z",
+            "id": "MDU6SXNzdWU1NzczOTA2ODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2377,
+            "state": "CLOSED",
+            "title": "grad fails through jax.numpy.square and jax.numpy.linalg.norm at zero",
+            "updatedAt": "2020-03-11T04:06:30Z",
+            "url": "https://github.com/jax-ml/jax/issues/2377"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "JAX should automatically treat dataclasses as pytrees, so they don't have to be explicitly registered.\nIdeally we would also support some syntax for non-differentiable parameters. Flax does so by adding custom metadata into dataclassess.Field.metadata with the special flax.struct.field constructor, which seems like a very clean way to do this.\nI started working on this in a branch, but haven't tested anything so it very likely is entirely broken/non-functional! If somebody wants to finish this up it would be awesome :)\nmaster...shoyer:dataclasses-pytree\nxref #1808",
+            "closedAt": "2025-01-07T19:58:46Z",
+            "createdAt": "2020-03-06T18:24:20Z",
+            "id": "MDU6SXNzdWU1NzcwOTk3MDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2371,
+            "state": "CLOSED",
+            "title": "Automatically treat dataclasses as pytrees",
+            "updatedAt": "2025-01-07T19:58:47Z",
+            "url": "https://github.com/jax-ml/jax/issues/2371"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I would like to pass a dictionary through a vmap.\nI made an attempt to understand https://jax.readthedocs.io/en/latest/notebooks/JAX_pytrees.html but couldn't figure out if this is something I need to understand or not?\nvmap(loss, [None, 0, 0])(dictionary, X[i:i+batch], y[i:i+batch])\nvmap(loss, [None, 0, 0])(tree_flatten(dictionary), X[i:i+batch], y[i:i+batch])\nvmap(loss, [tree_flatten(dict_none), 0, 0])(tree_flatten(dictionary), X[i:i+batch], y[i:i+batch])\nEither way I get an issue like this:\nValueError: Expected list, got (([<object object at 0x7fcb21ef58b0>, <object object at 0x7fcb21ef58b0>, <object object at 0x7fcb21ef58b0>, <object object at 0x7fcb21ef58b0>, <object object at 0x7fcb21ef58b0>, <object object at 0x7fcb21ef58b0>], <object object at 0x7fcb21ef58b0>), <object object at 0x7fcb21ef58b0>, <object object at 0x7fcb21ef58b0>).\n\nDuring handling of the above exception, another exception occurred:\n\nValueError                                Traceback (most recent call last)\n/usr/local/lib/python3.6/dist-packages/jax/api.py in _flatten_axes(treedef, axis_tree)\n    714     msg = (\"axes specification must be a tree prefix of the corresponding \"\n    715            \"value, got specification {} for value {}.\")\n--> 716     raise ValueError(msg.format(axis_tree, treedef))\n    717   axes = [None if a is proxy else a for a in axes]\n    718   assert len(axes) == treedef.num_leaves\n\nValueError: axes specification must be a tree prefix of the corresponding value, got specification [([], PyTreeDef(dict[['dense1', 'dense2', 'dense3']], [PyTreeDef(dict[[]], []),PyTreeDef(dict[[]], []),PyTreeDef(dict[[]], [])])), 0, 0] for value PyTreeDef(tuple, [PyTreeDef(tuple, [PyTreeDef(list, [*,*,*,*,*,*]),*]),*,*]).",
+            "closedAt": "2020-03-10T15:29:48Z",
+            "createdAt": "2020-03-06T03:03:26Z",
+            "id": "MDU6SXNzdWU1NzY2NjUzMTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 2367,
+            "state": "CLOSED",
+            "title": "Documentation for passing in trees",
+            "updatedAt": "2021-09-03T12:27:46Z",
+            "url": "https://github.com/jax-ml/jax/issues/2367"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "jax.lax.tie_in seems to have subtle but important properties, but has no docstring.  Could we add one?",
+            "closedAt": "2020-03-06T00:21:20Z",
+            "createdAt": "2020-03-05T09:17:26Z",
+            "id": "MDU6SXNzdWU1NzYxMDM0NTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2358,
+            "state": "CLOSED",
+            "title": "Docstring for jax.lax.tie_in",
+            "updatedAt": "2020-03-06T00:21:20Z",
+            "url": "https://github.com/jax-ml/jax/issues/2358"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The following sample code fails while trying to allocate 10gb on my meager 4gb notebook gpu. This is way too much for the computation it does.\nI traced the culprit to the argsort call on the sample_knn function bellow. If I substitute it by a arange or randint the code runs fine. I also noticed the expression gets a with<BatchTrace> type and the resulting HloText amounts to 41mb! (Some of the function parameters get constants full of {}. Don't know what it is.)\nWhat is happening here?\nI think this is not the only place where vmap produces strange results for me (I guess mostly because of the transparently prepended axis).\nAs an aside: is there any place were I can query the available device memory? It could be useful to know it and automatize mini batch sizes for large datasets sometimes.\nfrom jax import numpy as np, random, vmap, lax, tree_util, partial, config, jit, xla_computation\nconfig.update('jax_numpy_rank_promotion','raise')\n\n\n# a holder for datapoints, nearest neighbors and some auxiliary functions\nclass Source:\n    def __init__(self, X, nbrs):\n        self.X = X\n        self.nbrs = nbrs\n\n    def distance(self, i, j):\n        # assert i.ndim == j.ndim == 0\n        return np.linalg.norm(self.X[i] - self.X[j])\n\ntree_util.register_pytree_node(\n    Source,\n    lambda v: ([v.X, v.nbrs], None),\n    lambda _, a: Source(*a)\n)\n\n\n@partial(jit, static_argnums=2)\ndef sample_knn_triplets(seed, source, n_inliers, n_outliers, idx):\n\n    i = idx // (n_inliers * n_outliers)\n    j = (idx // n_outliers) % n_inliers\n\n    nbrs = source.nbrs[i]\n\n    n_neighbors = nbrs.shape[0]\n\n    P = vmap(partial(source.distance, i))(nbrs)\n    # P = lax.map(partial(source.distance, i), nbrs)\n\n    nbrs_by_sim = np.argsort(-P)\n    print(nbrs_by_sim) #Traced<ShapedArray(int32[10])>with<BatchTrace(level=0/1)>\n\n    nbrs_by_sim = random.randint(seed, (n_neighbors,), 0, n_neighbors)\n    print(nbrs_by_sim) #Traced<ShapedArray(int32[10]):JaxprTrace(level=-1/1)>\n\n    nbrs_by_sim = nbrs[nbrs_by_sim]\n\n    j = nbrs_by_sim[j + 1]\n\n    seed = random.fold_in(seed, idx)\n    k, = random.randint(seed, (1,), 0, source.X.shape[0], np.int32)\n\n    return np.array([i, j, k])\n\n\nseed = random.PRNGKey(0)\nkey1, key2, key3 = random.split(seed, 3)\n\n# mnist dimensions\nn_samples = 70_000\nn_dim = 784\n\nn_neighbors = 10\n\n# fake data and neighbor indexes\ndata = random.uniform(key1, (n_samples, n_dim), np.float32)\nnbrs = random.randint(key2, (n_samples, n_neighbors), 0, n_samples, np.int32)\n\nsource = Source(data, nbrs)\n\n\nn_triplets = n_samples * 10 * 5\n\nindices = np.arange(n_triplets)\n\nto_triplet = partial(sample_knn_triplets, key3, source, 10, 5)\n\ntriplets = vmap(to_triplet)(indices)",
+            "closedAt": "2020-04-25T18:34:25Z",
+            "createdAt": "2020-03-04T18:23:26Z",
+            "id": "MDU6SXNzdWU1NzU2NDY2NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2351,
+            "state": "CLOSED",
+            "title": "excessive memory allocation by running argsort inside a vectorized function",
+            "updatedAt": "2020-04-25T18:34:25Z",
+            "url": "https://github.com/jax-ml/jax/issues/2351"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Just flagging that jnp.nanmax has issues when the input is int. For example:\n#Numpy version:\nnp.nanmax(np.arange(3*3*3).reshape(3,3,3), axis=(1,2))\n>> array([ 8, 17, 26])\n\nversus:\njnp.nanmax(jnp.arange(3*3*3).reshape(3,3,3), axis=(1,2))\n>> ValueError: cannot convert float NaN to integer\n\nConverting to float works, as does jnp.nanmean. Issue seems to be converting nan to int here:\nhttps://github.com/google/jax/blob/52a41311c5666d0188c9f6966e3ef7e31ccb4e81/jax/numpy/lax_numpy.py#L275",
+            "closedAt": "2021-05-10T19:13:55Z",
+            "createdAt": "2020-03-04T16:24:34Z",
+            "id": "MDU6SXNzdWU1NzU1NTI2ODM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2349,
+            "state": "CLOSED",
+            "title": "jnp.nanmax does not work with int inputs",
+            "updatedAt": "2021-05-10T19:13:55Z",
+            "url": "https://github.com/jax-ml/jax/issues/2349"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Somewhat confusingly (imho) flatten drops leaves that are None:\n>>> jax.tree_leaves([1, None, 1])\n[1, 1]\nHowever flatten/unflatten on such a structure is symmetrical (leading me to believe JAX treats a None leaf as part of the structure):\n>>> leaves, treedef = jax.tree_flatten([1, None, 1])\n>>> jax.tree_unflatten(treedef, leaves)\n[1, None, 1]\nHowever multimap does not complain that the structures are different, and also skips the map fn if the left hand leaf is None:\n>>> a = [None, 1]\n>>> b = [2, None]\n>>> jax.tree_multimap(lambda x, y: (x, y), a, b)\n[None, (1, None)]\nIs this desired behaviour? It doesn't align with the other tree libraries (e.g. tf.nest and dm-tree) which treat None as a leaf, so it feels broken to me as a user of those libraries.",
+            "closedAt": "2020-03-04T19:16:42Z",
+            "createdAt": "2020-03-04T12:48:18Z",
+            "id": "MDU6SXNzdWU1NzUzNzQxODc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2348,
+            "state": "CLOSED",
+            "title": "JAX tree_* drops `None` elements",
+            "updatedAt": "2020-06-08T18:32:29Z",
+            "url": "https://github.com/jax-ml/jax/issues/2348"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "x = List[Tuple[jnp.array, float, float, jnp.array, bool]]\njnp.array(x, dtype=object) does not work. when np.array(x, dtype=object) works.\ni expect result as jnp.ndarray[Tuple[jnp.array, float, float, jnp.array, bool]]\nFollowing Error is:\nRuntimeError: Invalid argument: Convert does not allow non-arrays, so cannot convert from s32[4] to TOKEN.:\nThis is a bug in JAX's shape-checking rules; please report it!",
+            "closedAt": "2021-08-02T17:54:03Z",
+            "createdAt": "2020-03-04T12:20:32Z",
+            "id": "MDU6SXNzdWU1NzUzNTc2MTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "good first issue"
+                },
+                {
+                  "name": "documentation"
+                },
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 2347,
+            "state": "CLOSED",
+            "title": "jnp.array(x, dtype=object) Causes Error(Shape Checking Issue)",
+            "updatedAt": "2021-08-02T17:54:11Z",
+            "url": "https://github.com/jax-ml/jax/issues/2347"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "in our code over at https://github.com/pyhf/neos we run into an issue when jit'ing functions that report\nAssertionError: If you see this error, please let us know by opening an issue at\nhttps://github.com/google/jax/issues \nsince we thought this was unreachable!\n\nwe did manage to reach it, what would be the best way to report more detail?\ncc @phinate",
+            "closedAt": "2020-03-22T06:06:30Z",
+            "createdAt": "2020-03-03T20:08:58Z",
+            "id": "MDU6SXNzdWU1NzQ5MTEwNjk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2346,
+            "state": "CLOSED",
+            "title": "If you see this error, please let us know by opening an issue",
+            "updatedAt": "2020-03-22T21:01:05Z",
+            "url": "https://github.com/jax-ml/jax/issues/2346"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm attempting to get gradients through odeint. I have the following code,\n\n  Repro code\n  import jax\n  from jax import random\n  from jax import value_and_grad\n  import jax.numpy as jp\n  from jax.experimental.stax import Dense\n  from jax.experimental import ode\n\n  def pendulum_dynamics(mass: float, length: float, gravity: float,\n                        friction: float):\n    def f(state, action):\n      assert state.shape == (2, )\n      assert action.shape == (1, )\n\n      theta = state[0]\n      theta_dot = state[1]\n      u = action[0]\n\n      theta_dotdot = (-gravity / length * jp.sin(theta) - friction * theta_dot +\n                      u / (mass * length**2))\n\n      return jp.array([theta_dot, theta_dotdot])\n\n    return f\n\n  def policy_integrate(dynamics, cost, policy):\n    def ofunc(y, _t, policy_params):\n      x = y[1:]\n      u = policy(policy_params, x)\n      return jp.concatenate((cost(x, u).reshape((1, )), dynamics(x, u)))\n\n    def eval_policy(policy_params, x0, total_time):\n      return ode.odeint(ofunc, jp.concatenate((jp.zeros((1, )), x0)),\n                        jp.array([total_time]), policy_params)[0, 0]\n\n    return eval_policy\n\n  def main():\n    dynamics = pendulum_dynamics(\n        mass=0.1,\n        length=1.0,\n        gravity=9.8,\n        friction=0.0,\n    )\n\n    def cost(x, u):\n      return (x[0] - jp.pi)**2 + 0.1 * (x[1]**2) + 0.001 * (u[0]**2)\n\n    policy_init, policy = Dense(1)\n    _, policy_params = policy_init(random.PRNGKey(0), (2, ))\n\n    run = value_and_grad(policy_integrate(dynamics, cost, policy))\n    run(policy_params, jp.zeros((2, )), total_time=30.0)\n\n  if __name__ == \"__main__\":\n    print(jax.__version__)\n    main()\n\nwhich produces,\n0.1.59\n/Users/skainswo/.local/share/virtualenvs/research-CJWjSlE2/lib/python3.7/site-packages/jax/lib/xla_bridge.py:122: UserWarning: No GPU/TPU found, falling back to CPU.\n  warnings.warn('No GPU/TPU found, falling back to CPU.')\nTraceback (most recent call last):\n  File \"/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py\", line 193, in _run_module_as_main\n    \"__main__\", mod_spec)\n  File \"/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py\", line 85, in _run_code\n    exec(code, run_globals)\n  File \"/Users/skainswo/dev/research/research/diffphysics/jaxbug.py\", line 56, in <module>\n    main()\n  File \"/Users/skainswo/dev/research/research/diffphysics/jaxbug.py\", line 52, in main\n    run(policy_params, jp.zeros((2, )), total_time=30.0)\n  File \"/Users/skainswo/.local/share/virtualenvs/research-CJWjSlE2/lib/python3.7/site-packages/jax/api.py\", line 407, in value_and_grad_f\n    ans, vjp_py = vjp(f_partial, *dyn_args)\n  File \"/Users/skainswo/.local/share/virtualenvs/research-CJWjSlE2/lib/python3.7/site-packages/jax/api.py\", line 1285, in vjp\n    out_primal, out_vjp = ad.vjp(flat_fun, primals_flat)\n  File \"/Users/skainswo/.local/share/virtualenvs/research-CJWjSlE2/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 119, in vjp\n    out_primals, pvals, jaxpr, consts = linearize(traceable, *primals)\n  File \"/Users/skainswo/.local/share/virtualenvs/research-CJWjSlE2/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 110, in linearize\n    assert all(aval_primal is None for aval_primal in aval_primals)\nAssertionError\n\nI see that there's\n\nmy_odeint_grad\nmy_odeint_jacrev\nvjp_odeint\nbuild_odeint\n\nin jax.experimental.ode and it's not clear to me if I should be using one of these instead. If so, I'm not 100% clear on what all the differences are. Am I doing something wrong? What's the correct approach to getting forward/reverse mode gradients out of odeint? (In this particular case I'm looking for vjp.)",
+            "closedAt": "2020-03-22T06:04:51Z",
+            "createdAt": "2020-03-03T02:29:29Z",
+            "id": "MDU6SXNzdWU1NzQzNzQwODg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2345,
+            "state": "CLOSED",
+            "title": "value_and_grad(odeint(...)) doesn't work",
+            "updatedAt": "2020-03-22T06:04:51Z",
+            "url": "https://github.com/jax-ml/jax/issues/2345"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "After having programmed in Haskell, I wonder if jax provides the same environment to write my functions in their mathematical forms without caring for buffering intermediary results to avoid re-computations.\nWhen should I care about building/storing intermediary matrices for functions that are called frequently/at multiple places?\nFor instance, I'm toying with a rewrite of the trimap package (https://github.com/eamid/trimap). The current official implementation builds matrices not only for the triplets themselves, but also for their weights, which are based on further matrices for the similarities and distances between datapoints; and then uses the triplets and weights to optimize the final embedding.\nI wonder if I could do away with all those matrices and simply recall the distance etc. functions as necessary. This includes the triplets list itself: as jax's random number generator is deterministic, I could use jax.random.fold_in to simple sample any triplet for a given index.\nWould this recompute those values at every call? I suppose if those calls are made inside the same computation graph (like, inside a single jited function) the optimizer can avoid them? What about multiple calls from non jited functions?",
+            "closedAt": "2020-03-02T17:33:24Z",
+            "createdAt": "2020-02-29T12:47:10Z",
+            "id": "MDU6SXNzdWU1NzMyODgzMjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2340,
+            "state": "CLOSED",
+            "title": "what sort of computation caching, if any, does jax provide?",
+            "updatedAt": "2020-03-02T17:33:24Z",
+            "url": "https://github.com/jax-ml/jax/issues/2340"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Feature request for jax.vmap to support SPMD operations like those supported by jax.pmap, namely jax.lax.psum, jax.lax.axis_index, etc.\nA few use-cases:\n\nUse the same API as pmap without jit.\nImplementing batch-norm within an un-batched network layer.\n\nPotentially others!",
+            "closedAt": "2020-09-11T22:54:22Z",
+            "createdAt": "2020-02-28T18:33:45Z",
+            "id": "MDU6SXNzdWU1NzI5MzA3NzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2334,
+            "state": "CLOSED",
+            "title": "support SPMD operations like psum, axis_index in jax.vmap (feature request)",
+            "updatedAt": "2020-09-11T22:54:43Z",
+            "url": "https://github.com/jax-ml/jax/issues/2334"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI'm using Jax to compute Fourier coefficients. I want to save the computed loss in every iteration. Therefore I do the following in my loss function:\n    def loss(self, coefficents, train_values, train_labels):\n        preds = self.batched_predict(coefficents, train_values)[:, 0]\n        l = jnp.sum(jnp.square(preds - train_labels))\n        self.loss_list += [l]\n        return l\n\nThe loss functions get's called in my update function:\n    def update(self, coefficients, x, y):\n        grads = grad(self.loss)(coefficients, x, y)\n        /*code*/\n        return /*result*/\n\nHowever, the list contains these Jax primitives:\nTraced<ConcreteArray(105.82802000294275)>with<JVPTrace(level=1/0)>\nI want to access the numbers (i.e. 105.82802000294275) stored in my loss_list to plot them with pyplot and save the list of the loss values with numpy. Is there a way to \"unwrap\" the values in a Jax primitive?",
+            "closedAt": "2020-02-28T18:00:29Z",
+            "createdAt": "2020-02-28T17:32:34Z",
+            "id": "MDU6SXNzdWU1NzI5MDA1NzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2332,
+            "state": "CLOSED",
+            "title": "Recover value from Traced<ConcreteArray(-)>with<JVPTrace(level=1/0)>",
+            "updatedAt": "2020-02-28T18:00:30Z",
+            "url": "https://github.com/jax-ml/jax/issues/2332"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I came about some weird behaviour (to me) where jax alters the input to a function when mixed with numpy. I would have expected that x stays unaltered in all cases in the following example:\ndef f(x):\n x = [x]\n x = jnp.concatenate(x)\n x -= 1\n return x\n\nx = np.ones((1))\nf(x)\nprint(x)  # >>> [0.]\n\nx = jnp.ones((1))\nf(x)\nprint(x)  # >>> [1.]\n\nWhen using x = x - 1 or np.concatenate the output is [1.] as expected.\nWith the help of @mattjj I traced this back to https://github.com/google/jax/blob/ce9b03866cf04a378d6cc44a5ce5f99700f0148c/jax/numpy/lax_numpy.py#L1724-L1727\nI will commit a PR and test once an issue number is assigned",
+            "closedAt": "2020-03-04T00:28:49Z",
+            "createdAt": "2020-02-28T16:33:08Z",
+            "id": "MDU6SXNzdWU1NzI4NjI2NzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2330,
+            "state": "CLOSED",
+            "title": "lax_numpy.concatenate passes through individual argument",
+            "updatedAt": "2020-03-04T00:28:50Z",
+            "url": "https://github.com/jax-ml/jax/issues/2330"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am trying to implement a function that performs a \"reduced\" SVD, i.e. for a (m, n) matrix of rank k < min(m,n), only the first k singular values are nonzero and thus only the first k columns of U and the first k rows of Vh are relevant.\nthe code for the forward pass is\n@custom_transforms\ndef svd_reduced(X: array):\n    assert len(X.shape) == 2\n\n    U, S, Vh = np.linalg.svd(X, full_matrices=False)\n    k = np.sum(S > 0.).astype(int)\n    U = dynamic_slice_in_dim(U, 0, k, axis=1)  # U[:,:k]\n    S = dynamic_slice_in_dim(S, 0, k, axis=0)  # S[:k]\n    Vh = dynamic_slice_in_dim(Vh, 0, k, axis=0)  # Vh[:k,:]\n\n    return U, S, Vh\nI worked out the VJP formula and implemented it (not pasting it all, its rather long)\ndefvjp(svd_reduced, _vjp_rule_svd)\nHowever I run into a\nTypeError: Abstract value passed to int, which requires a concrete value. Try using value.astype(int) instead.\nThis is because k, which is the rank of the matrix X depends on its values and thus is not available during tracing.\nI realise that this means that I will not be able to jit this function, but IIUC it should in principle be possible to calculate its grad and that is all I want.\nHow would I go about defining this reduced_svd and its vjp_rule ?",
+            "closedAt": "2020-02-29T15:46:35Z",
+            "createdAt": "2020-02-28T15:18:20Z",
+            "id": "MDU6SXNzdWU1NzI4MTk3ODc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2329,
+            "state": "CLOSED",
+            "title": "Trying to implement gradient for SVD of low-rank matrix",
+            "updatedAt": "2020-02-29T15:46:35Z",
+            "url": "https://github.com/jax-ml/jax/issues/2329"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "One of the problems with making random number generators into objects (#2294) is that objects are not closed under JAX's transformation rules like batching.  I'm creating this issue as a discussion point.\nIt seems like what's necessary is an abstract base class for objects that need to support transformation rules. I don't know enough to propose something too concrete, but maybe:\nclass JaxArrayLike:\n\n    @abstractmethod\n    def as_jax_array(self):\n        \"\"\"\n        Returns T where T is either a JAX array or a sequence of T.\n        \"\"\"\n        raise NotImplementedError\n\nCurrently, a simple neural network object is a mess of static members:\nclass NeuralNetwork:\n\n    def __init__(self, sizes, key):\n        keys = random.split(key, len(sizes))\n        self.sizes = sizes\n        self.weights = [self.random_layer_params(m, n, k)\n                        for m, n, k in zip(sizes[:-1], sizes[1:], keys)]\n\n    # Initialization ----------------------------------------------------------\n    @staticmethod\n    def random_layer_params(m, n, key, scale=1e-2):\n        w_key, b_key = random.split(key)\n        return (scale * random.normal(w_key, (n, m)),\n                scale * random.normal(b_key, (n,)))\n\n    # Learning ----------------------------------------------------------------\n    @staticmethod\n    @jit\n    def _update(weights, images, targets):\n        grads = grad(BaseNeuralNetwork.loss)(weights, images, targets)\n        return [(w - step_size * dw, b - step_size * db)\n                for (w, b), (dw, db) in zip(weights, grads)]\n\n    @staticmethod\n    def loss(weights, images, targets):\n        preds = batched_predict(weights, images)\n        return -jnp.sum(preds * targets)\n\n    def update(self, images, targets):\n        self.weights = self._update(self.weights, images, targets)\n\n    def accuracy(self, images, targets):\n        target_class = jnp.argmax(targets, axis=1)\n        predicted_class = jnp.argmax(\n            batched_predict(self.weights, images), axis=1)\n        return jnp.mean(predicted_class == target_class)\n\n\n# Inference -------------------------------------------------------------------\ndef predict(weights, image):\n    # per-example predictions\n    activations = image\n    for w, b in weights[:-1]:\n        outputs = jnp.dot(w, activations) + b\n        activations = relu(outputs)\n\n    final_w, final_b = weights[-1]\n    logits = jnp.dot(final_w, activations) + final_b\n    return logits - logsumexp(logits)\n\n\nbatched_predict = vmap(predict, in_axes=(None, 0))\n\nBut by deriving from the abstract class, hopefully most of those static methods could be replaced with regular methods, and as_jax_array could return self.weights.  Even better would be to add object-oriented structure to the weights (make them say a list or graph of of objects), which works as longs as as_jax_array is also called on the components of its return value.",
+            "closedAt": "2020-03-10T23:56:22Z",
+            "createdAt": "2020-02-28T05:59:41Z",
+            "id": "MDU6SXNzdWU1NzI1MzkwODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2328,
+            "state": "CLOSED",
+            "title": "Design suggestion: allow objects to be closed under JAX's transformation rules",
+            "updatedAt": "2020-03-11T22:36:42Z",
+            "url": "https://github.com/jax-ml/jax/issues/2328"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "A very high level summary: I got an error when I did some complex number computation inside a lax.scan function (compute1 in the code below). But the almost identical code can be run with a for loop (compute2). Only gradient computation raises the error. Forward computation is fine for both method. If I replace np.diag(d) with v in the function f, then also no error.\nimport jax.numpy as np\nfrom jax import grad, random, jit, lax\n\ndef f(carrier, x):\n    h =  x*np.array([[0, 1j], [-1j, 0]])\n    d, v = np.linalg.eigh(h, symmetrize_input=False)\n    carrier = np.diag(d) @ carrier\n    return carrier, None\n\ndef compute1(p):\n    u = np.eye(2, dtype=np.complex64)\n    carrier, _ = lax.scan(f, u, p)\n    return np.abs(np.trace(carrier))\n\ndef compute2(p):\n    u = np.eye(2, dtype=np.complex64)\n    for i in range(3):\n        h =  p[i]*np.array([[0, 1j], [-1j, 0]])\n\n        d, v = np.linalg.eigh(h, symmetrize_input=False)\n        u = np.diag(d) @ u\n    return np.abs(np.trace(u))\n\nprint(grad(compute1)(np.arange(2,5,dtype=np.complex64)))\n# print(compute1(np.arange(2,5,dtype=np.complex64)))\nError message:\n/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/lib/xla_bridge.py:122: UserWarning: No GPU/TPU found, falling back to CPU.\nwarnings.warn('No GPU/TPU found, falling back to CPU.')\nTraceback (most recent call last):\nFile \"/home/xiaotongni/jax-qoc/test_scan.py\", line 24, in \nprint(grad(compute1)(np.arange(2,5,dtype=np.complex64)))\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/api.py\", line 352, in grad_f\n_, g = value_and_grad_f(*args, **kwargs)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/api.py\", line 407, in value_and_grad_f\nans, vjp_py = vjp(f_partial, *dyn_args)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/api.py\", line 1285, in vjp\nout_primal, out_vjp = ad.vjp(flat_fun, primals_flat)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 106, in vjp\nout_primals, pvals, jaxpr, consts = linearize(traceable, *primals)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 95, in linearize\njaxpr, out_pvals, consts = pe.trace_to_jaxpr(jvpfun_flat, in_pvals)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/partial_eval.py\", line 354, in trace_to_jaxpr\njaxpr, (out_pvals, consts, env) = fun.call_wrapped(pvals)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/linear_util.py\", line 149, in call_wrapped\nans = self.f(*args, **dict(self.params, **kwargs))\nFile \"/home/xiaotongni/jax-qoc/test_scan.py\", line 12, in compute1\ncarrier, _ = lax.scan(f, u, p)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/lax/lax_control_flow.py\", line 804, in scan\nlinear=(False,) * (len(consts) + len(in_flat)))\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/lax/lax_control_flow.py\", line 1166, in scan_bind\nnum_carry=num_carry, linear=linear)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/core.py\", line 182, in bind\nout_tracer = top_trace.process_primitive(self, tracers, kwargs)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 305, in process_primitive\nprimal_out, tangent_out = jvp(primals_in, tangents_in, **params)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/lax/lax_control_flow.py\", line 865, in _scan_jvp\njaxpr, nonzeros, instantiate=carry_nz + [False] * num_ys)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 575, in jvp_jaxpr\njaxpr_out, pvals_out, literals_out = pe.trace_to_jaxpr(f_jvp, pvals, instantiate=True)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/partial_eval.py\", line 354, in trace_to_jaxpr\njaxpr, (out_pvals, consts, env) = fun.call_wrapped(pvals)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/linear_util.py\", line 149, in call_wrapped\nans = self.f(*args, **dict(self.params, **kwargs))\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/core.py\", line 97, in jaxpr_as_fun\nreturn eval_jaxpr(typed_jaxpr.jaxpr, typed_jaxpr.literals, args)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/core.py\", line 251, in eval_jaxpr\nans = eqn.primitive.bind((subfuns + in_vals), **params)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/core.py\", line 182, in bind\nout_tracer = top_trace.process_primitive(self, tracers, kwargs)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 305, in process_primitive\nprimal_out, tangent_out = jvp(primals_in, tangents_in, **params)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/ad.py\", line 388, in linear_jvp\nval_out = primitive.bind(*primals, **params)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/core.py\", line 182, in bind\nout_tracer = top_trace.process_primitive(self, tracers, kwargs)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/partial_eval.py\", line 98, in process_primitive\nreturn self.default_process_primitive(primitive, tracers, params)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/interpreters/partial_eval.py\", line 106, in default_process_primitive\nout_aval = primitive.abstract_eval(*avals, **params)\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/lax/lax.py\", line 1523, in standard_abstract_eval\nreturn ShapedArray(shape_rule(*args, **kwargs), dtype_rule(*args, **kwargs))\nFile \"/home/xiaotongni/miniconda3/lib/python3.7/site-packages/jax/lax/lax.py\", line 2484, in _pad_dtype_rule\nraise TypeError(msg.format(operand.dtype, padding_value.dtype))\nTypeError: pad operand and padding_value must be same dtype: got complex64 and float32.",
+            "closedAt": "2020-06-25T12:14:55Z",
+            "createdAt": "2020-02-27T10:06:45Z",
+            "id": "MDU6SXNzdWU1NzE5NTkyMTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2325,
+            "state": "CLOSED",
+            "title": "An error from a combination of scan, complex numbers, and np.diag",
+            "updatedAt": "2020-06-25T12:15:32Z",
+            "url": "https://github.com/jax-ml/jax/issues/2325"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Can anybody provide a compiled .whl file for AMD GPU？\nThanks",
+            "closedAt": "2020-02-28T07:41:03Z",
+            "createdAt": "2020-02-27T09:53:02Z",
+            "id": "MDU6SXNzdWU1NzE5NTEwNjg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2324,
+            "state": "CLOSED",
+            "title": "compiled .whl file for  AMD GPU",
+            "updatedAt": "2020-02-28T07:41:04Z",
+            "url": "https://github.com/jax-ml/jax/issues/2324"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm having problems implementing the following fori_loop body.\ndef body_fun(i, val):\n    batch_sizes, packed_input_data, input_offset = val\n\n    batch_size = packed_input.batch_sizes[i]\n\n    #batch = packed_input_data[input_offset:input_offset+batch_size]\n    batch = dynamic_slice_in_dim(packed_input_data, input_offset, batch_size)\n    input_offset += batch_size\n\n    return batch_sizes, packed_input_data, input_offset\n\nI'm trying to replace the commented out code with jax primitives - i.e. slicing packed_input_data (n x m) based on the input_offset[i] (int). The issue I'm running into is dynamic_slice_in_dim throws:\n\nTypeError: Abstract value passed to int, which requires a concrete value. Try using value.astype(int) instead.\n\nWhat seems to be happening is dynamic_slice_in_dim attempts to cast input_offset and/or batch_size as int() which throws since they're traced and don't support this cast? i.e. If I use literal ints for the start_index, slice_size it works. Also if I call body_fun(i, val) from a pure python for loop it also works no problems.\nHow should I approach this problem? I can paste full code if required, my full implementation also includes packed_output_data (same shape as packed_input_data) which I'm trying to update using dynamic_update_slice plus a state array which also slice by batch_size.\n(I'm trying to implement variable length sequence RNN's using PyTorch as inspiration.)",
+            "closedAt": "2020-03-09T07:42:27Z",
+            "createdAt": "2020-02-27T03:54:08Z",
+            "id": "MDU6SXNzdWU1NzE4MDM1Mjg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2323,
+            "state": "CLOSED",
+            "title": "size of slices can’t be functions of argument values",
+            "updatedAt": "2020-03-09T07:42:27Z",
+            "url": "https://github.com/jax-ml/jax/issues/2323"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The LAPACK implementation of the QR decomposition does not construct the matrices Q and R directly, but rather lists of (the essential parts of) 'Householder vectors' h and scale factors tau from which these can be computed straightforwardly; Q and R are then computed from these via a second LAPACK call.\nBy default (o)np.linalg.qr bundles these calls together and just returns Q and R. However, when an m by n matrix with n << m has been decomposed, working directly with the h, tau representation can yield a major performance advantage, since applying Q via it scales like m x n rather than m^2 in the dense case.\nNumpy therefore provides a mode='raw' option to np.linalg.qr that returns h, tau (in column major order, but it's still better than nothing). Unfortunately Jax instead raises NotImplemented. Note this appears not to be documented.\nDigging through the source code, the CPU and GPU implementations actually do retrieve h and tau, so in these cases supporting mode=raw would just require an if statement (which I'm happy to write myself if needed). Presumably the TPU is also doing Householder QR, so the lists should be accessible in that case too, though I can't say how conveniently.",
+            "closedAt": "2022-05-16T20:00:02Z",
+            "createdAt": "2020-02-27T00:17:54Z",
+            "id": "MDU6SXNzdWU1NzE3NDAwMTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2322,
+            "state": "CLOSED",
+            "title": "[feature request]: support mode='raw' in jnp.linalg.qr",
+            "updatedAt": "2022-05-16T20:00:02Z",
+            "url": "https://github.com/jax-ml/jax/issues/2322"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Example to reproduce the issue:\nimport jax\nimport jax.numpy as jnp\n\nout_spec = jax.eval_shape(lambda x: x, jax.ShapeDtypeStruct(shape=(3,), dtype=jnp.float32))\nprint(out_spec)  # raise AttributeError: 'numpy.dtype' object has no attribute 'dtype'>\nout_spec.dtype contains the onp.dtype, while __repr__ try to print self.dtype.dtype.name",
+            "closedAt": "2020-02-27T08:46:22Z",
+            "createdAt": "2020-02-26T23:16:39Z",
+            "id": "MDU6SXNzdWU1NzE3MTkzMTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2320,
+            "state": "CLOSED",
+            "title": "__repr__ fails for jax.ShapeDtypeStruct returned by eval_shape",
+            "updatedAt": "2020-02-27T08:46:22Z",
+            "url": "https://github.com/jax-ml/jax/issues/2320"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the pip installation instructions for GPU, a variable \"CUDA_VERSION\" is used. We should change the name of the variable because that is an environment variable already declared by CUDA.",
+            "closedAt": "2020-12-02T16:54:33Z",
+            "createdAt": "2020-02-26T18:49:55Z",
+            "id": "MDU6SXNzdWU1NzE1ODUyMzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2317,
+            "state": "CLOSED",
+            "title": "Use of CUDA_VERSION in installation instructions in README.md",
+            "updatedAt": "2020-12-02T16:54:33Z",
+            "url": "https://github.com/jax-ml/jax/issues/2317"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "After running:\nnvidia-smi # success\n\nPYTHON_VERSION=cp38 \nPLATFORM=linux_x86_64\nCUDA_VERSION=cuda101\nBASE_URL='https://storage.googleapis.com/jax-releases'\npip install --upgrade $BASE_URL/$CUDA_VERSION/jaxlib-0.1.39-$PYTHON_VERSION-none-$PLATFORM.whl\npip install --upgrade jax\n\nI get the following error:\nImportError: libcusolver.so.10.0: cannot open shared object file: No such file or directory",
+            "closedAt": "2020-07-12T21:36:07Z",
+            "createdAt": "2020-02-26T17:49:03Z",
+            "id": "MDU6SXNzdWU1NzE1NTQzMDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2315,
+            "state": "CLOSED",
+            "title": "ImportError: libcusolver.so.10.0: cannot open shared object file: No such file or directory",
+            "updatedAt": "2020-09-30T18:32:19Z",
+            "url": "https://github.com/jax-ml/jax/issues/2315"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It would be great to have a Multivariate gaussian pdf/logpdf implementation, similar to the univariate version in jax.scipy.stats.norm. I am currently working with this hacky function:\n@jit\ndef multi_gauss_logpdf(x, mean, cov):\n    \"\"\" Calculate the probability density of a\n        sample from the multivariate normal. \"\"\"\n    D = mean.shape[0]\n    (sign, logdet) = np.linalg.slogdet(cov)\n    p1 = D*np.log(2*np.pi) + logdet\n    p2 = (x-mean).T @ np.linalg.inv(cov) @ (x-mean)\n    return -1./2 * (p1 + p2)\n\nbatch_logpdf = vmap(multi_gauss_logpdf, in_axes=(0, None, None))\n\nMy lax/primitive knowledge is still fairly limited but I will try to put together a pr. Any recommendations how to speed things up?",
+            "closedAt": "2020-03-21T22:43:00Z",
+            "createdAt": "2020-02-26T17:30:45Z",
+            "id": "MDU6SXNzdWU1NzE1NDQ3MzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2314,
+            "state": "CLOSED",
+            "title": "Add multivariate normal pdf evalutation to jax.scipy",
+            "updatedAt": "2020-03-21T22:43:00Z",
+            "url": "https://github.com/jax-ml/jax/issues/2314"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am playing around with implementing my own final-style tracer for experimenting with some symbolic execution alongside the JAX tracing. I tried to add a custom trace that is stateful. i.e. something like\nclass CustomTrace(jcore.Trace):\n    def __init__(self, master, sublevel):\n        super().__init__(master, sublevel)\n        # I am trying to maintain some state for a particualr trace here\n        self._path_conditions = []\nThen I am using the custom trace class with some snippet that looks like this\nwith jcore.new_master(CustomTrace) as master:\n        trace = CustomTrace(master, jcore.cur_sublevel())\n        x = CustomTracer(trace, np.ones(3))\n        out = (x < 2)\nHowever I have found that this will not work. In particular, I was expecting that out will have the same trace as x but this is not the case. The reason for that is because of the code in find_top_trace\nhttps://github.com/google/jax/blob/master/jax/core.py#L264\n...\nreturn type(top_trace)(top_trace.master, cur_sublevel())\n...\nHere a new trace is created when we have found a top trace. I am not very sure why JAX does this under the hood. Is there some good documentation / notes on what we should expect from MasterTrace, Trace and subtraces? In general, what would be the best way to maintain state in tracing?\nIs is similar to how #1663 does it?",
+            "closedAt": "2020-03-19T14:00:09Z",
+            "createdAt": "2020-02-26T15:47:11Z",
+            "id": "MDU6SXNzdWU1NzE0ODAwMjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2313,
+            "state": "CLOSED",
+            "title": "When are traces created?",
+            "updatedAt": "2020-03-19T14:00:10Z",
+            "url": "https://github.com/jax-ml/jax/issues/2313"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there,\nExcellent work here!\nOur team is trying to construct a Jax implementation of a matrix factorization which requires us to iterate over slices whose dimensions depend upon the iteration counter. For example, suppose we need to operate upon each column of some matrix’s lower-diagonal, as in the Householder QR algorithm, along the lines of:\n@jax.jit\ndef operate_on_lower_triangle(A):\n    for j in A.size[1]:\n        A_slice = A[j:, j]  # *\n        v = vector_function(A_slice)\n        A = jax.lax.index_update(A, index[j:, j], apply_transform(A, v))\nThis actually works, but since the for loop gets statically unrolled, compilation can get really slow, especially in the more complex example we are working with. The cure for this is to use one of the Lax control flow primitives. But this has the consequence that ‘j’ becomes an abstract tracer, so that the line marked * becomes problematic due to the dynamic shape of the slice.\nIs there a workaround for this? It seems like there must be, since QR has a TPU implementation.",
+            "closedAt": "2024-07-23T05:18:00Z",
+            "createdAt": "2020-02-25T23:30:00Z",
+            "id": "MDU6SXNzdWU1NzA5MTgzOTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2308,
+            "state": "CLOSED",
+            "title": "Iterate over dynamic slices",
+            "updatedAt": "2024-07-23T05:18:00Z",
+            "url": "https://github.com/jax-ml/jax/issues/2308"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Suppose a simplified function like this:\n@jit\ndef f(idx, mylist):\n    return mylist[idx]\n\nidx is an integer but will be converted to ShapedArray while mylist is a list of something. There will be an error because mylist cannot be indexed using a ShapedArray.\nIs there any option to actually get the scalar value in idx?",
+            "closedAt": "2020-02-25T10:23:05Z",
+            "createdAt": "2020-02-25T09:02:08Z",
+            "id": "MDU6SXNzdWU1NzA0MTI1OTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2304,
+            "state": "CLOSED",
+            "title": "asscalar workaround for jitted function",
+            "updatedAt": "2020-02-25T10:23:05Z",
+            "url": "https://github.com/jax-ml/jax/issues/2304"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I ran into the error in the title:\nTypeError: Gradient only defined for scalar-output functions. Output had shape: (1,)\nShould jax not treat arrays with shape (1,) as scalars?\nI also feel like this had worked before.\nWhen i tried to modify the function I ran into problems that so far I don't understand and cannot reproduce:\n\nWhen i made the function return an actual scalar (by taking the [0] slice) i ran into an Intel MKL Error that i haven't managed to pinpoint since the python debugger is not helpful here.\nWhen I tried to modify the function by returning previous_version.item(),  I got an AttributeError, saying that 'ConcreteArray' object has no attribute 'item'\n\nI guess the simple example below does not run into any of this, since the computation tree is trivial and it can jsut return zeros without doing any evaluations on the gradient pass\nI am a bit lost how I can actually compute a gradient of my function now...\nMinimal reproducer:\nfrom jax import numpy as np, value_and_grad\nprint(value_and_grad(lambda x: np.array([0.]))(np.array([1, 2, 3.])))",
+            "closedAt": "2026-07-31T20:31:47Z",
+            "createdAt": "2020-02-24T21:38:48Z",
+            "id": "MDU6SXNzdWU1NzAxNjMwOTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "better_errors"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2303,
+            "state": "CLOSED",
+            "title": "TypeError: Gradient only defined for scalar-output functions. Output had shape: (1,)",
+            "updatedAt": "2026-07-31T20:31:47Z",
+            "url": "https://github.com/jax-ml/jax/issues/2303"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAyMC0wMi0yNFQyMTozODo0OFrOIfv_lA==",
+          "hasNextPage": true
+        },
+        "totalCount": 5491
+      }
+    }
+  }
+}

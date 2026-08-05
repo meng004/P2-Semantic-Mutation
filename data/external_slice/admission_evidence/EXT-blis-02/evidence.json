@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-blis-02",
+  "source_pool": "defect4mr_64",
+  "source_index": 17,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "4839f6950e0103f8e744d8ce26a26738b3911497db3600be6d6c394b97c91394",
+  "issue_url": "https://github.com/flame/blis/issues/828",
+  "fix_url": "https://github.com/flame/blis/commit/a014a08189d05f45752f7ac23d8d42a24536fb93",
+  "buggy_sha": "3c71737e426f8d567f1324b82609b4a61db670f8",
+  "fixed_sha": "a014a08189d05f45752f7ac23d8d42a24536fb93",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The mixed-domain scalar calculation accepts numeric operands and can expose spurious non-finite propagation in one floating-point result."
+  },
+  "evidence_urls": [
+    "https://github.com/flame/blis/issues/828",
+    "https://github.com/flame/blis/commit/a014a08189d05f45752f7ac23d8d42a24536fb93"
+  ],
+  "mechanism_sentence": "prevents spurious non-finite propagation in mixed-domain scalar operations."
+}

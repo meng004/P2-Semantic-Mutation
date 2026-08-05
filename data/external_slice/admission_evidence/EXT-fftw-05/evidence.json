@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-fftw-05",
+  "source_pool": "defect4mr_64",
+  "source_index": 5,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "8ad4fdbaab902b5412f4d129f9745c8e501b6aa8a60e74b7ebe3b373deb42626",
+  "issue_url": "https://github.com/FFTW/fftw3/issues/174",
+  "fix_url": "",
+  "buggy_sha": "",
+  "fixed_sha": "",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL"
+  },
+  "rationales": {
+    "real_defect": "no identifiable merged public fix commit.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The affected MPI local-size query returns integer size counts, so its output cannot be adapted to float or few-float numerical output without changing the defect."
+  },
+  "evidence_urls": [
+    "https://github.com/FFTW/fftw3/issues/174"
+  ],
+  "mechanism_sentence": "reports an incorrect MPI local-size result for the single-precision transform."
+}

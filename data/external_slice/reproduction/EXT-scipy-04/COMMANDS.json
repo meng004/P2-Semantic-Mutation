@@ -1,0 +1,85 @@
+{
+  "commands": [
+    {
+      "command": "/tmp/c3_batch1/work/python39/install/bin/python3.9 -m venv /tmp/c3_batch1_fix/scipy/venv-buggy",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:venv",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python -m pip install -U pip wheel setuptools",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:bootstrap-pip",
+      "stderr_tail": "",
+      "stdout_tail": "Requirement already satisfied: pip in /tmp/c3_batch1_fix/scipy/venv-buggy/lib/python3.9/site-packages (23.0.1)\nCollecting pip\n  Using cached pip-26.0.1-py3-none-any.whl (1.8 MB)\nCollecting wheel\n  Using cached wheel-0.47.0-py3-none-any.whl (32 kB)\nRequirement already satisfied: setuptools in /tmp/c3_batch1_fix/scipy/venv-buggy/lib/python3.9/site-packages (58.1.0)\nCollecting setuptools\n  Using cached setuptools-82.0.1-py3-none-any.whl (1.0 MB)\nCollecting packaging>=24.0\n  Using cached packaging-26.2-py3-none-any.whl (100 kB)\nInstalling collected packages: setuptools, pip, packaging, wheel\n  Attempting uninstall: setuptools\n    Found existing installation: setuptools 58.1.0\n    Uninstalling setuptools-58.1.0:\n      Successfully uninstalled setuptools-58.1.0\n  Attempting uninstall: pip\n    Found existing installation: pip 23.0.1\n    Uninstalling pip-23.0.1:\n      Successfully uninstalled pip-23.0.1\nSuccessfully installed packaging-26.2 pip-26.0.1 setuptools-82.0.1 wheel-0.47.0\n"
+    },
+    {
+      "command": "/tmp/c3_batch1/work/python39/install/bin/python3.9 -m venv /tmp/c3_batch1_fix/scipy/venv-fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:venv",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python -m pip install -U pip wheel setuptools",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:bootstrap-pip",
+      "stderr_tail": "",
+      "stdout_tail": "Requirement already satisfied: pip in /tmp/c3_batch1_fix/scipy/venv-fixed/lib/python3.9/site-packages (23.0.1)\nCollecting pip\n  Using cached pip-26.0.1-py3-none-any.whl (1.8 MB)\nCollecting wheel\n  Using cached wheel-0.47.0-py3-none-any.whl (32 kB)\nRequirement already satisfied: setuptools in /tmp/c3_batch1_fix/scipy/venv-fixed/lib/python3.9/site-packages (58.1.0)\nCollecting setuptools\n  Using cached setuptools-82.0.1-py3-none-any.whl (1.0 MB)\nCollecting packaging>=24.0\n  Using cached packaging-26.2-py3-none-any.whl (100 kB)\nInstalling collected packages: setuptools, pip, packaging, wheel\n  Attempting uninstall: setuptools\n    Found existing installation: setuptools 58.1.0\n    Uninstalling setuptools-58.1.0:\n      Successfully uninstalled setuptools-58.1.0\n  Attempting uninstall: pip\n    Found existing installation: pip 23.0.1\n    Uninstalling pip-23.0.1:\n      Successfully uninstalled pip-23.0.1\nSuccessfully installed packaging-26.2 pip-26.0.1 setuptools-82.0.1 wheel-0.47.0\n"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python -m pip download -d /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.buggy numpy==1.19.5 scipy==1.5.4",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:pip-download",
+      "stderr_tail": "",
+      "stdout_tail": "Collecting numpy==1.19.5\n  Using cached numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl.metadata (2.0 kB)\nCollecting scipy==1.5.4\n  Using cached scipy-1.5.4-cp39-cp39-manylinux1_x86_64.whl.metadata (2.0 kB)\nUsing cached numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl (14.9 MB)\nUsing cached scipy-1.5.4-cp39-cp39-manylinux1_x86_64.whl (25.8 MB)\nSaved ./data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.buggy/numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl\nSaved ./data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.buggy/scipy-1.5.4-cp39-cp39-manylinux1_x86_64.whl\nSuccessfully downloaded numpy scipy\n"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python -m pip download -d /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.fixed numpy==1.19.5 scipy==1.6.0",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:pip-download",
+      "stderr_tail": "",
+      "stdout_tail": "Collecting numpy==1.19.5\n  Using cached numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl.metadata (2.0 kB)\nCollecting scipy==1.6.0\n  Using cached scipy-1.6.0-cp39-cp39-manylinux1_x86_64.whl.metadata (2.0 kB)\nUsing cached numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl (14.9 MB)\nUsing cached scipy-1.6.0-cp39-cp39-manylinux1_x86_64.whl (27.3 MB)\nSaved ./data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.fixed/numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl\nSaved ./data/external_slice/reproduction/EXT-scipy-04/locks/.download-requirements.fixed/scipy-1.6.0-cp39-cp39-manylinux1_x86_64.whl\nSuccessfully downloaded numpy scipy\n"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python -m pip install --require-hashes -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.buggy.txt",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:buggy:pip-install-require-hashes",
+      "stderr_tail": "",
+      "stdout_tail": "Collecting numpy==1.19.5 (from -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.buggy.txt (line 5))\n  Using cached numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl (14.9 MB)\nCollecting scipy==1.5.4 (from -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.buggy.txt (line 7))\n  Using cached scipy-1.5.4-cp39-cp39-manylinux1_x86_64.whl (25.8 MB)\nInstalling collected packages: numpy, scipy\n\n\nSuccessfully installed numpy-1.19.5 scipy-1.5.4\n"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python -m pip install --require-hashes -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.fixed.txt",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:pip-install-require-hashes",
+      "stderr_tail": "",
+      "stdout_tail": "Collecting numpy==1.19.5 (from -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.fixed.txt (line 5))\n  Using cached numpy-1.19.5-cp39-cp39-manylinux2010_x86_64.whl (14.9 MB)\nCollecting scipy==1.6.0 (from -r /workspace/data/external_slice/reproduction/EXT-scipy-04/locks/requirements.fixed.txt (line 7))\n  Using cached scipy-1.6.0-cp39-cp39-manylinux1_x86_64.whl (27.3 MB)\nInstalling collected packages: numpy, scipy\n\n\nSuccessfully installed numpy-1.19.5 scipy-1.6.0\n"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-buggy/bin/python /workspace/data/external_slice/reproducers/EXT-scipy-04.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-scipy-04/buggy.json",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "scipy:buggy:trigger",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": false, \"package_version\": {\"python\": \"3.9.18\", \"platform\": \"Linux-6.12.94+-x86_64-with-glibc2.39\", \"scipy\": \"1.5.4\", \"numpy\": \"1.19.5\"}}\n"
+    },
+    {
+      "command": "/tmp/c3_batch1_fix/scipy/venv-fixed/bin/python /workspace/data/external_slice/reproducers/EXT-scipy-04.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-scipy-04/fixed.json",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "scipy:fixed:trigger",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true, \"package_version\": {\"python\": \"3.9.18\", \"platform\": \"Linux-6.12.94+-x86_64-with-glibc2.39\", \"scipy\": \"1.6.0\", \"numpy\": \"1.19.5\"}}\n"
+    }
+  ],
+  "neutral_id": "EXT-scipy-04"
+}

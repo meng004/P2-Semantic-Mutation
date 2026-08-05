@@ -1,0 +1,9 @@
+{
+  "arm": "fixed",
+  "exit_status": null,
+  "failure_detail": "command failed (1): gcc -O2 /workspace/data/external_slice/reproducers/harnesses/lapack_stedc_order.c -I/tmp/c3_batch2/work/EXT-lapack-04/install-buggy/include -L/tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib -Wl,-rpath,/tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib -llapacke -llapack -lblas -lgfortran -lquadmath -lm -o /tmp/c3_batch2/work/EXT-lapack-04/harness_buggy\nstdout:\n\nstderr:\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_Zge_nancheck'\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_csb_nancheck'\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_Zge_trans'\n/usr/bin/ld: /tmp/c3_batch2/work/EXT-lapack-04/install-buggy/lib/liblapacke.so: undefined reference to `LAPACKE_zsb_nancheck'\ncollect2: error: ld returned 1 exit status\n",
+  "failure_stage": "build_or_trigger",
+  "neutral_id": "EXT-lapack-04",
+  "property_holds": null,
+  "seed": 0
+}

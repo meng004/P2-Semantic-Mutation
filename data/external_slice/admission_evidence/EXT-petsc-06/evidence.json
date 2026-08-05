@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-petsc-06",
+  "source_pool": "defect4mr_64",
+  "source_index": 40,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "0167b34a1ffc0be30c0030d7527f8d2ce4efbcf1060148536b3230d70e5e244e",
+  "issue_url": "https://gitlab.com/petsc/petsc/-/issues/1583",
+  "fix_url": "",
+  "buggy_sha": "",
+  "fixed_sha": "",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL"
+  },
+  "rationales": {
+    "real_defect": "no identifiable merged public fix commit.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported observable is a line-search convergence status rather than float or few-float numerical output."
+  },
+  "evidence_urls": [
+    "https://gitlab.com/petsc/petsc/-/issues/1583"
+  ],
+  "mechanism_sentence": "reports an unresolved line-search convergence-status discrepancy."
+}

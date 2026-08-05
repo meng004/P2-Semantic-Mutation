@@ -1,0 +1,1994 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "@mattjj this is a follow-up from our video chat last week. Just wanted to report back on this.\nYou were indeed right with JIT-compilation of multiple dot products between zipped lists of matrices.\nI wrote a forward computation, which looks like this:\ndef identity(x):\n    return x\n\ndef mp(params, As, Fs, nonlin=identity):\n    \"\"\"my hack for doing message passing on multiple graphs in one logical forward computation step.\"\"\"\n    outputs = []\n    for a, f in zip(As, Fs):\n        output = np.dot(a, f)\n        output = np.dot(params['w'], output) + params['b']\n        output = nonlin(output)\n        outputs.append(output)\n    return outputs\nWith 5000+ graphs (i.e. 5000+ pairs of As and Fs), initial compilation time took 3 hours. Subsequent forward passes took less than a few hundred milliseconds.\nNothing more here w.r.t. this issue, just wanted to let you know about it. Please feel free to close whenever 😄.",
+            "closedAt": "2021-05-10T13:49:08Z",
+            "createdAt": "2019-01-05T23:37:28Z",
+            "id": "MDU6SXNzdWUzOTYyMTEyNDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "application"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 200,
+            "state": "CLOSED",
+            "title": "report: jit-compilation on list of matrices",
+            "updatedAt": "2021-05-10T13:49:08Z",
+            "url": "https://github.com/jax-ml/jax/issues/200"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This might be related to #98.\nI'm just dipping my toe in the water with JAX and tweaked update to try to print the value of a network's parameters:\n  @jit\n   def update(i, opt_state, batch):\n       params = minmax.get_params(opt_state)\n       print('params', params)\n       return opt_update(i, grad(loss)(params, batch), opt_state)\n\nThe prints a list consisting of entries like\nTraced<ShapedArray(float32[1,64]):JaxprTrace(level=-1/1)>\n\nHow do I inspect the underlying values?",
+            "closedAt": "2019-01-12T23:02:21Z",
+            "createdAt": "2019-01-05T04:22:28Z",
+            "id": "MDU6SXNzdWUzOTYxMzIxNDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 196,
+            "state": "CLOSED",
+            "title": "How to print values inside a @jit-compiled function?",
+            "updatedAt": "2024-01-14T16:23:45Z",
+            "url": "https://github.com/jax-ml/jax/issues/196"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am pretty sure this is not a duplicate of #132, and also not a duplicate of #171, I think.\nThe output of the build commands is below, folded in a <details> tab so as to not clutter up the post.\nDetails\n     _   _  __  __\n    | | / \\ \\ \\/ /\n _  | |/ _ \\ \\  /\n| |_| / ___ \\/  \\\n \\___/_/   \\/_/\\_\\\nBazel binary path: ./bazel-0.19.2-darwin-x86_64\nPython binary path: /Users/ericmjl/anaconda/envs/mpnn/bin/python\nMKL-DNN enabled: yes\n-march=native: no\nCUDA enabled: no\nBuilding XLA and installing it in the jaxlib source tree...\nINFO: Analysed target //build:install_xla_in_source_tree (0 packages loaded, 0 targets configured).\nINFO: Found 1 target...\nERROR: /private/var/tmp/_bazel_ericmjl/719374c0ec5e322f5961145356fcba5a/external/local_config_python/BUILD:39:1: Executing genrule @local_config_python//:python_include failed (Exit 1) bash failed: error executing command\n(cd /private/var/tmp/_bazel_ericmjl/719374c0ec5e322f5961145356fcba5a/execroot/main && \nexec env - \nCUDA_TOOLKIT_PATH=/usr/local/cuda \nCUDNN_INSTALL_PATH=/usr/local/cuda \nPATH=/Users/ericmjl/anaconda/envs/mpnn/bin:/usr/local/opt/curl/bin:/opt/local/bin:/opt/local/sbin:/Users/ericmjl/anaconda/bin:/usr/local/cuda-9.2/bin:/Users/ericmjl/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/opt/X11/bin:/Library/Tex:/Users/ericmjl/pypy/bin:/usr/local/Cellar/pypy3/5.9.0/bin:/usr/local/bin \nPYTHON_BIN_PATH=/Users/ericmjl/anaconda/envs/mpnn/bin/python \nTF_NEED_CUDA=0 \n/bin/bash -c 'source external/bazel_tools/tools/genrule/genrule-setup.sh;\ncp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/Python-ast.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/Python-ast.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/Python.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/Python.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/abstract.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/abstract.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/accu.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/accu.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/asdl.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/asdl.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/ast.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/ast.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bitset.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bitset.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bltinmodule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bltinmodule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/boolobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/boolobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bytearrayobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bytearrayobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bytes_methods.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bytes_methods.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bytesobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bytesobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/cellobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/cellobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/ceval.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/ceval.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/classobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/classobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/code.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/code.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/codecs.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/codecs.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/compile.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/compile.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/complexobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/complexobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/datetime.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/datetime.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/descrobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/descrobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/dictobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/dictobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/dtoa.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/dtoa.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/dynamic_annotations.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/dynamic_annotations.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/enumobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/enumobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/errcode.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/errcode.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/eval.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/eval.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/fileobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/fileobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/fileutils.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/fileutils.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/floatobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/floatobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/frameobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/frameobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/funcobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/funcobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/genobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/genobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/graminit.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/graminit.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/grammar.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/grammar.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/import.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/import.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/intrcheck.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/intrcheck.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/iterobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/iterobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/listobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/listobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/longintrepr.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/longintrepr.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/longobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/longobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/marshal.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/marshal.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/memoryobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/memoryobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/metagrammar.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/metagrammar.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/methodobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/methodobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/modsupport.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/modsupport.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/moduleobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/moduleobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/namespaceobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/namespaceobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/node.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/node.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/object.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/object.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/objimpl.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/objimpl.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/odictobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/odictobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/opcode.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/opcode.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/osdefs.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/osdefs.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/osmodule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/osmodule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/parsetok.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/parsetok.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/patchlevel.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/patchlevel.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pgen.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pgen.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pgenheaders.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pgenheaders.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/py_curses.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/py_curses.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyarena.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyarena.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyatomic.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyatomic.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pycapsule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pycapsule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyconfig.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyconfig.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyctype.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyctype.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pydebug.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pydebug.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pydtrace.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pydtrace.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyerrors.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyerrors.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyexpat.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyexpat.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyfpe.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyfpe.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pygetopt.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pygetopt.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyhash.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyhash.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pylifecycle.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pylifecycle.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymacconfig.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymacconfig.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymacro.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymacro.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymath.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymath.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymem.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymem.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyport.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyport.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystate.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystate.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystrcmp.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystrcmp.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystrhex.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystrhex.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystrtod.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystrtod.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pythonrun.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pythonrun.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pythread.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pythread.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pytime.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pytime.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/rangeobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/rangeobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/setobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/setobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/sip.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/sip.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/sliceobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/sliceobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/structmember.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/structmember.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/structseq.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/structseq.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/symtable.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/symtable.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/sysmodule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/sysmodule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/token.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/token.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/traceback.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/traceback.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/tupleobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/tupleobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/typeslots.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/typeslots.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/ucnhash.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/ucnhash.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/unicodeobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/unicodeobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/warnings.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/warnings.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/weakrefobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/weakrefobject.h\"\n')\nUse --sandbox_debug to see verbose messages from the sandbox: bash failed: error executing command\n(cd /private/var/tmp/_bazel_ericmjl/719374c0ec5e322f5961145356fcba5a/execroot/main && \nexec env - \nCUDA_TOOLKIT_PATH=/usr/local/cuda \nCUDNN_INSTALL_PATH=/usr/local/cuda \nPATH=/Users/ericmjl/anaconda/envs/mpnn/bin:/usr/local/opt/curl/bin:/opt/local/bin:/opt/local/sbin:/Users/ericmjl/anaconda/bin:/usr/local/cuda-9.2/bin:/Users/ericmjl/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/opt/X11/bin:/Library/Tex:/Users/ericmjl/pypy/bin:/usr/local/Cellar/pypy3/5.9.0/bin:/usr/local/bin \nPYTHON_BIN_PATH=/Users/ericmjl/anaconda/envs/mpnn/bin/python \nTF_NEED_CUDA=0 \n/bin/bash -c 'source external/bazel_tools/tools/genrule/genrule-setup.sh;\ncp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/Python-ast.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/Python-ast.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/Python.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/Python.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/abstract.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/abstract.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/accu.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/accu.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/asdl.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/asdl.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/ast.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/ast.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bitset.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bitset.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bltinmodule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bltinmodule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/boolobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/boolobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bytearrayobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bytearrayobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bytes_methods.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bytes_methods.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/bytesobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/bytesobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/cellobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/cellobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/ceval.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/ceval.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/classobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/classobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/code.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/code.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/codecs.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/codecs.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/compile.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/compile.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/complexobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/complexobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/datetime.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/datetime.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/descrobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/descrobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/dictobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/dictobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/dtoa.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/dtoa.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/dynamic_annotations.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/dynamic_annotations.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/enumobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/enumobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/errcode.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/errcode.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/eval.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/eval.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/fileobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/fileobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/fileutils.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/fileutils.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/floatobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/floatobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/frameobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/frameobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/funcobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/funcobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/genobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/genobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/graminit.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/graminit.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/grammar.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/grammar.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/import.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/import.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/intrcheck.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/intrcheck.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/iterobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/iterobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/listobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/listobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/longintrepr.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/longintrepr.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/longobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/longobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/marshal.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/marshal.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/memoryobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/memoryobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/metagrammar.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/metagrammar.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/methodobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/methodobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/modsupport.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/modsupport.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/moduleobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/moduleobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/namespaceobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/namespaceobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/node.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/node.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/object.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/object.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/objimpl.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/objimpl.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/odictobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/odictobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/opcode.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/opcode.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/osdefs.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/osdefs.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/osmodule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/osmodule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/parsetok.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/parsetok.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/patchlevel.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/patchlevel.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pgen.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pgen.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pgenheaders.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pgenheaders.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/py_curses.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/py_curses.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyarena.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyarena.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyatomic.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyatomic.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pycapsule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pycapsule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyconfig.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyconfig.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyctype.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyctype.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pydebug.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pydebug.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pydtrace.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pydtrace.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyerrors.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyerrors.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyexpat.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyexpat.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyfpe.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyfpe.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pygetopt.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pygetopt.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyhash.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyhash.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pylifecycle.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pylifecycle.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymacconfig.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymacconfig.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymacro.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymacro.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymath.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymath.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pymem.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pymem.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pyport.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pyport.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystate.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystate.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystrcmp.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystrcmp.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystrhex.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystrhex.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pystrtod.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pystrtod.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pythonrun.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pythonrun.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pythread.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pythread.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/pytime.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/pytime.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/rangeobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/rangeobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/setobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/setobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/sip.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/sip.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/sliceobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/sliceobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/structmember.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/structmember.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/structseq.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/structseq.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/symtable.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/symtable.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/sysmodule.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/sysmodule.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/token.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/token.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/traceback.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/traceback.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/tupleobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/tupleobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/typeslots.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/typeslots.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/ucnhash.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/ucnhash.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/unicodeobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/unicodeobject.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/warnings.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/warnings.h\" && cp -f \"/Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/weakrefobject.h\" \"bazel-out/darwin-opt/genfiles/external/local_config_python/python_include/weakrefobject.h\"\n')\nUse --sandbox_debug to see verbose messages from the sandbox\ncp: /Users/ericmjl/anaconda/envs/mpnn/include/python3.6m/Python-ast.h: No such file or directory\nTarget //build:install_xla_in_source_tree failed to build\nINFO: Elapsed time: 1.181s, Critical Path: 0.21s, Remote (0.00% of the time): [queue: 0.00%, setup: 0.00%, process: 0.00%]\nINFO: 0 processes.\nFAILED: Build did NOT complete successfully\nFAILED: Build did NOT complete successfully\nTraceback (most recent call last):\nFile \"build/build.py\", line 301, in \nmain()\nFile \"build/build.py\", line 297, in main\n[\":install_xla_in_source_tree\", os.getcwd()])\nFile \"build/build.py\", line 50, in shell\noutput = subprocess.check_output(cmd)\nFile \"/Users/ericmjl/anaconda/envs/mpnn/lib/python3.7/subprocess.py\", line 395, in check_output\n**kwargs).stdout\nFile \"/Users/ericmjl/anaconda/envs/mpnn/lib/python3.7/subprocess.py\", line 487, in run\noutput=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['./bazel-0.19.2-darwin-x86_64', 'run', '--verbose_failures=true', '--config=mkl_open_source_only', ':install_xla_in_source_tree', '/Users/ericmjl/github/software/jax/build']' returned non-zero exit status 1.\n\n\nOne thing I am not sure of is why /usr/local/cuda still shows up in the output, especially when I'm using a tiny computer without a GPU ;).",
+            "closedAt": "2019-02-18T18:10:31Z",
+            "createdAt": "2019-01-03T21:11:04Z",
+            "id": "MDU6SXNzdWUzOTU3MjU2NDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "build"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 195,
+            "state": "CLOSED",
+            "title": "Issue building jax from scratch without CUDA on macOS Mojave",
+            "updatedAt": "2019-02-18T18:10:31Z",
+            "url": "https://github.com/jax-ml/jax/issues/195"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I install jax-0.1.15 and jaxlib-0.1.3 via pip:\n$ pip install jax jaxlib\n\nAfter I import jax, I get lapack-related errors:\n/Users/ericmjl/anaconda/envs/mpnn/lib/python3.6/importlib/_bootstrap.py:219: RuntimeWarning: compiletime version 3.7 of module 'lapack' does not match runtime version 3.6\n  return f(*args, **kwds)\n\nMy Python session then segfaults.\nSystem is macOS on 12\" MacBook, anaconda Python 3.6.\nEnvironment spec:\n# packages in environment at /Users/ericmjl/anaconda/envs/mpnn:\n#\n# Name                    Version                   Build  Channel\nabsl-py                   0.6.1                     <pip>\nappnope                   0.1.0            py36hf537a9a_0  \nasn1crypto                0.24.0                   py36_0  \nbackcall                  0.1.0                    py36_0  \nblas                      1.0                         mkl  \nbleach                    3.0.2                    py36_0  \nboost                     1.68.0           py36h3e44d54_1    conda-forge\nboost-cpp                 1.68.0               h3a22d5f_0    conda-forge\nbzip2                     1.0.6                h1de35cc_5  \nca-certificates           2018.03.07                    0  \ncairo                     1.14.12              hc4e6be7_4  \ncertifi                   2018.11.29               py36_0  \ncffi                      1.11.5           py36h6174b99_1  \nchainer                   5.1.0                     <pip>\nchardet                   3.0.4                    py36_1  \nconda                     4.5.12                   py36_0  \nconda-env                 2.6.0                         1  \ncryptography              2.4.2            py36ha12b0ac_0  \ncycler                    0.10.0           py36hfc81398_0  \ndbus                      1.13.2               h760590f_1  \ndecorator                 4.3.0                    py36_0  \nentrypoints               0.2.3                    py36_2  \nexpat                     2.2.6                h0a44026_0  \nfilelock                  3.0.10                    <pip>\nfontconfig                2.13.0               h5d5b041_1  \nfreetype                  2.9.1                hb4e5f40_0  \ngettext                   0.19.8.1             h15daf44_3  \nglib                      2.56.2               hd9629dc_0  \nicu                       58.2                 h4b95b61_1  \nidna                      2.8                      py36_0  \nintel-openmp              2019.1                      144  \nipykernel                 5.1.0            py36h39e3cac_0  \nipython                   7.2.0            py36h39e3cac_0  \nipython_genutils          0.2.0            py36h241746c_0  \nipywidgets                7.4.2                    py36_0  \njedi                      0.13.2                   py36_0  \njinja2                    2.10                     py36_0  \njpeg                      9b                   he5867d9_2  \njsonschema                2.6.0            py36hb385e00_0  \njupyter                   1.0.0                    py36_7  \njupyter_client            5.2.4                    py36_0  \njupyter_console           6.0.0                    py36_0  \njupyter_core              4.4.0                    py36_0  \njupyterlab                0.35.3                   py36_0  \njupyterlab_server         0.2.0                    py36_0  \nkiwisolver                1.0.1            py36h0a44026_0  \nlibboost                  1.65.1               hcc95346_4  \nlibcxx                    4.0.1                hcfea43d_1  \nlibcxxabi                 4.0.1                hcfea43d_1  \nlibedit                   3.1.20170329         hb402a30_2  \nlibffi                    3.2.1                h475c297_4  \nlibgfortran               3.0.1                h93005f0_2  \nlibiconv                  1.15                 hdd342a3_7  \nlibpng                    1.6.35               ha441bb4_0  \nlibsodium                 1.0.16               h3efe00b_0  \nlibtiff                   4.0.9                hcb84e12_2  \nlibxml2                   2.9.8                hab757c2_1  \nmarkupsafe                1.1.0            py36h1de35cc_0  \nmatplotlib                3.0.2            py36h54f8f79_0  \nmistune                   0.8.4            py36h1de35cc_0  \nmkl                       2019.1                      144  \nmkl_fft                   1.0.6            py36h27c97d8_0  \nmkl_random                1.0.2            py36h27c97d8_0  \nnbconvert                 5.3.1                    py36_0  \nnbformat                  4.4.0            py36h827af21_0  \nncurses                   6.1                  h0a44026_1  \nnetworkx                  2.2                      py36_1  \nnodejs                    10.13.0              h0a44026_0  \nnotebook                  5.7.4                    py36_0  \nnumpy                     1.15.4           py36hacdab7b_0  \nnumpy-base                1.15.4           py36h6575580_0  \nolefile                   0.46                     py36_0  \nopenssl                   1.1.1a               h1de35cc_0  \nopt-einsum                2.3.2                     <pip>\npandas                    0.23.4           py36h6440ff4_0  \npandas-flavor             0.1.2                      py_0    conda-forge\npandoc                    2.2.3.2                       0  \npandocfilters             1.4.2                    py36_1  \nparso                     0.3.1                    py36_0  \npcre                      8.42                 h378b8a2_0  \npexpect                   4.6.0                    py36_0  \npickleshare               0.7.5                    py36_0  \npillow                    5.3.0            py36hb68e598_0  \npip                       18.1                     py36_0  \npixman                    0.34.0               hca0a616_3  \nprometheus_client         0.5.0                    py36_0  \nprompt_toolkit            2.0.7                    py36_0  \nprotobuf                  3.6.1                     <pip>\nptyprocess                0.6.0                    py36_0  \npy-boost                  1.65.1           py36h1439ea1_4  \npycairo                   1.18.0           py36ha54c0a8_0  \npycosat                   0.6.3            py36h1de35cc_0  \npycparser                 2.19                     py36_0  \npygments                  2.3.1                    py36_0  \npyjanitor                 0.16.0                     py_0    conda-forge\npyopenssl                 18.0.0                   py36_0  \npyparsing                 2.3.0                    py36_0  \npyqt                      5.9.2            py36h655552a_2  \npysocks                   1.6.8                    py36_0  \npython                    3.6.8                haf84260_0  \npython-dateutil           2.7.5                    py36_0  \npytz                      2018.7                   py36_0  \npyzmq                     17.1.2           py36h1de35cc_0  \nqt                        5.9.7                h468cd18_1  \nqtconsole                 4.4.3                    py36_0  \nrdkit                     2018.09.1.0      py36h6adbef8_1    rdkit\nreadline                  7.0                  h1de35cc_5  \nrequests                  2.21.0                   py36_0  \nruamel_yaml               0.15.46          py36h1de35cc_0  \nscikit-learn              0.20.2           py36h27c97d8_0  \nscipy                     1.1.0            py36h1410ff5_2  \nsend2trash                1.5.0                    py36_0  \nsetuptools                40.6.3                   py36_0  \nsip                       4.19.8           py36h0a44026_0  \nsix                       1.12.0                   py36_0  \nsqlite                    3.26.0               ha441bb4_0  \nterminado                 0.8.1                    py36_1  \ntestpath                  0.4.2                    py36_0  \ntk                        8.6.8                ha441bb4_0  \ntornado                   5.1.1            py36h1de35cc_0  \ntqdm                      4.28.1           py36h28b3542_0  \ntraitlets                 4.3.2            py36h65bd3ce_0  \nurllib3                   1.24.1                   py36_0  \nwcwidth                   0.1.7            py36h8c6ec74_0  \nwebencodings              0.5.1                    py36_1  \nwheel                     0.32.3                   py36_0  \nwidgetsnbextension        3.4.2                    py36_0  \nxz                        5.2.4                h1de35cc_4  \nyaml                      0.1.7                hc338f04_2  \nzeromq                    4.2.5                h0a44026_1  \nzlib                      1.2.11               h1de35cc_3",
+            "closedAt": "2019-01-17T18:30:17Z",
+            "createdAt": "2019-01-03T19:54:55Z",
+            "id": "MDU6SXNzdWUzOTU3MDM5NzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "build"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 194,
+            "state": "CLOSED",
+            "title": "pip installation from PyPI results in lapack error & segfault",
+            "updatedAt": "2019-01-17T18:30:17Z",
+            "url": "https://github.com/jax-ml/jax/issues/194"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "After switching a function from Autograd to Jax, I found that it ran 10^3 times slower. I tried to isolate the reason for this slowdown, and it appears to be the ravel function.\nNumPy - 1.7 microseconds\nAutograd - 2.8 microseconds\nJax - 173 microseconds\nSee example:\nhttps://drive.google.com/file/d/1mkzMPPqkX-x_bTkiLXGyXXKiquN93l9I/view?usp=sharing\nAny idea how to fix this?",
+            "closedAt": "2019-01-03T19:35:42Z",
+            "createdAt": "2019-01-03T19:00:47Z",
+            "id": "MDU6SXNzdWUzOTU2ODc4NDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 193,
+            "state": "CLOSED",
+            "title": "array.ravel() takes orders of magnitude longer",
+            "updatedAt": "2019-01-03T19:46:02Z",
+            "url": "https://github.com/jax-ml/jax/issues/193"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Pasting this output from an IPython session on my GPU box.\n$ ipython\nPython 3.7.1 (default, Dec 14 2018, 19:28:38)\nType 'copyright', 'credits' or 'license' for more information\nIPython 7.2.0 -- An enhanced Interactive Python. Type '?' for help.\n\nIn [1]: from jax.random import PRNGKey\n\nIn [2]: key = PRNGKey(0)\n2019-01-03 11:19:54.239883: W external/org_tensorflow/tensorflow/compiler/xla/service/platform_util.cc:253] unable to create StreamExecutor for CUDA:0: failed\n initializing StreamExecutor for CUDA device ordinal 0: Internal: failed call to cuDevicePrimaryCtxRetain: CUDA_ERROR_UNKNOWN: unknown error\n2019-01-03 11:19:54.239973: F external/org_tensorflow/tensorflow/stream_executor/lib/statusor.cc:34] Attempting to fetch value instead of handling error Inter\nnal: no supported devices found for platform CUDA\nAborted (core dumped)\nI'm not quite sure what caused this error - nal: no supported devices found for platform CUDA does not seem valid, because the output from nvidia-smi shows that my GPU is visible.",
+            "closedAt": "2019-02-18T19:50:55Z",
+            "createdAt": "2019-01-03T16:34:10Z",
+            "id": "MDU6SXNzdWUzOTU2NDA0ODg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "build"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 191,
+            "state": "CLOSED",
+            "title": "Setting PRNGKey on Ubuntu 16 + CUDA9 results in dump error",
+            "updatedAt": "2020-04-30T20:34:36Z",
+            "url": "https://github.com/jax-ml/jax/issues/191"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I was reimplementing my old Autograd code in JAX, but I can't seem to find an equivalent of the \"flatten\" utility:\nhttps://github.com/HIPS/autograd/tree/master/autograd/misc\nBasically, given a list of the network's parameters w, I would need something like:\nw_flat, unflattener = flatten(w)\n\nwhere w_flat is a one-dimensional vector containing all parameters, and unflattener reverts this operation. If I understand correctly, this was used in Autograd at the beginning for the implementation of the optimizers, but it is not needed here. However, it is useful in many cases and also goes well with the idea of chainable transformations on data.",
+            "closedAt": "2019-01-06T22:33:22Z",
+            "createdAt": "2019-01-03T13:35:33Z",
+            "id": "MDU6SXNzdWUzOTU1NzQ5Mjg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 190,
+            "state": "CLOSED",
+            "title": "Flattening function like in Autograd",
+            "updatedAt": "2019-03-26T15:41:28Z",
+            "url": "https://github.com/jax-ml/jax/issues/190"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Putting this here and tagging myself @ericmjl so that I can remember this exists.\nTo get jax into the hands of data scientists and machine learning researchers, conda installation would be very useful. I will take a stab at this on conda-forge, and record my progress here.",
+            "closedAt": "2022-08-15T21:03:28Z",
+            "createdAt": "2019-01-03T02:24:32Z",
+            "id": "MDU6SXNzdWUzOTU0Mzk2MjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "build"
+                },
+                {
+                  "name": "contributions welcome"
+                },
+                {
+                  "name": "P2 (eventual)"
+                },
+                {
+                  "name": "NVIDIA GPU"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 189,
+            "state": "CLOSED",
+            "title": "conda-based installation",
+            "updatedAt": "2022-08-15T21:03:28Z",
+            "url": "https://github.com/jax-ml/jax/issues/189"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The same indexing works when applied to a numpy.ndarray. According to the README, all NumPy indexing (excepting indexed assignments) should work.\nScreenshots:\nIndexing works in original numpy but fails with jax's numpy\nhttps://drive.google.com/file/d/1bpj4RWV9_oFajeEDAN43IdiN9VHeRHJE/view?usp=sharing\nIndexing over one dimension works, but not over two:\nhttps://drive.google.com/file/d/10nCNyIIj2Gr9vOcSKV0p203hfKqEuQd_/view?usp=sharing\nAny idea why this is happening?",
+            "closedAt": "2019-01-03T02:43:42Z",
+            "createdAt": "2019-01-02T23:00:18Z",
+            "id": "MDU6SXNzdWUzOTU0MDg3MTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 187,
+            "state": "CLOSED",
+            "title": "Failure while indexing across both dimensions of a 2D jax.lax.FilledConstant array",
+            "updatedAt": "2019-01-03T02:43:42Z",
+            "url": "https://github.com/jax-ml/jax/issues/187"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Awesome project! I I really like how you have been able to make all the state explicit and pass it in to the models, optimizers, and random number generators. The performance gains that I've seen from just adding a simple jit annotation to my functions is phenomenal. However, I am really curious if you have considered making a similar library in Haskell? It seems like with each new neural network library we are trying to bring functional programming concepts into the mainstream. From the tensorflow data api to now Jax, we are getting closer and closer to a functional language built on top of Python. It still seems like certain things like control flow aren't quite there, which is why we need cond and while, which are again Lisp/Haskell concepts. Couldn't we make a better API and experience, if rather than trying to shoehorn a functional paradigm into imperative languages, we actually go to where the functional style is the natural one? We can model stax.sequential as a monad and stax.parallel as an applicative. The Facebook Haxl library could help make parallelization natural and mostly automated too.",
+            "closedAt": "2019-01-05T17:55:55Z",
+            "createdAt": "2019-01-02T01:57:19Z",
+            "id": "MDU6SXNzdWUzOTUxMzI4ODM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 185,
+            "state": "CLOSED",
+            "title": "Haskell",
+            "updatedAt": "2020-05-07T06:49:07Z",
+            "url": "https://github.com/jax-ml/jax/issues/185"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The @jit decorator has an optional argument static_argnums to tell it which inputs to be treated as constant.  However there is a minor problem with the decorator syntax in Python which means that you can't use it as a decorator and also pass it an argument.\nHere's a simple example:\nfrom jax.api import jit\n\n@jit(static_argnums=(0,))\ndef mymap(f, x):\n    return f(x)\nFails with TypeError: jit() takes at least 1 argument (1 given).\nThis works fine, but is a little uglier:\nfrom jax.api import jit\n\ndef mymap(f, x):\n    return f(x)\nmymap = jit(mymap, static_argnums=(0,))\nIt looks like this is a common issue and a bit of wrapping can solve it:\nhttps://stackoverflow.com/questions/5929107/decorators-with-parameters",
+            "closedAt": "2019-01-02T00:23:50Z",
+            "createdAt": "2019-01-01T20:37:57Z",
+            "id": "MDU6SXNzdWUzOTUxMTAzOTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 184,
+            "state": "CLOSED",
+            "title": "jit decorator can't accept arguments",
+            "updatedAt": "2022-03-29T22:44:46Z",
+            "url": "https://github.com/jax-ml/jax/issues/184"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I want to use vmap on functions that have some arguments which don't need to be mapped over.  I can specify this using in_axes, but vmap doesn't allow this for some argument types.  It seems to check if every argument is a valid type for batching, even if that argument is ignored due to in_axes.  Can you remove this check for those arguments which won't be batched over?\nA simple example:\nfrom jax.api import vmap\nimport jax.numpy as np\n\ndef mymap(f, x):\n    return f(x)\n\nvmap(mymap, in_axes=(None, 0))(np.sin, np.linspace(0, 1, 10))\nFails with TypeError: <type 'function'> is not a valid type for batching\nThis is a minor issue, because I could get around with with partial or by making closures, but that clutters up the code a bit.",
+            "closedAt": "2019-10-31T21:59:57Z",
+            "createdAt": "2019-01-01T20:21:16Z",
+            "id": "MDU6SXNzdWUzOTUxMDk0NTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 183,
+            "state": "CLOSED",
+            "title": "Allow vmap to accept unbatchable arguments if they aren't mapped over",
+            "updatedAt": "2019-10-31T21:59:57Z",
+            "url": "https://github.com/jax-ml/jax/issues/183"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "test in examples/mnist_classifier.py,\ndef accuracy(params, batch):    \n  inputs, targets = batch    \n  target_class = np.argmax(targets, axis=1)\n  x = predict(params, inputs)\n  print(x[0])\nthe final layer is LogSoftmax, but the output seems not correct,\nStarting training...\n[-2.3113673 -2.6440005 -2.4797316 -1.79847   -1.6207608 -2.931935\n -3.303906  -2.7275395 -2.2099946 -2.1403143]",
+            "closedAt": "2019-01-05T18:35:42Z",
+            "createdAt": "2019-01-01T10:07:28Z",
+            "id": "MDU6SXNzdWUzOTUwNzA2NzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 182,
+            "state": "CLOSED",
+            "title": "add Softmax layer to stax",
+            "updatedAt": "2019-01-05T18:35:42Z",
+            "url": "https://github.com/jax-ml/jax/issues/182"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nConsidering there has been recent work going on w.r.t. improving the linalg modules with the addition of Cholesky and QR decompositions and solve methods, I would like to see SVD added to this list.\nI don’t mind working on this with some guidance from the developers, if they think this is worth adding. Thank you.",
+            "closedAt": "2019-01-08T18:26:44Z",
+            "createdAt": "2018-12-31T06:55:26Z",
+            "id": "MDU6SXNzdWUzOTQ5MzgwNTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 180,
+            "state": "CLOSED",
+            "title": "[feature request] add support for numpy.linalg.svd and scipy.linalg.svd",
+            "updatedAt": "2019-02-26T00:03:58Z",
+            "url": "https://github.com/jax-ml/jax/issues/180"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2018-12-31T06:42:54Z",
+            "createdAt": "2018-12-31T01:26:04Z",
+            "id": "MDU6SXNzdWUzOTQ5MTY4NDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 177,
+            "state": "CLOSED",
+            "title": "vmap over PRNG keys",
+            "updatedAt": "2018-12-31T06:42:54Z",
+            "url": "https://github.com/jax-ml/jax/issues/177"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Requested by @duvenaud!",
+            "closedAt": "2018-12-31T04:53:12Z",
+            "createdAt": "2018-12-31T01:25:34Z",
+            "id": "MDU6SXNzdWUzOTQ5MTY4MTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 176,
+            "state": "CLOSED",
+            "title": "add np.append and np.polyval",
+            "updatedAt": "2019-01-05T17:50:48Z",
+            "url": "https://github.com/jax-ml/jax/issues/176"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Sometimes we need concat many layers. So like parallel, FanOut and FanInSum, we need FanInCat",
+            "closedAt": "2018-12-31T01:12:15Z",
+            "createdAt": "2018-12-30T13:12:22Z",
+            "id": "MDU6SXNzdWUzOTQ4NzExNTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 174,
+            "state": "CLOSED",
+            "title": "Need a function for concat layers in stax, maybe FanInCat",
+            "updatedAt": "2018-12-31T01:12:15Z",
+            "url": "https://github.com/jax-ml/jax/issues/174"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm using this snippet from the README\nfrom jax import jit, jacfwd, jacrev\ndef hessian(fun):\n  return jit(jacfwd(jacrev(fun)))\n\ncombined with the \"getting started with pytorch data loaders\" colab. How do I compute and use the hessian of this neural network? So far I have tried:\n\nNaive: hessian_loss = hessian(loss)(params, x, y) (TypeError: jacfwd() takes 2 positional arguments but 4 were given)\nNaive2: hessian_loss = hessian(loss)((params, x, y)) (takes a long time with a small network and then returns AttributeError: 'PyLeaf' object has no attribute 'node_type')\nFromTheTests: hessian_loss = hessian(lambda params_: loss(params_, x, y)(params) (AttributeError: 'PyLeaf' object has no attribute 'node_type')\n\nAll I really need is to compute the eigenvalues and eigenvectors of this Hessian.\nNote: repr(params) = [(DeviceArray{float32[10,784]}, DeviceArray{float32[10]})]\nSome ideas that I have:\n\nShould I re-write the code to use only flat arrays?",
+            "closedAt": "2019-01-07T17:14:03Z",
+            "createdAt": "2018-12-29T04:14:45Z",
+            "id": "MDU6SXNzdWUzOTQ3NTkzNzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 173,
+            "state": "CLOSED",
+            "title": "How to use jax.hessian?",
+            "updatedAt": "2019-01-07T17:14:03Z",
+            "url": "https://github.com/jax-ml/jax/issues/173"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am trying to run the MNIST example in a Colab but the kernel dies on line:\n_, init_params = init_random_params((-1, 28 * 28))\nAny ideas on how to start debugging this?",
+            "closedAt": "2019-01-17T18:31:39Z",
+            "createdAt": "2018-12-28T11:19:51Z",
+            "id": "MDU6SXNzdWUzOTQ2MTQzNjg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "build"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 172,
+            "state": "CLOSED",
+            "title": "MNIST example runtime crash",
+            "updatedAt": "2019-01-17T18:31:39Z",
+            "url": "https://github.com/jax-ml/jax/issues/172"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm building jax on MacOS(10.13.6), python 3.6.3 with venv, bazel version:\n(3.6.3.env) ➜  jax git:(master) ✗ bazel version\nINFO: Invocation ID: d5881b01-a4be-4310-9127-5d9c6383cf83\nBuild label: 0.20.0\nBuild target: bazel-out/darwin-opt/bin/src/main/java/com/google/devtools/build/lib/bazel/BazelServer_deploy.jar\nBuild time: Fri Nov 30 14:38:25 2018 (1543588705)\nBuild timestamp: 1543588705\nBuild timestamp as int: 1543588705\n\nThe command I used to build jax:\npython3 build/build.py\n\nIt failed with error:\n2 warnings generated.\nINFO: From ProtoCompile external/org_tensorflow/tensorflow/compiler/xla/service/hlo_pb2.py:\nexternal/protobuf_archive/python: warning: directory does not exist.\nexternal/protobuf_archive/python: warning: directory does not exist.\nERROR: /Users/wweic/workspace/jax/jaxlib/BUILD:23:1: Executing genrule //jaxlib:lapack.pyx_cython_translation failed (Exit 1) bash failed: error executing command\n  (cd /private/var/tmp/_bazel_wweic/7bcb81bebd0484c3fc9089f322922c60/execroot/__main__ && \\\n  exec env - \\\n    CUDA_TOOLKIT_PATH=/usr/local/cuda \\\n    CUDNN_INSTALL_PATH=/usr/local/cuda \\\n    PATH=/Users/wweic/workspace/jax/3.6.3.env/bin:/Users/wweic/.pyenv/shims:/usr/local/opt/llvm/bin:/Users/wweic/.cargo/bin:/Users/wweic/go/bin:/Users/wweic/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/wweic/go/bin:/Users/wweic/bin \\\n    PYTHON_BIN_PATH=/Users/wweic/workspace/jax/3.6.3.env/bin/python3 \\\n    TF_NEED_CUDA=0 \\\n  /bin/bash -c 'source external/bazel_tools/tools/genrule/genrule-setup.sh; PYTHONHASHSEED=0 bazel-out/darwin-opt/bin/external/cython/cython_binary --cplus jaxlib/lapack.pyx --output-file bazel-out/darwin-opt/genfiles/jaxlib/lapack.cpp')\nExecution platform: @bazel_tools//platforms:host_platform\n\nUse --sandbox_debug to see verbose messages from the sandbox: bash failed: error executing command\n  (cd /private/var/tmp/_bazel_wweic/7bcb81bebd0484c3fc9089f322922c60/execroot/__main__ && \\\n  exec env - \\\n    CUDA_TOOLKIT_PATH=/usr/local/cuda \\\n    CUDNN_INSTALL_PATH=/usr/local/cuda \\\n    PATH=/Users/wweic/workspace/jax/3.6.3.env/bin:/Users/wweic/.pyenv/shims:/usr/local/opt/llvm/bin:/Users/wweic/.cargo/bin:/Users/wweic/go/bin:/Users/wweic/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/wweic/go/bin:/Users/wweic/bin \\\n    PYTHON_BIN_PATH=/Users/wweic/workspace/jax/3.6.3.env/bin/python3 \\\n    TF_NEED_CUDA=0 \\\n  /bin/bash -c 'source external/bazel_tools/tools/genrule/genrule-setup.sh; PYTHONHASHSEED=0 bazel-out/darwin-opt/bin/external/cython/cython_binary --cplus jaxlib/lapack.pyx --output-file bazel-out/darwin-opt/genfiles/jaxlib/lapack.cpp')\nExecution platform: @bazel_tools//platforms:host_platform\n\nUse --sandbox_debug to see verbose messages from the sandbox\n\nError compiling Cython file:\n------------------------------------------------------------\n...\nfrom libc.stdint cimport int32_t\nfrom libc.string cimport memcpy\nfrom libcpp.string cimport string\nfrom cpython.pycapsule cimport PyCapsule_New\n\nfrom scipy.linalg.cython_blas cimport strsm, dtrsm, ctrsm\n^\n------------------------------------------------------------\njaxlib/lapack.pyx:27:0: 'scipy/linalg/cython_blas.pxd' not found\n\nError compiling Cython file:\n------------------------------------------------------------\n...\nfrom libc.stdint cimport int32_t\nfrom libc.string cimport memcpy\nfrom libcpp.string cimport string\nfrom cpython.pycapsule cimport PyCapsule_New\n\nfrom scipy.linalg.cython_blas cimport strsm, dtrsm, ctrsm\n^\n------------------------------------------------------------\n\njaxlib/lapack.pyx:27:0: 'scipy/linalg/cython_blas/strsm.pxd' not found\n\nError compiling Cython file:\n------------------------------------------------------------\n...\nfrom libc.stdint cimport int32_t\nfrom libc.string cimport memcpy\nfrom libcpp.string cimport string\nfrom cpython.pycapsule cimport PyCapsule_New",
+            "closedAt": "2018-12-24T22:13:05Z",
+            "createdAt": "2018-12-24T17:55:14Z",
+            "id": "MDU6SXNzdWUzOTM5MTU5NTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 171,
+            "state": "CLOSED",
+            "title": "Build without CUDA on Mac OS failed",
+            "updatedAt": "2019-01-05T17:51:00Z",
+            "url": "https://github.com/jax-ml/jax/issues/171"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dropout layer not working due to it's apply_fun keep = random.bernoulli(rng, rate, inputs.shape) .\nWhen I add rng = PRNGKey(seed) before this line, the apply_fun works well",
+            "closedAt": "2018-12-24T18:33:30Z",
+            "createdAt": "2018-12-23T20:14:30Z",
+            "id": "MDU6SXNzdWUzOTM3Nzc2MjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 170,
+            "state": "CLOSED",
+            "title": "Random key error in stax.Dropout layer",
+            "updatedAt": "2018-12-24T20:37:53Z",
+            "url": "https://github.com/jax-ml/jax/issues/170"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The README mentions boolean index slices a[idx] in relation to jit-able functions as something to avoid, but currently it seems they do not work in jax at all\n>>> import jax.numpy as np\n>>> a = np.array([1,2,3])\n>>> a[[True,False,False]]\n\nraises IndexError: Indexing mode not yet supported. Open a feature request!\nis this expected?",
+            "closedAt": "2018-12-23T20:29:30Z",
+            "createdAt": "2018-12-21T21:28:46Z",
+            "id": "MDU6SXNzdWUzOTM1OTU4MTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 166,
+            "state": "CLOSED",
+            "title": "boolean indexing support",
+            "updatedAt": "2020-05-15T02:06:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/166"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "If you use indexing , e.g. x[0] in a function you vmap, it fails.",
+            "closedAt": "2018-12-23T17:44:45Z",
+            "createdAt": "2018-12-21T18:55:25Z",
+            "id": "MDU6SXNzdWUzOTM1NTgxMjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 165,
+            "state": "CLOSED",
+            "title": "Batching rule for `dyanmic_slice` not defined",
+            "updatedAt": "2018-12-23T17:44:45Z",
+            "url": "https://github.com/jax-ml/jax/issues/165"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm trying to build from source on Centos 7, gcc 7, conda 4.5, python 3.6, cuda 9.2.\nAfter successfully building and installing as per the readme, I end up getting\nImportError: /n/holylfs/LABS/rush_lab/jc/code/jax/build/jaxlib/_pywrap_xla.so: undefined symbol: _ZNSaIPKN3xla14HloInstructionEEC1Ev\nafter importing jax, which seems to indicate that that the ffi can't find the xla symbols. I'm new to bazel, so is there something I need to add to my LD_LIBRARY_PATH? Or did I miss a step?",
+            "closedAt": "2018-12-28T14:58:55Z",
+            "createdAt": "2018-12-20T20:15:39Z",
+            "id": "MDU6SXNzdWUzOTMxOTYyNTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 152,
+            "state": "CLOSED",
+            "title": "Build on Centos7 with Cuda",
+            "updatedAt": "2019-01-05T17:51:10Z",
+            "url": "https://github.com/jax-ml/jax/issues/152"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In Autograd I was used to have value_and_grad to return both the gradient and the value of a function simultaneously. Is there any similar functionality in JAX? That would be incredibly useful for, e.g., plotting the loss while training a neural network.\nThis is an example in Autograd:\ngrad_and_value = grad_and_value(np.tanh)\nv, g = grad_and_value(0.0) # v=0.0, g=1.0",
+            "closedAt": "2018-12-20T18:31:29Z",
+            "createdAt": "2018-12-20T11:34:09Z",
+            "id": "MDU6SXNzdWUzOTMwMDYzNDI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 149,
+            "state": "CLOSED",
+            "title": "Get value and gradient simultaneously",
+            "updatedAt": "2018-12-20T19:02:27Z",
+            "url": "https://github.com/jax-ml/jax/issues/149"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have installed JAX on Colab as in the QuickStart notebook. Then I run this instruction:\nimport jax.numpy as np\nprint(np.arange(0.0, 1.0, 0.1))\n\nAnd I get an array with a single value [0], which is different from:\nimport numpy as np\nprint(np.arange(0.0, 1.0, 0.1))\n\nWhere I (correctly) get an array with 11 values 0, 0.1, ..., 0.9, 1.0. Is this intended?",
+            "closedAt": "2018-12-19T17:22:33Z",
+            "createdAt": "2018-12-19T16:53:26Z",
+            "id": "MDU6SXNzdWUzOTI2OTA5MDI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 145,
+            "state": "CLOSED",
+            "title": "Inconsistent behaviour of arange",
+            "updatedAt": "2018-12-19T17:24:52Z",
+            "url": "https://github.com/jax-ml/jax/issues/145"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It should do this.",
+            "closedAt": "2020-07-14T18:29:22Z",
+            "createdAt": "2018-12-18T14:23:25Z",
+            "id": "MDU6SXNzdWUzOTIxNzg5MTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 139,
+            "state": "CLOSED",
+            "title": "Batch norm layer in stax does not compute moving averages for test-time",
+            "updatedAt": "2020-07-14T18:29:23Z",
+            "url": "https://github.com/jax-ml/jax/issues/139"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We have a very basic example in #92, but there are many pre-trained models in the ONNX model zoo. We should make it easy to load all of them.",
+            "closedAt": "2021-05-10T13:46:43Z",
+            "createdAt": "2018-12-18T14:09:20Z",
+            "id": "MDU6SXNzdWUzOTIxNzI4OTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "good first issue"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 138,
+            "state": "CLOSED",
+            "title": "Loading pre-trained ONNX models",
+            "updatedAt": "2021-05-10T13:46:43Z",
+            "url": "https://github.com/jax-ml/jax/issues/138"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Meta-issue for tracking potential improvements to stax (feel free to rename however you like).\n\n Metrics #133\n Model serialization #134\n Logging #136\n TensorBoard integration #135\n Pre-trained models #138\n BatchNorm layer has incorrect test-time behavior #139",
+            "closedAt": "2020-07-14T18:28:27Z",
+            "createdAt": "2018-12-18T14:08:15Z",
+            "id": "MDU6SXNzdWUzOTIxNzI0NTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 137,
+            "state": "CLOSED",
+            "title": "Maturing stax",
+            "updatedAt": "2024-07-17T11:42:17Z",
+            "url": "https://github.com/jax-ml/jax/issues/137"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "JAX has a great tracer. Who says it can't be used to log information about the programs it traces? Useful applications:\n\nProfiling speed\nProfiling memory\nKeeping a log of what ops were run\nGradient magnitudes\nActivation magnitudes",
+            "closedAt": "2020-07-14T19:07:05Z",
+            "createdAt": "2018-12-18T14:07:29Z",
+            "id": "MDU6SXNzdWUzOTIxNzIxNDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 136,
+            "state": "CLOSED",
+            "title": "Use tracing for program logging and benchmarking",
+            "updatedAt": "2020-07-14T19:07:05Z",
+            "url": "https://github.com/jax-ml/jax/issues/136"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This could be a simple example of how to do it, since PyTorch users have already extracted it from TensorFlow as a whole (https://github.com/lanpa/tensorboardX, but that's just one example)",
+            "closedAt": "2019-05-17T14:47:32Z",
+            "createdAt": "2018-12-18T14:06:01Z",
+            "id": "MDU6SXNzdWUzOTIxNzE1NDU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 135,
+            "state": "CLOSED",
+            "title": "Integration with TensorBoard",
+            "updatedAt": "2019-05-17T14:47:32Z",
+            "url": "https://github.com/jax-ml/jax/issues/135"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It's DIY right now, but we should provide a good default.",
+            "closedAt": "2020-07-14T18:27:26Z",
+            "createdAt": "2018-12-18T14:04:35Z",
+            "id": "MDU6SXNzdWUzOTIxNzA5NDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 134,
+            "state": "CLOSED",
+            "title": "Serializing stax models",
+            "updatedAt": "2020-07-14T18:27:26Z",
+            "url": "https://github.com/jax-ml/jax/issues/134"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The delta between stax and keras is lower than I originally expected. A functionality stax does not currently have is the calculation of metrics, such as accuracy or precision. See the limited functionality provided by Keras: https://keras.io/metrics/",
+            "closedAt": "2018-12-18T15:43:07Z",
+            "createdAt": "2018-12-18T14:03:08Z",
+            "id": "MDU6SXNzdWUzOTIxNzAzNDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 133,
+            "state": "CLOSED",
+            "title": "Metrics calculations in stax",
+            "updatedAt": "2019-01-05T17:51:14Z",
+            "url": "https://github.com/jax-ml/jax/issues/133"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm trying to build the project in OS X 10.11.5, using Python 2.7.13 in a virtualenv (version 16.1.0).\npython build/build.py raises the error:\nexternal/org_tensorflow/tensorflow/core/platform/posix/env_time.cc:31:19: error: use of undeclared identifier 'CLOCK_REALTIME'\nclock_gettime(CLOCK_REALTIME, &ts);\n^\n1 error generated.\nTarget //build:install_xla_in_source_tree failed to build\nThis looks like an OS X compatibility issue. What's my best course of action here to get JAX running? Looks like I could fork and patch with this:\npjreddie/darknet#62",
+            "closedAt": "2018-12-18T00:24:31Z",
+            "createdAt": "2018-12-17T23:48:17Z",
+            "id": "MDU6SXNzdWUzOTE5Mzc2MTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 132,
+            "state": "CLOSED",
+            "title": "CLOCK_REALTIME in OS X jax build",
+            "updatedAt": "2019-01-05T17:51:40Z",
+            "url": "https://github.com/jax-ml/jax/issues/132"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "With a P4 GPU, the unit test fails out of the box for me:\n======================================================================\nERROR: jax.test_util.format_test_name_suffix\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/adam/dev/jax/venv2/local/lib/python2.7/site-packages/nose/case.py\", line 197, in runTest\n    self.test(*self.arg)\nTypeError: format_test_name_suffix() takes exactly 3 arguments (0 given)\n  \n======================================================================\nFAIL: testInv_shape=float32[200,200] (linalg_test.NumpyLinalgTest)\ntestInv_shape=float32[200,200](dtype=dtype('float32'), shape=(200, 200), rng=<functools.partial>)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/adam/dev/jax/venv2/local/lib/python2.7/site-packages/absl/third_party/unittest3_backport/case.py\", line 37, in testPartExecutor\n    yield\n  File \"/home/adam/dev/jax/venv2/local/lib/python2.7/site-packages/absl/third_party/unittest3_backport/case.py\", line 162, in run\n    testMethod()\n  File \"/home/adam/dev/jax/venv2/local/lib/python2.7/site-packages/absl/testing/parameterized.py\", line 256, in bound_param_test\n    test_method(self, **testcase_params)\n  File \"/home/adam/dev/jax/tests/linalg_test.py\", line 133, in testInv\n    self._CompileAndCheck(np.linalg.inv, args_maker, check_dtypes=True)\n  File \"/home/adam/dev/jax/jax/test_util.py\", line 429, in _CompileAndCheck\n    self.assertAllClose(python_ans, monitored_ans, check_dtypes, rtol, atol)\n  File \"/home/adam/dev/jax/jax/test_util.py\", line 408, in assertAllClose\n    self.assertArraysAllClose(x, y, check_dtypes, atol=atol, rtol=rtol)\n  File \"/home/adam/dev/jax/jax/test_util.py\", line 386, in assertArraysAllClose\n    raise self.failureException(msg)\nAssertionError: Arguments x and y not equal to tolerance atol=0.01, rtol=0.01:\nx:\n[[ 0.00618084  0.01218688  0.0251631  ...  0.00313068 -0.04788522\n   0.0435191 ]\n [-0.0086758   0.01550603  0.01697903 ... -0.02351537 -0.02903247\n  -0.00979138]\n [-0.06120062 -0.01663456  0.00417364 ... -0.00088828  0.02902133\n   0.02269716]\n ...\n [-0.01421827 -0.01083164 -0.00547409 ...  0.01480494  0.00061655\n   0.00666774]\n [ 0.0018405  -0.01860033  0.00488692 ...  0.00800579 -0.00021123\n   0.00595227]\n [ 0.02060174 -0.01633311 -0.02736879 ... -0.0021769  -0.00297758\n  -0.02157698]]\ny:\n[[ 0.03693918 -0.02123345  0.00972237 ... -0.01746454 -0.07871114\n   0.01237083]\n [-0.0037162   0.01538941  0.02761243 ... -0.0108461  -0.026155\n   0.00196449]\n [-0.08331504 -0.03236853 -0.05631161 ...  0.01518264  0.07201606\n   0.0681076 ]\n ...\n [-0.01517212 -0.02950297 -0.04371436 ...  0.02140163  0.01937166\n   0.00679701]\n [ 0.00105234 -0.04179138 -0.00391355 ... -0.00963392 -0.02027218\n  -0.01098038]\n [ 0.02950978 -0.01039723 -0.02611141 ...  0.00717233  0.02393566\n  -0.02157698]]\n\nI dug into it a little bit and the failure was taking place in the _CompileAndCheck() test routine.  Specifically, jitted and non-jitted versions of the function give different answers:\ndef myinv(a):\n    q, r = jnp.linalg.lax_linalg.qr(a)\n    return jnp.linalg.lax_linalg.triangular_solve(r, q.T, lower=False, left_side=True)\n\njitted_myinv = jit(myinv)\nprint(np.max(np.abs(myinv(bad), jitted_myinv(bad)))\n\nwhere bad is the random array dumped from the unit test, but generating random (200,200) matrices can cause it.\nInterestingly, if they're pulled apart:\ndef myqr(a):\n    q, r = jnp.linalg.lax_linalg.qr(a)\n    return q, r\n\ndef myts(q, r):\n    return jnp.linalg.lax_linalg.triangular_solve(r, q.T, lower=False, left_side=True)\n\njitted_myqr = jit(myqr)\njitted_myts = jit(myts)\n\nq, r = myqr(bad)\nres1 = myts(q, r)\n\nqc, rc = jitted_myqr(bad)\nres2 = myts(qc,qr)\n\nprint(np.allclose(res1,res2))\n\nThe problem does not surface.\nSince the problem doesn't occur with the CPU (Host) backend, it seems like maybe an XLA bug? I did dump the unoptimized HLO from both the Host and CUDA backends and they were identical, but they diverge when dumping after the optimizer runs (I guess the platform specific optimizations start to take place there?).\nAlso, what's the best way to debug these issues?  I see that functionality to dump jaxprs has been added?  Any other tricks for dumping useful information and visualizing it?  (Looking at the  output from protoc for the HLO was not the most fun for trying to make sense of it)",
+            "closedAt": "2019-01-07T15:44:22Z",
+            "createdAt": "2018-12-17T21:13:12Z",
+            "id": "MDU6SXNzdWUzOTE4OTE4MTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 129,
+            "state": "CLOSED",
+            "title": "CUDA backend produces inconsistent results for jax.numpy.linalg.inv",
+            "updatedAt": "2019-01-07T15:45:41Z",
+            "url": "https://github.com/jax-ml/jax/issues/129"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Running the following:\nIn [1]: import jax.lax_linalg as la                                                             \n                                                                                                \nIn [2]: import numpy.random as rng                                                              \n                                                                                                \nIn [3]: a = rng.randn(2, 150, 150)                                                              \n                                                                                                \nIn [4]: import jax.numpy as np                                                                  \n                                                                                                \nIn [5]: a_tri = np.triu(a)                                                                      \n/home/jamie/dev/jax/jax/lib/xla_bridge.py:138: UserWarning: No GPU found, falling back to CPU.\n  warnings.warn('No GPU found, falling back to CPU.')                                           \n                                                                                                \nIn [6]: la.triangular_solve(a_tri, a)                                                           \nProduces an error (see below, apologies for the long traceback). This seems to happen only for inputs above a certain size. I haven't pinpointed the exact sizes at which it starts to fail, but can say that on my machine it seems to work fine for np.shape(a) == (2, n, n) for n <= 100, and breaks for n >= 150.\n---------------------------------------------------------------------------                                                                                                                                                                                           \nKeyError                                  Traceback (most recent call last)                                                                                                                                                                                           \n~/dev/jax/jax/util.py in memoized_fun(*args, **kwargs)                                                                                                                                                                                                                \n    133     try:                                                                                                                                                                                                                                                      \n--> 134       return cache[key]                                                                                                                                                                                                                                       \n    135     except KeyError:                                                                                                                                                                                                                                          \n                                                                                                                                                                                                                                                                      \nKeyError: ((triangular_solve, ShapedArray(float32[2,150,150]), ShapedArray(float32[2,150,150])), (('conjugate_a', False), ('left_side', False), ('lower', False), ('transpose_a', False)))                                                                            \n                                                                                                                                                                                                                                                                      \nDuring handling of the above exception, another exception occurred:                                                                                                                                                                                                   \n                                                                                                                                                                                                                                                                      \nKeyError                                  Traceback (most recent call last)                                                                                                                                                                                           \n~/dev/jax/jax/util.py in memoized_fun(*args, **kwargs)                                                                                                                                                                                                                \n    133     try:                                                                                                                                                                                                                                                      \n--> 134       return cache[key]                                                                                                                                                                                                                                       \n    135     except KeyError:                                                                                                                                                                                                                                          \n                                                                                                                                                                                                                                                                      \nKeyError: ((triangular_solve, xla_client.Shape(_dtype=dtype('float32'), _dimensions=(2, 150, 150), _is_tuple=False, _minor_to_major=None), xla_client.Shape(_dtype=dtype('float32'), _dimensions=(2, 150, 150), _is_tuple=False, _minor_to_major=None)), (('conjugate_\na', False), ('left_side', False), ('lower', False), ('transpose_a', False)))                                                                                                                                                                                          \n                                                                                                                                                                                                                                                                      \nDuring handling of the above exception, another exception occurred:                                                                                                                                                                                                   \n                                                                                                                                                                                                                                                                      \nRuntimeError                              Traceback (most recent call last)                                                                                                                                                                                           \n<ipython-input-6-7b04d20ca17a> in <module>                                                                                                                                                                                                                            \n----> 1 la.triangular_solve(a_tri, a)                                                                                                                                                                                                                                 \n                                                                                                                                                                                                                                                                      \n~/dev/jax/jax/lax_linalg.py in triangular_solve(a, b, left_side, lower, transpose_a, conjugate_a)                                                                                                                                                                     \n     43   return triangular_solve_p.bind(                                                                                                                                                                                                                             \n     44       a, b, left_side=left_side, lower=lower, transpose_a=transpose_a,                                                                                                                                                                                        \n---> 45       conjugate_a=conjugate_a)                                                                                                                                                                                                                                \n     46                                                                                                                                                                                                                                                               \n     47                                                                                                                                                                                                                                                               \n                                                                                                                                                                                                                                                                      \n~/dev/jax/jax/core.py in bind(self, *args, **kwargs)                                                                                                                                                                                                                  \n     69     top_trace = find_top_trace(args)                                                                                                                                                                                                                          \n     70     if top_trace is None:                                                                                                                                                                                                                                     \n---> 71       return self.impl(*args, **kwargs)                                                                                                                                                                                                                       \n     72                                                                                                                                                                                                                                                               \n     73     tracers = map(top_trace.full_raise, args)                                                                                                                                                                                                                 \n                                                                                                                                                                                                                                                                      \n~/dev/jax/jax/interpreters/xla.py in apply_primitive(prim, *args, **kwargs)                                                                                                                                                                                           \n     41 def apply_primitive(prim, *args, **kwargs):                                                                                                                                                                                                                   \n     42   abstract_args = map(abstractify, args)                                                                                                                                                                                                                      \n---> 43   compiled_fun = xla_primitive_callable(prim, *abstract_args, **kwargs)                                                                                                                                                                                       \n     44   return compiled_fun(*args)                                                                                                                                                                                                                                  \n     45                                                                                                                                                                                                                                                               \n\n~/dev/jax/jax/util.py in memoized_fun(*args, **kwargs)\n    134       return cache[key]\n    135     except KeyError:\n--> 136       ans = cache[key] = fun(*args, **kwargs)\n    137       return ans\n    138     except TypeError:\n\n~/dev/jax/jax/interpreters/xla.py in xla_primitive_callable(prim, *abstract_args, **kwargs)\n     47 def xla_primitive_callable(prim, *abstract_args, **kwargs):\n     48   shapes = map(xla_shape, abstract_args)\n---> 49   built_c = primitive_computation(prim, *shapes, **kwargs)\n     50   result_shape = xla_shape_to_result_shape(built_c.GetReturnValueShape())\n     51   handle_result = result_handler(result_shape)\n\n~/dev/jax/jax/util.py in memoized_fun(*args, **kwargs)\n    134       return cache[key]\n    135     except KeyError:\n--> 136       ans = cache[key] = fun(*args, **kwargs)\n    137       return ans\n    138     except TypeError:\n\n~/dev/jax/jax/interpreters/xla.py in primitive_computation(prim, *shapes, **kwargs)\n     63     # try for a better error message by using the abstract_eval checks\n     64     prim.abstract_eval(*map(aval_from_xla_shape, shapes), **kwargs)\n---> 65     raise e\n     66\n     67 def aval_from_xla_shape(shape):\n\n~/dev/jax/jax/interpreters/xla.py in primitive_computation(prim, *shapes, **kwargs)\n     59   xla_result = translation_rule(prim)(c, *xla_args, **kwargs)\n     60   try:\n---> 61     return c.Build()\n     62   except RuntimeError as e:\n     63     # try for a better error message by using the abstract_eval checks\n\n~/dev/jax/jax/lib/xla_bridge.py in Build(self, *args, **kwargs)\n    286   def Build(self, *args, **kwargs):\n    287     return super(_JaxComputationBuilderBase, self).Build(\n--> 288         *args, backend=_get_backend(), **kwargs)\n    289\n    290   def Parameter(self, value, name=None, parameter_num=None):\n\n~/dev/jax/build/jaxlib/xla_client.py in Build(self, root, backend)\n    698     else:\n    699       return LocalComputation(\n--> 700           self._client.Build(), is_compiled=False, backend=backend)\n    701\n    702   def SetOpMetadata(self, op_metadata):\n\n~/dev/jax/build/jaxlib/pywrap_xla.py in Build(self)\n    307\n    308     def Build(self):\n--> 309         return _pywrap_xla.LocalComputationBuilder_Build(self)\n    310\n    311     def BuildWithRoot(self, root):\n\nRuntimeError: Invalid argument: Offset dimension 1 in gather op is out of bounds; got 3, but should have been in [0,3).:",
+            "closedAt": "2018-12-18T20:52:53Z",
+            "createdAt": "2018-12-17T17:13:25Z",
+            "id": "MDU6SXNzdWUzOTE4MDk2NTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 128,
+            "state": "CLOSED",
+            "title": "lax_linalg.triangular_solve gives RuntimeError for large-ish inputs on CPU",
+            "updatedAt": "2018-12-18T20:52:53Z",
+            "url": "https://github.com/jax-ml/jax/issues/128"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Steps to reproduce\nimport jax.numpy as np\nimport numpy as onp\nx = lax.add(np.eye(3), 0.)\nonp.mean(x)\n\nTraceback:\n---------------------------------------------------------------------------\nTypeError                                 Traceback (most recent call last)\n<ipython-input-91-45d207ceb919> in <module>()\n      1 x = lax.add(np.eye(3), 0.)\n----> 2 onp.mean(x)\n\n~/anaconda/lib/python3.5/site-packages/numpy/core/fromnumeric.py in mean(a, axis, dtype, out, keepdims)\n   2915             pass\n   2916         else:\n-> 2917             return mean(axis=axis, dtype=dtype, out=out, **kwargs)\n   2918 \n   2919     return _methods._mean(a, axis=axis, dtype=dtype,\n\nTypeError: mean() got an unexpected keyword argument 'out'",
+            "closedAt": "2018-12-17T23:34:06Z",
+            "createdAt": "2018-12-16T21:00:00Z",
+            "id": "MDU6SXNzdWUzOTE1MDQ1MjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 125,
+            "state": "CLOSED",
+            "title": "Improper kwarg forwarding for np.mean",
+            "updatedAt": "2018-12-17T23:34:06Z",
+            "url": "https://github.com/jax-ml/jax/issues/125"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We should provide an update function that lets users write\nA = lax.update(A, (slice(1, None, 2), Ellipsis, slice(None, -3)), value)\nwhich would behave similarly to this kind of expression in regular NumPy\nA[1::2, ...,  :-3] = value\nexcept without the in-place mutation that would update any aliases.\nThis wrapper would be similar to the lax_numpy._rewriting_take function we already have for handling complex indexing expressions, and would ultimately call into primitives like lax.dynamic_update_slice and lax.index_untake. Better name suggestions welcome!\nThis is a separate issue from whether to provide more convenient syntax for this kind of operation.",
+            "closedAt": "2019-03-04T22:00:23Z",
+            "createdAt": "2018-12-16T16:55:08Z",
+            "id": "MDU6SXNzdWUzOTE0ODUwNTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 122,
+            "state": "CLOSED",
+            "title": "add convenience wrapper for array updating with fancy index expressions",
+            "updatedAt": "2019-03-04T22:00:23Z",
+            "url": "https://github.com/jax-ml/jax/issues/122"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import jax.numpy as np\nimport numpy as onp\nonp.array(0).dtype # works, because onp.array(0) returns a 0-dim array\nnp.array(0).dtype # doesn't work, because np.array(0) returns an int\nThis showed up when trying to do lax.dynamic_update_slice(array, value, np.array(0))",
+            "closedAt": "2019-05-20T19:54:02Z",
+            "createdAt": "2018-12-16T14:58:44Z",
+            "id": "MDU6SXNzdWUzOTE0NzUyNjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 121,
+            "state": "CLOSED",
+            "title": "Scalars passed into np.array should return 0-dim arrays",
+            "updatedAt": "2019-05-20T19:54:02Z",
+            "url": "https://github.com/jax-ml/jax/issues/121"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "hi,\nafter importing those libs:\nimport pandas as pd\nimport jax.numpy as np\nimport tensorflow as tf\n\nI tried to run this cell and the results:",
+            "closedAt": "2019-01-18T20:00:39Z",
+            "createdAt": "2018-12-16T08:50:37Z",
+            "id": "MDU6SXNzdWUzOTE0NDc0Mzg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 120,
+            "state": "CLOSED",
+            "title": "Can’t import both jax and tensorflow (causes kernel restart)",
+            "updatedAt": "2019-01-19T04:24:29Z",
+            "url": "https://github.com/jax-ml/jax/issues/120"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "def predict(params, inputs):\nfor W, b in params:\noutputs = np.dot(inputs, W) + b\ninputs = np.tanh(outputs)\nreturn outputs\ninputs = np.tanh(outputs)\nshould be\noutputs = np.tanh(outputs)\n?",
+            "closedAt": "2018-12-16T15:24:23Z",
+            "createdAt": "2018-12-16T07:20:14Z",
+            "id": "MDU6SXNzdWUzOTE0NDIyNjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 119,
+            "state": "CLOSED",
+            "title": "example Errata",
+            "updatedAt": "2019-01-05T17:51:50Z",
+            "url": "https://github.com/jax-ml/jax/issues/119"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "JAX supports custom primitives and vjps, just like Autograd did. Improvements:\n\nadd this to documentation\nadd a minimal example of this in the examples section\nadd a wrapper function if appropriate?",
+            "closedAt": "2020-03-22T05:57:52Z",
+            "createdAt": "2018-12-14T20:00:09Z",
+            "id": "MDU6SXNzdWUzOTEyNDczMTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 116,
+            "state": "CLOSED",
+            "title": "Easy api for custom primitives and vjps",
+            "updatedAt": "2020-03-22T05:57:52Z",
+            "url": "https://github.com/jax-ml/jax/issues/116"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "repro:\n>>> import jax.numpy as np\n>>> from jax import vmap\n>>> vmap(np.any)(np.array([[True, False], [False, False]]))\njax/lib/xla_bridge.py:138: UserWarning: No GPU found, falling back to CPU.\n  warnings.warn('No GPU found, falling back to CPU.')\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"jax/api.py\", line 149, in batched_fun\n    out_flat = batching.batch(flat_fun, in_flat, in_axes_, out_axes)\n  File \"jax/interpreters/batching.py\", line 43, in batch\n    out_val, out_dim = batch_transform(fun).call_wrapped(in_vals, in_dims)\n  File \"jax/linear_util.py\", line 85, in call_wrapped\n    ans = self.f(*args, **self.kwargs)\n  File \"jax/numpy/lax_numpy.py\", line 607, in reduction\n    result = lax.reduce(a, _reduction_init_val(a, init_val), op, dims)\n  File \"jax/lax.py\", line 260, in reduce\n    dimensions=tuple(dimensions))\n  File \"jax/core.py\", line 74, in bind\n    out_tracer = top_trace.process_primitive(self, tracers, kwargs)\n  File \"jax/interpreters/batching.py\", line 119, in process_primitive\n    val_out, dim_out = batched_primitive(vals_in, dims_in, **params)\nTypeError: reducer_batcher() takes exactly 4 arguments (3 given)",
+            "closedAt": "2018-12-14T17:00:01Z",
+            "createdAt": "2018-12-13T22:25:12Z",
+            "id": "MDU6SXNzdWUzOTA4ODY5MzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 108,
+            "state": "CLOSED",
+            "title": "Batching broken for non-monoidal reducers",
+            "updatedAt": "2018-12-14T17:00:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/108"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Registering interest in having support for this distribution (specifically logpdf() and rvs()).",
+            "closedAt": "2019-04-24T00:45:59Z",
+            "createdAt": "2018-12-13T20:11:05Z",
+            "id": "MDU6SXNzdWUzOTA4NDA2NjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 106,
+            "state": "CLOSED",
+            "title": "support for scipy.stats.dirichlet",
+            "updatedAt": "2019-04-24T00:45:59Z",
+            "url": "https://github.com/jax-ml/jax/issues/106"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In Autograd, we had https://github.com/airspeed-velocity/asv",
+            "closedAt": "2022-08-12T19:48:23Z",
+            "createdAt": "2018-12-13T16:28:24Z",
+            "id": "MDU6SXNzdWUzOTA3NTc4MzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 104,
+            "state": "CLOSED",
+            "title": "Performance tests",
+            "updatedAt": "2022-08-12T19:48:23Z",
+            "url": "https://github.com/jax-ml/jax/issues/104"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I use numpy to read data. In the naive numpy  x_train[(i - 1) * 10000 : i * 10000, :, :, :] = data is OK！However, in the jax.numpy , it raise a ValueError: assignment destination is read-only. Meanwhile, np.set_printoptions() is not implemented.",
+            "closedAt": "2019-05-15T13:06:02Z",
+            "createdAt": "2018-12-13T13:42:48Z",
+            "id": "MDU6SXNzdWUzOTA2ODQzMjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 101,
+            "state": "CLOSED",
+            "title": "Numpy-style indexed update support.",
+            "updatedAt": "2021-12-03T02:24:46Z",
+            "url": "https://github.com/jax-ml/jax/issues/101"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Maybe add something in api.py.",
+            "closedAt": "2018-12-31T02:01:16Z",
+            "createdAt": "2018-12-13T01:45:05Z",
+            "id": "MDU6SXNzdWUzOTA0ODMwNjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 98,
+            "state": "CLOSED",
+            "title": "make it easy to print jaxprs",
+            "updatedAt": "2019-01-05T17:52:04Z",
+            "url": "https://github.com/jax-ml/jax/issues/98"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This worked in a demo at one point. Would be great to be able to load all models in the ONNX model zoo",
+            "closedAt": "2018-12-12T21:57:00Z",
+            "createdAt": "2018-12-12T19:43:05Z",
+            "id": "MDU6SXNzdWUzOTAzNzk5MjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 91,
+            "state": "CLOSED",
+            "title": "Resurrect ONNX -> jaxpr compatibility",
+            "updatedAt": "2018-12-12T21:57:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/91"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "any docker image or Dockerfile ?",
+            "closedAt": "2018-12-12T14:53:57Z",
+            "createdAt": "2018-12-12T01:51:43Z",
+            "id": "MDU6SXNzdWUzOTAwMzEwNzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 84,
+            "state": "CLOSED",
+            "title": "docker image",
+            "updatedAt": "2019-01-05T17:52:30Z",
+            "url": "https://github.com/jax-ml/jax/issues/84"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First and higher order derivatives of functions that use lax.cond and lax.while should be possible.",
+            "closedAt": "2020-05-12T07:47:29Z",
+            "createdAt": "2018-12-12T01:33:16Z",
+            "id": "MDU6SXNzdWUzOTAwMjcyNDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 83,
+            "state": "CLOSED",
+            "title": "grad of cond and while",
+            "updatedAt": "2020-05-12T07:47:29Z",
+            "url": "https://github.com/jax-ml/jax/issues/83"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "That will help us avoid breaking notebooks, especially once we have CI going!",
+            "closedAt": "2019-10-22T09:00:27Z",
+            "createdAt": "2018-12-11T21:49:10Z",
+            "id": "MDU6SXNzdWUzODk5NjgzMTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 81,
+            "state": "CLOSED",
+            "title": "make colab notebooks runnable as tests",
+            "updatedAt": "2019-10-22T09:00:27Z",
+            "url": "https://github.com/jax-ml/jax/issues/81"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It would be great to add a series of wrapper functions for common (de)convolution operations, eg ConvTranspose in PyTorch https://pytorch.org/docs/stable/nn.html#convtranspose2d\nPerhaps Jax doesn't need as many as PyTorch (for example, do we really need separate ConvTranspose1D, 2D, and 3D?). However, it would still be very helpful for GANs, VAEs, etc.",
+            "closedAt": "2019-04-10T13:46:59Z",
+            "createdAt": "2018-12-11T21:33:39Z",
+            "id": "MDU6SXNzdWUzODk5NjMwNzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 80,
+            "state": "CLOSED",
+            "title": "Wrapper functions for ConvTranspose etc.",
+            "updatedAt": "2019-04-10T13:46:59Z",
+            "url": "https://github.com/jax-ml/jax/issues/80"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We want to change the API to look more like vmap(fun) and vmap(fun)(x, y) instead of the current vmap(fun, x, y). That makes it more consistent with the other main transformations (jit and grad, plus all the other autodiff ones) and seems to be more convenient given the experiences of @shoyer and @alexbw.",
+            "closedAt": "2018-12-11T21:19:07Z",
+            "createdAt": "2018-12-11T20:01:03Z",
+            "id": "MDU6SXNzdWUzODk5MzAwODM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 78,
+            "state": "CLOSED",
+            "title": "curry `vmap`",
+            "updatedAt": "2019-01-05T17:52:13Z",
+            "url": "https://github.com/jax-ml/jax/issues/78"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Add support for bfloat16.\nBfloat16 is supported by XLA and valuable on TPUs in particular. There is a numpy bfloat16 extension in the TF source tree that we can leverage: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/lib/core/bfloat16.cc\n(although it supports a fairly limited set of operations.)",
+            "closedAt": "2019-11-21T03:43:47Z",
+            "createdAt": "2018-12-11T19:04:54Z",
+            "id": "MDU6SXNzdWUzODk5MDkyNDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 76,
+            "state": "CLOSED",
+            "title": "bfloat16 support",
+            "updatedAt": "2019-11-21T03:43:47Z",
+            "url": "https://github.com/jax-ml/jax/issues/76"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Add support for np.float16.",
+            "closedAt": "2019-02-18T00:55:19Z",
+            "createdAt": "2018-12-11T19:03:21Z",
+            "id": "MDU6SXNzdWUzODk5MDg2NjU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 75,
+            "state": "CLOSED",
+            "title": "float16 support",
+            "updatedAt": "2019-02-18T00:55:19Z",
+            "url": "https://github.com/jax-ml/jax/issues/75"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There is some support for complex numbers already, but many things are missing. Even things as simple as:\nnp.array([[1,-2j],[2j,5]])\n\ndon't work. We should fix this!",
+            "closedAt": "2018-12-11T20:15:20Z",
+            "createdAt": "2018-12-11T19:02:38Z",
+            "id": "MDU6SXNzdWUzODk5MDgzODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 74,
+            "state": "CLOSED",
+            "title": "Complex number support",
+            "updatedAt": "2019-06-20T16:34:01Z",
+            "url": "https://github.com/jax-ml/jax/issues/74"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Remaining functions to be implemented:\n\n np.argpartition (tricky because XLA does not provide any partial sort functionality)\n np.partition (tricky because XLA does not provide any partial sort functionality)\n\nThe list above was made by inspecting jnp._NOT_IMPLEMENTED and excluding deprecated functions (such as np.alen, np.ipmt, etc.), functions not relevant to JAX (such as np.setbufsize, np.ascontiguousarray, etc), and functions that modify buffers in-place (np.put, np.place, etc.):\nBugs for high-level categories:\n\n np.linalg: #1999\n np.fft: #1877\n searching: #2080\n sorting: #2079\n sets: #2078\n NaN functions: #2077\n Index tricks: #5850",
+            "closedAt": "2023-02-08T23:15:05Z",
+            "createdAt": "2018-12-11T17:00:14Z",
+            "id": "MDU6SXNzdWUzODk4NjExNTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "P3 (no schedule)"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 70,
+            "state": "CLOSED",
+            "title": "Unimplemented NumPy core functions",
+            "updatedAt": "2023-02-09T01:30:18Z",
+            "url": "https://github.com/jax-ml/jax/issues/70"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We shouldn't need to worry if a commit breaks a test or not -- it should be run automatically. Once the pip install situation stabilizes (i.e., we do not want to build xlapy from scratch at every commit or PR), this should not be too difficult to do.",
+            "closedAt": "2018-12-14T00:54:56Z",
+            "createdAt": "2018-12-11T16:01:48Z",
+            "id": "MDU6SXNzdWUzODk4MzQ0ODg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 68,
+            "state": "CLOSED",
+            "title": "Travis CI automated testing",
+            "updatedAt": "2018-12-14T00:54:56Z",
+            "url": "https://github.com/jax-ml/jax/issues/68"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We'd like contributors to be able to make sure their code isn't breaking anything, and that they add tests that cover their own contributions.",
+            "closedAt": "2018-12-15T03:50:56Z",
+            "createdAt": "2018-12-11T16:00:48Z",
+            "id": "MDU6SXNzdWUzODk4MzM5ODM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 67,
+            "state": "CLOSED",
+            "title": "Open source tests",
+            "updatedAt": "2019-01-05T17:52:53Z",
+            "url": "https://github.com/jax-ml/jax/issues/67"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Conda is a great package distribution system, especially for those with binary dependencies. It'd be good to have some ourselves.",
+            "closedAt": "2020-12-02T16:21:57Z",
+            "createdAt": "2018-12-11T15:59:53Z",
+            "id": "MDU6SXNzdWUzODk4MzM0ODQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "build"
+                },
+                {
+                  "name": "contributions welcome"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 66,
+            "state": "CLOSED",
+            "title": "Conda installations",
+            "updatedAt": "2020-12-02T16:21:57Z",
+            "url": "https://github.com/jax-ml/jax/issues/66"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2019-08-04T14:14:02Z",
+            "createdAt": "2018-12-11T15:58:44Z",
+            "id": "MDU6SXNzdWUzODk4MzI4OTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 65,
+            "state": "CLOSED",
+            "title": "Rename jaxlib to xlapy",
+            "updatedAt": "2019-08-04T14:14:02Z",
+            "url": "https://github.com/jax-ml/jax/issues/65"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "What's JAX all about, what are the principles guiding its development? Could replace any JAX-hosted comparisons with other frameworks/libraries.",
+            "closedAt": "2023-05-19T18:50:07Z",
+            "createdAt": "2018-12-11T15:57:55Z",
+            "id": "MDU6SXNzdWUzODk4MzI0NTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 64,
+            "state": "CLOSED",
+            "title": "JAX philosophy, or \"culture and values\" doc",
+            "updatedAt": "2023-05-19T18:50:07Z",
+            "url": "https://github.com/jax-ml/jax/issues/64"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Keras has a NumPy backend that is currently used for unit tests, but could be used with JAX. A little notebook demonstrating integration would be useful.",
+            "closedAt": "2018-12-18T14:21:21Z",
+            "createdAt": "2018-12-11T15:56:30Z",
+            "id": "MDU6SXNzdWUzODk4MzE3NTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 63,
+            "state": "CLOSED",
+            "title": "Keras NumPy backend demo",
+            "updatedAt": "2023-07-11T17:51:34Z",
+            "url": "https://github.com/jax-ml/jax/issues/63"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "They would be a useful resource for those that want to learn more about the ideas behind JAX.",
+            "closedAt": "2023-05-19T18:49:59Z",
+            "createdAt": "2018-12-11T15:55:28Z",
+            "id": "MDU6SXNzdWUzODk4MzEyNzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 62,
+            "state": "CLOSED",
+            "title": "Upload existing JAX talks to docs/ or talks/ folder",
+            "updatedAt": "2023-05-19T18:50:00Z",
+            "url": "https://github.com/jax-ml/jax/issues/62"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There are none currently.",
+            "closedAt": "2019-02-20T14:57:58Z",
+            "createdAt": "2018-12-11T15:54:38Z",
+            "id": "MDU6SXNzdWUzODk4MzA4NjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 61,
+            "state": "CLOSED",
+            "title": "Docstrings in api.py",
+            "updatedAt": "2019-02-20T14:57:58Z",
+            "url": "https://github.com/jax-ml/jax/issues/61"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "A notebook highlighting creative uses of vmap.\nIdeas:\n\nvanilla matrix-vector to matrix-matrix\nmore complicated, but still vanilla, function\npdist\ncdist\nvmapping random seeds for hessian trace estimation\nbootstrap",
+            "closedAt": "2023-05-19T18:49:19Z",
+            "createdAt": "2018-12-11T15:54:05Z",
+            "id": "MDU6SXNzdWUzODk4MzA2MTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 60,
+            "state": "CLOSED",
+            "title": "Vmap cookbook",
+            "updatedAt": "2023-05-19T18:49:49Z",
+            "url": "https://github.com/jax-ml/jax/issues/60"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "A notebook which highlights all the weird stuff you can do with grad. This could be a literate programming version of https://github.com/HIPS/autograd/blob/master/autograd/differential_operators.py.",
+            "closedAt": "2019-03-24T00:28:39Z",
+            "createdAt": "2018-12-11T15:53:18Z",
+            "id": "MDU6SXNzdWUzODk4MzAyNzg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 59,
+            "state": "CLOSED",
+            "title": "Autodiff cookbook",
+            "updatedAt": "2020-10-28T10:23:39Z",
+            "url": "https://github.com/jax-ml/jax/issues/59"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We're beginning to acquire some questions, some of which have been asked frequently. Collecting in this issue for eventual inclusion in a more polished markdown file.\n\nHow is JAX different than PyTorch?\nHow is JAX different than CuPy?\nIs automatic differentiation the same as finite differences?\nIs automatic differentiation the same as symbolic differentiation?\nWhat if I feed grad something non-differentiable?\n\nA function whose output doesn't depend on the input\nA function that is constant with respect to the input\nA function with a sharp discontinuity\nmax(0, x)\n\n\nI'm trying to use JAX but I'm getting an XYZ not implemented for ABC error (grad, vmap, jit)",
+            "closedAt": "2020-06-26T00:45:56Z",
+            "createdAt": "2018-12-11T15:51:41Z",
+            "id": "MDU6SXNzdWUzODk4Mjk0NTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 58,
+            "state": "CLOSED",
+            "title": "Frequenty asked questions doc",
+            "updatedAt": "2020-06-26T00:45:56Z",
+            "url": "https://github.com/jax-ml/jax/issues/58"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Collecting issues for a hypothetical v0.2.\n\n easy API for custom primitives (w/ docs) (#116)\n Experimental Cloud TPU support (#27)\n Frequently asked questions doc (#58)\n Autodiff cookbook (#59)\n Vmap cookbook (#60)\n api.py documentation (#61)\n Upload some materials to docs folder (e.g. PRNG design doc, rev-from-fwd) (#62)\n JAX development philosophy doc (#64)\n- [ ] Rename jaxlib to xlapy (#65)\n Conda installations (#66)\n Full Good NumPy core function coverage (#70)\n Full np.fft coverage\n Full np.linalg coverage\n Full np.random Good random coverage\n grad of cond and while (#83)\n mature stax (#137)\n JAX + TF interop (demonstrates composability with internal end external tools) (#45)\n In-place update syntax (#122)\n Keras NumPy backend demo (#63)\n Open source tests (#67)\n ONNX -> jaxpr loading (#91)\n Travis CI (#68)",
+            "closedAt": "2021-10-01T17:08:20Z",
+            "createdAt": "2018-12-11T15:47:33Z",
+            "id": "MDU6SXNzdWUzODk4Mjc0MDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 57,
+            "state": "CLOSED",
+            "title": "v0.2 tasks",
+            "updatedAt": "2021-10-01T17:08:21Z",
+            "url": "https://github.com/jax-ml/jax/issues/57"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nAre there any plans for improving the stats modules in jax.scipy? I look forward to contributing to this project by adding new distributions and properties for distributions (mean, variance for e.g.). Please let me know your thoughts about this.\nThank you.",
+            "closedAt": "2018-12-11T15:01:43Z",
+            "createdAt": "2018-12-11T13:22:56Z",
+            "id": "MDU6SXNzdWUzODk3NjIwMDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 56,
+            "state": "CLOSED",
+            "title": "Improving jax.scipy.stats",
+            "updatedAt": "2019-01-05T17:53:03Z",
+            "url": "https://github.com/jax-ml/jax/issues/56"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There is not provision of rotation of tensor in lux_numpy.py",
+            "closedAt": "2018-12-11T19:44:16Z",
+            "createdAt": "2018-12-11T07:32:53Z",
+            "id": "MDU6SXNzdWUzODk2MzAzMTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 55,
+            "state": "CLOSED",
+            "title": "np.rot90 support",
+            "updatedAt": "2023-04-14T06:37:39Z",
+            "url": "https://github.com/jax-ml/jax/issues/55"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm interested in using JAX to compute Jacobians for functions which involve iteratively applying operations to generate a sequence. When using Autograd for this, in order to avoid indexed assignment I would create a list which is iteratively populated with the sequence values and then create an array from the list using np.array or np.stack. Attempting the same in JAX (built from source with fc4afb4) raises a NotImplementedError when trying to compute the Jacobian of such a function with either jacrev or jacfwd as batching rules are not implemented for the pad and concatenate primitives respectively.\nAs a minimal example\nimport jax.numpy as np\nfrom jax import jacrev, jacfwd\n\ndef func(xs): \n    return np.array([x for x in xs])\n\njacrev_func = jacrev(func)\njacfwd_func = jacfwd(func)\n\nxs = np.ones((5, 1))\n\njacrev_func(xs)\n# raises NotImplementedError: Batching rule for 'pad' not implemented\n\njacfwd_func(xs)\n# raises NotImplementedError: Batching rule for 'concatenate' not implemented\nThe same errors are raised when replacing np.array in the defnition of func with np.stack, np.hstack, np.vstack or np.concatenate.",
+            "closedAt": "2018-12-12T00:26:52Z",
+            "createdAt": "2018-12-11T06:38:35Z",
+            "id": "MDU6SXNzdWUzODk2MTY5MzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 54,
+            "state": "CLOSED",
+            "title": "Batching rules for pad and concatenate primitives not implemented",
+            "updatedAt": "2018-12-12T01:43:43Z",
+            "url": "https://github.com/jax-ml/jax/issues/54"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Cupy is quite stable and efficient \"numpy for GPU\" (which has no restrictions mentioned in readme), chainer over cupy provides necessary audo-diff and primitives for deep learning. There are also other alternatives.\nIt would be nice to have showcases when jax is expected to be beneficial compared to already existing tools.\nThanks!",
+            "closedAt": "2018-12-11T14:59:17Z",
+            "createdAt": "2018-12-11T05:43:38Z",
+            "id": "MDU6SXNzdWUzODk2MDUzMjI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 52,
+            "state": "CLOSED",
+            "title": "Scenarios to prefer over cupy",
+            "updatedAt": "2019-01-05T17:53:37Z",
+            "url": "https://github.com/jax-ml/jax/issues/52"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It would be very helpful when using and learning JAX to have docstrings for as many major functions as possible. Especially https://github.com/google/jax/blob/master/jax/api.py but docstrings for any non-trivial function would be helpful.",
+            "closedAt": "2019-05-22T13:08:20Z",
+            "createdAt": "2018-12-11T02:05:33Z",
+            "id": "MDU6SXNzdWUzODk1NjU0NTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 51,
+            "state": "CLOSED",
+            "title": "add docstrings for major public functions",
+            "updatedAt": "2019-05-22T13:08:20Z",
+            "url": "https://github.com/jax-ml/jax/issues/51"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "def square(x):\n  return x**2\n\nval = 3\ndfn = grad(square)\nprint(dfn(val))\nI was surprised this threw an error. Changing it to val = 3.0 works as expected.",
+            "closedAt": "2019-02-21T14:47:44Z",
+            "createdAt": "2018-12-10T22:40:07Z",
+            "id": "MDU6SXNzdWUzODk1MTg0OTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 48,
+            "state": "CLOSED",
+            "title": "Unimplemented: binary integer op 'power'",
+            "updatedAt": "2019-02-26T00:04:21Z",
+            "url": "https://github.com/jax-ml/jax/issues/48"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is there a simple example of how to use jacrev and jacfwd? There's currently no useful docstring. Some usage details would be helpful.\nFor example:\n(1) when calling grad(fun), does it differentiate w.r.t. the first input argument?\n(2) how to use jacrev(func), when func takes multiple inputs? (e.g. differentiate w.r.t. 3rd input variable)\nThanks.",
+            "closedAt": "2018-12-11T15:04:55Z",
+            "createdAt": "2018-12-10T19:58:21Z",
+            "id": "MDU6SXNzdWUzODk0NjIzNzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 47,
+            "state": "CLOSED",
+            "title": "jacrev and jacfwd usage example",
+            "updatedAt": "2019-01-05T17:53:53Z",
+            "url": "https://github.com/jax-ml/jax/issues/47"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Thanks for this project! Looking forward to using it more.\nThis is a feature request, feel free to close if this is not a good place to track:\nI'd love to be able to export Tensorflow Ops (.so) from functions defined via JAX. The main use case is for embedding these functions in a serving context. For training this is is less necessary bc the two systems can interact at the python level, though I'm not clear on how to eliminate memory copies in that scenario.\nIdeally the API would be something like passing in a tf.placeholder to the function, or otherwise using the annotations being introduced in TF 2.0. Would be fine if this was a separate package to avoid direct dependency on TF in JAX.\nThanks!",
+            "closedAt": "2021-01-13T14:34:01Z",
+            "createdAt": "2018-12-10T16:15:06Z",
+            "id": "MDU6SXNzdWUzODkzNzUxMDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 45,
+            "state": "CLOSED",
+            "title": "Feature request: export TF ops",
+            "updatedAt": "2021-01-13T14:34:02Z",
+            "url": "https://github.com/jax-ml/jax/issues/45"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I've been trying to implement Gaussian Processes Regression, which require the calculation of a matrix inverse. With regular numpy I would use np.linalg.inv, but I can't find this function back in jax.\nEverything else is working as expected, and I can use np.linalg.inv for basic calculations.\nUnfortunately, the use of np.linalg.inv keeps me from using grad to calculate gradients, which would be the most exciting part of the whole implementation!\nI would love to contribute a PR if someone can tell me where to start.",
+            "closedAt": "2018-12-14T02:12:23Z",
+            "createdAt": "2018-12-10T15:24:00Z",
+            "id": "MDU6SXNzdWUzODkzNTExNzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 44,
+            "state": "CLOSED",
+            "title": "np.linalg.inv support",
+            "updatedAt": "2021-12-04T10:17:04Z",
+            "url": "https://github.com/jax-ml/jax/issues/44"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Do you have plans for mapping out where open source contributions would be helpful / useful?",
+            "closedAt": "2020-07-14T18:08:43Z",
+            "createdAt": "2018-12-10T15:20:35Z",
+            "id": "MDU6SXNzdWUzODkzNDk1MDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 43,
+            "state": "CLOSED",
+            "title": "Open Source Contributions",
+            "updatedAt": "2020-07-14T18:08:43Z",
+            "url": "https://github.com/jax-ml/jax/issues/43"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import jax.numpy as np\nFile \"/home/nesa320/anaconda2/envs/py3/lib/python3.6/site-packages/jax/init.py\", line 17, in \nfrom jax.api import *\nFile \"/home/nesa320/anaconda2/envs/py3/lib/python3.6/site-packages/jax/api.py\", line 30, in \nfrom .abstract_arrays import ShapedArray\nFile \"/home/nesa320/anaconda2/envs/py3/lib/python3.6/site-packages/jax/abstract_arrays.py\", line 25, in \nfrom .lib import xla_bridge\nFile \"/home/nesa320/anaconda2/envs/py3/lib/python3.6/site-packages/jax/lib/xla_bridge.py\", line 32, in \nfrom jaxlib import xla_data_pb2\nFile \"/home/nesa320/anaconda2/envs/py3/lib/python3.6/site-packages/jaxlib/xla_data_pb2.py\", line 23, in \nserialized_pb=_b('\\n&tensorflow/compiler/xla/xla_data.proto\\x12\\x03xla\"\\xb7\\x01\\n\\rPaddingConfig\\x12=\\n\\ndimensions\\x18\\x01 \\x03(\\x0b\\x32).xla.PaddingConfig.PaddingConfigDimension\\x1ag\\n\\x16PaddingConfigDimension\\x12\\x18\\n\\x10\\x65\\x64ge_padding_low\\x18\\x01 \\x01(\\x03\\x12\\x19\\n\\x11\\x65\\x64ge_padding_high\\x18\\x02 \\x01(\\x03\\x12\\x18\\n\\x10interior_padding\\x18\\x03 \\x01(\\x03\"\\x1a\\n\\x04Tile\\x12\\x12\\n\\ndimensions\\x18\\x01 \\x03(\\x03\"\\xc0\\x01\\n\\x06Layout\\x12\\x1b\\n\\x06\\x66ormat\\x18\\x04 \\x01(\\x0e\\x32\\x0b.xla.Format\\x12\\x16\\n\\x0eminor_to_major\\x18\\x01 \\x03(\\x03\\x12\\x1b\\n\\x13max_sparse_elements\\x18\\x05 \\x01(\\x03\\x12\\x18\\n\\x05tiles\\x18\\x06 \\x03(\\x0b\\x32\\t.xla.Tile\\x12\\x1c\\n\\x14\\x65lement_size_in_bits\\x18\\x07 \\x01(\\x03J\\x04\\x08\\x02\\x10\\x03J\\x04\\x08\\x03\\x10\\x04R\\x11padded_dimensionsR\\rpadding_value\"\\x9a\\x01\\n\\nShapeProto\\x12(\\n\\x0c\\x65lement_type\\x18\\x02 \\x01(\\x0e\\x32\\x12.xla.PrimitiveType\\x12\\x12\\n\\ndimensions\\x18\\x03 \\x03(\\x03\\x12%\\n\\x0ctuple_shapes\\x18\\x04 \\x03(\\x0b\\x32\\x0f.xla.ShapeProto\\x12\\x1b\\n\\x06layout\\x18\\x05 \\x01(\\x0b\\x32\\x0b.xla.LayoutJ\\x04\\x08\\x01\\x10\\x02R\\x04rank\"r\\n\\x11ProgramShapeProto\\x12#\\n\\nparameters\\x18\\x01 \\x03(\\x0b\\x32\\x0f.xla.ShapeProto\\x12\\x1f\\n\\x06result\\x18\\x02 \\x01(\\x0b\\x32\\x0f.xla.ShapeProto\\x12\\x17\\n\\x0fparameter_names\\x18\\x03 \\x03(\\t\"D\\n\\x10\\x43omputationStats\\x12\\x12\\n\\nflop_count\\x18\\x01 \\x01(\\x01\\x12\\x1c\\n\\x14transcendental_count\\x18\\x02 \\x01(\\x01\"X\\n\\nOpMetadata\\x12\\x0f\\n\\x07op_type\\x18\\x01 \\x01(\\t\\x12\\x0f\\n\\x07op_name\\x18\\x02 \\x01(\\t\\x12\\x13\\n\\x0bsource_file\\x18\\x03 \\x01(\\t\\x12\\x13\\n\\x0bsource_line\\x18\\x04 \\x01(\\x05\"\\xc8\\x01\\n\\x10\\x45xecutionProfile\\x12\\x1d\\n\\x15\\x63ompilation_cache_hit\\x18\\x01 \\x01(\\x08\\x12\\x17\\n\\x0f\\x63ompile_time_ms\\x18\\x02 \\x01(\\x03\\x12\\x1b\\n\\x13\\x63ompute_cycle_count\\x18\\x03 \\x01(\\x03\\x12\\x17\\n\\x0f\\x63ompute_time_ns\\x18\\x04 \\x01(\\x03\\x12$\\n\\x1c\\x63ompute_and_transfer_time_ns\\x18\\x05 \\x01(\\x03\\x12 \\n\\x18\\x65xecutable_size_in_bytes\\x18\\x06 \\x01(\\x03\"!\\n\\x0f\\x45xecutionHandle\\x12\\x0e\\n\\x06handle\\x18\\x01 \\x01(\\x03\"\"\\n\\x10GlobalDataHandle\\x12\\x0e\\n\\x06handle\\x18\\x01 \\x01(\\x03\"4\\n\\x0c\\x44\\x65viceHandle\\x12\\x0e\\n\\x06handle\\x18\\x01 \\x01(\\x03\\x12\\x14\\n\\x0c\\x64\\x65vice_count\\x18\\x02 \\x01(\\x03\"\\xb4\\x01\\n\\rChannelHandle\\x12\\x0e\\n\\x06handle\\x18\\x01 \\x01(\\x03\\x12,\\n\\x04type\\x18\\x02 \\x01(\\x0e\\x32\\x1e.xla.ChannelHandle.ChannelType\"e\\n\\x0b\\x43hannelType\\x12\\x18\\n\\x14\\x43HANNEL_TYPE_INVALID\\x10\\x00\\x12\\x14\\n\\x10\\x44\\x45VICE_TO_DEVICE\\x10\\x01\\x12\\x12\\n\\x0e\\x44\\x45VICE_TO_HOST\\x10\\x02\\x12\\x12\\n\\x0eHOST_TO_DEVICE\\x10\\x03\"\\xc5\\x01\\n\\x15\\x44\\x65viceAssignmentProto\\x12\\x15\\n\\rreplica_count\\x18\\x01 \\x01(\\x05\\x12\\x19\\n\\x11\\x63omputation_count\\x18\\x02 \\x01(\\x05\\x12I\\n\\x13\\x63omputation_devices\\x18\\x03 \\x03(\\x0b\\x32,.xla.DeviceAssignmentProto.ComputationDevice\\x1a/\\n\\x11\\x43omputationDevice\\x12\\x1a\\n\\x12replica_device_ids\\x18\\x01 \\x03(\\x05\"\\xb5\\x02\\n\\x0cLiteralProto\\x12\\x1e\\n\\x05shape\\x18\\x01 \\x01(\\x0b\\x32\\x0f.xla.ShapeProto\\x12\\r\\n\\x05preds\\x18\\x02 \\x03(\\x08\\x12\\x0b\\n\\x03s8s\\x18\\x0f \\x01(\\x0c\\x12\\x0b\\n\\x03u8s\\x18\\x03 \\x01(\\x0c\\x12\\x0c\\n\\x04s32s\\x18\\x04 \\x03(\\x05\\x12\\x0c\\n\\x04s64s\\x18\\x05 \\x03(\\x03\\x12\\x0c\\n\\x04u32s\\x18\\x06 \\x03(\\r\\x12\\x0c\\n\\x04u64s\\x18\\x07 \\x03(\\x04\\x12\\x0c\\n\\x04\\x66\\x33\\x32s\\x18\\x08 \\x03(\\x02\\x12\\x0c\\n\\x04\\x66\\x36\\x34s\\x18\\t \\x03(\\x01\\x12\\x0c\\n\\x04\\x63\\x36\\x34s\\x18\\x0c \\x03(\\x02\\x12)\\n\\x0etuple_literals\\x18\\n \\x03(\\x0b\\x32\\x11.xla.LiteralProto\\x12\\x0c\\n\\x04\\x66\\x31\\x36s\\x18\\x0b \\x01(\\x0c\\x12\\r\\n\\x05\\x62\\x66\\x31\\x36s\\x18\\r \\x01(\\x0c\\x12\\x0c\\n\\x04u16s\\x18\\x10 \\x01(\\x0c\\x12\\x0c\\n\\x04s16s\\x18\\x11 \\x01(\\x0c\\x12\\x16\\n\\x0esparse_indices\\x18\\x0e \\x03(\\x03\"\\xa3\\x01\\n\\x0fWindowDimension\\x12\\x0c\\n\\x04size\\x18\\x01 \\x01(\\x03\\x12\\x0e\\n\\x06stride\\x18\\x02 \\x01(\\x03\\x12\\x13\\n\\x0bpadding_low\\x18\\x03 \\x01(\\x03\\x12\\x14\\n\\x0cpadding_high\\x18\\x04 \\x01(\\x03\\x12\\x17\\n\\x0fwindow_dilation\\x18\\x05 \\x01(\\x03\\x12\\x15\\n\\rbase_dilation\\x18\\x06 \\x01(\\x03\\x12\\x17\\n\\x0fwindow_reversal\\x18\\x07 \\x01(\\x08\"2\\n\\x06Window\\x12(\\n\\ndimensions\\x18\\x01 \\x03(\\x0b\\x32\\x14.xla.WindowDimension\"~\\n\\x16GatherDimensionNumbers\\x12\\x13\\n\\x0boffset_dims\\x18\\x01 \\x03(\\x03\\x12\\x1c\\n\\x14\\x63ollapsed_slice_dims\\x18\\x02 \\x03(\\x03\\x12\\x17\\n\\x0fstart_index_map\\x18\\x03 \\x03(\\x03\\x12\\x18\\n\\x10index_vector_dim\\x18\\x04 \\x01(\\x03\"\\x93\\x01\\n\\x17ScatterDimensionNumbers\\x12\\x1a\\n\\x12update_window_dims\\x18\\x01 \\x03(\\x03\\x12\\x1c\\n\\x14inserted_window_dims\\x18\\x02 \\x03(\\x03\\x12$\\n\\x1cscatter_dims_to_operand_dims\\x18\\x03 \\x03(\\x03\\x12\\x18\\n\\x10index_vector_dim\\x18\\x04 \\x01(\\x03\"\\xd8\\x02\\n\\x1b\\x43onvolutionDimensionNumbers\\x12\\x1d\\n\\x15input_batch_dimension\\x18\\x07 \\x01(\\x03\\x12\\x1f\\n\\x17input_feature_dimension\\x18\\x08 \\x01(\\x03\\x12 \\n\\x18input_spatial_dimensions\\x18\\x0b \\x03(\\x03\\x12&\\n\\x1ekernel_input_feature_dimension\\x18\\x03 \\x01(\\x03\\x12'\\n\\x1fkernel_output_feature_dimension\\x18\\x04 \\x01(\\x03\\x12!\\n\\x19kernel_spatial_dimensions\\x18\\x06 \\x03(\\x03\\x12\\x1e\\n\\x16output_batch_dimension\\x18\\t \\x01(\\x03\\x12 \\n\\x18output_feature_dimension\\x18\\n \\x01(\\x03\\x12!\\n\\x19output_spatial_dimensions\\x18\\x0c \\x03(\\x03\"\\x99\\x01\\n\\x13\\x44otDimensionNumbers\\x12\"\\n\\x1alhs_contracting_dimensions\\x18\\x01 \\x03(\\x03\\x12\"\\n\\x1arhs_contracting_dimensions\\x18\\x02 \\x03(\\x03\\x12\\x1c\\n\\x14lhs_batch_dimensions\\x18\\x03 \\x03(\\x03\\x12\\x1c\\n\\x14rhs_batch_dimensions\\x18\\x04 \\x03(\\x03\"\\xff\\x01\\n\\nOpSharding\\x12\"\\n\\x04type\\x18\\x01 \\x01(\\x0e\\x32\\x14.xla.OpSharding.Type\\x12#\\n\\ntile_shape\\x18\\x02 \\x01(\\x0b\\x32\\x0f.xla.ShapeProto\\x12\"\\n\\x1atile_assignment_dimensions\\x18\\x03 \\x03(\\x03\\x12\\x1f\\n\\x17tile_assignment_devices\\x18\\x04 \\x03(\\x03\\x12(\\n\\x0ftuple_shardings\\x18\\x05 \\x03(\\x0b\\x32\\x0f.xla.OpSharding\"9\\n\\x04Type\\x12\\x0e\\n\\nREPLICATED\\x10\\x00\\x12\\x0b\\n\\x07MAXIMAL\\x10\\x01\\x12\\t\\n\\x05TUPLE\\x10\\x02\\x12\\t\\n\\x05OTHER\\x10\\x03\"#\\n\\x0cReplicaGroup\\x12\\x13\\n\\x0breplica_ids\\x18\\x01 \\x03(\\x03\".\\n\\x0cSourceTarget\\x12\\x0e\\n\\x06source\\x18\\x01 \\x01(\\x03\\x12\\x0e\\n\\x06target\\x18\\x02 \\x01(\\x03\"}\\n\\x0fPrecisionConfig\\x12\\x39\\n\\x11operand_precision\\x18\\x01 \\x03(\\x0e\\x32\\x1e.xla.PrecisionConfig.Precision\"/\\n\\tPrecision\\x12\\x0b\\n\\x07\\x44\\x45\\x46\\x41ULT\\x10\\x00\\x12\\x08\\n\\x04HIGH\\x10\\x01\\x12\\x0b\\n\\x07HIGHEST\\x10\\x02*\\xcb\\x01\\n\\rPrimitiveType\\x12\\x1a\\n\\x16PRIMITIVE_TYPE_INVALID\\x10\\x00\\x12\\x08\\n\\x04PRED\\x10\\x01\\x12\\x06\\n\\x02S8\\x10\\x02\\x12\\x07\\n\\x03S16\\x10\\x03\\x12\\x07\\n\\x03S32\\x10\\x04\\x12\\x07\\n\\x03S64\\x10\\x05\\x12\\x06\\n\\x02U8\\x10\\x06\\x12\\x07\\n\\x03U16\\x10\\x07\\x12\\x07\\n\\x03U32\\x10\\x08\\x12\\x07\\n\\x03U64\\x10\\t\\x12\\x07\\n\\x03\\x46\\x31\\x36\\x10\\n\\x12\\x07\\n\\x03\\x46\\x33\\x32\\x10\\x0b\\x12\\x08\\n\\x04\\x42\\x46\\x31\\x36\\x10\\x10\\x12\\x07\\n\\x03\\x46\\x36\\x34\\x10\\x0c\\x12\\x07\\n\\x03\\x43\\x36\\x34\\x10\\x0f\\x12\\t\\n\\x05TUPLE\\x10\\r\\x12\\n\\n\\x06OPAQUE\\x10\\x0e\\x12\\t\\n\\x05TOKEN\\x10\\x113\\n\\x06\\x46ormat\\x12\\x12\\n\\x0eINVALID_FORMAT\\x10\\x00\\x12\\t\\n\\x05\\x44\\x45NSE\\x10\\x01\\x12\\n\\n\\x06SPARSE\\x10\\x021\\n\\x07\\x46\\x66tType\\x12\\x07\\n\\x03\\x46\\x46T\\x10\\x00\\x12\\x08\\n\\x04IFFT\\x10\\x01\\x12\\x08\\n\\x04RFFT\\x10\\x02\\x12\\t\\n\\x05IRFFT\\x10\\x03*F\\n\\x12RandomDistribution\\x12\\x0f\\n\\x0bRNG_INVALID\\x10\\x00\\x12\\x0f\\n\\x0bRNG_UNIFORM\\x10\\x01\\x12\\x0e\\n\\nRNG_NORMAL\\x10\\x02\\x42\\x03\\xf8\\x01\\x01\\x62\\x06proto3')\nFile \"/home/nesa320/anaconda2/envs/py3/lib/python3.6/site-packages/google/protobuf/descriptor.py\", line 878, in new\nreturn _message.default_pool.AddSerializedFile(serialized_pb)\nTypeError: Couldn't build proto file into descriptor pool!\nInvalid proto descriptor for file \"tensorflow/compiler/xla/xla_data.proto\":\ntensorflow/compiler/xla/xla_data.proto: A file with this name is already in the pool.",
+            "closedAt": "2019-01-17T18:34:03Z",
+            "createdAt": "2018-12-10T04:12:20Z",
+            "id": "MDU6SXNzdWUzODkxMzAwNDA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 40,
+            "state": "CLOSED",
+            "title": "Invalid proto descriptor for file \"tensorflow/compiler/xla/xla_data.proto\"",
+            "updatedAt": "2019-01-17T18:34:03Z",
+            "url": "https://github.com/jax-ml/jax/issues/40"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI've been playing around with this trying to get it to work with my GPU and I've been having some issues.  First things first though, do you think it would make sense to add a note to the README about which versions of Python are recommended/supported?  My understanding is that tensorflow doesn't yet support 3.7, is that true here?  What version do you use for development?  3.6?  2.7?   Also, any notes on supported versions of the CUDA libraries (cuda/cudnn)?  (the build times are a bit long, so knowing that I'm starting from a known working environment would be really helpful!)\nThanks!",
+            "closedAt": "2019-01-16T15:47:52Z",
+            "createdAt": "2018-12-09T20:23:35Z",
+            "id": "MDU6SXNzdWUzODkwNjAxNDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 39,
+            "state": "CLOSED",
+            "title": "Hard crash when no compatible cuda devices found",
+            "updatedAt": "2019-01-16T15:48:53Z",
+            "url": "https://github.com/jax-ml/jax/issues/39"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "support for generic tensor contractions would cover a large class of computations and also provide a foundation for higher order operations. Perhaps jax could then also be added as a opt_einsum backend?",
+            "closedAt": "2019-02-08T18:51:39Z",
+            "createdAt": "2018-12-09T16:52:30Z",
+            "id": "MDU6SXNzdWUzODkwNDEzMjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 37,
+            "state": "CLOSED",
+            "title": "np.einsum support",
+            "updatedAt": "2019-02-08T18:51:39Z",
+            "url": "https://github.com/jax-ml/jax/issues/37"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "HTTP error 404 while getting https://storage.googleapis.com/jax-wheels/cuda90/jaxlib-0.1-py3-none-linux_x86_64.whl",
+            "closedAt": "2018-12-09T16:43:39Z",
+            "createdAt": "2018-12-09T08:34:14Z",
+            "id": "MDU6SXNzdWUzODg5OTk3MjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 35,
+            "state": "CLOSED",
+            "title": "CUDA90 and py3 ",
+            "updatedAt": "2018-12-09T16:43:39Z",
+            "url": "https://github.com/jax-ml/jax/issues/35"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Numpy supports broadcasts with size-0 dimensions against size-1 dimensions:\nonp.ones([0,1]) + onp.ones([1,128])\n\nproduces:\narray([], shape=(0, 128), dtype=float64)\n\nHowever\nto_device = jax.jit(lambda x:x)\nto_device(np.ones([0,1])) + to_device(np.ones([1,128]))\nValueError: Incompatible shapes for broadcasting: ((0, 1), (1, 128))\n\nThe broadcasting rule computes the output shape as\nresult_shape = onp.max(shapes, axis=0)\n\nbut it probably needs to be something like this:\nmin_shape = onp.min(shapes, axis=0)\nmax_shape = onp.max(shapes, axis=0)\nresult_shape = onp.where(min_shape == 0, 0, max_shape)",
+            "closedAt": "2018-12-10T14:43:23Z",
+            "createdAt": "2018-12-08T23:12:10Z",
+            "id": "MDU6SXNzdWUzODg5Njg0OTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 33,
+            "state": "CLOSED",
+            "title": "Broadcasting of size-0 dimensions not implemented",
+            "updatedAt": "2018-12-10T14:43:23Z",
+            "url": "https://github.com/jax-ml/jax/issues/33"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The mnist_classifier_fromscratch example has a bug in this line:\nhttps://github.com/google/jax/blob/2df36f7510e5cd3c7a3be639c7827d2ff3ae0c01/examples/mnist_classifier_fromscratch.py#L42\nThe bug also exists on the main page of the project (README.md).",
+            "closedAt": "2018-12-09T00:06:26Z",
+            "createdAt": "2018-12-08T22:58:12Z",
+            "id": "MDU6SXNzdWUzODg5Njc1NDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 31,
+            "state": "CLOSED",
+            "title": "Bug in examples?",
+            "updatedAt": "2018-12-09T00:06:26Z",
+            "url": "https://github.com/jax-ml/jax/issues/31"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is it possible to raise an error on NaN, a la np.seterr?\nimport numpy as np\n\nnp.seterr(all='raise')\nnp.divide(0, 0)  # FloatingPointError: divide by zero encountered in divide",
+            "closedAt": "2019-03-30T13:28:13Z",
+            "createdAt": "2018-12-08T22:16:55Z",
+            "id": "MDU6SXNzdWUzODg5NjQ2ODU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 30,
+            "state": "CLOSED",
+            "title": "Error on NaN?",
+            "updatedAt": "2019-03-30T13:28:14Z",
+            "url": "https://github.com/jax-ml/jax/issues/30"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Goal is to use @jit on a function containing a call np.trace(..). My rudimentary attempt to implement via indexing also fails\nfrom jax import numpy\nfrom jax.api import jit\nimport numpy as onp\n\n@jit\ndef trace(A):\n  return np.trace(A)  # Exception: Numpy function <function trace at 0x7f89bee1eb90> not yet implemented\n\n@jit\ndef trace(A):\n  idx = onp.diag_indices(len(A))\n  diag = A[idx]  # TypeError: No abstraction handler for type: <type 'tuple'>\n  return np.sum(diag)",
+            "closedAt": "2018-12-13T14:58:06Z",
+            "createdAt": "2018-12-08T22:06:13Z",
+            "id": "MDU6SXNzdWUzODg5NjM5NDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 29,
+            "state": "CLOSED",
+            "title": "Add support for `np.trace` ",
+            "updatedAt": "2018-12-13T14:58:06Z",
+            "url": "https://github.com/jax-ml/jax/issues/29"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We just need to fix the urllib import to be from six.moves.requests, or something like that.",
+            "closedAt": "2018-12-09T18:55:18Z",
+            "createdAt": "2018-12-08T18:15:10Z",
+            "id": "MDU6SXNzdWUzODg5NDU1ODA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 28,
+            "state": "CLOSED",
+            "title": "examples/datasets.py doesn’t work in python3",
+            "updatedAt": "2019-01-05T17:54:14Z",
+            "url": "https://github.com/jax-ml/jax/issues/28"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello all,\nSuper stoked about this project and so glad it's out in the open now! I just wanted to make an issue people can follow to track the support of Cloud TPUs in JAX.\nAs soon as this is ready to be tested for.ai and I would be super eager to give it a try and help out!\nAll the best,\nAidan",
+            "closedAt": "2019-12-16T18:33:12Z",
+            "createdAt": "2018-12-08T16:52:31Z",
+            "id": "MDU6SXNzdWUzODg5Mzg1Mjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 27,
+            "state": "CLOSED",
+            "title": "Cloud TPU Support",
+            "updatedAt": "2019-12-16T18:33:13Z",
+            "url": "https://github.com/jax-ml/jax/issues/27"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have a Mac laptop with a CUDA-compatible card in it (last generation they sold!) and have CUDA 9.2 and cuDNN 7.2.1 installed, and both seem to be working fine. I'm getting a build failure for JAX.\nERROR: /private/tmp/jax-build/jax-bazel-output-user-root/output-base/external/org_tensorflow/tensorflow/compiler/xla/service/gpu/BUILD:784:1: C++ compilation of rule '@org_tensorflow//tensorflow/compiler/xla/service/gpu:gpu_layout_assignment' failed (Exit 1)\nexternal/org_tensorflow/tensorflow/compiler/xla/service/gpu/gpu_layout_assignment.cc:53:18: error: constexpr variable 'kAllNCHW' must be initialized by a constant expression\n  constexpr auto kAllNCHW =\n                 ^\nexternal/org_tensorflow/tensorflow/compiler/xla/service/gpu/gpu_layout_assignment.cc:54:7: note: non-constexpr function 'make_tuple<stream_executor::dnn::DataLayout, stream_executor::dnn::FilterLayout, stream_executor::dnn::DataLayout>' cannot be used in a constant expression\n      std::make_tuple(DataLayout::kBatchDepthYX, FilterLayout::kOutputInputYX,\n      ^\n/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/tuple:1094:1: note: declared here\nmake_tuple(_Tp&&... __t)\n^\nexternal/org_tensorflow/tensorflow/compiler/xla/service/gpu/gpu_layout_assignment.cc:56:18: error: constexpr variable 'kAllNHWC' must be initialized by a constant expression\n  constexpr auto kAllNHWC =\n                 ^\nexternal/org_tensorflow/tensorflow/compiler/xla/service/gpu/gpu_layout_assignment.cc:57:7: note: non-constexpr function 'make_tuple<stream_executor::dnn::DataLayout, stream_executor::dnn::FilterLayout, stream_executor::dnn::DataLayout>' cannot be used in a constant expression\n      std::make_tuple(DataLayout::kBatchYXDepth, FilterLayout::kOutputYXInput,\n      ^\n/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/tuple:1094:1: note: declared here\nmake_tuple(_Tp&&... __t)\n^\n2 errors generated.\nTarget //jax:build_jax failed to build\n\nAny ideas?",
+            "closedAt": "2018-11-28T17:56:25Z",
+            "createdAt": "2018-11-25T21:16:20Z",
+            "id": "MDU6SXNzdWUzODQxMTk3NzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 5,
+            "state": "CLOSED",
+            "title": "Building on OSX with CUDA",
+            "updatedAt": "2019-04-17T01:50:39Z",
+            "url": "https://github.com/jax-ml/jax/issues/5"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "flake8 testing of https://github.com/google/jax on Python 3.7.1\n$ flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics\n./jax/lax.py:481:25: F821 undefined name '_ndim'\n  start_indices = [0] * _ndim(operand)\n                        ^\n./jax/lax.py:487:6: F821 undefined name '_ndim'\n  if _ndim(update) != _ndim(operand):\n     ^\n./jax/lax.py:487:23: F821 undefined name '_ndim'\n  if _ndim(update) != _ndim(operand):\n                      ^\n./jax/lax.py:488:12: F821 undefined name '_ndim'\n    assert _ndim(update) + 1 == _ndim(operand)\n           ^\n./jax/lax.py:488:33: F821 undefined name '_ndim'\n    assert _ndim(update) + 1 == _ndim(operand)\n                                ^\n./jax/lax.py:489:17: F821 undefined name '_ndim'\n    ax = axis % _ndim(operand)\n                ^\n./jax/lax.py:1955:35: F821 undefined name 'c'\n  select = _reduction_computation(c, select_jaxpr, select_consts, init_value)\n                                  ^\n./jax/lax.py:1956:36: F821 undefined name 'c'\n  scatter = _reduction_computation(c, scatter_jaxpr, scatter_consts, init_value)\n                                   ^\n./jax/lax.py:1957:10: F821 undefined name 'c'\n  return c.SelectAndScatter(operand, select, window_dimensions, window_strides,\n         ^\n./jax/lax.py:2156:32: F821 undefined name 'name'\n    raise TypeError(msg.format(name, len(lhs_shape), len(rhs_shape)))\n                               ^\n./jax/abstract_arrays.py:59:46: F821 undefined name 'long'\n    _long    = concretization_function_error(long)\n                                             ^\n./jax/core.py:163:7: F821 undefined name 'print_trace_stack'\n      print_trace_stack()\n      ^\n./jax/core.py:371:7: F821 undefined name 'print_trace_stack'\n      print_trace_stack()\n./jax/interpreters/xla.py:252:48: F821 undefined name 'long'\n    __long__ = partialmethod(forward_to_value, long)\n                                               ^\n./jax/interpreters/ad.py:189:20: F821 undefined name 'JaxTuple'\n        return xt, JaxTuple(map(zeros_like_jaxval, xt))\n                   ^\n./jax/interpreters/ad.py:196:16: F821 undefined name 'JaxTuple'\n        return JaxTuple(map(zeros_like_jaxval, yt)), yt\n               ^\n./jax/numpy/lax_numpy.py:379:41: F821 undefined name 'isfortran'\n    dims = onp.arange(ndim(a))[::-1] if isfortran(a) else onp.arange(ndim(a))\n                                        ^\n./examples/mnist_vae.py:113:21: E999 SyntaxError: invalid syntax\n    def body_fun(i, (rng, opt_state, images)):\n                    ^\n./examples/resnet50.py:124:12: F821 undefined name 'xrange'\n  for i in xrange(num_steps):\n           ^\n./tests/minmax_test.py:46:16: F821 undefined name 'fax'\n    infeeder = fax.make_infeed_from_sequence(\n               ^\n1     E999 SyntaxError: invalid syntax\n19    F821 undefined name 'xrange'\n20",
+            "closedAt": "2018-12-13T21:17:21Z",
+            "createdAt": "2018-11-22T16:25:28Z",
+            "id": "MDU6SXNzdWUzODM2MDExNjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1,
+            "state": "CLOSED",
+            "title": "Python 3 compatibility issues",
+            "updatedAt": "2018-12-13T21:17:21Z",
+            "url": "https://github.com/jax-ml/jax/issues/1"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxOC0xMS0yMlQxNjoyNToyOFrOFt1KCw==",
+          "hasNextPage": false
+        },
+        "totalCount": 5491
+      }
+    }
+  }
+}

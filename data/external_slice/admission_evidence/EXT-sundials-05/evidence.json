@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-sundials-05",
+  "source_pool": "defect4mr_64",
+  "source_index": 42,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "c4e1ad534e8129e8c5b37637803195d53d4072e57a657b18b2b8b4b4b1c71189",
+  "issue_url": "",
+  "fix_url": "https://github.com/LLNL/sundials/commit/dd0fc3db066275dc0a5b383764894317d454f398",
+  "buggy_sha": "6ec8edd5b6fbb20920bf514c82a46513278bd3d7",
+  "fixed_sha": "dd0fc3db066275dc0a5b383764894317d454f398",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "no public issue or equivalent tracker entry linked to the fix.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The iterative linear solve accepts numeric system data and can expose the scaling-vector defect in one selected floating-point solution component."
+  },
+  "evidence_urls": [
+    "https://github.com/LLNL/sundials/commit/dd0fc3db066275dc0a5b383764894317d454f398"
+  ],
+  "mechanism_sentence": "uses the correct scaling vector for an unscaled iterative linear solver with a mass matrix."
+}

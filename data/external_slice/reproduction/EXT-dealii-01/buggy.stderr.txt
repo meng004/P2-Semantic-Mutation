@@ -1,0 +1,195 @@
+CMake Deprecation Warning at CMakeLists.txt:36 (CMAKE_MINIMUM_REQUIRED):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+CMake Deprecation Warning at CMakeLists.txt:45 (CMAKE_POLICY):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+CMake Deprecation Warning at CMakeLists.txt:50 (CMAKE_POLICY):
+  The OLD behavior for policy CMP0037 will be removed from a future version
+  of CMake.
+
+  The cmake-policies(7) manual explains that the OLD behaviors of all
+  policies are deprecated and that a policy should be set to OLD only under
+  specific short-term circumstances.  Projects should be ported to the NEW
+  behavior and not rely on setting a policy to OLD.
+
+
+CMake Deprecation Warning at tests/CMakeLists.txt:24 (CMAKE_MINIMUM_REQUIRED):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+CMake Deprecation Warning at tests/CMakeLists.txt:38 (CMAKE_POLICY):
+  The OLD behavior for policy CMP0037 will be removed from a future version
+  of CMake.
+
+  The cmake-policies(7) manual explains that the OLD behaviors of all
+  policies are deprecated and that a policy should be set to OLD only under
+  specific short-term circumstances.  Projects should be ported to the NEW
+  behavior and not rely on setting a policy to OLD.
+
+
+###
+#
+#  deal.II configuration:
+#        CMAKE_BUILD_TYPE:       Release
+#        BUILD_SHARED_LIBS:      ON
+#        CMAKE_INSTALL_PREFIX:   /usr/local
+#        CMAKE_SOURCE_DIR:       /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src
+#                                (version 8.5.0-pre)
+#        CMAKE_BINARY_DIR:       /tmp/c3_a1c_fix/EXT-dealii-01/build-buggy
+#        CMAKE_CXX_COMPILER:     GNU 13.3.0 on platform Linux x86_64
+#                                /usr/bin/g++
+#
+#  Configured Features (DEAL_II_ALLOW_BUNDLED = ON, DEAL_II_ALLOW_AUTODETECTION = ON):
+#      ( DEAL_II_WITH_64BIT_INDICES = OFF )
+#      ( DEAL_II_WITH_ARPACK = OFF )
+#        DEAL_II_WITH_BOOST set up with bundled packages
+#      ( DEAL_II_WITH_BZIP2 = OFF )
+#      ( DEAL_II_WITH_CUDA = OFF )
+#        DEAL_II_WITH_CXX11 = ON
+#        DEAL_II_WITH_CXX14 = ON
+#      ( DEAL_II_WITH_GSL = OFF )
+#      ( DEAL_II_WITH_HDF5 = OFF )
+#      ( DEAL_II_WITH_LAPACK = OFF )
+#      ( DEAL_II_WITH_METIS = OFF )
+#      ( DEAL_II_WITH_MPI = OFF )
+#        DEAL_II_WITH_MUPARSER set up with bundled packages
+#      ( DEAL_II_WITH_NETCDF = OFF )
+#      ( DEAL_II_WITH_OPENCASCADE = OFF )
+#      ( DEAL_II_WITH_P4EST = OFF )
+#      ( DEAL_II_WITH_PETSC = OFF )
+#      ( DEAL_II_WITH_SLEPC = OFF )
+#        DEAL_II_WITH_THREADS set up with bundled packages
+#      ( DEAL_II_WITH_TRILINOS = OFF )
+#      ( DEAL_II_WITH_UMFPACK = OFF )
+#        DEAL_II_WITH_ZLIB set up with external dependencies
+#
+#  Component configuration:
+#      ( DEAL_II_COMPONENT_DOCUMENTATION = OFF )
+#      ( DEAL_II_COMPONENT_EXAMPLES = OFF )
+#      ( DEAL_II_COMPONENT_PACKAGE = OFF )
+#      ( DEAL_II_COMPONENT_PYTHON_BINDINGS = OFF )
+#
+#  Detailed information (compiler flags, feature configuration) can be found in detailed.log
+#
+#  Run  $ make info  to print a help message with a list of top level targets
+#
+###
+
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/tbb41_20130401oss/src/tbb/scheduler_common.h:51,
+                 from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/tbb41_20130401oss/src/tbb/arena.h:42,
+                 from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/tbb41_20130401oss/src/tbb/arena.cpp:29:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/tbb41_20130401oss/include/tbb/task.h:259:20: error: declaration of ‘tbb::task& tbb::internal::task_prefix::task()’ changes meaning of ‘task’ [-Wchanges-meaning]
+  259 |         tbb::task& task() {return *reinterpret_cast<tbb::task*>(this+1);}
+      |                    ^~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/tbb41_20130401oss/include/tbb/task.h:218:9: note: used here to mean ‘class tbb::task’
+  218 |         task* next_offloaded;
+      |         ^~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/tbb41_20130401oss/include/tbb/task.h:40:7: note: declared here
+   40 | class task;
+      |       ^~~~
+gmake[2]: *** [bundled/tbb41_20130401oss/src/CMakeFiles/obj_tbb_release.dir/build.make:90: bundled/tbb41_20130401oss/src/CMakeFiles/obj_tbb_release.dir/tbb/arena.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:991: bundled/tbb41_20130401oss/src/CMakeFiles/obj_tbb_release.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/iostreams/src/mapped_file.cpp: In member function ‘void boost::iostreams::detail::mapped_file_impl::open(param_type)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/iostreams/src/mapped_file.cpp:92:15: warning: implicitly-declared ‘boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>& boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>::operator=(const boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>&)’ is deprecated [-Wdeprecated-copy]
+   92 |     params_ = p;
+      |               ^
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/iostreams/src/mapped_file.cpp:18:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/iostreams/device/mapped_file.hpp:135:5: note: because ‘boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>’ has user-provided ‘boost::iostreams::basic_mapped_file_params<Path>::basic_mapped_file_params(const boost::iostreams::basic_mapped_file_params<Path>&) [with Path = boost::iostreams::detail::path]’
+  135 |     basic_mapped_file_params(const basic_mapped_file_params& other)
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/iostreams/src/mapped_file.cpp: In member function ‘void boost::iostreams::detail::mapped_file_impl::resize(boost::iostreams::stream_offset)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/iostreams/src/mapped_file.cpp:151:15: warning: implicitly-declared ‘boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>& boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>::operator=(const boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>&)’ is deprecated [-Wdeprecated-copy]
+  151 |     params_ = p;
+      |               ^
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/iostreams/device/mapped_file.hpp:135:5: note: because ‘boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>’ has user-provided ‘boost::iostreams::basic_mapped_file_params<Path>::basic_mapped_file_params(const boost::iostreams::basic_mapped_file_params<Path>&) [with Path = boost::iostreams::detail::path]’
+  135 |     basic_mapped_file_params(const basic_mapped_file_params& other)
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/iostreams/src/mapped_file.cpp: In member function ‘void boost::iostreams::detail::mapped_file_impl::clear(bool)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/iostreams/src/mapped_file.cpp:372:26: warning: implicitly-declared ‘boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>& boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>::operator=(const boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>&)’ is deprecated [-Wdeprecated-copy]
+  372 |     params_ = param_type();
+      |                          ^
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/iostreams/device/mapped_file.hpp:135:5: note: because ‘boost::iostreams::basic_mapped_file_params<boost::iostreams::detail::path>’ has user-provided ‘boost::iostreams::basic_mapped_file_params<Path>::basic_mapped_file_params(const boost::iostreams::basic_mapped_file_params<Path>&) [with Path = boost::iostreams::detail::path]’
+  135 |     basic_mapped_file_params(const basic_mapped_file_params& other)
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/text_oarchive.cpp:17:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_oarchive.hpp: In member function ‘void boost::archive::text_oarchive_impl<Archive>::save(const boost::archive::version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_oarchive.hpp:68:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   68 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_oarchive.hpp: In member function ‘void boost::archive::text_oarchive_impl<Archive>::save(const boost::serialization::item_version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_oarchive.hpp:71:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   71 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/text_woarchive.cpp:18:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_woarchive.hpp: In member function ‘void boost::archive::text_woarchive_impl<Archive>::save(const boost::archive::version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_woarchive.hpp:81:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   81 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_woarchive.hpp: In member function ‘void boost::archive::text_woarchive_impl<Archive>::save(const boost::serialization::item_version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/text_woarchive.hpp:84:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   84 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/xml_oarchive.cpp:17:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_oarchive.hpp: In member function ‘void boost::archive::xml_oarchive_impl<Archive>::save(const boost::archive::version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_oarchive.hpp:68:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   68 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_oarchive.hpp: In member function ‘void boost::archive::xml_oarchive_impl<Archive>::save(const boost::serialization::item_version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_oarchive.hpp:72:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   72 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/spirit/include/classic_actions.hpp:11,
+                 from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/basic_xml_grammar.ipp:26,
+                 from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/xml_grammar.cpp:64:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/spirit/home/classic/core/composite/actions.hpp: In instantiation of ‘boost::spirit::classic::action<ParserT, ActionT>::action(const ParserT&, const ActionT&) [with ParserT = boost::spirit::classic::rule<boost::spirit::classic::scanner<__gnu_cxx::__normal_iterator<char*, std::__cxx11::basic_string<char> >, boost::spirit::classic::scanner_policies<> >, boost::spirit::classic::nil_t, boost::spirit::classic::nil_t>; ActionT = boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >]’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/spirit/home/classic/core/parser.hpp:143:20:   required from ‘boost::spirit::classic::action<DerivedT, ActionT> boost::spirit::classic::parser<DerivedT>::operator[](const ActionT&) const [with ActionT = boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >; DerivedT = boost::spirit::classic::rule<boost::spirit::classic::scanner<__gnu_cxx::__normal_iterator<char*, std::__cxx11::basic_string<char> >, boost::spirit::classic::scanner_policies<> >, boost::spirit::classic::nil_t, boost::spirit::classic::nil_t>]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/basic_xml_grammar.ipp:263:18:   required from ‘boost::archive::basic_xml_grammar<CharType>::basic_xml_grammar() [with CharType = char]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/xml_grammar.cpp:70:16:   required from here
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/spirit/home/classic/core/composite/actions.hpp:101:11: warning: implicitly-declared ‘constexpr boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >::assign_impl(const boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >&)’ is deprecated [-Wdeprecated-copy]
+  101 |         , actor(a) {}
+      |           ^~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/basic_xml_grammar.ipp:83:32: note: because ‘boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >’ has user-provided ‘boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >& boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >::operator=(boost::archive::xml::assign_impl<std::__cxx11::basic_string<char> >&)’
+   83 |     assign_impl<std::string> & operator=(
+      |                                ^~~~~~~~
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/xml_woarchive.cpp:22:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_woarchive.hpp: In member function ‘void boost::archive::xml_woarchive_impl<Archive>::save(const boost::archive::version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_woarchive.hpp:77:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   77 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_woarchive.hpp: In member function ‘void boost::archive::xml_woarchive_impl<Archive>::save(const boost::serialization::item_version_type&)’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/xml_woarchive.hpp:81:14: warning: type qualifiers ignored on cast result type [-Wignored-qualifiers]
+   81 |         save(static_cast<const unsigned int>(t));
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/impl/xml_woarchive_impl.ipp:39,
+                 from /tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/xml_woarchive.cpp:28:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/iterators/wchar_from_mb.hpp: In instantiation of ‘boost::archive::iterators::wchar_from_mb<Base>::sliding_buffer<T>::sliding_buffer() [with T = char; Base = boost::archive::iterators::xml_escape<const char*>]’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/iterators/wchar_from_mb.hpp:128:31:   required from ‘boost::archive::iterators::wchar_from_mb<Base>::wchar_from_mb(T) [with T = const char*; Base = boost::archive::iterators::xml_escape<const char*>]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/impl/xml_woarchive_impl.ipp:56:9:   required from ‘void boost::archive::save_iterator(std::wostream&, InputIterator, InputIterator) [with InputIterator = const char*; std::wostream = std::basic_ostream<wchar_t>]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/impl/xml_woarchive_impl.ipp:97:17:   required from ‘void boost::archive::xml_woarchive_impl<Archive>::save(const char*) [with Archive = boost::archive::xml_woarchive]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/xml_woarchive.cpp:35:16:   required from here
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/iterators/wchar_from_mb.hpp:100:30: warning: member ‘boost::archive::iterators::wchar_from_mb<boost::archive::iterators::xml_escape<const char*> >::sliding_buffer<char>::m_buffer’ is used uninitialized [-Wuninitialized]
+  100 |             m_next_available(m_buffer.begin()),
+      |                              ^~~~~~~~
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/iterators/wchar_from_mb.hpp: In instantiation of ‘boost::archive::iterators::wchar_from_mb<Base>::sliding_buffer<T>::sliding_buffer() [with T = wchar_t; Base = boost::archive::iterators::xml_escape<const char*>]’:
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/iterators/wchar_from_mb.hpp:128:31:   required from ‘boost::archive::iterators::wchar_from_mb<Base>::wchar_from_mb(T) [with T = const char*; Base = boost::archive::iterators::xml_escape<const char*>]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/impl/xml_woarchive_impl.ipp:56:9:   required from ‘void boost::archive::save_iterator(std::wostream&, InputIterator, InputIterator) [with InputIterator = const char*; std::wostream = std::basic_ostream<wchar_t>]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/impl/xml_woarchive_impl.ipp:97:17:   required from ‘void boost::archive::xml_woarchive_impl<Archive>::save(const char*) [with Archive = boost::archive::xml_woarchive]’
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/libs/serialization/src/xml_woarchive.cpp:35:16:   required from here
+/tmp/c3_a1c_fix/EXT-dealii-01/buggy-src/bundled/boost-1.62.0/include/boost/archive/iterators/wchar_from_mb.hpp:100:30: warning: member ‘boost::archive::iterators::wchar_from_mb<boost::archive::iterators::xml_escape<const char*> >::sliding_buffer<wchar_t>::m_buffer’ is used uninitialized [-Wuninitialized]
+gmake: *** [Makefile:136: all] Error 2

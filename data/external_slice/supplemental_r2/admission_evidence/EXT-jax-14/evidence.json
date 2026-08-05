@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "d191927b24cbe83944552ee0222f8384dc7cff75",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "c2c68c018f886b88363d909f3bba4c319bfcfcf5",
+  "issue_node_id": "I_kwDOCTkjjc6tKm7T",
+  "issue_number": 27019,
+  "issue_url": "https://github.com/jax-ml/jax/issues/27019",
+  "mechanism": "restores expi values under disable_jit by correcting while_loop semantics.",
+  "neutral_id": "EXT-jax-14",
+  "public_fix_url": "https://github.com/jax-ml/jax/commit/c2c68c018f886b88363d909f3bba4c319bfcfcf5",
+  "public_issue_url": "https://github.com/jax-ml/jax/issues/27019",
+  "repository": "jax-ml/jax",
+  "snapshot_record_id": "SSR2-06-0014",
+  "snapshot_record_sha256": "55a310b58c6b2f430d1eac3ff33eefa5e7818c0dcf2703d324498269f1d039b4",
+  "source_cohort": "supplemental_r2"
+}

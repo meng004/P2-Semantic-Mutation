@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-pocketfft-02",
+  "source_pool": "defect4mr_64",
+  "source_index": 12,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "e2edf485258912aeabb41cd11d4e22955dd8144ce576ee9dbc871c849af5ed4b",
+  "issue_url": "https://github.com/mreineck/pocketfft/issues/15",
+  "fix_url": "https://github.com/mreineck/pocketfft/commit/3de1740ee61b5d6dbc3c5f3d3b98894145fb1032",
+  "buggy_sha": "bb5bdb776c64819f66cb2205f78bef1581448628",
+  "fixed_sha": "3de1740ee61b5d6dbc3c5f3d3b98894145fb1032",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The affected planning helper returns an integer transform size, so its output is not a float or few-float numerical-kernel result."
+  },
+  "evidence_urls": [
+    "https://github.com/mreineck/pocketfft/issues/15",
+    "https://github.com/mreineck/pocketfft/commit/3de1740ee61b5d6dbc3c5f3d3b98894145fb1032"
+  ],
+  "mechanism_sentence": "avoids integer overflow when selecting efficient transform sizes."
+}

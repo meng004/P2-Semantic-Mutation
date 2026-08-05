@@ -1,0 +1,2030 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "find_MAP and step methods should check for nans and infs more carefully and throw errors as appropriate.",
+            "closedAt": "2013-02-11T07:02:20Z",
+            "createdAt": "2013-02-05T21:46:57Z",
+            "id": "MDU6SXNzdWUxMDY2OTI5OQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 159,
+            "state": "CLOSED",
+            "title": "Debugging: thorough nan/inf checking ",
+            "updatedAt": "2013-02-11T07:02:20Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/159"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "step methods that need a covariance matrix should throw an error when they don't get a PD one.",
+            "closedAt": "2013-02-11T05:30:00Z",
+            "createdAt": "2013-02-05T21:44:56Z",
+            "id": "MDU6SXNzdWUxMDY2OTIwNQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 158,
+            "state": "CLOSED",
+            "title": "Debugging: throw errors for non PD matrixes ",
+            "updatedAt": "2013-02-11T05:30:00Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/158"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "model_logp etc.",
+            "closedAt": "2013-02-12T02:45:39Z",
+            "createdAt": "2013-02-05T21:36:58Z",
+            "id": "MDU6SXNzdWUxMDY2ODg1MQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 157,
+            "state": "CLOSED",
+            "title": "Tests: graph functions ",
+            "updatedAt": "2013-02-12T02:45:39Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/157"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "All step methods need tests",
+            "closedAt": "2013-02-10T08:32:01Z",
+            "createdAt": "2013-02-05T21:36:12Z",
+            "id": "MDU6SXNzdWUxMDY2ODgyMQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 156,
+            "state": "CLOSED",
+            "title": "Tests: step methods",
+            "updatedAt": "2013-02-10T08:32:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/156"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "nphistory needs tests",
+            "closedAt": "2013-02-10T08:32:01Z",
+            "createdAt": "2013-02-05T21:34:56Z",
+            "id": "MDU6SXNzdWUxMDY2ODc2Mw==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 155,
+            "state": "CLOSED",
+            "title": "Tests: nphistory",
+            "updatedAt": "2013-02-10T08:32:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/155"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "sample and psample need tests",
+            "closedAt": "2013-02-10T08:32:01Z",
+            "createdAt": "2013-02-05T21:29:27Z",
+            "id": "MDU6SXNzdWUxMDY2ODUxOQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 154,
+            "state": "CLOSED",
+            "title": "Tests for sampling",
+            "updatedAt": "2013-02-10T08:32:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/154"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Examples should have tests",
+            "closedAt": "2013-02-09T04:52:30Z",
+            "createdAt": "2013-02-05T21:16:07Z",
+            "id": "MDU6SXNzdWUxMDY2Nzk1NQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 153,
+            "state": "CLOSED",
+            "title": "Example tests",
+            "updatedAt": "2013-02-09T04:52:30Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/153"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm interested in releasing a PyMC 3 alpha release. Putting it in a relatively usable state so that we can have some people try it out and give feedback. How does that sound to you @fonnesbeck ?\nIf we're going to do this what are the minimum things that have to be changed? I'll post my list below.",
+            "closedAt": "2013-05-05T06:41:34Z",
+            "createdAt": "2013-02-05T20:48:40Z",
+            "id": "MDU6SXNzdWUxMDY2NjgzNQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "release"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 152,
+            "state": "CLOSED",
+            "title": "PyMC 3 alpha release",
+            "updatedAt": "2013-05-05T06:41:34Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/152"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Its probably time to drop pydot for generating DAG plots. Daft gives us something much closer to what users will expect to see for a hierarchical model.",
+            "closedAt": "2013-02-12T16:35:15Z",
+            "createdAt": "2013-02-04T21:45:34Z",
+            "id": "MDU6SXNzdWUxMDYyNzE3MQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 151,
+            "state": "CLOSED",
+            "title": "Generate DAG plots with Daft",
+            "updatedAt": "2013-02-12T16:35:15Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/151"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI've just started running analyses with HDDM, and came across the error message below. I've been able to run through without problems previously, but now this error comes up no matter what I do. Does anyone know what I can be doing wrong?\n/cluster/software/VERSIONS/python2-packages-2.7_2/lib/python2.7/site-packages/pymc/database/base.py:266: UserWarning:\nError tallying v( d3. control), will not try to tally it again this chain.\nDid you make all the samevariables and step methods tallyable\nas were tallyable last time you used the database file?\nError:\nTraceback (most recent call last):\nFile \"/cluster/software/VERSIONS/python2-packages-2.7_2/lib/python2.7/site-packages/pymc/database/base.py\", line 256, in tally\nself._traces[name].tally(chain)\nFile \"/cluster/software/VERSIONS/python2-packages-2.7_2/lib/python2.7/site-packages/pymc/database/ram.py\", line 93, in tally\nself._trace[chain][self._index[chain]] = value.copy()\nIndexError: index out of bounds\n%s\"\"\"%(name, ''.join(traceback.format_exception(cls, inst, tb))))\n/cluster/software/VERSIONS/python2-packages-2.7_2/lib/python2.7/site-packages/pymc/database/base.py:266: UserWarning:\nError tallying a( d4. on), will not try to tally it again this chain.\nDid you make all the samevariables and step methods tallyable\nas were tallyable last time you used the database file?",
+            "closedAt": "2013-02-07T03:06:25Z",
+            "createdAt": "2013-02-04T16:10:18Z",
+            "id": "MDU6SXNzdWUxMDYxMzk2OA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 150,
+            "state": "CLOSED",
+            "title": "Error tallyin",
+            "updatedAt": "2013-02-07T03:06:25Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/150"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm attempting to install the Scipy superpack on Mac OS 10.7.5. I installed the Scipy superpack and both numpy and scipy work fine. However I'm having problems importing the Pylab package. Below is the error I get. I've looked through online forums and none of the posted solutions seem to work. Any help would be very appreciated!\n\n\n\n\nimport pylab\n\n\n\nTraceback (most recent call last):\nFile \"\", line 1, in \nFile \"/Library/Python/2.7/site-packages/matplotlib-1.3.x-py2.7-macosx-10.8-intel.egg/pylab.py\", line 1, in \nfrom matplotlib.pylab import *\nFile \"/Library/Python/2.7/site-packages/matplotlib-1.3.x-py2.7-macosx-10.8-intel.egg/matplotlib/pylab.py\", line 268, in \nfrom matplotlib.pyplot import *\nFile \"/Library/Python/2.7/site-packages/matplotlib-1.3.x-py2.7-macosx-10.8-intel.egg/matplotlib/pyplot.py\", line 98, in \n_backend_mod, new_figure_manager, draw_if_interactive, _show = pylab_setup()\nFile \"/Library/Python/2.7/site-packages/matplotlib-1.3.x-py2.7-macosx-10.8-intel.egg/matplotlib/backends/init.py\", line 25, in pylab_setup\nglobals(),locals(),[backend_name])\nFile \"/Library/Python/2.7/site-packages/matplotlib-1.3.x-py2.7-macosx-10.8-intel.egg/matplotlib/backends/backend_macosx.py\", line 21, in \nfrom matplotlib.backends import _macosx\nImportError: dlopen(/Library/Python/2.7/site-packages/matplotlib-1.3.x-py2.7-macosx-10.8-intel.egg/matplotlib/backends/_macosx.so, 2): Library not loaded: /System/Library/Frameworks/CoreText.framework/Versions/A/CoreText\nReferenced from: /Library/Python/2.7/site-packages/matplotlib-1.3.x-py2.7-macosx-10.8-intel.egg/matplotlib/backends/_macosx.so\nReason: image not found\nI had successfully installed Python, Scipy and Numpy. But I also needed Matplotlib. So installed that, and it seemed to be fine all expect for pylab … the one package I was needing!\nWhen I installed Scipy superpack, everything went fine except for the following issues:\nFailed to build or run libzmq detection test.\nIf you expected pyzmq to link against an installed libzmq, please check to make sure:\n* You have a C compiler installed\n* A development version of Python is installed (including headers)\n* A development version of ZMQ >= 2.1.4 is installed (including headers)\n* If ZMQ is not in a default location, supply the argument --zmq=<path>\n* If you did recently install ZMQ to a default location,\n  try rebuilding the ld cache with `sudo ldconfig`\n  or specify zmq's location with `--zmq=/usr/local`\n\nIf you expected to get a binary install (egg), we have those for\ncurrent Pythons on OSX and Windows. These can be installed with\neasy_install, but PIP DOES NOT SUPPORT EGGS.\nYou can skip all this detection/waiting nonsense if you know\nyou want pyzmq to bundle libzmq as an extension by passing:\n`--zmq=bundled`\n\nI will now try to build libzmq as a Python extension\nunless you interrupt me (^C) in the next 10 seconds…\n1…\nand then as it was creating this extension, I got another error:\nAdding pyzmq 2.2.0.1 to easy-install.pth file\nInstalled /Library/Python/2.7/site-packages/pyzmq-2.2.0.1-py2.7-macosx-10.7-intel.egg\nError in at exit._run_exitfuncs\nTraceback (most recent call last):\nFile \"/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/atexit.py\", line 24, in _run_exitfuncs\nfunc(_targs, *_kargs)\nFile \"/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/multiprocessing/util.py\", line 258, in _exit_function\ninfo('process shutting down')\nTypeError: 'NoneType' object is not callable\nError in sys.exitfunc:\nTraceback (most recent call last):\nFile \"/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/atexit.py\", line 24, in _run_exitfuncs\nfunc(_targs, *_kargs)\nFile \"/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/multiprocessing/util.py\", line 258, in _exit_function\ninfo('process shutting down')\nTypeError: 'NoneType' object is not callable",
+            "closedAt": "2013-02-04T14:16:16Z",
+            "createdAt": "2013-02-04T07:55:27Z",
+            "id": "MDU6SXNzdWUxMDU5ODQxNA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 149,
+            "state": "CLOSED",
+            "title": "Scipy Superpack on OS 10.7.5",
+            "updatedAt": "2013-02-05T05:54:38Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/149"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This may not be considered a bug, since the same issue appears in the example on the documentation page, but the write_csv function, which is a very welcome advance,  would be more useful if the output parameters corresponded to the order of the input argument parameters, and for vector parameters in numerical order (theta1, theta2 etc). Otherwise, for large models there is a lot of post-processing just to get an output table sorted.",
+            "closedAt": "2013-09-16T03:59:01Z",
+            "createdAt": "2013-02-01T18:51:29Z",
+            "id": "MDU6SXNzdWUxMDU1NDE4MQ==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 146,
+            "state": "CLOSED",
+            "title": "write_csv",
+            "updatedAt": "2013-09-16T03:59:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/146"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I was going to start adding some tests to pymc3. Is the current test framework what we want to stick with? Or something else. I have no strong opinions.\n@fonnesbeck",
+            "closedAt": "2013-02-12T03:18:19Z",
+            "createdAt": "2013-01-24T23:57:48Z",
+            "id": "MDU6SXNzdWUxMDI5NDkxNw==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 145,
+            "state": "CLOSED",
+            "title": "Test framework",
+            "updatedAt": "2013-02-12T03:18:19Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/145"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nIs there an easy way within PyMC to combine chains of separate chains? For example, I now have 10 independent txt databases that sample the same sets of posteriors, how can I combine them into a single a \"pymc.database.txt.Database\" object? Thanks!",
+            "closedAt": "2015-06-03T06:29:36Z",
+            "createdAt": "2013-01-07T18:46:39Z",
+            "id": "MDU6SXNzdWU5NzQzNTEy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 144,
+            "state": "CLOSED",
+            "title": "how to combine chains?",
+            "updatedAt": "2015-06-03T06:29:36Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/144"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I noticed that various discussion threads have requested the ability to continue a MCMC run.  By continue, I mean that after calling sample(), one could call sample again and append the results to generate a longer chain.\nI realize that there is the \"interactive\" sampler, but to me it would be nice for all sampling to have a hot restart / append capabilities.\nFeel free to close this if this has already been discussed and deemed undesirable.",
+            "closedAt": "2015-06-03T06:29:11Z",
+            "createdAt": "2013-01-06T20:30:48Z",
+            "id": "MDU6SXNzdWU5NzE5OTQz",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 143,
+            "state": "CLOSED",
+            "title": "Resuming a MCMC run",
+            "updatedAt": "2015-06-03T06:29:11Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/143"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm happy to provide more details on my platform if helpful.  Just ask for what you need.  I'm using Python 2.7.\nThe stacktrace I get, after using MCMC.sample within a pyunit test, is pasted at the bottom of this message.  The problem seems to be related to the chr(27) printed out by the ProgressBar class.  I fixed it for myself by changing line 29 of progressbar.py from:\nprint self, chr(27) + '[A'\nto:\nprint self\nI assume that chr(27) is in there for a good reason, but it definitely causes an error on my system.\nBest,\nJason\nTraceback (most recent call last):\n\n  File \"/Applications/eclipse/plugins/org.python.pydev_2.7.0.2012080220/pysrc/pydev_runfiles_xml_rpc.py\", line 131, in run\n\n    self.server.notifyCommands(commands)\n\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/xmlrpclib.py\", line 1224, in __call__\n\n    return self.__send(self.__name, args)\n\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/xmlrpclib.py\", line 1575, in __request\n\n    verbose=self.__verbose\n\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/xmlrpclib.py\", line 1264, in request\n\n    return self.single_request(host, handler, request_body, verbose)\n\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/xmlrpclib.py\", line 1297, in single_request\n\n    return self.parse_response(response)\n\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/xmlrpclib.py\", line 1473, in parse_response\n\n    return u.close()\n\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/xmlrpclib.py\", line 793, in close\n\n    raise Fault(**self._stack[0])\n\nFault: <Fault 0: 'Failed to parse XML-RPC request: An invalid XML character (Unicode: 0x1b) was found in the element content of the document.'>",
+            "closedAt": "2013-02-07T03:06:38Z",
+            "createdAt": "2012-12-11T17:49:07Z",
+            "id": "MDU6SXNzdWU5MTg3OTE5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 142,
+            "state": "CLOSED",
+            "title": "Error with pyunit on osx lion",
+            "updatedAt": "2013-02-07T03:06:38Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/142"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In PyMC 2.2, block updating only occurs in Metropolis when stochastics are vector-valued. It would be nice to be able to block-update arbitrary sets of variables without having to use AdaptiveMetropolis.",
+            "closedAt": "2013-03-20T06:16:48Z",
+            "createdAt": "2012-12-09T00:04:03Z",
+            "id": "MDU6SXNzdWU5MTE2MTkx",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 141,
+            "state": "CLOSED",
+            "title": "Allow block updating for arbitrary sets of stochastics in Metropolis",
+            "updatedAt": "2013-03-20T17:04:59Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/141"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I produced a fatal error while using the AdaptiveMetropolis step method. Apologies if this is an inappropriate place to report this. Relevant message follows (transcribed, so may include typos). This one is well beyond me, but perhaps AdaptiveMetropolis just isn't ready for prime time.\nFile \"C:\\Python27\\lib\\site-packages\\pymc\\MCMC.py\", line 93, in use_step_method\n  new_method = step_method_class(*args, **kwds)\nFile \"C:\\Python27\\lib\\site-packages\\pymc\\StepMethods.py\", line 992, in __init__\n  self.updateproposal_sd()\nFile \"C:\\Python27\\lib\\site-packages\\pyms\\StepMethods.py\", line 1192, in updateproposal_sd\n  self.proposal_sd = np.linalg.cholesky(self.C)\nFile \"C:\\Python27\\lib\\site-packages\\numpy\\linalg\\linalg.py\", line 531, in cholesky\n  Cholesky decomposition cannot be computed'\nnumpy.linalg.linalg.LinAlgError: Matrix is not positive definite -          Cholesky decomposition cannot be computed",
+            "closedAt": "2013-02-07T03:49:24Z",
+            "createdAt": "2012-12-08T23:39:59Z",
+            "id": "MDU6SXNzdWU5MTE2MDA1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 140,
+            "state": "CLOSED",
+            "title": "Cholesky decomposition in AdaptiveMetropolis",
+            "updatedAt": "2013-02-07T03:49:24Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/140"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Apologies for not having chased this down further myself:\nI have a model that has difficulty converging, so I was testing to see if Adaptive Metropolis would work faster than Metropolis. All code identical except for this step method.\nIn order to check that the model sufficiently converges, my scripts use the Geweke Test:\ndef geweketest(MCObject):\n    scores=pymc.geweke(MCObject)\n    test=0\n    for var in scores.keys():\n        test=max([test]+[abs(j[1]) for j in scores[var]])\n    return test\n\nAll I care about is that the largest [absolute] value found is reasonable, which I've defined as 1.96.\nI get errors when I use this geweketest function against Adaptive Metropolis results but it works fine for Metropolis. The issue is the data structure in those scores. When step methods are not set, the structure is a dictionary of var:list where the list is a list of [iteration,value] lists. That's normal. The above function works because scores[var][j][1] is a Geweke score for iteration j in variable var.\nTo do the same with Adaptive Metropolis, this would have to be scores[var][j][0][0][1] because the desired list of [iteration, value] is nested in a series of otherwise-empty lists.\nI don't even know where to look in the code to find how this would be happening and don't see why the step method would be affecting the data structure of the Geweke test, but this is what I believe is happening.\nI'd be happy to try and dig further into it myself if provided some suggestions on where to look in the code base.\nEric Gleave",
+            "closedAt": "2013-09-16T04:31:33Z",
+            "createdAt": "2012-12-08T16:40:12Z",
+            "id": "MDU6SXNzdWU5MTEyMzEy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 139,
+            "state": "CLOSED",
+            "title": "Geweke score data structures under AdaptiveMetropolis",
+            "updatedAt": "2013-09-16T04:31:33Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/139"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Suppose I have a model with 5x Normal and 5x Gamma stochastic variables. Is it possible to block-update all 10x variables at each MCMC step using a multivariate normal proposal distribution, with zero off-diagonal terms? I'd like the diagonal terms of the resulting proposal distribution to be tuned during the sampling, as can be done when you use the Metropolis step method to update variables individually.\nI realise that the AdaptiveMetropolis step method does something like this, but it also calculates the covariance between variables based on previous steps and then uses this to create a multivariate normal proposal distribution with non-zero off diagonal terms.\nI also realise that I could bundle all of the 5x Normal stochastics into a single array-valued Normal stochastic and use the Metropolis step method, but I'm pretty keen to block update the Gamma stochastics along with the Normal stochastics at each step as well.\nI guess the reason I'm after this is because (1) I want to save time by taking 10x less steps overall when I have 10x stochastics; (2) I'm a little hesitant to take correlated steps with the AdaptiveMetropolis in high-ish dimensional parameter spaces that I don't have a good feel for at the outset. Unless there's a particularly cautious approach for doing this?\nThanks for any advice",
+            "closedAt": "2013-09-16T03:59:55Z",
+            "createdAt": "2012-12-05T22:07:16Z",
+            "id": "MDU6SXNzdWU5MDM1NjU1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 138,
+            "state": "CLOSED",
+            "title": "Block-updating variables without adaptive covariance?",
+            "updatedAt": "2013-09-16T03:59:55Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/138"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Are there any plans in the works to transparently allow PyMC to work on a hadoop cluster?",
+            "closedAt": "2013-09-07T21:24:13Z",
+            "createdAt": "2012-11-14T05:57:25Z",
+            "id": "MDU6SXNzdWU4MzQ1OTE0",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 137,
+            "state": "CLOSED",
+            "title": "PyMC with Hadoop?",
+            "updatedAt": "2014-06-30T22:25:18Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/137"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nHere is the stochastic node I defined in my code:\n@stochastic(dtype=int)\ndef d1(value=300, arg=in_stk_pos):\n\"\"\"This is the decision node that will import its policy from\noutside\"\"\"\nstk_pos_deg = -45 + in_stk_pos*90\nrange = len(d1_moves)\ndef logp(value, stk_pos_deg):\nif  np.absolute(arg) > 360:\nprint \"logp is\",-np.inf\nreturn -np.inf\nelse:\nreturn -np.log(range)\ndef random(arg):\nreturn d1_moves(pl_po.policy(stk_pos_deg))\nWhen I my module, I got the following error:\nTraceback (most recent call last):\nFile \"bnet.py\", line 25, in \ndef d1(value=300, arg=in_stk_pos):\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/pymc-2.2-py2.7-macosx-10.5-x86_64.egg/pymc/InstantiationDecorators.py\", line 149, in instantiate_p\nreturn class(value=value, parents=parents, **kwds)\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/pymc-2.2-py2.7-macosx-10.5-x86_64.egg/pymc/PyMCObjects.py\", line 716, in init\nif not isinstance(self.logp, float):\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/pymc-2.2-py2.7-macosx-10.5-x86_64.egg/pymc/PyMCObjects.py\", line 835, in get_logp\nraise TypeError(self.name + ': computed log-probability ' + str(logp) + ' cannot be cast to float')\nTypeError: d1: computed log-probability None cannot be cast to float\nCan anyone help me with this? Thanks.\n Solved \nApparently I'm not supposed to define new variables inside the stochastic d1 node that are outside the logp and\nrandom functions. When I removed them (stk_pos_deg and range) and\nmodified the logp and random functions accordingly, the error disappeared.",
+            "closedAt": "2012-10-29T01:31:05Z",
+            "createdAt": "2012-10-29T01:01:07Z",
+            "id": "MDU6SXNzdWU3OTI1MDM5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 136,
+            "state": "CLOSED",
+            "title": "computed log-probability None cannot be cast to float",
+            "updatedAt": "2012-10-29T01:31:05Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/136"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "According to search this issue came up already before (at least for test_LazyFunction.py).  Some of the tests might fail from time to time.\n** File \"/home/yoh/deb/perspect/build-area/pymc-2.2+ds/build/lib.linux-x86_64-2.7/pymc/tests/test_LazyFunction.py\", line 96, in <module>\n    assert_equal(L.get_cached_counts()[1,cur_frame], C.counter.get_count())\n  File \"/usr/lib/pymodules/python2.7/numpy/testing/utils.py\", line 313, in assert_equal\n    raise AssertionError(msg)\nAssertionError: \nItems are not equal:\n ACTUAL: 1\n DESIRED: 0\n\n** File \"/home/yoh/deb/perspect/build-area/pymc-2.2+ds/build/lib.linux-x86_64-2.7/pymc/tests/test_gradients.py\", line 325, in test_gradients\n    check_gradients(chi2)\n  File \"/home/yoh/deb/perspect/build-area/pymc-2.2+ds/build/lib.linux-x86_64-2.7/pymc/tests/test_gradients.py\", line 132, in check_gradients\n    \" is not correct.\")\n  File \"/usr/lib/pymodules/python2.7/numpy/testing/utils.py\", line 800, in assert_array_almost_equal\n    header=('Arrays are not almost equal to %d decimals' % decimal))\n  File \"/usr/lib/pymodules/python2.7/numpy/testing/utils.py\", line 636, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not almost equal to 4 decimals\nanalytic gradient for chi2 with respect to parameter chi2 is not correct.\n(mismatch 20.0%)\n x: array([ -2.53912447e-01,  -6.69935218e-02,  -3.84266602e+05,\n        -2.51009880e-01,  -2.23842278e-01])\n y: array([ -2.53911573e-01,  -6.69956899e-02,  -3.84350653e+05,\n        -2.51008824e-01,  -2.23843582e-01])\n\nI am preparing a debian package (based on 2.2) for pymc and enabling unittesting at package build time.  Sure thing I could just skip those but IMHO it would be great if those tests could be made more robust either via pre-seeding of RNG or just lowering demanded precision.  Thanks in advance",
+            "closedAt": "2013-09-16T02:25:25Z",
+            "createdAt": "2012-10-22T14:54:02Z",
+            "id": "MDU6SXNzdWU3NzY4NjAw",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 134,
+            "state": "CLOSED",
+            "title": "Make some of the tests (test_LazyFunction, test_gradients) more robust",
+            "updatedAt": "2013-09-16T02:25:25Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/134"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There appears to be no way to control the verbosity (which is set to a high-verbose level) for the Gaussian process MCMC classes.",
+            "closedAt": "2015-05-25T21:08:07Z",
+            "createdAt": "2012-10-11T14:56:38Z",
+            "id": "MDU6SXNzdWU3NTE1NTE1",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 133,
+            "state": "CLOSED",
+            "title": "No verbosity control for GPEvaluationGibbs",
+            "updatedAt": "2015-05-25T21:08:07Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/133"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There may be a bug in the current pymc when using a covariance matrix with the AdaptiveCovariance step method to assign to a collection of stochastics.\nSpecifically, I think the order of the parameters you specify for the method is not always correctly maintained with the ordering of the cov matrix.\nFor example, this code produces the results below.\n##################################\nimport pymc\nimport numpy as np\n\n#Boring model with 4 parameters a,b,c,d with very different scales.\n#Passed into data function using container list\ndef make_model():\n    # vary scales a lot between parameters so the difference is obvious\n    a = pymc.Uniform('a',lower=0,upper=1,value=0.5)\n    b = pymc.Uniform('b',lower=10.0,upper=20.0,value=15.0)\n    c = pymc.Uniform('c',lower=200.0,upper=300.0,value=250.0)\n    d = pymc.Uniform('d',lower=3000.0,upper=4000.0,value=3500.0)\n    params = [a,b,c,d]\n    @pymc.data\n    @pymc.stochastic\n    def e(params = params, value = 8.0):\n        print \"got params = \", params\n        my_a, my_b, my_c, my_d = params\n        my_b = my_b/10.0\n        my_c = my_c/100.0\n        my_d = my_d/1000.0\n        my_sum = my_a + my_b + my_c + my_d\n        return pymc.normal_like(value, my_sum, 1.0)\n    return locals()\n\n\n\ndef run():\n    #ordering is [a,b,c,d].  Chosen so we are 5 sigma from the edge of the Uniform prior in each case\n    covmat = np.diag([0.1, 1.0, 10.0, 100.0])**2\n    model = make_model()\n    params_for_covmat = [model[param] for param in ['a','b','c','d']]  #same ordering used\n    #This does not work either:\n    # params_for_covmat = model['params']\n    mcmc = pymc.MCMC(model, verbose=3)\n    mcmc.use_step_method(pymc.AdaptiveMetropolis, params_for_covmat , cov=covmat, interval=100, delay=100, verbose=3)\n    mcmc.sample(100)\n\nrun()\n##################################\n\nyields the result (see bold text for important bits):\n\ngot params =  [<pymc.distributions.Uniform 'a' at 0x10d5ddcd0>, <pymc.distributions.Uniform 'b' at 0x10bf89410>, <pymc.distributions.Uniform 'c' at 0x10bf89450>, <pymc.distributions.Uniform 'd' at 0x10bf89490>]\ngot params =  [array(0.5), array(15.0), array(250.0), array(3500.0)]\nInitialization...\nDimension:  4\nC_0:  [[  1.00000000e-02   0.00000000e+00   0.00000000e+00   0.00000000e+00]\n [  0.00000000e+00   1.00000000e+00   0.00000000e+00   0.00000000e+00]\n [  0.00000000e+00   0.00000000e+00   1.00000000e+02   0.00000000e+00]\n [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+04]]\nSigma:  [[   0.1    0.     0.     0. ]\n [   0.     1.     0.     0. ]\n [   0.     0.    10.     0. ]\n [   0.     0.     0.   100. ]]\nUsing step method AdaptiveMetropolis. Stochastics: \n    b\n    a\n    d\n    c\n    AdaptiveMetropolis_b_a_d_c Current log-likelihood plus current log-probability -14.7344490912\nCurrent value:  [  1.50000000e+01   5.00000000e-01   3.50000000e+03   2.50000000e+02]\nCurrent likelihood:  -14.7344490912\nJump : [  2.97148732e-02  -1.88500524e-01  -2.37316418e-01   1.10835594e+02]  #This order is the same as we expect from the covmat ...\nRejected with ZeroProbability Error.\nStep  0\n    Logprobability (current, proposed):  -14.7344490912 None        #but based on these numbers below they are being applied to the wrong parameters\n     b 15.0 [ 15.02971487]\n     a 0.5 [ 0.31149948]\n     d 3500.0 [ 3499.76268358]\n     c 250.0 [ 360.83559412]\n    Rejected\n\n    Acceptance ratio:  0.0\n    AdaptiveMetropolis_b_a_d_c Current log-likelihood plus current log-probability -14.7344490912\nCurrent value:  [  1.50000000e+01   5.00000000e-01   3.50000000e+03   2.50000000e+02]\nCurrent likelihood:  -14.7344490912\nJump : [ -2.50960499e-02   1.61102275e-01  -5.45846914e+00  -1.31091159e+02]\nRejected with ZeroProbability Error.",
+            "closedAt": "2013-09-19T03:39:23Z",
+            "createdAt": "2012-10-11T14:24:20Z",
+            "id": "MDU6SXNzdWU3NTE0NDk0",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 132,
+            "state": "CLOSED",
+            "title": "AdaptiveMetropolis alignment problem",
+            "updatedAt": "2013-09-19T03:39:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/132"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nSo after going through the utils.coda_output function I noticed that observed nodes are being skipped with a try/except statement. The caught on the except is a TypeError, and I've noticed that when an observed node is used, I doesn't have the attribute .trace() , so an AttributeError is thrown instead. Since no catch is made, the program crashes.\nI set the information in the gelman_biossary.py in a function called tester(), which returns locals():\nHere are my results...\n>>> from pymc.examples import gelman_bioassay\n>>> bar = pymc.MCMC(gelman_bioassay.tester(), db=\"ram\")\n>>> bar.stochastics\nset([<pymc.distributions.Normal 'alpha' at 0x000000001673C780>, <pymc.distributions.Normal 'beta' at 0x000000001673C128>])\n>>> bar.sample(100)\n[                  0%                  ] \n[****************100%******************]  100 of 100 complete \n\n>>> pymc.utils.coda_output(bar)\n\nGenerating CODA output\n==================================================\nProcessing alpha\nProcessing beta\nProcessing LD50\nProcessing deaths\n\nTraceback (most recent call last):\n  File \"<pyshell#174>\", line 1, in <module>\n    pymc.utils.coda_output(bar)\n  File \"C:\\Python27\\lib\\site-packages\\pymc\\utils.py\", line 726, in coda_output\n    index = _process_trace(trace_file, index_file, v.trace(), vname, index)\nAttributeError: 'Binomial' object has no attribute 'trace'\n\nI've made an edit, which will remove all observed nodes from the variables list, before the loop:\ndef coda_output(pymc_object):\n    \"\"\"Generate output files that are compatible with CODA\n\n    :Arguments:\n      pymc_object : Model or Node\n          A PyMC object containing MCMC output.\n\n    \"\"\"\n\n    print_()\n    print_(\"Generating CODA output\")\n    print_('='*50)\n\n    name = pymc_object.__name__\n\n    # Open trace file\n    trace_file = open(name+'_coda.out', 'w')\n\n    # Open index file\n    index_file = open(name+'_coda.ind', 'w')\n\n    ## observedNodes is a list of any observed node name in the model\n    observedNodes = [node.__name__ for node in pymc_object.observed_stochastics]\n\n    variables = [pymc_object]\n    if hasattr(pymc_object, 'variables'):\n        ## changed this call to the one below\n        #variables = pymc_object.variables\n        variables = [v for v in pymc_object.variables if v.__name__ not in observedNodes]\n\n\n    # Initialize index\n    index = 1\n\n    # Loop over all parameters\n    for v in variables:    \n        vname = v.__name__\n        print_(\"Processing\", vname)\n        try:\n            index = _process_trace(trace_file, index_file, v.trace(), vname, index)\n        except TypeError:\n            pass\n\n    # Close files\n    trace_file.close()\n    index_file.close()\n\n# Lazy shortcut\ncoda = coda_output\n\nThis works for me. I'm not sure if anyone else has had issues with this, but here's a fix.",
+            "closedAt": "2013-09-16T02:33:39Z",
+            "createdAt": "2012-09-07T14:04:23Z",
+            "id": "MDU6SXNzdWU2NzE0NzYx",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 131,
+            "state": "CLOSED",
+            "title": "Coda_output function doesn't work.",
+            "updatedAt": "2013-09-16T02:33:39Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/131"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Pymc 2.2 on OSX 10.8 installed with easy_install; tried building from source as well, and I was getting other errors. Compiled with the OSX 10.8 version of gfortran, \"GNU Fortran (GCC) 4.8.0 20120722 (experimental)\".\nGetting the following unit test failures:\nPython 2.7.3 |EPD 7.3-1 (64-bit)| (default, Apr 12 2012, 11:14:05)\n[GCC 4.0.1 (Apple Inc. build 5493)] on darwin\nType \"credits\", \"demo\" or \"enthought\" for more information.\n\n\n\nimport pymc\npymc.test()\nRunning unit tests for pymc.tests\nNumPy version 1.6.1\nNumPy is installed in /Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/numpy\nPython version 2.7.3 |EPD 7.3-1 (64-bit)| (default, Apr 12 2012, 11:14:05) [GCC 4.0.1 (Apple Inc. build 5493)]\nnose version 1.1.2\n..F.....Plotting switchpoint\nPlotting late_mean\nPlotting early_mean\n....................................S..............................................................................................................................\n\n\n\nFAIL: Failure: AssertionError (\nItems are not equal:\nACTUAL: 1\nDESIRED: 0)\nTraceback (most recent call last):\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/nose/loader.py\", line 390, in loadTestsFromName\naddr.filename, addr.module)\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/nose/importer.py\", line 39, in importFromPath\nreturn self.importFromDir(dir_path, fqname)\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/nose/importer.py\", line 86, in importFromDir\nmod = load_module(part_fqname, fh, filename, desc)\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/pymc-2.2-py2.7-macosx-10.5-x86_64.egg/pymc/tests/test_LazyFunction.py\", line 96, in \nassert_equal(L.get_cached_counts()[1,cur_frame], C.counter.get_count())\nFile \"/Library/Frameworks/EPD64.framework/Versions/7.3/lib/python2.7/site-packages/numpy/testing/utils.py\", line 313, in assert_equal\nraise AssertionError(msg)\nAssertionError:\nItems are not equal:\nACTUAL: 1\nDESIRED: 0\n\nRan 171 tests in 21.846s\nFAILED (SKIP=1, failures=1)\n<nose.result.TextTestResult run=171 errors=0 failures=1>\nI'm not really sure how to proceed from here; is this failure permissible?",
+            "closedAt": "2012-08-21T19:52:07Z",
+            "createdAt": "2012-08-21T19:27:03Z",
+            "id": "MDU6SXNzdWU2MzYwMTYw",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 130,
+            "state": "CLOSED",
+            "title": "Unit test failure, OSX 10.8",
+            "updatedAt": "2012-08-21T19:55:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/130"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi:\nI'm a beginner in learning MCMC and I only know some concept of Metropolis step methods(I take it as random walk with a multivariate normal distribution)\nI notice that I must define ALL the variables as some distribution, for example, I want to fit a function with some parameters but i know nothing about them, so I define them with Uniform('someParameter',lower = MyEstimation, upper = MyEstimation),  and define  MyModel = Normal('MyModel', mu=functionWithParameters, tau = Observe_data_stds, value = Observe_datas, observed=True), then use M=MCMC('MyModel') and begin to fit, but the trace of the parameters are just like \"WWWWWWWW\" and the hist \"IIIIIII\". They are not stable at all and seem to be random sampled from the Uniform distribution they are defined as. Of course the chain can not satisfy the Normal distribution, what's wrong with my model?\n-----------------------------------mymodel.py-------------------------------------\n#Omiga_m, Omiga_lamuda, H are the three parameters\n#SN_z, SN_y, SN_std are (580,) numpy arrays\n#SN_z is the independent variable, SN_y the observed data, SN_std the std error of SN_y\nOmiga_m = Uniform('Omiga_m',lower = 0, upper = 1)\nOmiga_lamuda = Uniform('Omiga_lamuda',lower = 0, upper = 1)\nH = Uniform('H',lower = 60, upper = 80)# they must have a prior??????\n\n@deterministic(plot=False)\ndef miu_th(Omiga_m = Omiga_m, Omiga_lamuda = Omiga_lamuda, H=H):\n    return SN_miu_th(SN_z,Omiga_m,Omiga_lamuda,H)\n# the function miu_th takes in the three parameter and the independent variable, return a (580,) numpy array\n# the likelihood of the parameters should be exp^(-0.5*sum (((miu_th-SN_y)/SN_std)^2))\n# so I write the model as \nSN = Normal('SN', mu=miu_th, tau = SN_std, value = SN_y, observed=True)\n#miu_th return the 580 y-value calculated, and SN_y is the obsvered data, it has the std error SN_std, which are also (580,) numpy array\n#and what should I do if I have the cov matrix of the observed data rather than their own std???\n\n#will, since I can make my model to be 580 Normal distribution,\n#can I make the sum((miu_th-SN_y)**2/SN_std**2) to be a chi2 distribution??\n#if I can do this, which is faster?\n\nOh, there is another question about the EXAMPLE StraightLineFit(https://github.com/pymc-devs/pymc/wiki/StraightLineFit)\n(I can't get the right result to fit the StraightLineFit by pymc.MCMC and\nM.sample(iter=10000,burn=2000))\n# this definition\n@stochastic\ndef theta(value=array([2.,5.])):\n    \"\"\"Slope and intercept parameters for a straight line.\n    The likelihood corresponds to the prior probability of the parameters.\"\"\"\n    slope, intercept = value\n    prob_intercept = uniform_like(intercept, -10, 10)\n    prob_slope = log(1./cos(slope)**2)\n    return prob_intercept+prob_slope\n#is it a custom prior of the parameters with a union distribution??\n#so it return the log-probability density?\n\n# is it because the variable x have a std so we define it also as a stochastic??\n# should i define my SN_z the same way??\nx = Uniform('x', lower=0, upper=50, value=init_x)\n\n#and this\ny = Normal('y', mu=modelled_y, tau=2, value=data_y, observed=True)\n# that means the observed data have the same std 2?\n\nIs it always right to define the parameters with  uniform distributions when I know nothing about it???\nwill this has a bad effect on the MCMC process??\ncan I define the cov matrix of the Metropolis step methods(I think it as a random walk with a multivariate normal distribution, so it can have a cov matrix?)\nOh, sorry for SO many questions.....I need to do some work Using the MCMC, and I actually have done it by numpy only and have a not bad result, but now i want to try Pymc, I'm eager to understand it\n------------update at 3pm----------\nI have tried to change the parameter of pymc to fit my model, but I still can't understand how it works\nthe posterior distribution of the 3 parameters is \"monoclonal peak\"\nand the union distribution of the 2 parameters Omiga_m, Omiga_lamuda is just like a bivariate normal distribution\nbefore that, I finished my work using numpy like this:\nfor i in range(length-1):  #begin the MCMC\n    print 'i=',i\n    \n    _lastChain = chain[i,0:3] # it record the last node's 3 parameters Omiga_m, Omiga_lamuda and H\n    \n    _lastkai = chain[i,3] # this kai(my pool pronunciation....) is the chi2 of \n    # sum((min_th-SN_y)**2/SN_std**2), which contains the information of the posterior's probability density\n    \n    _newChain = _lastChain + delta_v() # random walk with a multivariate normal distribution\n    # the cov matrix of the distribution is the inverse of the Fisher matrix in the best point times a scale\n    # I tried the scale many times to make sure the MCMC have a medium acception rate\n    \n    _newkais = SN_kai(_newChain[0], 1-_newChain[0]-_newChain[1], _newChain[2])(SN_z,SN_y)\n    _newkai = np.sum(_newkais**2/SN_std**2)\n    # calculate the new chi2\n    \n    if _newkai>_lastkai:# if the new chi2 is bigger(the probability is smaller \n    # since the posterior's probability density function is like exp(-0.5*chi2))\n    # we accept it with a probability of (thisNode's probability density / lastNode's probability density)\n    # that is exp(-0.5*(_newkai-_lastkai))\n        delta_kai = _newkai-_lastkai\n        f = np.exp(-0.5*delta_kai) \n        if f>np.random.rand(): # accept it! make the new node with the new parameters\n            chain[i+1,0:3] = _newChain\n            chain[i+1,3] = _newkai\n            accepted[i+1] = 1\n            continue\n        else:  # reject it, make the new node witn old parameters\n            chain[i+1,0:3] = _lastChain\n            chain[i+1,3] = _lastkai\n            continue\n            \n    else: # the new chi2 is smaller (the probability is bigger), accept it at once\n        chain[i+1,0:3] = _newChain\n        chain[i+1,3] = _newkai\n        accepted[i+1] = 1\n        continue\n\nthis program gives me a not bad result\ni have the acception rate of about 40%\nthe chain of the parameters vibrate near the best point\nand the hists are like Normal distributions\nwhile in Pymc\nthe chain of the parameters vibrate violently(actually the plot range is full with the chain....)\nthe hists are not Normal-like\nI don't understand how Pymc 'tune' the std, can I set it stable just like the above program?\nOr I set the wrong args to fail my work?\nthank you for your answer~",
+            "closedAt": "2013-09-07T21:24:40Z",
+            "createdAt": "2012-08-10T16:41:57Z",
+            "id": "MDU6SXNzdWU2MTU2ODg2",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 129,
+            "state": "CLOSED",
+            "title": "what's wrong with my model?",
+            "updatedAt": "2013-09-07T21:24:40Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/129"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm new to PYMC, so am not terribly confident that this is true, but it looks like there's a flaw in the distributions code that leads to erroneous expected values for Weibull distributions.\nFirst, the code:\ndef weibull_expval(alpha,beta):\n\"\"\"\nExpected value of weibull distribution.\n\"\"\"\nreturn beta * gammaln((alpha + 1.) / alpha)\nThe first thing that confuses me is the use of gammaln rather than gamma. Interpreting the expected value to be equivalent to the mean, I thought this formula would match what Wikipedia defines as the mean for a Weibull.\nThen I looked for the definition of gammaln.\ndef gammaln(x):\n\"\"\"\nLogarithm of the Gamma function\n\"\"\"\nreturn flib.gamfun(x)\n\nThere's no definition or help available on flib.gamfun, but its name suggests it is the gamma function. Feeding it several values and exponentiating the results, it is returning the logarithm of the gamma function.\nI dug into this because weibull_expval was returning negative values, which shouldn't be possible.\nEither adding a gamma function to the defined functions in distributions.py that returns the exponentiated gammaln value and changing the definition in weibull_expval or just adding the exponential to weibull_expval would fix this.",
+            "closedAt": "2013-09-16T02:24:12Z",
+            "createdAt": "2012-08-07T23:48:34Z",
+            "id": "MDU6SXNzdWU2MDkyMDky",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 128,
+            "state": "CLOSED",
+            "title": "weibull_expval and gamma",
+            "updatedAt": "2013-09-16T02:24:12Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/128"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "this is a weird one.\nafter I import pymc I get FloatingPointError whenever I run np.abs(np.nan).\n(which apperatnly happens a lot when you work with pandas Dataframe)\n>>python\nPython 2.7.2 (v2.7.2:8527427914a2, Jun 11 2011, 15:22:34) \n[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> import numpy as np\n>>> np.abs(np.nan)\n__main__:1: RuntimeWarning: invalid value encountered in absolute\nnan\n>>> np.abs(np.nan)\nnan\n>>> np.abs(np.nan)\nnan\n>>> import pymc as pm\n>>> np.abs(np.nan)\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nFloatingPointError: invalid value encountered in absolute\n\nI've looked for the RuntimeWarnnig on the web, and it seems not to be a problem. I ran np.abs(np.nan) a few times to show that the RuntimeWarning is not suppose to be the issue\nI'm using Mac OS 10.6\nnumpy 1.6.2\npymc 2.2 (I've just try to reinstalled it using pip)",
+            "closedAt": "2012-07-25T18:23:58Z",
+            "createdAt": "2012-07-25T02:17:02Z",
+            "id": "MDU6SXNzdWU1ODIxNzk5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 127,
+            "state": "CLOSED",
+            "title": "FloatingPointError when running np.abs(np.nan)    (?!)",
+            "updatedAt": "2012-07-25T18:38:54Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/127"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Calling the dic method for a GP model currently generates an error, such as the following:\nTraceback (most recent call last):\n  File \"/Users/Sam/PycharmProjects/Reg/VolFit.py\", line 115, in <module>\n    print \"This is the Deviance Information Criteria: \", GPSampler.dic\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/MCMC.py\", line 387, in _get_dic\n    return self._calc_dic()\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/MCMC.py\", line 374, in _calc_dic\n    mean_value = np.mean(self.db.trace(stochastic.__name__)(), axis=0)\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/fromnumeric.py\", line 2374, in mean\n    return mean(axis, dtype, out)\nTypeError: unsupported operand type(s) for +: 'StandardRealization' and 'StandardRealization\n\nWe need to either calculate a value, or return a message that DIC cannot be calculated. Refer to the original post on Google Groups for details.",
+            "closedAt": "2013-09-19T02:49:13Z",
+            "createdAt": "2012-06-28T15:42:25Z",
+            "id": "MDU6SXNzdWU1MzI1MTg2",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 126,
+            "state": "CLOSED",
+            "title": "DIC failure for GP models",
+            "updatedAt": "2013-09-19T02:49:13Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/126"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi-\nWhen the ObjectContainer tries to wrap internal containers in Container.py:file_items, it calls replace in such a way that the container has integers for attribute names. This creates a problem, as with the following example:\nimport pymc, numpy as np\ntestobjs = np.empty(5, dtype=object)\nfor i in range(5):\ntestobjs[i] = pymc.Uniform('test_%d' % i, 0, 1)\nmodel = pymc.Model([testobjs])\nmap = pymc.MAP(model)\nproduces the following backtrace:\n\nTypeError                                 Traceback (most recent call last)\n/path/ in ()\n----> 1 map = pymc.MAP(model)\n/path/pymc/NormalApproximation.pyc in init(self, input, eps, diff_order, verbose)\n144             raise ImportError('Scipy must be installed to use NormApprox and MAP.')\n145\n--> 146         Model.init(self, input, verbose=verbose)\n147\n148         # Allocate memory for internal traces and get stochastic slices\n/path/pymc/Model.pyc in init(self, input, name, verbose)\n90             input = main\n91\n---> 92         ObjectContainer.init(self, input)\n93\n94         if name is not None:\n/path/pymc/Container.pyc in init(self, input)\n554         else: # Modules, objects, etc.\n555             input_to_file = input.dict\n--> 556             conservative_update(self, input_to_file)\n557             # self.dict.update(input_to_file)\n/path/pymc/Container.pyc in conservative_update(obj, dict)\n500 def conservative_update(obj, dict):\n501     for k in dict:\n--> 502         if not hasattr(obj, k):\n503             try:\n504                 setattr(obj, k, dict[k])\nTypeError: hasattr(): attribute name must be string\n\nPrinting out model.dict.keys() gets you:\n[0,\n'stochastics',\n'moral_neighbors',\n'verbose',\n'OCValue',\n'variables',\n'observed_stochastics',\n'_value',\n'deterministics',\n'coparents',\n'potentials',\n'name',\n'nodes',\n'_dict_container',\n'markov_blanket',\n'containers']\nand you see that illegal 0 as an attribute name.\nPlacing a print statement in ObjectContainer:replace :\ndef replace(self, item, new_container, key):\nprint '$$$$$ ', item, new_container, key\ndict.setitem(self.dict, key, new_container)\nresults in\n$$$$$  [test_0 test_1 test_2 test_3 test_4] [test_0 test_1 test_2 test_3 test_4] 0\nand a 0 for an attribute name in the container dictionary.\nI'm not sure what the code is supposed to be doing here, otherwise I'd offer a fix.\nCheers,\nDouglas Applegate",
+            "closedAt": "2012-06-13T01:37:10Z",
+            "createdAt": "2012-06-12T23:14:57Z",
+            "id": "MDU6SXNzdWU1MDM2MjIx",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 125,
+            "state": "CLOSED",
+            "title": "Container initialization has illegal attribute names",
+            "updatedAt": "2012-06-13T01:55:57Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/125"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When googling for pymc, most of the links (docs, downloads, etc) sit under the Google Code site which is forbidden atm.\nRepro:\ngo to http://code.google.com/p/pymc/\nsee: 403 forbidden.\nAlso, the only docs that do work (that I could find) complain about mathjax not specifying a default config file:\nsite: http://readthedocs.org/docs/pymcmc/en/latest/tutorial.html\nmessage: \"\"\"MathJax no longer loads a default configuration file; you must specify such files explicitly. This page seems to use the older default config/MathJax.js file, and so needs to be updated. This is explained further at\nhttp://www.mathjax.org/help/configuration\"\"\"",
+            "closedAt": "2012-06-18T02:54:20Z",
+            "createdAt": "2012-06-07T05:30:04Z",
+            "id": "MDU6SXNzdWU0OTQ0MjM5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 123,
+            "state": "CLOSED",
+            "title": "Google code repository is forbidden?",
+            "updatedAt": "2012-06-18T02:54:20Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/123"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi-\nI recently installed pymc on my linux machine.  I ran pymc.test() a number of times and it would return different failures each time, and then would pass all tests on occasion.  I left the problem alone for a while, but have come back to investigate it again.  Now pymc.test() fails every time with the same error:\n\nRunning unit tests for pymc.tests\nNumPy version 1.6.1\nNumPy is installed in /usr/lib/python2.7/dist-packages/numpy\nPython version 2.7.3 (default, Apr 20 2012, 22:44:07) [GCC 4.6.3]\nnose version 1.1.2\n..F.....Plotting switchpoint\n/usr/lib/pymodules/python2.7/matplotlib/axes.py:4257: RuntimeWarning: invalid value encountered in true_divide\nif normed: c/= np.sqrt(np.dot(x,x) * np.dot(y,y))\nPlotting early_mean\nPlotting late_mean\n....................................S................./usr/local/lib/python2.7/dist-packages/pymc/tests/test_distributions.py:170: RuntimeWarning: overflow encountered in exp\nL = np.exp(np.array(l))\n......................./usr/local/lib/python2.7/dist-packages/pymc/tests/test_distributions.py:202: RuntimeWarning: overflow encountered in exp\nlike = np.exp(np.array(l))\n............................................/usr/local/lib/python2.7/dist-packages/pymc/tests/test_distributions.py:265: RuntimeWarning: overflow encountered in exp\nreturn sum(exp([like(x,**parameters) for x in np.arange(N)]))\n......................................./usr/local/lib/python2.7/dist-packages/pymc/tests/test_utils.py:14: RuntimeWarning: invalid value encountered in sqrt\nC = Lambda('C',lambda b=B: sqrt(b))\n...\nFAIL: Failure: AssertionError (\nItems are not equal:\nACTUAL: 3\nDESIRED: 0)\nTraceback (most recent call last):\nFile \"/usr/lib/python2.7/dist-packages/nose/loader.py\", line 390, in loadTestsFromName\naddr.filename, addr.module)\nFile \"/usr/lib/python2.7/dist-packages/nose/importer.py\", line 39, in importFromPath\nreturn self.importFromDir(dir_path, fqname)\nFile \"/usr/lib/python2.7/dist-packages/nose/importer.py\", line 86, in importFromDir\nmod = load_module(part_fqname, fh, filename, desc)\nFile \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_LazyFunction.py\", line 96, in \nassert_equal(L.get_cached_counts()[1,cur_frame], C.counter.get_count())\nFile \"/usr/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 313, in assert_equal\nraise AssertionError(msg)\nAssertionError:\nItems are not equal:\nACTUAL: 3\nDESIRED: 0\n\nRan 171 tests in 23.915s\nFAILED (SKIP=1, failures=1)\n\nIs this actually a problem to worry about?  Thanks!",
+            "closedAt": "2012-06-18T02:54:51Z",
+            "createdAt": "2012-06-06T21:03:19Z",
+            "id": "MDU6SXNzdWU0OTM4NTk1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 122,
+            "state": "CLOSED",
+            "title": "pymc.test() failures...",
+            "updatedAt": "2012-06-18T02:54:51Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/122"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "PyMC has some of the best documentation I've seen in it's user guide at http://pymc-devs.github.com/pymc/ but for the life of me I can't find a link to this documentation anywhere on the pymc github page.\nI'd recommend putting large prominent links to the user guide on the\n\nTop blurb on the Github code page which currently has a link to the wiki\nProminently on top of the README\nProminently on top of the Github Wiki\n\nKeep up the great work!",
+            "closedAt": "2012-06-06T17:46:35Z",
+            "createdAt": "2012-06-06T17:09:19Z",
+            "id": "MDU6SXNzdWU0OTMzODI5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 121,
+            "state": "CLOSED",
+            "title": "User Guide Links",
+            "updatedAt": "2012-06-06T17:46:35Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/121"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "i got an error at the following line\nunder Matplot.py:line 433\ncurrent:\n_doanes = lambda data, n: 1 + log(n) + log(1 + (kurtosis(data)n/6.)*0.5)\nwhereas i think it should be:\ndoanes = lambda data, n: 1 + log(n) + log(1 + kurtosis(data)(n/6.)_*0.5)\nthe double (*) are not showing up very well on my screen, but it's supposed to be raised to the power of 0.5\naccording to wikipedia:\nhttp://en.wikipedia.org/wiki/Histogram\notherwise this throws an error when the kurtosis is negative.",
+            "closedAt": "2012-06-02T01:19:17Z",
+            "createdAt": "2012-06-01T21:43:13Z",
+            "id": "MDU6SXNzdWU0ODY1NzE0",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 120,
+            "state": "CLOSED",
+            "title": "Matplot.plot error: doanes binning method formula error",
+            "updatedAt": "2012-06-02T01:19:17Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/120"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Some users wish to be able to specify burn-in and thinning factors after sampling, rather than pre-specifying them. This would allow the calculation of convergence diagnostics, etc. with arbitrary values for both.",
+            "closedAt": "2013-09-16T14:16:23Z",
+            "createdAt": "2012-05-25T20:19:28Z",
+            "id": "MDU6SXNzdWU0NzYwMTY3",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 119,
+            "state": "CLOSED",
+            "title": "Add burn and thin arguments to all utility functions",
+            "updatedAt": "2013-09-16T14:16:23Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/119"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm wondering if there's a minor bug in the coda_output() function definition in the utils module. Specifically, the exception handling at around line 725:\n    try:\n        index = _process_trace(trace_file, index_file, v.trace(), vname, index)\n    except TypeError:\n        pass\n\ndoesn't seem to work always. For instance, here's a simple example with output where I get an AttributeError rather than a TypeError, so it crashes:\nIn [2]: from pymc.examples import disaster_model\nIn [3]: M=pymc.MCMC(disaster_model)\nIn [4]: M.sample(iter=1000)\n[_100%_**]  1000 of 1000 complete\nIn [5]: pymc.utils.coda(M)\nGenerating CODA output\nProcessing rate\nProcessing early_mean\nProcessing late_mean\nProcessing disasters\nAttributeError                            Traceback (most recent call last)\n/Users/tomevans/ in ()\n----> 1 pymc.utils.coda(M)\n/Users/tomevans/.local/lib/python2.6/site-packages/pymc/utils.py in coda_output(pymc_object)\n723         print_(\"Processing\", vname)\n724         try:\n--> 725             index = _process_trace(trace_file, index_file, v.trace(), vname, index)\n726         except TypeError:\n727             pass\nAttributeError: 'Poisson' object has no attribute 'trace'\nOr maybe I'm just not using the function quite as it's designed (I tried following the available documentation)...",
+            "closedAt": "2012-05-22T14:20:00Z",
+            "createdAt": "2012-05-22T12:54:10Z",
+            "id": "MDU6SXNzdWU0Njg5ODE5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 118,
+            "state": "CLOSED",
+            "title": "pymc.utils.coda() problem",
+            "updatedAt": "2012-05-22T14:20:00Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/118"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The dev version of pymc has a bug which can cause problems running the scipy fmin_powell optimizer.\nOn import, pymc imports the tests submodule.  tests/init.py changes the numpy error settings with numpy.seterr(divide = 'raise', invalid = 'raise').  This change is not reverted later.\nWhen the Brent line search moves outside the prior region it receives an infinite value from pymc, and then this becomes a nan after some operations.  A call to numpy.abs (done in the line search) on this value yields a floating point error.",
+            "closedAt": "2012-05-22T11:10:41Z",
+            "createdAt": "2012-05-21T12:02:45Z",
+            "id": "MDU6SXNzdWU0NjY5NDQy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 117,
+            "state": "CLOSED",
+            "title": "Bug with scipy optimization caused by numpy.seterr in testing.",
+            "updatedAt": "2012-05-22T11:10:41Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/117"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "write_csv does not honor the variables argument, and instead dumps all traced variables to the file.",
+            "closedAt": "2013-07-25T12:45:43Z",
+            "createdAt": "2012-05-14T19:23:47Z",
+            "id": "MDU6SXNzdWU0NTcwNTU4",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 116,
+            "state": "CLOSED",
+            "title": "Model.write_csv ignores variables argument",
+            "updatedAt": "2013-07-25T12:45:43Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/116"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "On the document page MathJax isn't rendering properly.  It throws a (very ugly) error, and makes any of the markup display as it would appear w/o MathJax.\nDocs\nPic",
+            "closedAt": "2012-05-07T13:35:00Z",
+            "createdAt": "2012-05-05T03:36:48Z",
+            "id": "MDU6SXNzdWU0NDM0MjM0",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 113,
+            "state": "CLOSED",
+            "title": "MathJax Out-Of-Date",
+            "updatedAt": "2012-05-07T13:35:00Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/113"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "A demonstration of this error is below. I think perhaps line 348 of MCMC.py should be\n    if self._burn_till_tuned:\n\ninstead of\n    if not self._tune_throughout:\n\nError example:\n>>> import pymc\n>>> n = pymc.Normal('n', 1.0, 1.0)\n>>> m = pymc.MCMC([n])\n>>> m.sample(10, burn=1, tune_interval=5, tune_throughout=False)\n>>>                0%                  ] \n>>> m.sample(10, burn=5, tune_interval=5, tune_throughout=False)\n------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<ipython console>\", line 1, in <module>\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/MCMC.py\", line 250, in sample\n    Sampler.sample(self, iter, length, verbose)\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/Model.py\", line 243, in sample\n    self._loop()\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/MCMC.py\", line 269, in _loop\n    self.tune()\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/MCMC.py\", line 358, in tune\n    if self._tuned_count ==  self._stop_tuning_after:\nAttributeError: 'MCMC' object has no attribute '_stop_tuning_after'",
+            "closedAt": "2012-05-01T13:35:47Z",
+            "createdAt": "2012-04-23T22:55:28Z",
+            "id": "MDU6SXNzdWU0MjUwODE3",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 111,
+            "state": "CLOSED",
+            "title": "AttributeError: 'MCMC' object has no attribute '_stop_tuning_after'",
+            "updatedAt": "2012-05-01T13:35:47Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/111"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm working with pymc 2.1alpha because that's what's installed at my department, so I'm sorry if this is an issue that's been fixed up in more recent updates. But I'm having trouble defining Stochastic variables with the decorator syntax.\nIn fact, the model_3.py and model_4.py modules in the pymc/examples folder which use the decorator syntax to define the variables 'params_of_mean' and 'disasters' both crash for me upon import, returning the error message:\n\n\nform pymc.examples import model_3\n\n\nZeroProbability: Stochastic params_of_mean's value is outside its support,\nor it forbids its parents' current values.\n\n/usr/local/scisoft/packages/python/lib/python2.6/site-packages/pymc/PyMCObjects.py(657)get_logp()\n656             else:\n--> 657                 raise ZeroProbability, self.errmsg\n658\n\nAnd of course I get the same error messages when I try to define my own Stochastic variables with the equivalent syntax. I see that similar issues have been addressed previously, eg here:\nhttp://groups.google.com/group/pymc/browse_thread/thread/aae4c718eeac33b1/11d1a6fa5c6806cf?show_docid=11d1a6fa5c6806cf\nbut the solution offered there still seems to fail for me with the same error as above. I should also note that I don't see any failures when I run pymc.test().",
+            "closedAt": "2012-04-20T14:10:04Z",
+            "createdAt": "2012-04-19T08:45:00Z",
+            "id": "MDU6SXNzdWU0MTg3NjYz",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 110,
+            "state": "CLOSED",
+            "title": "Stochastic decorators: value outside support",
+            "updatedAt": "2012-04-20T14:10:04Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/110"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "**What steps will reproduce the problem?\nSimply perform a NormApprox fit for one of the built-in examples. For example:\n\n\nimport pymc\nfrom pymc.examples import gelman_bioassay\nN = pymc.NormApprox(gelman_bioassay)\nN.fit()\nN.revert_to_max()\n\n\n**What is the expected output? What do you see instead?\nI would expect N.alpha.value and N.beta.value to revert to the MAP solution values (i.e. those stored in N._mu). Instead, I get:\n/usr/local/scisoft/packages/python/lib/python2.6/site-packages/pymc/NormalApproximation.py in revert_to_max(self)\n444         Sets all N's stochastics to their MAP values.\n445         \"\"\"\n--> 446         self._set_stochastics(self.mu)\n447\n448\n/usr/local/scisoft/packages/python/lib/python2.6/site-packages/pymc/NormalApproximation.py in _set_stochastics(self, p)\n339                 stochastic.value = round_array(reshape(ravel(p)[self._slices[stochastic]],shape(stochastic.value)))\n340             else:\n--> 341                 stochastic.value = reshape(ravel(p)[self._slices[stochastic]],shape(stochastic.value))\n342\n343     def setitem(self, index, value):\n/usr/local/scisoft/packages/python/lib/python2.6/site-packages/pymc/PyMCObjects.pyc in set_value(self, value, force)\n602\n603         if self.dtype.kind != 'O':\n--> 604             self._value = asanyarray(value, dtype=self.dtype)\n605             self._value.flags['W']=False\n606         else:\n/usr/local/scisoft/packages/python/lib/python2.6/site-packages/numpy/core/numeric.pyc in asanyarray(a, dtype, order)\n334\n335     \"\"\"\n--> 336     return array(a, dtype, copy=False, order=order, subok=True)\n337\n338 def ascontiguousarray(a, dtype=None):\nValueError: setting an array element with a sequence.\n\n/usr/local/scisoft/packages/python/lib/python2.6/site-packages/numpy/core/numeric.py(336)asanyarray()\n335     \"\"\"\n--> 336     return array(a, dtype, copy=False, order=order, subok=True)\n337\n\n**What version of the product are you using? On what operating system?\npymc version 2.1alpha on Mac OS X 10.6.8.\nPlease provide any additional information below.\nI get the expected behaviour if I replace the self._set_stochastics(self.mu) call with self._set_stochastics(self._mu) inside the revert_to_max() definition. Could this be a simple bug and that's all that needs to change (in which case I thought I'd bring it to your attention, because I see that the revert_to_max definition is the same in version 2.1beta), or am I missing something? Thanks for any help!",
+            "closedAt": "2012-04-16T22:13:33Z",
+            "createdAt": "2012-04-16T09:18:07Z",
+            "id": "MDU6SXNzdWU0MTMxMTA0",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 109,
+            "state": "CLOSED",
+            "title": "revert_to_max() fails for NormApprox fits?",
+            "updatedAt": "2014-07-07T18:23:58Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/109"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am having problems using Wishart as a parent of MvNormal. Basically, no proposals are accepted (although if I burn in for longer, about 20k, it will tune the step size down to about 10^13 and accept). Code is below. If you comment out the observed data,  d=pymc.MvNormal... , it seems to do MCMC on the wishart prior okay.\nimport numpy\nimport pymc\n\nN = 2\n\ndef make_model():\n\n    wish = pymc.Wishart('wish', n=N, Tau=numpy.eye(N) )\n\n    d = pymc.MvNormal('d', numpy.zeros(N), wish, value=numpy.array([1.0, 1.0]), observed=True)\n    return locals()\n\nM = pymc.Model(make_model())\nS = pymc.MCMC(M)\nS.sample(iter=2000, burn=1000, thin=1, verbose=True)\nprint S.trace('wish')[0]\nprint S.trace('wish')[:] - S.trace('wish')[0]",
+            "closedAt": "2012-04-16T22:11:41Z",
+            "createdAt": "2012-04-14T17:06:34Z",
+            "id": "MDU6SXNzdWU0MTE4ODEy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 108,
+            "state": "CLOSED",
+            "title": "Wishart and MvNormal",
+            "updatedAt": "2012-04-16T22:12:39Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/108"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I get crashes on pymc.Matplot.plot for the autocorrelation plot sometimes, especially with small sample sizes. This kills plotting of all variables. A quick fix would be to wrap line 399 of Matplot.py, which calls autocorrelation, with a try/except, and warn on an error.",
+            "closedAt": "2012-04-16T15:27:47Z",
+            "createdAt": "2012-04-10T15:01:30Z",
+            "id": "MDU6SXNzdWU0MDQ3NTU0",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 107,
+            "state": "CLOSED",
+            "title": "Matplot autocorrelation ",
+            "updatedAt": "2012-04-16T15:27:47Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/107"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Since we use Git to manage our source code, it may be a good idea to create feature branches of the things worth saving in the sandbox, and eliminate the sandbox altogether. This will allow devs to work on integrating new features more fully and free the master branch from carrying around a bag of things that may or may not be promising. Anyone opposed to this idea?",
+            "closedAt": "2013-02-13T03:19:33Z",
+            "createdAt": "2012-04-05T20:00:15Z",
+            "id": "MDU6SXNzdWUzOTk0ODUw",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 105,
+            "state": "CLOSED",
+            "title": "Sandbox vs feature branches",
+            "updatedAt": "2013-02-13T03:19:33Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/105"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Does Numpy include enough of BLAS and LAPACK that we could use theirs instead of having to build our own?",
+            "closedAt": "2013-09-06T16:37:58Z",
+            "createdAt": "2012-04-05T19:54:08Z",
+            "id": "MDU6SXNzdWUzOTk0NzU4",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 104,
+            "state": "CLOSED",
+            "title": "Using BLAS/LAPACK from Numpy",
+            "updatedAt": "2013-09-06T16:37:58Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/104"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "pair_posterior is broken. It also lacks documentation.\nimport pymc as pm\n\n#create a model\nx = pm.Normal('x',0,1)\ny = pm.Normal('y',x,1)\nmc = pm.MCMC([x,y])\n\n#sample\nmc.sample(200)\npm.Matplot.pair_posterior(mc.stochastics)\n\noutput:\nIn [17]: execfile('/Users/imrisofer/PySchizo/bla2.py')\nSampling: 100% [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000] Iterations: 200/200\n---------------------------------------------------------------------------\nTypeError                                 Traceback (most recent call last)\n/Users/imrisofer/Documents/Projects/rapid/basic/<ipython-input-17-3b0704b3bada> in <module>()\n----> 1 execfile('/Users/imrisofer/PySchizo/bla2.py')\n\n/Users/imrisofer/PySchizo/bla2.py in <module>()\n     10 #sample\n\n     11 mc.sample(200)\n---> 12 pm.Matplot.pair_posterior(mc.stochastics)\n\n/Users/imrisofer/Documents/third/pymc/pymc/Matplot.py in pair_posterior(nodes, mask, trueval, fontsize, suffix, path, new, fontmap, verbose)\n    772         for j in range(ns[p]):\n    773             # Should this index be included?\n\n--> 774             if mask[p]:\n    775                 if not mask[p].ravel()[j]:\n    776                     indices[p].append(j)\n\nTypeError: 'NoneType' object is not subscriptable\n\nIn [18]:",
+            "closedAt": "2012-04-07T16:41:32Z",
+            "createdAt": "2012-04-03T17:33:22Z",
+            "id": "MDU6SXNzdWUzOTUxMzE2",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 103,
+            "state": "CLOSED",
+            "title": "pair_posterior is broken",
+            "updatedAt": "2012-04-07T16:41:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/103"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI just downloaded and installed the latest development version of pymc (latest commit cd07a7a), and there were a lot of test failures. The output of pymc.test() is below. I'm using ubuntu version 11.04 on a 64 bit system.\nIn [5]: pymc.test()\nRunning unit tests for pymc.tests\nNumPy version 1.5.1\nNumPy is installed in /usr/local/lib/python2.7/dist-packages/numpy\nPython version 2.7.1+ (r271:86832, Apr 11 2011, 18:13:53) [GCC 4.5.2]\nnose version 0.11.4\n.............................E.............S......FFF.......F............................................................................F.......F..........................\n======================================================================\nERROR: test_zcompression (pymc.tests.test_database.TestHDF5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_database.py\", line 280, in test_zcompression\n    S = MCMC(disaster_model, db=db)\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/MCMC.py\", line 71, in __init__\n    Sampler.__init__(self, input, db, name, calc_deviance=calc_deviance, **kwds)\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/Model.py\", line 212, in __init__\n    v.trace = self.db._traces[v.__name__]\nKeyError: 'late_mean'\n\n======================================================================\nFAIL: test_simple_sample (pymc.tests.test_database.testHDF5Objects)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_database.py\", line 323, in test_simple_sample\n    assert_array_equal(self.S.trace('K', chain=None)[:].shape, (5,))\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 686, in assert_array_equal\n    verbose=verbose, header='Arrays are not equal')\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 618, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not equal\n\n(mismatch 100.0%)\n x: array([45])\n y: array([5])\n\n======================================================================\nFAIL: test_xload (pymc.tests.test_database.testHDF5Objects)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_database.py\", line 344, in test_xload\n    assert_array_equal(db.B().shape, (10,))\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 686, in assert_array_equal\n    verbose=verbose, header='Arrays are not equal')\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 618, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not equal\n\n(mismatch 100.0%)\n x: array([5])\n y: array([10])\n\n======================================================================\nFAIL: test_yconnect_and_sample (pymc.tests.test_database.testHDF5Objects)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_database.py\", line 356, in test_yconnect_and_sample\n    assert_array_equal(db.K(chain=1).shape, (10,))\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 686, in assert_array_equal\n    verbose=verbose, header='Arrays are not equal')\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 618, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not equal\n\n(mismatch 100.0%)\n x: array([0])\n y: array([10])\n\n======================================================================\nFAIL: test_random (pymc.tests.test_distributions.test_arlognormal)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_distributions.py\", line 286, in test_random\n    assert_almost_equal(corr, rho, 1)\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 463, in assert_almost_equal\n    raise AssertionError(msg)\nAssertionError: \nArrays are not almost equal\n ACTUAL: 0.73378260431604114\n DESIRED: 0.8\n\n======================================================================\nFAIL: test_random (pymc.tests.test_distributions.test_truncnorm)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_distributions.py\", line 936, in test_random\n    assert_almost_equal(r.mean(), truncnorm_expval(-1, .1, -20., 20.), 1)\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 463, in assert_almost_equal\n    raise AssertionError(msg)\nAssertionError: \nArrays are not almost equal\n ACTUAL: -0.94639768884730635\n DESIRED: -0.99999999820581786\n\n======================================================================\nFAIL: test_gradients (pymc.tests.test_gradients.test_gradients)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_gradients.py\", line 305, in test_gradients\n    check_gradients(chi2)\n  File \"/usr/local/lib/python2.7/dist-packages/pymc/tests/test_gradients.py\", line 113, in check_gradients\n    \" is not correct.\")\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 774, in assert_array_almost_equal\n    header='Arrays are not almost equal')\n  File \"/usr/local/lib/python2.7/dist-packages/numpy/testing/utils.py\", line 618, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not almost equal\nanalytic gradient for chi2 with respect to parameter chi2 is not correct.\n(mismatch 20.0%)\n x: array([ -4.79623452e-01,  -3.19349880e-01,  -2.84632762e-01,\n        -2.39573694e-01,  -1.04844309e+06])\n y: array([ -4.79624077e-01,  -3.19349001e-01,  -2.84635127e-01,\n        -2.39572472e-01,  -1.04914927e+06])\n\n----------------------------------------------------------------------\nRan 172 tests in 30.006s\n\nFAILED (SKIP=1, errors=1, failures=6)",
+            "closedAt": "2012-04-01T21:05:31Z",
+            "createdAt": "2012-03-30T20:26:15Z",
+            "id": "MDU6SXNzdWUzOTA0NDY5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 102,
+            "state": "CLOSED",
+            "title": "Test failures",
+            "updatedAt": "2012-04-09T16:29:58Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/102"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Likelihood does not correspond to various checks, including the version in R. Are we inverting the X matrix properly? This is the step where it appears to diverge from other implementations.\nI hate debugging Fortran!",
+            "closedAt": "2013-09-16T14:07:29Z",
+            "createdAt": "2012-03-27T16:58:05Z",
+            "id": "MDU6SXNzdWUzODMxNDU3",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 101,
+            "state": "CLOSED",
+            "title": "Inverse Wishart likelihood is broken",
+            "updatedAt": "2013-09-16T14:07:29Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/101"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Having just gotten HDF5 working on OS X 10.7, the unit tests now fail:\n\nFAIL: test_simple_sample (pymc.tests.test_database.testHDF5Objects)\n\nTraceback (most recent call last):\nFile \"/Users/fonnescj/Code/pymc/pymc/tests/test_database.py\", line 332, in test_simple_sample\nassert_array_equal(self.S.trace('K')[:].shape, (10,))\nFile \"/Library/Python/2.7/site-packages/numpy-1.7.0.dev_3503c5f_20120323-py2.7-macosx-10.7-x86_64.egg/numpy/testing/utils.py\", line 753, in assert_array_equal\nverbose=verbose, header='Arrays are not equal')\nFile \"/Library/Python/2.7/site-packages/numpy-1.7.0.dev_3503c5f_20120323-py2.7-macosx-10.7-x86_64.egg/numpy/testing/utils.py\", line 677, in assert_array_compare\nraise AssertionError(msg)\nAssertionError:\nArrays are not equal\n(mismatch 100.0%)\nx: array([0])\ny: array([10])\n======================================================================\nFAIL: test_xload (pymc.tests.test_database.testHDF5Objects)\n\nTraceback (most recent call last):\nFile \"/Users/fonnescj/Code/pymc/pymc/tests/test_database.py\", line 345, in test_xload\nassert_array_equal(db.K().shape, (10,))\nFile \"/Library/Python/2.7/site-packages/numpy-1.7.0.dev_3503c5f_20120323-py2.7-macosx-10.7-x86_64.egg/numpy/testing/utils.py\", line 753, in assert_array_equal\nverbose=verbose, header='Arrays are not equal')\nFile \"/Library/Python/2.7/site-packages/numpy-1.7.0.dev_3503c5f_20120323-py2.7-macosx-10.7-x86_64.egg/numpy/testing/utils.py\", line 677, in assert_array_compare\nraise AssertionError(msg)\nAssertionError:\nArrays are not equal\n(mismatch 100.0%)\nx: array([0])\ny: array([10])\n======================================================================\nFAIL: test_yconnect_and_sample (pymc.tests.test_database.testHDF5Objects)\n\nTraceback (most recent call last):\nFile \"/Users/fonnescj/Code/pymc/pymc/tests/test_database.py\", line 356, in test_yconnect_and_sample\nassert_array_equal(db.K(chain=1).shape, (10,))\nFile \"/Library/Python/2.7/site-packages/numpy-1.7.0.dev_3503c5f_20120323-py2.7-macosx-10.7-x86_64.egg/numpy/testing/utils.py\", line 753, in assert_array_equal\nverbose=verbose, header='Arrays are not equal')\nFile \"/Library/Python/2.7/site-packages/numpy-1.7.0.dev_3503c5f_20120323-py2.7-macosx-10.7-x86_64.egg/numpy/testing/utils.py\", line 677, in assert_array_compare\nraise AssertionError(msg)\nAssertionError:\nArrays are not equal\n(mismatch 100.0%)\nx: array([0])\ny: array([10])",
+            "closedAt": "2013-09-16T02:23:50Z",
+            "createdAt": "2012-03-27T15:14:41Z",
+            "id": "MDU6SXNzdWUzODI5NDM2",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 100,
+            "state": "CLOSED",
+            "title": "HDF5 backend tests fail",
+            "updatedAt": "2013-09-16T02:23:50Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/100"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I think there may be a problem with the functions that return the log likelihood for the wishart and inverse wishart distributions.  This can be seen by taking two abritrary positive definite matrices (M1, M2) and an arbitrary value for degress of freedom (nu) (greater than the number of dimensions) then evaluating pymc.wishart_like(M1, nu, M2) and pymc.inverse_wishart_like(numpy.linalg.inv(M1), nu, numpy.linalg.inv(M2)).  These two quantities should be equivalent.",
+            "closedAt": "2012-03-16T20:59:32Z",
+            "createdAt": "2012-03-07T11:06:30Z",
+            "id": "MDU6SXNzdWUzNTQxMDY3",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 97,
+            "state": "CLOSED",
+            "title": "wishart_like and inverse_wishart_like functions",
+            "updatedAt": "2012-03-16T20:59:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/97"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I read through this section of the docs but couldn't really make heads or tails of it:\nhttp://pymc-devs.github.com/pymc/modelchecking.html#goodness-of-fit\nFirst, simulated and real data is introduced in the first example. Then the Freeman-Tukey test is described without any specification of what the parameters mean or what is indexed over. Following that, the discrepancy function is introduced which requires passing of an expected argument of which I also don't know where that is supposed to come from.\nIf I may suggest an improvement, I think it would make the whole story more clear if the following code examples for pymc.discrepancy() would build on the example introduced in the beginning of the section.",
+            "closedAt": "2012-03-28T00:59:07Z",
+            "createdAt": "2012-02-17T13:53:55Z",
+            "id": "MDU6SXNzdWUzMjY3Njg4",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 94,
+            "state": "CLOSED",
+            "title": "Unclear docs for Goodness of Fit",
+            "updatedAt": "2012-03-28T00:59:07Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/94"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import pymc as pm\n\n#creating a simple model\nx = pm.Normal('x',0,1)\ny = pm.Normal('y',x,1,value=randn(10), observed=True)\nm = pm.MCMC([x,y])\n\n#sampling once\nm.sample(1000)\n\n#the mean of the first chain\nprint \"mean of the first chain\"\nprint x.stats()['mean']\nprint\n\n#sampling again\nm.sample(1000)\n\nprint \"direct computation of the mean of the second chain\"\nprint mean(x.trace()[:])\nprint\n\n#showing that the chain argument does not work\nprint \"The following results should all look different from each other:\"\nprint \"suppose to be the mean of both chains:       \", x.stats()['mean']\nprint \"suppose to be the mean of the first chain:  \", x.stats(chain=0)['mean']\nprint \"suppose to be the mean of the second chain: \", x.stats(chain=1)['mean']\nprint \"suppose to raise an error:                   \", x.stats(chain='sdfs')['mean']\n\nprint\nprint \"suppose to be the mean of both chains:       \", m.stats()['x']['mean']\nprint \"suppose to be the mean of the first chains  \", m.stats(chain=0)['x']['mean']\nprint \"suppose to be the mean of the second chains \", m.stats(chain=1)['x']['mean']\nprint \"suppose to raise an error:                   \", m.stats(chain='sdfs')['x']['mean']\n\nresults:\nSampling: 100% [000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000] Iterations: 1000\nmean of the first chain\n-0.158602456071\n\nSampling: 100% [000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000] Iterations: 1000\ndirect computation of the mean of the second chain\n-0.132858643087\n\nThe following results should all look different from each other:\nsuppose to be the mean of both chains:        -0.132858643087\nsuppose to be the mean of the first chains:   -0.132858643087\nsuppose to be the mean of the second chains:  -0.132858643087\nsuppose to raise an error:                    -0.132858643087\n\nsuppose to be the mean of both chains:        -0.132858643087\nsuppose to be the mean of the first chains:   -0.132858643087\nsuppose to be the mean of the second chains:  -0.132858643087\nsuppose to raise an error:                    -0.132858643087",
+            "closedAt": "2012-02-10T23:21:31Z",
+            "createdAt": "2012-02-10T18:06:19Z",
+            "id": "MDU6SXNzdWUzMTc2NDQy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 92,
+            "state": "CLOSED",
+            "title": "The chain argument in stat is ignored",
+            "updatedAt": "2012-02-11T16:11:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/92"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "when creating an MCMC model using an existing db the traces are loaded to the model but not to individual nodes.\nimport pymc as pm\n\n#create a model\nx = pm.Normal('x',0,1)\nmc = pm.MCMC([x],db='pickle', dbname='testing.db')\n\n#sample\nmc.sample(200)\n\n#print trace\nprint \"printing the trace from x before closeing the db\"\nprint x.trace()[:10]\n\n#close the db\nmc.db.close()\n\n#now, let's load the db again\ndb = pm.database.pickle.load('testing.db')\n\n#create a new model\nx = pm.Normal('x',0,1)\nmc2 = pm.MCMC([x], db=db)\n\n#print trace from mcmc\nprint \"printing the trace of x from mc2\"\nprint mc2.trace('x')[:10]\n\n#print trace\n\"printing the trace of x from x\"\nprint x.trace()\n\nThis is the ouptut:\nIn [41]: execfile('/Users/imrisofer/PySchizo/bla2.py')\nSampling: 100% [000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000] Iterations: 200\nprinting the trace from x before closeing the db\n[-1.30381504  0.54872208  0.17317576  0.88309938 -0.3897846  -0.51572362\n -0.706447    0.10687589 -2.07283465  1.18359088]\nprinting the trace of x from mc2\n[-1.30381504  0.54872208  0.17317576  0.88309938 -0.3897846  -0.51572362\n -0.706447    0.10687589 -2.07283465  1.18359088]\n---------------------------------------------------------------------------\nTypeError                                 Traceback (most recent call last)\n/Users/imrisofer/Documents/Projects/rapid/alz/<ipython-input-41-3b0704b3bada> in <module>()\n----> 1 execfile('/Users/imrisofer/PySchizo/bla2.py')\n\n/Users/imrisofer/PySchizo/bla2.py in <module>()\n     30 #print trace\n\n     31 \"printing the trace of x from x\"\n---> 32 print x.trace()\n     33 \n     34 \n\nTypeError: 'bool' object is not callable\n\nthis kind of bug creates problems when trying to plot a single node or when using any other function that's try to excess the node's trace.",
+            "closedAt": "2012-02-27T03:55:57Z",
+            "createdAt": "2012-01-31T18:16:01Z",
+            "id": "MDU6SXNzdWUzMDM5OTc1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 90,
+            "state": "CLOSED",
+            "title": "when creating an MCMC model using an existing db the traces are not loaded to individual nodes.",
+            "updatedAt": "2012-02-27T03:55:57Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/90"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There should be a way to switch off the progress bar during sampling as this does not fair well with the ipython notebook.",
+            "closedAt": "2012-01-26T15:20:07Z",
+            "createdAt": "2012-01-26T15:00:56Z",
+            "id": "MDU6SXNzdWUyOTgwNDQ3",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 87,
+            "state": "CLOSED",
+            "title": "MCMC.sample(verbose=0) still displays progress bar",
+            "updatedAt": "2012-01-26T15:20:07Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/87"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I can't seem to pass a masked_array for mu into the TruncatedNormal; Normal works fine - is this a bug?\nE.G.\nfrom pymc import *\nfrom numpy import ma, array\nx = array([1,2,-999])\nx1 = ma.masked_array(x,mask=x==-999)\ny = array([-999,2,4])\ny1 = ma.masked_array(y,mask=y==-999)\nNormal('Yi',mu=x1,tau=0.01,value=y1,observed=T)\nOut[10]: <pymc.distributions.Normal 'Yi' at 0x1100ebfd0>\nVS:\nTruncatedNormal('Yi',mu=x1,tau=0.01,a=0,b=100,value=y1,observed=T)\n\"\"\"\nIn [11]: TruncatedNormal('Yi',mu=x1,tau=0.01,a=0,b=100,value=y1,observed=T)\nZeroProbability                           Traceback (most recent call last)\n/Volumes/ma_macneil/Documents/Current_work/AIMS_survey_impacts/rates_pymc/ in ()\n----> 1 TruncatedNormal('Yi',mu=x1,tau=0.01,a=0,b=100,value=y1,observed=T)\n/Users/amac/Downloads/pymc-devs-pymc-5b2d924/pymc/distributions.pyc in init(self, _args, *_kwds)\n266                 random = debug_wrapper(random)\n267             else:\n--> 268                 Stochastic.init(self, logp=logp, random=random, logp_partial_gradients = logp_partial_gradients, dtype=dtype, **arg_dict_out)\n269\n270     new_class.name = name\n/Users/amac/Downloads/pymc-devs-pymc-5b2d924/pymc/PyMCObjects.pyc in init(self, logp, doc, name, parents, random, trace, value, dtype, rseed, observed, cache_depth, plot, verbose, isdata, check_logp, logp_partial_gradients)\n700         if check_logp:\n701             # Check initial value\n--> 702             if not isinstance(self.logp, float):\n703                 raise ValueError, \"Stochastic \" + self.name + \"'s initial log-probability is %s, should be a float.\" %self.logp.repr()\n704\n/Users/amac/Downloads/pymc-devs-pymc-5b2d924/pymc/PyMCObjects.pyc in get_logp(self)\n832                 raise ZeroProbability, self.errmsg + \"\\nValue: %s\\nParents' values:%s\" % (self._value, self._parents.value)\n833             else:\n--> 834                 raise ZeroProbability, self.errmsg\n835\n836         return logp\nZeroProbability: Stochastic Yi's value is outside its support,\nor it forbids its parents' current values.\n\"\"\"",
+            "closedAt": "2012-02-11T04:24:58Z",
+            "createdAt": "2012-01-17T20:46:04Z",
+            "id": "MDU6SXNzdWUyODc0MzMy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 84,
+            "state": "CLOSED",
+            "title": "Masked TruncatedNormal",
+            "updatedAt": "2012-02-11T04:24:58Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/84"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "thanks for NormalSubmodel.py\ngraphical_util.py is also missing.\nIn [5]: from pymc.sandbox import NormalSubmodel\n---------------------------------------------------------------------------\nImportError                               Traceback (most recent call last)\n/Users/imrisofer/<ipython-input-5-eb732da2f578> in <module>()\n----> 1 from pymc.sandbox import NormalSubmodel\n\n/Users/imrisofer/Documents/third/pymc/pymc/sandbox/NormalSubmodel.py in <module>()\n     14 import copy as sys_copy\n     15 import numpy as np\n---> 16 from graphical_utils import *\n     17 import cvxopt as cvx\n     18 from cvxopt import base, cholmod\n\nImportError: No module named graphical_utils",
+            "closedAt": "2012-01-11T20:42:39Z",
+            "createdAt": "2012-01-11T19:18:43Z",
+            "id": "MDU6SXNzdWUyODA4NjE4",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 81,
+            "state": "CLOSED",
+            "title": "graphical_utils.py is missing",
+            "updatedAt": "2012-01-11T20:42:39Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/81"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The NormalSubmodel.py file is missing from the sandbox, which can be a problem when one wants to use the NormalNormal step method.",
+            "closedAt": "2012-01-11T17:11:48Z",
+            "createdAt": "2012-01-11T16:43:23Z",
+            "id": "MDU6SXNzdWUyODA2NjY1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 80,
+            "state": "CLOSED",
+            "title": "NormalSubmodel.py is missing",
+            "updatedAt": "2012-01-11T17:11:48Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/80"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the documentation of the Gamma variable beta is defined as a scale parameter.\naccording to Wikipedia (http://en.wikipedia.org/wiki/Gamma_distribution) it should be defined as a rate parameter. The scale parameter is 1/beta.",
+            "closedAt": "2012-01-11T17:15:59Z",
+            "createdAt": "2012-01-11T16:40:10Z",
+            "id": "MDU6SXNzdWUyODA2NjMy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 79,
+            "state": "CLOSED",
+            "title": "beta should be defined as a rate parameter for the Gamma distribution",
+            "updatedAt": "2012-01-11T17:15:59Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/79"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It is sometimes desirable to plot multiple chains' traces on the same frame, for purposes of checking convergence. The current plot() function does not allow this.",
+            "closedAt": "2013-09-16T14:11:15Z",
+            "createdAt": "2011-12-26T20:23:43Z",
+            "id": "MDU6SXNzdWUyNjU5Nzc0",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 78,
+            "state": "CLOSED",
+            "title": "Plot traces for multiple chains",
+            "updatedAt": "2013-09-16T14:11:15Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/78"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am fairly used to OpenBUGS and JAGS and want to begin using python with pymc for my bayesian estimation needs. I was wondering however how one runs multiple chains? In JAGS you simply add an option n.chains=2 or n.chains=4 but this doesn't seem to be the case with pymc. How should I proceed? I want to plot the traces of the different chains over one another to be able to see if mixing is good.\nSorry if this question was already answered, I used the search function but didn't find anything.\nOh, and merry Christmas!",
+            "closedAt": "2011-12-26T20:22:40Z",
+            "createdAt": "2011-12-24T13:09:57Z",
+            "id": "MDU6SXNzdWUyNjUyNjU5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 77,
+            "state": "CLOSED",
+            "title": "How can I run multiple chains?",
+            "updatedAt": "2011-12-26T20:22:40Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/77"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When running walker lake gp example, plotting realization fails:\nTraceback (most recent call last):\nFile \"mcmc.py\", line 97, in \nR = WalkerSampler.walker_v.f.value(dplot)\nTypeError: 'numpy.ndarray' object is not callable\nIn addition, walker lake dataset is not available at http://www.ai-geostats.org/fileadmin/Documents/Data/walker_01.dat anymore.",
+            "closedAt": "2012-01-12T17:31:37Z",
+            "createdAt": "2011-12-21T18:24:59Z",
+            "id": "MDU6SXNzdWUyNjI3OTg3",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 75,
+            "state": "CLOSED",
+            "title": "WalkerSampler.walker_v.f.value is ndarray?",
+            "updatedAt": "2012-01-12T17:31:37Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/75"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I've just had to do a clean reinstall of everything on a macbookpro.\nI'm doing through macports.  Here's what i have that is relevant:\npython27 @2.7.2_3 (active)\npy27-numpy @1.6.1_1 (active)\npy27-scipy @0.10.0_0+gcc44 (active)\npy27-matplotlib @1.1.0_0+ghostscript+latex+tkinter (active)\npy27-pymc @2.0_0+gcc44 (active)\nThe problem is that pymc fails to load normally, because it says it can't find scipy, with the error message:\nnormApprox = pymc.NormApprox( model )\nFile \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/NormalApproximation.py\", line 483, in init\nraise ImportError, 'Scipy must be installed to use NormApprox and MAP.'\nImportError: Scipy must be installed to use NormApprox and MAP.\nI think the problem is that in the latest scipy, scipy.derivate has moved to scipy.misc.derivative.\nI haven't been brave enough to try altering the source code, but i find the error disappears if i do the following:\nimport scipy\nfrom scipy.misc import derivative\nscipy.derivative = derivative\nI've no idea what (if any) difference there is between the old scipy.derivative, and the new sci.misc.derivative, but everything seems okay-ish in any case.\nHope that's helpful, even if it's somewhat mundane.",
+            "closedAt": "2012-01-11T19:23:36Z",
+            "createdAt": "2011-12-05T08:25:58Z",
+            "id": "MDU6SXNzdWUyNDQ2NjYx",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 73,
+            "state": "CLOSED",
+            "title": "issue with latest scipy(.misc).derivative",
+            "updatedAt": "2012-01-12T00:40:11Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/73"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI just installed Revision 1486, straight from the svn. I had two difficulties, which I'll explain after detailing my set up. I'll give full detail because I get the sense from the main webpage that that's what you want people to do when they get errors from the testsuite.\nI am using a Linux cluster, running CentOS-5.3, on Intel 64 processors. I can alternately use different nodes on my system which have AMD64 processors. My default compilers are GCC version 4.6.2, though once again, I have options:  if need be I can use either PGI or Intel compilers. I am using the Enthought Python Distribution (EPD), version 7.1-2, built for RHEL5_x86-64. It may be of importance that EPD was built using GCC-4.1.2, though that has never caused a problem for me before. In fact I have never had any issue with EPD installing a package before. It is interesting to note that while pymc did not come prebuilt with my free version of EPD, they do offer a prebuilt copy for paid users. This, I suspect, relates directly to my first issue.\nMy first issue is that when running setup.py, I got warning flags that numpy could not find its blas and lapack libraries. This is because EPD ships with the Intel MKL libraries, but not the header files, and so while the numerical routines in numpy/scipy work just fine, one cannot build new libraries against the built-in MKL. But, as before, I have options: I have access to both a system-wide MKL, and a system-wide copy of the ACML, with which I can try to build pymc, if you think that is necessary. If it's really necessary, I can build ATLAS + Netlib lapack, though I really don't want to go through all that trouble. At any rate, I don't know if it would have a bad effect on the interaction with numpy/scipy to use another lapack.\nBut, ignoring those warnings, I was able to build and install the pymc module, and load it into the interpreter. (I don't know if it's important, but it took a good minute and thirty seconds to load the module.) My second issue is that when I ran the testsuite, I got 30 errors and 2 fails. The errors all stem from my accessing this cluster remotely via SSH, and not having access to an X Windows system. Perhaps a detection mechanism for such should be built in, to avoid such errors, but that's not a big deal. The two fails, on the other hand, are assertion errors that are not easy for me to decipher, as I am completely unfamiliar with pymc. These fails could, of course, be trivial and I simply don't realize that because I'm new to pymc, but your webpage requests that one post it if tests fail, hence this long-ass post.\nThe output for the initialization and summary of the testsuite, as well as the output for the fails (but not the errors), is below.\n\n\n\nimport pymc\npymc.test()\nRunning unit tests for pymc.tests\nNumPy version 1.6.1\nNumPy is installed in /home/ccowingzitron/local_gcc/opt/epd-7.1-2-rh5-x86_64/lib/python2.7/site-packages/numpy\nPython version 2.7.2 |EPD 7.1-2 (64-bit)| (default, Jul  3 2011, 15:17:51) [GCC 4.1.2 20080704 (Red Hat 4.1.2-44)]\nnose version 1.0.0\n..FE.E.....EF..E..........Some objects from the database have not been assigned a getfunc set(['DiscreteMetropolis_s_adaptive_scale_factor', 'Metropolis_e_adaptive_scale_factor', 'Metropolis_l_adaptive_scale_factor'])\n.Some objects from the database have not been assigned a getfunc set(['DiscreteMetropolis_s_adaptive_scale_factor', 'Metropolis_e_adaptive_scale_factor', 'Metropolis_l_adaptive_scale_factor'])\n...............S....................E..E..E.E.E.E..EE...E.EE...E..EEE...EEE.........E..E../home/ccowingzitron/local_gcc/opt/epd-7.1-2-rh5-x86_64/lib/python2.7/site-packages/pymc/distributions.py:2201: RuntimeWarning: divide by zero encountered in log\nreturn  np.sum(np.log(2.) + np.log(pymc.utils.normcdf((x-mu)_np.sqrt(tau)_alpha))) + normal_like(x,mu,tau)\n.E.E.E...E..E..E.........................\n\n\n\n\nFAIL: Failure: AssertionError ()\nTraceback (most recent call last):\nFile \"/home/ccowingzitron/local_gcc/opt/epd-7.1-2-rh5-x86_64/lib/python2.7/site-packages/nose/loader.py\", line 390, in loadTestsFromName\naddr.filename, addr.module)\nFile \"/home/ccowingzitron/local_gcc/opt/epd-7.1-2-rh5-x86_64/lib/python2.7/site-packages/nose/importer.py\", line 39, in importFromPath\nreturn self.importFromDir(dir_path, fqname)\nFile \"/home/ccowingzitron/local_gcc/opt/epd-7.1-2-rh5-x86_64/lib/python2.7/site-packages/nose/importer.py\", line 86, in importFromDir\nmod = load_module(part_fqname, fh, filename, desc)\nFile \"/home/ccowingzitron/local_gcc/opt/epd-7.1-2-rh5-x86_64/lib/python2.7/site-packages/pymc/tests/test_LazyFunction.py\", line 98, in \nassert(L.get_cached_counts()[1,cur_frame] == C.counter.get_count())\nAssertionError\n\nFAIL: test (pymc.tests.test_container.test_Container)\nTraceback (most recent call last):\nFile \"/home/ccowingzitron/local_gcc/opt/epd-7.1-2-rh5-x86_64/lib/python2.7/site-packages/pymc/tests/test_container.py\", line 73, in test\nassert(D[1,i] is 1.)\nAssertionError\n\nRan 158 tests in 10.751s\nFAILED (SKIP=1, errors=30, failures=2)\n<nose.result.TextTestResult run=158 errors=30 failures=2>\nI'd really like to use pymc, for several reasons: it has a very good reputation; it is well developed;  it does everything I need it to do (I think); based upon the manuals it seems easier to use than JAGS/OpenBUGS; and (this initial difficulty aside) it seems easier to install than other MCMC packages, since it doesn't require auxiliary installs. As such, I would be very grateful if you could help me resolve this, either by actually fixing something, or by simply pointing out that I'm a moron who f'ed up an easy step :-)\nThanks in advance,\n-- Chris Cowing-Zitron",
+            "closedAt": "2011-11-30T22:25:32Z",
+            "createdAt": "2011-11-30T21:40:08Z",
+            "id": "MDU6SXNzdWUyNDA3NjM0",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 72,
+            "state": "CLOSED",
+            "title": "Revision 1486 Testsuite Fails",
+            "updatedAt": "2011-11-30T22:25:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/72"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For example, line 17 in file pymc/tests/test_adaptive.py is using 'with' statement. My Python 2.5.2 does not support this.\nif name == 'main':\nwith warnings.catch_warnings():\nwarnings.simplefilter('ignore',  FutureWarning)\nnose.runmodule()\nThis could be helpful to solve both, 'with' problem and 'catch_warnings':\nhttp://stackoverflow.com/questions/2059675/catching-warnings-pre-python-2-6",
+            "closedAt": "2011-11-30T17:06:57Z",
+            "createdAt": "2011-11-29T20:02:39Z",
+            "id": "MDU6SXNzdWUyMzkxNzEx",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 71,
+            "state": "CLOSED",
+            "title": "No 'with' statement in Python 2.5",
+            "updatedAt": "2011-11-30T17:06:57Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/71"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "File INSTALL.rst says in \"Dependencies\" section:\nPython_ version 2.5 or 2.6.\nHowever warnings module in Python 2.5.2 does not have a function \"warnings.catch_warnings()\". Hence error immediately after my new installation:\n/usr/lib64/python2.5/site-packages/pymc/init.pyc in ()\n35\n36\n---> 37 from tests import test\n38\n39 # Utilities modules\n/usr/lib64/python2.5/site-packages/pymc/tests/init.py in ()\n6     import numpy\n7     numpy.seterr(divide = 'raise', invalid = 'raise')\n----> 8     with warnings.catch_warnings():\n9         warnings.simplefilter('ignore')\n10         test = Tester().test\nAttributeError: 'module' object has no attribute 'catch_warnings'\nI have installed today (Nov 29th, 2011) from the sources from: git clone git://github.com/pymc-devs/pymc.git pymc\nat Fedora 10 Python 2.5.2 x86_64",
+            "closedAt": "2011-11-30T16:54:50Z",
+            "createdAt": "2011-11-29T19:07:56Z",
+            "id": "MDU6SXNzdWUyMzkwNDUz",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 70,
+            "state": "CLOSED",
+            "title": "Python 2.5.2 does not have 'warnings.catch_warnings()'",
+            "updatedAt": "2011-11-30T17:23:49Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/70"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "File INSTALL.rst says in \"Dependencies\" section:\n\nPython_ version 2.5 or 2.6.\nHowever Python 2.5 does not have \"multiprocessing\" package by default. Hence error immediately after my new installation:\n\n/usr/lib64/python2.5/site-packages/pymc/init.py in ()\n16\n17 # Core modules\n---> 18 from threadpool import *\n19 import os\n20 import pymc\n/usr/lib64/python2.5/site-packages/pymc/threadpool.py in ()\n309     PyMCThreadPool = ThreadPool(int(os.environ['OMP_NUM_THREADS']))\n310 except:\n--> 311     import multiprocessing\n312     PyMCThreadPool = ThreadPool(multiprocessing.cpu_count())\n313\nImportError: No module named multiprocessing\nI have installed today (Nov 29th, 2011) from the sources from: git clone git://github.com/pymc-devs/pymc.git pymc\nat Fedora 10 Python 2.5.2 x86_64",
+            "closedAt": "2011-11-30T16:41:20Z",
+            "createdAt": "2011-11-29T19:04:28Z",
+            "id": "MDU6SXNzdWUyMzkwMzgy",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 69,
+            "state": "CLOSED",
+            "title": "Python 2.5 does not have package 'multiprocessing' by default",
+            "updatedAt": "2011-11-30T16:41:20Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/69"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Worked in previous versions. Now we are missing these two before line ~557:\nCxo = self.eval_fun(self.obs_mesh, x, **self.params)\nUo_Cxo = trisolve(self.Uo, Cxo, uplo='U', transa='T')",
+            "closedAt": "2013-09-16T02:23:14Z",
+            "createdAt": "2011-11-10T20:53:50Z",
+            "id": "MDU6SXNzdWUyMjAyNTk4",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 68,
+            "state": "CLOSED",
+            "title": "Error in \"pymc.gp.Covariance.py\"  when \"Uo_Cxo\" is referenced before assignment",
+            "updatedAt": "2013-09-16T02:23:14Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/68"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Mac OS X 10.6, fink tools, pymc-devs-pymc-raked_sandbox-161-gf0ad9f7 (latest git clone)\nOutput below. Best regards, Tomas\n\nPython 2.7.2 (default, Aug 10 2011, 12:17:29)\nType \"copyright\", \"credits\" or \"license\" for more information.\nIPython 0.11 -- An enhanced Interactive Python.\n?         -> Introduction and overview of IPython's features.\n%quickref -> Quick reference.\nhelp      -> Python's own help system.\nobject?   -> Details about 'object', use 'object??' for extra details.\nIn [1]: import pymc\nIn [2]: pymc.test()\nRunning unit tests for pymc.tests\nNumPy version 1.6.1\nNumPy is installed in /sw/lib/python2.7/site-packages/numpy\nPython version 2.7.2 (default, Aug 10 2011, 12:17:29) [GCC 4.2.1 (Apple Inc. build 5666) (dot 3)]\nnose version 1.1.2\n..................F..S.............S......S.............................................................................................E..........................\nERROR: test_gradients (pymc.tests.test_gradients.test_gradients)\nTraceback (most recent call last):\nFile \"/sw/lib/python2.7/site-packages/pymc/tests/test_gradients.py\", line 340, in test_gradients\nnegative_binomial = NegativeBinomial('negative_binomial', mu = c, alpha = d )\nFile \"/sw/lib/python2.7/site-packages/pymc/distributions.py\", line 269, in init\nStochastic.init(self, logp=logp, random=random, logp_partial_gradients = logp_partial_gradients, dtype=dtype, *_arg_dict_out)\nFile \"/sw/lib/python2.7/site-packages/pymc/PyMCObjects.py\", line 691, in init\nverbose=verbose)\nFile \"/sw/lib/python2.7/site-packages/pymc/Node.py\", line 193, in init\nNode.init(self, doc, name, parents, cache_depth, verbose=verbose)\nFile \"/sw/lib/python2.7/site-packages/pymc/Node.py\", line 111, in init\nself.parents = parents\nFile \"/sw/lib/python2.7/site-packages/pymc/Node.py\", line 132, in _set_parents\nself.gen_lazy_function()\nFile \"/sw/lib/python2.7/site-packages/pymc/PyMCObjects.py\", line 731, in gen_lazy_function\nself._logp.force_compute()\nFile \"LazyFunction.pyx\", line 256, in pymc.LazyFunction.LazyFunction.force_compute\nFile \"/sw/lib/python2.7/site-packages/pymc/distributions.py\", line 2918, in wrapper\nreturn f(value, *_kwds)\nFile \"/sw/lib/python2.7/site-packages/pymc/distributions.py\", line 2076, in negative_binomial_like\nif alpha > 1e10:\nValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()\n\nFAIL: test_simple (pymc.tests.test_convergence.test_raftery_lewis)\nTraceback (most recent call last):\nFile \"/sw/lib/python2.7/site-packages/pymc/tests/test_convergence.py\", line 72, in test_simple\nassert(0.8 < (float(nprec)/kmind) / nmin < 1.2)\nAssertionError\n\nRan 161 tests in 19.108s\nFAILED (SKIP=3, errors=1, failures=1)\nOut[2]: <nose.result.TextTestResult run=161 errors=1 failures=1>",
+            "closedAt": "2011-11-09T21:55:07Z",
+            "createdAt": "2011-11-09T17:15:45Z",
+            "id": "MDU6SXNzdWUyMTg4NDEz",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 67,
+            "state": "CLOSED",
+            "title": "pymc.test() error: test_gradients in test_simple (just installed + new user...)",
+            "updatedAt": "2011-11-09T21:55:08Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/67"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "OSX 10.6.8 + pymc built from source.\nPython 2.6.1 (r261:67515, Aug  2 2010, 20:10:18) \n[GCC 4.2.1 (Apple Inc. build 5646)] on darwin\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> import pymc\n>>> pymc.test()\nRunning unit tests for pymc.tests\nNumPy version 2.0.0.dev-b5cdaee\nNumPy is installed in /Library/Python/2.6/site-packages/numpy-2.0.0.dev_b5cdaee_20110710-py2.6-macosx-10.6-universal.egg/numpy\nPython version 2.6.1 (r261:67515, Aug  2 2010, 20:10:18) [GCC 4.2.1 (Apple Inc. build 5646)]\nnose version 1.1.2\n..E...............F..S.............S......S............................../Library/Python/2.6/site-packages/scipy-0.10.0.dev_20110710-py2.6-macosx-10.6-universal.egg/scipy/stats/distributions.py:1256: DeprecationWarning: putmask has been deprecated. Use copyto with 'where' as the mask instead\n  putmask(output,(1-cond0)*array(cond1,bool),self.badvalue)\n......../Library/Python/2.6/site-packages/scipy-0.10.0.dev_20110710-py2.6-macosx-10.6-universal.egg/scipy/stats/distributions.py:3246: DeprecationWarning: putmask has been deprecated. Use copyto with 'where' as the mask instead\n  putmask(logpdf,(c==1) & (x==1),0.0) # logpdf(c==1 & x==1) = 0; % 0^0 situation\n.......................................................E.E.SS.....................\n======================================================================\nERROR: test_autocorrelation (pymc.tests.test_MCMCSampler.test_MCMC)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_MCMCSampler.py\", line 49, in test_autocorrelation\n    autocorrelation(self.M.early_mean, path=DIR,  verbose=0)\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/Matplot.py\", line 326, in wrapper\n    f(data, name, *args, **kwargs)\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/Matplot.py\", line 691, in autocorrelation\n    setp(tlabels, 'fontsize', fontmap[rows/2])\nKeyError: 0.5\n\n======================================================================\nERROR: test_gradients (pymc.tests.test_gradients.test_gradients)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_gradients.py\", line 281, in test_gradients\n    check_gradients(norm2)\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_gradients.py\", line 107, in check_gradients\n    numeric_gradient = get_numeric_gradient(stochastics, s)\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_gradients.py\", line 129, in get_numeric_gradient\n    delta[unravel_index(i,i_shape)] += e\nValueError: dims must have at least one value\n\n======================================================================\nERROR: test_model (pymc.tests.test_gradients.test_gradients)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_gradients.py\", line 355, in test_model\n    check_gradients(model[0])\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_gradients.py\", line 107, in check_gradients\n    numeric_gradient = get_numeric_gradient(stochastics, s)\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_gradients.py\", line 129, in get_numeric_gradient\n    delta[unravel_index(i,i_shape)] += e\nValueError: dims must have at least one value\n\n======================================================================\nFAIL: test_simple (pymc.tests.test_convergence.test_raftery_lewis)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Library/Python/2.6/site-packages/pymc-2.2alpha-py2.6-macosx-10.6-universal.egg/pymc/tests/test_convergence.py\", line 72, in test_simple\n    assert(0.8 < (float(nprec)/kmind) / nmin < 1.2)\nAssertionError\n\n----------------------------------------------------------------------\nRan 161 tests in 19.573s\n\nFAILED (SKIP=5, errors=3, failures=1)\n<nose.result.TextTestResult run=161 errors=3 failures=1>\n>>>",
+            "closedAt": "2011-11-30T16:28:39Z",
+            "createdAt": "2011-10-31T20:41:12Z",
+            "id": "MDU6SXNzdWUyMTAxOTM1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 65,
+            "state": "CLOSED",
+            "title": "pymc.test() failures (just installed + new user...)",
+            "updatedAt": "2011-11-30T16:28:39Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/65"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear all,\nfirst of all, thanks for this great package, which I enjoy much.\nDo you use a fixed docstring format to generate API documentation? If\nI just did not find it, please give me a hint. If not, do you have any intention\nto use, e.g., the numpydoc format in the future?\nBest regards,\nStefan",
+            "closedAt": "2012-02-27T03:55:19Z",
+            "createdAt": "2011-10-27T19:34:50Z",
+            "id": "MDU6SXNzdWUyMDcxNzc5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 64,
+            "state": "CLOSED",
+            "title": "Docstring format",
+            "updatedAt": "2012-02-27T03:55:19Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/64"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am working in windows xp + python 2.7.\nthe pymc packages is downloaded from github direclty.\nhttps://github.com/downloads/pymc-devs/pymc/pymc-2.2alpha.win32-py2.7.exe\nbut I have a problem when run it.\nIt says:\n\" import flib\nImportError: DLL load failed: The specified module could not be found. \"\nAfter a check, I find that there are two dll file missing:\nLIBGCC_S_SJLJ-1.DLL  LIBGFORTRAN-3.DLL\nCould you please also add the two files in the packages ? Thank you very much.",
+            "closedAt": "2011-10-06T18:40:41Z",
+            "createdAt": "2011-10-06T15:29:14Z",
+            "id": "MDU6SXNzdWUxODM0ODE0",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 61,
+            "state": "CLOSED",
+            "title": "error when loading flib.pyd",
+            "updatedAt": "2012-10-18T00:14:42Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/61"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm not sure this is a pymc error, it could be an hdf5 error.\nI'm getting it when I'm using MCMC  with hdf5 on large models.\n(Is there any backend which is recommended for work on large models?)\nimport pymc as pm\nimport numpy as np\nn = 1500\na = np.empty(n, dtype=object)\nfor i in range(n):\n    a[i] = pm.Normal('a%d' % i,0,1)\n\nm = pm.MCMC(a, db='hdf5', dbname = 'test.db')\nm.sample(100)\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/tables/table.py:720: PerformanceWarning: table ``/chain3/PyMCsamples`` is exceeding the recommended maximum number of columns (512); be ready to see PyTables asking for *lots* of memory and possibly slow I/O\n  PerformanceWarning )\nHDF5-DIAG: Error detected in HDF5 (1.8.5-patch1) thread 0:\n  #000: H5Ddeprec.c line 169 in H5Dcreate1(): unable to create dataset\n    major: Dataset\n    minor: Unable to initialize object\n  #001: H5Dint.c line 431 in H5D_create_named(): unable to create and link to dataset\n    major: Dataset\n    minor: Unable to initialize object\n  #002: H5L.c line 1640 in H5L_link_object(): unable to create new link to object\n    major: Links\n    minor: Unable to initialize object\n  #003: H5L.c line 1863 in H5L_create_real(): can't insert link\n    major: Symbol table\n    minor: Unable to insert object\n  #004: H5Gtraverse.c line 964 in H5G_traverse(): internal path traversal failed\n    major: Symbol table\n    minor: Object not found\n  #005: H5Gtraverse.c line 759 in H5G_traverse_real(): traversal operator failed\n    major: Symbol table\n    minor: Callback failed\n  #006: H5L.c line 1686 in H5L_link_cb(): unable to create object\n    major: Object header\n    minor: Unable to initialize object\n  #007: H5O.c line 2976 in H5O_obj_create(): unable to open object\n    major: Object header\n    minor: Can't open object\n  #008: H5Doh.c line 295 in H5O_dset_create(): unable to create dataset\n    major: Dataset\n    minor: Unable to initialize object\n  #009: H5Dint.c line 1039 in H5D_create(): can't update the metadata cache\n    major: Dataset\n    minor: Unable to initialize object\n  #010: H5Dint.c line 806 in H5D_update_oh_info(): unable to update datatype header message\n    major: Dataset\n    minor: Unable to initialize object\n  #011: H5Omessage.c line 184 in H5O_msg_append_oh(): unable to create new message in header\n    major: Attribute\n    minor: Unable to insert object\n  #012: H5Omessage.c line 224 in H5O_msg_append_real(): unable to create new message\n    major: Object header\n    minor: No space available for allocation\n  #013: H5Omessage.c line 1925 in H5O_msg_alloc(): unable to allocate space for message\n    major: Object header\n    minor: Unable to initialize object\n  #014: H5Oalloc.c line 1135 in H5O_alloc(): object header message is too large\n    major: Object header\n    minor: Unable to initialize object\n---------------------------------------------------------------------------\nHDF5ExtError                              Traceback (most recent call last)\n\n/Users/isofer/Projects/Schizo/PySchizo/ in ()\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/MCMC.pyc in sample(self, iter, burn, thin, tune_interval, tune_throughout, save_interval, verbose, progress_bar)\n    215 \n    216         # Run sampler\n\n--> 217         Sampler.sample(self, iter, length, verbose)\n    218 \n    219     def _loop(self):\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/Model.pyc in sample(self, iter, length, verbose)\n    226         if length is None:\n    227             length = iter\n--> 228         self.db._initialize(self._funs_to_tally, length)\n    229 \n    230         # Put traces on objects\n\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/database/hdf5.pyc in _initialize(self, funs_to_tally, length)\n    406             title='PyMC samples', \\\n    407             filters=self.filter,\n--> 408             expectedrows=length)\n    409 \n    410         self._tables.append(table)\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/tables/file.py in createTable(self, where, name, description, title, filters, expectedrows, chunkshape, byteorder, createparents)\n    772                      description=description, title=title,\n    773                      filters=filters, expectedrows=expectedrows,\n--> 774                      chunkshape=chunkshape, byteorder=byteorder)\n    775 \n    776 \n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/tables/table.py in __init__(self, parentNode, name, description, title, filters, expectedrows, chunkshape, byteorder, _log)\n    590 \n    591         super(Table, self).__init__(parentNode, name, new, filters,\n--> 592                                     byteorder, _log)\n    593 \n    594 \n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/tables/leaf.py in __init__(self, parentNode, name, new, filters, byteorder, _log)\n    289         # is a lazy property that automatically handles their loading.\n\n    290 \n--> 291         super(Leaf, self).__init__(parentNode, name, _log)\n    292 \n    293 \n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/tables/node.py in __init__(self, parentNode, name, _log)\n    294             #   Create or open the node and get its object ID.\n\n    295             if new:\n--> 296                 self._v_objectID = self._g_create()\n    297             else:\n    298                 self._v_objectID = self._g_open()\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/tables/table.py in _g_create(self)\n    745         # set because it is needed for setting attributes afterwards.\n\n    746         self._v_objectID = self._createTable(\n--> 747             self._v_new_title, self.filters.complib or '', obversion )\n    748         self._v_recarray = None  # not useful anymore\n    749         self._rabyteorder = None # not useful anymore\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/tables/tableExtension.so in tables.tableExtension.Table._createTable (tables/tableExtension.c:2074)()\n\nHDF5ExtError: Problems creating the table",
+            "closedAt": "2012-03-28T01:01:31Z",
+            "createdAt": "2011-08-23T18:17:38Z",
+            "id": "MDU6SXNzdWUxNDY4NTQ1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 60,
+            "state": "CLOSED",
+            "title": "hdf5 fails to create table when running on a large model",
+            "updatedAt": "2012-03-28T01:01:31Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/60"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When running pymc.test() there are a lot of annoying figure pop-ups (seem to be empty). Can these be disabled?\nAlso I got an error and 4 failures, although I think there are other open tickets for these already:\nIn [2]: pymc.__version__\nOut[2]: '2.2grad'\n\nIn [3]: pymc.test()\nRunning unit tests for pymc.tests\nNumPy version 1.6.1\nNumPy is installed in /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy\nPython version 2.7.2 (default, Jul 23 2011, 13:25:29) [GCC 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2335.15.00)]\nnose version 1.0.0\n..................F.........................S....../opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/database/hdf5.py:448: UserWarning: \nError tallying K, will not try to tally it again this chain.\nDid you make all the samevariables and step methods tallyable\nas were tallyable last time you used the database file?\n\nError:\n\nTraceback (most recent call last):\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/database/hdf5.py\", line 438, in tally\n    self._traces[name].tally(chain)\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/database/hdf5.py\", line 57, in tally\n    self._vlarrays[chain].append(self._getfunc())\nIndexError: list index out of range\n\n  %s\"\"\"%(name, ''.join(traceback.format_exception(cls, inst, tb))))\nFFF.............................................................................................E...SS.....................\n======================================================================\nERROR: test_gradients (pymc.tests.test_gradients.test_gradients)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/tests/test_gradients.py\", line 340, in test_gradients\n    negative_binomial = NegativeBinomial('negative_binomial', mu = c, alpha = d )\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/distributions.py\", line 269, in __init__\n    Stochastic.__init__(self, logp=logp, random=random, logp_partial_gradients = logp_partial_gradients, dtype=dtype, **arg_dict_out)\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/PyMCObjects.py\", line 691, in __init__\n    verbose=verbose)\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/Node.py\", line 193, in __init__\n    Node.__init__(self, doc, name, parents, cache_depth, verbose=verbose)\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/Node.py\", line 111, in __init__\n    self.parents = parents\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/Node.py\", line 132, in _set_parents\n    self.gen_lazy_function()\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/PyMCObjects.py\", line 731, in gen_lazy_function\n    self._logp.force_compute()\n  File \"LazyFunction.pyx\", line 256, in pymc.LazyFunction.LazyFunction.force_compute\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/distributions.py\", line 2918, in wrapper\n    return f(value, **kwds)\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/distributions.py\", line 2076, in negative_binomial_like\n    if alpha > 1e10:\nValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()\n\n======================================================================\nFAIL: test_simple (pymc.tests.test_convergence.test_raftery_lewis)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/tests/test_convergence.py\", line 72, in test_simple\n    assert(0.8 < (float(nprec)/kmind) / nmin < 1.2)\nAssertionError\n\n======================================================================\nFAIL: test_simple_sample (pymc.tests.test_database.testHDF5Objects)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/tests/test_database.py\", line 287, in test_simple_sample\n    assert_array_equal(self.S.trace('K')[:].shape, (10,))\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/testing/utils.py\", line 707, in assert_array_equal\n    verbose=verbose, header='Arrays are not equal')\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/testing/utils.py\", line 636, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not equal\n\n(mismatch 100.0%)\n x: array([0])\n y: array([10])\n\n======================================================================\nFAIL: test_xload (pymc.tests.test_database.testHDF5Objects)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/tests/test_database.py\", line 300, in test_xload\n    assert_array_equal(db.K().shape, (10,))\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/testing/utils.py\", line 707, in assert_array_equal\n    verbose=verbose, header='Arrays are not equal')\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/testing/utils.py\", line 636, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not equal\n\n(mismatch 100.0%)\n x: array([0])\n y: array([10])\n\n======================================================================\nFAIL: test_yconnect_and_sample (pymc.tests.test_database.testHDF5Objects)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pymc/tests/test_database.py\", line 311, in test_yconnect_and_sample\n    assert_array_equal(db.K(chain=1).shape, (10,))\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/testing/utils.py\", line 707, in assert_array_equal\n    verbose=verbose, header='Arrays are not equal')\n  File \"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/testing/utils.py\", line 636, in assert_array_compare\n    raise AssertionError(msg)\nAssertionError: \nArrays are not equal\n\n(mismatch 100.0%)\n x: array([0])\n y: array([10])\n\n----------------------------------------------------------------------\nRan 174 tests in 33.907s\n\nFAILED (SKIP=3, errors=1, failures=4)\nOut[3]: <nose.result.TextTestResult run=174 errors=1 failures=4>",
+            "closedAt": "2011-08-22T14:34:10Z",
+            "createdAt": "2011-08-22T11:11:26Z",
+            "id": "MDU6SXNzdWUxNDU3MDI2",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 59,
+            "state": "CLOSED",
+            "title": "Disable figure pop-ups while running tests?",
+            "updatedAt": "2011-08-22T14:34:10Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/59"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Two identical failures occur during calls to check_gradients in the test_gradients unit tests:\nTraceback (most recent call last):\n  File \"/Users/fonnescj/Code/pymc/pymc/tests/test_gradients.py\", line 286, in test_gradients\n    check_gradients(norm2)\n  File \"/Users/fonnescj/Code/pymc/pymc/tests/test_gradients.py\", line 107, in check_gradients\n    numeric_gradient = get_numeric_gradient(stochastics, s)\n  File \"/Users/fonnescj/Code/pymc/pymc/tests/test_gradients.py\", line 134, in get_numeric_gradient\n    delta[unravel_index(i,i_shape or (1,))] += e\nIndexError: 0-d arrays can only use a single () or a list of newaxes (and a single ...) as an index\n\nAlso occurs on line 360 of test_gradients.",
+            "closedAt": "2012-03-28T00:58:50Z",
+            "createdAt": "2011-08-16T02:46:39Z",
+            "id": "MDU6SXNzdWUxNDEyMjQy",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 58,
+            "state": "CLOSED",
+            "title": "IndexError in test_gradients",
+            "updatedAt": "2012-03-28T00:58:50Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/58"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The unit tests consistently fail testHDF5Objects in test_database. It appears to choke on updating the K node when sampling the second chain, as it refuses to tally:\nUserWarning:             ] Iterations: 0\nError tallying K, will not try to tally it again this chain.\nDid you make all the samevariables and step methods tallyable\nas were tallyable last time you used the database file?\n\nThis subsequently causes the chain length assertion tests to fail.\nRunning on OS X 10.7 with HDF5 1.8.5.",
+            "closedAt": "2012-02-27T03:57:05Z",
+            "createdAt": "2011-08-16T02:42:51Z",
+            "id": "MDU6SXNzdWUxNDEyMjM2",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 57,
+            "state": "CLOSED",
+            "title": "HDF5 failures on testHDF5Objects",
+            "updatedAt": "2012-02-27T03:57:05Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/57"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I spent an hour today trying to understand why my simple linear model does not converge to the true values.\n#create data for a simple linear model\nk = 4\nn = 100\nsigma = 0.3;\n#create beta\ntrue_beta = np.array([1, 0.5, -2, 1.7])\n#create x martix\nx = np.random.normal(0,1,size= (n,k))\n#data = x*beta + noise\ndata = dot(x,true_beta) + np.random.randn(n)*sigma\n\n#create linear model\nbeta = pm.Normal('beta', 0, 100, size=k)\nxbeta = pm.Lambda('xbeta', lambda x=x,beta=beta:dot(x,beta))\ntau = pm.Uniform('tau', 0,1000, value=0.2)\ny = pm.Normal(xbeta, tau, observed=True,value=data)  ##!!!!!!!## my bug is here\n\n#MCMC\nmc = pm.MCMC([xbeta, tau, y, beta])\nmc.sample(10000,5000)\n\nthe model runs, and even converges, but not to the true values. the reason is that the first argument that was passed to pm.Normal when the y node was created is xbeta and not the node's name.\nI think it would be extermly helpful to add argument checking when a node is initialize to prevent users from creating an incorrect model.",
+            "closedAt": "2011-08-15T18:39:01Z",
+            "createdAt": "2011-08-12T14:59:48Z",
+            "id": "MDU6SXNzdWUxMzk1Mjk4",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 55,
+            "state": "CLOSED",
+            "title": "Proposal: argument check when creating a Node ",
+            "updatedAt": "2011-08-15T18:39:01Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/55"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Has anyone, ever, used this backend other than me?",
+            "closedAt": "2011-08-16T03:09:32Z",
+            "createdAt": "2011-08-09T02:09:42Z",
+            "id": "MDU6SXNzdWUxMzY5Njk5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 54,
+            "state": "CLOSED",
+            "title": "Drop MySQL support?",
+            "updatedAt": "2011-08-16T03:09:32Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/54"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently, Variables have a trace attribute that is a flag before sampling, then becomes a reference to an actual trace from the db backend. These should be different attributes.",
+            "closedAt": "2012-02-24T21:24:37Z",
+            "createdAt": "2011-08-08T19:22:23Z",
+            "id": "MDU6SXNzdWUxMzY3NTA0",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 53,
+            "state": "CLOSED",
+            "title": "Separate trace from trace flag",
+            "updatedAt": "2012-02-24T21:24:38Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/53"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I cannot compute stats on a model that was loaded from a db although the model was loaded successfully.\nHere is the code I used:\ncreating MCMC model\nimport pymc as pm\nx = pm.Normal('x',0,1)\nmc = pm.MCMC([x],db='pickle', dbname='testing.db')\nsample\nmc.sample(1000)\nprint stats (no problem here)\nprint mc.stats()\nclose the db\nmc.db.close()\nnow, let's load the db\ndb = pm.database.pickle.load('testing.db')\ncreate a new model\nx = pm.Normal('x',0,1)\nmc2 = pm.MCMC([x], db=db)\ncheck that the trace was loaded\nprint len(mc2.trace('x')[:])\ntry to compute stats (which fails)\nprint mc2.stats()\nhere is the output that I got:\nIn [31]: import pymc as pm\nIn [32]: x = pm.Normal('x',0,1)\nIn [33]: mc = pm.MCMC([x],db='pickle', dbname='testing.db')\nIn [34]: mc.sample(1000)\nSampling: 100% [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000] Iterations: 1000\nIn [35]: print mc.stats()\n{'x': {'95% HPD interval': array([-1.88467957,  1.94281242]), 'n': 1000, 'quantiles': {2.5: -1.8828947855723701, 25: -0.68774516402745267, 50: -0.049887820880991689, 75: 0.665653263476219, 97.5: 1.9941128356195819}, 'standard deviation': 0.99104350597342195, 'mc error': 0.032035926857117064, 'mean': -0.030453765602493965}}\nIn [36]: mc.db.close()\nIn [37]: db = pm.database.pickle.load('testing.db')\nIn [38]: x = pm.Normal('x',0,1)\nIn [39]: mc2 = pm.MCMC([x], db=db)\nIn [40]: print len(mc2.trace('x')[:])\n1000\nIn [41]: print mc2.stats()\nCould not generate output statistics for x\n{'x': None}",
+            "closedAt": "2011-08-08T20:31:04Z",
+            "createdAt": "2011-08-06T18:35:14Z",
+            "id": "MDU6SXNzdWUxMzU4NTg2",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 52,
+            "state": "CLOSED",
+            "title": "cannot compute stats on a model that was loaded from a db",
+            "updatedAt": "2011-08-08T20:40:55Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/52"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The GP examples in the source do not appear in the examples file in the installed code for the pymc package. (All the other examples do seem to be there, though.)",
+            "closedAt": "2011-08-09T01:54:04Z",
+            "createdAt": "2011-07-11T17:19:08Z",
+            "id": "MDU6SXNzdWUxMjAyODky",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 50,
+            "state": "CLOSED",
+            "title": "GP Examples not in installed package code",
+            "updatedAt": "2011-08-09T01:54:04Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/50"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nclearly it would be nice if multiple chains could be run in parallel (using multiprocessing and/or mpi4py). I actually already hacked something together which does this, but it wasn't very clean. I would volunteer to implement this feature if there is enough interest. First, however, I thought I'd ask for some pointers on what the best implementation would be.\nOne thing I think is unavoidable (although kinda ugly): writing the traces of individual runs to separate db files (best backend for this?) and then in a next step reloading them and adding them into one trace (with different individual chains).\nAlso, I think this would have to be a subclass of MCMC (ParallelMCMC?) that behind the scene creates multiple MCMC instances.\nFeedback?\n-Thomas",
+            "closedAt": "2013-04-28T15:37:44Z",
+            "createdAt": "2011-06-27T16:27:05Z",
+            "id": "MDU6SXNzdWUxMTIzMzEz",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 48,
+            "state": "CLOSED",
+            "title": "Proposal: Add multiprocessor/MPI support",
+            "updatedAt": "2013-04-28T15:37:44Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/48"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI found it very useful to just use the MAP for complex models during model exploration. However, I'm having the problem that fmin sometimes explores parameter spaces outside the support of my distributions (Uniform). In this case, rather than return -Inf, they raise an exception. I'm not sure what the best way would be to fix it, but in this case I think this behavior makes no sense, so either MAP should ignore out-side-of-support-errors or the nodes should have a flag not to raise that error.\nThanks,\nThomas",
+            "closedAt": "2011-06-30T19:04:03Z",
+            "createdAt": "2011-06-24T17:15:00Z",
+            "id": "MDU6SXNzdWUxMTExNDAw",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 47,
+            "state": "CLOSED",
+            "title": "MAP's fmin is unconstrained and breaks nodes by walking outside the support.",
+            "updatedAt": "2011-06-30T19:04:03Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/47"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "x = pm.Normal('x',0,1,size=5)\n@pm.deterministic\ndef y(x=x):\nreturn x[2]\nm = pm.MCMC([y,x])\nm.sample(100,0)\nm.sample(100,0)\nm.sample(100,0)\npm.diagnostics.gelman_rubin(m)\n\nI ran this code and got different values for y and for x[2].\nfor instance,\n{'x': [0.96274904628327884,\n1.0617412110342699,\n0.94988095858687061,\n0.94650618423398925,\n1.0581700972182297],\n'y': 1.0180891431696331}",
+            "closedAt": "2011-07-01T14:45:52Z",
+            "createdAt": "2011-06-23T21:34:37Z",
+            "id": "MDU6SXNzdWUxMTA2OTM1",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 46,
+            "state": "CLOSED",
+            "title": "gelman_rubin returns wrong values",
+            "updatedAt": "2011-07-01T14:45:52Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/46"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello\nFirstly -- fantastic package. I just starting using it. Keep it up.\nI got stuck earlier trying to figure out why my priors weren't behaving as expected. Then I realised that Exponential (and exponential_like) are misdocument. Half of this problem has been corrected between the 2.1beta and the current commit, but the docstrings are still incorrect.\nSo part of Exponential's docstring reads:\n\nE = Exponential(name, beta, value=None, observed=False, size=1, trace=True, rseed=True, doc=None, verbose=None, debug=False)\nStochastic variable with Exponential distribution.\nParents are: beta.\n.. math:: f(x \\mid \\beta) = \\beta e^{-\\beta x}\n:Parameters:\n- x : x > 0\n- beta : Scale parameter (beta > 0).\n.. note::\n- :math:E(X) = \\beta\n- :math:Var(X) = \\beta^2\n\nIn commit 5dce4d9, the math form was corrected from the parameterisation\nf(x \\mid \\beta) = \\frac{1}{\\beta}e^{-x/\\beta}\nwhereas the current form reflects what's actually being calculated. However the expectations need to be changed as well -- in the current form, E(X) = 1/beta, and Var(X) = 1/beta^2.\nEven still, if this is the preferred form (giving 1/E(X) as the argument, rather than E(X)), then to be consistent with the standard literature, the parameter should be called \\lambda and not \\beta:\nhttp://itl.nist.gov/div898/handbook/eda/section3/eda3667.htm\nhttp://docs.scipy.org/doc/numpy/reference/generated/numpy.random.exponential.html\nhttp://mathworld.wolfram.com/ExponentialDistribution.html\nIt seems to be consensus that one parameterises the exponential distribution either as\nf(x \\mid \\beta) = \\frac{1}{\\beta}e^{-x/\\beta}\nf(x \\mid \\beta) = \\lambda e^{-\\lambda x}\nThis was my stumbling block...",
+            "closedAt": "2011-06-23T09:57:15Z",
+            "createdAt": "2011-06-22T21:50:24Z",
+            "id": "MDU6SXNzdWUxMTAxMDM2",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 45,
+            "state": "CLOSED",
+            "title": "docstring incorrect for Exponential / exponential_like",
+            "updatedAt": "2011-06-23T09:57:15Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/45"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\ncurrently, there is no way to print the stats of a loaded database object even though this would be trivial. As it is now, stats() is a method of Node which operates on it's trace instance. If the stats method would be implemented in the Trace class itself and node would just be deferring the call, users could have both, stats() on nodes and stats() from loaded database objects.\nI would implement that but wanted to make sure that this wouldn't break anything. I think I'd move stats() in base.Trace. Any input?\n-Thomas",
+            "closedAt": "2011-06-09T23:03:59Z",
+            "createdAt": "2011-06-09T15:24:00Z",
+            "id": "MDU6SXNzdWUxMDMwNzY5",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 43,
+            "state": "CLOSED",
+            "title": "Suggestion: move stats() to Trace or Database",
+            "updatedAt": "2011-06-09T23:03:59Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/43"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "A couple of windows users have reported receiving the \"'You seem to be importing PyMC from inside its source tree\" error, despite being outside the source tree. Rather, it appears to be a problem with their gcc compiler not building Container_values. I wonder if there is a better test for the import from source tree issue that does not mask other unrelated problems?\ntry:\n    import Container_values\n    del Container_values\nexcept ImportError:\n    raise ImportError, 'You seem to be importing PyMC from inside its source tree. Please change to another directory and try again.'",
+            "closedAt": "2011-06-09T22:57:24Z",
+            "createdAt": "2011-06-08T13:50:56Z",
+            "id": "MDU6SXNzdWUxMDI0MDAx",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 42,
+            "state": "CLOSED",
+            "title": "Test for importing from source tree masks compiler issues on Windows",
+            "updatedAt": "2011-06-09T22:57:24Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/42"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This line: https://github.com/pymc-devs/pymc/blob/master/pymc/database/hdf5.py#L416 causes the following error if an observed stochastic has length of around 10k.\nHDF5-DIAG: Error detected in HDF5 (1.8.5-patch1) thread 0:\n#000: H5Adeprec.c line 165 in H5Acreate1(): unable to create attribute\nmajor: Attribute\nminor: Unable to initialize object\n#1: H5A.c line 492 in H5A_create(): unable to create attribute in object header\nmajor: Attribute\nminor: Unable to insert object\n#2: H5Oattribute.c line 346 in H5O_attr_create(): unable to create new attribute in header\nmajor: Attribute\nminor: Unable to insert object\n#3: H5Omessage.c line 224 in H5O_msg_append_real(): unable to create new message\nmajor: Object header\nminor: No space available for allocation\n#4: H5Omessage.c line 1925 in H5O_msg_alloc(): unable to allocate space for message\nmajor: Object header\nminor: Unable to initialize object\n#5: H5Oalloc.c line 1135 in H5O_alloc(): object header message is too large\nmajor: Object header\nminor: Unable to initialize object\nHDF5-DIAG: Error detected in HDF5 (1.8.5-patch1) thread 0:\n#000: H5A.c line 916 in H5Awrite(): not an attribute\nmajor: Invalid arguments to routine\nminor: Inappropriate type",
+            "closedAt": "2013-09-16T02:22:42Z",
+            "createdAt": "2011-05-17T12:41:29Z",
+            "id": "MDU6SXNzdWU5MTYxNzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 41,
+            "state": "CLOSED",
+            "title": "Large data vectors break hdf5",
+            "updatedAt": "2013-09-16T02:22:42Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/41"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Github has organizations now. Would we be OK with making pymc-devs an organization?",
+            "closedAt": "2011-05-17T14:25:16Z",
+            "createdAt": "2011-05-17T09:55:51Z",
+            "id": "MDU6SXNzdWU5MTU1Nzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 40,
+            "state": "CLOSED",
+            "title": "Make the pymc-devs account into an organization?",
+            "updatedAt": "2011-05-17T14:25:16Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/40"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nwhen trying to install pymc on Ubuntu 10.04 today I ran into some trouble. I will attach the error message in a moment (it's quite long).\nThe issue was that I needed the python2.6-dev package, after that everything ran fine. Maybe there is a way to include this in the requirements for pymc, if not then I think it should be mentioned in the installation notes for ubuntu (I see that it says that it needs python 2.6, but I needed 30 minutes to figure out that it meant that I need to install python2.6-dev).\nThanks for all the great work!\nPaul",
+            "closedAt": "2011-06-23T13:31:46Z",
+            "createdAt": "2011-05-10T09:55:38Z",
+            "id": "MDU6SXNzdWU4NzU2ODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 39,
+            "state": "CLOSED",
+            "title": "easy_install fails on Ubuntu 10.04, python2.6-dev required but not checked",
+            "updatedAt": "2011-06-23T13:31:46Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/39"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello guys, I really need your help on this one, pymc is critical for my current work, I understand you are busy with other issues but please give a quick read to this one (it might not be so difficult to solve).\nI have recently upgraded to Fedora 14 (Python 2.7 (r27:82500, Sep 16 2010, 18:02:00)).     Before that,  I was using  Fedora 12 (python 2.6.2).    After the upgrade I am getting the following error all the time, when trying to run the same code as before:\nself._gp = _GP.observe( self._mean, self._cov, obs_mesh = self._fiber, obs_vals=numpy.ones( len(self._fiber)), obs_V = numpy.zeros(len(self._fiber)  )+self._epsilon )\nFile \"/user/alvsanch/home/bin/lib64/python2.7/site-packages/pymc/gp/GPutils.py\", line 288, in observe\nraise ValueError, \"These data seem extremely improbable given your GP prior. \\n Suggestions: decrease observation precision, or adjust the covariance to \\n allow the function to be less smooth.\"\nI am currently using 'pymc-2.1beta' (same version i was using before the upgrade) and I have also tried  with   'pymc-devs-pymc-jss-gp-15-gca77b7a'  , but the same ValueError is raised.    I am pretty sure the code is ok, since it is the same i was running before with no problems (and i can still run it in other computers with python 2.6)...  Could it be that python 2.7 is not compatible with   pymc???\nPlease, any help would be greatly appreciated.\n*The code is a bit long,  I can provide it on request\n*Additional information... pymc.test()\nPython 2.7 (r27:82500, Sep 16 2010, 18:02:00)\n[GCC 4.5.1 20100907 (Red Hat 4.5.1-3)] on linux2\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n\n\n\nimport pymc\npymc.test()>>> pymc.test()\nRunning unit tests for pymc.tests\nNumPy version 1.6.0rc2\nNumPy is installed in /user/alvsanch/home/bin/lib64/python2.7/site-packages/numpy\nPython version 2.7 (r27:82500, Sep 16 2010, 18:02:00) [GCC 4.5.1 20100907 (Red Hat 4.5.1-3)]\nnose version 0.11.3\n.....................S.............S......S.............................................................................................E.E.SS.....................\nERROR: test_gradients (pymc.tests.test_gradients.test_gradients)\nTraceback (most recent call last):\nFile \"/user/alvsanch/home/bin/lib64/python2.7/site-packages/pymc/tests/test_gradients.py\", line 281, in test_gradients\ncheck_gradients(norm2)\nFile \"/user/alvsanch/home/bin/lib64/python2.7/site-packages/pymc/tests/test_gradients.py\", line 107, in check_gradients\nnumeric_gradient = get_numeric_gradient(stochastics, s)\nFile \"/user/alvsanch/home/bin/lib64/python2.7/site-packages/pymc/tests/test_gradients.py\", line 129, in get_numeric_gradient\ndelta[unravel_index(i,i_shape)] += e\nValueError: dims must have at least one value\n\n\n\n\nERROR: test_model (pymc.tests.test_gradients.test_gradients)\nTraceback (most recent call last):\nFile \"/user/alvsanch/home/bin/lib64/python2.7/site-packages/pymc/tests/test_gradients.py\", line 355, in test_model\ncheck_gradients(model[0])\nFile \"/user/alvsanch/home/bin/lib64/python2.7/site-packages/pymc/tests/test_gradients.py\", line 107, in check_gradients\nnumeric_gradient = get_numeric_gradient(stochastics, s)\nFile \"/user/alvsanch/home/bin/lib64/python2.7/site-packages/pymc/tests/test_gradients.py\", line 129, in get_numeric_gradient\ndelta[unravel_index(i,i_shape)] += e\nValueError: dims must have at least one value\n\nRan 161 tests in 19.607s\nFAILED (SKIP=5, errors=2)\n<nose.result.TextTestResult run=161 errors=2 failures=0>",
+            "closedAt": "2011-05-05T10:17:43Z",
+            "createdAt": "2011-05-04T11:05:20Z",
+            "id": "MDU6SXNzdWU4NDgxMDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 38,
+            "state": "CLOSED",
+            "title": "GPutils.py,l288 in observe: \"raise ValueError, \"These data seem extremely improbable..\"",
+            "updatedAt": "2011-05-05T10:17:43Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/38"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Enthought Python 7, which includes Python 2.7 and HDF5, runs into issues with the HDF5 backend. See this thread on the Google Group mailing list for a failure case.",
+            "closedAt": "2011-08-16T02:38:45Z",
+            "createdAt": "2011-04-22T01:30:26Z",
+            "id": "MDU6SXNzdWU4MDEwNzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 36,
+            "state": "CLOSED",
+            "title": "HDF5 fails with Enthought Python",
+            "updatedAt": "2011-08-16T02:38:45Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/36"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "If a model has been initialized and sampled from, it is apparently not possible to change the StepMethod for any of its stochastics. use_step_method() works fine before sampling has occurred, but if a subsequent chain is sampled after changing the StepMethod, it uses the original StepMethod that it was initialized with.\nThis post describes an example: http://groups.google.com/group/pymc/browse_thread/thread/2e7a7e3be91bc90f",
+            "closedAt": "2011-05-05T10:24:07Z",
+            "createdAt": "2011-04-19T13:11:30Z",
+            "id": "MDU6SXNzdWU3ODg1MDI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 35,
+            "state": "CLOSED",
+            "title": "Cannot change StepMethod after sampling",
+            "updatedAt": "2011-05-05T10:24:07Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/35"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "x = pm.Normal('x',0,1)\ny = pm.Normal('y',0,1)\nz = pm.MCMC([x,y])\nz.sample(1000)\nz.use_step_method(pm.AdaptiveMetropolis, [x,y])\nLinAlgError                               Traceback (most recent call last)\n\n/Users/imrisofer/<ipython console> in <module>()\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/MCMC.pyc in use_step_method(self, step_method_class, *args, **kwds)\n     88         \"\"\"\n     89 \n---> 90         new_method = step_method_class(*args, **kwds)\n     91         if self.verbose > 1:\n     92             print 'Using step method %s. Stochastics: ' % step_method_class.__name__\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/StepMethods.pyc in __init__(self, stochastic, cov, delay, interval, greedy, shrink_if_necessary, scales, verbose, tally)\n    979                 self.C = self.cov_from_value(100.)\n    980 \n--> 981         self.updateproposal_sd()\n    982 \n    983         # Keep track of the internal trace length\n\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/StepMethods.pyc in updateproposal_sd(self)\n   1179     def updateproposal_sd(self):\n   1180         \"\"\"Compute the Cholesky decomposition of self.C.\"\"\"\n-> 1181         self.proposal_sd = np.linalg.cholesky(self.C)\n   1182 \n   1183     def recursive_cov(self, cov, length, mean, chain, scaling=1, epsilon=0):\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/numpy/linalg/linalg.pyc in cholesky(a)\n    515     \"\"\"\n    516     a, wrap = _makearray(a)\n--> 517     _assertRank2(a)\n    518     _assertSquareness(a)\n    519     t, result_t = _commonType(a)\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/numpy/linalg/linalg.pyc in _assertRank2(*arrays)\n    153         if len(a.shape) != 2:\n    154             raise LinAlgError, '%d-dimensional array given. Array must be \\    \n--> 155             two-dimensional' % len(a.shape)\n    156 \n    157 def _assertSquareness(*arrays):\n\nLinAlgError: 0-dimensional array given. Array must be             two-dimensional\n\nI think the problem is in cov_from_trace\nMc Os X 10.6.7 pymc 2.2grad, python 2.7.1",
+            "closedAt": "2011-04-19T13:29:33Z",
+            "createdAt": "2011-04-15T21:12:50Z",
+            "id": "MDU6SXNzdWU3NzYzOTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 34,
+            "state": "CLOSED",
+            "title": "adaptive metropolis raise an error (cov_from_trace maybe??)",
+            "updatedAt": "2011-04-19T13:46:29Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/34"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The progress bar is not designed to work well with other feedback from the model. Since isample() is interactive, it does not play well with the progress bar, so the latter should be disabled.",
+            "closedAt": "2011-06-30T19:21:11Z",
+            "createdAt": "2011-04-13T03:25:01Z",
+            "id": "MDU6SXNzdWU3NjI1NjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 33,
+            "state": "CLOSED",
+            "title": "Disable progress bar in isample",
+            "updatedAt": "2011-06-30T19:21:11Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/33"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "(the markdown of the following code misses a few lines)\nI'm running the following:\nfrom pymc import *\nfrom numpy import *\nfrom numpy.random import rand\n\n\ndef bla():\n\n    t = 50\n    data = rand(t)\n    e = 2\n    k = 5;\n    R = eye(k);\n    D = rand(t,3)\n    Xdm = rand(t,k,e)\n\n    h = MvNormal('h', zeros(k), eye(k))\n\n    alpha = Uniform('alpha', np.ones(e) * 0, np.ones(e) * 100)\n\n    gamma = MvNormal('gamma', zeros(3), eye(3))\n\n    @deterministic\n    def drift(D = D, gamma=gamma):\n        return dot(D, gamma)\n\n    sigma = InverseGamma('sigma', alpha=4, beta=4, value=10)\n\n    @deterministic\n    def all_alphaXh(Xdm=Xdm, h=h, alpha=alpha, t=t):\n        signal = np.zeros(t)\n        for i in range(len(alpha)):\n            signal += np.dot(Xdm[:,:,i], h) * alpha[i]\n\n        return  signal;\n\n    y = Normal('y', all_alphaXh + drift, 1/sigma, value=data, observed=True)\n    return { 'h':h, 'alpha':alpha, 'gamma':gamma, 'sigma':sigma,\n             'y':y, 'drift':drift, 'all_alphaXh':all_alphaXh}\n\nm = MCMC(bla())\n\n\n\nan when I try to access m.step_method_dict I get the following error\n\nIn [3]: m.step_method_dict\nOut[3]: ---------------------------------------------------------------------------\nValueError                                Traceback (most recent call last)\n\n/Users/imrisofer/<ipython console> in <module>()\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/IPython/Prompts.pyc in __call__(self, arg)\n    550 \n    551             # and now call a possibly user-defined print mechanism\n\n--> 552             manipulated_val = self.display(arg)\n    553 \n    554             # user display hooks can change the variable to be stored in\n\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/IPython/Prompts.pyc in _display(self, arg)\n    576             return IPython.generics.result_display(arg)\n    577         except TryNext:\n--> 578             return self.shell.hooks.result_display(arg)\n    579 \n    580     # Assign the default display method:\n\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/IPython/hooks.pyc in __call__(self, *args, **kw)\n    139             #print \"prio\",prio,\"cmd\",cmd #dbg\n\n    140             try:\n--> 141                 ret = cmd(*args, **kw)\n    142                 return ret\n    143             except ipapi.TryNext, exc:\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/IPython/hooks.pyc in result_display(self, arg)\n    169 \n    170     if self.rc.pprint:\n--> 171         out = pformat(arg)\n    172         if '\\n' in out:\n    173             # So that multi-line strings line up with the left column of\n\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/pprint.pyc in pformat(self, object)\n    117     def pformat(self, object):\n    118         sio = _StringIO()\n--> 119         self._format(object, sio, 0, 0, {}, 0)\n    120         return sio.getvalue()\n    121 \n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/pprint.pyc in _format(self, object, stream, indent, allowance, context, level)\n    135             self._readable = False\n    136             return\n--> 137         rep = self._repr(object, context, level - 1)\n    138         typ = _type(object)\n    139         sepLines = _len(rep) > (self._width - 1 - indent - allowance)\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/pprint.pyc in _repr(self, object, context, level)\n    228     def _repr(self, object, context, level):\n    229         repr, readable, recursive = self.format(object, context.copy(),\n--> 230                                                 self._depth, level)\n    231         if not readable:\n    232             self._readable = False\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/pprint.pyc in format(self, object, context, maxlevels, level)\n    240         and whether the object represents a recursive construct.\n    241         \"\"\"\n--> 242         return _safe_repr(object, context, maxlevels, level)\n    243 \n    244 \n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/pprint.pyc in _safe_repr(object, context, maxlevels, level)\n    282         level += 1\n    283         saferepr = _safe_repr\n--> 284         for k, v in _sorted(object.items()):\n    285             krepr, kreadable, krecur = saferepr(k, context, maxlevels, level)\n    286             vrepr, vreadable, vrecur = saferepr(v, context, maxlevels, level)\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/pprint.pyc in _sorted(iterable)\n     77             warnings.filterwarnings(\"ignore\", \"comparing unequal types \"\n     78                                     \"not supported\", DeprecationWarning)\n---> 79         return sorted(iterable)\n     80 \n     81 class PrettyPrinter:\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/CommonDeterministics.pyc in new_method(self, other)\n    631                                 {'self':self, 'other':other, 'op':'__'+op_name+'__'},\n    632                                 trace=False,\n--> 633                                 plot=False)\n    634     # Convert the function into a method for klass.\n\n    635     new_method.__name__ = '__'+op_name+'__'\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/PyMCObjects.pyc in __init__(self, eval, doc, name, parents, dtype, trace, cache_depth, plot, verbose, jacobians, jacobian_formats)\n    396                         trace=trace,\n    397                         plot=plot,\n--> 398                         verbose=verbose)\n    399 \n    400         # self._value.force_compute()\n\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/Node.pyc in __init__(self, doc, name, parents, cache_depth, trace, dtype, plot, verbose)\n    218         self.extended_children = set()\n    219 \n--> 220         Node.__init__(self, doc, name, parents, cache_depth, verbose=verbose)\n    221 \n    222         if self.dtype is None:\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/Node.pyc in __init__(self, doc, name, parents, cache_depth, verbose)\n    136 \n    137         # Initialize\n\n--> 138         self.parents = parents\n    139 \n    140     def _get_parents(self):\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/Node.pyc in _set_parents(self, new_parents)\n    157 \n    158         # Get new lazy function\n\n--> 159         self.gen_lazy_function()\n    160 \n    161     parents = property(_get_parents, _set_parents, doc=\"Self's parents: the variables referred to in self's declaration.\")\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/PyMCObjects.pyc in gen_lazy_function(self)\n    410                                     cache_depth = self._cache_depth)\n    411 \n--> 412         self._value.force_compute()\n    413 \n    414         self._jacobians = {}\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/LazyFunction.so in pymc.LazyFunction.LazyFunction.force_compute()\n\n/Library/Frameworks/EPD64.framework/Versions/7.0/lib/python2.7/site-packages/pymc/CommonDeterministics.pyc in eval_fun(self, other, op)\n    625         # This code creates a Deterministic object.\n\n    626         def eval_fun(self, other, op):\n--> 627             return getattr(self, op)(other)\n    628         return pm.Deterministic(eval_fun,\n    629                                 'A Deterministic returning the value of %s(%s,%s)'%(op_name,self.__name__, str(other)),\n\nValueError: shape mismatch: objects cannot be broadcast to a single shape\n\nin order to reproduce this bug one need to type m.step_method_dict in the interpreter. execute the same command from a file does not raise an error.\nusing Mac OS 10.6.7, pymc 2.2grad, python 2.7.1",
+            "closedAt": "2011-08-16T03:16:00Z",
+            "createdAt": "2011-04-12T13:10:46Z",
+            "id": "MDU6SXNzdWU3NTkxNDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 32,
+            "state": "CLOSED",
+            "title": "step_method_dict raise an error",
+            "updatedAt": "2014-03-26T19:31:51Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/32"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am just about finished this; see the docrev branch for the revised docs. I will merge this with the master branch when it has been completed and proofed (proofreading volunteers welcome!).",
+            "closedAt": "2012-02-24T02:44:53Z",
+            "createdAt": "2011-04-12T02:38:37Z",
+            "id": "MDU6SXNzdWU3NTc0NTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancements"
+                },
+                {
+                  "name": "docs"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 31,
+            "state": "CLOSED",
+            "title": "Port docs to Sphinx",
+            "updatedAt": "2012-02-24T02:44:53Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/31"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I would like to prepare a launch of version 2.2 over the next few weeks. This is a call to nominate issues that users and devs feel should be taken care of prior to this release. If your pet issue is not on the list already, feel free to add it. Keep in mind that this release is primarily intended to be for maintenance, as we can no longer recommend version 2.1 to users.",
+            "closedAt": "2011-08-09T01:40:27Z",
+            "createdAt": "2011-04-12T02:35:10Z",
+            "id": "MDU6SXNzdWU3NTc0NDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 30,
+            "state": "CLOSED",
+            "title": "Nominate issues for 2.2 release",
+            "updatedAt": "2011-08-09T01:40:27Z",
+            "url": "https://github.com/pymc-devs/pymc/issues/30"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxMS0wNC0xMlQwMjozNToxMFrOAAuOxw==",
+          "hasNextPage": true
+        },
+        "totalCount": 3223
+      }
+    }
+  }
+}

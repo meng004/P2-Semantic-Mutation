@@ -1,0 +1,28 @@
+{
+  "batch": 2,
+  "buggy_sha": "fda55ad25909c6c34eca104c6fc2e9b4acd20ad9",
+  "dual_arm_contrast": false,
+  "failure_detail": "PLATFORM_GATE:arch  -  defect is riscv64-zvl256b-specific; host is x86_64 and missing tools: ['qemu-riscv64-static', 'qemu-riscv64', 'riscv64-linux-gnu-gcc', 'riscv64-linux-gnu-gcc-14']. No case substitution.",
+  "failure_stage": "PLATFORM_GATE:arch",
+  "fixed_sha": "70a5a5374743ec985ccd38fe81a442951ba76e07",
+  "issue_url": "https://github.com/OpenMathLib/OpenBLAS/issues/5811",
+  "neutral_id": "EXT-openblas-01",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "julia": "julia version 1.10.5",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "uname": "Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Wed Jul 22 16:29:09 UTC 2026 x86_64 x86_64"
+  },
+  "proposed_crit_dual_arm_repro": "REPRO_FAILED",
+  "repo": "OpenMathLib/OpenBLAS",
+  "route": "platform-gate",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {}
+}

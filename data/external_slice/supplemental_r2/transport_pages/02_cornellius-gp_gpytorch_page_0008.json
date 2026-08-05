@@ -1,0 +1,2181 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "The functionality of CatLazyTensor can handle any concatenation dimension, yet the unit tests only cover the case of concatenation along rows.",
+            "closedAt": "2019-03-19T14:58:12Z",
+            "createdAt": "2019-01-31T14:25:59Z",
+            "id": "MDU6SXNzdWU0MDUyNjk4NTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "unit tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 490,
+            "state": "CLOSED",
+            "title": "CatLazyTensor missing unit tests",
+            "updatedAt": "2019-03-19T14:58:12Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/490"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This error occurred on master when running a single optimizer step which is strange because when I ran the same code using (v0.1.1) release, there wasn't any error message.\nRuntimeError: Trying to backward through the graph a second time, but the buffers have already been freed. Specify retain_graph=True when calling backward the first time\nDetails: I am using SV-DKL (AbstractVariationalGP module, AdditiveGridInterpolationVariationalStrategy)",
+            "closedAt": "2019-01-29T22:11:14Z",
+            "createdAt": "2019-01-29T20:42:37Z",
+            "id": "MDU6SXNzdWU0MDQ0Nzc3ODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 485,
+            "state": "CLOSED",
+            "title": "RuntimeError: Trying to backward through the graph a second time",
+            "updatedAt": "2019-06-27T17:46:16Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/485"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Getting the following test failure on master:\nAssertionError: 0.14334218204021454 not less than 0.1\n  File \"/usr/local/fbcode/gcc-5-glibc-2.23/lib/python3.6/unittest/case.py\", line 59, in testPartExecutor\n    yield\n  File \"/usr/local/fbcode/gcc-5-glibc-2.23/lib/python3.6/unittest/case.py\", line 605, in run\n    testMethod()\n  File \"/data/users/balandat/fbsource/fbcode/buck-out/dev/gen/pytorch/gpytorch/test_gpytorch_examples#binary,link-tree/test/examples/test_batch_whitened_svgp_gp_regression.py\", line 167, in test_regression_error_cuda\n    self.assertLess(mean_abs_error2.item(), 1e-1)\n  File \"/usr/local/fbcode/gcc-5-glibc-2.23/lib/python3.6/unittest/case.py\", line 1208, in assertLess\n    self.fail(self._formatMessage(msg, standardMsg))\n  File \"/usr/local/fbcode/gcc-5-glibc-2.23/lib/python3.6/unittest/case.py\", line 670, in fail\n    raise self.failureException(msg)",
+            "closedAt": "2019-02-04T05:01:14Z",
+            "createdAt": "2019-01-28T19:59:46Z",
+            "id": "MDU6SXNzdWU0MDM5ODI2MDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "unit tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 483,
+            "state": "CLOSED",
+            "title": "[Test Failure] test_batch_whitened_svgp_gp_regression",
+            "updatedAt": "2019-02-04T05:01:14Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/483"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First: Great Job! gpytorch is very well scalable!\nHowever, I tried to make a fair comparisson between gpytorch and scikit-learn and had some issues with the accuracy. I opened a thread regarding this topic on stack-overflow: https://stackoverflow.com/questions/54389944/lets-discuss-gpytorch-why-does-gpytorch-seems-to-be-less-accurate-then-scikit",
+            "closedAt": "2019-01-27T17:42:29Z",
+            "createdAt": "2019-01-27T15:55:57Z",
+            "id": "MDU6SXNzdWU0MDM1NjUzNzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 481,
+            "state": "CLOSED",
+            "title": "Why does gpytorch seems to be less accurate then scikit-learn?",
+            "updatedAt": "2019-01-27T17:42:29Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/481"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": ">>> import gpytorch\n>>> gl = gpytorch.likelihoods.GaussianLikelihood()\n>>> gl.initialize(noise=1)\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \".../gpytorch/gpytorch/module.py\", line 89, in initialize\n    setattr(self, name, val)\n  File \"../lib/python3.6/site-packages/torch/nn/modules/module.py\", line 579, in __setattr__\n    object.__setattr__(self, name, value)\n  File \".../gpytorch/gpytorch/likelihoods/gaussian_likelihood.py\", line 63, in noise\n    self.noise_covar.initialize(value)\nTypeError: initialize() takes 1 positional argument but 2 were given\n\nraw_noise works though\n>>> gl.initialize(raw_noise=1)\nGaussianLikelihood(\n  (noise_covar): HomoskedasticNoise()\n)",
+            "closedAt": "2019-01-26T20:30:14Z",
+            "createdAt": "2019-01-25T20:05:52Z",
+            "id": "MDU6SXNzdWU0MDMzMTM5Mjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 478,
+            "state": "CLOSED",
+            "title": "Initializing GaussianLikelihood noise broken",
+            "updatedAt": "2019-01-26T20:30:14Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/478"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In some use cases, we only ever care about the predictive mean of the GP. It would save a lot of computation time if there were an option to not compute the variances. Currently we have a hack to turn off variance computation at 34912d6\nMaybe we can un-hackify this and make it an option for all GPs.",
+            "closedAt": "2019-02-08T15:31:56Z",
+            "createdAt": "2019-01-25T19:25:03Z",
+            "id": "MDU6SXNzdWU0MDMzMDAxNzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 477,
+            "state": "CLOSED",
+            "title": "Option to not compute the variances",
+            "updatedAt": "2019-02-08T15:31:56Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/477"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Say I have an ExactGP called gp. It would be great if I could just do gp.initialize(kwargs) and all the parameters will be initialized recursively. This would allow us to put all the initialization values in one place.\nNote that it would have to raise an error if there were a parameter name collision.",
+            "closedAt": "2019-01-30T02:01:34Z",
+            "createdAt": "2019-01-25T18:59:16Z",
+            "id": "MDU6SXNzdWU0MDMyOTA0NDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 476,
+            "state": "CLOSED",
+            "title": "Recursively initialize Module parameters",
+            "updatedAt": "2019-01-30T02:01:34Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/476"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Simple 3D GP Regression using AbstractVariationalGP module and AdditiveGridInterpolationVariationalStrategy:\nPlease find the ipython notebook in this link: https://drive.google.com/file/d/1o8IkdLq_nrUF51IFdKyI64ZBLICk5is3/view?usp=sharing\nI wanted to know the reason why this might be occurring, and would also like to know if it would have any implications on the overall performance of GP regression (i.e. the kernel means and covariances have been finite and prolonged training seems to fit them better to the training data despite nans in confidence bounds).",
+            "closedAt": "2019-01-28T14:36:40Z",
+            "createdAt": "2019-01-25T14:46:19Z",
+            "id": "MDU6SXNzdWU0MDMxODY0MTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 475,
+            "state": "CLOSED",
+            "title": "Encountered nan in confidence bounds (variational inference)",
+            "updatedAt": "2019-01-28T14:36:40Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/475"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Simple 1D GP Regression using KISS-GP:\nWhen I tried to execute some of the example code provided in this repository, I encountered nan in confidence values (lower, upper = prediction.confidence_region()). This trend is more prevalent when I overtrain (for more epochs than specified) or increase the size of the training data.\nI wanted to know the reason why this might be occurring, and would also like to know if it would have any implications on the overall performance of GP regression (i.e. the kernel means and covariances have been finite and prolonged training seems to fit them better to the training data despite nans in confidence bounds).",
+            "closedAt": "2019-01-25T17:41:14Z",
+            "createdAt": "2019-01-24T15:33:54Z",
+            "id": "MDU6SXNzdWU0MDI3NjMzNDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 472,
+            "state": "CLOSED",
+            "title": "Encountered nan in confidence bounds",
+            "updatedAt": "2019-01-28T05:39:36Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/472"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There is a BatchRepeatLazyTensor, but no BatchLazyTensor that would allow batching of a number of arbitrary LazyTensors of the same size.\nI'd like to use this to set up a BlockDiagLazyTensor with a base_lazy_tensor that is a batch of LazyTensors.",
+            "closedAt": "2019-02-22T19:27:41Z",
+            "createdAt": "2019-01-18T01:27:06Z",
+            "id": "MDU6SXNzdWU0MDA1MzM2OTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 468,
+            "state": "CLOSED",
+            "title": "Implement BatchLazyTensor",
+            "updatedAt": "2019-02-22T19:27:41Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/468"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The new fast_computations(covar_root_decomposition=False) setting allows to use torch.cholesky for computing root decompositions. Right now this lives in LazyTensor, so when calling this the full matrix has to be instantiated, except for a small number of lazies that overwrite root_decomposition (e.g. DiagLazyTensor).\nFor things like BlockDiagLazyTensor this is of course very inefficient. We should overwrite root_decomposition there, and if use batch Cholesky decomposition to compute the Cholesky decomposition of each sub-block, and stitch the results together in another BlockDiagLazyTensor.",
+            "closedAt": "2019-11-12T20:40:37Z",
+            "createdAt": "2019-01-16T19:50:03Z",
+            "id": "MDU6SXNzdWUzOTk5Njg4MTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 465,
+            "state": "CLOSED",
+            "title": "Implement cholesky-based root_decomposition for lazy tensors",
+            "updatedAt": "2019-11-12T20:40:37Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/465"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello!\nThank you for your awesome work, I have been using gpytorch for a bit now and love it!\nI was wondering how it is possible to obtain the confidence or variance of a classification output especially in the case of the DKL example, i.e. classification with multiple classes.\nIf there is no built-in way, the two ideas I had would be to either take the variance as output by the Gaussian variational distribution or to compute the variance of the categorical distribution, i.e. use p_i(1-p_i). Does gpytorch offer a standard way for deriving a confidence measure that I am missing here?",
+            "closedAt": "2019-02-05T16:22:07Z",
+            "createdAt": "2019-01-11T18:57:25Z",
+            "id": "MDU6SXNzdWUzOTg0MTE2OTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 461,
+            "state": "CLOSED",
+            "title": "Confidence of classification output",
+            "updatedAt": "2021-06-03T12:28:01Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/461"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First--wonderful work on the package!\nI would like to depend on gpytorch in a project that already uses conda. Unfortunately conda doesn't allow the installation of dependencies via pip in package recipes, so it would be nice if gpytorch were deployed to Anaconda Cloud (or similar).\nI'd be happy to contribute the build files. Any thoughts?",
+            "closedAt": "2019-01-11T22:22:56Z",
+            "createdAt": "2019-01-11T16:08:44Z",
+            "id": "MDU6SXNzdWUzOTgzNTI1OTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 460,
+            "state": "CLOSED",
+            "title": "Deploy to Anaconda Cloud",
+            "updatedAt": "2019-01-11T22:22:57Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/460"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "#440 uses numpy's triu_indices to index into tensors. This has recently been implemented natively in\npytorch/pytorch#12653. We should switch over to that after the next pytorch release.",
+            "closedAt": "2019-02-07T20:06:59Z",
+            "createdAt": "2019-01-02T07:42:39Z",
+            "id": "MDU6SXNzdWUzOTUxNjk2MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 453,
+            "state": "CLOSED",
+            "title": "Use native torch.triu_indices instead of numpy",
+            "updatedAt": "2019-02-07T20:07:00Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/453"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "See pytorch/pytorch#15511.\nI committed 1ce7216 to temporarily cap the data size for which we will use pdist. Once the issue is resolved we can just revert that.\n@gpleiss Let's maybe hold off on releasing 0.1.1 until that's sorted out?",
+            "closedAt": "2019-02-07T20:07:40Z",
+            "createdAt": "2018-12-30T06:50:00Z",
+            "id": "MDU6SXNzdWUzOTQ4NTExMTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 446,
+            "state": "CLOSED",
+            "title": "torch.pdist for kernel computations only useable for small matrices",
+            "updatedAt": "2019-02-07T20:07:41Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/446"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The docs for LazyTensor says subclasses must implement _quad_form_derivative. Now that there is a default LazyTensor._quad_form_derivative, we should update the docs.",
+            "closedAt": "2020-09-03T16:12:57Z",
+            "createdAt": "2018-12-26T21:36:08Z",
+            "id": "MDU6SXNzdWUzOTQyNDUzMjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "help wanted"
+                },
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 443,
+            "state": "CLOSED",
+            "title": "Update docs for `LazyTensor` for `_quad_form_derivative`",
+            "updatedAt": "2020-09-03T16:12:58Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/443"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "From #434:\n\nI'm happy to switch back, but I want to be very sure that it doesn't affect numerical stability. Can you make sure that we don't have to increase any error bounds on any of the tests?\n\nUnfortunately, this does significantly affect numerical stability, in particular when using an algorithm for fitting that uses (expanding) line search (such as L-BFGS). With this change many of our tests that previously passed reliably now fail.\nI'm assuming the issue is due to the fact that now the individual components rather than their differences are squared: x1_norm = x1.pow(2).sum(dim=-1, keepdim=True). This causes overflow issues especially when using torch.float dtype, so the resulting MVNs have nan-valued loc/covar parameters. Switching to torch.double fixes many of the instability issues, but that's of course not a good solution when running on the GPU.",
+            "closedAt": "2019-01-16T19:40:23Z",
+            "createdAt": "2018-12-19T07:49:28Z",
+            "id": "MDU6SXNzdWUzOTI0Nzg1NTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 438,
+            "state": "CLOSED",
+            "title": "Numerical issues under new _covar_sq_dist helper",
+            "updatedAt": "2019-01-16T19:40:23Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/438"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello developers, thanks so much for your work!\nI'd like to experiment with gpytorch in a statistical inference setting, where I want to compute the GP marginal likelihood for the same data and many different covariance matrices (as chosen by a sampling algorithm that explores the hyperparameter posteriors).\nI already have optimized code to prepare my (rather custom) covariance matrices, so for the moment I would concentrate in accelerating the log likelihood computation, which currently relies on Cholesky.\nCan I do this with gpytorch?\nThanks!",
+            "closedAt": "2019-02-05T16:22:28Z",
+            "createdAt": "2018-12-17T20:53:37Z",
+            "id": "MDU6SXNzdWUzOTE4ODU0Njg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 435,
+            "state": "CLOSED",
+            "title": "Using gpytorch for Bayesian inference",
+            "updatedAt": "2019-02-05T16:22:28Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/435"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm looking at the basic exact regression example and getting discrepancy between gpflow and gpytorch in the marginal likelihood. The predictive distributions match, however, so I don't think it's an issue of hyperparameters.\nFor example\nnp.random.seed(0)\nN = 20\nNs = 10\nX = np.linspace(0, N, N).reshape(-1, 1)\nXs = np.linspace(0, N, Ns).reshape(-1, 1)\nY = np.random.randn(N, 1)\n\nmodel_gpflow = gpflow.models.GPR(X, \n                                 Y,\n                                 gpflow.kernels.RBF(1))\n\n\nprint('gpflow ML: {}'.format(model_gpflow.compute_log_likelihood()))\npreds_gpflow = model_gpflow.predict_y(Xs)\n\nprint('gpflow pred mean: {}'.format(preds_gpflow[0].flatten()))\n\nwith torch.no_grad(), gpytorch.settings.max_cg_iterations(10000):\n\n    class ExactGPModel(gpytorch.models.ExactGP):\n        def __init__(self, train_x, train_y, likelihood):\n            super(ExactGPModel, self).__init__(train_x, train_y, likelihood)\n            self.mean_module = gpytorch.means.ZeroMean()\n            self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())\n\n        def forward(self, x):\n            mean_x = self.mean_module(x)\n            covar_x = self.covar_module(x)\n            return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)\n\n\n    model_gpytorch = ExactGPModel(torch.Tensor(X.flatten()),\n                                 torch.Tensor(Y.flatten()),\n                                 gpytorch.likelihoods.GaussianLikelihood())\n\n    mll = gpytorch.mlls.ExactMarginalLogLikelihood(model_gpytorch.likelihood, model_gpytorch)\n    output = model_gpytorch(torch.Tensor(X.flatten()))\n    marginal_likelihood = mll(output, torch.Tensor(Y.flatten()))\n    print('gpytorch ML {}'.format(torch.sum(marginal_likelihood)))\n    \n    model_gpytorch.eval()\n    model_gpytorch.likelihood.eval()\n    \n    f_preds = model_gpytorch.likelihood(model_gpytorch(torch.Tensor(Xs.flatten())))\n    \n    print('gpytorch pred mean {}'.format(f_preds.mean))\nreturns\ngpflow ML: -29.71134295080608\ngpflow pred mean: [ 0.84703465  0.85736492  0.6959016   0.20702686  0.05754075  0.59123416\n  0.29651992  0.38384497  0.27194487 -0.33804375]\ngpytorch ML -1.5208690166473389\ngpytorch pred mean tensor([ 0.8470,  0.8574,  0.6959,  0.2070,  0.0575,  0.5912,  0.2965,  0.3838,\n         0.2719, -0.3380])\n\nAlso, the ML seems to be non-deterministic. On three runs I get -1.5357774496078491, -1.51754629611969 and -1.4996962547302246 (predictions are always the same, however). Is this the correct behaviour?",
+            "closedAt": "2018-12-11T11:14:58Z",
+            "createdAt": "2018-12-10T13:57:24Z",
+            "id": "MDU6SXNzdWUzODkzMTI4OTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 421,
+            "state": "CLOSED",
+            "title": "marginal likelihood discrepancy with gpflow for exact gp regression",
+            "updatedAt": "2018-12-11T11:14:58Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/421"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm running into some more issues with (alleged) size incompatibilities when using batch mode for multitask GPs. In particular,\n\nfitting a MTGP in batch mode fails outright\nfitting a MTPG in non-batch mode works, but evaluating that model in batch mode fails.\n\nSee MTGP_batch_errors.ipynb.txt\n@gpleiss, fixing these kind of issues properly without a ton of special casing relies on #369 -  can we prioritize this?",
+            "closedAt": "2019-02-22T19:30:39Z",
+            "createdAt": "2018-12-07T22:45:32Z",
+            "id": "MDU6SXNzdWUzODg4NDA2NjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 420,
+            "state": "CLOSED",
+            "title": "More issues with batch mode in MTGPs",
+            "updatedAt": "2019-02-22T19:30:40Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/420"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Lapack Error syev in DKL: 2 off-diagonal elements didn't converge to zero\nWhen running code:\nimport torch.nn as nn\nimport torch\nimport gpytorch\n\nnums = 60\nsequence_length = nums\ninput_size = 2\nhidden_size = 64\nnum_layers = 4\nnum_classes = nums\nbatch_size = 1\nlearning_rate = 0.01\nepochs = 20\n\ntrain_x = torch.randn(1, 60, 2)\ntrain_y = torch.randn(60)\n\n\nclass Down(nn.Module):\n    def __init__(self, input_size, hidden_size, num_layers, num_classes, init_func=nn.init.normal_):\n        super(Down, self).__init__()\n        self.hidden_size = hidden_size\n        self.num_layers = num_layers\n        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, bidirectional=False)\n        self.fc = nn.Linear(hidden_size, num_classes)\n        if init_func is not None:\n            init_func(self.lstm.weight_hh_l0)\n            init_func(self.lstm.weight_ih_l0)\n            init_func(self.fc.weight)\n\n    def forward(self, x):\n        # Set initial hidden and cell states\n        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)\n        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)\n\n        # Forward propagate LSTM\n        out, _ = self.lstm(x, (h0, c0))\n        out = self.fc(out[:, -1, :]).view(train_x.shape[0] * train_x.shape[1], -1)\n        return out\n\n\nfeature_extractor = Down(input_size, hidden_size, num_layers, num_classes)\n\n\n# We will use the simplest form of GP model, exact inference\nclass GPRegressionModel(gpytorch.models.ExactGP):\n        def __init__(self, train_x, train_y, likelihood):\n            super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)\n            self.feature_extractor = feature_extractor\n            self.mean_module = gpytorch.means.ConstantMean()\n            self.covar_module = gpytorch.kernels.GridInterpolationKernel(\n                gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel(ard_num_dims=3)),\n                num_dims=3, grid_size=5\n            )\n\n        def forward(self, x):\n            projected_x = self.feature_extractor(x)\n            projected_x = projected_x - projected_x.min(0)[0]\n            projected_x = 2 * (projected_x / projected_x.max(0)[0]) - 1\n\n            mean_x = self.mean_module(projected_x)\n            covar_x = self.covar_module(projected_x)\n            return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)\n\n\nlikelihood = gpytorch.likelihoods.GaussianLikelihood()\nmodel = GPRegressionModel(train_x, train_y, likelihood)\ntrain_loss = []\n\noptimizer = torch.optim.Adam([\n    {'params': model.feature_extractor.parameters()},\n    {'params': model.covar_module.parameters()},\n    {'params': model.mean_module.parameters()},\n    {'params': model.likelihood.parameters()},\n], lr=learning_rate)\n\n# \"Loss\" for GPs - the marginal log likelihood\nmll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)\n\ntrain_loss = []\n\n\ndef train(epoch):\n    with gpytorch.settings.use_toeplitz(True):\n\n        model.train()\n        likelihood.train()\n\n        # for i, data in enumerate(train_loader):\n        optimizer.zero_grad()\n        prediction = model(train_x)\n        loss = -mll(prediction, train_y)\n        loss.backward()\n        print('Iter %d - Loss: %.3f' % (epoch, loss.item()))\n        train_loss.append(loss.cpu().data.numpy().tolist())\n        optimizer.step()\n        return loss\n\n\ndef test(epoch):\n\n        model.eval()\n        likelihood.eval()\n\n        test_x = torch.randn(1, 60, 2)\n        test_y = torch.randn(60)\n\n        # for batch_size, (x_all, y_all) in enumerate(test_loader):\n        test_x = test_x\n        test_y = test_y.squeeze()\n        with torch.no_grad(), gpytorch.settings.use_toeplitz(False), gpytorch.fast_pred_var():\n            preds = model(test_x)\n        print('Test MAE: {}'.format(torch.mean(torch.abs(preds.mean - test_y))))\n        if torch.mean(torch.abs(preds.mean - test_y)) < 0.02:\n            print(\"we can save all parameters\")\n        return preds\n\n\nfor epoch in range(epochs):\n    loss = train(epoch)\n    if epoch % 10 == 0 and epoch > 0:\n        preds = test(epoch)\n        print(\"test finished\")",
+            "closedAt": "2018-12-07T17:45:35Z",
+            "createdAt": "2018-12-07T10:40:59Z",
+            "id": "MDU6SXNzdWUzODg1OTg4NTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 418,
+            "state": "CLOSED",
+            "title": "Lapack Error syev in DKL",
+            "updatedAt": "2018-12-07T17:45:35Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/418"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I'm wanting to compute the gradients of the predictive mean and variance with respect to the input location. Is this possible with the current version of gpytorch? Thanks!",
+            "closedAt": "2018-12-06T22:10:56Z",
+            "createdAt": "2018-12-06T21:47:52Z",
+            "id": "MDU6SXNzdWUzODg0MTIyNTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 416,
+            "state": "CLOSED",
+            "title": "Computing gradients of predictions",
+            "updatedAt": "2021-06-20T01:56:08Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/416"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm using DKL model to do regression. However, I met this error during testing. Any suggestions?\nIter 1/0 - Loss: 0.970\nIter 1/1 - Loss: 0.965\nIter 1/2 - Loss: 0.962\nIter 1/3 - Loss: 0.960\nIter 1/4 - Loss: 0.956\nIter 1/5 - Loss: 0.952\nIter 1/6 - Loss: 0.949\nIter 1/7 - Loss: 0.946\nIter 1/8 - Loss: 0.942\nIter 1/9 - Loss: 0.939\nIter 1/10 - Loss: 0.935\n\nTraceback (most recent call last):\n  File \"rrgp.py\", line 165, in <module>\n    preds = test(epoch)\n  File \"rrgp.py\", line 155, in test\n    preds = model(test_x)\n  File \"/anaconda3-server/lib/python3.6/site-packages/gpytorch/models/exact_gp.py\", line 166, in __call__\n    non_batch_train=non_batch_train,\n  File \"/anaconda3-server/lib/python3.6/site-packages/gpytorch/functions/__init__.py\", line 128, in exact_predictive_covar\n    return full_covar.exact_predictive_covar(train_inputs, num_train, likelihood, precomputed_cache, non_batch_train)\n  File \"/anaconda3-server/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_tensor.py\", line 242, in exact_predictive_covar\n    train_inputs, num_train, likelihood, precomputed_cache, non_batch_train\n  File \"/anaconda3-server/lib/python3.6/site-packages/gpytorch/lazy/interpolated_lazy_tensor.py\", line 477, in exact_predictive_covar\n    train_train_covar_inv_root = train_train_covar.root_inv_decomposition(probe_vectors, test_vectors).root\n  File \"/anaconda3-server/lib/python3.6/site-packages/gpytorch/lazy/lazy_tensor.py\", line 1124, in root_inv_decomposition\n    )(*self.representation())\n  File \"/anaconda3-server/lib/python3.6/site-packages/gpytorch/functions/_root_decomposition.py\", line 51, in forward\n    init_vecs=self.initial_vectors,\n  File \"/anaconda3-server/lib/python3.6/site-packages/gpytorch/utils/lanczos.py\", line 81, in lanczos_tridiag\n    t_mat[0, 0].copy_(alpha_0)\nRuntimeError: expand(torch.cuda.FloatTensor{[1, 1]}, size=[1]): the number of sizes provided (1) must be greater or equal to the number of dimensions in the tensor (2)",
+            "closedAt": "2018-12-17T04:55:35Z",
+            "createdAt": "2018-12-02T03:46:03Z",
+            "id": "MDU6SXNzdWUzODY1MjM0NTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 410,
+            "state": "CLOSED",
+            "title": "lanczos_tridiag error",
+            "updatedAt": "2019-08-02T22:36:45Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/410"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I installed gpytorch, but when I use import gpytorch it told me cannot import name '_standard_normal'. I have pytorch installed correctly, anyone know how to deal with this issue?",
+            "closedAt": "2018-12-02T15:16:53Z",
+            "createdAt": "2018-12-01T20:59:54Z",
+            "id": "MDU6SXNzdWUzODY0OTcyMjc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 409,
+            "state": "CLOSED",
+            "title": "GPytorch import error",
+            "updatedAt": "2018-12-02T15:16:53Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/409"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Module.initialize right now only works for actual parameters. It should also work for transformed parameters.\nFor example, the following lines work:\nlikelihood = gpytorch.likelihoods.GaussianLikelihood(param_transform=torch.exp)\nlikelihood.initialize(raw_noise=math.log(5))\nprint(likelihood.noise.item())  #5.\nSimilarly:\nlikelihood = gpytorch.likelihoods.GaussianLikelihood(param_transform=torch.exp)\nlikelihood.initialize(raw_noise=torch.tensor(math.log(5)))\nprint(likelihood.noise.item())  #5.\nThe following line silently errors:\nlikelihood = gpytorch.likelihoods.GaussianLikelihood(param_transform=torch.exp)\nlikelihood.initialize(noise=5)\nprint(likelihood.noise.item())  #1.",
+            "closedAt": "2018-12-03T05:21:31Z",
+            "createdAt": "2018-11-29T18:37:39Z",
+            "id": "MDU6SXNzdWUzODU4NzExOTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 405,
+            "state": "CLOSED",
+            "title": "Module.initialize should work with transformed parameters",
+            "updatedAt": "2018-12-03T05:21:31Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/405"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently, batch mode is not fully supported in MultitaskGasussianLikelihood. This is the only instance where one currently has to use the to-be-deprecated MultitaskGasussianLikelihoodKronecker.\nThis will require some changes to the LazyTensors so they can support arbitrary batch shapes throughout.",
+            "closedAt": "2019-04-15T15:28:27Z",
+            "createdAt": "2018-11-27T01:11:56Z",
+            "id": "MDU6SXNzdWUzODQ1NzcyNTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 401,
+            "state": "CLOSED",
+            "title": "Properly support batch mode in MultitaskGasussianLikelihood",
+            "updatedAt": "2019-04-15T15:28:27Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/401"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "@Balandat just ran in to an issue that I tracked back to this line:\n\n  \n    \n      gpytorch/gpytorch/likelihoods/gaussian_likelihood.py\n    \n    \n         Line 31\n      in\n      00ddfc8\n    \n  \n  \n    \n\n        \n          \n           shape = mean.shape if len(mean.shape) == 1 else mean.shape[:-1] \n        \n    \n  \n\n\nShould this be:\nshape = mean.shape\nHaven't we been letting batch means be b x n, meaning shape would be [b] and then as written noise_covar will be b x b x b instead of b x n x n?",
+            "closedAt": "2018-11-29T19:45:19Z",
+            "createdAt": "2018-11-26T22:13:58Z",
+            "id": "MDU6SXNzdWUzODQ1MzM1NzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 398,
+            "state": "CLOSED",
+            "title": "Size mismatch in batch mode GaussianLikelihood",
+            "updatedAt": "2018-11-29T19:45:19Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/398"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For exact and variational GPs, the marginal log likelihood requires computing the log determinant of the prior covariance matrix. This isn't a super expensive operation (since we get most of the terms for free from a single call to linear_cg). However, we still have to make a few calls to torch.symeig, which can add a bit of a performance hit.\nIf we are simply using the MLL as a loss function to optimize hyperparameters (and not for Gibbs sampling, model selection, etc.), then we don't actually care about the logdet value (just its derivatives, which we get for free from linear_cg). Therefore, we could avoid these torch.symeig calls.\nI propose a gpytorch.beta_features.skip_logdet feature flag that skips the logdet computation (but still computes the correct gradient, obviously). It will be off by default.",
+            "closedAt": "2018-11-30T14:11:23Z",
+            "createdAt": "2018-11-26T19:27:56Z",
+            "id": "MDU6SXNzdWUzODQ0NzYwMjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 396,
+            "state": "CLOSED",
+            "title": "Flag to turn off logdet computations for MLLs",
+            "updatedAt": "2018-11-30T14:11:23Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/396"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2018-11-23T03:54:38Z",
+            "createdAt": "2018-11-23T03:54:32Z",
+            "id": "MDU6SXNzdWUzODM2OTc0MTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 392,
+            "state": "CLOSED",
+            "title": "batch",
+            "updatedAt": "2018-11-23T03:54:38Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/392"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I followed the  Classification Tutorial, and made a change to use my own kernel as self.covar_module.\nI am using the most recent version of gpytorch and pytorch nightly.\nclass GPClassificationModel(AbstractVariationalGP):\n    def __init__(self, train_x):\n        variational_distribution = CholeskyVariationalDistribution(train_x.size(0))\n        variational_strategy = VariationalStrategy(self, train_x, variational_distribution)\n        super(GPClassificationModel, self).__init__(variational_strategy)\n        self.mean_module = gpytorch.means.ConstantMean()\n        self.covar_module = dkern_kernel.DeepKernelTesting([3,32,32],[2,3,4],[4,5,6],\n                                                           1,ExReLU(multiply_by_sqrt2=True))\n    def forward(self, x):\n        mean_x = self.mean_module(x)\n        covar_x = self.covar_module(x)\n        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)\n        return latent_pred\nThe training looks like this:\n# Initialize model and likelihood\nmodel = GPClassificationModel(train_x)\nlikelihood = gpytorch.likelihoods.BernoulliLikelihood()\n# Find optimal model hyperparameters\nmodel.train()\nlikelihood.train()\n\n\n# Use the adam optimizer\noptimizer = torch.optim.Adam(model.parameters(), lr=0.01)\n\n# \"Loss\" for GPs - the marginal log likelihood\n# num_data refers to the amount of training data\nmll = VariationalELBO(likelihood, model, train_y.numel())\n\n\ntraining_iter = 50\nfor i in range(training_iter):\n    optimizer.zero_grad()\n    output = model(train_x)\n    loss = -mll(output, train_y)\n    print('Iter %d/%d - Loss: %.3f' % (i + 1, training_iter, loss.item()))\n    loss.backward()\n    optimizer.step()\nI got the following error, I'm wondering what might be wrong? Thanks a lot!\nTypeError                                 Traceback (most recent call last)\n<ipython-input-21-89ce42107bd3> in <module>()\n     26     print(output)\n     27     # Calc loss and backprop gradients\n---> 28     loss = -mll(output, train_y)\n     29     print('Iter %d/%d - Loss: %.3f' % (i + 1, training_iter, loss.item()))\n     30     #set_trace()\n\n/Applications/anaconda/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n     19 \n     20     def __call__(self, *inputs, **kwargs):\n---> 21         outputs = self.forward(*inputs, **kwargs)\n     22 \n     23         if isinstance(outputs, tuple):\n\n/Applications/anaconda/lib/python3.6/site-packages/gpytorch/mlls/variational_elbo.py in forward(self, variational_dist_f, target, **kwargs)\n     30         )\n     31 \n---> 32         kl_divergence = torch.distributions.kl.kl_divergence(variational_dist_u, prior_dist)\n     33 \n     34         if kl_divergence.dim() > log_likelihood.dim():\n\n/Applications/anaconda/lib/python3.6/site-packages/torch/distributions/kl.py in kl_divergence(p, q)\n    164     if fun is NotImplemented:\n    165         raise NotImplementedError\n--> 166     return fun(p, q)\n    167 \n    168 \n\n/Applications/anaconda/lib/python3.6/site-packages/gpytorch/distributions/multivariate_normal.py in kl_mvn_mvn(p_dist, q_dist)\n    230     inv_quad_rhs = torch.cat([root_p_covar, mean_diffs.unsqueeze(-1)], -1)\n    231     log_det_p_covar = p_covar.log_det()\n--> 232     trace_plus_inv_quad_form, log_det_q_covar = q_covar.inv_quad_log_det(inv_quad_rhs=inv_quad_rhs, log_det=True)\n    233 \n    234     # Compute the KL Divergence.\n\n/Applications/anaconda/lib/python3.6/site-packages/gpytorch/lazy/lazy_tensor.py in inv_quad_log_det(self, inv_quad_rhs, log_det, reduce_inv_quad)\n    712             preconditioner=self._preconditioner()[0],\n    713             log_det_correction=self._preconditioner()[1],\n--> 714         )(*args)\n    715 \n    716         if inv_quad_term.numel() and reduce_inv_quad:\n\nTypeError: InvQuadLogDet.forward: expected Variable (got float) for return value 1",
+            "closedAt": "2018-11-22T03:12:34Z",
+            "createdAt": "2018-11-20T04:46:32Z",
+            "id": "MDU6SXNzdWUzODI0OTg5NTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 391,
+            "state": "CLOSED",
+            "title": "TypeError: InvQuadLogDet.forward: expected Variable (got float) for return value 1",
+            "updatedAt": "2018-11-25T16:13:50Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/391"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I tried to run the Classification Tutorial, I got error\n\n/Applications/anaconda/lib/python3.6/site-packages/gpytorch/variational/cholesky_variational_distribution.py in initialize_variational_distribution(self, prior_dist)\n     36     def initialize_variational_distribution(self, prior_dist):\n     37         self.variational_mean.data.copy_(prior_dist.mean)\n---> 38         self.chol_variational_covar.data.copy_(torch.cholesky(prior_dist.covariance_matrix, upper=True))\n     39 \n     40     @property\n\nAttributeError: module 'torch' has no attribute 'cholesky'",
+            "closedAt": "2018-11-20T04:34:27Z",
+            "createdAt": "2018-11-20T03:52:21Z",
+            "id": "MDU6SXNzdWUzODI0ODk3MDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 390,
+            "state": "CLOSED",
+            "title": "\"AttributeError: module 'torch' has no attribute 'cholesky'\"",
+            "updatedAt": "2018-11-20T04:34:27Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/390"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I’m getting very good feedback from a bunch of people using softplus in place of exp to enforce positivity constraints on some of the hyperparameters. It appears to require very little tweaking of optimization hyperparameters, and significantly improves model robustness and performance.\n#383 lets us gracefully deprecate log_* parameters in favor of this in a way that we should be able to preserve model loading, calls to model.covar_module.log_lengthscale = ... and others. Given these two factors (strong empirical benefits, relatively easy code transition), I am now in favor of putting this in for 0.1.0.\n@gpleiss are you on board for a 0.1.0 release given that we can gracefully deprecate log parameters now, or would you still prefer 0.2.0 for the switch?",
+            "closedAt": "2018-11-19T18:57:01Z",
+            "createdAt": "2018-11-18T17:46:25Z",
+            "id": "MDU6SXNzdWUzODE5ODI3MTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 386,
+            "state": "CLOSED",
+            "title": "Deprecate log space parameters in favor of softplus",
+            "updatedAt": "2018-11-19T18:57:01Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/386"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It looks like we haven't really been supporting py2 for a little while now, see #383 (review)\nLet's formally drop support for it, put that into the readme, and update the code accordingly (get rid of from future ... imports, add #!/usr/bin/env python3 to all files).\nMore controversial: If we feel ambitious and want to require >3.6, we could also start typing things....",
+            "closedAt": "2018-11-19T03:01:41Z",
+            "createdAt": "2018-11-18T17:17:29Z",
+            "id": "MDU6SXNzdWUzODE5ODAyODU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 385,
+            "state": "CLOSED",
+            "title": "Drop py2 support",
+            "updatedAt": "2018-11-19T03:01:41Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/385"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For the inputs, I load a pandas dataframe and cast the required columns to a torch tensor.\nAlso, I'm using the following arbitrary kernel:\ngpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel() + gpytorch.kernels.WhiteNoiseKernel(variances=_variances))\nOn initialising the model object as model = GPModel(Y, _y, likelihood) the same RuntimeError as in the title is thrown at this line.\nThe most obvious solution to this, it seemed, was model = GPModel(Y, _y, likelihood).model() and indeed that made everything work. Well, everything except observed_pred.confidence_region() which throws the same error. The trace is as below:\n (click to uncollapse) \n\n---------------------------------------------------------------------------\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-47-9d427a67dd6f> in <module>\n----> 1 observed_pred.confidence_region()\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/distributions/multivariate_normal.py in confidence_region(self)\n     74 \n     75         \"\"\"\n---> 76         std2 = self.stddev.mul_(2)\n     77         mean = self.mean\n     78         return mean.sub(std2), mean.add(std2)\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/torch/distributions/distribution.py in stddev(self)\n    108         Returns the standard deviation of the distribution.\n    109         \"\"\"\n--> 110         return self.variance.sqrt()\n    111 \n    112     def sample(self, sample_shape=torch.Size()):\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/distributions/multivariate_normal.py in variance(self)\n    169                 return self.lazy_covariance_matrix.diag().unsqueeze(-1).expand(self._batch_shape + self._event_shape)\n    170             else:\n--> 171                 return self.lazy_covariance_matrix.diag().expand(self._batch_shape + self._event_shape)\n    172         else:\n    173             return super(_MultivariateNormalBase, self).variance\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/lazy/sum_lazy_tensor.py in diag(self)\n     87 \n     88     def diag(self):\n---> 89         diags = [lazy_tensor.diag().contiguous() for lazy_tensor in self.lazy_tensors]\n     90         size = diags[0].size()\n     91         res = sum(diag.view(-1) for diag in diags)\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/lazy/sum_lazy_tensor.py in <listcomp>(.0)\n     87 \n     88     def diag(self):\n---> 89         diags = [lazy_tensor.diag().contiguous() for lazy_tensor in self.lazy_tensors]\n     90         size = diags[0].size()\n     91         res = sum(diag.view(-1) for diag in diags)\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/lazy/sum_lazy_tensor.py in diag(self)\n     87 \n     88     def diag(self):\n---> 89         diags = [lazy_tensor.diag().contiguous() for lazy_tensor in self.lazy_tensors]\n     90         size = diags[0].size()\n     91         res = sum(diag.view(-1) for diag in diags)\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/lazy/sum_lazy_tensor.py in <listcomp>(.0)\n     87 \n     88     def diag(self):\n---> 89         diags = [lazy_tensor.diag().contiguous() for lazy_tensor in self.lazy_tensors]\n     90         size = diags[0].size()\n     91         res = sum(diag.view(-1) for diag in diags)\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_tensor.py in diag(self)\n     86                 x2 = x2.unsqueeze(1)\n     87 \n---> 88             res = super(Kernel, self.kernel).__call__(x1, x2, diag=True, batch_dims=self.batch_dims, **self.params)\n     89 \n     90             # Did this Kernel eat the diag option?\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n     18 \n     19     def __call__(self, *inputs, **kwargs):\n---> 20         outputs = self.forward(*inputs, **kwargs)\n     21 \n     22         if isinstance(outputs, tuple):\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/kernels/scale_kernel.py in forward(self, x1, x2, batch_dims, **params)\n     67             outputscales = outputscales.unsqueeze(1).repeat(1, x1.size(-1)).view(-1)\n     68 \n---> 69         orig_output = self.base_kernel(x1, x2, batch_dims=batch_dims, **params)\n     70         if torch.is_tensor(orig_output):\n     71             outputscales = outputscales.view(-1, *([1] * (orig_output.dim() - 1)))\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/kernels/kernel.py in __call__(self, x1, x2, diag, batch_dims, **params)\n    248 \n    249         if diag:\n--> 250             res = super(Kernel, self).__call__(x1_, x2_, diag=True, batch_dims=batch_dims, **params)\n    251 \n    252             # Did this Kernel eat the diag option?\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n     18 \n     19     def __call__(self, *inputs, **kwargs):\n---> 20         outputs = self.forward(*inputs, **kwargs)\n     21 \n     22         if isinstance(outputs, tuple):\n\n~/.pyenv/versions/3.6.4/lib/python3.6/site-packages/gpytorch/kernels/kernel.py in forward(self, x1, x2, **params)\n    339             if isinstance(next_term, LazyEvaluatedKernelTensor):\n    340                 next_term = next_term.evaluate_kernel()\n--> 341             res = res + next_term\n    342         return res\n    343 \n\nRuntimeError: TensorIterator expected type torch.DoubleTensor but got torch.FloatTensor\n\n\n\nMy code is pretty much the same as the simple regression example except the inputs and the kernel used. If required, I could upload an example dataframe for reproducing this error.\nOne thing to note is that this (ie., the second error, the first error happens for any kernel) happens specifically with the WhiteNoiseKernel. Is it possible I'm using it incorrectly?",
+            "closedAt": "2018-11-17T12:56:56Z",
+            "createdAt": "2018-11-17T12:13:58Z",
+            "id": "MDU6SXNzdWUzODE4NTc3NDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 382,
+            "state": "CLOSED",
+            "title": "RuntimeError: TensorIterator expected type torch.DoubleTensor but got torch.FloatTensor",
+            "updatedAt": "2018-11-17T12:56:56Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/382"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "#376 changed priors to always operate on the actual parameters (e.g noise vs. its log or inverse softplus value). In some cases we want to sample parameters from the priors, which means that we'll have to transform the samples back to the internal parameter representation. We currently have no easy way of doing this. In particular, given a model, this requires additional knowledge of the model specifics.\n'Im thinking about ways of making this easier to automate. In the most general case this is hard, because (i) if a prior is on a function of two parameters that typically won't be a bijection, and (ii) if we have multiple priors that involve the same parameter it's unclear how to enforce consistency.\nLet's focus on the simple case and consider only those priors and parameters for which there is a one-to-one mapping between priors and parameters, with all mappings bijective.\nOne simple way would be to allow to specify an \"inverse closure\" when registering a prior for a single parameter. For instance, for a prior on the module's noise parameter, you could imagine something like:\n.register_prior(\"foo_prior\", foo_prior, self.noise, lambda x: self.noise = x)\n\nwhich would require a @setter for the noise to be defined. This of course in turn would require that the user pass in an inv_param_transform to the module (that could be made optional by just having some dictionary mapping common transformations to their inverse, e.g. {torch.exp: torch.log, torch.nn.functional.softplus: softplus_inverse...} and error out when an unknown param_transform were supplied.\nThen sampling from the prior and setting the parameter values could be done like\nfor name, prior, _, inv_closure in self.named_priors():\n    if inv_closure is not None:\n        inv_closure(prior.sample())\n\nThoughts on this?\ncc @bletham",
+            "closedAt": "2018-11-18T17:48:32Z",
+            "createdAt": "2018-11-16T20:55:05Z",
+            "id": "MDU6SXNzdWUzODE3NTYzNzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 381,
+            "state": "CLOSED",
+            "title": "Inverse parameter transforms and association with priors",
+            "updatedAt": "2018-11-18T17:48:32Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/381"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "(Related to #291, #361, etc, builds on work in #356 )\nOur unit test coverage of basic batch mode functionality could be substantially improved. We should add basic shape unit tests for the following:\n\n All kernels should accept n x d inputs and return n x n covariance matrices (or another appropriate shape that is kernel specific).\n All kernels should accept b x n x d inputs and return b x n x n covariance matrices (or another appropriate shape).\n All models extending gpytorch.models.GP should be callable on  n x d inputs and return appropriately sized MultivariateNormal distributions ((mu, Sigma) = (n, n x n)).\n All models extending gpytorch.models.GP should be callable on  b x n x d inputs and return appropriately sized MultivariateNormal distributions ((mu, Sigma) = (b x n, b x n x n)).\n All models extending gpytorch.models.GP initialized with n x d training data (or inducing points) should be (repeatedly) callable on both m x d inputs and b x m x d inputs, returning MVN distributions with the appropriate sizes.\n All LazyTensors should broadcast matmul calls in all situations that normal torch.Tensors do. This may require more work on the general goal of \"LazyTensors support arbitrary batch shapes that @Balandat has been working on.",
+            "closedAt": "2019-04-15T15:28:27Z",
+            "createdAt": "2018-11-15T05:23:00Z",
+            "id": "MDU6SXNzdWUzODEwMDQ4NzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "unit tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 378,
+            "state": "CLOSED",
+            "title": "Add unit tests for batch shapes and broadcasting",
+            "updatedAt": "2019-04-15T15:28:27Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/378"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We're seeing a rather large amount of variance in the value of MLL with an ExactGP obtained while holding the model and data fixed. Here is a repro case in which we get changes in MLL up to 30% across evaluations:\nfrom collections import OrderedDict\n\nimport torch\n\nfrom gpytorch.distributions import MultivariateNormal\nfrom gpytorch.kernels import MaternKernel, RBFKernel, ScaleKernel\nfrom gpytorch.likelihoods import Likelihood, GaussianLikelihood\nfrom gpytorch.means import ConstantMean\nfrom gpytorch.mlls.exact_marginal_log_likelihood import ExactMarginalLogLikelihood\nfrom gpytorch.models import ExactGP\nfrom gpytorch.priors import GammaPrior\n\n# Data\n\nX = torch.Tensor([\n    [-0.0843,  7.2533],\n    [ 0.5766,  0.1072],\n    [ 0.7004,  0.1931],\n    [ 0.6442,  0.6576],\n    [ 0.9669,  0.9565],\n    [ 0.2082,  0.7459],\n    [ 0.8764,  0.3689],\n    [ 0.0766,  0.6958],\n    [ 0.4030,  0.3839],\n    [ 0.8547,  0.7535],\n    [ 0.6673,  1.0000],\n    [ 1.0000,  0.9685],\n    [ 0.0520,  0.0000],\n    [ 1.0000,  1.0000],\n    [ 1.0000,  0.0000],\n])\n\nY = torch.Tensor([\n    -1.8684,  0.7750,  0.3887,  0.0143, -0.9510,  0.8281, -0.2027,  1.1532,\n    0.8408, -0.5322, -0.3719, -1.0300,  2.1166, -1.0564, -0.1041,\n])\n\n# Model\n\nclass SingleTaskGP(ExactGP):\n    \"\"\"\n    Class implementing a single task exact GP using relatively strong priors on\n    the Kernel hyperparameters, which work best when covariates are normalized\n    to the unit cube and outcomes are standardized (zero mean, unit variance).\n    \"\"\"\n\n    def __init__(\n        self, train_X: torch.Tensor, train_Y: torch.Tensor, likelihood: Likelihood\n    ) -> None:\n        super().__init__(train_X, train_Y, likelihood)\n        self.mean_module = ConstantMean()\n        self.covar_module = ScaleKernel(\n            MaternKernel(\n                nu=2.5,\n                ard_num_dims=2,\n                log_lengthscale_prior=GammaPrior(2.0, 5.0, log_transform=True),\n            ),\n            log_outputscale_prior=GammaPrior(1.1, 0.05, log_transform=True),\n        )\n\n    def forward(self, x: torch.Tensor) -> MultivariateNormal:\n        mean_x = self.mean_module(x)\n        covar_x = self.covar_module(x)\n        return MultivariateNormal(mean_x, covar_x)\n\n\nlikelihood = GaussianLikelihood()\nmodel = SingleTaskGP(X, Y.view(-1), likelihood)\n\n\n# Set model state\nsd = OrderedDict([\n    ('likelihood.log_noise', torch.Tensor([[-6.9565]])),\n    ('mean_module.constant', torch.Tensor([[-0.1901]])),\n    ('covar_module.log_outputscale', torch.Tensor([-0.4566])),\n    ('covar_module.base_kernel.log_lengthscale', torch.Tensor([[[-0.8539,  0.3291]]])),\n    ('covar_module.base_kernel.log_lengthscale_prior.concentration', torch.Tensor([2.])[0]),\n    ('covar_module.base_kernel.log_lengthscale_prior.rate', torch.Tensor([5.])[0]),\n    ('covar_module.log_outputscale_prior.concentration', torch.Tensor([1.1000])[0]),\n    ('covar_module.log_outputscale_prior.rate', torch.Tensor([0.0500])[0]),\n])\nmodel.load_state_dict(sd)\n\n\n# Evaluate mll\nmll = ExactMarginalLogLikelihood(likelihood, model)\noutput = mll.model(*mll.model.train_inputs)\n\nfor i in range(10):\n    print(mll(output, mll.model.train_targets).item())\n\nThe output is:\n-1.0269606113433838\n-1.044615387916565\n-0.9483365416526794\n-1.0176225900650024\n-1.2577258348464966\n-0.922021210193634\n-1.1497862339019775\n-0.922558605670929\n-1.3168827295303345\n-0.8927210569381714\n\nWith this particular model, when the parameters are left initialized at 0 (comment out loading the state dict), the MLL is -1.7, so this variance is well within the tolerance with which we'd like to optimize, and makes it challenging to use a non-stochastic optimizer.\nI'm guessing this variance is from the approximations being used in estimating MLL? Is there a parameter we can use to tune the fidelity of those approximations to improve the optimization?",
+            "closedAt": "2018-11-15T17:14:28Z",
+            "createdAt": "2018-11-14T23:28:00Z",
+            "id": "MDU6SXNzdWUzODA5MzI1ODA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 377,
+            "state": "CLOSED",
+            "title": "Variance in repeated mll evaluations",
+            "updatedAt": "2018-11-15T17:14:28Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/377"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "What is the recommended method to add measurement error (prefereably heteroscedastic) to a spectral mixture model? I've tried:\nspecmix = gpytorch.kernels.SpectralMixtureKernel(num_mixtures=4)\nerror = gpytorch.kernels.WhiteNoiseKernel(train_yerr ** 2.)\nself.covar_module = specmix + error\nbut this does not give a good fit and initialize_from_data does not then work.",
+            "closedAt": "2019-05-01T02:18:02Z",
+            "createdAt": "2018-11-14T22:43:13Z",
+            "id": "MDU6SXNzdWUzODA5MTk4MTA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 375,
+            "state": "CLOSED",
+            "title": "Incorporating measurement error with spectral mixture kernel",
+            "updatedAt": "2019-05-08T19:07:21Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/375"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "#371 added support for passing a param_transform into many modules to swap out the default exponential transform (i.e. internal parameters in log scale).\nThe priors currently still only support a log_scale boolean flag, so there is no easy way to put an existing prior on the transformed parameter (without implementing a new prior). We should change this and support passing in a param_transform to the prior constructor as well.",
+            "closedAt": "2018-11-16T03:24:27Z",
+            "createdAt": "2018-11-14T16:30:05Z",
+            "id": "MDU6SXNzdWUzODA3ODEwNjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 374,
+            "state": "CLOSED",
+            "title": "Allow priors to take a param_transform",
+            "updatedAt": "2018-11-16T03:24:27Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/374"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Thanks for the continued development on GPyTorch. It's fantastic for constructing models but one area that we've recently been struggling with is robustly fitting models, due to numerical issues during optimization. Even a simple ExactGP model errors out during fitting with a RuntimeError if the learning rate is too large.\nThis makes model fitting a real challenge: too small of a learning rate and it takes forever, too large and it errors. To get around learning rate tuning, we've been using L-BFGS (both from https://github.com/hjmshi/PyTorch-LBFGS and from Scipy), but even this can fail when the L-BFGS takes too large of a step. We want to run this for a large, heterogeneous collection of problems and so really need robust model fitting that doesn't require hyperparameter optimization.\nAttached is a notebook with a simple GP example that fails to fit with default L-BFGS setup, or when the Adam lengthscale is too long. It also includes a plot showing the unfortunate hyperparameter sensitivity of Adam.\nI've been in touch with @hjmshi about this. Ideally, the L-BFGS would be given a chance to backtrack from the overly large step by getting a NaN for the function return and leaving the model in a useable state. Is there anything that can be done along these lines to make fitting more robust?\ngpytorch_optim_test5.zip",
+            "closedAt": "2018-11-14T16:13:55Z",
+            "createdAt": "2018-11-14T00:18:12Z",
+            "id": "MDU6SXNzdWUzODA0ODE3MzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 370,
+            "state": "CLOSED",
+            "title": "Robust model fitting (RuntimeError when learning rate is too high)",
+            "updatedAt": "2018-11-15T02:15:13Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/370"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "#362 extended DiagLazyTensor to work with general batch sizes. We need to do the same for the KroneckerProductLazyTensor. This is required to make the new Heteroskedastic Likelihoods work correctly in the multi-batch multi-task case.\nCurrently, the behavior is\nT = NonLazyTensor(torch.rand(2, 3, 4))\nKLT = KroneckerProductLazyTensor(T, T)\nKLT.shape, KLT.evaluate().shape\n# torch.Size([2, 9, 16]), torch.Size([2, 9, 16]) <- great\n\nT = NonLazyTensor(torch.rand(1, 2, 3, 4))\nKLT = KroneckerProductLazyTensor(T, T)\nKLT.shape, KLT.evaluate().shape\n# <- (torch.Size([9, 16]), torch.Size([9, 64])) <- not great",
+            "closedAt": "2019-03-19T14:58:12Z",
+            "createdAt": "2018-11-13T14:42:39Z",
+            "id": "MDU6SXNzdWUzODAyNTg1NjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 369,
+            "state": "CLOSED",
+            "title": "Make all LazyTensors work with any batch size",
+            "updatedAt": "2019-03-19T14:58:12Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/369"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "invalid argument 0: Sizes of tensors must match except in dimension 1. Got 149 and 841 in dimension 0. Here the 149 is the test data while the 841 is the training data.\nWhat I am doing is to use a network to downsize the dimension of the input. Say, input 841*60*2 into 841*60 output. Where 841 and 149 are batches. It seems that the DKL model fixed the dimension into 841 when I do test.\nIf I set the batch_size into 841 for training then the GP Kernal will be fixed into 841 and still cannot be tested under 149 batches.\nAny suggestions in this case? Thanks~",
+            "closedAt": "2018-11-22T06:37:33Z",
+            "createdAt": "2018-11-12T10:45:36Z",
+            "id": "MDU6SXNzdWUzNzk3MTg4Njg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 366,
+            "state": "CLOSED",
+            "title": "DKL model fixed train size for test",
+            "updatedAt": "2018-11-22T06:37:33Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/366"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is the best loss close to 0 or only focusing on test accuracy if it is converged? In the example I see many examples with negative losses. Thanks",
+            "closedAt": "2018-11-12T11:06:33Z",
+            "createdAt": "2018-11-11T15:59:00Z",
+            "id": "MDU6SXNzdWUzNzk1MzYwNjE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 365,
+            "state": "CLOSED",
+            "title": "Best loss for prediction",
+            "updatedAt": "2018-11-12T11:06:33Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/365"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the simple gp regression notebook, replacing RBF kernel with Periodic Kernel throws this runtime error while making predictions:\nThe kernel PeriodicKernel is not equipped to handle and diag. Expected size torch.Size([1, 51]). Got size torch.Size([1, 1, 51])",
+            "closedAt": "2018-11-10T23:24:01Z",
+            "createdAt": "2018-11-10T21:48:29Z",
+            "id": "MDU6SXNzdWUzNzk0NjQ2NzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 364,
+            "state": "CLOSED",
+            "title": "periodic kernel predictive variance ",
+            "updatedAt": "2018-11-10T23:24:01Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/364"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Lapack Error syev : 14 off-diagonal elements didn't converge to zero at /opt/conda/conda-bld/pytorch-nightly_1539082131513/work/aten/src/TH/generic/THTensorLapack.cpp:395\nwhat does this mean?",
+            "closedAt": "2018-11-11T11:15:47Z",
+            "createdAt": "2018-11-10T13:22:38Z",
+            "id": "MDU6SXNzdWUzNzk0MjIwMjc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 363,
+            "state": "CLOSED",
+            "title": "Lapack Error syev in Kiss-GP error",
+            "updatedAt": "2018-11-11T11:15:47Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/363"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently, DiagLazyTensor assumes either a vector or matrix as input. This has the following weird behavior:\n> d1 = DiagLazyTensor(torch.ones(4))\n> d1.ndimension(), d1.shape\n2, (4, 4)\n\n> d2 = DiagLazyTensor(torch.ones(3, 4))\n> d2.ndimension(), d2.shape\n3, (3, 4, 4)\n\n> d3 = DiagLazyTensor(torch.ones(2, 3, 4))\n> d3.ndimension(), d3.shape\n2, (4, 4)\n\nGiven @gpleiss's previous work on supporting general batch shapes, I suggest we modify DiagLazyTensor to support input tensors of general shapes. The last dimension will be interpreted as the diagonal, and the previous dimensions as batches. That is, a DiagLazyTensor(torch.ones(2, 3, 4)) would have 4 dimensions and a batch shape of [2, 3].\nI need this for implementing Heteroskedastic Likelihoods for batched Multitask GPs.",
+            "closedAt": "2018-11-15T06:02:44Z",
+            "createdAt": "2018-11-09T02:43:13Z",
+            "id": "MDU6SXNzdWUzNzkwMDA1Nzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 361,
+            "state": "CLOSED",
+            "title": "Make DiagLazyTensor work with any batch size",
+            "updatedAt": "2018-11-15T06:02:44Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/361"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi\nI want to implement a scalable Multitask GP where we learn one task per input. I used an approach like the Hadamard multi-task approach. However, I confused how to use GridInterpolationKernel and IndexKernel together? Any way to implement it?\nThanks,\nMohammad",
+            "closedAt": "2018-11-08T19:54:18Z",
+            "createdAt": "2018-11-08T19:25:18Z",
+            "id": "MDU6SXNzdWUzNzg4ODExMzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 360,
+            "state": "CLOSED",
+            "title": "Hadamard Multitask GP with KISS",
+            "updatedAt": "2018-11-08T19:54:18Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/360"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "See comments in #356 . Having unit tests that make sure all of the basic models we think should function actually do is really nice, but it's getting too cumbersome to have happen every time we want to run unit tests locally.\nThe proposed solution is to use one of the frameworks that directly lets us test Jupyter notebooks. This also has the advantage of making sure our examples all still work.",
+            "closedAt": "2022-10-22T21:46:22Z",
+            "createdAt": "2018-11-08T14:17:20Z",
+            "id": "MDU6SXNzdWUzNzg3NTA1MjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "unit tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 358,
+            "state": "CLOSED",
+            "title": "Transition from test/examples to testing Jupyter notebooks directly",
+            "updatedAt": "2022-10-22T21:46:22Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/358"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This issue can be best explained with the following code snippets:\nThis works fine:\ncov1 = gpytorch.kernels.RBFKernel(active_dims=(0,))\ncov2 = gpytorch.kernels.RBFKernel(active_dims=(1,))\nx = torch.rand(10,2)\ncov = cov1 * cov2 \nres1 = cov(x).evaluate()\n\nThis does not:\ngrid_cov = gpytorch.kernels.GridInterpolationKernel(cov, grid_size=100, num_dims=2)\nres2 = grid_cov(x).evaluate()\n\nIs it not possible to wrap GridInterpolationKernel over such a custom-designed covariance module?",
+            "closedAt": "2018-11-08T14:47:43Z",
+            "createdAt": "2018-11-08T07:51:35Z",
+            "id": "MDU6SXNzdWUzNzg2MTUwNjE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 357,
+            "state": "CLOSED",
+            "title": "GridInterpolationKernel wrapped over product kernels with active dims",
+            "updatedAt": "2018-11-08T14:47:43Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/357"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The mixture weights of spectral mixture kernels has size batch_size x num_mixtures unlike means and scales hyperparameters. Any particular reason behind sharing the weights across all the dimensions? The paper keeps separate weights, means and scales.",
+            "closedAt": "2018-11-07T00:40:25Z",
+            "createdAt": "2018-11-07T00:31:32Z",
+            "id": "MDU6SXNzdWUzNzgwOTI0NDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 350,
+            "state": "CLOSED",
+            "title": "SM kernel shared mixture weights",
+            "updatedAt": "2018-11-07T00:40:25Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/350"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This was renamed in: pytorch/pytorch#12699\nWe should update the call sites accordingly once this has made its way into a release.",
+            "closedAt": "2018-11-14T17:49:17Z",
+            "createdAt": "2018-11-06T22:11:59Z",
+            "id": "MDU6SXNzdWUzNzgwNTU3MjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 349,
+            "state": "CLOSED",
+            "title": "Use torch.cholesky instead of torch.potrf",
+            "updatedAt": "2018-11-14T17:49:18Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/349"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Running a simple 1D GP regression (RBF kernel) sporadically throws runtime error when using LBFGS optimizer. This happens when MLL loss suddenly increases by a big value.",
+            "closedAt": "2018-11-29T01:42:09Z",
+            "createdAt": "2018-11-04T21:25:15Z",
+            "id": "MDU6SXNzdWUzNzcxOTY0OTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 348,
+            "state": "CLOSED",
+            "title": "GPR fails with LBFGS optimizer ",
+            "updatedAt": "2018-11-29T01:42:09Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/348"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am studying a case where my data lies perfectly on a 3D grid (example: cubic lattice) and I want to use spectralmixture kernel for GP regression. I want to wrap it with GridKernel to speed up computation. What does the inducing_points argument does and is it same as grid argument if there is one data point corresponding to each grid cell, in other words, there are no empty cells in the grid dataset?",
+            "closedAt": "2019-10-03T03:54:49Z",
+            "createdAt": "2018-11-04T01:28:09Z",
+            "id": "MDU6SXNzdWUzNzcxMTA2MzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 344,
+            "state": "CLOSED",
+            "title": "GridKernel for perfect grid dataset",
+            "updatedAt": "2019-10-03T03:54:49Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/344"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Running Deep Kernel Learning GP regression notebook  throws RuntimeError:\nRuntimeError(\"The kernel should only receive the inducing points as input\"). \n\nThis happens in the 2nd iteration. In the first, the loss is a huge negative number of the order 10^16.",
+            "closedAt": "2018-11-03T18:17:43Z",
+            "createdAt": "2018-11-02T22:26:06Z",
+            "id": "MDU6SXNzdWUzNzY5ODY2Njk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 341,
+            "state": "CLOSED",
+            "title": "Scalable GPR with KISSGP error",
+            "updatedAt": "2018-11-03T18:17:43Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/341"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "tl;dr: We need to better handle the precomputed cache for train-train covariance\nSay you fit a GP in standard (non-batch) mode (n x p input).\n\nif you evaluate it in standard mode (m x p input), you're fine\nif you evaluate in batch mode (b x m x p input) without having previously evaluated in standard mode, you're fine\nif you first evaluate in standard mode, then in batch mode (or vice versa), an error is raised because of incompatible sizes of the train_train cache.\n\nThis is a bug, going back between the different modes should be possible.\nFurther, the following should be supported:\n\nfitting a GP in batch mode (b x n x p input) and then evaluating in \"standard\" mode (b x m x p input)\nfitting a GP in batch mode (b x n x p input)  and evaluating in batch-batch mode (b' x b x n x p input)\n\nThe only thing that should not be supported is evaluating a GP fitted in batch mode (b x n x p input) on an incompatible size (b' x n x p input, where b' != b)\nIf the GP is fit in standard mode but evaluated in batched mode, we expand the train inputs here:\n\n  \n    \n      gpytorch/gpytorch/models/exact_gp.py\n    \n    \n         Line 99\n      in\n      2a96a88\n    \n  \n  \n    \n\n        \n          \n           train_inputs[i] = train_input.unsqueeze(0).expand(input.size(0), *train_input.size()) \n        \n    \n  \n\n\nWe then compute the same train-train covariance for each batch repeatedly during evaluation (b/c we use expand and Lazy tensors this is probably not terrible perf-wise, but unnecessary). Instead, what I would suggest is computing the train-train covariance cache once in standard mode, and then during the call of exact_predictive_mean do proper broadcasting here if necessary: \n  \n    \n      gpytorch/gpytorch/lazy/lazy_tensor.py\n    \n    \n         Line 483\n      in\n      1a91ca5\n    \n  \n  \n    \n\n        \n          \n           res = test_train_covar.matmul(precomputed_cache) \n        \n    \n  \n\n\nThis would likely require changes to how we deal with full_mean in the exact GP.",
+            "closedAt": "2018-11-15T05:52:26Z",
+            "createdAt": "2018-11-02T18:44:30Z",
+            "id": "MDU6SXNzdWUzNzY5MjY0ODM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 340,
+            "state": "CLOSED",
+            "title": "Issues with switching between batch and non-batch predictions",
+            "updatedAt": "2018-11-15T05:52:26Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/340"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "One returns the parameter before the prior, and the other returns the prior before the parameter:\n\n  \n    \n      gpytorch/gpytorch/mlls/exact_marginal_log_likelihood.py\n    \n    \n        Lines 41 to 44\n      in\n      8106ba8\n    \n  \n  \n    \n\n        \n          \n           for _, param, prior in self.named_parameter_priors(): \n        \n\n        \n          \n               res.add_(prior.log_prob(param).sum()) \n        \n\n        \n          \n           for _, prior, params, transform in self.named_derived_priors(): \n        \n\n        \n          \n               res.add_(prior.log_prob(transform(*params)).sum())",
+            "closedAt": "2018-11-16T03:26:02Z",
+            "createdAt": "2018-10-30T17:43:58Z",
+            "id": "MDU6SXNzdWUzNzU2MTQyOTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "refactor"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 339,
+            "state": "CLOSED",
+            "title": "Module.named_parameter_priors inconsistent with Module.named_derived_priors",
+            "updatedAt": "2018-11-16T03:26:02Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/339"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems the model has inherit hyperparameters that could not be change during prediction.\nIs there a way to deal with this?",
+            "closedAt": "2018-10-29T14:24:12Z",
+            "createdAt": "2018-10-29T13:58:48Z",
+            "id": "MDU6SXNzdWUzNzUwMjg5NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 336,
+            "state": "CLOSED",
+            "title": "Batch size could not be applied in prediction or relength to feed in model",
+            "updatedAt": "2018-10-29T14:24:12Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/336"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm seeing the below test failure on pytorch master.\nLooks like this is due to a discrepancy in the following two checks:\nhttps://github.com/cornellius-gp/gpytorch/blob/master/gpytorch/functions/_log_normal_cdf.py#L77\nhttps://github.com/cornellius-gp/gpytorch/blob/master/gpytorch/functions/_log_normal_cdf.py#L108-L109\nThis is somewhat disconcerting b/c these should be the same tensors?\nAttributeError: 'LogNormalCDF' object has no attribute 'denominator'\n  File \"/usr/local/fbcode/gcc-5-glibc-2.23/lib/python3.6/unittest/case.py\", line 59, in testPartExecutor\n    yield\n  File \"/usr/local/fbcode/gcc-5-glibc-2.23/lib/python3.6/unittest/case.py\", line 605, in run\n    testMethod()\n  File \"/data/users/balandat/fbsource/fbcode/buck-out/dev-nosan/gen/pytorch/gpytorch/test_gpytorch_examples#binary,link-tree/test/examples/test_kissgp_additive_classification.py\", line 76, in test_kissgp_classification_error\n    loss.backward()\n  File \"/data/users/balandat/fbsource/fbcode/buck-out/dev-nosan/gen/pytorch/gpytorch/test_gpytorch_examples#binary,link-tree/torch/tensor.py\", line 102, in backward\n    torch.autograd.backward(self, gradient, retain_graph, create_graph)\n  File \"/data/users/balandat/fbsource/fbcode/buck-out/dev-nosan/gen/pytorch/gpytorch/test_gpytorch_examples#binary,link-tree/torch/autograd/__init__.py\", line 90, in backward\n    allow_unreachable=True)  # allow_unreachable flag\n  File \"/data/users/balandat/fbsource/fbcode/buck-out/dev-nosan/gen/pytorch/gpytorch/test_gpytorch_examples#binary,link-tree/gpytorch/functions/_log_normal_cdf.py\", line 109, in backward\n    log_phi_z_grad[z_is_small] = torch.abs(self.denominator.div(self.numerator)).mul(math.sqrt(2 / math.pi))",
+            "closedAt": "2018-11-14T17:50:11Z",
+            "createdAt": "2018-10-26T17:39:28Z",
+            "id": "MDU6SXNzdWUzNzQ0ODExOTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 334,
+            "state": "CLOSED",
+            "title": "Test failure in TestKissGPAdditiveClassification",
+            "updatedAt": "2018-12-01T09:03:21Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/334"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "According to this comment(#314 (comment)), it seems like ard_num_dims should always be equal to the dimension of the input dimension, and if it isn't, it should throw an error. However, SpectralMixtureModel is the only model that does so, the rest (RBFKernel and MaternKernel) fail in unexpected ways.",
+            "closedAt": "2018-10-23T12:43:16Z",
+            "createdAt": "2018-10-18T05:28:28Z",
+            "id": "MDU6SXNzdWUzNzEzNjcwMDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 328,
+            "state": "CLOSED",
+            "title": "ard_num_dims handled inconsistently across kernels",
+            "updatedAt": "2018-10-23T12:43:16Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/328"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI was wondering if you could write out the predictive distribution for a new data point from task i, using the Kronecker product notebook?\nDo you follow the exact form of the paper you point to? Or is there another paper which fully specifies the mean and covariance when you predict for new data?\nThanks!",
+            "closedAt": "2018-10-18T12:21:45Z",
+            "createdAt": "2018-10-17T00:55:48Z",
+            "id": "MDU6SXNzdWUzNzA4NTYwMzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 326,
+            "state": "CLOSED",
+            "title": "multitask predictive distribution",
+            "updatedAt": "2018-10-18T12:21:45Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/326"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the tutorial example for Deep Kernel Learning on the CIFAR datasets there is an issue in the test() function. The following error is raised:\n---------------------------------------------------------------------------\nAttributeError                            Traceback (most recent call last)\n<ipython-input-8-30679d80b21c> in <module>\n      3     with gpytorch.settings.use_toeplitz(False), gpytorch.settings.max_preconditioner_size(0):\n      4         train(epoch)\n----> 5         test()\n      6     state_dict = model.state_dict()\n      7     likelihood_state_dict = likelihood.state_dict()\n\n<ipython-input-7-91f72c08681a> in test()\n     35         with torch.no_grad():\n     36             output = likelihood(model(data))\n---> 37             pred = output.argmax()\n     38             correct += pred.eq(target.view_as(pred)).cpu().sum()\n     39     test_loss /= len(test_loader.dataset)\n\nAttributeError: 'Categorical' object has no attribute 'argmax'\nIt appears that the output of likelihood() should be an instance of torch.Tensor, and not torch.distributions.categorical.Categorical. This is consistent with gpytorch.likelihoods.SoftmaxLikelihood. Should .argmax() be called on one of the attributes of output,  or is there another recommended best practice to return the predictions?",
+            "closedAt": "2018-10-16T14:48:44Z",
+            "createdAt": "2018-10-16T14:23:46Z",
+            "id": "MDU6SXNzdWUzNzA2Mzg3OTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 325,
+            "state": "CLOSED",
+            "title": "Error in Deep_Kernel_Learning_DenseNet_CIFAR_Tutorial.ipynb",
+            "updatedAt": "2018-10-16T15:19:41Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/325"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems that the example part in spectral_mixture_kernel.py file has been copied but not modified from the rbf_kernel.py file. See here",
+            "closedAt": "2018-10-09T21:01:54Z",
+            "createdAt": "2018-10-09T03:46:57Z",
+            "id": "MDU6SXNzdWUzNjgwMjk5NTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 321,
+            "state": "CLOSED",
+            "title": "SpectralMixtureKernel example typo",
+            "updatedAt": "2018-10-09T21:01:54Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/321"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm just opening an issue so that we can track the fact that we are aware of this, but it seems that until PyTorch implements batch potrf (pytorch/pytorch#11796) using preconditioning for SV-DKL training is definitely not worth it.\nI've been running some speed tests, and it makes training about 5x slower in the example notebook (going from ~100ms per minibatch to ~600ms per minibatch).\nI'm not sure there's a lot we can do on our end about this for now other than to recommend people not use preconditioning at training time.",
+            "closedAt": "2018-11-26T19:18:37Z",
+            "createdAt": "2018-10-08T19:06:28Z",
+            "id": "MDU6SXNzdWUzNjc5MTYwNTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 320,
+            "state": "CLOSED",
+            "title": "Preconditioning for SV-DKL is slow",
+            "updatedAt": "2018-11-26T19:18:37Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/320"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI was wondering if it's possible to add (or multiply, which I guess the kronecker does for you) different kernels across different dimensions of my training data.\nThis is what I have tried to do (code below), but the fitting gives me a dimensionality error. I'm wondering if anyone else has implemented this already?\nBasically: I am ultimately trying to build a model of the type : Y = b1X1 + b2X2 + GP across 3 separate dimensions.\nAnd so, ultimately I plan to have linear kernels on for fitting b1 and b2, and then a kronecker of 3 kernels for the GP part in order to fit the 3 dimensions of data I'll have.\nAny help is appreciated. Thanks!\nn=100\ntrain_x = torch.zeros(pow(n, 2), 3)\nfor i in range(n):\n    for j in range(n):\n        train_x[i * n + j][0] = float(i) / (n-1)\n        train_x[i * n + j][1] = float(j) / (n-1)\n        train_x[i * n + j][2] = float(j) / (n-1)\n \ntrain_y = torch.sin((train_x[:, 0] + train_x[:, 1] + train_x[:,2]) * (2 * math.pi)) + torch.randn_like(train_x[:, 0]).mul(0.01)\n\nclass GPRegressionModel(gpytorch.models.ExactGP):\n\n...\n\n        self.mean_module = gpytorch.means.ConstantMean()\n        self.covar_module = gpytorch.kernels.GridInterpolationKernel(\n            gpytorch.kernels.ScaleKernel(\n                gpytorch.kernels.RBFKernel( active_dims=[0,1]) + \\\n                gpytorch.kernels.RBFKernel(  active_dims=[2]) \n                \n            ), grid_size=grid_size, num_dims=3\n        )\n ...\n\n\nRuntimeError: KroneckerProductLazyTensor expects the same batch sizes for component tensors. Got sizes: [torch.Size([1, 21, 21]), torch.Size([1, 21, 21]), torch.Size([0, 21, 21])]",
+            "closedAt": "2019-06-29T18:52:41Z",
+            "createdAt": "2018-10-08T15:56:50Z",
+            "id": "MDU6SXNzdWUzNjc4NTQzODA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 319,
+            "state": "CLOSED",
+            "title": "Adding kernels in a GP Regression",
+            "updatedAt": "2024-03-15T01:26:56Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/319"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am doing some comparison across multi-task models and would like to compare against a model that models each task independently.  Is there an easy way to specify such a MT kernel?  Ideally it would not require greater time/space complexity than fitting each task separately.",
+            "closedAt": "2019-11-12T20:44:43Z",
+            "createdAt": "2018-10-08T00:41:14Z",
+            "id": "MDU6SXNzdWUzNjc2MTAzNjg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                },
+                {
+                  "name": "multitask"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 318,
+            "state": "CLOSED",
+            "title": "Best way to fit multi-task model with independent tasks?",
+            "updatedAt": "2019-11-12T20:44:44Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/318"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Training a GP model in the very recent beta version takes significantly more time than that in the older alpha version. I tested this on a simple 1D regression task (taken from notebook) and found that the average training time in beta version is 2.32 seconds compared to 1.21 seconds in alpha version for the exact same scipt (pasted below) except the random_variables replaced by distributions. The script is run on an Intel I7 CPU @2.7 GHz (no cuda). Is this expected behavior ?\nimport math \nimport time\nimport torch\nimport numpy as np\nimport gpytorch \n\nfrom gpytorch.likelihoods import GaussianLikelihood\nfrom gpytorch.means import ZeroMean\nfrom gpytorch.kernels import RBFKernel\n# import ipdb\n\n\nclass GPModel(gpytorch.models.ExactGP):\n\tdef __init__(self, train_x, train_y, likelihood, version='alpha'):\n\t\tsuper(GPModel, self).__init__(train_x, train_y, likelihood)\n\t\tself.mean_module = ZeroMean()\n\t\tself.covar_module = RBFKernel()\n\t\tself.version = version\n\n\tdef forward(self, x):\n\t\tmean = self.mean_module(x)\n\t\tcovar = self.covar_module(x)\n\t\tif self.version == 'beta':\n\t\t\treturn gpytorch.distributions.MultivariateNormal(mean, covar)\n\t\telse:\n\t\t\treturn gpytorch.random_variables.GaussianRandomVariable(mean, covar)\n\nclass GP(object):\n\tdef __init__(self, train_x, train_y, version):\n\t\tself.likelihood = GaussianLikelihood()\n\t\tself.model = GPModel(train_x, train_y, self.likelihood, version)\n\t\tself.optimizer = torch.optim.Adam([{'params': self.model.parameters()}], lr=.1)\n\t\tself.mll = gpytorch.mlls.ExactMarginalLogLikelihood(self.likelihood, self.model)\n\t\tself.train_x = train_x\n\t\tself.train_y = train_y\n\n\tdef fit(self, max_iterations):\n\t\tfor i in range(max_iterations):\n\t\t\tself.optimizer.zero_grad()\n\t\t\toutput = self.model(self.train_x)\n\t\t\tloss = -self.mll(output, self.train_y)\n\t\t\tloss.backward()\n\t\t\tself.optimizer.step()\n\n\nif __name__ == '__main__':\n\ttrain_x = torch.linspace(0, 1, 100)\n\ttrain_y = torch.sin(train_x * (2*math.pi)) + torch.randn(train_x.size())*.2\n\n\tnum_sims = 5\n\tall_times = []\n\tfor _ in range(num_sims):\n\t\tstart = time.time()\n\t\tgp = GP(train_x, train_y, 'beta')\n\t\tgp.fit(max_iterations=200)\n\t\tend = time.time()\n\t\tall_times.append(end - start)\n\tmean_time = np.mean(all_times)\n\tprint(mean_time)",
+            "closedAt": "2018-11-28T22:20:36Z",
+            "createdAt": "2018-10-05T02:16:59Z",
+            "id": "MDU6SXNzdWUzNjcwMzUwMDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 317,
+            "state": "CLOSED",
+            "title": "Model training slow in beta version",
+            "updatedAt": "2018-11-28T22:20:37Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/317"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I'm seeing errors importing gpytorch after updating.\nImportError: cannot import name '_standard_normal'",
+            "closedAt": "2018-10-05T14:27:09Z",
+            "createdAt": "2018-10-04T22:50:23Z",
+            "id": "MDU6SXNzdWUzNjY5OTkwNjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 316,
+            "state": "CLOSED",
+            "title": "New version issues",
+            "updatedAt": "2018-10-05T14:27:09Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/316"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "What is ard_num_dims useful for?  Are there any use cases for when you'd want ARD for some kernel parameters but not others (at least within the context of a single constructor call)?.  It's also not clear what the expected behavior is when ard_num_dims is not equal to the number of dimensions being fed into the kernel.",
+            "closedAt": "2018-10-18T15:50:00Z",
+            "createdAt": "2018-10-04T05:44:23Z",
+            "id": "MDU6SXNzdWUzNjY2MzA1Mjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 314,
+            "state": "CLOSED",
+            "title": "What is ard_num_dims useful for?",
+            "updatedAt": "2018-10-18T15:55:38Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/314"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Right now, we precondition linear solves and log determinants for AddedDiagLazyTensors. This instance of the preconditioner uses the Woodbury formula to solve with L_{k}L_{k}^{\\top} + s*I, and the matrix determinant lemma to get the log determinant of that matrix (see the NIPS paper).\nAbsent an added diagonal, I think L_{k} could still be useful for preconditioning at least linear systems by solving a least squares problem:\n# New proposed default for LazyTensor\ndef _preconditioner(self):\n    piv_chol_self = pivoted_cholesky(...)\n    def precond_closure(v):\n        # Solve least squares problem with L_{k}L_{k}^{\\top}\n    return precond_closure, None\nHere's the catch: I think this default could only be used for inv_matmul, not inv_quad_log_det. At least, I'm not sure how to get a good log determinant correction out of this like we do for the added diagonal case. However, this could make our inv_matmul calls for non AddedDiagLazyTensors all magically much better (of course we should test this).\n@gpleiss",
+            "closedAt": "2018-11-12T13:48:43Z",
+            "createdAt": "2018-10-03T14:11:59Z",
+            "id": "MDU6SXNzdWUzNjYzNTk5NDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 313,
+            "state": "CLOSED",
+            "title": "Implement default preconditioner for non AddedDiagLazyTensors?",
+            "updatedAt": "2018-11-12T13:48:43Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/313"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Running the KISSGP_Kronecker_Regression.ipynb script throws this error:\nAttributeError: 'Tensor' object has no attribute 'flip'\nThe bug is associated with GridInterpolationKernel as other scripts with the same kernel throws the same error and when I replace it with simple RBF kernel, the script works just fine.",
+            "closedAt": "2018-10-02T22:57:53Z",
+            "createdAt": "2018-10-02T20:59:33Z",
+            "id": "MDU6SXNzdWUzNjYwNzc0NTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 312,
+            "state": "CLOSED",
+            "title": "GridInterpolationKernel bug",
+            "updatedAt": "2018-10-02T22:57:53Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/312"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2022-10-22T21:49:15Z",
+            "createdAt": "2018-10-01T16:28:29Z",
+            "id": "MDU6SXNzdWUzNjU1NDE1NjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "unit tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 306,
+            "state": "CLOSED",
+            "title": "Cuda tests for LazyTensors",
+            "updatedAt": "2022-10-22T21:49:15Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/306"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When specifying the active_dims, one is able to use a list when on a CPU, but on a GPU, one needs to manually construct pytorch tensors for the appropriate device.  This results in some pretty ugly code to construct fully additive kernels, like:\n        def cudafy(a_list):\n            if cuda:\n                return torch.tensor(a_list, dtype=torch.long, device=\"cuda\")\n            else:\n                return a_list\n         self.covar_module = RBFKernel(active_dims=cudafy([0]))\n         for i in range(1, latent_dimensions):\n              self.covar_module += RBFKernel(active_dims=cudafy([i]))\nIt would be a lot more convenient if one didn't have to worry about whether one were in GPU/CPU mode, so that one could just write:\n         self.covar_module = RBFKernel(active_dims=[0])\n         for i in range(1, latent_dimensions):\n              self.covar_module += RBFKernel(active_dims=[i])",
+            "closedAt": "2018-09-29T23:04:55Z",
+            "createdAt": "2018-09-29T17:33:52Z",
+            "id": "MDU6SXNzdWUzNjUxNTE1NjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 302,
+            "state": "CLOSED",
+            "title": "Feature request: allow lists for active_dims in RBFKernel()",
+            "updatedAt": "2018-09-29T23:04:56Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/302"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I try the example combining KISS-GP, Deep Kernel Learning, and stochastic variational inference. The RMSE is 0.48.\nHowever, the y values are in [-1.25, 1.90]. Therefore, I think this RMSE is too large. This situation exists even if I increase the epoch number to 100.\nActually the predicted values are totally different with ground true values.\nI feel very confused...",
+            "closedAt": "2018-10-04T17:40:15Z",
+            "createdAt": "2018-09-29T17:05:32Z",
+            "id": "MDU6SXNzdWUzNjUxNDkzMTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 301,
+            "state": "CLOSED",
+            "title": "Does the DKL really work?",
+            "updatedAt": "2018-10-04T17:40:15Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/301"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "These are generally useful, we should PR this into pytorch core. See https://pytorch.slack.com/archives/C879Y9Q8K/p1538155154000100\nWill require implementing sampling functionality. This is Algorithm 3.2. from\nD. Lewandowski, D. Kurowicka, and H. Joe. Generating random correlation matrices based on vines and extended onion method. Journal of Multivariate Analysis, 100(9):1989 – 2001, 2009. ISSN 0047-259X. doi: https://doi.org/10.1016/j.jmva.2009.04.008.",
+            "closedAt": "2021-11-24T15:29:54Z",
+            "createdAt": "2018-09-28T23:22:31Z",
+            "id": "MDU6SXNzdWUzNjUwNzA5NTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "push upstream"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 300,
+            "state": "CLOSED",
+            "title": "Move LKJ priors into pytorch core (as distributions)",
+            "updatedAt": "2021-11-24T15:29:54Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/300"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI am trying to do a multitask gp with 36 tasks. However, I'm getting an error in training:\nFunction AddDiagLegacyBackward returned an invalid gradient at index 1 - expected shape [1] but got []\nI wanted to check a few things about setting up this model.\nFollowing the multitask example:https://github.com/cornellius-gp/gpytorch/blob/master/examples/03_Multitask_GP_Regression/Hadamard_Multitask_GP_Regression.ipynb\nit seems that all of the data is flattened into training x and y tensors with an index tensor. So I have:\nx = [x1,....,x696], y=[y1,...,y696] and then y_indices = [0,0,0,1,1,1,1,1,1,...,35,35,35].\nIs that the correct way to set up the indices? This seems to be the same as in the example.\nThe tasks are not of the same dimension. Is that a problem?\nThe model is straight from the example:\nclass  MultitaskGPModel(gpytorch.models.ExactGP):\ndef init(self, train_x, train_y, likelihood):\nsuper(MultitaskGPModel, self).init(train_x, train_y, likelihood)\n# Default bounds on mean are (-1e10, 1e10)\nself.mean_module = ConstantMean()\n# We use the very common RBF kernel\nself.covar_module = RBFKernel()\n# We learn an IndexKernel for 2 tasks\n# (so we'll actually learn 2x2=4 tasks with correlations)\nself.task_covar_module = IndexKernel(n_tasks=36, rank=1)\ndef forward(self,x,i):\n    # Get predictive mean\n    mean_x = self.mean_module(x)\n    # Get all covariances, we'll look up the task-speicific ones\n    covar_x = self.covar_module(x)\n    # # Get the covariance for task i\n    covar_i = self.task_covar_module(i)\n    covar_xi = covar_x.mul(covar_i)\n    return GaussianRandomVariable(mean_x, covar_xi)\n\nThanks for your help!",
+            "closedAt": "2018-09-27T16:47:16Z",
+            "createdAt": "2018-09-27T14:55:36Z",
+            "id": "MDU6SXNzdWUzNjQ1MTcxNjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 294,
+            "state": "CLOSED",
+            "title": "multitask with many tasks, Function AddDiagLegacyBackward ",
+            "updatedAt": "2018-09-27T16:47:52Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/294"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "E.g:\n> cv.lazy_vars\n[<gpytorch.lazy.lazy_evaluated_kernel_tensor.LazyEvaluatedKernelTensor at 0x7f6139087278>,\n <gpytorch.lazy.matmul_lazy_tensor.MatmulLazyTensor at 0x7f6139087780>]\n\n> [lv.size() for lv in cv.lazy_vars]\n[torch.Size([2, 1, 1]), torch.Size([2, 1, 1])]\n\n>diags = [lazy_var.diag().contiguous() for lazy_var in cv.lazy_vars]\n>[diag.size() for diag in diags]\n[torch.Size([2]), torch.Size([2, 1])]\n\nThis causes inconsistencies when using batch mode. My suggestion is to ensure that all .diag() calls reduce the last two dimensions of the tensor, i.e. for a b1 x b2 x n x n LazyTensor this would return a Tensor of Size b1 x b2 x n. This is the same as the behavior of torch.diagonal(X, dim1=-2, dim2=-1).",
+            "closedAt": "2018-10-01T14:41:07Z",
+            "createdAt": "2018-09-26T19:05:59Z",
+            "id": "MDU6SXNzdWUzNjQxNjg0MTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 292,
+            "state": "CLOSED",
+            "title": "Inconsistent behavior of .diag() method for different Lazy Tensors in batch mode",
+            "updatedAt": "2018-10-01T14:41:07Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/292"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Batch mode (fitting and predicting) is currently a \"hidden\" feature as it's not very well documented and does not have a tutorial.\nWe should add documentation and also unit tests to make sure this works as expected (this was the cause for a lot of bugs in the past).",
+            "closedAt": "2018-11-25T18:41:45Z",
+            "createdAt": "2018-09-26T18:04:42Z",
+            "id": "MDU6SXNzdWUzNjQxNDY4ODA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                },
+                {
+                  "name": "unit tests"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 291,
+            "state": "CLOSED",
+            "title": "Document various ways GPs can be used in batch mode",
+            "updatedAt": "2018-11-25T18:41:46Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/291"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI have got a working example of using a multitask GP using gpytorch, and also got an example working where the covariance has multiple kernels, but when I try to combine them the training fails. The forward method works but I'm not sure where it is failing in the training. Has anyone seen this before/have suggestions?",
+            "closedAt": "2018-09-23T19:26:39Z",
+            "createdAt": "2018-09-23T19:02:24Z",
+            "id": "MDU6SXNzdWUzNjI5NjgxMjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 285,
+            "state": "CLOSED",
+            "title": "multitask learning where each task has multiple kernels",
+            "updatedAt": "2018-09-23T19:40:31Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/285"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We can re-use a bunch of functionality, and we'll also conform to how torch.distributions handle batch mode. This should solve #267.\nFor the basic versions (e.g. Normal or Gamma priors) there are a couple of things to do\n\noverwrite log_prob in the base class so that the handling of log-transform is done as is currently [this is straightforward]\nmake sure Prior is derived from torch.nn.Module, so it can inherit all the goodies there. This also  means that the distribution parameters will need to be registered as buffers. This is doable, albeit a little bit hacky if we want to avoid duplication by calling the constructor of the respective torch distribution (b/c you can't overwrite attributes when registering buffers - so you'll have to do sth like store the broadcasted parameters [e.g. loc, scale] in a temporary variable, explicitly remove the attribute, and then add it back in as a buffer - not pretty, but seems to work).\n\nFor distributions not implemented in torch.distributions (LKJ, Wishart), we just need to conform to the basic torch.distributions api. We should probably just push these upstream once we feel good about those.\nI have a local commit that looks pretty promising, shouldn't be too long until I diff this out.",
+            "closedAt": "2018-09-25T15:52:49Z",
+            "createdAt": "2018-09-22T16:38:06Z",
+            "id": "MDU6SXNzdWUzNjI4NzE0NDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "refactor"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 284,
+            "state": "CLOSED",
+            "title": "Derive priors from torch.distributions",
+            "updatedAt": "2018-09-25T15:52:49Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/284"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Let's get rid of the following UserWarning throughout:\nUserWarning: To copy construct from a tensor, it is recommended to use\nsourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True),\nrather than torch.tensor(sourceTensor).",
+            "closedAt": "2018-09-23T19:49:27Z",
+            "createdAt": "2018-09-20T21:38:39Z",
+            "id": "MDU6SXNzdWUzNjIzNzc5MDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 281,
+            "state": "CLOSED",
+            "title": "Use recommended tensor copying",
+            "updatedAt": "2018-09-23T19:49:27Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/281"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently, model fitting requires writing a custom loop to take gradient steps. All the tutorials perform that for a fixed number of steps without any kind of smartness about how the loss / the parameter values evolve during the course of the optimization.\nTo make this easier for the non-expert (and to avoid writing tons of boilerplate code), I suggest we provide an (optional) wrapper for the model fitting loop that uses some reasonable convergence criteria to stop the optimization.\nGiven a specified model, likelihood, mll_class, train_x and train_y, calling this could be as simple as:\nfrom gpytorch import fit_model\nfit_model(model, likelihood, train_x, train_y, mll_class)\n\nImplementation wise this would be something like the following:\ndef fit_model(model, likelihood, train_x, train_y, mll_class, optimizer=None, options=None, verbose=True):\n    options = options or {}\n    model.train()\n    likelihood.train()\n    mll = mll_class(likelihood, model)\n    optimizer = optimizer or torch.optim.Adam(\n        [{\"params\": model.parameters()}],\n        lr=options.get(\"lr\", 0.1), # be smarter about this\n    )\n    param_trajectory = {\n        name: [] for name, param in model.named_parameters()\n    }\n    loss_trajectory = []\n    converged = False\n    while not converged:\n        optimizer.zero_grad()\n        output = model(train_x)\n        loss = -mll(output, train_y)\n        losses.append(loss.data.clone())\n        loss.backward()\n        if verbose:\n            print(\"Iter {} - MLL: {:.3f}\".format(i + 1, -loss.item()))\n        optimizer.step()\n        for name, param in model.named_parameters():\n            param_trajectory[name].append(param.data.clone())\n        converged = check_convergence(loss_trajectory, param_trajectory)\n    model.eval()\n    likelihood.eval()\n\nOf course we'd need to think a little harder about what check_convergence should be for the stochastic optimization algorithms used here.",
+            "closedAt": "2018-10-01T14:02:47Z",
+            "createdAt": "2018-09-19T16:55:53Z",
+            "id": "MDU6SXNzdWUzNjE4Mzg5NTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 279,
+            "state": "CLOSED",
+            "title": "Helper function for automateing model fitting",
+            "updatedAt": "2018-10-01T14:02:47Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/279"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The recent changes to master have basically completely broken batch mode. This example is for the forward method in kernels.RBFKernel. As an example, consider the following code snippet\nimport torch\nimport gpytorch\n\nclass BatchGP(gpytorch.models.ExactGP):\n    def __init__(self, train_inputs, train_targets, likelihood):\n        super(BatchGP, self).__init__(train_inputs, train_targets, likelihood)\n        self.mean_module = gpytorch.means.ConstantMean(batch_size=2)\n        self.covar_module = gpytorch.kernels.RBFKernel(ard_num_dims=3, batch_size=2)\n        self.register_parameter('log_outputscale', torch.nn.Parameter(torch.zeros(2, 1, 1)))\n        \n    def forward(self, inputs):\n        inputs = inputs.unsqueeze(0)\n        inputs = inputs.expand(2, -1, -1)\n        mean = self.mean_module(inputs)\n        prescale_covar = self.covar_module(inputs).evaluate()\n        covar = self.log_outputscale.exp() * prescale_covar\n\n        return self.likelihood(gpytorch.random_variables.GaussianRandomVariable(mean, covar))\n\ntrain_x = torch.rand(5, 3)\ntrain_y = torch.rand(5, 2)\nlikelihood = gpytorch.likelihoods.GaussianLikelihood()\n\nbatch_gp = BatchGP(train_x, train_y, likelihood)\n\nbatch_gp(train_x)\n\nOut:\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-11-bbf86dd62a62> in <module>()\n     24 batch_gp = BatchGP(train_x, train_y, likelihood)\n     25 \n---> 26 batch_gp(train_x)\n\n~/Code/gpytorch/gpytorch/models/exact_gp.py in __call__(self, *args, **kwargs)\n     79                 if not all(torch.equal(train_input, input) for train_input, input in zip(train_inputs, inputs)):\n     80                     raise RuntimeError(\"You must train on the training inputs!\")\n---> 81             return super(ExactGP, self).__call__(*inputs, **kwargs)\n     82 \n     83         # Posterior mode\n\n~/Code/gpytorch/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    178 \n    179     def __call__(self, *inputs, **kwargs):\n--> 180         outputs = self.forward(*inputs, **kwargs)\n    181         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyTensor):\n    182             return outputs\n\n<ipython-input-11-bbf86dd62a62> in forward(self, inputs)\n     13         inputs = inputs.expand(2, -1, -1)\n     14         mean = self.mean_module(inputs)\n---> 15         prescale_covar = self.covar_module(inputs).evaluate()\n     16         covar = self.log_outputscale.exp() * prescale_covar\n     17 \n\n~/Code/gpytorch/gpytorch/lazy/lazy_evaluated_kernel_tensor.py in evaluate(self)\n    123 \n    124     def evaluate(self):\n--> 125         return self.evaluate_kernel().evaluate()\n    126 \n    127     def exact_predictive_mean(self, full_mean, train_labels, n_train, likelihood, precomputed_cache=None):\n\n~/Code/gpytorch/gpytorch/lazy/lazy_evaluated_kernel_tensor.py in evaluate_kernel(self)\n    104                 x2 = self.x2\n    105 \n--> 106             self._cached_kernel_eval = super(Kernel, self.kernel).__call__(x1, x2, **self.params)\n    107             if self.squeeze_row:\n    108                 self._cached_kernel_eval.squeeze_(-2)\n\n~/Code/gpytorch/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    178 \n    179     def __call__(self, *inputs, **kwargs):\n--> 180         outputs = self.forward(*inputs, **kwargs)\n    181         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyTensor):\n    182             return outputs\n\n~/Code/gpytorch/gpytorch/kernels/rbf_kernel.py in forward(self, x1, x2)\n     94     def forward(self, x1, x2):\n     95         x1_, x2_ = self._create_input_grid(x1, x2)\n---> 96         x1_ = x1_.div(self.lengthscale)\n     97         x2_ = x2_.div(self.lengthscale)\n     98 \n\nRuntimeError: The size of tensor a (5) must match the size of tensor b (2) at non-singleton dimension 1\n\nIf you go in and look at the dimension of the tensors, x1_.size() is [B x N x 1 x D] and self.lengthscale.size() is [B x 1 x D]",
+            "closedAt": "2018-09-19T19:49:01Z",
+            "createdAt": "2018-09-18T02:47:04Z",
+            "id": "MDU6SXNzdWUzNjExMTQ5NDU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 274,
+            "state": "CLOSED",
+            "title": "Fowarding through RBFKernel in batch-mode broken",
+            "updatedAt": "2018-09-19T21:11:21Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/274"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm getting a reproducible RuntimeError: Lapack Error syev : 9 off-diagonal elements didn't converge to zero at caffe2/aten/src/TH/generic/THTensorLapack.cpp:395 in test_simple_gp_regression.py with this.\nNot sure whether related to #266 or #270. @gpleiss, could you take a look?",
+            "closedAt": "2018-09-20T14:36:41Z",
+            "createdAt": "2018-09-17T20:56:49Z",
+            "id": "MDU6SXNzdWUzNjEwNDEwNzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 271,
+            "state": "CLOSED",
+            "title": "Lapack Error in TestSimpleGPRegression",
+            "updatedAt": "2018-09-20T14:36:41Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/271"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Observing the following:\nI = torch.eye(4)\nNonLazyTensor(I).root_decomposition()\n\n# this will often return nans, and sometimes an approx. solution\ntensor([[nan, nan, nan],\n        [nan, nan, nan],\n        [nan, nan, nan],\n        [nan, nan, nan]])\n\nInoise = I + 1e-3 * torch.diag(torch.rand(4))\nNonLazyTensor(Inoise).root_decomposition()\n\ntensor([[ 1.6966e-05, -1.0755e-05,  1.0002e+00, -1.2987e-04],\n        [-1.0000e+00, -1.4206e-03,  1.3592e-05,  5.5494e-06],\n        [ 1.4198e-03, -1.0000e+00, -1.9231e-06, -1.2009e-05],\n        [-5.9421e-06,  1.3196e-05, -1.0358e-04, -1.0005e+00]])\n\nDdiag = torch.ones(4)\nDiagLazyTensor(Ddiag).root_decomposition()\n\n# again most of the time this is nan and sometimes an approx solution\ntensor([[nan, nan, nan],\n        [nan, nan, nan],\n        [nan, nan, nan],\n        [nan, nan, nan]])\n\nDdiagnoise = Ddiag  + 1e-3 * torch.rand(4)\nDiagLazyTensor(Ddiagnoise).root_decomposition()\n\ntensor([[ 0.0002,  1.0002,  0.0010, -0.0000],\n        [ 0.9999,  0.0002, -0.0001,  0.0001],\n        [ 0.0002,  0.0002, -0.0004, -1.0006],\n        [-0.0003, -0.0010,  1.0003, -0.0000]])\n\n\nAt least for DiagLazyTensor we should just short-circuit the special-case and just return DiagLazyTensor(torch.sqrt(input_diag)). Not sure about the other cases, things seem to work reasonably if the matrices have off-diagonal elements.",
+            "closedAt": "2018-11-16T03:27:52Z",
+            "createdAt": "2018-09-12T23:33:34Z",
+            "id": "MDU6SXNzdWUzNTk2ODk0MDI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 268,
+            "state": "CLOSED",
+            "title": "Root decomposition fails for simple matrices",
+            "updatedAt": "2018-11-16T03:27:52Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/268"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Suppose you create FooGP, a subclass of gpytorch.models.ExactGP and have an instance foo_gp. We specify\nfoo_gp.covar_module = gpytorch.kernels.RBFKernel(ard_num_dims=D, log_lengthscale_prior=gpytorch.priors.SmoothedBoxPrior(-3, 3), batch_size=B)\n\nCalling foo_gp.foward() results in the following error (here B=5, D=6)\n~/Code/gpytorch/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    160 \n    161     def __call__(self, *inputs, **kwargs):\n--> 162         outputs = self.forward(*inputs, **kwargs)\n    163         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyVariable):\n    164             return outputs\n\n~/Code/gpytorch/gpytorch/mlls/exact_marginal_log_likelihood.py in forward(self, output, target)\n     62         # Add log probs of priors on the parameters\n     63         for _, param, prior in self.named_parameter_priors():\n---> 64             res.add_(prior.log_prob(param).sum())\n     65         for _, prior, params, transform in self.named_derived_priors():\n     66             res.add_(prior.log_prob(transform(*params)).sum())\n\n~/Code/gpytorch/gpytorch/priors/prior.py in log_prob(self, parameter)\n     48     def log_prob(self, parameter):\n     49         \"\"\"Returns the log-probability of the parameter value under the prior.\"\"\"\n---> 50         return self._log_prob(parameter.exp() if self.log_transform else parameter)\n     51 \n     52     def _initialize_distributions(self):\n\n~/Code/gpytorch/gpytorch/priors/smoothed_box_prior.py in _log_prob(self, parameter)\n     65     def _log_prob(self, parameter):\n     66         # x = \"distances from box`\"\n---> 67         X = ((parameter.view(self.a.shape) - self._c).abs_() - self._r).clamp(min=0)\n     68         return sum(p.log_prob(x) for p, x in zip(self._tails, X)) - self._M.sum()\n     69 \n\nRuntimeError: invalid argument 2: size '[1]' is invalid for input with 5 elements at /opt/conda/conda-bld/pytorch_1533672544752/work/aten/src/TH/THStorage.cpp:84 \n\nHowever, if we say\nfoo_gp.covar_module = gpytorch.kernels.RBFKernel(ard_num_dims=D, log_lengthscale_prior=gpytorch.priors.SmoothedBoxPrior(-3, 3, size=(B, D)), batch_size=B)\n\nWe get this error\n----> 4 test_gp = ExactRBFGP(test_inputs, test_targets, likelihood)\n\n<ipython-input-49-10157c928ca4> in __init__(self, train_inputs, train_targets, likelihood)\n     11         lengthscale_size = (self.batch_size, self.input_dim)\n     12         self.covar_module = gpytorch.kernels.RBFKernel(ard_num_dims=self.input_dim,\n---> 13                                                        log_lengthscale_prior=gpytorch.priors.SmoothedBoxPrior(-3, 3, size=lengthscale_size),\n     14                                                        batch_size=self.batch_size)\n     15         outputscale_size = (self.batch_size, 1, 1)\n\n~/Code/gpytorch/gpytorch/priors/smoothed_box_prior.py in __init__(self, a, b, sigma, log_transform, size)\n     26     def __init__(self, a, b, sigma=0.01, log_transform=False, size=None):\n     27         if isinstance(a, Number) and isinstance(b, Number):\n---> 28             a = torch.full((size or 1,), float(a))\n     29             b = torch.full((size or 1,), float(b))\n     30         elif not (torch.is_tensor(a) and torch.is_tensor(b)):\n\nTypeError: 'tuple' object cannot be interpreted as an integer \n\nThis suggests that batch mode is not properly supported by some (all?) priors.",
+            "closedAt": "2018-10-02T01:56:41Z",
+            "createdAt": "2018-09-12T22:04:43Z",
+            "id": "MDU6SXNzdWUzNTk2Njk2Mjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 267,
+            "state": "CLOSED",
+            "title": "Batch-mode not properly supported by priors",
+            "updatedAt": "2018-10-02T01:56:41Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/267"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am of the opinion that the deprecated parameter bounds should not make it in to the beta release, since they are just an alias for a prior at this point and not really even hard constraint bounds anymore.\nThoughts?",
+            "closedAt": "2018-09-26T17:04:16Z",
+            "createdAt": "2018-09-12T13:38:07Z",
+            "id": "MDU6SXNzdWUzNTk0ODQ3OTA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 263,
+            "state": "CLOSED",
+            "title": "Remove deprecated parameter bounds for beta release",
+            "updatedAt": "2018-09-26T17:04:16Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/263"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We can provide a simple ICM constructor that just wraps this for convenience/clarity. I'll have to think a little bit how we deal with the priors on the different index kernels involved - it's probably fine to have the correlation prior over all index kernels and specify that once in the constructor. Though it's not quite clear how these would be evaluated then in the current setup. Maybe the easiest is just to clone the prior and attach it to each IndexKernel.",
+            "closedAt": "2018-10-01T23:34:26Z",
+            "createdAt": "2018-09-11T21:08:09Z",
+            "id": "MDU6SXNzdWUzNTkyMjQ0OTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 261,
+            "state": "CLOSED",
+            "title": "Implement LCM Kernel",
+            "updatedAt": "2018-10-01T23:34:26Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/261"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We have a mix of n_samples, num_dims, etc. for different attributes. For consistency, we should use just one of these. I propose num_ since it seems to be more commonly used with PyTorch.\nWe can accept both (for now) and deprecate n_*.",
+            "closedAt": "2018-10-04T19:17:29Z",
+            "createdAt": "2018-09-11T16:11:47Z",
+            "id": "MDU6SXNzdWUzNTkxMTgzNjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 260,
+            "state": "CLOSED",
+            "title": "For consistency: attrs should be `num_*`, not `n_*`",
+            "updatedAt": "2018-10-04T19:17:29Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/260"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This should probably also fix #85",
+            "closedAt": "2018-09-18T16:53:48Z",
+            "createdAt": "2018-09-10T20:10:48Z",
+            "id": "MDU6SXNzdWUzNTg3NzU0OTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "refactor"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 258,
+            "state": "CLOSED",
+            "title": "Refactor Matern and spectral mixture kernels",
+            "updatedAt": "2018-09-18T16:53:48Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/258"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2018-12-05T19:38:12Z",
+            "createdAt": "2018-09-10T20:09:31Z",
+            "id": "MDU6SXNzdWUzNTg3NzUwNTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 257,
+            "state": "CLOSED",
+            "title": "SGPR should use diagonal correction",
+            "updatedAt": "2018-12-05T19:38:12Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/257"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2018-11-26T19:05:51Z",
+            "createdAt": "2018-09-10T20:08:23Z",
+            "id": "MDU6SXNzdWUzNTg3NzQ1OTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 256,
+            "state": "CLOSED",
+            "title": "Add example notebooks for SGPR and SKIP",
+            "updatedAt": "2018-11-26T19:05:51Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/256"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2018-10-04T19:17:57Z",
+            "createdAt": "2018-09-10T20:08:05Z",
+            "id": "MDU6SXNzdWUzNTg3NzQ0ODI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 255,
+            "state": "CLOSED",
+            "title": "Add example scripts for initialing hyperparameters for SKI",
+            "updatedAt": "2018-10-04T19:17:57Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/255"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Given that (1) LazyVariable was intended to mimic Variable as closely as possible, but (2) Variable no longer exists in PyTorch, we should deprecate LazyVariable and rename it LazyTensor.",
+            "closedAt": "2018-09-13T13:23:23Z",
+            "createdAt": "2018-09-10T20:07:06Z",
+            "id": "MDU6SXNzdWUzNTg3NzQxMjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "compatibility"
+                },
+                {
+                  "name": "refactor"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 254,
+            "state": "CLOSED",
+            "title": "Rename LazyVariable to LazyTensor",
+            "updatedAt": "2018-09-13T13:23:23Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/254"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This is more of an implementation doubt rather than an issue. In the forward method of white_noise_kernel, when the module is in eval mode, shouldn't the elif condition return zero instead of training variances? Shouldn't white noise variance be training variance when x1 = x2 = training data?\n\n  \n    \n      gpytorch/gpytorch/kernels/white_noise_kernel.py\n    \n    \n        Lines 29 to 37\n      in\n      1b809b3\n    \n  \n  \n    \n\n        \n          \n           def forward(self, x1, x2): \n        \n\n        \n          \n               if self.training and torch.equal(x1, x2): \n        \n\n        \n          \n                   # Reshape into a batch of batch_size diagonal matrices, each of which is \n        \n\n        \n          \n                   # (data_size * task_size) x (data_size * task_size) \n        \n\n        \n          \n                   return DiagLazyVariable(self.variances.view(self.variances.size(0), -1)) \n        \n\n        \n          \n               elif x1.size(-2) == x2.size(-2) and x1.size(-2) == self.variances.size(1) and torch.equal(x1, x2): \n        \n\n        \n          \n                   return DiagLazyVariable(self.variances.view(self.variances.size(0), -1)) \n        \n\n        \n          \n               else: \n        \n\n        \n          \n                   return ZeroLazyVariable(x1.size(-3), x1.size(-2), x2.size(-2))",
+            "closedAt": "2018-11-30T14:20:17Z",
+            "createdAt": "2018-09-08T20:36:07Z",
+            "id": "MDU6SXNzdWUzNTgzMjYwNTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 252,
+            "state": "CLOSED",
+            "title": "White noise kernel variance",
+            "updatedAt": "2018-11-30T14:20:17Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/252"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The problem from #247 seems to preserve for the particular single test points, e.g., if the grid is\n[-3.3333, -1.6667,  0.0000,  1.6667,  3.3333] when provided grid_size=5 and grid_bounds=[(-2,2)], then prediction will fail on any single test point outside of the range of [0.0000,  1.6667] (notebook attached):\n---------------------------------------------------------------------------\nIndexError                                Traceback (most recent call last)\n<ipython-input-14-dd2c9e04445d> in <module>()\n      1 # Does not work\n      2 test_x = torch.FloatTensor([-0.1]).unsqueeze(1)\n----> 3 model(test_x)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/models/exact_gp.py in __call__(self, *args, **kwargs)\n    142                 n_train=n_train,\n    143                 likelihood=self.likelihood,\n--> 144                 precomputed_cache=self.mean_cache,\n    145             )\n    146             predictive_covar, covar_cache = exact_predictive_covar(\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/functions/__init__.py in exact_predictive_mean(full_covar, full_mean, train_labels, n_train, likelihood, precomputed_cache)\n     89 \n     90         full_covar = NonLazyVariable(full_covar)\n---> 91     return full_covar.exact_predictive_mean(full_mean, train_labels, n_train, likelihood, precomputed_cache)\n     92 \n     93 \n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in exact_predictive_mean(self, full_mean, train_labels, n_train, likelihood, precomputed_cache)\n    124         else:\n    125             return super(LazyEvaluatedKernelVariable, self).exact_predictive_mean(\n--> 126                 full_mean, train_labels, n_train, likelihood, precomputed_cache\n    127             )\n    128 \n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in exact_predictive_mean(self, full_mean, train_labels, n_train, likelihood, precomputed_cache)\n    427         else:\n    428             test_train_covar = self[n_train:, :n_train]\n--> 429         res = test_train_covar.matmul(precomputed_cache)\n    430         if res.ndimension() == 3:\n    431             res = res.squeeze(-1)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in matmul(self, tensor)\n    632             raise RuntimeError\n    633 \n--> 634         func = Matmul(self.representation_tree())\n    635         return func(tensor, *self.representation())\n    636 \n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in representation_tree(self)\n    112 \n    113     def representation_tree(self):\n--> 114         return LazyVariableRepresentationTree(self.evaluate_kernel())\n    115 \n    116     def evaluate(self):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in evaluate_kernel(self)\n     96                 x2 = self.x2\n     97 \n---> 98             self._cached_kernel_eval = super(Kernel, self.kernel).__call__(x1, x2, **self.params)\n     99             if self.squeeze_row:\n    100                 self._cached_kernel_eval.squeeze_(-2)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    160 \n    161     def __call__(self, *inputs, **kwargs):\n--> 162         outputs = self.forward(*inputs, **kwargs)\n    163         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyVariable):\n    164             return outputs\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/multitask_kernel.py in forward(self, x1, x2)\n     61     def forward(self, x1, x2):\n     62         covar_i = self.task_covar_module.covar_matrix\n---> 63         covar_x = self.data_covar_module.forward(x1, x2)\n     64         if covar_x.size(0) == 1:\n     65             covar_x = covar_x[0]\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/grid_interpolation_kernel.py in forward(self, x1, x2, **kwargs)\n     56             base_lazy_var = base_lazy_var.repeat(x1.size(0), 1, 1)\n     57 \n---> 58         left_interp_indices, left_interp_values = self._compute_grid(x1)\n     59         if torch.equal(x1.data, x2.data):\n     60             right_interp_indices = left_interp_indices\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/grid_interpolation_kernel.py in _compute_grid(self, inputs)\n     39         batch_size, n_data, n_dimensions = inputs.size()\n     40         inputs = inputs.view(batch_size * n_data, n_dimensions)\n---> 41         interp_indices, interp_values = Interpolation().interpolate(Variable(self.grid), inputs)\n     42         interp_indices = interp_indices.view(batch_size, n_data, -1)\n     43         interp_values = interp_values.view(batch_size, n_data, -1)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/utils/interpolation.py in interpolate(self, x_grid, x_target, interp_points)\n    114                     dim_interp_values[left_boundary_pts[j], :] = 0\n    115                     dim_interp_values[left_boundary_pts[j], closest_from_first[j]] = 1\n--> 116                     lower_grid_pt_idxs[left_boundary_pts[j]] = 0\n    117 \n    118             right_boundary_pts = torch.nonzero(lower_grid_pt_idxs > num_grid_points - num_coefficients)\n\nIndexError: too many indices for tensor of dimension 0\n\nKISS-GP-multitask.ipynb.zip",
+            "closedAt": "2018-11-04T13:32:17Z",
+            "createdAt": "2018-09-02T11:30:45Z",
+            "id": "MDU6SXNzdWUzNTYyNzQ3NzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 250,
+            "state": "CLOSED",
+            "title": "Multitask KISS-GP single test point error",
+            "updatedAt": "2018-11-04T13:32:17Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/250"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In KISS-GP setting with RBF kernel, for example, in 2D case (notebook attached), setting ard_num_dims=2 gives the following error during loss calculation:\n---------------------------------------------------------------------------\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-144-12b763efd692> in <module>()\n     19     output = model(train_x)\n     20     # TODO: Fix this view call!!\n---> 21     loss = -mll(output, train_y)\n     22     loss.backward()\n     23     print('Iter %d/%d - Loss: %.3f' % (i + 1, n_iter, loss.item()))\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    160 \n    161     def __call__(self, *inputs, **kwargs):\n--> 162         outputs = self.forward(*inputs, **kwargs)\n    163         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyVariable):\n    164             return outputs\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/mlls/exact_marginal_log_likelihood.py in forward(self, output, target)\n     49 \n     50         # Get log determininat and first part of quadratic form\n---> 51         inv_quad, log_det = covar.inv_quad_log_det(inv_quad_rhs=(target - mean).unsqueeze(-1), log_det=True)\n     52 \n     53         # Add terms for SGPR / when inducing points are learned\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in inv_quad_log_det(self, inv_quad_rhs, log_det)\n    577         matrix_size = self.size(-1)\n    578         batch_size = self.size(0) if self.ndimension() == 3 else None\n--> 579         tensor_cls = self.tensor_cls\n    580 \n    581         args = lazy_var.representation()\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in tensor_cls(self)\n    882     def tensor_cls(self):\n    883         if not hasattr(self, \"_tensor_cls\"):\n--> 884             first_item = self.representation()[0]\n    885             if isinstance(first_item, Variable):\n    886                 first_item = first_item.data\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in representation(self)\n    733                 representation.append(arg)\n    734             elif isinstance(arg, LazyVariable):\n--> 735                 representation += list(arg.representation())\n    736             else:\n    737                 raise RuntimeError(\"Representation of a LazyVariable should consist only of Variables\")\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in representation(self)\n    733                 representation.append(arg)\n    734             elif isinstance(arg, LazyVariable):\n--> 735                 representation += list(arg.representation())\n    736             else:\n    737                 raise RuntimeError(\"Representation of a LazyVariable should consist only of Variables\")\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in representation(self)\n    109 \n    110     def representation(self):\n--> 111         return self.evaluate_kernel().representation()\n    112 \n    113     def representation_tree(self):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in evaluate_kernel(self)\n     96                 x2 = self.x2\n     97 \n---> 98             self._cached_kernel_eval = super(Kernel, self.kernel).__call__(x1, x2, **self.params)\n     99             if self.squeeze_row:\n    100                 self._cached_kernel_eval.squeeze_(-2)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    160 \n    161     def __call__(self, *inputs, **kwargs):\n--> 162         outputs = self.forward(*inputs, **kwargs)\n    163         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyVariable):\n    164             return outputs\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/multitask_kernel.py in forward(self, x1, x2)\n     61     def forward(self, x1, x2):\n     62         covar_i = self.task_covar_module.covar_matrix\n---> 63         covar_x = self.data_covar_module.forward(x1, x2)\n     64         if covar_x.size(0) == 1:\n     65             covar_x = covar_x[0]\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/grid_interpolation_kernel.py in forward(self, x1, x2, **kwargs)\n     52 \n     53     def forward(self, x1, x2, **kwargs):\n---> 54         base_lazy_var = self._inducing_forward()\n     55         if x1.size(0) > 1:\n     56             base_lazy_var = base_lazy_var.repeat(x1.size(0), 1, 1)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/grid_interpolation_kernel.py in _inducing_forward(self)\n     46     def _inducing_forward(self):\n     47         inducing_points_var = Variable(self.inducing_points)\n---> 48         return super(GridInterpolationKernel, self).forward(inducing_points_var, inducing_points_var)\n     49 \n     50     def forward_diag(self, x1, x2, **kwargs):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/grid_kernel.py in forward(self, x1, x2, **kwargs)\n     38             if settings.use_toeplitz.on():\n     39                 first_item = grid_var[:, 0:1].contiguous()\n---> 40                 covar_columns = self.base_kernel_module(first_item, grid_var, **kwargs).evaluate()\n     41                 covars = [ToeplitzLazyVariable(covar_columns[i : i + 1].squeeze(-2)) for i in range(n_dim)]\n     42             else:\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in evaluate(self)\n    115 \n    116     def evaluate(self):\n--> 117         return self.evaluate_kernel().evaluate()\n    118 \n    119     def exact_predictive_mean(self, full_mean, train_labels, n_train, likelihood, precomputed_cache=None):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in evaluate_kernel(self)\n     96                 x2 = self.x2\n     97 \n---> 98             self._cached_kernel_eval = super(Kernel, self.kernel).__call__(x1, x2, **self.params)\n     99             if self.squeeze_row:\n    100                 self._cached_kernel_eval.squeeze_(-2)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    160 \n    161     def __call__(self, *inputs, **kwargs):\n--> 162         outputs = self.forward(*inputs, **kwargs)\n    163         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyVariable):\n    164             return outputs\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/rbf_kernel.py in forward(self, x1, x2)\n    104     def forward(self, x1, x2):\n    105         lengthscales = self.log_lengthscale.exp().mul(math.sqrt(2)).clamp(self.eps, 1e5)\n--> 106         diff = (x1.unsqueeze(2) - x2.unsqueeze(1)).div_(lengthscales.unsqueeze(1))\n    107         return diff.pow_(2).sum(-1).mul_(-1).exp_()\n\nRuntimeError: The expanded size of the tensor (1) must match the existing size (2) at non-singleton dimension 3\n\nSetting ard_num_dims=1 or ard_num_dims=None works fine, as well as without kernel interpolation. Matern kernel works fine for ard_num_dims=2.\nRBF_ard_num_dims.ipynb.zip",
+            "closedAt": "2018-10-02T04:12:10Z",
+            "createdAt": "2018-09-01T20:01:45Z",
+            "id": "MDU6SXNzdWUzNTYyMjg5NzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 249,
+            "state": "CLOSED",
+            "title": "KISS-GP + RBF kernel separate lengthscales error",
+            "updatedAt": "2020-06-08T19:14:30Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/249"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Proposal: kernels are not responsible for lengthscales. We can introduce a separate scaling module that divides the data by lengthscales before feeding the data into the kernel\nReasoning: we do some batch-dimension hacking to get fast kernel diagonals, as well as fast batch kernels. For kernel diags - we transform the n x d data into n x 1 x d data, which then only computes kernel diagonals. For additive/multiplicative kernels, we transform the n x d data into d x n x 1 data.\nThere is a problem when we are using an ARD option for kernels, or when we have separate lengthscales for the different batches. If this lengthscale scaling happens before the data enters the kernel, this problem is mitigated.\nIn general - this would introduce a convention that kernels should not define their own parameters (which is already the case with output scales).\nRolling in the change: if we're all on board with this, we will deprecate kernel lengthscales. We will encourage users to use the lengthscale module and initialize kernels with lengthscale=False. When we're ready for a major release (and remove lengthscales completely from kernels), then the lengthscale=False kwarg won't be necessary any more.\ncc/ @Balandat @darbour @jacobrgardner",
+            "closedAt": "2018-09-10T19:36:35Z",
+            "createdAt": "2018-08-31T23:34:07Z",
+            "id": "MDU6SXNzdWUzNTYxNDk5NzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 248,
+            "state": "CLOSED",
+            "title": "Move lengthscale outside of kernel",
+            "updatedAt": "2018-09-11T21:11:18Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/248"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In Multitask_GP_Regression_Scalable_With_KISSGP.ipynb replacing test_x = torch.linspace(0, 1, 51) with test_x = torch.zeros(1), i.e., predicting on a single test point gives the following error:\n---------------------------------------------------------------------------\nIndexError                                Traceback (most recent call last)\n<ipython-input-46-17c4b6da319c> in <module>()\n     11 with torch.no_grad():\n     12     test_x = torch.zeros(1)\n---> 13     observed_pred = likelihood(model(test_x))\n     14     # Get mean\n     15     mean = observed_pred.mean()\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/models/exact_gp.py in __call__(self, *args, **kwargs)\n    142                 n_train=n_train,\n    143                 likelihood=self.likelihood,\n--> 144                 precomputed_cache=self.mean_cache,\n    145             )\n    146             predictive_covar, covar_cache = exact_predictive_covar(\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/functions/__init__.py in exact_predictive_mean(full_covar, full_mean, train_labels, n_train, likelihood, precomputed_cache)\n     89 \n     90         full_covar = NonLazyVariable(full_covar)\n---> 91     return full_covar.exact_predictive_mean(full_mean, train_labels, n_train, likelihood, precomputed_cache)\n     92 \n     93 \n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in exact_predictive_mean(self, full_mean, train_labels, n_train, likelihood, precomputed_cache)\n    124         else:\n    125             return super(LazyEvaluatedKernelVariable, self).exact_predictive_mean(\n--> 126                 full_mean, train_labels, n_train, likelihood, precomputed_cache\n    127             )\n    128 \n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in exact_predictive_mean(self, full_mean, train_labels, n_train, likelihood, precomputed_cache)\n    427         else:\n    428             test_train_covar = self[n_train:, :n_train]\n--> 429         res = test_train_covar.matmul(precomputed_cache)\n    430         if res.ndimension() == 3:\n    431             res = res.squeeze(-1)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_variable.py in matmul(self, tensor)\n    632             raise RuntimeError\n    633 \n--> 634         func = Matmul(self.representation_tree())\n    635         return func(tensor, *self.representation())\n    636 \n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in representation_tree(self)\n    112 \n    113     def representation_tree(self):\n--> 114         return LazyVariableRepresentationTree(self.evaluate_kernel())\n    115 \n    116     def evaluate(self):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/lazy_evaluated_kernel_variable.py in evaluate_kernel(self)\n     96                 x2 = self.x2\n     97 \n---> 98             self._cached_kernel_eval = super(Kernel, self.kernel).__call__(x1, x2, **self.params)\n     99             if self.squeeze_row:\n    100                 self._cached_kernel_eval.squeeze_(-2)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/module.py in __call__(self, *inputs, **kwargs)\n    160 \n    161     def __call__(self, *inputs, **kwargs):\n--> 162         outputs = self.forward(*inputs, **kwargs)\n    163         if torch.is_tensor(outputs) or isinstance(outputs, RandomVariable) or isinstance(outputs, LazyVariable):\n    164             return outputs\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/multitask_kernel.py in forward(self, x1, x2)\n     62         task_indices = torch.arange(self.n_tasks, device=x1.device).long()\n     63         covar_i = self.task_covar_module(task_indices).evaluate_kernel()\n---> 64         covar_x = self.data_covar_module.forward(x1, x2)\n     65         if covar_x.size(0) == 1:\n     66             covar_x = covar_x[0]\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/grid_interpolation_kernel.py in forward(self, x1, x2, **kwargs)\n     56             base_lazy_var = base_lazy_var.repeat(x1.size(0), 1, 1)\n     57 \n---> 58         left_interp_indices, left_interp_values = self._compute_grid(x1)\n     59         if torch.equal(x1.data, x2.data):\n     60             right_interp_indices = left_interp_indices\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/kernels/grid_interpolation_kernel.py in _compute_grid(self, inputs)\n     39         batch_size, n_data, n_dimensions = inputs.size()\n     40         inputs = inputs.view(batch_size * n_data, n_dimensions)\n---> 41         interp_indices, interp_values = Interpolation().interpolate(Variable(self.grid), inputs)\n     42         interp_indices = interp_indices.view(batch_size, n_data, -1)\n     43         interp_values = interp_values.view(batch_size, n_data, -1)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/utils/interpolation.py in interpolate(self, x_grid, x_target, interp_points)\n    114                     dim_interp_values[left_boundary_pts[j], :] = 0\n    115                     dim_interp_values[left_boundary_pts[j], closest_from_first[j]] = 1\n--> 116                     lower_grid_pt_idxs[left_boundary_pts[j]] = 0\n    117 \n    118             right_boundary_pts = torch.nonzero(lower_grid_pt_idxs > num_grid_points - num_coefficients)\n\nIndexError: too many indices for tensor of dimension 0",
+            "closedAt": "2018-08-31T23:15:17Z",
+            "createdAt": "2018-08-29T10:59:26Z",
+            "id": "MDU6SXNzdWUzNTUxMDcwNTc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 247,
+            "state": "CLOSED",
+            "title": "Multitask KISS-GP IndexError",
+            "updatedAt": "2018-09-01T19:55:14Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/247"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am trying to run the code from Multitask_GP_Regression_Scalable_With_KISSGP.ipynb example from the master branch and get the following error at observed_pred.confidence_region():\n---------------------------------------------------------------------------\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-7-4cd5b24c7024> in <module>()\n     14     mean = observed_pred.mean()\n     15     # Get lower and upper confidence bounds\n---> 16     lower, upper = observed_pred.confidence_region()\n     17 # This contains predictions for both tasks, flattened out\n     18 # The first half of the predictions is for the first task\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/random_variables/random_variable.py in confidence_region(self)\n     24         variable is the upper end\n     25         \"\"\"\n---> 26         std2 = self.std().mul_(2)\n     27         mean = self.mean()\n     28         return mean.sub(std2), mean.add(std2)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/random_variables/random_variable.py in std(self)\n    108         batch size and d is the dimensionality of the random variable\n    109         \"\"\"\n--> 110         return self.var().sqrt()\n    111 \n    112     def var(self):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/random_variables/multitask_gaussian_random_variable.py in var(self)\n     66 \n     67     def var(self):\n---> 68         return self._covar.diag().view(self._n, self._t)\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/sum_lazy_variable.py in diag(self)\n     84 \n     85     def diag(self):\n---> 86         return sum(lazy_var.diag() for lazy_var in self.lazy_vars)\n     87 \n     88     def sum_batch(self, sum_batch_size=None):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/sum_lazy_variable.py in <genexpr>(.0)\n     84 \n     85     def diag(self):\n---> 86         return sum(lazy_var.diag() for lazy_var in self.lazy_vars)\n     87 \n     88     def sum_batch(self, sum_batch_size=None):\n\n~/anaconda/envs/py3/lib/python3.6/site-packages/gpytorch/lazy/sum_lazy_variable.py in diag(self)\n     84 \n     85     def diag(self):\n---> 86         return sum(lazy_var.diag() for lazy_var in self.lazy_vars)\n     87 \n     88     def sum_batch(self, sum_batch_size=None):\n\nRuntimeError: The size of tensor a (2) must match the size of tensor b (102) at non-singleton dimension 1\n\nSingle-task KISS-GP and multitask without kernel interpolation works ok.",
+            "closedAt": "2018-08-28T19:16:10Z",
+            "createdAt": "2018-08-28T14:14:04Z",
+            "id": "MDU6SXNzdWUzNTQ3NTEwOTk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 246,
+            "state": "CLOSED",
+            "title": "Multitask KISS-GP error",
+            "updatedAt": "2018-08-28T19:16:10Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/246"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Links from https://github.com/cornellius-gp/gpytorch/blob/master/README.md to example notebooks broken.",
+            "closedAt": "2018-08-27T21:09:13Z",
+            "createdAt": "2018-08-27T20:43:14Z",
+            "id": "MDU6SXNzdWUzNTQ0NzA3OTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 245,
+            "state": "CLOSED",
+            "title": "Links broken to example notebooks",
+            "updatedAt": "2018-08-27T21:09:13Z",
+            "url": "https://github.com/cornellius-gp/gpytorch/issues/245"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxOC0wOC0yN1QyMDo0MzoxNFrOFSDLiA==",
+          "hasNextPage": true
+        },
+        "totalCount": 1005
+      }
+    }
+  }
+}

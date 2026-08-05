@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "crash-only",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOCTkjjc7KPl79",
+  "issue_number": 31626,
+  "issue_url": "https://github.com/jax-ml/jax/issues/31626",
+  "mechanism": "pmap multi-GPU failure without a merged public numerical fix.",
+  "neutral_id": "EXT-jax-12",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/jax-ml/jax/issues/31626",
+  "repository": "jax-ml/jax",
+  "snapshot_record_id": "SSR2-06-0012",
+  "snapshot_record_sha256": "639b3ee9045fdafc6cff0e770fdda91b4f958eef15d97477f9802b198d5e7a09",
+  "source_cohort": "supplemental_r2"
+}

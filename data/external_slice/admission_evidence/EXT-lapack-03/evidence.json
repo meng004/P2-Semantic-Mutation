@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-lapack-03",
+  "source_pool": "defect4mr_64",
+  "source_index": 28,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "b36ecccfb1690bb30bb0fc227743abf07d05be019dba7f855ea518064c221ed6",
+  "issue_url": "https://github.com/Reference-LAPACK/lapack/issues/151",
+  "fix_url": "",
+  "buggy_sha": "",
+  "fixed_sha": "",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "no identifiable merged public fix commit.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The symmetric eigensolver accepts floating-point matrix entries and can expose the accuracy discrepancy in one selected eigenvalue."
+  },
+  "evidence_urls": [
+    "https://github.com/Reference-LAPACK/lapack/issues/151"
+  ],
+  "mechanism_sentence": "reports an unresolved symmetric eigensolver accuracy discrepancy."
+}

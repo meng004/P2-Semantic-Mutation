@@ -1,0 +1,11 @@
+{
+  "exit_status": 0,
+  "expected_property": "Constraint-failing CVODE steps shrink h rather than producing non-finite h.",
+  "neutral_id": "EXT-sundials-01",
+  "observed_output": {
+    "returncode": 0,
+    "stdout_tail": "{\"property_holds\": true}\n"
+  },
+  "property_holds": true,
+  "seed": 0
+}

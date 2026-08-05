@@ -1,0 +1,35 @@
+{
+  "exit_status": 1,
+  "expected_property": "MRIHTol with SUM accumulation at w=1e5, rtol=1e-5 keeps relative accuracy <= 500.0 (bounded tolerance tracking).",
+  "input": {
+    "args": [
+      "--scontrol",
+      "5",
+      "--faccum",
+      "1",
+      "--w",
+      "100000",
+      "--rtol",
+      "1e-5"
+    ],
+    "harness": "/tmp/c3_batch1_fix/sundials/kprmri-buggy",
+    "relative_accuracy_bound": 500.0
+  },
+  "neutral_id": "EXT-sundials-07",
+  "observed_output": {
+    "relative_accuracy": 7228.26,
+    "returncode": 0,
+    "stderr_tail": "",
+    "stdout_tail": "\nAdaptive multirate nonlinear Kvaerno-Prothero-Robinson test problem:\n    time domain:  (0,5]\n    G = -100\n    w = 100000\n    e = 0.5\n\n  Slow integrator: ARKODE_MRI_GARK_ERK45a (explicit)\n    MRI-HTOL controller (using I for H) based on order of MRI embedding\n    rtol = 1e-05, atol = 1e-11\n    fast error accumulation strategy = 1\n\n  Fast order 4\n    I controller for fast time scale, based on order of RK embedding\n    fast_rtol = 0.0001, atol = 1e-11\n        t           u           v       uerr      verr\n   ------------------------------------------------------\n    0.000000    1.732051    1.732051  0.00e+00  0.00e+00\n    0.250000    1.722754    1.682516  8.90e-06  3.34e-04\n    0.500000    1.695882    0.867454  4.77e-07  1.12e-04\n    0.750000    1.652154    1.098817  2.93e-05  5.44e-04\n    1.000000    1.592759    0.690061  1.54e-06  8.75e-05\n    1.250000    1.520432    1.404129  1.75e-06  2.60e-04\n    1.500000    1.437431    1.153096  2.98e-05  2.47e-04\n    1.750000    1.348037    1.176029  1.50e-05  2.89e-04\n    2.000000    1.257102    1.530879  2.79e-05  9.74e-05\n    2.250000    1.169810    1.468531  5.98e-06  2.18e-05\n    2.500000    1.093839    1.268840  9.05e-06  8.28e-06\n    2.750000    1.036308    0.979609  2.13e-05  2.73e-04\n    3.000000    1.004255    0.847285  2.35e-06  2.43e-04\n    3.250000    1.002280    0.892802  1.99e-12  2.90e-09\n    3.500000    1.030676    0.934217  5.43e-07  7.19e-07\n    3.750000    1.085566    0.876878  2.89e-06  1.71e-04\n    4.000000    1.159818    1.656646  4.31e-06  2.96e-05\n    4.250000    1.246002    1.649671  2.33e-06  3.28e-04\n    4.500000    1.337013    1.640904  9.10e-15  7.16e-11\n    4.750000    1.426805    1.549615  8.44e-07  1.35e-04\n    5.000000    1.510451    1.188448  3.83e-06  1.54e-04\n   ------------------------------------------------------\n\nFinal Solver Statistics:\n   Slow steps = 3848  (attempts = 5127,  fails = 1279)\n   Fast steps = 3452936  (attempts = 5063881,  fails = 1610945)\n   u error = 2.52062e-05, v error = 0.00139067, total error = 0.000983514\n   Relative accuracy = 7228.26\n   Total RHS evals:  Fse = 24357, Fsi = 0, Ff = 20269628\n"
+  },
+  "package_version": {
+    "harness_env": {
+      "HARNESS_BIN": "/tmp/c3_batch1_fix/sundials/kprmri-buggy",
+      "SUNDIALS_INSTALL": ""
+    },
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "property_holds": false,
+  "seed": 0
+}

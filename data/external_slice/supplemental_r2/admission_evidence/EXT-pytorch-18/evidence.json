@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABEMZeYA",
+  "issue_number": 186029,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/186029",
+  "mechanism": "Inductor count_nonzero/bincount outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-18",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/186029",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0018",
+  "snapshot_record_sha256": "8b37c9d3569896e33f2e995f634b8687a30070aafdee72f25f4eb965f2f869b3",
+  "source_cohort": "supplemental_r2"
+}

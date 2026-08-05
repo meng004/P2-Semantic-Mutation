@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "735ad747172353f9836d27ae5fc1f83c73062fbd",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "b5fc9a2895b325b7576e68955020723b7a923d15",
+  "issue_node_id": "I_kwDOA-j9z88AAAABDndOOQ",
+  "issue_number": 185464,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/185464",
+  "mechanism": "multilabel_margin_loss padded-target fix outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-20",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/b5fc9a2895b325b7576e68955020723b7a923d15",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/185464",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0020",
+  "snapshot_record_sha256": "2a5365fa3cca4f0e5ecf37740994231729e1dd325c439bfcd85e80314ae50843",
+  "source_cohort": "supplemental_r2"
+}

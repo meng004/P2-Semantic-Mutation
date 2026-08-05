@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-sundials-02",
+  "source_pool": "defect4mr_64",
+  "source_index": 35,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "7e46c52367714ee9ed70d725193abf367c008334f0382bc80f2c70269621e240",
+  "issue_url": "https://github.com/LLNL/sundials/pull/548",
+  "fix_url": "https://github.com/LLNL/sundials/commit/a5c62e6ed2f61985c91afdfe449f66c6da0d33d1",
+  "buggy_sha": "05f019f03b28129577cb723883b95d96743d559e",
+  "fixed_sha": "a5c62e6ed2f61985c91afdfe449f66c6da0d33d1",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The adaptive-step calculation accepts floating-point error data and can expose the defect through one returned error or step-size value."
+  },
+  "evidence_urls": [
+    "https://github.com/LLNL/sundials/pull/548",
+    "https://github.com/LLNL/sundials/commit/a5c62e6ed2f61985c91afdfe449f66c6da0d33d1"
+  ],
+  "mechanism_sentence": "removes an error floor that overestimates early-step error and limits step growth."
+}

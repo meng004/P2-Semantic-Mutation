@@ -1,0 +1,2142 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "As title.\n\n Move torch/csrc/autograd to ATen\n Move THD to ATen\n Delete THPP",
+            "closedAt": "2017-11-30T15:36:51Z",
+            "createdAt": "2017-07-13T20:00:43Z",
+            "id": "MDU6SXNzdWUyNDI4MTM2NzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2086,
+            "state": "CLOSED",
+            "title": "Migrate from THPP --> ATen as PyTorch's C++ Tensor",
+            "updatedAt": "2017-11-30T15:36:52Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2086"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Background:\nI am implementing a CLI to use a Pytorch model. If the user sets the lr to None it defaults to Pytorch's default lr per different optimizers. This works well except for torch.optim.SGD as it requires a lr parameter instead of defaulting to 1. This behavior is not consistent with every other torch.optim.* and forces me to handle a one-off case.\nIssue:\ntorch.optim.SGD unlike every other torch.optim.* has lr as a non-optional parameter.  For consistency, can Pytorch always require lr or never require it. torch.optim.SGD seems like a one-off case.",
+            "closedAt": "2017-07-13T17:34:59Z",
+            "createdAt": "2017-07-13T17:29:40Z",
+            "id": "MDU6SXNzdWUyNDI3NzQ5MzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2085,
+            "state": "CLOSED",
+            "title": "Consistent Learning Rate Parameters Requirements",
+            "updatedAt": "2017-07-13T17:34:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2085"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "when I run the code:https://github.com/bear63/sceneReco\nI shows thatImportError:dlopen:cannot load any more object with static TLS",
+            "closedAt": "2019-08-16T20:30:32Z",
+            "createdAt": "2017-07-13T16:36:33Z",
+            "id": "MDU6SXNzdWUyNDI3NjE1MjU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triage review"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 2083,
+            "state": "CLOSED",
+            "title": "Reduce the amount of TLS used in pytorch",
+            "updatedAt": "2022-09-19T14:15:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2083"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I need to use softmax() function on variables containing 5D tensors (batch_size X nChannels X W X D X H ).\nSince softmax() doesn't support 5D, I was changing the variable view as below:\nvar = var.view(batch_size, nChannels, -1)\nHowever running softmax(var) throws runtime error when W X D X H is bigger than a certain size. E.g. it works for sizes less than or equal to 40 X 40 X 40 but not greater than this.\nThe error I get is the following:\nRuntimeError: cuda runtime error (9) : invalid configuration argument at /py/conda-bld/pytorch_1493681908901/work/torch/lib/THCUNN/generic/SoftMax.cu:72\nAn example to reproduce the error:\nimport torch\nfrom torch.autograd import Variable\nimport torch.nn.functional as F\nt1 = Variable(torch.FloatTensor(2,1,40,40,40)).cuda()\n#Uncommenting the line below breaks softmax\n#t1 = Variable(torch.FloatTensor(2,1,41,41,41)).cuda()\nt1 = t1.contiguous().view(2,1,-1)\nt1=F.softmax(t1)\nprint(t1.data.size())\nt2 = Variable(torch.FloatTensor(2,1,41*41,41*41)).cuda()\n# Uncommenting the line below results in error which means total size is not an issue!\n#t2 = t2.contiguous().view(2,1,-1)\nt2=F.softmax(t2)\nprint(t2.data.size())",
+            "closedAt": "2017-11-03T21:30:29Z",
+            "createdAt": "2017-07-13T16:01:10Z",
+            "id": "MDU6SXNzdWUyNDI3NTEyNTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2080,
+            "state": "CLOSED",
+            "title": "cuda runtime error (9) invalid configuration argument on softmax when sending .view() variables",
+            "updatedAt": "2017-11-03T21:30:30Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2080"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Using python 3.5.2, error occurred when installing pytorch.\nCMake Error at CMakeLists.txt:128 (message):\nFailed to get generated_cpp list\n-- Configuring incomplete, errors occurred!",
+            "closedAt": "2017-07-13T17:50:17Z",
+            "createdAt": "2017-07-13T09:50:25Z",
+            "id": "MDU6SXNzdWUyNDI2NDU5NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2076,
+            "state": "CLOSED",
+            "title": "Installation Error: Failed to get generated_cpp list",
+            "updatedAt": "2017-07-13T17:50:18Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2076"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems the memory quickly gets occupied when I run the following testing code\nimport numpy as np\nimport torch\nfrom torch.autograd import Variable\n\na = np.random.rand(1000, 1000)\n\nfor i in xrange(10000):\n    b = Variable(torch.from_numpy(a).clone(), requires_grad=False)\n    c = torch.index_select(b, 0, Variable(torch.LongTensor([4])))\n\n    for t in xrange(1000):\n        b[t, :] = c\n\nwithin 2 minutes it eats up 128GB of my memory.\nBasically what I wanted to do is dynamically modify parts of a tensor from some other parts of the same tensor. There's a severe memory leak when I do that. I may be very likely doing something not intended for the pytorch framework but not sure what the workaround is.\nI'm using pytorch version 0.1.12_2, installed from pip. OS is Ubuntu 16.04.2 LTS.\nThanks for the help!",
+            "closedAt": "2017-07-13T05:43:23Z",
+            "createdAt": "2017-07-12T17:31:52Z",
+            "id": "MDU6SXNzdWUyNDI0NTc2NjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2068,
+            "state": "CLOSED",
+            "title": "Memory leak after index_select and assignment",
+            "updatedAt": "2017-07-13T05:43:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2068"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "16 errors detected in the compilation of \"/Tmp/suhubdyd/tmpxft_00006fe0_00000000-17_THCTensorMode.compute_61.cpp1.ii\".\nCMake Error at THC_generated_THCTensorMode.cu.o.cmake:267 (message):\n  Error generating file\n  /u/suhubdyd/research/dl-frameworks/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCTensorMode.cu.o\n\n\nCMakeFiles/THC.dir/build.make:10618: recipe for target 'CMakeFiles/THC.dir/THC_generated_THCTensorMode.cu.o' failed\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCTensorMode.cu.o] Error 1",
+            "closedAt": "2019-11-27T16:31:08Z",
+            "createdAt": "2017-07-12T16:24:44Z",
+            "id": "MDU6SXNzdWUyNDI0Mzk2Mzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2064,
+            "state": "CLOSED",
+            "title": "Build from source error",
+            "updatedAt": "2019-11-27T16:31:09Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2064"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am installing pytorch from source using python 2.7. I am getting the following error:\nFile \"/scratch0/Softwares/pytorch_new/torch/lib/ATen/gen.py\", line 6, in \nimport preprocess_declarations\nFile \"/scratch0/Softwares/pytorch_new/torch/lib/ATen/preprocess_declarations.py\", line 3, in \nfrom function_wrapper import TYPE_FORMAL_GENERIC\nFile \"/scratch0/Softwares/pytorch_new/torch/lib/ATen/function_wrapper.py\", line 2, in \nfrom code_template import CodeTemplate\nFile \"/scratch0/Softwares/pytorch_new/torch/lib/ATen/code_template.py\", line 13, in \nclass CodeTemplate(object):\nFile \"/scratch0/Softwares/pytorch_new/torch/lib/ATen/code_template.py\", line 15, in CodeTemplate\n'(^[^\\n\\S])?$([^\\d\\W]\\w|{,?[^\\d\\W]\\w*,?})', re.MULTILINE)\nFile \"/scratch0/Softwares/virtualpython/env_new/lib64/python2.7/re.py\", line 190, in compile\nreturn _compile(pattern, flags)\nFile \"/scratch0/Softwares/virtualpython/env_new/lib64/python2.7/re.py\", line 242, in _compile\nraise error, v # invalid expression\nsre_constants.error: nothing to repeat\nCMake Error at CMakeLists.txt:126 (message):\nFailed to get generated_cpp list\n-- Configuring incomplete, errors occurred!",
+            "closedAt": "2017-07-12T22:14:03Z",
+            "createdAt": "2017-07-12T14:25:21Z",
+            "id": "MDU6SXNzdWUyNDIzOTg5MDM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: dependency bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2062,
+            "state": "CLOSED",
+            "title": "Installation error ",
+            "updatedAt": "2017-07-12T22:14:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2062"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This is an ipython session. Note that the id doesn't remain the same for /= even though it works for div_\nIn [1]: import torch\n\nIn [2]: foo = torch.ones(3, 3)\n\nIn [3]: foo\nOut[3]: \n\n 1  1  1\n 1  1  1\n 1  1  1\n[torch.FloatTensor of size 3x3]\n\nIn [4]: id(foo)\nOut[4]: 140493992350728\n\nIn [5]: foo /= 2\n\nIn [6]: foo\nOut[6]: \n\n 0.5000  0.5000  0.5000\n 0.5000  0.5000  0.5000\n 0.5000  0.5000  0.5000\n[torch.FloatTensor of size 3x3]\n\nIn [7]: id(foo)\nOut[7]: 140493991465672\n\nIn [8]: foo = torch.ones(3, 3)\n\nIn [9]: id(foo)\nOut[9]: 140492895866120\n\nIn [10]: foo.div_(2)\nOut[10]: \n\n 0.5000  0.5000  0.5000\n 0.5000  0.5000  0.5000\n 0.5000  0.5000  0.5000\n[torch.FloatTensor of size 3x3]\n\nIn [11]: id(foo)\nOut[11]: 140492895866120",
+            "closedAt": "2017-07-12T15:37:56Z",
+            "createdAt": "2017-07-12T14:04:26Z",
+            "id": "MDU6SXNzdWUyNDIzOTE4NTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2061,
+            "state": "CLOSED",
+            "title": "inplace division doesn't work in version 0.1.12_2",
+            "updatedAt": "2017-07-12T15:37:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2061"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nIt seems that according to the paper https://arxiv.org/pdf/1412.6980.pdf  and the current compuation order, the denominator might be\ndenom = exp_avg_sq.sqrt().add_(group['eps'] * math.sqrt(bias_correction2))",
+            "closedAt": "2017-07-13T05:54:15Z",
+            "createdAt": "2017-07-12T11:24:51Z",
+            "id": "MDU6SXNzdWUyNDIzNDczNjg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2060,
+            "state": "CLOSED",
+            "title": "It seems that the Adam optimizer is a little different from the paper",
+            "updatedAt": "2017-07-13T05:54:15Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2060"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "a = Variable(torch.IntTensor([-1, 1, 2]))\nprint a[0] > 0  #### Variable contains 0\nprint a[1] > 0  #### Variable contains 1\nprint filter(lambda x: x>0, a)  #### \n\nprint map(lambda x: 1 if x>0 else 0, a)   #### [1, 1, 1] \nprint map(lambda x: 1 if x>0 else 0, a.data)   #### [0, 1, 1] \n\nHow this happens?",
+            "closedAt": "2017-07-13T01:13:55Z",
+            "createdAt": "2017-07-12T10:00:30Z",
+            "id": "MDU6SXNzdWUyNDIzMjQ1NzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2059,
+            "state": "CLOSED",
+            "title": "When mapping function to Variable, the result seems anti-intuitive",
+            "updatedAt": "2017-07-13T01:13:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2059"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For some reason otherwise the line import torch._C failed and it wasn't done during build. I am using Ubuntu 14.04, Anaconda 3, Python 3.6. Thanks.",
+            "closedAt": "2020-07-17T20:20:29Z",
+            "createdAt": "2017-07-11T20:08:30Z",
+            "id": "MDU6SXNzdWUyNDIxNjgzMDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "needs reproduction"
+                },
+                {
+                  "name": "module: build"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 2056,
+            "state": "CLOSED",
+            "title": "build: `cp _C.cpython-36m-x86_64-linux-gnu.so _C.so` after build",
+            "updatedAt": "2020-07-17T20:20:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2056"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems that the way how slicing is handled in pytorch is a little bit inconsistent with numpy and with pytorch itself. For example, one can create a tensor with empty dimension like 0x3 matrix (in numpy and pytroch). However, when trying to get a slice that will lead to no dimension tensor \"ValueError: result of slicing is an empty tensor\" error occurs. Is there any reason for implementing it differently compare to numpy?",
+            "closedAt": "2017-07-13T13:56:13Z",
+            "createdAt": "2017-07-11T16:50:10Z",
+            "id": "MDU6SXNzdWUyNDIxMTQyNzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2055,
+            "state": "CLOSED",
+            "title": "zero-dimensional numpy arrays should raise exception on from_numpy",
+            "updatedAt": "2017-09-12T17:53:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2055"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For example:\nself = output\ntorch.addmm(alpha, self, beta, matrix1, matrix2, out=output)\nAt the entrance to the call, self and out are the same object. However, the broadcasting code always creates a new self tensor for the call to expand().\n(https://github.com/pytorch/pytorch/blob/master/tools/cwrap/plugins/Broadcast.py)\nSome code in TH and THC checks for object identity, which this breaks:\nhttps://github.com/pytorch/pytorch/blob/master/torch/lib/TH/generic/THTensorMath.c#L1306",
+            "closedAt": "2017-09-13T14:45:04Z",
+            "createdAt": "2017-07-11T15:54:52Z",
+            "id": "MDU6SXNzdWUyNDIwOTc5NDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2054,
+            "state": "CLOSED",
+            "title": "Broadcasting code always creates a new tensor",
+            "updatedAt": "2017-09-13T14:45:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2054"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI have tried to understand the code behind the DataLoader, I think I got the global meaning.\nProblem\nI have noticed that while increasing the number of workers, the number of memory used increases linearly. I recall that someone told that each worker has its own replica of the dataset. I guess this is happening because when lauching a Process, the parent environment is copied for the newly created Process. It might happen differently, If I am wrong please explain me. :)\nContext\nMy main concern here is to have only one instance of my dataset in memory. For example my reference dataset is composed with a 8 GB file, scaling with 10 workers, you can imagine how fast memory burns. This situation has no sense because the dataset is static.\nI may have misinterpreted something along the way, I might not be the first one to deal with this problem.\nExpected workaround\nI already built a custom dataset and cannot break this 8 GB file into more pieces, but just using a reference to the object rather than copy would save my day.\nThanks",
+            "closedAt": "2017-07-12T11:59:12Z",
+            "createdAt": "2017-07-11T15:35:33Z",
+            "id": "MDU6SXNzdWUyNDIwOTE3MjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2052,
+            "state": "CLOSED",
+            "title": "DataLoader without dataset replica",
+            "updatedAt": "2017-07-12T11:59:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2052"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There is some situations where tensors are dynamically created in the forward pass. VAE for example. The proposed feature eliminates the need to explicitly pass a cuda parameter.",
+            "closedAt": "2017-07-13T05:58:36Z",
+            "createdAt": "2017-07-11T14:31:28Z",
+            "id": "MDU6SXNzdWUyNDIwNjkyMDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2050,
+            "state": "CLOSED",
+            "title": "[Feature request] Module.cuda() sets the Module._cuda flag",
+            "updatedAt": "2017-07-13T23:02:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2050"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "torch.sort() reports error when the tensor to be sorted is large:\n(ins)>>> import torch\n(ins)>>> r = torch.randn(1,2000).cuda()\n(ins)>>> s, i = torch.sort(r)\nTHCudaCheck FAIL file=/tmp/makepkg/python-pytorch-git/src/pytorch/torch/lib/THC/generated/../generic/THCTensorSort.cu line=153 error=7 : too many resources requested for launch\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nRuntimeError: cuda runtime error (7) : too many resources requested for launch at /tmp/makepkg/python-pytorch-git/src/pytorch/torch/lib/THC/generated/../generic/THCTensorSort.cu:153\n(ins)>>> \n\nWhen the size of the tensor is small, say 1x1000, the error won't occur.\nI tried it with both version 0.1.12 and the latest commit 1ef1dd9. The PyTorch is built with cuda 8.0.61 and cudnn 6.0.21. The Python version is 3.6.1. And the device is Tesla K40c. Should I provide more details? :)",
+            "closedAt": "2017-07-13T23:26:19Z",
+            "createdAt": "2017-07-11T11:39:33Z",
+            "id": "MDU6SXNzdWUyNDIwMTc2MDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2049,
+            "state": "CLOSED",
+            "title": "THCudaCheck FAIL in torch.sort()",
+            "updatedAt": "2017-07-13T23:26:19Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2049"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I tried to install PyTorch from source, but i got an error as below. Can anyone help me?\n[My environment]\nPython 3.6 installed using anaconda\nCuda 8.0, V8.0.44\nLinux version 3.10.0-514.6.1.el7.x86_64 (builder@kbuilder.dev.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) )\nnvcc error   : 'cicc' died due to signal 11 (Invalid memory reference)\nnvcc error   : 'cicc' died due to signal 11 (Invalid memory reference)\nptxas fatal   : Internal error: writing file\nnvcc error   : 'cicc' died due to signal 11 (Invalid memory reference)\nnvcc error   : 'cicc' died due to signal 11 (Invalid memory reference)\nnvcc error   : 'cicc' died due to signal 11 (Invalid memory reference)\nCMake Error at THC_generated_THCTensorMathCompareHalf.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathCompareHalf.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathCompareHalf.cu.o] Error 1\nmake[2]: *** Waiting for unfinished jobs....\nCMake Error at THC_generated_THCTensorMathCompareTHalf.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathCompareTHalf.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathCompareTHalf.cu.o] Error 1\nCMake Error at THC_generated_THCTensorMathPointwiseChar.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathPointwiseChar.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathPointwiseChar.cu.o] Error 1\nCMake Error at THC_generated_THCTensorMathPointwiseLong.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathPointwiseLong.cu.o\n\n\nCMake Error at THC_generated_THCTensorSortHalf.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorSortHalf.cu.o\n\n\nCMake Error at THC_generated_THCTensorSortInt.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorSortInt.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathPointwiseLong.cu.o] Error 1\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorSortHalf.cu.o] Error 1\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorSortInt.cu.o] Error 1\n/home1/irteam/users/yunjey/github/pytorch/torch/lib/THC/generic/THCTensorMode.cu(310): catastrophic error: error while writing generated C++ file: No space left on device\n\n1 catastrophic error detected in the compilation of \"/var/tmp/tmpxft_00017ac5_00000000-5_THCTensorMode.cpp4.ii\".\nCompilation terminated.\nCMake Error at THC_generated_THCTensorMode.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCTensorMode.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCTensorMode.cu.o] Error 1\nnvcc error   : 'cicc' died due to signal 11 (Invalid memory reference)\nCMake Error at THC_generated_THCTensorSortByte.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorSortByte.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorSortByte.cu.o] Error 1\nIn file included from tmpxft_00017ab3_00000000-4_THCTensorMath.cudafe1.stub.c:1:0:\n/var/tmp/tmpxft_00017ab3_00000000-4_THCTensorMath.cudafe1.stub.c:1005:27: fatal error: error writing to /var/tmp/cccqHJrA.s: No space left on device\n #pragma GCC diagnostic pop\n                           ^\ncompilation terminated.\nCMake Error at THC_generated_THCTensorMath.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCTensorMath.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCTensorMath.cu.o] Error 1\nIn file included from tmpxft_00017a37_00000000-4_THCTensorMathCompareTShort.cudafe1.stub.c:1:0:\n/var/tmp/tmpxft_00017a37_00000000-4_THCTensorMathCompareTShort.cudafe1.stub.c:2404:27: fatal error: error writing to /var/tmp/cciAzyNp.s: No space left on device\n #pragma GCC diagnostic pop\n                           ^\ncompilation terminated.\nCMake Error at THC_generated_THCTensorMathCompareTShort.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathCompareTShort.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathCompareTShort.cu.o] Error 1\nIn file included from tmpxft_00017a4c_00000000-4_THCTensorMathCompareTLong.cudafe1.stub.c:1:0:\n/var/tmp/tmpxft_00017a4c_00000000-4_THCTensorMathCompareTLong.cudafe1.stub.c:2404:27: fatal error: error writing to /var/tmp/ccJwp4R6.s: No space left on device\n #pragma GCC diagnostic pop\n                           ^\ncompilation terminated.\nIn file included from tmpxft_00017a88_00000000-4_THCTensorMathCompareTInt.cudafe1.stub.c:1:0:\n/var/tmp/tmpxft_00017a88_00000000-4_THCTensorMathCompareTInt.cudafe1.stub.c:2404:27: fatal error: error writing to /var/tmp/ccTFlECr.s: No space left on device\n #pragma GCC diagnostic pop\n                           ^\ncompilation terminated.\nIn file included from tmpxft_00017a78_00000000-4_THCTensorMathCompareTChar.cudafe1.stub.c:1:0:\n/var/tmp/tmpxft_00017a78_00000000-4_THCTensorMathCompareTChar.cudafe1.stub.c:2404:27: fatal error: error writing to /var/tmp/cclNRBYN.s: No space left on device\n #pragma GCC diagnostic pop\n                           ^\ncompilation terminated.\nCMake Error at THC_generated_THCTensorMathCompareTLong.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathCompareTLong.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathCompareTLong.cu.o] Error 1\nCMake Error at THC_generated_THCTensorMathCompareTInt.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathCompareTInt.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathCompareTInt.cu.o] Error 1\nCMake Error at THC_generated_THCTensorMathCompareTChar.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir/generated/./THC_generated_THCTensorMathCompareTChar.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/generated/THC_generated_THCTensorMathCompareTChar.cu.o] Error 1\nIn file included from tmpxft_00017a46_00000000-4_THCTensorCopy.cudafe1.stub.c:1:0:\n/var/tmp/tmpxft_00017a46_00000000-4_THCTensorCopy.cudafe1.stub.c:3548:27: fatal error: error writing to /var/tmp/ccjZJiww.s: No space left on device\n #pragma GCC diagnostic pop\n                           ^\ncompilation terminated.\nCMake Error at THC_generated_THCTensorCopy.cu.o.cmake:267 (message):\n  Error generating file\n  /home1/irteam/users/yunjey/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCTensorCopy.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCTensorCopy.cu.o] Error 1\nmake[1]: *** [CMakeFiles/THC.dir/all] Error 2\nmake: *** [all] Error 2\n\n\nThanks.",
+            "closedAt": "2017-07-11T03:46:42Z",
+            "createdAt": "2017-07-11T03:41:27Z",
+            "id": "MDU6SXNzdWUyNDE5MTU4NjE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2046,
+            "state": "CLOSED",
+            "title": "An error occurred when installing pytorch from source",
+            "updatedAt": "2019-09-30T02:01:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2046"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "when I ran follwing code,\nimport torch.multiprocessing as mp\nfrom torch.autograd import Variable\nimport torch\nimport numpy as np\nimport time\n\ndef worker(tensor):\n\twhile True :\n\t\ttensor += 0.01\n\t\ttime.sleep(1)\n\t\t\ndef main():\t\n\tmp.set_start_method('forkserver')\t\t\n\ttt = np.ones((100,100,100))\n\n\tt = torch.from_numpy(tt)\n\tt=t.share_memory_() #share 1\n\tt = t.cuda(async=True)\n\t#t=t.share_memory_() #share 2. did not work.\n\n\tprocesses = []\n\tfor i in range(10):\n\t\tp = mp.Process(target=worker , args=(   t   ,) )\n\t\tp.daemon=True\t\n\t\tp.start()\n\t\tprocesses.append(p)\n\t\t\n\tprint('running')\n\ttime.sleep(10)\n\tprint (t)\n\t\nif __name__ == '__main__':\n\tmain()\nall processes consumed a lot of GPU memories as if each process had copied version of cuda tensor.\n(data is shared as I expected.)\nIt does not happens when I use cpu tensors.\nHow can I share cuda tensors without consuming additional GPU memory?",
+            "closedAt": "2017-07-13T06:29:52Z",
+            "createdAt": "2017-07-11T02:54:50Z",
+            "id": "MDU6SXNzdWUyNDE5MDk1ODQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "needs reproduction"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2045,
+            "state": "CLOSED",
+            "title": "shared cuda tensor consumes GPU memory in every process",
+            "updatedAt": "2022-08-31T21:19:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2045"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The following code can reproduce the bug. The line \"torch.multinomial(a.exp(), 1)\" could work properly. But after casting into DoubleTensor, the sampled indexes will be out of range.\nimport torch\n\na = torch.rand(20000).float().mul(-20).view(20,1000).clone().cuda()\nprint(a)\n\n# this returns correct results\nprint(torch.multinomial(a.exp(), 1))\n# incorrect!\nprint(torch.multinomial(a.double().exp_(), 1))\n-15.8601 -14.0862 -11.3351  ...  -11.1707 -10.3008  -0.7116\n-18.1648  -9.0676  -0.4030  ...  -15.8194 -10.5331  -9.2996\n-12.7967  -5.2371 -18.6317  ...   -0.1992 -15.9085 -15.9299\n           ...               ⋱              ...\n -9.2137  -2.4529  -2.9928  ...  -14.3643 -12.9492 -17.5611\n -5.5278  -2.8773 -19.5927  ...  -11.5547  -4.2149 -18.7635\n -3.0814  -6.3477  -0.3227  ...   -7.2171 -15.2311  -0.4129\n[torch.cuda.FloatTensor of size 20x1000 (GPU 0)]\n\n\n  723\n  261\n  657\n  663\n  851\n  764\n  245\n  417\n  405\n  210\n  420\n  479\n  213\n  919\n  532\n  742\n  994\n  416\n  176\n  833\n[torch.cuda.LongTensor of size 20x1 (GPU 0)]\n\n\n 3.8407e+18\n 3.5479e+18\n 4.0363e+18\n 3.7260e+18\n 4.1986e+18\n 4.2638e+18\n 4.5605e+18\n 4.4725e+18\n 3.5909e+18\n 3.8631e+18\n 4.5026e+18\n 4.2295e+18\n 4.5749e+18\n 4.3938e+18\n 4.2139e+18\n 4.3064e+18\n 4.3244e+18\n 3.9574e+18\n 4.0812e+18\n 4.5084e+18\n[torch.cuda.LongTensor of size 20x1 (GPU 0)]",
+            "closedAt": "2017-07-13T04:27:08Z",
+            "createdAt": "2017-07-10T22:19:52Z",
+            "id": "MDU6SXNzdWUyNDE4NjkxMjY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2044,
+            "state": "CLOSED",
+            "title": "[bug] .multinomial() for cuda.DoubleTensor",
+            "updatedAt": "2017-07-13T17:32:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2044"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There appears to be a race condition in the index CUDA kernels where multiple threads are writing to the same address.\nReproducer code:\nimport torch\n\nref = torch.arange(0, 20).view(4, 5).float()\n\nindexer= [slice(None), [1 for i in range(5)]]\n\nsrc = torch.randperm(ref[indexer].numel()).view(ref[indexer].size()).float()\n\nprint('ref', ref)\nprint('indexer', indexer)\nprint('ref[indxer]', ref[indexer])\nprint('src', src)\n\ncpu_ans = ref.clone()\ncpu_ans[indexer]=src\n\nnump_ans = ref.double().numpy()\nidxs = tuple(indexer)\nnump_ans[idxs] = src.double().numpy()\n\nprint('ref numpy\\n', ref.numpy())\nprint('idx numpy\\n', idxs)\nprint('src numpy\\n', src.numpy())\n\ngpu_ans = ref.cuda()\ngpu_ans[indexer]=src.cuda()\n\nprint('cpu result', cpu_ans)\nprint('numpy result\\n', nump_ans)\nprint('cuda result', gpu_ans)\nOutput:\ncpu result \n  0   6   2   3   4\n  5   4   7   8   9\n 10  13  12  13  14\n 15  19  17  18  19\n[torch.FloatTensor of size 4x5]\nnumpy result\n [[  0.   6.   2.   3.   4.]\n  [  5.   4.   7.   8.   9.]\n  [ 10.  13.  12.  13.  14.]\n  [ 15.  19.  17.  18.  19.]]\ncuda result \n  0     6     2   3   4\n  5  **16**   7   8   9\n 10    13    12  13  14\n 15   **5**  17  18  19\n[torch.cuda.FloatTensor of size 4x5 (GPU 0)]\n\nLooks like  a preprocessing step will need to be added to identify which source indices is allowed to write to destination.\nI'm not sure if this will also be a problem in the other advanced indexing kernels.",
+            "closedAt": "2017-07-10T19:28:24Z",
+            "createdAt": "2017-07-10T17:35:32Z",
+            "id": "MDU6SXNzdWUyNDE3ODk2MzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2038,
+            "state": "CLOSED",
+            "title": "Race condition in CUDA IndexCopy[Large/Small]Index kernels (Maybe others?)",
+            "updatedAt": "2017-07-10T19:28:24Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2038"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Installed from the source. When I import torch, I got\nimportError: anaconda2/lib/python2.7/site-packages/torch/lib/libTHC.so.1: undefined symbol: THLongStorage_inferSizeN",
+            "closedAt": "2017-07-10T20:18:42Z",
+            "createdAt": "2017-07-10T16:30:53Z",
+            "id": "MDU6SXNzdWUyNDE3NzIyNTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2036,
+            "state": "CLOSED",
+            "title": "undefined symbol: THLongStorage_inferSizeN",
+            "updatedAt": "2017-11-17T11:17:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2036"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Trying to install pytorch from source using python 3.5 in an anaconda environment on Redhat linux distro 3.10.0-514.21.1.el7.x86_64\n# /home/henrye/anaconda3/envs/pytorch35/lib/python3.5/site-packages/torch/__pycache__/__init__.cpython-35.pyc matches /home/henrye/anaconda3/envs/pytorch35/lib/python3.5/site-packages/torch/__init__.py\n# code object from '/home/henrye/anaconda3/envs/pytorch35/lib/python3.5/site-packages/torch/__pycache__/__init__.cpython-35.pyc'\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"<frozen importlib._bootstrap>\", line 969, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 958, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 673, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 665, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 222, in _call_with_frames_removed\n  File \"/home/henrye/anaconda3/envs/pytorch35/lib/python3.5/site-packages/torch/__init__.py\", line 53, in <module>\n    from torch._C import *\n  File \"<frozen importlib._bootstrap>\", line 969, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 958, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 666, in _load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 577, in module_from_spec\n  File \"<frozen importlib._bootstrap_external>\", line 906, in create_module\n  File \"<frozen importlib._bootstrap>\", line 222, in _call_with_frames_removed\nImportError: /home/henrye/anaconda3/envs/pytorch35/lib/python3.5/site-packages/torch/lib/libTHD.so.1: undefined symbol: _ZN4thpp8THTensorIcEC1EP13THLongStorageS3_\n\n\nFrom the other issues and things I've read this is probably something to do with C compilers but I have no idea what do in that regard.",
+            "closedAt": "2017-07-12T15:34:14Z",
+            "createdAt": "2017-07-10T13:47:58Z",
+            "id": "MDU6SXNzdWUyNDE3MTgxMDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2035,
+            "state": "CLOSED",
+            "title": "Installing from source C issue",
+            "updatedAt": "2017-07-12T15:34:14Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2035"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "...................................................................................................\nSorry, I have to reopen this because I think this is a bug within the RNN module and I could't get help from discuss.pytorch\nI run a similar experiment with one linear layer neural network and the output is correct. So a reasonable explanation would be the RNN module keep different set of parameters (for optimization reason?) and didn't mix up at the end of the batch training. The following code will duplicate this problem.\n........................................................................................................\nI encounter this problem when I am trying to implement seq2seq to familiarize with this new framework. This issue seems related to parameters sharing in mini-batch. I setup a dummy training set with only one mini-batch. This mini-batch has 3 data entries in it. All with the same input, and different outputs:\ntraining_data = [\n[[[4,5,1,7,8],[4,5,1,7,8],[4,5,1,7,8]], (input 1)\n[[0],[0],[0]], (input 2)\n[[1],[3],[5]]] (target)\n]\nIn theory, the model will never learn this data because the contradiction. However, the loss reach near 0 after only a few hundred epochs. But if I split 3 data entries into 3 mini-batch, the model will not learn the data set which should be the correct result.\nSo the model must be keeping different set of parameter for each position in mini-batch? And the parameters are not updated to be the same after each mini-batch forward-backward? Can someone tell me if I misunderstood something?\nimport torch\nimport torch.autograd as autograd\nimport torch.nn as nn\nimport torch.nn.functional as F\nimport torch.optim as optim\n\n\n\ntraining_data = [\n\t[[[4,5,1,7,8],[4,5,1,7,8],[4,5,1,7,8]], [[0],[0],[0]], [[1],[3],[5]]]\n\t]\n\n\ndef prepare_sequence(all_seq):\n\treturn autograd.Variable(torch.LongTensor(all_seq)).cuda()\n\nclass Seq2seqLSTM(nn.Module):\n\n\tdef __init__(self, vocab_size, target_size, embed_dim, hidden_dim, num_layers):\n\n\t\tsuper(Seq2seqLSTM, self).__init__()\n\t\tself.hidden_dim = hidden_dim\n\t\tself.embed_dim = embed_dim\n\t\tself.vocab_size = vocab_size\n\t\tself.target_size = target_size\n\t\tself.num_layers = num_layers\n\n\t\tself.word_embeddings = nn.Embedding(vocab_size, embed_dim)\n\t\tself.encoder = nn.LSTM(embed_dim, hidden_dim, num_layers)\n\t\tself.decoder = nn.LSTM(embed_dim, hidden_dim, num_layers)\n\n\t\tself.curr_hidden = None\n\t\tself.hidden2tag = nn.Linear(hidden_dim, target_size)\n\n\tdef init_hidden(self, batch_size):\n\t\treturn (autograd.Variable(torch.zeros(self.num_layers, batch_size, self.hidden_dim)).cuda(),\n\t\t\tautograd.Variable(torch.zeros(self.num_layers, batch_size, self.hidden_dim)).cuda())\n\n\tdef forward(self, enc_seq, dec_seq):\n\n\t\tbatch_size = enc_seq.size()[0]\n\t\tself.curr_hidden = self.init_hidden(batch_size)\n\n\t\tenc_embeds = self.word_embeddings(enc_seq)\n\t\tdec_embeds = self.word_embeddings(dec_seq)\n\n\t\tenc_out, self.curr_hidden = self.encoder(\n\t\t\tenc_embeds.view(-1, batch_size, self.embed_dim), self.curr_hidden)\n\t\tdec_out, self.curr_hidden = self.decoder(\n\t\t\tdec_embeds.view(-1, batch_size, self.embed_dim), self.curr_hidden)\n\n\t\ttag_space = self.hidden2tag(dec_out.view(batch_size * len(dec_out), -1))\n\t\ttag_scores = F.log_softmax(tag_space)\n\t\treturn tag_scores\n\nEMBED_DIM = 10\nHIDDEN_DIM = 10\nVOCAB_SIZE = 10\nTARGET_SIZE = 10\nNUM_LAYERS = 2\n\nmodel = Seq2seqLSTM(VOCAB_SIZE, TARGET_SIZE, EMBED_DIM, HIDDEN_DIM, NUM_LAYERS).cuda()\nloss_function = nn.NLLLoss()\noptimizer = optim.Adam(model.parameters())\nprint model\n\nfor epoch in range(1000):\n\n\tone_batch = map(lambda x:prepare_sequence(x), training_data[epoch%len(training_data)])\n\tenc_inp = one_batch[0]\n\tdec_inp = one_batch[1]\n\ttarget = one_batch[2]\n\n\tmodel.zero_grad()\n\ttag_scores = model(enc_inp, dec_inp)\n\n\tloss = loss_function(tag_scores, target.view(-1))\n\tloss.backward()\n\toptimizer.step()\n\n\tprint loss",
+            "closedAt": "2017-07-11T14:14:44Z",
+            "createdAt": "2017-07-10T03:47:29Z",
+            "id": "MDU6SXNzdWUyNDE1OTIyNDU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2032,
+            "state": "CLOSED",
+            "title": "Possible bug in RNN module",
+            "updatedAt": "2017-07-11T15:27:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2032"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI'm missing an operation like tensorflow's unique.\nI'm trying to build minibatch weights for very skewed datasets.\nMy current code looks like the following snippet.\ndef get_loss_weights(target, num_classes=2, eps=1e-08):\n    \"\"\" \n    Gets loss weights by counting target classes examples\n\n    To help with skewed datasets we need to weight the gradient.\n    Each class need to have the same influence in gradient.\n    So, each example will have weight equal to 1/num_classes * 1/class_count\n\n    Usage:\n    >>> tensor = Variable(torch.FloatTensor([1, 0, 0, 0]))                                                                                            \n    >>> get_loss_weights(tensor)\n        0.5000\n        0.1667\n        0.1667\n        0.1667\n        [torch.FloatTensor of size 4]\n    \"\"\"\n\n    weights = Variable(torch.zeros(target.data.size()))\n\n    for cls in range(num_classes):\n        cls_members = (target.data == cls).float()\n        weights += Variable(1 / (torch.sum(cls_members) + eps) * cls_members)\n\n    weights /= num_classes\n    return weights.data\nI would like to build a more robust approach using unique operation.\nI'm happy to hear different approaches or optimizations.\nThanks for the package!\nEdit:\nFor anyone interested, the code to compute samples weights as sent as PR #2549",
+            "closedAt": "2018-03-07T23:17:09Z",
+            "createdAt": "2017-07-10T03:26:37Z",
+            "id": "MDU6SXNzdWUyNDE1ODk5MzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2031,
+            "state": "CLOSED",
+            "title": "[Feature request] unique operation",
+            "updatedAt": "2018-03-07T23:17:09Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2031"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI compiled PyTorch (master of 2 days ago) from sources on MacOSX 10.11 using the following command\nNO_DISTRIBUTED=1 MACOSX_DEPLOYMENT_TARGET=10.11 CC=clang CXX=clang++ python3 setup.py install\n\nThe build and installation is successfull, however this tutorial ends up with the error :\nTHCudaCheck FAIL file=/Users/USER/pytorch-master_source/torch/lib/THC/generic/THCStorage.cu line=66 error=63 : OS call failed or operation not supported on this OS\nTraceback (most recent call last):\n  File \"tensor_tutorial.py\", line 141, in <module>\n    x = x.cuda()\n  File \"/usr/local/lib/python3.5/site-packages/torch/_utils.py\", line 65, in _cuda\n    return new_type(self.size()).copy_(self, async)\n  File \"/usr/local/lib/python3.5/site-packages/torch/cuda/__init__.py\", line 269, in _lazy_new\n    return super(_CudaBase, cls).__new__(cls, *args, **kwargs)\nRuntimeError: cuda runtime error (63) : OS call failed or operation not supported on this OS at /Users/USER/pytorch-master_source/torch/lib/THC/generic/THCStorage.cu:66\n\nGPU is NVidia GT 750M, 2GB. I have installed CUDA 8.0 with CuDNN 5.1 which works perfectly with Theano, Tensorflow. Clang info :\nApple LLVM version 8.0.0 (clang-800.0.42.1)\nTarget: x86_64-apple-darwin15.6.0\nThread model: posix\n\nIf anyone know why I would receive such error, hints appreciated.\nThanks",
+            "closedAt": "2017-07-14T14:23:57Z",
+            "createdAt": "2017-07-10T01:42:35Z",
+            "id": "MDU6SXNzdWUyNDE1NzgwNzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: dependency bug"
+                },
+                {
+                  "name": "needs reproduction"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 2029,
+            "state": "CLOSED",
+            "title": "MacOSX, CUDA, OS call failed or operation not supported on this OS",
+            "updatedAt": "2017-07-14T14:23:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2029"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Here is the code causing the segmentation fault:\nimport torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom torch.autograd import Variable as Var\n#import Constants\nimport numpy as np\nimport random\nclass dc_model(nn.Module):\n    def __init__(self):\n        super(dc_model, self).__init__()\n        self.projection = nn.Linear(193, 2)\nif __name__ =='__main__':\n    model =  dc_model()\n    variance = Var(torch.randn(3000, 193))\n    print(model.projection(variance))\n\nHere is the gdb trace\n(gdb) r pytest.py\nStarting program: /users/pxie1/miniconda2/envs/py35/bin/python pytest.py\n[Thread debugging using libthread_db enabled]\nUsing host libthread_db library \"/lib/x86_64-linux-gnu/libthread_db.so.1\".\n[New Thread 0x7ffff350f700 (LWP 12359)]\n[New Thread 0x7ffff2d0e700 (LWP 12360)]\n[New Thread 0x7fffee50d700 (LWP 12361)]\n[New Thread 0x7fffebd0c700 (LWP 12362)]\n[New Thread 0x7fffe950b700 (LWP 12363)]\n[New Thread 0x7fffe6d0a700 (LWP 12364)]\n[New Thread 0x7fffe4509700 (LWP 12365)]\n[New Thread 0x7fffe1d08700 (LWP 12366)]\n[New Thread 0x7fffdf507700 (LWP 12367)]\n[New Thread 0x7fffdcd06700 (LWP 12368)]\n[New Thread 0x7fffda505700 (LWP 12369)]\n[New Thread 0x7fffd7d04700 (LWP 12370)]\n[New Thread 0x7fffd5503700 (LWP 12371)]\n[New Thread 0x7fffd2d02700 (LWP 12372)]\n[New Thread 0x7fffd0501700 (LWP 12373)]\n[New Thread 0x7fffcdd00700 (LWP 12374)]\n[New Thread 0x7fffcb4ff700 (LWP 12375)]\n[New Thread 0x7fffcacfe700 (LWP 12376)]\n[New Thread 0x7fffc84fd700 (LWP 12377)]\n[New Thread 0x7fffc5cfc700 (LWP 12378)]\n[New Thread 0x7fffc34fb700 (LWP 12379)]\n[New Thread 0x7fffc0cfa700 (LWP 12380)]\n[New Thread 0x7fffbe4f9700 (LWP 12381)]\n[New Thread 0x7fffbbcf8700 (LWP 12382)]\n[New Thread 0x7fffb94f7700 (LWP 12383)]\n[New Thread 0x7fffb6cf6700 (LWP 12384)]\n[New Thread 0x7fffb44f5700 (LWP 12385)]\n[New Thread 0x7fffb1cf4700 (LWP 12386)]\n[New Thread 0x7fffaf4f3700 (LWP 12387)]\n[New Thread 0x7fffaccf2700 (LWP 12388)]\n[New Thread 0x7fffaa4f1700 (LWP 12389)]\nwarning: File \"/users/pxie1/miniconda2/envs/py35/lib/libstdc++.so.6.0.19-gdb.py\" auto-loading has been declined by your `auto-load safe-path' set to \"$debugdir:$datadir/auto-load\".\nTo enable execution of this file add\n        add-auto-load-safe-path /users/pxie1/miniconda2/envs/py35/lib/libstdc++.so.6.0.19-gdb.py\nline to your configuration file \"/users/pxie1/.gdbinit\".\nTo completely disable this security protection add\n        set auto-load safe-path /\nline to your configuration file \"/users/pxie1/.gdbinit\".\nFor more information about this security protection see the\n\"Auto-loading safe path\" section in the GDB manual.  E.g., run from the shell:\n        info \"(gdb)Auto-loading safe path\"\n\nThread 1 \"python\" received signal SIGSEGV, Segmentation fault.\n0x0000000000000010 in ?? ()\n(gdb) where\n#0  0x0000000000000010 in ?? ()\n#1  0x00007fff71106782 in mkl_blas_avx2_sgemm_initialize_kernel_info () from /users/pxie1/miniconda2/envs/py35/bin/../lib/libmkl_avx2.so\n#2  0x00007fff8059e096 in ?? () from /users/pxie1/miniconda2/envs/py35/lib/python3.5/site-packages/torch/lib/libmkl_intel_thread.so\n#3  0x00007fff8059ded9 in ?? () from /users/pxie1/miniconda2/envs/py35/lib/python3.5/site-packages/torch/lib/libmkl_intel_thread.so\n#4  0x00007fff8059cff0 in ?? () from /users/pxie1/miniconda2/envs/py35/lib/python3.5/site-packages/torch/lib/libmkl_intel_thread.so\n#5  0x00007fff805c9ca1 in ?? () from /users/pxie1/miniconda2/envs/py35/lib/python3.5/site-packages/torch/lib/libmkl_intel_thread.so\n#6  0x00007fff81e3f145 in ?? () from /users/pxie1/miniconda2/envs/py35/lib/python3.5/site-packages/torch/lib/libmkl_intel_lp64.so\n#7  0x00007fff98087f61 in THFloatBlas_gemm () from /users/pxie1/miniconda2/envs/py35/lib/python3.5/site-packages/torch/lib/libTH.so.1\n#8  0x00007fff97e24e60 in THFloatTensor_addmm () from /users/pxie1/miniconda2/envs/py35/lib/python3.5/site-packages/torch/lib/libTH.so.1\n#9  0x00007fffa1f7ed8d in THPFloatTensor_addmm_ (self=0x7fff742f5fc8, args=<optimized out>, kwargs=<optimized out>)\n    at /b/wheel/pytorch-src/torch/csrc/generic/TensorMethods.cpp:19898\n#10 0x00007ffff79a0dd1 in PyCFunction_Call (func=0x7fff742f7fc0, args=0x7fff742cfae8, kwds=<optimized out>) at Objects/methodobject.c:98\n#11 0x00007ffff7a294a6 in call_function (oparg=<optimized out>, pp_stack=0x7fffffffd038) at Python/ceval.c:4720\n#12 PyEval_EvalFrameEx (f=<optimized out>, throwflag=<optimized out>) at Python/ceval.c:3251\n#13 0x00007ffff7a29fc9 in _PyEval_EvalCodeWithName (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=4, kws=0x0, kwcount=0, defs=0x7fff74402108, defcount=1, kwdefs=0x0, closure=0x0, name=0x0, qualname=0x0) at Python/ceval.c:4033\n#14 0x00007ffff7a2a158 in PyEval_EvalCodeEx (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=<optimized out>, kws=<optimized out>, kwcount=0, defs=0x7fff74402108, defcount=1, kwdefs=0x0, closure=0x0) at Python/ceval.c:4054\n#15 0x00007ffff797eb72 in function_call (func=0x7fff743f86a8, arg=0x7fff742cfbd8, kw=0x0) at Objects/funcobject.c:627\n#16 0x00007ffff794b4c6 in PyObject_Call (func=0x7fff743f86a8, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#17 0x00007ffff7967bdc in method_call (func=0x7fff743f86a8, arg=0x7fff742cfbd8, kw=0x0) at Objects/classobject.c:330\n#18 0x00007ffff794b4c6 in PyObject_Call (func=0x7ffff7f9d188, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#19 0x00007ffff7a1e5a3 in PyEval_CallObjectWithKeywords (func=0x7ffff7f9d188, arg=0x7ffff64a13f0, kw=<optimized out>) at Python/ceval.c:4595\n#20 0x00007fffa2326568 in THPFunction_do_forward (self=0x7ffff7e82048, inputs=0x7ffff7e955a0) at torch/csrc/autograd/python_function.cpp:456\n#21 0x00007ffff79a0d99 in PyCFunction_Call (func=0x7fff742f7f78, args=0x7ffff7e955a0, kwds=<optimized out>) at Objects/methodobject.c:109\n#22 0x00007ffff794b4c6 in PyObject_Call (func=0x7fff742f7f78, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#23 0x00007ffff79bf25f in slot_tp_call (self=0x7ffff7e82048, args=0x7ffff7e955a0, kwds=0x0) at Objects/typeobject.c:6072\n#24 0x00007ffff794b4c6 in PyObject_Call (func=0x7ffff7e82048, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#25 0x00007ffff7a2779c in do_call (nk=<optimized out>, na=3, pp_stack=0x7fffffffd718, func=0x7ffff7e82048) at Python/ceval.c:4951\n#26 call_function (oparg=<optimized out>, pp_stack=0x7fffffffd718) at Python/ceval.c:4747\n#27 PyEval_EvalFrameEx (f=<optimized out>, throwflag=<optimized out>) at Python/ceval.c:3251\n#28 0x00007ffff7a29fc9 in _PyEval_EvalCodeWithName (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=2, kws=0x7ffff7fa5060, kwcount=0, defs=0x0, defcount=0, kwdefs=0x0, closure=0x0, name=0x0, qualname=0x0) at Python/ceval.c:4033\n#29 0x00007ffff7a2a158 in PyEval_EvalCodeEx (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=<optimized out>, kws=<optimized out>, kwcount=0, defs=0x0, defcount=0, kwdefs=0x0, closure=0x0) at Python/ceval.c:4054\n#30 0x00007ffff797ec91 in function_call (func=0x7fff7437cae8, arg=0x7ffff7e8f508, kw=0x7ffff64ac588) at Objects/funcobject.c:627\n#31 0x00007ffff794b4c6 in PyObject_Call (func=0x7fff7437cae8, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#32 0x00007ffff7a26286 in ext_do_call (nk=-135727864, na=1, flags=<optimized out>, pp_stack=0x7fffffffda68, func=0x7fff7437cae8)\n    at Python/ceval.c:5049\n#33 PyEval_EvalFrameEx (f=<optimized out>, throwflag=<optimized out>) at Python/ceval.c:3290\n#34 0x00007ffff7a29fc9 in _PyEval_EvalCodeWithName (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=2, kws=0x0, kwcount=0, defs=0x0, defcount=0, kwdefs=0x0, closure=0x0, name=0x0, qualname=0x0) at Python/ceval.c:4033\n#35 0x00007ffff7a2a158 in PyEval_EvalCodeEx (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=<optimized out>, kws=<optimized out>, kwcount=0, defs=0x0, defcount=0, kwdefs=0x0, closure=0x0) at Python/ceval.c:4054\n#36 0x00007ffff797eb72 in function_call (func=0x7fff7437bd08, arg=0x7ffff7e86608, kw=0x0) at Objects/funcobject.c:627\n#37 0x00007ffff794b4c6 in PyObject_Call (func=0x7fff7437bd08, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#38 0x00007ffff7967bdc in method_call (func=0x7fff7437bd08, arg=0x7ffff7e86608, kw=0x0) at Objects/classobject.c:330\n#39 0x00007ffff794b4c6 in PyObject_Call (func=0x7ffff7f94648, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#40 0x00007ffff79bf25f in slot_tp_call (self=0x7ffff64921d0, args=0x7ffff7e89198, kwds=0x0) at Objects/typeobject.c:6072\n#41 0x00007ffff794b4c6 in PyObject_Call (func=0x7ffff64921d0, arg=<optimized out>, kw=<optimized out>) at Objects/abstract.c:2166\n#42 0x00007ffff7a2779c in do_call (nk=<optimized out>, na=1, pp_stack=0x7fffffffdec8, func=0x7ffff64921d0) at Python/ceval.c:4951\n#43 call_function (oparg=<optimized out>, pp_stack=0x7fffffffdec8) at Python/ceval.c:4747\n#44 PyEval_EvalFrameEx (f=<optimized out>, throwflag=<optimized out>) at Python/ceval.c:3251\n#45 0x00007ffff7a29fc9 in _PyEval_EvalCodeWithName (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=0, kws=0x0, kwcount=0, defs=0x0, defcount=0, kwdefs=0x0, closure=0x0, name=0x0, qualname=0x0) at Python/ceval.c:4033\n#46 0x00007ffff7a2a158 in PyEval_EvalCodeEx (_co=<optimized out>, globals=<optimized out>, locals=<optimized out>, args=<optimized out>, \n    argcount=<optimized out>, kws=<optimized out>, kwcount=0, defs=0x0, defcount=0, kwdefs=0x0, closure=0x0) at Python/ceval.c:4054\n#47 0x00007ffff7a2a19b in PyEval_EvalCode (co=<optimized out>, globals=<optimized out>, locals=<optimized out>) at Python/ceval.c:777\n#48 0x00007ffff7a4f410 in run_mod (arena=0x6a4dd0, flags=0x7fffffffe210, locals=0x7ffff7f53148, globals=0x7ffff7f53148, filename=0x7ffff670d830, \n    mod=0x70f1d8) at Python/pythonrun.c:982\n#49 PyRun_FileExFlags (fp=0x669eb0, filename_str=<optimized out>, start=<optimized out>, globals=0x7ffff7f53148, locals=0x7ffff7f53148, \n    closeit=<optimized out>, flags=0x7fffffffe210) at Python/pythonrun.c:935\n#50 0x00007ffff7a50a03 in PyRun_SimpleFileExFlags (fp=0x669eb0, filename=<optimized out>, closeit=1, flags=0x7fffffffe210)\n    at Python/pythonrun.c:402\n#51 0x00007ffff7a6bce7 in run_file (p_cf=0x7fffffffe210, filename=0x6032f0 L\"pytest.py\", fp=0x669eb0) at Modules/main.c:318\n#52 Py_Main (argc=<optimized out>, argv=<optimized out>) at Modules/main.c:769\n#53 0x0000000000400bbd in main (argc=2, argv=0x7fffffffe388) at ./Programs/python.c:65\n\nActually, this program run smoothly on my own PC, but meet segmentation fault on the gpu server. So I'm afraid there might be wrong configuration or dependency error. Anyone can help? Thanks very much!",
+            "closedAt": "2017-07-19T16:23:29Z",
+            "createdAt": "2017-07-10T00:25:36Z",
+            "id": "MDU6SXNzdWUyNDE1NzE2Njc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2028,
+            "state": "CLOSED",
+            "title": "Ship AVX2 mkl .so files with wheels",
+            "updatedAt": "2017-07-19T16:23:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2028"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Nop operations on empty tensors are sometimes convenient to save boiler-plate code on corner cases. PyTorch accepts many operations on empty tensors without a problem:\na = torch.Tensor()\nb = (a - 1) * 5\nbut fails for scatter_:\ntorch.zeros(10).scatter_(0, torch.LongTensor(), 0.0)",
+            "closedAt": "2018-11-19T17:51:57Z",
+            "createdAt": "2017-07-09T20:48:39Z",
+            "id": "MDU6SXNzdWUyNDE1NTU0Njg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2027,
+            "state": "CLOSED",
+            "title": "[minor] scatter_ doesn't support empty index vector",
+            "updatedAt": "2018-11-19T17:51:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2027"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nIn the documentation it says\ny =  x      if x >= threshold\n     value  if x <  threshold\n\nSo the following:\ntorch.nn.Threshold(1,0)(torch.Tensor([1]))\nshould evaluate to 1, but instead returns 0.\nMaybe it should be corrected to:\ny =  x      if x > threshold\n     value  if x <=  threshold",
+            "closedAt": "2017-07-11T14:36:19Z",
+            "createdAt": "2017-07-09T13:35:29Z",
+            "id": "MDU6SXNzdWUyNDE1MjUyNDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2025,
+            "state": "CLOSED",
+            "title": "Small mistake in nn.Threshold documentation",
+            "updatedAt": "2017-07-11T14:36:19Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2025"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "An implementation of Noisy Networks for Exploration.  I've written up a solution at this gist.  I only implemented it for linear layers because the authors used it that way in the paper.  I'll submit a pull request pending approval.\nEDIT: Realized I need to add some details around resetting the noise. Hoping this gets some attention before I implement that.",
+            "closedAt": "2020-02-25T20:31:57Z",
+            "createdAt": "2017-07-09T05:12:38Z",
+            "id": "MDU6SXNzdWUyNDE1MDExOTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "feature"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "needs research"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 2024,
+            "state": "CLOSED",
+            "title": "[Feature Request] Add NoisyLinear layer",
+            "updatedAt": "2020-02-25T20:31:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2024"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The torch.bmm function would raise a runtime error when both of its arguments have been expanded. The following code snippet can reproduce the error:\nimport torch\n\na = torch.randn(256, 256).cuda()\nb = torch.randn(32, 256).cuda()\n\nc = a.unsqueeze(0).expand(32, 256, 256)\nd = b.unsqueeze(2).expand(32, 256, 20)\ntorch.bmm(c, d)\n\nError message:\nRuntimeError: cublas runtime error : an invalid numeric value was used as an argument at /b/wheel/pytorch-src/torch/lib/THC/THCBlas.cu:344\n\nI was able to get rid of the error by replacing expand with repeat, the following code would be fine:\nimport torch\n\na = torch.randn(256, 256).cuda()\nb = torch.randn(32, 256).cuda()\n\nc = a.unsqueeze(0).expand(32, 256, 256)\nd = b.unsqueeze(2).repeat(1, 1, 20)\ntorch.bmm(c, d)\n\nMy environment:  python 3.6 (anaconda), CUDA 8.0, pytorch 0.1.12_2",
+            "closedAt": "2017-07-18T05:35:26Z",
+            "createdAt": "2017-07-09T02:36:48Z",
+            "id": "MDU6SXNzdWUyNDE0OTUxMzg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2022,
+            "state": "CLOSED",
+            "title": "cublas runtime error when both bmm's arguments have been expanded",
+            "updatedAt": "2017-07-18T05:35:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2022"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There is a type mismatch in line 82 of file 'adagrad.py' since we feed torch.cuda.FloatTensor to function 'addcmul_' which requires torch.FloatTensor input.",
+            "closedAt": "2018-08-23T22:01:39Z",
+            "createdAt": "2017-07-08T16:31:30Z",
+            "id": "MDU6SXNzdWUyNDE0NjQxNTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "needs reproduction"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 2021,
+            "state": "CLOSED",
+            "title": "type error when calling 'adagrad' optimization method",
+            "updatedAt": "2018-08-23T22:01:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2021"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Consider following code, and run it with multi gpus (e.g. 4):\nimport torch\nfrom torch import nn\nfrom torch.autograd import Function\n\nclass Func(Function):\n    def forward(self, x):\n        print('forward devices', torch.cuda.current_device())\n        return x\n\n    def backward(self, grad):\n        print('backward devices', torch.cuda.current_device())\n        return grad\n\nclass Module(nn.Module):\n    def forward(self, x):\n        return Func()(x)\n\nf = nn.DataParallel(Module().cuda())\nx = torch.autograd.Variable( torch.zeros(4, 1).cuda(), requires_grad=True)\nloss = f(x)\nloss.sum().backward()\n\nIt will output:\nforward devices 0\nforward devices 1\nforward devices 2\nforward devices 3\nbackward devices 0\nbackward devices 0\nbackward devices 0\nbackward devices 0\n\nThat is, the default device would always be zero even in DataParallel. My pytorch version is 0.1.12_2.\nI think this is not the desired behavior. It would cause some troubles. I tried to insert my own cuda kernel into backward to calculate the gradients, it become very slow, and I fixed it by torch.cuda.set_device(grad.get_device()).\nAnyway, I think current_device in forward and backward should be the same, or could anyone explain to me why they are different?",
+            "closedAt": "2017-07-13T20:24:38Z",
+            "createdAt": "2017-07-08T02:25:49Z",
+            "id": "MDU6SXNzdWUyNDE0MTg0NjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2017,
+            "state": "CLOSED",
+            "title": "torch.cuda.current_device() is always 0 at backward in DataParallel",
+            "updatedAt": "2022-08-22T23:38:28Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2017"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is it possible to convert a HalfTensor to/from a numpy array like you can with FloatTensor? If not I would be happy to work on adding it\nAlso a separate point the documentation seems to be out of date on the existence of HalfTensor on the cpu",
+            "closedAt": "2018-07-20T15:02:19Z",
+            "createdAt": "2017-07-08T00:04:33Z",
+            "id": "MDU6SXNzdWUyNDE0MDg3ODA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2014,
+            "state": "CLOSED",
+            "title": "HalfTensor to/from numpy",
+            "updatedAt": "2018-07-20T15:02:19Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2014"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I can't seem to find any documentation about the tensor.view() function or how it is implemented. I am trying to verify that pytorch view will always consistently reshape dimensions. Specifically I am trying to apply the softmax function onto a 4D tensor. I want to be able to verify that\n'''\ntensor = tensor.view(-1,N)\ntensor = nn.Softmax()(tensor)\ntensor = tensor.view(-1,N,spatial_dim_1,spatial_dim_2)\n'''\nwill preserve the spatial orientation of the tensor's cells.\nThanks!\nEDIT: Verified it myself. I'd still appreciate pointers on how view works if anyone has time.",
+            "closedAt": "2017-07-07T22:49:42Z",
+            "createdAt": "2017-07-07T22:43:06Z",
+            "id": "MDU6SXNzdWUyNDEzOTg0NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2013,
+            "state": "CLOSED",
+            "title": "Documentation for how pytorch tensor.view() rearranges dimensions?",
+            "updatedAt": "2021-06-09T06:30:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2013"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "import torch\nfrom timeit import timeit\n\nx = torch.randn(5, 5)\ny = torch.randn(5, 5)\n\nprint(timeit('x + y', number=1000000, globals=locals()))\nWith broadcasting: 4.47s\nWithout broadcasting: 2.27s\ncc: @gchanan",
+            "closedAt": "2017-08-31T04:26:18Z",
+            "createdAt": "2017-07-07T20:44:37Z",
+            "id": "MDU6SXNzdWUyNDEzNzU0MTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2012,
+            "state": "CLOSED",
+            "title": "Reduce broadcasting overhead when it's not used",
+            "updatedAt": "2017-08-31T04:26:18Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2012"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Running import torch gives the following error on the latest master:\nTraceback (most recent call last):\n  File \"classifier.py\", line 1, in <module>\n    import torch\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/__init__.py\", line 53, in <module>\n    from torch._C import *\nImportError: /opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/lib/libTHC.so.1: undefined symbol: THLongStorage_inferSizeN\n\ngit log\ncommit ebdec9a\nAuthor: lynic xuanlangjian@gmail.com\nDate:   Fri Jul 7 23:06:56 2017 +0800\nSkip distributed tests if not supported (#2004)",
+            "closedAt": "2017-07-13T06:11:19Z",
+            "createdAt": "2017-07-07T20:22:20Z",
+            "id": "MDU6SXNzdWUyNDEzNzA1MTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2011,
+            "state": "CLOSED",
+            "title": "Build passing, but runtime failing (at commit ebdec9a837074a303fd5ffb6f319cd593955becc)",
+            "updatedAt": "2017-07-13T06:11:19Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2011"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The docker image was created by running the command on the README file. My nvidia drivers work fine, and the cpu version of this works fine. But, running the classifier on the gpu as mentioned in http://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html gives the following error:\n(pytorch-py35) root@eba92d25c1cd:~# nvidia-smi\nFri Jul  7 19:24:32 2017\n+-----------------------------------------------------------------------------+\n| NVIDIA-SMI 375.39                 Driver Version: 375.39                    |\n|-------------------------------+----------------------+----------------------+\n| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |\n|===============================+======================+======================|\n|   0  TITAN X (Pascal)    Off  | 0000:04:00.0      On |                  N/A |\n| 23%   26C    P8    16W / 250W |   1331MiB / 12189MiB |      0%      Default |\n+-------------------------------+----------------------+----------------------+\n|   1  TITAN X (Pascal)    Off  | 0000:06:00.0     Off |                  N/A |\n| 23%   29C    P8    15W / 250W |      4MiB / 12189MiB |      0%      Default |\n+-------------------------------+----------------------+----------------------+\n\n+-----------------------------------------------------------------------------+\n| Processes:                                                       GPU Memory |\n|  GPU       PID  Type  Process name                               Usage      |\n|=============================================================================|\n+-----------------------------------------------------------------------------+\n(pytorch-py35) root@eba92d25c1cd:~# nvcc --version\nnvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2016 NVIDIA Corporation\nBuilt on Tue_Jan_10_13:22:03_CST_2017\nCuda compilation tools, release 8.0, V8.0.61\n(pytorch-py35) root@eba92d25c1cd:~# python classifier.py\nFiles already downloaded and verified\nFiles already downloaded and verified\nTraceback (most recent call last):\n  File \"classifier.py\", line 45, in <module>\n    net.cuda()\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/nn/modules/module.py\", line 147, in cuda\n    return self._apply(lambda t: t.cuda(device_id))\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/nn/modules/module.py\", line 118, in _apply\n    module._apply(fn)\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/nn/modules/module.py\", line 124, in _apply\n    param.data = fn(param.data)\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/nn/modules/module.py\", line 147, in <lambda>\n    return self._apply(lambda t: t.cuda(device_id))\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/_utils.py\", line 65, in _cuda\n    return new_type(self.size()).copy_(self, async)\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/cuda/__init__.py\", line 272, in __new__\n    _lazy_init()\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/cuda/__init__.py\", line 84, in _lazy_init\n    _check_driver()\n  File \"/opt/conda/envs/pytorch-py35/lib/python3.5/site-packages/torch/cuda/__init__.py\", line 51, in _check_driver\n    raise AssertionError(\"Torch not compiled with CUDA enabled\")\nAssertionError: Torch not compiled with CUDA enabled",
+            "closedAt": "2019-11-27T16:31:55Z",
+            "createdAt": "2017-07-07T19:31:13Z",
+            "id": "MDU6SXNzdWUyNDEzNTg3MzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "needs reproduction"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2010,
+            "state": "CLOSED",
+            "title": "gpu version of pytorch not working on docker image",
+            "updatedAt": "2019-11-27T16:31:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2010"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Torchvision is considered a basic requirement of the tutorials. Perhaps it makes sense to include it in the docker build.\n# python\nPython 3.5.2 |Continuum Analytics, Inc.| (default, Jul  2 2016, 17:53:06)\n[GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> import torchvision\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nImportError: No module named 'torchvision'",
+            "closedAt": "2017-07-13T23:06:42Z",
+            "createdAt": "2017-07-07T15:57:05Z",
+            "id": "MDU6SXNzdWUyNDEzMDcyNjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 2009,
+            "state": "CLOSED",
+            "title": "Docker image does not contain torchvision",
+            "updatedAt": "2017-07-13T23:06:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2009"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "During writing einsum I've found that sum is able to sum only over single axis. I'm going to add a simple implementation of it:\ndef sum(input, axes, keepdim=False):\n    # probably some check for uniqueness of axes\n    if keepdim:\n        for ax in axes:\n            input = input.sum(ax, keepdim=True)\n    else:\n        for ax in sorted(axes, reverse=True):\n            input = input.sum(ax)\n    return input\n\n\nIs it ok?\nWhere should it be better placed?",
+            "closedAt": "2018-05-03T01:50:54Z",
+            "createdAt": "2017-07-07T15:36:32Z",
+            "id": "MDU6SXNzdWUyNDEzMDE0Njk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2006,
+            "state": "CLOSED",
+            "title": "Tensor.sum() over multiple axes",
+            "updatedAt": "2018-05-03T01:50:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2006"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The problem here is what should be the returned value of a cpp Function when the output was indépendant of the inputs or no gradient was backpropagated for this specific output (it was unused later in the graph).\nFor python Function, the wrapper takes care, when no gradient exist for an output to create a full dense tensor filled with 0s of the size of the output. The same happens when a python Function returns None for a given parameter, the next Function will actually see a dense tensor of 0s.\nIn cpp, such wrapper does not exist, so if an output was not used, the corresponding element in the input variable_list will be and empty shared_ptr. And the cpp Function should handle empty shared_ptr as if it was a dense Tensor of 0s (possibly skipping a lot of computations as in ConvBackwardBackward).\nRight now, some Function do handle this case properly, but not all of them (leading for example to this issue in the forum).\nThe question is: are we ok with the above design saying that any input which is an empty shared_ptr is equivalent to a tensor of all 0s ? And all cpp Functions should handle empty shared_ptr as input ?",
+            "closedAt": "2017-07-25T02:40:52Z",
+            "createdAt": "2017-07-07T11:25:39Z",
+            "id": "MDU6SXNzdWUyNDEyMzU4NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2003,
+            "state": "CLOSED",
+            "title": "Handling of no/zero gradients in cpp Function",
+            "updatedAt": "2022-08-12T16:06:55Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2003"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I build pytorch from source.\nAll distributed tests failed on MAC:\nRunning distributed tests for the TCP backend\nProcess process 0:\nProcess process 1:\nProcess process 2:\nTraceback (most recent call last):\nFile \"/usr/local/anaconda3/envs/pytorch-dev/lib/python3.6/multiprocessing/process.py\", line 249, in _bootstrap\nself.run()\nFile \"/usr/local/anaconda3/envs/pytorch-dev/lib/python3.6/multiprocessing/process.py\", line 93, in run\nself._target(*self._args, **self._kwargs)\nFile \"./test_distributed.py\", line 534, in _run\ngetattr(self, self.id().split(\".\")[2])()\nFile \"./test_distributed.py\", line 493, in wrapper\nfn(self)\nFile \"./test_distributed.py\", line 445, in test_all_gather\ngroup, group_id, rank = self._init_global_test()\nFile \"./test_distributed.py\", line 90, in _init_global_test\ngroup = [i for i in range(0, dist.get_world_size())]\nAttributeError: module 'torch.distributed' has no attribute 'get_world_size'\n......\nFAILED (failures=31, skipped=2)\nIs it normal?",
+            "closedAt": "2017-07-07T15:06:57Z",
+            "createdAt": "2017-07-07T09:19:00Z",
+            "id": "MDU6SXNzdWUyNDEyMDYxMjc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 2002,
+            "state": "CLOSED",
+            "title": "distributed tests failed on MAC",
+            "updatedAt": "2017-07-07T15:06:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/2002"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "mac 10.12.5\nxcode 8.3.3\n$ clang --version\nApple LLVM version 8.1.0 (clang-802.0.38)\nTarget: x86_64-apple-darwin16.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n\n$ nvcc -V\nnvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2016 NVIDIA Corporation\nBuilt on Tue_Jan_10_13:22:46_CST_2017\nCuda compilation tools, release 8.0, V8.0.61\n\nThis warning is for project developers.  Use -Wno-dev to suppress it.\n\n-- Generating done\n-- Build files have been written to: /Users/zhaopeng/Projects/github/pytorch/torch/lib/build/THC\n[  3%] Building NVCC (Device) object CMakeFiles/THC.dir/THC_generated_THCHalf.cu.o\n[  4%] Building NVCC (Device) object CMakeFiles/THC.dir/THC_generated_THCSleep.cu.o\n[  4%] Building NVCC (Device) object CMakeFiles/THC.dir/THC_generated_THCReduceApplyUtils.cu.o\n[  4%] Building NVCC (Device) object CMakeFiles/THC.dir/THC_generated_THCBlas.cu.o\nnvcc fatal   : The version ('80100') of the host compiler ('Apple clang') is not supported\nnvcc fatal   : The version ('80100') of the host compiler ('Apple clang') is not supported\nnvcc fatal   : The version ('80100') of the host compiler ('Apple clang') is not supported\nnvcc fatal   : The version ('80100') of the host compiler ('Apple clang') is not supported\nCMake Error at THC_generated_THCSleep.cu.o.cmake:207 (message):\n  Error generating\n  /Users/zhaopeng/Projects/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCSleep.cu.o\n\n\nCMake Error at THC_generated_THCReduceApplyUtils.cu.o.cmake:207 (message):\n  Error generating\n  /Users/zhaopeng/Projects/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCReduceApplyUtils.cu.o\n\n\nCMake Error at THC_generated_THCHalf.cu.o.cmake:207 (message):\n  Error generating\n  /Users/zhaopeng/Projects/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCHalf.cu.o\n\n\nCMake Error at THC_generated_THCBlas.cu.o.cmake:207 (message):\n  Error generating\n  /Users/zhaopeng/Projects/github/pytorch/torch/lib/build/THC/CMakeFiles/THC.dir//./THC_generated_THCBlas.cu.o\n\n\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCSleep.cu.o] Error 1\nmake[2]: *** Waiting for unfinished jobs....\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCReduceApplyUtils.cu.o] Error 1\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCHalf.cu.o] Error 1\nmake[2]: *** [CMakeFiles/THC.dir/THC_generated_THCBlas.cu.o] Error 1\nmake[1]: *** [CMakeFiles/THC.dir/all] Error 2\nmake: *** [all] Error 2\n\n# zhaopeng @ zhaopengs-iMac in ~/Projects/github/pytorch on git:master o [13:41:08] C:1\n$",
+            "closedAt": "2017-07-07T13:24:14Z",
+            "createdAt": "2017-07-07T05:53:17Z",
+            "id": "MDU6SXNzdWUyNDExNjQ0NzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1999,
+            "state": "CLOSED",
+            "title": "mac build fail.",
+            "updatedAt": "2017-07-07T13:24:14Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1999"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Here is the link to my repo:\nhttps://github.com/salman1993/simple-qa-on-kb/tree/master/clean/relation_prediction\nThe model code is very similar to the SNLI model example. The dataset may need to be downloaded - did not test out that part of the code.\nLink to the dataset - https://www.dropbox.com/s/tohrsllcfy7rch4/SimpleQuestions_v2.tgz\nI run this code on my Mac and it is running fine. However, the code fails on Linux, both on CPU and GPU. I am running PyTorch version - '0.1.12_2'\nYou can run the code with:\npython train.py \npython train.py --cuda\n\nThis is the error I get on CPU:\n$ python train.py\nWARNING: You have CUDA but not using it.\nroot path for relation dataset: ../data\nNamespace(batch_size=2, birnn=True, clip_gradient=0.5, cuda=False, d_embed=300, d_hidden=400, d_out=1838, data_cache='/u/s43mohammed/dev/simple-qa-on-kb/clean/relation_prediction/data_cache', dev_every=1, dropout_prob=0.3, epochs=40, fix_emb=True, gpu=-1, log_every=1, lr=1e-05, n_cells=4, n_embed=74820, n_layers=2, patience=10, resume_snapshot='', save_every=100, save_path='saved_checkpoints', seed=1111, test=False, vector_cache='/u/s43mohammed/dev/simple-qa-on-kb/clean/relation_prediction/vector_cache/input_vectors.pt', word_vectors='glove.42B')\n  Time Epoch Iteration Progress    (%Epoch)   Loss   Dev/Loss     Accuracy  Dev/Accuracy\nTraceback (most recent call last):\n  File \"train.py\", line 100, in <module>\n    answer = model(batch)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py\", line 206, in __call__\n    result = self.forward(*input, **kwargs)\n  File \"/u/s43mohammed/dev/simple-qa-on-kb/clean/relation_prediction/model.py\", line 50, in forward\n    question_embed = self.embed(batch.question)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py\", line 206, in __call__\n    result = self.forward(*input, **kwargs)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/modules/sparse.py\", line 94, in forward\n    )(input, self.weight)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/_functions/thnn/sparse.py\", line 53, in forward\n    output = torch.index_select(weight, 0, indices.view(-1))\nRuntimeError: index out of range at /py/conda-bld/pytorch_1493680494901/work/torch/lib/TH/generic/THTensorMath.c:273\n\nOn the GPU, the error is different:\n$ python train.py --cuda\nroot path for relation dataset: ../data\nNamespace(batch_size=2, birnn=True, clip_gradient=0.5, cuda=True, d_embed=300, d_hidden=400, d_out=1838, data_cache='/u/s43mohammed/dev/simple-qa-on-kb/clean/relation_prediction/data_cache', dev_every=1, dropout_prob=0.3, epochs=40, fix_emb=True, gpu=0, log_every=1, lr=1e-05, n_cells=4, n_embed=74820, n_layers=2, patience=10, resume_snapshot='', save_every=100, save_path='saved_checkpoints', seed=1111, test=False, vector_cache='/u/s43mohammed/dev/simple-qa-on-kb/clean/relation_prediction/vector_cache/input_vectors.pt', word_vectors='glove.42B')\n  Time Epoch Iteration Progress    (%Epoch)   Loss   Dev/Loss     Accuracy  Dev/Accuracy\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [64,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [65,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [66,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [67,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [68,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [69,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [70,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\n/py/conda-bld/pytorch_1493680494901/work/torch/lib/THC/THCTensorIndex.cu:321: void indexSelectLargeIndex(TensorInfo<T, IndexType>, TensorInfo<T, IndexType>, TensorInfo<long, IndexType>, int, int, IndexType, IndexType, long) [with T = float, IndexType = unsigned int, DstDim = 2, SrcDim = 2, IdxDim = -2]: block: [51,0,0], thread: [71,0,0] Assertion `srcIndex < srcSelectDimSize` failed.\nTraceback (most recent call last):\n  File \"train.py\", line 100, in <module>\n    answer = model(batch)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py\", line 206, in __call__\n    result = self.forward(*input, **kwargs)\n  File \"/u/s43mohammed/dev/simple-qa-on-kb/clean/relation_prediction/model.py\", line 54, in forward\n    question_encoded = self.encoder(question_embed)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py\", line 206, in __call__\n    result = self.forward(*input, **kwargs)\n  File \"/u/s43mohammed/dev/simple-qa-on-kb/clean/relation_prediction/model.py\", line 20, in forward\n    outputs, (ht, ct) = self.rnn(inputs, (h0, c0))\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py\", line 206, in __call__\n    result = self.forward(*input, **kwargs)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/modules/rnn.py\", line 91, in forward\n    output, hidden = func(input, self.all_weights, hx)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/_functions/rnn.py\", line 343, in forward\n    return func(input, *fargs, **fkwargs)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/autograd/function.py\", line 202, in _do_forward\n    flat_output = super(NestedIOFunction, self)._do_forward(*flat_input)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/autograd/function.py\", line 224, in forward\n    result = self.forward_extended(*nested_tensors)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/nn/_functions/rnn.py\", line 285, in forward_extended\n    cudnn.rnn.forward(self, input, hx, weight, output, hy)\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/backends/cudnn/rnn.py\", line 190, in forward\n    handle = cudnn.get_handle()\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/backends/cudnn/__init__.py\", line 262, in get_handle\n    handle = CuDNNHandle()\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/backends/cudnn/__init__.py\", line 81, in __init__\n    check_error(lib.cudnnCreate(ctypes.byref(ptr)))\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/backends/cudnn/__init__.py\", line 249, in check_error\n    raise CuDNNError(status)\ntorch.backends.cudnn.CuDNNError: 4: b'CUDNN_STATUS_INTERNAL_ERROR'\nException ignored in: <bound method CuDNNHandle.__del__ of <torch.backends.cudnn.CuDNNHandle object at 0x7f540b0b8550>>\nTraceback (most recent call last):\n  File \"/u5/s43mohammed/anaconda3/lib/python3.6/site-packages/torch/backends/cudnn/__init__.py\", line 85, in __del__\n    check_error(lib.cudnnDestroy(self))\nctypes.ArgumentError: argument 1: <class 'TypeError'>: Don't know how to convert parameter 1\n\nI tried uninstalling PyTorch and reinstalling it as well but did not work.",
+            "closedAt": "2017-07-07T13:28:07Z",
+            "createdAt": "2017-07-07T04:12:29Z",
+            "id": "MDU6SXNzdWUyNDExNTI3MTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1998,
+            "state": "CLOSED",
+            "title": "Program runs fine on Mac but not on Linux (both CPU and GPU problems)",
+            "updatedAt": "2017-07-07T13:28:07Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1998"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I wrote a script to train conv net on mnist, but there are some problems.\nThe mnist dataset is from Kaggle (train.csv). The reference codes are\nlisted in the head part of the code.\nProblems:\n(1) line 46: Without this line, it will raise RuntimeError: expected Double tensor (got Float tensor).\nThe tutorial and example code don't do like this...\n    46\tconvnet = convnet.double() #RuntimeError: expected Double tensor (got Float tensor)\n\n(2) line 66: will crash if I don't explicitly assign True to model.trainning. The totorial and example code don't do like this...\n    66\t    model.trainning = True #AttributeError: 'MnistConvNet' object has no attribute 'trainning'\n\n(3) The model seems not learning (test accuracy still 0.11 after 100 iterations), but I didn't find out why. The test accuracy should arise after merely several iterations (The TF example codes in Kaggle do so). Is the code wrong?\nThanks in advance!\nComplete script:\n     1\t# http://pytorch.org/tutorials/\n     2\t# http://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html\n     3\t# https://github.com/pytorch/examples/blob/master/mnist/main.py\n     4\t\n     5\timport sys\n     6\timport os\n     7\t\n     8\tos.putenv('OPENBLAS_NUM_THREADS', '4')\n     9\t\n    10\timport torch as th\n    11\timport torch.nn.functional as thnf\n    12\timport numpy as np\n    13\timport pandas as pd\n    14\tfrom sklearn.model_selection import train_test_split\n    15\tprint('-> Using TH', th.__version__)\n    16\t\n    17\t### Read Train-Val data and split ###\n    18\ttrainval = pd.read_csv(\"train.csv\")\n    19\ttrainval_images = trainval.iloc[:, 1:].div(255)\n    20\ttrainval_labels = trainval.iloc[:, :1]\n    21\ttrain_images, val_images, train_labels, val_labels = train_test_split(\n    22\t        trainval_images, trainval_labels, train_size=0.8, random_state=0)\n    23\tprint('-> train set shape', train_images.shape)\n    24\tprint('-> val   set shape', val_images.shape)\n    25\t\n    26\t### Model ###\n    27\tclass MnistConvNet(th.nn.Module):\n    28\t    def __init__(self):\n    29\t        super(MnistConvNet, self).__init__()\n    30\t        self.conv1 = th.nn.Conv2d(1, 10, kernel_size=5)\n    31\t        self.conv2 = th.nn.Conv2d(10, 20, kernel_size=5)\n    32\t        self.conv2_drop = th.nn.Dropout2d()\n    33\t        self.fc1 = th.nn.Linear(320, 50)\n    34\t        self.fc2 = th.nn.Linear(50, 10)\n    35\t    def forward(self, x):\n    36\t        x = thnf.relu(thnf.max_pool2d(self.conv1(x), 2))\n    37\t        x = thnf.relu(thnf.max_pool2d(self.conv2_drop(self.conv2(x)), 2))\n    38\t        x = x.view(-1, 320)\n    39\t        x = thnf.relu(self.fc1(x))\n    40\t        x = thnf.dropout(x, training=self.trainning)\n    41\t        x = self.fc2(x)\n    42\t        return x\n    43\t        #return thnf.log_softmax(x)\n    44\t\n    45\tconvnet = MnistConvNet()\n    46\tconvnet = convnet.double() #RuntimeError: expected Double tensor (got Float tensor)\n    47\tcrit = th.nn.CrossEntropyLoss()\n    48\toptimizer = th.optim.Adam(convnet.parameters(), lr=1e-2)\n    49\t\n    50\t### Train and Val ###\n    51\t\n    52\tdef step_train(model, iteration):\n    53\t    i = iteration\n    54\t    batch_images = train_images.iloc[\n    55\t        (i*50)%33600:\n    56\t        (i+1)%672==0 and 33600 or ((i+1)*50)%33600].values\n    57\t    batch_labels = train_labels.iloc[\n    58\t        (i*50)%33600:\n    59\t        (i+1)%672==0 and 33600 or ((i+1)*50)%33600].values\n    60\t    batch_images = th.autograd.Variable(th.from_numpy(batch_images))\n    61\t    batch_labels = th.autograd.Variable(th.from_numpy(batch_labels))\n    62\t    batch_images = batch_images.resize(50, 1, 28, 28)\n    63\t    batch_labels = batch_labels.resize(50)\n    64\t\n    65\t    model.train()\n    66\t    model.trainning = True #AttributeError: 'MnistConvNet' object has no attribute 'trainning'\n    67\t    optimizer.zero_grad()\n    68\t    output = model(batch_images)\n    69\t    loss = crit(output, batch_labels)\n    70\t    loss.backward()\n    71\t    optimizer.step()\n    72\t\n    73\t    pred = output.data.max(1)[1]\n    74\t    correct = pred.eq(batch_labels.data).cpu().sum()\n    75\t    print('-> Iter {:5d} |'.format(i), 'loss {:7.3f} |'.format(loss.data[0]),\n    76\t            'Bch Train Accu {:.2f}'.format(correct / output.size()[1]))\n    77\t\n    78\tdef step_eval(model, iteration):\n    79\t    correct = 0\n    80\t    total   = val_images.shape[0]\n    81\t    lossaccum = 0.\n    82\t    print('-> TEST @ {} |'.format(iteration), end='')\n    83\t    for i in range(0, val_images.shape[0], 50):\n    84\t        images = val_images.iloc[i:i+50].values\n    85\t        labels = val_labels.iloc[i:i+50].values\n    86\t        images = th.autograd.Variable(th.from_numpy(images))\n    87\t        labels = th.autograd.Variable(th.from_numpy(labels))\n    88\t        images = images.resize(50, 1, 28, 28)\n    89\t        labels = labels.resize(50)\n    90\t\n    91\t        model.eval()\n    92\t        model.trainning = False\n    93\t        output = model(images)\n    94\t        loss = thnf.nll_loss(output, labels)\n    95\t        lossaccum += loss.data[0]\n    96\t        pred = output.data.max(1)[1]\n    97\t        correct += pred.eq(labels.data).cpu().sum()\n    98\t        print('.', end=''); sys.stdout.flush()\n    99\t    print('|')\n   100\t    print('-> TEST @ {} |'.format(iteration),\n   101\t            'Loss {:7.3f} |'.format(lossaccum),\n   102\t            'Accu {:.2f}|'.format(correct / total))\n   103\t    exit()\n   104\t\n   105\tfor i in range(20000):\n   106\t    step_train(convnet, i)\n   107\t    if i>0 and i%100==0:\n   108\t        step_eval(convnet, i)\npart of output\n-> Using TH 0.1.12\n-> train set shape (33600, 784)\n-> val   set shape (8400, 784)\n-> Iter     0 | loss   2.286 | Bch Train Accu 0.60\n-> Iter     1 | loss   2.340 | Bch Train Accu 0.70",
+            "closedAt": "2017-07-07T16:59:21Z",
+            "createdAt": "2017-07-07T03:49:35Z",
+            "id": "MDU6SXNzdWUyNDExNDk5ODk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1997,
+            "state": "CLOSED",
+            "title": "Several problems when training a convnet on mnist",
+            "updatedAt": "2017-07-07T16:59:21Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1997"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "If I have a tensor x of size (100000000,), and I save it with torch.save(x[:10]), it will take a lot of space in the disk (same space than if I save the entire tensor). However, torch.save(x[:10].clone()) only seems to serialize the relevant part of the tensor.\nIs it expected behaviour?",
+            "closedAt": "2017-07-06T20:59:33Z",
+            "createdAt": "2017-07-06T20:58:23Z",
+            "id": "MDU6SXNzdWUyNDEwODM5MzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1995,
+            "state": "CLOSED",
+            "title": "torch.save is saving too much",
+            "updatedAt": "2024-11-18T18:33:40Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1995"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Am I just early and this feature isn't packaged and deployed?\n➜  ~ conda install pytorch torchvision -c soumith\nFetching package metadata ...........\nSolving package specifications: .\nWarning: 2 possible package resolutions (only showing differing packages):\n  - soumith::pytorch-0.1.12-py361_2cu75\n  - soumith::pytorch-0.1.12-py36_2cu75\n\n# All requested packages already installed.\n# packages in environment at /Users/jramapuram/anaconda:\n#\npytorch                   0.1.12              py361_2cu75    soumith\ntorchvision               0.1.8                    py36_2    soumith\nIn [6]: x=torch.FloatTensor(5,3,4,1)\n\nIn [7]: y=torch.FloatTensor(3,1,1)\n\nIn [8]: (x.add_(y)).size()\n---------------------------------------------------------------------------\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-8-a6afff02e3c6> in <module>()\n----> 1 (x.add_(y)).size()\n\nRuntimeError: inconsistent tensor size at /Users/soumith/miniconda2/conda-bld/pytorch_1493757886437/work/torch/lib/TH/generic/THTensorMath.c:831\n\nIn [9]: x + y\n---------------------------------------------------------------------------\nRuntimeError                              Traceback (most recent call last)\n<ipython-input-9-b50c5120e24b> in <module>()\n----> 1 x + y\n\n/Users/jramapuram/anaconda/lib/python3.6/site-packages/torch/tensor.py in __add__(self, other)\n    265     # TODO: add tests for operators\n    266     def __add__(self, other):\n--> 267         return self.add(other)\n    268     __radd__ = __add__\n    269\n\nRuntimeError: inconsistent tensor size at /Users/soumith/miniconda2/conda-bld/pytorch_1493757886437/work/torch/lib/TH/generic/THTensorMath.c:831",
+            "closedAt": "2017-07-06T20:30:11Z",
+            "createdAt": "2017-07-06T20:28:53Z",
+            "id": "MDU6SXNzdWUyNDEwNzY0MjI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1994,
+            "state": "CLOSED",
+            "title": "Broadcasting doesn't match docs for conda package",
+            "updatedAt": "2017-07-06T20:50:40Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1994"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "As mentioned in a comment in #1880",
+            "closedAt": "2017-07-20T05:46:20Z",
+            "createdAt": "2017-07-06T14:52:16Z",
+            "id": "MDU6SXNzdWUyNDA5ODM2MzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1992,
+            "state": "CLOSED",
+            "title": "Allow arbitrary inputs in DataParallel",
+            "updatedAt": "2017-07-20T05:46:20Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1992"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "pytorch/torch/nn/modules/modules.py\ndef cpu(self, device_id=None):\n    \"\"\"Moves all model parameters and buffers to the CPU.\"\"\"\n    return self._apply(lambda t: t.cpu())\nas shown in source code, this parameters is not used. Any reason that we keep it?",
+            "closedAt": "2017-07-13T13:57:37Z",
+            "createdAt": "2017-07-06T12:31:48Z",
+            "id": "MDU6SXNzdWUyNDA5NDEwNDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1991,
+            "state": "CLOSED",
+            "title": "Why there is a `device_id` parameter in `nn.module.cpu()` call?",
+            "updatedAt": "2017-07-13T13:57:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1991"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently, load_state_dict works only when the loaded state_dict and the Module's state_dict match exactly.\nProblem: For the purpose of fine-tuning or for any slight change in the network, it is not straightforward to load the base layers, leaving one or two unchanged. Either we have to define the old network, load the state and then modify the network, or essentially rewrite the load_state_dict function.\nProposed Solution:\n    def load_state_dict(self, state_dict, ignored_keys=None):\nCan I create a PR for the same?",
+            "closedAt": "2017-10-18T13:37:18Z",
+            "createdAt": "2017-07-06T09:29:29Z",
+            "id": "MDU6SXNzdWUyNDA4OTcxNzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1990,
+            "state": "CLOSED",
+            "title": "[Feature request] Allow exceptions in load_state_dict",
+            "updatedAt": "2017-10-18T13:37:18Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1990"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Scalar reduction results are currently being returned as host-side scalars, causing an implicit sync-point, and gpu->device copy.  See the following results:\n=================\nit 0\n------ .sum(), returns a host-side scalar ---------\ntime for .sum() 0.040\ntime for synchronize 0.000\nres 2000001152.0\n---- .sum(1), returns proxy to gpu-side tensor -----\ntime for .sum(1) 0.000\ntime for synchronize 0.462\nres\n 2.0000e+09\n[torch.cuda.FloatTensor of size 1x1 (GPU 0)]\n\n=================\nit 1\n------ .sum(), returns a host-side scalar ---------\ntime for .sum() 0.039\ntime for synchronize 0.000\n---- .sum(1), returns proxy to gpu-side tensor -----\ntime for .sum(1) 0.000\ntime for synchronize 0.462\n=================\nit 2\n------ .sum(), returns a host-side scalar ---------\ntime for .sum() 0.040\ntime for synchronize 0.000\n---- .sum(1), returns proxy to gpu-side tensor -----\ntime for .sum(1) 0.000\ntime for synchronize 0.456\n\nYou can see that .sum(1) returns instantly, and the pain doesnt happen till the later .synchronize(). But .sum() waits for the entire gpu operation to finish, and returns a host-side scalar.  .sum() is implicitly, behind the scenes:\n\nwaiting for the entire operation to finish\nsync'ing\ncopying the result from the gpu back to the hostside\n\nI'm not sure this is desirable?  It's also inconsistent with how numpy works, which doesnt convert scalars into a non-numpy scalar until you call .item().\nTest code for the implicit sync points:\nimport torch\nimport time\n\n\nN = 1000 * 1000 * 1000\n\ndef implicit_sync(print_res=False):\n    print('------ .sum(), returns a host-side scalar ---------')\n    # start = time.time()\n    # a = torch.ones(N).cuda()\n    # a += 1\n    # torch.cuda.synchronize()\n    start = time.time()\n    res = a.sum()\n    print('time for .sum() %.3f' % (time.time() - start))\n    start = time.time()\n    torch.cuda.synchronize()\n    print('time for synchronize %.3f' % (time.time() - start))\n    if print_res:\n        print('res', res)\n\ndef stays_on_gpu(print_res=False):\n    print('---- .sum(1), returns proxy to gpu-side tensor -----')\n    start = time.time()\n    res = a.sum(1)\n    print('time for .sum(1) %.3f' % (time.time() - start))\n    start = time.time()\n    torch.cuda.synchronize()\n    print('time for synchronize %.3f' % (time.time() - start))\n    if print_res:\n        print('res', res)\n\n\nif __name__ == '__main__':\n    a = torch.ones(1, N).cuda()\n    a += 1\n    torch.cuda.synchronize()\n    for it in range(3):\n        print('=================')\n        print('it', it)\n        implicit_sync(it == 0)\n        stays_on_gpu(it == 0)\n\nEffect of .item() in numpy:\nimport numpy as np\n\na = np.zeros(3)\nprint('type(a[0])', type(a[0]))\nprint('type(a[0].item())', type(a[0].item()))\n\nResult:\ntype(a[0]) <class 'numpy.float64'>\ntype(a[0].item()) <class 'float'>\n\nI know this would need a ton of work behind the scenes, and for conv nets, there is only one reduce, in the loss function.  It seems likely that it could have a noticeable effect on python code that does some kind of normalization using fundamental pytorch operations though?  So, this issue means such kernels need to be written in CUDA, rather than in Python, in order to obtain good performance. Fixing this issues would make it easier for Python guys to write high performance kernels for novel research layers.",
+            "closedAt": "2017-07-07T07:43:08Z",
+            "createdAt": "2017-07-06T07:43:26Z",
+            "id": "MDU6SXNzdWUyNDA4NzA3NDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1989,
+            "state": "CLOSED",
+            "title": "Reductions returning scalars cause implicit sync-point",
+            "updatedAt": "2017-07-07T07:43:08Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1989"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The adpative pooling for 1d and 2d has been implemented. However for object detection in 3D images, e.g. medical images, the 3D version of adaptive pooling is not yet available in pytorch.\nDo you guys think it makes sense to extend the adaptive pooling to 3D?",
+            "closedAt": "2017-09-30T20:58:18Z",
+            "createdAt": "2017-07-05T15:49:19Z",
+            "id": "MDU6SXNzdWUyNDA2OTU1NjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1988,
+            "state": "CLOSED",
+            "title": "Feature request: 3D Adaptive Pooling",
+            "updatedAt": "2017-09-30T20:58:18Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1988"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "V = torch.Tensor([\n        [0.7, 0],\n        [0.3, 0],\n        [0.2, 0]\n    ])\n\n=> Ok\n    V = autograd.Variable([\n        [0.7, 0],\n        [0.3, 0],\n        [0.2, 0]\n    ])\n\n=> Fail",
+            "closedAt": "2017-07-06T14:35:33Z",
+            "createdAt": "2017-07-05T12:07:33Z",
+            "id": "MDU6SXNzdWUyNDA2Mjk3NjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1986,
+            "state": "CLOSED",
+            "title": "Inconsistency: can instantiate Tensor from List, but cannot instantiate Variable",
+            "updatedAt": "2017-07-06T14:35:33Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1986"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "torch.sqrt() doesnt work on result of full reduction operations:\nCurrently:\na = torch.rand(3, 2)\nprint(torch.sqrt(a.sum()))  # Fails\nprint(sqrt(a.sum()))  # Fails\n\nNeither torch.sqrt work, nor sqrt.  We could do import math, and use math.sqrt, but it's an additional import. Probably could use np.sqrt too, but again, additional import.  Additional cognitive load \"is this a torch.Tensor, or a scalar\".",
+            "closedAt": "2017-07-06T14:42:22Z",
+            "createdAt": "2017-07-05T12:03:57Z",
+            "id": "MDU6SXNzdWUyNDA2MjkwMDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1985,
+            "state": "CLOSED",
+            "title": "torch.sqrt() doesnt work on result of full reduction operations.",
+            "updatedAt": "2017-07-06T14:42:22Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1985"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "pytorch version: '0.1.12_2'\nRun this snippet (The required serialised tensor has been included in the attachment.\nimport torch\nfrom torch.autograd import Variable\nfrom torch import nn\n\ntorch.manual_seed(0)\n\nx_restored = Variable(torch.load('x.pth'), requires_grad=False)\nx_res_repeated = x_restored.repeat(10, 1)\n\nclass Network(nn.Module):\n    def __init__(self, dim_in, dim_out):\n        super(Network, self).__init__()\n        self.m = nn.Sequential(\n            nn.Linear(dim_in, 100),\n            nn.BatchNorm1d(100),\n            nn.ReLU(),\n            nn.Linear(100, 100),\n            nn.BatchNorm1d(100),\n            nn.ReLU(),\n            nn.Linear(100, dim_out*2)\n        )\n\n    def forward(self, X):\n        return self.m(X)\n\nnet = Network(x_restored.size()[1], 2)\nprint(net(x_restored))\nprint(net(x_res_repeated))\nThe output\nVariable containing:\n1.00000e-02 *\n -0.5704 -3.7342 -3.6541  7.4486\n[torch.FloatTensor of size 1x4]\n\nVariable containing:\n1.00000e-02 *\n -0.5703 -3.7480 -3.6610  7.4439\n -0.5703 -3.7480 -3.6610  7.4439\n -0.5703 -3.7480 -3.6610  7.4439\n -0.5703 -3.7480 -3.6610  7.4439\n -0.5703 -3.7480 -3.6610  7.4439\n -0.5703 -3.7480 -3.6610  7.4439\n -0.5703 -3.7480 -3.6610  7.4439\n -0.5703 -3.7480 -3.6610  7.4439\n -0.4867 -3.7301 -3.6103  7.4878\n -0.4867 -3.7301 -3.6103  7.4878\n[torch.FloatTensor of size 10x4]\n\nissue.zip",
+            "closedAt": "2017-07-05T10:49:04Z",
+            "createdAt": "2017-07-05T10:45:15Z",
+            "id": "MDU6SXNzdWUyNDA2MTA5MjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1984,
+            "state": "CLOSED",
+            "title": "Different results for batch size 1 Variables",
+            "updatedAt": "2017-07-05T10:49:04Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1984"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "pytorch version: '0.1.12_2'\nIt is not so easy to describe the exact bug here, but I think it is sufficient to provide an example in which strange results can be reproduced.\nUse the serialised version of Tensor in the attachment. Then run this snippet (also included in the attachment)\nimport torch\nfrom torch.autograd import Variable\n\nx_restored = Variable(torch.load('x.pth'), requires_grad=False)\nx_res_repeated = x_restored.repeat(10, 1)\n\nprint(x_restored.eq(x_res_repeated[0]).data.numpy().sum())\nprint(x_restored.eq(x_res_repeated[0]).data.sum())\nprint(x_restored.eq(x_res_repeated[0]).sum())\nThe output\n3200\n3200\nVariable containing:\n 128\n[torch.ByteTensor of size 1]\n\nI would expect the summation to return the same results regardless of whether we operate on numpy arrays, pytorch tensors or Variable holding a Tensor in the data field. (Which means it should return a Variable holding a Tensor with the right capacity to store the summed value.\nHowever, this is unfortunately not the case.\nbug_reproduce.zip",
+            "closedAt": "2017-07-05T10:33:06Z",
+            "createdAt": "2017-07-05T10:23:08Z",
+            "id": "MDU6SXNzdWUyNDA2MDU0Njk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1982,
+            "state": "CLOSED",
+            "title": "[BUG] Different results on sum for Variable and Tensor of batch size 1",
+            "updatedAt": "2017-07-05T10:33:06Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1982"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Commit history from pyyaml, as far as I can tell, http://pyyaml.org/log/\n\nCommit history from ruamel.yaml, https://bitbucket.org/ruamel/yaml/commits/all\n\nruamel.yaml supports yaml 1.2, and handles round-trip, including comments.",
+            "closedAt": "2017-07-13T07:36:55Z",
+            "createdAt": "2017-07-05T09:37:06Z",
+            "id": "MDU6SXNzdWUyNDA1OTMyOTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1981,
+            "state": "CLOSED",
+            "title": "[Controversial] `pyyaml` is 6 years old, might be best to switch to `ruamel.yaml`?",
+            "updatedAt": "2017-07-13T07:36:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1981"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "(for consistency with numpy)",
+            "closedAt": "2017-07-05T23:12:59Z",
+            "createdAt": "2017-07-05T09:21:27Z",
+            "id": "MDU6SXNzdWUyNDA1ODg4ODc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1980,
+            "state": "CLOSED",
+            "title": "Would be nice to have `.shape` as an alias for `.size()`",
+            "updatedAt": "2017-07-05T23:12:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1980"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2017-08-30T23:32:56Z",
+            "createdAt": "2017-07-05T09:04:02Z",
+            "id": "MDU6SXNzdWUyNDA1ODQzMjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1979,
+            "state": "CLOSED",
+            "title": "`Functional` is missing `Embedding`",
+            "updatedAt": "2017-08-30T23:32:56Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1979"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI was wondering if there are any plans to have a luarocks style package manager for pytorch. I'm not talking about just installing stuff (which can be easily done via conda, pip) but a package manager specific to PyTorch, which can have community made packages (like Torch has for computer vision etc).\nAny thoughts?",
+            "closedAt": "2017-07-05T12:50:46Z",
+            "createdAt": "2017-07-05T04:57:25Z",
+            "id": "MDU6SXNzdWUyNDA1Mzc4NTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1978,
+            "state": "CLOSED",
+            "title": "[Feature Request] LuaRocks style package manager for community made packages",
+            "updatedAt": "2017-07-05T12:50:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1978"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "in pytorch-master folder:\n\n\n\ntorch.nn.Conv2d(1,1,1,1)\nConv2d(1,1,,kernei_size=(1,1),stride=(1,1))\n\n\n\nbut when i use the same command in other folder:\n\n\n\ntorch.nn.Conv2d(1,1,1,1)\ni got an error like this:\n\n\n\nraise AttributeErrot(name)\nAttributeError : creator",
+            "closedAt": "2017-07-06T16:10:01Z",
+            "createdAt": "2017-07-05T02:11:12Z",
+            "id": "MDU6SXNzdWUyNDA1MjE1NjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1977,
+            "state": "CLOSED",
+            "title": "it seem that i can  only use  command in the pytorch-master folder, when i change the folder, i got AttributeError, anyone know why?",
+            "updatedAt": "2017-07-06T16:10:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1977"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Here's a commit that adds conv double backwards checks with groups != 1: gchanan@5b1269d\nApplying this and running:\npython test/test_nn.py TestNN.test_conv_double_backward\n\ngives me:\n======================================================================\nERROR: test_conv_double_backward (__main__.TestNN)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"test/test_nn.py\", line 2439, in test_conv_double_backward\n    no_weight, groups = chan_in)\n  File \"test/test_nn.py\", line 2425, in run_conv_double_back_test\n    dummy_out = func(*inputs)\n  File \"test/test_nn.py\", line 2414, in func\n    out = F.conv2d(lx, lweight, lbias, stride, padding, dilation, groups)\n  File \"/.../torch/nn/functional.py\", line 50, in conv2d\n    return f(input, weight, bias)\nRuntimeError: Need input of dimension 4 and input.size[1] == 2 but got input to be of shape: [2 x 1 x 6 x 6] at /.../torch/lib/THNN/generic/SpatialConvolutionMM.c:47\n\nis this expected @albanD?",
+            "closedAt": "2017-07-13T04:41:15Z",
+            "createdAt": "2017-07-03T22:16:53Z",
+            "id": "MDU6SXNzdWUyNDAyNzM3NTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1972,
+            "state": "CLOSED",
+            "title": "Conv double backwards with groups != 1 fails with size mismatch",
+            "updatedAt": "2017-07-13T04:41:15Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1972"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "There are some functions/classes which are very similar but have a different naming pattern. For example:\n\nlog_softmax vs logsigmoid: underscore symbol\nCrossEntropyLoss and NLLLoss vs BCELoss and BCEWithLogitsLoss: CE loss and BCE loss have different inputs\n\nMaybe there are other examples. Is it the legacy of lua torch?\ncc @albanD @mruberry",
+            "closedAt": "2024-09-06T13:27:26Z",
+            "createdAt": "2017-07-03T18:58:48Z",
+            "id": "MDU6SXNzdWUyNDAyNDUyOTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: nn"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "module: ux"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 1969,
+            "state": "CLOSED",
+            "title": "Naming inconsistencies",
+            "updatedAt": "2024-09-06T13:27:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1969"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "when i import torch under pytorch folder ,everyting is ok:\n~/pytorch python\n\n\n\nimport torch\n\n\n\nbut when i change to other folder like ~/pytorch/tools\n\n\n\nimport torch\ni got an error like this:\n\n\n\n`AttributeError: type object \"torch._C.FloatTensorBase\" has no attribute \"masked_copy_\"`\n>>>\n\nanyone know why? thanks~",
+            "closedAt": "2017-07-04T08:51:52Z",
+            "createdAt": "2017-07-03T10:46:34Z",
+            "id": "MDU6SXNzdWUyNDAxMzU1NTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1968,
+            "state": "CLOSED",
+            "title": "when i change the folder from pytorch to other folders and import torch, i got an errorl ike this",
+            "updatedAt": "2017-07-04T08:51:52Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1968"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have downloaded torch-0.1.12.post2-cp27-none-linux_x86_64.whl(from http://download.pytorch.org/whl/cu75/torch-0.1.12.post2-cp27-none-linux_x86_64.whl ) file and use the following command to install.\npip install torch-0.1.12.post2-cp27-none-linux_x86_64.whl\npip install pip install torchvision\n\nHowever, the error occurs when import torch\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"/home/my/lib/python2.7/site-packages/torch/__init__.py\", line 53, in <module>\n    from torch._C import *\nImportError: /lib64/tls/libc.so.6: version `GLIBC_2.7' not found (required by /home/my/lib/python2.7/site-packages/torch/lib/libTH.so.1)\n\nMy Linux kernel is 2.6.32_1-19-0-0 and GCC version is 4.8.3\nHow can I fix this problem?",
+            "closedAt": "2017-07-06T16:24:12Z",
+            "createdAt": "2017-07-03T06:48:14Z",
+            "id": "MDU6SXNzdWUyNDAwODA5NTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1967,
+            "state": "CLOSED",
+            "title": "version `GLIBC_2.7' not found when import pytorch",
+            "updatedAt": "2017-07-06T16:24:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1967"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is there an equivalent of tensor operations like tf.gather, tf,scatter, tf.update (tensorflow tensor operations) in pytorch without returning the same size tensor?\nIf yes, that would be a great help for me since I only need a specific part of the tensor. Else it would be a good operations to have, since they add versatility to the operations that can be performed on a tensor.\nI am currently using tensorflow for a piece of code, but the dynamic graph of pytorch can be very useful for my application as I can dynamically select parts of the tensor, but I need to be able to tf.gather and tf.scatter. Are there alternative hacks to perform similar operations in pytorch ?",
+            "closedAt": "2017-07-02T22:27:39Z",
+            "createdAt": "2017-07-02T22:08:17Z",
+            "id": "MDU6SXNzdWUyNDAwMzc3NDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1965,
+            "state": "CLOSED",
+            "title": "Equivalent of tf.gather , tf.scatter, tf.update in pytorch",
+            "updatedAt": "2017-07-02T22:28:13Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1965"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I was trying to compile around other people's code with the ffi module.\nMy current system is arch linux and the path for cuda is /opt/cuda.\nAs I found out that the path for create_extension is hard coded to be /usr/local/cuda (debian) and /Developer/NVIDIA/CUDA-*(mac os).\nSo, I hack around a little bit to add\n        cuda_include_dirs += glob.glob('/opt/cuda/include')\nto make it compile on my system.\nI think the proper way to do that is make the library path as a configurable parameter like\ndef create_extension(name, headers, sources, verbose=True, with_cuda=False,\n                     cuda_root_dir=None, # make it as a parameter\n                     package=False, relative_to='.', **kwargs):\nAnd we could figure out cuda_root_dir (either /opt/cuda, /usr/local/cuda, /Developer/NVIDIA/CUDA-*) by\n\nsupply it as a parameter\nenv variable CUDA_ROOT\nFigure it out from common system",
+            "closedAt": "2019-04-09T18:18:13Z",
+            "createdAt": "2017-07-02T12:35:43Z",
+            "id": "MDU6SXNzdWUyNDAwMDc4MDI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                },
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "module: cpp-extensions"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 1964,
+            "state": "CLOSED",
+            "title": "Cuda compilation path for building extension",
+            "updatedAt": "2019-04-09T18:18:13Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1964"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I think I encountered a memory leak situation potentially due to expand_as. I create a gist to reproduce my observations.\nBasically, for three different (meaningless) models, once the expand_as function is used, the memory usage will keep increasing.\nTo run the code, python mem_leak_expand.py --run_expand --model_type [0,1,2] where the --run_expand flag controls whether expand_as is used. Please run it long enough.\nI'm on Ubuntu 14.04 with python3.6. I tried two versions of pytorch, 0.1.12_2 and 0.1.12+da0fad8.\nSide Note: Even without using expand_as, the memory usauge can also increase for a while, but it will finally stablize at a level. What's more, when Conv2d (i.e. --model_type [1,2]) is used, it can take very long before the memory usage stablizes. I'm not sure whether this is a problem or not.",
+            "closedAt": "2017-07-10T22:46:07Z",
+            "createdAt": "2017-07-02T06:07:54Z",
+            "id": "MDU6SXNzdWUyMzk5OTE2MTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1963,
+            "state": "CLOSED",
+            "title": "Potential Memory Leak in expand_as",
+            "updatedAt": "2017-07-10T22:53:35Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1963"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I think it might be nice to estimate variances using incremental algorithm instead of smoothing variances estimated in every batch.\n\nIn this case BN will work fine even with batch size of 1.\nEstimated variance will be less biased when batch size is small.",
+            "closedAt": "2017-07-25T02:41:14Z",
+            "createdAt": "2017-07-01T22:18:15Z",
+            "id": "MDU6SXNzdWUyMzk5NzU0OTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1962,
+            "state": "CLOSED",
+            "title": "Incremental variance estimation instead of smoothing in batch normalization ",
+            "updatedAt": "2017-07-25T02:41:14Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1962"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The size of weight_ih_l[k] in LSTM seems to be  (4*hidden_size x input_size). And it also happens to weight_hh_l[k]\ne.g.,\ntmp = nn.LSTM(2, 9)\npritn(tmp.weight_hh_l0.size())\n\nwould return\ntorch.Size([36, 9])",
+            "closedAt": "2017-07-02T03:15:30Z",
+            "createdAt": "2017-07-01T05:39:54Z",
+            "id": "MDU6SXNzdWUyMzk5MjkwMTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1961,
+            "state": "CLOSED",
+            "title": "LSTM's Variables' sizes mismatch",
+            "updatedAt": "2017-07-02T03:15:31Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1961"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "from \"YellowFin and the Art of Momentum Tuning\" https://arxiv.org/abs/1706.03471\nreference implementation:\nhttps://github.com/JianGoForIt/YellowFin_Pytorch/blob/master/tuner_utils/yellowfin.py\ncc: @JianGoForIt",
+            "closedAt": "2019-03-29T13:24:18Z",
+            "createdAt": "2017-06-30T21:11:34Z",
+            "id": "MDU6SXNzdWUyMzk4ODk4MDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "proposal accepted"
+                },
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 1960,
+            "state": "CLOSED",
+            "title": "[feature request] Add YellowFin optimizer",
+            "updatedAt": "2019-03-29T13:27:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1960"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "See #1601 for previous discussion on layer normalization.",
+            "closedAt": "2018-02-22T17:03:53Z",
+            "createdAt": "2017-06-30T20:14:08Z",
+            "id": "MDU6SXNzdWUyMzk4NzgyMDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1959,
+            "state": "CLOSED",
+            "title": "[Feature Request] Layer Normalization",
+            "updatedAt": "2018-09-01T16:39:33Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1959"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "FloatTensor(np.array([0,1,2], dtype=np.float64))\ncuda.FloatTensor(np.array([0,1,2], dtype=np.float64))\nFloatTensor(np.array([0,1,2], dtype=np.float32))\nwork as expected, while\ncuda.FloatTensor(np.array([0,1,2], dtype=np.float32))\nfails with\nRuntimeError: tried to construct a tensor from a float sequence, but found an item of type numpy.float32 at index (0)\nPyTorch version: 0.1.12_2",
+            "closedAt": "2017-08-16T21:45:10Z",
+            "createdAt": "2017-06-30T11:49:01Z",
+            "id": "MDU6SXNzdWUyMzk3NTY2MDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1957,
+            "state": "CLOSED",
+            "title": "cuda.FloatTensor constructor with float32 array",
+            "updatedAt": "2017-08-16T21:45:10Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1957"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I tried use the cuda8.0 on Jetson TX1 , report\ncuda runtime error : too many resources requested for launch\nAnd I's work's with CPU.\nAny help will be appreciated.",
+            "closedAt": "2017-07-13T06:26:16Z",
+            "createdAt": "2017-06-30T01:22:51Z",
+            "id": "MDU6SXNzdWUyMzk2NTM0NjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1956,
+            "state": "CLOSED",
+            "title": "Too many resources requested for launch",
+            "updatedAt": "2017-07-13T06:26:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1956"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "So I've tried to compile Pytorch locally for development purposes under the (dev) anaconda environment and another one under (lisa) which I install from the instructions from pytorch.org, I've got a recent warning when running the VAE code on Pytorch tutorials when running it on the newest version.\n(dev) [SLURM] suhubdyd@kepler2:~/research/models/pytorch-models/vae$ python main.py \nTHCudaCheck FAIL file=/u/suhubdyd/research/dl-frameworks/pytorch/torch/lib/THC/generated/../generic/THCTensorMathPointwise.cu line=247 error=8 : invalid device function\nTraceback (most recent call last):\n  File \"main.py\", line 138, in <module>\n    train(epoch)\n  File \"main.py\", line 108, in train\n    recon_batch, mu, logvar = model(data)\n  File \"/u/suhubdyd/.conda/envs/dev/lib/python2.7/site-packages/torch/nn/modules/module.py\", line 206, in __call__\n    result = self.forward(*input, **kwargs)\n  File \"main.py\", line 71, in forward\n    mu, logvar = self.encode(x.view(-1, 784))\n  File \"main.py\", line 54, in encode\n    h1 = self.relu(self.fc1(x))\n  File \"/u/suhubdyd/.conda/envs/dev/lib/python2.7/site-packages/torch/nn/modules/module.py\", line 206, in __call__\n    result = self.forward(*input, **kwargs)\n  File \"/u/suhubdyd/.conda/envs/dev/lib/python2.7/site-packages/torch/nn/modules/linear.py\", line 54, in forward\n    return self._backend.Linear.apply(input, self.weight, self.bias)\n  File \"/u/suhubdyd/.conda/envs/dev/lib/python2.7/site-packages/torch/nn/_functions/linear.py\", line 14, in forward\n    output.add_(bias.expand_as(output))\nRuntimeError: cuda runtime error (8) : invalid device function at /u/suhubdyd/research/dl-frameworks/pytorch/torch/lib/THC/generated/../generic/THCTensorMathPointwise.cu:247\n\nwhile it doesn't matter for the stable distribution\n(lisa) [SLURM] suhubdyd@kepler2:~/research/models/pytorch-models/vae$ python main.py \nTrain Epoch: 1 [0/60000 (0%)]   Loss: 549.307800\nTrain Epoch: 1 [1280/60000 (2%)]        Loss: 311.565613\nTrain Epoch: 1 [2560/60000 (4%)]        Loss: 236.338989\nTrain Epoch: 1 [3840/60000 (6%)]        Loss: 225.371078\nTrain Epoch: 1 [5120/60000 (9%)]        Loss: 208.993668\nTrain Epoch: 1 [6400/60000 (11%)]       Loss: 206.427368\nTrain Epoch: 1 [7680/60000 (13%)]       Loss: 208.580597\nTrain Epoch: 1 [8960/60000 (15%)]       Loss: 201.324646\nTrain Epoch: 1 [10240/60000 (17%)]      Loss: 191.824326\nTrain Epoch: 1 [11520/60000 (19%)]      Loss: 195.214188\nTrain Epoch: 1 [12800/60000 (21%)]      Loss: 189.770447\nTrain Epoch: 1 [14080/60000 (23%)]      Loss: 173.119644\nTrain Epoch: 1 [15360/60000 (26%)]      Loss: 179.030197\nTrain Epoch: 1 [16640/60000 (28%)]      Loss: 170.247345\nTrain Epoch: 1 [17920/60000 (30%)]      Loss: 169.193451\nTrain Epoch: 1 [19200/60000 (32%)]      Loss: 162.828690\nTrain Epoch: 1 [20480/60000 (34%)]      Loss: 158.171326\nTrain Epoch: 1 [21760/60000 (36%)]      Loss: 158.530518\nTrain Epoch: 1 [23040/60000 (38%)]      Loss: 155.896255\nTrain Epoch: 1 [24320/60000 (41%)]      Loss: 158.835968\nTrain Epoch: 1 [25600/60000 (43%)]      Loss: 152.416977\nTrain Epoch: 1 [26880/60000 (45%)]      Loss: 153.593964\nTrain Epoch: 1 [28160/60000 (47%)]      Loss: 147.944260\nTrain Epoch: 1 [29440/60000 (49%)]      Loss: 148.223892\nTrain Epoch: 1 [30720/60000 (51%)]      Loss: 145.770905\nTrain Epoch: 1 [32000/60000 (53%)]      Loss: 144.410706\nTrain Epoch: 1 [33280/60000 (55%)]      Loss: 147.592163\nTrain Epoch: 1 [34560/60000 (58%)]      Loss: 149.320328",
+            "closedAt": "2017-07-13T06:28:44Z",
+            "createdAt": "2017-06-30T01:22:27Z",
+            "id": "MDU6SXNzdWUyMzk2NTM0MjM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1955,
+            "state": "CLOSED",
+            "title": "Cuda runtime error (8) : invalid device function at THCTensorMathPointwise.cu for latest build",
+            "updatedAt": "2018-12-13T06:45:25Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1955"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "error generating file \n/pytorch-master/torch/lob/build/THC/CMakeFiles/THC.dir//./THC_generated+THCTensorMathscan.cu.o\nmake[2]:***[CMakeFiles/THC.dir/./THC_generated_THCTensorMathScan.cu.o] Error 1\nmake[1]:***[CMakeFiles/THC.dir/all] Error 2\nmake:***[all] error",
+            "closedAt": "2017-06-30T15:07:49Z",
+            "createdAt": "2017-06-30T01:20:23Z",
+            "id": "MDU6SXNzdWUyMzk2NTMxNzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1954,
+            "state": "CLOSED",
+            "title": "install from source ,i get some error!!!",
+            "updatedAt": "2017-06-30T15:07:49Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1954"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "For advanced indexing with the duplicate indexes, it is expected that the last one should win, e.g. with the input\n  0   1   2   3   4\n  5   6   7   8   9\n 10  11  12  13  14\n 15  16  17  18  19\n\nindexer = [slice(None, None, None), [0, 1, 1, 2, 2]] and val\n 16  12   0  14  10\n 19  17   2   7   4\n  5   9   6   1  15\n 13  11   3   8  18\n\nthe expected output of input[indexer]=val is\n16   0  10   3   4\n19   2   4   8   9\n 5   6  15  13  14\n13   3  18  18  19\n\nthere are tests checking that. Yet the kernels doing the indexing (indexCopyLargeIndex and indexCopySmallIndex) provide no such guarantee - if the same dstOffset is shared by several threads, there is no guarantee on which write would be last, and no effort is made before launching the kernels to make sure that dstOffsets would be unique for all threads. This is not really fixable until the indices are de-duplicated and only the unique dstOffsets are present in those kernels. I don't know the best way to handle this. Disable advanced indexing with dupes, say results is undefined, de-dupe the indices? @killeent",
+            "closedAt": "2017-07-10T20:06:01Z",
+            "createdAt": "2017-06-30T01:17:17Z",
+            "id": "MDU6SXNzdWUyMzk2NTI3ODg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1953,
+            "state": "CLOSED",
+            "title": "Advanced indexing on the GPU",
+            "updatedAt": "2017-07-10T20:06:01Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1953"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "list(empty tensor) fails, while (empty tensor).tolist() is ok. It might be better if they were consistent.\nlist(torch.LongTensor())\n\n#Traceback (most recent call last):\n#  File \"<stdin>\", line 1, in <module>\n#  File \".../torch/tensor.py\", line 149, in __iter__\n#    return iter(map(lambda i: self.select(0, i), _range(self.size(0))))\n#RuntimeError: dimension 0 out of range of 0D tensor at .../torch/lib/TH/generic/THTensor.c:24\n\ntorch.LongTensor().tolist()\n#[]",
+            "closedAt": "2017-07-04T21:29:41Z",
+            "createdAt": "2017-06-30T00:41:15Z",
+            "id": "MDU6SXNzdWUyMzk2NDg0NjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1952,
+            "state": "CLOSED",
+            "title": "[minor] list(empty tensor) fails",
+            "updatedAt": "2017-07-04T21:29:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1952"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently squeeze and unsqueeze functions seem to allow only single dimension as an argument. I think it would be useful, if they allow tuple specification of multiple dimensions. Something like\ny = th.squeeze(x, dim=(0,2))",
+            "closedAt": "2018-06-06T17:27:59Z",
+            "createdAt": "2017-06-30T00:31:06Z",
+            "id": "MDU6SXNzdWUyMzk2NDcyMDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1951,
+            "state": "CLOSED",
+            "title": "[feature request] add tuple support for dim specification of squeeze() and unsqueeze()",
+            "updatedAt": "2018-06-06T17:27:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1951"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Support for using a negative dimension in torch.stack currently works as follows:\nif dim < 0:\n    dim += sequence[0].dim()\nThis is not consistent with the behaviour of torch.unsqueeze, which uses dim += input.dim() + 1. The unsqueeze behaviour is better since it is possible to use negative indexing to insert a new dimension as the last dimension.\nExample\ntorch.stack with dim=-1 adds a new dimension in the second-to-last position. This is confusing. It is not possible to use negative indexing to add a dimension in the last position (ie can't achieve a 3x2 result).\n>>> a = torch.Tensor([1, 2, 3])\n>>> b = torch.Tensor([4, 5, 6])\n>>> torch.stack([a, b], -1)\n\n 1  2  3\n 4  5  6\n[torch.FloatTensor of size 2x3]\nContrast this to using torch.unsqueeze and torch.cat with dim=-1, which adds a new dimension in the last position:\n>>> a = torch.Tensor([1, 2, 3])\n>>> b = torch.Tensor([4, 5, 6])\n>>> torch.cat([a.unsqueeze(-1), b.unsqueeze(-1)], -1)\n\n 1  4\n 2  5\n 3  6\n[torch.FloatTensor of size 3x2]",
+            "closedAt": "2017-07-13T20:29:31Z",
+            "createdAt": "2017-06-29T23:41:46Z",
+            "id": "MDU6SXNzdWUyMzk2NDAzOTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1950,
+            "state": "CLOSED",
+            "title": "Negative dimension behaviour in torch.stack",
+            "updatedAt": "2017-07-13T20:29:31Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1950"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Docs are written but not visible.",
+            "closedAt": "2017-07-13T06:32:26Z",
+            "createdAt": "2017-06-29T18:26:27Z",
+            "id": "MDU6SXNzdWUyMzk1NzA2NTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1946,
+            "state": "CLOSED",
+            "title": "[docs] Docs missing online for nn.functional.normalize",
+            "updatedAt": "2017-07-13T06:32:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1946"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI am using pytorch version of V-net and I encountered this error:\n[pylint] E1101:Module 'torch' has no 'squeeze' member\nIt is not critical error and lets my program runs but it doesn't squeeze the output at the end. Any idea?\nThanks",
+            "closedAt": "2017-07-17T17:24:19Z",
+            "createdAt": "2017-06-29T15:05:41Z",
+            "id": "MDU6SXNzdWUyMzk1MTExOTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "needs reproduction"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1942,
+            "state": "CLOSED",
+            "title": "[pylint] E1101:Module 'torch' has no 'squeeze' member",
+            "updatedAt": "2020-05-28T01:22:28Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1942"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nWhen I am trying to import torch, it said ImportError: libcudart.so.7.5: cannot open shared object file. However, when I run the command ldd /usr/local/lib/python2.7/dist-packages/torch/_C.so, it shows\n...\nlinux-vdso.so.1 =>  (0x00007ffcc25f4000)\nlibshm.so => /usr/local/lib/python2.7/dist-packages/torch/lib/libshm.so (0x00007fa881131000)\nlibcudart.so.8.0 => /usr/local/cuda/lib64/libcudart.so.8.0 (0x00007fa880eca000)\nlibnccl.so.1 => /usr/local/lib/libnccl.so.1 (0x00007fa87eead000)\nlibTH.so.1 => /usr/local/lib/python2.7/dist-packages/torch/lib/libTH.so.1 (0x00007fa87e8e2000)\n...\nlibdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fa86ed3f000)\nlibrt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007fa86eb37000)\nlibcudart.so.7.5 => not found\nlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fa86e830000)\nlibopenblas.so.0 => /usr/lib/libopenblas.so.0 (0x00007fa86d01d000)\n...\nSomehow it is looking for the libcudart of two different versions (7.5 & 8.0) at the same time! Currently in my machine, there is only cuda-8.0 installed and /usr/local/cuda is linking to cuda-8.0, too. I have been confused by this for 3 days.\nSomeone encountered the same issue?\nThanks!",
+            "closedAt": "2017-06-30T03:05:32Z",
+            "createdAt": "2017-06-29T14:47:11Z",
+            "id": "MDU6SXNzdWUyMzk1MDQ4ODQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1941,
+            "state": "CLOSED",
+            "title": "Install Issue: torch/_C.so looks for two versions of cuda",
+            "updatedAt": "2017-06-30T04:01:24Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1941"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In certain situations BCEWithLogitsLoss returns the wrong answer. This seems to happen in the case where the output has singleton dimensions (such as the typical case when it's the output of an nn.Linear in classification).\nSnippet to reproduce\nimport torch\nimport torch.nn as nn\nfrom torch.autograd import Variable\nimport numpy as np\n\nsigmoid = nn.Sigmoid()\n\nt = np.round(np.random.rand(64))\no = np.random.rand(64,1) - 0.5\n\nt = Variable(torch.Tensor(t))\no = Variable(torch.Tensor(o))\n\nprint(nn.BCEWithLogitsLoss()(o, t))\nprint(nn.BCELoss()(sigmoid(o), t)) # Different numbers\n\no = np.random.rand(64) - 0.5\no = Variable(torch.Tensor(o))\n\nprint(nn.BCEWithLogitsLoss()(o, t))\nprint(nn.BCELoss()(sigmoid(o), t)) # Same numbers\nThanks :)",
+            "closedAt": "2017-07-04T21:29:53Z",
+            "createdAt": "2017-06-29T11:09:24Z",
+            "id": "MDU6SXNzdWUyMzk0NDM3MTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1939,
+            "state": "CLOSED",
+            "title": "Different behaviour of BCEWithLogitsLoss and BCELoss + Sigmoid",
+            "updatedAt": "2017-07-04T21:29:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1939"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "using a LRN module from #653 (comment), which is just wrapper of legacy LRN, I found that, the CPU and GPU results of this module, given same input, are hugely different.\nCheck https://github.com/leelabcnbc/pytorch-caffe-models/blob/master/test_LRN.py, abs(result_cpu, result_gpu).max() can be as large as 73, where given exactly the same input in Caffe, abs(result_cpu, result_gpu).max() is only as large as 0.0004.",
+            "closedAt": "2020-05-09T06:02:29Z",
+            "createdAt": "2017-06-29T00:56:24Z",
+            "id": "MDU6SXNzdWUyMzkzMzc4OTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "proposal accepted"
+                },
+                {
+                  "name": "todo"
+                },
+                {
+                  "name": "needs reproduction"
+                },
+                {
+                  "name": "module: numerical-stability"
+                },
+                {
+                  "name": "module: nn"
+                },
+                {
+                  "name": "module: cuda"
+                },
+                {
+                  "name": "module: cpu"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "OA",
+                "hasNextPage": false
+              }
+            },
+            "number": 1938,
+            "state": "CLOSED",
+            "title": "numerical stability of CPU implementation of LRN",
+            "updatedAt": "2020-05-09T06:02:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1938"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "x = torch.randperm(16).resize_(4,4) # create tensor\ny = x.cuda() # copy to GPU\n# perform same operation on both:\nx.sum(dim=0,out=x)\ny.sum(dim=0,out=y)\nprint(y) # see expected behavior\nprint(x) # see zeros instead",
+            "closedAt": "2019-05-06T21:28:17Z",
+            "createdAt": "2017-06-28T18:24:45Z",
+            "id": "MDU6SXNzdWUyMzkyNTI5NjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                },
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "module: numerical-stability"
+                },
+                {
+                  "name": "module: cuda"
+                },
+                {
+                  "name": "module: cpu"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Ng",
+                "hasNextPage": false
+              }
+            },
+            "number": 1930,
+            "state": "CLOSED",
+            "title": "Different behavior of sum() in-place on CPU vs GPU",
+            "updatedAt": "2019-05-06T21:28:17Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1930"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I'm doing imagenet classification evaluation in 0.10, classID is alphebatical, and evaluate order is the store order in my FS.\nIn 0.12 this behavior is changed when my code is kept the same.\nAny ideas? I appreciate your help very much since I'm attending a Kaggle competition.",
+            "closedAt": "2017-06-29T01:25:07Z",
+            "createdAt": "2017-06-28T17:29:07Z",
+            "id": "MDU6SXNzdWUyMzkyMzgxNDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1929,
+            "state": "CLOSED",
+            "title": "DataLoader behave differently between 0.10 and 0.12",
+            "updatedAt": "2017-06-29T01:25:07Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1929"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The file\ntorch/csrc/autograd/variable.cpp\nrefers to retain_variables when it should be retain_graph. No idea if it should always be retain_graph though ...",
+            "closedAt": "2017-07-14T20:45:26Z",
+            "createdAt": "2017-06-28T17:25:22Z",
+            "id": "MDU6SXNzdWUyMzkyMzcxODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1928,
+            "state": "CLOSED",
+            "title": "Error refers to retain_variables when it should be retain_graph",
+            "updatedAt": "2017-07-14T20:45:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1928"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI would like to change the outputs of module forward_hook, given some torch tensors.\nFor example, I would like to change the outputs of each relu layers in the module, given select_maps.\nBesides, each outputs of relu layer is multiplied by the associated select_maps.\nI write a coarse code of my thought as follows:\ndef hook_forward_net(model, select_maps, layers):\n    \n    select_output_maps = []\n    \n\n    def fun(module, inputs, outputs):\n        print(module)\n        print('\\t'+'inputs size: ', inputs[0].size())\n        print('\\t'+'outputs size: ', outputs[0].size())\n        \n        outputs = torch.mul(outputs[0].data.cpu(), select_maps)\n    \n\n    \n    keys0 = list(model._modules.keys())\n    \n    for key0 in keys0:\n        value0 = model._modules.get(key0)\n        \n        if type(value0) == torch.nn.modules.container.Sequential:\n            \n            if type(value0._modules.get('2')) == torch.nn.modules.activation.ReLU:\n                \n                relu = value0._modules.get('2')\n                \n                hook = relu.register_forward_hook(fun)\n\nDoes anyone know how to do that in pytorch?",
+            "closedAt": "2019-11-27T21:33:20Z",
+            "createdAt": "2017-06-28T07:27:27Z",
+            "id": "MDU6SXNzdWUyMzkwNzU1MjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1926,
+            "state": "CLOSED",
+            "title": "How to change the outputs of forward_hook?",
+            "updatedAt": "2019-11-27T21:33:21Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1926"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Minimal working example:\nimport torch\nfrom torch.autograd import Variable\n\n## define input\nbatch = 1\nchannel = 1\nheight, width = 16, 16\nimages = Variable(torch.randn(batch, channel, height, width)).cuda()\nprint(\"input shape: {}\".format(images.size())) # 1 x 1 x 16 x 16\n\n## im2col\nkernel_size = 3\npatches = images.unfold(2, kernel_size, 1).unfold(3, kernel_size, 1).contiguous().view(batch, channel * kernel_size ** 2, height - kernel_size + 1, width - kernel_size + 1)\nprint(\"patches shape: {}\".format(patches.size())) # 1 x 9 x 14 x 14\n\nweight = Variable(torch.randn(batch, channel * kernel_size ** 2, height - kernel_size + 1, width - kernel_size + 1), requires_grad=True).cuda()\nprint(\"weight shape: {}\".format(weight.size())) # 1 x 9 x 14 x 14\n\nlatent = torch.mul(patches, weight).sum(dim=1).unsqueeze(1)\nprint(\"latent shape: {}\".format(latent.size())) # 1 x 1 x 14 x 14\n\n# score = latent.sum()\n# score.backward()\n### if we uncomment two lines above and stopped here, the error won't show up\n\noutput = latent.unfold(2, kernel_size, 1).unfold(3, kernel_size, 1).contiguous().view(batch, kernel_size ** 2, height - 2 * kernel_size + 2, width - 2 * kernel_size + 2)\nprint(\"output shape: {}\".format(output.size())) # 1 x 9 x 12 x 12\n\nscore = output.sum()\nscore.backward()\nError message:\n  File \"/home/biao/miniconda2/envs/pth/lib/python3.6/site-packages/torch/autograd/_functions/tensor.py\", line 756, in backward\n    torch.arange(0, ctx.input_numel, out=idx)\nTypeError: Type torch.cuda.LongTensor doesn't implement stateless method arange",
+            "closedAt": "2017-07-19T19:49:39Z",
+            "createdAt": "2017-06-28T02:29:23Z",
+            "id": "MDU6SXNzdWUyMzkwMzU4NDI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1925,
+            "state": "CLOSED",
+            "title": "Type torch.cuda.LongTensor doesn't implement stateless method arange",
+            "updatedAt": "2017-07-19T19:49:39Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1925"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nthe parameter name for with replacement differs between torch.multinomial and torch.autograd.Variable.multinomial (the former has replacement, the latter with_replacement).\nThis could be harmonized.\nInternally some bits of the python and C code also seem to use with_replacement, but I don't know whether that is important.\nThank you!\nBest regards\nThomas",
+            "closedAt": "2017-07-20T05:46:30Z",
+            "createdAt": "2017-06-27T18:49:03Z",
+            "id": "MDU6SXNzdWUyMzg5NDY3Nzc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1924,
+            "state": "CLOSED",
+            "title": ".multinomial parameter names differ between torch and torch.autograd.Variable",
+            "updatedAt": "2017-07-20T05:46:30Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1924"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The problem is here.",
+            "closedAt": "2017-07-02T14:13:45Z",
+            "createdAt": "2017-06-27T14:24:20Z",
+            "id": "MDU6SXNzdWUyMzg4NjkyNTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1922,
+            "state": "CLOSED",
+            "title": "torch.is_tensor(torch.HalfTensor()) returns False. ",
+            "updatedAt": "2017-07-02T14:13:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1922"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi all,\nI need to perform the svd operation for batch of the matrices, is it possible to do this in a simple way with pyTorch? It is a standard function in numpy( https://docs.scipy.org/doc/numpy-1.12.0/reference/generated/numpy.linalg.svd.html)and I would like to know if this can be reproduced in pytorch. Thanks",
+            "closedAt": "2017-06-27T14:02:42Z",
+            "createdAt": "2017-06-27T13:15:49Z",
+            "id": "MDU6SXNzdWUyMzg4NDcxNTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1920,
+            "state": "CLOSED",
+            "title": "multidimensional SVD",
+            "updatedAt": "2022-05-24T16:39:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1920"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "My dataset is in .h5 format. When i wrap it using torch.utils.data.DataLoader, and if i set num_workers to be 0, everything works fine, However if it is set to be 2, then the labels batch (a 1-D byte tensor)it loads at some epoch always seems to be bigger than the numer of classes(=40), which is 255. what causes this problem? any help?\nmy code is below:\nfrom __future__ import print_function\nimport torch.utils.data as data\nimport os\nimport os.path\nimport errno\nimport torch\nimport json\nimport h5py\n\nfrom IPython.core.debugger import Tracer \ndebug_here = Tracer() \n\nimport numpy as np\nimport sys\n\nimport json\n\n\nclass Modelnet40_V12_Dataset(data.Dataset):\n    def __init__(self, data_dir, image_size = 224, train=True):\n        self.image_size = image_size\n        self.data_dir = data_dir\n        self.train = train \n\n        file_path = os.path.join(self.data_dir, 'modelnet40.h5')\n        self.modelnet40_data = h5py.File(file_path)\n        \n        if self.train: \n            self.train_data = self.modelnet40_data['train']['data']\n            self.train_labels = self.modelnet40_data['train']['label']\n        else:\n            self.test_data = self.modelnet40_data['test']['data']\n            self.test_labels = self.modelnet40_data['test']['label']\n\n    def __getitem__(self, index):\n        if self.train:\n            shape_12v, label = self.train_data[index], self.train_labels[index] \n        else:\n            shape_12v, label = self.test_data[index], self.test_labels[index]\n        return shape_12v, label \n\n\n    def __len__(self):\n        if self.train:\n            return self.train_data.shape[0]\n        else:\n            return self.test_data.shape[0]\n\nif __name__ == '__main__':\n    print('test')\n    train_dataset = Modelnet40_V12_Dataset(data_dir='path/data', train=True)\n    print(len(train_dataset))\n\n    test_dataset = Modelnet40_V12_Dataset(data_dir='path/data', train=False)\n    print(len(test_dataset))\n    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=8,\n                                     shuffle=True, num_workers=2)\n\n\n    total = 0 \n    # debug_here() \n    # check when to cause labels error \n    for epoch in range(200):\n        print('epoch', epoch)\n        for i, (input_v, labels) in enumerate(train_loader):\n            total = total + labels.size(0)\n\n            # labels can be 255, what is the problem??\n            if labels.max() > 40: \n                debug_here() \n                print('error')\n\n            if labels.min() < 1:\n                debug_here()  \n                print('error')\n            \n            labels.sub_(1) # minus 1 in place \n            \n            if labels.max() >= 40: \n                debug_here() \n                print('error')\n\n            if labels.min() < 0:\n                debug_here()  \n                print('error')\n        print(total)",
+            "closedAt": "2017-06-27T21:01:25Z",
+            "createdAt": "2017-06-27T08:12:41Z",
+            "id": "MDU6SXNzdWUyMzg3NzAwMjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1919,
+            "state": "CLOSED",
+            "title": "Errors when num_workers is set to be value bigger than 0 in torch.utils.data.DataLoader",
+            "updatedAt": "2017-06-27T21:01:25Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1919"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello, I want to be able to check if two models have the same weights in their layers. After poking around, I couldn't find a function that did this, so I implemented my own.\ndef compareModelWeights(model_a, model_b):\n    module_a = model_a._modules\n    module_b = model_b._modules\n    if len(list(module_a.keys())) != len(list(module_b.keys())):\n        return False\n    a_modules_names = list(module_a.keys())\n    b_modules_names = list(module_b.keys())\n    for i in range(len(a_modules_names)):\n        layer_name_a = a_modules_names[i]\n        layer_name_b = b_modules_names[i]\n        if layer_name_a != layer_name_b:\n            return False\n        layer_a = module_a[layer_name_a]\n        layer_b = module_b[layer_name_b]\n        if (\n            (type(layer_a) == nn.Module) or (type(layer_b) == nn.Module) or\n            (type(layer_a) == nn.Sequential) or (type(layer_b) == nn.Sequential)\n            ):\n            if not compareModelWeights(layer_a, layer_b):\n                return False\n        if hasattr(layer_a, 'weight') and hasattr(layer_b, 'weight'):\n            if not torch.equal(layer_a.weight.data, layer_b.weight.data):\n                return False\n    return True\n\nIt's recursive because modules can have a tree structure.\nIf there is already a function that does this, I would love to use it in my code. If not, this might be a useful addition. Please let me know if there are any errors.",
+            "closedAt": "2017-06-27T00:11:00Z",
+            "createdAt": "2017-06-27T00:06:14Z",
+            "id": "MDU6SXNzdWUyMzg3MDI5NDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1918,
+            "state": "CLOSED",
+            "title": "Check if models have same weights",
+            "updatedAt": "2017-06-27T00:11:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1918"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Is it possible to get a single batch from a DataLoader? Currently, I setup a for loop and return a batch manually.\nIf there isn't a way to do this with the DataLoader currently, I would be happy to work on adding the functionality.",
+            "closedAt": "2017-06-26T20:05:30Z",
+            "createdAt": "2017-06-26T19:35:08Z",
+            "id": "MDU6SXNzdWUyMzg2NDY1NTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1917,
+            "state": "CLOSED",
+            "title": "Get a single batch from DataLoader without iterating",
+            "updatedAt": "2024-06-18T14:32:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1917"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Related to #728 I get the following error when compiling pytorch using\nMACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python3 setup.py install\non Mac OS 10.12 with Python 3.6:\ntorch/csrc/allocators.cpp:36:25: error: no matching function for call to 'min'\n    memcpy(newPtr, ptr, std::min(size, PyArray_NBYTES(array_ptr)));\n\nIf I change line 36 in torch/csrc/allocators.cpp from\n    memcpy(newPtr, ptr, std::min(size, PyArray_NBYTES(array_ptr)));\nto\n    memcpy(newPtr, ptr, std::min((long)size, PyArray_NBYTES(array_ptr)));\ncompilation succeeds.",
+            "closedAt": "2017-07-13T06:40:58Z",
+            "createdAt": "2017-06-26T15:30:19Z",
+            "id": "MDU6SXNzdWUyMzg1ODE0MDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1911,
+            "state": "CLOSED",
+            "title": "error: no matching function for call to 'min'",
+            "updatedAt": "2017-07-13T06:40:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1911"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "tensor.expand should be used as t.expand(a, b, c). However, when the size arguments are passed in a list, i.e., t.expand([a, b, c]). Forward is fine but backward fails. The following code shows this issue (from a discussion https://discuss.pytorch.org/t/solved-backward-error-when-using-expand/4273/6)\nimport torch\nfrom torch.autograd import Variable\nclass TwoLayerNet(torch.nn.Module):\n  def __init__(self, D_in, H, D_out, h, w):\n    super(TwoLayerNet, self).__init__()\n    self.linear1 = torch.nn.Linear(D_in, H)\n    self.linear2 = torch.nn.Linear(H * h * w, D_out)\n  def forward(self, x):\n    h_relu = self.linear1(x).clamp(min=0)\n    h_relu = torch.unsqueeze(torch.unsqueeze(h_relu, 2), 3) # -> N x H x 1 x 1\n    h_expand = h_relu.expand([64, H, h, w]).contiguous().view(64, -1) # -> N x H x h x w\n    y_pred = self.linear2(h_expand) # -> N x D_out\n    return y_pred\n\n\n\nx = Variable(torch.randn(N, D_in), requires_grad=True)\ny = Variable(torch.randn(N, D_out), requires_grad=False)\n\nmodel = TwoLayerNet(D_in, H, D_out, h, w)\n\ncriterion = torch.nn.MSELoss(size_average=False)\noptimizer = torch.optim.SGD(model.parameters(), lr=1e-4)\nfor t in range(500):\n  y_pred = model(x)\n  loss = criterion(y_pred, y)\n  print(t, loss.data[0])\n  optimizer.zero_grad()\n  loss.backward()\n  optimizer.step()\n(N is batch size; D_in is input dimension;\nH is hidden dimension; D_out is output dimension.\nN, D_in, H, D_out, h, w = 64, 1000, 100, 10, 6, 6)\nThe traceback is as follows:\nTraceback (most recent call last):\nFile \"try.py\", line 31, in \nloss.backward()\nFile \"/home/qizhe/tool/anaconda2/lib/python2.7/site-packages/torch/autograd/variable.py\", line 152, in backward\ntorch.autograd.backward(self, gradient, retain_graph, create_graph, retain_variables)\nFile \"/home/qizhe/tool/anaconda2/lib/python2.7/site-packages/torch/autograd/__init__.py\", line 98, in backward\nvariables, grad_variables, retain_graph)\nFile \"/home/qizhe/tool/anaconda2/lib/python2.7/site-packages/torch/autograd/function.py\", line 91, in apply\nreturn self.forwardcls.backward(self, *args)\nFile \"/home/qizhe/tool/anaconda2/lib/python2.7/site-packages/torch/autograd/_functions/pointwise.py\", line 289, in backward\nreturn grad_output * mask, None\nFile \"/home/qizhe/tool/anaconda2/lib/python2.7/site-packages/torch/autograd/variable.py\", line 802, in mul\nreturn self.mul(other)\nFile \"/home/qizhe/tool/anaconda2/lib/python2.7/site-packages/torch/autograd/variable.py\", line 311, in mul\nreturn Mul.apply(self, other)\nFile \"/home/qizhe/tool/anaconda2/lib/python2.7/site-packages/torch/autograd/_functions/basic_ops.py\", line 48, in forward\nreturn a.mul(b)\nRuntimeError: inconsistent tensor size, expected r_ [1 x 100 x 6 x 6], t [1 x 100 x 6 x 6] and src [64 x 100] to have the same number of elements, but got 3600, 3600 and 6400 elements respectively at /home/qizhe/tool/pytorch/torch/lib/TH/generic/THTensorMath.c:875\n\nThe issue exists for both the bleeding-edge version and the stable version torch-0.1.12.post2-cp27. Should forward throw an exception to help debuging?",
+            "closedAt": "2017-07-20T05:46:27Z",
+            "createdAt": "2017-06-26T14:56:30Z",
+            "id": "MDU6SXNzdWUyMzg1NzA1MjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1910,
+            "state": "CLOSED",
+            "title": "torch.expand doesn't  throw an exception in the forward pass when the size arguments are passed as a list",
+            "updatedAt": "2017-07-20T05:46:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1910"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Cyclical learning rates seem to be becoming more popular. Given that we now have a lr scheduler, it would be nice to have this available as another schedule scheme. Pinging @ajbrock, who has experience with this (unlike me haha).",
+            "closedAt": "2019-03-28T02:57:53Z",
+            "createdAt": "2017-06-26T14:32:57Z",
+            "id": "MDU6SXNzdWUyMzg1NjI2NjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "todo"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 1909,
+            "state": "CLOSED",
+            "title": "[Feature Request] Cyclical Learning Rates",
+            "updatedAt": "2019-03-28T02:57:53Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1909"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello all, great work with pytorch. I'm trying to use pytorch in a Jetson TX1, and it sort of works. One issue I'm running into is that it sporadically hangs when using CUDA.\nSome details:\n\nJetson TX1, a 64-bit ARM architecture with a tegra TX1\nUbuntu 16.04 aarch64\nCUDA 8.0, CUDNN 5105\nPython 2.7\nBuilt from source (conda not available yet) from git commit 7c24a (Jun 23) and from tag 1.12. Both have the same issue.\n\nExample program:\nimport torch\na = torch.FloatTensor(2).cuda()\nprint(a)\nThis code will work maybe 8/10 times (subjective belief, not actually measured) and the rest, it will hang on the second line. top indicates the program is using ~18% CPU. The program will not respond to Ctrl-C. Suspecting some kind of concurrency issue, I tried OMP_NUM_THREADS=1, and torch.set_num_threads(1) but the issue still occurs.\nWhen not using .cuda() it never hangs up (and in fact starts relatively quickly compared to the cuda version --  the .cuda() call seems surprisingly slow).",
+            "closedAt": "2019-05-06T19:04:43Z",
+            "createdAt": "2017-06-26T01:36:28Z",
+            "id": "MDU6SXNzdWUyMzg0MjI0MzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "needs reproduction"
+                },
+                {
+                  "name": "module: crash"
+                },
+                {
+                  "name": "module: cuda"
+                },
+                {
+                  "name": "triaged"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 1907,
+            "state": "CLOSED",
+            "title": "pytorch nondeterministically hangs on CUDA tensor creation (Tegra X1)",
+            "updatedAt": "2022-06-25T03:30:24Z",
+            "url": "https://github.com/pytorch/pytorch/issues/1907"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxNy0wNi0yNlQwMTozNjoyOFrODjYJng==",
+          "hasNextPage": true
+        },
+        "totalCount": 44684
+      }
+    }
+  }
+}

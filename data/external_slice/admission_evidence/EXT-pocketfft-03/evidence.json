@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-pocketfft-03",
+  "source_pool": "defect4mr_64",
+  "source_index": 13,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "0e8e58837974f4505d5cbc534d38d4e10e790a15cc53a76145f6fb05960c2797",
+  "issue_url": "https://github.com/mreineck/pocketfft/issues/4",
+  "fix_url": "",
+  "buggy_sha": "",
+  "fixed_sha": "",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "no identifiable merged public fix commit.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The multi-axis complex transform accepts numeric array values and can expose the discrepancy in a selected floating-point component."
+  },
+  "evidence_urls": [
+    "https://github.com/mreineck/pocketfft/issues/4"
+  ],
+  "mechanism_sentence": "reports an unresolved multi-axis transform discrepancy."
+}

@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-petsc-07",
+  "source_pool": "defect4mr_64",
+  "source_index": 41,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "e9c12325fccee3882a0bcc707d6551575eccd7b0867aa689c8f35379e9b4c952",
+  "issue_url": "https://gitlab.com/petsc/petsc/-/issues/1667",
+  "fix_url": "",
+  "buggy_sha": "",
+  "fixed_sha": "",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL"
+  },
+  "rationales": {
+    "real_defect": "no identifiable merged public fix commit.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The affected change concerns monitor and convergence-test control flow, not a numerical callable with float or few-float output."
+  },
+  "evidence_urls": [
+    "https://gitlab.com/petsc/petsc/-/issues/1667"
+  ],
+  "mechanism_sentence": "reports an unresolved monitor and convergence-test ordering change."
+}

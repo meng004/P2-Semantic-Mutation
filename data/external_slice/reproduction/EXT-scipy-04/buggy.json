@@ -1,0 +1,48 @@
+{
+  "exit_status": 1,
+  "expected_property": "For skew=-0.5, pearson3 CDF on a strictly increasing grid is monotone non-decreasing and in [0,1]; SF is monotone non-increasing.",
+  "input": {
+    "skew": -0.5,
+    "x_dense_grid_spec": {
+      "num": 201,
+      "start": -4.0,
+      "stop": 4.0
+    },
+    "x_issue_grid": [
+      -2.0,
+      -1.125,
+      -0.25,
+      0.625,
+      1.5
+    ]
+  },
+  "neutral_id": "EXT-scipy-04",
+  "observed_output": {
+    "cdf_in_unit_interval": true,
+    "cdf_issue_grid": [
+      0.9655999059404252,
+      0.8677262153647738,
+      0.6285463439246327,
+      0.2822071992577892,
+      0.04874040330397868
+    ],
+    "cdf_monotone_dense_grid": false,
+    "cdf_monotone_issue_grid": false,
+    "sf_issue_grid": [
+      0.03440009405957478,
+      0.1322737846352262,
+      0.3714536560753673,
+      0.7177928007422107,
+      0.9512595966960213
+    ],
+    "sf_nonincreasing_issue_grid": false
+  },
+  "package_version": {
+    "numpy": "1.19.5",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.9.18",
+    "scipy": "1.5.4"
+  },
+  "property_holds": false,
+  "seed": 0
+}

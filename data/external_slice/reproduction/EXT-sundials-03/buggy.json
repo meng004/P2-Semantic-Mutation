@@ -1,0 +1,11 @@
+{
+  "exit_status": 0,
+  "expected_property": "IDAS quadrature history after reinit matches a direct consistent-IC run.",
+  "neutral_id": "EXT-sundials-03",
+  "observed_output": {
+    "returncode": 0,
+    "stdout_tail": "{\"property_holds\": true}\n"
+  },
+  "property_holds": true,
+  "seed": 0
+}

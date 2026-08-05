@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-freia-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 39,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "70fe5637fd11f45613fadcc892461d237989888bccab245e266d5b3178556050",
+  "issue_url": "https://github.com/vislearn/FrEIA/issues/140",
+  "fix_url": "https://github.com/vislearn/FrEIA/commit/fa7b45d91710f9113bc000298b4a8e6aecdbcb23",
+  "buggy_sha": "0f100e008deda5c8521a4ba7014f0376ed5a0eb7",
+  "fixed_sha": "fa7b45d91710f9113bc000298b4a8e6aecdbcb23",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The inverse spline accepts floating-point coordinates and can expose the knot-selection defect in one returned floating-point value."
+  },
+  "evidence_urls": [
+    "https://github.com/vislearn/FrEIA/issues/140",
+    "https://github.com/vislearn/FrEIA/commit/fa7b45d91710f9113bc000298b4a8e6aecdbcb23"
+  ],
+  "mechanism_sentence": "uses the correct knots when evaluating the inverse spline direction."
+}

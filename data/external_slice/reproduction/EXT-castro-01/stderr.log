@@ -1,0 +1,44 @@
+=== buggy stderr ===
+fatal: not a git repository (or any of the parent directories): .git
+
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+/tmp/c3_a1c_fix/EXT-castro-01/buggy-src/Source/sdc/Castro_sdc.cpp: In lambda function:
+/tmp/c3_a1c_fix/EXT-castro-01/buggy-src/Source/sdc/Castro_sdc.cpp:183:13: warning: implicit capture of ‘this’ via ‘[=]’ is deprecated in C++20 [-Wdeprecated]
+  183 |             [=] AMREX_GPU_DEVICE (int i, int j, int k) noexcept
+      |             ^
+/tmp/c3_a1c_fix/EXT-castro-01/buggy-src/Source/sdc/Castro_sdc.cpp:183:13: note: add explicit ‘this’ or ‘*this’ capture
+/tmp/c3_a1c_fix/EXT-castro-01/buggy-src/Source/sdc/Castro_sdc.cpp: In lambda function:
+/tmp/c3_a1c_fix/EXT-castro-01/buggy-src/Source/sdc/Castro_sdc.cpp:232:13: warning: implicit capture of ‘this’ via ‘[=]’ is deprecated in C++20 [-Wdeprecated]
+  232 |             [=] AMREX_GPU_DEVICE (int i, int j, int k) noexcept
+      |             ^
+/tmp/c3_a1c_fix/EXT-castro-01/buggy-src/Source/sdc/Castro_sdc.cpp:232:13: note: add explicit ‘this’ or ‘*this’ capture
+
+
+=== fixed stderr ===
+fatal: not a git repository (or any of the parent directories): .git
+
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+/tmp/c3_a1c_fix/EXT-castro-01/fixed-src/Source/sdc/Castro_sdc.cpp: In lambda function:
+/tmp/c3_a1c_fix/EXT-castro-01/fixed-src/Source/sdc/Castro_sdc.cpp:183:13: warning: implicit capture of ‘this’ via ‘[=]’ is deprecated in C++20 [-Wdeprecated]
+  183 |             [=] AMREX_GPU_DEVICE (int i, int j, int k) noexcept
+      |             ^
+/tmp/c3_a1c_fix/EXT-castro-01/fixed-src/Source/sdc/Castro_sdc.cpp:183:13: note: add explicit ‘this’ or ‘*this’ capture
+/tmp/c3_a1c_fix/EXT-castro-01/fixed-src/Source/sdc/Castro_sdc.cpp: In lambda function:
+/tmp/c3_a1c_fix/EXT-castro-01/fixed-src/Source/sdc/Castro_sdc.cpp:232:13: warning: implicit capture of ‘this’ via ‘[=]’ is deprecated in C++20 [-Wdeprecated]
+  232 |             [=] AMREX_GPU_DEVICE (int i, int j, int k) noexcept
+      |             ^
+/tmp/c3_a1c_fix/EXT-castro-01/fixed-src/Source/sdc/Castro_sdc.cpp:232:13: note: add explicit ‘this’ or ‘*this’ capture
+
+

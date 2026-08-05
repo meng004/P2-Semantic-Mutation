@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-cupy-03",
+  "source_pool": "defect4mr_64",
+  "source_index": 20,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "55928ca5f047479a500a067a58fe7438f2f5dfb3ed84d66429ae61308d26deab",
+  "issue_url": "https://github.com/cupy/cupy/issues/2071",
+  "fix_url": "https://github.com/cupy/cupy/commit/10b8178aad0f166a5abd82774899f195f52081da",
+  "buggy_sha": "87915f72cfecba80e1f8431f0b367195bcaabde0",
+  "fixed_sha": "10b8178aad0f166a5abd82774899f195f52081da",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The matrix inverse accepts numeric matrix entries and can expose the defect through one selected complex-valued inverse entry."
+  },
+  "evidence_urls": [
+    "https://github.com/cupy/cupy/issues/2071",
+    "https://github.com/cupy/cupy/commit/10b8178aad0f166a5abd82774899f195f52081da"
+  ],
+  "mechanism_sentence": "returns correct complex-valued matrix inverses."
+}

@@ -1,0 +1,9 @@
+{
+  "arm": "buggy",
+  "exit_status": null,
+  "failure_detail": "PLATFORM_GATE:arch  -  defect is riscv64-zvl256b-specific; host is x86_64 and missing tools: ['qemu-riscv64-static', 'qemu-riscv64', 'riscv64-linux-gnu-gcc', 'riscv64-linux-gnu-gcc-14']. No case substitution.",
+  "failure_stage": "PLATFORM_GATE:arch",
+  "neutral_id": "EXT-openblas-01",
+  "property_holds": null,
+  "seed": 0
+}

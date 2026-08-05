@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-sundials-09",
+  "source_pool": "defect4mr_64",
+  "source_index": 46,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "4105d4be775146b89469faf8d7fae7b4df72433c6b27c38d143747088993ab72",
+  "issue_url": "https://github.com/LLNL/sundials/pull/850",
+  "fix_url": "https://github.com/LLNL/sundials/commit/a49c06c8ee90f9872f6d47fd3d6f5c8622cb3524",
+  "buggy_sha": "366172e3f51e1bd6e2e82ccb1e8d297a235b6a4e",
+  "fixed_sha": "a49c06c8ee90f9872f6d47fd3d6f5c8622cb3524",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The integration step accepts numeric state and can expose incorrect embedded coefficients in one selected floating-point state component."
+  },
+  "evidence_urls": [
+    "https://github.com/LLNL/sundials/pull/850",
+    "https://github.com/LLNL/sundials/commit/a49c06c8ee90f9872f6d47fd3d6f5c8622cb3524"
+  ],
+  "mechanism_sentence": "corrects the embedded coefficients of the affected integration method."
+}

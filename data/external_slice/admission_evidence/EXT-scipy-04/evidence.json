@@ -1,0 +1,19 @@
+{
+  "neutral_id": "EXT-scipy-04",
+  "source_pool": "defect4mr_64",
+  "source_index": 52,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "4a1e1673f3887b2a211640520042f4e5c1a52c3fef853f4a4474433d274daa38",
+  "issue_url": "https://github.com/scipy/scipy/issues/11186",
+  "fix_url": "https://github.com/scipy/scipy/commit/1caf2339491aa8a1f9d018d1b202228ea85b022c",
+  "buggy_sha": "5621f933e8434ebc6123dcb485e9836bf43e7be1",
+  "fixed_sha": "1caf2339491aa8a1f9d018d1b202228ea85b022c",
+  "criteria": {"real_defect": "PASS", "dual_arm_repro": "PENDING", "in_scope": "PASS"},
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The Pearson type-three distribution accepts floating-point arguments and returns one probability or density value that exposes the negative-skew defect."
+  },
+  "evidence_urls": ["https://github.com/scipy/scipy/issues/11186", "https://github.com/scipy/scipy/commit/1caf2339491aa8a1f9d018d1b202228ea85b022c"],
+  "mechanism_sentence": "computes the Pearson type-three distribution functions correctly for negative skew."
+}

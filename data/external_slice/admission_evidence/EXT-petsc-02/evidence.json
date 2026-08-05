@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-petsc-02",
+  "source_pool": "defect4mr_64",
+  "source_index": 22,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "6a0b164bb1e9f37b3c40888783bf52b820c3f19ff16a3aaceb92ea06233c13f2",
+  "issue_url": "https://gitlab.com/petsc/petsc/-/issues/1869",
+  "fix_url": "",
+  "buggy_sha": "",
+  "fixed_sha": "",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "FAIL"
+  },
+  "rationales": {
+    "real_defect": "no identifiable merged public fix commit.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The reported observable is an iteration-limit solver status, not a float or few-float numerical-kernel output."
+  },
+  "evidence_urls": [
+    "https://gitlab.com/petsc/petsc/-/issues/1869"
+  ],
+  "mechanism_sentence": "reports an unresolved iteration-limit result in the Krylov solver."
+}

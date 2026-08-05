@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "6f7fafaf93a9468cb6dac996e801f40f033fc170",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "c6131064c6467e0927cfdb77b0488dc715aef75d",
+  "issue_node_id": "MDU6SXNzdWUzNTA3MjMxNzI=",
+  "issue_number": 3156,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/3156",
+  "mechanism": "restores Categorical logp for multidimensional probability inputs.",
+  "neutral_id": "EXT-pymc-14",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/c6131064c6467e0927cfdb77b0488dc715aef75d",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/3156",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0014",
+  "snapshot_record_sha256": "e8a572fde89383a3e1be150fb28b0a752f2550f46b0cc745ac4789bd3247df1a",
+  "source_cohort": "supplemental_r2"
+}

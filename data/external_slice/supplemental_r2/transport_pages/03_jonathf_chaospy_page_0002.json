@@ -1,0 +1,133 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "This is going to be just a quick reality check as I may be just using the method incorrectly. I would appreciate a comment on this. I am running the following code\ndef cp_pseudospectral(max_order=10, sparse=False):\n    '''Test of the pseudospectral method'''\n    errors = zeros(max_order)\n\n    for order in range(max_order):\n        P, norms = orth_ttr(order, dist, retall=True)\n        nodes, weights = generate_quadrature(\n            2 * order, dist, sparse=sparse, rule='G')\n        solves = [u(t, s[0], s[1]) for s in nodes.T]\n        u_hat = fit_quadrature(P, nodes, weights, solves, norms=norms)\n        errors[order] = L2norm_in_random_space2D(u, u_hat)\n    return errors\nwhere u is the exponent function. I am getting this behavior\n\nSmolyak can stay on the Tensor grid depending on the quadrature order I select, but it diverges in the end. Is that an expected behavior?",
+            "closedAt": "2016-08-30T15:48:38Z",
+            "createdAt": "2016-08-26T10:59:27Z",
+            "id": "MDU6SXNzdWUxNzM0MjY5NDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 14,
+            "state": "CLOSED",
+            "title": "Smolyak grids diverge for higher polynoamial orders",
+            "updatedAt": "2016-08-30T15:48:38Z",
+            "url": "https://github.com/jonathf/chaospy/issues/14"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nMany thanks for contributing this package. I've done a few basic examples and I like your API a lot. At the moment I am trying to construct a random variable based on the polynomial representation. Is there a way to do it in ChaosPy already?\nFor instance, if I have a code which looks like this\na = Uniform(a_low, a_high)\nI = Uniform(I_low, I_high)\ndist = J(a, I)\n\nP, norms = orth_ttr(order, dist, retall=True)\nnodes, weights = generate_quadrature(\n       order, dist, sparse=False, rule='G')\nsolves = [u(t, s[0], s[1]) for s in nodes.T]\nu_hat = fit_quadrature(P, nodes, weights, solves, norms=norms)\nI would like to make a random variable based on u_hat. If I just use algebraic operations on a and I get an expected behaviour of a transformed RV, but how to perform this with the u_hat representation?\nObviously, I can print u_hat and see it in terms of q0 and q1, but I would like to make an actual substitution and see in terms of a and I and then for instance plot a pdf.\nPlease let me know if it's there already. Otherwise, I am happy to work on a pull request to implement it.",
+            "closedAt": "2016-10-17T12:39:36Z",
+            "createdAt": "2016-08-26T10:52:41Z",
+            "id": "MDU6SXNzdWUxNzM0MjU3NTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 13,
+            "state": "CLOSED",
+            "title": "Polynomial representations and random variables",
+            "updatedAt": "2016-10-17T12:39:36Z",
+            "url": "https://github.com/jonathf/chaospy/issues/13"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The (docstring) examples for cp.orth_svd, cp.orth_pcd, and cp.orth_hybrid don't work for me.\nIn [1]: import chaospy as cp\nIn [2]: Z = cp.Normal()\nIn [3]: print cp.orth_pcd(2, Z)\n---------------------------------------------------------------------------\nNameError                                 Traceback (most recent call last)\n<ipython-input-3-078656d1e4da> in <module>()\n----> 1 print cp.orth_pcd(2, Z)\n/usr/local/lib/python2.7/dist-packages/chaospy/orthogonal.pyc in orth_pcd(order, dist, eps, normed,     **kws)\n    343     N = len(basis)\n    344 \n--> 345     L, P = pcd(C, approx=1, pivot=1, tol=eps)\n    346     Li = np.dot(P, np.linalg.inv(L.T))\n    347 \nNameError: global name 'pcd' is not defined\n\nAre these deprecated? From what package did that pcd use to come?\nAdditionally, the example for orth_hybrid refers to orth_chol instead.",
+            "closedAt": "2016-02-05T10:47:00Z",
+            "createdAt": "2016-02-04T20:29:11Z",
+            "id": "MDU6SXNzdWUxMzE0NjUwNjk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 9,
+            "state": "CLOSED",
+            "title": "Name `pcd` is not defined.",
+            "updatedAt": "2016-02-05T12:29:52Z",
+            "url": "https://github.com/jonathf/chaospy/issues/9"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello Chaospy team. Great work with this library.\nGumbel copula and Gumbel distribution have the same name and collide:\n\n\n\ndist_Q = cp.Gumbel(dist, theta=2.)\n\n\n\nTypeError: Gumbel() got an unexpected keyword argument 'theta'\n\n\n\ncp.Gumbel?\n\n\n\ncp.Gumbel(scale=1, loc=0)\n\n\n\ndist_Q = cp.Copula(dist, cp.gumbel(len(dist), theta=2.) )\n\n\n\nworks!!",
+            "closedAt": "2016-02-05T10:31:06Z",
+            "createdAt": "2016-02-04T20:09:50Z",
+            "id": "MDU6SXNzdWUxMzE0NjA0NjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 8,
+            "state": "CLOSED",
+            "title": "Gumbel copula and Gumbel distribution have the same name and collide ",
+            "updatedAt": "2016-02-05T10:31:06Z",
+            "url": "https://github.com/jonathf/chaospy/issues/8"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I am a postdoc researcher at Université du Luxembourg.\nI have a vector which contains a set of data points (Monte-Carlo realisations).\nI would like to use chaospy to compute the PCE of the data points by choosing the order and the type of polynomials (Hermite, Jacobi, etc.).\nSincerely,\nPaul.",
+            "closedAt": "2016-10-17T12:38:08Z",
+            "createdAt": "2016-01-19T15:54:53Z",
+            "id": "MDU6SXNzdWUxMjc0NzY3NDM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 6,
+            "state": "CLOSED",
+            "title": "PCE of a set of data points",
+            "updatedAt": "2017-05-05T14:26:00Z",
+            "url": "https://github.com/jonathf/chaospy/issues/6"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have this error when try the example in chaospy. Could anyone let me know what was the problem and how to fix it? I am new in Python. Thank you so much.\nMai\n\n\n\nimport chaospy as cp\nimport numpy as np\nimport odespy\na = cp.Uniform(0, 0.1)\nI = cp.Uniform(8, 10)\ndist = cp.J(a, I)\norder = 5\nP, norms = cp.orth_ttr(order, dist, retall=True)\nnodes, weights = cp.generate_quadrature(order+1, dist, rule=\"G\")\nTraceback (most recent call last):\nFile \"\", line 1, in \nFile \"/home/trunghieumai/src/chaospy/chaospy/quadrature.py\", line 105, in generate_quadrature\nx, w = golub_welsch(order, domain, acc)\nFile \"/home/trunghieumai/src/chaospy/chaospy/quadrature.py\", line 242, in golub_welsch\nfor k in range(2*o[d]-3)])\nFile \"/home/trunghieumai/src/chaospy/chaospy/dist/backend.py\", line 399, in mom\nreturn out.reshape(shape)\nValueError: total size of new array must be unchanged",
+            "closedAt": "2015-08-31T12:02:07Z",
+            "createdAt": "2015-08-27T18:47:36Z",
+            "id": "MDU6SXNzdWUxMDM1NzA3Mzg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 1,
+            "state": "CLOSED",
+            "title": "Error when call cp.generate_quadrature",
+            "updatedAt": "2015-08-31T12:02:07Z",
+            "url": "https://github.com/jonathf/chaospy/issues/1"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxNS0wOC0yN1QxODo0NzozNlrOBixdMg==",
+          "hasNextPage": false
+        },
+        "totalCount": 206
+      }
+    }
+  }
+}

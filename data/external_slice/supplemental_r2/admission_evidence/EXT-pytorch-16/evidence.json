@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABEzoSDw",
+  "issue_number": 186671,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/186671",
+  "mechanism": "Dynamo set-subclass iteration outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-16",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/186671",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0016",
+  "snapshot_record_sha256": "5e4bca415723497e7585c0d98f718cc9245926a50b81d37fffd7075d6c96bcd2",
+  "source_cohort": "supplemental_r2"
+}

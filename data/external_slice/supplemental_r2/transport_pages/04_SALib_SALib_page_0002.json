@@ -1,0 +1,2025 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Sobol and Monte Carlo filtering are highly costly methods but for the robustness, I am planning to analyze building energy modeling while using sensitvity analysis. According to researches monte carlo filtering is suitable to define most efficent range values of decision variables. I can not see monte carlo filtering in Salib.\nIs there any other method to accomplish this task instead of MCF?",
+            "closedAt": "2019-11-07T22:57:38Z",
+            "createdAt": "2018-01-08T14:08:16Z",
+            "id": "MDU6SXNzdWUyODY3NTU3NzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 184,
+            "state": "CLOSED",
+            "title": "Instead of Monte Carlo Filtering which method is suitable for factor mapping ?",
+            "updatedAt": "2019-11-07T22:57:39Z",
+            "url": "https://github.com/SALib/SALib/issues/184"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nJust a small question about python 3 support in SALib. Python 3 seems supported but there is no specific classifier \"Programming Language :: Python :: 3\" in the setup.cfg file. Is it an omission or is there some incompatibility with Python 3 I didn't see ? (I didn't test it but only checked with pylint --py3k).\nThank you in advance for your answer.\nRegards",
+            "closedAt": "2018-01-05T16:06:48Z",
+            "createdAt": "2018-01-05T11:46:50Z",
+            "id": "MDU6SXNzdWUyODYyNjcxOTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 183,
+            "state": "CLOSED",
+            "title": "Python 3 support",
+            "updatedAt": "2018-01-05T16:06:49Z",
+            "url": "https://github.com/SALib/SALib/issues/183"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I tried to install SALib with pip install SALib (Command Prompt as an Administrator) but it failed on my system (Windows 10, Python 2.7.13 |Anaconda custom (64-bit)| [MSC v.1500 64 bit (AMD64)] on win32) with error code 1:\nC:\\WINDOWS\\system32>pip install SALib\nCollecting SALib\n  Using cached SALib-1.1.2.tar.gz\n    Complete output from command python setup.py egg_info:\n\n    Installed c:\\users\\xxx\\appdata\\local\\temp\\pip-build-p0iccs\\salib\\.eggs\\pyscaffold-2.5.8-py2.7.egg\n    ERROR:root:Error parsing\n    Traceback (most recent call last):\n      File \"c:\\users\\xxx\\appdata\\local\\temp\\pip-build-p0iccs\\salib\\.eggs\\pyscaffold-2.5.8-py2.7.egg\\pyscaffold\\contrib\\pbr\\pbr\\core.py\", line 111, in pbr\n        attrs = util.cfg_to_args(path, dist.script_args)\n      File \"c:\\users\\xxx\\appdata\\local\\temp\\pip-build-p0iccs\\salib\\.eggs\\pyscaffold-2.5.8-py2.7.egg\\pyscaffold\\contrib\\pbr\\pbr\\util.py\", line 267, in cfg_to_args\n        wrap_commands(kwargs)\n      File \"c:\\users\\xxx\\appdata\\local\\temp\\pip-build-p0iccs\\salib\\.eggs\\pyscaffold-2.5.8-py2.7.egg\\pyscaffold\\contrib\\pbr\\pbr\\util.py\", line 569, in wrap_commands\n        cmdclass = ep.resolve()\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\pkg_resources\\__init__.py\", line 2411, in resolve\n        module = __import__(self.module_name, fromlist=['__name__'], level=0)\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\sphinx\\setup_command.py\", line 23, in <module>\n        from sphinx.application import Sphinx\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\sphinx\\application.py\", line 33, in <module>\n        from sphinx.environment import BuildEnvironment\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\sphinx\\environment\\__init__.py\", line 45, in <module>\n        from sphinx.util.websupport import is_commentable\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\sphinx\\util\\websupport.py\", line 11, in <module>\n        from sphinxcontrib.websupport.utils import is_commentable  # NOQA\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\sphinxcontrib\\websupport\\__init__.py\", line 15, in <module>\n        from sphinxcontrib.websupport.core import WebSupport  # NOQA\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\sphinxcontrib\\websupport\\core.py\", line 17, in <module>\n        from jinja2 import Environment, FileSystemLoader\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\jinja2\\__init__.py\", line 33, in <module>\n        from jinja2.environment import Environment, Template\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\jinja2\\environment.py\", line 15, in <module>\n        from jinja2 import nodes\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\jinja2\\nodes.py\", line 19, in <module>\n        from jinja2.utils import Markup\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\jinja2\\utils.py\", line 486, in <module>\n        MutableMapping.register(LRUCache)\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\abc.py\", line 109, in register\n        if issubclass(subclass, cls):\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\abc.py\", line 180, in __subclasscheck__\n        if issubclass(subclass, scls):\n      File \"C:\\Users\\xxx\\Anaconda2\\lib\\site-packages\\typing.py\", line 1265, in __subclasscheck__\n        return super(GenericMeta, self).__subclasscheck__(cls)\n    TypeError: super() argument 1 must be type, not None\n    error in setup command: Error parsing c:\\users\\xxx\\appdata\\local\\temp\\pip-build-p0iccs\\SALib\\setup.cfg: TypeError: super() argument 1 must be type, not None\n\n    ----------------------------------------\nCommand \"python setup.py egg_info\" failed with error code 1 in c:\\users\\xxx\\appdata\\local\\temp\\pip-build-p0iccs\\SALib\\```",
+            "closedAt": "2019-03-14T15:46:58Z",
+            "createdAt": "2018-01-04T20:25:18Z",
+            "id": "MDU6SXNzdWUyODYxMDMyNDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 182,
+            "state": "CLOSED",
+            "title": "Installation Failure: Command \"python setup.py egg_info\" failed with error code 1. ",
+            "updatedAt": "2019-03-14T15:46:58Z",
+            "url": "https://github.com/SALib/SALib/issues/182"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "HelloTogether\nI have a following question to the Interpretation of S_conf.\nI made an Sobol sensitivity analysis with three variables. The results are good. It looks like I have almost no interaction.\nNow the S_i value and the S_i_conf value are ok as well as the S_T and the S_T_conf value. But there is only a small difference between them. All the efects of second (x1x2,...) and third order (x1x2x3) are statistically insignificant (Conf.interval overlapping Zero).\nMy question is if this automatically means that the difference between S_i and S_T is insignificant as well?\nMy approach was to check it with the difference. When S_T minus S_i is bigger than S_i_conf plus S_T_conf, the difference between them is significant. Otherwise it's not.\nWhat do you think?\nThank you very much in advance for your answer.\nKind regards\nStefan Gemperle",
+            "closedAt": "2019-11-07T22:51:39Z",
+            "createdAt": "2017-12-22T13:53:16Z",
+            "id": "MDU6SXNzdWUyODQxNjg1NTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 181,
+            "state": "CLOSED",
+            "title": "Interpratation S_conf",
+            "updatedAt": "2019-11-07T22:51:39Z",
+            "url": "https://github.com/SALib/SALib/issues/181"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "can we add ST on delta analysis as constract ? maybe there are somthing interesting.\nin this tool, the sobol analysis maybe only apply to sobol' sampling.  right?",
+            "closedAt": "2017-12-22T01:38:31Z",
+            "createdAt": "2017-12-21T06:44:04Z",
+            "id": "MDU6SXNzdWUyODM3ODczNTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 180,
+            "state": "CLOSED",
+            "title": "add ST on delta analysis",
+            "updatedAt": "2017-12-22T01:38:31Z",
+            "url": "https://github.com/SALib/SALib/issues/180"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "While doing a sensitivity analysis on a two input model with the Method of Morris I get unexpected results. The most influential parameter (x in the graphs) has low mu* and the less influential (y in the graphs) one has a higher mu*\nIn the two images following you can see a scatter plot of the output with the two inputs. and in particular you can see that for a given y  the output is almost constant (less than 1 unit) while the variation with x is relevant (more than 10 units)\n\n\nwhile searching for the problem in the method of morris implementation I found this calculation where I suppose delta is the  difference between a value on a trajectory and the next\n\n  \n    \n      SALib/SALib/analyze/morris.py\n    \n    \n         Line 257\n      in\n      4ef18c2\n    \n  \n  \n    \n\n        \n          \n           np.divide(ee, delta, out=ee) \n        \n    \n  \n\n\ncould it be that this value of delta has to be scaled according to how the inputs range instead of keeping it in the [0 1] range?\nI did a back of the envelope calculation and by doing so i verified that by rescaling this delta the mu* have the correct order",
+            "closedAt": "2019-11-07T22:50:58Z",
+            "createdAt": "2017-12-12T16:20:22Z",
+            "id": "MDU6SXNzdWUyODE0NDU0MjI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 179,
+            "state": "CLOSED",
+            "title": "Method of Morris wrong distribution",
+            "updatedAt": "2019-11-07T22:50:58Z",
+            "url": "https://github.com/SALib/SALib/issues/179"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey,\nI am using the delta analysis for calculating sensetivity indices for s model with 21-30 Parameters. The delta values sum up to  1.2 - 4. As far as I understood the paper of Borgonovo 2007 they should sum up to 1, since the conditional denseties are normalized by the unconditional density. However, could it be that this is just the case if it is an additive model?\nThe calculated sensitivity indices seen okay and are less than one.\nThanks for helping out!",
+            "closedAt": "2019-11-07T22:50:25Z",
+            "createdAt": "2017-12-07T07:21:13Z",
+            "id": "MDU6SXNzdWUyODAwMjcxMzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 178,
+            "state": "CLOSED",
+            "title": "delta indices not summing up to unity",
+            "updatedAt": "2019-11-07T22:50:25Z",
+            "url": "https://github.com/SALib/SALib/issues/178"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nIn order to get reproducible results, do I need to set a seed? If so, should I use something like this:\nrandom.seed(1969)\nnp.random.seed(1969)\nMany thanks,\nIvan",
+            "closedAt": "2017-11-26T03:43:49Z",
+            "createdAt": "2017-11-22T17:07:38Z",
+            "id": "MDU6SXNzdWUyNzYxNDM2MjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 177,
+            "state": "CLOSED",
+            "title": "Question on how to get reproducible results",
+            "updatedAt": "2017-11-26T03:43:50Z",
+            "url": "https://github.com/SALib/SALib/issues/177"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI would like to understand better how the confidence interval level is computed in Salib and how to interpret the result. For instance, the delta momentum uses the command:\nnorm.ppf(0.5 + conf_level / 2) * d.std(ddof=1)\nDo you have references to suggest? Or, if you could provide an explanation.\nMany thanks,\nIvan",
+            "closedAt": "2017-11-26T03:41:49Z",
+            "createdAt": "2017-11-22T16:36:40Z",
+            "id": "MDU6SXNzdWUyNzYxMzMwMzE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 176,
+            "state": "CLOSED",
+            "title": "Question on confidence interval level",
+            "updatedAt": "2017-11-28T16:59:54Z",
+            "url": "https://github.com/SALib/SALib/issues/176"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'd like to contribute nonuniform sampling support for the method of morris.\nI have hacked together a proof of concept based on the util.nonuniform_scale_samples function used in the sobol sampling algorithm.\nThe only problem in an otherwise trivial implementation is that the ppf function used explodes (outputs -inf or inf respectively) whenthe inputs get too close to 1 or 0\nThe approach I used to overcome this I just crop the allowable sample range so that only values inside a six sigma range from the mean value are returned.\nSince I'm just a user of the library and I'm not extremely familiar with this method's inner workings I open this issue to discuss the enhancement before the pull request",
+            "closedAt": "2019-11-07T22:50:04Z",
+            "createdAt": "2017-11-21T16:28:17Z",
+            "id": "MDU6SXNzdWUyNzU3NzYyNDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 174,
+            "state": "CLOSED",
+            "title": "Nonuniform distributions support for method of morris sampling",
+            "updatedAt": "2019-11-07T22:50:04Z",
+            "url": "https://github.com/SALib/SALib/issues/174"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey,\nI installed the SALib v 1.1.0 with pip install SALib and tested the exampled as described in the docs.\nhttp://salib.readthedocs.io/en/latest/getting-started.html#testing-installation\nAccording to the docs the Sis should be [ 0.30644324  0.44776661 -0.00104936].\nHowever, I get [ 0.03443819  0.09611386  0.12723021].\nI use python 3.5 .2, numpy 1.13.1+mkl, scipy  0.19.1 and matplotlib 1.5.3.\nWhy do I have these wrong values?\nThanks a lot.",
+            "closedAt": "2017-11-20T00:20:16Z",
+            "createdAt": "2017-11-15T09:09:05Z",
+            "id": "MDU6SXNzdWUyNzQwODI0MDc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 172,
+            "state": "CLOSED",
+            "title": "Wrong values in the installaltion test question_interpretation",
+            "updatedAt": "2017-11-20T00:20:16Z",
+            "url": "https://github.com/SALib/SALib/issues/172"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello together\nMy question is about the S_conv result.\nIs my interpretation right, that you use the confidence interval to reduce the outliner of the output Y and then calculate the new S_conv with the rest Y?\nAnd based on that, that a big difference between S_i / S_Ti and S_conv means that not enough sample N have been used?\nThank you very much for your answer!\nKind regards\nStefan Gemperle",
+            "closedAt": "2017-11-13T16:43:55Z",
+            "createdAt": "2017-11-09T15:22:39Z",
+            "id": "MDU6SXNzdWUyNzI2MDI1NDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 171,
+            "state": "CLOSED",
+            "title": "S_conv",
+            "updatedAt": "2017-12-19T14:11:53Z",
+            "url": "https://github.com/SALib/SALib/issues/171"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nIt may be possible that the results of Sobol, Morris, Delta-Moment, and Derivative-based Global Sensitivity Measure depend on the used number of resamples value. If this is the case, is there a way to estimate the optimum value?\nFor example, I have this problem definition:\nproblem= {\n'num_vars': 6,\n'names': ['Amplitude', 'Bandwidth', 'Envelope', 'Instantaneous Frequency', 'Sweetness', 'Thin Bed'],\n'bounds': [[min_amplitude, max_amplitude],\n[min_bandwidth, max_bandwidth],\n[min_envelope, max_envelope],\n[min_instantaneous_frequency, max_instantaneous_frequency],\n[min_sweetness, max_sweetness],\n[min_thin_bed, max_thin_bed]],\n'distributions': ['norm', 'norm', 'norm', 'norm', 'norm', 'norm']\n}\nThe input and model data is in a 2D array of size 7344 x 7. The last column contains the model output.\nWhat would be the optimum value for the number of resamples? is there a formula that I can use?\nMany thanks,\nIvan",
+            "closedAt": "2017-11-02T22:36:41Z",
+            "createdAt": "2017-11-02T17:08:21Z",
+            "id": "MDU6SXNzdWUyNzA3MzM3NTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 170,
+            "state": "CLOSED",
+            "title": "question: how do I select the optimum number of resamples value to use?",
+            "updatedAt": "2017-11-02T22:36:41Z",
+            "url": "https://github.com/SALib/SALib/issues/170"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI have the following problem definition:\nproblem= {\n'num_vars': 6,\n'names': ['Amplitude', 'Bandwidth', 'Envelope', 'Instantaneous Frequency', 'Sweetness', 'Thin Bed'],\n'bounds': [[min_amplitude, max_amplitude],\n[min_bandwidth, max_bandwidth],\n[min_envelope, max_envelope],\n[min_instantaneous_frequency, max_instantaneous_frequency],\n[min_sweetness, max_sweetness],\n[min_thin_bed, max_thin_bed]],\n'distributions': ['norm', 'norm', 'norm', 'norm', 'norm', 'norm']\n}\nThe input and model data is in an 2D array of size 7344 x 7. The last column contains the model output.\nWhen I ran the command line:\nSi= dgsm.analyze(problem, attributes_data[:, 0:6], attributes_data[:, 6], num_resamples= 7, print_to_console= True)\nit gives me this error:  Incorrect number of samples in model output file\nis there a way to determine the number of samples to use for this method?\nMany thanks,\nIvan",
+            "closedAt": "2017-11-02T22:41:46Z",
+            "createdAt": "2017-11-02T17:02:42Z",
+            "id": "MDU6SXNzdWUyNzA3MzE4ODE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 169,
+            "state": "CLOSED",
+            "title": "Question: How do I determine the number of samples for Derivative-based Global Sensitivity Measure?",
+            "updatedAt": "2017-11-06T21:38:10Z",
+            "url": "https://github.com/SALib/SALib/issues/169"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI have a 2d array, in which the first 6 columns are the input of the model and the last column contains the model output. I have the following code to compute the Morris method (lines 97 - 102 of the attached script):\nmax_points= int(np.round(num_lines/(6 + 1))) * (6 + 1) #max_points is used to extract the number of\n#data points necessary to run Morris computation\n#(a multiple of (D + 1))\nX= attributes_data[0: max_points, 0:5]\nY= np.reshape(attributes_data[0: max_points, 6], (-1,1))\nSi= morris.analyze(problem, X, Y, num_resamples= 7, print_to_console= True)\nwhich gives the following error message: index 5 is out of bounds for axis 0 with size 5\nI don't understand where this index error is coming from. Any suggestions? I attached the script and input data.\nMany thanks,\nIvan\nMorris_computation_issue.zip",
+            "closedAt": "2017-11-02T13:55:46Z",
+            "createdAt": "2017-11-02T13:48:04Z",
+            "id": "MDU6SXNzdWUyNzA2NTkxNjc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 168,
+            "state": "CLOSED",
+            "title": "Issue with Morris method",
+            "updatedAt": "2017-11-02T13:55:46Z",
+            "url": "https://github.com/SALib/SALib/issues/168"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, please forgive me if I ask something stupid because I am new to python. I am trying to calculate sobol indices using saltelli.analyze for six parameters. The problem and the results are mentioned below -\n\nproblem = {\n'num_vars': 6,\n'names': ['SF', 'sigma_E', 'l00', 'DS0_', 'COV_DS', 'lc'],\n'bounds': [[0.5, 2],\n[0.75, 2],\n[0.5, 2],\n[50, 65],\n[0.15, 0.25],\n[35, 50]]\n}\nN = 300 / 2400 samples\nFirst order indices [ 0.          0.03066379  0.1585347   0.02875659  0.09111114  0.02882451]\nFirst order indices, confidence [ 0.          0.03554003  0.10778229  0.12605363  0.15749953  0.0234399 ]\nTotal index [ 0.          0.04025687  0.63677459  0.30542551  0.59086153  0.0103497 ]\nTotal index confidence [ 0.          0.02308673  0.40460797  0.1848794   0.68160624  0.00654982]\n\nQuestion 1\nI am confused because I'm finding that for the sixth variable, the first order index (0.028) is greater than the total index (0.010). I'm wondering why could that be? Is that an issue in the number of samples?\nQuestion 2\nAlso, is it common to obtain sensitivity index as 0 in the case of the first variable? Or could it be because of the narrow bounds of the first variable? The awkward thing is, when I had run the same model with N = 100/ 800 samples, I was getting S1 as 0.13 and ST as 0.41. The only other difference between the two trials is that I had implemented multiprocessing through Pool.apply_async to reduce the computation time as below -\nparam_values = saltelli.sample(problem, 1000, calc_second_order=False)\nresult = [p.apply_async(function_VoI,args = (x,)) for x in param_values]\nY = np.zeros([len(param_values)])\nnew_Y = np.zeros([len(param_values)])\nmm = 0\nfor aa in result:\nY[mm] = aa.get()[0]\nnew_Y[mm] = aa.get()[1]\nmm += 1\nThis function_VoI(x) is my function which returns a list as [Y, new_Y]. I carry out sensitivity studies on these two vectors separately.",
+            "closedAt": "2017-11-02T22:42:00Z",
+            "createdAt": "2017-10-27T07:35:01Z",
+            "id": "MDU6SXNzdWUyNjkwMTM5MDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 167,
+            "state": "CLOSED",
+            "title": "First order index greater than total index",
+            "updatedAt": "2017-11-15T10:37:38Z",
+            "url": "https://github.com/SALib/SALib/issues/167"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi all,\nI read the description of SALib and made wonder how this analysis approach can be applied on the outcome from an unsupervised cluster analysis. For input, I have a matrix N x D (where N is the number of observations and D is the number of features) and usually N >> D.\nThen, to generate a cluster structure from the input data I use either Self-Organizing Maps or K-means algorithms. Both neurons nodes or cluster centers are composed of a sample vector {D_1, ..., D_n}.\nSo, I have the following information:\n\nAn input matrix N x D\nThe output of the model, a set of sample vectors that corresponds to either number of neurons or cluster centers\nEach sample vector has an associated categorical value which represents either the neuron number or cluster number\n\nIf SALib can be applied to this type scenario. What is the model output to be used? The sample vectors? Or, the categorical values of the neuron number or cluster center?\nMany thanks for your advice,\nIvan",
+            "closedAt": "2017-10-19T15:30:08Z",
+            "createdAt": "2017-10-18T13:53:53Z",
+            "id": "MDU6SXNzdWUyNjY1MDE4ODc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 166,
+            "state": "CLOSED",
+            "title": "Can I use SALib to interpret inputs used in an unsupervised cluster analysis?",
+            "updatedAt": "2017-10-19T15:30:08Z",
+            "url": "https://github.com/SALib/SALib/issues/166"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems to me there are two bugs related to minimum number of samples for FAST.\n\nI think FAST requires N > 4M^2. However, the first line in fast_sampler.sample instead checks that N >= 4M^2. So when I choose N = 4M^2, I get some NaN values.\nIf I instead choose N = 4M^2 + 1, I get an IndexError in the analyze step. I have not tried to understand why.\n\nBelow is a script for reproducing the two above problems. Choosing N >= 4M^2 + 2 seems to work fine. I am using SALib 1.0.7, Python 2.7.11, and NumPy 1.10.4 on Windows 10.\nfrom SALib.sample import fast_sampler\nfrom SALib.analyze import fast\nfrom SALib.test_functions import Ishigami\nimport numpy as np\n\nproblem = {\n  'num_vars': 3,\n  'names': ['x1', 'x2', 'x3'],\n  'bounds': [[-np.pi, np.pi]]*3\n}\n\n# NaN with N = 64\nN = 64\nsamples = fast_sampler.sample(problem, N)\nprint('NaN occurrences with N = 64: %d' % np.sum(np.isnan(samples)))\n\n# Weird error with N = 65\nN = 65\nsamples = fast_sampler.sample(problem, N)\nY = Ishigami.evaluate(samples)\ntry:\n    Si = fast.analyze(problem, Y)\nexcept IndexError as e:\n    print(\"Weird error with N = 65: %s\" % e)\n\n# All green with N = 66\nN = 66\nsamples = fast_sampler.sample(problem, N)\nY = Ishigami.evaluate(samples)\nSi = fast.analyze(problem, Y)",
+            "closedAt": "2017-10-08T15:58:12Z",
+            "createdAt": "2017-09-18T13:20:24Z",
+            "id": "MDU6SXNzdWUyNTg0NzY3NzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 162,
+            "state": "CLOSED",
+            "title": "Minimum number of FAST samples",
+            "updatedAt": "2017-10-09T18:35:06Z",
+            "url": "https://github.com/SALib/SALib/issues/162"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi!\nI'd like to understand better the meaning of 'groups' in the problem definition. Could someone please explain how to use it?\nCurrently, the API documentation only comments groups for the method of Morris (http://salib.readthedocs.io/en/latest/api.html#method-of-morris), but judging from the source code it applies also to Sobol: http://salib.readthedocs.io/en/latest/_modules/SALib/analyze/sobol.html. Not for FAST however.",
+            "closedAt": "2017-09-21T15:53:34Z",
+            "createdAt": "2017-09-13T12:37:28Z",
+            "id": "MDU6SXNzdWUyNTczNjQ1NTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 161,
+            "state": "CLOSED",
+            "title": "Documentation problem['groups']",
+            "updatedAt": "2017-09-21T15:53:35Z",
+            "url": "https://github.com/SALib/SALib/issues/161"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI got this error message when I test the Morris example file with Sobol_G function.\n    Y = Sobol_G.evaluate(param_values)\n  File \"/usr/local/lib/python2.7/dist-packages/SALib-1.0.3-py2.7.egg/SALib/test_functions/Sobol_G.py\", line 24, in evaluate\n    raise ValueError(\"Sobol G function called with values less than one\")\nValueError: Sobol G function called with values less than one\n\nI tried to use Ishigami function and it worked well.",
+            "closedAt": "2017-08-27T16:24:14Z",
+            "createdAt": "2017-08-25T19:13:47Z",
+            "id": "MDU6SXNzdWUyNTI5OTM5NDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 158,
+            "state": "CLOSED",
+            "title": "Sobol_G function in Morris example",
+            "updatedAt": "2017-08-27T21:17:00Z",
+            "url": "https://github.com/SALib/SALib/issues/158"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The guide, on this page for example, mentions two uses of kwargs:\nparam_values = saltelli.sample(problem, 1000, calc_second_order=True)\nand\nSi = sobol.analyze(problem, Y, print_to_console=False)\nthat I find confusing. Seeing that these options are explicitly set, I am guessing that this was to override the default behavior, hence if I want the opposite behavior, I can just remove them. But this is incorrect since these values are in fact redundant with the default behavior.\nIf I were you, I would not set these parameters explicitly in this example since this is redundant and can be confusing. If the purpose was to insist on these options at this point in the documentation, then I would use them with the opposite (non-default) behavior.",
+            "closedAt": "2017-08-25T16:22:47Z",
+            "createdAt": "2017-07-27T10:43:07Z",
+            "id": "MDU6SXNzdWUyNDU5OTk1MDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 155,
+            "state": "CLOSED",
+            "title": "Confusing kwarg values in the documentation",
+            "updatedAt": "2017-08-25T16:22:47Z",
+            "url": "https://github.com/SALib/SALib/issues/155"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI've recently inherited a project in my research group and we use SALib in our software, BCMD repo here\nA user of our software has been running sensitivity analysis on our model using their measured data as driving inputs. A number of parameters have a sensitivity of zero - the reasoning behind this needs more investigation but it could potentially be reasonable.\nThe problem is that the following error is thrown\n> Traceback (most recent call last):\n  File \"postproc.py\", line 239, in <module>\n    postproc(dir)\n  File \"postproc.py\", line 54, in postproc\n    calcDistances(dir, config)\n  File \"postproc.py\", line 207, in calcDistances\n    grid_jump=config['info']['jump'])\n  File \"/home/buck06191/anaconda3/envs/bcmd/lib/python2.7/site-packages/SALib/analyze/morris.py\", line 83, in analyze\n    ee = compute_elementary_effects(X, Y, int(Y.size / num_trajectories), delta)\n  File \"/home/buck06191/anaconda3/envs/bcmd/lib/python2.7/site-packages/SALib/analyze/morris.py\", line 233, in compute_elementary_effects\n    np.divide(ee, delta, out=ee)\nTypeError: ufunc 'divide' output (typecode 'd') could not be coerced to provided output parameter (typecode 'l') according to the casting rule ''same_kind''\nI've looked into the numpy function and have worked out that when ee is all zeros, all integers, and delta is a float, it's unable then pass the resulting array directly back into ee.\nCould this be fixed by ensuring that either\n\nee and delta are always of the same type OR\nee is converted into floats before dividing.\n\nThis is using Python 2.7\nThanks",
+            "closedAt": "2017-06-29T15:50:00Z",
+            "createdAt": "2017-06-29T11:37:04Z",
+            "id": "MDU6SXNzdWUyMzk0NTAxNjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 153,
+            "state": "CLOSED",
+            "title": "Error when running analyze/morris.py on a set of data that has zero sensitivity",
+            "updatedAt": "2017-06-29T15:50:00Z",
+            "url": "https://github.com/SALib/SALib/issues/153"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "See #151 for discussion on this error.\nUse the test file below to reproduce error:\nfrom SALib.analyze.delta import analyze\nimport numpy as np\n\ndef test_bug_delta_linalg():\n\n    problem = problem = {\n                'num_vars': 3,\n                'names': ['K_IO_AOBden', 'K_SO_AOBden', 'K_SNO_AOBden'],\n                'bounds': [[0.01, 11], [0.01, 13.2], [0.08, 4.3]]\n                         }\n\n    X = np.array([[2.12591411, 1.8200793, 0.10082878],\n                  [6.21754537, 5.85214066, 2.8846046],\n                  [8.01209459, 12.95017617, 1.00034018],\n                  [10.72587215, 9.03629573, 1.88932555],\n                  [4.17005179, 1.30648717, 3.7287254],\n                  [3.24299291, 3.44273292, 4.01808892],\n                  [8.80676551, 10.03481953, 1.43068963],\n                  [0.29322542, 6.80514303, 2.43057428]])\n\n    Y = np.arange(8)\n\n    analyze(problem, X, Y, num_resamples=100)",
+            "closedAt": "2019-03-05T12:59:16Z",
+            "createdAt": "2017-06-29T11:11:06Z",
+            "id": "MDU6SXNzdWUyMzk0NDQwODg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 152,
+            "state": "CLOSED",
+            "title": "delta.analyze fails with LinAlgError for small sample sizes",
+            "updatedAt": "2019-03-05T12:59:16Z",
+            "url": "https://github.com/SALib/SALib/issues/152"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear,\nfeeding the delta.analyze() function with:\nproblem = {\n  'num_vars': 3,\n  'names': ['K_IO_AOBden', 'K_SO_AOBden', 'K_SNO_AOBden'],\n  'bounds': [[0.01, 11], [0.01, 13.2], [0.08, 4.3]]\n}\n\nIn: param_values\nOut: array([[  2.12591411,   1.8200793 ,   0.10082878],\n       [  6.21754537,   5.85214066,   2.8846046 ],\n       [  8.01209459,  12.95017617,   1.00034018],\n       [ 10.72587215,   9.03629573,   1.88932555],\n       [  4.17005179,   1.30648717,   3.7287254 ],\n       [  3.24299291,   3.44273292,   4.01808892],\n       [  8.80676551,  10.03481953,   1.43068963],\n       [  0.29322542,   6.80514303,   2.43057428]])\n\nand\nmetric (a simple average value of the last 100 points of my time series output)\nI randomly (meaning that sometimes it works out and gives the output normally and sometimes not) get the following error:\n...................python2.7/site-packages/SALib/analyze/delta.pyc in calc_delta(Y, Ygrid, X, m)\n     89         ix = np.where((xr > m[j]) & (xr <= m[j + 1]))[0]\n     90         nm = len(ix)\n---> 91         fyc = gaussian_kde(Y[ix], bw_method='silverman')(Ygrid)\n     92         d_hat += (nm / (2 * N)) * np.trapz(np.abs(fy - fyc), Ygrid)\n     93 \n\n...................python2.7/site-packages/scipy/stats/kde.pyc in __init__(self, dataset, bw_method)\n    170 \n    171         self.d, self.n = self.dataset.shape\n--> 172         self.set_bandwidth(bw_method=bw_method)\n    173 \n    174     def evaluate(self, points):\n\n...................python2.7/site-packages/scipy/stats/kde.pyc in set_bandwidth(self, bw_method)\n    497             raise ValueError(msg)\n    498 \n--> 499         self._compute_covariance()\n    500 \n    501     def _compute_covariance(self):\n\n...................python2.7/site-packages/scipy/stats/kde.pyc in _compute_covariance(self)\n    508             self._data_covariance = atleast_2d(np.cov(self.dataset, rowvar=1,\n    509                                                bias=False))\n--> 510             self._data_inv_cov = linalg.inv(self._data_covariance)\n    511 \n    512         self.covariance = self._data_covariance * self.factor**2\n\n...................python2.7/site-packages/scipy/linalg/basic.pyc in inv(a, overwrite_a, check_finite)\n    817         inv_a, info = getri(lu, piv, lwork=lwork, overwrite_lu=1)\n    818     if info > 0:\n--> 819         raise LinAlgError(\"singular matrix\")\n    820     if info < 0:\n    821         raise ValueError('illegal value in %d-th argument of internal '\n\nLinAlgError: singular matrix\n\nMight be useful to know that increasing the num_resamples the error occurs more often (i.e. with 5 resamples occurs every 3 times, while using a resample of 15 you almost always get the error)\nDo you think this is due to a bug in SALib or scipy, or rather something I'm missing?",
+            "closedAt": "2017-06-29T11:12:31Z",
+            "createdAt": "2017-06-29T08:13:02Z",
+            "id": "MDU6SXNzdWUyMzkzOTg2ODQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 151,
+            "state": "CLOSED",
+            "title": "delta.analyze randomly returns singular matrix error",
+            "updatedAt": "2017-06-29T11:12:31Z",
+            "url": "https://github.com/SALib/SALib/issues/151"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The regression tests established in the tests/test_regression.py::MorrisTests class have been marked with @pytest.mark.xfail as the approach is not stable enough to test against a fixed sensitivity estimator (many of the tests use a very small number of trajectories so that the tests are relatively quick to run, but this results in wildly varying estimators).  The natural variation in the sampling procedure means that each test run results in a different answer.\n\nOne solution to this is to fix the random number generator seed before running the tests, but I wonder if we should stick to the principle of testing the interface rather than the implementation?\nAnother option is to divide the tests into quick-running tests which test the interface, and longer tests which test the implementation is valid (e.g. the various implementations of sensitivity analysis methods correctly identify the ranking of variables for a range of test functions)",
+            "closedAt": "2017-06-20T14:47:25Z",
+            "createdAt": "2017-06-15T17:10:01Z",
+            "id": "MDU6SXNzdWUyMzYyNTcwNTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 144,
+            "state": "CLOSED",
+            "title": "Regression tests for morris method are not stable",
+            "updatedAt": "2017-06-20T14:47:25Z",
+            "url": "https://github.com/SALib/SALib/issues/144"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Currently, only the global optimisation method allows the use of groups of parameters in the method of morris (SALib.sample.morris.sample).\n\n Make local optimisation the default method for finding (near) optimal trajectories\n Extend local optimisation to include groups\n Add better docstrings and linting",
+            "closedAt": "2017-06-15T16:48:00Z",
+            "createdAt": "2017-06-13T09:47:27Z",
+            "id": "MDU6SXNzdWUyMzU0OTY5NjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 141,
+            "state": "CLOSED",
+            "title": "Extend local optimisation to use group",
+            "updatedAt": "2017-06-15T16:48:00Z",
+            "url": "https://github.com/SALib/SALib/issues/141"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I get a memory error when trying to run analyze.sobol using parallel processors.  It works fine with parallel=False.  Any ideas for this problem?\n[kthorp@ARSAZMAR1360148 02-GSA]$ python DSSATCSM_Sobol_SA.py \nTraceback (most recent call last):\n  File \"DSSATCSM_Sobol_SA.py\", line 159, in <module>\n    result = analyze(problem, YY[:,i], calc_second_order=True,parallel=True,n_processors=8)\n  File \"/usr/lib/python2.7/site-packages/SALib/analyze/sobol.py\", line 115, in analyze\n    pool = Pool(n_processors)\n  File \"/usr/lib64/python2.7/multiprocessing/__init__.py\", line 232, in Pool\n    return Pool(processes, initializer, initargs, maxtasksperchild)\n  File \"/usr/lib64/python2.7/multiprocessing/pool.py\", line 159, in __init__\n    self._repopulate_pool()\n  File \"/usr/lib64/python2.7/multiprocessing/pool.py\", line 223, in _repopulate_pool\n    w.start()\n  File \"/usr/lib64/python2.7/multiprocessing/process.py\", line 130, in start\n    self._popen = Popen(self)\n  File \"/usr/lib64/python2.7/multiprocessing/forking.py\", line 121, in __init__\n    self.pid = os.fork()\nOSError: [Errno 12] Cannot allocate memory",
+            "closedAt": "2017-05-19T02:49:15Z",
+            "createdAt": "2017-05-17T19:07:47Z",
+            "id": "MDU6SXNzdWUyMjk0NTczMDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 140,
+            "state": "CLOSED",
+            "title": "Memory error - parallel processing - Sobol analyze",
+            "updatedAt": "2017-05-19T16:04:05Z",
+            "url": "https://github.com/SALib/SALib/issues/140"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI'm trying to use your sample.sobol_sequence function but I've noticed that the first row is giving completely wrong values (like 2.13393829e+219). It seems that you are skipping first rows in your code when you use sobol_sequence() but I'm not sure to understand what is happening here.\nIs it an expected behavior or am I doing something wrong?\nThank you for your work !",
+            "closedAt": "2017-03-31T16:35:01Z",
+            "createdAt": "2017-03-31T12:30:33Z",
+            "id": "MDU6SXNzdWUyMTg0ODgxNTA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 136,
+            "state": "CLOSED",
+            "title": "First row of sobol_sequence()",
+            "updatedAt": "2017-03-31T16:40:52Z",
+            "url": "https://github.com/SALib/SALib/issues/136"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the example problem in the Salib user manual, the S1 is [ 0.30644324 0.44776661 -0.00104936 ]. Sobol indices should not be negative as it is based on variance decomposition. Is this a bug? Thanks!",
+            "closedAt": "2017-11-26T03:59:32Z",
+            "createdAt": "2017-03-06T17:02:04Z",
+            "id": "MDU6SXNzdWUyMTIxODU4OTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "question"
+                },
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 135,
+            "state": "CLOSED",
+            "title": "Negative sobol indices",
+            "updatedAt": "2024-06-25T02:44:11Z",
+            "url": "https://github.com/SALib/SALib/issues/135"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm wondering how best to handle cases where some of the saltelli-generated input parameter sets cause model failure, resulting in no output. How will this interfere with the calculating of sensitivity indices using the Sobol method?",
+            "closedAt": "2019-11-07T22:34:14Z",
+            "createdAt": "2017-02-14T15:50:20Z",
+            "id": "MDU6SXNzdWUyMDc1NTM5ODM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 134,
+            "state": "CLOSED",
+            "title": "How best to handle model failure with certain parameter sets?",
+            "updatedAt": "2020-08-10T07:25:19Z",
+            "url": "https://github.com/SALib/SALib/issues/134"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The sample method uses problem.get('groups') and the analysis method should, too, to avoid requiring call to set problem['group'] = None.",
+            "closedAt": "2017-01-07T23:39:56Z",
+            "createdAt": "2017-01-05T18:21:53Z",
+            "id": "MDU6SXNzdWUxOTkwMjQwNjg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 127,
+            "state": "CLOSED",
+            "title": "morris analysis method requires problem['group'] to exist",
+            "updatedAt": "2017-01-07T23:39:59Z",
+            "url": "https://github.com/SALib/SALib/issues/127"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "A few issues with the main landing page for SALib that should be an easy fix:\n\n No link to the documentation at readthedocs\n\nBroken links:\n\n link to contributing.md points to the local directory, rather than the file in the main github repo\n ditto MIT license\n ditto advanced readme\n\nNew links:\n\n Link to JOSS paper (once we're published!), citation instructions, example and link to doi",
+            "closedAt": "2017-01-20T10:55:04Z",
+            "createdAt": "2017-01-05T16:56:49Z",
+            "id": "MDU6SXNzdWUxOTkwMDUzMjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 126,
+            "state": "CLOSED",
+            "title": "Github pages site outdated",
+            "updatedAt": "2017-01-20T10:55:04Z",
+            "url": "https://github.com/SALib/SALib/issues/126"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Lots of the existing sample and analyze methods could be vectorized for speed. We wrote several of these before learning the full power of numpy.",
+            "closedAt": "2017-01-03T17:58:36Z",
+            "createdAt": "2017-01-03T11:29:48Z",
+            "id": "MDU6SXNzdWUxOTg0NTU4NTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 125,
+            "state": "CLOSED",
+            "title": "Vectorise existing functions",
+            "updatedAt": "2017-01-03T17:58:36Z",
+            "url": "https://github.com/SALib/SALib/issues/125"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Add the PAWN method to the library",
+            "closedAt": "2021-06-27T06:10:54Z",
+            "createdAt": "2017-01-03T11:28:10Z",
+            "id": "MDU6SXNzdWUxOTg0NTU2MzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "add_method"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 123,
+            "state": "CLOSED",
+            "title": "Add new method - PAWN",
+            "updatedAt": "2021-06-27T06:10:54Z",
+            "url": "https://github.com/SALib/SALib/issues/123"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Add a \"groups\" functionality for Sobol. @willu47 added a really nice feature for the Morris method to read groups from the parameter file, and it would be great to extend this to other methods that can handle groups. For Sobol, the biggest difference would be in the cross-sampling.",
+            "closedAt": "2017-01-03T17:54:09Z",
+            "createdAt": "2017-01-03T11:25:37Z",
+            "id": "MDU6SXNzdWUxOTg0NTUyNDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 121,
+            "state": "CLOSED",
+            "title": "Add groups functionality for Sobol",
+            "updatedAt": "2017-01-03T17:54:09Z",
+            "url": "https://github.com/SALib/SALib/issues/121"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "JOSS review\nIn the paper, the description is focusing on the 6 current implementations. However, the consise API Reference (I also checked latest) contains only 5 method API descriptions.",
+            "closedAt": "2017-01-03T11:07:17Z",
+            "createdAt": "2016-12-13T04:38:50Z",
+            "id": "MDU6SXNzdWUxOTUxNTkyOTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 118,
+            "state": "CLOSED",
+            "title": "[JOSS review] paper and documentation not align",
+            "updatedAt": "2017-01-03T11:07:17Z",
+            "url": "https://github.com/SALib/SALib/issues/118"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "JOSS review\nWhen doing a fresh install of SALib in a conda py35 environment:\n- blas=1.1=openblas\n- cairo=1.14.6=0\n- certifi=2016.9.26=py35_0\n- cycler=0.10.0=py35_0\n- fontconfig=2.11.1=5\n- freetype=2.6.3=1\n- gettext=0.19.7=1\n- glib=2.51.0=2\n- harfbuzz=1.0.6=3\n- icu=56.1=4\n- jpeg=9b=0\n- libffi=3.2.1=2\n- libgfortran=3.0.0=1\n- libiconv=1.14=4\n- libpng=1.6.26=0\n- libtiff=4.0.6=7\n- libxml2=2.9.4=3\n- matplotlib=1.5.3=np111py35_3\n- ncurses=5.9=10\n- numpy=1.11.2=py35_blas_openblas_202\n- openblas=0.2.19=0\n- openssl=1.0.2j=0\n- pango=1.40.3=0\n- pcre=8.39=1\n- pip=9.0.1=py35_1\n- pixman=0.34.0=0\n- pyparsing=2.1.10=py35_0\n- pyqt=4.11.4=py35_4\n- python=3.5.2=2\n- python-dateutil=2.6.0=py35_0\n- pytz=2016.10=py35_0\n- qt=4.8.7=3\n- readline=6.2=2\n- scipy=0.18.1=np111py35_blas_openblas_201\n- setuptools=29.0.1=py35_1\n- sip=4.18=py35_0\n- six=1.10.0=py35_1\n- sqlite=3.13.0=1\n- tk=8.5.19=1\n- wheel=0.29.0=py35_0\n- xz=5.2.2=0\n- zlib=1.2.8=3\n- pip:\n  - salib==1.0.1\n\nand running the test-functions python setup.py test\nI get the following error report (showing the last section with the errors:\n...\n======================================================================\nFAIL: SALib.tests.test_plotting.test_morris_covariance_plot.test\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/stijn_vanhoey/githubs/forks/SALib/.eggs/nose-1.3.7-py3.5.egg/nose/case.py\", line 198, in runTest\n    self.test(*self.arg)\n  File \"/home/stijn_vanhoey/miniconda2/envs/salib/lib/python3.5/site-packages/matplotlib/testing/decorators.py\", line 53, in failer\n    result = f(*args, **kwargs)\n  File \"/home/stijn_vanhoey/miniconda2/envs/salib/lib/python3.5/site-packages/matplotlib/testing/decorators.py\", line 220, in do_test\n    '(RMS %(rms).3f)'%err)\nmatplotlib.testing.exceptions.ImageComparisonFailure: images not close: /home/stijn_vanhoey/githubs/forks/SALib/result_images/test_plotting/covariance_plot.png vs. /home/stijn_vanhoey/githubs/forks/SALib/result_images/test_plotting/covariance_plot-expected.png (RMS 16.765)\n\n======================================================================\nFAIL: SALib.tests.test_plotting.test_morris_covariance_plot_grouped.test\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/stijn_vanhoey/githubs/forks/SALib/.eggs/nose-1.3.7-py3.5.egg/nose/case.py\", line 198, in runTest\n    self.test(*self.arg)\n  File \"/home/stijn_vanhoey/miniconda2/envs/salib/lib/python3.5/site-packages/matplotlib/testing/decorators.py\", line 53, in failer\n    result = f(*args, **kwargs)\n  File \"/home/stijn_vanhoey/miniconda2/envs/salib/lib/python3.5/site-packages/matplotlib/testing/decorators.py\", line 220, in do_test\n    '(RMS %(rms).3f)'%err)\nmatplotlib.testing.exceptions.ImageComparisonFailure: images not close: /home/stijn_vanhoey/githubs/forks/SALib/result_images/test_plotting/covariance_plot_grouped.png vs. /home/stijn_vanhoey/githubs/forks/SALib/result_images/test_plotting/covariance_plot_grouped-expected.png (RMS 15.536)\n\n----------------------------------------------------------------------\nRan 95 tests in 14.192s\n\nFAILED (SKIP=6, failures=2)",
+            "closedAt": "2017-01-04T16:08:11Z",
+            "createdAt": "2016-12-13T04:20:29Z",
+            "id": "MDU6SXNzdWUxOTUxNTc0NDQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 117,
+            "state": "CLOSED",
+            "title": "[JOSS review] failed run of the tests after fresh installation",
+            "updatedAt": "2017-01-04T16:08:15Z",
+            "url": "https://github.com/SALib/SALib/issues/117"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "JOSS review\nThe current contribution guidelines provide essential information to interpret the current implementation and objectives, such as the design principle of the decoupling of the individual methods instead of a OOP approach. This is of great help.\nHowever, I suggest to adapt the guidelines as follows:\n\nThe contributing guidelines do not provide additional information about how to contribute new code. For example, provide information on how to provide pull requests (maybe different for bug fixes versus new SA methods) and how revision of new methods is organised (it would be good to formalize this revision procedure, e.g. which default examples should be tested).\nSome additional information about how to report problems could be useful. This could maybe provide classification on the kind of issue: (1) pure python Error or (2) irregularities of the SA outcome (the functions work, but output is 'strange'). The first one is basically a bug as such, whereas the second one is more on the interpretation side. Making this difference to the user in the contribution guidelines could be helpful.\nThe last section of the guidelines provides information on ideas for the future. I would suggest to get these out of the contribution guidelines and put these in separate issues, so progress can be checked for each of them and closed when finished. The latter is harder to track in the guidelines.\n\nFor these comment, I do think that the addition of some new/custom labels could provide sufficient abilities to support these adaptations. For example, a special label for interpretation questions/issues and just bug. The ideas of new methods could be grouped with label addmethod, whereas other features are enhancement. The usage of these labels can be explained in the guidelines.",
+            "closedAt": "2017-01-06T16:00:05Z",
+            "createdAt": "2016-12-13T04:14:11Z",
+            "id": "MDU6SXNzdWUxOTUxNTY4Mjc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 116,
+            "state": "CLOSED",
+            "title": "[JOSS review] Adaptations of the `contributing.md`",
+            "updatedAt": "2017-01-06T16:00:05Z",
+            "url": "https://github.com/SALib/SALib/issues/116"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "How could I specify the code to call a wrapper function that could call my model?",
+            "closedAt": "2016-12-10T15:50:00Z",
+            "createdAt": "2016-12-10T00:42:16Z",
+            "id": "MDU6SXNzdWUxOTQ3MzA4MzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 115,
+            "state": "CLOSED",
+            "title": "how could I provide my model for sampling?",
+            "updatedAt": "2016-12-10T15:50:00Z",
+            "url": "https://github.com/SALib/SALib/issues/115"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI have a question regarding sobol.analyze: how come there is no option for automatically normalizing/centering the output? I found the following warning for the method \"sobol2002\" in the R-package sensitivity (https://cran.r-project.org/web/packages/sensitivity/sensitivity.pdf):\n'BE CAREFUL! This estimator suffers from a conditioning problem when estimating the variances\nbehind the indices computations. This can seriously affect the Sobol’ indices estimates in case\nof largely non-centered output. To avoid this effect, you have to center the model output before\napplying \"sobol2002\". ...'\nWould this apply also for sobol.analyze? And in addition, could this explain the issue #109?",
+            "closedAt": "2017-01-07T23:39:56Z",
+            "createdAt": "2016-12-08T07:46:24Z",
+            "id": "MDU6SXNzdWUxOTQyNjgxNjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 114,
+            "state": "CLOSED",
+            "title": "Centering output for sobol.analyze",
+            "updatedAt": "2017-01-09T08:01:25Z",
+            "url": "https://github.com/SALib/SALib/issues/114"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "If there was massive computational power, how could this code be used? For instance, if 2000 samples were specified and there were 2000 cores, each evaluate one particular set of decision variables, how could this library correspond?",
+            "closedAt": "2016-12-09T23:49:10Z",
+            "createdAt": "2016-12-07T23:01:10Z",
+            "id": "MDU6SXNzdWUxOTQxOTgzMTQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 113,
+            "state": "CLOSED",
+            "title": "how to exploit massive processing power?",
+            "updatedAt": "2016-12-10T15:48:10Z",
+            "url": "https://github.com/SALib/SALib/issues/113"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "How could I specify integer variables for a problem? At least, how to perform the analysis on a dataset where the input variables are integers? (similarly, how about if they were finite in nature?)",
+            "closedAt": "2016-12-09T23:47:17Z",
+            "createdAt": "2016-12-07T22:51:09Z",
+            "id": "MDU6SXNzdWUxOTQxOTU5NjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 112,
+            "state": "CLOSED",
+            "title": "how to handle integer variables",
+            "updatedAt": "2016-12-10T00:38:12Z",
+            "url": "https://github.com/SALib/SALib/issues/112"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "it seems salib does not build outside of git\nwe'd like to build from the tarball for integration in anaconda, is it possible ?\nconda-forge/staged-recipes#1753",
+            "closedAt": "2018-07-27T20:16:49Z",
+            "createdAt": "2016-11-04T18:21:10Z",
+            "id": "MDU6SXNzdWUxODc0MDQ3ODU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 111,
+            "state": "CLOSED",
+            "title": "build without git repo",
+            "updatedAt": "2019-03-15T09:49:54Z",
+            "url": "https://github.com/SALib/SALib/issues/111"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI compare some tools and methods to calculate Sobol indices and I got some strange values for first order indices with SALib.\nWith Polynomial Chaos (openturns) and EASI algorithm, I have the following results for S1's:\n    Polynomial Chaos    EASI\nx1  0.48                0.48\nx2  0.25                0.25\nx3  0.10                0.11\nx4  0.04                0.05\nx5  0.04                0.04\nx6  0.03                0.03\nx7  0.02                0.02\nx8  0.02                0.02\nx9  0.02                0.02\nx10 0.01                0.01\n\nAs you can see, they converge to the same values.\nAnd 500 simulations with a Quasi Monte-Carlo sample is enough to reach these values (I tried up to 2000 simulations and they remain the same).\nAlso, the ST's I got with Polynomial Chaos are similar to the S1's (EASI doesn't include this calculation).\nWith Salib I use saltelli.sample to generate 5000 samples and I have the following results:\n    S1      S1_conf  ST  ST_conf\nx1  0.92    4.99    0.53    0.06\nx2  0.29    2.37    0.16    0.02\nx3  0.22    1.70    0.11    0.01\nx4  0.25    1.24    0.05    0.01\nx5  0.04    1.14    0.04    0.01\nx6  0.03    0.98    0.03    0.00\nx7  -0.09   1.01    0.02    0.00\nx8  0.05    0.98    0.02    0.00\nx9  0.06    0.83    0.02    0.00\nx10 0.02    0.82    0.01    0.00\n\nExcept for the second parameter, the ST's are really close to what I got with other methods.\nHowever, the S1's don't look good and the confidence intervals are terrible.\nI don't understand why SALib is able to calculate ST's but not S1's in my case, specially if they have similar values.\nI could increase the sample size but 5000 took 80 hours...\nAny thoughts on this issue ?",
+            "closedAt": "2017-01-07T23:42:03Z",
+            "createdAt": "2016-10-25T15:23:25Z",
+            "id": "MDU6SXNzdWUxODUxNTAyMDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 109,
+            "state": "CLOSED",
+            "title": "Odd Sobol first order indices",
+            "updatedAt": "2017-01-07T23:42:03Z",
+            "url": "https://github.com/SALib/SALib/issues/109"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI have a small remark on the documentation for the morris.sample function: http://salib.readthedocs.io/en/latest/api.html#method-of-morris. It says that the sampling matrix has N rows, but if I'm not misstaken, it has (D+1)*N rows. Right?",
+            "closedAt": "2017-01-03T11:06:48Z",
+            "createdAt": "2016-10-06T11:33:18Z",
+            "id": "MDU6SXNzdWUxODEzOTA5NjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 103,
+            "state": "CLOSED",
+            "title": "Documentation Morris",
+            "updatedAt": "2017-06-23T15:30:03Z",
+            "url": "https://github.com/SALib/SALib/issues/103"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI wonder how to interpret negative numbers for the values of sensitivity indices. For example in one of my results, a parameter x has S1 = -71.6 and ST = 0.52. Likewise I saw that the example here gives negative indices:\nhttps://waterprogramming.wordpress.com/2013/08/05/running-sobol-sensitivity-analysis-using-salib/\nI thought that Sobol sensitivity indices were by definition positive, since they are defined as a quote of two different variances (see https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis). Did I misunderstand something?\nBest,\nJonatan",
+            "closedAt": "2016-10-25T15:50:11Z",
+            "createdAt": "2016-09-26T08:38:39Z",
+            "id": "MDU6SXNzdWUxNzkxNjk1MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 102,
+            "state": "CLOSED",
+            "title": "Negative sobol indices",
+            "updatedAt": "2016-10-25T15:50:11Z",
+            "url": "https://github.com/SALib/SALib/issues/102"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, folks. I'm doing a Monte Carlo analysis which generates all my input values. I was wondering which, if any, of the SALib analysis methods would be appropriate to use for SA on these data.\nThanks.",
+            "closedAt": "2016-06-27T18:47:36Z",
+            "createdAt": "2016-06-27T17:58:06Z",
+            "id": "MDU6SXNzdWUxNjI1MTA4NzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 101,
+            "state": "CLOSED",
+            "title": "Using SALib with externally-generated samples ",
+            "updatedAt": "2016-06-27T18:47:36Z",
+            "url": "https://github.com/SALib/SALib/issues/101"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nFAST behaves strangely when a low number of samples is used. I run the Ishigami example model function by using the script\nfrom SALib.sample import fast_sampler\nfrom SALib.analyze import fast\nfrom SALib.test_functions import Ishigami\n\nproblem = {\n    'num_vars': 3,\n    'names': ['x1', 'x2', 'x3'],\n    'bounds': [[-3.14159265359, 3.14159265359],\n               [-3.14159265359, 3.14159265359],\n               [-3.14159265359, 3.14159265359]]\n}\n\nparam_values = fast_sampler.sample(problem, 33)\n\nY = Ishigami.evaluate(param_values)\n\nSi = fast.analyze(problem, Y, print_to_console=False)\nUsing more than 33 samples (tested with > 70) runs perfectly fine. However, using this (33) or lower sample values results in the following error:\nSALib\\sample\\fast_sampler.py:39: RuntimeWarning: invalid value encountered in remainder\n  omega[1:] = np.arange(D - 1) % m + 1\n\\SALib\\analyze\\fast.py:70: RuntimeWarning: invalid value encountered in remainder\n  omega[1:] = np.arange(D - 1) % m + 1\n\\SALib\\analyze\\fast.py:88: RuntimeWarning: invalid value encountered in power\n  Sp = np.power(np.absolute(f[np.arange(1, int(N / 2))]) / N, 2)\nTraceback (most recent call last):\n  File \"test.py\", line 17, in <module>\n    Si = fast.analyze(problem, Y, print_to_console=False)\n  File \"SALib\\analyze\\fast.py\", line 78, in analyze\n    Si['S1'][i] = compute_first_order(Y[l], N, M, omega[0])\n  File \"SALib\\analyze\\fast.py\", line 90, in compute_first_order\n    D1 = 2 * np.sum(Sp[np.arange(1, M + 1) * int(omega) - 1])\nIndexError: index 15 is out of bounds for axis 0 with size 15\n\nAlthough such a low sampling number is rarely needed in practice, it would be good to have an automatic check / warning if the number of samples is too low in case this error should be related to accuracy reasons in the FAST approach.",
+            "closedAt": "2016-06-06T17:34:26Z",
+            "createdAt": "2016-05-24T08:48:30Z",
+            "id": "MDU6SXNzdWUxNTY0NTIzNDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 99,
+            "state": "CLOSED",
+            "title": "SALib IndexError for FAST with low number of samples",
+            "updatedAt": "2016-06-06T17:34:26Z",
+            "url": "https://github.com/SALib/SALib/issues/99"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I would like to use the Sobol method to run a sensitivity analysis on a complex model in python. This model includes continuous, discrete, as well as boolean input parameters. Is it possible to use the SALib python package to perform this analysis? Specifically, can I use the saltelli.sample method (or somehow modify it) to generate quasi-random sets of my input parameters when some parameters don't actually have upper or lower bounds but instead only discrete options? For instance, if my input parameters looked more like this:\nx1: continuous (so possible values could be 0, 0.01, 1.2...0.987)\nx2: boolean (so possible values are 0 or 1)\nx3: discrete (so possible values are 0, 0.25, 0.5, 0.75, or 1)\nIt would need to generate quasi-random sample sets for the continuous vars, but with boolean vars, for instance, it would need to only select from 0 or 1.\nThanks for the help.",
+            "closedAt": "2016-04-14T20:44:16Z",
+            "createdAt": "2016-04-14T17:23:31Z",
+            "id": "MDU6SXNzdWUxNDg0MjkzNjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 98,
+            "state": "CLOSED",
+            "title": "Use saltelli.sample method with boolean or discrete input parameters?",
+            "updatedAt": "2018-04-11T15:34:14Z",
+            "url": "https://github.com/SALib/SALib/issues/98"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "from @calvinwhealton ...\nIt seems that reading-in a problem file with no groups but with distributions is triggering an error in lines 183-185 of init.py. The error is that there are no groups so the results will not be meaningful and it does not read-in the file. Was this an intentional change because of some of the methods (Morris)? I think a simple work around is to define groups and once the problem file is read-in to set the ‘groups' to None, although it is inelegant.",
+            "closedAt": "2016-02-25T15:53:07Z",
+            "createdAt": "2016-02-24T21:30:05Z",
+            "id": "MDU6SXNzdWUxMzYxOTE4NDE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 96,
+            "state": "CLOSED",
+            "title": "dists without groups causes error",
+            "updatedAt": "2016-02-25T15:53:07Z",
+            "url": "https://github.com/SALib/SALib/issues/96"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "http://stackoverflow.com/questions/34668794/error-with-salib-library-for-sensitivity-analysis-in-python\nhttp://stackoverflow.com/questions/34943871/sensitivity-analysis-with-salib-nan-nan-nan",
+            "closedAt": "2016-07-18T11:07:28Z",
+            "createdAt": "2016-01-22T16:26:55Z",
+            "id": "MDU6SXNzdWUxMjgxOTE3Mzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 93,
+            "state": "CLOSED",
+            "title": "Open Questions on StackOverflow",
+            "updatedAt": "2016-07-18T11:07:28Z",
+            "url": "https://github.com/SALib/SALib/issues/93"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey I want to do a sensitivity analysis using SALib. The model is based on differential equations to solve the temperature after a certain time with odeint.\nProblem: I do not get any error, but it just say [nan,nan,nan] for my three values.\nIs it allowed to post Code in here? Otherwise here is a Link to my Code: http://stackoverflow.com/questions/34943871/sensitivity-analysis-with-salib-nan-nan-nan\nMaybe i am missing something. Some suggestions would be nice. Thanks",
+            "closedAt": "2016-01-24T13:06:43Z",
+            "createdAt": "2016-01-22T16:03:07Z",
+            "id": "MDU6SXNzdWUxMjgxODcyMjU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 92,
+            "state": "CLOSED",
+            "title": "sensitivity analysis with SALib [nan,nan,nan]",
+            "updatedAt": "2016-01-24T13:06:43Z",
+            "url": "https://github.com/SALib/SALib/issues/92"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello!\nI found your library to be of great use. Thank you for sharing!\nHowever, I wondered whether it might be possible to also implement Gaussian / normal distributed variables for FAST in sample.fast_sampler. For instance, this could be implemented using the Inverse Cumulative Distribution Function obtained with scipy.stats.norm.ppf.",
+            "closedAt": "2016-07-18T11:07:55Z",
+            "createdAt": "2016-01-22T12:50:16Z",
+            "id": "MDU6SXNzdWUxMjgxNTA1MTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 91,
+            "state": "CLOSED",
+            "title": "FAST for variables with Gaussian distribution",
+            "updatedAt": "2016-07-18T11:07:55Z",
+            "url": "https://github.com/SALib/SALib/issues/91"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "An upstream error documented here means that our plot comparison tests fail because they use the\nimage comparison decorator.\nTraceback (most recent call last):\n  File \"/Users/will2/miniconda3/envs/python2gurobi/lib/python2.7/unittest/case.py\", line 331, in run\n    testMethod()\n  File \"/Users/will2/miniconda3/envs/python2gurobi/lib/python2.7/site-packages/nose/loader.py\", line 418, in loadTestsFromName\n    addr.filename, addr.module)\n  File \"/Users/will2/miniconda3/envs/python2gurobi/lib/python2.7/site-packages/nose/importer.py\", line 47, in importFromPath\n    return self.importFromDir(dir_path, fqname)\n  File \"/Users/will2/miniconda3/envs/python2gurobi/lib/python2.7/site-packages/nose/importer.py\", line 94, in importFromDir\n    mod = load_module(part_fqname, fh, filename, desc)\n  File \"/Users/will2/repository/SALib/SALib/tests/test_plotting.py\", line 12, in <module>\n    from matplotlib.testing.decorators import image_comparison\n  File \"/Users/will2/miniconda3/envs/python2gurobi/lib/python2.7/site-packages/matplotlib/testing/decorators.py\", line 19, in <module>\n    import matplotlib.tests\nImportError: No module named tests",
+            "closedAt": "2016-10-10T16:50:54Z",
+            "createdAt": "2015-11-26T14:38:08Z",
+            "id": "MDU6SXNzdWUxMTkwNTYzMjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 84,
+            "state": "CLOSED",
+            "title": "Plotting tests fail due to upstream error in matplotlib 1.5.0",
+            "updatedAt": "2016-10-10T16:50:54Z",
+            "url": "https://github.com/SALib/SALib/issues/84"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "@willu47 and @JoerivanEngelen have discussed writing a paper based on SALib. A couple of thoughts come to mind which could be mixed and matched:\n\nJust a software announcement, \"this thing exists\"\nA description of all of the open source tools we're using (not many academic software packages have this kind of transparency and testing)\nA methods comparison, convergence on some test functions?\n\nA combination of some or all of those things could make for a nice paper. The journal I'm most familiar with for this kind of paper is Environmental Modelling & Software. Let's keep a list of ideas here to get started if you're interested.",
+            "closedAt": "2017-01-20T10:56:09Z",
+            "createdAt": "2015-11-10T16:35:24Z",
+            "id": "MDU6SXNzdWUxMTYxNDU3MzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 83,
+            "state": "CLOSED",
+            "title": "Publish something",
+            "updatedAt": "2017-01-20T15:22:14Z",
+            "url": "https://github.com/SALib/SALib/issues/83"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The fractional factorial module is missing from the documentation.  It has no doc-string!",
+            "closedAt": "2017-01-03T11:06:46Z",
+            "createdAt": "2015-09-23T15:35:17Z",
+            "id": "MDU6SXNzdWUxMDc5NDczNTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 80,
+            "state": "CLOSED",
+            "title": "Fractional factorial has no docstring",
+            "updatedAt": "2017-01-03T11:06:49Z",
+            "url": "https://github.com/SALib/SALib/issues/80"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The methods are currently documented using comments and not docstrings.  Also missing details for the arguments.  I am working on a fix for this now and will send a pull-request when completed.\nWould also be nice to setup online documentation when this issue is resolved.",
+            "closedAt": "2015-09-17T15:25:01Z",
+            "createdAt": "2015-08-28T17:23:35Z",
+            "id": "MDU6SXNzdWUxMDM3NjA0NDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 75,
+            "state": "CLOSED",
+            "title": "Better documentation",
+            "updatedAt": "2015-09-17T15:25:01Z",
+            "url": "https://github.com/SALib/SALib/issues/75"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the following paper, Oakley et al. (2004) propose a test function of the form\n\nThe data for the test function is available on the author's website.  The analytical results are in the paper (table 1 on page 764).\nOakley, Jeremy E., and Anthony O’Hagan. “Probabilistic Sensitivity Analysis of Complex Models: A Bayesian Approach.” Journal of the Royal Statistical Society: Series B (Statistical Methodology) 66, no. 3 (August 2004): 751–769. doi:10.1111/j.1467-9868.2004.05304.x.",
+            "closedAt": "2021-09-04T15:04:30Z",
+            "createdAt": "2015-08-28T10:18:04Z",
+            "id": "MDU6SXNzdWUxMDM2OTE3OTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "good_for_first_issue"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 74,
+            "state": "CLOSED",
+            "title": "A new test function from Oakley et al. (2004)",
+            "updatedAt": "2021-09-04T15:04:30Z",
+            "url": "https://github.com/SALib/SALib/issues/74"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "If identical trajectories were generated (which is only likely with very small numbers of parameters), then duplicate entries can be made in the distance matrix which leads to duplicate (but identical) combinations of trajectories than can be chosen.",
+            "closedAt": "2015-07-30T09:10:33Z",
+            "createdAt": "2015-07-27T17:04:50Z",
+            "id": "MDU6SXNzdWU5NzUwOTUxMA==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 68,
+            "state": "CLOSED",
+            "title": "Morris: Identical trajectories cause differences between optimal trajectories",
+            "updatedAt": "2015-07-30T09:10:33Z",
+            "url": "https://github.com/SALib/SALib/issues/68"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Details here.",
+            "closedAt": "2016-10-10T16:51:04Z",
+            "createdAt": "2015-07-24T15:42:38Z",
+            "id": "MDU6SXNzdWU5NzA3OTk0Nw==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 67,
+            "state": "CLOSED",
+            "title": "Travis CI has a new container based infrastructure, but it doesn't allow `sudo`",
+            "updatedAt": "2016-10-10T16:51:04Z",
+            "url": "https://github.com/SALib/SALib/issues/67"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The result metric sigma should be an unbiased estimator of the sample variation.  The current way of computing the standard deviation (np.std(ee)) is incorrect, and should be changed to np.std(ee, ddof=1)",
+            "closedAt": "2015-07-24T15:54:51Z",
+            "createdAt": "2015-07-24T09:55:39Z",
+            "id": "MDU6SXNzdWU5NzAxNjgwNw==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 65,
+            "state": "CLOSED",
+            "title": "In the Method of Morris, result metric sigma is not computed correctly",
+            "updatedAt": "2015-07-24T15:54:51Z",
+            "url": "https://github.com/SALib/SALib/issues/65"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "with the transfer to an organization repo. I think I fixed it on coveralls.io but we'll see next time there's a push.",
+            "closedAt": "2015-07-09T00:09:10Z",
+            "createdAt": "2015-07-08T21:43:49Z",
+            "id": "MDU6SXNzdWU5Mzg5NzA5Mg==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 62,
+            "state": "CLOSED",
+            "title": "coveralls broke",
+            "updatedAt": "2015-07-09T00:09:10Z",
+            "url": "https://github.com/SALib/SALib/issues/62"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The following code replicates the issue with SALib v0.5.\nCompare values of mu_star_conf and sigma in the console printouts.\nThe 95% confidence intervals seem to be sensitive to the number of levels used in the sample.\nfrom SALib.analyze import morris\nfrom SALib.sample.morris import sample\nfrom SALib.test_functions import Sobol_G\n\n# Create parameter file\nproblem = {'num_vars': 3,\n                  'names': ['x1', 'x2', 'x3'],\n                  'groups': None,\n'bounds': [[0, 1],\n                [0, 1],\n                [0, 1]]\n }\n\n# Generate sample with high N (N=1000)\nparam_values = sample(problem, N=1000, num_levels=4, grid_jump=2, \\\n                      optimal_trajectories=None)\n\n# Run the \"model\" -- this will happen offline for external models\nY = Sobol_G.evaluate(param_values, a=[99,50,1])\n\n# Use 100 resamples\nSi = morris.analyze(problem, param_values, Y, conf_level=0.95, \n                    print_to_console=True,\n                    num_levels=4, grid_jump=2, num_resamples=100)\n\n# Now use 1000 resamples\nSi = morris.analyze(problem, param_values, Y, conf_level=0.95, \n                    print_to_console=True,\n                    num_levels=4, grid_jump=2, num_resamples=1000)\n\n\n# Now generate a sample with a low N (N=10)\nparam_values = sample(problem, N=10, num_levels=4, grid_jump=2, \\\n                      optimal_trajectories=None)\n\n# Run the \"model\" -- this will happen offline for external models\nY = Sobol_G.evaluate(param_values, a=[99,50,1])\n\n# Use 100 resamples\nSi = morris.analyze(problem, param_values, Y, conf_level=0.95, \n                    print_to_console=True,\n                    num_levels=4, grid_jump=2, num_resamples=100)\n\n# Now use 1000 resamples\nSi = morris.analyze(problem, param_values, Y, conf_level=0.95, \n                    print_to_console=True,\n                    num_levels=4, grid_jump=2, num_resamples=1000)\n\n\n# Now generate a sample with a high number of levels (num_levels=10)\nparam_values = sample(problem, N=10, num_levels=10, grid_jump=5, \\\n                      optimal_trajectories=None)\n\n# Run the \"model\" -- this will happen offline for external models\nY = Sobol_G.evaluate(param_values, a=[99,50,1])\n\n# Use 100 resamples\nSi = morris.analyze(problem, param_values, Y, conf_level=0.95, \n                    print_to_console=True,\n                    num_levels=10, grid_jump=5, num_resamples=100)\n\n# Now use 1000 resamples\nSi = morris.analyze(problem, param_values, Y, conf_level=0.95, \n                    print_to_console=True,\n                    num_levels=10, grid_jump=5, num_resamples=1000)",
+            "closedAt": "2015-07-08T21:37:21Z",
+            "createdAt": "2015-07-08T15:45:57Z",
+            "id": "MDU6SXNzdWU5MzgyMzEzNA==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "invalid"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 61,
+            "state": "CLOSED",
+            "title": "Confidence intervals for Method of Morris very different from sigma",
+            "updatedAt": "2015-07-08T21:42:45Z",
+            "url": "https://github.com/SALib/SALib/issues/61"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I've a shopping list of little utilities and tools which I'd like to add to the Method of Morris.\nUtilities\n\nRemove simulation/missing data from results, and recompute metrics - this is inspired by a paper from Branger et al. (2015) who note that a piece of missing data affects only the computation of two elementary effects.  These can just be removed from the input sample and model results.  However, this will result in irregularly sized trajectories, so will need to bypass the checks on sample and trajectory size related to the number of parameters.\nInput sample analysis - a quick utility which returns the histograms of each input parameter for a given input sample, with the option to view either the levels (e.g. 1,2,3 or 4) or sample values (e.g. -0.5, 0, 0.5, 1)\nInput sample analysis - a utility which identifies which input changed in which simulation (for identifying which input parameter caused a crash or infeasible solution) - could also identify the previous and next levels for each parameter\n\nVisualisations\nThis is potentially a no-go zone because it would add a dependency to Matplotlib, but this is such a ubiquitous package it may not be an issue.  The aesthetics also quickly get subjective (I prefer seaborn for example)...\nResults\n\nScatter plot of mu* versus sigma\n\nScatter plot of mu versus sigma\nHorizontal bar chart of mu* with sigma as error bars\nHorizontal bar chart of mu with sigma as error bars\n\nUtilities\n\nHistogram of selected parameter/s for a given input sample\nMatrix plot of entire input sample, with groups sharing colours, and levels shown as different shading",
+            "closedAt": "2019-11-07T22:12:26Z",
+            "createdAt": "2015-06-17T15:09:00Z",
+            "id": "MDU6SXNzdWU4OTA0Mzg2OA==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 58,
+            "state": "CLOSED",
+            "title": "Method of Morris: Tools",
+            "updatedAt": "2019-11-07T22:12:27Z",
+            "url": "https://github.com/SALib/SALib/issues/58"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Links to readme and contributing are broken.\nNot sure whether these are supposed to link to the github repository, or copies of these files on the web-page.",
+            "closedAt": "2015-06-17T14:50:00Z",
+            "createdAt": "2015-06-15T13:59:57Z",
+            "id": "MDU6SXNzdWU4ODQzNTg5OA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 56,
+            "state": "CLOSED",
+            "title": "Broken links on the io webpages",
+            "updatedAt": "2015-06-17T14:50:00Z",
+            "url": "https://github.com/SALib/SALib/issues/56"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello everyone,\nI have used this package with great pleasure so far. In my internship I am going to implement the Morris method on a complex model, but while reading the scientific literature I found some methods that, in my opinion, would make a nice addition to this package. I am not sure if this is the right place to post this; so if I am doing this incorrectly, sorry in advance. I am not a very skilled coder, therefore I mention these methods here. I hope my lazy attitude does not bother you! ;-)\n--Radial Sampling--\nThis is nothing else than an iterated One Factor At A Time approach. Starting from a random point in the hyperspace, one step in turn is taken for each factor. This procedure is iterated. So: instead of using trajectories like Morris' method, \"stars\" are created in the input hyperspace. Campolongo et al. (2011) used this method with greater success than Morris' method and the same amount of runs.\nhttp://www.sciencedirect.com/science/article/pii/S0010465510005321\n--Morris method with sampling strategy of Ruano et al. (2012)--\nAs the \"Brute Force Approach\" of Campolongo et al. (2007) introduces an combinatorial optimization problem, a sampling strategy which looks at combinations locally instead of globally might be a nice addition to the Morris function in this package. This makes it doable to create more optimized trajectories in exchange for a better coverage of the input space. Still, this is better than purely random sampling. Ruano et al. (2012) present such an approach. I myself find it hard to understand the thoughts behind each step in their algorithm, but it is presented in such a way that it could be implemented in code.\nhttp://www.sciencedirect.com/science/article/pii/S1364815212000904\nUPDATE: I have made an implementation of this method for SALib and pulled it as a request (or whatever the correct grammar for a \"pull request\" is)\n--Latin Hypercube Sampling (LHS) of starting points in Morris method--\nUsing LHS for the starting points was originally proposed by Morris to enhance the spread in the output space. This is also an alternative to the \"brute force approach\".\nI hope these methods could be added to the \"Methods to consider adding\" list! If you cannot access the papers, send me a message.",
+            "closedAt": "2019-11-07T22:18:55Z",
+            "createdAt": "2015-06-02T14:42:12Z",
+            "id": "MDU6SXNzdWU4NDA1NDA0NA==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 55,
+            "state": "CLOSED",
+            "title": "Extra methods to be included in this package in the future",
+            "updatedAt": "2019-11-07T22:18:55Z",
+            "url": "https://github.com/SALib/SALib/issues/55"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, I noticed that the project is using LGPL v3, this put many restrictions on it (for example other libraries with LGPL v2.1 and even GPLv2!). Please read the GnuTLS experience at: http://nmav.gnutls.org/2013/03/the-perils-of-lgplv3.html\nIt forces the libraries to migrate to GPL v3, look at the compatibility matrix: http://gplv3.fsf.org/dd3-faq\nOne very easy way to fix that is to license the software under \"LGPLv2.1 or later\" so the people can combine it with GPLv2 and LGPLv2.1 and also with GPLv3 and LGPLv3 code.\nBest regards,\nFábio",
+            "closedAt": "2015-05-08T12:59:29Z",
+            "createdAt": "2015-05-07T10:53:49Z",
+            "id": "MDU6SXNzdWU3Mzk0MDY3Nw==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 53,
+            "state": "CLOSED",
+            "title": "Relicense with \"LGPL v2.1 or later\"",
+            "updatedAt": "2015-05-08T12:59:29Z",
+            "url": "https://github.com/SALib/SALib/issues/53"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The optimum combination of trajectories should always be returned in ascending order from the alternative options - either the brute force method, or the experimental combinatorial optimisation version.",
+            "closedAt": "2015-04-21T14:14:04Z",
+            "createdAt": "2015-04-20T10:11:06Z",
+            "id": "MDU6SXNzdWU2OTU1MzM5NA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 49,
+            "state": "CLOSED",
+            "title": "Error in compile_output if maximum_combo is not in ascending order",
+            "updatedAt": "2015-04-21T14:14:04Z",
+            "url": "https://github.com/SALib/SALib/issues/49"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Call to find_optimum_trajectories in sample/morris.py should be called with groups argument",
+            "closedAt": "2015-04-21T14:13:26Z",
+            "createdAt": "2015-04-17T17:11:34Z",
+            "id": "MDU6SXNzdWU2OTE3ODA3MQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 48,
+            "state": "CLOSED",
+            "title": "Morris groups with optimal trajectories not correctly computing distance matrix",
+            "updatedAt": "2015-07-06T21:36:13Z",
+            "url": "https://github.com/SALib/SALib/issues/48"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "for other methods besides Morris. Also consider reporting the standard error in the results instead of the CI half-width, because this has been confusing for people.",
+            "closedAt": "2015-05-08T13:02:30Z",
+            "createdAt": "2015-04-16T12:49:34Z",
+            "id": "MDU6SXNzdWU2ODkxNjg4MA==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 47,
+            "state": "CLOSED",
+            "title": "vectorize bootstrap CI calculations",
+            "updatedAt": "2015-05-08T13:02:30Z",
+            "url": "https://github.com/SALib/SALib/issues/47"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The function which returns a bootstrapped confidence interval in the morris method analysis module is very slow.",
+            "closedAt": "2015-04-14T17:25:28Z",
+            "createdAt": "2015-04-14T16:33:40Z",
+            "id": "MDU6SXNzdWU2ODQzNDA2Ng==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 45,
+            "state": "CLOSED",
+            "title": "Computation of mu_star_confidence (Morris) is slow",
+            "updatedAt": "2015-07-06T21:36:13Z",
+            "url": "https://github.com/SALib/SALib/issues/45"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2015-05-08T13:00:16Z",
+            "createdAt": "2015-04-03T15:06:36Z",
+            "id": "MDU6SXNzdWU2NjE2Mjc3Nw==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 44,
+            "state": "CLOSED",
+            "title": "make sure `'group': none` is an option for all methods",
+            "updatedAt": "2015-05-08T13:00:16Z",
+            "url": "https://github.com/SALib/SALib/issues/44"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "read_param_file should use universal read mode: ('rU')\nhttp://www.shutupandship.com/2012/01/file-modes-in-python-text-binary-and.html",
+            "closedAt": "2015-05-08T13:00:24Z",
+            "createdAt": "2015-03-20T14:14:01Z",
+            "id": "MDU6SXNzdWU2MzIzNTAwOA==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 43,
+            "state": "CLOSED",
+            "title": "parameter file line endings",
+            "updatedAt": "2015-05-08T13:00:24Z",
+            "url": "https://github.com/SALib/SALib/issues/43"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This isn't an issue but a question or two. Is there an API for interfacing with SALib.sample.morris and SALib.analyze.morris, without the need to read and write parameter files, sample files, and model results? Is it possible to get the analysis results directly without using the operating system to write it to a file and then read it later?",
+            "closedAt": "2015-01-29T16:21:08Z",
+            "createdAt": "2015-01-23T03:09:57Z",
+            "id": "MDU6SXNzdWU1NTI0MDAxNw==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 35,
+            "state": "CLOSED",
+            "title": "Is there an API for Method of Morris?",
+            "updatedAt": "2015-01-29T16:21:08Z",
+            "url": "https://github.com/SALib/SALib/issues/35"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The following error occurs when I run step 4 of the Morris analysis:\nTraceback (most recent call last):\n  File \"/usr/lib/python2.7/runpy.py\", line 162, in _run_module_as_main\n    \"__main__\", fname, loader, pkg_name)\n  File \"/usr/lib/python2.7/runpy.py\", line 72, in _run_code\n    exec code in run_globals\n  File \"/usr/local/lib/python2.7/dist-packages/SALib/analyze/morris.py\", line 206, in <module>\n    num_levels=args.levels, grid_jump=args.grid_jump)\n  File \"/usr/local/lib/python2.7/dist-packages/SALib/analyze/morris.py\", line 33, in analyze\n    X = np.loadtxt(input_file, delimiter=delim, ndmin=2)\n  File \"/usr/lib/python2.7/dist-packages/numpy/lib/npyio.py\", line 848, in loadtxt\n    items = [conv(val) for (conv, val) in zip(converters, vals)]\nValueError: could not convert string to float: adCO_k\n\nI must manually remove the first line (header row) of my_samples_file.txt to avoid the error.",
+            "closedAt": "2015-01-23T20:24:39Z",
+            "createdAt": "2015-01-23T02:48:07Z",
+            "id": "MDU6SXNzdWU1NTIzODc3Mg==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 34,
+            "state": "CLOSED",
+            "title": "Must manually remove header from samples file",
+            "updatedAt": "2015-01-23T20:33:04Z",
+            "url": "https://github.com/SALib/SALib/issues/34"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Copied below from @willu47 ...\nAt present, the Morris class is just a wrapper around the existing morris_oat, morris_optimal and morris_groups modules.  It selects which module to run based upon the parameter file - the logic of which is contained in the __init__ section of the class.\nI left it like this because (and I'm learning here...) I thought that it would be best to maintain some form of backwards compatibility between how morris_oat was originally designed to be used, and my new code which includes calls to morris_optimal and groups.\nAfter issues #31 and #26 were raised I now see this has just complicated things and confused users.\nI propose a big tidy up:\n\nFirstly, all the code from the various morris modules should be brought within the Morris class.  This way, the Morris class will be the definitive entry point for sampling using Morris' approach (and should avoid confusion).\nWe'll also have to rejig the tests for each the morris modules to point to the relevant procedures within the Morris class...\nThe --group argument can be removed from the arguments under the __main__ prodedure.",
+            "closedAt": "2015-01-29T16:17:45Z",
+            "createdAt": "2014-12-30T21:03:58Z",
+            "id": "MDU6SXNzdWU1MzE0Njg3NQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 32,
+            "state": "CLOSED",
+            "title": "Consolidate Morris sampling methods into Morris class",
+            "updatedAt": "2015-01-29T16:17:45Z",
+            "url": "https://github.com/SALib/SALib/issues/32"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems that SALib.sample.morris_oat ignores the bounds in the parameters file.\nIn params.txt I have:\ndy.adCO.k 500 800 # mA/cm^2\ndy.oxCO.k 2e-4 5e-4 # mA/cm^2\nI ran python -m SALib.sample.morris_oat -n 3 -p params.txt -o my_samples_file.txt.\nI got this in my_samples_file.txt:\n8.88888889e-01 1.11111111e-01\n3.33333333e-01 1.11111111e-01\n3.33333333e-01 6.66666667e-01\n8.88888889e-01 8.88888889e-01\n3.33333333e-01 8.88888889e-01\n3.33333333e-01 3.33333333e-01\n1.00000000e+00 7.77777778e-01\n1.00000000e+00 2.22222222e-01\n4.44444444e-01 2.22222222e-01\nNone of the settings fall within the bounds of the parameters. If I change the bounds to 0.0 and 1.0, I get the same output.",
+            "closedAt": "2014-12-29T20:11:07Z",
+            "createdAt": "2014-12-29T18:52:13Z",
+            "id": "MDU6SXNzdWU1MzA2MTY5MA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 31,
+            "state": "CLOSED",
+            "title": "Are bounds ignored?",
+            "updatedAt": "2014-12-30T21:02:59Z",
+            "url": "https://github.com/SALib/SALib/issues/31"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The current implementation of Morris groups uses a separate text group file to define the groups.  Each row in the group file contains the name of the group, followed by the names of the variables from the corresponding parameter file.\nThis is current unworkable for models with large numbers of parameters.  I therefore suggest we go back to the original suggestion of @jdherman and incorporate grouping in the parameter file as a separate column.\nSuggested parameter file format:\nx1,0,1,group1\nx2,-1,1,group2\nx3,0,1,group2\n\nI think this will require two passes of the parameter file:\n\nto collect the names of the groups and identify unique group names (i.e. a set of groups)\nto a) assign the parameters to groups and build the group matrix and b) read in the parameter values and names",
+            "closedAt": "2014-12-20T20:56:50Z",
+            "createdAt": "2014-12-11T13:56:41Z",
+            "id": "MDU6SXNzdWU1MTY4OTEwOQ==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 29,
+            "state": "CLOSED",
+            "title": "Morris groups - group file currently unworkable for large numbers of parameters",
+            "updatedAt": "2015-07-06T21:36:13Z",
+            "url": "https://github.com/SALib/SALib/issues/29"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "More annoying that serious and an easy fix.  Reminder to myself to push a bug fix and write a test to solve this in forthcoming pull request.\nIndexError                                Traceback (most recent call last)\n/site-packages/SALib/sample/morris.pyc in __init__(self, parameter_file, samples, num_levels, grid_jump, group_file, optimal_trajectories)\n     62         if self.groups is None:\n     63 \n---> 64             self.create_sample()\n     65 \n     66         else:\n\n/site-packages/SALib/sample/morris.pyc in create_sample(self)\n    117                                                self.parameter_file,\n    118                                                self.num_levels,\n--> 119                                                self.grid_jump)\n    120 \n    121         else:\n\n/Users/will2/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/SALib/sample/morris_oat.pyc in sample(N, param_file, num_levels, grid_jump)\n     38         for i in range(D):\n     39             x_base[:, i] = (\n---> 40                 rd.choice(np.arange(num_levels - grid_jump))) / (num_levels - 1)\n     41 \n     42         # Indices to be assigned to X, corresponding to this trajectory\n\n/Applications/Canopy.app/appdata/canopy-1.5.1.2730.macosx-x86_64/Canopy.app/Contents/lib/python2.7/random.pyc in choice(self, seq)\n    271     def choice(self, seq):\n    272         \"\"\"Choose a random element from a non-empty sequence.\"\"\"\n--> 273         return seq[int(self.random() * len(seq))]  # raises IndexError if seq is empty\n    274 \n    275     def shuffle(self, x, random=None):",
+            "closedAt": "2015-01-29T16:18:23Z",
+            "createdAt": "2014-12-09T17:09:21Z",
+            "id": "MDU6SXNzdWU1MTQ1Mzg1Ng==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 28,
+            "state": "CLOSED",
+            "title": "Bug: Morris sample fails without error if grid_step >= num_levels",
+            "updatedAt": "2015-07-06T21:36:13Z",
+            "url": "https://github.com/SALib/SALib/issues/28"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "From @saroele ...\nAnd then I have some bad news: I get a bug when trying ``optimal_trajectories=4``. \nWith 2, 3 and 5 it works (the latter takes a LOT of time though, but that is documented).  \n\n# Generate samples \nparam_values = Morris(os.path.join('results','parameters_'+s_id+'.txt'), \n                  samples=100,\n                  num_levels=num_levels, \n                  grid_jump=grid_jump,\n                  optimal_trajectories=4)\n\n---------------------------------------------------------------------------\nValueError                                Traceback (most recent call last)\n<ipython-input-22-be5a7e2544a6> in <module>()\n      4                       num_levels=num_levels,\n      5                       grid_jump=grid_jump,\n----> 6                       optimal_trajectories=4)\n      7 #print param_values\n      8 \n\n/home/roel/data/work/SALib/SALib/sample/morris.pyc in __init__(self, parameter_file, samples, num_levels, grid_jump, group_file, optimal_trajectories)\n     62         if self.groups is None:\n     63 \n---> 64             self.create_sample()\n     65 \n     66         else:\n\n/home/roel/data/work/SALib/SALib/sample/morris.pyc in create_sample(self)\n    129                                                          self.samples,\n    130                                                          self.num_vars,\n--> 131                                                          self.optimal_trajectories)\n    132 \n    133         self.output_sample = optimal_sample\n\n/home/roel/data/work/SALib/SALib/sample/morris_optimal.pyc in find_optimum_trajectories(input_sample, N, num_params, k_choices)\n    132                                N,\n    133                                num_params,\n--> 134                                k_choices)\n    135 \n    136     index_list = []\n\n/home/roel/data/work/SALib/SALib/sample/morris_optimal.pyc in find_most_distant(input_sample, N, num_params, k_choices)\n     72 \n     73     for combos in grouper(chunk, combo_gen):\n---> 74         scores[(counter*chunk):((counter+1)*chunk)] = mappable(combos, pairwise, distance_matrix)\n     75         counter += 1\n     76     return scores\n\nValueError: could not broadcast input array from shape (921225) into shape (921224)\n\nAnother example ...\nSimilar bug with a different combination : \n # Generate samples \n param_values = Morris(os.path.join('results','parameters_'+s_id+'.txt'), \n                  samples=200,\n                  num_levels=num_levels, \n                  grid_jump=grid_jump,\n                  optimal_trajectories=3)\n\n---------------------------------------------------------------------------\nValueError                                Traceback (most recent call last)\n<ipython-input-32-40d2028baf35> in <module>()\n      4                       num_levels=num_levels,\n      5                       grid_jump=grid_jump,\n----> 6                       optimal_trajectories=3)\n      7 #print param_values\n      8 \n\n/home/roel/data/work/SALib/SALib/sample/morris.pyc in __init__(self, parameter_file, samples, num_levels, grid_jump, group_file, optimal_trajectories)\n     62         if self.groups is None:\n     63 \n---> 64             self.create_sample()\n     65 \n     66         else:\n\n/home/roel/data/work/SALib/SALib/sample/morris.pyc in create_sample(self)\n    129                                                          self.samples,\n    130                                                          self.num_vars,\n--> 131                                                          self.optimal_trajectories)\n    132 \n    133         self.output_sample = optimal_sample\n\n/home/roel/data/work/SALib/SALib/sample/morris_optimal.pyc in find_optimum_trajectories(input_sample, N, num_params, k_choices)\n    132                                N,\n    133                                num_params,\n--> 134                                k_choices)\n    135 \n    136     index_list = []\n\n/home/roel/data/work/SALib/SALib/sample/morris_optimal.pyc in find_most_distant(input_sample, N, num_params, k_choices)\n     72 \n     73     for combos in grouper(chunk, combo_gen):\n---> 74         scores[(counter*chunk):((counter+1)*chunk)] = mappable(combos, pairwise, distance_matrix)\n     75         counter += 1\n     76     return scores\n\nValueError: could not broadcast input array from shape (313400) into shape (313399)",
+            "closedAt": "2015-02-04T15:31:32Z",
+            "createdAt": "2014-12-08T16:50:56Z",
+            "id": "MDU6SXNzdWU1MTMyMzk3Nw==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 27,
+            "state": "CLOSED",
+            "title": "Array size off by one in morris optimal trajectories",
+            "updatedAt": "2015-02-04T15:31:32Z",
+            "url": "https://github.com/SALib/SALib/issues/27"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI upgraded  today to v0.2, and suddenly the sampling results are wrong.\nTo give a minimal example:\nimport sys\n\nsys.path.append('/home/roel/data/work/SALib')\nfrom SALib.sample import morris_oat\nfrom SALib.analyze import morris\n\n# create a parameter file with the range for each parameter\nwith open('test_parameters.txt', 'w') as f_pars:\n    f_pars.write('A 0.993220338983 1.00677966102\\n')\n    f_pars.write('B 0.5 1.5\\n')\n\n# Generate samples \nparam_values = morris_oat.sample(2, 'test_parameters.txt', 4, 2)\n\n# Here we see that the sampling does not take into account the specified boundaries\nprint param_values\n\n[[ 0.          0.        ]\n [ 0.          0.66666667]\n [ 0.66666667  0.66666667]\n [ 0.33333333  0.33333333]\n [ 1.          0.33333333]\n [ 1.          1.        ]]\n\nDid the api change, or am i doing something wrong?\nThanks,\nRoel",
+            "closedAt": "2014-12-08T16:47:22Z",
+            "createdAt": "2014-12-08T15:03:54Z",
+            "id": "MDU6SXNzdWU1MTMxMTE4NQ==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 26,
+            "state": "CLOSED",
+            "title": "Error in morris_oat.sample() since v0.2",
+            "updatedAt": "2014-12-08T16:47:22Z",
+            "url": "https://github.com/SALib/SALib/issues/26"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nfirst: thanks for this library! (I'm using it for SA of building simulation models.)\nI have a question regarding the Morris sampling strategy.  I'm using v0.2 (but had the same issues before).\nI use the following code to create a sample, and then visualize my sample (not all dependencies included, but you can get the idea):\nparam_values = morris_oat.sample(2, 'parameters.txt', 4, 2)\n\n# show the distribution of each individual parameter\nplt.figure()\nrows, cols = plot_layout(len(xnames))\nfor i,v in enumerate(xnames):\n    ax = plt.subplot(rows, cols, i+1)\n    plt.hist(param_values[:,i]*scaling[i], bins=num_levels)\n    ax.set_title(v)\nplt.tight_layout()\n\nThe resulting sample does not look well spread over the different intervals.  Here is a typical result of the plot:\n\nIs this normal behaviour? Are there solutions to get a more equilibrated sample?\nThanks,\nRoel",
+            "closedAt": "2014-12-08T16:52:05Z",
+            "createdAt": "2014-12-08T14:47:44Z",
+            "id": "MDU6SXNzdWU1MTMwOTQwMQ==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 25,
+            "state": "CLOSED",
+            "title": "Strange sample",
+            "updatedAt": "2014-12-08T16:52:05Z",
+            "url": "https://github.com/SALib/SALib/issues/25"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Campolongo et al. (2007) suggest and enhancement for the original Morris sampling regimen which allows factors to be grouped.",
+            "closedAt": "2014-12-02T18:12:34Z",
+            "createdAt": "2014-11-21T09:21:26Z",
+            "id": "MDU6SXNzdWU0OTY3NTEzMA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 24,
+            "state": "CLOSED",
+            "title": "Add Morris groups functionality",
+            "updatedAt": "2014-12-02T18:12:34Z",
+            "url": "https://github.com/SALib/SALib/issues/24"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have some parameter names from an existing model that contain with whitespace in the names.\nThe current parameter file format in SALib doesn't allow for parameter files with alternative delimiters to a whitespace \" \".\nI suggest that an optional argument delim=\" \" is introduced to the procedure in the util module:\ndef read_param_file(filename, delim=\" \"):\n\n    with open(filename, \"r\") as file:\n        names = []\n        bounds = []\n        num_vars = 0\n\n        for row in [line.split(deli) for line in file if not line.strip().startswith('#')]:\n            num_vars += 1\n            names.append(row[0])\n            bounds.append([float(row[1]), float(row[2])])\n\n    return {'names': names, 'bounds': bounds, 'num_vars': num_vars}\nHowever, this would then require an additional argument to be passed to the calling procedure of read_param_file.\nFor example:\ndef morris_optimal(arg1, arg2, delim=\" \"):\n    file = read_param_file(\"myfile.txt\", \",\")\n    return file\n\nmorris_optimal( foo, bar, delim=\",\")\nIs there a better way to organise the loading of parameter data?",
+            "closedAt": "2014-12-02T18:11:17Z",
+            "createdAt": "2014-11-06T15:16:57Z",
+            "id": "MDU6SXNzdWU0Nzk3MzExNg==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 21,
+            "state": "CLOSED",
+            "title": "Parameter files don't allow parameter names with spaces",
+            "updatedAt": "2014-12-02T18:11:17Z",
+            "url": "https://github.com/SALib/SALib/issues/21"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dependencies that are only used for a particular method should be optional to install, especially if they are outside the standard scientific python stack. Could use the extras setup here:\nhttp://pythonhosted.org/setuptools/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies",
+            "closedAt": "2015-01-30T20:44:52Z",
+            "createdAt": "2014-10-21T14:12:04Z",
+            "id": "MDU6SXNzdWU0NjM5Nzg3OQ==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 19,
+            "state": "CLOSED",
+            "title": "make dependencies optional other than numpy/scipy",
+            "updatedAt": "2015-01-30T20:44:52Z",
+            "url": "https://github.com/SALib/SALib/issues/19"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "here is the output:\nhttps://travis-ci.org/jdherman/SALib/jobs/38291537\nI fixed a few things prior to this, including the long keyword (removed in py3) and range function (which needs to be cast to a list in py3). But something is still wrong with the integer indices being passed islice(). Maybe they are too large?\nNote I also switched to the n-choose-k function scipy.misc.comb(N,k).",
+            "closedAt": "2014-11-04T13:46:40Z",
+            "createdAt": "2014-10-17T18:55:49Z",
+            "id": "MDU6SXNzdWU0NjEzMjAzNw==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 18,
+            "state": "CLOSED",
+            "title": "morris_optimal build fails for python 3",
+            "updatedAt": "2014-11-04T13:46:40Z",
+            "url": "https://github.com/SALib/SALib/issues/18"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In addition to my pull request #16 for brute force computation of optimal trajectories, I've also implemented a combinatorial optimisation feature using the python API for Gurobi, a commercially available optimisation package.\nThis is significantly more powerful, but adds a dependency to the library.\nIs there any appetite for including this within the feature set?",
+            "closedAt": "2015-04-21T14:39:25Z",
+            "createdAt": "2014-10-17T13:10:50Z",
+            "id": "MDU6SXNzdWU0NjA5NzM0Mw==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 17,
+            "state": "CLOSED",
+            "title": "Optimised trajectories",
+            "updatedAt": "2015-07-06T21:36:13Z",
+            "url": "https://github.com/SALib/SALib/issues/17"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The delta.py has the same introductory remarks as the sobol.py :\n...Perform Sobol Analysis on file of model results\nReturns a dictionary with keys 'S1', 'S1_conf', 'ST', and 'ST_conf'\n...\nwhich is a bit confusing. The actual keys are 'delta', 'delta_conf', 'S1', 'S1_conf', but I don't understand what the S1 values mean. Are they similar to sobol first order (they are calculated from the function sobol_first())  and what are the differences?\nThanks for any enlightening remark",
+            "closedAt": "2014-10-14T19:05:30Z",
+            "createdAt": "2014-10-14T18:48:13Z",
+            "id": "MDU6SXNzdWU0NTc4NTc4OA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 14,
+            "state": "CLOSED",
+            "title": "comments on delta.py ",
+            "updatedAt": "2014-10-15T12:58:19Z",
+            "url": "https://github.com/SALib/SALib/issues/14"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "since python3 imports must be relative, ie from .sobol_sequence import xxxxx:\nxantares@archlinux:~/projects/xantares-aur$ python python-salib/src/salib-0.1/examples/sobol/sobol.py\nTraceback (most recent call last):\nFile \"python-salib/src/salib-0.1/examples/sobol/sobol.py\", line 4, in \nfrom SALib.sample import saltelli\nFile \"/usr/lib/python3.4/site-packages/SALib/sample/saltelli.py\", line 3, in \nimport sobol_sequence\nImportError: No module named 'sobol_sequence'",
+            "closedAt": "2014-10-10T17:41:37Z",
+            "createdAt": "2014-10-09T20:30:47Z",
+            "id": "MDU6SXNzdWU0NTQxMzQ2Ng==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 11,
+            "state": "CLOSED",
+            "title": "complete py3k port",
+            "updatedAt": "2014-10-10T17:41:37Z",
+            "url": "https://github.com/SALib/SALib/issues/11"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "automating tests would be nice, you could use travis to test againt multiple python versions:\nhttps://github.com/rg3/youtube-dl/blob/master/.travis.yml",
+            "closedAt": "2014-11-18T18:31:42Z",
+            "createdAt": "2014-10-09T20:13:03Z",
+            "id": "MDU6SXNzdWU0NTQxMTU3Ng==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 10,
+            "state": "CLOSED",
+            "title": "autotests",
+            "updatedAt": "2014-11-18T18:31:42Z",
+            "url": "https://github.com/SALib/SALib/issues/10"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "hello,\nplease provide a setup.py for installation, for example:\nhttps://github.com/hhatto/autopep8/blob/master/setup.py",
+            "closedAt": "2014-10-09T17:55:00Z",
+            "createdAt": "2014-10-06T14:25:09Z",
+            "id": "MDU6SXNzdWU0NDk4OTIzNA==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 6,
+            "state": "CLOSED",
+            "title": "setup.py",
+            "updatedAt": "2014-10-09T17:55:00Z",
+            "url": "https://github.com/SALib/SALib/issues/6"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Python 2.7.1, NumPy 1.5.1 gives the following error when running python sobol.py from the examples/sobol directory:\nTraceback (most recent call last):\n  File \"sobol.py\", line 13, in <module>\n    param_values = saltelli.sample(1000, param_file, calc_second_order = True)\n  File \"../../SALib/sample/saltelli.py\", line 19, in sample\n    base_sequence = sobol_sequence.sample(N + skip_values, 2*D)\n  File \"../../SALib/sample/sobol_sequence.py\", line 47, in sample\n    directions = read_directions_file('joe-kuo-6.21000.txt')\n  File \"../../SALib/sample/sobol_sequence.py\", line 120, in read_directions_file\n    return np.array(directions)\nValueError: setting an array element with a sequence.\n\nNot sure if this is a difference in Python (parsing the Sobol sequence file) or NumPy (creating array from list). Since it works fine in recent versions of Python/NumPy, maybe ok to let this slide for now.",
+            "closedAt": "2014-12-08T16:51:22Z",
+            "createdAt": "2014-08-19T12:55:53Z",
+            "id": "MDU6SXNzdWU0MDU4NzcyNA==",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "wontfix"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 5,
+            "state": "CLOSED",
+            "title": "Sobol sequence creation error in older Python+NumPy",
+            "updatedAt": "2014-12-08T16:51:22Z",
+            "url": "https://github.com/SALib/SALib/issues/5"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Just wondering if there could be a discussion of what these parameters really do, in the docs.",
+            "closedAt": "2014-03-12T18:33:49Z",
+            "createdAt": "2014-03-12T18:11:03Z",
+            "id": "MDU6SXNzdWUyOTI4NzYxMQ==",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 3,
+            "state": "CLOSED",
+            "title": "Docs for morris grid_jump and num_levels parameters",
+            "updatedAt": "2014-03-12T18:33:49Z",
+            "url": "https://github.com/SALib/SALib/issues/3"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxNC0wMy0xMlQxODoxMTowM1rOAb7kuw==",
+          "hasNextPage": false
+        },
+        "totalCount": 293
+      }
+    }
+  }
+}

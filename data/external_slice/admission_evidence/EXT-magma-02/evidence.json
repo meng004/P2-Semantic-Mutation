@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-magma-02",
+  "source_pool": "defect4mr_64",
+  "source_index": 33,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "47fe633823b906175718494e59c32b27658f545f49f8904eab94e930918891a6",
+  "issue_url": "",
+  "fix_url": "https://github.com/icl-utk-edu/magma/commit/55c5b2b38f67897e8ca2f58ba46b7c4982cd4105",
+  "buggy_sha": "e20a6748d9e7067c0946036b9c6d5caa022051db",
+  "fixed_sha": "55c5b2b38f67897e8ca2f58ba46b7c4982cd4105",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "no public issue or equivalent tracker entry linked to the fix.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The batched complex solve accepts numeric matrices and right-hand sides and can expose the defect in one selected solution component."
+  },
+  "evidence_urls": [
+    "https://github.com/icl-utk-edu/magma/commit/55c5b2b38f67897e8ca2f58ba46b7c4982cd4105"
+  ],
+  "mechanism_sentence": "corrects the batched complex random-butterfly solve."
+}

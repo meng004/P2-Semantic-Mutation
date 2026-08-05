@@ -1,0 +1,68 @@
+{
+  "commands": [
+    {
+      "command": "curl -fsSL -L -H \"Authorization: Bearer <REDACTED_GITHUB_TOKEN>\" -o /tmp/c3_batch2/work/EXT-pocketfft-01/buggy.tar.gz https://github.com/mreineck/pocketfft/archive/076cb3d2536b7c5d0629093ad886e10ac05f3623.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-pocketfft-01:buggy:download-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-pocketfft-01/buggy.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-pocketfft-01/buggy-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-pocketfft-01:buggy:extract-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "g++ -std=c++17 -O2 -I/tmp/c3_batch2/work/EXT-pocketfft-01/buggy-src /workspace/data/external_slice/reproducers/harnesses/pocketfft_dst_adjoint_check.cpp -o /tmp/c3_batch2/work/EXT-pocketfft-01/dst_check_buggy -pthread",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-pocketfft-01:buggy:compile-harness",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "/usr/bin/python3 /workspace/data/external_slice/reproducers/EXT-pocketfft-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-pocketfft-01/buggy.json --harness /tmp/c3_batch2/work/EXT-pocketfft-01/dst_check_buggy",
+      "cwd": "/workspace",
+      "exit_code": 1,
+      "label": "EXT-pocketfft-01:buggy:trigger",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": false}\n"
+    },
+    {
+      "command": "curl -fsSL -L -H \"Authorization: Bearer <REDACTED_GITHUB_TOKEN>\" -o /tmp/c3_batch2/work/EXT-pocketfft-01/fixed.tar.gz https://github.com/mreineck/pocketfft/archive/fb21e4016b96f50a83c516fc0acabe8def4b3bb5.tar.gz",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-pocketfft-01:fixed:download-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "tar -xzf /tmp/c3_batch2/work/EXT-pocketfft-01/fixed.tar.gz --strip-components=1 -C /tmp/c3_batch2/work/EXT-pocketfft-01/fixed-src",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-pocketfft-01:fixed:extract-archive",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "g++ -std=c++17 -O2 -I/tmp/c3_batch2/work/EXT-pocketfft-01/fixed-src /workspace/data/external_slice/reproducers/harnesses/pocketfft_dst_adjoint_check.cpp -o /tmp/c3_batch2/work/EXT-pocketfft-01/dst_check_fixed -pthread",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-pocketfft-01:fixed:compile-harness",
+      "stderr_tail": "",
+      "stdout_tail": ""
+    },
+    {
+      "command": "/usr/bin/python3 /workspace/data/external_slice/reproducers/EXT-pocketfft-01.py --seed 0 --json-out /workspace/data/external_slice/reproduction/EXT-pocketfft-01/fixed.json --harness /tmp/c3_batch2/work/EXT-pocketfft-01/dst_check_fixed",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "label": "EXT-pocketfft-01:fixed:trigger",
+      "stderr_tail": "",
+      "stdout_tail": "{\"property_holds\": true}\n"
+    }
+  ]
+}

@@ -1,0 +1,2972 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @bdhirsh @jbschlosser",
+            "closedAt": "2021-06-01T05:39:41Z",
+            "createdAt": "2019-08-16T19:22:50Z",
+            "id": "MDU6SXNzdWU0ODE3NTA5MDg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24754,
+            "state": "CLOSED",
+            "title": "Migrate `renorm` and `renorm_` from the TH to Aten (CPU)",
+            "updatedAt": "2021-06-01T05:39:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24754"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @anjali411 @dylanbespalko",
+            "closedAt": "2020-03-15T19:03:36Z",
+            "createdAt": "2019-08-16T19:22:49Z",
+            "id": "MDU6SXNzdWU0ODE3NTA5MDM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "module: complex"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24753,
+            "state": "CLOSED",
+            "title": "Migrate `remainder` and `remainder_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-15T19:03:36Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24753"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-02-28T19:25:54Z",
+            "createdAt": "2019-08-16T19:22:48Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4OTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24752,
+            "state": "CLOSED",
+            "title": "Migrate `random_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-02-28T19:25:54Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24752"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-04-06T01:07:24Z",
+            "createdAt": "2019-08-16T19:22:46Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4ODg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24751,
+            "state": "CLOSED",
+            "title": "Migrate `put_` from the TH to Aten (CPU)",
+            "updatedAt": "2021-04-06T01:07:24Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24751"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-08-28T17:04:26Z",
+            "createdAt": "2019-08-16T19:22:45Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4ODE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24750,
+            "state": "CLOSED",
+            "title": "Migrate `pow` and `pow_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-08-28T17:04:26Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24750"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-08-29T18:53:21Z",
+            "createdAt": "2019-08-16T19:22:43Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4NzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24749,
+            "state": "CLOSED",
+            "title": "Migrate `polygamma` and `polygamma_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-08-29T18:53:21Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24749"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry @heitorschueroff",
+            "closedAt": "2021-05-06T11:46:05Z",
+            "createdAt": "2019-08-16T19:22:42Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4NTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24748,
+            "state": "CLOSED",
+            "title": "Migrate `ormqr` from the TH to Aten (CPU)",
+            "updatedAt": "2021-05-06T11:46:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24748"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry @heitorschueroff",
+            "closedAt": "2021-01-25T11:00:48Z",
+            "createdAt": "2019-08-16T19:22:40Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4NDU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24747,
+            "state": "CLOSED",
+            "title": "Migrate `orgqr` from the TH to Aten (CPU)",
+            "updatedAt": "2021-01-25T11:00:48Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24747"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-02-06T04:41:07Z",
+            "createdAt": "2019-08-16T19:22:39Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4Mzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24746,
+            "state": "CLOSED",
+            "title": "Migrate `normal` and `normal_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-02-06T04:41:07Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24746"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @bdhirsh @jbschlosser",
+            "closedAt": "2021-05-27T17:08:20Z",
+            "createdAt": "2019-08-16T19:22:38Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4Mjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24745,
+            "state": "CLOSED",
+            "title": "Migrate `nonzero` from the TH to Aten (CPU)",
+            "updatedAt": "2021-05-27T17:08:20Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24745"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:34:47Z",
+            "createdAt": "2019-08-16T19:22:36Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4MjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24744,
+            "state": "CLOSED",
+            "title": "Migrate `nll_loss_forward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:34:47Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24744"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:34:44Z",
+            "createdAt": "2019-08-16T19:22:34Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4MTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24743,
+            "state": "CLOSED",
+            "title": "Migrate `nll_loss_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:34:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24743"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:33:49Z",
+            "createdAt": "2019-08-16T19:22:33Z",
+            "id": "MDU6SXNzdWU0ODE3NTA4MDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24742,
+            "state": "CLOSED",
+            "title": "Migrate `nll_loss2d_forward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:33:49Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24742"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:33:46Z",
+            "createdAt": "2019-08-16T19:22:31Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3OTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24741,
+            "state": "CLOSED",
+            "title": "Migrate `nll_loss2d_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:33:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24741"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-29T20:06:05Z",
+            "createdAt": "2019-08-16T19:22:30Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3ODc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24740,
+            "state": "CLOSED",
+            "title": "Migrate `ne` and `ne_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-29T20:06:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24740"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-04-23T16:45:44Z",
+            "createdAt": "2019-08-16T19:22:29Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3NzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24739,
+            "state": "CLOSED",
+            "title": "Migrate `mv` from the TH to Aten (CPU)",
+            "updatedAt": "2020-04-23T16:45:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24739"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-03T21:24:45Z",
+            "createdAt": "2019-08-16T19:22:27Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3Njk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24738,
+            "state": "CLOSED",
+            "title": "Migrate `multinomial` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-03T21:24:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24738"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:32:08Z",
+            "createdAt": "2019-08-16T19:22:26Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3NjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24737,
+            "state": "CLOSED",
+            "title": "Migrate `multilabel_margin_loss_forward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:32:08Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24737"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:32:05Z",
+            "createdAt": "2019-08-16T19:22:25Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3NDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24736,
+            "state": "CLOSED",
+            "title": "Migrate `multilabel_margin_loss_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:32:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24736"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-10-22T21:23:06Z",
+            "createdAt": "2019-08-16T19:22:23Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3NDM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24735,
+            "state": "CLOSED",
+            "title": "Migrate `multi_margin_loss_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-10-22T21:23:06Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24735"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-10-22T21:23:02Z",
+            "createdAt": "2019-08-16T19:22:22Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3MzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24734,
+            "state": "CLOSED",
+            "title": "Migrate `multi_margin_loss` from the TH to Aten (CPU)",
+            "updatedAt": "2019-10-22T21:23:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24734"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:31:08Z",
+            "createdAt": "2019-08-16T19:22:21Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3MjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24733,
+            "state": "CLOSED",
+            "title": "Migrate `mse_loss_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:31:08Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24733"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:31:03Z",
+            "createdAt": "2019-08-16T19:22:20Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3MTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24732,
+            "state": "CLOSED",
+            "title": "Migrate `mse_loss` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:31:03Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24732"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @heitorschueroff",
+            "closedAt": "2021-04-03T05:23:21Z",
+            "createdAt": "2019-08-16T19:22:18Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3MDU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: sorting and selection"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24731,
+            "state": "CLOSED",
+            "title": "Migrate `mode` from the TH to Aten (CPU)",
+            "updatedAt": "2021-04-03T05:23:21Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24731"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-05-05T22:26:02Z",
+            "createdAt": "2019-08-16T19:22:17Z",
+            "id": "MDU6SXNzdWU0ODE3NTA3MDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24730,
+            "state": "CLOSED",
+            "title": "Migrate `mm` from the TH to Aten (CPU)",
+            "updatedAt": "2020-05-05T22:26:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24730"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-16T01:10:38Z",
+            "createdAt": "2019-08-16T19:22:15Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2OTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24729,
+            "state": "CLOSED",
+            "title": "Migrate `min` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-16T01:10:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24729"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-15T23:12:02Z",
+            "createdAt": "2019-08-16T19:22:14Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2ODE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24728,
+            "state": "CLOSED",
+            "title": "Migrate `max` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-15T23:12:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24728"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-29T20:06:11Z",
+            "createdAt": "2019-08-16T19:22:12Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2Njk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24727,
+            "state": "CLOSED",
+            "title": "Migrate `lt` and `lt_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-29T20:06:11Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24727"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @vishwakftw @ssnl",
+            "closedAt": "2021-06-06T09:19:40Z",
+            "createdAt": "2019-08-16T19:22:10Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2NTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24726,
+            "state": "CLOSED",
+            "title": "Migrate `lstsq` from the TH to Aten (CPU)",
+            "updatedAt": "2021-06-06T09:19:40Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24726"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:55:50Z",
+            "createdAt": "2019-08-16T19:22:08Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2NDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24725,
+            "state": "CLOSED",
+            "title": "Migrate `log_sigmoid_forward` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:55:50Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24725"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-09T18:30:16Z",
+            "createdAt": "2019-08-16T19:22:07Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24724,
+            "state": "CLOSED",
+            "title": "Migrate `log_sigmoid_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-09T18:30:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24724"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-22T03:08:58Z",
+            "createdAt": "2019-08-16T19:22:05Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2MjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24723,
+            "state": "CLOSED",
+            "title": "Migrate `log_normal_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-22T03:08:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24723"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-20T18:58:44Z",
+            "createdAt": "2019-08-16T19:22:02Z",
+            "id": "MDU6SXNzdWU0ODE3NTA2MDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24722,
+            "state": "CLOSED",
+            "title": "Migrate `lgamma` and `lgamma_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-20T18:58:44Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24722"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-26T19:10:12Z",
+            "createdAt": "2019-08-16T19:22:00Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1OTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24721,
+            "state": "CLOSED",
+            "title": "Migrate `leaky_relu_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-12-26T19:10:12Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24721"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-26T19:10:15Z",
+            "createdAt": "2019-08-16T19:21:58Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1ODU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24720,
+            "state": "CLOSED",
+            "title": "Migrate `leaky_relu` and `leaky_relu_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-12-26T19:10:15Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24720"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-29T20:06:20Z",
+            "createdAt": "2019-08-16T19:21:57Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1NzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24719,
+            "state": "CLOSED",
+            "title": "Migrate `le` and `le_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-29T20:06:20Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24719"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:24:41Z",
+            "createdAt": "2019-08-16T19:21:55Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1NjE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24718,
+            "state": "CLOSED",
+            "title": "Migrate `l1_loss_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:24:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24718"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:24:38Z",
+            "createdAt": "2019-08-16T19:21:54Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1NTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24717,
+            "state": "CLOSED",
+            "title": "Migrate `l1_loss` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:24:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24717"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-20T17:15:58Z",
+            "createdAt": "2019-08-16T19:21:53Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1NDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24716,
+            "state": "CLOSED",
+            "title": "Migrate `is_set_to` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-20T17:15:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24716"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:54:59Z",
+            "createdAt": "2019-08-16T19:21:51Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1MzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24715,
+            "state": "CLOSED",
+            "title": "Migrate `index_select` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:54:59Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24715"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @bdhirsh @jbschlosser",
+            "closedAt": "2021-02-02T00:12:16Z",
+            "createdAt": "2019-08-16T19:21:50Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1MTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24714,
+            "state": "CLOSED",
+            "title": "Migrate `index_fill_` from the TH to Aten (CPU)",
+            "updatedAt": "2021-02-02T00:12:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24714"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-09T21:54:41Z",
+            "createdAt": "2019-08-16T19:21:49Z",
+            "id": "MDU6SXNzdWU0ODE3NTA1MDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24713,
+            "state": "CLOSED",
+            "title": "Migrate `index_add_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-12-09T21:54:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24713"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @heitorschueroff",
+            "closedAt": "2021-06-24T18:37:36Z",
+            "createdAt": "2019-08-16T19:21:48Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0OTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: sorting and selection"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24712,
+            "state": "CLOSED",
+            "title": "Migrate `histc` from the TH to Aten (CPU)",
+            "updatedAt": "2021-06-24T18:37:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24712"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-09T21:54:19Z",
+            "createdAt": "2019-08-16T19:21:46Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0ODc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24711,
+            "state": "CLOSED",
+            "title": "Migrate `hardtanh_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-12-09T21:54:19Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24711"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-09T21:54:16Z",
+            "createdAt": "2019-08-16T19:21:45Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0ODA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24710,
+            "state": "CLOSED",
+            "title": "Migrate `hardtanh` and `hardtanh_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-12-09T21:54:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24710"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-29T20:06:24Z",
+            "createdAt": "2019-08-16T19:21:44Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0NzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24709,
+            "state": "CLOSED",
+            "title": "Migrate `gt` and `gt_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-29T20:06:24Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24709"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-02T16:37:38Z",
+            "createdAt": "2019-08-16T19:21:43Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0NjY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24708,
+            "state": "CLOSED",
+            "title": "Migrate `glu_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-02T16:37:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24708"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-02-27T15:34:32Z",
+            "createdAt": "2019-08-16T19:21:42Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0NTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24707,
+            "state": "CLOSED",
+            "title": "Migrate `glu` from the TH to Aten (CPU)",
+            "updatedAt": "2020-02-27T15:34:32Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24707"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-05-05T22:24:24Z",
+            "createdAt": "2019-08-16T19:21:40Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0NDU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24706,
+            "state": "CLOSED",
+            "title": "Migrate `ger` from the TH to Aten (CPU)",
+            "updatedAt": "2020-05-05T22:24:24Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24706"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry @heitorschueroff",
+            "closedAt": "2021-04-25T08:18:22Z",
+            "createdAt": "2019-08-16T19:21:39Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0NDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24705,
+            "state": "CLOSED",
+            "title": "Migrate `geqrf` from the TH to Aten (CPU)",
+            "updatedAt": "2021-04-25T08:18:22Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24705"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-09T18:48:10Z",
+            "createdAt": "2019-08-16T19:21:38Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0MzQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24704,
+            "state": "CLOSED",
+            "title": "Migrate `geometric_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-09T18:48:10Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24704"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-29T20:06:27Z",
+            "createdAt": "2019-08-16T19:21:37Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0MjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24703,
+            "state": "CLOSED",
+            "title": "Migrate `ge` and `ge_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-29T20:06:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24703"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-28T19:05:40Z",
+            "createdAt": "2019-08-16T19:21:36Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0MTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24702,
+            "state": "CLOSED",
+            "title": "Migrate `gather` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-28T19:15:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24702"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519",
+            "closedAt": "2020-08-03T14:54:02Z",
+            "createdAt": "2019-08-16T19:21:34Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24701,
+            "state": "CLOSED",
+            "title": "Migrate `fmod` and `fmod_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-08-03T14:54:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24701"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-19T22:41:21Z",
+            "createdAt": "2019-08-16T19:21:33Z",
+            "id": "MDU6SXNzdWU0ODE3NTA0MDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24700,
+            "state": "CLOSED",
+            "title": "Migrate `fill_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-19T22:41:21Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24700"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-30T19:30:58Z",
+            "createdAt": "2019-08-16T19:21:31Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzOTU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24699,
+            "state": "CLOSED",
+            "title": "Migrate `exponential_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-30T19:30:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24699"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-08-22T17:16:38Z",
+            "createdAt": "2019-08-16T19:21:30Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzOTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24698,
+            "state": "CLOSED",
+            "title": "Migrate `erfinv` and `erfinv_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-08-22T17:16:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24698"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-01-06T05:42:02Z",
+            "createdAt": "2019-08-16T19:21:29Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzODM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24697,
+            "state": "CLOSED",
+            "title": "Migrate `equal` from the TH to Aten (CPU)",
+            "updatedAt": "2021-01-06T05:42:02Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24697"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-29T20:06:33Z",
+            "createdAt": "2019-08-16T19:21:28Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzNzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24696,
+            "state": "CLOSED",
+            "title": "Migrate `eq` and `eq_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-29T20:06:33Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24696"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-18T16:23:20Z",
+            "createdAt": "2019-08-16T19:21:26Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzNzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24695,
+            "state": "CLOSED",
+            "title": "Migrate `elu_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2019-12-18T16:23:20Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24695"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-12-18T16:23:17Z",
+            "createdAt": "2019-08-16T19:21:25Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzNjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24694,
+            "state": "CLOSED",
+            "title": "Migrate `elu` and `elu_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-12-18T16:23:17Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24694"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry",
+            "closedAt": "2020-12-10T07:30:35Z",
+            "createdAt": "2019-08-16T19:21:24Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzNTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24693,
+            "state": "CLOSED",
+            "title": "Migrate `eig` from the TH to Aten (CPU)",
+            "updatedAt": "2020-12-10T07:30:35Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24693"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-28T00:14:08Z",
+            "createdAt": "2019-08-16T19:21:23Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzNDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24692,
+            "state": "CLOSED",
+            "title": "Migrate `dot` from the TH to Aten (CPU)",
+            "updatedAt": "2020-06-28T00:14:08Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24692"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-16T01:20:05Z",
+            "createdAt": "2019-08-16T19:21:21Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzMzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24691,
+            "state": "CLOSED",
+            "title": "Migrate `dist` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-16T01:20:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24691"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-08-29T17:33:59Z",
+            "createdAt": "2019-08-16T19:21:20Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzMzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24690,
+            "state": "CLOSED",
+            "title": "Migrate `digamma` and `digamma_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-08-29T17:34:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24690"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-25T16:44:27Z",
+            "createdAt": "2019-08-16T19:21:19Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzMjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24689,
+            "state": "CLOSED",
+            "title": "Migrate `diag` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-25T16:44:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24689"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-02T16:37:42Z",
+            "createdAt": "2019-08-16T19:21:17Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzMTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24688,
+            "state": "CLOSED",
+            "title": "Migrate `cumsum` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-02T16:37:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24688"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-02T16:37:46Z",
+            "createdAt": "2019-08-16T19:21:15Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzMDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24687,
+            "state": "CLOSED",
+            "title": "Migrate `cumprod` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-02T16:37:46Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24687"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-03T21:24:41Z",
+            "createdAt": "2019-08-16T19:21:14Z",
+            "id": "MDU6SXNzdWU0ODE3NTAzMDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24686,
+            "state": "CLOSED",
+            "title": "Migrate `clamp` and `clamp_` from the TH to Aten (CPU)",
+            "updatedAt": "2019-09-03T21:24:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24686"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @vincentqb @vishwakftw @jianyuh @nikitaved @pearu @mruberry @heitorschueroff",
+            "closedAt": "2021-01-29T00:28:05Z",
+            "createdAt": "2019-08-16T19:21:13Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyOTA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: linear algebra"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24685,
+            "state": "CLOSED",
+            "title": "Migrate `cholesky_inverse` from the TH to Aten (CPU)",
+            "updatedAt": "2021-01-29T00:28:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24685"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-08T23:11:05Z",
+            "createdAt": "2019-08-16T19:21:11Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyODE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24684,
+            "state": "CLOSED",
+            "title": "Migrate `cauchy_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-08T23:11:05Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24684"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-30T19:30:25Z",
+            "createdAt": "2019-08-16T19:21:10Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyNzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24683,
+            "state": "CLOSED",
+            "title": "Migrate `binary_cross_entropy_backward` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-30T19:30:25Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24683"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-30T19:30:23Z",
+            "createdAt": "2019-08-16T19:21:09Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyNjY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24682,
+            "state": "CLOSED",
+            "title": "Migrate `binary_cross_entropy` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-30T19:30:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24682"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-10-08T07:24:18Z",
+            "createdAt": "2019-08-16T19:21:07Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyNTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24681,
+            "state": "CLOSED",
+            "title": "Migrate `addr` and `addr_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-10-08T07:24:18Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24681"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-04-23T16:45:59Z",
+            "createdAt": "2019-08-16T19:21:05Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyNDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24680,
+            "state": "CLOSED",
+            "title": "Migrate `addmv` and `addmv_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-04-23T16:46:00Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24680"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519 @anjali411 @dylanbespalko",
+            "closedAt": "2020-07-10T21:33:37Z",
+            "createdAt": "2019-08-16T19:21:03Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyMjg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "module: complex"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 24679,
+            "state": "CLOSED",
+            "title": "Migrate `addmm` and `addmm_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-07-10T21:33:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24679"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-07-10T21:33:37Z",
+            "createdAt": "2019-08-16T19:21:01Z",
+            "id": "MDU6SXNzdWU0ODE3NTAyMTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24678,
+            "state": "CLOSED",
+            "title": "Migrate `addbmm` and `addbmm_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-07-10T21:33:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24678"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-22T21:26:58Z",
+            "createdAt": "2019-08-16T19:20:59Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxOTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24677,
+            "state": "CLOSED",
+            "title": "Migrate `_var` from the TH to Aten (CPU)",
+            "updatedAt": "2020-06-22T21:26:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24677"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-06-22T21:26:57Z",
+            "createdAt": "2019-08-16T19:20:58Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxOTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24676,
+            "state": "CLOSED",
+            "title": "Migrate `_std` from the TH to Aten (CPU)",
+            "updatedAt": "2020-06-22T21:26:57Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24676"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-06-01T16:27:31Z",
+            "createdAt": "2019-08-16T19:20:56Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxODg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24675,
+            "state": "CLOSED",
+            "title": "Migrate `_multinomial_alias_setup` from the TH to Aten (CPU)",
+            "updatedAt": "2021-06-01T16:27:31Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24675"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @vincentqb @fritzo @neerajprad @alicanb @vishwakftw @nikitaved",
+            "closedAt": "2021-06-01T16:27:10Z",
+            "createdAt": "2019-08-16T19:20:55Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxODE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "module: distributions"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24674,
+            "state": "CLOSED",
+            "title": "Migrate `_multinomial_alias_draw` from the TH to Aten (CPU)",
+            "updatedAt": "2021-06-01T16:27:10Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24674"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @heitorschueroff",
+            "closedAt": "2021-04-15T12:15:45Z",
+            "createdAt": "2019-08-16T19:20:54Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxNzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                },
+                {
+                  "name": "module: sorting and selection"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24673,
+            "state": "CLOSED",
+            "title": "Migrate `_mode` from the TH to Aten (CPU)",
+            "updatedAt": "2021-04-15T12:15:45Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24673"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-25T01:08:58Z",
+            "createdAt": "2019-08-16T19:20:53Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxNjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24672,
+            "state": "CLOSED",
+            "title": "Migrate `_min` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-25T01:08:58Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24672"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-25T01:08:52Z",
+            "createdAt": "2019-08-16T19:20:52Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxNjI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24671,
+            "state": "CLOSED",
+            "title": "Migrate `_max` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-25T01:08:52Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24671"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2021-03-23T05:38:34Z",
+            "createdAt": "2019-08-16T19:20:50Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxNTM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24670,
+            "state": "CLOSED",
+            "title": "Migrate `_index_copy_` from the TH to Aten (CPU)",
+            "updatedAt": "2021-03-23T05:38:34Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24670"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-03-02T16:34:41Z",
+            "createdAt": "2019-08-16T19:20:49Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxNDY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24669,
+            "state": "CLOSED",
+            "title": "Migrate `_cumsum` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-02T16:34:41Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24669"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-02-25T21:05:52Z",
+            "createdAt": "2019-08-16T19:20:48Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxMzY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24668,
+            "state": "CLOSED",
+            "title": "Migrate `_cumprod` from the TH to Aten (CPU)",
+            "updatedAt": "2020-02-25T21:05:52Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24668"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.\ncc @ezyang @gchanan @zou3519",
+            "closedAt": "2020-03-02T16:34:32Z",
+            "createdAt": "2019-08-16T19:20:46Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxMjk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "high priority"
+                },
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "NA",
+                "hasNextPage": false
+              }
+            },
+            "number": 24667,
+            "state": "CLOSED",
+            "title": "Migrate `_cat` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-02T16:34:32Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24667"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-11-18T22:35:37Z",
+            "createdAt": "2019-08-16T19:20:45Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxMjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24666,
+            "state": "CLOSED",
+            "title": "Migrate `_addr` and `_addr_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-11-18T22:35:37Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24666"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-09-20T20:35:05Z",
+            "createdAt": "2019-08-16T19:20:44Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxMTI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24665,
+            "state": "CLOSED",
+            "title": "Migrate `_addmm` and `_addmm_` from the TH to Aten (CPU)",
+            "updatedAt": "2020-03-08T11:28:06Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24665"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-13T00:14:16Z",
+            "createdAt": "2019-08-16T19:20:43Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxMDc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24664,
+            "state": "CLOSED",
+            "title": "Migrate `__xor__` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-13T00:14:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24664"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:53:27Z",
+            "createdAt": "2019-08-16T19:20:42Z",
+            "id": "MDU6SXNzdWU0ODE3NTAxMDM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24663,
+            "state": "CLOSED",
+            "title": "Migrate `__rshift__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:53:27Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24663"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:53:23Z",
+            "createdAt": "2019-08-16T19:20:40Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwOTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24662,
+            "state": "CLOSED",
+            "title": "Migrate `__or__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:53:23Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24662"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:53:19Z",
+            "createdAt": "2019-08-16T19:20:39Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwODY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24661,
+            "state": "CLOSED",
+            "title": "Migrate `__lshift__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:53:19Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24661"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2019-11-13T00:14:16Z",
+            "createdAt": "2019-08-16T19:20:38Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwNzg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24660,
+            "state": "CLOSED",
+            "title": "Migrate `__ixor__` from the TH to Aten (CPU)",
+            "updatedAt": "2019-11-13T00:14:16Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24660"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:53:15Z",
+            "createdAt": "2019-08-16T19:20:37Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwNzM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24659,
+            "state": "CLOSED",
+            "title": "Migrate `__irshift__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:53:15Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24659"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:52:42Z",
+            "createdAt": "2019-08-16T19:20:36Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwNjc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24658,
+            "state": "CLOSED",
+            "title": "Migrate `__ior__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:52:42Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24658"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:52:38Z",
+            "createdAt": "2019-08-16T19:20:35Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwNjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24657,
+            "state": "CLOSED",
+            "title": "Migrate `__ilshift__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:52:38Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24657"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:52:29Z",
+            "createdAt": "2019-08-16T19:20:34Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwNDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24656,
+            "state": "CLOSED",
+            "title": "Migrate `__iand__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:52:29Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24656"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Porting TH operators is essential for code simplicity and performance reasons.\nPorting guides and Q&A are available in umbrella issue: #24507\nFeel free to add @VitalyFedyunin as a reviewer to get a prioritized review.",
+            "closedAt": "2020-01-21T18:52:22Z",
+            "createdAt": "2019-08-16T19:20:33Z",
+            "id": "MDU6SXNzdWU0ODE3NTAwMzk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "triaged"
+                },
+                {
+                  "name": "module: porting"
+                },
+                {
+                  "name": "better-engineering"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 24655,
+            "state": "CLOSED",
+            "title": "Migrate `__and__` from the TH to Aten (CPU)",
+            "updatedAt": "2020-01-21T18:52:22Z",
+            "url": "https://github.com/pytorch/pytorch/issues/24655"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxOS0wOC0xNlQxOToyMDozM1rOHLbsFw==",
+          "hasNextPage": true
+        },
+        "totalCount": 44684
+      }
+    }
+  }
+}

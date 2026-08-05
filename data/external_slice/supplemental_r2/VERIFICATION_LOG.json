@@ -1,0 +1,81 @@
+{
+  "baseline_commit": "3a02e251858034d65009ca40f89105912b098000",
+  "commands": [
+    {
+      "command": "PYTHONPATH=src python3 scripts/external_slice/mine_supplemental_r2.py validate-decisions --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "DECISIONS_OK",
+      "phase": "payload"
+    },
+    {
+      "command": "PYTHONPATH=src python3 scripts/external_slice/check_supplemental_r2_admission.py --root data/external_slice/supplemental_r2",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "ADMISSION_CHECK_OK",
+      "phase": "payload"
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m pytest -q tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "220 passed",
+      "phase": "payload"
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m pytest -q",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "480 passed, 19 warnings",
+      "phase": "payload"
+    },
+    {
+      "command": "python3 -m ruff check --select E,F,I,E501 scripts/external_slice/mine_supplemental_r2.py scripts/external_slice/check_supplemental_r2_admission.py scripts/external_slice/check_supplemental_r2_handoff_hashes.py tests/external_slice/test_mine_supplemental_r2.py tests/external_slice/test_check_supplemental_r2_admission.py",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "All checks passed!",
+      "phase": "payload"
+    },
+    {
+      "command": "python3 -m compileall -q scripts/external_slice tests/external_slice",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "compileall_ok",
+      "phase": "payload"
+    },
+    {
+      "command": "git diff --check",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "no whitespace errors",
+      "phase": "payload"
+    },
+    {
+      "command": "git diff --exit-code 020b60fb83f7eb1d34f143458fca62beab5aa398 -- data/external_slice/supplemental_r2/SCOPE.json data/external_slice/supplemental_r2/TRANSPORT_CONTRACT.json data/external_slice/supplemental_r2/QUOTAS.json data/external_slice/supplemental_r2/ISSUE_SNAPSHOT.json data/external_slice/supplemental_r2/COMMAND_LOG.json data/external_slice/supplemental_r2/PUBLISH_COMMIT.json data/external_slice/supplemental_r2/transport_pages data/external_slice/supplemental_r2/failed_runs",
+      "cwd": "/workspace",
+      "exit_code": 0,
+      "key_output": "immutable transport evidence unchanged",
+      "phase": "payload"
+    }
+  ],
+  "confirmations": {
+    "a2_all_pending": true,
+    "analysis_id_all_blank": true,
+    "canonical_freeze_claimed": false,
+    "existing_files_unchanged": true,
+    "forbidden_data_absent": true,
+    "readiness_ran": false
+  },
+  "created_at_utc": "2026-08-04T11:53:18Z",
+  "environment": "Cursor VM",
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r7",
+  "quota_disclosure_status": "DISTRIBUTION_TARGET_AT_RISK",
+  "schema_version": 1,
+  "task": "SUPPLEMENTAL_MINING_R2",
+  "totals": {
+    "admit_pending_repro": 9,
+    "decisions": 67,
+    "excluded": 58
+  },
+  "transport_freeze_commit": "020b60fb83f7eb1d34f143458fca62beab5aa398"
+}

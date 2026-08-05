@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "6112906c66876bd119c814640b331d992b8ac8d7",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "756cf4862aadfc38ebd3f32b55514e8a2eefbd8e",
+  "issue_node_id": "MDU6SXNzdWU4NjIxMzc5NjY=",
+  "issue_number": 1580,
+  "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/1580",
+  "mechanism": "restores summed lazy-covariance predictive results.",
+  "neutral_id": "EXT-gpytorch-03",
+  "public_fix_url": "https://github.com/cornellius-gp/gpytorch/commit/756cf4862aadfc38ebd3f32b55514e8a2eefbd8e",
+  "public_issue_url": "https://github.com/cornellius-gp/gpytorch/issues/1580",
+  "repository": "cornellius-gp/gpytorch",
+  "snapshot_record_id": "SSR2-02-0003",
+  "snapshot_record_sha256": "f77d4911b60bf234016cd281c11ca5b3f7bf773aec3f48e17cc8d3ccded91ea2",
+  "source_cohort": "supplemental_r2"
+}

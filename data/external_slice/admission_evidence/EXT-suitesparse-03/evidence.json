@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-suitesparse-03",
+  "source_pool": "defect4mr_64",
+  "source_index": 8,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "22c231a9f07749744989cbb2e7f93474185e227e20d275ce46936b0efe2ebe2c",
+  "issue_url": "https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/982",
+  "fix_url": "",
+  "buggy_sha": "",
+  "fixed_sha": "",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "no identifiable merged public fix commit.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The sparse QR calculation accepts numeric matrix data and can expose the discrepancy in a selected floating-point factor or solution entry."
+  },
+  "evidence_urls": [
+    "https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/982"
+  ],
+  "mechanism_sentence": "reports a QR result discrepancy that is not linked to an identifiable fix commit."
+}

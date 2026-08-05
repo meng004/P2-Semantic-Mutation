@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-eigen-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 59,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "65a4b56e4353619cab4cedd5598480c493af0b1aa1f096517c0581dfb246967b",
+  "issue_url": "https://gitlab.com/libeigen/eigen/-/issues/718",
+  "fix_url": "https://gitlab.com/libeigen/eigen/-/commit/7838fda82cfc49b40e8d3a615bb05711815b50e1",
+  "buggy_sha": "b1eca55328436f9778254c6bbc8852910a0d3d2a",
+  "fixed_sha": "7838fda82cfc49b40e8d3a615bb05711815b50e1",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The sparse iterator consumes numeric matrix entries and can expose the storage-order defect in one selected floating-point element value."
+  },
+  "evidence_urls": [
+    "https://gitlab.com/libeigen/eigen/-/issues/718",
+    "https://gitlab.com/libeigen/eigen/-/commit/7838fda82cfc49b40e8d3a615bb05711815b50e1"
+  ],
+  "mechanism_sentence": "prevents cross-storage sparse iteration from returning an invalid element value."
+}

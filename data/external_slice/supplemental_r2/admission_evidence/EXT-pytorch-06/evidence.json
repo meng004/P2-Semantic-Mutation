@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "c46c8102908fb51e24b3a1ce4c5e9eb64236f565",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "4e7eef63f9586670e971215c436fd4f23f787f6c",
+  "issue_node_id": "I_kwDOA-j9z88AAAABIRzbjg",
+  "issue_number": 189495,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/189495",
+  "mechanism": "restores F.linear results when an MPS batch dimension exceeds 65536.",
+  "neutral_id": "EXT-pytorch-06",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/4e7eef63f9586670e971215c436fd4f23f787f6c",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/189495",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0006",
+  "snapshot_record_sha256": "ff9f190b2144430a9250563ce7f19f316678a843ed45bf7bc5105de07c12e5da",
+  "source_cohort": "supplemental_r2"
+}

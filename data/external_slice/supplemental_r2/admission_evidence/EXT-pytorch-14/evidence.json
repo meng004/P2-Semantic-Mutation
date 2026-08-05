@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABFOOyuQ",
+  "issue_number": 187117,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/187117",
+  "mechanism": "MPS binary-op storage_offset bug outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-14",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/187117",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0014",
+  "snapshot_record_sha256": "c16e8e3b00a33370e849770c78f76574d591895a932b2f65f0b1b115973fad67",
+  "source_cohort": "supplemental_r2"
+}

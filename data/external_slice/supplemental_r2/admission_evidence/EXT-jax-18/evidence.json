@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "e4eca9ec5975982f89903082532b49ec4d56da9d",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "eaef7d72792de2f019af551645486c60ed2d78e2",
+  "issue_node_id": "I_kwDOCTkjjc6bjX1D",
+  "issue_number": 24491,
+  "issue_url": "https://github.com/jax-ml/jax/issues/24491",
+  "mechanism": "Pallas attention kernel fix outside frozen numerical scope.",
+  "neutral_id": "EXT-jax-18",
+  "public_fix_url": "https://github.com/jax-ml/jax/commit/eaef7d72792de2f019af551645486c60ed2d78e2",
+  "public_issue_url": "https://github.com/jax-ml/jax/issues/24491",
+  "repository": "jax-ml/jax",
+  "snapshot_record_id": "SSR2-06-0018",
+  "snapshot_record_sha256": "240a3b900d9a79a08e78142afdcc5be7844fc7eaccce75161cffd7719e5afe5e",
+  "source_cohort": "supplemental_r2"
+}

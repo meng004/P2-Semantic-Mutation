@@ -1,0 +1,178 @@
+{
+  "task": "C2_CORRECTION",
+  "gate_requested": "A1a",
+  "created_at": "2026-08-01T11:07:58+08:00",
+  "branch": "codex/gpt-desktop-phase3-5-c2-admission",
+  "fixed_start_commit": "e5737f3c1c88641bc783bf8449fd7c53a6178df9",
+  "prior_payload_commit": "90640368d21fe2087a266d8726ec81c2e9c2c124",
+  "prior_handoff_commit": "f31a508ae6409c18dca8229fbabdf77598e0345d",
+  "blocked_audit_commit": "c18d9cdb3d6f0a2e4f2829d89468f1a333cad37d",
+  "correction_payload_commit": "964fcafcbd977004536979fab950aec88cec7b32",
+  "handoff_commit": {
+    "value": "SELF",
+    "direct_parent_required": "964fcafcbd977004536979fab950aec88cec7b32",
+    "resolution": "The containing Git commit cannot embed its own full SHA without a self-reference. Resolve the immutable handoff SHA with `rtk git rev-parse HEAD`; it is reported in the Gate A1a request after commit and push."
+  },
+  "handoff_commit_semantics": "This manifest is the only payload changed in the direct child of correction_payload_commit. All corrected candidate, evidence, checker, and test hashes below belong to correction_payload_commit and remain unchanged in this handoff child.",
+  "closed_findings": [
+    "A1-SCOPE-001",
+    "A1-SCOPE-002",
+    "A1-SCOPE-003",
+    "A1-SOURCE-BINDING-001"
+  ],
+  "additional_conservative_correction": {
+    "neutral_id": "EXT-fftw-05",
+    "reason": "The MPI local-size query returns integer size metadata rather than float or few-float numerical output.",
+    "effect": "crit_in_scope changed from PASS to FAIL; the already-EXCLUDED decision is unchanged."
+  },
+  "candidate_summary": {
+    "defect4mr_rows": 64,
+    "supplemental_pilot_rows": 9,
+    "real_defect": {"PASS": 35, "FAIL": 29},
+    "dual_arm_repro": {"PENDING": 64, "PASS": 0, "REPRO_FAILED": 0},
+    "in_scope": {"PASS": 55, "FAIL": 9},
+    "decision": {"ADMIT_PENDING_REPRO": 32, "EXCLUDED": 32},
+    "analysis_id_nonblank": 0,
+    "scope_review": {
+      "submitted_a3_pass_rechecked": 59,
+      "retained_pass": 55,
+      "changed_to_fail": 4,
+      "case_specific_scope_rationales": 64,
+      "unique_scope_rationales": 64
+    },
+    "note": "The A3 distribution is one PASS lower and one FAIL higher than the audit's conditional 56/8 expectation because the required all-case re-review conservatively identified EXT-fftw-05. No case was replaced."
+  },
+  "source_binding": {
+    "field": "source_record_sha256",
+    "canonicalization": "UTF-8 JSON of the corresponding sanitized record with sort_keys=true, separators=(',', ':'), and ensure_ascii=false",
+    "checker_recomputation": "The checker loads candidates_sanitized.json, requires 64 records, recomputes each positional canonical record SHA256, and compares it with the matching evidence record.",
+    "negative_test": "Swapping source_record_sha256 values between the first two evidence records is rejected."
+  },
+  "environment": {
+    "os": "Darwin 24.6.0 arm64",
+    "kernel": "Darwin Kernel Version 24.6.0; RELEASE_ARM64_T6000",
+    "python": "3.11.9",
+    "pytest": "9.0.3",
+    "python_executable": "/Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python",
+    "working_tree": "/Users/limeng/.codex/worktrees/f9a9/P3-SemanticMutation"
+  },
+  "inputs": [
+    {"path": "data/external_slice/defect4mr_import/candidates_sanitized.json", "sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac"},
+    {"path": "data/external_slice/admission_sheet.csv", "role": "separate supplemental pilot", "sha256": "77f729b1297ef24d4223d5277b093c93ad84711dfbbe69a1927398d49d387a0a"},
+    {"path": "f31a508ae6409c18dca8229fbabdf77598e0345d:data/external_slice/HANDOFF_ADMISSION.json", "sha256": "c244ef61d0fa11eb39b8e797a308d35cb0e5becca4b5cc44459a41d4a2baa847"},
+    {"path": "c18d9cdb3d6f0a2e4f2829d89468f1a333cad37d:docs/review_20260730/gate_a1_admission_audit.md", "sha256": "2aa9efd7353e33a8405af538533f3a4715fee5ef4973cec141a9f4c3ba960c75"},
+    {"path": "c18d9cdb3d6f0a2e4f2829d89468f1a333cad37d:docs/review_20260730/gate_a1_findings.csv", "sha256": "13d24a6ff1212c8b5635697900d35395fdf79e31edcf2016ef474c734eef926f"},
+    {"path": "research/prereg_v2/external_slice_protocol.md", "sha256": "186b9734077035f63a1819569ecf45e645545862d045cb5ee899a7dd8f2841ca"},
+    {"path": "docs/review_20260728/external_admission_runbook.md", "sha256": "a3ced473d0d4ab91c39480bb59e7032c05bd15f68e57ee277da71582b3256f05"},
+    {"path": "e72faa2d7b7469eba75b8a4e240083dc76de90dd:docs/task-instructions/2026-07-30-cursor-vm-phase3-5.md", "sha256": "c040d6499514ddd0e0add474e339973df012663c208262808d91d49d26677e1a"}
+  ],
+  "outputs": [
+    {"path": "data/external_slice/admission_sheet.cursor_candidate.csv", "sha256": "4b0296c3656219e77a03acf1e9a727f574651bbaf1650ae07f31f2c47294adb8"},
+    {"path": "data/external_slice/admission_evidence", "sha256": "854a2e06f97a2cf2928504be4a4d55afd327be2da31ad3cc7975924b45bc43ae", "hash_algorithm": "SHA256 of concatenated sorted relative-path + NUL + per-file-SHA256 + newline records", "file_count": 64},
+    {"path": "scripts/check_external_admission.py", "sha256": "4fed32a87ac22c4e17ea13c735cfd65430e1abcf41e139484172320d59df1428"},
+    {"path": "tests/external_slice/test_check_external_admission.py", "sha256": "ddcef0dd58c0e11b82aa4666ce38c6419661787b00fb97da59808e372d76b50e"}
+  ],
+  "commands": [
+    {
+      "command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest tests/external_slice/test_check_external_admission.py -q",
+      "exit_code": 1,
+      "result": "TDD RED: 12 failed, 6 passed before checker implementation"
+    },
+    {
+      "command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest tests/external_slice/test_check_external_admission.py -q",
+      "exit_code": 0,
+      "result": "TDD GREEN after checker implementation: 18 passed"
+    },
+    {
+      "command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python scripts/check_external_admission.py --sheet data/external_slice/admission_sheet.cursor_candidate.csv",
+      "exit_code": 1,
+      "result": "Integration RED before evidence migration: EXT-fftw-01 source_record_sha256 missing"
+    },
+    {
+      "command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest tests/external_slice/test_check_external_admission.py -q",
+      "exit_code": 0,
+      "result": "Final targeted verification: 19 passed"
+    },
+    {
+      "command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python scripts/check_external_admission.py --sheet data/external_slice/admission_sheet.cursor_candidate.csv",
+      "exit_code": 0,
+      "result": "Pre-readiness C2 candidate only: 64 candidate rows, 64 bound evidence records, and 9 separate supplemental pilot rows valid"
+    },
+    {
+      "command": "rtk env PYTHONPATH=src /Users/limeng/Papers/P3-SemanticMutation/.venv/bin/python -m pytest -q",
+      "exit_code": 0,
+      "result": "260 passed, 10 warnings"
+    },
+    {
+      "command": "rtk rg -n -i 'mr_mapping|proposed_mr_oracle|\\bkill\\b|\\bfiber\\b|\\boperator\\b|prediction|analysis_id[^,]*[^,[:space:]]' data/external_slice/admission_sheet.cursor_candidate.csv data/external_slice/admission_evidence",
+      "exit_code": 1,
+      "result": "Expected clean result; no output"
+    },
+    {
+      "command": "rtk git diff --check",
+      "exit_code": 0,
+      "result": "No whitespace errors"
+    },
+    {
+      "command": "rtk git commit -m \"fix(external): correct blocked C2 admission findings\"",
+      "exit_code": 0,
+      "result": "correction payload 964fcafcbd977004536979fab950aec88cec7b32"
+    }
+  ],
+  "failures": [
+    {
+      "stage": "review-driven TDD RED",
+      "exit_code": 1,
+      "detail": "New fixture/source-binding, public-URL, alias-prefix, pre-readiness, and case-specific-rationale tests failed before implementation, as intended."
+    },
+    {
+      "stage": "real-artifact integration RED",
+      "exit_code": 1,
+      "detail": "The strengthened checker rejected the old evidence because source_record_sha256 was absent."
+    },
+    {
+      "stage": "manual scope-review display",
+      "exit_code": 1,
+      "detail": "The first read-only Python one-liner used nested escaped f-string expressions and raised SyntaxError; it made no writes."
+    }
+  ],
+  "retries": [
+    {
+      "stage": "review-driven TDD GREEN",
+      "resolution": "Implemented per-record binding and all checker hardening, then reran the targeted suite.",
+      "result": "19 passed in final verification"
+    },
+    {
+      "stage": "real-artifact migration",
+      "resolution": "Added canonical source_record_sha256 to all 64 evidence records and reran the checker.",
+      "result": "success"
+    },
+    {
+      "stage": "manual scope-review display",
+      "resolution": "Replaced the invalid nested f-string with percent-formatting and reran the read-only command.",
+      "result": "all 64 case-specific scope rationales displayed successfully"
+    }
+  ],
+  "unresolved_findings": [
+    {
+      "id": "STARTUP-CONFLICT-001",
+      "status": "unchanged",
+      "scope": "Gate A2 precondition only",
+      "action": "Not processed and not used to alter the C2 sampling frame."
+    },
+    {
+      "id": "C2-DUAL-ARM-PENDING",
+      "status": "expected candidate state",
+      "detail": "All 64 rows remain PENDING. No dual-arm PASS is claimed and C3 was not started."
+    }
+  ],
+  "forbidden_actions_confirmed_absent": [
+    "No Gate A1 report or audit ledger was modified.",
+    "No canonical admission_sheet.csv was modified.",
+    "No FREEZE.sha256 was created or modified.",
+    "No C3 or later task was started.",
+    "No failed case was replaced.",
+    "No analysis alias was assigned.",
+    "No downstream run or classification data was read or written."
+  ]
+}

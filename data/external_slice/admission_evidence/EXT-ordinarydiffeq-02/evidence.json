@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-ordinarydiffeq-02",
+  "source_pool": "defect4mr_64",
+  "source_index": 64,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "d1880f629fe5f75210a58055c7ee72caf568198ce369016c0ac0384252ce97cf",
+  "issue_url": "https://github.com/SciML/OrdinaryDiffEq.jl/issues/1312",
+  "fix_url": "https://github.com/SciML/OrdinaryDiffEq.jl/commit/8b4b1f2fc3077478ee2d69a4837f633877fb6b7d",
+  "buggy_sha": "53126ab2f3ed38b829b68b5b4fa6108ad11720ff",
+  "fixed_sha": "8b4b1f2fc3077478ee2d69a4837f633877fb6b7d",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The symplectic update accepts numeric state and arbitrary numeric callables and can expose the defect in one selected floating-point state component."
+  },
+  "evidence_urls": [
+    "https://github.com/SciML/OrdinaryDiffEq.jl/issues/1312",
+    "https://github.com/SciML/OrdinaryDiffEq.jl/commit/8b4b1f2fc3077478ee2d69a4837f633877fb6b7d"
+  ],
+  "mechanism_sentence": "applies symplectic updates correctly for arbitrary callable functions."
+}

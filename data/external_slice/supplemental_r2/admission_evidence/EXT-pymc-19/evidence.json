@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "fecf1f41523c9965c7631f8f15e8d495d9e3a9e8",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "5a76df50be66d4bda3952a1c8882db0afd2bb2ab",
+  "issue_node_id": "MDU6SXNzdWUyMTEzNjM5NDA=",
+  "issue_number": 1848,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/1848",
+  "mechanism": "clips Stationary.square_dist outputs that produced negative distances and NaN covariances.",
+  "neutral_id": "EXT-pymc-19",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/5a76df50be66d4bda3952a1c8882db0afd2bb2ab",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/1848",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0019",
+  "snapshot_record_sha256": "cd8c0fde5503eaec06548f022e31e91a5625c8ae3fa38d773589b9a419aafb4a",
+  "source_cohort": "supplemental_r2"
+}

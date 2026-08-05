@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "8614b55bd9a88c4df863268a812296fa2d4d24fe",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "a729ca6e8a31e63bb4723bdc99370bf7383ba8b4",
+  "issue_node_id": "I_kwDOA-j9z88AAAABH63d-g",
+  "issue_number": 189134,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/189134",
+  "mechanism": "restores MPS linalg.solve when B is broadcast against batched A.",
+  "neutral_id": "EXT-pytorch-09",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/a729ca6e8a31e63bb4723bdc99370bf7383ba8b4",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/189134",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0009",
+  "snapshot_record_sha256": "ff1305a97277e0ecc9e79b2b8e06003e9484b2022509a1fec2fdf08973f55930",
+  "source_cohort": "supplemental_r2"
+}

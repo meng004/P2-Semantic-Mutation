@@ -1,0 +1,25 @@
+{
+  "neutral_id": "EXT-sundials-06",
+  "source_pool": "defect4mr_64",
+  "source_index": 43,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "fbb04e5fae6e41f8ae06e08849959d1586ca00b6fda7753ebf67840e34ecac12",
+  "issue_url": "",
+  "fix_url": "https://github.com/LLNL/sundials/commit/ecb58259a7ec2a42ba114e8b62c7187f9e44820c",
+  "buggy_sha": "c134442c56df28b0ed95422df4f8f3f1a999ce4a",
+  "fixed_sha": "ecb58259a7ec2a42ba114e8b62c7187f9e44820c",
+  "criteria": {
+    "real_defect": "FAIL",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "no public issue or equivalent tracker entry linked to the fix.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The nonlinear solve accepts numeric state and can expose the update-order defect through its returned floating-point residual norm."
+  },
+  "evidence_urls": [
+    "https://github.com/LLNL/sundials/commit/ecb58259a7ec2a42ba114e8b62c7187f9e44820c"
+  ],
+  "mechanism_sentence": "updates the nonlinear residual norm only after a successful solve."
+}

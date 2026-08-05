@@ -1,0 +1,9 @@
+{
+  "arm": "buggy",
+  "exit_status": null,
+  "failure_detail": "command failed (1): gcc -O2 /workspace/data/external_slice/reproducers/harnesses/sundials_erk_fsal_order_sweep.c -I/tmp/c3_batch2/work/EXT-sundials-10/install-buggy/include -L/tmp/c3_batch2/work/EXT-sundials-10/install-buggy/lib -Wl,-rpath,/tmp/c3_batch2/work/EXT-sundials-10/install-buggy/lib -lsundials_arkode -lsundials_nvecserial -lsundials_core -lm -o /tmp/c3_batch2/work/EXT-sundials-10/harness_buggy\nstdout:\n\nstderr:\n/usr/bin/ld: cannot find -lsundials_core: No such file or directory\ncollect2: error: ld returned 1 exit status\n",
+  "failure_stage": "build_or_trigger",
+  "neutral_id": "EXT-sundials-10",
+  "property_holds": null,
+  "seed": 0
+}

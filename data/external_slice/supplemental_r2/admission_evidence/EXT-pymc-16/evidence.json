@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "7b0eb365dc1725d00955571ad6059e8be7b4a630",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "crash-only",
+  "fixed_sha": "42bc88e0c679ed61b086df5a8dd967394fa37abc",
+  "issue_node_id": "MDU6SXNzdWUyMjE4MTA1MjA=",
+  "issue_number": 2032,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/2032",
+  "mechanism": "restores floatX casting in transform inputs that produced GPU log errors; crash-only failure outside admitted numerical return defects.",
+  "neutral_id": "EXT-pymc-16",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/42bc88e0c679ed61b086df5a8dd967394fa37abc",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/2032",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0016",
+  "snapshot_record_sha256": "d801bd5f6bc49318e3e99a43c23222bd1b723197141202ec13b549543fb40614",
+  "source_cohort": "supplemental_r2"
+}

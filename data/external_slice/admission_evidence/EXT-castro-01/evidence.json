@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-castro-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 57,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "aeeadfdb8ad2a0e3883e0aa50e2202f7c1452aaa2f8e6b4a4ac8a31cdc6c08e6",
+  "issue_url": "https://github.com/AMReX-Astro/Castro/issues/3259",
+  "fix_url": "https://github.com/AMReX-Astro/Castro/commit/d9549c534d5311c7eb2de0b810f45510ef5cf644",
+  "buggy_sha": "23c000f8bef236a3504cf4f6edeccfc69b462fbb",
+  "fixed_sha": "d9549c534d5311c7eb2de0b810f45510ef5cf644",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The conserved-state update accepts floating-point density and composition values and can expose the floor-scaling defect in one selected state component."
+  },
+  "evidence_urls": [
+    "https://github.com/AMReX-Astro/Castro/issues/3259",
+    "https://github.com/AMReX-Astro/Castro/commit/d9549c534d5311c7eb2de0b810f45510ef5cf644"
+  ],
+  "mechanism_sentence": "scales the composition floor by density in the conserved state."
+}

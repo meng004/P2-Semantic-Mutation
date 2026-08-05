@@ -1,0 +1,2100 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "nodes": [
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nfirst, thank you very much for you library!\nI am wondering, if I can sample my parameters for sensitivity analysis (Saltelli) a from a normal distribution, lognormal distributions and a truncated lognormal distribution. Is this already possible or am I missing a point here?\nMy distribution inputs are:\nh1=chaopsy.Normal(mu1,sigma1)\nh2=chaopsy.LogNormal(mu2, mu2*sigma2, shift=1.15, scale=0.18)\nh3=chaopsy.Uniform(low3,upp3)\nh4=chaopsy.Trunc(0.975-cp.LogNormal(-2.6, 0.5), lower=0.75)\nMany thanks!\nBest\nMarc Rocas",
+            "closedAt": "2021-06-05T10:05:22Z",
+            "createdAt": "2021-05-12T13:06:40Z",
+            "id": "MDU6SXNzdWU4OTAwNzE3OTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 420,
+            "state": "CLOSED",
+            "title": "Sobol Indices of Normal, Lognormal and Truncated distributions",
+            "updatedAt": "2021-06-05T10:05:22Z",
+            "url": "https://github.com/SALib/SALib/issues/420"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello.\nI can not speak English very well. Also, I am not familiar with Python and SALib. but I have a question while using morris in SALib.\nI would like to target the sensitivity analysis with my observation data, not the Ishigami and sobol_G used in the dictionary.\nCan you show me as an example which method to use?",
+            "closedAt": "2021-06-22T13:50:53Z",
+            "createdAt": "2021-05-04T01:57:54Z",
+            "id": "MDU6SXNzdWU4NzUwMzc4MjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 419,
+            "state": "CLOSED",
+            "title": "Specifying dependent variables for SALib",
+            "updatedAt": "2021-06-22T13:50:53Z",
+            "url": "https://github.com/SALib/SALib/issues/419"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I noticed that Sobol' sequence could be used in a wrong way by sample.saltelli:\n\n  \n    \n      SALib/src/SALib/sample/saltelli.py\n    \n    \n         Line 43\n      in\n      6765749\n    \n  \n  \n    \n\n        \n          \n           base_sequence = sobol_sequence.sample(N + skip_values, 2 * D) \n        \n    \n  \n\n\nThe convergence properties of Sobol' sequence are only valid if sampling exactly 2^n points. Also, if skipping is wanted, you must skip 2^m points and then you can only sample 2^n points with n < m.\nWe had lengthly discussions while adding a QMC module to SciPy notably with Art Owen, Sergei Kucherenko and Fred Hickernell:\nscipy/scipy#10844\nArt Owen wrote an article about it too:\nhttps://arxiv.org/abs/2008.08051\nIn the end, I would suggest to either fix the usage of Sobol' here or rely on the new scipy.stats.qmc which will be available in the next release of SciPy (1.7).\nIn general, this module if fairly new (and we are always looking for people interested in contributing) but already has Sobol' sequence, Halton, LHS and discrepancy measures. Implementations of Sobol' and discrepancy are in Cython and orders of magnitudes faster than equivalent in python.\nLet me know if I can help you with something.\nps. Sobol' writes with the apostrophe, it's not a mark of possessive but the diacritic is in the name.",
+            "closedAt": "2021-04-21T11:29:21Z",
+            "createdAt": "2021-04-10T19:59:07Z",
+            "id": "MDU6SXNzdWU4NTUxNDQ1NTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 414,
+            "state": "CLOSED",
+            "title": "Wrong usage of Sobol' sequence",
+            "updatedAt": "2021-04-21T11:29:21Z",
+            "url": "https://github.com/SALib/SALib/issues/414"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The SALib.sample.saltelli function has a \"seed\" input that suggests there is a way to randomize the generated points. Changing the value of this input, however, appears to have no effect on the output. Am I missing something?\nnames = ['var1', \n         'var2', \n         'var3']\n\nbounds = [[0, 1], \n          [1, 2], \n          [2, 3]]\n\ninputs = {'num_vars': len(names),\n          'names': names,\n          'bounds': bounds}\n\t\t\t\t\t\t\t\t\n# generate samples\nparam_vals_1 = saltelli.sample(problem=inputs, \n                                N=100)\nparam_vals_2 = saltelli.sample(problem=inputs, \n                               N=100, \n                               seed = 10)\n\nThese both produce the same values.",
+            "closedAt": "2021-04-05T11:26:56Z",
+            "createdAt": "2021-04-05T11:10:55Z",
+            "id": "MDU6SXNzdWU4NTAyOTM4Nzg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 412,
+            "state": "CLOSED",
+            "title": "Role of seed in SALib.sample.saltelli",
+            "updatedAt": "2021-04-05T11:26:56Z",
+            "url": "https://github.com/SALib/SALib/issues/412"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nfirst, thank you very much for you library, which I have been using extensively in the last weeks!\nI am wondering, if I can sample my parameters for sensitivity analysis (Saltelli) a  from a normal distribution instead of the upper and lower limit. Is this already possible or am I missing a point here?\nMany thanks!\nBest\nJohannes",
+            "closedAt": "2021-03-08T13:21:23Z",
+            "createdAt": "2021-03-08T12:51:06Z",
+            "id": "MDU6SXNzdWU4MjQ1MjkwMzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 405,
+            "state": "CLOSED",
+            "title": "Sobol Sensitivity Analysis with sampling from normal distribution",
+            "updatedAt": "2021-03-08T13:21:23Z",
+            "url": "https://github.com/SALib/SALib/issues/405"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi guys, I'm looking for a function to run a eFAST function. Is there a plan to develope this analysis in your library? If not, can you suggest me a good library that implements it?\nThanks!",
+            "closedAt": "2021-03-27T23:41:24Z",
+            "createdAt": "2021-03-01T11:29:38Z",
+            "id": "MDU6SXNzdWU4MTg3NzI3Mzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 404,
+            "state": "CLOSED",
+            "title": "[Feature Request] Extended Fourier amplitude sensitivity test - eFAST",
+            "updatedAt": "2021-03-27T23:41:24Z",
+            "url": "https://github.com/SALib/SALib/issues/404"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In SALib/src/SALib/analyze/sobol.py\nIt looks like there is an error in indices for computing BA : (+1 --> +2):\nAm I wrong ?\nOriginal\ndef separate_output_values(Y, D, N, calc_second_order):\n    AB = np.zeros((N, D))\n    BA = np.zeros((N, D)) if calc_second_order else None\n    step = 2 * D + 2 if calc_second_order else D + 2\n\n    A = Y[0:Y.size:step]\n    B = Y[(step - 1):Y.size:step]\n    for j in range(D):\n        AB[:, j] = Y[(j + 1):Y.size:step]\n        if calc_second_order:\n            BA[:, j] = Y[(j + 1 + D):Y.size:step]\n\n    return A, B, AB, BA\nModified:\ndef separate_output_values(Y, D, N, calc_second_order):\n    AB = np.zeros((N, D))\n    BA = np.zeros((N, D)) if calc_second_order else None\n    step = 2 * D + 2 if calc_second_order else D + 2\n\n    A = Y[0:Y.size:step]\n    B = Y[(step - 1):Y.size:step]\n    for j in range(D):\n        AB[:, j] = Y[(j + 1):Y.size:step]\n        if calc_second_order:\n            BA[:, j] = Y[(j + 2 + D):Y.size:step]\n\n    return A, B, AB, BA",
+            "closedAt": "2021-02-24T10:00:31Z",
+            "createdAt": "2021-02-24T09:51:06Z",
+            "id": "MDU6SXNzdWU4MTUzMDk0NzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 403,
+            "state": "CLOSED",
+            "title": "separate_output_values : error in indices ?",
+            "updatedAt": "2021-02-24T10:00:31Z",
+            "url": "https://github.com/SALib/SALib/issues/403"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The most recent version on conda-forge is 1.3.11, but there's a newer version, 1.3.12 on pypi.\nIt looks like maybe this just requires merging in the related PR on the conda-forge feedstock repo (https://github.com/conda-forge/salib-feedstock)? Maybe this step should be mentioned in the docs developed for #355?",
+            "closedAt": "2021-02-20T03:22:14Z",
+            "createdAt": "2021-02-19T22:23:25Z",
+            "id": "MDU6SXNzdWU4MTIzOTU1NjI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 401,
+            "state": "CLOSED",
+            "title": "version 1.3.12 is available on pypi but not on conda-forge",
+            "updatedAt": "2021-02-20T03:22:14Z",
+            "url": "https://github.com/SALib/SALib/issues/401"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am using a model with inputs of both scalars and booleans.\nSaltelli.sample generates continuous values for the last 4 parameters which are booleans.\nIn my case, those variables can not be scalars between 0 and 1 which is what is produced.\nMaybe this is how it is intended to work but I was a bit surprised so I am posting it.\nSee code below.\nbounds = [[0.0, 0.048],\n [0.0, 0.522],\n [0.07, 2.5],\n [0.5263157894736842, 60.0],\n [0.5263157894736842, 60.0],\n [0.5263157894736842, 50.0],\n [0.5882352941176471, 50.0],\n [0.5263157894736842, 52.0],\n [0.6060606060606061, 60.0],\n [0.5263157894736842, 50.0],\n [0.5263157894736842, 66.66666666666667],\n [0.5882352941176471, 50.0],\n [0.5882352941176471, 52.0],\n [0.5882352941176471, 50.0],\n [0.5263157894736842, 66.66666666666667],\n [0.5882352941176471, 50.0],\n [0.5882352941176471, 52.0],\n [0.5882352941176471, 50.0],\n [0.0, 45.0],\n [0.0, 50.0],\n [0.0, 50.0],\n [0.0, 50.0],\n [0.0, 50.0],\n [0.0, 50.0],\n [0.0, 50.0],\n [0.0, 50.0],\n [False, True],\n [False, True],\n [False, True],\n [False, True]]\n\nproblem = {\n    'num_vars': 30,\n    'names': columns,\n    'bounds': bounds\n}\n\n# Generate samples\nparam_values = saltelli.sample(problem, 1000)",
+            "closedAt": "2021-02-21T13:09:07Z",
+            "createdAt": "2021-02-16T09:35:26Z",
+            "id": "MDU6SXNzdWU4MDkxNDM4NzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 400,
+            "state": "CLOSED",
+            "title": "Booleans in bound parameter generates continouos values when using saltelli.sample",
+            "updatedAt": "2021-02-21T13:09:07Z",
+            "url": "https://github.com/SALib/SALib/issues/400"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nIs it normal that when performing twice the saltelli.sample function with the same problem\nand a different seed I obtain the same array.\nA = saltelli.sample(problem,10,seed=123456)\nB = saltelli.sample(problem,10,seed=654321)\nthen\ncomparaison = A ==B\ncomparaison.all()\nreturn True\nSincerely Mickaël",
+            "closedAt": "2021-01-20T09:05:21Z",
+            "createdAt": "2021-01-20T09:01:29Z",
+            "id": "MDU6SXNzdWU3ODk3ODExMjE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 399,
+            "state": "CLOSED",
+            "title": "How to generate different sample for the same problem with Saltelli.sample ",
+            "updatedAt": "2021-01-20T10:06:02Z",
+            "url": "https://github.com/SALib/SALib/issues/399"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "",
+            "closedAt": "2021-01-19T17:50:02Z",
+            "createdAt": "2021-01-19T17:14:33Z",
+            "id": "MDU6SXNzdWU3ODkyMDU1OTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 397,
+            "state": "CLOSED",
+            "title": "s",
+            "updatedAt": "2021-02-16T19:36:57Z",
+            "url": "https://github.com/SALib/SALib/issues/397"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have the \"param_values\" as .txt file, and \"Y\" as .txt file. But, I could not use the SALib, since in the example it uses \"sobol.analyze(problem...\", and use the problem as input.\nCould you help me how to solve this? thank you.",
+            "closedAt": "2021-01-30T05:10:10Z",
+            "createdAt": "2021-01-07T19:34:29Z",
+            "id": "MDU6SXNzdWU3ODE1NTY3OTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 394,
+            "state": "CLOSED",
+            "title": "Does SALib work with the data which provide with .txt file?",
+            "updatedAt": "2021-01-30T05:10:10Z",
+            "url": "https://github.com/SALib/SALib/issues/394"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have a 3 * 3 * 3 matrix variable. How to set its range in 'problem'?\n3Q!",
+            "closedAt": "2020-12-30T13:19:42Z",
+            "createdAt": "2020-12-29T03:41:50Z",
+            "id": "MDU6SXNzdWU3NzU2ODEwNjg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 393,
+            "state": "CLOSED",
+            "title": "A Question about samples",
+            "updatedAt": "2020-12-30T13:19:42Z",
+            "url": "https://github.com/SALib/SALib/issues/393"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi!\nI have a problem with Morris method. In particular for generation of sample. I obtain this error\nAttributeError                            Traceback (most recent call last)\n in \n----> 1 vals =morris.sample(problem, 5000,num_levels=11)\n2 vals\n3\n4 # initializing matrix to store output\n5 Y = np.zeros([len(vals),1])\nAttributeError: module 'SALib.analyze.morris' has no attribute 'sample'\nIs it possible to solve?\nThank you!",
+            "closedAt": "2020-12-02T12:35:01Z",
+            "createdAt": "2020-12-02T12:28:50Z",
+            "id": "MDU6SXNzdWU3NTUyMzE3NjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 391,
+            "state": "CLOSED",
+            "title": "Problem with morris.sample in Morris method",
+            "updatedAt": "2020-12-02T12:40:19Z",
+            "url": "https://github.com/SALib/SALib/issues/391"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI'm using delta analysis with correlated input parameters. As presented in the documentation, we need to assign distributions to parameters respectively. But how can we describe the correlation among these parameters?",
+            "closedAt": "2020-11-30T10:22:05Z",
+            "createdAt": "2020-11-23T19:01:49Z",
+            "id": "MDU6SXNzdWU3NDkwNTAyOTM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 390,
+            "state": "CLOSED",
+            "title": "Delta Moment-Independent Measure with correlated input paramaters",
+            "updatedAt": "2020-11-30T10:22:05Z",
+            "url": "https://github.com/SALib/SALib/issues/390"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "RuntimeWarning from numpy. I am not sure how much impact it has or if it should be expected given the context.\ntests/test_regression.py::test_regression_hdmr_ishigami\n  /home/travis/miniconda/envs/testenv/lib/python3.7/site-packages/numpy/linalg/linalg.py:2159: RuntimeWarning: overflow encountered in det\n    r = _umath_linalg.det(a, signature=signature)\nCould be emitted if some subset of an array happens to be filled with constant values (e.g. during resampling?).\nPossibly related issues:\nnumpy/numpy#8529\nroping @sahin-abdullah into this conversation",
+            "closedAt": "2021-01-20T02:03:28Z",
+            "createdAt": "2020-11-19T12:21:06Z",
+            "id": "MDU6SXNzdWU3NDY1MzM3MTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 389,
+            "state": "CLOSED",
+            "title": "RuntimeWarning emitted in test for HDMR",
+            "updatedAt": "2021-01-20T02:03:28Z",
+            "url": "https://github.com/SALib/SALib/issues/389"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Fails when the suite is run\nThe test test_cli.py:test_cli_avail_methods fails when calling SALib.util_funcs.avail_approaches with the error:\n________________________________________________________ test_cli_avail_methods ________________________________________________________\n\n    def test_cli_avail_methods():\n        method_types = ['sample', 'analyze']\n    \n        for method in method_types:\n            module = importlib.import_module('.'.join(['SALib', method]))\n            actions = avail_approaches(module)\n            for act in actions:\n>               approach = importlib.import_module('.'.join(\n                    ['SALib', method, act]))\n\ntests/test_cli.py:28: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../miniconda3/envs/salib/lib/python3.8/importlib/__init__.py:127: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n<frozen importlib._bootstrap>:1014: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:991: in _find_and_load\n    ???\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nname = 'SALib.sample.morris.test_morris', import_ = <function _gcd_import at 0x7fdf645884c0>\n\n>   ???\nE   ModuleNotFoundError: No module named 'SALib.sample.morris.test_morris'\n\n<frozen importlib._bootstrap>:973: ModuleNotFoundError\nbut only when all tests are run together.\nPasses when run in isolation\nWhen pytest tests/test_cli.py is run, the tests pass fine.\n$ pytest tests/test_cli.py \n========================================================= test session starts ==========================================================\nplatform darwin -- Python 3.8.2, pytest-5.4.1, py-1.8.1, pluggy-0.13.1 -- /Users/wusher/miniconda3/envs/salib/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/wusher/repository/SALib, inifile: setup.cfg\nplugins: cov-2.8.1\ncollected 2 items                                                                                                                      \n\ntests/test_cli.py::test_cli_usage PASSED                                                                                         [ 50%]\ntests/test_cli.py::test_cli_avail_methods PASSED                                                                                 [100%]Coverage.py warning: No data was collected. (no-data-collected)\nWARNING: Failed to generate report: No data to report.\n\n/Users/wusher/miniconda3/envs/salib/lib/python3.8/site-packages/pytest_cov/plugin.py:254: PytestWarning: Failed to generate report: No data to report.\n\n  self.cov_controller.finish()\n\n\n=========================================================== warnings summary ===========================================================\ntests/test_cli.py::test_cli_avail_methods\n  <frozen importlib._bootstrap>:219: RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject\n\n-- Docs: https://docs.pytest.org/en/latest/warnings.html\n\n---------- coverage: platform darwin, python 3.8.2-final-0 -----------\n\n===================================================== 2 passed, 1 warning in 6.54s =====================================================",
+            "closedAt": "2020-11-19T12:00:02Z",
+            "createdAt": "2020-11-16T21:52:59Z",
+            "id": "MDU6SXNzdWU3NDQyMTk1Mjk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 386,
+            "state": "CLOSED",
+            "title": "Function SALib.util_funcs.avail_approaches fails when all tests are run, passes in isolation",
+            "updatedAt": "2020-11-19T12:00:02Z",
+            "url": "https://github.com/SALib/SALib/issues/386"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI'm doing uncertainty and sensitivity analysis for some research on IEA - EBC annex70 on building stock models.\nIs there a way to check for convergence using the FAST global sensitivity analysis?\nIn Sobol for example, you immediately get the bootstrapped confidence intervals for S1 and ST, so you could compare it to an arbitrarily chosen limit (e.g. 0.05) and conclude that the sensitivity indices have converged as the CI is below 0.05.\nThis is however not the case for the FAST global sensitivity analysis since there are no confidence intervals calculated. Same issue for RBD-FAST, so I'm wondering if it can be implemented in these two SA-methods (FAST and RBD-FAST) or if there is another good way to check for convergence?\nKind regards,\nMatthias",
+            "closedAt": "2020-11-08T08:20:56Z",
+            "createdAt": "2020-10-18T10:34:53Z",
+            "id": "MDU6SXNzdWU3MjM5NzcxMDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 373,
+            "state": "CLOSED",
+            "title": "Convergence check for FAST and RBD-FAST GSA",
+            "updatedAt": "2020-11-08T08:20:56Z",
+            "url": "https://github.com/SALib/SALib/issues/373"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\na SyntaxWarning occurs when using SAlib with python 3.8\n\\lib\\site-packages\\SALib\\util\\_\n_init__.py:222: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n  elif row['group'] is 'NA':\n\\lib\\site-packages\\SALib\\util\\r\nesults.py:15: SyntaxWarning: \"is not\" with a literal. Did you mean \"!=\"?\n  return pd.DataFrame({k: v for k, v in self.items() if k is not 'names'},",
+            "closedAt": "2020-10-12T16:37:52Z",
+            "createdAt": "2020-10-12T16:32:46Z",
+            "id": "MDU6SXNzdWU3MTk1MTAwMTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 372,
+            "state": "CLOSED",
+            "title": "SyntaxWarning with python 3.8",
+            "updatedAt": "2020-10-12T23:52:56Z",
+            "url": "https://github.com/SALib/SALib/issues/372"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Have the results\nTrying to plot the Sobol method but it gives the error:\n\"\"\n---> 29     conf_cols = Si_df.columns.str.contains(CONF_COLUMN)\n30\n31     confs = Si_df.loc[:, conf_cols]\nAttributeError: 'list' object has no attribute 'columns' \"\"\nConverting to data frame gives a list, can that be the problem?",
+            "closedAt": "2020-09-29T20:03:58Z",
+            "createdAt": "2020-09-25T22:09:09Z",
+            "id": "MDU6SXNzdWU3MDkzMTIzNzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 359,
+            "state": "CLOSED",
+            "title": "SALib.plotting.bar module error",
+            "updatedAt": "2020-09-29T20:03:58Z",
+            "url": "https://github.com/SALib/SALib/issues/359"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Write down list of steps to take when preparing for a new release\nCreate an Issue Template which can be used to keep track of these steps for each release (e.g. a new issue using the template is opened when preparing a release, and closed upon release).",
+            "closedAt": "2022-09-06T12:40:30Z",
+            "createdAt": "2020-09-14T21:58:47Z",
+            "id": "MDU6SXNzdWU3MDE0NjA4OTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 355,
+            "state": "CLOSED",
+            "title": "Document release process",
+            "updatedAt": "2022-09-06T12:40:30Z",
+            "url": "https://github.com/SALib/SALib/issues/355"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Just got burnt by this.\nSuppose we have an output that is completely insensitive, e.g.\nY = [192.53, 192.53, 192.53, 192.53, 192.53, ...]\n\nThe delta method (DMIM) as implemented in SALib reports some sensitivity:\n\n(the x-axis is the number of samples)\nWhy, you ask?\nIn calculating the Sobol' indices, DMIM divides by the variance of Y.\nBut if Y is unchanging, then the variance should be 0.0 and it should error with a ZeroDivision exception, no?\nWell, apparently not, due to precision/rounding error:\n>>> np.var(Y)\n8.077935669463161e-28\n\n(there's an open discussion on this over at: numpy/numpy#9631)\nTo resolve this, I've modified the relevant function (first 3 lines of function):\ndef sobol_first(Y, X, m):\n    if (len(Y.shape) == 1) and np.allclose((Y - Y[0]), 0.0):\n        # If Y does not change then it is not sensitive to anything...\n        return 0.0\n\n    xr = rankdata(X, method='ordinal')\n    Vi = 0\n    N = len(Y)\n    Y_mean = Y.mean()\n    for j in range(len(m) - 1):\n        ix = np.where((xr > m[j]) & (xr <= m[j + 1]))[0]\n        nm = len(ix)\n        Vi += (nm / N) * ((Y[ix].mean() - Y_mean)**2)\n\n    return Vi / np.var(Y)\n\nwhich resolves the issue for my specific case (single output vector), but likely could be made more general...\nThis issue might (likely to?) affect other methods as well, I haven't gone through and checked yet.",
+            "closedAt": "2022-09-24T13:30:30Z",
+            "createdAt": "2020-09-10T08:13:53Z",
+            "id": "MDU6SXNzdWU2OTc1OTQ2NDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 344,
+            "state": "CLOSED",
+            "title": "Non-zero variance with constant array affecting results (DMIM)",
+            "updatedAt": "2022-09-24T13:30:30Z",
+            "url": "https://github.com/SALib/SALib/issues/344"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm working with python 3.5.\nWhen I run the following Morris example script here (morris.py),\nit gives me the following warning:\nMatplotlibDeprecationWarning:\nPassing one of 'on', 'true', 'off', 'false' as a boolean is deprecated; use an actual boolean (True/False) instead.\nwarn_deprecated(\"2.2\", \"Passing one of 'on', 'true', 'off', 'false' as a \"\nThe problem occurs in line 56: sample_histograms(fig2, param_values, problem, {'color': 'y'})",
+            "closedAt": "2020-09-10T08:33:21Z",
+            "createdAt": "2020-09-09T20:36:50Z",
+            "id": "MDU6SXNzdWU2OTcxNDA2NDM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 342,
+            "state": "CLOSED",
+            "title": "MatplotlibDeprecationWarning in morris.py example file",
+            "updatedAt": "2020-09-10T08:33:21Z",
+            "url": "https://github.com/SALib/SALib/issues/342"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there,\nI am a newbie about the topic of sensitivity analysis. However, this library looks great!\nI have some doubts in regards to discrete variables in the problem definition. I understand that you can produce your sample with uniform distribution and then round to the next integer. This makes sense. Hence, suppose we \"solve this issue\" and then being able to generate our outputs:\n\n\n\nY = Ishigami.evaluate(X) (example)\n\n\n\nHere is my doubt. When we perform SA with Sobol the analyze function does not have any parameter in regards to the adjusted sample. I know that the outputs are affected by the adjusted samples, but the following line of code does not seem able to take into account the fact that some Input are discrete (in fact the 'dist' in the problem definition will be equal to uniform)\n\n\n\nSi = sobol.analyze(problem, Y, print_to_console=True)\n\n\n\nWe can adjust parameters to have discrete values, but does the above function consider that?\nThank you",
+            "closedAt": "2020-09-10T06:14:52Z",
+            "createdAt": "2020-09-01T00:32:57Z",
+            "id": "MDU6SXNzdWU2ODk3MTMzNzE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 341,
+            "state": "CLOSED",
+            "title": "Discrete variables concern",
+            "updatedAt": "2020-09-10T06:14:52Z",
+            "url": "https://github.com/SALib/SALib/issues/341"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI was trying to calculate the analytical total sensitivity index for Sobol G-function using the default values for a ([0, 1, 4.5, 9, 99, 99, 99, 99]). These values appear to come from Sobol et al (2007; DOI: 10.1016/j.ress.2006.07.001). But the results from SALib do not match the analytical values given in the paper.\nI can get matching results with Sobol et al. using the formula from Saltelli et al., (2010; https://doi.org/10.1016/j.cpc.2009.09.018) but this formula appears different to the one used in SALib for the Sobol G-function, see Table below.\n\n\n\nFactor\nAnalytic Values from Sobol 2007\nSALib\nMy calculation using Saltelli 2010\n\n\n\n\n1\n0.787\n7.898277850460805327e-01\n7.871441266592746899e-01\n\n\n2\n0.242\n2.526836583868056207e-01\n2.421981928182383448e-01\n\n\n3\n0.034\n9.731139034486657735e-02\n3.431691015408282197e-02\n\n\n4\n0.010\n8.079753785583765335e-02\n1.046038706523952887e-02\n\n\n5\n1.05e-04\n7.370723538393519902e-02\n1.049490519195059676e-04\n\n\n6\n1.05e-04\n7.370723538393519902e-02\n1.049490519195059676e-04\n\n\n7\n1.05e-04\n7.370723538393519902e-02\n1.049490519195059676e-04\n\n\n8\n1.05e-04\n7.370723538393519902e-02\n1.049490519195059676e-04\n\n\n\nI am unable to find which method SALib is using to calculate the analytic values.\nHere is the code I used:\na = [0, 1, 4.5, 9, 99, 99, 99, 99]\nvd = np.array([1/3/ (i +1)**2 for i in a])\nvtd = np.zeros(vd.shape[0])\ntotal_vtd = np.prod([i + 1 for i in vd])\nfor i in range(vtd.shape[0]):\n    vtd[i] = vd[i] * total_vtd / (vd[i] + 1) / _total_variance(a)\n_total_variance() is the same one as found in SALib\nBest wishes,\nQian",
+            "closedAt": "2021-09-04T15:06:35Z",
+            "createdAt": "2020-07-23T05:50:00Z",
+            "id": "MDU6SXNzdWU2NjQyMTkyNzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 335,
+            "state": "CLOSED",
+            "title": "Possible problem with analytic results for Sobol G-function ",
+            "updatedAt": "2021-09-04T15:06:35Z",
+            "url": "https://github.com/SALib/SALib/issues/335"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I noticed a possible bug in Saltelli.sample function.\nIn particular, the seed option does not seem to work properly (Python 3.6, Ubuntu).\nI attached the following script:\nN=1\nproblem = {'num_vars': 3,\n           'names': ['x1','x2','x3'],\n           'bounds': [\n               [0,1],\n               [0,1],\n               [0,1]\n           ]\n           }\nfrom SALib.sample import saltelli\nSample = saltelli.sample(problem, N, calc_second_order=False, seed=None)\n\nprint(Sample)\nAs can be easily verified, the sampling provides always the same results (Sample) with any \"seed\" setting.",
+            "closedAt": "2020-11-08T08:21:50Z",
+            "createdAt": "2020-07-22T16:47:34Z",
+            "id": "MDU6SXNzdWU2NjM5MDQ2MjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "clean up/maintenance"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 334,
+            "state": "CLOSED",
+            "title": "Problem with seed in Saltelli.sample",
+            "updatedAt": "2020-11-08T08:21:50Z",
+            "url": "https://github.com/SALib/SALib/issues/334"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "\"The _conf keys store the corresponding confidence intervals, typically with a confidence level of 95%\"\nWhat \"confidence intervals\" exactly mean?  confidence intervals on the effect ?\nbest wishes",
+            "closedAt": "2020-09-12T05:57:22Z",
+            "createdAt": "2020-07-13T12:08:43Z",
+            "id": "MDU6SXNzdWU2NTU3OTkwMDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 333,
+            "state": "CLOSED",
+            "title": "Question about confidence level",
+            "updatedAt": "2022-03-12T01:15:02Z",
+            "url": "https://github.com/SALib/SALib/issues/333"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "First ... Nice Work thx\nOn Page : https://salib.readthedocs.io/en/latest/basics.html\nThe ghosts of \"Python 2\" appear again in the print expression in the example\nbest wishes",
+            "closedAt": "2021-02-01T13:47:27Z",
+            "createdAt": "2020-07-13T12:03:02Z",
+            "id": "MDU6SXNzdWU2NTU3OTU3MjM=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 332,
+            "state": "CLOSED",
+            "title": "Documentation ReadTheDocs",
+            "updatedAt": "2021-02-01T13:47:27Z",
+            "url": "https://github.com/SALib/SALib/issues/332"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The saltelli sampler can handle other distributions in the problem definition, however the latin hypercube sampler can not.\nExample-code:\nproblem = { 'num_vars': 3,\n                    'names': ['P1', 'P2', 'P3'],\n                    'bounds': [[0.9, 1.1], [5, 1], [3.4, 0.1]],\n                    'dists': ['unif', 'norm', 'lognorm']}\n\n#generating samples\nsaltelli_samples = saltelli.sample(prob_dists_code, 1000, calc_second_order=True) -> works fine\n\n#generating samples\nlatin_samples = latin.sample(prob_dists_code, 1000) -> ValueError: Bounds are not legal.\nI assume the latin sampler doesn't recognize the 'dists'-statement in the problem-definition and assumes all uniform.\nCan this be fixed?\nRegards,\nMatthias",
+            "closedAt": "2020-11-13T08:18:58Z",
+            "createdAt": "2020-07-09T09:26:34Z",
+            "id": "MDU6SXNzdWU2NTM5MTAzMTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 329,
+            "state": "CLOSED",
+            "title": "Sample problem in boundary-distribution definition: bounds are not legal.",
+            "updatedAt": "2020-11-13T08:18:58Z",
+            "url": "https://github.com/SALib/SALib/issues/329"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello.\nI would like to make some more clean up, this time for the module morris.py of the package analyze. What I intend to do is:\n\nBreak the function analyze into smaller functions\nRemove unused code\nSome minor style modifications\n\nIf you know something else that should change in this module, please let me know.",
+            "closedAt": "2020-10-27T06:56:53Z",
+            "createdAt": "2020-07-07T09:47:13Z",
+            "id": "MDU6SXNzdWU2NTIxNzczOTU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 327,
+            "state": "CLOSED",
+            "title": "Refactoring - analyze/morris.py",
+            "updatedAt": "2020-10-27T06:56:53Z",
+            "url": "https://github.com/SALib/SALib/issues/327"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello. I'll propose a few more changes on the sampling module morris.py. No functionalities will be changed for now, I'll just try to clean the code a little more. Specially, I'll break the function _compute_optimised_trajectories in more functions.",
+            "closedAt": "2020-07-07T18:39:34Z",
+            "createdAt": "2020-07-06T07:54:12Z",
+            "id": "MDU6SXNzdWU2NTEzMjc3Nzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "clean up/maintenance"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 325,
+            "state": "CLOSED",
+            "title": "Refactoring Morris sample module",
+            "updatedAt": "2020-07-07T18:39:34Z",
+            "url": "https://github.com/SALib/SALib/issues/325"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello, everyone.\nCurrently there is a default value for the number of level in the sample method of the subpackage sample/morris (num_levels=4). The number of levels is a fundamental aspect of this method, shouldn't we demand the user to explicitly specify it, removing this default value? This can avoid people forgetting to change this value and having unexpected results.",
+            "closedAt": "2020-06-22T18:42:52Z",
+            "createdAt": "2020-06-19T00:12:58Z",
+            "id": "MDU6SXNzdWU2NDE2MjAwMjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 323,
+            "state": "CLOSED",
+            "title": "Default value for number of levels",
+            "updatedAt": "2020-06-22T18:42:52Z",
+            "url": "https://github.com/SALib/SALib/issues/323"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello, guys.\nI was checking this project today, and I found it really interesting. I've been making some sensitivity analysis during my PhD studies, so this project is really useful for me.\nChecking the code, I realized that perhaps I could contribute someway. I would like to propose you a refactor of the code to make it cleaner and more readable. Here are some things I could do:\n\nChange some variables' names to increase readability\nMake sure the code is using PEP-8 style (for example, 79 characters per line, naming conventions, etc)\nAbstract functions from the existing ones. The idea is to increase the test coverage and to increase readability, writing small functions that do only one thing\nWrite extra unit tests\nEliminate hard coding, creating new default variables for the functions (similar to what I did in issue #316 today)\nAdd annotations to the variables showing the expected types\n\nMy idea is to start small and to do only one change first. Then I would submit it and wait for your feedback.\nHow do you feel about that?",
+            "closedAt": "2020-07-05T20:16:02Z",
+            "createdAt": "2020-06-17T18:08:26Z",
+            "id": "MDU6SXNzdWU2NDA2NDE5ODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 320,
+            "state": "CLOSED",
+            "title": "Enhancement proposal: code refactoring",
+            "updatedAt": "2020-07-05T20:16:03Z",
+            "url": "https://github.com/SALib/SALib/issues/320"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nAs a  part of Basics in SALib documentation:\nfor i, X in enumerate(param_values):\nY[i] = evaluate_model(X)\nis used. according to Python 3.7, evaluate_model is undefined.",
+            "closedAt": "2020-06-01T03:36:16Z",
+            "createdAt": "2020-05-29T17:15:19Z",
+            "id": "MDU6SXNzdWU2Mjc0MTY5MDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 318,
+            "state": "CLOSED",
+            "title": "evaluate_model is undefined?",
+            "updatedAt": "2020-06-01T03:36:16Z",
+            "url": "https://github.com/SALib/SALib/issues/318"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey,\nI was trying to use saltelli.sample and found that the skip_values is not a parameter in the method. The value used is 1000 in the code. It might be good to add skip_values as a parameter.  Or is there any particular reason that skip_values is hidden?\nLook forward to your reply.\nBest wishes,\nQian",
+            "closedAt": "2020-06-18T12:25:55Z",
+            "createdAt": "2020-05-21T13:08:34Z",
+            "id": "MDU6SXNzdWU2MjI0ODc4Njc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "good_for_first_issue"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 316,
+            "state": "CLOSED",
+            "title": "saltelli.sample enables user defined skip_values? ",
+            "updatedAt": "2020-06-18T12:25:55Z",
+            "url": "https://github.com/SALib/SALib/issues/316"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hey,\nI am trying to install your package in Ubuntu with \"sudo pip install SALib\" but it doesn't works. This is the error that appears:\n\"Complete output (1 lines):\nError: version of setuptools is too old (<38.3)!\n\".\nI have upgradeed the setup tool by \" pip install --upgrade pip setuptools\n\" but appears the same problem.\nThis is the error that appears:\n\nThank you in advance,\nMarc",
+            "closedAt": "2020-06-01T03:37:33Z",
+            "createdAt": "2020-05-05T09:22:30Z",
+            "id": "MDU6SXNzdWU2MTI0NjE0MTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 313,
+            "state": "CLOSED",
+            "title": "Problem with the installation",
+            "updatedAt": "2020-06-01T03:37:33Z",
+            "url": "https://github.com/SALib/SALib/issues/313"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'd like to ask you a question of how to interpret the results obtained by Morris method.\nI tried the following sample code which is shown in the SAlib document.\nfrom SALib.sample.morris import sample\nfrom SALib.analyze.morris import analyze\nfrom SALib.test_functions import Ishigami\n\n# Define the model inputs\nproblem = {\n    'num_vars': 3,\n    'names': ['x1', 'x2', 'x3'],\n    'bounds': [[-3.14159265359, 3.14159265359],\n               [-3.14159265359, 3.14159265359],\n               [-3.14159265359, 3.14159265359]]\n}\n\n# Generate samples\nX = sample(problem, 10, num_levels=4)\n\n# Run model (example)\nY = Ishigami.evaluate(X)\n\n# Perform analysis\nSi = analyze(problem, X, Y, num_levels=4, print_to_console=True)\nWe obtained the following indicating all three parameters have significant values of mu_star, which is totally fine as Ishigami function depends on all parameters.\nParameter                         Mu_Star         Mu    Mu_Star_Conf      Sigma\nx1                                  7.704      7.704           3.796      6.587\nx2                                  7.875      1.575           0.000      8.133\nx3                                  6.249      1.250           3.814      9.222\n\nThe problem occurs when we increase num_levels to a higher value, such as 64.\nThe output looks like the following, which indicates that x2 is not an influential parameter.\nParameter                         Mu_Star         Mu    Mu_Star_Conf      Sigma\nx1                                  9.293      9.293           6.691     11.895\nx2                                  0.373     -0.026           0.120      0.450\nx3                                  6.624     -3.302           4.205      9.402\n\nTo my understanding, this occurs because the Ishigami function is periodic in x2 with period pi, which is exactly half of the range of x2. Since Morris method changes the value of a factor by exactly half of the range, Ishigami function behaves as if it is independent of x2.\nWhile I understand this is not a problem of the implementation of this library, isn't there an algorithm to avoid this problem?",
+            "closedAt": "2020-05-13T03:05:24Z",
+            "createdAt": "2020-05-02T01:02:14Z",
+            "id": "MDU6SXNzdWU2MTEwNzcyNTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 312,
+            "state": "CLOSED",
+            "title": "Morris returns mu_star=0 for Ishigami function",
+            "updatedAt": "2020-05-14T06:45:56Z",
+            "url": "https://github.com/SALib/SALib/issues/312"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "To begin to address some issues there is a need for a test (or example) function with multiple outputs.\nIssues such a function could be used to test/develop solutions against:\n#41 - Could be used as a test bed for parallel or vectorized analyses\n#234 - Would be useful for testing any new object or method structures\n#308 - Generation of epsilon value could be used as an example to document input distributions",
+            "closedAt": "2020-09-13T08:49:29Z",
+            "createdAt": "2020-04-29T09:45:05Z",
+            "id": "MDU6SXNzdWU2MDg5MTkwMjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 309,
+            "state": "CLOSED",
+            "title": "Need for test function with multiple outputs",
+            "updatedAt": "2020-09-13T08:49:29Z",
+            "url": "https://github.com/SALib/SALib/issues/309"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nThank you in advance for your time.\nI have a metamodel M(x1,x2,x3) with three inputs X=[x1,x2,x3] with Normal distributions x1=N(0,1), x2=N(0,1), x3=N(0,1).\nMy idea is to develop sensitivity analysis for the metamodel M with gaussian inputs not with Uniform distribution. How I can definde the problem to obtain the Saltelli samples?\nMy example idea:\nproblem = {\n'num_vars': 3,\n'names': ['x1', 'x2', 'x3'],\n'dist': [[N(0,1)],\n[N(0,1)],\n[N(0,1)]]\n}\nThank you very much for your help and time!\nMarc",
+            "closedAt": "2020-04-26T17:06:09Z",
+            "createdAt": "2020-04-26T13:46:50Z",
+            "id": "MDU6SXNzdWU2MDcwMTYzNzA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 307,
+            "state": "CLOSED",
+            "title": "Gaussian inputs",
+            "updatedAt": "2020-04-27T08:36:16Z",
+            "url": "https://github.com/SALib/SALib/issues/307"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I attempt to run from SALib.sample import morris I get an error related to comb:\n\nFile \"/home/aman/anaconda3/lib/python3.7/site-packages/SALib/sample/morris/init.py\", line 34, in \nfrom . gurobi import GlobalOptimisation\nFile \"/home/aman/anaconda3/lib/python3.7/site-packages/SALib/sample/morris/gurobi.py\", line 19, in  from scipy.misc import comb as nchoosek\nImportError: cannot import name 'comb' from 'scipy.misc' (/home/aman/anaconda3/lib/python3.7/site-packages/scipy/misc/init.py)\n\nThis might be because comb was moved to scipy.special. Changing from scipy.misc import comb to from scipy.special import comb in gurobi.py and brute.py in the morris directory fixed this for me.",
+            "closedAt": "2020-04-21T14:26:20Z",
+            "createdAt": "2020-04-21T13:36:34Z",
+            "id": "MDU6SXNzdWU2MDQwMDQ2NDk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 305,
+            "state": "CLOSED",
+            "title": "Error importing morris ",
+            "updatedAt": "2020-04-21T14:26:20Z",
+            "url": "https://github.com/SALib/SALib/issues/305"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi\nI am running SALib on a python 3.7.1  environment with numpy version 1.18.1.\nWhen running the delta.analyze function I get an error. Here the code and the error.\n(Note: when using the Saltelli and Sobol methods everything works fine.\nNote2: same code on python environment 3.6.7 and numpy 1.17.2 returns no error)\n` from SALib.sample import latin\nfrom SALib.analyze import delta\nfrom SALib.test_functions import Ishigami\nimport numpy as np\nproblem = {\n'num_vars': 3,\n'names': ['x1', 'x2', 'x3'],\n'bounds': [[-3.14159265359, 3.14159265359],\n[-3.14159265359, 3.14159265359],\n[-3.14159265359, 3.14159265359]]\n}\nX = latin.sample(problem, 1000)\nY = Ishigami.evaluate(X)\nSi = delta.analyze(problem, X, Y, print_to_console=True)\n`\nThis is the error I get\n`Traceback (most recent call last):\nFile \"/Users/massimo/miniconda/envs/BW2.1/lib/python3.7/site-packages/numpy/core/function_base.py\", line 117, in linspace\nnum = operator.index(num)\nTypeError: 'numpy.float64' object cannot be interpreted as an integer\nDuring handling of the above exception, another exception occurred:\nTraceback (most recent call last):\nFile \"\", line 1, in \nFile \"/Users/massimo/miniconda/envs/BW2.1/lib/python3.7/site-packages/SALib/analyze/delta.py\", line 60, in analyze\nm = np.linspace(0, N, M + 1)\nFile \"<array_function internals>\", line 6, in linspace\nFile \"/Users/massimo/miniconda/envs/BW2.1/lib/python3.7/site-packages/numpy/core/function_base.py\", line 121, in linspace\n.format(type(num)))\nTypeError: object of type <class 'numpy.float64'> cannot be safely interpreted as an integer.\n`",
+            "closedAt": "2020-04-20T10:29:26Z",
+            "createdAt": "2020-04-20T09:48:44Z",
+            "id": "MDU6SXNzdWU2MDMwOTk4ODU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 304,
+            "state": "CLOSED",
+            "title": "Integer error in delta.analyze method",
+            "updatedAt": "2020-04-20T10:29:26Z",
+            "url": "https://github.com/SALib/SALib/issues/304"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "root: both matrix and jobs given, matrix overwrites jobs\nroot: deprecated key sudo (The key `sudo` has no effect anymore.)\nroot: deprecated key sudo (The key `sudo` has no effect anymore.)\nenv: key matrix is an alias for jobs, using jobs\nroot: key matrix is an alias for jobs, using jobs\nenv: key matrix is an alias for jobs, using jobs\nroot: key matrix is an alias for jobs, using jobs\nroot: missing dist, using the default xenial\nroot: missing os, using the default linux",
+            "closedAt": "2020-04-20T05:35:11Z",
+            "createdAt": "2020-04-19T23:44:05Z",
+            "id": "MDU6SXNzdWU2MDI4NTM2Njk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 302,
+            "state": "CLOSED",
+            "title": "Travis Deploy overwritten due to deprecated matrix key present",
+            "updatedAt": "2020-04-20T05:35:11Z",
+            "url": "https://github.com/SALib/SALib/issues/302"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, is a new release planned in the near future? Especially with the fix for the Morris method?",
+            "closedAt": "2020-04-19T23:22:19Z",
+            "createdAt": "2020-04-19T09:06:58Z",
+            "id": "MDU6SXNzdWU2MDI2NjM0MzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 299,
+            "state": "CLOSED",
+            "title": "Question new release?",
+            "updatedAt": "2020-04-20T06:11:38Z",
+            "url": "https://github.com/SALib/SALib/issues/299"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there !\nI am using SALib to run my sensitivity analysis with Morris method. I have the same problem as described in issue #248 . I use the version 1.3.8.\nCan you give me a help ? Thanks a lot.\nBenoit",
+            "closedAt": "2020-04-20T13:00:08Z",
+            "createdAt": "2020-04-14T21:09:45Z",
+            "id": "MDU6SXNzdWU1OTk4NjEwMDI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 297,
+            "state": "CLOSED",
+            "title": "issue 248 with more than 4 num_levels",
+            "updatedAt": "2020-04-20T14:06:21Z",
+            "url": "https://github.com/SALib/SALib/issues/297"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I am sure I am doing something wrong here but I cannot find where.\nI am reading the Saltelli 2002 paper, on Page 290 Section 5, the author is testing this algorithm with Sobol G function:\n\nI am trying to repeat the author's tests using the following code:\nfrom SALib.sample import saltelli\nfrom SALib.analyze import sobol\nfrom SALib.test_functions import Ishigami\nimport numpy as np\nfrom functools import partial\n\n# %%\ndef psi(t, a):\n    return (np.abs(4*t -2) + a) / (1 + a)\n\nparam_a_array = [0, 0.5, 3, 9, 99, 99]\npsi_array = [partial(psi, a=i) for i in param_a_array]\ndef evaluate_model_p(x, func_array):\n    return np.prod([v(x) for v in func_array])\n\n# %%\nproblem = {\n    'num_vars': 6,\n    'names': ['x1', 'x2', 'x3', 'x4', 'x5', 'x6'],\n    'bounds': [[0, 1],\n               [0, 1],\n               [0, 1],\n               [0, 1],\n               [0, 1],\n               [0, 1]]\n}\n\nparam_values = saltelli.sample(problem, 10000)\n\n# %%\nY = np.zeros([param_values.shape[0]])\n\nfor i, X in enumerate(param_values):\n    Y[i] = evaluate_model_p(X, psi_array)\n   \n# %%\nSi = sobol.analyze(problem, Y)\nThe first order Sobol indices I have are:\n\nSi\n{'S1': array([0.008951  , 0.01900799, 0.01116865, 0.020058  , 0.01720087,\n        0.0102313 ]),\n 'S1_conf': array([0.00828363, 0.02171837, 0.01284479, 0.02083286, 0.01274454,\n        0.00802342]),\n 'ST': array([0.2934952 , 0.33114771, 0.24861919, 0.39577492, 0.32104749,\n        0.31388651]),\n 'ST_conf': array([0.21464042, 0.23829173, 0.18040653, 0.31523333, 0.23419328,\n        0.20756677]),\n\nThese seem to be very different than the author's results in Fig 2:\n\nI saw the testing code also defines a Sobol G function, but it is slightly different than the paper one. Is there a special reason why we use this form of g function instead of the original 2002 paper's form?",
+            "closedAt": "2020-04-11T16:00:11Z",
+            "createdAt": "2020-04-11T07:33:28Z",
+            "id": "MDU6SXNzdWU1OTgyMTExNjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 293,
+            "state": "CLOSED",
+            "title": "Incorrect Sobol g function results?",
+            "updatedAt": "2020-04-11T16:00:12Z",
+            "url": "https://github.com/SALib/SALib/issues/293"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Can the Sobol algorithm handle randomized functions?\nSay f(x,y) = x**2 + 2yA + x*y + A, where A is some random variable.\nCan I still calculate the sensitivities of f with respect to x and y (for some input distribution of x and y)?",
+            "closedAt": "2020-04-12T02:34:02Z",
+            "createdAt": "2020-04-10T18:37:49Z",
+            "id": "MDU6SXNzdWU1OTgwMzE4NzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 292,
+            "state": "CLOSED",
+            "title": "Sobol algorithm for randomized functions",
+            "updatedAt": "2020-04-12T02:34:02Z",
+            "url": "https://github.com/SALib/SALib/issues/292"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi all,\nDefault num_resamples values for different SALib analyze methods:\nMorris: num_resamples=1000\nDGSM: num_resamples=1000\nSobol: num_resamples=100\nDelta-MIM: num_resamples=10\nWhy is the default value for resamples lower for Delta-MIM (and Sobol) than Morris and DGSM?\nAnd thanks for all the great work!",
+            "closedAt": "2020-04-11T16:01:37Z",
+            "createdAt": "2020-04-03T11:31:18Z",
+            "id": "MDU6SXNzdWU1OTMzMTYzNzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 291,
+            "state": "CLOSED",
+            "title": "Why is the default value of num_resamples for Delta-MIM lower than for other methods?",
+            "updatedAt": "2020-04-11T16:01:37Z",
+            "url": "https://github.com/SALib/SALib/issues/291"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi, say I have the following setup:\ninput distributions: x1, x2\nintermediate values: m1 = f1(x1, x2), m2 = f2(x1, x2)\nfinal value: y = g(m1, m2, x1, x2)\n\nSALib is doing a great job of getting the sensitivities of y with respect to x1 and x2. How would I compute the sensitivities of y with respect to m1 and m2?",
+            "closedAt": "2020-05-07T11:53:24Z",
+            "createdAt": "2020-04-03T01:53:27Z",
+            "id": "MDU6SXNzdWU1OTMwMjI2MzI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 290,
+            "state": "CLOSED",
+            "title": "Sensitivity Analysis with respect to intermediate values",
+            "updatedAt": "2020-05-07T11:53:24Z",
+            "url": "https://github.com/SALib/SALib/issues/290"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have issues trying to install SALib on Arch via pip.\nCould anyone hint me in a direction to solve this?\nERROR: Command errored out with exit status 1:\n     command: /usr/bin/python -c 'import sys, setuptools, tokenize; sys.argv[0] = '\"'\"'/tmp/pip-install-_iecc01h/SALib/setup.py'\"'\"'; __file__='\"'\"'/tmp/pip-install-_iecc01h/SALib/setup.py'\"'\"';f=getattr(tokenize, '\"'\"'open'\"'\"', open)(__file__);code=f.read().replace('\"'\"'\\r\\n'\"'\"', '\"'\"'\\n'\"'\"');f.close();exec(compile(code, __file__, '\"'\"'exec'\"'\"'))' egg_info --egg-base /tmp/pip-install-_iecc01h/SALib/pip-egg-info\n         cwd: /tmp/pip-install-_iecc01h/SALib/\n    Complete output (9 lines):\n    running egg_info\n    creating /tmp/pip-install-_iecc01h/SALib/pip-egg-info/SALib.egg-info\n    writing /tmp/pip-install-_iecc01h/SALib/pip-egg-info/SALib.egg-info/PKG-INFO\n    writing dependency_links to /tmp/pip-install-_iecc01h/SALib/pip-egg-info/SALib.egg-info/dependency_links.txt\n    writing entry points to /tmp/pip-install-_iecc01h/SALib/pip-egg-info/SALib.egg-info/entry_points.txt\n    writing requirements to /tmp/pip-install-_iecc01h/SALib/pip-egg-info/SALib.egg-info/requires.txt\n    writing top-level names to /tmp/pip-install-_iecc01h/SALib/pip-egg-info/SALib.egg-info/top_level.txt\n    writing manifest file '/tmp/pip-install-_iecc01h/SALib/pip-egg-info/SALib.egg-info/SOURCES.txt'\n    error: [Errno 2] No such file or directory: 'hg'\n    ----------------------------------------\nERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.",
+            "closedAt": "2020-04-07T06:58:12Z",
+            "createdAt": "2020-03-31T14:21:11Z",
+            "id": "MDU6SXNzdWU1OTExNTA3ODc=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 289,
+            "state": "CLOSED",
+            "title": "Installation issues (pip, missing 'hg')",
+            "updatedAt": "2020-04-07T06:58:12Z",
+            "url": "https://github.com/SALib/SALib/issues/289"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Usage via CLI expects the analysis function to support printing directly to the console.\nWe could leverage the new DataFrame object results to output to a file instead.\nThis will simplify the code (as the previous \"print_to_console\" options could be removed) and newer functions do not have to support console printing.",
+            "closedAt": "2020-09-13T08:49:33Z",
+            "createdAt": "2020-03-06T10:49:17Z",
+            "id": "MDU6SXNzdWU1NzY4NTA1NzM=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 286,
+            "state": "CLOSED",
+            "title": "CLI - leverage dataframes to output analysis results",
+            "updatedAt": "2020-09-13T08:49:33Z",
+            "url": "https://github.com/SALib/SALib/issues/286"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nThanks for this great library,\nI have a set of experiments designed by Taguchi method stored in a file, and I would like to analyse the sensitivity of the inputs,\nCould you please provide a small code that uses data from a file?\nThank you very much for your help,",
+            "closedAt": "2020-02-03T14:34:42Z",
+            "createdAt": "2020-02-03T10:47:54Z",
+            "id": "MDU6SXNzdWU1NTg5OTkyNjA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 281,
+            "state": "CLOSED",
+            "title": "Analyse a set of experiments from a file",
+            "updatedAt": "2020-02-05T13:42:22Z",
+            "url": "https://github.com/SALib/SALib/issues/281"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I keep running into a weird SSL error when trying to install SALib. Below is a screenshot with the error. This is on a brand new windows server 2019 machine with the latest anaconda 64 bit distribution. I have had the same on clean windows 10 machines as well. Any idea what is going on and how it might be fixed?\nI have tried various suggested fixes such as updating pip etc, but I have the most up to date versions here. My hunch is that it has to do with some configurations related to pyscaffold.",
+            "closedAt": "2022-09-24T12:58:47Z",
+            "createdAt": "2019-12-19T15:14:40Z",
+            "id": "MDU6SXNzdWU1NDAzNzUwODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 279,
+            "state": "CLOSED",
+            "title": "problem when installing with pip",
+            "updatedAt": "2022-09-24T12:58:47Z",
+            "url": "https://github.com/SALib/SALib/issues/279"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi everyone!\nI'm doing Sobol analysis using Salib and getting sample matrix using saltelli.sample function. The equation Im analyzing include a inverse error function. Before the Sobols analysis its necessary to exclude some of the samples generated by saltelli sample method so the function domain make sense. I have modified the sample matrix, by removing those samples that don't comply with the domain requirements, but I get weird Sobols indices.\nSince you can't use existing data to calculate Sobol indices like was asked in issue #211 ( like export the modified sample ), there is anyway to modified sample matrix before the Sobol analysis (sobol.analyse) ???\nThanks!\n¡Hola a todos!\nEstoy haciendo un análisis de Sobol usando Salib y obtengo una matriz de muestra usando la función saltelli.sample. La ecuación que estoy analizando incluye la inversa de la función de error. Antes del análisis de Sobols es necesario excluir algunas de las muestras generadas por el método de muestra saltelli para que el dominio de la función tenga sentido. He modificado la matriz de muestras, eliminando aquellas muestras que no cumplen con los requisitos del dominio, pero obtengo índices de Sobols extraños.\nYa que no puede utilizar los datos existentes para calcular los índices de Sobol tal como se menciona en el asunto #211  (como exportar la muestra modificada), ¿hay alguna forma de matriz de muestra modificada antes del análisis de Sobol (sobol.analyse) ???\n¡Gracias!",
+            "closedAt": "2019-12-17T04:26:20Z",
+            "createdAt": "2019-12-17T01:38:31Z",
+            "id": "MDU6SXNzdWU1Mzg3ODE3MzQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 278,
+            "state": "CLOSED",
+            "title": "Modify sample matrix before Sobol Analysis / Modificar matriz de muestra antes del análisis de Sobol",
+            "updatedAt": "2019-12-17T04:26:20Z",
+            "url": "https://github.com/SALib/SALib/issues/278"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear user,\nRecently, I faced a problem with sobol analysis results\n# Perform analysis\nSi = sobol.analyze(problem, Y, calc_second_order=True, num_resamples=100,\n            conf_level=0.95, print_to_console=True)\nY is attached for the reference....\nThe result obtained is different than R package for the same input.. ..Could any one please help me to figure out the issue ?\nSalib\nParameter S1 S1_conf ST ST_conf\nx1 0.019522 0.036718 0.991004 0.042381\nx2 -0.008420 0.033168 1.005745 0.041473\nx3 -0.031159 0.034805 1.032269 0.055246\nx4 -0.003859 0.035548 1.027899 0.046800\nR results\ninput.docx\nModel runs: 60000\noriginal          bias std. error     min. c.i.  max. c.i.\nX1 0.03052948 -0.0025201811 0.01530504 -3.112346e-06 0.06720971\nX2 0.45468790 -0.0032829662 0.01272489  4.332534e-01 0.48427634\nX3 0.18339427 -0.0009877617 0.01644451  1.530832e-01 0.21648349\nX4 0.32118027 -0.0017089329 0.01231835  2.984512e-01 0.34563679\n\nTotal indices:\noriginal          bias   std. error  min. c.i.  max. c.i.\nX1 0.01737156  3.419055e-05 0.0004438342 0.01641291 0.01818515\nX2 0.49307431 -1.390719e-04 0.0112479825 0.47084374 0.51534768\nX3 0.20720198  1.653553e-03 0.0050508063 0.19491080 0.21571724\nX4 0.32220133  7.532271e-04 0.0087575178 0.30496359 0.33812582\n#218",
+            "closedAt": "2019-12-21T01:52:58Z",
+            "createdAt": "2019-12-02T10:02:50Z",
+            "id": "MDU6SXNzdWU1MzEwMTg2OTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 277,
+            "state": "CLOSED",
+            "title": "Sobol Indices (Negative) & not matching with R Package",
+            "updatedAt": "2019-12-21T01:52:59Z",
+            "url": "https://github.com/SALib/SALib/issues/277"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It seems that the latest versions of SALib are only available on PyPI. Our workflow requires conda so I had to package it on our 'personal' channel. I'll be happy to contribute and deploy it on conda-forge for you instead.",
+            "closedAt": "2020-10-27T06:55:39Z",
+            "createdAt": "2019-11-05T07:19:42Z",
+            "id": "MDU6SXNzdWU1MTc1ODk4Mzc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "priority"
+                },
+                {
+                  "name": "need_help"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 271,
+            "state": "CLOSED",
+            "title": "conda release > 1.1.2",
+            "updatedAt": "2020-10-27T06:55:39Z",
+            "url": "https://github.com/SALib/SALib/issues/271"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear Jon / Wil/Salib developer,\nThank you very much for developing an open source software SAlib. I am a new user of this software & compiling it with Python for my own study.\nThe Ishigami example works well for me documented here https://salib.readthedocs.io/en/latest/basics.html#an-example\nHowever, I am not able to plot given in the attached file.. I am looking forward to plot Y (output) vs X1 / X2 same as in the attachment in [0, 1] limit.\n\nCould you please help in this regard? I will be very much thankful to you for the  same.\n*Example code\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom SALib.sample import saltelli\nfrom SALib.analyze import sobol\nfrom SALib.sample.fast_sampler import sample as fast_sampler\nfrom SALib.analyze.fast import analyze as fast_analyzer\nfrom SALib.test_functions import Ishigami\nimport matplotlib\nmatplotlib.rc('figure', figsize=(6, 6))\nproblem = {\n'num_vars': 3,\n'names': ['x1', 'x2', 'x3'],\n'bounds': [[-np.pi, np.pi]]*3\n}\nsamples = fast_sampler(problem, 2000, seed=101)\nnp.savetxt(\"param_values.txt\", samples)\nY = Ishigami.evaluate(samples)\nSi = fast_analyzer(problem, Y, print_to_console=False)\nSi.plot()",
+            "closedAt": "2019-11-06T09:02:23Z",
+            "createdAt": "2019-11-04T15:58:56Z",
+            "id": "MDU6SXNzdWU1MTcyNDU4NDA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 270,
+            "state": "CLOSED",
+            "title": " SALib issue tracker #SAlib",
+            "updatedAt": "2019-11-06T09:02:23Z",
+            "url": "https://github.com/SALib/SALib/issues/270"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "As an alternative method to Morris method, I am using the Delta-MIM method on an aquatic model with 340 input parameters. Looking at the delta results I observe no clear demarcation of sensitive and non-sensitive parameters. Do anyone know of a threshold or cut-off criteria to use with the Delta-MIM method?",
+            "closedAt": "2019-11-07T23:04:03Z",
+            "createdAt": "2019-10-07T09:18:23Z",
+            "id": "MDU6SXNzdWU1MDMzMjc5MjU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 268,
+            "state": "CLOSED",
+            "title": "Threshold/cut-off criteria for sensive/non-sensitive parameters with the Delta-MIM method?",
+            "updatedAt": "2019-11-07T23:04:03Z",
+            "url": "https://github.com/SALib/SALib/issues/268"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi!\nThe SALib  install (in a cluster using pip3) has crashed because it needs PyScaffold 3. It would be advisable to add it to the requirements.\nThanks.",
+            "closedAt": "2019-09-18T12:06:44Z",
+            "createdAt": "2019-09-18T09:46:02Z",
+            "id": "MDU6SXNzdWU0OTUxMTI5MTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 263,
+            "state": "CLOSED",
+            "title": "Error installing SALib via requirements file listing?",
+            "updatedAt": "2019-10-01T07:00:50Z",
+            "url": "https://github.com/SALib/SALib/issues/263"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "On a related question regarding model failure when running Method of Morris:\nI am running a process-based, biogeochemical model with 200+ parameters and get around 5% model failures. I was thinking of trying to locate the parameters and/or parameter combinations as a way to handle/avoid model failure and thereby being able to go forward with Method of Morris analysis. Does anyone has a good method to locate parameters causing model failure?\n(I hope this question is not out of the scope for this board) :-)",
+            "closedAt": "2019-09-05T22:44:55Z",
+            "createdAt": "2019-09-05T09:19:42Z",
+            "id": "MDU6SXNzdWU0ODk2MzE5NTI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 262,
+            "state": "CLOSED",
+            "title": "Method to locate parameter combinations/ranges that cause model failure with Morris?",
+            "updatedAt": "2019-10-08T14:10:58Z",
+            "url": "https://github.com/SALib/SALib/issues/262"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "It would be helpful to include a more immediate link to where to get help and a FAQ on the readme and in the documentation.\n\nQ. I've already got results from my Monte Carlo simulation - which technique can I use?\nA. DMIM\nQ. I get this error when installing SALib 1.3 with Python 2.7\nA. SALib 1.3 onwards does not support Python 2.7\nQ. Can you help me with implementing my sensitivity analysis?\nA. Check out the examples here",
+            "closedAt": "2021-06-27T08:13:06Z",
+            "createdAt": "2019-08-19T12:55:09Z",
+            "id": "MDU6SXNzdWU0ODIyOTU3OTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "documentation"
+                },
+                {
+                  "name": "good_for_first_issue"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mw",
+                "hasNextPage": false
+              }
+            },
+            "number": 258,
+            "state": "CLOSED",
+            "title": "Add FAQ with answers to the most common questions to the documentation",
+            "updatedAt": "2021-06-27T08:13:06Z",
+            "url": "https://github.com/SALib/SALib/issues/258"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I've added some convenience plotting methods to SALib and would appreciate any suggestions/feedback before I submit a PR.\nAll functions/methods return matplotlib axes objects.\nChanges are currently sitting in my basic-viz branch\nExample usage code and resulting figures provided below. Should be possible to start playing around after a copy/paste.\nA possible source of brittleness: currently relying on confidence bound values to be provided in columns with _conf in the header.\nLooking forward to hearing from you all.\nimport numpy as np\nfrom SALib.sample import saltelli\nfrom SALib.analyze import sobol\n\nfrom SALib.sample.fast_sampler import sample as fast_sampler\nfrom SALib.analyze.fast import analyze as fast_analyzer\n\nfrom SALib.test_functions import Ishigami\n\n# Set figure attributes\nimport matplotlib\nmatplotlib.rc('figure', figsize=(6, 6))\n\n\nproblem = {\n  'num_vars': 3,\n  'names': ['x1', 'x2', 'x3'],\n  'bounds': [[-np.pi, np.pi]]*3\n}\n\nsamples = fast_sampler(problem, 2000, seed=101)\nY = Ishigami.evaluate(samples)\nSi = fast_analyzer(problem, Y, print_to_console=False)\n\n# New convenience plotting method\n# See Figure 1 below\nSi.plot()\n\n# Also possible:\nfrom SALib.plotting.bar import plot as barplot\n\nsamples = saltelli.sample(problem, 2000, seed=101, calc_second_order=False)\nY = Ishigami.evaluate(samples)\nSi_saltelli = sobol.analyze(problem, Y, print_to_console=False, calc_second_order=False)\nSaltelli_T, Saltelli_1st = Si_saltelli.to_df()\n\n# More direct control by manually specifying figure attributes\n# See Figure 2 below\nfig, (ax1, ax2) = plt.subplots(1,2, figsize=(16,6))\n\nax1 = barplot(Saltelli_T, ax=ax1)\nax2 = barplot(Saltelli_1st, ax=ax2)\nFigure 1\n\nFigure 2",
+            "closedAt": "2019-09-02T18:56:33Z",
+            "createdAt": "2019-08-13T13:18:06Z",
+            "id": "MDU6SXNzdWU0ODAxNTIyMjQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "in progress"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 257,
+            "state": "CLOSED",
+            "title": "Additional basic visualization",
+            "updatedAt": "2019-09-02T18:56:34Z",
+            "url": "https://github.com/SALib/SALib/issues/257"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Install of SALib-1.3.7 fails on Python 2.7. Based on a related discussion, I believe this would solve the issue, but not familiar enough with the library to ensure compatibility:\npbrod/numdifftools#37 (comment)\nCollecting salib\n  Using cached https://files.pythonhosted.org/packages/12/8b/14f6c0f0a12b29d5e1766e7a585269cd6ec9728a63886c161a6eddb4e7fa/SALib-1.3.7.tar.gz\n    Complete output from command python setup.py egg_info:\n    Traceback (most recent call last):\n      File \"<string>\", line 1, in <module>\n      File \"/private/var/folders/rv/spd1m5_524j35pnylts_bxvm0000gn/T/pip-install-w_1pbI/salib/setup.py\", line 37, in <module>\n        setup_package()\n      File \"/private/var/folders/rv/spd1m5_524j35pnylts_bxvm0000gn/T/pip-install-w_1pbI/salib/setup.py\", line 33, in setup_package\n        use_pyscaffold=True)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/__init__.py\", line 144, in setup\n        _install_setup_requires(attrs)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/__init__.py\", line 139, in _install_setup_requires\n        dist.fetch_build_eggs(dist.setup_requires)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/dist.py\", line 717, in fetch_build_eggs\n        replace_conflicting=True,\n      File \"/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py\", line 782, in resolve\n        replace_conflicting=replace_conflicting\n      File \"/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py\", line 1065, in best_match\n        return self.obtain(req, installer)\n      File \"/usr/local/lib/python2.7/site-packages/pkg_resources/__init__.py\", line 1077, in obtain\n        return installer(requirement)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/dist.py\", line 784, in fetch_build_egg\n        return cmd.easy_install(req)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/command/easy_install.py\", line 679, in easy_install\n        return self.install_item(spec, dist.location, tmpdir, deps)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/command/easy_install.py\", line 705, in install_item\n        dists = self.install_eggs(spec, download, tmpdir)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/command/easy_install.py\", line 890, in install_eggs\n        return self.build_and_install(setup_script, setup_base)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/command/easy_install.py\", line 1158, in build_and_install\n        self.run_setup(setup_script, setup_base, args)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/command/easy_install.py\", line 1144, in run_setup\n        run_setup(setup_script, args)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 253, in run_setup\n        raise\n      File \"/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/lib/python2.7/contextlib.py\", line 35, in __exit__\n        self.gen.throw(type, value, traceback)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 195, in setup_context\n        yield\n      File \"/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/lib/python2.7/contextlib.py\", line 35, in __exit__\n        self.gen.throw(type, value, traceback)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 166, in save_modules\n        saved_exc.resume()\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 141, in resume\n        six.reraise(type, exc, self._tb)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 154, in save_modules\n        yield saved\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 195, in setup_context\n        yield\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 250, in run_setup\n        _execfile(setup_script, ns)\n      File \"/usr/local/lib/python2.7/site-packages/setuptools/sandbox.py\", line 45, in _execfile\n        exec(code, globals, locals)\n      File \"/var/folders/rv/spd1m5_524j35pnylts_bxvm0000gn/T/easy_install-ozE0Ta/PyScaffold-3.0.3/setup.py\", line 107, in <module>\n    \n      File \"/var/folders/rv/spd1m5_524j35pnylts_bxvm0000gn/T/easy_install-ozE0Ta/PyScaffold-3.0.3/setup.py\", line 102, in setup_package\n    \n      File \"/var/folders/rv/spd1m5_524j35pnylts_bxvm0000gn/T/easy_install-ozE0Ta/PyScaffold-3.0.3/setup.py\", line 76, in bootstrap_cfg\n    \n      File \"/var/folders/rv/spd1m5_524j35pnylts_bxvm0000gn/T/easy_install-ozE0Ta/PyScaffold-3.0.3/src/pyscaffold/utils.py\", line 274, in check_setuptools_version\n    RuntimeError: Due to a bug in setuptools, PyScaffold currently needs at least Python 3.4! Install PyScaffold 2.5 for Python 2.7 support.",
+            "closedAt": "2019-08-18T14:29:58Z",
+            "createdAt": "2019-07-25T10:06:46Z",
+            "id": "MDU6SXNzdWU0NzI3Nzg1NjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 256,
+            "state": "CLOSED",
+            "title": "Unable to install v1.3.7 on Python 2.7",
+            "updatedAt": "2019-08-18T14:29:58Z",
+            "url": "https://github.com/SALib/SALib/issues/256"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In some cases it has been observed that a NON LINEAR model has be not converged for a sample generated by SAlib. In this case no value of model Output is generated, how does SAlib precieve it, does for this empty output entry, does it considers the value of zero (which would be incorrect as model incovergence doesnt mean a zero value output). Or does SAlib considers it as NAN.\n1- Inany case (0 or NAN) which SAlib method would be appropriate for this application,\n2-does SAlib has some internal mechanism to ignore NO output, samples and vector for sensitvity analysis.\nBest Regards",
+            "closedAt": "2019-06-18T00:42:06Z",
+            "createdAt": "2019-06-17T16:13:42Z",
+            "id": "MDU6SXNzdWU0NTcwMjIzODI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 255,
+            "state": "CLOSED",
+            "title": "what happens if no model output is possible for sample vector?",
+            "updatedAt": "2019-06-18T00:42:06Z",
+            "url": "https://github.com/SALib/SALib/issues/255"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello!\nI want to do a sensitivity analysis of my simple model. I did lmfit for the optimization and I want to do sensitivity with SALib and I have troubles writing the Y part for evaluating the function. Any help would be greatly appreciated :)\nfrom scipy.integrate import odeint\nimport numpy as np\nfrom lmfit import minimize, Parameters, report_fit\n\nimport matplotlib.pyplot as plt\ntime = 10\nNt = 10\ntt = np.linspace(0,time, Nt)\n\nfrom SALib.sample import saltelli\nfrom SALib.analyze import sobol\nimport numpy as np\n\n\n\ndef f(xs, t, ps):\n    \"\"\"Test\"\"\"\n    try:\n        k1 = ps['k1'].value\n        k2 = ps['k2'].value\n        k3 = ps['k3'].value\n        k4 = ps['k4'].value\n    except:\n        k1, k2, k3, k4 = ps\n\n    a, a1, b, c, d = xs\n    return [-k1*a,-k2*a1, k1*a+k2*a1, k3*b, k4*b]\n\ndef g(t, x0, ps):\n    \"\"\"\n    Solution to the ODE x'(t) = f(t,x,k) with initial condition x(0) = x0\n    \"\"\"\n    x = odeint(f, x0, t, args=(ps,))\n    return x\n\ndef residual(ps, ts, data):\n    x0 = ps['a'].value, ps['a1'].value, ps['b'].value, ps['c'].value, ps['d'].value\n    model = g(ts, x0, ps)\n    return (model - data).ravel()\n\n#t = np.linspace(0, 10, 100)\nx0 = np.array([1,0.5,0,0,0])\n\nk1, k2, k3, k4 = 1,0.8,0.65,0.2\ntrue_params = np.array((k1,k2,k3,k4))\ndata = g(tt, x0, true_params)\n\ndata += np.abs(np.random.normal(size=data.shape))\nlb, ub = 0.2, 0.2\n\n# set parameters incluing bounds\nparams = Parameters()\nparams.add('a', value = x0[0] , min=0, max=1.5)\nparams.add('a1', value = x0[1], min=0, max=2.5)\nparams.add('b', value = x0[2], min=0, max=1)\nparams.add('c', value= x0[3] , min=0, max=1)\nparams.add('d', value= x0[4] , min=0, max=1)\nparams.add('k1', value=k1, min=k1 - lb, max=k1 + ub)\nparams.add('k2', value=k2, min=k2 - lb, max=k2 + ub)\nparams.add('k3', value=k3, min=k3 - lb, max=k3 + ub)\nparams.add('k4', value=k4, min=k4 - lb, max=k4 + ub)\n\n# fit model and find predicted values\nresult = minimize(residual, params, args=(tt, data), method='leastsq')\nfinal = data + result.residual.reshape(data.shape)\n\n# plot data and fitted curves\nplt.plot(tt, data, 'o')\nplt.plot(tt, final, '-', linewidth=2);\n\n# display fitted statistics\nreport_fit(result)\n\nproblem = {\n    'num_vars': 5,\n    'names': ['a', 'a1', 'b', 'c', 'd'],\n    'bounds': [[(result.params['a'].value) - 0.2, (result.params['a'].value) + 0.2],\n               [(result.params['a1'].value) - 0.2, (result.params['a1'].value) + 0.2],\n               [(result.params['b'].value) - 0.2, (result.params['b'].value) + 0.2],\n               [(result.params['c'].value) - 0.2, (result.params['c'].value) + 0.2],\n               [(result.params['d'].value) - 0.2, (result.params['d'].value) + 0.2]]\n}\nparam_values = saltelli.sample(problem, 1000, calc_second_order=True)\n\n#dont know how to write an Y function\n\nSi = sobol.analyze(problem,Y, print_to_console=False)\n\nI am getting confused in writing an Y function for the analyze. Any1 help pls?",
+            "closedAt": "2019-06-18T00:39:25Z",
+            "createdAt": "2019-06-17T14:06:45Z",
+            "id": "MDU6SXNzdWU0NTY5NTU4NzI=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 254,
+            "state": "CLOSED",
+            "title": "Getting stuck in SALib code for a simple chemical network",
+            "updatedAt": "2019-06-18T07:29:26Z",
+            "url": "https://github.com/SALib/SALib/issues/254"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have tried to create a sample with saltelli for different distriputions like in SALib v0.7.1: Group Sampling & Nonuniform Distributions. I understood it that the lower bound of the lognormal distribution is the mean and the second is the standard deviation. With the following code I have created a sample.\nproblem = {\n    'num_vars': 3,\n    'names': ['x1', 'x2', 'x3'],\n    'bounds': [[-3.14159265359, 3.14159265359],\n               [5, 0.4],\n               [5, 0.4]],\n    'dists': ['unif', 'norm', 'lognorm']\n}\n\n# Generate samples\nparam_values = saltelli.sample(problem, 1000, calc_second_order=True)\nWhy is the mean of the lognormal distribution  around 160?\n\nI use Windows 10 with python 3.7.1 and  SALib 1.3.6",
+            "closedAt": "2019-06-07T08:43:38Z",
+            "createdAt": "2019-06-05T13:40:38Z",
+            "id": "MDU6SXNzdWU0NTI1MDc4MzU=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 250,
+            "state": "CLOSED",
+            "title": "Question lognormal distribution",
+            "updatedAt": "2019-06-07T08:43:38Z",
+            "url": "https://github.com/SALib/SALib/issues/250"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there !\nI am using SALib to run Morris sensitivity analyses, and I am facing a problem with Morris sample generation.\nWhen using 4 grid levels, each parameter is distributed over its 4 grid levels, i.e. 0, 1/3, 2/3 and 1 when normalized. When using more grid levels, the delta value is modified accordingly but only four grid values appear in the samples.\nFor instance, in the following example the number of levels is set to 6:\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nfrom SALib.sample.morris import sample\n\n#Manual definition of the problem\nproblem = {\n 'num_vars': 8,\n 'names': ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8'],\n 'groups': None,\n 'bounds': [[0.0, 1.0],\n            [0.0, 1.0],\n            [0.0, 1.0],\n            [0.0, 1.0],\n            [0.0, 1.0],\n            [0.0, 1.0],\n            [0.0, 1.0],\n            [0.0, 1.0]]\n}\n\n#Generate Morris samples\nparam_values = sample(problem, N=1000, num_levels=6,\n                      optimal_trajectories=None)\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nThe delta value is modified accordingly, i.e. that the step for elementary effects calculation is then  0.6, but the variables only take the values 0, 0.4, 0.6 and 1, while 0.2 and 0.8 never appear. The same behavior occurs for larger number of levels as well.\nThanks a lot for your help !\nMartin",
+            "closedAt": "2019-11-07T23:03:09Z",
+            "createdAt": "2019-06-05T08:18:02Z",
+            "id": "MDU6SXNzdWU0NTIzNzAxNTY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 248,
+            "state": "CLOSED",
+            "title": "Unexpected distribution of Morris samples with more than 4 grid levels",
+            "updatedAt": "2019-11-07T23:03:10Z",
+            "url": "https://github.com/SALib/SALib/issues/248"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi!\nI updated to SALib 1.3.4 from 1.2. When I import the Morris sample or analyze, I get the following error:\n\n\n\nfrom SALib.sample.morris import sample\nTraceback (most recent call last):\nFile \"\", line 1, in \nFile \"/home/hossein/py3env/lib/python3.6/site-packages/SALib/sample/morris/i             nit.py\", line 34, in \nfrom . gurobi import GlobalOptimisation\nFile \"/home/hossein/py3env/lib/python3.6/site-packages/SALib/sample/morris/gur             obi.py\", line 19, in \nfrom scipy.misc import comb as nchoosek\nImportError: cannot import name 'comb'\n\n\n\nWould you please help me with this?",
+            "closedAt": "2019-05-22T15:22:12Z",
+            "createdAt": "2019-05-20T13:43:26Z",
+            "id": "MDU6SXNzdWU0NDYxMjU5MTA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 245,
+            "state": "CLOSED",
+            "title": "ImportError: cannot import name 'comb' while importing Morris sample and analyze",
+            "updatedAt": "2019-05-22T15:22:13Z",
+            "url": "https://github.com/SALib/SALib/issues/245"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi there,\nI noted that there are two closed incidents on this topic (#152 and #1510), as well a recent one (#240). But I believe that the issue I'm having is different to those that were reported.\nI am using Python 3.6.5 on a windows machine and SALib 1.3.3\nI conducted a series of tests using four input parameters to derive a single output. There are four scenarios, so I want to evaluate Delta indices in each scenario for different bootstrap levels by using the following code (note that I consider \"resamples\" option in Delta index as the number of samples to be taken in bootstrap procedure):\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nproblem= {\n'num_vars': 5,\n'names': ['input_1', 'input_2', 'input_3', 'input_4', 'input_5'],\n'bounds': [[min_input_1, max_input_1],\n[min_input_2, max_input_2],\n[min_input_3, max_input_3],\n[min_input_4, max_input_4],\n[min_input_5, max_input_5]],\n}\nSi= []\nfilename= 'delta_moment_3d_orig_n_noise_class_'\nfigure_name= 'delta_moment_3d_orig_n_noise_class_'\nlabel= 'Free noise wedge model'\nattribute_names= ['input_1', 'input_2', 'input_3', 'input_4', 'input_5']\nbootstrap= 0\nprint(\"Perform Delta-Moment Independent Test\\n\")\nfor count in range(0,len(classification_names)): # Test different scenarios\nfilename= filename + np.str(count + 1) + '.csv'\nfigure_name= figure_name + np.str(count + 1)\noutput_file= open(path + filename, 'w')\n\nfor iters in range(0,4): # Test different bootstrap levels\n    bootstrap += 200\n\n    print(\"using a bootstrap sampling of {} at iteration {} and count {}\\n\".format(bootstrap, iters, count))\n\n    Si= delta.analyze(problem, attribute_data, classification_data[:,count], num_resamples= bootstrap, print_to_console= True)\n\n    if (bootstrap == 200):\n        field_names= []\n    \n        for key in Si:\n            field_names.append(str(key))\n        \n        output_file.write(\"%s %s %s %s %s %s %s %s %s %s %s\\n\" %(\"attribute name\", ',', field_names[0], ',',\n                                                                 field_names[1], ',', field_names[2], ',', field_names[3], ',',\n                                                                 \"bootstrap level\"))\n\n    delta_r= Si.get('delta')\n    delta_conf_r= Si.get('delta_conf')\n    sobol_r= Si.get('S1')\n    sobol_conf_r= Si.get('S1_conf')\n\n    for i in range(0, len(delta_r)):\n        output_file.write(\"%s %s %2.5f %s %2.5f %s %2.5f %s %2.5f %s %s\\n\" %(attribute_names[i], ',', delta_r[i], \n                                                                         ',', delta_conf_r[i], ',', sobol_r[i], ',',\n                                                                         sobol_conf_r[i], ',', str(bootstrap)))\n    \n    print(\"\\n\")\n\noutput_file.close()\n\nSA= pd.read_csv(path + filename, delimiter= ',')\nplot_histograms(SA, label, figure_name)\n\nfilename= 'delta_moment_3d_orig_n_noise_class_'\nfigure_name= 'delta_moment_3d_orig_n_noise_class_'\n\nSi= []\n\nbootstrap= 0\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nSo, I checked for bootstrap levels at 200, 400, 600, and 800. All input data are 1D arrays of length 20099 samples. When the script reaches the second scenario for a bootstrap of 600, the following error message occurs:\nusing a bootstrap sampling of 600 at iteration 2 and count 2\nParameter delta delta_conf S1 S1_conf\nInput_1 0.313084 0.004628 0.081716 0.010388\nInput_2 0.436194 0.008330 0.371258 0.012746\nTraceback (most recent call last):\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\SALib\\analyze\\delta.py\", line 75, in analyze\nY, Ygrid, X[:, i], m, num_resamples, conf_level)\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\SALib\\analyze\\delta.py\", line 115, in bias_reduced_delta\nd[i] = calc_delta(Y[r], Ygrid, X[r], m)\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\SALib\\analyze\\delta.py\", line 101, in calc_delta\nfyc = gaussian_kde(Y[ix], bw_method='silverman')(Ygrid)\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\scipy\\stats\\kde.py\", line 172, in init\nself.set_bandwidth(bw_method=bw_method)\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\scipy\\stats\\kde.py\", line 499, in set_bandwidth\nself._compute_covariance()\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\scipy\\stats\\kde.py\", line 510, in _compute_covariance\nself._data_inv_cov = linalg.inv(self._data_covariance)\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\scipy\\linalg\\basic.py\", line 975, in inv\nraise LinAlgError(\"singular matrix\")\nnumpy.linalg.linalg.LinAlgError: singular matrix\nDuring handling of the above exception, another exception occurred:\nTraceback (most recent call last):\nFile \"Run_sa_3d_results.py\", line 202, in \nSi= delta.analyze(problem, attribute_data, classification_data[:,count], num_resamples= bootstrap, print_to_console= True)\nFile \"C:\\Temp\\Python\\Python36\\lib\\site-packages\\SALib\\analyze\\delta.py\", line 85, in analyze\nraise np.linalg.LinAlgError(msg)\nnumpy.linalg.linalg.LinAlgError: Singular matrix detected\nSample size of 20099 may be too small\nFor some reason, Delta function considers that there not enough samples. However, the script was able to perform 10 computations.\nIn the attached file, you will find the input data:\nA) Model input: input_1, input_2, input_3, input_4, input_5\nB) Model output: output_1, output_2, output_3, output_4\nC) Python script\nMany thanks for your help!\nIvan\nDelta_indices.zip",
+            "closedAt": "2019-06-09T15:17:07Z",
+            "createdAt": "2019-05-09T21:03:06Z",
+            "id": "MDU6SXNzdWU0NDI0MzI1NjY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 241,
+            "state": "CLOSED",
+            "title": "Singular matrix issue when computing delta indeces",
+            "updatedAt": "2019-06-10T14:39:54Z",
+            "url": "https://github.com/SALib/SALib/issues/241"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I'm submitting this as a new issue as #225 is closed.\nSo I updated to 1.3.4 as per @jdherman's suggestion and I still get the same singular matrix error (or, rather, the updated message). It’s doing it for both 1000 samples and 10000 samples of the same analysis done in different ways. There’s a lot of zeros in my output, so I thought that’s what’s causing it.\nI went to manually replicate the calculation where it breaks down. The script loops through every parameter and estimates the difference with the density function in the calc_delta function below (where Y is the entire output and X is the samples for one of the parameters). The error is always produced when estimating the density function of Y at the specific X values (fyc = …)\nIn my case the Y was water shortage, and one parameter specifically is an on/off switch that [what it does doesn’t matter] but results in 0 shortages. gaussian_kde won’t work for an array of zeros (giving a singular matrix error) but the parameter indeed shifts the density function rather significantly and the difference should be added to d_hat. I get an error where I should actually be getting a very high index for that parameter. Does that make sense?\ndef calc_delta(Y, Ygrid, X, m):\n    N = len(Y)\n    fy = gaussian_kde(Y, bw_method='silverman')(Ygrid)\n    xr = rankdata(X, method='ordinal')\n\n    d_hat = 0\n    for j in range(len(m) - 1):\n        ix = np.where((xr > m[j]) & (xr <= m[j + 1]))[0]\n        nm = len(ix)\n        fyc = gaussian_kde(Y[ix], bw_method='silverman')(Ygrid)\n        d_hat += (nm / (2 * N)) * np.trapz(np.abs(fy - fyc), Ygrid)\n\n    return d_hat\n\nLastly, I don't know if it would be valuable to still report on the delta values of the other parameters even if one of them causes an error (for whatever reason). In my case all other parameters work fine, but this pesky one halts the whole thing.",
+            "closedAt": "2019-06-09T15:16:54Z",
+            "createdAt": "2019-05-08T23:07:29Z",
+            "id": "MDU6SXNzdWU0NDE5NzI1NDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 240,
+            "state": "CLOSED",
+            "title": "Singular matrix when calculating Delta indices",
+            "updatedAt": "2019-06-09T15:16:54Z",
+            "url": "https://github.com/SALib/SALib/issues/240"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi\nI just found out that analyze.rbd_fast has a different argument order with respect to the other analyze functions. This one is sorted as (problem, Y, X), while the others are organised as (Problem, X, Y)\nWill it be a good idea to reformat this so there is consistency in the interface?\nRegards,",
+            "closedAt": "2019-04-30T11:30:13Z",
+            "createdAt": "2019-04-29T08:58:56Z",
+            "id": "MDU6SXNzdWU0MzgyMTMzNDQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 238,
+            "state": "CLOSED",
+            "title": "argument order for analyze.rbd_fast",
+            "updatedAt": "2019-04-30T11:30:20Z",
+            "url": "https://github.com/SALib/SALib/issues/238"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have tried to calculate the Sobol indexes with NAN values as results of the model output, which leads to NAN values of the sensitivity indexes.\nA sample code is added\nimport numpy as np\nimport SALib as sa\nfrom SALib.sample.saltelli import sample\nfrom  SALib.analyze.sobol import analyze\n\ndef func(x):\n    if x[0]/x[1] > 1:\n        out = np.nan\n    else:\n        out = np.sum(x)\n    return out\n\nsa_prob = dict(num_vars = 2,\n               names = ['x', 'y'],\n               bounds = [[0,1], [0,1]],\n               )\n\nX = sample(sa_prob, 1000)\nY = np.array([func(Xi) for Xi in X])\nout = analyze(sa_prob, Y)\n\nThe results of this operation may come from the fact that the functions are not suited to support operations with NAN values (np.sum and np.std among others).",
+            "closedAt": "2019-05-17T08:14:25Z",
+            "createdAt": "2019-04-23T11:10:13Z",
+            "id": "MDU6SXNzdWU0MzYxMzAxMTc=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 237,
+            "state": "CLOSED",
+            "title": "Failing to calculate sensitivity indexes with NAN values in the model results",
+            "updatedAt": "2022-08-17T19:24:24Z",
+            "url": "https://github.com/SALib/SALib/issues/237"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "This will be a long read but I hope to spark some discussion around improvements to SALib in terms of usability in the longer term.\nBefore I start I'd like to thank everyone involved in making this package, it certainly has made doing this kind of work more accessible.\nIn using this package there are some pain points I have encountered which I'd like to show examples of, and suggest possible solutions. Some of the issues I raise below are relatively minor, but addressing these could improve usability.\nStarting with the most minor:\n\nRedundant attribute in \"problem\" specification\n\nproblem = {\n  'num_vars': 3,\n  'names': ['x1', 'x2', 'x3'],\n  'bounds': [[-np.pi, np.pi]]*3\n}\nI've always thought \"why do I have to specify the number of parameters? It could be inferred from the number of names.\"\nBut I've noticed that some methods directly modify this value (in ff.py for example). This leads into the next suggestion of reconceptualizing how SALib represents the different sampling/analysis methods. Currently they are a set of functions which were developed by different contributors - and nothing wrong with that! But it does mean that methods are not always compatible (more on this later).\n\nObjects for SALib\n\nPreviously it was suggested that a move towards a more object-oriented approach be made as in here. I previously pushed for keeping things as they currently are for the short-term but given the context here is for the medium/long term changes it's worth revisiting.\nTo implement my first suggestion would 1) require all methods to have the check implemented and create the num_vars element if it doesn't exist, 2) be reorganized into a class hierarchy from which the check is inherited, or 3) use a common decorator function that implements the check.\nThe first would introduce unnecessary duplication and complexity so that's off the table. The second is viable but would mean a significant overhaul of how things are implemented, with implications for the testing setup that is already in place. The third approach is what I'm currently leaning towards as it retains most of the current implementation (see further below for an example).\n\nMixing and matching methods\n\nCurrently users are able to mix and match different sampling and analysis methods without any indication that it is sane to do so. This leads to some confusion as in here and here; addressing this pain point would go a long way to making SALib more user-friendly.\n\nAn example\n\nTo bring all the points above together, I'll adapt the canonical example from the readme.\nI should also ask at this point if there's been any previous discussion around what the envisioned OO approach looks like.\nThe below is only an idea, none of the below has been tested, implemented, or checked for sanity, but I think it is doable.\n# This, with or without `num_vars`, would be a valid spec\nproblem = {\n  'names': ['x1', 'x2', 'x3'],\n  'bounds': [[-np.pi, np.pi]]*3\n}\n\n# Could also define like this:\nproblem = ProblemSpec(\n  names=['x1', 'x2', 'x3'],\n  bounds=[[-np.pi, np.pi]]*3\n)\n\n# In the process of generating samples, the ProblemSpec\n# object would be updated with the sampling method used,\n# the sample values, and a list of compatible methods.\nparam_values = latin.sample(problem, 1000)\n\n# Run model\nY = Ishigami.evaluate(param_values)\n\n# Perform analysis (incompatible method)\nSi = sobol.analyze(problem, Y, print_to_console=True)\n# The above would raise an error with a message like\n# Error: SALib.sample.latin samples are not compatible with SALib.analyze.sobol\n#        Compatible methods are ...\n\n# Alternatively, in the case where the user specifies their own sampling values\n# could continue on as normal but with a warning about not being able to check compatibility\nA more OO approach (with method chaining) would be:\nproblem = ProblemSpec(\n  names=['x1', 'x2', 'x3'],\n  bounds=[[-np.pi, np.pi]]*3\n)\n\nSi = problem\\\n      .sample('latin', num_samples=1000)\\\n      .evaluate(Ishigami.evaluate)\\\n      .analyze('sobol', print_to_console=True)\nBoth approaches could be supported without breaking backwards compatibility.\nThe question then is how to implement the above behaviour without significant rework. The most elegant solution (read: least amount of work) could be to have an implementation of the ProblemSpec (or simply Problem?) class above extend the base dict object, similar to the previously implemented ResultDict to achieve what we want:\n# In util/ProblemSpec.py\nimport numpy as np\n\n\nclass ProblemSpec(dict):\n  # Note this class inherits from the base Dictionary class so\n  # its default behaviour is like a dict\n\n  # A class property mapping samplers to compatible analysis functions\n  # A more modular approach would be for each sampler to specify what is compatible\n  compat_map = {\n    'SALib.latin.sample': []\n  }\n\n  # Could dynamically load in available sampling/analysis methods here too\n\n\n  def __init__(self, *args, **kwargs):\n    super(ProblemSpec, self).__init__(*args, **kwargs)\n    self.sampler_name = None\n\n  def is_compatible(self, analyzer_name):\n    compat_methods = ProblemSpec.compat_map[self.sampler_name]\n    if not analyzer_name in compat_methods:\n      err_msg = \"Error: {} samples are not compatible with {}\\n\".format(self.sampler_name, analyzer_name)\n      err_msg += \"Compatible methods are:\\n{}\".format(compat_methods)\n      raise TypeError(err_msg)\n      # Alternatively, could simply return False and incompatibility error elsewhere...\n    \n    return True\n  \n  # to support the OO approach...\n  def sample(self, sampler, num_samples, seed=None):\n    # call the relevant samplers and store values\n    self.samples = ...\n    return self\n\n  def evaluate(self, func):\n    self.model_results = func(self.samples)\n    return self\n\n  def analyze(self, analyzer):\n    self.analysis_results = ...\n    return ResultDict(...)\n\n# End ProblemSpec()\nThe ProblemSpec class could then be used in conjunction with decorators. The advantage of this approach is that backwards compatibility could be maintained without a significant rewrite, and future contributors would simply decorate their submitted methods.\n# In util/method_decorators.py\nfrom functools import wraps\nfrom types import MethodType\nfrom .results import ResultDict\n\n\ndef sampler_decorator(func):\n  @wraps(func)\n  def sampler_wrapper(*args, **kwargs):\n    if 'num_vars' not in problem:\n      problem['num_vars'] = len(problem['names'])\n\n    if not issubclass(problem, ProblemSpec):\n      # Convert dict to ProblemSpec if necessary\n      problem = ProblemSpec(**problem)\n\n    samples = func(*args, **kwargs)\n    sampler_name = func.__module__\n\n    # Compatible methods could be specified here to make it more modular.\n\n    problem.samples = samples\n    problem.sampler_name = sampler_name\n    return problem.samples\n  # End sampler_wrapper\n\n  return sampler_wrapper\n# End sampler_decorator()\n\n\ndef analyzer_decorator(func):\n  @wraps(func)\n  def analyzer_wrapper(*args, **kwargs):\n\n    # I know the below represents some duplication \n    # but it can be cleaned up later\n    if 'num_vars' not in problem:\n      problem['num_vars'] = len(problem['names'])\n\n    try:\n      is_problemspec = issubclass(problem, ProblemSpec)\n      has_sampler_info = problem.sampler_name  # None resolves to 'False'\n      if not has_sampler_info or not is_problemspec:\n        raise AttributeError()\n      \n    except AttributeError as e:\n        warnings.warn(\"Cannot check for compatible analysis method\")\n    else:\n      # If no exceptions are raised...\n\n      # In this example, `is_compatible` would raise a TypeError if the methods\n      # were not compatible. Otherwise it could be made to return `False`\n      # and the incompatibility handled here (e.g. raise warning?)\n      analyze_name = func.__module__\n\n      try:\n        problem.is_compatible(analyze_name)\n      except TypeError as e:\n        warnings.warn(\"Sampling and analysis methods are incompatible!\\n{}\".format(e))\n\n\n    results = ResultDict(func(*args, **kwargs))\n    results.problem = problem\n    results.to_df = MethodType(to_df, results)\n\n    return results\n  # End analyzer_wrapper\n\n  return analyzer_wrapper\n# End analyzer_decorator()\nThen all that is left to do is decorate the existing functions\n# In latin.py\n@sampler_decorator\ndef latin_sample(problem, N, seed=None):\n  # the usual latin sampler but is now decorated to return \n  # the custom ProblemSpec class. Behaviour should be identical.\n\n\n# In sobol.py\n@analyzer_decorator\ndef analyze(...):\n  # same as above\nAre there any thoughts, objections, or things/use cases that I haven't thought about that the above wouldn't address?",
+            "closedAt": "2021-06-27T06:10:16Z",
+            "createdAt": "2019-04-21T03:00:25Z",
+            "id": "MDU6SXNzdWU0MzU0Njk2NTE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 234,
+            "state": "CLOSED",
+            "title": "OO Problem class & method compatibility checking",
+            "updatedAt": "2021-06-27T06:10:16Z",
+            "url": "https://github.com/SALib/SALib/issues/234"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The shape of output array of my model which i suppose to use as an argument for SAlib's analyse (SOBOL) does not fit the shape of array which sobol needs.\nI have a parameter array which has a shape of (28,13) that is produced by SAlib package's saltelli function.\nOn the other hand, my model computes a solution at numerous time points, say 200. So in the end I have an output array of (28,200)\nI must use this output array as an argument for the SAlib's Sobol function.\nBut as far as i understand from the example in the SAlib's doc , the input argument of Sobol must have a column array such as (28,)\nThe thing i want to learn is , do i infer correct conclusion from SAlib's document as SAlib's Sobol function needs only a column array ? or can i feed it with an array of (28,200) ?\nPS : actually i tried (28,200) and got some error. But I am not sure this error occurs because  SAlib does not support array shape of (28,200) or my code have an error.  (I first asked this to the stackoverflow but couldn't get any answer.\nhttps://stackoverflow.com/questions/55634208/does-salib-sensitivity-analysis-package-support-only-one-column-vector-input)",
+            "closedAt": "2019-04-20T12:07:04Z",
+            "createdAt": "2019-04-13T07:38:13Z",
+            "id": "MDU6SXNzdWU0MzI4MTk1ODI=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 233,
+            "state": "CLOSED",
+            "title": "Do SAlib supports only vector inputs?",
+            "updatedAt": "2019-04-20T12:07:04Z",
+            "url": "https://github.com/SALib/SALib/issues/233"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI have been using SALib for a while now, and I am wondering if any of the methods allow for the analysis of models with respect to time and space.\ne.g. f(a) = (aat)/tx\nwhere t and x are not input variables.\nalternatively, is it possible to analyse vector outputs rather than discrete numbers?",
+            "closedAt": "2019-07-25T09:32:10Z",
+            "createdAt": "2019-03-28T16:26:50Z",
+            "id": "MDU6SXNzdWU0MjY1ODk4OTQ=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 232,
+            "state": "CLOSED",
+            "title": "Can SALib support spatial/temporal sensitivity analysis?",
+            "updatedAt": "2019-07-25T09:32:10Z",
+            "url": "https://github.com/SALib/SALib/issues/232"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The commented description for the Ishigami test function states:\n# Non-monotonic Ishigami Function (3 parameters)\n# First-order indices:\n# x1: 0.3139\n# x2: 0.4424\n# x3: 0.0\nI do not seem to be getting this expected result (see code snippet below).\nAm I doing something wrong?\nOtherwise, it would be nice to better document the conditions in which the example results are expected (e.g. sample size, sample and analysis method...)\nfrom SALib.sample import latin\nfrom SALib.analyze import sobol\nfrom SALib.test_functions import Ishigami\nimport numpy as np\n\nseed_value = 101\nnum_samples = 1000\n\nproblem = {\n  'num_vars': 3,\n  'names': ['x1', 'x2', 'x3'],\n  'bounds': [[-np.pi, np.pi]]*3\n}\n\nparam_values = latin.sample(problem, num_samples, seed=seed_value)\n\nY = Ishigami.evaluate(param_values)\n\nSi = sobol.analyze(problem, Y, print_to_console=False)\n\ntotal, first, second = Si.to_df()\n\nfirst\n\n\n\n \nS1\nS1_conf\n\n\n\n\nx1\n0.124795\n0.265309\n\n\nx2\n0.069378\n0.203661\n\n\nx3\n0.112679\n0.225504",
+            "closedAt": "2019-03-04T00:08:27Z",
+            "createdAt": "2019-03-03T12:30:28Z",
+            "id": "MDU6SXNzdWU0MTY1MTA2OTg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 224,
+            "state": "CLOSED",
+            "title": "Possibly incorrect first-order sensitivities from Ishigami function",
+            "updatedAt": "2019-03-04T00:08:27Z",
+            "url": "https://github.com/SALib/SALib/issues/224"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Can you please give me some more explanation of the plots and how to interpret them?\nfor example:\nthe horizontal bar plot shows the mu_star. The black line in the middle is the mu_star_conf which is created by mu_star + mu_star_conf , mu_star -mu_star_conf. The mu_star_conf is obtained using boostrapping. If I want to show the error bars,  should I just use mu_star + mu_star_conf , mu_star -mu_star_conf?\nWhat the sample_histograms plot shows? How can I interpret the samples obtained from bootstrap in relation to Morris's results?  Thanks",
+            "closedAt": "2019-11-07T23:00:56Z",
+            "createdAt": "2018-11-08T17:08:38Z",
+            "id": "MDU6SXNzdWUzNzg4MzE2NjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 220,
+            "state": "CLOSED",
+            "title": "Interpretation horizontal_bar_plot, covariance_plot & sample_histograms",
+            "updatedAt": "2019-11-07T23:00:57Z",
+            "url": "https://github.com/SALib/SALib/issues/220"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI used both Morris method (N = 1000) and Sobol method (N=10000) on my model but with different sample size. I found one inconsistency between the two sensitivity analysis results: one of the parameter (x1) has all zero Sobol indices, but in previous Morris screening, it has the largest mu_star and sigma.\nMorris results:\nnames   mu\t        mu_star\t        mu_star_conf\tsigma\nx0\t0.00540865\t0.103722415\t0.0117976\t0.21802934\nx1\t-0.319154629\t0.356137522\t0.033439088\t0.562381172\nx2\t0.017288669\t0.019674237\t0.004035186\t0.06412919\nx3\t-0.082206348\t0.085084219\t0.0112485\t0.186565818\nx4\t0.002952096\t0.002952096\t0.000295386\t0.004893399\nx5\t1.19E-05        1.19E-05        2.69E-06        4.29E-05\nx6\t0.147081462\t0.147081462\t0.013135644\t0.220334197\nx7\t0.02511013\t0.02511013\t0.002344832\t0.037635495\nx8\t0.030168628\t0.030168628\t0.004543725\t0.072239133\nx9\t0.084020837\t0.0990371\t0.016425916\t0.273253257\nx10\t-0.00362476\t0.004105058\t0.000733176\t0.01209023\nx11\t-0.009234232\t0.00983841\t0.001342195\t0.02186147\nx12\t0.031340372\t0.031340372\t0.004425243\t0.072742846\nx13\t-0.270894354\t0.270894354\t0.027865875\t0.456573114\nx14\t0.011737444\t0.011737444\t0.001378524\t0.02243343\nx15\t0.03672372\t0.086053372\t0.016660606\t0.285758817\nx16\t0.025086102\t0.23786912\t0.021859008\t0.427018379\n\nSobol results:\nParameter \tS1\tS1_conf\t        ST\t        ST_conf\nx0\t0.004579614\t0.006404225\t0.046108087\t0.008461144\nx1\t0\t        0\t        0\t        0\nx2\t0.000918881\t0.001909451\t0.007024479\t0.001362697\nx3\t0.035607833\t0.0132437\t0.124186051\t0.018104251\nx4\t-1.02E-05\t0.000198905\t7.29E-05        1.13E-05\nx5\t-3.04E-07 \t7.73E-07\t1.76E-09\t7.00E-10\nx6\t0.090273058\t0.014326854\t0.229475308\t0.04077448\nx7\t0.003748173\t0.002109648\t0.006823947\t0.000833518\nx8\t0.000338639\t0.001041811\t0.002705863\t0.00111173\nx9\t0.036765096\t0.009169142\t0.137324376\t0.027193857\nx10\t-5.22E-05\t0.00022229\t0.000146207\t0.000106307\nx11\t0.000348554\t0.000461343\t0.000509305\t0.000127446\nx12\t-0.000161136\t0.001001972\t0.002548721\t0.000820482\nx13\t0.321956485\t0.041067831\t0.605386728\t0.059801277\nx14\t0.192007316\t0.031874362\t0.334714384\t0.037966712\n\nAlthough Morris indices mu_star and sigma cannot quantitatively indicate the importance of a parameter, it indicates its importance relative to other parameters. So I assume a parameter with large mu_star is supposed to have large S1. And a large sigma should also imply large ST and probably S2. But instead of having extremely small or negative Sobol indices, this parameter (x1) has all S1 and ST of zero. This seems very odd to me.\nI'd very much appreciate it if you have any idea of what went wrong in my case.",
+            "closedAt": "2018-11-07T21:41:44Z",
+            "createdAt": "2018-11-04T19:22:08Z",
+            "id": "MDU6SXNzdWUzNzcxODUwNTY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 219,
+            "state": "CLOSED",
+            "title": "Inconsistent results of Morris and Sobol method",
+            "updatedAt": "2018-11-07T21:41:44Z",
+            "url": "https://github.com/SALib/SALib/issues/219"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI have a small test case with negative indices and it is not clear to me, what I am doing wrong (basically the results of a Bungee test case from Saltelli book):\nParameter S1 S1_conf ST ST_conf\nH_Val -0.137564 inf 1.170733 inf\nM_Val -0.037697 inf 1.097325 inf\nsigma_Val -0.024214 inf 0.956763 inf\nI attached the data file and the python (called sobol_test1.txt)\nsobol_test1.txt\ntest file.\npost_opt_ea.txt\nDo you have an advice?\nThank you in advance!",
+            "closedAt": "2018-11-02T15:29:55Z",
+            "createdAt": "2018-11-02T10:23:26Z",
+            "id": "MDU6SXNzdWUzNzY3NTE1NDY=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 218,
+            "state": "CLOSED",
+            "title": "sobol with negative result",
+            "updatedAt": "2018-11-02T15:29:55Z",
+            "url": "https://github.com/SALib/SALib/issues/218"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Problem\nThe command line commands used to run a sample or analysis function involves a lot of code duplication.  Each module contains an if __name__ == '__main__' section containing an argument parser, often with duplicate arguments.\nRecommendation\nWrite one central command-line interface argument parser which interrogates the available methods and exposes the arguments on the command line.  An an entry point for an salib command.\nFor example\n$ salib sample morris\n\nSALib: Sensitivity Analysis Library\n\nMorris Method requires the following arguments\n-n <int> number of trajectories\n-o <str> filepath to write sample\n...\n\n$ salib sample morris -n 10 -o my_sample.csv",
+            "closedAt": "2019-03-14T15:46:28Z",
+            "createdAt": "2018-10-19T13:55:12Z",
+            "id": "MDU6SXNzdWUzNzE5NjgzMzg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 216,
+            "state": "CLOSED",
+            "title": "Refactor command line interface",
+            "updatedAt": "2019-03-14T15:46:28Z",
+            "url": "https://github.com/SALib/SALib/issues/216"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The most recent version of PyScaffold offers a number of benefits over the previous version.\nFirstly, it does away with a troublesome dependency pbr which causes issues with conda #182 and #207\nSecondly, it reduces the duplication of install_requires and requirements.txt.\nOne disadvantage is the it does not support Python 2.7.",
+            "closedAt": "2019-03-14T12:55:51Z",
+            "createdAt": "2018-10-19T13:47:17Z",
+            "id": "MDU6SXNzdWUzNzE5NjUyNjY=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "priority"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 215,
+            "state": "CLOSED",
+            "title": "Update to latest version of PyScaffold",
+            "updatedAt": "2019-03-14T12:55:51Z",
+            "url": "https://github.com/SALib/SALib/issues/215"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Pandas DataFrames are the de facto standard for analysis purposes. It would be nice to have pandas friendly inter-operability out of the box.",
+            "closedAt": "2018-10-31T11:51:21Z",
+            "createdAt": "2018-10-19T08:54:42Z",
+            "id": "MDU6SXNzdWUzNzE4NjUwMjU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 213,
+            "state": "CLOSED",
+            "title": "Pandas friendly structure",
+            "updatedAt": "2018-10-31T11:51:21Z",
+            "url": "https://github.com/SALib/SALib/issues/213"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "SALib makes use of nose for testing.  New projects should consider using Nose2, py.test, or just plain unittest/unittest2",
+            "closedAt": "2019-03-14T12:55:51Z",
+            "createdAt": "2018-10-12T11:48:13Z",
+            "id": "MDU6SXNzdWUzNjk1MTc2MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 212,
+            "state": "CLOSED",
+            "title": "Remove nose from SALib",
+            "updatedAt": "2019-03-14T12:55:51Z",
+            "url": "https://github.com/SALib/SALib/issues/212"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nAs I already have a bunch of x and y data, I don't need to use SALib to generate new data, but how shall I change the 'problem' part?\nI deleted the 'bound', but it still doesn't work.",
+            "closedAt": "2018-10-05T13:05:21Z",
+            "createdAt": "2018-10-04T23:43:00Z",
+            "id": "MDU6SXNzdWUzNjcwMDk2NTg=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 211,
+            "state": "CLOSED",
+            "title": "how to use existed data to calculate sobol index?",
+            "updatedAt": "2018-10-05T13:05:21Z",
+            "url": "https://github.com/SALib/SALib/issues/211"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The Morris sample methods include two parameters grid_jump and num_levels.  These should have the default values of 0.66 and 4 respectively.  Potentially, grid_jump could be removed and replaced by the recommended grid_jump = num_levels / 2 * (num_levels - 1).\nThis is partially implemented in the groups methods, and I've noticed that there is an inconsistency between the use of delta and grid_step parameters across the different Morris methods.",
+            "closedAt": "2018-10-19T13:34:42Z",
+            "createdAt": "2018-10-04T10:53:29Z",
+            "id": "MDU6SXNzdWUzNjY3MzIyNTk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 209,
+            "state": "CLOSED",
+            "title": "Extraneous Morris parameters and no default values",
+            "updatedAt": "2018-10-19T13:34:42Z",
+            "url": "https://github.com/SALib/SALib/issues/209"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I have imported a simple model from Dymola to Python and it is working perfectly. I want to perform the Global Sensitivity Analysis in this model using SALib.\nIs there any example or suggestions available for this issue?",
+            "closedAt": "2018-09-19T13:19:51Z",
+            "createdAt": "2018-09-19T13:15:46Z",
+            "id": "MDU6SXNzdWUzNjE3NDQxODE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 208,
+            "state": "CLOSED",
+            "title": "Example of using SALib to perform Global Sensitivity Analysis after importing a model from Dymola",
+            "updatedAt": "2018-09-19T13:22:25Z",
+            "url": "https://github.com/SALib/SALib/issues/208"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "When I execute 'pip install SALib'  on centOS 7, it is giving an error of \"distutils.errors.DistutilsError: Could not find suitable distribution for Requirement.parse('pyscaffold<2.6a0,>=2.5a0')\".\nAfter installed pyscaffold (2.5.2), it is giving error of \"your setuptools version is too old(<12)\",but my setuptools version is 39.1.0,and this is the biggest version required by tensorflow which is my  necessary.\nHowever , everything go well on windows.",
+            "closedAt": "2019-03-14T15:45:05Z",
+            "createdAt": "2018-09-11T08:08:52Z",
+            "id": "MDU6SXNzdWUzNTg5MzM4Njg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 207,
+            "state": "CLOSED",
+            "title": "Unable to install SALib ",
+            "updatedAt": "2019-03-14T15:45:55Z",
+            "url": "https://github.com/SALib/SALib/issues/207"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In physical models where the stability of the numerical solution may be influence by a change in parameters, a change in parameter/s may lead the model to fail. As it stands, this will result in a model-output vector (Y) with fewer number of samples in the output than in the input-- i.e. using Sobol:\n\n  \n    \n      SALib/SALib/analyze/sobol.py\n    \n    \n        Lines 79 to 81\n      in\n      3bc2ddf\n    \n  \n  \n    \n\n        \n          \n                   raise RuntimeError(\"\"\" \n        \n\n        \n          \n                   Incorrect number of samples in model output file. \n        \n\n        \n          \n                   Confirm that calc_second_order matches option used during sampling.\"\"\") \n        \n    \n  \n\n\nIs there a way to circumnavigate this problem somehow, whilst keeping statistical meaning unchanged?",
+            "closedAt": "2018-08-02T16:05:20Z",
+            "createdAt": "2018-07-31T14:12:18Z",
+            "id": "MDU6SXNzdWUzNDYyMDYxMzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 206,
+            "state": "CLOSED",
+            "title": "Handle Model Failures",
+            "updatedAt": "2018-08-02T16:05:21Z",
+            "url": "https://github.com/SALib/SALib/issues/206"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "In the docstring of SALib.sample.fast_sampler.sample where it says\nThe resulting matrix contains N rows and D columns\n\nit should read N * D rows and D columns instead.",
+            "closedAt": "2019-09-02T19:08:49Z",
+            "createdAt": "2018-07-24T13:45:45Z",
+            "id": "MDU6SXNzdWUzNDQwNDQxNzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 205,
+            "state": "CLOSED",
+            "title": "Typo in fast_sampler.sample documentation",
+            "updatedAt": "2019-09-02T19:08:49Z",
+            "url": "https://github.com/SALib/SALib/issues/205"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nafter I use 'pip install SALib' and it said successfully installed, I import it with' import SALib' ,but it said no module named SALib. Mine is a Mac Pro. Shall I do something to fix this problem?",
+            "closedAt": "2018-07-05T21:52:45Z",
+            "createdAt": "2018-07-05T21:40:38Z",
+            "id": "MDU6SXNzdWUzMzg3MzQ5MjQ=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 204,
+            "state": "CLOSED",
+            "title": "No module named 'SALib'",
+            "updatedAt": "2018-07-05T21:52:45Z",
+            "url": "https://github.com/SALib/SALib/issues/204"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello everyone,\nConsider that this is the problem:\nproblem={\n'num_vars': 2,\n'names': ['x1', 'x2'],\n'bounds': [ [1,2], [1,2] ]\n}\nAnd the output is a list of lists like Y:\nY=[\n[1.5, 5],\n[2, 6.5],\n[3, 7]\n]\nWe use the Morris method for generating samples:\nX=morris.sample (problem, N = 1, num_levels = 10, grid_jump = 2)\nWhen I use Morris analyze, using the following command;\nSi=morris.analyze (problem, X, Y, conf_level=0.95, print_to_console=True, num_levels=10, grid_jump=1)\nAn error occurs which states that\nop_vec = model_outputs.reshape(num_trajectories, trajectory_size)\nValueError: cannot reshape array of size 6 into shape (1,3)\nDoes anybody know how can I fix this problem?",
+            "closedAt": "2018-05-27T16:27:30Z",
+            "createdAt": "2018-05-27T07:40:28Z",
+            "id": "MDU6SXNzdWUzMjY3OTUwMzk=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 202,
+            "state": "CLOSED",
+            "title": "When Morris Output is a List of Lists!",
+            "updatedAt": "2018-05-27T16:27:30Z",
+            "url": "https://github.com/SALib/SALib/issues/202"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello,\nI want to use the PyFMI to import my Dymola model in Python. But when I am trying to install, it is showing the following error. i am using pip install PyFMI\n(a) Collecting PyFMI Using cached https://files.pythonhosted.org/packages/cc/e5/cf5ecd0a6dcf1b1fff89e7a14de6b3d7888a35b8a2e4db22ddb3a9f9b081/PyFMI-2.4.0.zip Complete output from command python setup.py egg_info: Traceback (most recent call last): File \"<string>\", line 1, in <module> File \"/tmp/pip-install-f9wyxe_c/PyFMI/setup.py\", line 172, in <module> raise Exception(\"FMI Library cannot be found. Please specify its location, either using the flag to the setup script '--fmil-home' or specify it using the environment variable FMIL_HOME.\") Exception: FMI Library cannot be found. Please specify its location, either using the flag to the setup script '--fmil-home' or specify it using the environment variable FMIL_HOME.\nHow can I solve this? Also are both PyFMI and FMPy is same ?",
+            "closedAt": "2018-05-25T14:10:41Z",
+            "createdAt": "2018-05-25T09:34:29Z",
+            "id": "MDU6SXNzdWUzMjY0NDk5ODA=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 201,
+            "state": "CLOSED",
+            "title": "Installation Failure :PyFMI",
+            "updatedAt": "2018-05-25T14:10:41Z",
+            "url": "https://github.com/SALib/SALib/issues/201"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "SALib/SALib/analyze/rbd_fast.py\n    \n    \n        Lines 14 to 34\n      in\n      fd64136\n    \n  \n  \n    \n\n        \n          \n           def analyze(problem, Y, X, M=10, print_to_console=False): \n        \n\n        \n          \n               \"\"\"Performs the Random Balanced Design - Fourier Amplitude Sensitivity Test \n        \n\n        \n          \n               (RBD-FAST) on model outputs. \n        \n\n        \n          \n            \n        \n\n        \n          \n               Returns a dictionary with keys 'S1', where each entry is a list of \n        \n\n        \n          \n               size D (the number of parameters) containing the indices in the same order \n        \n\n        \n          \n               as the parameter file. \n        \n\n        \n          \n            \n        \n\n        \n          \n               Parameters \n        \n\n        \n          \n               ---------- \n        \n\n        \n          \n               problem : dict \n        \n\n        \n          \n                   The problem definition \n        \n\n        \n          \n               Y : numpy.array \n        \n\n        \n          \n                   A NumPy array containing the model outputs \n        \n\n        \n          \n               X : numpy.array \n        \n\n        \n          \n                   A NumPy array containing the model inputs \n        \n\n        \n          \n               M : int \n        \n\n        \n          \n                   The interference parameter, i.e., the number of harmonics to sum in \n        \n\n        \n          \n                   the Fourier series decomposition (default 4) \n        \n\n        \n          \n               print_to_console : bool \n        \n\n        \n          \n                   Print results directly to console (default False) \n        \n    \n  \n\n\nuses M=10 as default but the doc string specifies 4. The README.md of the code this is based on says M can be raised up to 10, I think the default should be 4 like FAST. M is usually 4 or 6 as per Plischke [2, in the rdb_fast lit] for spectrum calcs.",
+            "closedAt": "2018-06-10T08:13:16Z",
+            "createdAt": "2018-05-16T23:30:07Z",
+            "id": "MDU6SXNzdWUzMjM4MjI2MzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "bug"
+                },
+                {
+                  "name": "documentation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 200,
+            "state": "CLOSED",
+            "title": "RDB-fast analyze doc typo or wrong default",
+            "updatedAt": "2018-06-10T08:13:16Z",
+            "url": "https://github.com/SALib/SALib/issues/200"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "I want to perform a Global Sensitivity Analysis for Building Simulation in Python Interface. I am doing my Simulation in 'Dymola'. I want to Transfer the model to python and do the Sensitivity Analysis. Can anyone suggest or give me an example where the model from Dymola is transferred to python and also the sensitivity Analysis has performed?\nThank you",
+            "closedAt": "2018-05-09T16:18:03Z",
+            "createdAt": "2018-05-09T09:45:46Z",
+            "id": "MDU6SXNzdWUzMjE1MDI0NDA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 199,
+            "state": "CLOSED",
+            "title": "Sensitivity Analysis in Python after Transferring the model from Dymola",
+            "updatedAt": "2018-05-09T16:18:16Z",
+            "url": "https://github.com/SALib/SALib/issues/199"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Dear all,\nI attempted to compute the first and total order sensitivity indices using Sobol. My dynamic model has 38 parameters which I sampled using uniform and normal distributions. Omitting the second order indices spared me some input-rows, however, the computational time is still quite long (it has been running 8h for around 10%). As some of my parameters are discrete, I read here on github that one should use continuous sampling and then round by creating integers based on the sampled values. Some of the discrete parameters are used as indices within my model. As far as I understand this results in the necessity to individually iterate through the rows of the input-matrix which results in the long computational time?\n# Run model and store relevant outputs\nOut = 12\nY = np.zeros([par_values.shape[0], Out])\nfor i, X in enumerate(par_values):\nY[i] = Xf_model(X)\n# Perform sensitivity analysis\nSi = [sobol.analyze(stochastic, Y[:, o]) for o in range(Out)]\nI re-watched Will's presentation and saw that one of the slides mentioned that Sobol should only be used with a smaller number of parameters. However, my attempts to run RBD-FAST or Morris results in\n\nValueError: Bounds are not legal\n\nI was wondering if the samplers for RBD-FAST and Morris allow for input-distributions or whether that is only possible for Sobol. Do you have any recommendations how to choose the right method for models with larger amount of parameters when the goal is to conclude on the relative importance of inputs and the consequences from fixing some parameters? Sorry for the long post!",
+            "closedAt": "2018-05-14T09:09:00Z",
+            "createdAt": "2018-05-08T07:00:24Z",
+            "id": "MDU6SXNzdWUzMjEwNjUyNzA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 198,
+            "state": "CLOSED",
+            "title": "Computational time for Sobol and illegal bounds for RBD-FAST & Morris",
+            "updatedAt": "2018-05-14T09:09:00Z",
+            "url": "https://github.com/SALib/SALib/issues/198"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hi,\nI have a windows machine with conda 3.4 and Python 3.6.1 installed. When I ran the command: python setup.py install, I got this error:\n(base) C:\\Users\\IMarroquin\\Downloads\\SALib-master>python setup.py install\nInstalled c:\\users\\imarroquin\\downloads\\salib-master.eggs\\pyscaffold-2.5.11-py3.6.egg\nERROR:root:Error parsing\nTraceback (most recent call last):\nFile \"c:\\users\\imarroquin\\downloads\\salib-master.eggs\\pyscaffold-2.5.11-py3.6.egg\\pyscaffold\\contrib\\pbr\\pbr\\core.py\", line 96, in pbr\nattrs = util.cfg_to_args(path, dist.script_args)\nFile \"c:\\users\\imarroquin\\downloads\\salib-master.eggs\\pyscaffold-2.5.11-py3.6.egg\\pyscaffold\\contrib\\pbr\\pbr\\util.py\", line 258, in cfg_to_args\npbr.hooks.setup_hook(config)\nFile \"c:\\users\\imarroquin\\downloads\\salib-master.eggs\\pyscaffold-2.5.11-py3.6.egg\\pyscaffold\\contrib\\pbr\\pbr\\hooks_init_.py\", line 25, in setup_hook\nmetadata_config.run()\nFile \"c:\\users\\imarroquin\\downloads\\salib-master.eggs\\pyscaffold-2.5.11-py3.6.egg\\pyscaffold\\contrib\\pbr\\pbr\\hooks\\base.py\", line 27, in run\nself.hook()\nFile \"c:\\users\\imarroquin\\downloads\\salib-master.eggs\\pyscaffold-2.5.11-py3.6.egg\\pyscaffold\\contrib\\pbr\\pbr\\hooks\\metadata.py\", line 26, in hook\nself.config['name'], self.config.get('version', None))\nFile \"c:\\users\\imarroquin\\downloads\\salib-master.eggs\\pyscaffold-2.5.11-py3.6.egg\\pyscaffold\\contrib\\pbr\\pbr\\packaging.py\", line 816, in get_version\nname=package_name))\nException: Versioning for this project requires either an sdist tarball, or access to an upstream git repository. It's also possible that there is a mismatch between the package name in setup.cfg and\nthe argument given to pbr.version.VersionInfo. Project name SALib was given, but was not able to be found.\nerror in setup command: Error parsing C:\\Users\\IMarroquin\\Downloads\\SALib-master\\setup.cfg: Exception: Versioning for this project requires either an sdist tarball, or access to an upstream git reposi\ntory. It's also possible that there is a mismatch between the package name in setup.cfg and the argument given to pbr.version.VersionInfo. Project name SALib was given, but was not able to be found.\nBased on this message, I run the command \"conda list\" and noticed that I don't have pyscaffold installed.\nDo I need pyscaffold to install SALib? If so, can I download pyscaffold 3.0 which is compatible with Python 3.4?\nMany thanks,\nIvan",
+            "closedAt": "2018-05-03T20:19:25Z",
+            "createdAt": "2018-05-03T14:05:24Z",
+            "id": "MDU6SXNzdWUzMTk5MzU0NTE=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 197,
+            "state": "CLOSED",
+            "title": "Installation issue",
+            "updatedAt": "2018-05-03T20:19:26Z",
+            "url": "https://github.com/SALib/SALib/issues/197"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Since RBD-fast method implies an experiment design such that a specific sampling strategy is followed (albeit the samples are practically Latin), does using a non RBD designed sample imply you’d get back an EASI sensitivity index estimate because the EASI sort algorithm is implemented in the RBD analyze function?",
+            "closedAt": "2019-11-07T22:59:58Z",
+            "createdAt": "2018-04-22T10:32:18Z",
+            "id": "MDU6SXNzdWUzMTY1Njc1MDk=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question_interpretation"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 196,
+            "state": "CLOSED",
+            "title": "RBD clarification ",
+            "updatedAt": "2019-11-07T22:59:58Z",
+            "url": "https://github.com/SALib/SALib/issues/196"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "Hello all,\nsorry for inquiring here. I am rather new to Python and SALib. To keep it short, I am conducting my sensitivity analysis using your library. However, I am encountering problems for the parameters that are used as indices and within a interpolation in my model. Stackoverflow is not very responsive when it comes to questions regarding SA it seems. I understand that the problem is that the model fails due to the attempt to include the sampled array for the parameter used within the interpolation. Is the inclusion of arrays intended (for other parameters this does appear to provide the sensitivity results) or is there a way to loop through the input-file-rows in order to obtain the output for all sampled parameter combinations, but one value used at the time?\nMy stackoverflow post also included a simple example of the problem:\nhttps://stackoverflow.com/questions/49668426/sensitivity-analysis-of-upper-bound-within-linear-interpolation-in-python\nThank you very much for all the effort! Your library is certainly the best one around for SA in Python.",
+            "closedAt": "2018-04-05T12:26:45Z",
+            "createdAt": "2018-04-05T09:45:05Z",
+            "id": "MDU6SXNzdWUzMTE1NDE0MzU=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 194,
+            "state": "CLOSED",
+            "title": "SA for upper bound within interpolation?",
+            "updatedAt": "2018-04-05T12:26:45Z",
+            "url": "https://github.com/SALib/SALib/issues/194"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "The delta parameter used in morris.analyze and morris.compute_elementary_effects is not scaled to account for the bounds of the parameters.\nIn the sample code this is not a problem, because the samples are scaled at the end of the code. However, in the analyze code X is not [0,1] hypercube anymore, so delta can't be calculated as delta = grid_jump / (num_levels - 1)\nThanks and let me know if this makes sense",
+            "closedAt": "2018-01-31T10:36:35Z",
+            "createdAt": "2018-01-29T19:51:11Z",
+            "id": "MDU6SXNzdWUyOTI1Mzc3NDE=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "question"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "MQ",
+                "hasNextPage": false
+              }
+            },
+            "number": 191,
+            "state": "CLOSED",
+            "title": "Scaling delta in morris.analyze",
+            "updatedAt": "2018-01-31T10:36:45Z",
+            "url": "https://github.com/SALib/SALib/issues/191"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "We discovered in #186 that the test comparing Morris LocalOptimisation and Brute (methods to identify maximally-distant trajectories) will fail under random conditions.\nUnder this issue I'll keep track of attempts to figure out what's going on. Things I have noticed so far:\n\nThis problem is not specific to using group sampling. It also happens without group sampling.\nUsing N=8 and k_choices=4 (as in the test case), the frequency of errors with random input sampling is roughly 7%.\n\nHere is one test case with input samples that result in failure and success:\nimport numpy as np \nfrom SALib.sample.morris.local import LocalOptimisation\nfrom SALib.sample.morris.brute import BruteForce\n\nN = 8\nk_choices = 4\n\nproblem = {\n  'num_vars': 7,\n  'names': ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7'],\n  'bounds': [[0,1]]*7,\n}\nnum_params = problem['num_vars']\n\ninput_sample = np.loadtxt('samples-success.csv', delimiter=',')\n\nstrategy = LocalOptimisation()\nactual = strategy.find_local_maximum(input_sample, N, num_params,\n                                     k_choices)\nbrute = BruteForce()\ndesired = brute.brute_force_most_distant(input_sample,\n                                         N,\n                                         num_params,\n                                         k_choices)\nprint('Actual', actual)\nprint('Desired', desired)\nHere is samples_success.csv (sampled from the settings above):\n0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00\n6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00\n0.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,6.666666666666666297e-01\n0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00\n3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01\n1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01\n1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01\n1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00\n1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00\n0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00\n6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00\n6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00\n6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00\n6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00\n0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00\n0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00\n0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01\n3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01\n3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01\n3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01\n3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,1.000000000000000000e+00\n3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,1.000000000000000000e+00\n3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00\n3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00\n1.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00\n0.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00\n0.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00\n0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00\n6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00\n6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,3.333333333333333148e-01\n\nAnd here is samples-fail.csv:\n3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01\n3.333333333333333148e-01,1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01\n3.333333333333333148e-01,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01\n3.333333333333333148e-01,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01\n3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01\n3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01\n1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01\n1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00\n3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00\n3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01\n3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01\n6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01\n6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01\n0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01,6.666666666666666297e-01\n0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01\n0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01\n0.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01\n0.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00\n3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01\n3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01\n1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01\n1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00\n1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00\n1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00\n1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00\n1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00\n0.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01\n0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01\n0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01\n0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,3.333333333333333148e-01,3.333333333333333148e-01\n0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n0.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00\n6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,0.000000000000000000e+00\n6.666666666666666297e-01,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,3.333333333333333148e-01,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,3.333333333333333148e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01\n0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01\n6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,0.000000000000000000e+00,1.000000000000000000e+00\n6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00\n0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00\n0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00\n0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,1.000000000000000000e+00\n0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01\n0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01,3.333333333333333148e-01\n0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01,3.333333333333333148e-01\n1.000000000000000000e+00,1.000000000000000000e+00,3.333333333333333148e-01,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00\n1.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,0.000000000000000000e+00\n1.000000000000000000e+00,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,6.666666666666666297e-01\n3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,3.333333333333333148e-01,6.666666666666666297e-01,6.666666666666666297e-01\n3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01\n3.333333333333333148e-01,1.000000000000000000e+00,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01\n3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,6.666666666666666297e-01,6.666666666666666297e-01\n3.333333333333333148e-01,3.333333333333333148e-01,1.000000000000000000e+00,6.666666666666666297e-01,1.000000000000000000e+00,0.000000000000000000e+00,6.666666666666666297e-01",
+            "closedAt": "2018-01-24T16:55:52Z",
+            "createdAt": "2018-01-21T20:12:28Z",
+            "id": "MDU6SXNzdWUyOTAzMDE1NDg=",
+            "labels": {
+              "nodes": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "number": 188,
+            "state": "CLOSED",
+            "title": "Morris sampling `brute` vs. `local` do not match, sometimes.",
+            "updatedAt": "2018-01-24T16:55:52Z",
+            "url": "https://github.com/SALib/SALib/issues/188"
+          },
+          {
+            "__typename": "Issue",
+            "bodyText": "RBD–FAST is an extension of the RBD sampling technique to the FAST method, developed by Tarantola, Gatelli and Mara (2006). The interest of RBD–FAST is the use of a single frequency ω0 for the sampling of each random variable. The RBD–FAST originality is based on a randomization procedure that consists of randomly permuting the set of samples for each random variable, run the model feeding by those permuted sets of random variables and then, reorder the output according to the input permuta tion of each random variable. For each reorganized set of output, according to each input permutation, the frequency ω0 is reconstituted through the N evaluations of the model output y and the sensitivity indices for each xi may be computed as for FAST.\nOriginal algorithm:\nAuthor: S. Tarantola (JRC) Joint Research Centre All rights Reserved\nUpdate: M. Rabouille\nAdd: Reordering Y according a random design X (EASI algorithm) from E Plischke. Add: Unbiased estimator from J-Y Tissot & C Prieur. Note: The estimate is less dependant on the M value which can be raised up to 10.\nReferences:\nS. Tarantola, D. Gatelli and T. Mara (2006) Random Balance Designs for the Estimation of First Order Global Sensitivity Indices, Reliability Engineering and System Safety, 91:6, 717-727\nElmar Plischke (2010) An effective algorithm for computing global sensitivity indices (EASI) Reliability Engineering & System Safety, 95:4, 354-360. <10.1016/j.ress.2009.11.005>\nJean-Yves Tissot, Clémentine Prieur (2012) Bias correction for the estimation of sensitivity indices based on random balance designs. Reliability Engineering and System Safety, Elsevier, 107, 205-213. <10.1016/j.ress.2012.06.010>\nJeanne Goffart, Mickael Rabouille & Nathan Mendes (2015): Uncertainty and sensitivity analysis applied to hygrothermal simulation of a brick building in a hot and humid climate, Journal of Building Performance Simulation, DOI: 10.1080/19401493.2015.1112430",
+            "closedAt": "2018-01-23T17:53:49Z",
+            "createdAt": "2018-01-12T08:50:02Z",
+            "id": "MDU6SXNzdWUyODgwNDY3NjA=",
+            "labels": {
+              "nodes": [
+                {
+                  "name": "enhancement"
+                },
+                {
+                  "name": "add_method"
+                }
+              ],
+              "pageInfo": {
+                "endCursor": "Mg",
+                "hasNextPage": false
+              }
+            },
+            "number": 185,
+            "state": "CLOSED",
+            "title": "Add new method - RBD FAST",
+            "updatedAt": "2019-05-14T13:49:50Z",
+            "url": "https://github.com/SALib/SALib/issues/185"
+          }
+        ],
+        "pageInfo": {
+          "endCursor": "Y3Vyc29yOnYyOpK0MjAxOC0wMS0xMlQwODo1MDowMlrOESs-qA==",
+          "hasNextPage": true
+        },
+        "totalCount": 293
+      }
+    }
+  }
+}

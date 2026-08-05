@@ -1,0 +1,50 @@
+{
+  "batch": 2,
+  "buggy_sha": "834e865e44ee273361dbdf11bbce986f6be78407",
+  "build_outcomes": {
+    "buggy:build": {
+      "exit_code": 2,
+      "timeout_s": 900
+    },
+    "buggy:configure": {
+      "exit_code": 0,
+      "timeout_s": 600
+    },
+    "fixed:build": {
+      "exit_code": 2,
+      "timeout_s": 900
+    },
+    "fixed:configure": {
+      "exit_code": 0,
+      "timeout_s": 600
+    }
+  },
+  "build_timeout_s": 900,
+  "closed_findings": [
+    "A1C-BUILD-EVIDENCE-001"
+  ],
+  "configure_timeout_s": 600,
+  "correction": "Gate A1c",
+  "dual_arm_contrast": false,
+  "failure_detail": "REPRO_FAILED:build - observed configure/build failure on dual-arm attempt; outcomes={'buggy:configure': {'exit_code': 0, 'timeout_s': 600}, 'buggy:build': {'exit_code': 2, 'timeout_s': 900}, 'fixed:configure': {'exit_code': 0, 'timeout_s': 600}, 'fixed:build': {'exit_code': 2, 'timeout_s': 900}}",
+  "failure_stage": "build",
+  "fixed_sha": "92a06f6229a1c242171d6a24f3eb2c7cdd2bbf6f",
+  "issue_url": "https://github.com/dealii/dealii/issues/3874",
+  "neutral_id": "EXT-dealii-01",
+  "platform": {
+    "cmake": "cmake version 3.28.3",
+    "g++": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "gfortran": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "machine": "x86_64",
+    "make": "GNU Make 4.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "proposed_crit_dual_arm_repro": "REPRO_FAILED",
+  "repo": "dealii/dealii",
+  "route": "exact-source-cmake-timeout-bounded",
+  "seed": 0,
+  "sheet_crit_dual_arm_repro_unchanged": "PENDING",
+  "trigger_exit_codes": {}
+}

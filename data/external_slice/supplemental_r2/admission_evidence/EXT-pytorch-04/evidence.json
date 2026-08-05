@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "c99d06a01764f62f60e3d1246fb026e63146e026",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "a6f227a0642b85478704622e6418cac12d990dd0",
+  "issue_node_id": "I_kwDOA-j9z88AAAABIzDKsA",
+  "issue_number": 189895,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/189895",
+  "mechanism": "Inductor padding/reduction fusion outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-04",
+  "public_fix_url": "https://github.com/pytorch/pytorch/commit/a6f227a0642b85478704622e6418cac12d990dd0",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/189895",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0004",
+  "snapshot_record_sha256": "3a30cae6dad8a16711ff21037bf6ae6c095f4fffd9699139c33e429acde7ffb3",
+  "source_cohort": "supplemental_r2"
+}

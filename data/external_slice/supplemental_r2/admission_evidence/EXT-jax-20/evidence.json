@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "875f44c63a6c0f082ef3b228559e86e1d0a398d1",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "77613f21aa61b9fb5fc18a5d94707030585c8e47",
+  "issue_node_id": "I_kwDOCTkjjc6YJ_7p",
+  "issue_number": 23972,
+  "issue_url": "https://github.com/jax-ml/jax/issues/23972",
+  "mechanism": "Pallas TPU unsigned comparison fix outside frozen numerical scope.",
+  "neutral_id": "EXT-jax-20",
+  "public_fix_url": "https://github.com/jax-ml/jax/commit/77613f21aa61b9fb5fc18a5d94707030585c8e47",
+  "public_issue_url": "https://github.com/jax-ml/jax/issues/23972",
+  "repository": "jax-ml/jax",
+  "snapshot_record_id": "SSR2-06-0020",
+  "snapshot_record_sha256": "7ea8c55d26215caa8f6a29990a155758c9abafa4fc0334bf9e920296f36bb2bc",
+  "source_cohort": "supplemental_r2"
+}

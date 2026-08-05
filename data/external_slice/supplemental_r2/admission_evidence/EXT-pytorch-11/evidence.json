@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "FAIL",
+  "decision": "EXCLUDED",
+  "exclusion_class": "",
+  "fixed_sha": "",
+  "issue_node_id": "I_kwDOA-j9z88AAAABHh4S0Q",
+  "issue_number": 188878,
+  "issue_url": "https://github.com/pytorch/pytorch/issues/188878",
+  "mechanism": "FlexAttention FLASH backend outside frozen numerical scope.",
+  "neutral_id": "EXT-pytorch-11",
+  "public_fix_url": "",
+  "public_issue_url": "https://github.com/pytorch/pytorch/issues/188878",
+  "repository": "pytorch/pytorch",
+  "snapshot_record_id": "SSR2-05-0011",
+  "snapshot_record_sha256": "164b45ac4f799db5e5feb4ad119c403822b3e5bb6b098910e294d4638274bd3c",
+  "source_cohort": "supplemental_r2"
+}

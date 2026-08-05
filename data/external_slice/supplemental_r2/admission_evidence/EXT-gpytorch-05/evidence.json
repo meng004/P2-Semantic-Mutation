@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "67a7d75a98b14f151e2e7d4e57ee54ff31c2ac77",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "crash-only",
+  "fixed_sha": "befb9961f5de7313b427202db1c79d744ce2bfde",
+  "issue_node_id": "MDU6SXNzdWU1MjQ3MTkwNzg=",
+  "issue_number": 955,
+  "issue_url": "https://github.com/cornellius-gp/gpytorch/issues/955",
+  "mechanism": "prevents divide-by-zero NaNs in grid interpolation during training; crash-only failure outside admitted numerical return defects.",
+  "neutral_id": "EXT-gpytorch-05",
+  "public_fix_url": "https://github.com/cornellius-gp/gpytorch/commit/befb9961f5de7313b427202db1c79d744ce2bfde",
+  "public_issue_url": "https://github.com/cornellius-gp/gpytorch/issues/955",
+  "repository": "cornellius-gp/gpytorch",
+  "snapshot_record_id": "SSR2-02-0005",
+  "snapshot_record_sha256": "96bee16a9e7e1c091a9a91a5257175b35676b76c532a0aba279b7b8ee97871df",
+  "source_cohort": "supplemental_r2"
+}

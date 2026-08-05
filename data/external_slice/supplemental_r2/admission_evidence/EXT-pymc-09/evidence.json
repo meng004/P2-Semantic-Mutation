@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "7b27a07aaf0463e4ad5e271fb3a4109d2e27812e",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "FAIL",
+  "crit_real_public_fix": "PASS",
+  "decision": "EXCLUDED",
+  "exclusion_class": "behaviour change that is intended API redesign",
+  "fixed_sha": "a4f965789199adda68f4958b8155e6a7ca5d62fa",
+  "issue_node_id": "MDU6SXNzdWU3OTE5NzQ5MDM=",
+  "issue_number": 4429,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/4429",
+  "mechanism": "changes CheckParameterValue rewrite policy around check_bounds.",
+  "neutral_id": "EXT-pymc-09",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/a4f965789199adda68f4958b8155e6a7ca5d62fa",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/4429",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0009",
+  "snapshot_record_sha256": "91d5dbdb634ac665457e38d331722bc9ac9d0be175d2b21ed24e44d5299ebc4b",
+  "source_cohort": "supplemental_r2"
+}

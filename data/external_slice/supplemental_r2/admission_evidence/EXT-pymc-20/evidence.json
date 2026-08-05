@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "5d2fe4f86b6447e112fc73db94f75427106a907e",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "09afc8e74ecc56644be26916911996470d020ab3",
+  "issue_node_id": "MDU6SXNzdWUyMTEwNTE2NTI=",
+  "issue_number": 1843,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/1843",
+  "mechanism": "rejects observed Bound RVs that previously returned unnormalized wrong logp values.",
+  "neutral_id": "EXT-pymc-20",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/09afc8e74ecc56644be26916911996470d020ab3",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/1843",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0020",
+  "snapshot_record_sha256": "be34e124585ac7498b3da2540fbbfcc1f58353789a55ec9b355484155832652e",
+  "source_cohort": "supplemental_r2"
+}

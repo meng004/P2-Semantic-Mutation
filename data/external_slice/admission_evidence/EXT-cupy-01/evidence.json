@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-cupy-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 18,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "5876a1aba28a6a7c9ede9c4725dd036cd5f6035433a8762b74efa917962e19db",
+  "issue_url": "https://github.com/cupy/cupy/issues/1602",
+  "fix_url": "https://github.com/cupy/cupy/commit/265d52e25a3a3512dc846361938665e80b805a3e",
+  "buggy_sha": "66a51ddda52d8802fd6aa055388455c31e92d822",
+  "fixed_sha": "265d52e25a3a3512dc846361938665e80b805a3e",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The linear solver accepts numeric matrix and right-hand-side values and can expose the defect in one selected complex solution component."
+  },
+  "evidence_urls": [
+    "https://github.com/cupy/cupy/issues/1602",
+    "https://github.com/cupy/cupy/commit/265d52e25a3a3512dc846361938665e80b805a3e"
+  ],
+  "mechanism_sentence": "returns correct complex-valued solutions from the linear solver."
+}

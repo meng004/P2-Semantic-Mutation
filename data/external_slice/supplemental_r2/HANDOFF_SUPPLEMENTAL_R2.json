@@ -1,0 +1,251 @@
+{
+  "confirmations": {
+    "a2_all_pending": true,
+    "analysis_id_all_blank": true,
+    "canonical_freeze_claimed": false,
+    "existing_files_unchanged": true,
+    "forbidden_data_absent": true,
+    "readiness_ran": false
+  },
+  "created_at_utc": "2026-08-04T11:53:41Z",
+  "decision_totals": {
+    "admit_pending_repro": 9,
+    "decisions": 67,
+    "excluded": 58
+  },
+  "design_baseline_commit": "d95d6277ee09479d638bb83d75562e9dc4348031",
+  "evidence_sha256": {
+    "admission_evidence/EXT-chaospy-01/evidence.json": "cfa0ecac5dd47eabc4de1ed10954dc0ccaf79debc6e69dae25332b20742270ce",
+    "admission_evidence/EXT-chaospy-02/evidence.json": "032f97858f4f9512ae13000eb6378096b0ede758118fe5d6548f614776382ecb",
+    "admission_evidence/EXT-gpytorch-01/evidence.json": "b9c7f2b3c1af5aa7477cf3b061369ae807474ede96b4a76ca4cb454ef40a8fc2",
+    "admission_evidence/EXT-gpytorch-02/evidence.json": "569a7136c07828515d4b5df49b96ae8fd19e20e5ef759267f07c8de72fe55275",
+    "admission_evidence/EXT-gpytorch-03/evidence.json": "84fd1b02f83184897a4e14e996c21078a238866840aa7b94ce5a9048b09efd7e",
+    "admission_evidence/EXT-gpytorch-04/evidence.json": "0ef2691d451f9179685a23a4208fc442ec17b7dfce4bfd5d852522df53ea5edb",
+    "admission_evidence/EXT-gpytorch-05/evidence.json": "c2522519db46686cce0fee916bcc4bf94704aa8eed26de0879887e3024106a24",
+    "admission_evidence/EXT-jax-01/evidence.json": "474792de5098cf3684d7e498ed9603b622e8a55c4a46f23cca958053b3edf71a",
+    "admission_evidence/EXT-jax-02/evidence.json": "0f3adc26c0eb70a02af03b467566ecdb3728ad4ac771ef5462a983fac4a0aa03",
+    "admission_evidence/EXT-jax-03/evidence.json": "40e8761f2c62056642a1a4261a36ae6da9fef660f7319727896196b8efd116bf",
+    "admission_evidence/EXT-jax-04/evidence.json": "1542ba5776eb543faceabf50ecf52e5e11f9cfa025d9ea85eaa18411f1f3d3e2",
+    "admission_evidence/EXT-jax-05/evidence.json": "d13f048836cf8ca31488b9b7326a35324a8587fb4c8505c5f194582da619f7cb",
+    "admission_evidence/EXT-jax-06/evidence.json": "f6cffb6d0ed861f40d113fec0350d06509953f7885f7de0c44f83f6cfd95ec4c",
+    "admission_evidence/EXT-jax-07/evidence.json": "680ea664781d984f53e9bb3fe58f7e81b030fac33660e76c80b4c8916be32b66",
+    "admission_evidence/EXT-jax-08/evidence.json": "97ccf49914d359681bbeb57597fa00c19608d3c1a0b2c6ce282b61cc86e1e0f5",
+    "admission_evidence/EXT-jax-09/evidence.json": "224226b88a89bd3e72cab47a09db934c5c193b9dd079aed2b3e1d3f9ccf4cfa9",
+    "admission_evidence/EXT-jax-10/evidence.json": "8a9a45a312653e05bd976657159fcd3c6c44e6cdad248a3a5ff772d5451c701f",
+    "admission_evidence/EXT-jax-11/evidence.json": "28b997530b6700e0a76899ce472c4ea4cc41bfcdcb1bf5aacc1ede607d20ff04",
+    "admission_evidence/EXT-jax-12/evidence.json": "420bddbe7833a2ff82b4282a8f0720401de17b38c71ac0f8cb4ccdc53ab7cb88",
+    "admission_evidence/EXT-jax-13/evidence.json": "9e7566d4e403f99b1ebadb1734eb466d99c71061b9f141b963d101628ceda453",
+    "admission_evidence/EXT-jax-14/evidence.json": "9bb6ea25d136f3342dad8a41e3324bb415a187fe6241d02bdb6bf17433c5b0c1",
+    "admission_evidence/EXT-jax-15/evidence.json": "2b5a066a4dd1dd1cfe7a21c50e51a28947a649bb78cf3ea1c3c6b72d520e046d",
+    "admission_evidence/EXT-jax-16/evidence.json": "d82a9f4bfc1ae9cfef690ff45b59d35253351b8f190ea47f7d020e9fcf5c18c3",
+    "admission_evidence/EXT-jax-17/evidence.json": "4fd331d14d54ae207042132d6a33a332c6a772c47100525b2f67c368f0864588",
+    "admission_evidence/EXT-jax-18/evidence.json": "e670092d741ed5112840fd6ac4c03a00949457d67a6198b601dab20ee75fd27d",
+    "admission_evidence/EXT-jax-19/evidence.json": "6ee9ee8842f67aaeebf0891870ab9eb5ceaad1f53c247ae9920564dbb56ee970",
+    "admission_evidence/EXT-jax-20/evidence.json": "8e85e046c6c34c046912bcbd8f6849dd7a88191a6bb7885470f48b6856311447",
+    "admission_evidence/EXT-pymc-01/evidence.json": "ad36a120bb7e647b36356dc6a6618c39ce05cf4ff5275e17da1fbf4063cbebe3",
+    "admission_evidence/EXT-pymc-02/evidence.json": "43cedc0ca4768b9579ce044ab80af8c4368a1229e42bf2e8633297abdad5bf86",
+    "admission_evidence/EXT-pymc-03/evidence.json": "ce2628e961cda6bc4de21d45129e8f53900daed149fbd5141907684a282a3623",
+    "admission_evidence/EXT-pymc-04/evidence.json": "a7312983981f4df289c61fa71c62c9168a8d8011a0309030b0860e01a21e5935",
+    "admission_evidence/EXT-pymc-05/evidence.json": "63ca22f389ab3d69908a5e0210713f5ba31f7c00c8876e3f5fa7ad65afbb0ffe",
+    "admission_evidence/EXT-pymc-06/evidence.json": "95fbe93a28b585a22a3b38a1cd052afa1d14e0736f216e1726360e2073cbb68a",
+    "admission_evidence/EXT-pymc-07/evidence.json": "aebca64ae9058b37c44549ec11387715ebe4fce8cac8557c46edd2f33cbc274e",
+    "admission_evidence/EXT-pymc-08/evidence.json": "aa25f3493d348cf791d48f78e55732de471bd181d0dfbeea3fe10c5ef7e0d796",
+    "admission_evidence/EXT-pymc-09/evidence.json": "6153d1a941c48fdc9370a3228020aa7619c5c983cfb211a1edf3caaab12c3b75",
+    "admission_evidence/EXT-pymc-10/evidence.json": "8b9ae2dbabcd644eae84ba20db546fa611eec561e8200523337184c42ee941d0",
+    "admission_evidence/EXT-pymc-11/evidence.json": "276a41893eaeac48ac59c55398d2ee4c2fec159e4a5bce06415d54c4588d7fd3",
+    "admission_evidence/EXT-pymc-12/evidence.json": "692ad1f6a560dc31812c30fbf10caf50515ded4f7cdc2b5f3a102b30dfa707c0",
+    "admission_evidence/EXT-pymc-13/evidence.json": "a6ea950c8e30d32220d4cbd98648444ac4c7377bed76a4bd29d19200adcd77f4",
+    "admission_evidence/EXT-pymc-14/evidence.json": "59ca863f6827b04d8fcbdfc1e52424b07b5ab7e40a438b601ffdf2616c72753e",
+    "admission_evidence/EXT-pymc-15/evidence.json": "0bbe172bbbf4e0c6054cb967c12cad3ee4ab0a934798f1e60dcb3a07778badae",
+    "admission_evidence/EXT-pymc-16/evidence.json": "cd75cc3bc8cb4171bad00ad477fb6bbae827e2cd639397a60b612e21a9d56005",
+    "admission_evidence/EXT-pymc-17/evidence.json": "12a9fe8f25025e2a46161a9ec178fd01ef22fd51e99e9e2e5876e33f34efe6a1",
+    "admission_evidence/EXT-pymc-18/evidence.json": "fb4e46a11274723557c860e701097bab2360dc768dc3467682cfbb8114a2149c",
+    "admission_evidence/EXT-pymc-19/evidence.json": "93298d193b1d65fd58b8ec3b2a3a56f7e3a8cb103687c204ef17054a6ebf6913",
+    "admission_evidence/EXT-pymc-20/evidence.json": "b520a16dd8c0e48ab0be0fe3172dabf42ab91636198197e83237bc95ff8a3fe2",
+    "admission_evidence/EXT-pytorch-01/evidence.json": "d92a80657444eb1a5f0b6d297c2447e0dc96952aa98f4286dc299990744ae249",
+    "admission_evidence/EXT-pytorch-02/evidence.json": "44b97b170411e677db00c31b3c65a4e36e939ad275b3ebfac887894f9efac42f",
+    "admission_evidence/EXT-pytorch-03/evidence.json": "77e83d609a3f600825275589ab513ebdc4afc8021ea4155f57da1391f9282828",
+    "admission_evidence/EXT-pytorch-04/evidence.json": "53a21bc3860db39a756d9a87b84f1b50fa23663b64be179126dc091521d2fd36",
+    "admission_evidence/EXT-pytorch-05/evidence.json": "3afe373fdb7bace164d706277e87ca543e53a529008b3a5df40a8994e08fae02",
+    "admission_evidence/EXT-pytorch-06/evidence.json": "ea236cfe625b0406481bfd1a108bb05ffdd13dc7f175bde753e89d630422879b",
+    "admission_evidence/EXT-pytorch-07/evidence.json": "bfcf508f4d27afd20e7b9024bd099c6bcdf71482eaef1f29c43a95cf6d2530c8",
+    "admission_evidence/EXT-pytorch-08/evidence.json": "fc6ab9aa0e5737998dd19bb6e3f10ec16fac4144867ed8786223c9694d3c019e",
+    "admission_evidence/EXT-pytorch-09/evidence.json": "d14afb0bfa76bc3d2fb15e72ca4c89426ae8c69f8ab5347dd3a6ebc9218ce680",
+    "admission_evidence/EXT-pytorch-10/evidence.json": "4c58b1d555ee3b4bbbfdb2075b490a9f9b935d15d98f54b1c153e02068cfc2c1",
+    "admission_evidence/EXT-pytorch-11/evidence.json": "d42c5d8ce0d6cf70ae93ccd6c05405acb8e384b449fd2c6795192eb2d8a747ec",
+    "admission_evidence/EXT-pytorch-12/evidence.json": "c1ef9d936c44818830c8cc57e5afb3e00cd820a92945159904818c6d8c3314ce",
+    "admission_evidence/EXT-pytorch-13/evidence.json": "eb7144fad4d10a5811c4cb7ca91de8e449ea6f8f9b9527e668e9a92b291750f9",
+    "admission_evidence/EXT-pytorch-14/evidence.json": "c64eb4d8d2c291d369409d46e033e298e051c53570275026469f26a2992c08ba",
+    "admission_evidence/EXT-pytorch-15/evidence.json": "1366635af1d517998638cf49c4ae59bbf558d9f6bc70d7c28d59fe93e644057d",
+    "admission_evidence/EXT-pytorch-16/evidence.json": "d9824e401e39bf695764403338440bddbb93a060bbf19f3a1cb0951a86e1c820",
+    "admission_evidence/EXT-pytorch-17/evidence.json": "6772e3efcf140b6bbbdaa45a26df42a2d20d41d942bace50ec24f47fc319e60e",
+    "admission_evidence/EXT-pytorch-18/evidence.json": "6be53e56e28891b7cc4b80c28218bc9e4fe5b4106029d361bb8753d98ee03492",
+    "admission_evidence/EXT-pytorch-19/evidence.json": "7043147ba0ceff8cb2147690e67b63a59625c6281827d9b2d3326e926c10cb54",
+    "admission_evidence/EXT-pytorch-20/evidence.json": "1c7733ed1128df58a6160ff6eb697e9e9019d33a1b8cd5e73e4e8630eb649d79"
+  },
+  "file_sha256": {
+    "COMMAND_LOG.json": "e2b40d91a71840c703946c9d99e399259a0f849d8fbd3b027a1228935ed7a23d",
+    "EVIDENCE_SNAPSHOT.json": "8780c6c94e4624ff04b20a7f50f12cac040855d49cf9458d9e876fb4edddb421",
+    "ISSUE_SNAPSHOT.json": "5d99b98d3ab122ca7ef327c6913cd3bcbd2ebc2abf5c8f5a0fab8d9dcd18b060",
+    "QUOTAS.json": "ffee858c21b29ec72e38695564b7e54d5baaea4ea3dd21c991b353ab6b3ea2f2",
+    "REVIEW_DECISIONS.json": "0940daf1f586a0f2610f412c07c5c614a9577b2066745f8cae5bc3dc4532c569",
+    "REVIEW_QUEUE.json": "5ae6038910fdc3ed7fa93502d0b92ec43b70f0f021663cd0d4468bead7c4344e",
+    "SCOPE.json": "1f826d3a9c502b070e25b974841ef9d992046883b89521c91d8049a8607c8c26",
+    "TRANSPORT_CONTRACT.json": "bc6bc443f3289dad51334026a670c3567478b11a975bcbb871a23d54a59feb24",
+    "VERIFICATION_LOG.json": "cb5e12b2be3c5b1afd1f51a003792e7f0a26bcf7a4ac5f41cdd9258e0f7b7b34",
+    "admission_sheet.cursor_candidate.csv": "9d511403ada080de41e13f4fe14d1377fabde9685bd3bb0d7d5418672df7e187",
+    "scripts/external_slice/check_supplemental_r2_admission.py": "58db239974d195b143bcad5df34f860c7b48dea7835963f269144ddd2cbe1a9d",
+    "scripts/external_slice/check_supplemental_r2_handoff_hashes.py": "c43be3249b696bf2123fc15300e7075916a294b98362c22226c0759d4e8b3ba7",
+    "scripts/external_slice/mine_supplemental_r2.py": "b63780dd1b2529ac98d4ff6016f751f8a442ef44f65d4c8ea31127a89325b1f1",
+    "tests/external_slice/test_check_supplemental_r2_admission.py": "46adf284d28fee9e483b5c29d74a65bf05274bf349975b34f145e07375555614",
+    "tests/external_slice/test_mine_supplemental_r2.py": "27bd55a6cad28dbb9fa7d45597cfb4f5b52b17ca3d926a3abc6e3b88eb2fbaac"
+  },
+  "gate_requested": "SUPPLEMENTAL_ADMISSION_R2-r7",
+  "handoff_commit": {
+    "direct_parent_required": "7d27f287601b45f895749fb507eaff72d746a4de",
+    "resolution": "Resolve immutable handoff SHA with `git rev-parse HEAD`; direct parent must equal payload_commit.",
+    "value": "SELF"
+  },
+  "payload_commit": "7d27f287601b45f895749fb507eaff72d746a4de",
+  "quota_feasibility": {
+    "claims_canonical_freeze": false,
+    "claims_readiness_executed": false,
+    "claims_ready_success": false,
+    "pending_by_repo": {
+      "cornellius-gp/gpytorch": 1,
+      "jax-ml/jax": 1,
+      "pymc-devs/pymc": 5,
+      "pytorch/pytorch": 2
+    },
+    "projection_if_quotas_met": {
+      "qualifying_project_names": [
+        "pymc-devs/pymc",
+        "cornellius-gp/gpytorch",
+        "jonathf/chaospy",
+        "SALib/SALib",
+        "LLNL/sundials",
+        "statsmodels/statsmodels"
+      ],
+      "qualifying_projects": 6,
+      "ready_defects_lower_bound": 30
+    },
+    "shortfalls": [
+      {
+        "additional_ready_target": 3,
+        "pending_admit_rows": 1,
+        "repo": "cornellius-gp/gpytorch",
+        "shortfall": 2
+      },
+      {
+        "additional_ready_target": 3,
+        "pending_admit_rows": 0,
+        "repo": "jonathf/chaospy",
+        "shortfall": 3
+      },
+      {
+        "additional_ready_target": 3,
+        "pending_admit_rows": 0,
+        "repo": "SALib/SALib",
+        "shortfall": 3
+      }
+    ],
+    "starting_accepted_ready_defects": 18,
+    "starting_qualifying_projects": 2,
+    "status": "DISTRIBUTION_TARGET_AT_RISK"
+  },
+  "repository_review_counts": {
+    "SALib/SALib": {
+      "admit_pending_repro": 0,
+      "excluded": 0,
+      "exclusion_class_counts": {},
+      "queue_size": 0,
+      "review_status_counts": {},
+      "reviewed": 0,
+      "stop_reason": "queue_exhausted"
+    },
+    "cornellius-gp/gpytorch": {
+      "admit_pending_repro": 1,
+      "excluded": 4,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 1,
+        "behaviour change that is intended API redesign": 2,
+        "crash-only": 1
+      },
+      "queue_size": 5,
+      "review_status_counts": {
+        "REVIEWED": 5
+      },
+      "reviewed": 5,
+      "stop_reason": "queue_exhausted"
+    },
+    "jax-ml/jax": {
+      "admit_pending_repro": 1,
+      "excluded": 19,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 14,
+        "behaviour change that is intended API redesign": 2,
+        "build/packaging": 1,
+        "crash-only": 1,
+        "test-infrastructure": 1
+      },
+      "queue_size": 34,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 14,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "twenty_reviewed"
+    },
+    "jonathf/chaospy": {
+      "admit_pending_repro": 0,
+      "excluded": 2,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 1,
+        "behaviour change that is intended API redesign": 1
+      },
+      "queue_size": 2,
+      "review_status_counts": {
+        "REVIEWED": 2
+      },
+      "reviewed": 2,
+      "stop_reason": "queue_exhausted"
+    },
+    "pymc-devs/pymc": {
+      "admit_pending_repro": 5,
+      "excluded": 15,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 5,
+        "behaviour change that is intended API redesign": 1,
+        "build/packaging": 3,
+        "crash-only": 2,
+        "documentation": 3,
+        "test-infrastructure": 1
+      },
+      "queue_size": 24,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 4,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "five_admit_pending_repro"
+    },
+    "pytorch/pytorch": {
+      "admit_pending_repro": 2,
+      "excluded": 18,
+      "exclusion_class_counts": {
+        "(A1/A3 fail)": 18
+      },
+      "queue_size": 91,
+      "review_status_counts": {
+        "NOT_REVIEWED_AFTER_STOP": 71,
+        "REVIEWED": 20
+      },
+      "reviewed": 20,
+      "stop_reason": "twenty_reviewed"
+    }
+  },
+  "schema_version": 1,
+  "task": "SUPPLEMENTAL_MINING_R2",
+  "transport": "github_graphql_repository_issues",
+  "verification_log": "VERIFICATION_LOG.json"
+}

@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-trilinos-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 48,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "bcc9dd28ec445909ad36110d0215e3714399b5978495151431e8d6717f55943e",
+  "issue_url": "https://github.com/trilinos/Trilinos/issues/7680",
+  "fix_url": "https://github.com/trilinos/Trilinos/commit/c7f0d9210b154e8f090d8c72363058885f7d674a",
+  "buggy_sha": "4209d0dd46e86c40d32d878b844ab86978c9280b",
+  "fixed_sha": "c7f0d9210b154e8f090d8c72363058885f7d674a",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The conjugate-gradient iteration accepts numeric system data and can expose the entry-selection defect in one floating-point reduced residual."
+  },
+  "evidence_urls": [
+    "https://github.com/trilinos/Trilinos/issues/7680",
+    "https://github.com/trilinos/Trilinos/commit/c7f0d9210b154e8f090d8c72363058885f7d674a"
+  ],
+  "mechanism_sentence": "uses the correct reduced residual entry in the single-reduction conjugate-gradient solver."
+}

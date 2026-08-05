@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-lapack-04",
+  "source_pool": "defect4mr_64",
+  "source_index": 47,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "fa80baf2ecb1043c604a2b6da28d31c9a33ecbc3b6d0502b596cebfe3b3564d4",
+  "issue_url": "https://www.netlib.org/lapack/bug_list.html",
+  "fix_url": "https://github.com/Reference-LAPACK/lapack/commit/6d3c6b3d719c4fa38f8321e398a8ab142c124f22",
+  "buggy_sha": "2491c9367a9c5e827a935679a4755387b348e159",
+  "fixed_sha": "6d3c6b3d719c4fa38f8321e398a8ab142c124f22",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The eigensolver accepts floating-point matrix data and can expose the sorting defect in one selected returned eigenvalue."
+  },
+  "evidence_urls": [
+    "https://www.netlib.org/lapack/bug_list.html",
+    "https://github.com/Reference-LAPACK/lapack/commit/6d3c6b3d719c4fa38f8321e398a8ab142c124f22"
+  ],
+  "mechanism_sentence": "sorts the returned eigenvalues into ascending order for a single subproblem."
+}

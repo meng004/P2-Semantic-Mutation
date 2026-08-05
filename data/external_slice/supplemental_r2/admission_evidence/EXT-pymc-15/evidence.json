@@ -1,0 +1,21 @@
+{
+  "analysis_id": "",
+  "buggy_sha": "6e02dbc58acd4ab55e06a4e3b2d86d847946dbdc",
+  "crit_dual_arm_repro": "PENDING",
+  "crit_in_numerical_scope": "PASS",
+  "crit_real_public_fix": "PASS",
+  "decision": "ADMIT_PENDING_REPRO",
+  "exclusion_class": "",
+  "fixed_sha": "866c4821b70f5925847e10135be1f4f285ac34ad",
+  "issue_node_id": "MDU6SXNzdWUyNDgyODEwOTg=",
+  "issue_number": 2482,
+  "issue_url": "https://github.com/pymc-devs/pymc/issues/2482",
+  "mechanism": "restores MAP/MLE handling for Uniform random variables via logp_nojac.",
+  "neutral_id": "EXT-pymc-15",
+  "public_fix_url": "https://github.com/pymc-devs/pymc/commit/866c4821b70f5925847e10135be1f4f285ac34ad",
+  "public_issue_url": "https://github.com/pymc-devs/pymc/issues/2482",
+  "repository": "pymc-devs/pymc",
+  "snapshot_record_id": "SSR2-01-0015",
+  "snapshot_record_sha256": "6fa483c13054ddbe1376400f5b8a0eabdbbf47be3e024fb7564d5c6e95ee8e6f",
+  "source_cohort": "supplemental_r2"
+}

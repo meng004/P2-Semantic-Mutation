@@ -1,0 +1,26 @@
+{
+  "neutral_id": "EXT-lapack-01",
+  "source_pool": "defect4mr_64",
+  "source_index": 26,
+  "source_manifest_sha256": "34e819ccffca48afb260a3ef99b0f23ec6c1f4198106a4c74932a5eb0b9b6bac",
+  "source_record_sha256": "98a726907f774b44265c65e7a8df90110730ee138454127e473c40015c2e16e9",
+  "issue_url": "https://github.com/Reference-LAPACK/lapack/issues/826",
+  "fix_url": "https://github.com/Reference-LAPACK/lapack/commit/8b7f5106d4b9f4c0d68c6576da4625b8b142ac95",
+  "buggy_sha": "3b4fea67ce31015e09d9a830e399ec598d224261",
+  "fixed_sha": "8b7f5106d4b9f4c0d68c6576da4625b8b142ac95",
+  "criteria": {
+    "real_defect": "PASS",
+    "dual_arm_repro": "PENDING",
+    "in_scope": "PASS"
+  },
+  "rationales": {
+    "real_defect": "A public defect report and an identifiable public fix commit are linked.",
+    "dual_arm_repro": "No auditable same-trigger execution record for both immutable source revisions is claimed at this candidate gate.",
+    "in_scope": "The two-by-two eigensolver accepts floating-point matrix entries and can expose the ordering defect in one returned eigenvalue."
+  },
+  "evidence_urls": [
+    "https://github.com/Reference-LAPACK/lapack/issues/826",
+    "https://github.com/Reference-LAPACK/lapack/commit/8b7f5106d4b9f4c0d68c6576da4625b8b142ac95"
+  ],
+  "mechanism_sentence": "returns the requested eigenpair in the correct order for the two-by-two case."
+}
