@@ -1,0 +1,125 @@
+{
+  "branch": "cursor/grok-phase3-supplemental-r3-evidence",
+  "entries": [
+    {
+      "command": [
+        "gh",
+        "auth",
+        "status"
+      ],
+      "ended_at_utc": "2026-08-05T12:48:30Z",
+      "exit_code": 0,
+      "notes": "Authenticated as cursor; no evidence networking.",
+      "stage": "phase1_identity_clean_state_gate",
+      "started_at_utc": "2026-08-05T12:48:30Z",
+      "step": "gh_auth_status"
+    },
+    {
+      "command": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "origin",
+        "refs/heads/codex/phase3-supplemental-r3-contract-freeze:refs/remotes/origin/codex/phase3-supplemental-r3-contract-freeze"
+      ],
+      "exit_code": 0,
+      "notes": "Only allowed contract-freeze ref fetch.",
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "fetch_contract_freeze_ref"
+    },
+    {
+      "command": [
+        "test",
+        "$(git rev-parse refs/remotes/origin/codex/phase3-supplemental-r3-contract-freeze)",
+        "=",
+        "0e85691391dd80228dcf1d584d68f2194a6077d0"
+      ],
+      "exit_code": 0,
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "verify_remote_baseline"
+    },
+    {
+      "command": [
+        "test",
+        "-z",
+        "$(git branch --list cursor/grok-phase3-supplemental-r3-evidence)"
+      ],
+      "exit_code": 0,
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "verify_local_branch_absent"
+    },
+    {
+      "command": [
+        "git",
+        "switch",
+        "-c",
+        "cursor/grok-phase3-supplemental-r3-evidence",
+        "0e85691391dd80228dcf1d584d68f2194a6077d0"
+      ],
+      "exit_code": 0,
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "create_evidence_branch_at_baseline"
+    },
+    {
+      "exit_code": 0,
+      "notes": "HEAD and fixed parent chain assertions all passed.",
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "verify_head_and_parent_chain"
+    },
+    {
+      "command": [
+        "test",
+        "-z",
+        "$(git status --porcelain)"
+      ],
+      "exit_code": 0,
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "verify_clean_tree"
+    },
+    {
+      "command": [
+        "git",
+        "rev-list",
+        "HEAD",
+        ">",
+        "/tmp/supplemental-r3-ancestry.txt",
+        "&&",
+        "python3",
+        "-c",
+        "<ancestry assert deny not in items>"
+      ],
+      "exit_code": 0,
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "batch3_not_in_ancestry"
+    },
+    {
+      "command": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)",
+        ">",
+        "/tmp/supplemental-r3-refs.txt"
+      ],
+      "exit_code": 0,
+      "stage": "phase1_identity_clean_state_gate",
+      "step": "list_refs_no_extra_fetch"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path\ndeny = \"f6f1888f361a524a481cc9505e567a8bc414b9ea\"\nfor line in Path(\"/tmp/supplemental-r3-refs.txt\").read_text().splitlines():\n    assert deny not in line\n"
+      ],
+      "exit_code": 1,
+      "failure_classification": "batch3_denylist_present_in_fetched_refs",
+      "hit_ref": "refs/remotes/origin/cursor/grok-phase3-c3-readiness-batch3",
+      "stage": "phase1_identity_clean_state_gate",
+      "stderr_sha256": "aca0c9f705f444f616379a154f0be3ea0d5fbc1930aa513596fe3b0404a5c746",
+      "step": "batch3_not_in_fetched_refs"
+    }
+  ],
+  "head_at_failure": "0e85691391dd80228dcf1d584d68f2194a6077d0",
+  "protocol": "SUPPLEMENTAL_R3_EVIDENCE",
+  "schema_version": 1,
+  "verdict": "R3_UNBLOCK_DESIGN_BLOCKED"
+}

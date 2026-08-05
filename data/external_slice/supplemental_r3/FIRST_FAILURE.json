@@ -1,0 +1,38 @@
+{
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path\ndeny = \"f6f1888f361a524a481cc9505e567a8bc414b9ea\"\nfor line in Path(\"/tmp/supplemental-r3-refs.txt\").read_text().splitlines():\n    assert deny not in line\n"
+  ],
+  "completed_request_count": 0,
+  "failure_classification": "batch3_denylist_present_in_fetched_refs",
+  "failure_detail": {
+    "ancestry_check": "passed",
+    "branch": "cursor/grok-phase3-supplemental-r3-evidence",
+    "deny_sha": "f6f1888f361a524a481cc9505e567a8bc414b9ea",
+    "head": "0e85691391dd80228dcf1d584d68f2194a6077d0",
+    "hit_ref": "refs/remotes/origin/cursor/grok-phase3-c3-readiness-batch3",
+    "note": "Phase 1 required deny SHA absent from all currently fetched refs. Preexisting remote-tracking ref already pointed at the Batch 3 denylist SHA. No additional fetch/show/cat-file/checkout/merge/inspect of that SHA was performed."
+  },
+  "last_successful_cursor": null,
+  "last_successful_page": null,
+  "network": {
+    "browser_requests": 0,
+    "evidence_request_count": 0,
+    "github_issue_requests": 0,
+    "graphql_requests": 0,
+    "manual_membership_search": false,
+    "rest_requests": 0
+  },
+  "neutral_id": null,
+  "partial_payload_created": false,
+  "protocol": "SUPPLEMENTAL_R3_EVIDENCE",
+  "raw_exit_code": 1,
+  "repository": null,
+  "retry_performed": false,
+  "schema_version": 1,
+  "stage": "phase1_identity_clean_state_gate",
+  "stderr_sha256": "aca0c9f705f444f616379a154f0be3ea0d5fbc1930aa513596fe3b0404a5c746",
+  "utc_timestamp": "2026-08-05T12:49:27Z",
+  "verdict": "R3_UNBLOCK_DESIGN_BLOCKED"
+}
