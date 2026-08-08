@@ -3,7 +3,11 @@
 > Date: 2026-08-08  
 > Review type: internal methodology self-review, not an independent external audit  
 > Reviewed plan: `docs/superpowers/plans/2026-08-08-p3-semantic-mutant-argumentation-experiment.md`  
-> Reviewed plan SHA-256: `c433ea69f51049f50da9b14d53eb7654c9bf2c7843485ebf4dbc7080887c6ab5`
+> Historical review target SHA-256: `c433ea69f51049f50da9b14d53eb7654c9bf2c7843485ebf4dbc7080887c6ab5`
+>
+> Status: superseded as a current-plan verdict. The plan was revised after a
+> scientific-necessity and engineering-scope review; this note remains only the
+> audit record for the historical bytes above.
 
 ## Verdict
 

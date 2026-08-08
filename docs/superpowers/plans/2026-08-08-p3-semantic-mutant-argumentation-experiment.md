@@ -11,8 +11,8 @@
 - Origin: P3 semantic-mutant construction principles
 - Origin date: 2026-08-08
 - Study type: empirical software engineering / mutation testing / metamorphic testing
-- Verification status: methodology self-review passed; implementation and
-  independent evidence audits pending
+- Verification status: revised after scientific-necessity and engineering-scope
+  review; implementation and independent evidence audit pending
 - Execution environment: fresh Cursor VM, Grok 4.5 High
 - Scientific authority: frozen artifacts and executable checks, never model judgment
 - Governing design:
@@ -26,11 +26,14 @@
 | P12 admission/reference MR could leak into evaluated portfolios | Partition reference MRs as positive controls and mechanically exclude them and semantic duplicates from confirmatory portfolios |
 | Contract, patch, and witness could be co-designed | Freeze contract/domain/oracle first, propose patch second, select the first canonical witness third |
 | P12 population and paired cohort were ambiguous | Define `P12_FULL`, `P12_PAIRED`, and `P12_DIRECT`, plus separate diversity and criterion construction cohorts, with distinct estimands |
-| Outcome blindness was logical rather than physical | Use three content-addressed packages with no `.git` history and mount them in chronological order |
+| Outcome blindness lacked an enforceable process boundary | Use three content-addressed packages in chronological phase environments; claim platform-level physical absence only with provisioner attestation |
 | MR subset lattice created pseudo-replication and infeasible enumeration | Keep the lattice descriptive; use fixed-budget combinadic sampling and project-budget aggregates for inference |
 | RQ4 model was too large for the proposed floor | Use a simulation-qualified project-level model and retain the existing 17-project/60-family confirmatory floor |
 | `DIRECT`-only and unequal equivalence denominators favored the semantic model | Use all paired defects for primary criterion validity and common strict/conservative equivalence policies for both baselines |
 | The new RQ4 estimand could override the frozen P12 v1.1.2 S1–S2 contract | Require an explicitly compatible successor P12 contract; otherwise retain v1.1.2 only under its own estimand and downgrade P3 RQ4 |
+| Blinded IDs could alter deterministic cohort selection | Derive selection from canonical outcome-free subject records; do not rank by a custodian-chosen identifier |
+| A bridge self-hash did not prove P12 completeness or exact fixed-version pairing | Bind the bridge to the P12 package root and complete eligible inventory, then verify the revealed fixed commit against the earlier snapshot tree |
+| Audit infrastructure could delay the scientific experiment indefinitely | Adopt a minimum-evidence foundation and defer generic schema, governance, and orchestration frameworks |
 
 ## 1. Goal and central argument
 
@@ -43,7 +46,7 @@ mutation does not provide.
 The central empirical chain is:
 
 ```text
-P12 fixed program version
+P12-bound blinded fixed source snapshot
   -> independently constructed semantic mutants
   -> traditional syntactic mutants on the same version
   -> the same frozen non-reference MR inventory executed on both mutant populations
@@ -77,6 +80,31 @@ domain, not to all software defects. An MR used to establish that benchmark
 property is a positive control, not an independent P3 evaluation MR. The frozen
 P12 v1.1.2 package has a different admission rule and S1–S2/RFDS primary
 estimand; P3 does not retroactively redefine either one.
+
+### 2.1 Minimum-necessary evidence principle
+
+Every mechanism in this plan must protect at least one named scientific property:
+construct validity, outcome blindness, exact-version pairing, sampling integrity,
+failure retention, reproducibility, or claim-to-evidence traceability. A mechanism
+that protects only a preferred branch name, shell shape, launch prose, commit
+sequence, or tool-specific ceremony is not a scientific gate.
+
+The minimum authoritative evidence consists of:
+
+1. one frozen protocol and analysis specification;
+2. one P12-bound blinded bridge and deterministic subject frames;
+3. one manifest for each phase input package;
+4. one immutable result record per planned experimental job;
+5. one append-only attempt ledger plus a phase-close head/count receipt;
+6. analysis code and regenerated outputs; and
+7. a claim-to-evidence table.
+
+Canonical JSON, SHA-256, exact Git/source identities, and ordinary clean process
+environments are sufficient unless a stronger mechanism directly changes the
+scientific guarantee. YAML and Markdown may be generated views but are not
+additional authorities. The study does not require a generic schema language,
+a generic claim-transition engine, a custom VM controller, a one-shot launch
+packet, or a prescribed number of commits and pushes.
 
 ## 3. Research questions
 
@@ -196,9 +224,38 @@ pre-outcome criterion-construction frame and complete profile availability;
 faults missed by every evaluated MR set remain included. Unpaired faults and the
 mechanical reason for missing a profile remain in the coverage ledger.
 
+### 5.1.1 P12-bound blinded fixed-snapshot bridge
+
+P3 needs repaired source code for controlled construction but must not receive
+the corresponding defect, patch, reference MR, or outcome. An identified P12
+custodian therefore publishes a bridge before P3 construction begins. The bridge
+envelope is bound to the immutable successor P12 package and contains:
+
+- `p12_package_root_sha256` and the compatible contract hash;
+- the complete eligible-inventory root and item count;
+- one record for every unique eligible fixed Git tree;
+- for each record, the fixed Git tree OID, a normalized source-tree SHA-256,
+  source archive hash, build descriptor hash, and eligibility reason;
+- a deterministic `neutral_subject_id` derived from the package root and fixed
+  Git tree OID; and
+- a custodian/release attestation binding the bridge to the named P12 release.
+
+The bridge excludes issue/PR identity, buggy commit, fixed commit, defect patch,
+changed symbols, defect family, reference MR, and every outcome. P3 recomputes
+source scale and implementation-technique features from the permitted fixed
+source and build metadata; the custodian does not assign the strata used for
+selection.
+
+At Phase 7 the revealed mapping must cover every bridge record exactly once. For
+each mapping, P3 verifies that the revealed fixed commit's Git tree OID and
+normalized source-tree SHA-256 equal the values used during controlled
+construction. A missing record, an extra eligible P12 item, or any tree mismatch
+is retained as an unpaired failure and cannot be repaired by substituting another
+subject. A self-hash alone is not accepted as evidence of origin or completeness.
+
 ### 5.2 Program-scale strata
 
-Repository source size is computed mechanically at the frozen fixed commit,
+Repository source size is computed mechanically from the frozen fixed snapshot,
 excluding vendored, generated, test-fixture, and environment directories:
 
 - `S`: fewer than 10,000 nonblank noncomment source lines;
@@ -237,15 +294,17 @@ remain visible; they do not enter technique-stratified confirmatory claims.
 Two controlled cohorts are frozen before P3 sees MR outcomes:
 
 1. `C_CONSTRUCT` supports RQ1–RQ3 diversity. Enumerate the complete eligible
-   fixed-version frame, classify scale and technique mechanically, rank each
-   scale × technique cell by
-   `SHA256(fixed_commit || project_id || target_id || "P3-C1")`, select the first
+   fixed-version frame, classify scale and technique mechanically, and derive an
+   outcome-free `subject_selection_key` as the SHA-256 of the canonical record
+   `{normalized_source_tree_sha256, build_descriptor_sha256, scale_class,
+   technique_vector, "P3-C1"}`. Rank each scale × technique cell by
+   this key, select the first
    candidate per nonempty cell, then continue round-robin until 18 subjects are
    selected or the frame is exhausted. Retain `EMPTY_FRAME` for unfilled cells.
 2. `C_CRITERION` supports RQ4 exact-version pairing. Enumerate, without sampling,
-   every unique exact fixed commit referenced by the compatible successor
+   every unique eligible fixed tree committed by the compatible successor
    `P12_FULL` frame and construct the same prespecified semantic and syntactic
-   profiles. Multiple faults sharing an exact fixed commit reuse one immutable
+   profiles. Multiple faults sharing an exact fixed tree reuse one immutable
    profile but remain distinct real-fault rows. A failed profile remains a
    failed pairing record and is never replaced by another version.
 
@@ -259,6 +318,11 @@ compute, and storage. Resource infeasibility downgrades RQ4 to a case series; it
 does not authorize hash sampling or favorable-version selection. Exact overlap
 between `C_CONSTRUCT` and `C_CRITERION` reuses one artifact and one execution,
 with both cohort roles recorded.
+
+This formula supersedes the earlier rank based on visible fixed-commit, project,
+and target identifiers. It preserves deterministic selection after blinding and
+prevents a custodian-chosen neutral label from changing cohort membership. The
+complete eligible frame and feature derivation code freeze before ranking.
 
 ### 5.5 Controlled-only supplements
 
@@ -329,7 +393,7 @@ reproducible scientific artifacts.
 
 The construction package contains only:
 
-- the P12 fixed program version;
+- the P12-bound blinded fixed source snapshot;
 - public documentation and build metadata;
 - the frozen two-axis operator catalogue;
 - the slot identifier, applicability record, and permitted mechanism;
@@ -653,9 +717,9 @@ incremental-value modelling; canonical-signature matches without exact identity
 remain in a prespecified sensitivity analysis. Counts and exclusions are
 reported, never replaced.
 
-### 12.1 Physical evidence partitions
+### 12.1 Phase-separated evidence partitions
 
-Logical allowlists are supplemented by three physical packages:
+Logical allowlists are supplemented by three content-addressed packages:
 
 1. `PACKAGE_A_CONSTRUCTION`: fixed source snapshots, documentation, frozen
    contracts, and proposal inputs; no `.git`, buggy revisions, MR files,
@@ -668,9 +732,15 @@ Logical allowlists are supplemented by three physical packages:
    isolated mapper and leakage-audit processes may read Package C, but no
    evaluated MR may execute on a P12 bug until their outputs are frozen.
 
-Each package has an independent manifest and tree hash. The Cursor controller
-receives only the package required by the current phase. A clean verifier checks
+Each package has an independent manifest and tree hash. Each phase process
+receives only the package required by that phase. A clean verifier checks
 absence, not merely non-use, of forbidden paths and identities.
+
+The defensible claim is **phase-separated package and process isolation**. P3
+may claim stronger platform-level physical absence only if the VM provisioner
+produces an independently verifiable attestation of the newly created environment
+and its mounted inputs. A directory scan, package self-hash, or Cursor conversation
+statement does not by itself prove that the platform never possessed Package C.
 
 ## 13. Cursor VM execution design
 
@@ -700,12 +770,18 @@ Before a confirmatory run, a repeatable non-scientific preflight verifies:
 - CPU, memory, disk, OS, Python, compiler, and dependency lock;
 - build and smoke tests for every selected subject;
 - subprocess, atomic-rename, file-lock, and parallel-worker capabilities;
-- offline availability of all confirmatory inputs;
+- offline availability of the inputs declared for that phase only; Phase A/B
+  preflight must not receive or inspect Package C;
 - exact model label `Grok 4.5 High` in the environment record.
 
 Preflight failure does not consume a scientific run and may be diagnosed and
 rerun. Confirmatory authorization begins only after the complete manifest is
 frozen and the first atomic experimental job is recorded.
+
+Preflight is an audited project CLI, not an inline natural-language controller.
+It may use ordinary diagnostic commands and may be rerun. Repository identity is
+the normalized owner/repository plus the exact selected commit; raw HTTPS versus
+SSH remote spelling is recorded but is not an equality gate.
 
 ### 13.3 Parallel execution
 
@@ -730,6 +806,7 @@ policy is not used.
 
 - every attempt, including failed and inconclusive attempts, remains in the
   experiment ledger;
+- each scientific job writes and fsyncs its intent before the first side effect;
 - a transient infrastructure operation may be attempted at most three times
   with the same job ID, inputs, seed, and command;
 - scientific repetitions are fixed in advance and are never increased after
@@ -740,149 +817,103 @@ policy is not used.
   the complete affected phase while retaining the failed version;
 - a successful rerun cannot erase or overwrite an earlier failure.
 
+At phase close, the reducer freezes the expected job inventory, terminal-row
+count, final ledger-event hash, and ledger byte hash in a receipt referenced by
+the next phase. This detects removal of a valid hash-chain suffix; a previous-hash
+chain alone is not treated as proof that all failed attempts were retained.
+
 ## 14. Execution sequence
 
-### Phase 0 — Freeze claims and governance
+### Phase 0 — Freeze the scientific protocol
 
-Create and hash:
+Freeze one canonical protocol containing RQs, claims and ceilings, operator
+catalogue, cohorts, metrics, MR budgets, analysis rules, retry rules, P12
+compatibility requirements, and environment lock. Claims remain blocked; this
+phase does not implement a generic claim-transition engine.
 
-- `research/p3_v3/score-task.yml`;
-- `research/p3_v3/claim-ledger.yml`;
-- `research/p3_v3/operator-catalog.yml`;
-- `research/p3_v3/analysis-plan.md`;
-- `research/p3_v3/rq4-sensitivity-plan.yml`;
-- `research/p3_v3/p12-contract-compatibility.json`;
-- `research/p3_v3/environment-lock.json`.
+Exit criterion: all outcome-dependent choices are explicit and machine-readable.
 
-Exit criterion: exact RQs, claim ceiling, metrics, retry policy, and prohibited
-claims are machine-readable and internally consistent; the RQ4 simulation grid,
-cluster assumptions, model-eligibility floor, P12 contract-compatibility gate,
-and downgrade rules are frozen.
+### Phase 1 — Receive the blinded bridge and build frames
 
-### Phase 1 — Build the blinded subject and MR frames
+The P12 custodian freezes the P12 package root, complete bridge, eligible count,
+fixed-tree bindings, and reference-MR exclusion receipts. P3 verifies the bridge,
+recomputes scale and technique features, and deterministically builds
+`C_CONSTRUCT`, exhaustive unique-tree `C_CRITERION`, the non-reference MR
+inventory, and confirmatory portfolios. Package A contains only permitted fixed
+source, build metadata, contracts, and proposal inputs.
 
-Produce:
+Exit criterion: every frame is reproducible from outcome-free inputs, and no
+custodian-selected label or feature can alter cohort membership.
 
-- `research/p3_v3/p12-eligible-frame.json`;
-- `research/p3_v3/construct-cohort-frame.json`;
-- `research/p3_v3/criterion-cohort-frame.json`;
-- `research/p3_v3/subject-frame.json`;
-- `research/p3_v3/subject-strata.json`;
-- `research/p3_v3/mr-inventory.json`;
-- `research/p3_v3/mr-set-lattice.json`;
-- `research/p3_v3/reference-mr-exclusions.json`;
-- `research/p3_v3/construction-allowlist.json`;
-- package schemas and allow/deny rules, the final Package A manifest, and an
-  independently assembled sealed Package C root hash. Until Phase 7, the
-  construction and controlled-execution processes can read only that opaque root
-  hash, not Package C paths, identities, or contents.
+### Phase 2 — Repeatable preflight and non-P12 pilot
 
-Exit criterion: deterministic selection can be recomputed from frozen inputs;
-the reference-MR exclusion set is reproducible; Package A physically excludes
-`.git`, buggy diffs, MRs, and outcomes; Package C is sealed but not mounted in
-the construction or controlled-execution environment; the criterion frame
-contains every unique eligible P12 fixed commit with no outcome-based sampling.
+In a clean phase environment, run capability, dependency, build, smoke, ledger,
+and runner probes. Exercise every pipeline terminal state on separately labelled
+`PILOT_ONLY` subjects. Preflight and pilot failures may be diagnosed and rerun;
+they cannot enter confirmatory denominators.
 
-### Phase 2 — Instrument pilot
+Exit criterion: the actual project CLI can execute one synthetic end-to-end job
+and retain both success and failure records. No launch prose is part of the test.
 
-Use separate non-P12 pilot subjects, one per represented implementation
-technique, to validate patch application, contracts, coverage, witnesses,
-syntactic baseline, MR runner, atomic ledger, and parallel reduction.
+### Phase 3 — Blind semantic construction
 
-Pilot objects and outcomes are permanently labelled `PILOT_ONLY` and cannot
-enter any confirmatory denominator or result table.
+For each selected subject and slot, freeze the contract, domain, oracle,
+tolerance, activation rule, and witness order; then obtain one Grok 4.5 High
+candidate patch and freeze it. The proposer receives Package A only. It cannot
+read buggy code, defect patches, reference or evaluated MRs, or outcomes.
 
-Exit criterion: every pipeline state has a deliberate positive and negative
-test; pilot failures are resolved before the confirmatory freeze.
+Exit criterion: every slot has an immutable patch or explicit failure, and
+`CONTRACT_FROZEN` precedes `PATCH_FROZEN`.
 
-### Phase 3 — Contract freeze and patch proposal
+### Phase 4 — Certification and syntactic baseline
 
-Process each candidate slot in the following order and freeze every transition:
+Certify all semantic candidates using the frozen witness order and terminal
+states. Generate the frozen first-order syntactic baseline on the same fixed
+versions and apply the common equivalence policy. Freeze both denominators in
+Package B; do not replace failed, invalid, duplicate, or unresolved objects.
 
-- subject commits and strata;
-- ten semantic-contract candidate slots per subject;
-- each slot's semantic-contract family, executable predicate, domain, canonical
-  witness search, oracle, tolerance, activation obligation, and expected effect;
-- Package A construction input;
-- the single Grok 4.5 High proposal response and frozen candidate exact patch;
-- syntactic mutation configuration;
-- hash bindings to the already frozen non-reference MR inventory, confirmatory
-  portfolio sample, seeds, tolerances, timeouts, and analysis code; none of those
-  MR contents is mounted in Package A.
+Exit criterion: both populations and all exclusions are independent of MR kills
+and P12 real-fault outcomes.
 
-Exit criterion: state hashes prove `CONTRACT_FROZEN` precedes `PATCH_FROZEN`; a
-clean verifier proves that no evaluated MR, P12 buggy revision, reference-MR
-signature, or P12 outcome was present in Package A.
+### Phase 5 — Controlled MR execution
 
-### Phase 4 — Semantic certification
+Freeze the atomic job list from the two denominators and the non-reference MR
+portfolios. Write each job intent before execution, run jobs in parallel where
+the frozen resource policy permits, and reduce immutable rows. Close the phase
+with the job inventory, terminal-row count, ledger head, and ledger byte hash.
 
-Run the canonical witness search and complete certification pipeline in Cursor
-VM. Preserve every terminal state and raw artifact. The first qualifying witness
-in canonical order is frozen without modifying the contract or patch. Freeze the
-primary semantic denominator, then assemble and hash the immutable Package B
-semantic segment. No MR execution is available before that denominator is
-frozen.
+Exit criterion: every planned row is successful, failed, inconclusive, or
+missing for an explicit reason; nothing is silently imputed or discarded.
 
-Exit criterion: denominator membership is reproducible from exact patches,
-contracts, witnesses, logs, and environment identity.
+### Phase 6 — Controlled freeze
 
-### Phase 5 — Syntactic baseline
+Freeze Package B, controlled matrices, MR portfolios, mapping rules, leakage
+comparison algorithm, and analysis code. A clean verifier regenerates the
+controlled summaries. Only after this receipt exists may Package C be supplied
+to a new real-fault phase environment.
 
-Generate and execute the frozen syntactic candidate population on the same
-fixed versions. Preserve the full and budget-matched denominator manifests,
-then assemble the final Package B manifest from the already frozen semantic
-segment, the frozen syntactic segment, the non-reference MR inventory, and the
-controlled job-list inputs. Final assembly cannot rewrite either segment.
+Exit criterion: no decision that can favor the semantic model remains mutable.
 
-Exit criterion: generation and funnel results are independent of all MR and P12
-outcomes; the final Package B manifest binds both controlled denominators and is
-immutable before Phase 6 execution.
+### Phase 7 — Reveal P12 and execute real faults
 
-### Phase 6 — Controlled MR execution
+Verify that every revealed fixed commit matches its blinded bridge tree. Run the
+rule-based family mapper without MR data, then run the leakage comparison without
+kill outcomes. Freeze both outputs and the P12 job list before executing the same
+non-reference MR portfolios on P12 buggy/fixed pairs. Reference positive controls
+never enter P3 portfolios or primary models.
 
-Derive and freeze the canonical controlled job list from the already frozen
-non-reference MR inventory and the two frozen mutant denominators. Execute it
-against original versions, certified semantic mutants, and syntactic mutants.
-Run jobs in parallel where allowed and reduce them into immutable atomic
-matrices.
+Exit criterion: every eligible P12 item appears as paired, unpaired, failed, or
+out of scope; no replacement is permitted.
 
-Exit criterion: every planned row has exactly one terminal outcome, and missing
-or failed rows are explicit rather than imputed.
+### Phase 8 — Prespecified analysis and evidence gate
 
-### Phase 7 — P12 real-fault execution
+Regenerate all RQ1–RQ4 tables, intervals, residual explanations, model
+comparisons, and sensitivities from atomic rows. On a clean environment verify
+package hashes, fixed-version pairing, phase-close receipts, failed-run retention,
+analysis regeneration, and claim-to-evidence references.
 
-Mount Package C only after Phases 4–6 are sealed. First, an isolated mapper that
-cannot read Package B freezes the rule-based semantic-contract-family mapping
-from buggy/fixed artifacts. Second, a separate leakage auditor reads only
-Package C and a projection of controlled-mutant patch, tree, changed-symbol, and
-semantic-signature identities; it cannot read MR definitions or any kill
-outcome. Freeze both outputs and the real-fault job list before the first
-evaluated non-reference MR runs on any P12 buggy version. Then execute the same
-non-reference MR inventories. Reference positive controls, if required for P12
-benchmark admission, are not executed by P3 until the confirmatory P3 analysis
-is sealed and never enter P3 models or portfolio scores.
-
-Exit criterion: all eligible faults, including misses and execution failures,
-are represented.
-
-### Phase 8 — Prespecified analysis
-
-Generate RQ1–RQ4 tables, figures, confidence intervals, portfolio comparisons,
-residual explanations, model comparisons, and sensitivity analyses from the
-immutable matrices.
-
-Exit criterion: every number in a table or figure traces to atomic rows and the
-analysis commit; no manual spreadsheet value is authoritative.
-
-### Phase 9 — Independent evidence gate
-
-On a clean environment, verify artifact hashes, schemas, input/output closure,
-failed-run retention, denominator freeze chronology, analysis regeneration, and
-claim status.
-
-Exit criterion: produce an evidence package containing supported, observed,
-qualified, insufficient, blocked, and speculative claims. Manuscript writing
-may use only the first three statuses with matching wording strength.
+Exit criterion: manuscript writing receives an evidence package in which only
+`supported`, `observed`, and `qualified` claims may be stated as results.
 
 ## 15. Required result tables and figures
 
@@ -901,36 +932,30 @@ may use only the first three statuses with matching wording strength.
 
 ## 16. Reproducibility artifacts
 
-The implementation must ultimately produce:
+The minimum authoritative artifact set is:
 
 ```text
-research/p3_v3/score-task.yml
-research/p3_v3/claim-ledger.yml
-research/p3_v3/experiment-ledger.yml
-research/p3_v3/operator-catalog.yml
-research/p3_v3/construct-cohort-frame.json
-research/p3_v3/criterion-cohort-frame.json
-research/p3_v3/subject-frame.json
-research/p3_v3/mr-inventory.json
-research/p3_v3/mr-set-lattice.json
-research/p3_v3/reference-mr-exclusions.json
-research/p3_v3/rq4-sensitivity-plan.yml
-research/p3_v3/p12-contract-compatibility.json
-research/p3_v3/analysis-plan.md
-research/p3_v3/environment-lock.json
+research/p3_v3/protocol.json
+research/p3_v3/p12-bridge.json
+research/p3_v3/subject-frames.json
+research/p3_v3/mr-inventory-and-portfolios.json
+research/p3_v3/attempt-ledger.jsonl
+research/p3_v3/claim-evidence.json
 data/p3_v3/manifests/package-a-construction.json
 data/p3_v3/manifests/package-b-controlled-execution.json
 data/p3_v3/manifests/package-c-real-holdout.json
-data/p3_v3/manifests/p12-semantic-contract-family-mapping.json
-data/p3_v3/manifests/controlled-real-leakage-audit.json
-data/p3_v3/raw/
-data/p3_v3/matrices/
-data/p3_v3/results/
+data/p3_v3/phase-close/
+data/p3_v3/jobs/
+data/p3_v3/results/atomic-matrices/
+data/p3_v3/results/generated/
 data/p3_v3/evidence-package.md
 ```
 
-Raw, failed, and inconclusive artifacts are append-only. Derived tables and
-figures are regenerated from raw matrices and never edited as sources of truth.
+The protocol may reference additional detailed files, but they are not separate
+authorities unless listed by hash in `protocol.json`. JSON is authoritative;
+human-readable YAML or Markdown projections are optional generated views. Raw,
+failed, and inconclusive artifacts are append-only. Derived tables and figures
+are regenerated from atomic matrices and never edited as sources of truth.
 
 ## 17. Argument outcomes
 
@@ -951,16 +976,25 @@ metrics, or claim thresholds after outcomes are observed.
 
 ## 18. Work decomposition after approval
 
-This scientific plan should be implemented through four separately reviewable
-plans:
+Implementation proceeds through three scientific deliverables, not a general
+governance platform:
 
-1. evidence schemas, subject framing, and blinded package construction;
-2. artifact-first semantic-mutant construction and certification;
-3. syntactic baseline, MR runner, atomic matrices, and parallel reducer;
-4. P12 integration, statistical analysis, evidence package, and Cursor VM launch
-   instructions.
+1. **Minimum evidence channel:** fixed JSON schemas for the artifacts above,
+   bridge/frame/package verification, atomic job records, phase-close receipts,
+   and repeatable preflight.
+2. **Controlled experiment:** contract freeze, proposal capture, certification,
+   syntactic baseline, MR runner, reducer, and controlled analysis freeze.
+3. **P12 criterion experiment:** bridge reveal verification, mapping, leakage
+   audit, real-fault execution, final analysis, and evidence package.
 
-Cursor VM instructions are generated only after all four implementation plans,
-their tests, and the repeatable preflight pass. They must launch existing
-audited CLIs rather than embed a new unaudited controller in the instruction
-text.
+Each deliverable must demonstrate one end-to-end synthetic or pilot path before
+additional framework work is considered. Deferred unless a concrete failure
+requires them: a generic schema algebra, generated JSON-Schema catalogue,
+canonical YAML engine, generic claim-state framework, custom Cursor controller,
+one-shot authorization protocol, mandatory commit topology, and launch-packet
+self-hashing.
+
+Cursor instructions may be generated after the CLI for the next scientific
+deliverable passes repeatable preflight; they do not wait for unrelated future
+frameworks. Instructions invoke audited commands directly and never embed a
+second controller.
