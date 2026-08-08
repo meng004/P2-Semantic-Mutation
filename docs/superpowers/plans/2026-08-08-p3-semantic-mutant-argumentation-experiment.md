@@ -475,6 +475,10 @@ The fresh Cursor VM with Grok 4.5 High is the execution environment. Grok may:
 - report mechanical failures;
 - assemble already-validated artifacts.
 
+Cursor VM commands invoke the frozen project CLIs directly and do not use the
+local GPT Desktop `rtk` wrapper. The `rtk` requirement remains limited to local
+Desktop shell work.
+
 Grok may not decide admission, semantic-family mapping, equivalence, MR kills,
 claim status, or whether an inconvenient run should be excluded. Those decisions
 are produced by frozen code, schemas, and prespecified rules.
