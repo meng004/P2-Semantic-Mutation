@@ -21,12 +21,12 @@ network access, mutant construction, and MR execution remain out of scope.
 
 ## Global Constraints
 
-- Scientific plan commit:
+- Parent scientific-plan revision commit:
   `07287122123b113610b6b8bcde7116ab397da688`.
 - Scientific plan SHA-256:
-  `4fa367d1ac33a741071b806903bfc45ac476e4109da55de04515b285fde7bb1c`.
+  `baf838489e605c0a9c09cd71cc84f8a44892b389e398edd1eaa0b6bd97ee7ac6`.
 - Evidence-foundation design SHA-256:
-  `f9d13c6f7ca2363c4fd24df6d7fcd4f93befe1ebb6671d59f6ae44b963f67d1d`.
+  `57668ac81a076e0ec88177d5492230dd6a55efe2138a82e72c0fb1e0f9236f14`.
 - `PINNED_GIT_RELEASE` is the only bridge trust mode.
 - Historical P12 v1.1.2 bytes remain immutable; tests use synthetic successor
   releases only.
@@ -123,10 +123,11 @@ rtk git commit -m "feat(p3-v3): add canonical evidence artifacts"
 
 **Interfaces:**
 - Consumes: artifact primitives from Task 1.
-- Produces: `verify_pinned_bridge(repo_root, bridge_relpath) -> dict`,
+- Produces: `verify_pinned_bridge(repo_root, consumer_lock) -> dict`,
   `build_subject_frames(verified_bridge, feature_records, construct_limit=18)
   -> dict`, and `verify_reveal(bridge_record, reveal_record, package_root) -> None`.
-- `verify_pinned_bridge` reads the release commit, bridge blob, and contract blob
+- `verify_pinned_bridge` reads the externally pinned release commit, bridge blob,
+  and contract blob
   directly from Git using exact `git -C ...` argv with `shell=False`.
 - `build_subject_frames` derives `controlled_subject_id`, deterministic site IDs,
   total-order `C_CONSTRUCT`, and exhaustive unique-subject `C_CRITERION`.
@@ -135,13 +136,13 @@ rtk git commit -m "feat(p3-v3): add canonical evidence artifacts"
 
 ```python
 def test_bridge_requires_pinned_git_blobs(synthetic_p12_repo):
-    verified = verify_pinned_bridge(synthetic_p12_repo.root, "release/p3-bridge.json")
+    verified = verify_pinned_bridge(synthetic_p12_repo.root, synthetic_p12_repo.consumer_lock)
     assert verified["trust_mode"] == "PINNED_GIT_RELEASE"
 
 def test_visible_bridge_rejects_tree_oid(synthetic_p12_repo):
     synthetic_p12_repo.mutate_record({"fixed_git_tree_oid": "a" * 40})
     with pytest.raises(EvidenceError, match="E_BRIDGE_VISIBLE_SECRET"):
-        verify_pinned_bridge(synthetic_p12_repo.root, "release/p3-bridge.json")
+        verify_pinned_bridge(synthetic_p12_repo.root, synthetic_p12_repo.consumer_lock)
 ```
 
 Add literal expected IDs for shuffled-input invariance, alias reuse, conflict

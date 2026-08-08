@@ -6,7 +6,7 @@
 - Status: revised after targeted scientific review; implementation pending
 - Scope: only the evidence controls required before controlled semantic-mutant work
 - Parent scientific plan SHA-256:
-  `4fa367d1ac33a741071b806903bfc45ac476e4109da55de04515b285fde7bb1c`
+  `baf838489e605c0a9c09cd71cc84f8a44892b389e398edd1eaa0b6bd97ee7ac6`
 - Governing principles SHA-256:
   `4aa9fb17bdfa8976387a4165445b2b0b72e653688187c958fa1beb022075780d`
 - Existing P12 v1.1.2 contract SHA-256:
@@ -201,9 +201,6 @@ The identified P12 custodian publishes an envelope containing:
 schema_version
 p12_release_id
 p12_repository_identity
-p12_release_commit_sha
-p12_bridge_path
-p12_bridge_blob_sha
 p12_contract_path
 p12_contract_blob_sha
 p12_package_root_sha256
@@ -216,12 +213,17 @@ artifact_sha256
 ```
 
 `trust_mode` is exactly `PINNED_GIT_RELEASE`. The validator normalizes the P12
-repository identity, checks out the exact release commit, and proves that the
-bridge and contract bytes at their pinned paths have the declared Git blob
-identities and package root. This is the only minimum trust mode: the foundation
-does not add a generic signature or PKI system. A self-hash detects mutation but
-is not accepted as proof of origin or completeness. If the pinned release cannot
-be verified, RQ4 remains blocked.
+repository identity. A separate P3 consumer lock contains exactly
+`repository_identity`, `release_commit_sha`, `bridge_path`, `bridge_blob_sha`,
+`contract_path`, `contract_blob_sha`, and `package_root_sha256`. The validator
+reads the bridge and contract from that exact commit and proves their Git blob
+identities and package root. Release commit and bridge blob identities must not
+appear inside the bridge they identify, because that would create a
+self-referential Git object. This is the only minimum trust mode: the foundation
+does not add a generic signature or PKI system. The bridge's `artifact_sha256`
+excludes that field under the canonical self-hash rule, but a self-hash alone is
+not accepted as proof of origin or completeness. If the pinned release cannot be
+verified, RQ4 remains blocked.
 
 ### 6.2 Record
 

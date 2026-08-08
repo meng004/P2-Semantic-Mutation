@@ -243,9 +243,13 @@ envelope is bound to the immutable successor P12 package and contains:
   SHA-256, source archive hash, build descriptor hash, and eligibility reason;
 - a deterministic `neutral_snapshot_id` derived from the package root and
   normalized source-tree/source-archive hashes; and
-- a `PINNED_GIT_RELEASE` trust record containing the normalized P12 repository
-  identity, exact release commit SHA, bridge path and blob SHA, P12 contract path
-  and blob SHA, and package root.
+- a `PINNED_GIT_RELEASE` identity containing the normalized P12 repository,
+  release ID, P12 contract path and blob SHA, and benchmark package root.
+
+The P3 consumer lock—not the bridge file itself—pins the exact release commit,
+bridge path/blob SHA, contract path/blob SHA, and package root. Keeping the
+release commit and bridge blob outside the bridge avoids a self-referential Git
+object while still binding the bytes mechanically.
 
 The visible bridge never contains the fixed Git tree OID. The custodian computes:
 
