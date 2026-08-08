@@ -3,7 +3,8 @@
 ## Material Passport
 
 - Date: 2026-08-08
-- Status: revised after targeted scientific review; implementation pending
+- Status: revised after targeted scientific review and workload-role separation;
+  implementation pending
 - Scope: only the evidence controls required before controlled semantic-mutant work
 - Parent scientific plan SHA-256:
   `911562938a14ad3955a6c1e38080185ba78e92dbf4401efcb10d7c169e4a2772`
@@ -28,8 +29,10 @@ the P3 experiment reproducible and non-circular. It must prove:
 4. the controlled fixed source is the same program version later paired with the
    P12 real defect;
 5. every planned job, including failures and inconclusive attempts, remains in
-   the record; and
-6. every manuscript claim traces to an exact result artifact.
+   the record;
+6. profiling workloads cannot be confused with the independent inputs used to
+   evaluate mutants and MR portfolios; and
+7. every manuscript claim traces to an exact result artifact.
 
 Passing this foundation does not support a paper result. It supports only the
 existence of a reproducible, outcome-blind input and recording channel.
@@ -68,6 +71,10 @@ The minimum set is:
 ```text
 research/p3_v3/protocol.json
 research/p3_v3/p12-bridge.json
+research/p3_v3/public-behavior-frame.json
+research/p3_v3/profiling-workload.json
+research/p3_v3/profiling-results.json
+research/p3_v3/evaluation-inputs.json
 research/p3_v3/subject-frames.json
 research/p3_v3/mr-inventory-and-portfolios.json
 research/p3_v3/attempt-ledger.jsonl
@@ -115,10 +122,11 @@ exactly one terminal LF in files. An object self-hash excludes its own hash fiel
 
 ### 4.2 `bridge_and_frames.py`
 
-Validates the P12 bridge, recomputes permitted mechanical features, builds
-`C_CONSTRUCT` and `C_CRITERION`, validates non-reference MR exclusion receipts,
-and freezes MR portfolios. It cannot read P12 buggy source, patches, reference-MR
-content, or any outcome.
+Validates the P12 bridge, derives the public behavior frame, selects the profiling
+workload, recomputes permitted mechanical features, builds `C_CONSTRUCT` and
+`C_CRITERION`, validates non-reference MR exclusion receipts, and freezes MR
+portfolios. It cannot read P12 buggy source, patches, reference-MR content, any
+mutant/MR result, or any real-fault outcome.
 
 ### 4.3 `packages.py`
 
@@ -170,6 +178,8 @@ same project CLI without `rtk`.
 - P12 compatibility requirement and downgrade rule;
 - semantic-contract and construction-mechanism catalogues;
 - subject eligibility and feature derivation;
+- public-behavior discovery, profiling-workload budgets and selection, and the
+  independent evaluation-input construction rule;
 - candidate slots, stopping rules, seeds, timeouts, and retry policy;
 - canonical site enumeration, first-applicable-site selection, and
   subject/site/real-fault unit definitions;
@@ -262,11 +272,11 @@ Phase 7.
 
 ### 6.3 Feature authority and completeness
 
-P3 derives the canonical public workload set, scale, dependency-cone,
-program-level implementation-technique features, and mutation-site enumeration
-from the permitted fixed source, build descriptor, and public documentation
-using frozen rules. Custodian-supplied strata, targets, and sites are neither
-accepted nor used for selection.
+P3 derives the public behavior frame, profiling workload, scale,
+dependency-cone, program-level implementation-technique features, and
+mutation-site enumeration from the permitted fixed source, build descriptor,
+and public documentation using frozen rules. Custodian-supplied workloads,
+strata, targets, and sites are neither accepted nor used for selection.
 
 The program-version experimental unit is:
 
@@ -274,7 +284,7 @@ The program-version experimental unit is:
 controlled_subject_id = SHA256(canonical_json({
   normalized_source_tree_sha256,
   build_descriptor_sha256,
-  public_workload_set_sha256,
+  profiling_workload_sha256,
   domain: "P3-SUBJECT-v1"
 }))
 ```
@@ -292,7 +302,121 @@ same controlled subject reuse one profile; conflicting source/build/workload
 commitments are a hard failure. An absent or extra item is a hard
 compatibility failure, not an opportunity to select a replacement.
 
-### 6.4 Phase 7 reveal
+### 6.4 Three distinct workload-related authorities
+
+The design separates three objects that answer different scientific questions.
+They cannot be substituted for one another.
+
+#### 6.4.1 Public Behavior Frame
+
+`public-behavior-frame.json` is the complete, outcome-blind enumeration of
+publicly evidenced ways to exercise the fixed program version. Discovery reads
+only the normalized fixed source, build descriptor, dependency metadata, and
+public project documentation. Before constructing the frame, P3 computes:
+
+```text
+controlled_subject_source_id = SHA256(canonical_json({
+  normalized_source_tree_sha256,
+  build_descriptor_sha256,
+  domain: "P3-SOURCE-v1"
+}))
+```
+
+The artifact has an exact `category_accounting` entry for every frozen category,
+including categories with zero discovered behaviors. Each discovered frame row
+records, at minimum:
+
+```text
+controlled_subject_source_id
+behavior_id
+category
+provenance_path
+provenance_span_or_key
+entrypoint
+declared_inputs
+prerequisites
+discovery_status
+unsupported_or_exclusion_reason
+artifact_sha256
+```
+
+The frozen categories are `PUBLIC_API`, `CLI`, `EXAMPLE`, `BENCHMARK`, and
+`PROJECT_TEST`. A project need not contain every category. Missing categories
+remain explicit in `category_accounting`; unsupported build systems and invalid
+public declarations remain explicit provenance-bearing rows. None is removed
+from the denominator or triggers replacement by another subject. Project tests
+may therefore describe a public behavior, but they do not become evaluation
+evidence merely by entering this frame.
+
+Discovery is mechanical and exhaustive relative to the declared file kinds and
+adapters. This proves frame completeness under the frozen discovery rule; it
+does not by itself prove that repository materials represent all real-world use.
+
+#### 6.4.2 Profiling Workload
+
+`profiling-workload.json` is a deterministic, outcome-blind subset of the public
+behavior frame used only to obtain dependency-cone, call-trace, implementation-
+technique, and observed-reachability evidence. Selection occurs before mutant
+construction, MR inventory, evaluation-input execution, and every defect or
+kill outcome is available.
+
+The protocol freezes size-class-specific execution budgets and category quotas
+before seeing frame contents or outcomes. Every nonempty executable category has
+a quota of at least one; each size-class budget is at least five, and the budgets
+are monotone from `S` through `M` to `L`. If the executable frame fits the
+applicable budget, all executable rows are selected. If it does not, selection
+first maximizes category coverage, then statically distinct entrypoints and
+dependency signatures, with canonical `behavior_id` hash order as the only
+tie-breaker. Dynamic coverage, execution success, mutation results, MR results,
+project identity, and desired technique label cannot affect selection. Different
+languages and build ecosystems use adapters that emit the same canonical
+records; unsupported adapters fail visibly rather than falling back to hand
+selection.
+
+`profiling-results.json` retains every selected command, input, environment,
+version, exit status, raw stream hash, call-trace hash, timeout, and failure. A
+site reached by this workload may be tagged `OBSERVED_REACHABLE`. A statically
+enumerated site not reached by it is tagged `UNPROFILED`, never
+`NOT_APPLICABLE`. `NOT_APPLICABLE` requires the frozen static semantic
+applicability predicate to fail.
+
+`profiling_workload_sha256` identifies the canonical selected rows and their
+declared inputs, not successful execution output. This prevents an execution
+failure from silently changing subject identity or the sampling frame.
+
+#### 6.4.3 Evaluation Inputs
+
+`evaluation-inputs.json` contains the independent contract witnesses used later
+to compare original programs, semantic mutants, syntactic mutants, and MR
+portfolios. It is not derived from profiling success, project test outcomes,
+mutant survival, MR kills, P12 defect identities, reference MRs, or real-fault
+outcomes. A witness may be derived from the already frozen semantic contract and
+canonical site under a frozen construction rule, but its identity and complete
+generation provenance must close before the first evaluated mutant/MR job.
+
+Evaluation inputs never change the public behavior frame, profiling workload,
+program-scale class, primary technique stratum, subject ranking, or candidate-
+site order. Invalid, non-activating, failed, and inconclusive witnesses remain in
+the evidence funnel; a successful witness cannot replace them unless the
+protocol had already declared the next deterministic candidate and its stopping
+rule.
+
+#### 6.4.4 Claim ceiling and sensitivity
+
+Dynamic statements are limited to behavior exercised by the frozen profiling
+workload or evaluation inputs. The study may claim whole-source static
+enumeration only for the language/adapters and predicates actually supported;
+it may not infer whole-program dynamic reachability from profiling. Technique-
+stratified claims must report the public-frame category coverage, selected
+fraction, profile failures, and `UNPROFILED` sites for every subject.
+
+The analysis reports whether primary conclusions change under the prespecified
+profiling sensitivity views: all successful selected behaviors, each category
+removed in turn when at least two categories are present, and static-only
+classification with ambiguous cases mapped to `TECH_UNCERTAIN`. These views do
+not alter the frozen primary frame or permit post-outcome reselection.
+
+### 6.5 Phase 7 reveal
 
 The revealed mapping covers every bridge record exactly once. For every mapping:
 
@@ -340,11 +464,13 @@ Failed profiles remain failed pairings and are never replaced.
 ### 7.3 MR independence
 
 All subject-specific contracts, domains, oracles, activation rules, witness
-orders, and canonical sites are phase-closed before an evaluated-MR frame is
-built. The contract builder cannot read candidate/final MR material. In a sibling
-process, the MR builder receives only permitted fixed source/build/public
-documentation and cannot read contracts, slots, patches, certificates, or
-denominators.
+orders, canonical sites, and evaluation-input construction rules are
+phase-closed before an evaluated-MR frame is built. Evaluation-input identities
+close after contracts and sites but before the first evaluated mutant/MR job.
+The contract and evaluation-input builders cannot read candidate/final MR
+material or any mutant/MR outcome. In a sibling process, the MR builder receives
+only permitted fixed source/build/public documentation and cannot read contracts,
+slots, evaluation inputs, patches, certificates, or denominators.
 
 The MR builder first freezes the complete candidate frame and semantic
 signatures. A custodian receipt then compares those canonical semantic
@@ -365,8 +491,9 @@ mode, size, raw SHA-256, and content class.
 
 ### 8.2 Package A
 
-Contains blinded fixed source, build metadata, public documentation, frozen
-contracts, candidate slots, and proposal inputs. It forbids VCS metadata, bug
+Contains blinded fixed source, build metadata, public documentation, the public
+behavior frame, profiling workload and reports, frozen contracts, evaluation
+inputs, candidate slots, and proposal inputs. It forbids VCS metadata, bug
 identities, buggy code, patches, MRs, outcomes, and expected-result commentary.
 
 ### 8.3 Package B
@@ -471,27 +598,40 @@ All foundation tests use synthetic fixtures. The minimum matrix proves:
 3. visible bridge bytes containing a fixed tree OID or reveal nonce fail, and a
    commitment, nonce, OID, normalized-tree, or source-archive mutation fails at
    reveal;
-4. `controlled_subject_id` is stable across bridge aliases while conflicting
-   source/build/workload inputs fail, and `site_id` changes do not change the
-   program-level sampling stratum;
-5. `C_CONSTRUCT` is input-order invariant, neutral-ID independent, and uses the
+4. public-behavior discovery is input-order invariant, accounts for every
+   missing category, retains every unsupported and invalid declaration, and
+   rejects any discovered behavior without public provenance;
+5. profiling selection covers categories before adding a second row from a
+   category, uses only static diversity plus hash tie-breaking, is unchanged by
+   injected execution, mutant, MR, or real-fault outcomes, and retains every
+   selected execution failure in the profiling results;
+6. project tests in the public behavior frame cannot enter evaluation inputs
+   without independently satisfying the frozen witness-construction rule;
+7. an unexecuted static site is `UNPROFILED`, and only a failed static semantic
+   predicate can produce `NOT_APPLICABLE`;
+8. `controlled_subject_id` is stable across bridge aliases while conflicting
+   source/build/profiling-workload inputs fail, and `site_id` changes do not
+   change the program-level sampling stratum;
+9. `C_CONSTRUCT` is input-order invariant, neutral-ID independent, and uses the
    exact `(selection_key, controlled_subject_id)` tie order;
-6. `C_CRITERION` includes every unique eligible controlled subject and has no
+10. `C_CRITERION` includes every unique eligible controlled subject and has no
    sampling path;
-7. custodian-provided strata/sites cannot influence selection, and each slot
-   selects the first applicable canonical site or remains `NOT_APPLICABLE`;
-8. contract phase close must predate the candidate-MR frame, and either builder
-   rejects the other sibling's forbidden material;
-9. candidate-MR frame, custodian receipt, final inventory, and portfolios must
+11. custodian-provided workloads/strata/sites cannot influence selection, and
+   each slot selects the first applicable canonical site or remains
+   `NOT_APPLICABLE`;
+12. contract and evaluation-input phase close must predate the candidate-MR
+   frame and first evaluated job, and either builder rejects the other sibling's
+   forbidden material;
+13. candidate-MR frame, custodian receipt, final inventory, and portfolios must
    form that exact order; missing or uncertain receipts fail closed;
-10. proposal records reject missing prompt/context/response hashes and use
+14. proposal records reject missing prompt/context/response hashes and use
     `UNAVAILABLE_NOT_CLAIMED` rather than fabricated provider parameters;
-11. Package A/B forbidden content and Package C early presence fail;
-12. a job cannot produce a result without an earlier immutable intent;
-13. failed, interrupted, and inconclusive jobs survive reduction;
-14. ledger suffix truncation is detected by the phase-close receipt;
-15. corrected preflight can pass without modifying the scientific ledger; and
-16. a synthetic Phase 0→Phase 7 path verifies exact commitment opening and
+15. Package A/B forbidden content and Package C early presence fail;
+16. a job cannot produce a result without an earlier immutable intent;
+17. failed, interrupted, and inconclusive jobs survive reduction;
+18. ledger suffix truncation is detected by the phase-close receipt;
+19. corrected preflight can pass without modifying the scientific ledger; and
+20. a synthetic Phase 0→Phase 7 path verifies exact commitment opening and
     fixed-tree pairing.
 
 The implementation does not wait for generic framework tests. The first release
@@ -505,21 +645,31 @@ implementation plan only when:
 1. the P12 bridge is authenticated, complete, and exact-version verifiable;
 2. the visible bridge discloses no fixed Git tree OID and every Phase 7 reveal
    opens its commitment and normalized source snapshot exactly;
-3. both subject frames and site enumerations regenerate byte-identically from
+3. the public behavior frame regenerates completely from permitted public
+   evidence and retains missing, unsupported, and invalid declarations;
+4. the profiling workload regenerates byte-identically without reading dynamic
+   coverage or any mutant, MR, P12 defect, or real-fault outcome, and its result
+   funnel retains all selected failures;
+5. evaluation inputs have independent provenance, close before evaluated jobs,
+   and cannot alter profiles, strata, subject ranks, or site order;
+6. profile coverage and `UNPROFILED` funnels bound every dynamic claim, and
+   unobserved reachability cannot be reported as `NOT_APPLICABLE`;
+7. both subject frames and site enumerations regenerate byte-identically from
    shuffled inputs and use the declared experimental units;
-4. contracts phase-close before the isolated candidate-MR frame exists;
-5. reference MRs and semantic duplicates cannot enter P3 portfolios, and the
+8. contracts and evaluation-input identities phase-close before the isolated
+   candidate-MR frame and first evaluated job exist;
+9. reference MRs and semantic duplicates cannot enter P3 portfolios, and the
    candidate-frame -> receipt -> final-inventory -> portfolio order is proven;
-6. Package A and B materialize and verify without forbidden content;
-7. repeatable preflight completes an actual synthetic end-to-end CLI path;
-8. scientific intent precedes every synthetic job side effect;
-9. phase close detects missing, duplicate, pending, and truncated records;
-10. all claim entries remain blocked until result predicates are implemented;
-11. RQ4 claim validation limits inference to `P12_PAIRED`, requires the full
+10. Package A and B materialize and verify without forbidden content;
+11. repeatable preflight completes an actual synthetic end-to-end CLI path;
+12. scientific intent precedes every synthetic job side effect;
+13. phase close detects missing, duplicate, pending, and truncated records;
+14. all claim entries remain blocked until result predicates are implemented;
+15. RQ4 claim validation limits inference to `P12_PAIRED`, requires the full
     construction-failure funnel and paired-versus-full pre-outcome coverage
     comparison, and treats `P12_FULL` as descriptive only;
-12. the focused and repository test suites pass; and
-13. no live P12 Holdout, real outcome, or Cursor launch was used to obtain the
+16. the focused and repository test suites pass; and
+17. no live P12 Holdout, real outcome, or Cursor launch was used to obtain the
     result.
 
 ## 14. Scope boundary
