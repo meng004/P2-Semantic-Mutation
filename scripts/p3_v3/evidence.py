@@ -27,6 +27,10 @@ from p3_v3.preflight import run_preflight  # noqa: E402
 from p3_v3.run_records import close_phase, verify_ledger  # noqa: E402
 
 
+SCIENTIFIC_PLAN_SHA256 = "911562938a14ad3955a6c1e38080185ba78e92dbf4401efcb10d7c169e4a2772"
+EVIDENCE_DESIGN_SHA256 = "e2a943b30f8096aa65a72c43aa514df67b8d58e16fcf7209930799ee4444c346"
+
+
 def _write(payload: dict) -> None:
     sys.stdout.buffer.write(canonical_json_bytes(payload))
 
@@ -49,6 +53,11 @@ def _protocol(path: str) -> dict:
         raise EvidenceError("E_PROTOCOL", "protocol version or initial claim status differs")
     validate_sha256(value["scientific_plan_sha256"], "scientific_plan_sha256")
     validate_sha256(value["evidence_design_sha256"], "evidence_design_sha256")
+    if (
+        value["scientific_plan_sha256"] != SCIENTIFIC_PLAN_SHA256
+        or value["evidence_design_sha256"] != EVIDENCE_DESIGN_SHA256
+    ):
+        raise EvidenceError("E_PROTOCOL_AUTHORITY", "protocol authority hashes differ")
     return value
 
 
@@ -175,7 +184,10 @@ def dispatch(args: argparse.Namespace) -> dict:
     if args.command == "verify-evidence":
         artifacts = []
         for raw_path in sorted(set(args.artifact)):
-            read_canonical_json(raw_path)
+            if Path(raw_path).suffix == ".jsonl":
+                verify_ledger(raw_path)
+            else:
+                read_canonical_json(raw_path)
             artifacts.append({"path": raw_path, "sha256": file_sha256(raw_path)})
         return {"status": "PASS", "artifacts": artifacts}
     raise EvidenceError("E_CLI_COMMAND", f"unsupported command: {args.command}")

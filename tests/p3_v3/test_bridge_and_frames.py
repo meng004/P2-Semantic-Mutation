@@ -11,6 +11,8 @@ import pytest
 from p3_v3.artifacts import EvidenceError
 from p3_v3.bridge_and_frames import (
     build_subject_frames,
+    select_construct_subjects,
+    select_first_applicable_site,
     validate_bridge_document,
     verify_pinned_bridge,
     verify_reveal,
@@ -177,12 +179,73 @@ def test_subject_frames_are_input_order_invariant_and_use_subject_id(synthetic_r
     assert len(subject["controlled_subject_id"]) == 64
     assert len(subject["sites"][0]["site_id"]) == 64
     assert first["c_criterion"] == [subject["controlled_subject_id"]]
+    assert len(first["empty_construct_cells"]) == 20
+    assert {
+        "scale_class": "S",
+        "primary_technique": "SCALAR_CONTROL",
+        "status": "EMPTY_FRAME",
+    } in first["empty_construct_cells"]
 
 
 def test_subject_frame_rejects_missing_feature_record(synthetic_release):
     verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
     with pytest.raises(EvidenceError, match="E_FEATURE_COVERAGE"):
         build_subject_frames(verified, [])
+
+
+def _subject(subject_id: str, technique: str) -> dict:
+    return {
+        "controlled_subject_id": subject_id,
+        "scale_class": "S",
+        "primary_technique": technique,
+        "technique_vector": [technique],
+    }
+
+
+def test_construct_selection_continues_strict_round_robin_by_cell():
+    subjects = [
+        _subject("1" * 64, "ARRAY_NUMERICAL"),
+        _subject("2" * 64, "ARRAY_NUMERICAL"),
+        _subject("3" * 64, "SCALAR_CONTROL"),
+        _subject("4" * 64, "SCALAR_CONTROL"),
+    ]
+    selected = select_construct_subjects(
+        subjects, {item["controlled_subject_id"] for item in subjects}, limit=4
+    )
+    cell_by_id = {
+        item["controlled_subject_id"]: item["primary_technique"] for item in subjects
+    }
+    assert [cell_by_id[item] for item in selected] == [
+        "ARRAY_NUMERICAL",
+        "SCALAR_CONTROL",
+        "ARRAY_NUMERICAL",
+        "SCALAR_CONTROL",
+    ]
+
+
+def test_slot_selects_first_applicable_canonical_site_or_none():
+    sites = [
+        {
+            "path": "a.py",
+            "symbol": "f",
+            "start_line": 1,
+            "start_col": 0,
+            "end_line": 1,
+            "end_col": 1,
+            "site_id": "1" * 64,
+        },
+        {
+            "path": "b.py",
+            "symbol": "g",
+            "start_line": 2,
+            "start_col": 0,
+            "end_line": 2,
+            "end_col": 1,
+            "site_id": "2" * 64,
+        },
+    ]
+    assert select_first_applicable_site(sites, lambda site: site["symbol"] in {"f", "g"}) == "1" * 64
+    assert select_first_applicable_site(sites, lambda _site: False) is None
 
 
 def test_reveal_binds_nonce_oid_commitment_and_normalized_source(synthetic_release):

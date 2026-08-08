@@ -60,6 +60,7 @@ def _spec(root: Path, smoke=None):
     ("raw", "expected"),
     [
         ("https://github.com/Example/Repo.git", "Example/Repo"),
+        ("https://github.com/Example/RepoXgit", "Example/RepoXgit"),
         ("git@github.com:Example/Repo.git", "Example/Repo"),
         ("ssh://git@github.com/Example/Repo.git", "Example/Repo"),
     ],

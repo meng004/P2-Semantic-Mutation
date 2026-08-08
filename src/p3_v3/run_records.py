@@ -165,7 +165,18 @@ def reduce_attempts(job_root: str | Path, ledger_path: str | Path) -> list[dict[
             if attempt_number < 1 or str(attempt_number) != attempt_directory.name:
                 raise EvidenceError("E_ATTEMPT_PATH", f"noncanonical attempt: {attempt_directory}")
             attempts.append((attempt_number, attempt_directory))
-        for attempt_number, attempt_directory in sorted(attempts):
+        attempts.sort()
+        if [number for number, _ in attempts] != list(range(1, len(attempts) + 1)):
+            raise EvidenceError("E_ATTEMPT_SEQUENCE", "attempts must be contiguous from one")
+        if len(attempts) > 3:
+            raise EvidenceError("E_RETRY_POLICY", "a job may have at most three attempts")
+        previous_status: str | None = None
+        for attempt_number, attempt_directory in attempts:
+            if attempt_number > 1 and previous_status != "FAIL_INFRASTRUCTURE":
+                raise EvidenceError(
+                    "E_RETRY_POLICY",
+                    "only a completed infrastructure failure permits another attempt",
+                )
             intent_path = attempt_directory / "intent.json"
             if not intent_path.exists():
                 raise EvidenceError("E_ATTEMPT_INTENT", f"missing intent: {attempt_directory}")
@@ -183,6 +194,9 @@ def reduce_attempts(job_root: str | Path, ledger_path: str | Path) -> list[dict[
                 result_event = _event(len(events) + 1, "RESULT", result, previous)
                 events.append(result_event)
                 previous = result_event["event_sha256"]
+                previous_status = result["status"]
+            else:
+                previous_status = None
     raw = b"".join(canonical_json_bytes(event) for event in events)
     _write_exclusive_bytes(Path(ledger_path), raw)
     return events
@@ -200,6 +214,19 @@ def verify_ledger(ledger_path: str | Path) -> list[dict[str, Any]]:
         if canonical_json_bytes(event) != line:
             raise EvidenceError("E_LEDGER_CANONICAL", f"noncanonical ledger line {line_number}")
         validate_exact_object(event, _EVENT_SCHEMA, f"ledger[{line_number}]")
+        validate_sha256(event["artifact_sha256"], f"ledger[{line_number}].artifact_sha256")
+        validate_sha256(event["event_sha256"], f"ledger[{line_number}].event_sha256")
+        if event["previous_event_sha256"] is not None:
+            validate_sha256(
+                event["previous_event_sha256"],
+                f"ledger[{line_number}].previous_event_sha256",
+            )
+        if event["kind"] == "INTENT" and event["status"] is not None:
+            raise EvidenceError("E_LEDGER_STATUS", "intent event cannot have status")
+        if event["kind"] == "RESULT" and event["status"] not in TERMINAL_STATES:
+            raise EvidenceError("E_LEDGER_STATUS", "result event status is not terminal")
+        if event["kind"] not in {"INTENT", "RESULT"}:
+            raise EvidenceError("E_LEDGER_KIND", f"unknown event kind: {event['kind']}")
         body = {key: value for key, value in event.items() if key != "event_sha256"}
         if event["event_sha256"] != canonical_sha256(body):
             raise EvidenceError("E_LEDGER_EVENT_HASH", f"event hash differs at {line_number}")
@@ -217,6 +244,8 @@ def close_phase(
     ledger_path: str | Path,
     output_manifest_sha256: str,
 ) -> dict[str, Any]:
+    if not isinstance(phase_id, str) or not phase_id or "/" in phase_id:
+        raise EvidenceError("E_PHASE_ID", "phase ID must be a nonempty path segment")
     validate_sha256(protocol_sha256, "protocol_sha256")
     validate_sha256(output_manifest_sha256, "output_manifest_sha256")
     expected = list(expected_jobs)

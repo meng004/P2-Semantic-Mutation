@@ -6,7 +6,7 @@
 - Status: revised after targeted scientific review; implementation pending
 - Scope: only the evidence controls required before controlled semantic-mutant work
 - Parent scientific plan SHA-256:
-  `baf838489e605c0a9c09cd71cc84f8a44892b389e398edd1eaa0b6bd97ee7ac6`
+  `911562938a14ad3955a6c1e38080185ba78e92dbf4401efcb10d7c169e4a2772`
 - Governing principles SHA-256:
   `4aa9fb17bdfa8976387a4165445b2b0b72e653688187c958fa1beb022075780d`
 - Existing P12 v1.1.2 contract SHA-256:
@@ -324,6 +324,9 @@ subject_selection_key = SHA256(canonical_json({
 The builder partitions by scale × primary technique and uses the total order
 `(subject_selection_key, controlled_subject_id)`, selects the lowest pair in
 each nonempty cell, and continues round-robin until 18 subjects or exhaustion.
+Cells iterate in the frozen order scale `S`, `M`, `L`, then technique
+`HYBRID_NATIVE`, `TENSOR_AUTODIFF`, `PROBABILISTIC_SURROGATE`,
+`ITERATIVE_STOCHASTIC`, `ARRAY_NUMERICAL`, `SCALAR_CONTROL`, `TECH_UNCERTAIN`.
 Empty cells and failed classifications remain explicit. Input order, neutral snapshot ID,
 project name, defect identity, and outcomes cannot change ranking.
 
@@ -402,10 +405,15 @@ evidence, not permission to erase or silently rerun it.
 
 ### 9.2 Attempt ledger
 
-The append-only JSONL ledger records preflight, intent, result, retry, reduction,
-and phase-close events. Events have contiguous sequence, unique ID, previous hash,
-and self-hash. Parallel workers write only their own job directories; one reducer
-appends validated records in frozen job-ID and attempt order.
+Preflight receipts are separate non-scientific artifacts. Parallel workers write
+only immutable job-local intent/result pairs. After the frozen attempt inventory
+is complete, one reducer exclusively creates one immutable JSONL ledger in
+canonical job-ID and contiguous attempt order. Retry is represented by the next
+attempt of the same job; only a completed infrastructure failure permits it, and
+at most three attempts are retained. Ledger events have contiguous sequence, a
+unique `(job_id, attempt, kind)` identity, previous hash, and self-hash. The
+reducer operation and phase-close receipt are separate child artifacts rather
+than mutations of the ledger.
 
 ### 9.3 Phase-close receipt
 

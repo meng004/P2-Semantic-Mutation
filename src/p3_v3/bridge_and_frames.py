@@ -7,7 +7,7 @@ import json
 import re
 import subprocess
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from .artifacts import (
     EvidenceError,
@@ -20,8 +20,8 @@ from .artifacts import (
 
 
 _GIT_OID_RE = re.compile(r"[0-9a-f]{40}")
-_SCALES = {"S", "M", "L"}
-_TECHNIQUES = {
+_SCALE_ORDER = ("S", "M", "L")
+_TECHNIQUE_ORDER = (
     "HYBRID_NATIVE",
     "TENSOR_AUTODIFF",
     "PROBABILISTIC_SURROGATE",
@@ -29,7 +29,9 @@ _TECHNIQUES = {
     "ARRAY_NUMERICAL",
     "SCALAR_CONTROL",
     "TECH_UNCERTAIN",
-}
+)
+_SCALES = set(_SCALE_ORDER)
+_TECHNIQUES = set(_TECHNIQUE_ORDER)
 
 _LOCK_SCHEMA = {
     "repository_identity": str,
@@ -80,6 +82,7 @@ _SITE_SCHEMA = {
     "end_line": int,
     "end_col": int,
 }
+_CANONICAL_SITE_SCHEMA = {**_SITE_SCHEMA, "site_id": str}
 _REVEAL_SCHEMA = {
     "neutral_snapshot_id": str,
     "fixed_git_tree_oid": str,
@@ -244,6 +247,100 @@ def _sites(subject_id: str, values: Sequence[Any]) -> list[dict[str, Any]]:
     return sites
 
 
+def select_first_applicable_site(
+    sites: Sequence[Mapping[str, Any]],
+    predicate: Callable[[Mapping[str, Any]], bool],
+) -> str | None:
+    """Select the first applicable canonical site without transferring the slot."""
+
+    canonical: list[dict[str, Any]] = []
+    for index, candidate in enumerate(sites):
+        site = validate_exact_object(
+            dict(candidate), _CANONICAL_SITE_SCHEMA, f"canonical_sites[{index}]"
+        )
+        safe_relative_path(site["path"])
+        validate_sha256(site["site_id"], f"canonical_sites[{index}].site_id")
+        canonical.append(site)
+    def order(item: Mapping[str, Any]) -> tuple[Any, ...]:
+        return (
+            item["path"],
+            item["symbol"],
+            item["start_line"],
+            item["start_col"],
+            item["end_line"],
+            item["end_col"],
+            item["site_id"],
+        )
+    if canonical != sorted(canonical, key=order):
+        raise EvidenceError("E_SITE_ORDER", "sites are not in canonical order")
+    for site in canonical:
+        applicable = predicate(site)
+        if type(applicable) is not bool:
+            raise EvidenceError("E_APPLICABILITY_RESULT", "predicate must return bool")
+        if applicable:
+            return site["site_id"]
+    return None
+
+
+def select_construct_subjects(
+    subjects: Sequence[Mapping[str, Any]],
+    eligible_subject_ids: set[str],
+    *,
+    limit: int = 18,
+) -> list[str]:
+    """Apply the frozen cell order and strict round-robin construction sampling."""
+
+    if type(limit) is not int or limit < 1:
+        raise EvidenceError("E_CONSTRUCT_LIMIT", "construct limit must be positive")
+    buckets: dict[tuple[str, str], list[tuple[str, str]]] = {}
+    observed: set[str] = set()
+    for subject in subjects:
+        subject_id = validate_sha256(
+            subject.get("controlled_subject_id"), "subject.controlled_subject_id"
+        )
+        if subject_id in observed:
+            raise EvidenceError("E_SUBJECT_DUPLICATE", "duplicate controlled subject")
+        observed.add(subject_id)
+        if subject_id not in eligible_subject_ids:
+            continue
+        scale = subject.get("scale_class")
+        technique = subject.get("primary_technique")
+        vector = subject.get("technique_vector")
+        if scale not in _SCALES or technique not in _TECHNIQUES or not isinstance(vector, list):
+            raise EvidenceError("E_SUBJECT_PROFILE", "subject sampling profile is invalid")
+        selection_key = canonical_sha256(
+            {
+                "controlled_subject_id": subject_id,
+                "scale_class": scale,
+                "technique_vector": vector,
+                "domain": "P3-C1",
+            }
+        )
+        buckets.setdefault((scale, technique), []).append((selection_key, subject_id))
+    for bucket in buckets.values():
+        bucket.sort()
+    selected: list[str] = []
+    scale_rank = {value: index for index, value in enumerate(_SCALE_ORDER)}
+    technique_rank = {value: index for index, value in enumerate(_TECHNIQUE_ORDER)}
+    cells = sorted(
+        buckets, key=lambda cell: (scale_rank[cell[0]], technique_rank[cell[1]])
+    )
+    round_index = 0
+    while len(selected) < limit:
+        progressed = False
+        for cell in cells:
+            bucket = buckets[cell]
+            if round_index < len(bucket):
+                selected.append(bucket[round_index][1])
+                progressed = True
+                if len(selected) == limit:
+                    break
+        if not progressed:
+            break
+        round_index += 1
+    return selected
+
+
 def build_subject_frames(
     verified_bridge: Mapping[str, Any],
     feature_records: Sequence[Mapping[str, Any]],
@@ -309,39 +406,35 @@ def build_subject_frames(
         state["criterion"] = state["criterion"] or record["eligible_for_criterion"]
 
     subjects = [profiles[key] for key in sorted(profiles)]
-    candidates: list[tuple[str, str, str, str]] = []
-    for subject in subjects:
-        subject_id = subject["controlled_subject_id"]
-        if eligibility[subject_id]["construct"]:
-            key = canonical_sha256(
-                {
-                    "controlled_subject_id": subject_id,
-                    "scale_class": subject["scale_class"],
-                    "technique_vector": subject["technique_vector"],
-                    "domain": "P3-C1",
-                }
-            )
-            candidates.append(
-                (subject["scale_class"], subject["primary_technique"], key, subject_id)
-            )
-    candidates.sort(key=lambda item: (item[2], item[3]))
-    selected: list[str] = []
-    used_cells: set[tuple[str, str]] = set()
-    for scale, technique, _, subject_id in candidates:
-        if (scale, technique) not in used_cells and len(selected) < construct_limit:
-            selected.append(subject_id)
-            used_cells.add((scale, technique))
-    for _, _, _, subject_id in candidates:
-        if subject_id not in selected and len(selected) < construct_limit:
-            selected.append(subject_id)
+    selected = select_construct_subjects(
+        subjects,
+        {subject_id for subject_id, state in eligibility.items() if state["construct"]},
+        limit=construct_limit,
+    )
     criterion = sorted(
         subject_id for subject_id, state in eligibility.items() if state["criterion"]
     )
+    construct_cells = {
+        (subject["scale_class"], subject["primary_technique"])
+        for subject in subjects
+        if eligibility[subject["controlled_subject_id"]]["construct"]
+    }
+    empty_construct_cells = [
+        {
+            "scale_class": scale,
+            "primary_technique": technique,
+            "status": "EMPTY_FRAME",
+        }
+        for scale in _SCALE_ORDER
+        for technique in _TECHNIQUE_ORDER
+        if (scale, technique) not in construct_cells
+    ]
     body = {
         "schema_version": "p3-subject-frames-v1",
         "subjects": subjects,
         "c_construct": selected,
         "c_criterion": criterion,
+        "empty_construct_cells": empty_construct_cells,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
 

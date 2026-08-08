@@ -13,6 +13,7 @@ from typing import Any, Mapping
 
 from .artifacts import (
     EvidenceError,
+    canonical_sha256,
     file_sha256,
     safe_relative_path,
     validate_exact_object,
@@ -36,9 +37,9 @@ _GIT_OID_RE = re.compile(r"[0-9a-f]{40}")
 
 def normalize_repository_identity(raw: str) -> str:
     patterns = (
-        r"https://github.com/([^/]+/[^/]+?)(?:.git)?$",
-        r"git@github.com:([^/]+/[^/]+?)(?:.git)?$",
-        r"ssh://git@github.com/([^/]+/[^/]+?)(?:.git)?$",
+        r"https://github.com/([^/]+/[^/]+?)(?:\.git)?$",
+        r"git@github.com:([^/]+/[^/]+?)(?:\.git)?$",
+        r"ssh://git@github.com/([^/]+/[^/]+?)(?:\.git)?$",
     )
     for pattern in patterns:
         match = re.fullmatch(pattern, raw)
@@ -144,7 +145,7 @@ def run_preflight(
             failure_code = "E_PREFLIGHT_SMOKE"
             break
     disk = shutil.disk_usage(root)
-    return {
+    body = {
         "schema_version": "p3-preflight-result-v1",
         "status": "FAIL" if failure_code else "PASS",
         "failure_code": failure_code,
@@ -159,3 +160,4 @@ def run_preflight(
         "phase_inputs": inputs,
         "smoke": smoke,
     }
+    return {**body, "artifact_sha256": canonical_sha256(body)}

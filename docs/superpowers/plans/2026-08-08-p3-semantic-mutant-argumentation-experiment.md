@@ -99,7 +99,8 @@ The minimum authoritative evidence consists of:
 2. one P12-bound blinded bridge and deterministic subject frames;
 3. one manifest for each phase input package;
 4. one immutable result record per planned experimental job;
-5. one append-only attempt ledger plus a phase-close head/count receipt;
+5. one immutable, deterministically reduced attempt ledger plus a phase-close
+   head/count receipt;
 6. analysis code and regenerated outputs; and
 7. a claim-to-evidence table.
 
@@ -356,7 +357,10 @@ Two controlled cohorts are frozen before P3 sees MR outcomes:
    Rank each scale × technique cell by the total order
    `(subject_selection_key, controlled_subject_id)`, select the first
    candidate per nonempty cell, then continue round-robin until 18 subjects are
-   selected or the frame is exhausted. Retain `EMPTY_FRAME` for unfilled cells.
+   selected or the frame is exhausted. The cell iteration order is scale
+   `S`, `M`, `L`, then the technique precedence declared in Section 5.3
+   (`HYBRID_NATIVE` through `TECH_UNCERTAIN`). Retain `EMPTY_FRAME` for unfilled
+   cells.
 2. `C_CRITERION` supports RQ4 exact-version pairing. Enumerate, without sampling,
    every unique eligible `controlled_subject_id` committed by the compatible
    successor `P12_FULL` frame and construct the same prespecified semantic and
@@ -915,6 +919,10 @@ At phase close, the reducer freezes the expected job inventory, terminal-row
 count, final ledger-event hash, and ledger byte hash in a receipt referenced by
 the next phase. This detects removal of a valid hash-chain suffix; a previous-hash
 chain alone is not treated as proof that all failed attempts were retained.
+Workers never append to a shared ledger. The reducer creates one immutable
+ledger snapshot exclusively after the frozen attempt inventory is complete;
+retry is represented by the next immutable attempt of the same job, and the
+phase-close receipt remains a separate child artifact that binds the ledger.
 
 ## 14. Execution sequence
 

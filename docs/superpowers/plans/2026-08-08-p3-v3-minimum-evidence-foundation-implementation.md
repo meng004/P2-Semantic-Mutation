@@ -24,9 +24,9 @@ network access, mutant construction, and MR execution remain out of scope.
 - Parent scientific-plan revision commit:
   `07287122123b113610b6b8bcde7116ab397da688`.
 - Scientific plan SHA-256:
-  `baf838489e605c0a9c09cd71cc84f8a44892b389e398edd1eaa0b6bd97ee7ac6`.
+  `911562938a14ad3955a6c1e38080185ba78e92dbf4401efcb10d7c169e4a2772`.
 - Evidence-foundation design SHA-256:
-  `57668ac81a076e0ec88177d5492230dd6a55efe2138a82e72c0fb1e0f9236f14`.
+  `e2a943b30f8096aa65a72c43aa514df67b8d58e16fcf7209930799ee4444c346`.
 - `PINNED_GIT_RELEASE` is the only bridge trust mode.
 - Historical P12 v1.1.2 bytes remain immutable; tests use synthetic successor
   releases only.
@@ -371,7 +371,10 @@ rtk git commit -m "feat(p3-v3): add repeatable preflight CLI"
 
 **Interfaces:**
 - The integration test uses the public CLI only and proves synthetic protocol →
-  bridge → frames → Package A → preflight → synthetic attempt → phase close.
+  bridge → frames → Package A → repeatable preflight receipt. Scientific intent
+  and phase-close invariants remain focused state-machine tests: Phase 2 is
+  explicitly non-scientific, and the frozen public CLI has no command that may
+  create a scientific job intent.
 - The Cursor document contains separate Phase 0 and Phase 2 invocations, no
   inline controller, no live P12 path, and no scientific authorization sentence.
 
@@ -425,6 +428,37 @@ semantic-mutant proposal, MR execution, manuscript work, push, PR, and merge.
 rtk git add tests/p3_v3/test_synthetic_phase_path.py docs/superpowers/plans/2026-08-08-p3-v3-phase0-phase2-cursor-vm.md
 rtk git commit -m "docs(p3-v3): add audited phase0 phase2 VM path"
 ```
+
+## Inline Review Record
+
+This is a disclosed inline self-review, not an independent audit.
+
+The specification pass found and repaired: exact authority-hash binding,
+canonical scale/technique cell iteration, strict round-robin continuation,
+explicit empty cells, first-applicable-site selection, preflight receipt
+self-hashing, literal `.git` suffix normalization, canonical JSONL verification,
+ledger digest/type checks, and contiguous infrastructure-only retry rules. It
+also corrected the Task 6 boundary: non-scientific Phase 2 ends at a repeatable
+preflight receipt and does not manufacture a scientific intent.
+
+The engineering pass confirms that this slice performs no network fetch, live
+P12 reveal, semantic proposal, MR execution, or manuscript mutation; Git and
+smoke subprocesses use explicit argv with `shell=False`; preflight creates no
+scientific intent; and package/artifact writes are exclusive or atomic.
+
+The following remain explicit blockers before any real P12 or controlled-study
+phase can start:
+
+1. the source-derived public-workload, scale, technique, and applicability rule
+   engine is not yet implemented, so real feature records are not authoritative;
+2. `verify-mr-inventory` currently verifies only the frozen chronology envelope,
+   not semantic-signature exclusion or the custodian receipt contents;
+3. study-specific claim-evidence and RQ4 `P12_PAIRED` validators are absent; and
+4. the synthetic Phase 0→7 commitment-opening path is absent.
+
+Accordingly, completion of this implementation plan supports only synthetic
+Phase 0/2 foundation verification and preparation of a non-authorizing VM
+instruction. It does not satisfy the design's later-phase acceptance criteria.
 
 ## Completion boundary
 
