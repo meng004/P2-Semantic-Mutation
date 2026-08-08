@@ -32,8 +32,12 @@
 | `DIRECT`-only and unequal equivalence denominators favored the semantic model | Use all paired defects for primary criterion validity and common strict/conservative equivalence policies for both baselines |
 | The new RQ4 estimand could override the frozen P12 v1.1.2 S1–S2 contract | Require an explicitly compatible successor P12 contract; otherwise retain v1.1.2 only under its own estimand and downgrade P3 RQ4 |
 | Blinded IDs could alter deterministic cohort selection | Derive selection from canonical outcome-free subject records; do not rank by a custodian-chosen identifier |
-| A bridge self-hash did not prove P12 completeness or exact fixed-version pairing | Bind the bridge to the P12 package root and complete eligible inventory, then verify the revealed fixed commit against the earlier snapshot tree |
+| A bridge self-hash did not prove P12 completeness or exact fixed-version pairing | Pin the bridge/contract blobs to an exact P12 Git release and verify the Phase 7 commitment opening plus normalized snapshot |
 | Audit infrastructure could delay the scientific experiment indefinitely | Adopt a minimum-evidence foundation and defer generic schema, governance, and orchestration frameworks |
+| Subject-specific contracts were frozen after the MR inventory | Close the contract phase before any evaluated-MR process receives inputs; the contract and MR builders are mutually blind siblings |
+| Fixed tree, subject, workload, target site, and atomic-row identities were conflated | Define a program-version `controlled_subject_id`; select mutation sites separately by a frozen canonical rule; use the subject ID in every row |
+| A visible Git tree OID could reveal the fixed commit before Phase 7 | Publish only a salted fixed-tree commitment and normalized source identity; open the OID and nonce in Package C |
+| Complete-profile conditioning could be generalized to all P12 | Restrict RQ4 inference to the prospectively paired, constructible P12 subdomain and report its coverage against `P12_FULL` |
 
 ## 1. Goal and central argument
 
@@ -233,25 +237,49 @@ envelope is bound to the immutable successor P12 package and contains:
 
 - `p12_package_root_sha256` and the compatible contract hash;
 - the complete eligible-inventory root and item count;
-- one record for every unique eligible fixed Git tree;
-- for each record, the fixed Git tree OID, a normalized source-tree SHA-256,
-  source archive hash, build descriptor hash, and eligibility reason;
-- a deterministic `neutral_subject_id` derived from the package root and fixed
-  Git tree OID; and
-- a custodian/release attestation binding the bridge to the named P12 release.
+- one record for every eligible P12 fixed-version snapshot; P3 later groups
+  records resolving to the same controlled subject;
+- for each visible record, a `fixed_tree_commitment`, normalized source-tree
+  SHA-256, source archive hash, build descriptor hash, and eligibility reason;
+- a deterministic `neutral_snapshot_id` derived from the package root and
+  normalized source-tree/source-archive hashes; and
+- a `PINNED_GIT_RELEASE` trust record containing the normalized P12 repository
+  identity, exact release commit SHA, bridge path and blob SHA, P12 contract path
+  and blob SHA, and package root.
+
+The visible bridge never contains the fixed Git tree OID. The custodian computes:
+
+```text
+fixed_tree_commitment = SHA256(
+  "P3-FIXED-TREE-v1" || p12_package_root_sha256 ||
+  fixed_git_tree_oid || reveal_nonce
+)
+```
+
+Here `||` is byte concatenation; the domain and lowercase hexadecimal identities
+are ASCII bytes, and `reveal_nonce` is exactly 32 random bytes.
+
+The custodian keeps `fixed_git_tree_oid` and a fresh `reveal_nonce` sealed in Package C.
+The bridge validator reads the bridge and P12 contract as exact blobs from the
+pinned release commit and recomputes their Git blob identities. This
+`PINNED_GIT_RELEASE` mode is the only accepted origin rule; the study introduces
+no generic signing or PKI subsystem. If P12 cannot supply this pinned release
+binding, primary RQ4 remains blocked.
 
 The bridge excludes issue/PR identity, buggy commit, fixed commit, defect patch,
 changed symbols, defect family, reference MR, and every outcome. P3 recomputes
-source scale and implementation-technique features from the permitted fixed
-source and build metadata; the custodian does not assign the strata used for
-selection.
+the public workload set, source scale, implementation-technique features, and
+canonical mutation-site enumeration from the permitted fixed source, build
+metadata, and public documentation; the custodian does not assign the strata or
+sites used for selection.
 
 At Phase 7 the revealed mapping must cover every bridge record exactly once. For
-each mapping, P3 verifies that the revealed fixed commit's Git tree OID and
-normalized source-tree SHA-256 equal the values used during controlled
-construction. A missing record, an extra eligible P12 item, or any tree mismatch
-is retained as an unpaired failure and cannot be repaired by substituting another
-subject. A self-hash alone is not accepted as evidence of origin or completeness.
+each mapping, P3 verifies the reveal nonce, recomputes the commitment, verifies
+the revealed fixed commit's Git tree OID, and recomputes the normalized source
+tree. All must match the controlled snapshot. A missing record, an extra eligible
+P12 item, or any commitment/tree mismatch is retained as an unpaired failure and
+cannot be repaired by substituting another subject. A self-hash alone is not
+accepted as evidence of origin or completeness.
 
 ### 5.2 Program-scale strata
 
@@ -262,32 +290,56 @@ excluding vendored, generated, test-fixture, and environment directories:
 - `M`: 10,000–99,999 nonblank noncomment source lines;
 - `L`: at least 100,000 nonblank noncomment source lines.
 
-The target executable unit's source lines and dependency cone are recorded
-separately, so a small target inside a large repository is not misreported as a
-large mutation site.
+The program-version subject's executable source and dependency cones are
+recorded separately. Mutation-site size is a secondary descriptor and never
+changes the program-level size stratum.
+
+### 5.2.1 Experimental unit and site identity
+
+The controlled subject is a program version, not a mutation site. P3 derives a
+canonical public workload set before proposal and computes:
+
+```text
+controlled_subject_id = SHA256(canonical_json({
+  normalized_source_tree_sha256,
+  build_descriptor_sha256,
+  public_workload_set_sha256,
+  domain: "P3-SUBJECT-v1"
+}))
+```
+
+The same normalized source/build/workload triple always denotes the same
+controlled subject, including when several P12 faults share it. Candidate
+mutation sites are separate objects. Each `site_id` is derived from
+`controlled_subject_id`, canonical relative path, resolved symbol, and source
+span. A frozen syntax-aware enumerator orders sites by path, symbol, span, and
+site hash. Subject rows, mutation rows, and revealed real-fault rows are never
+treated as interchangeable independent units.
 
 ### 5.3 Implementation-technique strata
 
-Each subject receives a multi-label technique vector and exactly one primary
-technique label under the following precedence order:
+Each program-version subject receives a multi-label technique vector and exactly
+one primary technique label under the following precedence order:
 
-1. `HYBRID_NATIVE`: the target execution crosses a project-owned
+1. `HYBRID_NATIVE`: a canonical public workload crosses a project-owned
    language/process/native-kernel boundary;
 2. `TENSOR_AUTODIFF`: tensor, accelerator, neural-network, or automatic-
-   differentiation semantics dominate the target;
+   differentiation semantics dominate the program workload;
 3. `PROBABILISTIC_SURROGATE`: probabilistic inference, surrogate modelling, or
-   statistical estimation dominates the target;
+   statistical estimation dominates the program workload;
 4. `ITERATIVE_STOCHASTIC`: iterative solver, optimization, simulation, sampling,
-   or state-trajectory semantics dominate the target;
+   or state-trajectory semantics dominate the program workload;
 5. `ARRAY_NUMERICAL`: dense/sparse array, vectorized, or linear-algebra semantics
-   dominate the target;
+   dominate the program workload;
 6. `SCALAR_CONTROL`: scalar computation and ordinary control flow dominate.
 
-The classifier is a frozen rule engine over dependency metadata, a predeclared
-original-program smoke input, call traces, and declared target symbols. The
-primary label supports deterministic stratified sampling; the multi-label vector
-supports sensitivity analysis. Ambiguous subjects receive `TECH_UNCERTAIN` and
-remain visible; they do not enter technique-stratified confirmatory claims.
+The classifier is a frozen rule engine over dependency metadata and the
+predeclared public workload set and its call traces. The primary program-level
+label supports deterministic stratified sampling; the multi-label vector
+supports sensitivity analysis. Each selected site also receives secondary
+technique tags derived without changing the subject stratum. Ambiguous subjects
+receive `TECH_UNCERTAIN` and remain visible; they do not enter
+technique-stratified confirmatory claims.
 
 ### 5.4 Deterministic controlled cohorts
 
@@ -296,15 +348,15 @@ Two controlled cohorts are frozen before P3 sees MR outcomes:
 1. `C_CONSTRUCT` supports RQ1–RQ3 diversity. Enumerate the complete eligible
    fixed-version frame, classify scale and technique mechanically, and derive an
    outcome-free `subject_selection_key` as the SHA-256 of the canonical record
-   `{normalized_source_tree_sha256, build_descriptor_sha256, scale_class,
-   technique_vector, "P3-C1"}`. Rank each scale × technique cell by
-   this key, select the first
+   `{controlled_subject_id, scale_class, technique_vector, domain: "P3-C1"}`.
+   Rank each scale × technique cell by the total order
+   `(subject_selection_key, controlled_subject_id)`, select the first
    candidate per nonempty cell, then continue round-robin until 18 subjects are
    selected or the frame is exhausted. Retain `EMPTY_FRAME` for unfilled cells.
 2. `C_CRITERION` supports RQ4 exact-version pairing. Enumerate, without sampling,
-   every unique eligible fixed tree committed by the compatible successor
-   `P12_FULL` frame and construct the same prespecified semantic and syntactic
-   profiles. Multiple faults sharing an exact fixed tree reuse one immutable
+   every unique eligible `controlled_subject_id` committed by the compatible
+   successor `P12_FULL` frame and construct the same prespecified semantic and
+   syntactic profiles. Multiple faults sharing an exact fixed tree reuse one immutable
    profile but remain distinct real-fault rows. A failed profile remains a
    failed pairing record and is never replaced by another version.
 
@@ -318,6 +370,11 @@ compute, and storage. Resource infeasibility downgrades RQ4 to a case series; it
 does not authorize hash sampling or favorable-version selection. Exact overlap
 between `C_CONSTRUCT` and `C_CRITERION` reuses one artifact and one execution,
 with both cohort roles recorded.
+
+Duplicate bridge records resolving to the same `controlled_subject_id` are
+aliases of one subject profile. If their normalized source, build descriptor, or
+public workload commitments conflict, frame construction fails; the ranker never
+breaks that conflict using record order or a custodian label.
 
 This formula supersedes the earlier rank based on visible fixed-commit, project,
 and target identifiers. It preserves deterministic selection after blinding and
@@ -380,6 +437,12 @@ declares its permitted construction mechanism before patch proposal. An
 inapplicable slot is recorded as `NOT_APPLICABLE` and is not transferred to
 another family or subject.
 
+For each family/mechanism slot, a frozen applicability predicate scans the
+canonical `site_id` order and selects the first applicable site. If no site is
+applicable, the slot is `NOT_APPLICABLE`; a later site, family, or subject cannot
+inherit the budget. The selected site's secondary technique tags are retained
+for sensitivity analysis but never redefine the program-level sampling stratum.
+
 Thus each subject has exactly ten declared slots before construction. Every
 confirmatory slot uses the same frozen Grok 4.5 High proposal protocol: one
 prompt, one context package, one returned candidate patch, and no author repair.
@@ -388,6 +451,14 @@ describes the observed artifact yield of this disclosed proposal protocol and
 does not claim general LLM generation effectiveness. The frozen patch, manifest,
 and independent certification—not regeneration of the proposal—are the
 reproducible scientific artifacts.
+
+Each proposal record binds the exact model and provider label, prompt hash,
+context-package hash, raw-response hash, UTC timestamp, and all generation
+metadata actually exposed by the provider. Any unavailable proprietary field is
+the explicit literal `UNAVAILABLE_NOT_CLAIMED`; no seed, temperature, internal
+model revision, or decoding parameter is inferred or fabricated. The
+reproducibility claim concerns the frozen input/output artifacts and subsequent
+certification, not deterministic regeneration by a proprietary model.
 
 ### 6.3 Construction blindness
 
@@ -469,16 +540,24 @@ validity and is not claimed to represent every syntactic mutation system.
 
 ### 8.1 Inventory freeze
 
-For each subject, freeze every admissible evaluation MR from a predeclared P3 MR
-source frame assembled from program specifications, public documentation, and
-MR artifacts that predate Package C opening. Record its provenance, source and
-follow-up input generator, oracle, tolerance, seed policy, timeout, environment,
-and cost measurement rule. P12 buggy artifacts, reference MRs, and real-fault
-outcomes cannot be used to propose or admit an evaluation MR. Before portfolio
-construction, an isolated exclusion process removes every
+MR construction is a sibling process, not a continuation of semantic-contract
+construction. Its builder receives the permitted fixed source, build metadata,
+public specifications, and public documentation, but cannot read semantic
+contracts, slot applicability, candidate patches, certificates, controlled
+denominators, or outcomes. Conversely, the contract builder and patch proposer
+cannot read the candidate or final MR frames.
+
+For each subject, first freeze every candidate evaluation MR from the
+predeclared P3 source frame. Record its provenance, source and follow-up input
+generator, oracle, tolerance, seed policy, timeout, environment, cost measurement
+rule, and canonical semantic signature. Send only the frozen candidate
+IDs/signatures and inventory hash to the holdout custodian. P12 buggy artifacts,
+reference MRs, and real-fault outcomes cannot be used to propose or admit an
+evaluation MR. The returned receipt then removes every
 `ADMISSION_POSITIVE_CONTROL` reference MR, exact implementation variant, and
-canonical-semantic-signature duplicate. The exclusion manifest is frozen and
-auditable. Invalid or flaky remaining MRs are classified before mutant outcomes
+canonical-semantic-signature duplicate. Freeze the receipt, final inventory, and
+only then the portfolio sample, in that order. Invalid or flaky remaining MRs
+are classified before mutant outcomes
 and remain in the execution funnel. If no non-reference MR remains for a
 subject, record `NO_INDEPENDENT_EVALUATION_MR`; do not promote its reference MR.
 
@@ -534,7 +613,7 @@ outcomes:
 The atomic row key is:
 
 ```text
-(subject_commit, object_type, object_id, mr_id, repetition_id, environment_id)
+(controlled_subject_id, object_type, object_id, mr_id, repetition_id, environment_id)
 ```
 
 Each row records original output, follow-up output, oracle value, tolerance,
@@ -629,7 +708,12 @@ residuals even when aggregate scores are high.
 Primary RQ4 analysis uses `P12_PAIRED`, including every mapping state, and is
 performed on project × fixed-budget aggregates. The report first gives pairing
 coverage by project, fault, and exact fixed version, including every failed or
-missing controlled profile. Within a project × budget cell,
+missing controlled profile. After Phase 7 mapping but before real-fault MR
+outcomes are executed or opened, compare `P12_PAIRED` with `P12_FULL` on
+project, scale, implementation-technique,
+semantic-fault-family, and build/workload-availability covariates. Publish the
+complete profile-construction funnel and every exclusion/failure reason. Within
+a project × budget cell,
 portfolio-level semantic score, syntactic score, and real-fault detection are
 averaged using the frozen equal cell weights. Overlapping portfolios do not
 become independent observations.
@@ -688,6 +772,12 @@ Without the compatible successor contract, below the 17-project/60-family floor,
 or when event distribution makes the regularized model unidentified, RQ4 is a
 bounded project-level case series. No predictive-validity or incremental-value
 claim is allowed.
+
+Even when all gates pass, primary RQ4 inference is restricted to the
+prospectively paired, constructible P12 subdomain represented by `P12_PAIRED`.
+Coverage comparisons diagnose selection but do not authorize transport to
+`P12_FULL`. Results for `P12_FULL`, its unpaired remainder, or unavailable
+profiles are descriptive case-series evidence only.
 
 ## 12. Non-circular mapping of P12 faults
 
@@ -835,15 +925,18 @@ Exit criterion: all outcome-dependent choices are explicit and machine-readable.
 
 ### Phase 1 — Receive the blinded bridge and build frames
 
-The P12 custodian freezes the P12 package root, complete bridge, eligible count,
-fixed-tree bindings, and reference-MR exclusion receipts. P3 verifies the bridge,
+The P12 custodian freezes the pinned release identity, P12 package root, complete
+bridge, eligible count, and fixed-tree commitments. P3 verifies the bridge,
 recomputes scale and technique features, and deterministically builds
-`C_CONSTRUCT`, exhaustive unique-tree `C_CRITERION`, the non-reference MR
-inventory, and confirmatory portfolios. Package A contains only permitted fixed
-source, build metadata, contracts, and proposal inputs.
+`C_CONSTRUCT` and exhaustive unique-subject `C_CRITERION`. For every selected
+subject, P3 then freezes the canonical site enumeration and every slot's
+contract, domain, oracle, activation rule, and witness order. This phase closes
+before any evaluated-MR candidate frame is assembled. Package A contains only
+permitted fixed source, build metadata, frozen contracts, and proposal inputs.
 
-Exit criterion: every frame is reproducible from outcome-free inputs, and no
-custodian-selected label or feature can alter cohort membership.
+Exit criterion: the subject and site frames regenerate byte-identically,
+`CONTRACT_FROZEN` exists for every declared slot, and no evaluated-MR builder has
+received contract, patch, or slot material.
 
 ### Phase 2 — Repeatable preflight and non-P12 pilot
 
@@ -855,25 +948,40 @@ they cannot enter confirmatory denominators.
 Exit criterion: the actual project CLI can execute one synthetic end-to-end job
 and retain both success and failure records. No launch prose is part of the test.
 
-### Phase 3 — Blind semantic construction
+### Phase 3 — Blind construction, certification, and syntactic baseline
 
-For each selected subject and slot, freeze the contract, domain, oracle,
-tolerance, activation rule, and witness order; then obtain one Grok 4.5 High
-candidate patch and freeze it. The proposer receives Package A only. It cannot
-read buggy code, defect patches, reference or evaluated MRs, or outcomes.
-
-Exit criterion: every slot has an immutable patch or explicit failure, and
-`CONTRACT_FROZEN` precedes `PATCH_FROZEN`.
-
-### Phase 4 — Certification and syntactic baseline
+For each frozen slot, obtain one Grok 4.5 High candidate patch and freeze it.
+The proposer receives Package A only. At this point no evaluated-MR inventory
+exists; the proposer cannot read buggy code, defect patches, reference MRs, or
+outcomes. Record the exact model/provider label, prompt and context hashes, raw
+response hash, timestamp, and available generation metadata. Proprietary or
+unavailable parameters are recorded as `UNAVAILABLE_NOT_CLAIMED`; they are never
+invented. Reproducibility attaches to the frozen prompt, response, patch, and
+certificate rather than to exact model regeneration.
 
 Certify all semantic candidates using the frozen witness order and terminal
 states. Generate the frozen first-order syntactic baseline on the same fixed
-versions and apply the common equivalence policy. Freeze both denominators in
-Package B; do not replace failed, invalid, duplicate, or unresolved objects.
+versions and apply the common equivalence policy. Freeze both denominators; do
+not replace failed, invalid, duplicate, or unresolved objects.
 
-Exit criterion: both populations and all exclusions are independent of MR kills
-and P12 real-fault outcomes.
+Exit criterion: every slot has an immutable patch or explicit failure,
+`CONTRACT_FROZEN` precedes `PATCH_FROZEN`, and both controlled populations are
+independent of every evaluated-MR definition and outcome.
+
+### Phase 4 — Independently freeze evaluated MRs and portfolios
+
+In a sibling process that cannot access contracts, patches, certificates, or
+controlled denominators, the MR builder uses only permitted fixed source, build
+metadata, public specifications, and public documentation. It first freezes the
+complete candidate-MR frame and canonical signatures, then sends only those
+signatures to the P12 custodian. After the custodian returns the exclusion
+receipt, freeze the final non-reference inventory and portfolios. Only then may
+Package B combine the already frozen controlled populations with the frozen MR
+frame. The construction proposer never receives this frame.
+
+Exit criterion: candidate frame -> custodian receipt -> final inventory ->
+portfolio receipts form an immutable chain, and neither sibling process could
+tailor its artifacts to the other's semantic material.
 
 ### Phase 5 — Controlled MR execution
 
@@ -896,7 +1004,8 @@ Exit criterion: no decision that can favor the semantic model remains mutable.
 
 ### Phase 7 — Reveal P12 and execute real faults
 
-Verify that every revealed fixed commit matches its blinded bridge tree. Run the
+Verify that every revealed fixed commit and nonce open its blinded bridge
+commitment and match the normalized controlled snapshot. Run the
 rule-based family mapper without MR data, then run the leakage comparison without
 kill outcomes. Freeze both outputs and the P12 job list before executing the same
 non-reference MR portfolios on P12 buggy/fixed pairs. Reference positive controls
@@ -962,7 +1071,8 @@ are regenerated from atomic matrices and never edited as sources of truth.
 The design supports four scientifically honest endpoints:
 
 1. **Strong positive:** semantic adequacy is construct-distinct, interpretable,
-   and incrementally predictive within the P12 domain.
+   and incrementally predictive within the prospectively paired, constructible
+   P12 subdomain.
 2. **Qualified positive:** semantic adequacy explains family-level residuals but
    incremental predictive evidence is uncertain.
 3. **Boundary result:** semantic mutants are reproducible and distinct, but do

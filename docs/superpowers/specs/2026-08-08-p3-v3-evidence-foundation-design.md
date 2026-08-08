@@ -3,10 +3,10 @@
 ## Material Passport
 
 - Date: 2026-08-08
-- Status: revised design; user review required
+- Status: revised after targeted scientific review; implementation pending
 - Scope: only the evidence controls required before controlled semantic-mutant work
 - Parent scientific plan SHA-256:
-  `6efed12823680df70d618c10ba902e5a64f21697ddff710872aef33285e8c3a2`
+  `4fa367d1ac33a741071b806903bfc45ac476e4109da55de04515b285fde7bb1c`
 - Governing principles SHA-256:
   `4aa9fb17bdfa8976387a4165445b2b0b72e653688187c958fa1beb022075780d`
 - Existing P12 v1.1.2 contract SHA-256:
@@ -171,10 +171,18 @@ same project CLI without `rtk`.
 - semantic-contract and construction-mechanism catalogues;
 - subject eligibility and feature derivation;
 - candidate slots, stopping rules, seeds, timeouts, and retry policy;
+- canonical site enumeration, first-applicable-site selection, and
+  subject/site/real-fault unit definitions;
+- proposal provenance fields: exact provider/model label, prompt/context/raw
+  response hashes, UTC timestamp, exposed generation metadata, and the literal
+  `UNAVAILABLE_NOT_CLAIMED` for unavailable proprietary parameters;
 - syntactic baseline and equivalence policy;
 - MR source frame, semantic-signature algorithm, budgets, and sampling rule;
 - primary and secondary measures;
 - analysis, multiplicity, clustering, sensitivity, and missingness rules;
+- the `P12_PAIRED` inferential ceiling, paired-versus-full pre-outcome coverage
+  comparison, complete profile-failure funnel, and descriptive-only treatment of
+  `P12_FULL`;
 - required package roles, job fields, outputs, and prohibited claims; and
 - hashes of referenced scripts, dependency lock, and detailed specifications.
 
@@ -192,26 +200,37 @@ The identified P12 custodian publishes an envelope containing:
 ```text
 schema_version
 p12_release_id
+p12_repository_identity
+p12_release_commit_sha
+p12_bridge_path
+p12_bridge_blob_sha
+p12_contract_path
+p12_contract_blob_sha
 p12_package_root_sha256
 p12_contract_sha256
 eligible_inventory_root_sha256
 eligible_item_count
 records
-custodian_attestation
+trust_mode
 artifact_sha256
 ```
 
-The attestation binds the bridge to a named immutable P12 release or signed
-release artifact. A self-hash detects mutation but is not accepted as proof of
-origin or completeness.
+`trust_mode` is exactly `PINNED_GIT_RELEASE`. The validator normalizes the P12
+repository identity, checks out the exact release commit, and proves that the
+bridge and contract bytes at their pinned paths have the declared Git blob
+identities and package root. This is the only minimum trust mode: the foundation
+does not add a generic signature or PKI system. A self-hash detects mutation but
+is not accepted as proof of origin or completeness. If the pinned release cannot
+be verified, RQ4 remains blocked.
 
 ### 6.2 Record
 
-There is one record per unique eligible fixed Git tree:
+There is one visible record per eligible P12 fixed-version snapshot. P3 later
+groups records resolving to the same controlled subject:
 
 ```text
-neutral_subject_id
-fixed_git_tree_oid
+neutral_snapshot_id
+fixed_tree_commitment
 normalized_source_tree_sha256
 source_archive_sha256
 build_descriptor_sha256
@@ -220,20 +239,55 @@ eligible_for_construct
 eligible_for_criterion
 ```
 
-`neutral_subject_id` is deterministically derived from the P12 package root and
-fixed Git tree OID. It is not chosen by the custodian. The bridge excludes issue,
-PR, buggy commit, fixed commit, patch, changed symbols, defect family, reference
-MR, and all outcomes.
+`neutral_snapshot_id` is deterministically derived from the P12 package root,
+normalized source-tree SHA-256, and source-archive SHA-256. It is not chosen by
+the custodian. The custodian computes:
+
+```text
+fixed_tree_commitment = SHA256(
+  "P3-FIXED-TREE-v1" || p12_package_root_sha256 ||
+  fixed_git_tree_oid || reveal_nonce
+)
+```
+
+Here `||` is byte concatenation; the domain and lowercase hexadecimal identities
+are ASCII bytes, and `reveal_nonce` is exactly 32 random bytes.
+
+The visible bridge excludes `fixed_git_tree_oid` and `reveal_nonce` as well as
+issue, PR, buggy commit, fixed commit, patch, changed symbols, defect family,
+reference MR, and all outcomes. The OID and nonce exist only in Package C until
+Phase 7.
 
 ### 6.3 Feature authority and completeness
 
-P3 computes scale, dependency-cone, and implementation-technique features from
-the permitted fixed source and build descriptor using the frozen classifier.
-Custodian-supplied strata are neither accepted nor used for selection.
+P3 derives the canonical public workload set, scale, dependency-cone,
+program-level implementation-technique features, and mutation-site enumeration
+from the permitted fixed source, build descriptor, and public documentation
+using frozen rules. Custodian-supplied strata, targets, and sites are neither
+accepted nor used for selection.
 
-The bridge validator checks record count, unique trees, unique neutral IDs,
-inventory root, package root, release binding, and all hashes. `C_CRITERION`
-contains every unique eligible fixed tree. An absent or extra item is a hard
+The program-version experimental unit is:
+
+```text
+controlled_subject_id = SHA256(canonical_json({
+  normalized_source_tree_sha256,
+  build_descriptor_sha256,
+  public_workload_set_sha256,
+  domain: "P3-SUBJECT-v1"
+}))
+```
+
+Each candidate `site_id` is separately derived from
+`controlled_subject_id`, canonical relative path, resolved symbol, and source
+span, then ordered by path, symbol, span, and site hash. Program-level technique
+labels define sampling strata; site-level tags are secondary analysis metadata.
+
+The bridge validator checks record count, unique commitments, deterministic
+neutral snapshot IDs and alias groups, inventory root, package root, release
+binding, and all hashes. `C_CRITERION`
+contains every unique eligible `controlled_subject_id`. Records resolving to the
+same controlled subject reuse one profile; conflicting source/build/workload
+commitments are a hard failure. An absent or extra item is a hard
 compatibility failure, not an opportunity to select a replacement.
 
 ### 6.4 Phase 7 reveal
@@ -243,6 +297,8 @@ The revealed mapping covers every bridge record exactly once. For every mapping:
 ```text
 git_tree(revealed_fixed_commit) == fixed_git_tree_oid
 normalized_tree(revealed_fixed_commit) == normalized_source_tree_sha256
+SHA256("P3-FIXED-TREE-v1" || p12_package_root_sha256 ||
+       fixed_git_tree_oid || reveal_nonce) == fixed_tree_commitment
 ```
 
 A mismatch remains an unpaired failure. It cannot be repaired by using a nearby
@@ -256,34 +312,43 @@ For each complete eligible record, P3 computes:
 
 ```text
 subject_selection_key = SHA256(canonical_json({
-  normalized_source_tree_sha256,
-  build_descriptor_sha256,
+  controlled_subject_id,
   scale_class,
   technique_vector,
   domain: "P3-C1"
 }))
 ```
 
-The builder partitions by scale × primary technique, selects the lowest key in
+The builder partitions by scale × primary technique and uses the total order
+`(subject_selection_key, controlled_subject_id)`, selects the lowest pair in
 each nonempty cell, and continues round-robin until 18 subjects or exhaustion.
-Empty cells and failed classifications remain explicit. Input order, neutral ID,
+Empty cells and failed classifications remain explicit. Input order, neutral snapshot ID,
 project name, defect identity, and outcomes cannot change ranking.
 
 ### 7.2 `C_CRITERION`
 
-The builder includes every unique eligible fixed tree from the compatible bridge.
-There is no random or hash sampling path. Multiple P12 faults sharing a tree reuse
-one controlled profile but remain distinct real-fault rows. Failed profiles remain
-failed pairings and are never replaced.
+The builder includes every unique eligible `controlled_subject_id` from the
+compatible bridge. There is no random or hash sampling path. Multiple P12 faults
+sharing a tree reuse one controlled profile but remain distinct real-fault rows.
+Failed profiles remain failed pairings and are never replaced.
 
 ### 7.3 MR independence
 
-The candidate MR frame is frozen from specifications, public documentation, and
-pre-Package-C P3 artifacts. A custodian receipt compares canonical semantic
+All subject-specific contracts, domains, oracles, activation rules, witness
+orders, and canonical sites are phase-closed before an evaluated-MR frame is
+built. The contract builder cannot read candidate/final MR material. In a sibling
+process, the MR builder receives only permitted fixed source/build/public
+documentation and cannot read contracts, slots, patches, certificates, or
+denominators.
+
+The MR builder first freezes the complete candidate frame and semantic
+signatures. A custodian receipt then compares those canonical semantic
 signatures with P12 reference MRs and returns only candidate ID, decision, reason,
 candidate inventory hash, P12 root, and comparison algorithm hash. Missing,
 uncertain, reference, exact-variant, and semantic-duplicate cases are excluded
-before outcomes. Reference MR source or identity never enters Packages A or B.
+before outcomes. The final inventory freezes only after the receipt, and
+portfolios freeze only after the final inventory. Reference MR source or identity
+never enters Packages A or B.
 
 ## 8. Phase packages and isolation claim
 
@@ -308,7 +373,8 @@ real-fault outcomes.
 
 ### 8.4 Package C
 
-Contains P12 buggy/fixed identities and real-fault execution material. It is
+Contains P12 buggy/fixed identities, each bridge record's sealed
+`fixed_git_tree_oid` and `reveal_nonce`, and real-fault execution material. It is
 supplied only to a new Phase 7 environment after the controlled phase-close
 receipt freezes Package B, denominators, portfolios, matrices, mapping rules,
 leakage algorithm, and analysis code.
@@ -391,18 +457,32 @@ is durably created.
 All foundation tests use synthetic fixtures. The minimum matrix proves:
 
 1. canonical JSON and every declared one-byte mutation behave deterministically;
-2. bridge package-root, inventory-root, count, release, fixed-tree, and source-tree
-   mutations fail;
-3. `C_CONSTRUCT` is input-order invariant and neutral-ID independent;
-4. `C_CRITERION` includes every unique eligible tree and has no sampling path;
-5. custodian-provided strata cannot influence selection;
-6. missing or uncertain reference-MR receipts fail closed;
-7. Package A/B forbidden content and Package C early presence fail;
-8. a job cannot produce a result without an earlier immutable intent;
-9. failed, interrupted, and inconclusive jobs survive reduction;
-10. ledger suffix truncation is detected by the phase-close receipt;
-11. corrected preflight can pass without modifying the scientific ledger; and
-12. a synthetic Phase 0→Phase 7 path verifies exact fixed-tree reveal pairing.
+2. pinned repository/release/path/blob/package-root mutations fail;
+3. visible bridge bytes containing a fixed tree OID or reveal nonce fail, and a
+   commitment, nonce, OID, normalized-tree, or source-archive mutation fails at
+   reveal;
+4. `controlled_subject_id` is stable across bridge aliases while conflicting
+   source/build/workload inputs fail, and `site_id` changes do not change the
+   program-level sampling stratum;
+5. `C_CONSTRUCT` is input-order invariant, neutral-ID independent, and uses the
+   exact `(selection_key, controlled_subject_id)` tie order;
+6. `C_CRITERION` includes every unique eligible controlled subject and has no
+   sampling path;
+7. custodian-provided strata/sites cannot influence selection, and each slot
+   selects the first applicable canonical site or remains `NOT_APPLICABLE`;
+8. contract phase close must predate the candidate-MR frame, and either builder
+   rejects the other sibling's forbidden material;
+9. candidate-MR frame, custodian receipt, final inventory, and portfolios must
+   form that exact order; missing or uncertain receipts fail closed;
+10. proposal records reject missing prompt/context/response hashes and use
+    `UNAVAILABLE_NOT_CLAIMED` rather than fabricated provider parameters;
+11. Package A/B forbidden content and Package C early presence fail;
+12. a job cannot produce a result without an earlier immutable intent;
+13. failed, interrupted, and inconclusive jobs survive reduction;
+14. ledger suffix truncation is detected by the phase-close receipt;
+15. corrected preflight can pass without modifying the scientific ledger; and
+16. a synthetic Phase 0→Phase 7 path verifies exact commitment opening and
+    fixed-tree pairing.
 
 The implementation does not wait for generic framework tests. The first release
 is complete when this focused matrix and the repository regression suite pass.
@@ -413,15 +493,23 @@ The minimum evidence foundation is ready for the controlled-experiment
 implementation plan only when:
 
 1. the P12 bridge is authenticated, complete, and exact-version verifiable;
-2. both subject frames regenerate byte-identically from shuffled inputs;
-3. reference MRs and semantic duplicates cannot enter P3 portfolios;
-4. Package A and B materialize and verify without forbidden content;
-5. repeatable preflight completes an actual synthetic end-to-end CLI path;
-6. scientific intent precedes every synthetic job side effect;
-7. phase close detects missing, duplicate, pending, and truncated records;
-8. all claim entries remain blocked until result predicates are implemented;
-9. the focused and repository test suites pass; and
-10. no live P12 Holdout, real outcome, or Cursor launch was used to obtain the
+2. the visible bridge discloses no fixed Git tree OID and every Phase 7 reveal
+   opens its commitment and normalized source snapshot exactly;
+3. both subject frames and site enumerations regenerate byte-identically from
+   shuffled inputs and use the declared experimental units;
+4. contracts phase-close before the isolated candidate-MR frame exists;
+5. reference MRs and semantic duplicates cannot enter P3 portfolios, and the
+   candidate-frame -> receipt -> final-inventory -> portfolio order is proven;
+6. Package A and B materialize and verify without forbidden content;
+7. repeatable preflight completes an actual synthetic end-to-end CLI path;
+8. scientific intent precedes every synthetic job side effect;
+9. phase close detects missing, duplicate, pending, and truncated records;
+10. all claim entries remain blocked until result predicates are implemented;
+11. RQ4 claim validation limits inference to `P12_PAIRED`, requires the full
+    construction-failure funnel and paired-versus-full pre-outcome coverage
+    comparison, and treats `P12_FULL` as descriptive only;
+12. the focused and repository test suites pass; and
+13. no live P12 Holdout, real outcome, or Cursor launch was used to obtain the
     result.
 
 ## 14. Scope boundary
