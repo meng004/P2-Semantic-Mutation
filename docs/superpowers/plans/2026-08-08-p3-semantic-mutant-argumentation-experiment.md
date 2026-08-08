@@ -11,7 +11,8 @@
 - Origin: P3 semantic-mutant construction principles
 - Origin date: 2026-08-08
 - Study type: empirical software engineering / mutation testing / metamorphic testing
-- Verification status: revised after methodology review; re-review required
+- Verification status: methodology self-review passed; implementation and
+  independent evidence audits pending
 - Execution environment: fresh Cursor VM, Grok 4.5 High
 - Scientific authority: frozen artifacts and executable checks, never model judgment
 - Governing design:
@@ -24,7 +25,7 @@
 | Patch mechanism was misused as semantic family | Separate `construction_mechanism` from `semantic_contract_family`; primary macro SMS uses only the latter |
 | P12 admission/reference MR could leak into evaluated portfolios | Partition reference MRs as positive controls and mechanically exclude them and semantic duplicates from confirmatory portfolios |
 | Contract, patch, and witness could be co-designed | Freeze contract/domain/oracle first, propose patch second, select the first canonical witness third |
-| P12 population and paired cohort were ambiguous | Define `P12_FULL`, `P12_PAIRED`, and `P12_DIRECT` with distinct estimands |
+| P12 population and paired cohort were ambiguous | Define `P12_FULL`, `P12_PAIRED`, and `P12_DIRECT`, plus separate diversity and criterion construction cohorts, with distinct estimands |
 | Outcome blindness was logical rather than physical | Use three content-addressed packages with no `.git` history and mount them in chronological order |
 | MR subset lattice created pseudo-replication and infeasible enumeration | Keep the lattice descriptive; use fixed-budget combinadic sampling and project-budget aggregates for inference |
 | RQ4 model was too large for the proposed floor | Use a simulation-qualified project-level model and retain the existing 17-project/60-family confirmatory floor |
@@ -89,8 +90,8 @@ Evidence:
 
 - the complete candidate-to-certified funnel;
 - pass, fail, and inconclusive states for every certification gate;
-- certification yield by semantic-contract family, program-scale stratum, implementation
-  stratum, repository, and target program;
+- certification yield by semantic-contract family, program-scale stratum,
+  implementation stratum, repository, and target program;
 - stable original/mutant semantic witnesses.
 
 RQ1 is descriptive. A failed construction remains evidence about the boundary
@@ -115,9 +116,9 @@ construct-distinctness result only.
 
 ### RQ3 — MR-set adequacy and explanation
 
-Which semantic mutants and semantic-contract families are detected or missed by each MR
-set, and what do unique contribution, redundancy, residual risk, and execution
-cost reveal beyond a single aggregate mutation score?
+Which semantic mutants and semantic-contract families are detected or missed by
+each MR set, and what do unique contribution, redundancy, residual risk, and
+execution cost reveal beyond a single aggregate mutation score?
 
 The primary controlled-mutant measure is family-balanced semantic mutation
 score. Instance-weighted score, conservative equivalence bounds, unique kills,
@@ -159,8 +160,8 @@ The plan maintains three immutable P12 populations:
 
 - `P12_FULL`: every accepted P12 real-fault item, used for benchmark-wide
   descriptive reporting;
-- `P12_PAIRED`: every `P12_FULL` fault whose fixed project/version belongs to
-  the deterministically selected controlled-mutant cohort, used for primary
+- `P12_PAIRED`: every `P12_FULL` fault whose exact fixed version has a complete
+  prespecified criterion-construction profile, used for primary
   criterion-validity analysis;
 - `P12_DIRECT`: the outcome-blind `DIRECT` semantic-contract-family subset of
   `P12_PAIRED`, used only for secondary mechanism-concordance analysis.
@@ -190,8 +191,10 @@ contract as external descriptive or sensitivity evidence. It cannot relabel
 that package as the new P3 primary criterion-validity experiment.
 
 P3 applies no inclusion rule based on confirmatory MR-set outcomes. All eligible
-items remain in `P12_FULL`; all eligible items in selected project/version strata
-remain in `P12_PAIRED`, including faults missed by every evaluated MR set.
+items remain in `P12_FULL`. Membership in `P12_PAIRED` is determined only by the
+pre-outcome criterion-construction frame and complete profile availability;
+faults missed by every evaluated MR set remain included. Unpaired faults and the
+mechanical reason for missing a profile remain in the coverage ledger.
 
 ### 5.2 Program-scale strata
 
@@ -229,22 +232,33 @@ primary label supports deterministic stratified sampling; the multi-label vector
 supports sensitivity analysis. Ambiguous subjects receive `TECH_UNCERTAIN` and
 remain visible; they do not enter technique-stratified confirmatory claims.
 
-### 5.4 Deterministic subject selection
+### 5.4 Deterministic controlled cohorts
 
-The paired confirmatory cohort is selected before P3 sees MR outcomes:
+Two controlled cohorts are frozen before P3 sees MR outcomes:
 
-1. enumerate the complete eligible P12 fixed-version frame;
-2. classify scale and implementation technique mechanically;
-3. within each nonempty scale × technique cell, rank candidates by
-   `SHA256(fixed_commit || project_id || target_id || "P3-C1")`;
-4. select the first candidate per cell, then continue round-robin by the same
-   rank until 18 subjects are selected or the frame is exhausted;
-5. retain an explicit `EMPTY_FRAME` record for every unfilled cell.
+1. `C_CONSTRUCT` supports RQ1–RQ3 diversity. Enumerate the complete eligible
+   fixed-version frame, classify scale and technique mechanically, rank each
+   scale × technique cell by
+   `SHA256(fixed_commit || project_id || target_id || "P3-C1")`, select the first
+   candidate per nonempty cell, then continue round-robin until 18 subjects are
+   selected or the frame is exhausted. Retain `EMPTY_FRAME` for unfilled cells.
+2. `C_CRITERION` supports RQ4 exact-version pairing. Enumerate, without sampling,
+   every unique exact fixed commit referenced by the compatible successor
+   `P12_FULL` frame and construct the same prespecified semantic and syntactic
+   profiles. Multiple faults sharing an exact fixed commit reuse one immutable
+   profile but remain distinct real-fault rows. A failed profile remains a
+   failed pairing record and is never replaced by another version.
 
-The target is representation of all three size strata, at least four
-implementation techniques, at least eight repositories, and at least 15 paired
-subjects. Failure to meet that target downgrades cross-stratum claims; it does
-not authorize outcome-based replacement.
+The `C_CONSTRUCT` target is representation of all three size strata, at least
+four implementation techniques, at least eight repositories, and at least 15
+subjects. The RQ4 target is at least 17 projects and 60 `P12_PAIRED` real-fault
+families with complete exact-version profiles, subject to the concentration
+rules in Section 11.4. Before proposal or outcome opening, preflight publishes
+the number of unique `C_CRITERION` versions, planned candidate jobs, estimated
+compute, and storage. Resource infeasibility downgrades RQ4 to a case series; it
+does not authorize hash sampling or favorable-version selection. Exact overlap
+between `C_CONSTRUCT` and `C_CRITERION` reuses one artifact and one execution,
+with both cohort roles recorded.
 
 ### 5.5 Controlled-only supplements
 
@@ -295,7 +309,8 @@ forbidden overlaps, and the exact mapping of historical IDs before construction.
 
 ### 6.2 Candidate budget and applicability
 
-For each confirmatory subject, the frozen applicability matrix allocates two
+For each confirmatory subject in either controlled cohort, the frozen
+applicability matrix allocates two
 candidate slots to each of the five semantic-contract families. Each slot also
 declares its permitted construction mechanism before patch proposal. An
 inapplicable slot is recorded as `NOT_APPLICABLE` and is not transferred to
@@ -390,13 +405,23 @@ validity and is not claimed to represent every syntactic mutation system.
 
 ### 8.1 Inventory freeze
 
-For each subject, freeze every admissible P12 MR implementation, its source and
+For each subject, freeze every admissible evaluation MR from a predeclared P3 MR
+source frame assembled from program specifications, public documentation, and
+MR artifacts that predate Package C opening. Record its provenance, source and
 follow-up input generator, oracle, tolerance, seed policy, timeout, environment,
-and cost measurement rule. Before portfolio construction, remove every
+and cost measurement rule. P12 buggy artifacts, reference MRs, and real-fault
+outcomes cannot be used to propose or admit an evaluation MR. Before portfolio
+construction, an isolated exclusion process removes every
 `ADMISSION_POSITIVE_CONTROL` reference MR, exact implementation variant, and
 canonical-semantic-signature duplicate. The exclusion manifest is frozen and
 auditable. Invalid or flaky remaining MRs are classified before mutant outcomes
-and remain in the execution funnel.
+and remain in the execution funnel. If no non-reference MR remains for a
+subject, record `NO_INDEPENDENT_EVALUATION_MR`; do not promote its reference MR.
+
+The exclusion process runs under the holdout custodian. It may compare candidate
+and reference signatures, but emits only the excluded candidate MR ID, reason
+code, and comparison hash. Construction and controlled-execution processes do
+not receive reference-MR source, identity, signature, or behavior.
 
 The canonical semantic signature is computed without executions or outcomes as
 the SHA-256 of a schema-versioned canonical representation of the source-input
@@ -538,10 +563,18 @@ residuals even when aggregate scores are high.
 ### 11.4 RQ4
 
 Primary RQ4 analysis uses `P12_PAIRED`, including every mapping state, and is
-performed on project × fixed-budget aggregates. Within a project × budget cell,
+performed on project × fixed-budget aggregates. The report first gives pairing
+coverage by project, fault, and exact fixed version, including every failed or
+missing controlled profile. Within a project × budget cell,
 portfolio-level semantic score, syntactic score, and real-fault detection are
 averaged using the frozen equal cell weights. Overlapping portfolios do not
 become independent observations.
+
+The response for a project × budget cell is the equal-fault, equal-portfolio
+detection fraction, and model loss is Bernoulli cross-entropy evaluated on that
+fraction. Each held-out project's loss is first averaged across its available
+fixed budgets; `Delta_sem` is then the equal-project mean difference. Fault,
+portfolio, or budget multiplicity therefore cannot increase a project's weight.
 
 Before outcome opening, use P12 project and fault counts plus a grid of plausible
 intraclass correlations and detection rates to simulate the minimum detectable
@@ -654,9 +687,9 @@ Cursor VM commands invoke the frozen project CLIs directly and do not use the
 local GPT Desktop `rtk` wrapper. The `rtk` requirement remains limited to local
 Desktop shell work.
 
-Grok may not decide admission, semantic-contract-family mapping, equivalence, MR kills,
-claim status, or whether an inconvenient run should be excluded. Those decisions
-are produced by frozen code, schemas, and prespecified rules.
+Grok may not decide admission, semantic-contract-family mapping, equivalence, MR
+kills, claim status, or whether an inconvenient run should be excluded. Those
+decisions are produced by frozen code, schemas, and prespecified rules.
 
 ### 13.2 Reusable preflight rather than one-shot bootstrap
 
@@ -731,6 +764,8 @@ and downgrade rules are frozen.
 Produce:
 
 - `research/p3_v3/p12-eligible-frame.json`;
+- `research/p3_v3/construct-cohort-frame.json`;
+- `research/p3_v3/criterion-cohort-frame.json`;
 - `research/p3_v3/subject-frame.json`;
 - `research/p3_v3/subject-strata.json`;
 - `research/p3_v3/mr-inventory.json`;
@@ -745,7 +780,8 @@ Produce:
 Exit criterion: deterministic selection can be recomputed from frozen inputs;
 the reference-MR exclusion set is reproducible; Package A physically excludes
 `.git`, buggy diffs, MRs, and outcomes; Package C is sealed but not mounted in
-the construction or controlled-execution environment.
+the construction or controlled-execution environment; the criterion frame
+contains every unique eligible P12 fixed commit with no outcome-based sampling.
 
 ### Phase 2 — Instrument pilot
 
@@ -845,7 +881,8 @@ may use only the first three statuses with matching wording strength.
 
 ## 15. Required result tables and figures
 
-1. subject frame by repository, scale, technique, and P12/supplemental role;
+1. subject frame by cohort role, repository, exact fixed version, scale,
+   technique, and P12/supplemental role, plus P12 pairing coverage;
 2. semantic candidate and certification funnel by semantic-contract family,
    construction mechanism, and stratum;
 3. semantic-versus-syntactic construct comparison;
@@ -866,6 +903,8 @@ research/p3_v3/score-task.yml
 research/p3_v3/claim-ledger.yml
 research/p3_v3/experiment-ledger.yml
 research/p3_v3/operator-catalog.yml
+research/p3_v3/construct-cohort-frame.json
+research/p3_v3/criterion-cohort-frame.json
 research/p3_v3/subject-frame.json
 research/p3_v3/mr-inventory.json
 research/p3_v3/mr-set-lattice.json
