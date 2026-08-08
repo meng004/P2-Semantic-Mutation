@@ -12,7 +12,8 @@
 - Origin date: 2026-08-08
 - Study type: empirical software engineering / mutation testing / metamorphic testing
 - Verification status: revised after scientific-necessity, engineering-scope,
-  and workload-role review; implementation and independent evidence audit pending
+  workload-role, construct-conditioning, and missingness-estimand review;
+  implementation and independent evidence audit pending
 - Execution environment: fresh Cursor VM, Grok 4.5 High
 - Scientific authority: frozen artifacts and executable checks, never model judgment
 - Governing design:
@@ -20,7 +21,7 @@
 - Minimum evidence design:
   `docs/superpowers/specs/2026-08-08-p3-v3-evidence-foundation-design.md`
   at SHA-256
-  `5b57f4885b0ece6f5bc996fd99abb2c0b2bf8369434fd083456643c9e511e941`
+  `af3f265437ad020487abf726d9008bfd4ea486ce6f2f2e5b8ca482849c4c5c12`
 
 ## Review-remediation matrix
 
@@ -42,8 +43,11 @@
 | Fixed tree, subject, workload, target site, and atomic-row identities were conflated | Define a program-version `controlled_subject_id`; select mutation sites separately by a frozen canonical rule; use the subject ID in every row |
 | A visible Git tree OID could reveal the fixed commit before Phase 7 | Publish only a salted fixed-tree commitment and normalized source identity; open the OID and nonce in Package C |
 | Complete-profile conditioning could be generalized to all P12 | Restrict RQ4 inference to the prospectively paired, constructible P12 subdomain and report its coverage against `P12_FULL` |
-| A single workload object conflated behavior discovery, dynamic profiling, and MR evaluation | Freeze a complete Public Behavior Frame, derive an outcome-blind Profiling Workload for classification only, and construct independent Evaluation Inputs for mutant/MR outcomes |
+| A single workload object conflated behavior discovery, dynamic profiling, and MR evaluation | Freeze a complete Public Behavior Frame, derive an outcome-blind Profiling Workload for classification only, construct pre-contract `E_COMMON` for primary outcomes, and keep post-contract `E_CONTRACT` out of primary estimands |
 | Dynamic non-coverage could be misread as semantic inapplicability | Record unobserved static sites as `UNPROFILED`; reserve `NOT_APPLICABLE` for failure of the frozen static semantic predicate |
+| Primary inputs were conditioned on semantic contracts/sites | Generate all 30 `E_COMMON` ordinals from public input schemas before contracts/sites; use five per-slot `E_CONTRACT` ordinals only for activation, certification, and labelled sensitivity |
+| Technique strata dropped failures and over-weighted populous behavior categories | Use category-equal lower/upper technique scores; assign a primary label only for a robust winner and otherwise retain `TECH_UNCERTAIN` |
+| P12 execution failure could be removed by complete-case analysis | Freeze the Phase 7 denominator before reveal and use an intention-to-evaluate lower-bound estimand with upper-bound and complete-case sensitivities |
 
 ## 1. Goal and central argument
 
@@ -59,7 +63,8 @@ The central empirical chain is:
 P12-bound blinded fixed source snapshot
   -> complete public behavior frame
   -> outcome-blind profiling workload and observed execution profile
-  -> independent contract-derived evaluation inputs
+  -> pre-contract subject-level `E_COMMON` primary inputs
+  -> post-contract `E_CONTRACT` activation/certification inputs
   -> independently constructed semantic mutants
   -> traditional syntactic mutants on the same version
   -> the same frozen non-reference MR inventory executed on both mutant populations
@@ -106,7 +111,7 @@ The minimum authoritative evidence consists of:
 
 1. one frozen protocol and analysis specification;
 2. one P12-bound blinded bridge, complete public behavior frame, profiling
-   workload/results, independent evaluation-input inventory, and deterministic
+   workload/results, separate `E_COMMON` and `E_CONTRACT` input inventories, and deterministic
    subject frames;
 3. one manifest for each phase input package;
 4. one immutable result record per planned experimental job;
@@ -348,22 +353,55 @@ The plan freezes three distinct authorities; none may substitute for another.
    zero-count categories, while unsupported adapters and invalid public
    declarations remain explicit. This is completeness relative to the frozen
    discovery rule, not a claim that repository materials represent all use.
-2. **Profiling Workload.** Select before execution using frozen size-class
-   budgets, at least one row from every nonempty executable category, static
-   entrypoint/dependency diversity, and canonical `behavior_id` hash ties. The
-   budgets are at least five and monotone from `S` through `M` to `L`. Dynamic
+2. **Profiling Workload.** Before bridge intake, freeze the exact adapter
+   registry and source hashes. Confirmatory adapters are
+   `PYTHON_PEP517_V1`, `CMAKE_CTEST_V1`, `MESON_TEST_V1`, and
+   `AUTOTOOLS_MAKECHECK_V1`; every other ecosystem is retained as
+   `ADAPTER_UNSUPPORTED` and receives no hand-selected fallback. Use exact
+   subject budgets `B_S=10`, `B_M=15`, and `B_L=20`. The frozen category order is
+   `PUBLIC_API`, `CLI`, `EXAMPLE`, `BENCHMARK`, then `PROJECT_TEST`. Select one
+   row from each nonempty executable category in that order, choosing the lowest
+   `(diversity_signature_sha256, behavior_id)`, then cycle through categories,
+   preferring unseen diversity signatures before the lowest remaining
+   `behavior_id`, until the budget or frame is exhausted. The diversity
+   signature hashes category, normalized entrypoint, sorted static dependency
+   tags, input-schema hash, and domain `P3-PROFILE-DIVERSITY-v1`. Dynamic
    coverage, execution success, project identity, desired technique, mutant/MR
    outcomes, P12 identities, and real-fault outcomes cannot affect selection.
-   The workload is used only for dependency cones, call traces, technique
-   classification, and observed reachability. Every selected failure remains in
-   the profiling-result funnel.
-3. **Evaluation Inputs.** Construct contract witnesses by a frozen rule after
-   contracts and sites close but before any evaluated mutant/MR job. They cannot
-   be copied from the Profiling Workload merely because a profiling command
-   succeeds, and cannot be selected from project tests, mutant survival, MR
-   kills, P12 defect/reference-MR information, or real-fault outcomes. A project
-   test may enter only if the independent frozen witness rule regenerates the
-   same input without using its observed outcome.
+   Every selected failure remains in the profiling-result funnel. These are
+   fixed resource budgets, not a power or representativeness claim.
+3. **`E_COMMON` primary inputs.** Immediately after the Public Behavior Frame
+   and before contracts or sites, generate exactly 30 subject-level candidates
+   with ordinals `0..29`. The generator reads only normalized fixed source/build
+   metadata, public input schemas, and public documentation; it cannot read
+   `PROJECT_TEST` bodies or fixtures, profiling results, contracts, patches,
+   MRs, P12 identities, or outcomes. The seed is the first unsigned 64 bits of
+   `SHA256(canonical_json({domain: "P3-E-COMMON-SEED-v1",
+   controlled_subject_source_id, ordinal}))`. Invalid or unavailable ordinals
+   remain in the denominator and are never manually replaced. Only `E_COMMON`
+   supplies primary RQ3 and RQ4 jobs.
+4. **`E_CONTRACT` certification inputs.** For each statically applicable slot,
+   after site and contract freeze but before patch proposal, generate exactly
+   five candidates with ordinals `0..4`. The seed is the first unsigned 64 bits
+   of `SHA256(canonical_json({domain: "P3-E-CONTRACT-SEED-v1",
+   controlled_subject_id, slot_id, ordinal}))`. The generator may read the
+   contract/domain/site but no patch, MR, P12 identity, profiling outcome, or
+   experimental outcome. Invalid/nonactivating candidates remain without
+   replacement. `E_CONTRACT` is limited to prepatch activation,
+   certification support, and a separately labelled contract-conditioned
+   sensitivity; it cannot enter primary SMS, P12 detection, or `Delta_sem`.
+
+A post-patch certification witness belongs to neither input inventory. A public
+test can coincide with `E_COMMON` only when the public-schema generator
+independently emits byte-identical input at its predetermined ordinal. Thirty and
+five are fixed exposure budgets, not power guarantees; achieved valid,
+invalid, and unavailable counts are reported.
+
+After all 30 ordinals freeze, a separate pre-outcome fixed-source validation
+classifies each as executable, invalid, or unavailable. Primary controlled and
+P12 job inventories use only executable fixed-source identities, while the full
+30-row generation/validity funnel remains mandatory. Validity cannot alter sites,
+contracts, strata, patches, or MR inventories.
 
 Before behavior discovery, compute the source/build identity independently of
 any workload:
@@ -383,8 +421,9 @@ success, trace, or output.
 A reached static site is `OBSERVED_REACHABLE`. A statically enumerated but
 unreached site is `UNPROFILED`, not `NOT_APPLICABLE`. Only failure of the frozen
 static semantic applicability predicate yields `NOT_APPLICABLE`. Dynamic claims
-are limited to behavior exercised by the frozen Profiling Workload or Evaluation
-Inputs; whole-source dynamic coverage is never inferred.
+are limited to behavior exercised by the frozen Profiling Workload, `E_COMMON`,
+or explicitly labelled `E_CONTRACT` sensitivity inputs; whole-source dynamic
+coverage is never inferred.
 
 ### 5.3 Implementation-technique strata
 
@@ -406,16 +445,26 @@ scores:
    flow without evidence for a more specific tag.
 
 The frozen classifier first restricts tags using source and dependency metadata
-and then assigns tags to each successfully traced Profiling Workload row. For
-technique `t`, its program score is the fraction of successful selected rows
-tagged `t`.
-The vector contains every tag with a nonzero score; the primary label is the
-maximum score with the order above as the deterministic tie-breaker. If there is
-no successful trace, the trace adapter is unsupported, or a source/trace
-conflict is unresolved, the label is `TECH_UNCERTAIN`. The primary label supports deterministic
-stratified sampling; the vector and scores support sensitivity analysis. Site
-tags never change the subject stratum. `TECH_UNCERTAIN` subjects remain visible
-but do not enter technique-stratified confirmatory claims.
+and then assigns tags to every usable Profiling Workload trace. Let `C` be the
+nonempty selected behavior categories, `n_c` all selected rows in category `c`,
+`a_ct` usable rows tagged with technique `t`, and `u_c` rows lacking a usable
+trace because of failure, timeout, or adapter uncertainty:
+
+```text
+L_t = (1 / |C|) * sum_c (a_ct / n_c)
+U_t = (1 / |C|) * sum_c ((a_ct + u_c) / n_c)
+```
+
+Every category must have at least one successful trace; if any category lacks
+one, the subject is `TECH_UNCERTAIN`. Otherwise, if no row is unresolved, the
+exact maximum uses the order above only as a tie-break. If any row is unresolved,
+a primary technique is assigned only when one `t` satisfies
+`L_t > max_{q != t}(U_q)`; otherwise the subject is `TECH_UNCERTAIN`. Confirmed
+multi-label tags have `L_t > 0`; possible tags with `U_t > 0` are retained only
+for sensitivity. `C_CONSTRUCT` uses the robust primary label. No success-only
+row fraction may define a confirmatory stratum. Site tags never change the
+subject stratum, and `TECH_UNCERTAIN` subjects remain visible but do not enter
+technique-stratified confirmatory claims.
 
 ### 5.4 Deterministic controlled cohorts
 
@@ -557,8 +606,8 @@ The construction package contains only:
 - the already frozen semantic contract, input domain, executable oracle,
   expected effect, and witness-selection policy.
 
-The proposal process does not receive Profiling Workload outcomes or final
-Evaluation Input identities. Those artifacts may coexist in Package A for later
+The proposal process does not receive Profiling Workload outcomes, `E_COMMON`,
+or `E_CONTRACT` identities. Those artifacts may coexist in Package A for later
 phase consumers, but the proposer receives a clean materialization of the
 proposal-process allowlist that excludes them.
 
@@ -569,23 +618,35 @@ succeed. The package hash and exact allowlisted file tree are recorded.
 
 ### 6.4 Contract–patch–witness chronology
 
-Each non-pilot slot follows a one-way four-stage state machine:
+`E_COMMON` closes at subject level before sites or contracts. Each non-pilot
+slot then follows exactly one of two terminal paths:
 
-1. `CONTRACT_FROZEN`: freeze the semantic-contract family, executable predicate,
-   committed input domain, canonical input ordering or seed stream, oracle,
-   tolerance, activation obligation, and expected direction of violation;
-2. `EVALUATION_INPUTS_FROZEN`: an outcome-blind sibling builder applies the
-   frozen input-construction rule to the contract and canonical site. It cannot
-   read a candidate patch, evaluated MR, P12 defect/reference MR, or any outcome;
-3. `PATCH_FROZEN`: expose the contract package, but not final Evaluation Input
-   identities or profiling outcomes, to the proposer and freeze the
-   returned exact patch without changing any Stage 1 field;
-4. `CERTIFICATION_WITNESS_SELECTED`: an independent certifier searches the
-   frozen domain and selects the first qualifying non-equivalence witness in
-   canonical order. This certification witness is not an Evaluation Input and
-   cannot be added to the MR evaluation inventory after observing the patch. If
-   no witness exists, the slot becomes `EQUIVALENCE_UNRESOLVED` or
-   `TRIGGER_UNEXERCISED`; neither the contract nor patch may be edited.
+```text
+APPLICABILITY_CLOSED_NOT_APPLICABLE
+```
+
+or
+
+```text
+SITE_FROZEN -> CONTRACT_FROZEN -> E_CONTRACT_FROZEN
+-> PATCH_FROZEN -> CERTIFICATION_WITNESS_SELECTED -> TERMINAL_STATE
+```
+
+The applicability decision uses only the frozen static predicate and canonical
+site order. A `NOT_APPLICABLE` slot has no contract, `E_CONTRACT`, patch, or
+certification witness. For an applicable slot, `CONTRACT_FROZEN` records the
+family, executable predicate, domain, oracle, tolerance, activation obligation,
+and expected violation direction; then an outcome-blind sibling builder creates
+the five predetermined `E_CONTRACT` ordinals before patch proposal. It cannot
+read a patch, evaluated MR, P12 defect/reference MR, or outcome.
+
+At `PATCH_FROZEN`, the proposer receives the contract package but neither input
+inventory nor profiling outcomes. At `CERTIFICATION_WITNESS_SELECTED`, an
+independent certifier searches the frozen domain and selects the first qualifying
+non-equivalence witness in canonical order. This post-patch witness belongs to
+neither `E_COMMON` nor `E_CONTRACT` and cannot be added to any evaluation
+inventory. If no witness exists, the slot becomes `EQUIVALENCE_UNRESOLVED` or
+`TRIGGER_UNEXERCISED`; neither contract nor patch may be edited.
 
 The proposer cannot write certification artifacts. The certifier cannot edit
 the contract, expected effect, patch, or candidate source tree. State hashes and
@@ -640,9 +701,9 @@ validity and is not claimed to represent every syntactic mutation system.
 MR construction is a sibling process, not a continuation of semantic-contract
 construction. Its builder receives the permitted fixed source, build metadata,
 public specifications, and public documentation, but cannot read semantic
-contracts, Evaluation Inputs, slot applicability, candidate patches,
+contracts, either input inventory, slot applicability, candidate patches,
 certificates, controlled denominators, or outcomes. Conversely, the contract,
-Evaluation Input, and patch builders cannot read the candidate or final MR
+input, and patch builders cannot read the candidate or final MR
 frames.
 
 For each subject, first freeze every candidate evaluation MR from the
@@ -712,15 +773,18 @@ The atomic row key is:
 
 ```text
 (controlled_subject_id, object_type, object_id, mr_id,
- evaluation_input_id, repetition_id, environment_id)
+ evaluation_input_class, evaluation_input_id, repetition_id, environment_id)
 ```
 
 Each row records original output, follow-up output, oracle value, tolerance,
-exit status, timeout, duration, seed, Evaluation Input provenance, stdout/stderr
-hashes, and artifact paths. Profiling Workload rows cannot be inserted as
-Evaluation Inputs unless the independent frozen witness rule had already
-generated the same identity. Aggregation is forbidden until the complete atomic
-ledger passes schema, uniqueness, and hash validation.
+exit status, timeout, duration, seed, input provenance, stdout/stderr hashes, and
+artifact paths. Primary semantic, syntactic, and P12 rows require
+`evaluation_input_class=E_COMMON`. `E_CONTRACT` rows use a separately labelled
+sensitivity job inventory and cannot enter primary aggregation. Profiling rows
+and post-patch certification witnesses are rejected as evaluation inputs, even
+when their bytes coincide; only a pre-frozen inventory identity is admissible.
+Aggregation is forbidden until the complete atomic ledger passes schema,
+uniqueness, role, and hash validation.
 
 ## 10. Metrics
 
@@ -756,10 +820,13 @@ Required controlled-mutant outputs:
 
 Required real-fault outputs:
 
-- P12 real-fault detection rate within the declared MR-detectable benchmark;
+- the primary intention-to-evaluate lower-bound P12 detection rate within the
+  declared MR-detectable benchmark, plus the prespecified upper-bound and
+  complete-case sensitivities;
 - detection by `DIRECT` semantic-contract family, size, technique, and repository;
 - missed real faults associated with semantic-contract-family residuals;
-- all P12 exclusions, mapping uncertainties, and failed executions.
+- all P12 exclusions, mapping uncertainties, `SCIENTIFIC_INCONCLUSIVE`, and
+  `INFRASTRUCTURE_UNRESOLVED` executions.
 
 ## 11. Prespecified analysis
 
@@ -808,13 +875,18 @@ budget cell, and resample or permute entire projects. Compare portfolios at the
 same MR count and measured execution budget. Control family-level secondary
 comparisons using Benjamini–Hochberg at `q = 0.05`.
 
+Primary RQ3 scores use only `E_COMMON`. Contract-conditioned `E_CONTRACT`
+results are reported as a separate sensitivity and cannot be pooled into,
+substituted for, or used to select the primary semantic or syntactic score.
+
 The paper must report surviving semantic-contract families and concrete
 residuals even when aggregate scores are high.
 
 ### 11.4 RQ4
 
-Primary RQ4 analysis uses `P12_PAIRED`, including every mapping state, and is
-performed on project × fixed-budget aggregates. The report first gives pairing
+Primary RQ4 analysis uses the pre-outcome frozen `P12_PAIRED` membership,
+including every mapping state, and only its pre-frozen `E_COMMON` job inventory.
+It is performed on project × fixed-budget aggregates. The report first gives pairing
 coverage by project, fault, and exact fixed version, including every failed or
 missing controlled profile. After Phase 7 mapping but before real-fault MR
 outcomes are executed or opened, compare `P12_PAIRED` with `P12_FULL` on
@@ -827,6 +899,15 @@ a project × budget cell,
 portfolio-level semantic score, syntactic score, and real-fault detection are
 averaged using the frozen equal cell weights. Overlapping portfolios do not
 become independent observations.
+
+Each planned real-fault row terminates as `MR_VIOLATION`, `MR_SATISFIED`,
+`DECLARED_EXCEPTION_OR_TIMEOUT_VIOLATION`, `SCIENTIFIC_INCONCLUSIVE`, or
+`INFRASTRUCTURE_UNRESOLVED`. The primary intention-to-evaluate lower bound keeps
+every planned row: only the two violation states contribute one. The upper-bound
+sensitivity additionally counts the two unresolved states as one, while
+`MR_SATISFIED` remains zero. Complete-case analysis is secondary. Outcome or
+execution success cannot change `P12_PAIRED` membership, job membership, or
+weights, and both unresolved classes are reported separately.
 
 The response for a project × budget cell is the equal-fault, equal-portfolio
 detection fraction, and model loss is Bernoulli cross-entropy evaluated on that
@@ -881,6 +962,7 @@ Secondary analyses are:
   `TECH_UNCERTAIN`;
 - `P12_FULL` case-series results without paired or mapping-based inference;
 - lower/upper model sensitivity using syntactic and semantic equivalence bounds.
+- lower/upper P12 missingness sensitivity and complete-case P12 results.
 
 Without the compatible successor contract, below the 17-project/60-family floor,
 or when event distribution makes the regularized model unidentified, RQ4 is a
@@ -927,11 +1009,14 @@ Logical allowlists are supplemented by three content-addressed packages:
 
 1. `PACKAGE_A_CONSTRUCTION`: fixed source snapshots, documentation, Public
    Behavior Frames, Profiling Workloads/results, frozen contracts, independent
-   Evaluation Inputs, and proposal inputs, with process-specific allowlists so
-   the proposer cannot read profiling results or Evaluation Input identities;
+   `E_COMMON` and `E_CONTRACT` inventories, and proposal inputs, with
+   process-specific allowlists so the proposer cannot read profiling results or
+   either input inventory;
    no `.git`, buggy revisions, MR files, reference-MR signatures, or outcomes;
 2. `PACKAGE_B_CONTROLLED_EXECUTION`: certified original/mutant trees and the
-   non-reference MR inventory; no P12 buggy tree or real-fault result;
+   non-reference MR inventory, with `E_COMMON` as the only primary job input and
+   `E_CONTRACT` confined to a separately labelled sensitivity inventory; no P12
+   buggy tree or real-fault result;
 3. `PACKAGE_C_REAL_HOLDOUT`: P12 buggy/fixed identities and execution material,
    mounted only after Packages A and B, controlled denominators, non-reference
    portfolios, and analysis code are sealed. Immediately after mounting, an
@@ -1046,8 +1131,10 @@ phase-close receipt remains a separate child artifact that binds the ledger.
 Freeze one canonical protocol containing RQs, claims and ceilings, operator
 catalogue, cohorts, metrics, MR budgets, analysis rules, retry rules, P12
 compatibility requirements, Public Behavior Frame discovery rules, language and
-build adapters, size-class Profiling Workload budgets, technique scoring,
-Evaluation Input construction, and environment lock. Claims remain blocked;
+build adapters and source hashes, exact `B_S=10`/`B_M=15`/`B_L=20` Profiling
+Workload budgets and selection, category-balanced technique interval scoring,
+exact 30-ordinal `E_COMMON` and five-per-slot `E_CONTRACT` construction,
+P12 missingness estimand, and environment lock. Claims remain blocked;
 this phase does not implement a generic claim-transition engine.
 
 Exit criterion: all outcome-dependent choices are explicit and machine-readable.
@@ -1057,16 +1144,19 @@ Exit criterion: all outcome-dependent choices are explicit and machine-readable.
 The P12 custodian freezes the pinned release identity, P12 package root, complete
 bridge, eligible count, and fixed-tree commitments. P3 verifies the bridge and,
 for every unique fixed-source snapshot, mechanically derives source scale, the
-complete Public Behavior Frame, and static dependency signatures. It then
+complete Public Behavior Frame, static dependency signatures, and all 30
+`E_COMMON` ordinals. `E_COMMON` generation completes before contracts and sites
+and cannot read project-test bodies or fixtures. P3 then
 selects and hashes each Profiling Workload using only frozen size budgets,
 category coverage, static diversity, and hash ties; computes the controlled
 subject identity; and enumerates canonical static sites. No selected profiling
 command is executed in this phase.
 
-Exit criterion: bridge, category accounting, behavior rows, static sites, and
-Profiling Workload selections regenerate byte-identically from shuffled inputs;
-all unsupported/invalid declarations remain visible; no dynamic result, mutant,
-MR, P12 defect, or real-fault outcome was read.
+Exit criterion: bridge, category accounting, behavior rows, exact adapter
+registry, all `E_COMMON` ordinals, static sites, and Profiling Workload selections
+regenerate byte-identically from shuffled inputs; all unsupported/invalid
+declarations and `E_COMMON` failures remain visible; no dynamic result, contract,
+mutant, MR, P12 defect, or real-fault outcome was read.
 
 ### Phase 2 — Preflight, non-P12 pilot, profiling, and frame close
 
@@ -1079,27 +1169,33 @@ selected success, failure, timeout, trace, command/input identity, environment,
 and raw-stream hash. No profiling result may add, remove, or replace a selected
 row.
 
-Using those frozen results, assign technique vectors/scores or
-`TECH_UNCERTAIN`, then deterministically build `C_CONSTRUCT` and the exhaustive
+Using those frozen results, compute the category-equal `L_t`/`U_t` intervals,
+assign a robust primary technique or `TECH_UNCERTAIN`, then deterministically
+build `C_CONSTRUCT` and the exhaustive
 unique-subject `C_CRITERION`. For every selected subject, freeze the canonical
-site enumeration and every slot's contract, domain, oracle, activation rule, and
-witness order. In an outcome-blind sibling process, freeze the independent
-Evaluation Inputs before any patch is proposed or evaluated-MR frame is built.
-Package A then freezes permitted fixed source/build/public material, behavior and
-profiling authorities, contracts, Evaluation Inputs, and process-specific
-allowlists.
+site enumeration. Each slot either closes immediately as
+`APPLICABILITY_CLOSED_NOT_APPLICABLE`, with no downstream contract/input/patch
+artifact, or freezes its contract, domain, oracle, activation rule, and witness
+order and then generates all five `E_CONTRACT` ordinals in an outcome-blind
+sibling process. Package A then freezes permitted fixed source/build/public
+material, behavior and profiling authorities, contracts, `E_COMMON`,
+`E_CONTRACT`, and process-specific allowlists.
 
 Exit criterion: the actual project CLI executes one synthetic end-to-end job and
 retains both success and failure records; profiling selection is unchanged by
-execution results; subject/site frames regenerate byte-identically;
-`CONTRACT_FROZEN` and `EVALUATION_INPUTS_FROZEN` exist for every declared slot;
-and no proposer or evaluated-MR builder has received forbidden sibling material.
+execution results; technique classification counts every selected row and
+applies the robust interval rule; subject/site frames regenerate
+byte-identically; every slot matches exactly one legal terminal path; every
+applicable slot has `SITE_FROZEN -> CONTRACT_FROZEN -> E_CONTRACT_FROZEN`, every
+inapplicable slot has none of those downstream artifacts; and no proposer or
+evaluated-MR builder has received forbidden sibling material.
 
 ### Phase 3 — Blind construction, certification, and syntactic baseline
 
-For each frozen slot, obtain one Grok 4.5 High candidate patch and freeze it.
+For each applicable frozen slot, obtain one Grok 4.5 High candidate patch and
+freeze it. A `NOT_APPLICABLE` slot receives no proposal.
 The proposer receives only the clean proposal-process materialization derived
-from Package A, which excludes profiling results and Evaluation Input identities.
+from Package A, which excludes profiling results and both input inventories.
 At this point no evaluated-MR inventory exists; the proposer cannot read buggy
 code, defect patches, reference MRs, or outcomes. Record the exact model/provider
 label, prompt and context hashes, raw response hash, timestamp, and available
@@ -1113,23 +1209,25 @@ states. Generate the frozen first-order syntactic baseline on the same fixed
 versions and apply the common equivalence policy. Freeze both denominators; do
 not replace failed, invalid, duplicate, or unresolved objects.
 
-Exit criterion: every slot has an immutable patch or explicit failure,
-`CONTRACT_FROZEN` precedes `EVALUATION_INPUTS_FROZEN`, which precedes
-`PATCH_FROZEN`, and both controlled populations are independent of every
-evaluated-MR definition and outcome. Certification witnesses selected after a
-patch cannot be promoted into Evaluation Inputs.
+Exit criterion: every slot has either its applicability-closed record or an
+immutable patch/explicit construction failure; every applicable slot follows
+`CONTRACT_FROZEN -> E_CONTRACT_FROZEN -> PATCH_FROZEN`, every
+`NOT_APPLICABLE` slot has no patch, and both controlled
+populations are independent of every evaluated-MR definition and outcome.
+Certification witnesses selected after a patch cannot be promoted into either
+input inventory.
 
 ### Phase 4 — Independently freeze evaluated MRs and portfolios
 
 In a sibling process that cannot access contracts, patches, certificates, or
-controlled denominators or Evaluation Inputs, the MR builder uses only permitted
+controlled denominators or either input inventory, the MR builder uses only permitted
 fixed source, build metadata, public specifications, and public documentation.
 It first freezes the complete candidate-MR frame and canonical signatures, then
 sends only those signatures to the P12 custodian. After the custodian returns
 the exclusion receipt, freeze the final non-reference inventory and portfolios.
 Only then may Package B combine the already frozen controlled populations,
-Evaluation Inputs, and frozen MR frame. The construction proposer never receives
-this frame.
+`E_COMMON`, separately labelled `E_CONTRACT` sensitivity inputs, and the frozen
+MR frame. The construction proposer never receives this frame.
 
 Exit criterion: candidate frame -> custodian receipt -> final inventory ->
 portfolio receipts form an immutable chain, and neither sibling process could
@@ -1137,8 +1235,11 @@ tailor its artifacts to the other's semantic material.
 
 ### Phase 5 — Controlled MR execution
 
-Freeze the atomic job list from the two denominators, independent Evaluation
-Inputs, and non-reference MR portfolios. Write each job intent before execution,
+Freeze the primary atomic job list from the two denominators, fixed-source-
+executable `E_COMMON` identities, and non-reference MR portfolios. Freeze any
+`E_CONTRACT` sensitivity jobs under a
+different input-class field and manifest; primary aggregators reject them. Write
+each job intent before execution,
 run jobs in parallel where the frozen resource policy permits, and reduce
 immutable rows. Close the phase with the job inventory, terminal-row count,
 ledger head, and ledger byte hash.
@@ -1160,14 +1261,19 @@ Exit criterion: no decision that can favor the semantic model remains mutable.
 Verify that every revealed fixed commit and nonce open its blinded bridge
 commitment and match the normalized controlled snapshot. Run the
 rule-based family mapper without MR data, then run the leakage comparison without
-kill outcomes. Freeze both outputs and the P12 job list before executing the same
-non-reference MR portfolios with the same frozen Evaluation Input identities on
-P12 buggy/fixed pairs. Inputs that cannot execute on a revealed buggy/fixed pair
-remain explicit failures; no P12-specific replacement input is added. Reference
-positive controls never enter P3 portfolios or primary models.
+kill outcomes. Freeze both outputs, `P12_PAIRED` membership, and the complete
+`E_COMMON` P12 job denominator before executing the same non-reference MR
+portfolios on P12 buggy/fixed pairs. Every planned row ends as `MR_VIOLATION`,
+`MR_SATISFIED`, `DECLARED_EXCEPTION_OR_TIMEOUT_VIOLATION`,
+`SCIENTIFIC_INCONCLUSIVE`, or `INFRASTRUCTURE_UNRESOLVED`; no outcome changes
+membership or weight. Inputs that cannot execute remain explicit under the
+frozen rules; no P12-specific replacement input is added. Reference positive
+controls never enter P3 portfolios or primary models.
 
 Exit criterion: every eligible P12 item appears as paired, unpaired, failed, or
-out of scope; no replacement is permitted.
+out of scope; every planned paired row has one terminal state; the primary
+lower-bound, upper-bound, and complete-case results regenerate from the same
+frozen denominator; no replacement is permitted.
 
 ### Phase 8 — Prespecified analysis and evidence gate
 
@@ -1183,18 +1289,22 @@ Exit criterion: manuscript writing receives an evidence package in which only
 
 1. Public Behavior Frame category accounting, Profiling Workload selection and
    result funnel, `UNPROFILED` counts, and adapter support by subject and scale;
-2. subject frame by cohort role, repository, exact fixed version, scale,
+2. `E_COMMON` generation/validity funnel and separately labelled `E_CONTRACT`
+   activation/certification funnel, with proof that only `E_COMMON` enters
+   primary RQ3/RQ4 jobs;
+3. subject frame by cohort role, repository, exact fixed version, scale,
    technique, and P12/supplemental role, plus P12 pairing coverage;
-3. semantic candidate and certification funnel by semantic-contract family,
+4. semantic candidate and certification funnel by semantic-contract family,
    construction mechanism, and stratum;
-4. semantic-versus-syntactic construct comparison;
-5. per-MR, per-Evaluation-Input, and per-portfolio semantic kill matrix;
-6. family-balanced, instance-weighted, and conservative SMS views;
-7. MR unique contribution, redundancy, residual, and cost table;
-8. P12 real-fault detection matrix and mapping states;
-9. controlled-to-real criterion-validity and incremental-value results;
-10. all failures, inconclusive cases, empty strata, and claim downgrades;
-11. a claim-to-artifact ledger for every abstract and contribution sentence.
+5. semantic-versus-syntactic construct comparison;
+6. per-MR, per-`E_COMMON`, and per-portfolio primary semantic kill matrix;
+7. family-balanced, instance-weighted, and conservative SMS views;
+8. MR unique contribution, redundancy, residual, and cost table;
+9. P12 lower-bound, upper-bound, and complete-case real-fault detection matrices,
+   mapping states, and unresolved counts;
+10. controlled-to-real criterion-validity and incremental-value results;
+11. all failures, inconclusive cases, empty strata, and claim downgrades;
+12. a claim-to-artifact ledger for every abstract and contribution sentence.
 
 ## 16. Reproducibility artifacts
 
@@ -1206,7 +1316,8 @@ research/p3_v3/p12-bridge.json
 research/p3_v3/public-behavior-frame.json
 research/p3_v3/profiling-workload.json
 research/p3_v3/profiling-results.json
-research/p3_v3/evaluation-inputs.json
+research/p3_v3/evaluation-inputs-common.json
+research/p3_v3/evaluation-inputs-contract.json
 research/p3_v3/subject-frames.json
 research/p3_v3/mr-inventory-and-portfolios.json
 research/p3_v3/attempt-ledger.jsonl
@@ -1252,9 +1363,10 @@ governance platform:
 
 1. **Minimum evidence channel:** fixed JSON schemas for the artifacts above,
    bridge verification, public-behavior discovery, outcome-blind profiling
-   selection/results, independent Evaluation Input construction, frame/package
-   verification, atomic job records, phase-close receipts, and repeatable
-   preflight.
+   selection/results, pre-contract `E_COMMON` construction, applicable-slot
+   `E_CONTRACT` construction, robust technique classification, frame/package
+   verification, atomic job records, P12 missingness estimand checks, phase-close
+   receipts, and repeatable preflight.
 2. **Controlled experiment:** contract freeze, proposal capture, certification,
    syntactic baseline, MR runner, reducer, and controlled analysis freeze.
 3. **P12 criterion experiment:** bridge reveal verification, mapping, leakage
