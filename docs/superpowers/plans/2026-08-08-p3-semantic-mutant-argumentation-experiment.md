@@ -11,11 +11,25 @@
 - Origin: P3 semantic-mutant construction principles
 - Origin date: 2026-08-08
 - Study type: empirical software engineering / mutation testing / metamorphic testing
-- Verification status: proposed design, pending user review
+- Verification status: revised after methodology review; re-review required
 - Execution environment: fresh Cursor VM, Grok 4.5 High
 - Scientific authority: frozen artifacts and executable checks, never model judgment
 - Governing design:
   `docs/superpowers/specs/2026-08-08-p3-semantic-mutant-construction-principles-design.md`
+
+## Review-remediation matrix
+
+| Review finding | Binding repair in this revision |
+|---|---|
+| Patch mechanism was misused as semantic family | Separate `construction_mechanism` from `semantic_contract_family`; primary macro SMS uses only the latter |
+| P12 admission/reference MR could leak into evaluated portfolios | Partition reference MRs as positive controls and mechanically exclude them and semantic duplicates from confirmatory portfolios |
+| Contract, patch, and witness could be co-designed | Freeze contract/domain/oracle first, propose patch second, select the first canonical witness third |
+| P12 population and paired cohort were ambiguous | Define `P12_FULL`, `P12_PAIRED`, and `P12_DIRECT` with distinct estimands |
+| Outcome blindness was logical rather than physical | Use three content-addressed packages with no `.git` history and mount them in chronological order |
+| MR subset lattice created pseudo-replication and infeasible enumeration | Keep the lattice descriptive; use fixed-budget combinadic sampling and project-budget aggregates for inference |
+| RQ4 model was too large for the proposed floor | Use a simulation-qualified project-level model and retain the existing 17-project/60-family confirmatory floor |
+| `DIRECT`-only and unequal equivalence denominators favored the semantic model | Use all paired defects for primary criterion validity and common strict/conservative equivalence policies for both baselines |
+| The new RQ4 estimand could override the frozen P12 v1.1.2 S1–S2 contract | Require an explicitly compatible successor P12 contract; otherwise retain v1.1.2 only under its own estimand and downgrade P3 RQ4 |
 
 ## 1. Goal and central argument
 
@@ -31,8 +45,8 @@ The central empirical chain is:
 P12 fixed program version
   -> independently constructed semantic mutants
   -> traditional syntactic mutants on the same version
-  -> the same frozen MR inventory executed on both mutant populations
-  -> family-aware MR-set adequacy profiles
+  -> the same frozen non-reference MR inventory executed on both mutant populations
+  -> semantic-contract-family-aware MR-set adequacy profiles
   -> comparison with the same MR sets on P12 buggy/fixed real-fault pairs
 ```
 
@@ -56,8 +70,12 @@ Three designs were considered:
    selected design because it supports construct validity, comparison, and
    criterion validity without using MR outcomes to admit experimental objects.
 
-P12 remains a benchmark of **MR-detectable real semantic defects**. Results may
-be generalized to that declared benchmark domain, not to all software defects.
+The intended successor P12 package is a benchmark of **MR-detectable real
+semantic defects**. Results may be generalized to that declared benchmark
+domain, not to all software defects. An MR used to establish that benchmark
+property is a positive control, not an independent P3 evaluation MR. The frozen
+P12 v1.1.2 package has a different admission rule and S1–S2/RFDS primary
+estimand; P3 does not retroactively redefine either one.
 
 ## 3. Research questions
 
@@ -71,7 +89,7 @@ Evidence:
 
 - the complete candidate-to-certified funnel;
 - pass, fail, and inconclusive states for every certification gate;
-- certification yield by semantic family, program-scale stratum, implementation
+- certification yield by semantic-contract family, program-scale stratum, implementation
   stratum, repository, and target program;
 - stable original/mutant semantic witnesses.
 
@@ -97,7 +115,7 @@ construct-distinctness result only.
 
 ### RQ3 — MR-set adequacy and explanation
 
-Which semantic mutants and semantic families are detected or missed by each MR
+Which semantic mutants and semantic-contract families are detected or missed by each MR
 set, and what do unique contribution, redundancy, residual risk, and execution
 cost reveal beyond a single aggregate mutation score?
 
@@ -112,10 +130,11 @@ On frozen P12 MR-detectable real defects, do semantic-mutant adequacy profiles
 explain or predict MR-set detection outcomes, and do they add information beyond
 traditional syntactic mutation score?
 
-Primary evidence uses only real defects with an outcome-blind `DIRECT` mapping
-to a frozen semantic family. `ADJACENT` mappings are sensitivity evidence;
-`OUT_OF_SCOPE` and `UNCERTAIN` cases remain visible but do not enter the primary
-mapping analysis.
+Primary criterion-validity evidence uses every eligible defect in the paired
+P12 cohort and family-agnostic semantic-adequacy features. Outcome-blind
+`DIRECT` mappings support a secondary mechanism-concordance analysis.
+`ADJACENT`, `OUT_OF_SCOPE`, and `UNCERTAIN` cases remain in the primary
+family-agnostic denominator and are reported separately for mapping analyses.
 
 ## 4. Claims and initial status
 
@@ -134,19 +153,45 @@ claims stay blocked and may themselves support a boundary or limitation result.
 
 ## 5. Experimental objects
 
-### 5.1 Primary P12 frame
+### 5.1 P12 populations and reference-MR isolation
 
-The real-fault frame contains every P12 item satisfying the P12 benchmark's
-already-frozen requirements:
+The plan maintains three immutable P12 populations:
+
+- `P12_FULL`: every accepted P12 real-fault item, used for benchmark-wide
+  descriptive reporting;
+- `P12_PAIRED`: every `P12_FULL` fault whose fixed project/version belongs to
+  the deterministically selected controlled-mutant cohort, used for primary
+  criterion-validity analysis;
+- `P12_DIRECT`: the outcome-blind `DIRECT` semantic-contract-family subset of
+  `P12_PAIRED`, used only for secondary mechanism-concordance analysis.
+
+No fault may move between these populations after MR outcomes are opened. The
+`P12_FULL` frame contains every item satisfying the P12 package's frozen
+requirements:
 
 - immutable buggy and fixed program identities;
 - a reproducible original/fixed execution path;
-- an executable reference MR demonstrating that the fault is MR-detectable;
+- when the P12 benchmark definition requires it, an executable reference MR
+  demonstrating that the fault is MR-detectable;
 - complete provenance and no unresolved licensing restriction.
 
-P3 applies no additional inclusion rule based on the candidate MR sets' kill
-outcomes. All eligible P12 items in selected project/version strata remain in
-the ledger, including items missed by every evaluated MR set.
+For P12 D2 packages governed by the existing v1.1.2 consumer contract, admission
+must remain independent of MR detectability. For a successor P12 benchmark that
+requires a reference MR, that reference MR, its implementation variants, and
+any MR with the same canonical semantic signature are tagged
+`ADMISSION_POSITIVE_CONTROL` and excluded from all confirmatory P3 portfolios.
+Uncertain signature equivalence is resolved conservatively by exclusion.
+
+Primary P3 RQ4 requires a successor P12 contract that prospectively authorizes
+the paired fixed-version/non-reference-MR estimand, exposes the required atomic
+ledger, and preserves at least the v1.1.2 scale and concentration floors. If
+only v1.1.2 is available, P3 consumes it solely under its frozen S1–S2/RFDS
+contract as external descriptive or sensitivity evidence. It cannot relabel
+that package as the new P3 primary criterion-validity experiment.
+
+P3 applies no inclusion rule based on confirmatory MR-set outcomes. All eligible
+items remain in `P12_FULL`; all eligible items in selected project/version strata
+remain in `P12_PAIRED`, including faults missed by every evaluated MR set.
 
 ### 5.2 Program-scale strata
 
@@ -163,8 +208,8 @@ large mutation site.
 
 ### 5.3 Implementation-technique strata
 
-Each subject receives exactly one primary technique label under the following
-precedence order:
+Each subject receives a multi-label technique vector and exactly one primary
+technique label under the following precedence order:
 
 1. `HYBRID_NATIVE`: the target execution crosses a project-owned
    language/process/native-kernel boundary;
@@ -178,8 +223,10 @@ precedence order:
    dominate the target;
 6. `SCALAR_CONTROL`: scalar computation and ordinary control flow dominate.
 
-The classifier is a frozen rule engine over dependency metadata, call traces,
-and declared target symbols. Ambiguous subjects receive `TECH_UNCERTAIN` and
+The classifier is a frozen rule engine over dependency metadata, a predeclared
+original-program smoke input, call traces, and declared target symbols. The
+primary label supports deterministic stratified sampling; the multi-label vector
+supports sensitivity analysis. Ambiguous subjects receive `TECH_UNCERTAIN` and
 remain visible; they do not enter technique-stratified confirmatory claims.
 
 ### 5.4 Deterministic subject selection
@@ -201,7 +248,8 @@ not authorize outcome-based replacement.
 
 ### 5.5 Controlled-only supplements
 
-If P12 does not cover a declared scale × technique cell or semantic family, a
+If P12 does not cover a declared scale × technique cell or semantic-contract
+family, a
 public program may be added through the same hash-ranked eligibility procedure.
 Supplemental programs contribute only to RQ1–RQ3 and are labelled:
 
@@ -214,31 +262,53 @@ They never enter RQ4 or statements about observed real-fault prevalence.
 
 ## 6. Semantic-mutant population
 
-### 6.1 Primary families
+### 6.1 Two orthogonal classification axes
 
-P3 uses five primary semantic mutation families, treated as semantic fault
-campaign families rather than MR meta-patterns:
+Every candidate records both axes below. They cannot be substituted for each
+other.
 
-- `CE`: conservation or quantitative-constraint erosion;
-- `OS`: semantically incompatible operator or API substitution;
-- `HP`: hyperparameter or tolerance semantics perturbation;
-- `TF`: trajectory, training-data, or state-evolution transformation;
-- `SI`: structural, indexing, aggregation, or algorithm-skeleton injection.
+**Construction-mechanism axis** records how code is changed:
 
-The final operator catalogue must state family definitions, applicability
-rules, forbidden overlaps, and the exact handling of legacy `CF` items before
-candidate construction. `CF` cannot silently become a sixth primary family.
+- `CE`, `OS`, `HP`, `TF`, and `SI` are historical internal patch-shape campaign
+  IDs retained for reproducibility;
+- this axis supports patch-overlap, feasibility, and implementation-heterogeneity
+  analysis only;
+- legacy `CF` must be mapped to a declared construction mechanism or retained as
+  `LEGACY_CF`; it cannot silently become a sixth semantic family.
+
+**Semantic-contract axis** records which externally stated property is changed:
+
+- `INV`: invariant or conservation property;
+- `MONO`: monotonicity or order property;
+- `CONV`: convergence or limiting-behaviour property;
+- `DYN`: state, trajectory, or dynamical-evolution property;
+- `CMP`: comparison, relative-relation, or representation-consistency property.
+
+Each candidate has exactly one pre-patch primary `semantic_contract_family`.
+Additional affected properties may be recorded as secondary tags and enter only
+sensitivity analyses. Primary family-balanced SMS and residual-risk claims use
+the semantic-contract axis. The construction-mechanism axis never receives the
+word “semantic family” in analysis or manuscript results.
+
+The operator catalogue must define both axes, applicability rules, examples,
+forbidden overlaps, and the exact mapping of historical IDs before construction.
 
 ### 6.2 Candidate budget and applicability
 
 For each confirmatory subject, the frozen applicability matrix allocates two
-candidate slots to each of the five families. An inapplicable slot is recorded
-as `NOT_APPLICABLE` and is not transferred to another family or subject.
+candidate slots to each of the five semantic-contract families. Each slot also
+declares its permitted construction mechanism before patch proposal. An
+inapplicable slot is recorded as `NOT_APPLICABLE` and is not transferred to
+another family or subject.
 
-Thus each subject has exactly ten declared slots before construction. Candidate
-patches may be proposed by a project-specific script, an author, or Grok 4.5
-High. Candidate proposal is not an evaluated contribution. The accepted patch,
-its manifest, and its independent certification are the scientific artifact.
+Thus each subject has exactly ten declared slots before construction. Every
+confirmatory slot uses the same frozen Grok 4.5 High proposal protocol: one
+prompt, one context package, one returned candidate patch, and no author repair.
+Author- or script-proposed patches are limited to `PILOT_ONLY`. RQ1 therefore
+describes the observed artifact yield of this disclosed proposal protocol and
+does not claim general LLM generation effectiveness. The frozen patch, manifest,
+and independent certification—not regeneration of the proposal—are the
+reproducible scientific artifacts.
 
 ### 6.3 Construction blindness
 
@@ -246,15 +316,35 @@ The construction package contains only:
 
 - the P12 fixed program version;
 - public documentation and build metadata;
-- the frozen operator-family catalogue;
-- the slot identifier and applicability record;
-- the semantic-contract and witness schema.
+- the frozen two-axis operator catalogue;
+- the slot identifier, applicability record, and permitted mechanism;
+- the already frozen semantic contract, input domain, executable oracle,
+  expected effect, and witness-selection policy.
 
-It excludes P12 buggy diffs, P12 MR source, candidate MR definitions, MR kill
-outcomes, syntactic-mutant outcomes, and manuscript hypotheses about which MR
-should succeed. The package hash and allowlisted file tree are recorded.
+It excludes `.git` history, P12 buggy diffs or revisions, P12 MR source,
+reference-MR signatures, candidate MR definitions, MR kill outcomes,
+syntactic-mutant outcomes, and manuscript hypotheses about which MR should
+succeed. The package hash and exact allowlisted file tree are recorded.
 
-### 6.4 Certification
+### 6.4 Contract–patch–witness chronology
+
+Each non-pilot slot follows a one-way three-stage state machine:
+
+1. `CONTRACT_FROZEN`: freeze the semantic-contract family, executable predicate,
+   committed input domain, canonical input ordering or seed stream, oracle,
+   tolerance, activation obligation, and expected direction of violation;
+2. `PATCH_FROZEN`: expose the contract package to the proposer and freeze the
+   returned exact patch without changing any Stage 1 field;
+3. `WITNESS_SELECTED`: an independent certifier searches the frozen domain and
+   selects the first qualifying witness in canonical order. If no witness exists,
+   the slot becomes `EQUIVALENCE_UNRESOLVED` or `TRIGGER_UNEXERCISED`; neither
+   the contract nor patch may be edited.
+
+The proposer cannot write certification artifacts. The certifier cannot edit
+the contract, expected effect, patch, or candidate source tree. State hashes and
+timestamps prove the order.
+
+### 6.5 Certification
 
 Every candidate is assigned exactly one terminal state:
 
@@ -282,7 +372,12 @@ operator configuration generates the baseline population.
   execution;
 - invalid, duplicate, unresolved, and build-failing candidates remain in the
   funnel and are not replaced;
-- the primary syntactic score uses the full frozen executable denominator;
+- the same MR-independent differential-witness and certificate rules classify
+  syntactic candidates as confirmed non-equivalent, certified equivalent, or
+  equivalence unresolved;
+- `MS_syntax_strict` uses only confirmed non-equivalent candidates;
+- `MS_syntax_conservative` reports lower and upper bounds with unresolved
+  candidates, matching the semantic-mutant equivalence policy;
 - a deterministic ten-candidate-per-subject sample provides a budget-matched
   sensitivity comparison with the semantic candidate slots;
 - lack of a semantic contract prevents a syntactic mutant from being relabelled
@@ -297,31 +392,51 @@ validity and is not claimed to represent every syntactic mutation system.
 
 For each subject, freeze every admissible P12 MR implementation, its source and
 follow-up input generator, oracle, tolerance, seed policy, timeout, environment,
-and cost measurement rule. Invalid or flaky MRs are classified before mutant
-outcomes and remain in the execution funnel.
+and cost measurement rule. Before portfolio construction, remove every
+`ADMISSION_POSITIVE_CONTROL` reference MR, exact implementation variant, and
+canonical-semantic-signature duplicate. The exclusion manifest is frozen and
+auditable. Invalid or flaky remaining MRs are classified before mutant outcomes
+and remain in the execution funnel.
+
+The canonical semantic signature is computed without executions or outcomes as
+the SHA-256 of a schema-versioned canonical representation of the source-input
+transformation, follow-up-input transformation, metamorphic relation predicate,
+tolerance class, and oracle direction. Signature construction normalizes names
+but not executable semantics. A pair that cannot be classified mechanically is
+`SIGNATURE_UNCERTAIN` and is conservatively excluded from confirmatory
+portfolios rather than adjudicated after outcomes.
 
 P3 does not compare MR-generation prompts or claim that one recognition method
 is generally superior. Provenance labels may be reported descriptively but are
 not the paper's central treatment.
 
-### 8.2 Objective MR-set portfolio lattice
+### 8.2 Descriptive lattice and confirmatory portfolio sample
 
-Let a subject have `q` frozen valid MRs.
+Let a subject have `q` frozen, non-reference valid MRs.
 
-- if `q <= 12`, evaluate every nonempty MR subset;
-- if `q > 12`, evaluate all singleton sets, the full set, every leave-one-out
-  set, and 100 deterministic subsets at each size
-  `b = 2, ..., min(12, q - 1)`;
-- deterministic subsets are the first 100 unique subsets after sorting by
-  `SHA256(subject_id || b || sorted_mr_ids || "P3-MRSET")`;
-- no portfolio is added, removed, or resized after seeing mutant or P12 results.
+- the descriptive lattice contains all singleton sets, the full set, and every
+  leave-one-out set;
+- if `q <= 12`, all remaining nonempty subsets may be executed for descriptive
+  visualisation only;
+- confirmatory fixed budgets are `b = 1`, `b = 2`, `b = 4`, and `b = q`; a
+  subject contributes only budgets not exceeding `q`;
+- at each nontrivial budget below `q`, select at most 20 subsets by SHA-256-seeded
+  combinadic unranking without enumerating all combinations;
+- the exact generator, seed, sampled combination ranks, and portfolio hashes are
+  frozen before outcomes;
+- no portfolio is added, removed, resized, or promoted from descriptive to
+  confirmatory after seeing mutant or P12 results.
 
-This lattice lets P3 compare and explain MR sets without introducing a separate
-MR-selection method as an undeclared contribution.
+Every subject × budget cell receives total analysis weight one, divided equally
+over its sampled portfolios. Consequently, a subject with many available MRs or
+combinations cannot create a larger effective sample. The full lattice explains
+set behaviour but supplies no independent degrees of freedom and is not used to
+inflate inferential sample size.
 
 ## 9. Execution matrices
 
-For every subject and every valid MR, record three aligned outcomes:
+For every subject and every frozen non-reference valid MR, record three aligned
+outcomes:
 
 1. semantic-mutant kill vector;
 2. syntactic-mutant kill vector;
@@ -340,22 +455,28 @@ uniqueness, and hash validation.
 
 ## 10. Metrics
 
-For MR set `R`, confirmed semantic-mutant set `M`, semantic family set `F`, and
-kill indicator `K_R(m)`:
+For MR set `R`, confirmed semantic-mutant set `M`, frozen semantic-contract
+family set `F_target = {INV, MONO, CONV, DYN, CMP}`, represented family set
+`F_cert`, and kill indicator `K_R(m)`:
 
 ```text
 SMS_instance(R) = sum_m K_R(m) / |M|
 
-SMS_family(R) = (1 / |F*|) * sum_f [sum_{m in M_f} K_R(m) / |M_f|]
+SMS_family(R) = (1 / |F_cert|) * sum_f [sum_{m in M_f} K_R(m) / |M_f|]
+
+CDC = |F_cert| / |F_target|
 ```
 
-`F*` contains only prospectively applicable families with at least one
-confirmed denominator item. Missing families are reported rather than silently
-removed from the applicability funnel.
+`SMS_family` is never interpreted without construct-domain coverage `CDC` and
+the exact `F_cert` set. A target family with no confirmed item is
+`UNMEASURED`, not covered and not missed. Cross-cohort score comparisons use the
+intersection of represented frozen families and report the excluded family set.
+The patch-mechanism IDs `CE/OS/HP/TF/SI` never appear in this formula.
 
 Required controlled-mutant outputs:
 
 - family-balanced `SMS_family` as the primary score;
+- construct-domain coverage `CDC` and every `UNMEASURED` target family;
 - instance-weighted `SMS_instance`;
 - conservative lower and upper bounds including equivalence-unresolved items;
 - family residual `1 - SMS_f(R)`;
@@ -367,8 +488,8 @@ Required controlled-mutant outputs:
 Required real-fault outputs:
 
 - P12 real-fault detection rate within the declared MR-detectable benchmark;
-- detection by `DIRECT` semantic family, size, technique, and repository;
-- missed real faults associated with semantic-family residuals;
+- detection by `DIRECT` semantic-contract family, size, technique, and repository;
+- missed real faults associated with semantic-contract-family residuals;
 - all P12 exclusions, mapping uncertainties, and failed executions.
 
 ## 11. Prespecified analysis
@@ -376,20 +497,24 @@ Required real-fault outputs:
 ### 11.1 RQ1
 
 Report counts and project-clustered bootstrap 95% confidence intervals for
-certification yield. Report all seven terminal states by family, scale, and
-technique. Do not test a post hoc universal success threshold.
+certification yield. Report all seven terminal states by semantic-contract
+family, construction mechanism, scale, and technique. Do not test a post hoc
+universal success threshold.
 
 Broad cross-stratum constructibility wording requires:
 
 - at least 75 confirmed non-equivalent semantic mutants;
-- at least eight confirmed mutants in each primary family;
+- at least eight confirmed mutants in each primary semantic-contract family;
 - at least 15 confirmed mutants in each represented size stratum;
 - at least eight confirmed mutants in each claimed technique stratum;
 - no subject contributing more than 12.5% of the semantic denominator;
-- at least 15 subjects from at least eight repositories.
+- at least 15 subjects from at least eight repositories;
+- each claimed semantic-contract family, size stratum, or technique stratum to
+  contain at least three subjects from at least two repositories.
 
 If a condition fails, retain the results and restrict the claim to represented
-subjects and families.
+subjects and families. These are minimum diversity gates, not power-derived
+proof of population-wide constructibility or prevalence.
 
 ### 11.2 RQ2
 
@@ -400,27 +525,41 @@ bootstrap intervals. Do not infer testing value from AST or patch distance.
 
 ### 11.3 RQ3
 
-For every MR-set portfolio, report all metrics in Section 10. Compare portfolios
-at the same MR count and measured execution budget. Use subject-blocked
-permutation tests for family-balanced score contrasts and control family-level
-secondary comparisons using Benjamini–Hochberg at `q = 0.05`.
+For every MR-set portfolio, report all metrics in Section 10. The exhaustive or
+descriptive lattice receives descriptive summaries only. Confirmatory contrasts
+use the frozen fixed-budget sample, normalize weights to one per subject ×
+budget cell, and resample or permute entire projects. Compare portfolios at the
+same MR count and measured execution budget. Control family-level secondary
+comparisons using Benjamini–Hochberg at `q = 0.05`.
 
-The paper must report surviving semantic families and concrete residuals even
-when aggregate scores are high.
+The paper must report surviving semantic-contract families and concrete
+residuals even when aggregate scores are high.
 
 ### 11.4 RQ4
 
-Primary RQ4 analysis is project-held-out and uses only `DIRECT` P12 mappings.
+Primary RQ4 analysis uses `P12_PAIRED`, including every mapping state, and is
+performed on project × fixed-budget aggregates. Within a project × budget cell,
+portfolio-level semantic score, syntactic score, and real-fault detection are
+averaged using the frozen equal cell weights. Overlapping portfolios do not
+become independent observations.
 
-For each real defect `d` and MR set `R`, fit and compare:
+Before outcome opening, use P12 project and fault counts plus a grid of plausible
+intraclass correlations and detection rates to simulate the minimum detectable
+change in leave-one-project-out log loss. Predictive modelling is eligible only
+under a prospectively compatible successor P12 contract and when all existing
+P12 v1.1.2 confirmatory floors are met: at least 17 analyzable projects, at least
+60 real-fault families, at least two families per project, and no project
+contributing more than 20% of the faults. A successor P12 contract may raise but
+not lower these floors without a separately reviewed amendment.
 
-- `M0`: MR count, execution cost, scale, and technique controls;
-- `MSYN`: `M0` plus traditional syntactic mutation score;
-- `MSEM`: `M0` plus family-balanced and mapped-family semantic coverage;
-- `MBOTH`: `M0` plus both syntactic and semantic predictors.
+If eligible, compare two deliberately small regularized models:
 
-Evaluate with leave-one-project-out log loss. The primary incremental statistic
-is:
+- `MSYN`: budget, execution cost, and `MS_syntax_strict`;
+- `MBOTH`: the same predictors plus `SMS_family` and `CDC`.
+
+Hyperparameters are fixed by an inner leave-one-project-out loop. The outer
+leave-one-project-out predictions are the only inputs to the primary log-loss
+comparison. The primary incremental statistic is:
 
 ```text
 Delta_sem = logloss(MSYN) - logloss(MBOTH)
@@ -428,29 +567,37 @@ Delta_sem = logloss(MSYN) - logloss(MBOTH)
 
 A positive value favors incremental semantic information. A central claim of
 incremental value requires the project-clustered bootstrap 95% interval for
-`Delta_sem` to lie entirely above zero. Otherwise the result is reported as
-observed, qualified, insufficient, or blocked according to the claim ledger.
+`Delta_sem` to lie entirely above zero, no complete or quasi-complete separation,
+and the simulation-based sensitivity report to show that effects of the
+observed magnitude were identifiable under the achieved cluster structure.
+Otherwise the result is reported as observed, qualified, insufficient, or
+blocked according to the claim ledger.
 
 Secondary analyses are:
 
-- Kendall association between semantic adequacy and real-fault detection,
-  clustered by project and matched by MR-set size;
-- odds ratio for a real fault remaining undetected when its `DIRECT` semantic
-  family is a residual family of `R`;
+- Kendall association between project-budget semantic adequacy and real-fault
+  detection, using project-clustered intervals;
+- odds ratio for a real fault remaining undetected when its `DIRECT`
+  semantic-contract family is a residual family of `R`, restricted to
+  `P12_DIRECT` and explicitly
+  labelled mechanism-concordance evidence;
 - `ADJACENT` mapping sensitivity;
 - budget-matched syntactic sampling sensitivity;
 - leave-one-technique and leave-one-size-stratum sensitivity;
-- full P12 case-series results without mapping-based inference.
+- `P12_FULL` case-series results without paired or mapping-based inference;
+- lower/upper model sensitivity using syntactic and semantic equivalence bounds.
 
-If fewer than 30 eligible P12 faults or fewer than six P12 repositories enter
-the primary paired analysis, RQ4 is reported as a bounded case series and no
-broad predictive-validity claim is allowed.
+Without the compatible successor contract, below the 17-project/60-family floor,
+or when event distribution makes the regularized model unidentified, RQ4 is a
+bounded project-level case series. No predictive-validity or incremental-value
+claim is allowed.
 
 ## 12. Non-circular mapping of P12 faults
 
-The P12-to-semantic-family mapper consumes only frozen buggy/fixed identities,
-the defect patch, independently recorded behavioral contract metadata, and the
-operator catalogue. It cannot read MR source, MR identities, or kill outcomes.
+The P12-to-semantic-contract-family mapper consumes only frozen buggy/fixed
+identities, the defect patch, independently recorded behavioral contract
+metadata, and the operator catalogue. It cannot read MR source, MR identities,
+or kill outcomes.
 
 The mapper emits one of:
 
@@ -461,8 +608,36 @@ The mapper emits one of:
 
 Classification is rule-based and schema validated. Ambiguous multi-family cases
 become `UNCERTAIN`; Grok or an author may explain an uncertainty but cannot
-promote it into the primary analysis. The mapping registry and its hash are
+promote it into `P12_DIRECT`. All mapping states remain in the primary
+family-agnostic `P12_PAIRED` analysis. The mapping registry and its hash are
 frozen before any P12 MR outcome is opened to the analysis process.
+
+After the P12 buggy layer is opened, a mechanical leakage audit compares every
+controlled mutant with every paired real fault by exact patch hash, mutant tree,
+changed-symbol set, and canonical semantic signature. Exact patch/tree matches
+are tagged `REAL_FAULT_DUPLICATE_POSITIVE_CONTROL` and excluded from primary
+incremental-value modelling; canonical-signature matches without exact identity
+remain in a prespecified sensitivity analysis. Counts and exclusions are
+reported, never replaced.
+
+### 12.1 Physical evidence partitions
+
+Logical allowlists are supplemented by three physical packages:
+
+1. `PACKAGE_A_CONSTRUCTION`: fixed source snapshots, documentation, frozen
+   contracts, and proposal inputs; no `.git`, buggy revisions, MR files,
+   reference-MR signatures, or outcomes;
+2. `PACKAGE_B_CONTROLLED_EXECUTION`: certified original/mutant trees and the
+   non-reference MR inventory; no P12 buggy tree or real-fault result;
+3. `PACKAGE_C_REAL_HOLDOUT`: P12 buggy/fixed identities and execution material,
+   mounted only after Packages A and B, controlled denominators, non-reference
+   portfolios, and analysis code are sealed. Immediately after mounting, an
+   isolated mapper and leakage-audit processes may read Package C, but no
+   evaluated MR may execute on a P12 bug until their outputs are frozen.
+
+Each package has an independent manifest and tree hash. The Cursor controller
+receives only the package required by the current phase. A clean verifier checks
+absence, not merely non-use, of forbidden paths and identities.
 
 ## 13. Cursor VM execution design
 
@@ -479,7 +654,7 @@ Cursor VM commands invoke the frozen project CLIs directly and do not use the
 local GPT Desktop `rtk` wrapper. The `rtk` requirement remains limited to local
 Desktop shell work.
 
-Grok may not decide admission, semantic-family mapping, equivalence, MR kills,
+Grok may not decide admission, semantic-contract-family mapping, equivalence, MR kills,
 claim status, or whether an inconvenient run should be excluded. Those decisions
 are produced by frozen code, schemas, and prespecified rules.
 
@@ -542,10 +717,14 @@ Create and hash:
 - `research/p3_v3/claim-ledger.yml`;
 - `research/p3_v3/operator-catalog.yml`;
 - `research/p3_v3/analysis-plan.md`;
+- `research/p3_v3/rq4-sensitivity-plan.yml`;
+- `research/p3_v3/p12-contract-compatibility.json`;
 - `research/p3_v3/environment-lock.json`.
 
 Exit criterion: exact RQs, claim ceiling, metrics, retry policy, and prohibited
-claims are machine-readable and internally consistent.
+claims are machine-readable and internally consistent; the RQ4 simulation grid,
+cluster assumptions, model-eligibility floor, P12 contract-compatibility gate,
+and downgrade rules are frozen.
 
 ### Phase 1 — Build the blinded subject and MR frames
 
@@ -556,10 +735,17 @@ Produce:
 - `research/p3_v3/subject-strata.json`;
 - `research/p3_v3/mr-inventory.json`;
 - `research/p3_v3/mr-set-lattice.json`;
-- `research/p3_v3/construction-allowlist.json`.
+- `research/p3_v3/reference-mr-exclusions.json`;
+- `research/p3_v3/construction-allowlist.json`;
+- package schemas and allow/deny rules, the final Package A manifest, and an
+  independently assembled sealed Package C root hash. Until Phase 7, the
+  construction and controlled-execution processes can read only that opaque root
+  hash, not Package C paths, identities, or contents.
 
 Exit criterion: deterministic selection can be recomputed from frozen inputs;
-the construction allowlist excludes buggy diffs, MRs, and outcomes.
+the reference-MR exclusion set is reproducible; Package A physically excludes
+`.git`, buggy diffs, MRs, and outcomes; Package C is sealed but not mounted in
+the construction or controlled-execution environment.
 
 ### Phase 2 — Instrument pilot
 
@@ -573,26 +759,32 @@ enter any confirmatory denominator or result table.
 Exit criterion: every pipeline state has a deliberate positive and negative
 test; pilot failures are resolved before the confirmatory freeze.
 
-### Phase 3 — Confirmatory freeze
+### Phase 3 — Contract freeze and patch proposal
 
-Freeze and hash:
+Process each candidate slot in the following order and freeze every transition:
 
 - subject commits and strata;
-- ten semantic candidate slots per subject;
-- construction packages and frozen candidate exact patches;
-- independent contracts and witnesses;
+- ten semantic-contract candidate slots per subject;
+- each slot's semantic-contract family, executable predicate, domain, canonical
+  witness search, oracle, tolerance, activation obligation, and expected effect;
+- Package A construction input;
+- the single Grok 4.5 High proposal response and frozen candidate exact patch;
 - syntactic mutation configuration;
-- MR inventory and portfolio lattice;
-- job list, seeds, tolerances, timeouts, and analysis code.
+- hash bindings to the already frozen non-reference MR inventory, confirmatory
+  portfolio sample, seeds, tolerances, timeouts, and analysis code; none of those
+  MR contents is mounted in Package A.
 
-Exit criterion: a clean verifier proves that no evaluated MR or P12 outcome was
-available to construction and certification inputs.
+Exit criterion: state hashes prove `CONTRACT_FROZEN` precedes `PATCH_FROZEN`; a
+clean verifier proves that no evaluated MR, P12 buggy revision, reference-MR
+signature, or P12 outcome was present in Package A.
 
 ### Phase 4 — Semantic certification
 
-Run the complete certification pipeline in Cursor VM. Preserve every terminal
-state and raw artifact. Freeze the primary semantic denominator before any MR
-execution.
+Run the canonical witness search and complete certification pipeline in Cursor
+VM. Preserve every terminal state and raw artifact. The first qualifying witness
+in canonical order is frozen without modifying the contract or patch. Freeze the
+primary semantic denominator, then assemble and hash the final Package B content
+manifest. No MR execution is available before that denominator is frozen.
 
 Exit criterion: denominator membership is reproducible from exact patches,
 contracts, witnesses, logs, and environment identity.
@@ -607,18 +799,27 @@ outcomes.
 
 ### Phase 6 — Controlled MR execution
 
-Execute the frozen MR inventory against original versions, certified semantic
-mutants, and syntactic mutants. Run the canonical job list in parallel where
-allowed and reduce it into immutable atomic matrices.
+Derive and freeze the canonical controlled job list from the already frozen
+non-reference MR inventory and the two frozen mutant denominators. Execute it
+against original versions, certified semantic mutants, and syntactic mutants.
+Run jobs in parallel where allowed and reduce them into immutable atomic
+matrices.
 
 Exit criterion: every planned row has exactly one terminal outcome, and missing
 or failed rows are explicit rather than imputed.
 
 ### Phase 7 — P12 real-fault execution
 
-Open the frozen P12 buggy/fixed layer only after Phases 4–6 are sealed. Run the
-same MR inventories and freeze the rule-based family mapping before the
-real-fault outcome matrix is provided to analysis.
+Mount Package C only after Phases 4–6 are sealed. First, an isolated mapper that
+cannot read Package B freezes the rule-based semantic-contract-family mapping
+from buggy/fixed artifacts. Second, a separate leakage auditor reads only
+Package C and a projection of controlled-mutant patch, tree, changed-symbol, and
+semantic-signature identities; it cannot read MR definitions or any kill
+outcome. Freeze both outputs and the real-fault job list before the first
+evaluated non-reference MR runs on any P12 buggy version. Then execute the same
+non-reference MR inventories. Reference positive controls, if required for P12
+benchmark admission, are not executed by P3 until the confirmatory P3 analysis
+is sealed and never enter P3 models or portfolio scores.
 
 Exit criterion: all eligible faults, including misses and execution failures,
 are represented.
@@ -645,7 +846,8 @@ may use only the first three statuses with matching wording strength.
 ## 15. Required result tables and figures
 
 1. subject frame by repository, scale, technique, and P12/supplemental role;
-2. semantic candidate and certification funnel by family and stratum;
+2. semantic candidate and certification funnel by semantic-contract family,
+   construction mechanism, and stratum;
 3. semantic-versus-syntactic construct comparison;
 4. per-MR and per-portfolio semantic kill matrix;
 5. family-balanced, instance-weighted, and conservative SMS views;
@@ -667,9 +869,16 @@ research/p3_v3/operator-catalog.yml
 research/p3_v3/subject-frame.json
 research/p3_v3/mr-inventory.json
 research/p3_v3/mr-set-lattice.json
+research/p3_v3/reference-mr-exclusions.json
+research/p3_v3/rq4-sensitivity-plan.yml
+research/p3_v3/p12-contract-compatibility.json
 research/p3_v3/analysis-plan.md
 research/p3_v3/environment-lock.json
-data/p3_v3/manifests/
+data/p3_v3/manifests/package-a-construction.json
+data/p3_v3/manifests/package-b-controlled-execution.json
+data/p3_v3/manifests/package-c-real-holdout.json
+data/p3_v3/manifests/p12-semantic-contract-family-mapping.json
+data/p3_v3/manifests/controlled-real-leakage-audit.json
 data/p3_v3/raw/
 data/p3_v3/matrices/
 data/p3_v3/results/
