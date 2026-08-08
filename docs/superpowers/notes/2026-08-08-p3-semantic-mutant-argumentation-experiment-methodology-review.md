@@ -3,7 +3,7 @@
 > Date: 2026-08-08  
 > Review type: internal methodology self-review, not an independent external audit  
 > Reviewed plan: `docs/superpowers/plans/2026-08-08-p3-semantic-mutant-argumentation-experiment.md`  
-> Reviewed plan SHA-256: `a299d092b574565a14595456762f1a156484cb6de8206addb3f3e325df56f262`
+> Reviewed plan SHA-256: `c433ea69f51049f50da9b14d53eb7654c9bf2c7843485ebf4dbc7080887c6ab5`
 
 ## Verdict
 
@@ -29,6 +29,7 @@ repeatable preflight, and an independent evidence audit remain mandatory.
 | P12 v1.1.2 contract override | Closed: the new RQ4 requires a prospectively compatible successor contract; v1.1.2 retains its S1–S2/RFDS estimand |
 | Eighteen selected versions could not support the RQ4 floor | Closed: the diversity cohort remains sampled, while the criterion cohort enumerates every unique eligible P12 fixed version without outcome-based sampling |
 | Independent evaluation-MR inventory could be empty after reference exclusion | Closed: evaluation MRs come from a predeclared P3 source frame; an empty independent inventory is an explicit terminal scope limitation |
+| Package B was called final before the syntactic denominator existed | Closed: Phase 4 freezes an immutable semantic segment; Phase 5 binds it with the syntactic segment and MR/job inputs into the final Package B manifest |
 
 ## Residual conditions and consequences
 

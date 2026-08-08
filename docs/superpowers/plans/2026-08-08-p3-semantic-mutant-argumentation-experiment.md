@@ -819,8 +819,9 @@ signature, or P12 outcome was present in Package A.
 Run the canonical witness search and complete certification pipeline in Cursor
 VM. Preserve every terminal state and raw artifact. The first qualifying witness
 in canonical order is frozen without modifying the contract or patch. Freeze the
-primary semantic denominator, then assemble and hash the final Package B content
-manifest. No MR execution is available before that denominator is frozen.
+primary semantic denominator, then assemble and hash the immutable Package B
+semantic segment. No MR execution is available before that denominator is
+frozen.
 
 Exit criterion: denominator membership is reproducible from exact patches,
 contracts, witnesses, logs, and environment identity.
@@ -828,10 +829,14 @@ contracts, witnesses, logs, and environment identity.
 ### Phase 5 — Syntactic baseline
 
 Generate and execute the frozen syntactic candidate population on the same
-fixed versions. Preserve the full and budget-matched denominator manifests.
+fixed versions. Preserve the full and budget-matched denominator manifests,
+then assemble the final Package B manifest from the already frozen semantic
+segment, the frozen syntactic segment, the non-reference MR inventory, and the
+controlled job-list inputs. Final assembly cannot rewrite either segment.
 
 Exit criterion: generation and funnel results are independent of all MR and P12
-outcomes.
+outcomes; the final Package B manifest binds both controlled denominators and is
+immutable before Phase 6 execution.
 
 ### Phase 6 — Controlled MR execution
 
