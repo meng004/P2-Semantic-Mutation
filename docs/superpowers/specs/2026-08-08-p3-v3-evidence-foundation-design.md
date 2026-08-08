@@ -75,6 +75,7 @@ research/p3_v3/p12-bridge.json
 research/p3_v3/public-behavior-frame.json
 research/p3_v3/profiling-workload.json
 research/p3_v3/profiling-results.json
+research/p3_v3/input-generator-registry.json
 research/p3_v3/evaluation-inputs-common.json
 research/p3_v3/evaluation-inputs-contract.json
 research/p3_v3/subject-frames.json
@@ -186,7 +187,8 @@ same project CLI without `rtk`.
 - semantic-contract and construction-mechanism catalogues;
 - subject eligibility and feature derivation;
 - public-behavior discovery, profiling-workload budgets and selection, and the
-  independent `E_COMMON`/`E_CONTRACT` construction rules;
+  independent `E_COMMON`/`E_CONTRACT` construction rules and frozen input-
+  generator registry/source hashes;
 - candidate slots, stopping rules, seeds, timeouts, and retry policy;
 - canonical site enumeration, first-applicable-site selection, and
   subject/site/real-fault unit definitions;
@@ -437,6 +439,17 @@ separately and cannot define strata. `C_CONSTRUCT` uses only this primary label.
 `E_COMMON` and `E_CONTRACT` are separate authorities with disjoint primary
 consumers.
 
+Before bridge intake, `input-generator-registry.json` freezes each generator ID,
+accepted schema/domain kind, exact implementation path and source SHA-256,
+canonical output schema, and failure code. The `E_COMMON` allowlist is
+`JSON_SCHEMA_DRAFT2020_12_V1`, `CLI_TOKEN_GRAMMAR_V1`,
+`NUMERIC_ARRAY_DOMAIN_V1`, `TEXT_IO_SCHEMA_V1`, and
+`BINARY_RECORD_SCHEMA_V1`. The `E_CONTRACT` allowlist is
+`CONTRACT_ENUM_DOMAIN_V1`, `CONTRACT_NUMERIC_DOMAIN_V1`,
+`CONTRACT_ARRAY_DOMAIN_V1`, `CONTRACT_SEQUENCE_DOMAIN_V1`, and
+`CONTRACT_RELATION_PAIR_DOMAIN_V1`. Unregistered kinds are unavailable; there is
+no model- or author-generated fallback.
+
 `evaluation-inputs-common.json` contains exactly 30 subject-level input
 candidates. It is constructed immediately after the Public Behavior Frame and
 before semantic-contract families, sites, patches, evaluated MRs, P12 identities,
@@ -453,6 +466,16 @@ creation is forbidden. Thirty is a fixed exposure budget, not a statistical
 power guarantee; achieved valid counts and invalid/unavailable counts are always
 reported.
 
+Eligible public schema records are canonicalized, deduplicated by raw schema
+SHA-256, and ordered by `(schema_selection_key, raw_schema_sha256)`, where
+`schema_selection_key` is the SHA-256 of the canonical schema record excluding
+subject/project aliases. Ordinal `i` uses schema index `i mod k`, where `k` is
+the number of eligible schemas, and invokes only the registry implementation for
+that schema kind with its frozen canonical schema bytes and seed. The generator
+must return one canonical input envelope and raw payload hash or a stable
+invalid/unavailable code. This rule plus the registry source hash determines the
+candidate bytes; observed execution never chooses a schema or replacement.
+
 `evaluation-inputs-contract.json` contains exactly five candidates for each
 statically applicable slot. It is constructed after site and contract freeze but
 before patch proposal. Candidate ordinal `j` is `0..4`; its seed is the first
@@ -463,6 +486,12 @@ patch, evaluated MR, P12 defect/reference MR, profiling outcome, or any kill or
 real-fault outcome. Invalid/non-activating candidates remain in the slot funnel
 and are never replaced. Five is a fixed certification-support budget and cannot
 be used to claim exhaustive activation coverage.
+
+Each contract names exactly one registered contract-domain generator before
+patch proposal. All five ordinals invoke that generator with the frozen
+canonical contract/domain bytes and their seeds. An unsupported domain produces
+five explicit `CONTRACT_INPUT_UNAVAILABLE` records; it cannot trigger a new
+generator, contract edit, site substitution, or manual witness input.
 
 Primary RQ3 and RQ4 comparisons of semantic mutants, syntactic mutants, and P12
 buggy/fixed pairs use only `E_COMMON`. `E_CONTRACT` may be used for prepatch
@@ -747,10 +776,12 @@ All foundation tests use synthetic fixtures. The minimum matrix proves:
    frozen lower-versus-upper rule, otherwise the result is `TECH_UNCERTAIN`;
 8. `E_COMMON` always materializes 30 predetermined ordinals before contracts or
    sites, is invariant to injected contract, patch, MR, P12, and execution
-   outcomes, cannot read project-test bodies or fixtures, and never replaces an
-   invalid or unavailable ordinal;
+   outcomes, cannot read project-test bodies or fixtures, uses the exact frozen
+   generator registry/schema round-robin to reproduce payload bytes, and never
+   replaces an invalid or unavailable ordinal;
 9. only a statically applicable slot materializes its five predetermined
-   `E_CONTRACT` ordinals; an inapplicable slot closes on the
+   `E_CONTRACT` ordinals through its predeclared registry generator; an
+   unsupported domain yields five unavailable rows, while an inapplicable slot closes on the
    `APPLICABILITY_CLOSED_NOT_APPLICABLE` path with no contract, patch, input, or
    witness artifact;
 10. primary job construction rejects every `E_CONTRACT` or post-patch
@@ -807,9 +838,10 @@ implementation plan only when:
 5. technique classification uses category-equal lower/upper scores, never drops
    failed profiling rows, and yields `TECH_UNCERTAIN` when no robust winner exists;
 6. all 30 `E_COMMON` ordinals close before sites/contracts and are the only
-   primary RQ3/RQ4 inputs; each applicable slot's five `E_CONTRACT` ordinals
-   close before its patch and enter only activation, certification, or labelled
-   sensitivity analyses;
+   primary RQ3/RQ4 inputs; their schema selection and bytes regenerate from the
+   frozen input-generator registry; each applicable slot's five `E_CONTRACT`
+   ordinals close before its patch through its predeclared generator and enter
+   only activation, certification, or labelled sensitivity analyses;
 7. the two terminal slot paths reject contract/input/patch artifacts for
    `NOT_APPLICABLE` slots and reject missing `E_CONTRACT` for applicable slots;
 8. neither input inventory can alter profiles, strata, subject ranks, or site

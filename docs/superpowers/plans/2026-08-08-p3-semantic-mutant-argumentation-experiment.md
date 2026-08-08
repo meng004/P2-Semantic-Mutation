@@ -21,7 +21,7 @@
 - Minimum evidence design:
   `docs/superpowers/specs/2026-08-08-p3-v3-evidence-foundation-design.md`
   at SHA-256
-  `af3f265437ad020487abf726d9008bfd4ea486ce6f2f2e5b8ca482849c4c5c12`
+  `7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9`
 
 ## Review-remediation matrix
 
@@ -390,6 +390,26 @@ The plan freezes three distinct authorities; none may substitute for another.
    replacement. `E_CONTRACT` is limited to prepatch activation,
    certification support, and a separately labelled contract-conditioned
    sensitivity; it cannot enter primary SMS, P12 detection, or `Delta_sem`.
+
+Before bridge intake, freeze `input-generator-registry.json`: each generator ID,
+accepted schema/domain kind, implementation path and source SHA-256, canonical
+output schema, and failure code. `E_COMMON` permits only
+`JSON_SCHEMA_DRAFT2020_12_V1`, `CLI_TOKEN_GRAMMAR_V1`,
+`NUMERIC_ARRAY_DOMAIN_V1`, `TEXT_IO_SCHEMA_V1`, and
+`BINARY_RECORD_SCHEMA_V1`; `E_CONTRACT` permits only
+`CONTRACT_ENUM_DOMAIN_V1`, `CONTRACT_NUMERIC_DOMAIN_V1`,
+`CONTRACT_ARRAY_DOMAIN_V1`, `CONTRACT_SEQUENCE_DOMAIN_V1`, and
+`CONTRACT_RELATION_PAIR_DOMAIN_V1`. No model/author fallback is permitted.
+
+For `E_COMMON`, canonicalize eligible public schema records, deduplicate by raw
+schema SHA-256, order by `(schema_selection_key, raw_schema_sha256)` using a selection
+key that excludes subject/project aliases, and assign ordinal `i` to schema
+index `i mod k`. The registered implementation receives only frozen schema bytes
+and seed and returns one canonical input envelope/payload hash or a stable failure
+code. Each applicable contract names exactly one registered domain generator;
+all five `E_CONTRACT` ordinals invoke it with frozen contract/domain bytes and
+their seeds. An unsupported domain yields five `CONTRACT_INPUT_UNAVAILABLE`
+records, not a new generator, site, contract, or manual input.
 
 A post-patch certification witness belongs to neither input inventory. A public
 test can coincide with `E_COMMON` only when the public-schema generator
@@ -1134,7 +1154,8 @@ compatibility requirements, Public Behavior Frame discovery rules, language and
 build adapters and source hashes, exact `B_S=10`/`B_M=15`/`B_L=20` Profiling
 Workload budgets and selection, category-balanced technique interval scoring,
 exact 30-ordinal `E_COMMON` and five-per-slot `E_CONTRACT` construction,
-P12 missingness estimand, and environment lock. Claims remain blocked;
+the exact input-generator registry/schema assignment, P12 missingness estimand,
+and environment lock. Claims remain blocked;
 this phase does not implement a generic claim-transition engine.
 
 Exit criterion: all outcome-dependent choices are explicit and machine-readable.
@@ -1152,9 +1173,10 @@ category coverage, static diversity, and hash ties; computes the controlled
 subject identity; and enumerates canonical static sites. No selected profiling
 command is executed in this phase.
 
-Exit criterion: bridge, category accounting, behavior rows, exact adapter
-registry, all `E_COMMON` ordinals, static sites, and Profiling Workload selections
-regenerate byte-identically from shuffled inputs; all unsupported/invalid
+Exit criterion: bridge, category accounting, behavior rows, exact profiling and
+input-generator registries, all `E_COMMON` ordinals/payload hashes, static sites,
+and Profiling Workload selections regenerate byte-identically from shuffled
+inputs; all unsupported/invalid
 declarations and `E_COMMON` failures remain visible; no dynamic result, contract,
 mutant, MR, P12 defect, or real-fault outcome was read.
 
@@ -1316,6 +1338,7 @@ research/p3_v3/p12-bridge.json
 research/p3_v3/public-behavior-frame.json
 research/p3_v3/profiling-workload.json
 research/p3_v3/profiling-results.json
+research/p3_v3/input-generator-registry.json
 research/p3_v3/evaluation-inputs-common.json
 research/p3_v3/evaluation-inputs-contract.json
 research/p3_v3/subject-frames.json
@@ -1364,9 +1387,9 @@ governance platform:
 1. **Minimum evidence channel:** fixed JSON schemas for the artifacts above,
    bridge verification, public-behavior discovery, outcome-blind profiling
    selection/results, pre-contract `E_COMMON` construction, applicable-slot
-   `E_CONTRACT` construction, robust technique classification, frame/package
-   verification, atomic job records, P12 missingness estimand checks, phase-close
-   receipts, and repeatable preflight.
+   `E_CONTRACT` construction, frozen input-generator registry, robust technique
+   classification, frame/package verification, atomic job records, P12
+   missingness estimand checks, phase-close receipts, and repeatable preflight.
 2. **Controlled experiment:** contract freeze, proposal capture, certification,
    syntactic baseline, MR runner, reducer, and controlled analysis freeze.
 3. **P12 criterion experiment:** bridge reveal verification, mapping, leakage
