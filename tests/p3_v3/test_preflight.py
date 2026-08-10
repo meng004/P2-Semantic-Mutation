@@ -141,6 +141,9 @@ def test_available_memory_uses_darwin_vm_stat_when_posix_sysconf_is_unavailable(
         DARWIN_VM_STAT.replace(b"Pages purgeable:                           7.\n", b""),
         DARWIN_VM_STAT + b"Pages free: 1.\n",
         DARWIN_VM_STAT.replace(b"Pages inactive:                           20.", b"Pages inactive: nope."),
+        DARWIN_VM_STAT + b"Pages free: nope.\n",
+        DARWIN_VM_STAT
+        + b"Mach Virtual Memory Statistics: (page size of nope bytes)\n",
         b"\xff",
     ],
     ids=[
@@ -148,6 +151,8 @@ def test_available_memory_uses_darwin_vm_stat_when_posix_sysconf_is_unavailable(
         "missing-class",
         "duplicate-class",
         "noninteger-value",
+        "valid-and-malformed-class",
+        "valid-and-malformed-header",
         "invalid-bytes",
     ],
 )

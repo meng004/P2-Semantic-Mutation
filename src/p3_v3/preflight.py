@@ -89,24 +89,35 @@ def _parse_darwin_vm_stat(raw: bytes) -> int:
     page_size = None
     pages: dict[str, int] = {}
     for line in text.splitlines():
-        header = re.fullmatch(
-            r"Mach Virtual Memory Statistics: \(page size of ([0-9]+) bytes\)",
-            line,
-        )
-        if header:
+        if line.startswith("Mach Virtual Memory Statistics:"):
+            header = re.fullmatch(
+                r"Mach Virtual Memory Statistics: \(page size of ([0-9]+) bytes\)",
+                line,
+            )
+            if header is None:
+                raise ValueError("malformed page size")
             if page_size is not None:
                 raise ValueError("duplicate page size")
             page_size = int(header.group(1))
             continue
-        page_class = re.fullmatch(
-            r"Pages (free|inactive|speculative|purgeable):\s+([0-9]+)\.",
-            line,
+        target_class = next(
+            (
+                name
+                for name in _DARWIN_AVAILABLE_PAGE_CLASSES
+                if line.startswith(f"Pages {name}:")
+            ),
+            None,
         )
-        if page_class:
-            name = page_class.group(1)
-            if name in pages:
+        if target_class is not None:
+            page_class = re.fullmatch(
+                rf"Pages {target_class}:\s+([0-9]+)\.",
+                line,
+            )
+            if page_class is None:
+                raise ValueError("malformed page class")
+            if target_class in pages:
                 raise ValueError("duplicate page class")
-            pages[name] = int(page_class.group(2))
+            pages[target_class] = int(page_class.group(1))
     if page_size is None or page_size < 1:
         raise ValueError("invalid page size")
     if pages.keys() != _DARWIN_AVAILABLE_PAGE_CLASSES:
