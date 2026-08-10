@@ -163,6 +163,13 @@ def _validate_intent(intent: Mapping[str, Any]) -> dict[str, Any]:
     return value
 
 
+def retry_invariant(intent: Mapping[str, Any]) -> dict[str, Any]:
+    """Return the validated retry identity, excluding only its attempt number."""
+
+    value = _validate_intent(intent)
+    return {key: item for key, item in value.items() if key != "attempt"}
+
+
 def _validate_result(
     result: Mapping[str, Any],
     intent: Mapping[str, Any] | None = None,
@@ -278,6 +285,7 @@ def reduce_attempts(job_root: str | Path, ledger_path: str | Path) -> list[dict[
                 f"a job may have at most {INFRASTRUCTURE_RETRY_LIMIT} attempts",
             )
         previous_status: str | None = None
+        expected_retry_invariant: bytes | None = None
         for attempt_number, attempt_directory in attempts:
             if attempt_number > 1 and previous_status != "FAIL_INFRASTRUCTURE":
                 raise EvidenceError(
@@ -288,6 +296,14 @@ def reduce_attempts(job_root: str | Path, ledger_path: str | Path) -> list[dict[
             if not intent_path.exists():
                 raise EvidenceError("E_ATTEMPT_INTENT", f"missing intent: {attempt_directory}")
             intent = _validate_intent(read_canonical_json(intent_path))
+            current_retry_invariant = canonical_json_bytes(retry_invariant(intent))
+            if expected_retry_invariant is None:
+                expected_retry_invariant = current_retry_invariant
+            elif current_retry_invariant != expected_retry_invariant:
+                raise EvidenceError(
+                    "E_RETRY_IDENTITY",
+                    "retry intent differs from the first attempt outside attempt",
+                )
             if intent["job_id"] != job_directory.name or intent["attempt"] != attempt_number:
                 raise EvidenceError("E_ATTEMPT_IDENTITY", "attempt directory identity differs")
             intent_event = _event(len(events) + 1, "INTENT", intent, previous)

@@ -234,14 +234,38 @@ _PROTOCOL_HASH_FIELDS = (
     "package_policy_sha256",
     "environment_lock_sha256",
 )
-_MR_INVENTORY_SCHEMA = {
+_MR_CANDIDATE_FRAME_SCHEMA = {
     "schema_version": str,
-    "candidate_frame_sha256": str,
-    "custodian_receipt_sha256": str,
-    "final_inventory_sha256": str,
-    "portfolios_sha256": str,
-    "chronology": list,
+    "artifact_type": str,
+    "candidate_mr_ids": list,
     "artifact_sha256": str,
+}
+_MR_CUSTODIAN_RECEIPT_SCHEMA = {
+    "schema_version": str,
+    "artifact_type": str,
+    "candidate_frame_sha256": str,
+    "receipt_state": str,
+    "admitted_mr_ids": list,
+    "excluded_mr_ids": list,
+    "artifact_sha256": str,
+}
+_MR_FINAL_INVENTORY_SCHEMA = {
+    "schema_version": str,
+    "artifact_type": str,
+    "custodian_receipt_sha256": str,
+    "mr_ids": list,
+    "artifact_sha256": str,
+}
+_MR_PORTFOLIOS_SCHEMA = {
+    "schema_version": str,
+    "artifact_type": str,
+    "final_inventory_sha256": str,
+    "portfolios": list,
+    "artifact_sha256": str,
+}
+_MR_PORTFOLIO_SCHEMA = {
+    "portfolio_id": str,
+    "mr_ids": list,
 }
 
 _LOCK_SCHEMA = {
@@ -479,26 +503,167 @@ def validate_protocol(
     return value
 
 
-def validate_mr_inventory(inventory: Mapping[str, Any]) -> dict[str, Any]:
-    value = validate_exact_object(dict(inventory), _MR_INVENTORY_SCHEMA, "mr_inventory")
+def _validate_mr_artifact(
+    artifact: Mapping[str, Any],
+    schema: Mapping[str, Any],
+    context: str,
+    expected_schema_version: str,
+    expected_artifact_type: str,
+) -> dict[str, Any]:
+    value = validate_exact_object(dict(artifact), schema, context)
+    if value["schema_version"] != expected_schema_version:
+        raise EvidenceError(
+            "E_MR_SCHEMA_VERSION",
+            f"{context} schema version differs",
+        )
+    if value["artifact_type"] != expected_artifact_type:
+        raise EvidenceError(
+            "E_MR_ARTIFACT_TYPE",
+            f"{context} artifact type differs",
+        )
+    validate_sha256(value["artifact_sha256"], f"{context}.artifact_sha256")
     body = {key: item for key, item in value.items() if key != "artifact_sha256"}
     if value["artifact_sha256"] != canonical_sha256(body):
-        raise EvidenceError("E_MR_INVENTORY_HASH", "MR inventory self-hash differs")
-    for field in (
-        "candidate_frame_sha256",
-        "custodian_receipt_sha256",
-        "final_inventory_sha256",
-        "portfolios_sha256",
-    ):
-        validate_sha256(value[field], field)
-    if value["chronology"] != [
-        "candidate_frame",
-        "custodian_receipt",
-        "final_inventory",
-        "portfolios",
-    ]:
-        raise EvidenceError("E_MR_CHRONOLOGY", "MR freeze chronology differs")
+        raise EvidenceError(
+            "E_MR_ARTIFACT_HASH",
+            f"{context} canonical self-hash differs",
+        )
     return value
+
+
+def _validate_mr_ids(value: list[Any], context: str) -> list[str]:
+    if any(type(item) is not str or not item for item in value):
+        raise EvidenceError("E_MR_MEMBERSHIP", f"{context} contains an invalid MR ID")
+    if value != sorted(set(value)):
+        raise EvidenceError(
+            "E_MR_MEMBERSHIP",
+            f"{context} must be sorted and unique",
+        )
+    return value
+
+
+def validate_mr_inventory(
+    candidate: Mapping[str, Any],
+    receipt: Mapping[str, Any],
+    final_inventory: Mapping[str, Any],
+    portfolios: Mapping[str, Any],
+) -> dict[str, dict[str, Any]]:
+    candidate_value = _validate_mr_artifact(
+        candidate,
+        _MR_CANDIDATE_FRAME_SCHEMA,
+        "mr_candidate_frame",
+        "p3-mr-candidate-frame-v1",
+        "MR_CANDIDATE_FRAME",
+    )
+    receipt_value = _validate_mr_artifact(
+        receipt,
+        _MR_CUSTODIAN_RECEIPT_SCHEMA,
+        "mr_custodian_receipt",
+        "p3-mr-custodian-receipt-v1",
+        "MR_CUSTODIAN_RECEIPT",
+    )
+    inventory_value = _validate_mr_artifact(
+        final_inventory,
+        _MR_FINAL_INVENTORY_SCHEMA,
+        "mr_final_inventory",
+        "p3-mr-final-inventory-v1",
+        "MR_FINAL_INVENTORY",
+    )
+    portfolios_value = _validate_mr_artifact(
+        portfolios,
+        _MR_PORTFOLIOS_SCHEMA,
+        "mr_portfolios",
+        "p3-mr-portfolios-v1",
+        "MR_PORTFOLIOS",
+    )
+
+    candidate_ids = _validate_mr_ids(
+        candidate_value["candidate_mr_ids"],
+        "mr_candidate_frame.candidate_mr_ids",
+    )
+    admitted_ids = _validate_mr_ids(
+        receipt_value["admitted_mr_ids"],
+        "mr_custodian_receipt.admitted_mr_ids",
+    )
+    excluded_ids = _validate_mr_ids(
+        receipt_value["excluded_mr_ids"],
+        "mr_custodian_receipt.excluded_mr_ids",
+    )
+    if receipt_value["receipt_state"] != "CLOSED":
+        raise EvidenceError(
+            "E_MR_RECEIPT_STATE",
+            "custodian receipt must fail closed before inventory freeze",
+        )
+    if (
+        set(admitted_ids) & set(excluded_ids)
+        or sorted(admitted_ids + excluded_ids) != candidate_ids
+    ):
+        raise EvidenceError(
+            "E_MR_RECEIPT_MEMBERSHIP",
+            "custodian receipt must partition every candidate exactly once",
+        )
+
+    inventory_ids = _validate_mr_ids(
+        inventory_value["mr_ids"],
+        "mr_final_inventory.mr_ids",
+    )
+    if inventory_ids != admitted_ids:
+        raise EvidenceError(
+            "E_MR_INVENTORY_MEMBERSHIP",
+            "final inventory must contain exactly the admitted MR IDs",
+        )
+
+    portfolio_rows: list[dict[str, Any]] = []
+    for index, row in enumerate(portfolios_value["portfolios"]):
+        portfolio = validate_exact_object(
+            row,
+            _MR_PORTFOLIO_SCHEMA,
+            f"mr_portfolios.portfolios[{index}]",
+        )
+        if not portfolio["portfolio_id"]:
+            raise EvidenceError("E_MR_PORTFOLIO", "portfolio ID must be nonempty")
+        _validate_mr_ids(
+            portfolio["mr_ids"],
+            f"mr_portfolios.portfolios[{index}].mr_ids",
+        )
+        if not set(portfolio["mr_ids"]).issubset(inventory_ids):
+            raise EvidenceError(
+                "E_MR_PORTFOLIO_MEMBERSHIP",
+                "every portfolio MR must belong to the final inventory",
+            )
+        portfolio_rows.append(portfolio)
+    portfolio_ids = [row["portfolio_id"] for row in portfolio_rows]
+    if portfolio_ids != sorted(set(portfolio_ids)):
+        raise EvidenceError(
+            "E_MR_PORTFOLIO",
+            "portfolio IDs must be sorted and unique",
+        )
+
+    parent_links = (
+        (
+            receipt_value["candidate_frame_sha256"],
+            candidate_value["artifact_sha256"],
+        ),
+        (
+            inventory_value["custodian_receipt_sha256"],
+            receipt_value["artifact_sha256"],
+        ),
+        (
+            portfolios_value["final_inventory_sha256"],
+            inventory_value["artifact_sha256"],
+        ),
+    )
+    for child_parent, expected_parent in parent_links:
+        validate_sha256(child_parent, "mr parent reference")
+        if child_parent != expected_parent:
+            raise EvidenceError("E_MR_PARENT", "MR artifact parent hash differs")
+
+    return {
+        "candidate": candidate_value,
+        "receipt": receipt_value,
+        "final_inventory": inventory_value,
+        "portfolios": portfolios_value,
+    }
 
 
 def _git(root: Path, *args: str) -> bytes:

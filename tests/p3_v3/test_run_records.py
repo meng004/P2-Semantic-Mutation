@@ -5,7 +5,8 @@ from fractions import Fraction
 
 import pytest
 
-from p3_v3.artifacts import EvidenceError, canonical_sha256
+import p3_v3.run_records as run_records_module
+from p3_v3.artifacts import EvidenceError, canonical_json_bytes, canonical_sha256
 from p3_v3.run_records import (
     INFRASTRUCTURE_RETRY_LIMIT,
     P12_OUTCOME_STATES,
@@ -127,6 +128,79 @@ def test_reducer_rejects_noncontiguous_or_scientific_retry(tmp_path):
     write_result(second, _result(job_id="job-2", attempt=2))
     with pytest.raises(EvidenceError, match="E_RETRY_POLICY"):
         reduce_attempts(other_jobs, tmp_path / "scientific-retry.jsonl")
+
+
+_RETRY_IDENTITY_MUTATIONS = {
+    "job_id": "job-other",
+    "protocol_sha256": "9" * 64,
+    "phase": "PHASE-3",
+    "argv": ["python3", "-c", "print(2)"],
+    "cwd_identity": "other-fixture-root",
+    "environment_sha256": "8" * 64,
+    "input_sha256": ["7" * 64],
+    "seed": 17,
+    "timeout_seconds": 31,
+    "object_type": "P12_FAULT",
+    "object_id": "mut-2",
+    "mr_id": "mr-2",
+    "evaluation_input_id": "e-common-1",
+    "repetition_id": 2,
+    "environment_id": "env-2",
+    "job_role": "P12",
+}
+
+
+@pytest.mark.parametrize(
+    ("field", "mutated_value"),
+    _RETRY_IDENTITY_MUTATIONS.items(),
+    ids=_RETRY_IDENTITY_MUTATIONS,
+)
+def test_retry_rejects_every_mutated_identity_field(
+    tmp_path, field, mutated_value
+):
+    jobs = tmp_path / "jobs"
+    first = jobs / "job-1/1"
+    second = jobs / "job-1/2"
+    create_intent(first, _intent(attempt=1))
+    write_result(first, _result(attempt=1, status="FAIL_INFRASTRUCTURE"))
+
+    retried = {**_intent(attempt=2), field: mutated_value}
+    if field == "job_id":
+        second.mkdir(parents=True)
+        (second / "intent.json").write_bytes(canonical_json_bytes(retried))
+    else:
+        create_intent(second, retried)
+
+    with pytest.raises(EvidenceError, match="E_RETRY_IDENTITY"):
+        reduce_attempts(jobs, tmp_path / f"retry-{field}.jsonl")
+
+
+def test_retry_invariant_validates_intent_and_removes_only_attempt():
+    intent = _intent(attempt=2)
+    invariant = run_records_module.retry_invariant(intent)
+    assert invariant == {key: value for key, value in intent.items() if key != "attempt"}
+
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        run_records_module.retry_invariant(
+            {**intent, "unbound_retry_field": "ignored-by-bug"}
+        )
+
+
+def test_retry_allows_three_total_attempts_but_rejects_fourth(tmp_path):
+    jobs = tmp_path / "jobs"
+    for attempt in range(1, 4):
+        directory = jobs / f"job-1/{attempt}"
+        create_intent(directory, _intent(attempt=attempt))
+        write_result(
+            directory,
+            _result(attempt=attempt, status="FAIL_INFRASTRUCTURE"),
+        )
+
+    reduce_attempts(jobs, tmp_path / "three-attempts.jsonl")
+
+    create_intent(jobs / "job-1/4", _intent(attempt=4))
+    with pytest.raises(EvidenceError, match="E_RETRY_POLICY"):
+        reduce_attempts(jobs, tmp_path / "four-attempts.jsonl")
 
 
 def test_ledger_tampering_breaks_event_hash(tmp_path):

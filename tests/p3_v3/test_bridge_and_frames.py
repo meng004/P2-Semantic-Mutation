@@ -37,6 +37,7 @@ from p3_v3.bridge_and_frames import (
     validate_common_inputs_on_fixed_source,
     validate_contract_generator_registry,
     validate_input_generator_registry,
+    validate_mr_inventory,
     validate_proposal_record,
     verify_pinned_bridge,
     verify_reveal,
@@ -211,6 +212,173 @@ def test_bridge_rejects_wrong_external_blob_pin(synthetic_release):
     lock = {**synthetic_release.lock, "bridge_blob_sha": "0" * 40}
     with pytest.raises(EvidenceError, match="E_PINNED_BRIDGE_BLOB"):
         verify_pinned_bridge(synthetic_release.root, lock)
+
+
+def _self_hashed(body: dict) -> dict:
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _mr_chain():
+    candidate = _self_hashed(
+        {
+            "schema_version": "p3-mr-candidate-frame-v1",
+            "artifact_type": "MR_CANDIDATE_FRAME",
+            "candidate_mr_ids": ["mr-1", "mr-2"],
+        }
+    )
+    receipt = _self_hashed(
+        {
+            "schema_version": "p3-mr-custodian-receipt-v1",
+            "artifact_type": "MR_CUSTODIAN_RECEIPT",
+            "candidate_frame_sha256": candidate["artifact_sha256"],
+            "receipt_state": "CLOSED",
+            "admitted_mr_ids": ["mr-1"],
+            "excluded_mr_ids": ["mr-2"],
+        }
+    )
+    final_inventory = _self_hashed(
+        {
+            "schema_version": "p3-mr-final-inventory-v1",
+            "artifact_type": "MR_FINAL_INVENTORY",
+            "custodian_receipt_sha256": receipt["artifact_sha256"],
+            "mr_ids": ["mr-1"],
+        }
+    )
+    portfolios = _self_hashed(
+        {
+            "schema_version": "p3-mr-portfolios-v1",
+            "artifact_type": "MR_PORTFOLIOS",
+            "final_inventory_sha256": final_inventory["artifact_sha256"],
+            "portfolios": [
+                {"portfolio_id": "portfolio-1", "mr_ids": ["mr-1"]}
+            ],
+        }
+    )
+    return candidate, receipt, final_inventory, portfolios
+
+
+def _rehashed(artifact: dict, **changes) -> dict:
+    body = {
+        key: value
+        for key, value in {**artifact, **changes}.items()
+        if key != "artifact_sha256"
+    }
+    return _self_hashed(body)
+
+
+def test_mr_chain_accepts_exact_hash_parent_chain():
+    validate_mr_inventory(*_mr_chain())
+
+
+@pytest.mark.parametrize(
+    ("artifact_index", "artifact_type"),
+    [
+        (0, "MR_FINAL_INVENTORY"),
+        (1, "MR_PORTFOLIOS"),
+        (2, "MR_CANDIDATE_FRAME"),
+        (3, "MR_CUSTODIAN_RECEIPT"),
+    ],
+)
+def test_mr_chain_rejects_mutated_exact_artifact_type(
+    artifact_index, artifact_type
+):
+    artifacts = list(_mr_chain())
+    artifacts[artifact_index] = _rehashed(
+        artifacts[artifact_index], artifact_type=artifact_type
+    )
+    with pytest.raises(EvidenceError, match="E_MR_ARTIFACT_TYPE"):
+        validate_mr_inventory(*artifacts)
+
+
+@pytest.mark.parametrize("artifact_index", range(4))
+def test_mr_chain_rejects_mutated_self_hash(artifact_index):
+    artifacts = list(_mr_chain())
+    artifacts[artifact_index] = {
+        **artifacts[artifact_index],
+        "artifact_sha256": "0" * 64,
+    }
+    with pytest.raises(EvidenceError, match="E_MR_ARTIFACT_HASH"):
+        validate_mr_inventory(*artifacts)
+
+
+@pytest.mark.parametrize(
+    ("artifact_index", "parent_field"),
+    [
+        (1, "candidate_frame_sha256"),
+        (2, "custodian_receipt_sha256"),
+        (3, "final_inventory_sha256"),
+    ],
+)
+def test_mr_chain_rejects_mutated_parent_reference(artifact_index, parent_field):
+    artifacts = list(_mr_chain())
+    artifacts[artifact_index] = _rehashed(
+        artifacts[artifact_index], **{parent_field: "9" * 64}
+    )
+    with pytest.raises(EvidenceError, match="E_MR_PARENT"):
+        validate_mr_inventory(*artifacts)
+
+
+def test_mr_chain_receipt_is_fail_closed_and_partitions_candidates():
+    candidate, receipt, final_inventory, portfolios = _mr_chain()
+    open_receipt = _rehashed(receipt, receipt_state="OPEN")
+    with pytest.raises(EvidenceError, match="E_MR_RECEIPT_STATE"):
+        validate_mr_inventory(candidate, open_receipt, final_inventory, portfolios)
+
+    incomplete_receipt = _rehashed(receipt, excluded_mr_ids=[])
+    with pytest.raises(EvidenceError, match="E_MR_RECEIPT_MEMBERSHIP"):
+        validate_mr_inventory(
+            candidate,
+            incomplete_receipt,
+            final_inventory,
+            portfolios,
+        )
+
+
+def test_mr_chain_final_inventory_and_portfolios_bind_admitted_membership():
+    candidate, receipt, final_inventory, portfolios = _mr_chain()
+    wrong_inventory = _rehashed(final_inventory, mr_ids=["mr-2"])
+    with pytest.raises(EvidenceError, match="E_MR_INVENTORY_MEMBERSHIP"):
+        validate_mr_inventory(candidate, receipt, wrong_inventory, portfolios)
+
+    wrong_portfolios = _rehashed(
+        portfolios,
+        portfolios=[{"portfolio_id": "portfolio-1", "mr_ids": ["mr-2"]}],
+    )
+    with pytest.raises(EvidenceError, match="E_MR_PORTFOLIO_MEMBERSHIP"):
+        validate_mr_inventory(
+            candidate,
+            receipt,
+            final_inventory,
+            wrong_portfolios,
+        )
+
+
+@pytest.mark.parametrize("artifact_index", range(4))
+def test_mr_chain_requires_exact_top_level_keys(artifact_index):
+    artifacts = list(_mr_chain())
+    artifacts[artifact_index] = _rehashed(
+        artifacts[artifact_index], chronology=["untrusted-declaration"]
+    )
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        validate_mr_inventory(*artifacts)
+
+
+def test_chronology_list_with_four_unrelated_hashes_is_not_mr_chain_evidence():
+    legacy_body = {
+        "schema_version": "p3-mr-inventory-v1",
+        "candidate_frame_sha256": canonical_sha256({"stage": "candidate"}),
+        "custodian_receipt_sha256": canonical_sha256({"stage": "receipt"}),
+        "final_inventory_sha256": canonical_sha256({"stage": "final"}),
+        "portfolios_sha256": canonical_sha256({"stage": "portfolios"}),
+        "chronology": [
+            "candidate_frame",
+            "custodian_receipt",
+            "final_inventory",
+            "portfolios",
+        ],
+    }
+    with pytest.raises(TypeError):
+        validate_mr_inventory(_self_hashed(legacy_body))
 
 
 def test_visible_bridge_rejects_fixed_tree_oid_even_when_rehashed(synthetic_release):
