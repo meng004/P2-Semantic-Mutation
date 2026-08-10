@@ -6,9 +6,36 @@ import os
 import subprocess
 from pathlib import Path
 
+from p3_v3.artifacts import canonical_sha256
+
 
 ROOT = Path(__file__).resolve().parents[2]
 CLI = ROOT / "scripts/p3_v3/evidence.py"
+SCIENTIFIC_PLAN_SHA256 = "fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830"
+EVIDENCE_DESIGN_SHA256 = "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
+TECHNIQUE_ORDER = [
+    "HYBRID_NATIVE",
+    "TENSOR_AUTODIFF",
+    "PROBABILISTIC_SURROGATE",
+    "ITERATIVE_STOCHASTIC",
+    "ARRAY_NUMERICAL",
+    "SCALAR_CONTROL",
+    "TECH_UNCERTAIN",
+]
+P12_OUTCOME_STATES = [
+    "MR_VIOLATION",
+    "MR_SATISFIED",
+    "DECLARED_EXCEPTION_OR_TIMEOUT_VIOLATION",
+    "SCIENTIFIC_INCONCLUSIVE",
+    "INFRASTRUCTURE_UNRESOLVED",
+]
+BEHAVIOR_CATEGORY_ORDER = [
+    "PUBLIC_API",
+    "CLI",
+    "EXAMPLE",
+    "BENCHMARK",
+    "PROJECT_TEST",
+]
 
 
 def _bytes(value):
@@ -105,11 +132,34 @@ def test_synthetic_phase0_to_phase2_public_cli_path(tmp_path):
         "contract_blob_sha": _git(repo, "rev-parse", f"{commit}:release/contract.json"),
         "package_root_sha256": package_root,
     }
-    protocol = {
+    protocol_body = {
         "schema_version": "p3-protocol-v1",
-        "scientific_plan_sha256": "911562938a14ad3955a6c1e38080185ba78e92dbf4401efcb10d7c169e4a2772",
-        "evidence_design_sha256": "e2a943b30f8096aa65a72c43aa514df67b8d58e16fcf7209930799ee4444c346",
+        "scientific_plan_sha256": SCIENTIFIC_PLAN_SHA256,
+        "evidence_design_sha256": EVIDENCE_DESIGN_SHA256,
         "claims_initial_status": "blocked",
+        "rq_spec_sha256": canonical_sha256({"fixture": "rq"}),
+        "claim_ceiling_sha256": canonical_sha256({"fixture": "ceiling"}),
+        "p12_contract_sha256": canonical_sha256({"fixture": "p12"}),
+        "operator_catalogue_sha256": canonical_sha256({"fixture": "operators"}),
+        "adapter_registry_sha256": canonical_sha256({"fixture": "adapters"}),
+        "input_generator_registry_sha256": canonical_sha256({"fixture": "generators"}),
+        "mr_policy_sha256": canonical_sha256({"fixture": "mr"}),
+        "site_policy_sha256": canonical_sha256({"fixture": "site"}),
+        "analysis_spec_sha256": canonical_sha256({"fixture": "analysis"}),
+        "package_policy_sha256": canonical_sha256({"fixture": "package"}),
+        "environment_lock_sha256": canonical_sha256({"fixture": "env"}),
+        "profiling_budgets": {"S": 10, "M": 15, "L": 20},
+        "behavior_category_order": list(BEHAVIOR_CATEGORY_ORDER),
+        "technique_order": list(TECHNIQUE_ORDER),
+        "e_common_count": 30,
+        "e_contract_count": 5,
+        "p12_outcome_states": list(P12_OUTCOME_STATES),
+        "p12_primary_estimand": "INTENTION_TO_EVALUATE_LOWER_BOUND",
+        "infrastructure_retry_limit": 3,
+    }
+    protocol = {
+        **protocol_body,
+        "artifact_sha256": canonical_sha256(protocol_body),
     }
     features = [
         {

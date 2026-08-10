@@ -33,6 +33,77 @@ _TECHNIQUE_ORDER = (
 _SCALES = set(_SCALE_ORDER)
 _TECHNIQUES = set(_TECHNIQUE_ORDER)
 
+PROFILING_BUDGETS = {"S": 10, "M": 15, "L": 20}
+BEHAVIOR_CATEGORY_ORDER = [
+    "PUBLIC_API",
+    "CLI",
+    "EXAMPLE",
+    "BENCHMARK",
+    "PROJECT_TEST",
+]
+P12_OUTCOME_STATES = [
+    "MR_VIOLATION",
+    "MR_SATISFIED",
+    "DECLARED_EXCEPTION_OR_TIMEOUT_VIOLATION",
+    "SCIENTIFIC_INCONCLUSIVE",
+    "INFRASTRUCTURE_UNRESOLVED",
+]
+P12_PRIMARY_ESTIMAND = "INTENTION_TO_EVALUATE_LOWER_BOUND"
+INFRASTRUCTURE_RETRY_LIMIT = 3
+E_COMMON_COUNT = 30
+E_CONTRACT_COUNT = 5
+
+_PROTOCOL_SCHEMA = {
+    "schema_version": str,
+    "scientific_plan_sha256": str,
+    "evidence_design_sha256": str,
+    "claims_initial_status": str,
+    "rq_spec_sha256": str,
+    "claim_ceiling_sha256": str,
+    "p12_contract_sha256": str,
+    "operator_catalogue_sha256": str,
+    "adapter_registry_sha256": str,
+    "input_generator_registry_sha256": str,
+    "mr_policy_sha256": str,
+    "site_policy_sha256": str,
+    "analysis_spec_sha256": str,
+    "package_policy_sha256": str,
+    "environment_lock_sha256": str,
+    "profiling_budgets": dict,
+    "behavior_category_order": list,
+    "technique_order": list,
+    "e_common_count": int,
+    "e_contract_count": int,
+    "p12_outcome_states": list,
+    "p12_primary_estimand": str,
+    "infrastructure_retry_limit": int,
+    "artifact_sha256": str,
+}
+_PROTOCOL_HASH_FIELDS = (
+    "scientific_plan_sha256",
+    "evidence_design_sha256",
+    "rq_spec_sha256",
+    "claim_ceiling_sha256",
+    "p12_contract_sha256",
+    "operator_catalogue_sha256",
+    "adapter_registry_sha256",
+    "input_generator_registry_sha256",
+    "mr_policy_sha256",
+    "site_policy_sha256",
+    "analysis_spec_sha256",
+    "package_policy_sha256",
+    "environment_lock_sha256",
+)
+_MR_INVENTORY_SCHEMA = {
+    "schema_version": str,
+    "candidate_frame_sha256": str,
+    "custodian_receipt_sha256": str,
+    "final_inventory_sha256": str,
+    "portfolios_sha256": str,
+    "chronology": list,
+    "artifact_sha256": str,
+}
+
 _LOCK_SCHEMA = {
     "repository_identity": str,
     "release_commit_sha": str,
@@ -89,6 +160,68 @@ _REVEAL_SCHEMA = {
     "reveal_nonce": str,
     "normalized_source_tree_sha256": str,
 }
+
+
+def validate_protocol(
+    protocol: Mapping[str, Any],
+    expected_plan_sha256: str,
+    expected_design_sha256: str,
+) -> dict[str, Any]:
+    value = validate_exact_object(dict(protocol), _PROTOCOL_SCHEMA, "protocol")
+    if value["schema_version"] != "p3-protocol-v1":
+        raise EvidenceError("E_PROTOCOL", "protocol version differs")
+    if value["claims_initial_status"] != "blocked":
+        raise EvidenceError("E_PROTOCOL", "claims_initial_status must be blocked")
+    for field in _PROTOCOL_HASH_FIELDS:
+        validate_sha256(value[field], field)
+    validate_sha256(value["artifact_sha256"], "artifact_sha256")
+    validate_sha256(expected_plan_sha256, "expected_plan_sha256")
+    validate_sha256(expected_design_sha256, "expected_design_sha256")
+    body = {key: item for key, item in value.items() if key != "artifact_sha256"}
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_PROTOCOL_HASH", "protocol canonical self-hash differs")
+    if (
+        value["scientific_plan_sha256"] != expected_plan_sha256
+        or value["evidence_design_sha256"] != expected_design_sha256
+    ):
+        raise EvidenceError("E_PROTOCOL_AUTHORITY", "protocol authority hashes differ")
+    if value["profiling_budgets"] != PROFILING_BUDGETS:
+        raise EvidenceError("E_PROTOCOL", "profiling_budgets differ")
+    if value["behavior_category_order"] != BEHAVIOR_CATEGORY_ORDER:
+        raise EvidenceError("E_PROTOCOL", "behavior_category_order differs")
+    if value["technique_order"] != list(_TECHNIQUE_ORDER):
+        raise EvidenceError("E_PROTOCOL", "technique_order differs")
+    if value["e_common_count"] != E_COMMON_COUNT or value["e_contract_count"] != E_CONTRACT_COUNT:
+        raise EvidenceError("E_PROTOCOL_COUNTS", "evaluation input counts differ")
+    if value["p12_outcome_states"] != P12_OUTCOME_STATES:
+        raise EvidenceError("E_PROTOCOL_OUTCOMES", "p12_outcome_states order differs")
+    if value["p12_primary_estimand"] != P12_PRIMARY_ESTIMAND:
+        raise EvidenceError("E_PROTOCOL", "p12_primary_estimand differs")
+    if value["infrastructure_retry_limit"] != INFRASTRUCTURE_RETRY_LIMIT:
+        raise EvidenceError("E_PROTOCOL_RETRY", "infrastructure_retry_limit differs")
+    return value
+
+
+def validate_mr_inventory(inventory: Mapping[str, Any]) -> dict[str, Any]:
+    value = validate_exact_object(dict(inventory), _MR_INVENTORY_SCHEMA, "mr_inventory")
+    body = {key: item for key, item in value.items() if key != "artifact_sha256"}
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_MR_INVENTORY_HASH", "MR inventory self-hash differs")
+    for field in (
+        "candidate_frame_sha256",
+        "custodian_receipt_sha256",
+        "final_inventory_sha256",
+        "portfolios_sha256",
+    ):
+        validate_sha256(value[field], field)
+    if value["chronology"] != [
+        "candidate_frame",
+        "custodian_receipt",
+        "final_inventory",
+        "portfolios",
+    ]:
+        raise EvidenceError("E_MR_CHRONOLOGY", "MR freeze chronology differs")
+    return value
 
 
 def _git(root: Path, *args: str) -> bytes:
