@@ -533,15 +533,57 @@ def test_subject_material_recomputes_source_tree_commitment_before_adapter(
         frames_module.derive_subject_material(spec, record)
 
 
-def test_source_tree_commitment_sorts_full_relative_paths_and_excludes_build_output(
-    tmp_path
+@pytest.mark.parametrize(
+    "relative_path",
+    ["vendor/runtime.py", "fixtures/external/input.json"],
+)
+def test_source_tree_commitment_binds_vendor_fixture_and_external_bytes(
+    synthetic_release, tmp_path, relative_path
+):
+    adapter_root = tmp_path / "adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    record = verify_pinned_bridge(
+        synthetic_release.root, synthetic_release.lock
+    )["records"][0]
+    source_root = tmp_path / "python-subject"
+    source_root.mkdir()
+    included = source_root / relative_path
+    included.parent.mkdir(parents=True)
+    included.write_bytes(b"project-material-v1")
+    spec = _derived_subject_spec(
+        source_root,
+        "python.json",
+        record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    committed = record["normalized_source_tree_sha256"]
+
+    included.write_bytes(b"project-material-v2")
+
+    assert frames_module.canonical_source_tree_sha256(source_root) != committed
+    with pytest.raises(EvidenceError, match="E_SOURCE_TREE_COMMITMENT"):
+        frames_module.derive_subject_material(spec, record)
+
+
+def test_source_tree_commitment_sorts_all_project_files_and_excludes_only_vcs_metadata(
+    tmp_path,
 ):
     root = tmp_path / "source"
     (root / "a").mkdir(parents=True)
-    (root / "build").mkdir()
+    (root / ".git").mkdir()
+    (root / "vendor").mkdir()
     (root / "a/z.txt").write_bytes(b"nested")
     (root / "a.txt").write_bytes(b"root")
-    (root / "build/ignored.txt").write_bytes(b"ignored-v1")
+    (root / "vendor/runtime.py").write_bytes(b"vendored")
+    (root / ".git/index").write_bytes(b"vcs-v1")
     expected = canonical_sha256(
         {
             "domain": "P3-NORMALIZED-SOURCE-TREE-v1",
@@ -554,15 +596,33 @@ def test_source_tree_commitment_sorts_full_relative_paths_and_excludes_build_out
                     "path": "a/z.txt",
                     "byte_sha256": hashlib.sha256(b"nested").hexdigest(),
                 },
+                {
+                    "path": "vendor/runtime.py",
+                    "byte_sha256": hashlib.sha256(b"vendored").hexdigest(),
+                },
             ],
         }
     )
 
     observed = frames_module.canonical_source_tree_sha256(root)
-    (root / "build/ignored.txt").write_bytes(b"ignored-v2")
+    (root / ".git/index").write_bytes(b"vcs-v2")
 
     assert observed == expected
     assert frames_module.canonical_source_tree_sha256(root) == expected
+
+
+@pytest.mark.parametrize("transient", ["build/output.o", ".venv/bin/python"])
+def test_source_tree_commitment_rejects_transient_build_or_environment_output(
+    tmp_path, transient
+):
+    root = tmp_path / "source"
+    root.mkdir()
+    path = root / transient
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b"transient")
+
+    with pytest.raises(EvidenceError, match="E_SOURCE_TREE_PATH"):
+        frames_module.canonical_source_tree_sha256(root)
 
 
 def test_source_tree_commitment_rejects_included_symlink(tmp_path):
@@ -807,6 +867,119 @@ def test_subject_frames_reject_cross_subject_parent_swap_after_rehash(
 
     with pytest.raises(EvidenceError, match="E_DERIVED_SUBJECT_BINDING"):
         build_subject_frames(bridge, [forged, second])
+
+
+def _rehash_material_artifact(material: dict, field: str) -> None:
+    body = {
+        key: value
+        for key, value in material[field].items()
+        if key != "artifact_sha256"
+    }
+    material[field] = {**body, "artifact_sha256": canonical_sha256(body)}
+    material[f"{field}_sha256"] = material[field]["artifact_sha256"]
+
+
+def _rehash_derived_material(material: dict) -> dict:
+    body = {key: value for key, value in material.items() if key != "artifact_sha256"}
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _site_with_subject_id(site: dict, subject_id: str) -> dict:
+    raw = {key: value for key, value in site.items() if key != "site_id"}
+    site_id = canonical_sha256(
+        {"controlled_subject_id": subject_id, **raw, "domain": "P3-SITE-v1"}
+    )
+    return {**raw, "site_id": site_id}
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "subject_id",
+        "scale_L",
+        "technique_hybrid_native",
+        "fake_workload",
+        "canonical_site",
+        "profiling_parent",
+    ],
+)
+def test_subject_frames_recompute_nested_derivations_after_layered_rehash(
+    synthetic_release, tmp_path, mutation
+):
+    bridge, material, other = _two_subject_material_fixture(
+        synthetic_release, tmp_path
+    )
+    forged = copy.deepcopy(material)
+    subject = forged["subject"]
+
+    if mutation == "subject_id":
+        subject["controlled_subject_id"] = "d" * 64
+    elif mutation == "scale_L":
+        forged["source_scale"]["scale_class"] = "L"
+        _rehash_material_artifact(forged, "source_scale")
+        subject["scale_class"] = "L"
+    elif mutation == "technique_hybrid_native":
+        forged["technique_profile"].update(
+            {
+                "confirmed_tags": ["HYBRID_NATIVE"],
+                "possible_tags": ["HYBRID_NATIVE"],
+                "primary_technique": "HYBRID_NATIVE",
+            }
+        )
+        _rehash_material_artifact(forged, "technique_profile")
+        subject["primary_technique"] = "HYBRID_NATIVE"
+        subject["technique_vector"] = ["HYBRID_NATIVE"]
+    elif mutation == "fake_workload":
+        forged["profiling_workload"]["budget"] += 1
+        _rehash_material_artifact(forged, "profiling_workload")
+        forged["profiling_results"]["profiling_workload_sha256"] = forged[
+            "profiling_workload_sha256"
+        ]
+        _rehash_material_artifact(forged, "profiling_results")
+        forged["technique_profile"].update(
+            {
+                "profiling_workload_sha256": forged["profiling_workload_sha256"],
+                "profiling_results_sha256": forged["profiling_results_sha256"],
+            }
+        )
+        _rehash_material_artifact(forged, "technique_profile")
+        subject["public_workload_set_sha256"] = forged["profiling_workload_sha256"]
+        subject_id = canonical_sha256(
+            {
+                "normalized_source_tree_sha256": subject[
+                    "normalized_source_tree_sha256"
+                ],
+                "build_descriptor_sha256": subject["build_descriptor_sha256"],
+                "public_workload_set_sha256": subject[
+                    "public_workload_set_sha256"
+                ],
+                "domain": "P3-SUBJECT-v1",
+            }
+        )
+        subject["controlled_subject_id"] = subject_id
+        subject["sites"] = [
+            _site_with_subject_id(site, subject_id) for site in subject["sites"]
+        ]
+    elif mutation == "canonical_site":
+        changed = copy.deepcopy(subject["sites"][0])
+        changed["symbol"] = f"{changed['symbol']}_forged"
+        subject["sites"][0] = _site_with_subject_id(
+            changed, subject["controlled_subject_id"]
+        )
+    else:
+        forged["profiling_results"]["runner_implementation_source_sha256"] = (
+            "e" * 64
+        )
+        _rehash_material_artifact(forged, "profiling_results")
+        forged["technique_profile"]["profiling_results_sha256"] = forged[
+            "profiling_results_sha256"
+        ]
+        _rehash_material_artifact(forged, "technique_profile")
+
+    forged = _rehash_derived_material(forged)
+
+    with pytest.raises(EvidenceError, match="E_DERIVED_SUBJECT_BINDING"):
+        build_subject_frames(bridge, [forged, other])
 
 
 def test_subject_alias_merge_does_not_mutate_derived_material(
@@ -1840,14 +2013,29 @@ def _synthetic_workload(rows: list[tuple[str, str]]) -> dict:
 
 
 def _success(behavior_id: str, *tags: str) -> dict:
-    feature_by_technique = {
-        "HYBRID_NATIVE": "NATIVE_BOUNDARY_CROSSING",
-        "TENSOR_AUTODIFF": "TENSOR_AUTODIFF_OPERATION",
-        "PROBABILISTIC_SURROGATE": "PROBABILISTIC_SURROGATE_OPERATION",
-        "ITERATIVE_STOCHASTIC": "ITERATIVE_STOCHASTIC_OPERATION",
-        "ARRAY_NUMERICAL": "ARRAY_NUMERICAL_OPERATION",
-        "SCALAR_CONTROL": "SCALAR_CONTROL_OPERATION",
+    call_by_technique = {
+        "HYBRID_NATIVE": ("ctypes.cdll", "invoke", "NATIVE_CALL"),
+        "TENSOR_AUTODIFF": ("torch.autograd", "backward", "PYTHON_CALL"),
+        "PROBABILISTIC_SURROGATE": (
+            "sklearn.gaussian_process",
+            "predict",
+            "PYTHON_CALL",
+        ),
+        "ITERATIVE_STOCHASTIC": ("scipy.optimize", "minimize", "PYTHON_CALL"),
+        "ARRAY_NUMERICAL": ("numpy.linalg", "solve", "PYTHON_CALL"),
+        "SCALAR_CONTROL": ("builtins", "abs", "PYTHON_CALL"),
     }
+    call_trace = [
+        {
+            "sequence": sequence,
+            "module": call_by_technique[tag][0],
+            "symbol": call_by_technique[tag][1],
+            "call_kind": call_by_technique[tag][2],
+            "argument_types": ["float"],
+            "keyword_names": [],
+        }
+        for sequence, tag in enumerate(tags, start=1)
+    ]
     return {
         "behavior_id": behavior_id,
         "status": "SUCCESS",
@@ -1858,8 +2046,8 @@ def _success(behavior_id: str, *tags: str) -> dict:
         "exit_code": 0,
         "stdout_sha256": "53" * 32,
         "stderr_sha256": "54" * 32,
-        "call_trace_sha256": "55" * 32,
-        "trace_features": sorted(feature_by_technique[tag] for tag in tags),
+        "call_trace": call_trace,
+        "call_trace_sha256": canonical_sha256(call_trace),
         "timed_out": False,
         "failure_code": "",
         "observed_site_ids": [],
@@ -1877,8 +2065,8 @@ def _unresolved(behavior_id: str, status: str) -> dict:
         "exit_code": None,
         "stdout_sha256": "53" * 32,
         "stderr_sha256": "54" * 32,
-        "call_trace_sha256": None,
-        "trace_features": [],
+        "call_trace": [],
+        "call_trace_sha256": canonical_sha256([]),
         "timed_out": status == "TIMEOUT",
         "failure_code": f"PROFILE_{status}",
         "observed_site_ids": [],
@@ -1907,7 +2095,7 @@ def _classify(workload: dict, rows: list[dict]) -> dict:
     return classify_technique(workload, _profiling_receipt(workload, rows))
 
 
-def test_profiling_receipt_derives_technique_from_frozen_trace_features():
+def test_profiling_receipt_derives_technique_from_raw_call_trace():
     behavior_id = _behavior_id("derived-scalar")
     workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
 
@@ -1915,6 +2103,19 @@ def test_profiling_receipt_derives_technique_from_frozen_trace_features():
 
     assert profile["confirmed_tags"] == ["SCALAR_CONTROL"]
     assert profile["primary_technique"] == "SCALAR_CONTROL"
+
+
+def test_profiling_receipt_rejects_direct_trace_features_after_rehash():
+    behavior_id = _behavior_id("forged-feature")
+    workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
+    row = {
+        **_success(behavior_id, "SCALAR_CONTROL"),
+        "trace_features": ["TENSOR_AUTODIFF_OPERATION"],
+    }
+    receipt = _profiling_receipt(workload, [row])
+
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        classify_technique(workload, receipt)
 
 
 def test_profiling_receipt_rejects_direct_technique_tags_after_rehash():
@@ -1925,6 +2126,36 @@ def test_profiling_receipt_rejects_direct_technique_tags_after_rehash():
 
     with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
         classify_technique(workload, receipt)
+
+
+def test_profiling_receipt_rejects_call_trace_bytes_with_stale_hash():
+    behavior_id = _behavior_id("stale-trace-hash")
+    workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
+    row = _success(behavior_id, "ARRAY_NUMERICAL")
+    row["call_trace"][0]["symbol"] = "backward"
+    receipt = _profiling_receipt(workload, [row])
+
+    with pytest.raises(EvidenceError, match="E_PROFILE_TRACE_HASH"):
+        classify_technique(workload, receipt)
+
+
+def test_profiling_call_symbol_changes_mechanically_derived_technique():
+    behavior_id = _behavior_id("symbol-derived-technique")
+    workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
+    scalar_row = _success(behavior_id, "SCALAR_CONTROL")
+    scalar_row["call_trace"][0].update(
+        {"module": "subject.kernel", "symbol": "scalar_add"}
+    )
+    scalar_row["call_trace_sha256"] = canonical_sha256(scalar_row["call_trace"])
+    tensor_row = copy.deepcopy(scalar_row)
+    tensor_row["call_trace"][0]["symbol"] = "tensor_backward"
+    tensor_row["call_trace_sha256"] = canonical_sha256(tensor_row["call_trace"])
+
+    scalar = _classify(workload, [scalar_row])
+    tensor = _classify(workload, [tensor_row])
+
+    assert scalar["primary_technique"] == "SCALAR_CONTROL"
+    assert tensor["primary_technique"] == "TENSOR_AUTODIFF"
 
 
 @pytest.mark.parametrize(
@@ -2106,7 +2337,9 @@ def _public_schema(schema_kind: str, raw_schema: dict, **aliases) -> dict:
     return record
 
 
-def _public_frame_with_schemas(schemas: list[dict]) -> dict:
+def _public_frame_with_schemas(
+    schemas: list[dict], *, discovery_status: str = "EXECUTABLE"
+) -> dict:
     source_id = canonical_sha256(
         {
             "normalized_source_tree_sha256": "21" * 32,
@@ -2117,6 +2350,7 @@ def _public_frame_with_schemas(schemas: list[dict]) -> dict:
     body = {
         "schema_version": "p3-public-behavior-frame-v1",
         "controlled_subject_source_id": source_id,
+        "discovery_status": discovery_status,
         "category_accounting": [
             {
                 "category": category,
@@ -2377,12 +2611,23 @@ def test_supported_common_input_generation_fails_closed_when_all_rows_invalid():
         build_common_inputs(_source_record(), frame, registry)
 
 
-def test_zero_eligible_schemas_yield_thirty_unavailable_rows():
+def test_executable_discovery_with_zero_eligible_schemas_fails_closed():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+
+    with pytest.raises(EvidenceError, match="E_COMMON_EXECUTABLE"):
+        build_common_inputs(_source_record(), _public_frame_with_schemas([]), registry)
+
+
+def test_unsupported_discovery_yields_thirty_unavailable_rows():
     registry = validate_input_generator_registry(
         _load_generator_registry(), GENERATOR_FIXTURE_ROOT
     )
     inventory = build_common_inputs(
-        _source_record(), _public_frame_with_schemas([]), registry
+        _source_record(),
+        _public_frame_with_schemas([], discovery_status="ADAPTER_UNSUPPORTED"),
+        registry,
     )
     assert len(inventory["rows"]) == 30
     assert {row["status"] for row in inventory["rows"]} == {"COMMON_INPUT_UNAVAILABLE"}

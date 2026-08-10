@@ -66,14 +66,47 @@ _PROFILE_TECHNIQUES = tuple(
 _UNRESOLVED_STATUSES = frozenset(
     {"FAILURE", "TIMEOUT", "MISSING_TRACE", "ADAPTER_UNCERTAIN"}
 )
-_TRACE_FEATURE_TO_TECHNIQUE = {
-    "NATIVE_BOUNDARY_CROSSING": "HYBRID_NATIVE",
-    "TENSOR_AUTODIFF_OPERATION": "TENSOR_AUTODIFF",
-    "PROBABILISTIC_SURROGATE_OPERATION": "PROBABILISTIC_SURROGATE",
-    "ITERATIVE_STOCHASTIC_OPERATION": "ITERATIVE_STOCHASTIC",
-    "ARRAY_NUMERICAL_OPERATION": "ARRAY_NUMERICAL",
-    "SCALAR_CONTROL_OPERATION": "SCALAR_CONTROL",
-}
+_TRACE_CALL_KINDS = frozenset(
+    {
+        "PYTHON_CALL",
+        "FUNCTION_CALL",
+        "METHOD_CALL",
+        "NATIVE_CALL",
+        "FFI_CALL",
+        "PROCESS_SPAWN",
+    }
+)
+_NATIVE_CALL_KINDS = frozenset({"NATIVE_CALL", "FFI_CALL", "PROCESS_SPAWN"})
+_TENSOR_MODULE_PREFIXES = ("torch", "tensorflow", "jax", "autograd")
+_PROBABILISTIC_MODULE_PREFIXES = (
+    "pymc",
+    "pyro",
+    "sklearn.gaussian_process",
+    "scipy.stats",
+    "statsmodels",
+)
+_ITERATIVE_MODULE_PREFIXES = ("scipy.optimize", "scipy.integrate", "emcee")
+_ARRAY_MODULE_PREFIXES = ("numpy", "scipy.linalg", "scipy.sparse", "cupy")
+_TENSOR_SYMBOL_TOKENS = frozenset(
+    {"autodiff", "backprop", "backward", "gradient", "tensor"}
+)
+_PROBABILISTIC_SYMBOL_TOKENS = frozenset(
+    {
+        "bayes",
+        "distribution",
+        "gaussian",
+        "inference",
+        "logprob",
+        "posterior",
+        "predict",
+    }
+)
+_ITERATIVE_SYMBOL_TOKENS = frozenset(
+    {"iterate", "minimize", "optimize", "sample", "simulate", "step", "trajectory"}
+)
+_ARRAY_SYMBOL_TOKENS = frozenset(
+    {"array", "dot", "linalg", "matmul", "matrix", "solve", "sparse", "vector"}
+)
 P12_OUTCOME_STATES = [
     "MR_VIOLATION",
     "MR_SATISFIED",
@@ -345,11 +378,19 @@ _PROFILING_RESULT_SCHEMA = {
     "exit_code": (int, type(None)),
     "stdout_sha256": str,
     "stderr_sha256": str,
-    "call_trace_sha256": (str, type(None)),
-    "trace_features": list,
+    "call_trace": list,
+    "call_trace_sha256": str,
     "timed_out": bool,
     "failure_code": str,
     "observed_site_ids": list,
+}
+_CALL_TRACE_EVENT_SCHEMA = {
+    "sequence": int,
+    "module": str,
+    "symbol": str,
+    "call_kind": str,
+    "argument_types": list,
+    "keyword_names": list,
 }
 _PROFILING_RECEIPT_SCHEMA = {
     "schema_version": str,
@@ -948,6 +989,200 @@ def build_subject_frames(
                 raise EvidenceError(
                     "E_DERIVED_SUBJECT_BINDING", "direct parent binding differs"
                 )
+            try:
+                discovery_bindings = {
+                    "neutral_snapshot_id": neutral,
+                    "controlled_subject_source_id": source_id,
+                    "normalized_source_tree_sha256": record[
+                        "normalized_source_tree_sha256"
+                    ],
+                    "build_descriptor_sha256": record["build_descriptor_sha256"],
+                    "adapter_registry_sha256": validate_sha256(
+                        discovery.get("adapter_registry_sha256"),
+                        "adapter_discovery.adapter_registry_sha256",
+                    ),
+                }
+                expected_discovery_keys = set(_ADAPTER_DISCOVERY_SCHEMA) | set(
+                    discovery_bindings
+                )
+                if set(discovery) != expected_discovery_keys:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "bound adapter discovery keys differ",
+                    )
+                raw_discovery_body = {
+                    key: discovery[key]
+                    for key in _ADAPTER_DISCOVERY_SCHEMA
+                    if key != "artifact_sha256"
+                }
+                raw_discovery = {
+                    **raw_discovery_body,
+                    "artifact_sha256": canonical_sha256(raw_discovery_body),
+                }
+                raw_discovery = _validate_discovery(raw_discovery)
+                expected_discovery = _bind_artifact(
+                    raw_discovery, discovery_bindings
+                )
+                if discovery != expected_discovery:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "adapter discovery does not reconstruct from nested evidence",
+                    )
+                source_record = {
+                    "normalized_source_tree_sha256": record[
+                        "normalized_source_tree_sha256"
+                    ],
+                    "build_descriptor_sha256": record["build_descriptor_sha256"],
+                }
+                expected_frame = _bind_artifact(
+                    build_public_behavior_frame(source_record, raw_discovery),
+                    {"adapter_discovery_sha256": discovery["artifact_sha256"]},
+                )
+                if frame != expected_frame:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "public behavior frame does not reconstruct from discovery",
+                    )
+
+                per_file = scale.get("per_file_effective_lines")
+                if not isinstance(per_file, list):
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING", "source scale rows are absent"
+                    )
+                expected_paths = raw_discovery["source_files"]
+                observed_paths = [
+                    row.get("path")
+                    for row in per_file
+                    if isinstance(row, Mapping)
+                ]
+                if observed_paths != expected_paths:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "source scale paths differ from adapter discovery",
+                    )
+                if any(
+                    not isinstance(row, Mapping)
+                    or set(row) != {"path", "effective_lines"}
+                    or type(row["effective_lines"]) is not int
+                    or row["effective_lines"] < 0
+                    for row in per_file
+                ):
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING", "source scale rows are invalid"
+                    )
+                total_lines = sum(row["effective_lines"] for row in per_file)
+                expected_scale_class = (
+                    "S"
+                    if total_lines < 10_000
+                    else "M"
+                    if total_lines < 100_000
+                    else "L"
+                )
+                expected_scale = _bind_artifact(
+                    {
+                        "schema_version": "p3-source-scale-v1",
+                        "adapter_id": raw_discovery["adapter_id"],
+                        "ecosystem": raw_discovery["ecosystem"],
+                        "implementation_source_sha256": raw_discovery[
+                            "implementation_source_sha256"
+                        ],
+                        "discovery_sha256": raw_discovery["artifact_sha256"],
+                        "per_file_effective_lines": per_file,
+                        "total_effective_lines": total_lines,
+                        "scale_class": expected_scale_class,
+                    },
+                    {
+                        "neutral_snapshot_id": neutral,
+                        "controlled_subject_source_id": source_id,
+                        "normalized_source_tree_sha256": record[
+                            "normalized_source_tree_sha256"
+                        ],
+                        "build_descriptor_sha256": record[
+                            "build_descriptor_sha256"
+                        ],
+                        "discovery_sha256": discovery["artifact_sha256"],
+                    },
+                )
+                if scale != expected_scale:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "source scale does not reconstruct from nested evidence",
+                    )
+
+                expected_workload = select_profiling_workload(
+                    expected_frame, expected_scale_class
+                )
+                if workload != expected_workload:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "profiling workload does not reconstruct from frame and scale",
+                    )
+                expected_technique_body = classify_technique(
+                    expected_workload, receipt
+                )
+                expected_technique = _bind_artifact(
+                    expected_technique_body,
+                    {
+                        "neutral_snapshot_id": neutral,
+                        "controlled_subject_source_id": source_id,
+                        "normalized_source_tree_sha256": record[
+                            "normalized_source_tree_sha256"
+                        ],
+                        "build_descriptor_sha256": record[
+                            "build_descriptor_sha256"
+                        ],
+                        "adapter_discovery_sha256": discovery["artifact_sha256"],
+                        "profiling_workload_sha256": expected_workload[
+                            "artifact_sha256"
+                        ],
+                        "profiling_results_sha256": receipt["artifact_sha256"],
+                    },
+                )
+                if technique != expected_technique:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "technique profile does not reconstruct from profiling receipt",
+                    )
+
+                expected_subject_id = _controlled_subject_id(
+                    record,
+                    {
+                        "public_workload_set_sha256": expected_workload[
+                            "artifact_sha256"
+                        ]
+                    },
+                )
+                expected_vector = sorted(
+                    set(expected_technique["confirmed_tags"])
+                    | {expected_technique["primary_technique"]}
+                )
+                expected_subject = {
+                    "controlled_subject_id": expected_subject_id,
+                    "normalized_source_tree_sha256": record[
+                        "normalized_source_tree_sha256"
+                    ],
+                    "build_descriptor_sha256": record["build_descriptor_sha256"],
+                    "public_workload_set_sha256": expected_workload[
+                        "artifact_sha256"
+                    ],
+                    "scale_class": expected_scale_class,
+                    "primary_technique": expected_technique["primary_technique"],
+                    "technique_vector": expected_vector,
+                    "sites": _sites(expected_subject_id, raw_discovery["sites"]),
+                    "neutral_snapshot_ids": [neutral],
+                }
+                if material["subject"] != expected_subject:
+                    raise EvidenceError(
+                        "E_DERIVED_SUBJECT_BINDING",
+                        "derived subject does not reconstruct from nested evidence",
+                    )
+            except EvidenceError as exc:
+                if exc.code == "E_DERIVED_SUBJECT_BINDING":
+                    raise
+                raise EvidenceError(
+                    "E_DERIVED_SUBJECT_BINDING",
+                    f"nested subject derivation is invalid: {exc.code}",
+                ) from exc
         if neutral in materials:
             raise EvidenceError(
                 "E_SUBJECT_SPEC_COVERAGE", f"duplicate derived subject: {neutral}"
@@ -1182,6 +1417,29 @@ _EXCLUDED_SOURCE_NAMES = frozenset(
         "compile_commands.json",
     }
 )
+_VCS_METADATA_PARTS = frozenset({".bzr", ".git", ".hg", ".svn"})
+_TRANSIENT_SOURCE_PARTS = frozenset(
+    {
+        ".tox",
+        ".venv",
+        "_build",
+        "__pycache__",
+        "build",
+        "cmakefiles",
+        "debug",
+        "dist",
+        "env",
+        "node_modules",
+        "out",
+        "release",
+        "relwithdebinfo",
+        "minsizerel",
+        "site-packages",
+        "target",
+        "venv",
+    }
+)
+_TRANSIENT_SOURCE_NAMES = _EXCLUDED_SOURCE_NAMES
 _PYTHON_SOURCE_SUFFIXES = frozenset({".py", ".pyi", ".pyx", ".pxd"})
 _CPP_SOURCE_SUFFIXES = frozenset(
     {".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".inl"}
@@ -1635,9 +1893,19 @@ def canonical_source_tree_sha256(source_root: str | Path) -> str:
             ) from exc
         for path in children:
             relative = path.relative_to(root).as_posix()
-            safe_relative_path(relative)
-            if _excluded_scale_path(relative):
+            parts = tuple(part.casefold() for part in safe_relative_path(relative).parts)
+            if any(part in _VCS_METADATA_PARTS for part in parts):
                 continue
+            if any(
+                part in _TRANSIENT_SOURCE_PARTS
+                or part.startswith("cmake-build-")
+                or part.startswith("build-")
+                for part in parts
+            ) or path.name.casefold() in _TRANSIENT_SOURCE_NAMES:
+                raise EvidenceError(
+                    "E_SOURCE_TREE_PATH",
+                    f"source root contains transient output: {relative}",
+                )
             if path.is_symlink():
                 raise EvidenceError(
                     "E_SOURCE_TREE_PATH", f"source path contains a symlink: {relative}"
@@ -2000,6 +2268,7 @@ def build_public_behavior_frame(
     body = {
         "schema_version": "p3-public-behavior-frame-v1",
         "controlled_subject_source_id": source_id,
+        "discovery_status": adapter_discovery["discovery_status"],
         "adapter_discovery_sha256": adapter_discovery["artifact_sha256"],
         "category_accounting": accounting,
         "rows": rows,
@@ -2122,6 +2391,71 @@ def _serialize_fraction(value: Fraction) -> str:
     return text or "0"
 
 
+def _module_matches(module: str, prefixes: tuple[str, ...]) -> bool:
+    normalized = module.casefold()
+    return any(
+        normalized == prefix or normalized.startswith(f"{prefix}.")
+        for prefix in prefixes
+    )
+
+
+def _techniques_from_call_trace(call_trace: list[Any]) -> list[str]:
+    techniques: set[str] = set()
+    for index, candidate in enumerate(call_trace):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError(
+                "E_PROFILE_TRACE", f"call_trace[{index}] must be an object"
+            )
+        event = validate_exact_object(
+            dict(candidate), _CALL_TRACE_EVENT_SCHEMA, f"call_trace[{index}]"
+        )
+        if event["sequence"] != index + 1:
+            raise EvidenceError(
+                "E_PROFILE_TRACE", "call trace sequence must be contiguous and ordered"
+            )
+        if not event["module"] or not event["symbol"]:
+            raise EvidenceError(
+                "E_PROFILE_TRACE", "call trace module and symbol must be nonempty"
+            )
+        if event["call_kind"] not in _TRACE_CALL_KINDS:
+            raise EvidenceError("E_PROFILE_TRACE", "call trace kind is not frozen")
+        argument_types = event["argument_types"]
+        keyword_names = event["keyword_names"]
+        if any(type(item) is not str or not item for item in argument_types):
+            raise EvidenceError("E_PROFILE_TRACE", "call argument types are invalid")
+        if (
+            any(type(item) is not str or not item for item in keyword_names)
+            or keyword_names != sorted(set(keyword_names))
+        ):
+            raise EvidenceError("E_PROFILE_TRACE", "call keyword names are not canonical")
+
+        module = event["module"]
+        symbol_tokens = frozenset(
+            re.findall(r"[a-z0-9]+", event["symbol"].casefold())
+        )
+        if event["call_kind"] in _NATIVE_CALL_KINDS:
+            techniques.add("HYBRID_NATIVE")
+        if _module_matches(module, _TENSOR_MODULE_PREFIXES) or (
+            symbol_tokens & _TENSOR_SYMBOL_TOKENS
+        ):
+            techniques.add("TENSOR_AUTODIFF")
+        if _module_matches(module, _PROBABILISTIC_MODULE_PREFIXES) or (
+            symbol_tokens & _PROBABILISTIC_SYMBOL_TOKENS
+        ):
+            techniques.add("PROBABILISTIC_SURROGATE")
+        if _module_matches(module, _ITERATIVE_MODULE_PREFIXES) or (
+            symbol_tokens & _ITERATIVE_SYMBOL_TOKENS
+        ):
+            techniques.add("ITERATIVE_STOCHASTIC")
+        if _module_matches(module, _ARRAY_MODULE_PREFIXES) or (
+            symbol_tokens & _ARRAY_SYMBOL_TOKENS
+        ):
+            techniques.add("ARRAY_NUMERICAL")
+    if call_trace and not techniques:
+        techniques.add("SCALAR_CONTROL")
+    return sorted(techniques)
+
+
 def _validated_profiling_rows(
     workload: Mapping[str, Any], profiling_receipt: Mapping[str, Any]
 ) -> list[dict[str, Any]]:
@@ -2205,20 +2539,16 @@ def _validated_profiling_rows(
             validate_sha256(row[field], f"profiling_results[{index}].{field}")
         if not row["runner_version"]:
             raise EvidenceError("E_PROFILE_RESULTS", "runner version is absent")
-        call_trace = row["call_trace_sha256"]
-        if call_trace is not None:
-            validate_sha256(
-                call_trace, f"profiling_results[{index}].call_trace_sha256"
-            )
-        features = row["trace_features"]
-        if (
-            any(type(feature) is not str for feature in features)
-            or features != sorted(set(features))
-            or any(feature not in _TRACE_FEATURE_TO_TECHNIQUE for feature in features)
-        ):
+        call_trace_sha256 = validate_sha256(
+            row["call_trace_sha256"],
+            f"profiling_results[{index}].call_trace_sha256",
+        )
+        call_trace = row["call_trace"]
+        if call_trace_sha256 != canonical_sha256(call_trace):
             raise EvidenceError(
-                "E_PROFILE_TRACE_FEATURE", "trace features are not frozen canonical evidence"
+                "E_PROFILE_TRACE_HASH", "call trace canonical bytes differ from its hash"
             )
+        technique_tags = _techniques_from_call_trace(call_trace)
         observed_sites = row["observed_site_ids"]
         for site_index, site_id in enumerate(observed_sites):
             validate_sha256(
@@ -2233,7 +2563,7 @@ def _validated_profiling_rows(
                 row["exit_code"] != 0
                 or row["timed_out"]
                 or row["failure_code"]
-                or call_trace is None
+                or not call_trace
             ):
                 raise EvidenceError(
                     "E_PROFILE_RESULTS", "successful profiling result is inconsistent"
@@ -2243,9 +2573,9 @@ def _validated_profiling_rows(
                 raise EvidenceError(
                     "E_PROFILE_RESULTS", "unresolved profiling result is inconsistent"
                 )
-            if features:
+            if call_trace:
                 raise EvidenceError(
-                    "E_PROFILE_TRACE_FEATURE", "unresolved result cannot classify technique"
+                    "E_PROFILE_TRACE", "unresolved result cannot contain a call trace"
                 )
         else:
             raise EvidenceError(
@@ -2255,9 +2585,7 @@ def _validated_profiling_rows(
             {
                 **row,
                 "behavior_id": behavior_id,
-                "technique_tags": sorted(
-                    {_TRACE_FEATURE_TO_TECHNIQUE[feature] for feature in features}
-                ),
+                "technique_tags": technique_tags,
             }
         )
     if [row["behavior_id"] for row in normalized] != sorted(
@@ -2691,10 +3019,22 @@ def build_common_inputs(
             "E_FRAME_SOURCE",
             "public frame controlled_subject_source_id differs from source_record",
         )
+    discovery_status = public_frame.get("discovery_status")
+    if discovery_status not in {"EXECUTABLE", "ADAPTER_UNSUPPORTED"}:
+        raise EvidenceError("E_FRAME", "public frame discovery status is invalid")
     kind_to_generator = {
         entry["schema_kind"]: entry for entry in validated_registry["generators"]
     }
     eligible = _eligible_public_schemas(public_frame, kind_to_generator)
+    if discovery_status == "ADAPTER_UNSUPPORTED" and eligible:
+        raise EvidenceError(
+            "E_FRAME", "unsupported discovery cannot carry eligible public schemas"
+        )
+    if discovery_status == "EXECUTABLE" and not eligible:
+        raise EvidenceError(
+            "E_COMMON_EXECUTABLE",
+            "executable discovery produced no eligible common-input schema",
+        )
     rows: list[dict[str, Any]] = []
     if not eligible:
         for ordinal in range(1, E_COMMON_COUNT + 1):
@@ -2817,7 +3157,7 @@ def build_common_inputs(
                 }
             )
 
-    if eligible and not any(
+    if discovery_status == "EXECUTABLE" and not any(
         row["status"] == "COMMON_INPUT_EXECUTABLE" for row in rows
     ):
         raise EvidenceError(

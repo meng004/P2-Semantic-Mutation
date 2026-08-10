@@ -126,10 +126,20 @@ def _profiling_receipt(
     adapter_source_sha256: str | None,
     technique: str,
 ) -> dict:
-    feature = {
-        "SCALAR_CONTROL": "SCALAR_CONTROL_OPERATION",
-        "ARRAY_NUMERICAL": "ARRAY_NUMERICAL_OPERATION",
+    module, symbol = {
+        "SCALAR_CONTROL": ("builtins", "abs"),
+        "ARRAY_NUMERICAL": ("numpy.linalg", "solve"),
     }[technique]
+    call_trace = [
+        {
+            "sequence": 1,
+            "module": module,
+            "symbol": symbol,
+            "call_kind": "PYTHON_CALL",
+            "argument_types": ["float"],
+            "keyword_names": [],
+        }
+    ]
     rows = [
         {
             "behavior_id": row["behavior_id"],
@@ -141,8 +151,8 @@ def _profiling_receipt(
             "exit_code": 0,
             "stdout_sha256": "53" * 32,
             "stderr_sha256": "54" * 32,
-            "call_trace_sha256": "55" * 32,
-            "trace_features": [feature],
+            "call_trace": call_trace,
+            "call_trace_sha256": canonical_sha256(call_trace),
             "timed_out": False,
             "failure_code": "",
             "observed_site_ids": [],
