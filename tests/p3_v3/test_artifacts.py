@@ -72,3 +72,16 @@ def test_sha256_and_canonical_hash_require_lowercase_hex():
     assert validate_sha256(expected, "digest") == expected
     with pytest.raises(EvidenceError, match="E_SHA256"):
         validate_sha256(expected.upper(), "digest")
+
+
+def test_byte_index_digest_covers_the_complete_self_hashed_artifact(tmp_path):
+    body = {"schema_version": "fixture-v1", "policy": "blocked"}
+    artifact = {**body, "artifact_sha256": canonical_sha256(body)}
+    path = tmp_path / "authority.json"
+
+    write_canonical_json(path, artifact, exclusive=True)
+
+    byte_digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    assert byte_digest == hashlib.sha256(canonical_json_bytes(artifact)).hexdigest()
+    assert byte_digest != artifact["artifact_sha256"]
+    assert read_canonical_json(path) == artifact

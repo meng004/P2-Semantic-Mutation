@@ -1777,6 +1777,53 @@ def test_protocol_binding_rejects_omitted_mandatory_registry(tmp_path, collectio
     assert json.loads(result.stderr)["code"] == "E_PROTOCOL_BINDING"
 
 
+@pytest.mark.parametrize("collection", ["adapter_registries", "input_generator_registries"])
+def test_protocol_binding_requires_exactly_one_registry_authority(tmp_path, collection):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text())
+    source = tmp_path / index[collection][0]["path"]
+    duplicate = tmp_path / f"duplicate-{collection}.json"
+    duplicate.write_bytes(source.read_bytes())
+    index[collection].append(_indexed_reference(tmp_path, duplicate))
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(canonical_json_bytes(index))
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_PROTOCOL_BINDING"
+
+
+def test_mapping_free_yaml_claim_ceiling_fails_closed(tmp_path):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text())
+    authority_ref = index["protocol_artifacts"]["claim_ceiling_sha256"]
+    authority_path = tmp_path / authority_ref["path"]
+    authority_path.write_text("claims_initial_status: blocked\n", encoding="utf-8")
+    authority_ref["sha256"] = hashlib.sha256(authority_path.read_bytes()).hexdigest()
+    protocol_path = tmp_path / index["protocol"]["path"]
+    protocol = json.loads(protocol_path.read_text())
+    protocol["claim_ceiling_sha256"] = authority_ref["sha256"]
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    protocol_path.write_bytes(canonical_json_bytes(protocol))
+    index["protocol"]["sha256"] = hashlib.sha256(protocol_path.read_bytes()).hexdigest()
+    index_body = {
+        key: value for key, value in index.items() if key != "artifact_sha256"
+    }
+    index["artifact_sha256"] = canonical_sha256(index_body)
+    index_path.write_bytes(canonical_json_bytes(index))
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_JSON"
+    assert not result.stdout
+
+
 @pytest.mark.parametrize("field", _PROTOCOL_ARTIFACT_FIELDS)
 def test_protocol_binding_rejects_omitted_mandatory_policy(tmp_path, field):
     body = _empty_evidence_index_body(tmp_path)
