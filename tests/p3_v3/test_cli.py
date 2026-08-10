@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import subprocess
 from pathlib import Path
@@ -58,6 +59,14 @@ _ADAPTER_SPECS = (
     ("MESON_TEST_V1", "meson", "adapters/meson_test_v1.py"),
     ("AUTOTOOLS_MAKECHECK_V1", "autotools", "adapters/autotools_makecheck_v1.py"),
 )
+SECRET_ORIGIN = (
+    "https://audit-user:TOP_SECRET_TOKEN@github.com/"
+    "meng004/P3-Semantic-Mutation.git"
+)
+SECRET_IDENTITY = "github.com/meng004/P3-Semantic-Mutation"
+SECRET_ORIGIN_SHA256 = (
+    "8b90a20c89d81eff7287a414ad53840b1d030a1e1d42a409a69396efbe2ec3d2"
+)
 
 
 def _env():
@@ -66,6 +75,51 @@ def _env():
 
 def _digest(label: str) -> str:
     return canonical_sha256({"fixture": label})
+
+
+def _run_git(root: Path, *argv: str) -> str:
+    return subprocess.run(
+        ["git", "-C", str(root), *argv],
+        capture_output=True,
+        check=True,
+        text=True,
+    ).stdout.strip()
+
+
+def _secret_preflight_fixture(tmp_path: Path) -> tuple[Path, dict]:
+    root = tmp_path / "repo"
+    root.mkdir()
+    _run_git(root, "init")
+    _run_git(root, "config", "user.name", "Fixture")
+    _run_git(root, "config", "user.email", "fixture@example.invalid")
+    _run_git(root, "remote", "add", "origin", SECRET_ORIGIN)
+    lock = root / "requirements.lock"
+    lock.write_text("dependency==1\n", encoding="utf-8")
+    input_path = root / "input.json"
+    input_path.write_text("{}\n", encoding="utf-8")
+    _run_git(root, "add", "requirements.lock", "input.json")
+    _run_git(root, "commit", "-m", "fixture")
+    spec = {
+        "schema_version": "p3-preflight-v1",
+        "repository_identity": SECRET_IDENTITY,
+        "expected_commit": _run_git(root, "rev-parse", "HEAD"),
+        "dependency_lock_path": "requirements.lock",
+        "dependency_lock_sha256": hashlib.sha256(lock.read_bytes()).hexdigest(),
+        "phase_inputs": [
+            {
+                "path": "input.json",
+                "sha256": hashlib.sha256(input_path.read_bytes()).hexdigest(),
+            }
+        ],
+        "smoke_commands": [["python3", "-c", "print(1)"]],
+        "timeout_seconds": 10,
+        "phase_role": "CONTROLLED_B",
+        "minimum_cpu_count": 1,
+        "minimum_memory_bytes": 1,
+        "minimum_disk_free_bytes": 1,
+        "worker_limit": 1,
+    }
+    return root, spec
 
 
 def _protocol_body(**overrides):
@@ -145,6 +199,68 @@ def test_cli_help_lists_only_frozen_commands():
     line = next(item for item in result.stdout.splitlines() if "{" in item and "}" in item)
     observed = set(line[line.index("{") + 1 : line.index("}")].split(","))
     assert observed == COMMANDS
+
+
+def test_run_preflight_stdout_and_receipt_do_not_reveal_secret_origin(tmp_path):
+    root, spec = _secret_preflight_fixture(tmp_path)
+    spec_path = tmp_path / "preflight.json"
+    receipt_path = tmp_path / "receipt.json"
+    write_canonical_json(spec_path, spec, exclusive=True)
+
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "run-preflight",
+            "--root",
+            str(root),
+            "--spec",
+            str(spec_path),
+            "--output",
+            str(receipt_path),
+        ],
+        capture_output=True,
+        check=False,
+        env=_env(),
+    )
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["repository_identity"] == SECRET_IDENTITY
+    assert payload["origin_transport"] == "HTTPS"
+    assert payload["origin_sha256"] == SECRET_ORIGIN_SHA256
+    assert "raw_origin" not in payload
+    for stream in (result.stdout, result.stderr, receipt_path.read_bytes()):
+        assert b"audit-user" not in stream
+        assert b"TOP_SECRET_TOKEN" not in stream
+
+
+def test_run_preflight_error_does_not_reveal_secret_origin(tmp_path):
+    root, spec = _secret_preflight_fixture(tmp_path)
+    spec["repository_identity"] = "github.com/Other/Repo"
+    spec_path = tmp_path / "preflight.json"
+    write_canonical_json(spec_path, spec, exclusive=True)
+
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "run-preflight",
+            "--root",
+            str(root),
+            "--spec",
+            str(spec_path),
+        ],
+        capture_output=True,
+        check=False,
+        env=_env(),
+    )
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_PREFLIGHT_REPOSITORY"
+    for stream in (result.stdout, result.stderr):
+        assert b"audit-user" not in stream
+        assert b"TOP_SECRET_TOKEN" not in stream
 
 
 def test_validate_protocol_prints_one_canonical_json_result(tmp_path):

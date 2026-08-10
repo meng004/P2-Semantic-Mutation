@@ -43,21 +43,28 @@ _GIT_OID_RE = re.compile(r"[0-9a-f]{40}")
 _PHASE_ROLES_AB = frozenset({"CONSTRUCTION_A", "CONTROLLED_B"})
 _PHASE_ROLES = _PHASE_ROLES_AB | frozenset({"REAL_HOLDOUT_C"})
 _PACKAGE_C_MARKERS = ("package-c", "REAL_HOLDOUT", "holdout")
+_DARWIN_AVAILABLE_PAGE_CLASSES = frozenset(
+    {"free", "inactive", "speculative", "purgeable"}
+)
 
 
-def normalize_repository_identity(raw: str) -> str:
+def _normalize_repository_origin(raw: str) -> tuple[str, str]:
     # Cursor VMs rewrite remotes via insteadOf and may inject HTTPS userinfo.
     candidate = re.sub(r"^(https://)[^/@]+@", r"\1", raw)
     patterns = (
-        r"https://github.com/([^/]+/[^/]+?)(?:\.git)?$",
-        r"git@github.com:([^/]+/[^/]+?)(?:\.git)?$",
-        r"ssh://git@github.com/([^/]+/[^/]+?)(?:\.git)?$",
+        ("HTTPS", r"https://github.com/([^/]+/[^/]+?)(?:\.git)?$"),
+        ("SSH", r"git@github.com:([^/]+/[^/]+?)(?:\.git)?$"),
+        ("SSH", r"ssh://git@github.com/([^/]+/[^/]+?)(?:\.git)?$"),
     )
-    for pattern in patterns:
+    for transport, pattern in patterns:
         match = re.fullmatch(pattern, candidate)
         if match:
-            return match.group(1)
-    raise EvidenceError("E_REPOSITORY_IDENTITY", f"unsupported repository origin: {raw!r}")
+            return f"github.com/{match.group(1)}", transport
+    raise EvidenceError("E_REPOSITORY_IDENTITY", "unsupported repository origin")
+
+
+def normalize_repository_identity(raw: str) -> str:
+    return _normalize_repository_origin(raw)[0]
 
 
 def _git(root: Path, *args: str) -> str:
@@ -77,17 +84,71 @@ def _stream_sha(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
-def _available_memory_bytes() -> int | None:
+def _parse_darwin_vm_stat(raw: bytes) -> int:
+    text = raw.decode("ascii", errors="strict")
+    page_size = None
+    pages: dict[str, int] = {}
+    for line in text.splitlines():
+        header = re.fullmatch(
+            r"Mach Virtual Memory Statistics: \(page size of ([0-9]+) bytes\)",
+            line,
+        )
+        if header:
+            if page_size is not None:
+                raise ValueError("duplicate page size")
+            page_size = int(header.group(1))
+            continue
+        page_class = re.fullmatch(
+            r"Pages (free|inactive|speculative|purgeable):\s+([0-9]+)\.",
+            line,
+        )
+        if page_class:
+            name = page_class.group(1)
+            if name in pages:
+                raise ValueError("duplicate page class")
+            pages[name] = int(page_class.group(2))
+    if page_size is None or page_size < 1:
+        raise ValueError("invalid page size")
+    if pages.keys() != _DARWIN_AVAILABLE_PAGE_CLASSES:
+        raise ValueError("missing page class")
+    available = page_size * sum(pages.values())
+    if available < 1:
+        raise ValueError("available memory is not positive")
+    return available
+
+
+def _available_memory_bytes(executor=subprocess.run) -> int | None:
     try:
         page_size = os.sysconf("SC_PAGE_SIZE")
         avail_pages = os.sysconf("SC_AVPHYS_PAGES")
     except (AttributeError, OSError, ValueError):
+        page_size = None
+        avail_pages = None
+    if (
+        type(page_size) is int
+        and type(avail_pages) is int
+        and page_size > 0
+        and avail_pages > 0
+    ):
+        return page_size * avail_pages
+    if platform.system() != "Darwin":
         return None
-    if type(page_size) is not int or type(avail_pages) is not int:
+    try:
+        result = executor(
+            ["vm_stat"],
+            capture_output=True,
+            shell=False,
+            check=False,
+            timeout=5,
+        )
+    except (OSError, subprocess.TimeoutExpired):
         return None
-    if page_size < 1 or avail_pages < 0:
+    if result.returncode != 0:
         return None
-    return page_size * avail_pages
+    try:
+        return _parse_darwin_vm_stat(result.stdout)
+    except (AttributeError, TypeError, ValueError):
+        return None
 
 
 def _probe_atomic_replace(_root: Path) -> str:
@@ -161,7 +222,8 @@ def run_preflight(
         raise EvidenceError("E_PREFLIGHT_WORKER", "worker_limit must be a positive integer")
 
     raw_origin = _git(root, "remote", "get-url", "origin")
-    identity = normalize_repository_identity(raw_origin)
+    identity, origin_transport = _normalize_repository_origin(raw_origin)
+    origin_sha256 = _stream_sha(raw_origin.encode("utf-8"))
     if identity != spec["repository_identity"]:
         raise EvidenceError("E_PREFLIGHT_REPOSITORY", "normalized repository identity differs")
     head = _git(root, "rev-parse", "HEAD")
@@ -271,7 +333,8 @@ def run_preflight(
         "status": "FAIL" if failure_code else "PASS",
         "failure_code": failure_code,
         "repository_identity": identity,
-        "raw_origin": raw_origin,
+        "origin_transport": origin_transport,
+        "origin_sha256": origin_sha256,
         "commit": head,
         "phase_role": spec["phase_role"],
         "platform": platform.system(),

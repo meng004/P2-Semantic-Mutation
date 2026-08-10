@@ -12,7 +12,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from p3_v3.artifacts import (
+from p3_v3.artifacts import (  # noqa: E402
     EvidenceError,
     canonical_json_bytes,
     canonical_sha256,
@@ -20,7 +20,7 @@ from p3_v3.artifacts import (
     read_canonical_json,
     write_canonical_json,
 )
-from p3_v3.bridge_and_frames import (
+from p3_v3.bridge_and_frames import (  # noqa: E402
     build_common_inputs,
     build_contract_inputs,
     build_public_behavior_frame,
@@ -36,13 +36,13 @@ from p3_v3.bridge_and_frames import (
     verify_pinned_bridge,
     verify_slot_chronology,
 )
-from p3_v3.packages import (
+from p3_v3.packages import (  # noqa: E402
     build_package,
     validate_package_manifest,
     verify_package,
 )
-from p3_v3.preflight import run_preflight
-from p3_v3.run_records import (
+from p3_v3.preflight import run_preflight  # noqa: E402
+from p3_v3.run_records import (  # noqa: E402
     close_phase,
     verify_ledger,
     verify_p12_denominator,
