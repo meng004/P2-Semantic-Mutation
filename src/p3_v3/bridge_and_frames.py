@@ -66,6 +66,14 @@ _PROFILE_TECHNIQUES = tuple(
 _UNRESOLVED_STATUSES = frozenset(
     {"FAILURE", "TIMEOUT", "MISSING_TRACE", "ADAPTER_UNCERTAIN"}
 )
+_TRACE_FEATURE_TO_TECHNIQUE = {
+    "NATIVE_BOUNDARY_CROSSING": "HYBRID_NATIVE",
+    "TENSOR_AUTODIFF_OPERATION": "TENSOR_AUTODIFF",
+    "PROBABILISTIC_SURROGATE_OPERATION": "PROBABILISTIC_SURROGATE",
+    "ITERATIVE_STOCHASTIC_OPERATION": "ITERATIVE_STOCHASTIC",
+    "ARRAY_NUMERICAL_OPERATION": "ARRAY_NUMERICAL",
+    "SCALAR_CONTROL_OPERATION": "SCALAR_CONTROL",
+}
 P12_OUTCOME_STATES = [
     "MR_VIOLATION",
     "MR_SATISFIED",
@@ -243,7 +251,7 @@ _SUBJECT_SPEC_SCHEMA = {
     "build_descriptor": dict,
     "adapter_registry": dict,
     "input_generator_registry": dict,
-    "profiling_results": list,
+    "profiling_results": dict,
 }
 _SUBJECT_PROFILE_SCHEMA = {
     "controlled_subject_id": str,
@@ -258,12 +266,21 @@ _SUBJECT_PROFILE_SCHEMA = {
 }
 _DERIVED_SUBJECT_SCHEMA = {
     "neutral_snapshot_id": str,
+    "controlled_subject_source_id": str,
     "adapter_discovery": dict,
+    "adapter_discovery_sha256": str,
     "source_scale": dict,
+    "source_scale_sha256": str,
     "public_behavior_frame": dict,
+    "public_behavior_frame_sha256": str,
     "profiling_workload": dict,
+    "profiling_workload_sha256": str,
     "common_inputs": dict,
+    "common_inputs_sha256": str,
+    "profiling_results": dict,
+    "profiling_results_sha256": str,
     "technique_profile": dict,
+    "technique_profile_sha256": str,
     "subject": dict,
     "artifact_sha256": str,
 }
@@ -317,6 +334,34 @@ _ADAPTER_DISCOVERY_SCHEMA = {
 _SOURCE_RECORD_SCHEMA = {
     "normalized_source_tree_sha256": str,
     "build_descriptor_sha256": str,
+}
+_PROFILING_RESULT_SCHEMA = {
+    "behavior_id": str,
+    "status": str,
+    "argv": list,
+    "input_sha256": list,
+    "environment_sha256": str,
+    "runner_version": str,
+    "exit_code": (int, type(None)),
+    "stdout_sha256": str,
+    "stderr_sha256": str,
+    "call_trace_sha256": (str, type(None)),
+    "trace_features": list,
+    "timed_out": bool,
+    "failure_code": str,
+    "observed_site_ids": list,
+}
+_PROFILING_RECEIPT_SCHEMA = {
+    "schema_version": str,
+    "neutral_snapshot_id": str,
+    "controlled_subject_source_id": str,
+    "normalized_source_tree_sha256": str,
+    "build_descriptor_sha256": str,
+    "profiling_workload_sha256": str,
+    "adapter_implementation_source_sha256": (str, type(None)),
+    "runner_implementation_source_sha256": str,
+    "results": list,
+    "artifact_sha256": str,
 }
 _GENERATOR_ENTRY_SCHEMA = {
     "generator_id": str,
@@ -810,6 +855,99 @@ def build_subject_frames(
         body = {key: value for key, value in material.items() if key != "artifact_sha256"}
         if material["artifact_sha256"] != canonical_sha256(body):
             raise EvidenceError("E_DERIVED_SUBJECT_HASH", "derived subject self-hash differs")
+        source_id = validate_sha256(
+            material["controlled_subject_source_id"],
+            f"derived_subjects[{index}].controlled_subject_source_id",
+        )
+        artifact_fields = (
+            "adapter_discovery",
+            "source_scale",
+            "public_behavior_frame",
+            "profiling_workload",
+            "common_inputs",
+            "profiling_results",
+            "technique_profile",
+        )
+        for field in artifact_fields:
+            artifact = material[field]
+            if not isinstance(artifact, Mapping):
+                raise EvidenceError(
+                    "E_DERIVED_SUBJECT_BINDING", f"{field} must be an object"
+                )
+            artifact_body = {
+                key: value
+                for key, value in artifact.items()
+                if key != "artifact_sha256"
+            }
+            observed_sha256 = artifact.get("artifact_sha256")
+            if (
+                material[f"{field}_sha256"] != observed_sha256
+                or observed_sha256 != canonical_sha256(artifact_body)
+            ):
+                raise EvidenceError(
+                    "E_DERIVED_SUBJECT_BINDING", f"{field} artifact binding differs"
+                )
+        record = records_by_neutral.get(neutral)
+        if record is not None:
+            expected_source_id = _controlled_subject_source_id(record)
+            discovery = material["adapter_discovery"]
+            scale = material["source_scale"]
+            frame = material["public_behavior_frame"]
+            workload = material["profiling_workload"]
+            common = material["common_inputs"]
+            receipt = material["profiling_results"]
+            technique = material["technique_profile"]
+            if source_id != expected_source_id or any(
+                artifact.get("controlled_subject_source_id") != source_id
+                for artifact in (discovery, scale, frame, workload, common, receipt, technique)
+            ):
+                raise EvidenceError(
+                    "E_DERIVED_SUBJECT_BINDING", "controlled source binding differs"
+                )
+            if (
+                discovery.get("neutral_snapshot_id") != neutral
+                or discovery.get("normalized_source_tree_sha256")
+                != record["normalized_source_tree_sha256"]
+                or discovery.get("build_descriptor_sha256")
+                != record["build_descriptor_sha256"]
+                or scale.get("neutral_snapshot_id") != neutral
+                or scale.get("normalized_source_tree_sha256")
+                != record["normalized_source_tree_sha256"]
+                or scale.get("build_descriptor_sha256")
+                != record["build_descriptor_sha256"]
+                or receipt.get("neutral_snapshot_id") != neutral
+                or receipt.get("normalized_source_tree_sha256")
+                != record["normalized_source_tree_sha256"]
+                or receipt.get("build_descriptor_sha256")
+                != record["build_descriptor_sha256"]
+                or technique.get("neutral_snapshot_id") != neutral
+                or technique.get("normalized_source_tree_sha256")
+                != record["normalized_source_tree_sha256"]
+                or technique.get("build_descriptor_sha256")
+                != record["build_descriptor_sha256"]
+            ):
+                raise EvidenceError(
+                    "E_DERIVED_SUBJECT_BINDING", "subject identity binding differs"
+                )
+            if (
+                scale.get("discovery_sha256")
+                != material["adapter_discovery_sha256"]
+                or frame.get("adapter_discovery_sha256")
+                != material["adapter_discovery_sha256"]
+                or receipt.get("profiling_workload_sha256")
+                != material["profiling_workload_sha256"]
+                or receipt.get("adapter_implementation_source_sha256")
+                != discovery.get("implementation_source_sha256")
+                or technique.get("adapter_discovery_sha256")
+                != material["adapter_discovery_sha256"]
+                or technique.get("profiling_workload_sha256")
+                != material["profiling_workload_sha256"]
+                or technique.get("profiling_results_sha256")
+                != material["profiling_results_sha256"]
+            ):
+                raise EvidenceError(
+                    "E_DERIVED_SUBJECT_BINDING", "direct parent binding differs"
+                )
         if neutral in materials:
             raise EvidenceError(
                 "E_SUBJECT_SPEC_COVERAGE", f"duplicate derived subject: {neutral}"
@@ -1473,6 +1611,62 @@ def _excluded_scale_path(relative: str) -> bool:
     )
 
 
+def canonical_source_tree_sha256(source_root: str | Path) -> str:
+    """Hash the canonical regular-file manifest for a verified source root."""
+
+    supplied_root = Path(source_root)
+    if supplied_root.is_symlink():
+        raise EvidenceError("E_SOURCE_TREE_PATH", "source root must not be a symlink")
+    try:
+        root = supplied_root.resolve(strict=True)
+    except OSError as exc:
+        raise EvidenceError("E_SOURCE_TREE_PATH", "source root is unavailable") from exc
+    if not root.is_dir():
+        raise EvidenceError("E_SOURCE_TREE_PATH", "source root must be a directory")
+
+    files: list[dict[str, str]] = []
+
+    def visit(directory: Path) -> None:
+        try:
+            children = sorted(directory.iterdir(), key=lambda path: path.name)
+        except OSError as exc:
+            raise EvidenceError(
+                "E_SOURCE_TREE_PATH", "source directory cannot be enumerated"
+            ) from exc
+        for path in children:
+            relative = path.relative_to(root).as_posix()
+            safe_relative_path(relative)
+            if _excluded_scale_path(relative):
+                continue
+            if path.is_symlink():
+                raise EvidenceError(
+                    "E_SOURCE_TREE_PATH", f"source path contains a symlink: {relative}"
+                )
+            if path.is_dir():
+                visit(path)
+                continue
+            if not path.is_file():
+                raise EvidenceError(
+                    "E_SOURCE_TREE_PATH", f"source path is not regular: {relative}"
+                )
+            try:
+                content_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+            except OSError as exc:
+                raise EvidenceError(
+                    "E_SOURCE_TREE_PATH", f"source file cannot be read: {relative}"
+                ) from exc
+            files.append({"path": relative, "byte_sha256": content_sha256})
+
+    visit(root)
+    files.sort(key=lambda item: item["path"])
+    return canonical_sha256(
+        {
+            "domain": "P3-NORMALIZED-SOURCE-TREE-v1",
+            "files": files,
+        }
+    )
+
+
 def _source_language(path: Path) -> str:
     suffix = path.suffix.casefold()
     if path.name.casefold() == "cmakelists.txt" or suffix == ".cmake":
@@ -1928,9 +2122,154 @@ def _serialize_fraction(value: Fraction) -> str:
     return text or "0"
 
 
+def _validated_profiling_rows(
+    workload: Mapping[str, Any], profiling_receipt: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    if not isinstance(profiling_receipt, Mapping):
+        raise EvidenceError("E_PROFILE_RECEIPT", "profiling receipt must be an object")
+    receipt = validate_exact_object(
+        dict(profiling_receipt), _PROFILING_RECEIPT_SCHEMA, "profiling_receipt"
+    )
+    if receipt["schema_version"] != "p3-profiling-results-v1":
+        raise EvidenceError("E_PROFILE_RECEIPT", "profiling receipt version differs")
+    body = {key: value for key, value in receipt.items() if key != "artifact_sha256"}
+    if receipt["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_PROFILE_RECEIPT_HASH", "profiling receipt self-hash differs")
+    for field in (
+        "neutral_snapshot_id",
+        "controlled_subject_source_id",
+        "normalized_source_tree_sha256",
+        "build_descriptor_sha256",
+        "profiling_workload_sha256",
+        "runner_implementation_source_sha256",
+        "artifact_sha256",
+    ):
+        validate_sha256(receipt[field], f"profiling_receipt.{field}")
+    adapter_source = receipt["adapter_implementation_source_sha256"]
+    if adapter_source is not None:
+        validate_sha256(
+            adapter_source,
+            "profiling_receipt.adapter_implementation_source_sha256",
+        )
+    expected_source_id = _controlled_subject_source_id(
+        {
+            "normalized_source_tree_sha256": receipt[
+                "normalized_source_tree_sha256"
+            ],
+            "build_descriptor_sha256": receipt["build_descriptor_sha256"],
+        }
+    )
+    if (
+        receipt["controlled_subject_source_id"] != expected_source_id
+        or workload.get("controlled_subject_source_id") != expected_source_id
+    ):
+        raise EvidenceError(
+            "E_PROFILE_SOURCE_BINDING", "profiling receipt source binding differs"
+        )
+    workload_body = {
+        key: value for key, value in workload.items() if key != "artifact_sha256"
+    }
+    workload_sha256 = workload.get("artifact_sha256")
+    validate_sha256(workload_sha256, "profiling_workload.artifact_sha256")
+    if workload_sha256 != canonical_sha256(workload_body):
+        raise EvidenceError("E_WORKLOAD_HASH", "profiling workload self-hash differs")
+    if receipt["profiling_workload_sha256"] != workload_sha256:
+        raise EvidenceError(
+            "E_PROFILE_WORKLOAD_BINDING", "profiling receipt workload binding differs"
+        )
+    if receipt["runner_implementation_source_sha256"] != file_sha256(Path(__file__)):
+        raise EvidenceError(
+            "E_PROFILE_RUNNER_BINDING", "profiling runner source binding differs"
+        )
+
+    normalized: list[dict[str, Any]] = []
+    for index, candidate in enumerate(receipt["results"]):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError(
+                "E_PROFILE_RESULTS", f"results[{index}] must be an object"
+            )
+        row = validate_exact_object(
+            dict(candidate), _PROFILING_RESULT_SCHEMA, f"profiling_results[{index}]"
+        )
+        behavior_id = validate_sha256(
+            row["behavior_id"], f"profiling_results[{index}].behavior_id"
+        )
+        if not row["argv"] or any(type(item) is not str for item in row["argv"]):
+            raise EvidenceError("E_PROFILE_RESULTS", "profiling argv is invalid")
+        for input_index, input_sha256 in enumerate(row["input_sha256"]):
+            validate_sha256(
+                input_sha256,
+                f"profiling_results[{index}].input_sha256[{input_index}]",
+            )
+        for field in ("environment_sha256", "stdout_sha256", "stderr_sha256"):
+            validate_sha256(row[field], f"profiling_results[{index}].{field}")
+        if not row["runner_version"]:
+            raise EvidenceError("E_PROFILE_RESULTS", "runner version is absent")
+        call_trace = row["call_trace_sha256"]
+        if call_trace is not None:
+            validate_sha256(
+                call_trace, f"profiling_results[{index}].call_trace_sha256"
+            )
+        features = row["trace_features"]
+        if (
+            any(type(feature) is not str for feature in features)
+            or features != sorted(set(features))
+            or any(feature not in _TRACE_FEATURE_TO_TECHNIQUE for feature in features)
+        ):
+            raise EvidenceError(
+                "E_PROFILE_TRACE_FEATURE", "trace features are not frozen canonical evidence"
+            )
+        observed_sites = row["observed_site_ids"]
+        for site_index, site_id in enumerate(observed_sites):
+            validate_sha256(
+                site_id,
+                f"profiling_results[{index}].observed_site_ids[{site_index}]",
+            )
+        if observed_sites != sorted(set(observed_sites)):
+            raise EvidenceError("E_PROFILE_RESULTS", "observed site IDs are not canonical")
+        status = row["status"]
+        if status == "SUCCESS":
+            if (
+                row["exit_code"] != 0
+                or row["timed_out"]
+                or row["failure_code"]
+                or call_trace is None
+            ):
+                raise EvidenceError(
+                    "E_PROFILE_RESULTS", "successful profiling result is inconsistent"
+                )
+        elif status in _UNRESOLVED_STATUSES:
+            if row["timed_out"] != (status == "TIMEOUT") or not row["failure_code"]:
+                raise EvidenceError(
+                    "E_PROFILE_RESULTS", "unresolved profiling result is inconsistent"
+                )
+            if features:
+                raise EvidenceError(
+                    "E_PROFILE_TRACE_FEATURE", "unresolved result cannot classify technique"
+                )
+        else:
+            raise EvidenceError(
+                "E_PROFILE_RESULTS", f"unsupported profiling status: {status!r}"
+            )
+        normalized.append(
+            {
+                **row,
+                "behavior_id": behavior_id,
+                "technique_tags": sorted(
+                    {_TRACE_FEATURE_TO_TECHNIQUE[feature] for feature in features}
+                ),
+            }
+        )
+    if [row["behavior_id"] for row in normalized] != sorted(
+        row["behavior_id"] for row in normalized
+    ):
+        raise EvidenceError("E_PROFILE_RESULTS", "profiling results are not canonical")
+    return normalized
+
+
 def classify_technique(
     workload: Mapping[str, Any],
-    profiling_results: Sequence[Mapping[str, Any]],
+    profiling_receipt: Mapping[str, Any],
 ) -> dict[str, Any]:
     if not isinstance(workload, Mapping):
         raise EvidenceError("E_WORKLOAD", "profiling workload must be an object")
@@ -1954,8 +2293,7 @@ def classify_technique(
         seen_ids.add(behavior_id)
         selected.append({"behavior_id": behavior_id, "category": category})
         selected_ids.append(behavior_id)
-    if not isinstance(profiling_results, Sequence) or isinstance(profiling_results, (str, bytes)):
-        raise EvidenceError("E_PROFILE_RESULTS", "profiling_results must be a sequence")
+    profiling_results = _validated_profiling_rows(workload, profiling_receipt)
     results_by_id: dict[str, Mapping[str, Any]] = {}
     for index, candidate in enumerate(profiling_results):
         if not isinstance(candidate, Mapping):
@@ -2479,11 +2817,28 @@ def build_common_inputs(
                 }
             )
 
+    if eligible and not any(
+        row["status"] == "COMMON_INPUT_EXECUTABLE" for row in rows
+    ):
+        raise EvidenceError(
+            "E_COMMON_EXECUTABLE",
+            "supported subject produced no executable common input",
+        )
     body = {
         "schema_version": "p3-evaluation-inputs-common-v1",
         "controlled_subject_source_id": source_id,
         "eligible_schema_count": len(eligible),
         "rows": rows,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _bind_artifact(
+    artifact: Mapping[str, Any], bindings: Mapping[str, Any]
+) -> dict[str, Any]:
+    body = {
+        **{key: value for key, value in artifact.items() if key != "artifact_sha256"},
+        **bindings,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
@@ -2517,6 +2872,16 @@ def derive_subject_material(
             )
     if not isinstance(spec["build_descriptor"], Mapping):
         raise EvidenceError("E_BUILD_DESCRIPTOR", "build_descriptor must be an object")
+    if canonical_sha256(spec["build_descriptor"]) != record["build_descriptor_sha256"]:
+        raise EvidenceError(
+            "E_BUILD_DESCRIPTOR_COMMITMENT", "build descriptor commitment differs"
+        )
+    if canonical_source_tree_sha256(spec["source_root"]) != record[
+        "normalized_source_tree_sha256"
+    ]:
+        raise EvidenceError(
+            "E_SOURCE_TREE_COMMITMENT", "normalized source-tree commitment differs"
+        )
     ecosystem = spec["build_descriptor"].get("ecosystem")
     if not isinstance(ecosystem, str) or not ecosystem:
         raise EvidenceError("E_BUILD_DESCRIPTOR", "build_descriptor ecosystem is absent")
@@ -2531,23 +2896,82 @@ def derive_subject_material(
     if not isinstance(adapter_registry.get("adapters"), list):
         raise EvidenceError("E_ADAPTER_REGISTRY", "adapter registry entries are absent")
     adapter_id = _ecosystem_to_adapter(adapter_registry).get(ecosystem)
-    discovery = run_adapter_discovery(
+    source_id = _controlled_subject_source_id(source_record)
+    raw_discovery = run_adapter_discovery(
         spec["source_root"],
         spec["build_descriptor"],
         adapter_registry,
         adapter_id,
     )
-    public_frame = build_public_behavior_frame(source_record, discovery)
-    source_scale = derive_source_scale(spec["source_root"], discovery)
+    discovery = _bind_artifact(
+        raw_discovery,
+        {
+            "neutral_snapshot_id": neutral,
+            "controlled_subject_source_id": source_id,
+            "normalized_source_tree_sha256": record[
+                "normalized_source_tree_sha256"
+            ],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+            "adapter_registry_sha256": adapter_registry["artifact_sha256"],
+        },
+    )
+    raw_public_frame = build_public_behavior_frame(source_record, raw_discovery)
+    public_frame = _bind_artifact(
+        raw_public_frame,
+        {
+            "adapter_discovery_sha256": discovery["artifact_sha256"],
+        },
+    )
+    raw_source_scale = derive_source_scale(spec["source_root"], raw_discovery)
+    source_scale = _bind_artifact(
+        raw_source_scale,
+        {
+            "neutral_snapshot_id": neutral,
+            "controlled_subject_source_id": source_id,
+            "normalized_source_tree_sha256": record[
+                "normalized_source_tree_sha256"
+            ],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+            "discovery_sha256": discovery["artifact_sha256"],
+        },
+    )
     workload = select_profiling_workload(public_frame, source_scale["scale_class"])
     common_inputs = build_common_inputs(
         source_record, public_frame, generator_registry
     )
-    technique_body = classify_technique(workload, spec["profiling_results"])
-    technique_profile = {
-        **technique_body,
-        "artifact_sha256": canonical_sha256(technique_body),
-    }
+    profiling_receipt = spec["profiling_results"]
+    technique_body = classify_technique(workload, profiling_receipt)
+    if (
+        profiling_receipt["neutral_snapshot_id"] != neutral
+        or profiling_receipt["normalized_source_tree_sha256"]
+        != record["normalized_source_tree_sha256"]
+        or profiling_receipt["build_descriptor_sha256"]
+        != record["build_descriptor_sha256"]
+    ):
+        raise EvidenceError(
+            "E_PROFILE_SUBJECT_BINDING", "profiling receipt subject binding differs"
+        )
+    if (
+        profiling_receipt["adapter_implementation_source_sha256"]
+        != discovery["implementation_source_sha256"]
+    ):
+        raise EvidenceError(
+            "E_PROFILE_ADAPTER_BINDING", "profiling receipt adapter binding differs"
+        )
+    technique_profile = _bind_artifact(
+        technique_body,
+        {
+            "neutral_snapshot_id": neutral,
+            "controlled_subject_source_id": source_id,
+            "normalized_source_tree_sha256": record[
+                "normalized_source_tree_sha256"
+            ],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+            "adapter_discovery_sha256": discovery["artifact_sha256"],
+            "profiling_workload_sha256": workload["artifact_sha256"],
+            "profiling_results_sha256": profiling_receipt["artifact_sha256"],
+        },
+    )
     primary = technique_profile["primary_technique"]
     technique_vector = sorted(set(technique_profile["confirmed_tags"]) | {primary})
     subject_seed = {
@@ -2567,12 +2991,21 @@ def derive_subject_material(
     }
     body = {
         "neutral_snapshot_id": neutral,
+        "controlled_subject_source_id": source_id,
         "adapter_discovery": discovery,
+        "adapter_discovery_sha256": discovery["artifact_sha256"],
         "source_scale": source_scale,
+        "source_scale_sha256": source_scale["artifact_sha256"],
         "public_behavior_frame": public_frame,
+        "public_behavior_frame_sha256": public_frame["artifact_sha256"],
         "profiling_workload": workload,
+        "profiling_workload_sha256": workload["artifact_sha256"],
         "common_inputs": common_inputs,
+        "common_inputs_sha256": common_inputs["artifact_sha256"],
+        "profiling_results": profiling_receipt,
+        "profiling_results_sha256": profiling_receipt["artifact_sha256"],
         "technique_profile": technique_profile,
+        "technique_profile_sha256": technique_profile["artifact_sha256"],
         "subject": subject,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}

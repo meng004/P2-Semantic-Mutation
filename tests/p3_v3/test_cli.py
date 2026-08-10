@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+import p3_v3.bridge_and_frames as frames_module
 from p3_v3.artifacts import canonical_sha256, write_canonical_json
 from p3_v3.bridge_and_frames import (
     build_public_behavior_frame,
@@ -79,6 +80,60 @@ def _env():
 
 def _digest(label: str) -> str:
     return canonical_sha256({"fixture": label})
+
+
+def _source_tree_sha256(root: Path) -> str:
+    files = [
+        {
+            "path": path.relative_to(root).as_posix(),
+            "byte_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+        for path in sorted(root.rglob("*"))
+        if path.is_file() and not path.is_symlink()
+    ]
+    return canonical_sha256(
+        {"domain": "P3-NORMALIZED-SOURCE-TREE-v1", "files": files}
+    )
+
+
+def _profiling_receipt(
+    workload: dict,
+    source_record: dict,
+    neutral: str,
+    adapter_source_sha256: str | None,
+) -> dict:
+    rows = [
+        {
+            "behavior_id": row["behavior_id"],
+            "status": "SUCCESS",
+            "argv": ["fixture-runner", row["behavior_id"]],
+            "input_sha256": ["51" * 32],
+            "environment_sha256": "52" * 32,
+            "runner_version": "fixture-runner-v1",
+            "exit_code": 0,
+            "stdout_sha256": "53" * 32,
+            "stderr_sha256": "54" * 32,
+            "call_trace_sha256": "55" * 32,
+            "trace_features": ["SCALAR_CONTROL_OPERATION"],
+            "timed_out": False,
+            "failure_code": "",
+            "observed_site_ids": [],
+        }
+        for row in workload["selected_rows"]
+    ]
+    body = {
+        "schema_version": "p3-profiling-results-v1",
+        "neutral_snapshot_id": neutral,
+        "controlled_subject_source_id": workload["controlled_subject_source_id"],
+        **source_record,
+        "profiling_workload_sha256": workload["artifact_sha256"],
+        "adapter_implementation_source_sha256": adapter_source_sha256,
+        "runner_implementation_source_sha256": hashlib.sha256(
+            Path(frames_module.__file__).read_bytes()
+        ).hexdigest(),
+        "results": sorted(rows, key=lambda row: row["behavior_id"]),
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
 def _run_git(root: Path, *argv: str) -> str:
@@ -282,7 +337,7 @@ def test_build_frames_subject_spec_coverage_fails_before_adapter_execution(
         "build_descriptor": {"ecosystem": "python"},
         "adapter_registry": {},
         "input_generator_registry": {},
-        "profiling_results": [],
+        "profiling_results": {},
     }
     if case == "missing":
         specs = []
@@ -574,23 +629,21 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
         "reverse": False,
     }
     source_record = {
-        "normalized_source_tree_sha256": "21" * 32,
-        "build_descriptor_sha256": "22" * 32,
+        "normalized_source_tree_sha256": _source_tree_sha256(source_root),
+        "build_descriptor_sha256": canonical_sha256(descriptor),
     }
+    neutral = canonical_sha256({"fixture": "neutral"})
     discovery = run_adapter_discovery(
         source_root, descriptor, registry, "PYTHON_PEP517_V1"
     )
     frame = build_public_behavior_frame(source_record, discovery)
     workload = select_profiling_workload(frame, "S")
-    profiling_results = [
-        {
-            "behavior_id": row["behavior_id"],
-            "status": "SUCCESS",
-            "technique_tags": ["SCALAR_CONTROL"],
-            "observed_site_ids": [],
-        }
-        for row in workload["selected_rows"]
-    ]
+    profiling_results = _profiling_receipt(
+        workload,
+        source_record,
+        neutral,
+        discovery["implementation_source_sha256"],
+    )
     bridge = {
         "schema_version": "p3-p12-bridge-v1",
         "p12_release_id": "fixture",
@@ -604,11 +657,15 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
         "trust_mode": "PINNED_GIT_RELEASE",
         "records": [
             {
-                "neutral_snapshot_id": canonical_sha256({"fixture": "neutral"}),
+                "neutral_snapshot_id": neutral,
                 "fixed_tree_commitment": "4" * 64,
-                "normalized_source_tree_sha256": "21" * 32,
+                "normalized_source_tree_sha256": source_record[
+                    "normalized_source_tree_sha256"
+                ],
                 "source_archive_sha256": "5" * 64,
-                "build_descriptor_sha256": "22" * 32,
+                "build_descriptor_sha256": source_record[
+                    "build_descriptor_sha256"
+                ],
                 "eligibility_reason": "fixture",
                 "eligible_for_construct": True,
                 "eligible_for_criterion": True,
@@ -686,6 +743,7 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
         f"public-behavior-frame-{neutral}.json",
         f"profiling-workload-{neutral}.json",
         f"evaluation-inputs-common-{neutral}.json",
+        f"profiling-results-{neutral}.json",
         f"technique-profile-{neutral}.json",
         f"derived-subject-{neutral}.json",
         "subject-frames.json",

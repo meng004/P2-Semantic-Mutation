@@ -132,7 +132,7 @@ _SUBJECT_SPEC_SCHEMA = {
     "build_descriptor": dict,
     "adapter_registry": dict,
     "input_generator_registry": dict,
-    "profiling_results": list,
+    "profiling_results": dict,
 }
 
 
@@ -208,6 +208,7 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
         "public_behavior_frame": "public-behavior-frame",
         "profiling_workload": "profiling-workload",
         "common_inputs": "evaluation-inputs-common",
+        "profiling_results": "profiling-results",
         "technique_profile": "technique-profile",
     }
     for material in derived_subjects:

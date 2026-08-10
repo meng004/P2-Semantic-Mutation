@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+import p3_v3.bridge_and_frames as frames_module
 from p3_v3.artifacts import canonical_sha256, read_canonical_json, write_canonical_json
 from p3_v3.bridge_and_frames import (
     APPLICABLE_SLOT_CHRONOLOGY,
@@ -103,6 +104,65 @@ def _bytes(value):
 
 def _sha(value):
     return hashlib.sha256(_bytes(value)).hexdigest()
+
+
+def _source_tree_sha256(root: Path) -> str:
+    files = [
+        {
+            "path": path.relative_to(root).as_posix(),
+            "byte_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+        for path in sorted(root.rglob("*"))
+        if path.is_file() and not path.is_symlink()
+    ]
+    return canonical_sha256(
+        {"domain": "P3-NORMALIZED-SOURCE-TREE-v1", "files": files}
+    )
+
+
+def _profiling_receipt(
+    workload: dict,
+    record: dict,
+    adapter_source_sha256: str | None,
+    technique: str,
+) -> dict:
+    feature = {
+        "SCALAR_CONTROL": "SCALAR_CONTROL_OPERATION",
+        "ARRAY_NUMERICAL": "ARRAY_NUMERICAL_OPERATION",
+    }[technique]
+    rows = [
+        {
+            "behavior_id": row["behavior_id"],
+            "status": "SUCCESS",
+            "argv": ["fixture-runner", row["behavior_id"]],
+            "input_sha256": ["51" * 32],
+            "environment_sha256": "52" * 32,
+            "runner_version": "fixture-runner-v1",
+            "exit_code": 0,
+            "stdout_sha256": "53" * 32,
+            "stderr_sha256": "54" * 32,
+            "call_trace_sha256": "55" * 32,
+            "trace_features": [feature],
+            "timed_out": False,
+            "failure_code": "",
+            "observed_site_ids": [],
+        }
+        for row in workload["selected_rows"]
+    ]
+    body = {
+        "schema_version": "p3-profiling-results-v1",
+        "neutral_snapshot_id": record["neutral_snapshot_id"],
+        "controlled_subject_source_id": workload["controlled_subject_source_id"],
+        "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+        "build_descriptor_sha256": record["build_descriptor_sha256"],
+        "profiling_workload_sha256": workload["artifact_sha256"],
+        "adapter_implementation_source_sha256": adapter_source_sha256,
+        "runner_implementation_source_sha256": hashlib.sha256(
+            Path(frames_module.__file__).read_bytes()
+        ).hexdigest(),
+        "results": sorted(rows, key=lambda row: row["behavior_id"]),
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
 def _git(root: Path, *args: str) -> str:
@@ -200,18 +260,13 @@ def _contract_generator_registry(root: Path) -> dict:
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
-def _subject_spec_fixture(
+def _write_subject_source(
     root: Path,
     fixture_name: str,
-    record: dict,
-    raw_adapter_registry: dict,
-    validated_adapters: dict,
-    generator_registry: dict,
-    technique: str,
     *,
     effective_lines: int,
     add_second_site: bool = False,
-) -> tuple[dict, dict, dict, list[dict], dict]:
+) -> tuple[dict, dict]:
     fixture = json.loads((FIXTURE_ROOT / fixture_name).read_text(encoding="utf-8"))
     if add_second_site:
         fixture = {
@@ -231,20 +286,38 @@ def _subject_spec_fixture(
     source_path = root / fixture["source_files"][0]
     source_path.parent.mkdir(parents=True, exist_ok=True)
     if fixture["ecosystem"] == "python":
-        source_path.write_text(
-            ("value = 1\n" * effective_lines), encoding="utf-8"
-        )
+        source_path.write_text(("value = 1\n" * effective_lines), encoding="utf-8")
     else:
-        source_path.write_text(
-            ("int value = 1;\n" * effective_lines), encoding="utf-8"
-        )
+        source_path.write_text(("int value = 1;\n" * effective_lines), encoding="utf-8")
     manifest = root / f"adapter-{fixture['ecosystem']}.json"
     _write(manifest, fixture)
-    descriptor = {
+    return fixture, {
         "ecosystem": fixture["ecosystem"],
         "manifest_path": manifest.name,
         "reverse": False,
     }
+
+
+def _subject_spec_fixture(
+    root: Path,
+    fixture_name: str,
+    record: dict,
+    raw_adapter_registry: dict,
+    validated_adapters: dict,
+    generator_registry: dict,
+    technique: str,
+    *,
+    effective_lines: int,
+    add_second_site: bool = False,
+) -> tuple[dict, dict, dict, dict, dict]:
+    fixture, descriptor = _write_subject_source(
+        root,
+        fixture_name,
+        effective_lines=effective_lines,
+        add_second_site=add_second_site,
+    )
+    record["normalized_source_tree_sha256"] = _source_tree_sha256(root)
+    record["build_descriptor_sha256"] = canonical_sha256(descriptor)
     discovery = run_adapter_discovery(
         root, descriptor, validated_adapters, fixture["adapter_id"]
     )
@@ -255,15 +328,12 @@ def _subject_spec_fixture(
     frame = build_public_behavior_frame(source_record, discovery)
     scale = derive_source_scale(root, discovery)
     workload = select_profiling_workload(frame, scale["scale_class"])
-    profiling_results = [
-        {
-            "behavior_id": row["behavior_id"],
-            "status": "SUCCESS",
-            "technique_tags": [technique],
-            "observed_site_ids": [],
-        }
-        for row in workload["selected_rows"]
-    ]
+    profiling_results = _profiling_receipt(
+        workload,
+        record,
+        discovery["implementation_source_sha256"],
+        technique,
+    )
     spec = {
         "neutral_snapshot_id": record["neutral_snapshot_id"],
         "source_root": str(root),
@@ -288,9 +358,24 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     _write(repo / "release/contract.json", contract)
     contract_blob = _git(repo, "hash-object", "release/contract.json")
     package_root = "1" * 64
-    source_sha = "21" * 32
+    python_root = tmp_path / "python-subject"
+    cmake_root = tmp_path / "cmake-subject"
+    python_root.mkdir()
+    cmake_root.mkdir()
+    _python_fixture, python_descriptor = _write_subject_source(
+        python_root,
+        "python.json",
+        effective_lines=2,
+        add_second_site=True,
+    )
+    _cmake_fixture, cmake_descriptor = _write_subject_source(
+        cmake_root,
+        "cmake.json",
+        effective_lines=10_000,
+    )
+    source_sha = _source_tree_sha256(python_root)
     archive_sha = "3" * 64
-    build_sha = "22" * 32
+    build_sha = canonical_sha256(python_descriptor)
     fixed_oid = "5" * 40
     nonce = bytes.fromhex("6" * 64)
     commitment = hashlib.sha256(
@@ -304,9 +389,9 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
             "domain": "P3-NEUTRAL-SNAPSHOT-v1",
         }
     )
-    cmake_source_sha = "31" * 32
+    cmake_source_sha = _source_tree_sha256(cmake_root)
     cmake_archive_sha = "4" * 64
-    cmake_build_sha = "32" * 32
+    cmake_build_sha = canonical_sha256(cmake_descriptor)
     cmake_neutral = _sha(
         {
             "p12_package_root_sha256": package_root,
@@ -401,10 +486,6 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     adapter_registry = _adapter_registry(adapter_root)
     generator_registry = json.loads((GENERATOR_ROOT / "registry.json").read_text())
     validated_adapters = validate_adapter_registry(adapter_registry, adapter_root)
-    python_root = tmp_path / "python-subject"
-    cmake_root = tmp_path / "cmake-subject"
-    python_root.mkdir()
-    cmake_root.mkdir()
     python_spec, _python_frame, _python_workload, profiling_results, python_scale = (
         _subject_spec_fixture(
             python_root,
@@ -577,9 +658,8 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     # Independent UNPROFILED vs NOT_APPLICABLE distinction
     observed_results = [
         {
-            "behavior_id": profiling_results[1]["behavior_id"],
+            "behavior_id": profiling_results["results"][1]["behavior_id"],
             "status": "SUCCESS",
-            "technique_tags": ["SCALAR_CONTROL"],
             "observed_site_ids": [sites[0]["site_id"]],
         }
     ]
@@ -682,7 +762,7 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     )
     write_canonical_json(
         package_a_root / "profiling_result.json",
-        {"rows": profiling_results},
+        profiling_results,
         exclusive=True,
     )
     write_canonical_json(

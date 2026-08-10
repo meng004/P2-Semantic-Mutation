@@ -70,6 +70,43 @@ def _sha(value):
     return hashlib.sha256(_bytes(value)).hexdigest()
 
 
+def _source_tree_sha256(root: Path) -> str:
+    excluded = {
+        ".git",
+        ".hg",
+        ".svn",
+        ".tox",
+        ".venv",
+        "__pycache__",
+        "build",
+        "dist",
+        "fixtures",
+        "node_modules",
+        "target",
+        "vendor",
+        "venv",
+    }
+    files = []
+    for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root).as_posix()
+        if any(part.casefold() in excluded for part in Path(relative).parts):
+            continue
+        if path.is_symlink() or not path.is_file():
+            continue
+        files.append(
+            {
+                "path": relative,
+                "byte_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+        )
+    return canonical_sha256(
+        {
+            "domain": "P3-NORMALIZED-SOURCE-TREE-v1",
+            "files": files,
+        }
+    )
+
+
 def _run(root: Path, *argv: str) -> str:
     result = subprocess.run(
         ["git", "-C", str(root), *argv], capture_output=True, check=True, text=True
@@ -425,6 +462,8 @@ def _derived_subject_spec(
         source_path.write_text("int value = 1;\n" * effective_lines, encoding="utf-8")
     ecosystem = _load_fixture(fixture_name)["ecosystem"]
     descriptor = {**descriptor, "ecosystem": ecosystem}
+    record["normalized_source_tree_sha256"] = _source_tree_sha256(root)
+    record["build_descriptor_sha256"] = canonical_sha256(descriptor)
     adapter_id = {
         "python": "PYTHON_PEP517_V1",
         "cmake": "CMAKE_CTEST_V1",
@@ -439,15 +478,16 @@ def _derived_subject_spec(
     )
     scale = derive_source_scale(root, discovery)["scale_class"]
     workload = select_profiling_workload(frame, scale)
-    profiling_results = [
-        {
-            "behavior_id": row["behavior_id"],
-            "status": "SUCCESS",
-            "technique_tags": [technique],
-            "observed_site_ids": [],
-        }
-        for row in workload["selected_rows"]
-    ]
+    profiling_results = _profiling_receipt(
+        workload,
+        [_success(row["behavior_id"], technique) for row in workload["selected_rows"]],
+        neutral_snapshot_id=record["neutral_snapshot_id"],
+        normalized_source_tree_sha256=record["normalized_source_tree_sha256"],
+        build_descriptor_sha256=record["build_descriptor_sha256"],
+        adapter_implementation_source_sha256=discovery[
+            "implementation_source_sha256"
+        ],
+    )
     return {
         "neutral_snapshot_id": record["neutral_snapshot_id"],
         "source_root": str(root),
@@ -460,6 +500,110 @@ def _derived_subject_spec(
         "input_generator_registry": generator_registry,
         "profiling_results": profiling_results,
     }
+
+
+def test_subject_material_recomputes_source_tree_commitment_before_adapter(
+    synthetic_release, tmp_path
+):
+    adapter_root = tmp_path / "adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    record = verify_pinned_bridge(
+        synthetic_release.root, synthetic_release.lock
+    )["records"][0]
+    source_root = tmp_path / "python-subject"
+    source_root.mkdir()
+    spec = _derived_subject_spec(
+        source_root,
+        "python.json",
+        record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    source_path = source_root / _load_fixture("python.json")["source_files"][0]
+    source_path.write_bytes(source_path.read_bytes() + b"\n# unauthorized mutation\n")
+
+    with pytest.raises(EvidenceError, match="E_SOURCE_TREE_COMMITMENT"):
+        frames_module.derive_subject_material(spec, record)
+
+
+def test_source_tree_commitment_sorts_full_relative_paths_and_excludes_build_output(
+    tmp_path
+):
+    root = tmp_path / "source"
+    (root / "a").mkdir(parents=True)
+    (root / "build").mkdir()
+    (root / "a/z.txt").write_bytes(b"nested")
+    (root / "a.txt").write_bytes(b"root")
+    (root / "build/ignored.txt").write_bytes(b"ignored-v1")
+    expected = canonical_sha256(
+        {
+            "domain": "P3-NORMALIZED-SOURCE-TREE-v1",
+            "files": [
+                {
+                    "path": "a.txt",
+                    "byte_sha256": hashlib.sha256(b"root").hexdigest(),
+                },
+                {
+                    "path": "a/z.txt",
+                    "byte_sha256": hashlib.sha256(b"nested").hexdigest(),
+                },
+            ],
+        }
+    )
+
+    observed = frames_module.canonical_source_tree_sha256(root)
+    (root / "build/ignored.txt").write_bytes(b"ignored-v2")
+
+    assert observed == expected
+    assert frames_module.canonical_source_tree_sha256(root) == expected
+
+
+def test_source_tree_commitment_rejects_included_symlink(tmp_path):
+    root = tmp_path / "source"
+    root.mkdir()
+    target = root / "target.txt"
+    target.write_bytes(b"target")
+    (root / "alias.txt").symlink_to(target)
+
+    with pytest.raises(EvidenceError, match="E_SOURCE_TREE_PATH"):
+        frames_module.canonical_source_tree_sha256(root)
+
+
+def test_subject_material_recomputes_build_descriptor_commitment_before_adapter(
+    synthetic_release, tmp_path
+):
+    adapter_root = tmp_path / "adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    record = verify_pinned_bridge(
+        synthetic_release.root, synthetic_release.lock
+    )["records"][0]
+    source_root = tmp_path / "python-subject"
+    source_root.mkdir()
+    spec = _derived_subject_spec(
+        source_root,
+        "python.json",
+        record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    spec["build_descriptor"] = {**spec["build_descriptor"], "reverse": True}
+
+    with pytest.raises(EvidenceError, match="E_BUILD_DESCRIPTOR_COMMITMENT"):
+        frames_module.derive_subject_material(spec, record)
 
 
 def test_two_subject_material_is_fully_derived_and_order_invariant(
@@ -511,12 +655,21 @@ def test_two_subject_material_is_fully_derived_and_order_invariant(
     cmake_material = derive_subject_material(cmake_spec, cmake_record)
     assert set(python_material) == {
         "neutral_snapshot_id",
+        "controlled_subject_source_id",
         "adapter_discovery",
+        "adapter_discovery_sha256",
         "source_scale",
+        "source_scale_sha256",
         "public_behavior_frame",
+        "public_behavior_frame_sha256",
         "profiling_workload",
+        "profiling_workload_sha256",
         "common_inputs",
+        "common_inputs_sha256",
+        "profiling_results",
+        "profiling_results_sha256",
         "technique_profile",
+        "technique_profile_sha256",
         "subject",
         "artifact_sha256",
     }
@@ -556,6 +709,106 @@ def test_two_subject_material_is_fully_derived_and_order_invariant(
     assert _bytes(first) == _bytes(second)
 
 
+def _two_subject_material_fixture(synthetic_release, tmp_path):
+    adapter_root = tmp_path / "parent-binding-adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
+    python_record = verified["records"][0]
+    cmake_record = {
+        **python_record,
+        "neutral_snapshot_id": "b" * 64,
+        "fixed_tree_commitment": "c" * 64,
+    }
+    python_root = tmp_path / "parent-python"
+    cmake_root = tmp_path / "parent-cmake"
+    python_root.mkdir()
+    cmake_root.mkdir()
+    python_spec = _derived_subject_spec(
+        python_root,
+        "python.json",
+        python_record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    cmake_spec = _derived_subject_spec(
+        cmake_root,
+        "cmake.json",
+        cmake_record,
+        adapter_registry,
+        generator_registry,
+        "ARRAY_NUMERICAL",
+        effective_lines=10_000,
+    )
+    bridge = {**verified, "records": [python_record, cmake_record]}
+    return (
+        bridge,
+        frames_module.derive_subject_material(python_spec, python_record),
+        frames_module.derive_subject_material(cmake_spec, cmake_record),
+    )
+
+
+def test_derived_subject_artifacts_carry_direct_parent_bindings(
+    synthetic_release, tmp_path
+):
+    _bridge, material, _other = _two_subject_material_fixture(
+        synthetic_release, tmp_path
+    )
+    neutral = material["neutral_snapshot_id"]
+    source_id = material["controlled_subject_source_id"]
+
+    assert material["adapter_discovery"]["neutral_snapshot_id"] == neutral
+    assert material["adapter_discovery"]["controlled_subject_source_id"] == source_id
+    assert material["source_scale"]["neutral_snapshot_id"] == neutral
+    assert material["source_scale"]["controlled_subject_source_id"] == source_id
+    assert material["source_scale"]["discovery_sha256"] == material[
+        "adapter_discovery"
+    ]["artifact_sha256"]
+    assert material["technique_profile"]["neutral_snapshot_id"] == neutral
+    assert material["technique_profile"]["controlled_subject_source_id"] == source_id
+    assert material["technique_profile"]["profiling_workload_sha256"] == material[
+        "profiling_workload"
+    ]["artifact_sha256"]
+    assert material["technique_profile"]["profiling_results_sha256"] == material[
+        "profiling_results"
+    ]["artifact_sha256"]
+    for field in (
+        "adapter_discovery",
+        "source_scale",
+        "public_behavior_frame",
+        "profiling_workload",
+        "common_inputs",
+        "profiling_results",
+        "technique_profile",
+    ):
+        assert material[f"{field}_sha256"] == material[field]["artifact_sha256"]
+
+
+@pytest.mark.parametrize(
+    "field", ["adapter_discovery", "source_scale", "technique_profile"]
+)
+def test_subject_frames_reject_cross_subject_parent_swap_after_rehash(
+    synthetic_release, tmp_path, field
+):
+    bridge, first, second = _two_subject_material_fixture(synthetic_release, tmp_path)
+    forged_body = {
+        key: copy.deepcopy(value)
+        for key, value in first.items()
+        if key != "artifact_sha256"
+    }
+    forged_body[field] = copy.deepcopy(second[field])
+    forged = {**forged_body, "artifact_sha256": canonical_sha256(forged_body)}
+
+    with pytest.raises(EvidenceError, match="E_DERIVED_SUBJECT_BINDING"):
+        build_subject_frames(bridge, [forged, second])
+
+
 def test_subject_alias_merge_does_not_mutate_derived_material(
     synthetic_release, tmp_path
 ):
@@ -585,20 +838,22 @@ def test_subject_alias_merge_does_not_mutate_derived_material(
         generator_registry,
         "SCALAR_CONTROL",
     )
+    second_record["normalized_source_tree_sha256"] = first_record[
+        "normalized_source_tree_sha256"
+    ]
+    second_record["build_descriptor_sha256"] = first_record[
+        "build_descriptor_sha256"
+    ]
+    second_spec = _derived_subject_spec(
+        source_root,
+        "python.json",
+        second_record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
     first_material = frames_module.derive_subject_material(first_spec, first_record)
-    second_body = {
-        **copy.deepcopy(first_material),
-        "neutral_snapshot_id": second_record["neutral_snapshot_id"],
-        "subject": {
-            **copy.deepcopy(first_material["subject"]),
-            "neutral_snapshot_ids": [second_record["neutral_snapshot_id"]],
-        },
-    }
-    second_body.pop("artifact_sha256")
-    second_material = {
-        **second_body,
-        "artifact_sha256": canonical_sha256(second_body),
-    }
+    second_material = frames_module.derive_subject_material(second_spec, second_record)
     before = _bytes([first_material, second_material])
 
     frames = build_subject_frames(bridge, [first_material, second_material])
@@ -654,17 +909,35 @@ def test_unsupported_subject_common_inputs_remain_explicitly_unavailable(
     )["records"][0]
     source_root = tmp_path / "unsupported-source"
     source_root.mkdir()
+    descriptor = {"ecosystem": "rust"}
+    record["normalized_source_tree_sha256"] = _source_tree_sha256(source_root)
+    record["build_descriptor_sha256"] = canonical_sha256(descriptor)
+    source_record = {
+        "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+        "build_descriptor_sha256": record["build_descriptor_sha256"],
+    }
+    discovery = run_adapter_discovery(
+        source_root, descriptor, adapter_registry, None
+    )
+    frame = build_public_behavior_frame(source_record, discovery)
+    workload = select_profiling_workload(
+        frame, derive_source_scale(source_root, discovery)["scale_class"]
+    )
     spec = {
         "neutral_snapshot_id": record["neutral_snapshot_id"],
         "source_root": str(source_root),
-        "source_record": {
-            "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
-            "build_descriptor_sha256": record["build_descriptor_sha256"],
-        },
-        "build_descriptor": {"ecosystem": "rust"},
+        "source_record": source_record,
+        "build_descriptor": descriptor,
         "adapter_registry": adapter_registry,
         "input_generator_registry": generator_registry,
-        "profiling_results": [],
+        "profiling_results": _profiling_receipt(
+            workload,
+            [],
+            neutral_snapshot_id=record["neutral_snapshot_id"],
+            normalized_source_tree_sha256=record["normalized_source_tree_sha256"],
+            build_descriptor_sha256=record["build_descriptor_sha256"],
+            adapter_implementation_source_sha256=None,
+        ),
     }
     material = frames_module.derive_subject_material(spec, record)
     assert material["adapter_discovery"]["discovery_status"] == "ADAPTER_UNSUPPORTED"
@@ -1546,9 +1819,16 @@ def _synthetic_workload(rows: list[tuple[str, str]]) -> dict:
         for category in BEHAVIOR_CATEGORY_ORDER
         if any(item_category == category for _, item_category in rows)
     }
+    source_id = canonical_sha256(
+        {
+            "normalized_source_tree_sha256": "41" * 32,
+            "build_descriptor_sha256": "42" * 32,
+            "domain": "P3-SOURCE-v1",
+        }
+    )
     body = {
         "schema_version": "p3-profiling-workload-v1",
-        "controlled_subject_source_id": "21" * 32,
+        "controlled_subject_source_id": source_id,
         "scale_class": "S",
         "budget": 10,
         "category_order": list(BEHAVIOR_CATEGORY_ORDER),
@@ -1560,10 +1840,29 @@ def _synthetic_workload(rows: list[tuple[str, str]]) -> dict:
 
 
 def _success(behavior_id: str, *tags: str) -> dict:
+    feature_by_technique = {
+        "HYBRID_NATIVE": "NATIVE_BOUNDARY_CROSSING",
+        "TENSOR_AUTODIFF": "TENSOR_AUTODIFF_OPERATION",
+        "PROBABILISTIC_SURROGATE": "PROBABILISTIC_SURROGATE_OPERATION",
+        "ITERATIVE_STOCHASTIC": "ITERATIVE_STOCHASTIC_OPERATION",
+        "ARRAY_NUMERICAL": "ARRAY_NUMERICAL_OPERATION",
+        "SCALAR_CONTROL": "SCALAR_CONTROL_OPERATION",
+    }
     return {
         "behavior_id": behavior_id,
         "status": "SUCCESS",
-        "technique_tags": list(tags),
+        "argv": ["fixture-runner", behavior_id],
+        "input_sha256": ["51" * 32],
+        "environment_sha256": "52" * 32,
+        "runner_version": "fixture-runner-v1",
+        "exit_code": 0,
+        "stdout_sha256": "53" * 32,
+        "stderr_sha256": "54" * 32,
+        "call_trace_sha256": "55" * 32,
+        "trace_features": sorted(feature_by_technique[tag] for tag in tags),
+        "timed_out": False,
+        "failure_code": "",
+        "observed_site_ids": [],
     }
 
 
@@ -1571,8 +1870,88 @@ def _unresolved(behavior_id: str, status: str) -> dict:
     return {
         "behavior_id": behavior_id,
         "status": status,
-        "technique_tags": [],
+        "argv": ["fixture-runner", behavior_id],
+        "input_sha256": ["51" * 32],
+        "environment_sha256": "52" * 32,
+        "runner_version": "fixture-runner-v1",
+        "exit_code": None,
+        "stdout_sha256": "53" * 32,
+        "stderr_sha256": "54" * 32,
+        "call_trace_sha256": None,
+        "trace_features": [],
+        "timed_out": status == "TIMEOUT",
+        "failure_code": f"PROFILE_{status}",
+        "observed_site_ids": [],
     }
+
+
+def _profiling_receipt(workload: dict, rows: list[dict], **overrides) -> dict:
+    body = {
+        "schema_version": "p3-profiling-results-v1",
+        "neutral_snapshot_id": "61" * 32,
+        "controlled_subject_source_id": workload["controlled_subject_source_id"],
+        "normalized_source_tree_sha256": "41" * 32,
+        "build_descriptor_sha256": "42" * 32,
+        "profiling_workload_sha256": workload["artifact_sha256"],
+        "adapter_implementation_source_sha256": "31" * 32,
+        "runner_implementation_source_sha256": file_sha256(
+            Path(frames_module.__file__)
+        ),
+        "results": sorted(rows, key=lambda row: row["behavior_id"]),
+    }
+    body.update(overrides)
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _classify(workload: dict, rows: list[dict]) -> dict:
+    return classify_technique(workload, _profiling_receipt(workload, rows))
+
+
+def test_profiling_receipt_derives_technique_from_frozen_trace_features():
+    behavior_id = _behavior_id("derived-scalar")
+    workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
+
+    profile = _classify(workload, [_success(behavior_id, "SCALAR_CONTROL")])
+
+    assert profile["confirmed_tags"] == ["SCALAR_CONTROL"]
+    assert profile["primary_technique"] == "SCALAR_CONTROL"
+
+
+def test_profiling_receipt_rejects_direct_technique_tags_after_rehash():
+    behavior_id = _behavior_id("forged-label")
+    workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
+    row = {**_success(behavior_id), "technique_tags": ["HYBRID_NATIVE"]}
+    receipt = _profiling_receipt(workload, [row])
+
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        classify_technique(workload, receipt)
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "code"),
+    [
+        ("normalized_source_tree_sha256", "71" * 32, "E_PROFILE_SOURCE_BINDING"),
+        ("build_descriptor_sha256", "72" * 32, "E_PROFILE_SOURCE_BINDING"),
+        ("profiling_workload_sha256", "73" * 32, "E_PROFILE_WORKLOAD_BINDING"),
+        (
+            "runner_implementation_source_sha256",
+            "74" * 32,
+            "E_PROFILE_RUNNER_BINDING",
+        ),
+    ],
+)
+def test_profiling_receipt_rejects_rehashed_parent_or_runner_forgery(
+    field, value, code
+):
+    behavior_id = _behavior_id(f"forged-{field}")
+    workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
+    receipt = _profiling_receipt(workload, [_success(behavior_id)])
+    body = {key: item for key, item in receipt.items() if key != "artifact_sha256"}
+    body[field] = value
+    forged = {**body, "artifact_sha256": canonical_sha256(body)}
+
+    with pytest.raises(EvidenceError, match=code):
+        classify_technique(workload, forged)
 
 
 def _category_balanced_fixture():
@@ -1588,7 +1967,7 @@ def _category_balanced_fixture():
 
 def test_classify_technique_is_category_equal_not_row_weighted():
     workload, results, array_id = _category_balanced_fixture()
-    profile = classify_technique(workload, results)
+    profile = _classify(workload, results)
     assert profile["lower_scores"]["SCALAR_CONTROL"] == "0.5"
     assert profile["lower_scores"]["ARRAY_NUMERICAL"] == "0.5"
     assert profile["upper_scores"]["SCALAR_CONTROL"] == "0.5"
@@ -1604,7 +1983,7 @@ def test_classify_technique_is_category_equal_not_row_weighted():
     extended_results = list(results) + [
         _unresolved(behavior_id, "FAILURE") for behavior_id in failed_ids
     ]
-    widened = classify_technique(extended_workload, extended_results)
+    widened = _classify(extended_workload, extended_results)
     assert widened["lower_scores"]["SCALAR_CONTROL"] == "0.5"
     assert widened["lower_scores"]["ARRAY_NUMERICAL"] == "0.125"
     assert widened["upper_scores"]["SCALAR_CONTROL"] == "0.875"
@@ -1629,7 +2008,7 @@ def test_classify_technique_requires_success_in_every_selected_category():
         _success(scalar_id, "SCALAR_CONTROL"),
         _unresolved(failed_id, "TIMEOUT"),
     ]
-    profile = classify_technique(workload, results)
+    profile = _classify(workload, results)
     assert profile["primary_technique"] == "TECH_UNCERTAIN"
 
 
@@ -1642,7 +2021,7 @@ def test_classify_technique_overlapping_intervals_are_uncertain():
     results = list(results) + [
         _unresolved(behavior_id, "ADAPTER_UNCERTAIN") for behavior_id in failed_ids
     ]
-    profile = classify_technique(workload, results)
+    profile = _classify(workload, results)
     assert profile["primary_technique"] == "TECH_UNCERTAIN"
 
 
@@ -1662,7 +2041,7 @@ def test_classify_technique_strict_lower_bound_winner():
         _success(right, "SCALAR_CONTROL"),
         _unresolved(uncertain, "MISSING_TRACE"),
     ]
-    profile = classify_technique(workload, results)
+    profile = _classify(workload, results)
     assert profile["lower_scores"]["SCALAR_CONTROL"] == "0.75"
     assert profile["upper_scores"]["SCALAR_CONTROL"] == "1"
     assert profile["primary_technique"] == "SCALAR_CONTROL"
@@ -1679,7 +2058,7 @@ def test_classify_technique_tie_breaks_with_frozen_technique_order():
         _success(left, "SCALAR_CONTROL"),
         _success(right, "ARRAY_NUMERICAL"),
     ]
-    profile = classify_technique(workload, results)
+    profile = _classify(workload, results)
     assert profile["lower_scores"]["SCALAR_CONTROL"] == "0.5"
     assert profile["lower_scores"]["ARRAY_NUMERICAL"] == "0.5"
     assert profile["primary_technique"] == "ARRAY_NUMERICAL"
@@ -1687,8 +2066,8 @@ def test_classify_technique_tie_breaks_with_frozen_technique_order():
 
 def test_classify_technique_is_result_order_invariant():
     workload, results, _array_id = _category_balanced_fixture()
-    first = classify_technique(workload, results)
-    second = classify_technique(workload, list(reversed(results)))
+    first = _classify(workload, results)
+    second = _classify(workload, list(reversed(results)))
     assert first == second
     assert canonical_sha256(first) == canonical_sha256(second)
 
@@ -1706,7 +2085,7 @@ def test_build_subject_frames_has_no_caller_technique_profile_authority(
         _success(left, "SCALAR_CONTROL"),
         _success(right, "SCALAR_CONTROL"),
     ]
-    profile = classify_technique(workload, results)
+    profile = _classify(workload, results)
     assert profile["primary_technique"] == "SCALAR_CONTROL"
     with pytest.raises(TypeError):
         build_subject_frames(verified, features, technique_profile=profile)
@@ -1979,6 +2358,23 @@ def test_generator_failure_occupies_ordinal_as_common_input_invalid():
         ordinal for ordinal in range(1, 31) if (ordinal - 1) % 2 == failing_index
     ]
     assert len(invalid_rows) + len(generated_rows) == 30
+
+
+def test_supported_common_input_generation_fails_closed_when_all_rows_invalid():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    frame = _public_frame_with_schemas(
+        [
+            _public_schema(
+                "JSON_SCHEMA_DRAFT2020_12_V1",
+                {"force_invalid": True},
+            )
+        ]
+    )
+
+    with pytest.raises(EvidenceError, match="E_COMMON_EXECUTABLE"):
+        build_common_inputs(_source_record(), frame, registry)
 
 
 def test_zero_eligible_schemas_yield_thirty_unavailable_rows():
