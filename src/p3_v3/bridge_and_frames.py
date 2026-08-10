@@ -82,7 +82,24 @@ E_COMMON_GENERATOR_IDS = (
     "TEXT_IO_SCHEMA_V1",
     "BINARY_RECORD_SCHEMA_V1",
 )
+E_CONTRACT_GENERATOR_IDS = (
+    "CONTRACT_ENUM_DOMAIN_V1",
+    "CONTRACT_NUMERIC_DOMAIN_V1",
+    "CONTRACT_ARRAY_DOMAIN_V1",
+    "CONTRACT_SEQUENCE_DOMAIN_V1",
+    "CONTRACT_RELATION_PAIR_DOMAIN_V1",
+)
 _E_COMMON_GENERATOR_ID_SET = set(E_COMMON_GENERATOR_IDS)
+_E_CONTRACT_GENERATOR_ID_SET = set(E_CONTRACT_GENERATOR_IDS)
+APPLICABLE_SLOT_CHRONOLOGY = (
+    "SITE_FROZEN",
+    "CONTRACT_FROZEN",
+    "E_CONTRACT_FROZEN",
+    "PATCH_FROZEN",
+    "CERTIFICATION_WITNESS_SELECTED",
+    "TERMINAL_STATE",
+)
+NOT_APPLICABLE_SLOT_CHRONOLOGY = ("APPLICABILITY_CLOSED_NOT_APPLICABLE",)
 _SCHEMA_ALIAS_KEYS = frozenset(
     {"subject_alias", "project_alias", "controlled_subject_source_id"}
 )
@@ -253,6 +270,26 @@ _GENERATOR_REGISTRY_SCHEMA = {
     "schema_version": str,
     "generators": list,
     "artifact_sha256": str,
+}
+_SLOT_SCHEMA = {
+    "slot_id": str,
+    "controlled_subject_id": str,
+}
+_CONTRACT_SCHEMA = {
+    "contract_id": str,
+    "generator_id": str,
+    "domain": dict,
+    "site_id": str,
+}
+_SLOT_ARTIFACTS_SCHEMA = {
+    "slot_id": str,
+    "chronology": list,
+    "contract": (dict, type(None)),
+    "e_contract": (dict, type(None)),
+    "patch": (dict, type(None)),
+    "certification_witness": (dict, type(None)),
+    "e_common_input_ids": list,
+    "e_contract_input_ids": list,
 }
 
 
@@ -1702,3 +1739,374 @@ def validate_common_inputs_on_fixed_source(
         "frame_artifact_sha256": frame_artifact_sha256,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def validate_contract_generator_registry(
+    registry: Mapping[str, Any], source_root: str | Path
+) -> dict[str, Any]:
+    value = validate_exact_object(
+        dict(registry), _GENERATOR_REGISTRY_SCHEMA, "contract_generator_registry"
+    )
+    if value["schema_version"] != "p3-contract-generator-registry-v1":
+        raise EvidenceError(
+            "E_GENERATOR_REGISTRY", "contract generator registry version differs"
+        )
+    body = {key: item for key, item in value.items() if key != "artifact_sha256"}
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError(
+            "E_GENERATOR_REGISTRY_HASH",
+            "contract generator registry self-hash differs",
+        )
+    generators = value["generators"]
+    if not isinstance(generators, list) or len(generators) != len(E_CONTRACT_GENERATOR_IDS):
+        raise EvidenceError(
+            "E_GENERATOR_ALLOWLIST",
+            "contract generator registry must list the five E_CONTRACT generators exactly",
+        )
+    root = Path(source_root)
+    seen: set[str] = set()
+    normalized: list[dict[str, Any]] = []
+    for index, candidate in enumerate(generators):
+        entry = validate_exact_object(
+            candidate, _GENERATOR_ENTRY_SCHEMA, f"generators[{index}]"
+        )
+        generator_id = entry["generator_id"]
+        if generator_id not in _E_CONTRACT_GENERATOR_ID_SET:
+            raise EvidenceError(
+                "E_GENERATOR_ALLOWLIST",
+                f"generator not in E_CONTRACT allowlist: {generator_id}",
+            )
+        if generator_id in seen:
+            raise EvidenceError("E_GENERATOR_DUPLICATE", f"duplicate generator: {generator_id}")
+        seen.add(generator_id)
+        if entry["schema_kind"] != generator_id:
+            raise EvidenceError(
+                "E_GENERATOR_KIND",
+                f"schema_kind must equal generator_id for {generator_id}",
+            )
+        if not isinstance(entry["failure_code"], str) or not entry["failure_code"]:
+            raise EvidenceError(
+                "E_GENERATOR_FAILURE_CODE", f"failure_code missing for {generator_id}"
+            )
+        output_schema = entry["output_schema"]
+        if output_schema.get("generator_id") != generator_id:
+            raise EvidenceError(
+                "E_GENERATOR_OUTPUT_SCHEMA",
+                f"output_schema.generator_id differs for {generator_id}",
+            )
+        relative = safe_relative_path(entry["implementation_path"])
+        validate_sha256(entry["source_sha256"], f"generators[{index}].source_sha256")
+        absolute = root / relative.as_posix()
+        if not absolute.is_file() or absolute.is_symlink():
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE",
+                f"generator implementation missing: {entry['implementation_path']}",
+            )
+        if file_sha256(absolute) != entry["source_sha256"]:
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE_HASH",
+                f"generator source hash differs: {generator_id}",
+            )
+        normalized.append(entry)
+    if seen != _E_CONTRACT_GENERATOR_ID_SET:
+        raise EvidenceError("E_GENERATOR_ALLOWLIST", "E_CONTRACT generator set differs")
+    return {
+        "schema_version": value["schema_version"],
+        "generators": normalized,
+        "artifact_sha256": value["artifact_sha256"],
+        "_source_root": str(root.resolve()),
+    }
+
+
+def close_slot(
+    slot: Mapping[str, Any],
+    canonical_sites: Sequence[Mapping[str, Any]],
+    applicability_predicate: Callable[[Mapping[str, Any]], bool],
+) -> dict[str, Any]:
+    value = validate_exact_object(dict(slot), _SLOT_SCHEMA, "slot")
+    validate_sha256(value["slot_id"], "slot.slot_id")
+    validate_sha256(value["controlled_subject_id"], "slot.controlled_subject_id")
+    site_id = select_first_applicable_site(canonical_sites, applicability_predicate)
+    if site_id is None:
+        body = {
+            "schema_version": "p3-slot-closure-v1",
+            "slot_id": value["slot_id"],
+            "controlled_subject_id": value["controlled_subject_id"],
+            "site_id": None,
+            "state": "APPLICABILITY_CLOSED_NOT_APPLICABLE",
+            "path": "APPLICABILITY_CLOSED_NOT_APPLICABLE",
+        }
+    else:
+        body = {
+            "schema_version": "p3-slot-closure-v1",
+            "slot_id": value["slot_id"],
+            "controlled_subject_id": value["controlled_subject_id"],
+            "site_id": site_id,
+            "state": "SITE_FROZEN",
+            "path": "APPLICABLE",
+        }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _contract_input_seed(subject_id: str, slot_id: str, ordinal: int) -> int:
+    digest = canonical_sha256(
+        {
+            "domain": "P3-E-CONTRACT-SEED-v1",
+            "controlled_subject_id": subject_id,
+            "slot_id": slot_id,
+            "ordinal": ordinal,
+        }
+    )
+    return int.from_bytes(bytes.fromhex(digest)[:8], "big")
+
+
+def _contract_input_id(
+    subject_id: str,
+    slot_id: str,
+    ordinal: int,
+    *,
+    generator_id: str | None,
+    domain_sha256: str | None,
+    raw_payload_sha256: str | None,
+    status: str,
+    failure_code: str,
+) -> str:
+    return canonical_sha256(
+        {
+            "controlled_subject_id": subject_id,
+            "slot_id": slot_id,
+            "ordinal": ordinal,
+            "generator_id": generator_id,
+            "domain_sha256": domain_sha256,
+            "raw_payload_sha256": raw_payload_sha256,
+            "status": status,
+            "failure_code": failure_code,
+            "domain": "P3-E-CONTRACT-INPUT-v1",
+        }
+    )
+
+
+def _domain_is_unsupported(domain: Mapping[str, Any]) -> bool:
+    return domain.get("unsupported_domain") is True
+
+
+def build_contract_inputs(
+    applicable_slot: Mapping[str, Any],
+    contract: Mapping[str, Any],
+    registry: Mapping[str, Any],
+) -> dict[str, Any]:
+    if not isinstance(applicable_slot, Mapping):
+        raise EvidenceError("E_SLOT", "applicable_slot must be an object")
+    if applicable_slot.get("path") != "APPLICABLE" or applicable_slot.get("state") != "SITE_FROZEN":
+        raise EvidenceError(
+            "E_SLOT_PATH",
+            "contract inputs require an applicable SITE_FROZEN slot",
+        )
+    slot_id = validate_sha256(applicable_slot.get("slot_id"), "applicable_slot.slot_id")
+    subject_id = validate_sha256(
+        applicable_slot.get("controlled_subject_id"),
+        "applicable_slot.controlled_subject_id",
+    )
+    site_id = validate_sha256(applicable_slot.get("site_id"), "applicable_slot.site_id")
+    frozen = validate_exact_object(dict(contract), _CONTRACT_SCHEMA, "contract")
+    validate_sha256(frozen["contract_id"], "contract.contract_id")
+    validate_sha256(frozen["site_id"], "contract.site_id")
+    if frozen["site_id"] != site_id:
+        raise EvidenceError(
+            "E_SLOT_SITE",
+            "contract site_id differs from frozen applicable slot site",
+        )
+    _reject_forbidden_generator_inputs(frozen, "contract")
+    registry_source_root = registry.get("_source_root") if isinstance(registry, Mapping) else None
+    registry_body = {
+        key: value for key, value in dict(registry).items() if key != "_source_root"
+    }
+    validated_registry = validate_exact_object(
+        registry_body, _GENERATOR_REGISTRY_SCHEMA, "contract_generator_registry"
+    )
+    if {
+        entry["generator_id"] for entry in validated_registry["generators"]
+    } != _E_CONTRACT_GENERATOR_ID_SET:
+        raise EvidenceError(
+            "E_GENERATOR_ALLOWLIST", "contract generator registry is incomplete"
+        )
+    validated_registry = {**validated_registry, "_source_root": registry_source_root}
+    generator_id = frozen["generator_id"]
+    domain = frozen["domain"]
+    domain_sha256 = canonical_sha256(domain)
+    unsupported = (
+        generator_id not in _E_CONTRACT_GENERATOR_ID_SET or _domain_is_unsupported(domain)
+    )
+    rows: list[dict[str, Any]] = []
+    if unsupported:
+        for ordinal in range(E_CONTRACT_COUNT):
+            seed = _contract_input_seed(subject_id, slot_id, ordinal)
+            status = "CONTRACT_INPUT_UNAVAILABLE"
+            failure_code = "CONTRACT_INPUT_UNAVAILABLE"
+            input_id = _contract_input_id(
+                subject_id,
+                slot_id,
+                ordinal,
+                generator_id=None,
+                domain_sha256=domain_sha256,
+                raw_payload_sha256=None,
+                status=status,
+                failure_code=failure_code,
+            )
+            rows.append(
+                {
+                    "ordinal": ordinal,
+                    "seed": seed,
+                    "generator_id": None,
+                    "schema_kind": None,
+                    "domain_sha256": domain_sha256,
+                    "status": status,
+                    "failure_code": failure_code,
+                    "envelope": None,
+                    "raw_payload_sha256": None,
+                    "input_id": input_id,
+                }
+            )
+    else:
+        source_root = validated_registry.get("_source_root")
+        if not isinstance(source_root, (str, Path)):
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE",
+                "contract generator registry must come from validate_contract_generator_registry",
+            )
+        kind_to_generator = {
+            entry["generator_id"]: entry for entry in validated_registry["generators"]
+        }
+        generator_entry = kind_to_generator[generator_id]
+        relative = safe_relative_path(generator_entry["implementation_path"])
+        absolute = Path(source_root) / relative.as_posix()
+        generate = _load_generator_callable(absolute, generator_id)
+        domain_bytes = canonical_json_bytes(domain)
+        failure_code = generator_entry["failure_code"]
+        for ordinal in range(E_CONTRACT_COUNT):
+            seed = _contract_input_seed(subject_id, slot_id, ordinal)
+            try:
+                result = generate(domain_bytes, seed)
+            except Exception:
+                result = {"failure_code": failure_code}
+            if not isinstance(result, Mapping):
+                result = {"failure_code": failure_code}
+            result_failure = result.get("failure_code")
+            if result_failure == "CONTRACT_INPUT_UNAVAILABLE":
+                status = "CONTRACT_INPUT_UNAVAILABLE"
+                code = "CONTRACT_INPUT_UNAVAILABLE"
+                envelope = None
+                raw_payload_sha256 = None
+                row_generator_id = None
+                row_schema_kind = None
+            elif result_failure:
+                status = "CONTRACT_INPUT_INVALID"
+                code = str(result_failure)
+                envelope = None
+                raw_payload_sha256 = None
+                row_generator_id = generator_id
+                row_schema_kind = generator_id
+            elif "envelope" in result and "raw_payload_sha256" in result:
+                status = "CONTRACT_INPUT_GENERATED"
+                code = ""
+                envelope = result["envelope"]
+                raw_payload_sha256 = validate_sha256(
+                    result["raw_payload_sha256"], "raw_payload_sha256"
+                )
+                row_generator_id = generator_id
+                row_schema_kind = generator_id
+            else:
+                status = "CONTRACT_INPUT_INVALID"
+                code = failure_code
+                envelope = None
+                raw_payload_sha256 = None
+                row_generator_id = generator_id
+                row_schema_kind = generator_id
+            input_id = _contract_input_id(
+                subject_id,
+                slot_id,
+                ordinal,
+                generator_id=row_generator_id,
+                domain_sha256=domain_sha256,
+                raw_payload_sha256=raw_payload_sha256,
+                status=status,
+                failure_code=code,
+            )
+            rows.append(
+                {
+                    "ordinal": ordinal,
+                    "seed": seed,
+                    "generator_id": row_generator_id,
+                    "schema_kind": row_schema_kind,
+                    "domain_sha256": domain_sha256,
+                    "status": status,
+                    "failure_code": code,
+                    "envelope": envelope,
+                    "raw_payload_sha256": raw_payload_sha256,
+                    "input_id": input_id,
+                }
+            )
+
+    body = {
+        "schema_version": "p3-evaluation-inputs-contract-v1",
+        "controlled_subject_id": subject_id,
+        "slot_id": slot_id,
+        "site_id": site_id,
+        "contract_id": frozen["contract_id"],
+        "rows": rows,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def verify_slot_chronology(slot_artifacts: Mapping[str, Any]) -> None:
+    artifacts = validate_exact_object(
+        dict(slot_artifacts), _SLOT_ARTIFACTS_SCHEMA, "slot_artifacts"
+    )
+    validate_sha256(artifacts["slot_id"], "slot_artifacts.slot_id")
+    chronology = artifacts["chronology"]
+    if chronology == list(NOT_APPLICABLE_SLOT_CHRONOLOGY):
+        for field in ("contract", "e_contract", "patch", "certification_witness"):
+            if artifacts[field] is not None:
+                raise EvidenceError(
+                    "E_SLOT_CHRONOLOGY",
+                    f"NOT_APPLICABLE slot must not carry {field}",
+                )
+        return
+    if chronology != list(APPLICABLE_SLOT_CHRONOLOGY):
+        raise EvidenceError(
+            "E_SLOT_CHRONOLOGY",
+            "slot chronology must be exactly one of the two frozen paths",
+        )
+    if artifacts["contract"] is None:
+        raise EvidenceError("E_SLOT_CHRONOLOGY", "applicable slot missing frozen contract")
+    if artifacts["e_contract"] is None:
+        raise EvidenceError(
+            "E_SLOT_CHRONOLOGY",
+            "applicable slot missing E_CONTRACT before patch",
+        )
+    if artifacts["patch"] is None:
+        raise EvidenceError("E_SLOT_CHRONOLOGY", "applicable slot missing frozen patch")
+    if artifacts["certification_witness"] is None:
+        raise EvidenceError(
+            "E_SLOT_CHRONOLOGY",
+            "applicable slot missing certification witness",
+        )
+    e_contract = artifacts["e_contract"]
+    if not isinstance(e_contract, Mapping) or "rows" not in e_contract:
+        raise EvidenceError("E_SLOT_CHRONOLOGY", "E_CONTRACT inventory rows are absent")
+    common_ids = artifacts["e_common_input_ids"]
+    contract_ids = artifacts["e_contract_input_ids"]
+    if any(not isinstance(item, str) for item in common_ids + contract_ids):
+        raise EvidenceError("E_SLOT_CHRONOLOGY", "input inventory IDs must be strings")
+    inventory_ids = set(common_ids) | set(contract_ids)
+    witness = artifacts["certification_witness"]
+    if not isinstance(witness, Mapping):
+        raise EvidenceError("E_SLOT_CHRONOLOGY", "certification witness must be an object")
+    witness_identity = witness.get("witness_id")
+    if not isinstance(witness_identity, str) or not witness_identity:
+        raise EvidenceError("E_SLOT_CHRONOLOGY", "certification witness_id missing")
+    if witness_identity in inventory_ids:
+        raise EvidenceError(
+            "E_WITNESS_INVENTORY",
+            "post-patch witness identity appears in an input inventory",
+        )

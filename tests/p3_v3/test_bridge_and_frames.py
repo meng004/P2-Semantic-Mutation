@@ -14,19 +14,25 @@ from p3_v3.bridge_and_frames import (
     BEHAVIOR_CATEGORY_ORDER,
     E_COMMON_COUNT,
     E_COMMON_GENERATOR_IDS,
+    E_CONTRACT_COUNT,
+    E_CONTRACT_GENERATOR_IDS,
     build_common_inputs,
+    build_contract_inputs,
     build_public_behavior_frame,
     build_subject_frames,
     classify_technique,
+    close_slot,
     select_construct_subjects,
     select_first_applicable_site,
     select_profiling_workload,
     validate_adapter_registry,
     validate_bridge_document,
     validate_common_inputs_on_fixed_source,
+    validate_contract_generator_registry,
     validate_input_generator_registry,
     verify_pinned_bridge,
     verify_reveal,
+    verify_slot_chronology,
 )
 
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "public_behavior"
@@ -1145,3 +1151,367 @@ def test_validate_common_inputs_on_fixed_source_preserves_identities():
     assert report["frame_artifact_sha256"] == frame_hash
     # Validator cannot replace rows: still exactly 30 predetermined identities.
     assert len({row["input_id"] for row in report["rows"]}) == 30
+
+
+APPLICABLE_CHRONOLOGY = [
+    "SITE_FROZEN",
+    "CONTRACT_FROZEN",
+    "E_CONTRACT_FROZEN",
+    "PATCH_FROZEN",
+    "CERTIFICATION_WITNESS_SELECTED",
+    "TERMINAL_STATE",
+]
+
+_CONTRACT_GENERATOR_TEMPLATE = '''\
+"""Deterministic synthetic {generator_id} contract input generator."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from typing import Any
+
+
+FAILURE_CODE = "{failure_code}"
+GENERATOR_ID = "{generator_id}"
+
+
+def _seed_block(seed: int, counter: int) -> bytes:
+    return hashlib.sha256(
+        b"P3-INPUT-STREAM-v1" + seed.to_bytes(8, "big") + counter.to_bytes(8, "big")
+    ).digest()
+
+
+def generate(schema_bytes: bytes, seed: int) -> dict[str, Any]:
+    if not schema_bytes:
+        return {{"failure_code": FAILURE_CODE}}
+    try:
+        schema = json.loads(schema_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return {{"failure_code": FAILURE_CODE}}
+    if isinstance(schema, dict) and schema.get("force_invalid") is True:
+        return {{"failure_code": FAILURE_CODE}}
+    if isinstance(schema, dict) and schema.get("unsupported_domain") is True:
+        return {{"failure_code": "CONTRACT_INPUT_UNAVAILABLE"}}
+    block = _seed_block(seed, 0)
+    payload = {{
+        "generator_id": GENERATOR_ID,
+        "stream": block.hex(),
+        "schema_fingerprint": hashlib.sha256(schema_bytes).hexdigest(),
+    }}
+    raw = (
+        json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        + b"\\n"
+    )
+    envelope = {{
+        "schema_version": "p3-contract-input-envelope-v1",
+        "generator_id": GENERATOR_ID,
+        "payload": payload,
+    }}
+    return {{
+        "envelope": envelope,
+        "raw_payload_sha256": hashlib.sha256(raw).hexdigest(),
+    }}
+'''
+
+
+def _canonical_sites() -> list[dict]:
+    return [
+        {
+            "path": "a.py",
+            "symbol": "f",
+            "start_line": 1,
+            "start_col": 0,
+            "end_line": 1,
+            "end_col": 1,
+            "site_id": "a1" * 32,
+        },
+        {
+            "path": "b.py",
+            "symbol": "g",
+            "start_line": 2,
+            "start_col": 0,
+            "end_line": 2,
+            "end_col": 1,
+            "site_id": "b2" * 32,
+        },
+    ]
+
+
+def _slot() -> dict:
+    return {
+        "slot_id": "c3" * 32,
+        "controlled_subject_id": "d4" * 32,
+    }
+
+
+def _contract_generator_registry(tmp_path: Path) -> dict:
+    generators = []
+    for generator_id in E_CONTRACT_GENERATOR_IDS:
+        rel = f"generators/{generator_id.lower()}.py"
+        path = tmp_path / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        failure_code = f"{generator_id}_INVALID"
+        source = _CONTRACT_GENERATOR_TEMPLATE.format(
+            generator_id=generator_id,
+            failure_code=failure_code,
+        )
+        path.write_text(source, encoding="utf-8")
+        generators.append(
+            {
+                "generator_id": generator_id,
+                "schema_kind": generator_id,
+                "implementation_path": rel,
+                "source_sha256": file_sha256(path),
+                "output_schema": {
+                    "generator_id": generator_id,
+                    "schema_version": "p3-contract-input-envelope-v1",
+                },
+                "failure_code": failure_code,
+            }
+        )
+    body = {
+        "schema_version": "p3-contract-generator-registry-v1",
+        "generators": generators,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _frozen_contract(generator_id: str, domain: dict) -> dict:
+    return {
+        "contract_id": "e5" * 32,
+        "generator_id": generator_id,
+        "domain": domain,
+        "site_id": "a1" * 32,
+    }
+
+
+def test_contract_generator_registry_binds_exact_five_e_contract_ids(tmp_path):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    assert {item["generator_id"] for item in registry["generators"]} == set(
+        E_CONTRACT_GENERATOR_IDS
+    )
+    assert len(registry["generators"]) == E_CONTRACT_COUNT == 5
+    for item in registry["generators"]:
+        absolute = tmp_path / item["implementation_path"]
+        assert file_sha256(absolute) == item["source_sha256"]
+        assert item["schema_kind"] == item["generator_id"]
+
+
+def test_close_slot_two_paths_not_applicable_or_site_frozen():
+    slot = _slot()
+    sites = _canonical_sites()
+    closed = close_slot(slot, sites, lambda _site: False)
+    assert closed["state"] == "APPLICABILITY_CLOSED_NOT_APPLICABLE"
+    assert closed["path"] == "APPLICABILITY_CLOSED_NOT_APPLICABLE"
+    assert closed["site_id"] is None
+    assert closed["slot_id"] == slot["slot_id"]
+    assert closed["controlled_subject_id"] == slot["controlled_subject_id"]
+
+    applicable = close_slot(slot, sites, lambda site: site["symbol"] == "g")
+    assert applicable["state"] == "SITE_FROZEN"
+    assert applicable["path"] == "APPLICABLE"
+    assert applicable["site_id"] == "b2" * 32
+
+
+def test_build_contract_inputs_five_ordinals_seeds_and_named_generator(tmp_path):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    slot = close_slot(_slot(), _canonical_sites(), lambda site: site["symbol"] == "f")
+    contract = _frozen_contract(
+        "CONTRACT_NUMERIC_DOMAIN_V1",
+        {"domain": "numeric", "bounds": [0, 1]},
+    )
+    inventory = build_contract_inputs(slot, contract, registry)
+    assert inventory["schema_version"] == "p3-evaluation-inputs-contract-v1"
+    assert len(inventory["rows"]) == E_CONTRACT_COUNT == 5
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(5))
+    subject_id = slot["controlled_subject_id"]
+    slot_id = slot["slot_id"]
+    for ordinal, row in enumerate(inventory["rows"]):
+        expected_seed = int.from_bytes(
+            bytes.fromhex(
+                canonical_sha256(
+                    {
+                        "domain": "P3-E-CONTRACT-SEED-v1",
+                        "controlled_subject_id": subject_id,
+                        "slot_id": slot_id,
+                        "ordinal": ordinal,
+                    }
+                )
+            )[:8],
+            "big",
+        )
+        assert row["seed"] == expected_seed
+        assert row["generator_id"] == "CONTRACT_NUMERIC_DOMAIN_V1"
+        assert row["status"] == "CONTRACT_INPUT_GENERATED"
+        assert row["raw_payload_sha256"]
+        assert row["envelope"]["generator_id"] == "CONTRACT_NUMERIC_DOMAIN_V1"
+        assert row["input_id"]
+
+
+def test_unsupported_domain_yields_five_contract_input_unavailable(tmp_path):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    slot = close_slot(_slot(), _canonical_sites(), lambda site: True)
+    contract = _frozen_contract(
+        "CONTRACT_ENUM_DOMAIN_V1",
+        {"unsupported_domain": True},
+    )
+    inventory = build_contract_inputs(slot, contract, registry)
+    assert len(inventory["rows"]) == 5
+    assert {row["status"] for row in inventory["rows"]} == {"CONTRACT_INPUT_UNAVAILABLE"}
+    assert all(row["envelope"] is None for row in inventory["rows"])
+    assert all(row["raw_payload_sha256"] is None for row in inventory["rows"])
+    # Cannot invent a replacement generator or site.
+    assert {row["generator_id"] for row in inventory["rows"]} == {None}
+    assert inventory["site_id"] == slot["site_id"]
+
+
+def test_build_contract_inputs_rejects_not_applicable_slot(tmp_path):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    slot = close_slot(_slot(), _canonical_sites(), lambda _site: False)
+    contract = _frozen_contract(
+        "CONTRACT_ARRAY_DOMAIN_V1",
+        {"domain": "array", "shape": [2]},
+    )
+    with pytest.raises(EvidenceError, match="E_SLOT_PATH"):
+        build_contract_inputs(slot, contract, registry)
+
+
+def test_verify_slot_chronology_accepts_exactly_one_of_two_paths(tmp_path):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    not_applicable = {
+        "slot_id": "c3" * 32,
+        "chronology": ["APPLICABILITY_CLOSED_NOT_APPLICABLE"],
+        "contract": None,
+        "e_contract": None,
+        "patch": None,
+        "certification_witness": None,
+        "e_common_input_ids": [],
+        "e_contract_input_ids": [],
+    }
+    verify_slot_chronology(not_applicable)
+
+    slot = close_slot(_slot(), _canonical_sites(), lambda site: site["symbol"] == "f")
+    contract = _frozen_contract(
+        "CONTRACT_SEQUENCE_DOMAIN_V1",
+        {"domain": "sequence", "length": 3},
+    )
+    inventory = build_contract_inputs(slot, contract, registry)
+    applicable = {
+        "slot_id": slot["slot_id"],
+        "chronology": list(APPLICABLE_CHRONOLOGY),
+        "contract": contract,
+        "e_contract": inventory,
+        "patch": {"patch_id": "f6" * 32},
+        "certification_witness": {"witness_id": "a7" * 32},
+        "e_common_input_ids": ["b8" * 32],
+        "e_contract_input_ids": [row["input_id"] for row in inventory["rows"]],
+    }
+    verify_slot_chronology(applicable)
+
+
+def test_inapplicable_slot_carrying_downstream_artifacts_fails():
+    for field, value in (
+        ("contract", {"contract_id": "e5" * 32}),
+        ("e_contract", {"rows": []}),
+        ("patch", {"patch_id": "f6" * 32}),
+        ("certification_witness", {"witness_id": "a7" * 32}),
+    ):
+        artifacts = {
+            "slot_id": "c3" * 32,
+            "chronology": ["APPLICABILITY_CLOSED_NOT_APPLICABLE"],
+            "contract": None,
+            "e_contract": None,
+            "patch": None,
+            "certification_witness": None,
+            "e_common_input_ids": [],
+            "e_contract_input_ids": [],
+        }
+        artifacts[field] = value
+        with pytest.raises(EvidenceError, match="E_SLOT_CHRONOLOGY"):
+            verify_slot_chronology(artifacts)
+
+
+def test_applicable_slot_missing_e_contract_before_patch_fails(tmp_path):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    slot = close_slot(_slot(), _canonical_sites(), lambda site: True)
+    contract = _frozen_contract(
+        "CONTRACT_RELATION_PAIR_DOMAIN_V1",
+        {"domain": "relation", "pairs": [[0, 1]]},
+    )
+    inventory = build_contract_inputs(slot, contract, registry)
+    missing_e_contract = {
+        "slot_id": slot["slot_id"],
+        "chronology": [
+            "SITE_FROZEN",
+            "CONTRACT_FROZEN",
+            "PATCH_FROZEN",
+            "CERTIFICATION_WITNESS_SELECTED",
+            "TERMINAL_STATE",
+        ],
+        "contract": contract,
+        "e_contract": None,
+        "patch": {"patch_id": "f6" * 32},
+        "certification_witness": {"witness_id": "a7" * 32},
+        "e_common_input_ids": [],
+        "e_contract_input_ids": [row["input_id"] for row in inventory["rows"]],
+    }
+    with pytest.raises(EvidenceError, match="E_SLOT_CHRONOLOGY"):
+        verify_slot_chronology(missing_e_contract)
+
+    patch_without_inventory = {
+        "slot_id": slot["slot_id"],
+        "chronology": list(APPLICABLE_CHRONOLOGY),
+        "contract": contract,
+        "e_contract": None,
+        "patch": {"patch_id": "f6" * 32},
+        "certification_witness": {"witness_id": "a7" * 32},
+        "e_common_input_ids": [],
+        "e_contract_input_ids": [],
+    }
+    with pytest.raises(EvidenceError, match="E_SLOT_CHRONOLOGY"):
+        verify_slot_chronology(patch_without_inventory)
+
+
+def test_post_patch_witness_in_either_input_inventory_fails(tmp_path):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    slot = close_slot(_slot(), _canonical_sites(), lambda site: True)
+    contract = _frozen_contract(
+        "CONTRACT_ENUM_DOMAIN_V1",
+        {"domain": "enum", "values": ["a", "b"]},
+    )
+    inventory = build_contract_inputs(slot, contract, registry)
+    witness_from_contract = inventory["rows"][0]["input_id"]
+    artifacts = {
+        "slot_id": slot["slot_id"],
+        "chronology": list(APPLICABLE_CHRONOLOGY),
+        "contract": contract,
+        "e_contract": inventory,
+        "patch": {"patch_id": "f6" * 32},
+        "certification_witness": {"witness_id": witness_from_contract},
+        "e_common_input_ids": ["b8" * 32],
+        "e_contract_input_ids": [row["input_id"] for row in inventory["rows"]],
+    }
+    with pytest.raises(EvidenceError, match="E_WITNESS_INVENTORY"):
+        verify_slot_chronology(artifacts)
+
+    artifacts_common = {
+        **artifacts,
+        "certification_witness": {"witness_id": "b8" * 32},
+    }
+    with pytest.raises(EvidenceError, match="E_WITNESS_INVENTORY"):
+        verify_slot_chronology(artifacts_common)
