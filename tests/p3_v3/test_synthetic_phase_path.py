@@ -15,8 +15,13 @@ from p3_v3.bridge_and_frames import (
     E_CONTRACT_GENERATOR_IDS,
     UNAVAILABLE_NOT_CLAIMED,
     build_contract_inputs,
+    build_public_behavior_frame,
     close_slot,
+    derive_source_scale,
+    run_adapter_discovery,
+    select_profiling_workload,
     tag_site_reachability,
+    validate_adapter_registry,
     validate_contract_generator_registry,
     validate_mr_inventory,
     validate_proposal_record,
@@ -31,6 +36,7 @@ from p3_v3.packages import (
     materialize_package,
     verify_package,
 )
+from p3_v3.preflight import normalize_repository_identity
 from p3_v3.run_records import (
     P12_OUTCOME_STATES,
     create_intent,
@@ -43,6 +49,7 @@ from p3_v3.run_records import (
 ROOT = Path(__file__).resolve().parents[2]
 CLI = ROOT / "scripts/p3_v3/evidence.py"
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "public_behavior"
+ADAPTER_FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "adapters"
 GENERATOR_ROOT = Path(__file__).resolve().parent / "fixtures" / "input_generators"
 SCIENTIFIC_PLAN_SHA256 = "fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830"
 EVIDENCE_DESIGN_SHA256 = "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
@@ -146,7 +153,11 @@ def _adapter_registry(root: Path) -> dict:
     for adapter_id, ecosystem, rel in _ADAPTER_SPECS:
         path = root / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(f"# adapter {adapter_id}\n", encoding="utf-8")
+        fixture = ADAPTER_FIXTURE_ROOT / Path(rel).name
+        if fixture.is_file():
+            path.write_bytes(fixture.read_bytes())
+        else:
+            path.write_text(f"# adapter {adapter_id}\n", encoding="utf-8")
         adapters.append(
             {
                 "adapter_id": adapter_id,
@@ -189,6 +200,82 @@ def _contract_generator_registry(root: Path) -> dict:
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
+def _subject_spec_fixture(
+    root: Path,
+    fixture_name: str,
+    record: dict,
+    raw_adapter_registry: dict,
+    validated_adapters: dict,
+    generator_registry: dict,
+    technique: str,
+    *,
+    effective_lines: int,
+    add_second_site: bool = False,
+) -> tuple[dict, dict, dict, list[dict], dict]:
+    fixture = json.loads((FIXTURE_ROOT / fixture_name).read_text(encoding="utf-8"))
+    if add_second_site:
+        fixture = {
+            **fixture,
+            "sites": [
+                *fixture["sites"],
+                {
+                    "path": fixture["source_files"][0],
+                    "symbol": "zz_helper",
+                    "start_line": 5,
+                    "start_col": 0,
+                    "end_line": 5,
+                    "end_col": 8,
+                },
+            ],
+        }
+    source_path = root / fixture["source_files"][0]
+    source_path.parent.mkdir(parents=True, exist_ok=True)
+    if fixture["ecosystem"] == "python":
+        source_path.write_text(
+            ("value = 1\n" * effective_lines), encoding="utf-8"
+        )
+    else:
+        source_path.write_text(
+            ("int value = 1;\n" * effective_lines), encoding="utf-8"
+        )
+    manifest = root / f"adapter-{fixture['ecosystem']}.json"
+    _write(manifest, fixture)
+    descriptor = {
+        "ecosystem": fixture["ecosystem"],
+        "manifest_path": manifest.name,
+        "reverse": False,
+    }
+    discovery = run_adapter_discovery(
+        root, descriptor, validated_adapters, fixture["adapter_id"]
+    )
+    source_record = {
+        "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+        "build_descriptor_sha256": record["build_descriptor_sha256"],
+    }
+    frame = build_public_behavior_frame(source_record, discovery)
+    scale = derive_source_scale(root, discovery)
+    workload = select_profiling_workload(frame, scale["scale_class"])
+    profiling_results = [
+        {
+            "behavior_id": row["behavior_id"],
+            "status": "SUCCESS",
+            "technique_tags": [technique],
+            "observed_site_ids": [],
+        }
+        for row in workload["selected_rows"]
+    ]
+    spec = {
+        "neutral_snapshot_id": record["neutral_snapshot_id"],
+        "source_root": str(root),
+        "source_record": source_record,
+        "build_descriptor": descriptor,
+        "adapter_registry": raw_adapter_registry,
+        "input_generator_registry": generator_registry,
+        "profiling_results": profiling_results,
+    }
+    return spec, frame, workload, profiling_results, scale
+
+
 def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     repo = tmp_path / "p12"
     repo.mkdir()
@@ -217,6 +304,17 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
             "domain": "P3-NEUTRAL-SNAPSHOT-v1",
         }
     )
+    cmake_source_sha = "31" * 32
+    cmake_archive_sha = "4" * 64
+    cmake_build_sha = "32" * 32
+    cmake_neutral = _sha(
+        {
+            "p12_package_root_sha256": package_root,
+            "normalized_source_tree_sha256": cmake_source_sha,
+            "source_archive_sha256": cmake_archive_sha,
+            "domain": "P3-NEUTRAL-SNAPSHOT-v1",
+        }
+    )
     records = [
         {
             "neutral_snapshot_id": neutral,
@@ -227,7 +325,17 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
             "eligibility_reason": "fixture",
             "eligible_for_construct": True,
             "eligible_for_criterion": True,
-        }
+        },
+        {
+            "neutral_snapshot_id": cmake_neutral,
+            "fixed_tree_commitment": "7" * 64,
+            "normalized_source_tree_sha256": cmake_source_sha,
+            "source_archive_sha256": cmake_archive_sha,
+            "build_descriptor_sha256": cmake_build_sha,
+            "eligibility_reason": "cmake fixture",
+            "eligible_for_construct": True,
+            "eligible_for_criterion": True,
+        },
     ]
     bridge_body = {
         "schema_version": "p3-p12-bridge-v1",
@@ -238,7 +346,7 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
         "p12_package_root_sha256": package_root,
         "p12_contract_sha256": hashlib.sha256(_bytes(contract)).hexdigest(),
         "eligible_inventory_root_sha256": _sha(records),
-        "eligible_item_count": 1,
+        "eligible_item_count": 2,
         "records": records,
         "trust_mode": "PINNED_GIT_RELEASE",
     }
@@ -291,103 +399,51 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     adapter_root = tmp_path / "adapter-root"
     adapter_root.mkdir()
     adapter_registry = _adapter_registry(adapter_root)
-    declarations = _tagged_declarations("python.json") + _tagged_declarations("cmake.json")
-    source_record = {
-        "normalized_source_tree_sha256": source_sha,
-        "build_descriptor_sha256": build_sha,
-    }
     generator_registry = json.loads((GENERATOR_ROOT / "registry.json").read_text())
-
-    # Provisional features/slots filled after first frame pass identities exist.
-    # build-frames needs profiling rows matching the selected workload; prepare a
-    # dry-run via CLI after writing placeholders, then rewrite profiling if needed.
-    # Instead, precompute workload behavior ids by invoking the same modules through CLI
-    # after writing a first-cut profiling list built from fixture declarations' counts.
-    # Practical approach: call build-frames twice is heavy; build profiling after a
-    # helper module path inside the test by reading selected rows from a staged run.
-    # We stage inputs, run a Python helper through the CLI build path only once by
-    # constructing profiling results via an intermediate local selection.
-    from p3_v3.bridge_and_frames import (
-        build_public_behavior_frame,
-        select_profiling_workload,
-        validate_adapter_registry,
-    )
-
     validated_adapters = validate_adapter_registry(adapter_registry, adapter_root)
-    provisional_frame = build_public_behavior_frame(
-        source_record, declarations, validated_adapters
+    python_root = tmp_path / "python-subject"
+    cmake_root = tmp_path / "cmake-subject"
+    python_root.mkdir()
+    cmake_root.mkdir()
+    python_spec, _python_frame, _python_workload, profiling_results, python_scale = (
+        _subject_spec_fixture(
+            python_root,
+            "python.json",
+            records[0],
+            adapter_registry,
+            validated_adapters,
+            generator_registry,
+            "SCALAR_CONTROL",
+            effective_lines=2,
+            add_second_site=True,
+        )
     )
-    provisional_workload = select_profiling_workload(provisional_frame, "S")
-    site_a = {
-        "path": "program.py",
-        "symbol": "module",
-        "start_line": 1,
-        "start_col": 0,
-        "end_line": 1,
-        "end_col": 8,
-    }
-    site_b = {
-        "path": "source.py",
-        "symbol": "helper",
-        "start_line": 1,
-        "start_col": 0,
-        "end_line": 1,
-        "end_col": 3,
-    }
-    features = [
-        {
-            "neutral_snapshot_id": neutral,
-            "public_workload_set_sha256": provisional_workload["artifact_sha256"],
-            "scale_class": "S",
-            "primary_technique": "ARRAY_NUMERICAL",
-            "technique_vector": ["ARRAY_NUMERICAL"],
-            "sites": [site_a, site_b],
-        }
-    ]
-    # Reach only the first site in synthetic profiling rows.
-    # Site ids are derived later; use observed_site_ids empty in profiling and
-    # tag_site_reachability separately with reconstructed site ids.
-    profiling_results = []
-    for index, row in enumerate(provisional_workload["selected_rows"]):
-        if index == 0:
-            profiling_results.append(
-                {
-                    "behavior_id": row["behavior_id"],
-                    "status": "FAILURE",
-                    "technique_tags": [],
-                    "observed_site_ids": [],
-                }
-            )
-        else:
-            profiling_results.append(
-                {
-                    "behavior_id": row["behavior_id"],
-                    "status": "SUCCESS",
-                    "technique_tags": ["SCALAR_CONTROL"],
-                    "observed_site_ids": [],
-                }
-            )
+    cmake_spec, _cmake_frame, _cmake_workload, _cmake_results, cmake_scale = (
+        _subject_spec_fixture(
+            cmake_root,
+            "cmake.json",
+            records[1],
+            adapter_registry,
+            validated_adapters,
+            generator_registry,
+            "ARRAY_NUMERICAL",
+            effective_lines=10_000,
+        )
+    )
+    assert python_scale["scale_class"] == "S"
+    assert cmake_scale["scale_class"] == "M"
+    subject_specs = [python_spec, cmake_spec]
 
     protocol_path = tmp_path / "protocol.json"
     lock_path = tmp_path / "lock.json"
-    source_path = tmp_path / "source-record.json"
-    adapter_path = tmp_path / "adapter-registry.json"
-    declarations_path = tmp_path / "declarations.json"
-    generator_path = tmp_path / "generator-registry.json"
-    profiling_path = tmp_path / "profiling-results.json"
-    features_path = tmp_path / "features.json"
+    subject_specs_path = tmp_path / "subject-specs.json"
     slots_path = tmp_path / "slots.json"
     contracts_path = tmp_path / "contracts.json"
     applicability_path = tmp_path / "applicability.json"
     for path, value in (
         (protocol_path, protocol),
         (lock_path, lock),
-        (source_path, source_record),
-        (adapter_path, validated_adapters),
-        (declarations_path, declarations),
-        (generator_path, generator_registry),
-        (profiling_path, profiling_results),
-        (features_path, features),
+        (subject_specs_path, subject_specs),
         (slots_path, []),
         (contracts_path, {}),
         (applicability_path, {}),
@@ -399,7 +455,8 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
 
     # 1) validate protocol
     code, payload = _cli("validate-protocol", "--protocol", str(protocol_path))
-    assert code == 0 and payload["status"] == "PASS"
+    assert code == 0, payload
+    assert payload["status"] == "PASS"
     protocol_sha = payload["protocol_sha256"]
     assert protocol["claims_initial_status"] == "blocked"
 
@@ -422,46 +479,97 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
         "build-frames",
         "--bridge",
         str(bridge_output),
-        "--source-record",
-        str(source_path),
-        "--adapter-registry",
-        str(adapter_path),
+        "--subject-specs",
+        str(subject_specs_path),
         "--adapter-root",
         str(adapter_root),
-        "--declarations",
-        str(declarations_path),
-        "--input-generator-registry",
-        str(generator_path),
         "--generator-root",
         str(GENERATOR_ROOT),
-        "--profiling-results",
-        str(profiling_path),
-        "--features",
-        str(features_path),
         "--slots",
         str(slots_path),
         "--contracts",
         str(contracts_path),
         "--applicability-map",
         str(applicability_path),
-        "--scale-class",
-        "S",
         "--output-root",
         str(frames_root),
     )
     assert code == 0, payload
     assert payload["status"] == "PASS"
 
-    public_frame = read_canonical_json(frames_root / "public-behavior-frame.json")
-    workload = read_canonical_json(frames_root / "profiling-workload.json")
-    common_inputs = read_canonical_json(frames_root / "evaluation-inputs-common.json")
-    technique_profile = read_canonical_json(frames_root / "technique-profile.json")
+    reversed_specs_path = tmp_path / "subject-specs-reversed.json"
+    reversed_frames_root = tmp_path / "frames-out-reversed"
+    _write(reversed_specs_path, list(reversed(subject_specs)))
+    code, payload = _cli(
+        "build-frames",
+        "--bridge",
+        str(bridge_output),
+        "--subject-specs",
+        str(reversed_specs_path),
+        "--adapter-root",
+        str(adapter_root),
+        "--generator-root",
+        str(GENERATOR_ROOT),
+        "--slots",
+        str(slots_path),
+        "--contracts",
+        str(contracts_path),
+        "--applicability-map",
+        str(applicability_path),
+        "--output-root",
+        str(reversed_frames_root),
+    )
+    assert code == 0, payload
+    assert {
+        path.name: path.read_bytes() for path in frames_root.iterdir() if path.is_file()
+    } == {
+        path.name: path.read_bytes()
+        for path in reversed_frames_root.iterdir()
+        if path.is_file()
+    }
+
+    public_frame = read_canonical_json(
+        frames_root / f"public-behavior-frame-{neutral}.json"
+    )
+    workload = read_canonical_json(frames_root / f"profiling-workload-{neutral}.json")
+    common_inputs = read_canonical_json(
+        frames_root / f"evaluation-inputs-common-{neutral}.json"
+    )
+    technique_profile = read_canonical_json(
+        frames_root / f"technique-profile-{neutral}.json"
+    )
+    cmake_output_frame = read_canonical_json(
+        frames_root / f"public-behavior-frame-{cmake_neutral}.json"
+    )
+    cmake_output_workload = read_canonical_json(
+        frames_root / f"profiling-workload-{cmake_neutral}.json"
+    )
+    cmake_common_inputs = read_canonical_json(
+        frames_root / f"evaluation-inputs-common-{cmake_neutral}.json"
+    )
+    cmake_technique_profile = read_canonical_json(
+        frames_root / f"technique-profile-{cmake_neutral}.json"
+    )
     subject_frames = read_canonical_json(frames_root / "subject-frames.json")
 
     assert len(common_inputs["rows"]) == 30
+    assert len(cmake_common_inputs["rows"]) == 30
+    assert any(row["status"] == "COMMON_INPUT_EXECUTABLE" for row in common_inputs["rows"])
+    assert any(
+        row["status"] == "COMMON_INPUT_EXECUTABLE"
+        for row in cmake_common_inputs["rows"]
+    )
     assert workload["budget"] == 10
+    assert cmake_output_workload["budget"] == 15
+    assert public_frame["artifact_sha256"] != cmake_output_frame["artifact_sha256"]
+    assert technique_profile["artifact_sha256"] != cmake_technique_profile["artifact_sha256"]
     assert technique_profile["primary_technique"] in TECHNIQUE_ORDER
-    subject = subject_frames["subjects"][0]
+    assert len(subject_frames["subjects"]) == 2
+    subject = next(
+        item
+        for item in subject_frames["subjects"]
+        if neutral in item["neutral_snapshot_ids"]
+    )
     subject_id = subject["controlled_subject_id"]
     sites = subject["sites"]
     assert len(sites) == 2
@@ -478,7 +586,7 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     tagged = tag_site_reachability(
         sites,
         observed_results,
-        lambda site: site["symbol"] == "module",
+        lambda site: site["symbol"] == "solve",
     )
     by_id = {row["site_id"]: row for row in tagged}
     assert by_id[sites[0]["site_id"]]["reachability"] == "OBSERVED_REACHABLE"
@@ -496,7 +604,7 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
         "controlled_subject_id": subject_id,
     }
     closed_applicable = close_slot(
-        slot_applicable, sites, lambda site: site["symbol"] == "module"
+        slot_applicable, sites, lambda site: site["symbol"] == "solve"
     )
     closed_na = close_slot(slot_na, sites, lambda _site: False)
     assert closed_applicable["path"] == "APPLICABLE"
@@ -682,7 +790,7 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     # Preflight with Task 8 fields
     preflight = {
         "schema_version": "p3-preflight-v1",
-        "repository_identity": "Example/P12-Defect4MR",
+        "repository_identity": "github.com/Example/P12-Defect4MR",
         "expected_commit": commit,
         "dependency_lock_path": "requirements.lock",
         "dependency_lock_sha256": hashlib.sha256(
@@ -705,6 +813,9 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
     preflight_path = tmp_path / "preflight.json"
     preflight_output = tmp_path / "preflight-result.json"
     _write(preflight_path, preflight)
+    assert normalize_repository_identity(_git(repo, "remote", "get-url", "origin")) == (
+        preflight["repository_identity"]
+    )
     code, payload = _cli(
         "run-preflight",
         "--root",
@@ -714,7 +825,8 @@ def test_synthetic_phase0_to_phase7_evidence_path(tmp_path):
         "--output",
         str(preflight_output),
     )
-    assert code == 0 and payload["status"] == "PASS"
+    assert code == 0, payload
+    assert payload["status"] == "PASS"
     assert payload["phase_role"] == "CONTROLLED_B"
     assert not list(repo.glob("**/intent.json"))
 

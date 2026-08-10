@@ -6,9 +6,12 @@ import os
 import subprocess
 from pathlib import Path
 
+import pytest
+
 from p3_v3.artifacts import canonical_sha256, write_canonical_json
 from p3_v3.bridge_and_frames import (
     build_public_behavior_frame,
+    run_adapter_discovery,
     select_profiling_workload,
     validate_adapter_registry,
 )
@@ -16,6 +19,7 @@ from p3_v3.bridge_and_frames import (
 ROOT = Path(__file__).resolve().parents[2]
 CLI = ROOT / "scripts/p3_v3/evidence.py"
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "public_behavior"
+ADAPTER_FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "adapters"
 COMMANDS = {
     "validate-protocol",
     "verify-bridge",
@@ -166,7 +170,11 @@ def _adapter_registry(tmp_path: Path) -> dict:
     for adapter_id, ecosystem, rel in _ADAPTER_SPECS:
         path = tmp_path / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(f"# adapter {adapter_id}\n", encoding="utf-8")
+        fixture = ADAPTER_FIXTURE_ROOT / Path(rel).name
+        if fixture.is_file():
+            path.write_bytes(fixture.read_bytes())
+        else:
+            path.write_text(f"# adapter {adapter_id}\n", encoding="utf-8")
         adapters.append(
             {
                 "adapter_id": adapter_id,
@@ -199,6 +207,135 @@ def test_cli_help_lists_only_frozen_commands():
     line = next(item for item in result.stdout.splitlines() if "{" in item and "}" in item)
     observed = set(line[line.index("{") + 1 : line.index("}")].split(","))
     assert observed == COMMANDS
+
+
+def test_build_frames_subject_specs_are_the_only_subject_authority_options(tmp_path):
+    help_result = subprocess.run(
+        ["python3", str(CLI), "build-frames", "--help"],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
+    )
+    assert help_result.returncode == 0
+    assert "--subject-specs" in help_result.stdout
+    for removed in ("--declarations", "--features", "--scale-class"):
+        assert removed not in help_result.stdout
+        output_root = tmp_path / removed.removeprefix("--")
+        result = subprocess.run(
+            [
+                "python3",
+                str(CLI),
+                "build-frames",
+                "--bridge",
+                str(tmp_path / "bridge.json"),
+                "--subject-specs",
+                str(tmp_path / "subject-specs.json"),
+                "--adapter-root",
+                str(tmp_path),
+                "--generator-root",
+                str(tmp_path),
+                "--slots",
+                str(tmp_path / "slots.json"),
+                "--contracts",
+                str(tmp_path / "contracts.json"),
+                "--applicability-map",
+                str(tmp_path / "applicability.json"),
+                "--output-root",
+                str(output_root),
+                removed,
+                "legacy-authority.json",
+            ],
+            capture_output=True,
+            check=False,
+            text=True,
+            env=_env(),
+        )
+        assert result.returncode == 2
+        assert f"unrecognized arguments: {removed}" in result.stderr
+        assert not output_root.exists()
+
+
+@pytest.mark.parametrize("case", ["missing", "duplicate", "extra"])
+def test_build_frames_subject_spec_coverage_fails_before_adapter_execution(
+    tmp_path, case
+):
+    neutral = _digest("subject-neutral")
+    record = {
+        "neutral_snapshot_id": neutral,
+        "fixed_tree_commitment": "4" * 64,
+        "normalized_source_tree_sha256": "21" * 32,
+        "source_archive_sha256": "5" * 64,
+        "build_descriptor_sha256": "22" * 32,
+        "eligibility_reason": "fixture",
+        "eligible_for_construct": True,
+        "eligible_for_criterion": True,
+    }
+    bridge = {"records": [record]}
+    base_spec = {
+        "neutral_snapshot_id": neutral,
+        "source_root": str(tmp_path / "must-not-execute"),
+        "source_record": {
+            "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+        },
+        "build_descriptor": {"ecosystem": "python"},
+        "adapter_registry": {},
+        "input_generator_registry": {},
+        "profiling_results": [],
+    }
+    if case == "missing":
+        specs = []
+    elif case == "duplicate":
+        specs = [base_spec, dict(base_spec)]
+    else:
+        specs = [{**base_spec, "neutral_snapshot_id": _digest("extra-neutral")}]
+    paths = {
+        "bridge": tmp_path / "bridge.json",
+        "specs": tmp_path / "subject-specs.json",
+        "slots": tmp_path / "slots.json",
+        "contracts": tmp_path / "contracts.json",
+        "applicability": tmp_path / "applicability.json",
+    }
+    for path, value in (
+        (paths["bridge"], bridge),
+        (paths["specs"], specs),
+        (paths["slots"], []),
+        (paths["contracts"], {}),
+        (paths["applicability"], {}),
+    ):
+        write_canonical_json(path, value, exclusive=True)
+    output_root = tmp_path / "frames-out"
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "build-frames",
+            "--bridge",
+            str(paths["bridge"]),
+            "--subject-specs",
+            str(paths["specs"]),
+            "--adapter-root",
+            str(tmp_path),
+            "--generator-root",
+            str(tmp_path),
+            "--slots",
+            str(paths["slots"]),
+            "--contracts",
+            str(paths["contracts"]),
+            "--applicability-map",
+            str(paths["applicability"]),
+            "--output-root",
+            str(output_root),
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
+    )
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_SUBJECT_SPEC_COVERAGE"
+    assert not output_root.exists()
 
 
 def test_run_preflight_stdout_and_receipt_do_not_reveal_secret_origin(tmp_path):
@@ -420,13 +557,30 @@ def test_verify_mr_inventory_accepts_exact_chronology(tmp_path):
 def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path):
     adapter_root = tmp_path / "adapters-root"
     adapter_root.mkdir()
-    registry = validate_adapter_registry(_adapter_registry(adapter_root), adapter_root)
+    raw_registry = _adapter_registry(adapter_root)
+    registry = validate_adapter_registry(raw_registry, adapter_root)
+    source_root = tmp_path / "source-root"
+    source_root.mkdir()
+    fixture = json.loads((FIXTURE_ROOT / "python.json").read_text(encoding="utf-8"))
+    for relative in fixture["source_files"]:
+        path = source_root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("def solve(value):\n    return value\n", encoding="utf-8")
+    manifest = source_root / "adapter-python.json"
+    write_canonical_json(manifest, fixture, exclusive=True)
+    descriptor = {
+        "ecosystem": "python",
+        "manifest_path": manifest.name,
+        "reverse": False,
+    }
     source_record = {
         "normalized_source_tree_sha256": "21" * 32,
         "build_descriptor_sha256": "22" * 32,
     }
-    declarations = _tagged_declarations("python.json") + _tagged_declarations("cmake.json")
-    frame = build_public_behavior_frame(source_record, declarations, registry)
+    discovery = run_adapter_discovery(
+        source_root, descriptor, registry, "PYTHON_PEP517_V1"
+    )
+    frame = build_public_behavior_frame(source_record, discovery)
     workload = select_profiling_workload(frame, "S")
     profiling_results = [
         {
@@ -462,25 +616,6 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
         ],
     }
     bridge = {**bridge, "artifact_sha256": canonical_sha256(bridge)}
-    features = [
-        {
-            "neutral_snapshot_id": bridge["records"][0]["neutral_snapshot_id"],
-            "public_workload_set_sha256": workload["artifact_sha256"],
-            "scale_class": "S",
-            "primary_technique": "ARRAY_NUMERICAL",
-            "technique_vector": ["ARRAY_NUMERICAL"],
-            "sites": [
-                {
-                    "path": "program.py",
-                    "symbol": "module",
-                    "start_line": 1,
-                    "start_col": 0,
-                    "end_line": 1,
-                    "end_col": 8,
-                }
-            ],
-        }
-    ]
     generator_registry = json.loads(
         (
             Path(__file__).resolve().parent
@@ -488,28 +623,29 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
         ).read_text(encoding="utf-8")
     )
     generator_root = Path(__file__).resolve().parent / "fixtures/input_generators"
+    subject_specs = [
+        {
+            "neutral_snapshot_id": bridge["records"][0]["neutral_snapshot_id"],
+            "source_root": str(source_root),
+            "source_record": source_record,
+            "build_descriptor": descriptor,
+            "adapter_registry": raw_registry,
+            "input_generator_registry": generator_registry,
+            "profiling_results": profiling_results,
+        }
+    ]
     outside = tmp_path / "outside"
     outside.mkdir()
     output_root = tmp_path / "frames-out"
     paths = {
         "bridge": tmp_path / "bridge.json",
-        "source": tmp_path / "source.json",
-        "adapters": tmp_path / "adapters.json",
-        "declarations": tmp_path / "declarations.json",
-        "generators": tmp_path / "generators.json",
-        "profiling": tmp_path / "profiling.json",
-        "features": tmp_path / "features.json",
+        "subject_specs": tmp_path / "subject-specs.json",
         "slots": tmp_path / "slots.json",
         "contracts": tmp_path / "contracts.json",
         "applicability": tmp_path / "applicability.json",
     }
     write_canonical_json(paths["bridge"], bridge, exclusive=True)
-    write_canonical_json(paths["source"], source_record, exclusive=True)
-    write_canonical_json(paths["adapters"], registry, exclusive=True)
-    write_canonical_json(paths["declarations"], declarations, exclusive=True)
-    write_canonical_json(paths["generators"], generator_registry, exclusive=True)
-    write_canonical_json(paths["profiling"], profiling_results, exclusive=True)
-    write_canonical_json(paths["features"], features, exclusive=True)
+    write_canonical_json(paths["subject_specs"], subject_specs, exclusive=True)
     write_canonical_json(paths["slots"], [], exclusive=True)
     write_canonical_json(paths["contracts"], {}, exclusive=True)
     write_canonical_json(paths["applicability"], {}, exclusive=True)
@@ -521,30 +657,18 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
             "build-frames",
             "--bridge",
             str(paths["bridge"]),
-            "--source-record",
-            str(paths["source"]),
-            "--adapter-registry",
-            str(paths["adapters"]),
+            "--subject-specs",
+            str(paths["subject_specs"]),
             "--adapter-root",
             str(adapter_root),
-            "--declarations",
-            str(paths["declarations"]),
-            "--input-generator-registry",
-            str(paths["generators"]),
             "--generator-root",
             str(generator_root),
-            "--profiling-results",
-            str(paths["profiling"]),
-            "--features",
-            str(paths["features"]),
             "--slots",
             str(paths["slots"]),
             "--contracts",
             str(paths["contracts"]),
             "--applicability-map",
             str(paths["applicability"]),
-            "--scale-class",
-            "S",
             "--output-root",
             str(output_root),
         ],
@@ -555,19 +679,25 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
     assert payload["status"] == "PASS"
+    neutral = bridge["records"][0]["neutral_snapshot_id"]
     expected = {
-        "public-behavior-frame.json",
-        "profiling-workload.json",
-        "evaluation-inputs-common.json",
-        "technique-profile.json",
+        f"adapter-discovery-{neutral}.json",
+        f"source-scale-{neutral}.json",
+        f"public-behavior-frame-{neutral}.json",
+        f"profiling-workload-{neutral}.json",
+        f"evaluation-inputs-common-{neutral}.json",
+        f"technique-profile-{neutral}.json",
+        f"derived-subject-{neutral}.json",
         "subject-frames.json",
     }
     written = {path.name for path in output_root.iterdir() if path.is_file()}
     assert expected <= written
     assert list(outside.iterdir()) == []
-    common = json.loads((output_root / "evaluation-inputs-common.json").read_text())
+    common = json.loads(
+        (output_root / f"evaluation-inputs-common-{neutral}.json").read_text()
+    )
     assert len(common["rows"]) == 30
-    assert all(row["status"] == "COMMON_INPUT_UNAVAILABLE" for row in common["rows"])
+    assert any(row["status"] == "COMMON_INPUT_EXECUTABLE" for row in common["rows"])
 
 
 def test_verify_evidence_validates_complete_evidence_set(tmp_path):

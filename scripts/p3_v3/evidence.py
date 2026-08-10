@@ -18,16 +18,15 @@ from p3_v3.artifacts import (  # noqa: E402
     canonical_sha256,
     file_sha256,
     read_canonical_json,
+    validate_exact_object,
+    validate_sha256,
     write_canonical_json,
 )
 from p3_v3.bridge_and_frames import (  # noqa: E402
-    build_common_inputs,
     build_contract_inputs,
-    build_public_behavior_frame,
     build_subject_frames,
-    classify_technique,
     close_slot,
-    select_profiling_workload,
+    derive_subject_material,
     validate_adapter_registry,
     validate_contract_generator_registry,
     validate_input_generator_registry,
@@ -79,18 +78,12 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--output")
     command = sub.add_parser("build-frames")
     command.add_argument("--bridge", required=True)
-    command.add_argument("--source-record", required=True)
-    command.add_argument("--adapter-registry", required=True)
+    command.add_argument("--subject-specs", required=True)
     command.add_argument("--adapter-root", required=True)
-    command.add_argument("--declarations", required=True)
-    command.add_argument("--input-generator-registry", required=True)
     command.add_argument("--generator-root", required=True)
-    command.add_argument("--profiling-results", required=True)
-    command.add_argument("--features", required=True)
     command.add_argument("--slots", required=True)
     command.add_argument("--contracts", required=True)
     command.add_argument("--applicability-map", required=True)
-    command.add_argument("--scale-class", required=True)
     command.add_argument("--output-root", required=True)
     command.add_argument("--contract-generator-registry")
     command.add_argument("--contract-generator-root")
@@ -132,43 +125,102 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+_SUBJECT_SPEC_SCHEMA = {
+    "neutral_snapshot_id": str,
+    "source_root": str,
+    "source_record": dict,
+    "build_descriptor": dict,
+    "adapter_registry": dict,
+    "input_generator_registry": dict,
+    "profiling_results": list,
+}
+
+
+def _subject_specs_by_neutral(
+    bridge: Mapping[str, Any], subject_specs: Any
+) -> list[tuple[dict[str, Any], Mapping[str, Any]]]:
+    records = bridge.get("records") if isinstance(bridge, Mapping) else None
+    if not isinstance(records, list):
+        raise EvidenceError("E_BRIDGE_RECORDS", "verified bridge records are absent")
+    records_by_neutral: dict[str, Mapping[str, Any]] = {}
+    for index, record in enumerate(records):
+        if not isinstance(record, Mapping):
+            raise EvidenceError("E_BRIDGE_RECORDS", f"records[{index}] must be an object")
+        neutral = validate_sha256(
+            record.get("neutral_snapshot_id"), f"records[{index}].neutral_snapshot_id"
+        )
+        if neutral in records_by_neutral:
+            raise EvidenceError("E_BRIDGE_RECORDS", "duplicate bridge neutral ID")
+        records_by_neutral[neutral] = record
+    if not isinstance(subject_specs, list):
+        raise EvidenceError("E_SUBJECT_SPEC", "subject-specs must be a list")
+    specs_by_neutral: dict[str, dict[str, Any]] = {}
+    for index, candidate in enumerate(subject_specs):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError("E_SUBJECT_SPEC", f"subject_specs[{index}] must be an object")
+        spec = validate_exact_object(
+            dict(candidate), _SUBJECT_SPEC_SCHEMA, f"subject_specs[{index}]"
+        )
+        neutral = validate_sha256(
+            spec["neutral_snapshot_id"], f"subject_specs[{index}].neutral_snapshot_id"
+        )
+        if neutral in specs_by_neutral:
+            raise EvidenceError(
+                "E_SUBJECT_SPEC_COVERAGE", f"duplicate subject specification: {neutral}"
+            )
+        specs_by_neutral[neutral] = spec
+    if set(specs_by_neutral) != set(records_by_neutral):
+        raise EvidenceError(
+            "E_SUBJECT_SPEC_COVERAGE",
+            "subject specifications do not cover bridge exactly",
+        )
+    return [
+        (specs_by_neutral[neutral], records_by_neutral[neutral])
+        for neutral in sorted(records_by_neutral)
+    ]
+
+
 def _dispatch_build_frames(args: argparse.Namespace) -> dict:
+    bridge = read_canonical_json(args.bridge)
+    indexed_specs = _subject_specs_by_neutral(
+        bridge, read_canonical_json(args.subject_specs)
+    )
+    derived_subjects = []
+    for spec, record in indexed_specs:
+        prepared = {
+            **spec,
+            "adapter_registry": validate_adapter_registry(
+                spec["adapter_registry"], args.adapter_root
+            ),
+            "input_generator_registry": validate_input_generator_registry(
+                spec["input_generator_registry"], args.generator_root
+            ),
+        }
+        derived_subjects.append(derive_subject_material(prepared, record))
+    subject_frames = build_subject_frames(bridge, derived_subjects)
+
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
-    bridge = read_canonical_json(args.bridge)
-    source_record = read_canonical_json(args.source_record)
-    adapter_registry = validate_adapter_registry(
-        read_canonical_json(args.adapter_registry), args.adapter_root
-    )
-    declarations = read_canonical_json(args.declarations)
-    if not isinstance(declarations, list):
-        raise EvidenceError("E_DECLARATIONS", "declarations must be a list")
-    frame = build_public_behavior_frame(source_record, declarations, adapter_registry)
-    workload = select_profiling_workload(frame, args.scale_class)
-    generator_registry = validate_input_generator_registry(
-        read_canonical_json(args.input_generator_registry), args.generator_root
-    )
-    common_inputs = build_common_inputs(source_record, frame, generator_registry)
-    profiling_results = read_canonical_json(args.profiling_results)
-    if not isinstance(profiling_results, list):
-        raise EvidenceError("E_PROFILE_RESULTS", "profiling-results must be a list")
-    technique_profile = classify_technique(workload, profiling_results)
-    technique_body = dict(technique_profile)
-    technique_profile = {
-        **technique_body,
-        "artifact_sha256": canonical_sha256(technique_body),
+    written = []
+    artifact_names = {
+        "adapter_discovery": "adapter-discovery",
+        "source_scale": "source-scale",
+        "public_behavior_frame": "public-behavior-frame",
+        "profiling_workload": "profiling-workload",
+        "common_inputs": "evaluation-inputs-common",
+        "technique_profile": "technique-profile",
     }
-    features = read_canonical_json(args.features)
-    if not isinstance(features, list):
-        raise EvidenceError("E_FEATURES", "features must be a list")
-    subject_frames = build_subject_frames(
-        bridge, features, technique_profile=technique_profile
-    )
-    _write_under(output_root, "public-behavior-frame.json", frame)
-    _write_under(output_root, "profiling-workload.json", workload)
-    _write_under(output_root, "evaluation-inputs-common.json", common_inputs)
-    _write_under(output_root, "technique-profile.json", technique_profile)
+    for material in derived_subjects:
+        neutral = material["neutral_snapshot_id"]
+        for field, stem in artifact_names.items():
+            name = f"{stem}-{neutral}.json"
+            _write_under(output_root, name, material[field])
+            written.append(name)
+        name = f"derived-subject-{neutral}.json"
+        _write_under(output_root, name, material)
+        written.append(name)
     _write_under(output_root, "subject-frames.json", subject_frames)
+    written.append("subject-frames.json")
 
     slots = read_canonical_json(args.slots)
     contracts = read_canonical_json(args.contracts)
@@ -183,13 +235,6 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
         subject["controlled_subject_id"]: subject for subject in subject_frames["subjects"]
     }
     contract_registry = None
-    written = [
-        "public-behavior-frame.json",
-        "profiling-workload.json",
-        "evaluation-inputs-common.json",
-        "technique-profile.json",
-        "subject-frames.json",
-    ]
     for index, slot in enumerate(slots):
         if not isinstance(slot, Mapping):
             raise EvidenceError("E_SLOTS", f"slots[{index}] must be an object")
@@ -237,7 +282,10 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
         "status": "PASS",
         "output_root": str(output_root),
         "artifacts": sorted(written),
-        "common_input_count": len(common_inputs["rows"]),
+        "common_input_count": sum(
+            len(material["common_inputs"]["rows"])
+            for material in derived_subjects
+        ),
         "subject_count": len(subject_frames["subjects"]),
     }
 

@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+import p3_v3.bridge_and_frames as frames_module
 from p3_v3.artifacts import EvidenceError, canonical_sha256, file_sha256
 from p3_v3.bridge_and_frames import (
     BEHAVIOR_CATEGORY_ORDER,
@@ -206,30 +207,16 @@ def _features(neutral_id: str):
     ]
 
 
-def test_subject_frames_are_input_order_invariant_and_use_subject_id(synthetic_release):
+def test_build_subject_frames_rejects_legacy_caller_authority(synthetic_release):
     verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
     features = _features(verified["records"][0]["neutral_snapshot_id"])
-    first = build_subject_frames(verified, features)
-    second = build_subject_frames(
-        {**verified, "records": list(reversed(verified["records"]))},
-        list(reversed(features)),
-    )
-    assert first == second
-    subject = first["subjects"][0]
-    assert len(subject["controlled_subject_id"]) == 64
-    assert len(subject["sites"][0]["site_id"]) == 64
-    assert first["c_criterion"] == [subject["controlled_subject_id"]]
-    assert len(first["empty_construct_cells"]) == 20
-    assert {
-        "scale_class": "S",
-        "primary_technique": "SCALAR_CONTROL",
-        "status": "EMPTY_FRAME",
-    } in first["empty_construct_cells"]
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        build_subject_frames(verified, features)
 
 
-def test_subject_frame_rejects_missing_feature_record(synthetic_release):
+def test_subject_frame_rejects_missing_derived_subject(synthetic_release):
     verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
-    with pytest.raises(EvidenceError, match="E_FEATURE_COVERAGE"):
+    with pytest.raises(EvidenceError, match="E_SUBJECT_SPEC_COVERAGE"):
         build_subject_frames(verified, [])
 
 
@@ -420,6 +407,275 @@ def _write_adapter_project(root: Path, fixture_name: str, *, reverse: bool = Fal
     manifest = root / f"adapter-{fixture['ecosystem']}.json"
     manifest.write_bytes(_bytes(fixture))
     return {"manifest_path": manifest.name, "reverse": reverse}
+
+
+def _derived_subject_spec(
+    root: Path,
+    fixture_name: str,
+    record: dict,
+    adapter_registry: dict,
+    generator_registry: dict,
+    technique: str,
+    *,
+    effective_lines: int | None = None,
+) -> dict:
+    descriptor = _write_adapter_project(root, fixture_name)
+    if effective_lines is not None:
+        source_path = root / _load_fixture(fixture_name)["source_files"][0]
+        source_path.write_text("int value = 1;\n" * effective_lines, encoding="utf-8")
+    ecosystem = _load_fixture(fixture_name)["ecosystem"]
+    descriptor = {**descriptor, "ecosystem": ecosystem}
+    adapter_id = {
+        "python": "PYTHON_PEP517_V1",
+        "cmake": "CMAKE_CTEST_V1",
+    }[ecosystem]
+    discovery = run_adapter_discovery(root, descriptor, adapter_registry, adapter_id)
+    frame = build_public_behavior_frame(
+        {
+            "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+        },
+        discovery,
+    )
+    scale = derive_source_scale(root, discovery)["scale_class"]
+    workload = select_profiling_workload(frame, scale)
+    profiling_results = [
+        {
+            "behavior_id": row["behavior_id"],
+            "status": "SUCCESS",
+            "technique_tags": [technique],
+            "observed_site_ids": [],
+        }
+        for row in workload["selected_rows"]
+    ]
+    return {
+        "neutral_snapshot_id": record["neutral_snapshot_id"],
+        "source_root": str(root),
+        "source_record": {
+            "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+        },
+        "build_descriptor": descriptor,
+        "adapter_registry": adapter_registry,
+        "input_generator_registry": generator_registry,
+        "profiling_results": profiling_results,
+    }
+
+
+def test_two_subject_material_is_fully_derived_and_order_invariant(
+    synthetic_release, tmp_path
+):
+    derive_subject_material = getattr(frames_module, "derive_subject_material", None)
+    assert callable(derive_subject_material)
+    adapter_root = tmp_path / "adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
+    python_record = verified["records"][0]
+    cmake_record = {
+        **python_record,
+        "neutral_snapshot_id": "7" * 64,
+        "normalized_source_tree_sha256": "8" * 64,
+        "build_descriptor_sha256": "9" * 64,
+        "fixed_tree_commitment": "a" * 64,
+    }
+    bridge = {**verified, "records": [python_record, cmake_record]}
+    python_root = tmp_path / "python-subject"
+    cmake_root = tmp_path / "cmake-subject"
+    python_root.mkdir()
+    cmake_root.mkdir()
+    python_spec = _derived_subject_spec(
+        python_root,
+        "python.json",
+        python_record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    cmake_spec = _derived_subject_spec(
+        cmake_root,
+        "cmake.json",
+        cmake_record,
+        adapter_registry,
+        generator_registry,
+        "ARRAY_NUMERICAL",
+        effective_lines=10_000,
+    )
+
+    python_material = derive_subject_material(python_spec, python_record)
+    cmake_material = derive_subject_material(cmake_spec, cmake_record)
+    assert set(python_material) == {
+        "neutral_snapshot_id",
+        "adapter_discovery",
+        "source_scale",
+        "public_behavior_frame",
+        "profiling_workload",
+        "common_inputs",
+        "technique_profile",
+        "subject",
+        "artifact_sha256",
+    }
+    assert python_material["adapter_discovery"]["ecosystem"] == "python"
+    assert cmake_material["adapter_discovery"]["ecosystem"] == "cmake"
+    assert python_material["source_scale"]["scale_class"] == "S"
+    assert cmake_material["source_scale"]["scale_class"] == "M"
+    for field in (
+        "adapter_discovery",
+        "source_scale",
+        "public_behavior_frame",
+        "profiling_workload",
+        "common_inputs",
+        "technique_profile",
+    ):
+        assert (
+            python_material[field]["artifact_sha256"]
+            != cmake_material[field]["artifact_sha256"]
+        )
+    assert canonical_sha256(python_material["subject"]["sites"]) != canonical_sha256(
+        cmake_material["subject"]["sites"]
+    )
+    assert [row["ordinal"] for row in python_material["common_inputs"]["rows"]] == list(
+        range(1, 31)
+    )
+    assert any(
+        row["status"] == "COMMON_INPUT_EXECUTABLE"
+        for row in python_material["common_inputs"]["rows"]
+    )
+    assert all(
+        row["schema_provenance_path"] and row["generator_source_sha256"]
+        for row in python_material["common_inputs"]["rows"]
+    )
+
+    first = build_subject_frames(bridge, [python_material, cmake_material])
+    second = build_subject_frames(bridge, [cmake_material, python_material])
+    assert _bytes(first) == _bytes(second)
+
+
+def test_subject_alias_merge_does_not_mutate_derived_material(
+    synthetic_release, tmp_path
+):
+    adapter_root = tmp_path / "adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
+    first_record = verified["records"][0]
+    second_record = {
+        **first_record,
+        "neutral_snapshot_id": "7" * 64,
+        "fixed_tree_commitment": "8" * 64,
+    }
+    bridge = {**verified, "records": [first_record, second_record]}
+    source_root = tmp_path / "python-subject"
+    source_root.mkdir()
+    first_spec = _derived_subject_spec(
+        source_root,
+        "python.json",
+        first_record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    first_material = frames_module.derive_subject_material(first_spec, first_record)
+    second_body = {
+        **copy.deepcopy(first_material),
+        "neutral_snapshot_id": second_record["neutral_snapshot_id"],
+        "subject": {
+            **copy.deepcopy(first_material["subject"]),
+            "neutral_snapshot_ids": [second_record["neutral_snapshot_id"]],
+        },
+    }
+    second_body.pop("artifact_sha256")
+    second_material = {
+        **second_body,
+        "artifact_sha256": canonical_sha256(second_body),
+    }
+    before = _bytes([first_material, second_material])
+
+    frames = build_subject_frames(bridge, [first_material, second_material])
+
+    assert _bytes([first_material, second_material]) == before
+    assert frames["subjects"][0]["neutral_snapshot_ids"] == sorted(
+        [first_record["neutral_snapshot_id"], second_record["neutral_snapshot_id"]]
+    )
+
+
+@pytest.mark.parametrize("mutation", ["extra", "missing"])
+def test_subject_spec_rejects_non_exact_keys_before_adapter_execution(
+    synthetic_release, tmp_path, mutation
+):
+    derive_subject_material = getattr(frames_module, "derive_subject_material", None)
+    assert callable(derive_subject_material)
+    record = verify_pinned_bridge(
+        synthetic_release.root, synthetic_release.lock
+    )["records"][0]
+    spec: dict[str, object] = {
+        "neutral_snapshot_id": record["neutral_snapshot_id"],
+        "source_root": str(tmp_path / "does-not-exist"),
+        "source_record": {
+            "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+        },
+        "build_descriptor": {"ecosystem": "python"},
+        "adapter_registry": {},
+        "input_generator_registry": {},
+        "profiling_results": [],
+    }
+    if mutation == "extra":
+        spec["scale_class"] = "S"
+    else:
+        del spec["profiling_results"]
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        derive_subject_material(spec, record)
+
+
+def test_unsupported_subject_common_inputs_remain_explicitly_unavailable(
+    synthetic_release, tmp_path
+):
+    adapter_root = tmp_path / "adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    record = verify_pinned_bridge(
+        synthetic_release.root, synthetic_release.lock
+    )["records"][0]
+    source_root = tmp_path / "unsupported-source"
+    source_root.mkdir()
+    spec = {
+        "neutral_snapshot_id": record["neutral_snapshot_id"],
+        "source_root": str(source_root),
+        "source_record": {
+            "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+            "build_descriptor_sha256": record["build_descriptor_sha256"],
+        },
+        "build_descriptor": {"ecosystem": "rust"},
+        "adapter_registry": adapter_registry,
+        "input_generator_registry": generator_registry,
+        "profiling_results": [],
+    }
+    material = frames_module.derive_subject_material(spec, record)
+    assert material["adapter_discovery"]["discovery_status"] == "ADAPTER_UNSUPPORTED"
+    assert material["subject"]["sites"] == []
+    assert material["technique_profile"]["primary_technique"] == "TECH_UNCERTAIN"
+    assert [row["ordinal"] for row in material["common_inputs"]["rows"]] == list(
+        range(1, 31)
+    )
+    assert {row["status"] for row in material["common_inputs"]["rows"]} == {
+        "COMMON_INPUT_UNAVAILABLE"
+    }
 
 
 def test_adapter_registry_binds_exact_implementation_paths_and_source_hashes(tmp_path):
@@ -1219,6 +1475,48 @@ def test_profiling_workload_prefers_unseen_diversity_then_behavior_id(tmp_path):
     assert len(workload["selected_behavior_ids"]) == 10
 
 
+def test_profiling_fallback_uses_behavior_id_after_unseen_diversity_is_exhausted():
+    source_id = "21" * 32
+    rows = []
+    for behavior_id, diversity in (
+        ("f" * 64, "0" * 64),
+        ("e" * 64, "1" * 64),
+        ("d" * 64, "2" * 64),
+        ("c" * 64, "1" * 64),
+        ("0" * 64, "2" * 64),
+    ):
+        rows.append(
+            {
+                "controlled_subject_source_id": source_id,
+                "category": "PUBLIC_API",
+                "provenance_path": f"docs/{behavior_id[0]}.md",
+                "provenance_span_or_key": behavior_id[0],
+                "entrypoint": f"entry:{behavior_id[0]}",
+                "normalized_entrypoint": f"entry:{behavior_id[0]}",
+                "declared_inputs": {"kind": "none"},
+                "declared_input_schema_sha256": "a" * 64,
+                "static_dependency_tags": [],
+                "prerequisites": [],
+                "ecosystem": "python",
+                "adapter_id": "PYTHON_PEP517_V1",
+                "discovery_status": "EXECUTABLE",
+                "unsupported_or_exclusion_reason": "",
+                "diversity_signature_sha256": diversity,
+                "behavior_id": behavior_id,
+                "artifact_sha256": "b" * 64,
+            }
+        )
+    workload = select_profiling_workload(
+        {"controlled_subject_source_id": source_id, "rows": rows}, "S"
+    )
+    assert workload["selected_behavior_ids"][:4] == [
+        "f" * 64,
+        "c" * 64,
+        "0" * 64,
+        "d" * 64,
+    ]
+
+
 def _behavior_id(label: str) -> str:
     return canonical_sha256(
         {
@@ -1395,7 +1693,7 @@ def test_classify_technique_is_result_order_invariant():
     assert canonical_sha256(first) == canonical_sha256(second)
 
 
-def test_build_subject_frames_prefers_technique_profile_over_feature_label(
+def test_build_subject_frames_has_no_caller_technique_profile_authority(
     synthetic_release,
 ):
     verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
@@ -1410,12 +1708,8 @@ def test_build_subject_frames_prefers_technique_profile_over_feature_label(
     ]
     profile = classify_technique(workload, results)
     assert profile["primary_technique"] == "SCALAR_CONTROL"
-    frames = build_subject_frames(
-        verified, features, technique_profile=profile
-    )
-    subject = frames["subjects"][0]
-    assert subject["primary_technique"] == "SCALAR_CONTROL"
-    assert subject["technique_vector"] == ["SCALAR_CONTROL"]
+    with pytest.raises(TypeError):
+        build_subject_frames(verified, features, technique_profile=profile)
 
 
 def _load_generator_registry() -> dict:
@@ -1426,6 +1720,8 @@ def _public_schema(schema_kind: str, raw_schema: dict, **aliases) -> dict:
     record = {
         "schema_kind": schema_kind,
         "raw_schema": raw_schema,
+        "provenance_path": "public-schema.json",
+        "provenance_span_or_key": schema_kind,
     }
     record.update(aliases)
     return record
@@ -1530,10 +1826,10 @@ def test_build_common_inputs_ordinals_seeds_dedupe_and_round_robin():
     inventory = build_common_inputs(_source_record(), frame, registry)
     assert inventory["schema_version"] == "p3-evaluation-inputs-common-v1"
     assert len(inventory["rows"]) == E_COMMON_COUNT == 30
-    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(1, 31))
 
     source_id = frame["controlled_subject_source_id"]
-    for ordinal, row in enumerate(inventory["rows"]):
+    for ordinal, row in enumerate(inventory["rows"], start=1):
         expected_seed = int.from_bytes(
             bytes.fromhex(
                 canonical_sha256(
@@ -1570,13 +1866,16 @@ def test_build_common_inputs_ordinals_seeds_dedupe_and_round_robin():
         )
     unique_raw.sort(key=lambda item: (item[0], item[1]))
     assert len(unique_raw) == 3
-    for ordinal, row in enumerate(inventory["rows"]):
-        expected_kind = unique_raw[ordinal % 3][2]
+    for index, row in enumerate(inventory["rows"]):
+        expected_kind = unique_raw[index % 3][2]
         assert row["schema_kind"] == expected_kind
         assert row["generator_id"] == expected_kind
-        assert row["status"] == "COMMON_INPUT_GENERATED"
+        assert row["status"] == "COMMON_INPUT_EXECUTABLE"
         assert row["raw_payload_sha256"]
         assert row["envelope"]["generator_id"] == expected_kind
+        assert row["schema_provenance_path"] == "public-schema.json"
+        assert row["schema_provenance_span_or_key"] == expected_kind
+        assert len(row["generator_source_sha256"]) == 64
 
     shuffled = _public_frame_with_schemas(list(reversed(schemas)))
     shuffled_inventory = build_common_inputs(_source_record(), shuffled, registry)
@@ -1618,18 +1917,6 @@ def test_build_common_inputs_rejects_forbidden_generator_inputs():
         frame = _public_frame_with_schemas([poisoned_schema])
         with pytest.raises(EvidenceError, match="E_GENERATOR_INPUT"):
             build_common_inputs(_source_record(), frame, registry)
-        poisoned_frame = {
-            **_public_frame_with_schemas(base_schemas),
-            **forbidden,
-        }
-        body = {
-            key: value
-            for key, value in poisoned_frame.items()
-            if key != "artifact_sha256"
-        }
-        poisoned_frame = {**body, "artifact_sha256": canonical_sha256(body)}
-        with pytest.raises(EvidenceError, match="E_GENERATOR_INPUT"):
-            build_common_inputs(_source_record(), poisoned_frame, registry)
 
 
 def test_generator_failure_occupies_ordinal_as_common_input_invalid():
@@ -1654,12 +1941,12 @@ def test_generator_failure_occupies_ordinal_as_common_input_invalid():
         row for row in inventory["rows"] if row["status"] == "COMMON_INPUT_INVALID"
     ]
     generated_rows = [
-        row for row in inventory["rows"] if row["status"] == "COMMON_INPUT_GENERATED"
+        row for row in inventory["rows"] if row["status"] == "COMMON_INPUT_EXECUTABLE"
     ]
     assert invalid_rows
     assert generated_rows
     for row in invalid_rows:
-        assert row["ordinal"] in range(30)
+        assert row["ordinal"] in range(1, 31)
         assert row["failure_code"] == "JSON_SCHEMA_DRAFT2020_12_V1_INVALID"
         assert row["envelope"] is None
         assert row["raw_payload_sha256"] is None
@@ -1689,7 +1976,7 @@ def test_generator_failure_occupies_ordinal_as_common_input_invalid():
         if item[2] == "JSON_SCHEMA_DRAFT2020_12_V1"
     )
     assert [row["ordinal"] for row in invalid_rows] == [
-        ordinal for ordinal in range(30) if ordinal % 2 == failing_index
+        ordinal for ordinal in range(1, 31) if (ordinal - 1) % 2 == failing_index
     ]
     assert len(invalid_rows) + len(generated_rows) == 30
 
@@ -1703,7 +1990,7 @@ def test_zero_eligible_schemas_yield_thirty_unavailable_rows():
     )
     assert len(inventory["rows"]) == 30
     assert {row["status"] for row in inventory["rows"]} == {"COMMON_INPUT_UNAVAILABLE"}
-    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(1, 31))
     assert all(row["envelope"] is None for row in inventory["rows"])
     assert all(row["raw_payload_sha256"] is None for row in inventory["rows"])
 
@@ -1763,7 +2050,7 @@ def test_validate_common_inputs_on_fixed_source_preserves_identities():
         }
         for row in report["rows"]
     )
-    assert [row["ordinal"] for row in report["rows"]] == list(range(30))
+    assert [row["ordinal"] for row in report["rows"]] == list(range(1, 31))
     for before, after in zip(frozen_payloads, report["rows"], strict=True):
         assert after["ordinal"] == before[0]
         assert after["input_id"] == before[1]

@@ -236,13 +236,36 @@ _RECORD_SCHEMA = {
     "eligible_for_construct": bool,
     "eligible_for_criterion": bool,
 }
-_FEATURE_SCHEMA = {
+_SUBJECT_SPEC_SCHEMA = {
     "neutral_snapshot_id": str,
+    "source_root": str,
+    "source_record": dict,
+    "build_descriptor": dict,
+    "adapter_registry": dict,
+    "input_generator_registry": dict,
+    "profiling_results": list,
+}
+_SUBJECT_PROFILE_SCHEMA = {
+    "controlled_subject_id": str,
+    "normalized_source_tree_sha256": str,
+    "build_descriptor_sha256": str,
     "public_workload_set_sha256": str,
     "scale_class": str,
     "primary_technique": str,
     "technique_vector": list,
     "sites": list,
+    "neutral_snapshot_ids": list,
+}
+_DERIVED_SUBJECT_SCHEMA = {
+    "neutral_snapshot_id": str,
+    "adapter_discovery": dict,
+    "source_scale": dict,
+    "public_behavior_frame": dict,
+    "profiling_workload": dict,
+    "common_inputs": dict,
+    "technique_profile": dict,
+    "subject": dict,
+    "artifact_sha256": str,
 }
 _SITE_SCHEMA = {
     "path": str,
@@ -754,77 +777,86 @@ def select_construct_subjects(
 
 def build_subject_frames(
     verified_bridge: Mapping[str, Any],
-    feature_records: Sequence[Mapping[str, Any]],
+    derived_subjects: Sequence[Mapping[str, Any]],
     construct_limit: int = 18,
-    *,
-    technique_profile: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if type(construct_limit) is not int or construct_limit < 1:
         raise EvidenceError("E_CONSTRUCT_LIMIT", "construct limit must be positive")
-    derived_primary: str | None = None
-    derived_vector: list[str] | None = None
-    if technique_profile is not None:
-        if not isinstance(technique_profile, Mapping):
-            raise EvidenceError("E_TECHNIQUE_PROFILE", "technique_profile must be an object")
-        derived_primary = technique_profile.get("primary_technique")
-        if derived_primary not in _TECHNIQUES:
-            raise EvidenceError("E_TECHNIQUE_PROFILE", "invalid derived primary technique")
-        confirmed = technique_profile.get("confirmed_tags")
-        if not isinstance(confirmed, list) or any(
-            item not in _TECHNIQUES for item in confirmed
-        ):
-            raise EvidenceError("E_TECHNIQUE_PROFILE", "confirmed_tags must be technique labels")
-        derived_vector = sorted(set(confirmed) | {derived_primary})
     records = verified_bridge.get("records")
     if not isinstance(records, list):
         raise EvidenceError("E_BRIDGE_RECORDS", "verified bridge records are absent")
-    features: dict[str, Mapping[str, Any]] = {}
-    for index, candidate in enumerate(feature_records):
-        feature = validate_exact_object(candidate, _FEATURE_SCHEMA, f"features[{index}]")
-        neutral = validate_sha256(feature["neutral_snapshot_id"], "feature.neutral_snapshot_id")
-        validate_sha256(feature["public_workload_set_sha256"], "feature.workload")
-        if neutral in features:
-            raise EvidenceError("E_FEATURE_DUPLICATE", f"duplicate feature record: {neutral}")
-        if feature["scale_class"] not in _SCALES:
-            raise EvidenceError("E_SCALE", f"invalid scale: {feature['scale_class']}")
-        if feature["primary_technique"] not in _TECHNIQUES:
+    records_by_neutral: dict[str, Mapping[str, Any]] = {}
+    for record in records:
+        neutral = validate_sha256(
+            record.get("neutral_snapshot_id"), "bridge_record.neutral_snapshot_id"
+        )
+        if neutral in records_by_neutral:
+            raise EvidenceError("E_BRIDGE_RECORDS", "duplicate bridge neutral ID")
+        records_by_neutral[neutral] = record
+
+    materials: dict[str, dict[str, Any]] = {}
+    for index, candidate in enumerate(derived_subjects):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError(
+                "E_DERIVED_SUBJECT", f"derived_subjects[{index}] must be an object"
+            )
+        material = validate_exact_object(
+            dict(candidate), _DERIVED_SUBJECT_SCHEMA, f"derived_subjects[{index}]"
+        )
+        neutral = validate_sha256(
+            material["neutral_snapshot_id"],
+            f"derived_subjects[{index}].neutral_snapshot_id",
+        )
+        body = {key: value for key, value in material.items() if key != "artifact_sha256"}
+        if material["artifact_sha256"] != canonical_sha256(body):
+            raise EvidenceError("E_DERIVED_SUBJECT_HASH", "derived subject self-hash differs")
+        if neutral in materials:
+            raise EvidenceError(
+                "E_SUBJECT_SPEC_COVERAGE", f"duplicate derived subject: {neutral}"
+            )
+        profile = validate_exact_object(
+            material["subject"], _SUBJECT_PROFILE_SCHEMA, f"derived_subjects[{index}].subject"
+        )
+        if profile["neutral_snapshot_ids"] != [neutral]:
+            raise EvidenceError("E_DERIVED_SUBJECT", "derived subject neutral binding differs")
+        if profile["scale_class"] not in _SCALES:
+            raise EvidenceError("E_SCALE", f"invalid scale: {profile['scale_class']}")
+        if profile["primary_technique"] not in _TECHNIQUES:
             raise EvidenceError("E_TECHNIQUE", "invalid primary technique")
-        vector = feature["technique_vector"]
+        vector = profile["technique_vector"]
         if (
             not vector
             or any(item not in _TECHNIQUES for item in vector)
             or vector != sorted(set(vector))
-            or feature["primary_technique"] not in vector
+            or profile["primary_technique"] not in vector
         ):
             raise EvidenceError("E_TECHNIQUE", "technique vector is not canonical")
-        if derived_primary is not None and derived_vector is not None:
-            feature = {
-                **feature,
-                "primary_technique": derived_primary,
-                "technique_vector": list(derived_vector),
-            }
-        features[neutral] = feature
-    record_ids = {record["neutral_snapshot_id"] for record in records}
-    if set(features) != record_ids:
-        raise EvidenceError("E_FEATURE_COVERAGE", "feature records do not cover bridge exactly")
+        materials[neutral] = material
+    if set(materials) != set(records_by_neutral):
+        raise EvidenceError(
+            "E_SUBJECT_SPEC_COVERAGE", "derived subjects do not cover bridge exactly"
+        )
 
     profiles: dict[str, dict[str, Any]] = {}
     eligibility: dict[str, dict[str, bool]] = {}
-    for record in records:
-        neutral = record["neutral_snapshot_id"]
-        feature = features[neutral]
-        subject_id = _controlled_subject_id(record, feature)
+    for neutral in sorted(records_by_neutral):
+        record = records_by_neutral[neutral]
         profile = {
-            "controlled_subject_id": subject_id,
-            "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
-            "build_descriptor_sha256": record["build_descriptor_sha256"],
-            "public_workload_set_sha256": feature["public_workload_set_sha256"],
-            "scale_class": feature["scale_class"],
-            "primary_technique": feature["primary_technique"],
-            "technique_vector": list(feature["technique_vector"]),
-            "sites": _sites(subject_id, feature["sites"]),
-            "neutral_snapshot_ids": [neutral],
+            **materials[neutral]["subject"],
+            "neutral_snapshot_ids": list(
+                materials[neutral]["subject"]["neutral_snapshot_ids"]
+            ),
         }
+        if (
+            profile["normalized_source_tree_sha256"]
+            != record["normalized_source_tree_sha256"]
+            or profile["build_descriptor_sha256"]
+            != record["build_descriptor_sha256"]
+        ):
+            raise EvidenceError("E_DERIVED_SUBJECT", "derived subject source binding differs")
+        subject_id = validate_sha256(
+            profile["controlled_subject_id"], "subject.controlled_subject_id"
+        )
         existing = profiles.get(subject_id)
         if existing is not None:
             comparable = {**existing, "neutral_snapshot_ids": [neutral]}
@@ -1853,8 +1885,16 @@ def select_profiling_workload(frame: Mapping[str, Any], scale_class: str) -> dic
                 for item in remaining
                 if item["diversity_signature_sha256"] not in seen_diversity
             ]
-            pool = unseen if unseen else remaining
-            pool.sort(key=lambda item: (item["diversity_signature_sha256"], item["behavior_id"]))
+            if unseen:
+                pool = sorted(
+                    unseen,
+                    key=lambda item: (
+                        item["diversity_signature_sha256"],
+                        item["behavior_id"],
+                    ),
+                )
+            else:
+                pool = sorted(remaining, key=lambda item: item["behavior_id"])
             choice = pool[0]
             selected.append(choice)
             selected_ids.append(choice["behavior_id"])
@@ -2209,6 +2249,19 @@ def _eligible_public_schemas(
                 "E_PUBLIC_SCHEMAS", f"public_schemas[{index}] lacks raw_schema"
             )
         raw_schema = candidate["raw_schema"]
+        provenance_path = candidate.get("provenance_path")
+        provenance_span = candidate.get("provenance_span_or_key")
+        if not isinstance(provenance_path, str) or not provenance_path:
+            raise EvidenceError(
+                "E_PUBLIC_SCHEMAS",
+                f"public_schemas[{index}] lacks provenance_path",
+            )
+        safe_relative_path(provenance_path)
+        if not isinstance(provenance_span, str) or not provenance_span:
+            raise EvidenceError(
+                "E_PUBLIC_SCHEMAS",
+                f"public_schemas[{index}] lacks provenance_span_or_key",
+            )
         raw_schema_sha256 = canonical_sha256(raw_schema)
         if raw_schema_sha256 in seen_raw:
             continue
@@ -2225,6 +2278,8 @@ def _eligible_public_schemas(
                 "raw_schema": raw_schema,
                 "raw_schema_sha256": raw_schema_sha256,
                 "schema_selection_key": schema_selection_key,
+                "schema_provenance_path": provenance_path,
+                "schema_provenance_span_or_key": provenance_span,
                 "canonical_schema_bytes": canonical_json_bytes(raw_schema),
                 "generator": kind_to_generator[schema_kind],
             }
@@ -2242,6 +2297,9 @@ def _common_input_id(
     generator_id: str | None,
     schema_selection_key: str | None,
     raw_schema_sha256: str | None,
+    schema_provenance_path: str | None,
+    schema_provenance_span_or_key: str | None,
+    generator_source_sha256: str | None,
     raw_payload_sha256: str | None,
     status: str,
     failure_code: str,
@@ -2253,6 +2311,9 @@ def _common_input_id(
             "generator_id": generator_id,
             "schema_selection_key": schema_selection_key,
             "raw_schema_sha256": raw_schema_sha256,
+            "schema_provenance_path": schema_provenance_path,
+            "schema_provenance_span_or_key": schema_provenance_span_or_key,
+            "generator_source_sha256": generator_source_sha256,
             "raw_payload_sha256": raw_payload_sha256,
             "status": status,
             "failure_code": failure_code,
@@ -2271,7 +2332,6 @@ def build_common_inputs(
     validate_sha256(source["build_descriptor_sha256"], "build_descriptor_sha256")
     if not isinstance(public_frame, Mapping):
         raise EvidenceError("E_FRAME", "public behavior frame must be an object")
-    _reject_forbidden_generator_inputs(public_frame, "public_frame")
     registry_source_root = registry.get("_source_root") if isinstance(registry, Mapping) else None
     registry_body = {
         key: value
@@ -2299,7 +2359,7 @@ def build_common_inputs(
     eligible = _eligible_public_schemas(public_frame, kind_to_generator)
     rows: list[dict[str, Any]] = []
     if not eligible:
-        for ordinal in range(E_COMMON_COUNT):
+        for ordinal in range(1, E_COMMON_COUNT + 1):
             seed = _common_input_seed(source_id, ordinal)
             status = "COMMON_INPUT_UNAVAILABLE"
             failure_code = "COMMON_INPUT_UNAVAILABLE"
@@ -2309,6 +2369,9 @@ def build_common_inputs(
                 generator_id=None,
                 schema_selection_key=None,
                 raw_schema_sha256=None,
+                schema_provenance_path=None,
+                schema_provenance_span_or_key=None,
+                generator_source_sha256=None,
                 raw_payload_sha256=None,
                 status=status,
                 failure_code=failure_code,
@@ -2321,6 +2384,9 @@ def build_common_inputs(
                     "schema_kind": None,
                     "schema_selection_key": None,
                     "raw_schema_sha256": None,
+                    "schema_provenance_path": None,
+                    "schema_provenance_span_or_key": None,
+                    "generator_source_sha256": None,
                     "status": status,
                     "failure_code": failure_code,
                     "envelope": None,
@@ -2347,9 +2413,9 @@ def build_common_inputs(
             absolute = Path(source_root) / relative.as_posix()
             callables[generator_id] = _load_generator_callable(absolute, generator_id)
 
-        for ordinal in range(E_COMMON_COUNT):
+        for ordinal in range(1, E_COMMON_COUNT + 1):
             seed = _common_input_seed(source_id, ordinal)
-            schema = eligible[ordinal % len(eligible)]
+            schema = eligible[(ordinal - 1) % len(eligible)]
             generator_entry = schema["generator"]
             generator_id = generator_entry["generator_id"]
             failure_code = generator_entry["failure_code"]
@@ -2366,7 +2432,7 @@ def build_common_inputs(
                 envelope = None
                 raw_payload_sha256 = None
             elif "envelope" in result and "raw_payload_sha256" in result:
-                status = "COMMON_INPUT_GENERATED"
+                status = "COMMON_INPUT_EXECUTABLE"
                 code = ""
                 envelope = result["envelope"]
                 raw_payload_sha256 = validate_sha256(
@@ -2383,6 +2449,11 @@ def build_common_inputs(
                 generator_id=generator_id,
                 schema_selection_key=schema["schema_selection_key"],
                 raw_schema_sha256=schema["raw_schema_sha256"],
+                schema_provenance_path=schema["schema_provenance_path"],
+                schema_provenance_span_or_key=schema[
+                    "schema_provenance_span_or_key"
+                ],
+                generator_source_sha256=generator_entry["source_sha256"],
                 raw_payload_sha256=raw_payload_sha256,
                 status=status,
                 failure_code=code,
@@ -2395,6 +2466,11 @@ def build_common_inputs(
                     "schema_kind": schema["schema_kind"],
                     "schema_selection_key": schema["schema_selection_key"],
                     "raw_schema_sha256": schema["raw_schema_sha256"],
+                    "schema_provenance_path": schema["schema_provenance_path"],
+                    "schema_provenance_span_or_key": schema[
+                        "schema_provenance_span_or_key"
+                    ],
+                    "generator_source_sha256": generator_entry["source_sha256"],
                     "status": status,
                     "failure_code": code,
                     "envelope": envelope,
@@ -2408,6 +2484,96 @@ def build_common_inputs(
         "controlled_subject_source_id": source_id,
         "eligible_schema_count": len(eligible),
         "rows": rows,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def derive_subject_material(
+    subject_spec: Mapping[str, Any], bridge_record: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Derive one subject solely from verified source/build material."""
+
+    if not isinstance(subject_spec, Mapping):
+        raise EvidenceError("E_SUBJECT_SPEC", "subject_spec must be an object")
+    spec = validate_exact_object(
+        dict(subject_spec), _SUBJECT_SPEC_SCHEMA, "subject_spec"
+    )
+    record = validate_exact_object(
+        dict(bridge_record), _RECORD_SCHEMA, "bridge_record"
+    )
+    neutral = validate_sha256(
+        spec["neutral_snapshot_id"], "subject_spec.neutral_snapshot_id"
+    )
+    if neutral != record["neutral_snapshot_id"]:
+        raise EvidenceError("E_SUBJECT_SPEC_BINDING", "neutral snapshot ID differs")
+    source_record = validate_exact_object(
+        spec["source_record"], _SOURCE_RECORD_SCHEMA, "subject_spec.source_record"
+    )
+    for field in ("normalized_source_tree_sha256", "build_descriptor_sha256"):
+        validate_sha256(source_record[field], f"subject_spec.source_record.{field}")
+        if source_record[field] != record[field]:
+            raise EvidenceError(
+                "E_SUBJECT_SPEC_BINDING", f"subject source binding differs: {field}"
+            )
+    if not isinstance(spec["build_descriptor"], Mapping):
+        raise EvidenceError("E_BUILD_DESCRIPTOR", "build_descriptor must be an object")
+    ecosystem = spec["build_descriptor"].get("ecosystem")
+    if not isinstance(ecosystem, str) or not ecosystem:
+        raise EvidenceError("E_BUILD_DESCRIPTOR", "build_descriptor ecosystem is absent")
+    adapter_registry = spec["adapter_registry"]
+    generator_registry = spec["input_generator_registry"]
+    if not isinstance(adapter_registry, Mapping):
+        raise EvidenceError("E_ADAPTER_REGISTRY", "adapter_registry must be an object")
+    if not isinstance(generator_registry, Mapping):
+        raise EvidenceError(
+            "E_GENERATOR_REGISTRY", "input_generator_registry must be an object"
+        )
+    if not isinstance(adapter_registry.get("adapters"), list):
+        raise EvidenceError("E_ADAPTER_REGISTRY", "adapter registry entries are absent")
+    adapter_id = _ecosystem_to_adapter(adapter_registry).get(ecosystem)
+    discovery = run_adapter_discovery(
+        spec["source_root"],
+        spec["build_descriptor"],
+        adapter_registry,
+        adapter_id,
+    )
+    public_frame = build_public_behavior_frame(source_record, discovery)
+    source_scale = derive_source_scale(spec["source_root"], discovery)
+    workload = select_profiling_workload(public_frame, source_scale["scale_class"])
+    common_inputs = build_common_inputs(
+        source_record, public_frame, generator_registry
+    )
+    technique_body = classify_technique(workload, spec["profiling_results"])
+    technique_profile = {
+        **technique_body,
+        "artifact_sha256": canonical_sha256(technique_body),
+    }
+    primary = technique_profile["primary_technique"]
+    technique_vector = sorted(set(technique_profile["confirmed_tags"]) | {primary})
+    subject_seed = {
+        "public_workload_set_sha256": workload["artifact_sha256"],
+    }
+    subject_id = _controlled_subject_id(record, subject_seed)
+    subject = {
+        "controlled_subject_id": subject_id,
+        "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
+        "build_descriptor_sha256": record["build_descriptor_sha256"],
+        "public_workload_set_sha256": workload["artifact_sha256"],
+        "scale_class": source_scale["scale_class"],
+        "primary_technique": primary,
+        "technique_vector": technique_vector,
+        "sites": _sites(subject_id, discovery["sites"]),
+        "neutral_snapshot_ids": [neutral],
+    }
+    body = {
+        "neutral_snapshot_id": neutral,
+        "adapter_discovery": discovery,
+        "source_scale": source_scale,
+        "public_behavior_frame": public_frame,
+        "profiling_workload": workload,
+        "common_inputs": common_inputs,
+        "technique_profile": technique_profile,
+        "subject": subject,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
@@ -2435,7 +2601,7 @@ def validate_common_inputs_on_fixed_source(
     for index, row in enumerate(rows):
         if not isinstance(row, Mapping):
             raise EvidenceError("E_COMMON_INVENTORY", f"rows[{index}] must be an object")
-        if row.get("ordinal") != index:
+        if row.get("ordinal") != index + 1:
             raise EvidenceError("E_COMMON_INVENTORY", f"rows[{index}] ordinal differs")
         status = validator(row)
         if status not in {
