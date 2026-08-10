@@ -644,6 +644,27 @@ def test_adapter_rejects_mixed_type_declaration_collections_with_evidence_error(
         )
 
 
+@pytest.mark.parametrize("field", ["static_dependency_tags", "prerequisites"])
+def test_adapter_rejects_non_list_declaration_collections_with_evidence_error(
+    tmp_path, field
+):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    manifest = source_root / descriptor["manifest_path"]
+    value = json.loads(manifest.read_text(encoding="utf-8"))
+    value["declarations"][0][field] = "not-a-list"
+    manifest.write_bytes(_bytes(value))
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
+        run_adapter_discovery(
+            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        )
+
+
 def test_adapter_rejects_non_object_site_with_evidence_error(tmp_path):
     implementation_root = tmp_path / "implementations"
     source_root = tmp_path / "source"
@@ -655,6 +676,33 @@ def test_adapter_rejects_non_object_site_with_evidence_error(tmp_path):
     manifest = source_root / descriptor["manifest_path"]
     value = json.loads(manifest.read_text(encoding="utf-8"))
     value["sites"] = [["not", "an", "object"]]
+    manifest.write_bytes(_bytes(value))
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
+        run_adapter_discovery(
+            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        )
+
+
+def test_adapter_rejects_convertible_list_of_pairs_site(tmp_path):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    manifest = source_root / descriptor["manifest_path"]
+    value = json.loads(manifest.read_text(encoding="utf-8"))
+    value["sites"] = [
+        [
+            ["path", "src/demo_pkg/api.py"],
+            ["symbol", "solve"],
+            ["start_line", 1],
+            ["start_col", 0],
+            ["end_line", 1],
+            ["end_col", 5],
+        ]
+    ]
     manifest.write_bytes(_bytes(value))
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
         run_adapter_discovery(
@@ -868,6 +916,18 @@ def test_source_scale_rejects_unsupported_source_language(tmp_path):
         derive_source_scale(tmp_path, discovery)
 
 
+def test_non_utf8_unsupported_source_reports_language_error_before_decode(tmp_path):
+    source = tmp_path / "src/lib.rs"
+    source.parent.mkdir(parents=True)
+    source.write_bytes(b"\xff\xfe")
+    discovery = _discovery_receipt([])
+    discovery["source_files"] = ["src/lib.rs"]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_SCALE_SOURCE_LANGUAGE"):
+        derive_source_scale(tmp_path, discovery)
+
+
 @pytest.mark.parametrize(
     "mutation",
     ["unsafe_source", "duplicate_source", "unsorted_declarations", "forbidden_schema", "bad_site"],
@@ -911,9 +971,39 @@ def test_discovery_rejects_mixed_type_collections_with_evidence_error(tmp_path, 
         derive_source_scale(tmp_path, discovery)
 
 
+@pytest.mark.parametrize("field", ["static_dependency_tags", "prerequisites"])
+def test_discovery_rejects_non_list_collections_with_evidence_error(tmp_path, field):
+    discovery = _discovery_receipt(
+        _tagged_declarations(_load_fixture("python.json"))[:1]
+    )
+    discovery["declarations"][0][field] = "not-a-list"
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
+        derive_source_scale(tmp_path, discovery)
+
+
 def test_discovery_rejects_non_object_site_with_evidence_error(tmp_path):
     discovery = _discovery_receipt([])
     discovery["sites"] = [["not", "an", "object"]]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
+        derive_source_scale(tmp_path, discovery)
+
+
+def test_discovery_rejects_convertible_list_of_pairs_site(tmp_path):
+    discovery = _discovery_receipt([])
+    discovery["sites"] = [
+        [
+            ["path", "src/a.py"],
+            ["symbol", "solve"],
+            ["start_line", 1],
+            ["start_col", 0],
+            ["end_line", 1],
+            ["end_col", 5],
+        ]
+    ]
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):

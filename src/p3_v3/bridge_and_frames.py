@@ -1136,13 +1136,14 @@ def _normalize_adapter_result(
     for declaration in declarations:
         for field in ("static_dependency_tags", "prerequisites"):
             collection = declaration.get(field)
-            if isinstance(collection, list):
-                if any(not isinstance(item, str) for item in collection):
-                    raise EvidenceError(
-                        "E_ADAPTER_RESULT",
-                        f"declaration {field} must contain only strings",
-                    )
-                declaration[field] = sorted(set(collection))
+            if type(collection) is not list or any(
+                type(item) is not str for item in collection
+            ):
+                raise EvidenceError(
+                    "E_ADAPTER_RESULT",
+                    f"declaration {field} must be an exact string list",
+                )
+            declaration[field] = sorted(set(collection))
 
     public_schemas = _canonical_collection(value["public_schemas"], "public_schemas")
     for index, schema in enumerate(public_schemas):
@@ -1162,6 +1163,10 @@ def _normalize_adapter_result(
 
     sites: list[dict[str, Any]] = []
     for index, raw in enumerate(value["sites"]):
+        if not isinstance(raw, Mapping):
+            raise EvidenceError(
+                "E_ADAPTER_RESULT", f"sites[{index}] must be an object"
+            )
         try:
             site = validate_exact_object(dict(raw), _SITE_SCHEMA, f"sites[{index}]")
         except (TypeError, ValueError, EvidenceError) as exc:
@@ -1335,16 +1340,17 @@ def _validate_discovery(
     for declaration in declarations:
         for field in ("static_dependency_tags", "prerequisites"):
             collection = declaration.get(field)
-            if isinstance(collection, list):
-                if any(not isinstance(item, str) for item in collection):
-                    raise EvidenceError(
-                        "E_ADAPTER_RESULT",
-                        f"declaration {field} must contain only strings",
-                    )
-                if collection != sorted(set(collection)):
-                    raise EvidenceError(
-                        "E_ADAPTER_RESULT", f"declaration {field} is not normalized"
-                    )
+            if type(collection) is not list or any(
+                type(item) is not str for item in collection
+            ):
+                raise EvidenceError(
+                    "E_ADAPTER_RESULT",
+                    f"declaration {field} must be an exact string list",
+                )
+            if collection != sorted(set(collection)):
+                raise EvidenceError(
+                    "E_ADAPTER_RESULT", f"declaration {field} is not normalized"
+                )
     if declarations != sorted(declarations, key=canonical_json_bytes):
         raise EvidenceError("E_ADAPTER_RESULT", "declarations are not normalized")
 
@@ -1369,6 +1375,10 @@ def _validate_discovery(
 
     sites: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["sites"]):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError(
+                "E_ADAPTER_RESULT", f"sites[{index}] must be an object"
+            )
         try:
             site = validate_exact_object(dict(candidate), _SITE_SCHEMA, f"sites[{index}]")
         except (TypeError, ValueError, EvidenceError) as exc:
@@ -1445,13 +1455,13 @@ def _source_language(path: Path) -> str:
 
 
 def _effective_line_count(path: Path) -> int:
+    language = _source_language(path)
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except (OSError, UnicodeDecodeError) as exc:
         raise EvidenceError(
             "E_SCALE_SOURCE", f"source file is not UTF-8 text: {path.name}"
         ) from exc
-    language = _source_language(path)
     if language in {"python", "cmake"}:
         return sum(
             1 for line in lines if line.strip() and not line.lstrip().startswith("#")
