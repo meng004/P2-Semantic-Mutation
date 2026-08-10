@@ -19,28 +19,66 @@ from .artifacts import (
 )
 
 
-ALLOWED_CLASSES = {
-    "CONSTRUCTION_A": {
-        "SOURCE",
-        "BUILD",
-        "PUBLIC_DOC",
-        "CONTRACT",
-        "PROPOSAL_INPUT",
-    },
-    "CONTROLLED_B": {
-        "SOURCE",
-        "SEMANTIC_MUTANT",
-        "SYNTACTIC_MUTANT",
-        "MR",
-        "JOB_INPUT",
-    },
-    "REAL_HOLDOUT_C": {
-        "P12_IDENTITY",
-        "P12_BUGGY",
-        "P12_REVEAL",
-        "REAL_JOB_INPUT",
-    },
+PACKAGE_A_CLASSES = {
+    "PUBLIC_BEHAVIOR_FRAME",
+    "PROFILING_WORKLOAD",
+    "PROFILING_RESULT",
+    "CONTRACT",
+    "E_COMMON",
+    "E_CONTRACT",
+    "SLOT",
+    "PROPOSAL_INPUT",
 }
+PACKAGE_B_CLASSES = {
+    "DENOMINATOR",
+    "PORTFOLIO",
+    "E_COMMON_PRIMARY",
+    "E_CONTRACT_SENSITIVITY",
+    "EXECUTION_CODE",
+}
+PROPOSER_ALLOWED_CLASSES = {
+    "SOURCE",
+    "BUILD",
+    "PUBLIC_DOC",
+    "CONTRACT",
+    "PROPOSAL_INPUT",
+}
+
+_CONSTRUCTION_A_BASE = {
+    "SOURCE",
+    "BUILD",
+    "PUBLIC_DOC",
+    "CONTRACT",
+    "PROPOSAL_INPUT",
+}
+_CONTROLLED_B_BASE = {
+    "SOURCE",
+    "SEMANTIC_MUTANT",
+    "SYNTACTIC_MUTANT",
+    "MR",
+    "JOB_INPUT",
+}
+
+ALLOWED_CLASSES = {
+    "CONSTRUCTION_A": frozenset(_CONSTRUCTION_A_BASE | PACKAGE_A_CLASSES),
+    "CONTROLLED_B": frozenset(_CONTROLLED_B_BASE | PACKAGE_B_CLASSES),
+    "REAL_HOLDOUT_C": frozenset(
+        {
+            "P12_IDENTITY",
+            "P12_BUGGY",
+            "P12_REVEAL",
+            "REAL_JOB_INPUT",
+        }
+    ),
+}
+
+PACKAGE_B_PRIMARY_CLASSES = frozenset(
+    ALLOWED_CLASSES["CONTROLLED_B"] - {"E_CONTRACT_SENSITIVITY"}
+)
+PACKAGE_B_SENSITIVITY_CLASSES = frozenset(
+    ALLOWED_CLASSES["CONTROLLED_B"] - {"E_COMMON_PRIMARY"}
+)
+
 _SPEC_SCHEMA = {"path": str, "class": str}
 _FILE_SCHEMA = {"path": str, "class": str, "mode": int, "size": int, "sha256": str}
 _MANIFEST_SCHEMA = {
@@ -70,13 +108,28 @@ def _validate_role(role: Any) -> str:
     return role
 
 
+def _resolve_allowed_classes(role: str, allowed_classes: Sequence[str] | set[str] | frozenset[str] | None) -> frozenset[str]:
+    role_classes = ALLOWED_CLASSES[role]
+    if allowed_classes is None:
+        return role_classes
+    selected = frozenset(allowed_classes)
+    if not selected <= role_classes:
+        raise EvidenceError(
+            "E_PACKAGE_ALLOWED_CLASSES",
+            f"allowed_classes is not a subset of {role}",
+        )
+    return selected
+
+
 def build_package(
     role: str,
     source_root: str | Path,
     file_specs: Sequence[Mapping[str, Any]],
     parents: Sequence[str],
+    allowed_classes: Sequence[str] | set[str] | frozenset[str] | None = None,
 ) -> dict[str, Any]:
     role = _validate_role(role)
+    effective_classes = _resolve_allowed_classes(role, allowed_classes)
     root = Path(source_root)
     for index, parent in enumerate(parents):
         validate_sha256(parent, f"parents[{index}]")
@@ -90,7 +143,7 @@ def build_package(
         if relative in seen:
             raise EvidenceError("E_PACKAGE_DUPLICATE", f"duplicate path: {relative}")
         seen.add(relative)
-        if spec["class"] not in ALLOWED_CLASSES[role]:
+        if spec["class"] not in effective_classes:
             raise EvidenceError(
                 "E_PACKAGE_CONTENT_CLASS",
                 f"{spec['class']} is forbidden in {role}",
@@ -175,20 +228,42 @@ def verify_package(source_root: str | Path, manifest: Mapping[str, Any]) -> None
             raise EvidenceError("E_PACKAGE_SHA256", f"bytes differ: {record['path']}")
 
 
+def _project_manifest(
+    manifest: Mapping[str, Any],
+    allowed_classes: frozenset[str],
+) -> dict[str, Any]:
+    files = [dict(item) for item in manifest["files"] if item["class"] in allowed_classes]
+    body = {
+        "schema_version": manifest["schema_version"],
+        "role": manifest["role"],
+        "parents": list(manifest["parents"]),
+        "files": files,
+        "package_tree_sha256": canonical_sha256(files),
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
 def materialize_package(
     source_root: str | Path,
     target_root: str | Path,
     manifest: Mapping[str, Any],
+    allowed_classes: Sequence[str] | set[str] | frozenset[str] | None = None,
 ) -> None:
     source = Path(source_root)
     target = Path(target_root)
     verify_package(source, manifest)
+    effective_classes = _resolve_allowed_classes(manifest["role"], allowed_classes)
+    active_manifest: Mapping[str, Any] = (
+        manifest
+        if allowed_classes is None
+        else _project_manifest(manifest, effective_classes)
+    )
     if target.exists():
         raise EvidenceError("E_PACKAGE_TARGET_EXISTS", f"target exists: {target}")
     target.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix=f".{target.name}.", dir=target.parent))
     try:
-        for record in manifest["files"]:
+        for record in active_manifest["files"]:
             destination = temporary / safe_relative_path(record["path"])
             destination.parent.mkdir(parents=True, exist_ok=True)
             with (source / record["path"]).open("rb") as reader, destination.open("xb") as writer:
@@ -196,7 +271,7 @@ def materialize_package(
                 writer.flush()
                 os.fsync(writer.fileno())
             os.chmod(destination, record["mode"])
-        verify_package(temporary, manifest)
+        verify_package(temporary, active_manifest)
         temporary.rename(target)
     except BaseException:
         shutil.rmtree(temporary, ignore_errors=True)
