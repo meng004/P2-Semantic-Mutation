@@ -970,6 +970,7 @@ _CALLER_DISCOVERY_KEYS = frozenset(
 )
 _EXCLUDED_SOURCE_PARTS = frozenset(
     {
+        ".bzr",
         ".git",
         ".hg",
         ".svn",
@@ -978,6 +979,8 @@ _EXCLUDED_SOURCE_PARTS = frozenset(
         "_build",
         "__pycache__",
         "build",
+        "cmakefiles",
+        "debug",
         "dist",
         "env",
         "external",
@@ -986,6 +989,10 @@ _EXCLUDED_SOURCE_PARTS = frozenset(
         "generated",
         "node_modules",
         "out",
+        "release",
+        "relwithdebinfo",
+        "minsizerel",
+        "site-packages",
         "target",
         "testdata",
         "third-party",
@@ -995,6 +1002,19 @@ _EXCLUDED_SOURCE_PARTS = frozenset(
         "vendors",
         "venv",
     }
+)
+_EXCLUDED_SOURCE_NAMES = frozenset(
+    {
+        ".ninja_deps",
+        ".ninja_log",
+        "build.ninja",
+        "cmakecache.txt",
+        "compile_commands.json",
+    }
+)
+_PYTHON_SOURCE_SUFFIXES = frozenset({".py", ".pyi", ".pyx", ".pxd"})
+_CPP_SOURCE_SUFFIXES = frozenset(
+    {".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".inl"}
 )
 
 
@@ -1116,9 +1136,12 @@ def _normalize_adapter_result(
     for declaration in declarations:
         for field in ("static_dependency_tags", "prerequisites"):
             collection = declaration.get(field)
-            if isinstance(collection, list) and all(
-                isinstance(item, str) for item in collection
-            ):
+            if isinstance(collection, list):
+                if any(not isinstance(item, str) for item in collection):
+                    raise EvidenceError(
+                        "E_ADAPTER_RESULT",
+                        f"declaration {field} must contain only strings",
+                    )
                 declaration[field] = sorted(set(collection))
 
     public_schemas = _canonical_collection(value["public_schemas"], "public_schemas")
@@ -1141,7 +1164,7 @@ def _normalize_adapter_result(
     for index, raw in enumerate(value["sites"]):
         try:
             site = validate_exact_object(dict(raw), _SITE_SCHEMA, f"sites[{index}]")
-        except (TypeError, EvidenceError) as exc:
+        except (TypeError, ValueError, EvidenceError) as exc:
             raise EvidenceError("E_ADAPTER_RESULT", f"sites[{index}] is invalid") from exc
         safe_relative_path(site["path"])
         if not site["symbol"] or any(
@@ -1312,10 +1335,16 @@ def _validate_discovery(
     for declaration in declarations:
         for field in ("static_dependency_tags", "prerequisites"):
             collection = declaration.get(field)
-            if isinstance(collection, list) and collection != sorted(set(collection)):
-                raise EvidenceError(
-                    "E_ADAPTER_RESULT", f"declaration {field} is not normalized"
-                )
+            if isinstance(collection, list):
+                if any(not isinstance(item, str) for item in collection):
+                    raise EvidenceError(
+                        "E_ADAPTER_RESULT",
+                        f"declaration {field} must contain only strings",
+                    )
+                if collection != sorted(set(collection)):
+                    raise EvidenceError(
+                        "E_ADAPTER_RESULT", f"declaration {field} is not normalized"
+                    )
     if declarations != sorted(declarations, key=canonical_json_bytes):
         raise EvidenceError("E_ADAPTER_RESULT", "declarations are not normalized")
 
@@ -1342,7 +1371,7 @@ def _validate_discovery(
     for index, candidate in enumerate(value["sites"]):
         try:
             site = validate_exact_object(dict(candidate), _SITE_SCHEMA, f"sites[{index}]")
-        except (TypeError, EvidenceError) as exc:
+        except (TypeError, ValueError, EvidenceError) as exc:
             raise EvidenceError("E_ADAPTER_RESULT", f"sites[{index}] is invalid") from exc
         safe_relative_path(site["path"])
         if not site["symbol"] or any(
@@ -1395,21 +1424,35 @@ def _excluded_scale_path(relative: str) -> bool:
     parts = [part.casefold() for part in safe_relative_path(relative).parts]
     return any(
         part in _EXCLUDED_SOURCE_PARTS
+        or part in _EXCLUDED_SOURCE_NAMES
         or part.startswith("cmake-build-")
         or part.startswith("build-")
         for part in parts
     )
 
 
-def _effective_line_count(path: Path, ecosystem: str) -> int:
+def _source_language(path: Path) -> str:
+    suffix = path.suffix.casefold()
+    if path.name.casefold() == "cmakelists.txt" or suffix == ".cmake":
+        return "cmake"
+    if suffix in _PYTHON_SOURCE_SUFFIXES:
+        return "python"
+    if suffix in _CPP_SOURCE_SUFFIXES:
+        return "cpp"
+    raise EvidenceError(
+        "E_SCALE_SOURCE_LANGUAGE", f"unsupported source language: {path.name}"
+    )
+
+
+def _effective_line_count(path: Path) -> int:
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except (OSError, UnicodeDecodeError) as exc:
         raise EvidenceError(
             "E_SCALE_SOURCE", f"source file is not UTF-8 text: {path.name}"
         ) from exc
-    is_cmake_script = path.name == "CMakeLists.txt" or path.suffix.casefold() == ".cmake"
-    if ecosystem != "cmake" or is_cmake_script:
+    language = _source_language(path)
+    if language in {"python", "cmake"}:
         return sum(
             1 for line in lines if line.strip() and not line.lstrip().startswith("#")
         )
@@ -1475,7 +1518,7 @@ def derive_source_scale(
         counts.append(
             {
                 "path": relative,
-                "effective_lines": _effective_line_count(absolute, value["ecosystem"]),
+                "effective_lines": _effective_line_count(absolute),
             }
         )
     counts.sort(key=lambda item: item["path"])

@@ -623,6 +623,45 @@ def test_adapter_requires_exact_callable_and_result_schema(tmp_path, result_muta
         )
 
 
+@pytest.mark.parametrize("field", ["static_dependency_tags", "prerequisites"])
+def test_adapter_rejects_mixed_type_declaration_collections_with_evidence_error(
+    tmp_path, field
+):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    manifest = source_root / descriptor["manifest_path"]
+    value = json.loads(manifest.read_text(encoding="utf-8"))
+    value["declarations"][0][field] = ["valid", 7]
+    manifest.write_bytes(_bytes(value))
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
+        run_adapter_discovery(
+            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        )
+
+
+def test_adapter_rejects_non_object_site_with_evidence_error(tmp_path):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    manifest = source_root / descriptor["manifest_path"]
+    value = json.loads(manifest.read_text(encoding="utf-8"))
+    value["sites"] = [["not", "an", "object"]]
+    manifest.write_bytes(_bytes(value))
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
+        run_adapter_discovery(
+            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        )
+
+
 @pytest.mark.parametrize("source_files", [["../escape.py"], ["src/a.py", "src/a.py"]])
 def test_adapter_rejects_unsafe_or_duplicate_source_paths(tmp_path, source_files):
     implementation_root = tmp_path / "implementations"
@@ -714,6 +753,11 @@ def test_source_scale_is_derived_at_frozen_boundaries(
         "out/a.py",
         "target/a.py",
         "build-release/a.py",
+        "CMakeFiles/generated.cpp",
+        "Debug/generated.obj",
+        "site-packages/pkg/a.py",
+        ".bzr/state.py",
+        "CMakeCache.txt",
         "tests/fixtures/a.py",
     ],
 )
@@ -769,6 +813,62 @@ def test_cmake_adapter_counts_cpp_directives_and_comment_markers_in_strings(tmp_
 
 
 @pytest.mark.parametrize(
+    ("adapter_id", "ecosystem", "sources", "expected_counts"),
+    [
+        (
+            "PYTHON_PEP517_V1",
+            "python",
+            {
+                "src/main.py": "# comment\nvalue = 1\n",
+                "native/helper.cpp": "// comment\n#include <vector>\nint value = 1;\n",
+            },
+            {"native/helper.cpp": 2, "src/main.py": 1},
+        ),
+        (
+            "CMAKE_CTEST_V1",
+            "cmake",
+            {
+                "src/main.cpp": "// comment\nint value = 1;\n",
+                "tools/helper.py": "# comment\nvalue = 1\n",
+                "CMakeLists.txt": "# comment\nset(VALUE 1)\n",
+            },
+            {"CMakeLists.txt": 1, "src/main.cpp": 1, "tools/helper.py": 1},
+        ),
+    ],
+)
+def test_source_scale_dispatches_frozen_comment_rules_per_file_language(
+    tmp_path, adapter_id, ecosystem, sources, expected_counts
+):
+    for relative, contents in sources.items():
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(contents, encoding="utf-8")
+    discovery = _discovery_receipt(
+        [], adapter_id=adapter_id, ecosystem=ecosystem
+    )
+    discovery["source_files"] = sorted(sources)
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    scale = derive_source_scale(tmp_path, discovery)
+    assert {
+        row["path"]: row["effective_lines"]
+        for row in scale["per_file_effective_lines"]
+    } == expected_counts
+
+
+def test_source_scale_rejects_unsupported_source_language(tmp_path):
+    source = tmp_path / "src/lib.rs"
+    source.parent.mkdir(parents=True)
+    source.write_text("fn main() {}\n", encoding="utf-8")
+    discovery = _discovery_receipt([])
+    discovery["source_files"] = ["src/lib.rs"]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_SCALE_SOURCE_LANGUAGE"):
+        derive_source_scale(tmp_path, discovery)
+
+
+@pytest.mark.parametrize(
     "mutation",
     ["unsafe_source", "duplicate_source", "unsorted_declarations", "forbidden_schema", "bad_site"],
 )
@@ -796,6 +896,27 @@ def test_discovery_receipts_are_deeply_validated_before_consumption(tmp_path, mu
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError):
+        derive_source_scale(tmp_path, discovery)
+
+
+@pytest.mark.parametrize("field", ["static_dependency_tags", "prerequisites"])
+def test_discovery_rejects_mixed_type_collections_with_evidence_error(tmp_path, field):
+    discovery = _discovery_receipt(
+        _tagged_declarations(_load_fixture("python.json"))[:1]
+    )
+    discovery["declarations"][0][field] = ["valid", 7]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
+        derive_source_scale(tmp_path, discovery)
+
+
+def test_discovery_rejects_non_object_site_with_evidence_error(tmp_path):
+    discovery = _discovery_receipt([])
+    discovery["sites"] = [["not", "an", "object"]]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
         derive_source_scale(tmp_path, discovery)
 
 
