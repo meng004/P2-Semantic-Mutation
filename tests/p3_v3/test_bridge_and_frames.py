@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import inspect
 import json
+import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -23,6 +25,8 @@ from p3_v3.bridge_and_frames import (
     build_subject_frames,
     classify_technique,
     close_slot,
+    derive_source_scale,
+    run_adapter_discovery,
     select_construct_subjects,
     select_first_applicable_site,
     select_profiling_workload,
@@ -39,6 +43,7 @@ from p3_v3.bridge_and_frames import (
 )
 
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "public_behavior"
+ADAPTER_FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "adapters"
 GENERATOR_FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "input_generators"
 CONFIRMATORY_ADAPTERS = {
     "PYTHON_PEP517_V1",
@@ -318,7 +323,11 @@ def _adapter_registry(tmp_path: Path) -> dict:
     for adapter_id, ecosystem, rel in _ADAPTER_SPECS:
         path = tmp_path / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(f"# adapter {adapter_id}\n", encoding="utf-8")
+        fixture = ADAPTER_FIXTURE_ROOT / Path(rel).name
+        if fixture.is_file():
+            shutil.copyfile(fixture, path)
+        else:
+            path.write_text(f"# adapter {adapter_id}\n", encoding="utf-8")
         adapters.append(
             {
                 "adapter_id": adapter_id,
@@ -356,6 +365,61 @@ def _combined_executable_declarations() -> list[dict]:
     return _tagged_declarations(_load_fixture("python.json")) + _tagged_declarations(
         _load_fixture("cmake.json")
     )
+
+
+def _discovery_receipt(
+    declarations: list[dict],
+    *,
+    adapter_id: str | None = "PYTHON_PEP517_V1",
+    ecosystem: str = "python",
+    status: str = "EXECUTABLE",
+    public_schemas: list[dict] | None = None,
+    sites: list[dict] | None = None,
+) -> dict:
+    normalized_declarations = copy.deepcopy(declarations)
+    for declaration in normalized_declarations:
+        for field in ("static_dependency_tags", "prerequisites"):
+            collection = declaration.get(field)
+            if isinstance(collection, list) and all(
+                isinstance(item, str) for item in collection
+            ):
+                declaration[field] = sorted(set(collection))
+    body = {
+        "schema_version": "p3-adapter-discovery-v1",
+        "adapter_id": adapter_id,
+        "ecosystem": ecosystem,
+        "discovery_status": status,
+        "implementation_source_sha256": "31" * 32 if adapter_id is not None else None,
+        "source_files": [],
+        "declarations": sorted(normalized_declarations, key=_bytes),
+        "public_schemas": sorted(public_schemas or [], key=_bytes),
+        "sites": sorted(sites or [], key=_bytes),
+        "unsupported_or_exclusion_reason": ""
+        if status == "EXECUTABLE"
+        else "ecosystem has no confirmatory adapter; hand-selected commands are forbidden",
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _write_adapter_project(root: Path, fixture_name: str, *, reverse: bool = False) -> dict:
+    fixture = _load_fixture(fixture_name)
+    source_files = fixture["source_files"]
+    for index, relative in enumerate(source_files):
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        suffix = path.suffix
+        if suffix == ".py":
+            path.write_text("# ignored\n\ndef solve(value):\n    return value\n", encoding="utf-8")
+        elif suffix in {".hpp", ".cpp", ".cc", ".cxx", ".h"}:
+            path.write_text(
+                "// ignored\nint solve(int value) { return value; }\n",
+                encoding="utf-8",
+            )
+        else:
+            path.write_text(f"source-{index}\n", encoding="utf-8")
+    manifest = root / f"adapter-{fixture['ecosystem']}.json"
+    manifest.write_bytes(_bytes(fixture))
+    return {"manifest_path": manifest.name, "reverse": reverse}
 
 
 def test_adapter_registry_binds_exact_implementation_paths_and_source_hashes(tmp_path):
@@ -411,11 +475,353 @@ def test_adapter_registry_rejects_one_field_mutations(tmp_path, mutator):
         validate_adapter_registry(registry, tmp_path)
 
 
-def test_public_behavior_frame_accounts_all_categories_and_retains_unsupported(tmp_path):
+def _rehash_adapter_registry(registry: dict, root: Path, adapter_id: str) -> dict:
+    adapters = []
+    for entry in registry["adapters"]:
+        if entry["adapter_id"] == adapter_id:
+            entry = {
+                **entry,
+                "source_sha256": file_sha256(root / entry["implementation_path"]),
+            }
+        adapters.append(entry)
+    body = {
+        "schema_version": registry["schema_version"],
+        "adapters": adapters,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+@pytest.mark.parametrize(
+    ("adapter_id", "fixture_name", "expected_ecosystem"),
+    [
+        ("PYTHON_PEP517_V1", "python.json", "python"),
+        ("CMAKE_CTEST_V1", "cmake.json", "cmake"),
+    ],
+)
+def test_pinned_adapter_executes_and_normalizes_discovery(
+    tmp_path, adapter_id, fixture_name, expected_ecosystem
+):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, fixture_name)
+    first = run_adapter_discovery(
+        source_root, descriptor, registry, adapter_id
+    )
+    shuffled = run_adapter_discovery(
+        source_root, {**descriptor, "reverse": True}, registry, adapter_id
+    )
+    fixture = _load_fixture(fixture_name)
+    assert first == shuffled
+    assert first["adapter_id"] == adapter_id
+    assert first["ecosystem"] == expected_ecosystem
+    assert first["discovery_status"] == "EXECUTABLE"
+    assert first["source_files"] == sorted(fixture["source_files"])
+    assert first["public_schemas"]
+    assert first["sites"]
+    assert first["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in first.items() if key != "artifact_sha256"}
+    )
+
+
+def test_adapter_bytes_are_reverified_immediately_before_execution(tmp_path):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    implementation = implementation_root / "adapters/python_pep517_v1.py"
+    implementation.write_text("raise RuntimeError('changed bytes executed')\n", encoding="utf-8")
+    with pytest.raises(EvidenceError, match="E_ADAPTER_SOURCE_HASH"):
+        run_adapter_discovery(source_root, descriptor, registry, "PYTHON_PEP517_V1")
+
+
+def test_adapter_registry_is_revalidated_at_execution_boundary(tmp_path):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    mutated = copy.deepcopy(registry)
+    mutated["adapters"][0]["source_sha256"] = "0" * 64
+    with pytest.raises(EvidenceError, match="E_ADAPTER_REGISTRY_HASH"):
+        run_adapter_discovery(
+            source_root, descriptor, mutated, "PYTHON_PEP517_V1"
+        )
+
+
+def test_adapter_rejects_unregistered_and_wrong_returned_adapter_ids(tmp_path):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = _adapter_registry(implementation_root)
+    descriptor = _write_adapter_project(source_root, "python.json")
+    validated = validate_adapter_registry(registry, implementation_root)
+    with pytest.raises(EvidenceError, match="E_ADAPTER_UNREGISTERED"):
+        run_adapter_discovery(source_root, descriptor, validated, "CARGO_TEST_V1")
+
+    implementation = implementation_root / "adapters/python_pep517_v1.py"
+    implementation.write_text(
+        implementation.read_text(encoding="utf-8").replace(
+            '"PYTHON_PEP517_V1"', '"CMAKE_CTEST_V1"'
+        ),
+        encoding="utf-8",
+    )
+    validated = validate_adapter_registry(
+        _rehash_adapter_registry(registry, implementation_root, "PYTHON_PEP517_V1"),
+        implementation_root,
+    )
+    with pytest.raises(EvidenceError, match="E_ADAPTER_ID"):
+        run_adapter_discovery(
+            source_root, descriptor, validated, "PYTHON_PEP517_V1"
+        )
+
+
+@pytest.mark.parametrize("result_mutation", ["missing", "extra", "bad_signature"])
+def test_adapter_requires_exact_callable_and_result_schema(tmp_path, result_mutation):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = _adapter_registry(implementation_root)
+    descriptor = _write_adapter_project(source_root, "python.json")
+    implementation = implementation_root / "adapters/python_pep517_v1.py"
+    fixture_result = {
+        "adapter_id": "PYTHON_PEP517_V1",
+        "ecosystem": "python",
+        "source_files": ["src/demo_pkg/api.py"],
+        "declarations": [],
+        "public_schemas": [],
+        "sites": [],
+    }
+    if result_mutation == "missing":
+        fixture_result.pop("sites")
+    elif result_mutation == "extra":
+        fixture_result["manual_fallback"] = "python -m demo"
+    signature = (
+        "source_root, build_descriptor, caller_discovery=None"
+        if result_mutation == "bad_signature"
+        else "source_root, build_descriptor"
+    )
+    implementation.write_text(
+        f"def discover({signature}):\n    return {fixture_result!r}\n",
+        encoding="utf-8",
+    )
+    validated = validate_adapter_registry(
+        _rehash_adapter_registry(registry, implementation_root, "PYTHON_PEP517_V1"),
+        implementation_root,
+    )
+    with pytest.raises(EvidenceError, match="E_ADAPTER_(SIGNATURE|RESULT)"):
+        run_adapter_discovery(
+            source_root, descriptor, validated, "PYTHON_PEP517_V1"
+        )
+
+
+@pytest.mark.parametrize("source_files", [["../escape.py"], ["src/a.py", "src/a.py"]])
+def test_adapter_rejects_unsafe_or_duplicate_source_paths(tmp_path, source_files):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    manifest = source_root / descriptor["manifest_path"]
+    value = json.loads(manifest.read_text(encoding="utf-8"))
+    value["source_files"] = source_files
+    manifest.write_bytes(_bytes(value))
+    with pytest.raises(EvidenceError, match="E_ADAPTER_SOURCE_PATH"):
+        run_adapter_discovery(
+            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        )
+
+
+def test_adapter_rejects_caller_supplied_discovery_collections(tmp_path):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = validate_adapter_registry(
+        _adapter_registry(implementation_root), implementation_root
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    descriptor["declarations"] = _load_fixture("python.json")["declarations"]
+    with pytest.raises(EvidenceError, match="E_ADAPTER_AUTHORITY"):
+        run_adapter_discovery(
+            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        )
+
+
+def test_unsupported_adapter_emits_receipt_without_manual_fallback(tmp_path):
+    fixture = _load_fixture("unsupported.json")
+    assert fixture["declarations"] == []
+    assert "hand_command" not in json.dumps(fixture)
     registry = validate_adapter_registry(_adapter_registry(tmp_path), tmp_path)
+    discovery = run_adapter_discovery(
+        tmp_path,
+        {"ecosystem": "cargo"},
+        registry,
+        None,
+    )
+    assert discovery["discovery_status"] == "ADAPTER_UNSUPPORTED"
+    assert discovery["adapter_id"] is None
+    assert discovery["declarations"] == []
+    assert discovery["public_schemas"] == []
+    assert discovery["sites"] == []
+    assert "hand_command" not in discovery
+
+
+@pytest.mark.parametrize(
+    ("effective_lines", "expected_scale"),
+    [(9_999, "S"), (10_000, "M"), (99_999, "M"), (100_000, "L")],
+)
+def test_source_scale_is_derived_at_frozen_boundaries(
+    tmp_path, effective_lines, expected_scale
+):
+    source = tmp_path / "src/program.py"
+    source.parent.mkdir(parents=True)
+    source.write_text("# comment\n\n" + "value = 1\n" * effective_lines, encoding="utf-8")
+    discovery = _discovery_receipt([])
+    discovery["source_files"] = ["src/program.py"]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    scale = derive_source_scale(tmp_path, discovery)
+    assert scale["per_file_effective_lines"] == [
+        {"path": "src/program.py", "effective_lines": effective_lines}
+    ]
+    assert scale["total_effective_lines"] == effective_lines
+    assert scale["scale_class"] == expected_scale
+    assert scale["discovery_sha256"] == discovery["artifact_sha256"]
+    assert scale["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in scale.items() if key != "artifact_sha256"}
+    )
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "vendor/a.py",
+        "generated/a.py",
+        ".git/a.py",
+        ".venv/a.py",
+        "build/a.py",
+        "_build/a.py",
+        "out/a.py",
+        "target/a.py",
+        "build-release/a.py",
+        "tests/fixtures/a.py",
+    ],
+)
+def test_source_scale_rejects_excluded_source_paths(tmp_path, relative):
+    path = tmp_path / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("value = 1\n", encoding="utf-8")
+    discovery = _discovery_receipt([])
+    discovery["source_files"] = [relative]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_SCALE_SOURCE_PATH"):
+        derive_source_scale(tmp_path, discovery)
+
+
+def test_source_scale_counts_frozen_python_and_cmake_comment_rules(tmp_path):
+    python_source = tmp_path / "src/a.py"
+    cmake_source = tmp_path / "src/a.cpp"
+    python_source.parent.mkdir(parents=True)
+    python_source.write_text("# comment\nvalue = 1  # code\n\n", encoding="utf-8")
+    cmake_source.write_text(
+        "// comment\n/* block\nstill block */\nint value = 1; // code\n",
+        encoding="utf-8",
+    )
+    python_discovery = _discovery_receipt([])
+    python_discovery["source_files"] = ["src/a.py"]
+    body = {key: value for key, value in python_discovery.items() if key != "artifact_sha256"}
+    python_discovery["artifact_sha256"] = canonical_sha256(body)
+    cmake_discovery = _discovery_receipt(
+        [], adapter_id="CMAKE_CTEST_V1", ecosystem="cmake"
+    )
+    cmake_discovery["source_files"] = ["src/a.cpp"]
+    body = {key: value for key, value in cmake_discovery.items() if key != "artifact_sha256"}
+    cmake_discovery["artifact_sha256"] = canonical_sha256(body)
+    assert derive_source_scale(tmp_path, python_discovery)["total_effective_lines"] == 1
+    assert derive_source_scale(tmp_path, cmake_discovery)["total_effective_lines"] == 1
+
+
+def test_cmake_adapter_counts_cpp_directives_and_comment_markers_in_strings(tmp_path):
+    source = tmp_path / "src/a.cpp"
+    source.parent.mkdir(parents=True)
+    source.write_text(
+        '#include <vector>\nconst char *marker = "/*";\n/* comment */\nint value = 1;\n',
+        encoding="utf-8",
+    )
+    discovery = _discovery_receipt(
+        [], adapter_id="CMAKE_CTEST_V1", ecosystem="cmake"
+    )
+    discovery["source_files"] = ["src/a.cpp"]
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    assert derive_source_scale(tmp_path, discovery)["total_effective_lines"] == 3
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["unsafe_source", "duplicate_source", "unsorted_declarations", "forbidden_schema", "bad_site"],
+)
+def test_discovery_receipts_are_deeply_validated_before_consumption(tmp_path, mutation):
+    source = tmp_path / "src/a.py"
+    source.parent.mkdir(parents=True)
+    source.write_text("value = 1\n", encoding="utf-8")
+    declarations = _tagged_declarations(_load_fixture("python.json"))[:2]
+    discovery = _discovery_receipt(
+        declarations,
+        public_schemas=_load_fixture("python.json")["public_schemas"],
+        sites=_load_fixture("python.json")["sites"],
+    )
+    discovery["source_files"] = ["src/a.py"]
+    if mutation == "unsafe_source":
+        discovery["source_files"] = ["../a.py"]
+    elif mutation == "duplicate_source":
+        discovery["source_files"] = ["src/a.py", "src/a.py"]
+    elif mutation == "unsorted_declarations":
+        discovery["declarations"] = list(reversed(discovery["declarations"]))
+    elif mutation == "forbidden_schema":
+        discovery["public_schemas"][0]["project_test_body"] = "assert True"
+    elif mutation == "bad_site":
+        discovery["sites"][0]["start_line"] = -1
+    body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    discovery["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError):
+        derive_source_scale(tmp_path, discovery)
+
+
+def test_scale_interface_has_no_caller_scale_class():
+    assert list(inspect.signature(derive_source_scale).parameters) == [
+        "source_root",
+        "discovery",
+    ]
+
+
+def test_discovery_and_public_frame_interfaces_reject_legacy_caller_authority():
+    assert list(inspect.signature(run_adapter_discovery).parameters) == [
+        "source_root",
+        "build_descriptor",
+        "registry",
+        "adapter_id",
+    ]
+    assert list(inspect.signature(build_public_behavior_frame).parameters) == [
+        "source_record",
+        "discovery",
+    ]
+
+
+def test_public_behavior_frame_accounts_all_categories_and_preserves_public_schemas(tmp_path):
     declarations = (
-        _combined_executable_declarations()
-        + _tagged_declarations(_load_fixture("unsupported.json"))
+        _tagged_declarations(_load_fixture("python.json"))
         + [
             {
                 "category": "CLI",
@@ -432,46 +838,44 @@ def test_public_behavior_frame_accounts_all_categories_and_retains_unsupported(t
             }
         ]
     )
-    assert sum(1 for item in _combined_executable_declarations()) > 20
-    frame = build_public_behavior_frame(_source_record(), declarations, registry)
+    assert len(declarations) > 20
+    public_schemas = _load_fixture("python.json")["public_schemas"]
+    frame = build_public_behavior_frame(
+        _source_record(),
+        _discovery_receipt(declarations, public_schemas=public_schemas),
+    )
     accounting = frame["category_accounting"]
     assert [row["category"] for row in accounting] == BEHAVIOR_CATEGORY_ORDER
     assert all("discovered_count" in row for row in accounting)
     assert all(row["discovered_count"] >= 0 for row in accounting)
     empty_frame = build_public_behavior_frame(
         _source_record(),
-        [
-            {
-                "category": "PUBLIC_API",
-                "ecosystem": "python",
-                "adapter_id": "PYTHON_PEP517_V1",
-                "provenance_path": "src/only.py",
-                "provenance_span_or_key": "only",
-                "entrypoint": "only:f",
-                "normalized_entrypoint": "only:f",
-                "declared_inputs": {"kind": "none"},
-                "declared_input_schema_sha256": "cc" * 32,
-                "static_dependency_tags": [],
-                "prerequisites": [],
-            }
-        ],
-        registry,
+        _discovery_receipt(
+            [
+                {
+                    "category": "PUBLIC_API",
+                    "provenance_path": "src/only.py",
+                    "provenance_span_or_key": "only",
+                    "entrypoint": "only:f",
+                    "normalized_entrypoint": "only:f",
+                    "declared_inputs": {"kind": "none"},
+                    "declared_input_schema_sha256": "cc" * 32,
+                    "static_dependency_tags": [],
+                    "prerequisites": [],
+                }
+            ]
+        ),
     )
     assert [row["category"] for row in empty_frame["category_accounting"]] == BEHAVIOR_CATEGORY_ORDER
     assert sum(1 for row in empty_frame["category_accounting"] if row["discovered_count"] == 0) == 4
 
-    unsupported = [
-        row for row in frame["rows"] if row["discovery_status"] == "ADAPTER_UNSUPPORTED"
-    ]
-    assert len(unsupported) == 3
-    assert all(row["provenance_path"] for row in unsupported)
-    assert all(row.get("hand_command") is None or row["discovery_status"] != "EXECUTABLE" for row in frame["rows"])
     invalid = [row for row in frame["rows"] if row["discovery_status"] == "INVALID_DECLARATION"]
     assert len(invalid) == 1
     assert invalid[0]["provenance_path"] == "docs/broken.md"
     assert invalid[0]["unsupported_or_exclusion_reason"]
     executable = [row for row in frame["rows"] if row["discovery_status"] == "EXECUTABLE"]
-    assert len(executable) > 20
+    assert len(executable) == 20
+    assert frame["public_schemas"] == public_schemas
     assert frame["controlled_subject_source_id"] == canonical_sha256(
         {
             "normalized_source_tree_sha256": "21" * 32,
@@ -482,7 +886,6 @@ def test_public_behavior_frame_accounts_all_categories_and_retains_unsupported(t
 
 
 def test_public_behavior_rejects_missing_provenance(tmp_path):
-    registry = validate_adapter_registry(_adapter_registry(tmp_path), tmp_path)
     declaration = {
         "category": "PUBLIC_API",
         "ecosystem": "python",
@@ -497,38 +900,38 @@ def test_public_behavior_rejects_missing_provenance(tmp_path):
         "prerequisites": [],
     }
     with pytest.raises(EvidenceError, match="E_PROVENANCE"):
-        build_public_behavior_frame(_source_record(), [declaration], registry)
+        build_public_behavior_frame(_source_record(), _discovery_receipt([declaration]))
 
 
 def test_public_behavior_frame_is_input_order_invariant(tmp_path):
-    registry = validate_adapter_registry(_adapter_registry(tmp_path), tmp_path)
-    declarations = _combined_executable_declarations() + _tagged_declarations(
-        _load_fixture("unsupported.json")
+    declarations = _tagged_declarations(_load_fixture("python.json"))
+    first = build_public_behavior_frame(
+        _source_record(), _discovery_receipt(declarations)
     )
-    first = build_public_behavior_frame(_source_record(), declarations, registry)
     second = build_public_behavior_frame(
-        _source_record(), list(reversed(declarations)), registry
+        _source_record(), _discovery_receipt(list(reversed(declarations)))
     )
     assert first == second
 
 
 def test_unsupported_ecosystem_has_no_hand_command_fallback(tmp_path):
-    registry = validate_adapter_registry(_adapter_registry(tmp_path), tmp_path)
-    declarations = _tagged_declarations(_load_fixture("unsupported.json"))
-    assert all(item.get("hand_command") for item in declarations)
-    frame = build_public_behavior_frame(_source_record(), declarations, registry)
-    assert all(row["discovery_status"] == "ADAPTER_UNSUPPORTED" for row in frame["rows"])
-    assert all(row["discovery_status"] != "EXECUTABLE" for row in frame["rows"])
+    discovery = _discovery_receipt(
+        [], adapter_id=None, ecosystem="cargo", status="ADAPTER_UNSUPPORTED"
+    )
+    frame = build_public_behavior_frame(_source_record(), discovery)
+    assert frame["rows"] == []
+    assert all(row["executable_count"] == 0 for row in frame["category_accounting"])
     workload = select_profiling_workload(frame, "S")
     assert workload["selected_behavior_ids"] == []
     assert workload["budget"] == 10
 
 
 def test_profiling_workload_selection_is_balanced_and_outcome_blind(tmp_path):
-    registry = validate_adapter_registry(_adapter_registry(tmp_path), tmp_path)
-    declarations = _combined_executable_declarations()
-    assert len(declarations) > 20
-    frame = build_public_behavior_frame(_source_record(), declarations, registry)
+    declarations = _tagged_declarations(_load_fixture("python.json"))
+    assert len(declarations) == 20
+    frame = build_public_behavior_frame(
+        _source_record(), _discovery_receipt(declarations)
+    )
     workload = select_profiling_workload(frame, "L")
     assert workload["budget"] == 20
     assert workload["category_order"] == [
@@ -538,9 +941,13 @@ def test_profiling_workload_selection_is_balanced_and_outcome_blind(tmp_path):
         "BENCHMARK",
         "PROJECT_TEST",
     ]
-    assert max(workload["selected_category_counts"].values()) - min(
-        workload["selected_category_counts"].values()
-    ) <= 1
+    assert workload["selected_category_counts"] == {
+        "PUBLIC_API": 5,
+        "CLI": 4,
+        "EXAMPLE": 4,
+        "BENCHMARK": 3,
+        "PROJECT_TEST": 4,
+    }
     assert len(workload["selected_behavior_ids"]) == 20
     baseline_ids = list(workload["selected_behavior_ids"])
 
@@ -553,19 +960,20 @@ def test_profiling_workload_selection_is_balanced_and_outcome_blind(tmp_path):
         row["mr_outcome"] = "MR_VIOLATION"
         row["p12_fault_id"] = f"fault-{index}"
         poisoned.append(row)
-    poisoned_frame = build_public_behavior_frame(_source_record(), poisoned, registry)
+    poisoned_frame = build_public_behavior_frame(
+        _source_record(), _discovery_receipt(poisoned)
+    )
     poisoned_workload = select_profiling_workload(poisoned_frame, "L")
     assert poisoned_workload["selected_behavior_ids"] == baseline_ids
 
     shuffled_frame = build_public_behavior_frame(
-        _source_record(), list(reversed(poisoned)), registry
+        _source_record(), _discovery_receipt(list(reversed(poisoned)))
     )
     shuffled_workload = select_profiling_workload(shuffled_frame, "L")
     assert shuffled_workload["selected_behavior_ids"] == baseline_ids
 
 
 def test_profiling_workload_prefers_unseen_diversity_then_behavior_id(tmp_path):
-    registry = validate_adapter_registry(_adapter_registry(tmp_path), tmp_path)
     schema = "ee" * 32
     declarations = []
     for category in BEHAVIOR_CATEGORY_ORDER:
@@ -585,7 +993,9 @@ def test_profiling_workload_prefers_unseen_diversity_then_behavior_id(tmp_path):
                     "prerequisites": [],
                 }
             )
-    frame = build_public_behavior_frame(_source_record(), declarations, registry)
+    frame = build_public_behavior_frame(
+        _source_record(), _discovery_receipt(declarations)
+    )
     executable = [row for row in frame["rows"] if row["discovery_status"] == "EXECUTABLE"]
     by_category: dict[str, list[dict]] = {category: [] for category in BEHAVIOR_CATEGORY_ORDER}
     for row in executable:

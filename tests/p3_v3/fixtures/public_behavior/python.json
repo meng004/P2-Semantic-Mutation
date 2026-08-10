@@ -1,6 +1,25 @@
 {
   "ecosystem": "python",
   "adapter_id": "PYTHON_PEP517_V1",
+  "source_files": ["src/demo_pkg/api.py"],
+  "public_schemas": [
+    {
+      "schema_kind": "JSON_SCHEMA_DRAFT2020_12_V1",
+      "raw_schema": {"type": "array", "items": {"type": "number"}},
+      "provenance_path": "pyproject.toml",
+      "provenance_span_or_key": "tool.demo.public-input"
+    }
+  ],
+  "sites": [
+    {
+      "path": "src/demo_pkg/api.py",
+      "symbol": "solve",
+      "start_line": 3,
+      "start_col": 0,
+      "end_line": 4,
+      "end_col": 16
+    }
+  ],
   "declarations": [
     {
       "category": "PUBLIC_API",

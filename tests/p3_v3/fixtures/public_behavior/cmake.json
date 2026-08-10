@@ -1,6 +1,25 @@
 {
   "ecosystem": "cmake",
   "adapter_id": "CMAKE_CTEST_V1",
+  "source_files": ["include/demo/solver.hpp"],
+  "public_schemas": [
+    {
+      "schema_kind": "CLI_TOKEN_GRAMMAR_V1",
+      "raw_schema": {"tokens": ["--size", "INT"]},
+      "provenance_path": "apps/CMakeLists.txt",
+      "provenance_span_or_key": "demo_cli"
+    }
+  ],
+  "sites": [
+    {
+      "path": "include/demo/solver.hpp",
+      "symbol": "demo::solve",
+      "start_line": 2,
+      "start_col": 0,
+      "end_line": 2,
+      "end_col": 39
+    }
+  ],
   "declarations": [
     {
       "category": "PUBLIC_API",

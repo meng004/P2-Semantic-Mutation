@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import inspect
 import json
 import re
 import subprocess
+import uuid
 from collections.abc import Callable, Mapping, Sequence
 from decimal import Decimal
 from fractions import Fraction
@@ -266,6 +268,27 @@ _ADAPTER_ENTRY_SCHEMA = {
 _ADAPTER_REGISTRY_SCHEMA = {
     "schema_version": str,
     "adapters": list,
+    "artifact_sha256": str,
+}
+_ADAPTER_RESULT_SCHEMA = {
+    "adapter_id": str,
+    "ecosystem": str,
+    "source_files": list,
+    "declarations": list,
+    "public_schemas": list,
+    "sites": list,
+}
+_ADAPTER_DISCOVERY_SCHEMA = {
+    "schema_version": str,
+    "adapter_id": (str, type(None)),
+    "ecosystem": str,
+    "discovery_status": str,
+    "implementation_source_sha256": (str, type(None)),
+    "source_files": list,
+    "declarations": list,
+    "public_schemas": list,
+    "sites": list,
+    "unsupported_or_exclusion_reason": str,
     "artifact_sha256": str,
 }
 _SOURCE_RECORD_SCHEMA = {
@@ -886,7 +909,9 @@ def verify_reveal(
         raise EvidenceError("E_REVEAL_SOURCE", "normalized source differs")
 
 
-def validate_adapter_registry(registry: Mapping[str, Any], source_root: str | Path) -> dict[str, Any]:
+def validate_adapter_registry(
+    registry: Mapping[str, Any], implementation_root: str | Path
+) -> dict[str, Any]:
     value = validate_exact_object(dict(registry), _ADAPTER_REGISTRY_SCHEMA, "adapter_registry")
     if value["schema_version"] != "p3-adapter-registry-v1":
         raise EvidenceError("E_ADAPTER_REGISTRY", "adapter registry version differs")
@@ -896,7 +921,7 @@ def validate_adapter_registry(registry: Mapping[str, Any], source_root: str | Pa
     adapters = value["adapters"]
     if not isinstance(adapters, list) or len(adapters) != len(CONFIRMATORY_ADAPTERS):
         raise EvidenceError("E_ADAPTER_ALLOWLIST", "adapter registry must list confirmatory adapters exactly")
-    root = Path(source_root)
+    root = Path(implementation_root).resolve()
     seen: set[str] = set()
     normalized: list[dict[str, Any]] = []
     for index, candidate in enumerate(adapters):
@@ -911,12 +936,9 @@ def validate_adapter_registry(registry: Mapping[str, Any], source_root: str | Pa
             raise EvidenceError("E_ADAPTER_ECOSYSTEM", f"ecosystem differs for {adapter_id}")
         relative = safe_relative_path(entry["implementation_path"])
         validate_sha256(entry["source_sha256"], f"adapters[{index}].source_sha256")
-        absolute = root / relative.as_posix()
-        if not absolute.is_file() or absolute.is_symlink():
-            raise EvidenceError(
-                "E_ADAPTER_SOURCE",
-                f"adapter implementation missing: {entry['implementation_path']}",
-            )
+        absolute = _verified_regular_file(
+            root, relative.as_posix(), "E_ADAPTER_SOURCE"
+        )
         if file_sha256(absolute) != entry["source_sha256"]:
             raise EvidenceError(
                 "E_ADAPTER_SOURCE_HASH",
@@ -929,7 +951,547 @@ def validate_adapter_registry(registry: Mapping[str, Any], source_root: str | Pa
         "schema_version": value["schema_version"],
         "adapters": normalized,
         "artifact_sha256": value["artifact_sha256"],
+        "_implementation_root": str(root),
     }
+
+
+_CALLER_DISCOVERY_KEYS = frozenset(
+    {
+        "source_files",
+        "declarations",
+        "public_schemas",
+        "sites",
+        "discovery",
+        "scale_class",
+        "source_scale",
+        "hand_command",
+        "manual_fallback",
+    }
+)
+_EXCLUDED_SOURCE_PARTS = frozenset(
+    {
+        ".git",
+        ".hg",
+        ".svn",
+        ".tox",
+        ".venv",
+        "_build",
+        "__pycache__",
+        "build",
+        "dist",
+        "env",
+        "external",
+        "fixture",
+        "fixtures",
+        "generated",
+        "node_modules",
+        "out",
+        "target",
+        "testdata",
+        "third-party",
+        "third_party",
+        "vendor",
+        "vendored",
+        "vendors",
+        "venv",
+    }
+)
+
+
+def _verified_regular_file(root: Path, relative: str, code: str) -> Path:
+    path = safe_relative_path(relative)
+    absolute = root / path.as_posix()
+    try:
+        resolved = absolute.resolve(strict=True)
+    except OSError as exc:
+        raise EvidenceError(code, f"source file is unavailable: {relative}") from exc
+    try:
+        resolved.relative_to(root)
+    except ValueError as exc:
+        raise EvidenceError(code, f"source file escapes verified root: {relative}") from exc
+    cursor = root
+    for part in path.parts:
+        cursor = cursor / part
+        if cursor.is_symlink():
+            raise EvidenceError(code, f"source path contains a symlink: {relative}")
+    if not resolved.is_file():
+        raise EvidenceError(code, f"source path is not a regular file: {relative}")
+    return resolved
+
+
+def _reject_caller_discovery(value: Mapping[str, Any]) -> None:
+    forbidden = sorted(set(value) & _CALLER_DISCOVERY_KEYS)
+    if forbidden:
+        raise EvidenceError(
+            "E_ADAPTER_AUTHORITY",
+            f"build descriptor contains caller-controlled discovery fields: {forbidden}",
+        )
+
+
+def _load_adapter_discover(
+    absolute: Path, adapter_id: str, source_bytes: bytes
+) -> Callable[..., Any]:
+    module_name = f"_p3_v3_adapter_{adapter_id.lower()}_{uuid.uuid4().hex}"
+    spec = importlib.util.spec_from_loader(
+        module_name, loader=None, origin=str(absolute)
+    )
+    if spec is None:
+        raise EvidenceError("E_ADAPTER_LOAD", f"unable to load adapter: {adapter_id}")
+    module = importlib.util.module_from_spec(spec)
+    module.__file__ = str(absolute)
+    try:
+        exec(compile(source_bytes, str(absolute), "exec"), module.__dict__)
+    except Exception as exc:
+        raise EvidenceError("E_ADAPTER_LOAD", f"unable to load adapter: {adapter_id}") from exc
+    discover = getattr(module, "discover", None)
+    if not callable(discover):
+        raise EvidenceError("E_ADAPTER_SIGNATURE", f"adapter lacks discover(): {adapter_id}")
+    parameters = list(inspect.signature(discover).parameters.values())
+    if (
+        [parameter.name for parameter in parameters]
+        != ["source_root", "build_descriptor"]
+        or any(
+            parameter.kind is not inspect.Parameter.POSITIONAL_OR_KEYWORD
+            or parameter.default is not inspect.Parameter.empty
+            for parameter in parameters
+        )
+    ):
+        raise EvidenceError(
+            "E_ADAPTER_SIGNATURE",
+            "discover must accept exactly source_root and build_descriptor",
+        )
+    return discover
+
+
+def _canonical_collection(values: list[Any], context: str) -> list[Any]:
+    for index, item in enumerate(values):
+        if not isinstance(item, Mapping):
+            raise EvidenceError("E_ADAPTER_RESULT", f"{context}[{index}] must be an object")
+    return sorted((dict(item) for item in values), key=canonical_json_bytes)
+
+
+def _normalize_adapter_result(
+    result: Any,
+    *,
+    source_root: Path,
+    adapter_id: str,
+    ecosystem: str,
+) -> dict[str, Any]:
+    if not isinstance(result, dict):
+        raise EvidenceError("E_ADAPTER_RESULT", "adapter result must be an exact object")
+    try:
+        value = validate_exact_object(result, _ADAPTER_RESULT_SCHEMA, "adapter_result")
+    except EvidenceError as exc:
+        raise EvidenceError("E_ADAPTER_RESULT", str(exc)) from exc
+    if value["adapter_id"] != adapter_id:
+        raise EvidenceError("E_ADAPTER_ID", "adapter returned a different adapter_id")
+    if value["ecosystem"] != ecosystem:
+        raise EvidenceError("E_ADAPTER_ECOSYSTEM", "adapter returned a different ecosystem")
+
+    source_files: list[str] = []
+    seen_sources: set[str] = set()
+    for index, raw in enumerate(value["source_files"]):
+        if not isinstance(raw, str):
+            raise EvidenceError(
+                "E_ADAPTER_SOURCE_PATH", f"source_files[{index}] must be a string"
+            )
+        try:
+            safe_relative_path(raw)
+        except EvidenceError as exc:
+            raise EvidenceError("E_ADAPTER_SOURCE_PATH", str(exc)) from exc
+        if raw in seen_sources:
+            raise EvidenceError("E_ADAPTER_SOURCE_PATH", f"duplicate source path: {raw}")
+        seen_sources.add(raw)
+        if _excluded_scale_path(raw):
+            raise EvidenceError(
+                "E_ADAPTER_SOURCE_PATH", f"source path is excluded: {raw}"
+            )
+        try:
+            _verified_regular_file(source_root, raw, "E_ADAPTER_SOURCE_PATH")
+        except EvidenceError as exc:
+            raise EvidenceError("E_ADAPTER_SOURCE_PATH", str(exc)) from exc
+        source_files.append(raw)
+
+    declarations = _canonical_collection(value["declarations"], "declarations")
+    for declaration in declarations:
+        for field in ("static_dependency_tags", "prerequisites"):
+            collection = declaration.get(field)
+            if isinstance(collection, list) and all(
+                isinstance(item, str) for item in collection
+            ):
+                declaration[field] = sorted(set(collection))
+
+    public_schemas = _canonical_collection(value["public_schemas"], "public_schemas")
+    for index, schema in enumerate(public_schemas):
+        _reject_forbidden_generator_inputs(schema, f"public_schemas[{index}]")
+        provenance = schema.get("provenance_path")
+        if not isinstance(provenance, str):
+            raise EvidenceError(
+                "E_PUBLIC_SCHEMAS", f"public_schemas[{index}] lacks provenance_path"
+            )
+        safe_relative_path(provenance)
+        span = schema.get("provenance_span_or_key")
+        if not isinstance(span, str) or not span:
+            raise EvidenceError(
+                "E_PUBLIC_SCHEMAS",
+                f"public_schemas[{index}] lacks provenance_span_or_key",
+            )
+
+    sites: list[dict[str, Any]] = []
+    for index, raw in enumerate(value["sites"]):
+        try:
+            site = validate_exact_object(dict(raw), _SITE_SCHEMA, f"sites[{index}]")
+        except (TypeError, EvidenceError) as exc:
+            raise EvidenceError("E_ADAPTER_RESULT", f"sites[{index}] is invalid") from exc
+        safe_relative_path(site["path"])
+        if not site["symbol"] or any(
+            type(site[field]) is not int or site[field] < 0
+            for field in _SITE_SCHEMA
+            if field.endswith(("line", "col"))
+        ):
+            raise EvidenceError("E_SITE_SPAN", f"sites[{index}] has an invalid span")
+        sites.append(site)
+    sites.sort(
+        key=lambda site: (
+            site["path"],
+            site["symbol"],
+            site["start_line"],
+            site["start_col"],
+            site["end_line"],
+            site["end_col"],
+        )
+    )
+    if len({canonical_sha256(site) for site in sites}) != len(sites):
+        raise EvidenceError("E_SITE_DUPLICATE", "adapter returned a duplicate site")
+    declarations.sort(key=canonical_json_bytes)
+    public_schemas.sort(key=canonical_json_bytes)
+    return {
+        "source_files": sorted(source_files),
+        "declarations": declarations,
+        "public_schemas": public_schemas,
+        "sites": sites,
+    }
+
+
+def run_adapter_discovery(
+    source_root: str | Path,
+    build_descriptor: Mapping[str, Any],
+    registry: Mapping[str, Any],
+    adapter_id: str | None,
+) -> dict[str, Any]:
+    """Execute only a source-hash-verified adapter and normalize its discovery."""
+
+    if not isinstance(build_descriptor, Mapping):
+        raise EvidenceError("E_BUILD_DESCRIPTOR", "build_descriptor must be an object")
+    _reject_caller_discovery(build_descriptor)
+    if not isinstance(registry, Mapping) or "_implementation_root" not in registry:
+        raise EvidenceError("E_ADAPTER_REGISTRY", "adapter registry is not verified")
+    implementation_root = registry["_implementation_root"]
+    if not isinstance(implementation_root, str):
+        raise EvidenceError(
+            "E_ADAPTER_REGISTRY", "verified implementation root is invalid"
+        )
+    public_registry = {
+        key: registry.get(key)
+        for key in ("schema_version", "adapters", "artifact_sha256")
+    }
+    verified_registry = validate_adapter_registry(
+        public_registry, implementation_root
+    )
+    root = Path(source_root).resolve()
+    if not root.is_dir():
+        raise EvidenceError("E_ADAPTER_SOURCE_ROOT", "source_root must be a directory")
+
+    if adapter_id is None:
+        ecosystem = build_descriptor.get("ecosystem")
+        if not isinstance(ecosystem, str) or not ecosystem:
+            raise EvidenceError(
+                "E_ADAPTER_UNSUPPORTED", "unsupported discovery requires ecosystem"
+            )
+        body = {
+            "schema_version": "p3-adapter-discovery-v1",
+            "adapter_id": None,
+            "ecosystem": ecosystem,
+            "discovery_status": "ADAPTER_UNSUPPORTED",
+            "implementation_source_sha256": None,
+            "source_files": [],
+            "declarations": [],
+            "public_schemas": [],
+            "sites": [],
+            "unsupported_or_exclusion_reason": (
+                "ecosystem has no confirmatory adapter; hand-selected commands are forbidden"
+            ),
+        }
+        return {**body, "artifact_sha256": canonical_sha256(body)}
+
+    entries = {
+        entry.get("adapter_id"): entry
+        for entry in verified_registry["adapters"]
+        if isinstance(entry, Mapping)
+    }
+    entry = entries.get(adapter_id)
+    if entry is None:
+        raise EvidenceError("E_ADAPTER_UNREGISTERED", f"adapter is not registered: {adapter_id}")
+    implementation_root = Path(verified_registry["_implementation_root"])
+    absolute = _verified_regular_file(
+        implementation_root,
+        entry["implementation_path"],
+        "E_ADAPTER_SOURCE",
+    )
+    try:
+        implementation_bytes = absolute.read_bytes()
+    except OSError as exc:
+        raise EvidenceError(
+            "E_ADAPTER_SOURCE", f"unable to read adapter: {adapter_id}"
+        ) from exc
+    if hashlib.sha256(implementation_bytes).hexdigest() != entry["source_sha256"]:
+        raise EvidenceError(
+            "E_ADAPTER_SOURCE_HASH", f"adapter source hash differs: {adapter_id}"
+        )
+    discover = _load_adapter_discover(absolute, adapter_id, implementation_bytes)
+    try:
+        raw_result = discover(root, dict(build_descriptor))
+    except EvidenceError:
+        raise
+    except Exception as exc:
+        raise EvidenceError("E_ADAPTER_EXECUTION", f"adapter failed: {adapter_id}") from exc
+    normalized = _normalize_adapter_result(
+        raw_result,
+        source_root=root,
+        adapter_id=adapter_id,
+        ecosystem=entry["ecosystem"],
+    )
+    body = {
+        "schema_version": "p3-adapter-discovery-v1",
+        "adapter_id": adapter_id,
+        "ecosystem": entry["ecosystem"],
+        "discovery_status": "EXECUTABLE",
+        "implementation_source_sha256": entry["source_sha256"],
+        **normalized,
+        "unsupported_or_exclusion_reason": "",
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _validate_discovery(
+    discovery: Mapping[str, Any],
+    *,
+    source_path_error_code: str = "E_ADAPTER_SOURCE_PATH",
+) -> dict[str, Any]:
+    value = validate_exact_object(
+        dict(discovery), _ADAPTER_DISCOVERY_SCHEMA, "adapter_discovery"
+    )
+    if value["schema_version"] != "p3-adapter-discovery-v1":
+        raise EvidenceError("E_ADAPTER_DISCOVERY", "discovery version differs")
+    body = {key: item for key, item in value.items() if key != "artifact_sha256"}
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_ADAPTER_DISCOVERY_HASH", "discovery self-hash differs")
+    source_files: list[str] = []
+    for index, relative in enumerate(value["source_files"]):
+        if not isinstance(relative, str):
+            raise EvidenceError(
+                source_path_error_code, f"source_files[{index}] must be a string"
+            )
+        try:
+            safe_relative_path(relative)
+        except EvidenceError as exc:
+            raise EvidenceError(source_path_error_code, str(exc)) from exc
+        if _excluded_scale_path(relative):
+            raise EvidenceError(
+                source_path_error_code, f"source path is excluded: {relative}"
+            )
+        source_files.append(relative)
+    if source_files != sorted(set(source_files)):
+        raise EvidenceError(
+            source_path_error_code, "source files must be sorted and unique"
+        )
+
+    declarations = value["declarations"]
+    if any(not isinstance(item, Mapping) for item in declarations):
+        raise EvidenceError("E_ADAPTER_RESULT", "declarations must contain objects")
+    for declaration in declarations:
+        for field in ("static_dependency_tags", "prerequisites"):
+            collection = declaration.get(field)
+            if isinstance(collection, list) and collection != sorted(set(collection)):
+                raise EvidenceError(
+                    "E_ADAPTER_RESULT", f"declaration {field} is not normalized"
+                )
+    if declarations != sorted(declarations, key=canonical_json_bytes):
+        raise EvidenceError("E_ADAPTER_RESULT", "declarations are not normalized")
+
+    public_schemas = value["public_schemas"]
+    if any(not isinstance(item, Mapping) for item in public_schemas):
+        raise EvidenceError("E_PUBLIC_SCHEMAS", "public schemas must contain objects")
+    for index, schema in enumerate(public_schemas):
+        _reject_forbidden_generator_inputs(schema, f"public_schemas[{index}]")
+        provenance = schema.get("provenance_path")
+        if not isinstance(provenance, str):
+            raise EvidenceError(
+                "E_PUBLIC_SCHEMAS", f"public_schemas[{index}] lacks provenance_path"
+            )
+        safe_relative_path(provenance)
+        span = schema.get("provenance_span_or_key")
+        if not isinstance(span, str) or not span or "raw_schema" not in schema:
+            raise EvidenceError(
+                "E_PUBLIC_SCHEMAS", f"public_schemas[{index}] is incomplete"
+            )
+    if public_schemas != sorted(public_schemas, key=canonical_json_bytes):
+        raise EvidenceError("E_PUBLIC_SCHEMAS", "public schemas are not normalized")
+
+    sites: list[dict[str, Any]] = []
+    for index, candidate in enumerate(value["sites"]):
+        try:
+            site = validate_exact_object(dict(candidate), _SITE_SCHEMA, f"sites[{index}]")
+        except (TypeError, EvidenceError) as exc:
+            raise EvidenceError("E_ADAPTER_RESULT", f"sites[{index}] is invalid") from exc
+        safe_relative_path(site["path"])
+        if not site["symbol"] or any(
+            site[field] < 0
+            for field in _SITE_SCHEMA
+            if field.endswith(("line", "col"))
+        ):
+            raise EvidenceError("E_SITE_SPAN", f"sites[{index}] has an invalid span")
+        sites.append(site)
+    def site_order(site: Mapping[str, Any]) -> tuple[Any, ...]:
+        return (
+            site["path"],
+            site["symbol"],
+            site["start_line"],
+            site["start_col"],
+            site["end_line"],
+            site["end_col"],
+        )
+    if sites != sorted(sites, key=site_order):
+        raise EvidenceError("E_ADAPTER_RESULT", "sites are not normalized")
+    if len({canonical_sha256(site) for site in sites}) != len(sites):
+        raise EvidenceError("E_SITE_DUPLICATE", "discovery contains duplicate sites")
+    status = value["discovery_status"]
+    if status == "EXECUTABLE":
+        if value["adapter_id"] not in CONFIRMATORY_ADAPTERS:
+            raise EvidenceError("E_ADAPTER_ID", "executable discovery adapter is invalid")
+        validate_sha256(
+            value["implementation_source_sha256"], "implementation_source_sha256"
+        )
+        if value["ecosystem"] != _ADAPTER_ECOSYSTEMS[value["adapter_id"]]:
+            raise EvidenceError("E_ADAPTER_ECOSYSTEM", "discovery ecosystem differs")
+    elif status == "ADAPTER_UNSUPPORTED":
+        if (
+            value["adapter_id"] is not None
+            or value["implementation_source_sha256"] is not None
+            or any(
+                value[field]
+                for field in ("source_files", "declarations", "public_schemas", "sites")
+            )
+        ):
+            raise EvidenceError(
+                "E_ADAPTER_UNSUPPORTED", "unsupported discovery must contain no fallback data"
+            )
+    else:
+        raise EvidenceError("E_ADAPTER_DISCOVERY", "discovery status is invalid")
+    return value
+
+
+def _excluded_scale_path(relative: str) -> bool:
+    parts = [part.casefold() for part in safe_relative_path(relative).parts]
+    return any(
+        part in _EXCLUDED_SOURCE_PARTS
+        or part.startswith("cmake-build-")
+        or part.startswith("build-")
+        for part in parts
+    )
+
+
+def _effective_line_count(path: Path, ecosystem: str) -> int:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        raise EvidenceError(
+            "E_SCALE_SOURCE", f"source file is not UTF-8 text: {path.name}"
+        ) from exc
+    is_cmake_script = path.name == "CMakeLists.txt" or path.suffix.casefold() == ".cmake"
+    if ecosystem != "cmake" or is_cmake_script:
+        return sum(
+            1 for line in lines if line.strip() and not line.lstrip().startswith("#")
+        )
+    count = 0
+    in_block = False
+    for line in lines:
+        has_code = False
+        index = 0
+        while index < len(line):
+            if in_block:
+                end = line.find("*/", index)
+                if end < 0:
+                    index = len(line)
+                else:
+                    in_block = False
+                    index = end + 2
+                continue
+            if line.startswith("//", index):
+                break
+            if line.startswith("/*", index):
+                in_block = True
+                index += 2
+                continue
+            character = line[index]
+            if character in {'"', "'"}:
+                has_code = True
+                quote = character
+                index += 1
+                while index < len(line):
+                    if line[index] == "\\":
+                        index += 2
+                    elif line[index] == quote:
+                        index += 1
+                        break
+                    else:
+                        index += 1
+                continue
+            if not character.isspace():
+                has_code = True
+            index += 1
+        count += int(has_code)
+    return count
+
+
+def derive_source_scale(
+    source_root: str | Path, discovery: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Derive scale solely from validated adapter-enumerated source files."""
+
+    value = _validate_discovery(
+        discovery, source_path_error_code="E_SCALE_SOURCE_PATH"
+    )
+    root = Path(source_root).resolve()
+    if not root.is_dir():
+        raise EvidenceError("E_SCALE_SOURCE_ROOT", "source_root must be a directory")
+    counts: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for relative in value["source_files"]:
+        if not isinstance(relative, str) or relative in seen or _excluded_scale_path(relative):
+            raise EvidenceError("E_SCALE_SOURCE_PATH", f"source path is excluded: {relative}")
+        seen.add(relative)
+        absolute = _verified_regular_file(root, relative, "E_SCALE_SOURCE_PATH")
+        counts.append(
+            {
+                "path": relative,
+                "effective_lines": _effective_line_count(absolute, value["ecosystem"]),
+            }
+        )
+    counts.sort(key=lambda item: item["path"])
+    total = sum(item["effective_lines"] for item in counts)
+    scale_class = "S" if total < 10_000 else "M" if total < 100_000 else "L"
+    body = {
+        "schema_version": "p3-source-scale-v1",
+        "adapter_id": value["adapter_id"],
+        "ecosystem": value["ecosystem"],
+        "implementation_source_sha256": value["implementation_source_sha256"],
+        "discovery_sha256": value["artifact_sha256"],
+        "per_file_effective_lines": counts,
+        "total_effective_lines": total,
+        "scale_class": scale_class,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
 def _controlled_subject_source_id(source_record: Mapping[str, Any]) -> str:
@@ -1007,18 +1569,13 @@ def _behavior_id(source_id: str, row: Mapping[str, Any]) -> str:
 
 def build_public_behavior_frame(
     source_record: Mapping[str, Any],
-    declarations: Sequence[Mapping[str, Any]],
-    adapter_registry: Mapping[str, Any],
+    discovery: Mapping[str, Any],
 ) -> dict[str, Any]:
     source = validate_exact_object(dict(source_record), _SOURCE_RECORD_SCHEMA, "source_record")
     validate_sha256(source["normalized_source_tree_sha256"], "normalized_source_tree_sha256")
     validate_sha256(source["build_descriptor_sha256"], "build_descriptor_sha256")
-    registry = validate_exact_object(
-        dict(adapter_registry), _ADAPTER_REGISTRY_SCHEMA, "adapter_registry"
-    )
-    if {entry["adapter_id"] for entry in registry["adapters"]} != CONFIRMATORY_ADAPTERS:
-        raise EvidenceError("E_ADAPTER_ALLOWLIST", "adapter registry is incomplete")
-    ecosystem_adapters = _ecosystem_to_adapter(registry)
+    adapter_discovery = _validate_discovery(discovery)
+    declarations = adapter_discovery["declarations"]
     source_id = _controlled_subject_source_id(source)
     rows: list[dict[str, Any]] = []
     for index, raw in enumerate(declarations):
@@ -1032,11 +1589,9 @@ def build_public_behavior_frame(
         provenance_span = declaration.get("provenance_span_or_key")
         if not isinstance(provenance_span, str):
             provenance_span = ""
-        ecosystem = declaration.get("ecosystem")
-        if not isinstance(ecosystem, str) or not ecosystem:
-            raise EvidenceError("E_DECLARATION", f"declarations[{index}] ecosystem missing")
+        ecosystem = adapter_discovery["ecosystem"]
         valid, reason = _declaration_is_structurally_valid(declaration)
-        adapter_id = ecosystem_adapters.get(ecosystem)
+        adapter_id = adapter_discovery["adapter_id"]
         if adapter_id is None:
             discovery_status = "ADAPTER_UNSUPPORTED"
             exclusion = "ecosystem has no confirmatory adapter; hand-selected commands are forbidden"
@@ -1166,8 +1721,11 @@ def build_public_behavior_frame(
     body = {
         "schema_version": "p3-public-behavior-frame-v1",
         "controlled_subject_source_id": source_id,
+        "adapter_discovery_sha256": adapter_discovery["artifact_sha256"],
         "category_accounting": accounting,
         "rows": rows,
+        "public_schemas": list(adapter_discovery["public_schemas"]),
+        "sites": list(adapter_discovery["sites"]),
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
