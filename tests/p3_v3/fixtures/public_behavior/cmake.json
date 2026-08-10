@@ -1,0 +1,72 @@
+{
+  "ecosystem": "cmake",
+  "adapter_id": "CMAKE_CTEST_V1",
+  "declarations": [
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "include/demo/solver.hpp",
+      "provenance_span_or_key": "solve",
+      "entrypoint": "demo::solve",
+      "normalized_entrypoint": "demo::solve",
+      "declared_inputs": {"kind": "numeric_array"},
+      "declared_input_schema_sha256": "f111111111111111111111111111111111111111111111111111111111111111",
+      "static_dependency_tags": ["eigen"],
+      "prerequisites": []
+    },
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "include/demo/solver.hpp",
+      "provenance_span_or_key": "refine",
+      "entrypoint": "demo::refine",
+      "normalized_entrypoint": "demo::refine",
+      "declared_inputs": {"kind": "numeric_array"},
+      "declared_input_schema_sha256": "f222222222222222222222222222222222222222222222222222222222222222",
+      "static_dependency_tags": ["eigen", "blas"],
+      "prerequisites": []
+    },
+    {
+      "category": "CLI",
+      "provenance_path": "apps/CMakeLists.txt",
+      "provenance_span_or_key": "demo_cli",
+      "entrypoint": "bin/demo_cli",
+      "normalized_entrypoint": "bin/demo_cli",
+      "declared_inputs": {"kind": "cli_tokens"},
+      "declared_input_schema_sha256": "f333333333333333333333333333333333333333333333333333333333333333",
+      "static_dependency_tags": [],
+      "prerequisites": ["build"]
+    },
+    {
+      "category": "EXAMPLE",
+      "provenance_path": "examples/basic.cpp",
+      "provenance_span_or_key": "main",
+      "entrypoint": "examples/basic",
+      "normalized_entrypoint": "examples/basic",
+      "declared_inputs": {"kind": "none"},
+      "declared_input_schema_sha256": "f444444444444444444444444444444444444444444444444444444444444444",
+      "static_dependency_tags": ["eigen"],
+      "prerequisites": []
+    },
+    {
+      "category": "BENCHMARK",
+      "provenance_path": "bench/CMakeLists.txt",
+      "provenance_span_or_key": "bench_solve",
+      "entrypoint": "bench/bench_solve",
+      "normalized_entrypoint": "bench/bench_solve",
+      "declared_inputs": {"kind": "bench"},
+      "declared_input_schema_sha256": "f555555555555555555555555555555555555555555555555555555555555555",
+      "static_dependency_tags": ["benchmark"],
+      "prerequisites": []
+    },
+    {
+      "category": "PROJECT_TEST",
+      "provenance_path": "tests/CMakeLists.txt",
+      "provenance_span_or_key": "ctest:solver",
+      "entrypoint": "ctest:solver",
+      "normalized_entrypoint": "ctest:solver",
+      "declared_inputs": {"kind": "ctest"},
+      "declared_input_schema_sha256": "f666666666666666666666666666666666666666666666666666666666666666",
+      "static_dependency_tags": ["gtest"],
+      "prerequisites": []
+    }
+  ]
+}

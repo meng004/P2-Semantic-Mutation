@@ -1,0 +1,226 @@
+{
+  "ecosystem": "python",
+  "adapter_id": "PYTHON_PEP517_V1",
+  "declarations": [
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "src/demo_pkg/api.py",
+      "provenance_span_or_key": "solve",
+      "entrypoint": "demo_pkg.api:solve",
+      "normalized_entrypoint": "demo_pkg.api:solve",
+      "declared_inputs": {"kind": "numeric_array"},
+      "declared_input_schema_sha256": "a111111111111111111111111111111111111111111111111111111111111111",
+      "static_dependency_tags": ["numpy", "scipy"],
+      "prerequisites": []
+    },
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "src/demo_pkg/api.py",
+      "provenance_span_or_key": "integrate",
+      "entrypoint": "demo_pkg.api:integrate",
+      "normalized_entrypoint": "demo_pkg.api:integrate",
+      "declared_inputs": {"kind": "numeric_array"},
+      "declared_input_schema_sha256": "a222222222222222222222222222222222222222222222222222222222222222",
+      "static_dependency_tags": ["numpy"],
+      "prerequisites": []
+    },
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "src/demo_pkg/api.py",
+      "provenance_span_or_key": "fit",
+      "entrypoint": "demo_pkg.api:fit",
+      "normalized_entrypoint": "demo_pkg.api:fit",
+      "declared_inputs": {"kind": "table"},
+      "declared_input_schema_sha256": "a333333333333333333333333333333333333333333333333333333333333333",
+      "static_dependency_tags": ["pandas"],
+      "prerequisites": ["optional-extra"]
+    },
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "src/demo_pkg/transform.py",
+      "provenance_span_or_key": "transform",
+      "entrypoint": "demo_pkg.transform:transform",
+      "normalized_entrypoint": "demo_pkg.transform:transform",
+      "declared_inputs": {"kind": "bytes"},
+      "declared_input_schema_sha256": "a444444444444444444444444444444444444444444444444444444444444444",
+      "static_dependency_tags": [],
+      "prerequisites": []
+    },
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "src/demo_pkg/io.py",
+      "provenance_span_or_key": "load",
+      "entrypoint": "demo_pkg.io:load",
+      "normalized_entrypoint": "demo_pkg.io:load",
+      "declared_inputs": {"kind": "path"},
+      "declared_input_schema_sha256": "a555555555555555555555555555555555555555555555555555555555555555",
+      "static_dependency_tags": ["numpy", "numpy"],
+      "prerequisites": []
+    },
+    {
+      "category": "CLI",
+      "provenance_path": "pyproject.toml",
+      "provenance_span_or_key": "project.scripts.demo",
+      "entrypoint": "demo_pkg.cli:main",
+      "normalized_entrypoint": "demo_pkg.cli:main",
+      "declared_inputs": {"kind": "cli_tokens"},
+      "declared_input_schema_sha256": "b111111111111111111111111111111111111111111111111111111111111111",
+      "static_dependency_tags": ["click"],
+      "prerequisites": []
+    },
+    {
+      "category": "CLI",
+      "provenance_path": "pyproject.toml",
+      "provenance_span_or_key": "project.scripts.demo-fit",
+      "entrypoint": "demo_pkg.cli:fit_main",
+      "normalized_entrypoint": "demo_pkg.cli:fit_main",
+      "declared_inputs": {"kind": "cli_tokens"},
+      "declared_input_schema_sha256": "b222222222222222222222222222222222222222222222222222222222222222",
+      "static_dependency_tags": ["click", "numpy"],
+      "prerequisites": []
+    },
+    {
+      "category": "CLI",
+      "provenance_path": "docs/cli.md",
+      "provenance_span_or_key": "section:batch",
+      "entrypoint": "demo_pkg.cli:batch",
+      "normalized_entrypoint": "demo_pkg.cli:batch",
+      "declared_inputs": {"kind": "cli_tokens"},
+      "declared_input_schema_sha256": "b333333333333333333333333333333333333333333333333333333333333333",
+      "static_dependency_tags": ["click"],
+      "prerequisites": []
+    },
+    {
+      "category": "CLI",
+      "provenance_path": "docs/cli.md",
+      "provenance_span_or_key": "section:export",
+      "entrypoint": "demo_pkg.cli:export",
+      "normalized_entrypoint": "demo_pkg.cli:export",
+      "declared_inputs": {"kind": "cli_tokens"},
+      "declared_input_schema_sha256": "b444444444444444444444444444444444444444444444444444444444444444",
+      "static_dependency_tags": [],
+      "prerequisites": []
+    },
+    {
+      "category": "EXAMPLE",
+      "provenance_path": "examples/basic.py",
+      "provenance_span_or_key": "module",
+      "entrypoint": "examples.basic:run",
+      "normalized_entrypoint": "examples.basic:run",
+      "declared_inputs": {"kind": "none"},
+      "declared_input_schema_sha256": "c111111111111111111111111111111111111111111111111111111111111111",
+      "static_dependency_tags": ["numpy"],
+      "prerequisites": []
+    },
+    {
+      "category": "EXAMPLE",
+      "provenance_path": "examples/advanced.py",
+      "provenance_span_or_key": "module",
+      "entrypoint": "examples.advanced:run",
+      "normalized_entrypoint": "examples.advanced:run",
+      "declared_inputs": {"kind": "none"},
+      "declared_input_schema_sha256": "c222222222222222222222222222222222222222222222222222222222222222",
+      "static_dependency_tags": ["scipy"],
+      "prerequisites": []
+    },
+    {
+      "category": "EXAMPLE",
+      "provenance_path": "examples/pipeline.py",
+      "provenance_span_or_key": "module",
+      "entrypoint": "examples.pipeline:run",
+      "normalized_entrypoint": "examples.pipeline:run",
+      "declared_inputs": {"kind": "none"},
+      "declared_input_schema_sha256": "c333333333333333333333333333333333333333333333333333333333333333",
+      "static_dependency_tags": ["pandas", "numpy"],
+      "prerequisites": []
+    },
+    {
+      "category": "EXAMPLE",
+      "provenance_path": "examples/notebook_export.py",
+      "provenance_span_or_key": "module",
+      "entrypoint": "examples.notebook_export:run",
+      "normalized_entrypoint": "examples.notebook_export:run",
+      "declared_inputs": {"kind": "none"},
+      "declared_input_schema_sha256": "c444444444444444444444444444444444444444444444444444444444444444",
+      "static_dependency_tags": [],
+      "prerequisites": []
+    },
+    {
+      "category": "BENCHMARK",
+      "provenance_path": "benchmarks/bench_solve.py",
+      "provenance_span_or_key": "module",
+      "entrypoint": "benchmarks.bench_solve:main",
+      "normalized_entrypoint": "benchmarks.bench_solve:main",
+      "declared_inputs": {"kind": "bench"},
+      "declared_input_schema_sha256": "d111111111111111111111111111111111111111111111111111111111111111",
+      "static_dependency_tags": ["numpy"],
+      "prerequisites": []
+    },
+    {
+      "category": "BENCHMARK",
+      "provenance_path": "benchmarks/bench_fit.py",
+      "provenance_span_or_key": "module",
+      "entrypoint": "benchmarks.bench_fit:main",
+      "normalized_entrypoint": "benchmarks.bench_fit:main",
+      "declared_inputs": {"kind": "bench"},
+      "declared_input_schema_sha256": "d222222222222222222222222222222222222222222222222222222222222222",
+      "static_dependency_tags": ["scipy"],
+      "prerequisites": []
+    },
+    {
+      "category": "BENCHMARK",
+      "provenance_path": "benchmarks/bench_io.py",
+      "provenance_span_or_key": "module",
+      "entrypoint": "benchmarks.bench_io:main",
+      "normalized_entrypoint": "benchmarks.bench_io:main",
+      "declared_inputs": {"kind": "bench"},
+      "declared_input_schema_sha256": "d333333333333333333333333333333333333333333333333333333333333333",
+      "static_dependency_tags": [],
+      "prerequisites": []
+    },
+    {
+      "category": "PROJECT_TEST",
+      "provenance_path": "tests/test_api.py",
+      "provenance_span_or_key": "test_solve",
+      "entrypoint": "tests.test_api:test_solve",
+      "normalized_entrypoint": "tests.test_api:test_solve",
+      "declared_inputs": {"kind": "pytest"},
+      "declared_input_schema_sha256": "e111111111111111111111111111111111111111111111111111111111111111",
+      "static_dependency_tags": ["pytest"],
+      "prerequisites": []
+    },
+    {
+      "category": "PROJECT_TEST",
+      "provenance_path": "tests/test_cli.py",
+      "provenance_span_or_key": "test_main",
+      "entrypoint": "tests.test_cli:test_main",
+      "normalized_entrypoint": "tests.test_cli:test_main",
+      "declared_inputs": {"kind": "pytest"},
+      "declared_input_schema_sha256": "e222222222222222222222222222222222222222222222222222222222222222",
+      "static_dependency_tags": ["pytest", "click"],
+      "prerequisites": []
+    },
+    {
+      "category": "PROJECT_TEST",
+      "provenance_path": "tests/test_transform.py",
+      "provenance_span_or_key": "test_transform",
+      "entrypoint": "tests.test_transform:test_transform",
+      "normalized_entrypoint": "tests.test_transform:test_transform",
+      "declared_inputs": {"kind": "pytest"},
+      "declared_input_schema_sha256": "e333333333333333333333333333333333333333333333333333333333333333",
+      "static_dependency_tags": ["pytest"],
+      "prerequisites": []
+    },
+    {
+      "category": "PROJECT_TEST",
+      "provenance_path": "tests/test_io.py",
+      "provenance_span_or_key": "test_load",
+      "entrypoint": "tests.test_io:test_load",
+      "normalized_entrypoint": "tests.test_io:test_load",
+      "declared_inputs": {"kind": "pytest"},
+      "declared_input_schema_sha256": "e444444444444444444444444444444444444444444444444444444444444444",
+      "static_dependency_tags": [],
+      "prerequisites": []
+    }
+  ]
+}

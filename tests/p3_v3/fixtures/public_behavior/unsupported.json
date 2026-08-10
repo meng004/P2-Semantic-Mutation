@@ -1,0 +1,42 @@
+{
+  "ecosystem": "cargo",
+  "adapter_id": null,
+  "declarations": [
+    {
+      "category": "PUBLIC_API",
+      "provenance_path": "src/lib.rs",
+      "provenance_span_or_key": "solve",
+      "entrypoint": "demo::solve",
+      "normalized_entrypoint": "demo::solve",
+      "declared_inputs": {"kind": "numeric_array"},
+      "declared_input_schema_sha256": "aa11111111111111111111111111111111111111111111111111111111111111",
+      "static_dependency_tags": ["ndarray"],
+      "prerequisites": [],
+      "hand_command": "cargo test solve"
+    },
+    {
+      "category": "CLI",
+      "provenance_path": "Cargo.toml",
+      "provenance_span_or_key": "[[bin]].name=demo",
+      "entrypoint": "demo",
+      "normalized_entrypoint": "demo",
+      "declared_inputs": {"kind": "cli_tokens"},
+      "declared_input_schema_sha256": "aa22222222222222222222222222222222222222222222222222222222222222",
+      "static_dependency_tags": [],
+      "prerequisites": [],
+      "hand_command": "cargo run --bin demo"
+    },
+    {
+      "category": "PROJECT_TEST",
+      "provenance_path": "tests/smoke.rs",
+      "provenance_span_or_key": "smoke",
+      "entrypoint": "tests::smoke",
+      "normalized_entrypoint": "tests::smoke",
+      "declared_inputs": {"kind": "cargo_test"},
+      "declared_input_schema_sha256": "aa33333333333333333333333333333333333333333333333333333333333333",
+      "static_dependency_tags": [],
+      "prerequisites": [],
+      "hand_command": "cargo test"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ from .artifacts import (
     EvidenceError,
     canonical_json_bytes,
     canonical_sha256,
+    file_sha256,
     safe_relative_path,
     validate_exact_object,
     validate_sha256,
@@ -41,6 +42,19 @@ BEHAVIOR_CATEGORY_ORDER = [
     "BENCHMARK",
     "PROJECT_TEST",
 ]
+CONFIRMATORY_ADAPTERS = {
+    "PYTHON_PEP517_V1",
+    "CMAKE_CTEST_V1",
+    "MESON_TEST_V1",
+    "AUTOTOOLS_MAKECHECK_V1",
+}
+_ADAPTER_ECOSYSTEMS = {
+    "PYTHON_PEP517_V1": "python",
+    "CMAKE_CTEST_V1": "cmake",
+    "MESON_TEST_V1": "meson",
+    "AUTOTOOLS_MAKECHECK_V1": "autotools",
+}
+_BEHAVIOR_CATEGORIES = set(BEHAVIOR_CATEGORY_ORDER)
 P12_OUTCOME_STATES = [
     "MR_VIOLATION",
     "MR_SATISFIED",
@@ -160,8 +174,21 @@ _REVEAL_SCHEMA = {
     "reveal_nonce": str,
     "normalized_source_tree_sha256": str,
 }
-
-
+_ADAPTER_ENTRY_SCHEMA = {
+    "adapter_id": str,
+    "ecosystem": str,
+    "implementation_path": str,
+    "source_sha256": str,
+}
+_ADAPTER_REGISTRY_SCHEMA = {
+    "schema_version": str,
+    "adapters": list,
+    "artifact_sha256": str,
+}
+_SOURCE_RECORD_SCHEMA = {
+    "normalized_source_tree_sha256": str,
+    "build_descriptor_sha256": str,
+}
 def validate_protocol(
     protocol: Mapping[str, Any],
     expected_plan_sha256: str,
@@ -607,3 +634,387 @@ def verify_reveal(
         or observed_normalized_sha256 != bridge_record["normalized_source_tree_sha256"]
     ):
         raise EvidenceError("E_REVEAL_SOURCE", "normalized source differs")
+
+
+def validate_adapter_registry(registry: Mapping[str, Any], source_root: str | Path) -> dict[str, Any]:
+    value = validate_exact_object(dict(registry), _ADAPTER_REGISTRY_SCHEMA, "adapter_registry")
+    if value["schema_version"] != "p3-adapter-registry-v1":
+        raise EvidenceError("E_ADAPTER_REGISTRY", "adapter registry version differs")
+    body = {key: item for key, item in value.items() if key != "artifact_sha256"}
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_ADAPTER_REGISTRY_HASH", "adapter registry self-hash differs")
+    adapters = value["adapters"]
+    if not isinstance(adapters, list) or len(adapters) != len(CONFIRMATORY_ADAPTERS):
+        raise EvidenceError("E_ADAPTER_ALLOWLIST", "adapter registry must list confirmatory adapters exactly")
+    root = Path(source_root)
+    seen: set[str] = set()
+    normalized: list[dict[str, Any]] = []
+    for index, candidate in enumerate(adapters):
+        entry = validate_exact_object(candidate, _ADAPTER_ENTRY_SCHEMA, f"adapters[{index}]")
+        adapter_id = entry["adapter_id"]
+        if adapter_id not in CONFIRMATORY_ADAPTERS:
+            raise EvidenceError("E_ADAPTER_ALLOWLIST", f"adapter not confirmatory: {adapter_id}")
+        if adapter_id in seen:
+            raise EvidenceError("E_ADAPTER_DUPLICATE", f"duplicate adapter: {adapter_id}")
+        seen.add(adapter_id)
+        if entry["ecosystem"] != _ADAPTER_ECOSYSTEMS[adapter_id]:
+            raise EvidenceError("E_ADAPTER_ECOSYSTEM", f"ecosystem differs for {adapter_id}")
+        relative = safe_relative_path(entry["implementation_path"])
+        validate_sha256(entry["source_sha256"], f"adapters[{index}].source_sha256")
+        absolute = root / relative.as_posix()
+        if not absolute.is_file() or absolute.is_symlink():
+            raise EvidenceError(
+                "E_ADAPTER_SOURCE",
+                f"adapter implementation missing: {entry['implementation_path']}",
+            )
+        if file_sha256(absolute) != entry["source_sha256"]:
+            raise EvidenceError(
+                "E_ADAPTER_SOURCE_HASH",
+                f"adapter source hash differs: {adapter_id}",
+            )
+        normalized.append(entry)
+    if seen != CONFIRMATORY_ADAPTERS:
+        raise EvidenceError("E_ADAPTER_ALLOWLIST", "confirmatory adapter set differs")
+    return {
+        "schema_version": value["schema_version"],
+        "adapters": normalized,
+        "artifact_sha256": value["artifact_sha256"],
+    }
+
+
+def _controlled_subject_source_id(source_record: Mapping[str, Any]) -> str:
+    return canonical_sha256(
+        {
+            "normalized_source_tree_sha256": source_record["normalized_source_tree_sha256"],
+            "build_descriptor_sha256": source_record["build_descriptor_sha256"],
+            "domain": "P3-SOURCE-v1",
+        }
+    )
+
+
+def _ecosystem_to_adapter(registry: Mapping[str, Any]) -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    for entry in registry["adapters"]:
+        mapping[entry["ecosystem"]] = entry["adapter_id"]
+    return mapping
+
+
+def _declaration_is_structurally_valid(declaration: Mapping[str, Any]) -> tuple[bool, str]:
+    category = declaration.get("category")
+    if category not in _BEHAVIOR_CATEGORIES:
+        return False, "category is not a frozen behavior category"
+    entrypoint = declaration.get("entrypoint")
+    normalized = declaration.get("normalized_entrypoint")
+    if not isinstance(entrypoint, str) or not entrypoint:
+        return False, "entrypoint is empty"
+    if not isinstance(normalized, str) or not normalized:
+        return False, "normalized_entrypoint is empty"
+    try:
+        validate_sha256(
+            declaration.get("declared_input_schema_sha256"),
+            "declared_input_schema_sha256",
+        )
+    except EvidenceError:
+        return False, "declared_input_schema_sha256 is invalid"
+    tags = declaration.get("static_dependency_tags")
+    if not isinstance(tags, list) or any(not isinstance(tag, str) for tag in tags):
+        return False, "static_dependency_tags must be a string list"
+    prerequisites = declaration.get("prerequisites")
+    if not isinstance(prerequisites, list) or any(not isinstance(item, str) for item in prerequisites):
+        return False, "prerequisites must be a string list"
+    if "declared_inputs" not in declaration:
+        return False, "declared_inputs missing"
+    span = declaration.get("provenance_span_or_key")
+    if not isinstance(span, str) or not span:
+        return False, "provenance_span_or_key missing"
+    return True, ""
+
+
+def _diversity_signature(row: Mapping[str, Any]) -> str:
+    return canonical_sha256(
+        {
+            "category": row["category"],
+            "normalized_entrypoint": row["normalized_entrypoint"],
+            "sorted_static_dependency_tags": sorted(set(row["static_dependency_tags"])),
+            "declared_input_schema_sha256": row["declared_input_schema_sha256"],
+            "domain": "P3-PROFILE-DIVERSITY-v1",
+        }
+    )
+
+
+def _behavior_id(source_id: str, row: Mapping[str, Any]) -> str:
+    return canonical_sha256(
+        {
+            "controlled_subject_source_id": source_id,
+            "category": row["category"],
+            "provenance_path": row["provenance_path"],
+            "provenance_span_or_key": row["provenance_span_or_key"],
+            "normalized_entrypoint": row["normalized_entrypoint"],
+            "domain": "P3-BEHAVIOR-v1",
+        }
+    )
+
+
+def build_public_behavior_frame(
+    source_record: Mapping[str, Any],
+    declarations: Sequence[Mapping[str, Any]],
+    adapter_registry: Mapping[str, Any],
+) -> dict[str, Any]:
+    source = validate_exact_object(dict(source_record), _SOURCE_RECORD_SCHEMA, "source_record")
+    validate_sha256(source["normalized_source_tree_sha256"], "normalized_source_tree_sha256")
+    validate_sha256(source["build_descriptor_sha256"], "build_descriptor_sha256")
+    registry = validate_exact_object(
+        dict(adapter_registry), _ADAPTER_REGISTRY_SCHEMA, "adapter_registry"
+    )
+    if {entry["adapter_id"] for entry in registry["adapters"]} != CONFIRMATORY_ADAPTERS:
+        raise EvidenceError("E_ADAPTER_ALLOWLIST", "adapter registry is incomplete")
+    ecosystem_adapters = _ecosystem_to_adapter(registry)
+    source_id = _controlled_subject_source_id(source)
+    rows: list[dict[str, Any]] = []
+    for index, raw in enumerate(declarations):
+        if not isinstance(raw, Mapping):
+            raise EvidenceError("E_DECLARATION", f"declarations[{index}] must be an object")
+        declaration = dict(raw)
+        provenance_path = declaration.get("provenance_path")
+        if not isinstance(provenance_path, str) or not provenance_path.strip():
+            raise EvidenceError("E_PROVENANCE", f"declarations[{index}] lacks public provenance")
+        safe_relative_path(provenance_path)
+        provenance_span = declaration.get("provenance_span_or_key")
+        if not isinstance(provenance_span, str):
+            provenance_span = ""
+        ecosystem = declaration.get("ecosystem")
+        if not isinstance(ecosystem, str) or not ecosystem:
+            raise EvidenceError("E_DECLARATION", f"declarations[{index}] ecosystem missing")
+        valid, reason = _declaration_is_structurally_valid(declaration)
+        adapter_id = ecosystem_adapters.get(ecosystem)
+        if adapter_id is None:
+            discovery_status = "ADAPTER_UNSUPPORTED"
+            exclusion = "ecosystem has no confirmatory adapter; hand-selected commands are forbidden"
+            diversity = None
+            behavior_fields = {
+                "category": declaration.get("category")
+                if declaration.get("category") in _BEHAVIOR_CATEGORIES
+                else "PUBLIC_API",
+                "entrypoint": declaration.get("entrypoint")
+                if isinstance(declaration.get("entrypoint"), str)
+                else "",
+                "normalized_entrypoint": declaration.get("normalized_entrypoint")
+                if isinstance(declaration.get("normalized_entrypoint"), str)
+                else "",
+                "declared_inputs": declaration.get("declared_inputs", {}),
+                "declared_input_schema_sha256": declaration.get("declared_input_schema_sha256")
+                if isinstance(declaration.get("declared_input_schema_sha256"), str)
+                else "0" * 64,
+                "static_dependency_tags": list(declaration.get("static_dependency_tags") or []),
+                "prerequisites": list(declaration.get("prerequisites") or []),
+            }
+            if behavior_fields["category"] not in _BEHAVIOR_CATEGORIES:
+                behavior_fields["category"] = "PUBLIC_API"
+        elif not valid:
+            discovery_status = "INVALID_DECLARATION"
+            exclusion = reason or "declaration is invalid"
+            diversity = None
+            behavior_fields = {
+                "category": declaration["category"]
+                if declaration.get("category") in _BEHAVIOR_CATEGORIES
+                else "PUBLIC_API",
+                "entrypoint": declaration.get("entrypoint")
+                if isinstance(declaration.get("entrypoint"), str)
+                else "",
+                "normalized_entrypoint": declaration.get("normalized_entrypoint")
+                if isinstance(declaration.get("normalized_entrypoint"), str)
+                else "",
+                "declared_inputs": declaration.get("declared_inputs", {}),
+                "declared_input_schema_sha256": declaration.get("declared_input_schema_sha256")
+                if isinstance(declaration.get("declared_input_schema_sha256"), str)
+                and len(str(declaration.get("declared_input_schema_sha256"))) == 64
+                else "0" * 64,
+                "static_dependency_tags": [
+                    tag
+                    for tag in list(declaration.get("static_dependency_tags") or [])
+                    if isinstance(tag, str)
+                ],
+                "prerequisites": [
+                    item
+                    for item in list(declaration.get("prerequisites") or [])
+                    if isinstance(item, str)
+                ],
+            }
+        else:
+            discovery_status = "EXECUTABLE"
+            exclusion = ""
+            behavior_fields = {
+                "category": declaration["category"],
+                "entrypoint": declaration["entrypoint"],
+                "normalized_entrypoint": declaration["normalized_entrypoint"],
+                "declared_inputs": declaration["declared_inputs"],
+                "declared_input_schema_sha256": validate_sha256(
+                    declaration["declared_input_schema_sha256"],
+                    "declared_input_schema_sha256",
+                ),
+                "static_dependency_tags": list(declaration["static_dependency_tags"]),
+                "prerequisites": list(declaration["prerequisites"]),
+            }
+            diversity = _diversity_signature(behavior_fields)
+        row_body = {
+            "controlled_subject_source_id": source_id,
+            "category": behavior_fields["category"],
+            "provenance_path": provenance_path,
+            "provenance_span_or_key": provenance_span,
+            "entrypoint": behavior_fields["entrypoint"],
+            "normalized_entrypoint": behavior_fields["normalized_entrypoint"],
+            "declared_inputs": behavior_fields["declared_inputs"],
+            "declared_input_schema_sha256": behavior_fields["declared_input_schema_sha256"],
+            "static_dependency_tags": sorted(set(behavior_fields["static_dependency_tags"]))
+            if discovery_status == "EXECUTABLE"
+            else list(behavior_fields["static_dependency_tags"]),
+            "prerequisites": list(behavior_fields["prerequisites"]),
+            "ecosystem": ecosystem,
+            "adapter_id": adapter_id,
+            "discovery_status": discovery_status,
+            "unsupported_or_exclusion_reason": exclusion,
+            "diversity_signature_sha256": diversity,
+        }
+        behavior_id = _behavior_id(source_id, row_body)
+        row = {**row_body, "behavior_id": behavior_id}
+        row_hash_body = {key: value for key, value in row.items()}
+        rows.append({**row, "artifact_sha256": canonical_sha256(row_hash_body)})
+
+    rows.sort(
+        key=lambda item: (
+            BEHAVIOR_CATEGORY_ORDER.index(item["category"])
+            if item["category"] in _BEHAVIOR_CATEGORIES
+            else len(BEHAVIOR_CATEGORY_ORDER),
+            item["provenance_path"],
+            item["provenance_span_or_key"],
+            item["normalized_entrypoint"],
+            item["behavior_id"],
+        )
+    )
+    accounting = []
+    for category in BEHAVIOR_CATEGORY_ORDER:
+        category_rows = [row for row in rows if row["category"] == category]
+        accounting.append(
+            {
+                "category": category,
+                "discovered_count": len(category_rows),
+                "executable_count": sum(
+                    1 for row in category_rows if row["discovery_status"] == "EXECUTABLE"
+                ),
+                "adapter_unsupported_count": sum(
+                    1
+                    for row in category_rows
+                    if row["discovery_status"] == "ADAPTER_UNSUPPORTED"
+                ),
+                "invalid_count": sum(
+                    1
+                    for row in category_rows
+                    if row["discovery_status"] == "INVALID_DECLARATION"
+                ),
+            }
+        )
+    body = {
+        "schema_version": "p3-public-behavior-frame-v1",
+        "controlled_subject_source_id": source_id,
+        "category_accounting": accounting,
+        "rows": rows,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def select_profiling_workload(frame: Mapping[str, Any], scale_class: str) -> dict[str, Any]:
+    if scale_class not in PROFILING_BUDGETS:
+        raise EvidenceError("E_SCALE", f"invalid scale_class: {scale_class}")
+    if not isinstance(frame, Mapping) or "rows" not in frame:
+        raise EvidenceError("E_FRAME", "public behavior frame rows are absent")
+    budget = PROFILING_BUDGETS[scale_class]
+    source_id = frame.get("controlled_subject_source_id")
+    validate_sha256(source_id, "controlled_subject_source_id")
+    buckets: dict[str, list[dict[str, Any]]] = {category: [] for category in BEHAVIOR_CATEGORY_ORDER}
+    for index, candidate in enumerate(frame["rows"]):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError("E_FRAME_ROW", f"rows[{index}] must be an object")
+        if candidate.get("discovery_status") != "EXECUTABLE":
+            continue
+        category = candidate.get("category")
+        if category not in _BEHAVIOR_CATEGORIES:
+            raise EvidenceError("E_FRAME_ROW", f"rows[{index}] category is invalid")
+        behavior_id = validate_sha256(candidate.get("behavior_id"), f"rows[{index}].behavior_id")
+        diversity = candidate.get("diversity_signature_sha256")
+        if not isinstance(diversity, str):
+            diversity = _diversity_signature(candidate)
+        else:
+            validate_sha256(diversity, f"rows[{index}].diversity_signature_sha256")
+        buckets[category].append(
+            {
+                "behavior_id": behavior_id,
+                "category": category,
+                "diversity_signature_sha256": diversity,
+                "normalized_entrypoint": candidate.get("normalized_entrypoint"),
+                "declared_input_schema_sha256": candidate.get("declared_input_schema_sha256"),
+                "static_dependency_tags": list(candidate.get("static_dependency_tags") or []),
+                "provenance_path": candidate.get("provenance_path"),
+                "provenance_span_or_key": candidate.get("provenance_span_or_key"),
+                "entrypoint": candidate.get("entrypoint"),
+            }
+        )
+    for category, items in buckets.items():
+        items.sort(key=lambda item: (item["diversity_signature_sha256"], item["behavior_id"]))
+    selected: list[dict[str, Any]] = []
+    selected_ids: list[str] = []
+    selected_set: set[str] = set()
+    seen_diversity: set[str] = set()
+    # First pass: one lowest row from each nonempty executable category.
+    for category in BEHAVIOR_CATEGORY_ORDER:
+        if len(selected) >= budget:
+            break
+        bucket = buckets[category]
+        if not bucket:
+            continue
+        choice = bucket[0]
+        selected.append(choice)
+        selected_ids.append(choice["behavior_id"])
+        selected_set.add(choice["behavior_id"])
+        seen_diversity.add(choice["diversity_signature_sha256"])
+    # Subsequent passes: prefer unseen diversity signatures, then lowest behavior_id.
+    while len(selected) < budget:
+        progressed = False
+        for category in BEHAVIOR_CATEGORY_ORDER:
+            if len(selected) >= budget:
+                break
+            remaining = [
+                item for item in buckets[category] if item["behavior_id"] not in selected_set
+            ]
+            if not remaining:
+                continue
+            unseen = [
+                item
+                for item in remaining
+                if item["diversity_signature_sha256"] not in seen_diversity
+            ]
+            pool = unseen if unseen else remaining
+            pool.sort(key=lambda item: (item["diversity_signature_sha256"], item["behavior_id"]))
+            choice = pool[0]
+            selected.append(choice)
+            selected_ids.append(choice["behavior_id"])
+            selected_set.add(choice["behavior_id"])
+            seen_diversity.add(choice["diversity_signature_sha256"])
+            progressed = True
+        if not progressed:
+            break
+    counts = {
+        category: sum(1 for item in selected if item["category"] == category)
+        for category in BEHAVIOR_CATEGORY_ORDER
+        if any(item["category"] == category for item in selected)
+    }
+    body = {
+        "schema_version": "p3-profiling-workload-v1",
+        "controlled_subject_source_id": source_id,
+        "scale_class": scale_class,
+        "budget": budget,
+        "category_order": list(BEHAVIOR_CATEGORY_ORDER),
+        "selected_rows": selected,
+        "selected_behavior_ids": selected_ids,
+        "selected_category_counts": counts,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
