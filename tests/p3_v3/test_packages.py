@@ -4,7 +4,8 @@ import copy
 
 import pytest
 
-from p3_v3.artifacts import EvidenceError
+import p3_v3.packages as packages_module
+from p3_v3.artifacts import EvidenceError, canonical_sha256
 from p3_v3.packages import (
     PACKAGE_A_CLASSES,
     PACKAGE_B_CLASSES,
@@ -225,3 +226,255 @@ def test_package_c_classes_remain_forbidden_from_a_and_b(tmp_path):
                 [{"path": "buggy.py", "class": "P12_REVEAL"}],
                 [],
             )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["extra", "omission", "bytes", "mode", "symlink", "unsafe_manifest_path"],
+)
+def test_verify_materialized_package_requires_exact_tree(tmp_path, mutation):
+    root = tmp_path / "materialized-package"
+    root.mkdir()
+    program = root / "program.py"
+    program.write_bytes(b"print(1)\n")
+    manifest = build_package(
+        "CONSTRUCTION_A",
+        root,
+        [{"path": "program.py", "class": "SOURCE"}],
+        [],
+    )
+    if mutation == "extra":
+        (root / "extra.txt").write_text("extra", encoding="utf-8")
+    elif mutation == "omission":
+        program.unlink()
+    elif mutation == "bytes":
+        program.write_bytes(b"print(2)\n")
+    elif mutation == "mode":
+        program.chmod(0o600 if manifest["files"][0]["mode"] != 0o600 else 0o644)
+    elif mutation == "symlink":
+        program.unlink()
+        target = root / "real.py"
+        target.write_bytes(b"print(1)\n")
+        program.symlink_to(target.name)
+    else:
+        manifest = copy.deepcopy(manifest)
+        manifest["files"][0]["path"] = "../program.py"
+        body = {
+            key: value for key, value in manifest.items() if key != "artifact_sha256"
+        }
+        from p3_v3.artifacts import canonical_sha256
+
+        manifest["package_tree_sha256"] = canonical_sha256(manifest["files"])
+        body["package_tree_sha256"] = manifest["package_tree_sha256"]
+        manifest["artifact_sha256"] = canonical_sha256(body)
+
+    with pytest.raises(EvidenceError):
+        packages_module.verify_materialized_package(root, manifest)
+
+
+def test_verify_materialized_package_returns_validated_manifest(tmp_path):
+    root = tmp_path / "materialized-package"
+    root.mkdir()
+    (root / "program.py").write_bytes(b"print(1)\n")
+    manifest = build_package(
+        "CONSTRUCTION_A",
+        root,
+        [{"path": "program.py", "class": "SOURCE"}],
+        [],
+    )
+
+    assert packages_module.verify_materialized_package(root, manifest) == manifest
+
+
+def test_verify_materialized_package_rejects_symlink_root(tmp_path):
+    real_root = tmp_path / "real-package"
+    real_root.mkdir()
+    (real_root / "program.py").write_bytes(b"print(1)\n")
+    manifest = build_package(
+        "CONSTRUCTION_A",
+        real_root,
+        [{"path": "program.py", "class": "SOURCE"}],
+        [],
+    )
+    linked_root = tmp_path / "linked-package"
+    linked_root.symlink_to(real_root, target_is_directory=True)
+
+    with pytest.raises(EvidenceError, match="E_PACKAGE_FILE_TYPE"):
+        packages_module.verify_materialized_package(linked_root, manifest)
+
+
+def _common_input_fixture():
+    source_id = "21" * 32
+    rows = []
+    for ordinal in range(1, 31):
+        seed = int.from_bytes(
+            bytes.fromhex(
+                canonical_sha256(
+                    {
+                        "domain": "P3-E-COMMON-SEED-v1",
+                        "controlled_subject_source_id": source_id,
+                        "ordinal": ordinal,
+                    }
+                )
+            )[:8],
+            "big",
+        )
+        envelope = {"ordinal": ordinal, "value": ordinal / 10}
+        raw_payload_sha256 = canonical_sha256(envelope)
+        identity = {
+            "controlled_subject_source_id": source_id,
+            "ordinal": ordinal,
+            "generator_id": "NUMERIC_ARRAY_DOMAIN_V1",
+            "schema_selection_key": "31" * 32,
+            "raw_schema_sha256": "32" * 32,
+            "schema_provenance_path": "public-schema.json",
+            "schema_provenance_span_or_key": "numeric",
+            "generator_source_sha256": "33" * 32,
+            "raw_payload_sha256": raw_payload_sha256,
+            "status": "COMMON_INPUT_EXECUTABLE",
+            "failure_code": "",
+            "domain": "P3-E-COMMON-INPUT-v1",
+        }
+        rows.append(
+            {
+                "ordinal": ordinal,
+                "seed": seed,
+                "generator_id": "NUMERIC_ARRAY_DOMAIN_V1",
+                "schema_kind": "NUMERIC_ARRAY_DOMAIN_V1",
+                "schema_selection_key": "31" * 32,
+                "raw_schema_sha256": "32" * 32,
+                "schema_provenance_path": "public-schema.json",
+                "schema_provenance_span_or_key": "numeric",
+                "generator_source_sha256": "33" * 32,
+                "status": "COMMON_INPUT_EXECUTABLE",
+                "failure_code": "",
+                "envelope": envelope,
+                "raw_payload_sha256": raw_payload_sha256,
+                "input_id": canonical_sha256(identity),
+            }
+        )
+    inventory_body = {
+        "schema_version": "p3-evaluation-inputs-common-v1",
+        "controlled_subject_source_id": source_id,
+        "eligible_schema_count": 1,
+        "rows": rows,
+    }
+    inventory = {
+        **inventory_body,
+        "artifact_sha256": canonical_sha256(inventory_body),
+    }
+    frame_body = {"controlled_subject_source_id": source_id}
+    frame = {**frame_body, "artifact_sha256": canonical_sha256(frame_body)}
+    workload_body = {"controlled_subject_source_id": source_id}
+    workload = {**workload_body, "artifact_sha256": canonical_sha256(workload_body)}
+    validity_rows = [
+        {
+            key: row[key]
+            for key in (
+                "ordinal",
+                "input_id",
+                "raw_payload_sha256",
+                "envelope",
+                "generator_id",
+                "schema_kind",
+                "schema_selection_key",
+                "raw_schema_sha256",
+                "seed",
+                "status",
+                "failure_code",
+            )
+        }
+        for row in rows
+    ]
+    validity_body = {
+        "schema_version": "p3-common-input-validity-v1",
+        "controlled_subject_source_id": source_id,
+        "inventory_artifact_sha256": inventory["artifact_sha256"],
+        "rows": validity_rows,
+        "sites": [],
+        "contracts": [],
+        "profile": {},
+        "frame_artifact_sha256": frame["artifact_sha256"],
+    }
+    validity = {**validity_body, "artifact_sha256": canonical_sha256(validity_body)}
+    return inventory, validity, frame, workload
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "row_keys",
+        "ordinal",
+        "subject",
+        "workload_subject",
+        "generator",
+        "schema",
+        "seed",
+        "raw_hash",
+        "input_id",
+        "validity_identity",
+        "frame_hash",
+        "preconsumer",
+    ],
+)
+def test_common_input_evidence_rejects_identity_or_chronology_drift(mutation):
+    inventory, validity, frame, workload = _common_input_fixture()
+    inventory = copy.deepcopy(inventory)
+    validity = copy.deepcopy(validity)
+    frame = copy.deepcopy(frame)
+    workload = copy.deepcopy(workload)
+    consumers = [inventory["rows"][0]["input_id"]]
+    if mutation == "row_keys":
+        inventory["rows"][0]["fabricated"] = True
+    elif mutation == "ordinal":
+        inventory["rows"][0]["ordinal"] = 0
+    elif mutation == "subject":
+        inventory["controlled_subject_source_id"] = "41" * 32
+    elif mutation == "workload_subject":
+        workload["controlled_subject_source_id"] = "42" * 32
+    elif mutation == "generator":
+        inventory["rows"][0]["generator_id"] = None
+    elif mutation == "schema":
+        inventory["rows"][0]["schema_kind"] = "CLI_TOKEN_GRAMMAR_V1"
+    elif mutation == "seed":
+        inventory["rows"][0]["seed"] += 1
+    elif mutation == "raw_hash":
+        inventory["rows"][0]["raw_payload_sha256"] = "0" * 64
+    elif mutation == "input_id":
+        inventory["rows"][0]["input_id"] = "0" * 64
+    elif mutation == "validity_identity":
+        validity["rows"][0]["input_id"] = "0" * 64
+    elif mutation == "frame_hash":
+        validity["frame_artifact_sha256"] = "0" * 64
+    else:
+        validity["rows"][0]["status"] = "COMMON_INPUT_INVALID"
+    for artifact in (inventory, validity, frame, workload):
+        artifact["artifact_sha256"] = canonical_sha256(
+            {key: value for key, value in artifact.items() if key != "artifact_sha256"}
+        )
+
+    with pytest.raises(EvidenceError, match="E_COMMON|E_SCHEMA_KEYS"):
+        packages_module.verify_common_input_evidence(
+            inventory,
+            validity,
+            controlled_subject_source_id="21" * 32,
+            public_frame=frame,
+            profiling_workload=workload,
+            consumer_input_ids=consumers,
+        )
+
+
+def test_common_input_evidence_accepts_exact_preconsumer_receipt():
+    inventory, validity, frame, workload = _common_input_fixture()
+
+    verified = packages_module.verify_common_input_evidence(
+        inventory,
+        validity,
+        controlled_subject_source_id="21" * 32,
+        public_frame=frame,
+        profiling_workload=workload,
+        consumer_input_ids=[row["input_id"] for row in inventory["rows"]],
+    )
+
+    assert verified["inventory"] == inventory
+    assert verified["validity"] == validity

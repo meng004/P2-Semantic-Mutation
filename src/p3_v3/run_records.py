@@ -118,6 +118,20 @@ _DENOMINATOR_SCHEMA = {
     "paired_ids_sha256": str,
     "artifact_sha256": str,
 }
+_PHASE_IDS = tuple(f"PHASE_{number}" for number in range(8))
+_PHASE_RECEIPT_SCHEMA = {
+    "phase_id": str,
+    "phase_status": str,
+    "protocol_sha256": str,
+    "expected_job_inventory_sha256": str,
+    "expected_job_count": int,
+    "terminal_result_count": int,
+    "ledger_event_count": int,
+    "ledger_head_sha256": (str, type(None)),
+    "ledger_raw_sha256": str,
+    "output_manifest_sha256": str,
+    "artifact_sha256": str,
+}
 
 
 def _validate_intent(intent: Mapping[str, Any]) -> dict[str, Any]:
@@ -325,6 +339,146 @@ def reduce_attempts(job_root: str | Path, ledger_path: str | Path) -> list[dict[
     return events
 
 
+def _require_directory(path: Path, context: str) -> list[Path]:
+    try:
+        info = path.lstat()
+    except FileNotFoundError as exc:
+        raise EvidenceError("E_ATTEMPT_TREE", f"missing {context}: {path}") from exc
+    if path.is_symlink() or not path.is_dir():
+        raise EvidenceError("E_ATTEMPT_TREE", f"{context} is not a directory: {path}")
+    return list(path.iterdir())
+
+
+def reconstruct_attempt_events(job_root: Path) -> list[dict[str, Any]]:
+    """Rebuild canonical ledger events from the frozen phase/job/attempt tree."""
+
+    root = Path(job_root)
+    phase_entries = _require_directory(root, "job root")
+    phase_directories: list[tuple[int, Path]] = []
+    for phase_directory in phase_entries:
+        if phase_directory.name not in _PHASE_IDS:
+            raise EvidenceError(
+                "E_ATTEMPT_TREE", f"unknown phase entry: {phase_directory.name}"
+            )
+        _require_directory(phase_directory, "phase entry")
+        phase_directories.append((_PHASE_IDS.index(phase_directory.name), phase_directory))
+
+    events: list[dict[str, Any]] = []
+    previous: str | None = None
+    for _, phase_directory in sorted(phase_directories):
+        job_directories = _require_directory(phase_directory, "phase entry")
+        if not job_directories:
+            raise EvidenceError("E_ATTEMPT_TREE", f"empty phase: {phase_directory.name}")
+        for job_directory in sorted(job_directories, key=lambda path: path.name):
+            if not job_directory.name or "/" in job_directory.name:
+                raise EvidenceError("E_ATTEMPT_TREE", "job ID is not a path segment")
+            attempt_entries = _require_directory(job_directory, "job entry")
+            attempts: list[tuple[int, Path]] = []
+            for attempt_directory in attempt_entries:
+                _require_directory(attempt_directory, "attempt entry")
+                if not attempt_directory.name.isdecimal():
+                    raise EvidenceError(
+                        "E_ATTEMPT_TREE", f"invalid attempt path: {attempt_directory}"
+                    )
+                number = int(attempt_directory.name)
+                if number < 1 or str(number) != attempt_directory.name:
+                    raise EvidenceError(
+                        "E_ATTEMPT_TREE", f"noncanonical attempt: {attempt_directory}"
+                    )
+                attempts.append((number, attempt_directory))
+            attempts.sort()
+            if not attempts or [number for number, _ in attempts] != list(
+                range(1, len(attempts) + 1)
+            ):
+                raise EvidenceError(
+                    "E_ATTEMPT_SEQUENCE", "attempts must be contiguous from one"
+                )
+            if len(attempts) > INFRASTRUCTURE_RETRY_LIMIT:
+                raise EvidenceError(
+                    "E_RETRY_POLICY",
+                    f"a job may have at most {INFRASTRUCTURE_RETRY_LIMIT} attempts",
+                )
+            previous_status: str | None = None
+            expected_retry_invariant: bytes | None = None
+            for attempt_number, attempt_directory in attempts:
+                if attempt_number > 1 and previous_status != "FAIL_INFRASTRUCTURE":
+                    raise EvidenceError(
+                        "E_RETRY_POLICY",
+                        "only a completed infrastructure failure permits another attempt",
+                    )
+                entries = _require_directory(attempt_directory, "attempt entry")
+                names = {entry.name for entry in entries}
+                if names not in ({"intent.json"}, {"intent.json", "result.json"}):
+                    raise EvidenceError(
+                        "E_ATTEMPT_TREE",
+                        f"attempt files differ from frozen grammar: {attempt_directory}",
+                    )
+                if any(entry.is_symlink() or not entry.is_file() for entry in entries):
+                    raise EvidenceError(
+                        "E_ATTEMPT_TREE", f"attempt contains a non-regular file: {attempt_directory}"
+                    )
+                intent = _validate_intent(
+                    read_canonical_json(attempt_directory / "intent.json")
+                )
+                if (
+                    intent["phase"] != phase_directory.name
+                    or intent["job_id"] != job_directory.name
+                    or intent["attempt"] != attempt_number
+                ):
+                    raise EvidenceError(
+                        "E_ATTEMPT_IDENTITY", "attempt directory identity differs"
+                    )
+                invariant = canonical_json_bytes(retry_invariant(intent))
+                if expected_retry_invariant is None:
+                    expected_retry_invariant = invariant
+                elif invariant != expected_retry_invariant:
+                    raise EvidenceError(
+                        "E_RETRY_IDENTITY",
+                        "retry intent differs from the first attempt outside attempt",
+                    )
+                intent_event = _event(len(events) + 1, "INTENT", intent, previous)
+                events.append(intent_event)
+                previous = intent_event["event_sha256"]
+                result_path = attempt_directory / "result.json"
+                if result_path.exists():
+                    result = _validate_result(read_canonical_json(result_path), intent)
+                    if (
+                        result["job_id"] != intent["job_id"]
+                        or result["attempt"] != intent["attempt"]
+                    ):
+                        raise EvidenceError(
+                            "E_RESULT_IDENTITY", "result identity differs from intent"
+                        )
+                    result_event = _event(
+                        len(events) + 1, "RESULT", result, previous
+                    )
+                    events.append(result_event)
+                    previous = result_event["event_sha256"]
+                    previous_status = result["status"]
+                else:
+                    previous_status = None
+    return events
+
+
+def verify_attempt_tree(
+    job_root: str | Path, ledger: str | Path
+) -> list[dict[str, Any]]:
+    """Require the supplied ledger to be the exact reconstruction of the tree."""
+
+    events = reconstruct_attempt_events(Path(job_root))
+    expected = b"".join(canonical_json_bytes(event) for event in events)
+    if Path(ledger).read_bytes() != expected:
+        raise EvidenceError(
+            "E_LEDGER_RECONSTRUCTION", "ledger bytes differ from reconstructed attempts"
+        )
+    verified = verify_ledger(ledger)
+    if verified != events:
+        raise EvidenceError(
+            "E_LEDGER_RECONSTRUCTION", "ledger events differ from reconstructed attempts"
+        )
+    return events
+
+
 def verify_ledger(ledger_path: str | Path) -> list[dict[str, Any]]:
     raw = Path(ledger_path).read_bytes()
     events: list[dict[str, Any]] = []
@@ -393,6 +547,7 @@ def close_phase(
     ledger_raw = Path(ledger_path).read_bytes()
     body = {
         "phase_id": phase_id,
+        "phase_status": "CLOSED",
         "protocol_sha256": protocol_sha256,
         "expected_job_inventory_sha256": canonical_sha256(expected),
         "expected_job_count": len(expected),
@@ -403,6 +558,72 @@ def close_phase(
         "output_manifest_sha256": output_manifest_sha256,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def verify_phase_receipt(
+    receipt: Mapping[str, Any],
+    events: Sequence[Mapping[str, Any]],
+    expected_jobs: Sequence[str],
+    output_manifest: Mapping[str, Any] | str,
+) -> None:
+    """Recompute a closed phase receipt from reconstructed events."""
+
+    value = validate_exact_object(dict(receipt), _PHASE_RECEIPT_SCHEMA, "phase_receipt")
+    if value["phase_id"] not in _PHASE_IDS:
+        raise EvidenceError("E_PHASE_RECEIPT", "phase receipt has an unknown phase")
+    validate_sha256(value["protocol_sha256"], "phase_receipt.protocol_sha256")
+    if isinstance(output_manifest, str):
+        output_sha256 = validate_sha256(output_manifest, "output_manifest_sha256")
+    elif isinstance(output_manifest, Mapping):
+        output_value = dict(output_manifest)
+        output_sha256 = validate_sha256(
+            output_value.get("artifact_sha256"), "output_manifest.artifact_sha256"
+        )
+        output_body = {
+            key: item for key, item in output_value.items() if key != "artifact_sha256"
+        }
+        if output_sha256 != canonical_sha256(output_body):
+            raise EvidenceError("E_PHASE_RECEIPT", "output manifest self-hash differs")
+    else:
+        raise EvidenceError("E_PHASE_RECEIPT", "output manifest must be an object")
+    expected = list(expected_jobs)
+    if expected != sorted(set(expected)) or any(
+        type(item) is not str or not item or "/" in item for item in expected
+    ):
+        raise EvidenceError("E_PHASE_RECEIPT", "expected jobs are not canonical")
+    normalized_events = [dict(event) for event in events]
+    ledger_raw = b"".join(canonical_json_bytes(event) for event in normalized_events)
+    intents = {
+        (event["job_id"], event["attempt"]): event
+        for event in normalized_events
+        if event.get("kind") == "INTENT"
+    }
+    results = {
+        (event["job_id"], event["attempt"]): event
+        for event in normalized_events
+        if event.get("kind") == "RESULT"
+    }
+    observed_jobs = sorted({job_id for job_id, _ in intents})
+    closed = set(intents) == set(results) and observed_jobs == expected
+    body = {
+        "phase_id": value["phase_id"],
+        "phase_status": "CLOSED" if closed else "OPEN",
+        "protocol_sha256": value["protocol_sha256"],
+        "expected_job_inventory_sha256": canonical_sha256(expected),
+        "expected_job_count": len(expected),
+        "terminal_result_count": len(results),
+        "ledger_event_count": len(normalized_events),
+        "ledger_head_sha256": (
+            normalized_events[-1]["event_sha256"] if normalized_events else None
+        ),
+        "ledger_raw_sha256": hashlib.sha256(ledger_raw).hexdigest(),
+        "output_manifest_sha256": output_sha256,
+    }
+    rebuilt = {**body, "artifact_sha256": canonical_sha256(body)}
+    if rebuilt != value:
+        raise EvidenceError(
+            "E_PHASE_RECEIPT", "phase receipt differs from reconstructed evidence"
+        )
 
 
 def _validate_p12_job(job: Mapping[str, Any], index: int) -> dict[str, Any]:

@@ -591,32 +591,87 @@ def test_validate_protocol_rejects_wrong_counts_retry_or_outcome_order(tmp_path)
 
 
 def test_verify_mr_inventory_accepts_exact_chronology(tmp_path):
-    body = {
-        "schema_version": "p3-mr-inventory-v1",
-        "candidate_frame_sha256": _digest("candidate"),
-        "custodian_receipt_sha256": _digest("receipt"),
-        "final_inventory_sha256": _digest("final"),
-        "portfolios_sha256": _digest("portfolios"),
-        "chronology": [
-            "candidate_frame",
-            "custodian_receipt",
-            "final_inventory",
-            "portfolios",
-        ],
+    candidate_body = {
+        "schema_version": "p3-mr-candidate-frame-v1",
+        "artifact_type": "MR_CANDIDATE_FRAME",
+        "candidate_mr_ids": ["mr-1"],
     }
-    inventory = {**body, "artifact_sha256": canonical_sha256(body)}
-    path = tmp_path / "mr.json"
-    path.write_bytes(
-        json.dumps(inventory, sort_keys=True, separators=(",", ":")).encode() + b"\n"
-    )
+    candidate = {**candidate_body, "artifact_sha256": canonical_sha256(candidate_body)}
+    receipt_body = {
+        "schema_version": "p3-mr-custodian-receipt-v1",
+        "artifact_type": "MR_CUSTODIAN_RECEIPT",
+        "candidate_frame_sha256": candidate["artifact_sha256"],
+        "receipt_state": "CLOSED",
+        "admitted_mr_ids": ["mr-1"],
+        "excluded_mr_ids": [],
+    }
+    receipt = {**receipt_body, "artifact_sha256": canonical_sha256(receipt_body)}
+    inventory_body = {
+        "schema_version": "p3-mr-final-inventory-v1",
+        "artifact_type": "MR_FINAL_INVENTORY",
+        "custodian_receipt_sha256": receipt["artifact_sha256"],
+        "mr_ids": ["mr-1"],
+    }
+    inventory = {
+        **inventory_body,
+        "artifact_sha256": canonical_sha256(inventory_body),
+    }
+    portfolios_body = {
+        "schema_version": "p3-mr-portfolios-v1",
+        "artifact_type": "MR_PORTFOLIOS",
+        "final_inventory_sha256": inventory["artifact_sha256"],
+        "portfolios": [{"portfolio_id": "primary", "mr_ids": ["mr-1"]}],
+    }
+    portfolios = {
+        **portfolios_body,
+        "artifact_sha256": canonical_sha256(portfolios_body),
+    }
+    paths = {}
+    for name, artifact in (
+        ("candidate", candidate),
+        ("receipt", receipt),
+        ("inventory", inventory),
+        ("portfolios", portfolios),
+    ):
+        paths[name] = tmp_path / f"{name}.json"
+        write_canonical_json(paths[name], artifact, exclusive=True)
     result = subprocess.run(
-        ["python3", str(CLI), "verify-mr-inventory", "--inventory", str(path)],
+        [
+            "python3",
+            str(CLI),
+            "verify-mr-inventory",
+            "--candidate-frame",
+            str(paths["candidate"]),
+            "--custodian-receipt",
+            str(paths["receipt"]),
+            "--final-inventory",
+            str(paths["inventory"]),
+            "--portfolios",
+            str(paths["portfolios"]),
+        ],
         capture_output=True, check=False,
         text=True,
         env=_env(),
     )
     assert result.returncode == 0
     assert json.loads(result.stdout)["status"] == "PASS"
+
+    legacy = subprocess.run(
+        ["python3", str(CLI), "verify-mr-inventory", "--inventory", str(paths["inventory"])],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
+    )
+    assert legacy.returncode == 2
+    help_result = subprocess.run(
+        ["python3", str(CLI), "verify-mr-inventory", "--help"],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
+    )
+    assert "--inventory" not in help_result.stdout
 
 
 def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path):
@@ -768,7 +823,511 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
     assert any(row["status"] == "COMMON_INPUT_EXECUTABLE" for row in common["rows"])
 
 
-def test_verify_evidence_validates_complete_evidence_set(tmp_path):
+def _indexed_reference(index_root: Path, path: Path) -> dict:
+    return {
+        "path": path.relative_to(index_root).as_posix(),
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+    }
+
+
+def _write_evidence_index(path: Path, body: dict) -> None:
+    write_canonical_json(
+        path,
+        {**body, "artifact_sha256": canonical_sha256(body)},
+        exclusive=True,
+    )
+
+
+def _empty_evidence_index_body(tmp_path: Path) -> dict:
+    protocol = tmp_path / "protocol.json"
+    _write_protocol(protocol, _protocol_body())
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(b"")
+    (tmp_path / "jobs").mkdir()
+    claims_body = {
+        "schema_version": "p3-claim-evidence-v1",
+        "claims": [{"claim_id": "RQ1", "status": "blocked"}],
+    }
+    claims = {**claims_body, "artifact_sha256": canonical_sha256(claims_body)}
+    claims_path = tmp_path / "claims.json"
+    write_canonical_json(claims_path, claims, exclusive=True)
+    return {
+        "schema_version": "P3_V3_EVIDENCE_INDEX_V1",
+        "phase_coverage": [],
+        "protocol": _indexed_reference(tmp_path, protocol),
+        "adapter_registries": [],
+        "input_generator_registries": [],
+        "subjects": [],
+        "packages": [],
+        "mr_chain": {},
+        "job_root": "jobs",
+        "ledger": _indexed_reference(tmp_path, ledger),
+        "phase_receipts": [],
+        "p12": {},
+        "claims": _indexed_reference(tmp_path, claims_path),
+    }
+
+
+def _run_evidence_index(index_path: Path) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["python3", str(CLI), "verify-evidence", "--index", str(index_path)],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_code"),
+    [
+        ("extra_key", "E_SCHEMA_KEYS"),
+        ("missing_key", "E_SCHEMA_KEYS"),
+        ("unsafe_path", "E_PATH"),
+        ("duplicate_path", "E_INDEX_DUPLICATE"),
+        ("hash_mismatch", "E_INDEX_FILE_HASH"),
+        ("unknown_phase", "E_INDEX_PHASE"),
+        ("empty_phase_collections", "E_INDEX_COVERAGE"),
+    ],
+)
+def test_evidence_index_rejects_structural_forgery(tmp_path, mutation, expected_code):
+    body = _empty_evidence_index_body(tmp_path)
+    if mutation == "extra_key":
+        body["unbound"] = []
+    elif mutation == "missing_key":
+        del body["claims"]
+    elif mutation == "unsafe_path":
+        body["protocol"] = {**body["protocol"], "path": "../protocol.json"}
+    elif mutation == "duplicate_path":
+        body["claims"] = dict(body["protocol"])
+    elif mutation == "hash_mismatch":
+        body["protocol"] = {**body["protocol"], "sha256": "0" * 64}
+    elif mutation == "unknown_phase":
+        body["phase_coverage"] = ["PHASE_8"]
+    elif mutation == "empty_phase_collections":
+        body["phase_coverage"] = ["PHASE_0"]
+    index_path = tmp_path / "evidence-index.json"
+    _write_evidence_index(index_path, body)
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == expected_code
+    assert not result.stdout
+
+
+def test_evidence_index_rejects_noncanonical_bytes(tmp_path):
+    body = _empty_evidence_index_body(tmp_path)
+    index = {**body, "artifact_sha256": canonical_sha256(body)}
+    index_path = tmp_path / "evidence-index.json"
+    index_path.write_text(json.dumps(index, indent=2) + "\n", encoding="utf-8")
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_NONCANONICAL_JSON"
+    assert not result.stdout
+
+
+def _complete_phase_zero_evidence_index(tmp_path: Path) -> Path:
+    from p3_v3.packages import build_package
+    from p3_v3.run_records import (
+        close_phase,
+        create_intent,
+        reconstruct_attempt_events,
+        write_result,
+    )
+
+    protocol = tmp_path / "protocol.json"
+    protocol_raw = _write_protocol(protocol, _protocol_body())
+    package_root = tmp_path / "package-a"
+    package_root.mkdir()
+    (package_root / "source.py").write_bytes(b"print(1)\n")
+    manifest = build_package(
+        "CONSTRUCTION_A",
+        package_root,
+        [{"path": "source.py", "class": "SOURCE"}],
+        [],
+    )
+    manifest_path = tmp_path / "package-a-manifest.json"
+    output_manifest_path = tmp_path / "phase-0-output-manifest.json"
+    write_canonical_json(manifest_path, manifest, exclusive=True)
+    write_canonical_json(output_manifest_path, manifest, exclusive=True)
+
+    job_id = "phase-0-job"
+    attempt = tmp_path / f"jobs/PHASE_0/{job_id}/1"
+    intent = {
+        "job_id": job_id,
+        "protocol_sha256": hashlib.sha256(protocol_raw).hexdigest(),
+        "phase": "PHASE_0",
+        "argv": ["python3", "-c", "print(1)"],
+        "cwd_identity": "fixture-root",
+        "environment_sha256": "b" * 64,
+        "input_sha256": ["c" * 64],
+        "seed": None,
+        "timeout_seconds": 30,
+        "attempt": 1,
+        "object_type": "PREFLIGHT",
+        "object_id": "phase-0",
+        "mr_id": "not-applicable",
+        "evaluation_input_class": "E_COMMON",
+        "evaluation_input_id": "phase-0-input",
+        "repetition_id": 1,
+        "environment_id": "env-1",
+        "job_role": "PRIMARY_CONTROLLED",
+    }
+    create_intent(attempt, intent)
+    write_result(
+        attempt,
+        {
+            "job_id": job_id,
+            "attempt": 1,
+            "status": "PASS",
+            "exit_code": 0,
+            "stdout_sha256": "d" * 64,
+            "stderr_sha256": "e" * 64,
+            "duration_seconds": 0.25,
+            "failure_code": "",
+            "scientific_outcome": None,
+        },
+    )
+    events = reconstruct_attempt_events(tmp_path / "jobs")
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(b"".join(
+        json.dumps(event, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+        for event in events
+    ))
+    expected_jobs_path = tmp_path / "phase-0-expected-jobs.json"
+    write_canonical_json(expected_jobs_path, [job_id], exclusive=True)
+    receipt = close_phase(
+        "PHASE_0",
+        hashlib.sha256(protocol_raw).hexdigest(),
+        [job_id],
+        ledger,
+        manifest["artifact_sha256"],
+    )
+    receipt_path = tmp_path / "phase-0-receipt.json"
+    write_canonical_json(receipt_path, receipt, exclusive=True)
+    claims_body = {
+        "schema_version": "p3-claim-evidence-v1",
+        "claims": [{"claim_id": "RQ1", "status": "blocked"}],
+    }
+    claims_path = tmp_path / "claims.json"
+    write_canonical_json(
+        claims_path,
+        {**claims_body, "artifact_sha256": canonical_sha256(claims_body)},
+        exclusive=True,
+    )
+    body = {
+        "schema_version": "P3_V3_EVIDENCE_INDEX_V1",
+        "phase_coverage": ["PHASE_0"],
+        "protocol": _indexed_reference(tmp_path, protocol),
+        "adapter_registries": [],
+        "input_generator_registries": [],
+        "subjects": [],
+        "packages": [
+            {
+                "phase": "PHASE_0",
+                "input_role": "A",
+                "root": package_root.relative_to(tmp_path).as_posix(),
+                "manifest": _indexed_reference(tmp_path, manifest_path),
+            }
+        ],
+        "mr_chain": {},
+        "job_root": "jobs",
+        "ledger": _indexed_reference(tmp_path, ledger),
+        "phase_receipts": [
+            {
+                "phase": "PHASE_0",
+                "receipt": _indexed_reference(tmp_path, receipt_path),
+                "expected_jobs": _indexed_reference(tmp_path, expected_jobs_path),
+                "output_manifest": _indexed_reference(tmp_path, output_manifest_path),
+            }
+        ],
+        "p12": {},
+        "claims": _indexed_reference(tmp_path, claims_path),
+    }
+    index_path = tmp_path / "evidence-index.json"
+    _write_evidence_index(index_path, body)
+    return index_path
+
+
+def test_evidence_index_reconstructs_a_complete_phase_zero_set(tmp_path):
+    result = _run_evidence_index(_complete_phase_zero_evidence_index(tmp_path))
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout) == {
+        "status": "PASS",
+        "index_sha256": hashlib.sha256(
+            (tmp_path / "evidence-index.json").read_bytes()
+        ).hexdigest(),
+        "phase_coverage": ["PHASE_0"],
+        "manifest_count": 1,
+        "phase_receipt_count": 1,
+        "slot_artifact_count": 0,
+        "ledger_event_count": 2,
+    }
+
+
+def test_evidence_index_rejects_unindexed_attempt_file(tmp_path):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    (tmp_path / "jobs/PHASE_0/phase-0-job/1/unindexed.txt").write_text("x")
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_ATTEMPT_TREE"
+
+
+def test_evidence_index_rejects_unindexed_file_outside_declared_roots(tmp_path):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    (tmp_path / "unindexed-root.txt").write_text("forged", encoding="utf-8")
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_INDEX_UNINDEXED"
+
+
+def test_evidence_index_rejects_rebuilt_attempts_bound_to_another_protocol(tmp_path):
+    from p3_v3.run_records import close_phase, reconstruct_attempt_events
+
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text())
+    intent_path = tmp_path / "jobs/PHASE_0/phase-0-job/1/intent.json"
+    intent = json.loads(intent_path.read_text())
+    intent["protocol_sha256"] = "0" * 64
+    intent_path.write_bytes(
+        json.dumps(intent, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    events = reconstruct_attempt_events(tmp_path / "jobs")
+    ledger_path = tmp_path / index["ledger"]["path"]
+    ledger_path.write_bytes(
+        b"".join(
+            json.dumps(event, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+            for event in events
+        )
+    )
+    index["ledger"]["sha256"] = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
+    receipt_entry = index["phase_receipts"][0]
+    output_manifest = json.loads(
+        (tmp_path / receipt_entry["output_manifest"]["path"]).read_text()
+    )
+    receipt = close_phase(
+        "PHASE_0",
+        "0" * 64,
+        ["phase-0-job"],
+        ledger_path,
+        output_manifest["artifact_sha256"],
+    )
+    receipt_path = tmp_path / receipt_entry["receipt"]["path"]
+    receipt_path.write_bytes(
+        json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    receipt_entry["receipt"]["sha256"] = hashlib.sha256(
+        receipt_path.read_bytes()
+    ).hexdigest()
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_PROTOCOL_BINDING"
+
+
+def _phase_zero_index_with_slots(tmp_path: Path, slots: list[dict]) -> Path:
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    source_id = "21" * 32
+    rows = []
+    for ordinal in range(1, 31):
+        seed_digest = canonical_sha256(
+            {
+                "domain": "P3-E-COMMON-SEED-v1",
+                "controlled_subject_source_id": source_id,
+                "ordinal": ordinal,
+            }
+        )
+        seed = int.from_bytes(bytes.fromhex(seed_digest)[:8], "big")
+        identity = {
+            "controlled_subject_source_id": source_id,
+            "ordinal": ordinal,
+            "generator_id": None,
+            "schema_selection_key": None,
+            "raw_schema_sha256": None,
+            "schema_provenance_path": None,
+            "schema_provenance_span_or_key": None,
+            "generator_source_sha256": None,
+            "raw_payload_sha256": None,
+            "status": "COMMON_INPUT_UNAVAILABLE",
+            "failure_code": "COMMON_INPUT_UNAVAILABLE",
+            "domain": "P3-E-COMMON-INPUT-v1",
+        }
+        rows.append(
+            {
+                "ordinal": ordinal,
+                "seed": seed,
+                "generator_id": None,
+                "schema_kind": None,
+                "schema_selection_key": None,
+                "raw_schema_sha256": None,
+                "schema_provenance_path": None,
+                "schema_provenance_span_or_key": None,
+                "generator_source_sha256": None,
+                "status": "COMMON_INPUT_UNAVAILABLE",
+                "failure_code": "COMMON_INPUT_UNAVAILABLE",
+                "envelope": None,
+                "raw_payload_sha256": None,
+                "input_id": canonical_sha256(identity),
+            }
+        )
+    frame_body = {"controlled_subject_source_id": source_id}
+    frame = {**frame_body, "artifact_sha256": canonical_sha256(frame_body)}
+    workload_body = {"controlled_subject_source_id": source_id}
+    workload = {**workload_body, "artifact_sha256": canonical_sha256(workload_body)}
+    common_body = {
+        "schema_version": "p3-evaluation-inputs-common-v1",
+        "controlled_subject_source_id": source_id,
+        "eligible_schema_count": 0,
+        "rows": rows,
+    }
+    common = {**common_body, "artifact_sha256": canonical_sha256(common_body)}
+    validity_body = {
+        "schema_version": "p3-common-input-validity-v1",
+        "controlled_subject_source_id": source_id,
+        "inventory_artifact_sha256": common["artifact_sha256"],
+        "rows": [
+            {
+                key: row[key]
+                for key in (
+                    "ordinal",
+                    "input_id",
+                    "raw_payload_sha256",
+                    "envelope",
+                    "generator_id",
+                    "schema_kind",
+                    "schema_selection_key",
+                    "raw_schema_sha256",
+                    "seed",
+                    "status",
+                    "failure_code",
+                )
+            }
+            for row in rows
+        ],
+        "sites": [],
+        "contracts": [],
+        "profile": {},
+        "frame_artifact_sha256": frame["artifact_sha256"],
+    }
+    validity = {**validity_body, "artifact_sha256": canonical_sha256(validity_body)}
+    artifacts = {
+        "public-frame.json": frame,
+        "workload.json": workload,
+        "profiling-results.json": {"status": "NOT_RUN"},
+        "common.json": common,
+        "validity.json": validity,
+    }
+    for name, artifact in artifacts.items():
+        write_canonical_json(tmp_path / name, artifact, exclusive=True)
+    slot_refs = []
+    for index, slot in enumerate(slots):
+        path = tmp_path / f"slot-{index}.json"
+        write_canonical_json(path, slot, exclusive=True)
+        slot_refs.append(
+            {
+                "slot_id": slot["slot_id"],
+                "controlled_subject_id": "22" * 32,
+                "artifact": _indexed_reference(tmp_path, path),
+            }
+        )
+    index = json.loads(index_path.read_text())
+    index["subjects"] = [
+        {
+            "phase": "PHASE_0",
+            "controlled_subject_source_id": source_id,
+            "controlled_subject_id": "22" * 32,
+            "public_frame": _indexed_reference(tmp_path, tmp_path / "public-frame.json"),
+            "profiling_workload": _indexed_reference(tmp_path, tmp_path / "workload.json"),
+            "profiling_results": _indexed_reference(tmp_path, tmp_path / "profiling-results.json"),
+            "common_inputs": _indexed_reference(tmp_path, tmp_path / "common.json"),
+            "common_input_validity": _indexed_reference(tmp_path, tmp_path / "validity.json"),
+            "slot_artifacts": slot_refs,
+        }
+    ]
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    return index_path
+
+
+def test_evidence_index_requires_common_validity_before_attempt_consumption(tmp_path):
+    result = _run_evidence_index(_phase_zero_index_with_slots(tmp_path, []))
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_COMMON_CHRONOLOGY"
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_code"),
+    [
+        ("coordinate", "E_SLOT_COORDINATE"),
+        ("input_role", "E_SLOT_INPUT_ROLE"),
+        ("unknown_common", "E_COMMON_CHRONOLOGY"),
+    ],
+)
+def test_evidence_index_rejects_slot_coordinate_or_input_role_drift(
+    tmp_path, mutation, expected_code
+):
+    slot_id = "61" * 32
+    not_applicable = {
+        "slot_id": slot_id,
+        "chronology": ["APPLICABILITY_CLOSED_NOT_APPLICABLE"],
+        "contract": None,
+        "e_contract": None,
+        "patch": None,
+        "certification_witness": None,
+        "e_common_input_ids": [],
+        "e_contract_input_ids": [],
+    }
+    if mutation == "coordinate":
+        slots = [not_applicable, dict(not_applicable)]
+    else:
+        common_id = "71" * 32
+        contract_id = common_id if mutation == "input_role" else "75" * 32
+        slots = [
+            {
+                "slot_id": slot_id,
+                "chronology": [
+                    "SITE_FROZEN",
+                    "CONTRACT_FROZEN",
+                    "E_CONTRACT_FROZEN",
+                    "PATCH_FROZEN",
+                    "CERTIFICATION_WITNESS_SELECTED",
+                    "TERMINAL_STATE",
+                ],
+                "contract": {"contract_id": "72" * 32},
+                "e_contract": {"rows": []},
+                "patch": {"patch_id": "73" * 32},
+                "certification_witness": {"witness_id": "74" * 32},
+                "e_common_input_ids": [common_id],
+                "e_contract_input_ids": [contract_id],
+            }
+        ]
+    result = _run_evidence_index(_phase_zero_index_with_slots(tmp_path, slots))
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == expected_code
+
+
+def test_forged_evidence_index_is_rejected_without_pass_receipt(tmp_path):
+    """Removing reconstruction cannot turn self-consistent declarations into PASS."""
+
     protocol = tmp_path / "protocol.json"
     _write_protocol(protocol, _protocol_body())
     claims_body = {
@@ -779,131 +1338,123 @@ def test_verify_evidence_validates_complete_evidence_set(tmp_path):
     claims_path = tmp_path / "claims.json"
     write_canonical_json(claims_path, claims, exclusive=True)
 
-    manifest_body = {
-        "schema_version": "p3-package-manifest-v1",
-        "role": "CONSTRUCTION_A",
-        "parents": [],
-        "files": [],
-        "package_tree_sha256": canonical_sha256([]),
-    }
-    manifest = {**manifest_body, "artifact_sha256": canonical_sha256(manifest_body)}
-    manifest_path = tmp_path / "manifest.json"
-    write_canonical_json(manifest_path, manifest, exclusive=True)
-
     ledger = tmp_path / "ledger.jsonl"
     ledger.write_bytes(b"")
-
-    from p3_v3.run_records import close_phase
-
-    receipt = close_phase(
-        "PHASE-SYNTH",
-        "a" * 64,
-        [],
-        ledger,
-        "c" * 64,
-    )
-    receipt_path = tmp_path / "receipt.json"
-    write_canonical_json(receipt_path, receipt, exclusive=True)
-
-    slot_artifacts = {
-        "slot_id": "c3" * 32,
-        "chronology": ["APPLICABILITY_CLOSED_NOT_APPLICABLE"],
-        "contract": None,
-        "e_contract": None,
-        "patch": None,
-        "certification_witness": None,
-        "e_common_input_ids": [],
-        "e_contract_input_ids": [],
-    }
-    slot_path = tmp_path / "slot.json"
-    write_canonical_json(slot_path, slot_artifacts, exclusive=True)
 
     common_body = {
         "schema_version": "p3-evaluation-inputs-common-v1",
         "controlled_subject_source_id": "21" * 32,
         "eligible_schema_count": 0,
-        "rows": [
-            {
-                "ordinal": index,
-                "seed": index,
-                "generator_id": None,
-                "schema_kind": None,
-                "schema_selection_key": None,
-                "raw_schema_sha256": None,
-                "status": "COMMON_INPUT_UNAVAILABLE",
-                "failure_code": "COMMON_INPUT_UNAVAILABLE",
-                "envelope": None,
-                "raw_payload_sha256": None,
-                "input_id": canonical_sha256({"ordinal": index}),
-            }
-            for index in range(30)
-        ],
+        "rows": [{"status": "FABRICATED"} for _ in range(30)],
     }
     common = {**common_body, "artifact_sha256": canonical_sha256(common_body)}
     common_path = tmp_path / "common.json"
     write_canonical_json(common_path, common, exclusive=True)
 
-    from p3_v3.run_records import freeze_p12_denominator, summarize_p12_outcomes
-
-    jobs = [
-        {
-            "job_id": f"j-{index}",
-            "object_type": "P12_FAULT",
-            "object_id": f"fault-{index}",
-            "mr_id": "mr-1",
-            "evaluation_input_class": "E_COMMON",
-            "evaluation_input_id": f"e-{index}",
-            "repetition_id": 1,
-            "environment_id": "env-1",
-            "job_role": "P12",
-            "weight": 1,
-        }
-        for index in range(5)
-    ]
-    paired = [f"fault-{index}" for index in range(5)]
-    denominator = freeze_p12_denominator(paired, jobs)
+    denominator_body = {
+        "schema_version": "p3-p12-denominator-v1",
+        "p12_paired_ids": [],
+        "jobs": [],
+        "planned_count": 0,
+        "job_inventory_sha256": canonical_sha256([]),
+        "paired_ids_sha256": canonical_sha256([]),
+    }
+    denominator = {
+        **denominator_body,
+        "artifact_sha256": canonical_sha256(denominator_body),
+    }
     denom_path = tmp_path / "denominator.json"
     write_canonical_json(denom_path, denominator, exclusive=True)
-    outcomes = list(P12_OUTCOME_STATES)
-    summary = summarize_p12_outcomes(
-        denominator,
-        [
-            {"job_id": f"j-{index}", "scientific_outcome": outcomes[index]}
-            for index in range(5)
-        ],
-    )
+    summary_body = {
+        "planned_count": 0,
+        "denominator_sha256": denominator["artifact_sha256"],
+        "status": "FABRICATED",
+    }
+    summary = {**summary_body, "artifact_sha256": canonical_sha256(summary_body)}
     summary_path = tmp_path / "summary.json"
     write_canonical_json(summary_path, summary, exclusive=True)
+
+    result_rows_path = tmp_path / "p12-results.json"
+    write_canonical_json(result_rows_path, [], exclusive=True)
+    validity_path = tmp_path / "common-validity.json"
+    write_canonical_json(validity_path, {"status": "FABRICATED"}, exclusive=True)
+    public_frame_path = tmp_path / "public-frame.json"
+    write_canonical_json(public_frame_path, {"status": "FABRICATED"}, exclusive=True)
+    workload_path = tmp_path / "profiling-workload.json"
+    write_canonical_json(workload_path, {"status": "FABRICATED"}, exclusive=True)
+    profiling_path = tmp_path / "profiling-results.json"
+    write_canonical_json(profiling_path, {"status": "FABRICATED"}, exclusive=True)
+
+    index_body = {
+        "schema_version": "P3_V3_EVIDENCE_INDEX_V1",
+        "phase_coverage": ["PHASE_1"],
+        "protocol": _indexed_reference(tmp_path, protocol),
+        "adapter_registries": [],
+        "input_generator_registries": [],
+        "subjects": [
+            {
+                "phase": "PHASE_1",
+                "controlled_subject_source_id": "21" * 32,
+                "controlled_subject_id": "22" * 32,
+                "public_frame": _indexed_reference(tmp_path, public_frame_path),
+                "profiling_workload": _indexed_reference(tmp_path, workload_path),
+                "profiling_results": _indexed_reference(tmp_path, profiling_path),
+                "common_inputs": _indexed_reference(tmp_path, common_path),
+                "common_input_validity": _indexed_reference(tmp_path, validity_path),
+                "slot_artifacts": [],
+            }
+        ],
+        "packages": [],
+        "mr_chain": {},
+        "job_root": "jobs",
+        "ledger": _indexed_reference(tmp_path, ledger),
+        "phase_receipts": [],
+        "p12": {
+            "denominator": _indexed_reference(tmp_path, denom_path),
+            "result_rows": _indexed_reference(tmp_path, result_rows_path),
+            "summary": _indexed_reference(tmp_path, summary_path),
+        },
+        "claims": _indexed_reference(tmp_path, claims_path),
+    }
+    index_path = tmp_path / "evidence-index.json"
+    _write_evidence_index(index_path, index_body)
 
     result = subprocess.run(
         [
             "python3",
             str(CLI),
             "verify-evidence",
-            "--protocol",
-            str(protocol),
-            "--manifest",
-            str(manifest_path),
-            "--ledger",
-            str(ledger),
-            "--phase-receipt",
-            str(receipt_path),
-            "--slot-artifacts",
-            str(slot_path),
-            "--common-inputs",
-            str(common_path),
-            "--denominator",
-            str(denom_path),
-            "--p12-summary",
-            str(summary_path),
-            "--claims",
-            str(claims_path),
+            "--index",
+            str(index_path),
         ],
         capture_output=True, check=False,
         text=True,
         env=_env(),
     )
-    assert result.returncode == 0, result.stderr
-    payload = json.loads(result.stdout)
-    assert payload["status"] == "PASS"
-    assert payload["claims_status"] == "blocked"
+    assert result.returncode != 0
+    assert not result.stdout
+    assert b'"status":"PASS"' not in result.stdout.encode()
+
+
+def test_verify_evidence_accepts_only_one_index_argument():
+    result = subprocess.run(
+        ["python3", str(CLI), "verify-evidence", "--help"],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
+    )
+    assert result.returncode == 0
+    assert "--index" in result.stdout
+    for legacy in (
+        "--protocol",
+        "--manifest",
+        "--ledger",
+        "--phase-receipt",
+        "--slot-artifacts",
+        "--common-inputs",
+        "--denominator",
+        "--p12-summary",
+        "--claims",
+    ):
+        assert legacy not in result.stdout

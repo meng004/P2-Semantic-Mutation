@@ -525,3 +525,141 @@ def test_phase7_p12_result_requires_scientific_outcome_and_others_forbid_it(tmp_
         p12,
         _result(job_id="p12-job", scientific_outcome="MR_SATISFIED"),
     )
+
+
+def _complete_attempt(job_root, phase, job_id, attempt=1, status="PASS"):
+    directory = job_root / phase / job_id / str(attempt)
+    create_intent(
+        directory,
+        _intent(job_id=job_id, attempt=attempt, phase=phase),
+    )
+    write_result(
+        directory,
+        _result(job_id=job_id, attempt=attempt, status=status),
+    )
+    return directory
+
+
+def test_reconstruct_attempt_events_orders_phase_job_attempt_and_ordinal(tmp_path):
+    jobs = tmp_path / "jobs"
+    _complete_attempt(jobs, "PHASE_3", "job-b")
+    _complete_attempt(jobs, "PHASE_1", "job-z")
+    first = _complete_attempt(
+        jobs, "PHASE_1", "job-a", status="FAIL_INFRASTRUCTURE"
+    )
+    assert first.is_dir()
+    _complete_attempt(jobs, "PHASE_1", "job-a", attempt=2)
+
+    events = run_records_module.reconstruct_attempt_events(jobs)
+
+    assert [
+        (event["job_id"], event["attempt"], event["kind"])
+        for event in events
+    ] == [
+        ("job-a", 1, "INTENT"),
+        ("job-a", 1, "RESULT"),
+        ("job-a", 2, "INTENT"),
+        ("job-a", 2, "RESULT"),
+        ("job-z", 1, "INTENT"),
+        ("job-z", 1, "RESULT"),
+        ("job-b", 1, "INTENT"),
+        ("job-b", 1, "RESULT"),
+    ]
+    assert [event["sequence"] for event in events] == list(range(1, 9))
+
+
+@pytest.mark.parametrize("mutation", ["unknown_file", "gap", "drifted_intent"])
+def test_reconstruct_attempt_events_rejects_nonfrozen_tree(tmp_path, mutation):
+    jobs = tmp_path / "jobs"
+    _complete_attempt(jobs, "PHASE_2", "job-1", status="FAIL_INFRASTRUCTURE")
+    if mutation == "unknown_file":
+        (jobs / "PHASE_2/job-1/1/undeclared.txt").write_text("x")
+    elif mutation == "gap":
+        _complete_attempt(jobs, "PHASE_2", "job-1", attempt=3)
+    else:
+        second = jobs / "PHASE_2/job-1/2"
+        create_intent(
+            second,
+            {**_intent(job_id="job-1", attempt=2, phase="PHASE_2"), "seed": 7},
+        )
+        write_result(second, _result(job_id="job-1", attempt=2))
+
+    with pytest.raises(EvidenceError, match="E_ATTEMPT_(TREE|SEQUENCE)|E_RETRY_IDENTITY"):
+        run_records_module.reconstruct_attempt_events(jobs)
+
+
+def test_verify_attempt_tree_requires_exact_ledger_bytes(tmp_path):
+    jobs = tmp_path / "jobs"
+    _complete_attempt(jobs, "PHASE_1", "job-a")
+    _complete_attempt(jobs, "PHASE_2", "job-b")
+    events = run_records_module.reconstruct_attempt_events(jobs)
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(b"".join(canonical_json_bytes(event) for event in events))
+    assert run_records_module.verify_attempt_tree(jobs, ledger) == events
+
+    reordered = tmp_path / "reordered.jsonl"
+    reordered.write_bytes(
+        canonical_json_bytes(events[2])
+        + canonical_json_bytes(events[3])
+        + canonical_json_bytes(events[0])
+        + canonical_json_bytes(events[1])
+    )
+    with pytest.raises(EvidenceError, match="E_LEDGER_RECONSTRUCTION"):
+        run_records_module.verify_attempt_tree(jobs, reordered)
+
+    altered = copy.deepcopy(events)
+    altered[-1]["status"] = "FAIL_SCIENTIFIC"
+    altered_path = tmp_path / "altered.jsonl"
+    altered_path.write_bytes(
+        b"".join(canonical_json_bytes(event) for event in altered)
+    )
+    with pytest.raises(EvidenceError, match="E_LEDGER_RECONSTRUCTION"):
+        run_records_module.verify_attempt_tree(jobs, altered_path)
+
+
+def test_verify_phase_receipt_recomputes_every_closed_phase_binding(tmp_path):
+    jobs = tmp_path / "jobs"
+    _complete_attempt(jobs, "PHASE_2", "job-1")
+    events = run_records_module.reconstruct_attempt_events(jobs)
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(b"".join(canonical_json_bytes(event) for event in events))
+    output_body = {
+        "schema_version": "p3-package-manifest-v1",
+        "role": "CONSTRUCTION_A",
+        "parents": [],
+        "files": [],
+        "package_tree_sha256": canonical_sha256([]),
+    }
+    output_manifest = {
+        **output_body,
+        "artifact_sha256": canonical_sha256(output_body),
+    }
+    receipt = close_phase(
+        "PHASE_2",
+        "a" * 64,
+        ["job-1"],
+        ledger,
+        output_manifest["artifact_sha256"],
+    )
+    assert receipt["phase_status"] == "CLOSED"
+    run_records_module.verify_phase_receipt(
+        receipt, events, ["job-1"], output_manifest
+    )
+
+    mutations = {
+        "ledger_event_count": 1,
+        "expected_job_count": 2,
+        "expected_job_inventory_sha256": "0" * 64,
+        "output_manifest_sha256": "1" * 64,
+        "terminal_result_count": 0,
+        "phase_status": "OPEN",
+    }
+    for field, value in mutations.items():
+        changed = {**receipt, field: value}
+        changed["artifact_sha256"] = canonical_sha256(
+            {key: item for key, item in changed.items() if key != "artifact_sha256"}
+        )
+        with pytest.raises(EvidenceError, match="E_PHASE_RECEIPT"):
+            run_records_module.verify_phase_receipt(
+                changed, events, ["job-1"], output_manifest
+            )
