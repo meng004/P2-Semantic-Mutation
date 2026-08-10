@@ -6,6 +6,8 @@ import hashlib
 import json
 import re
 import subprocess
+from decimal import Decimal
+from fractions import Fraction
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
@@ -55,6 +57,12 @@ _ADAPTER_ECOSYSTEMS = {
     "AUTOTOOLS_MAKECHECK_V1": "autotools",
 }
 _BEHAVIOR_CATEGORIES = set(BEHAVIOR_CATEGORY_ORDER)
+_PROFILE_TECHNIQUES = tuple(
+    technique for technique in _TECHNIQUE_ORDER if technique != "TECH_UNCERTAIN"
+)
+_UNRESOLVED_STATUSES = frozenset(
+    {"FAILURE", "TIMEOUT", "MISSING_TRACE", "ADAPTER_UNCERTAIN"}
+)
 P12_OUTCOME_STATES = [
     "MR_VIOLATION",
     "MR_SATISFIED",
@@ -505,9 +513,25 @@ def build_subject_frames(
     verified_bridge: Mapping[str, Any],
     feature_records: Sequence[Mapping[str, Any]],
     construct_limit: int = 18,
+    *,
+    technique_profile: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if type(construct_limit) is not int or construct_limit < 1:
         raise EvidenceError("E_CONSTRUCT_LIMIT", "construct limit must be positive")
+    derived_primary: str | None = None
+    derived_vector: list[str] | None = None
+    if technique_profile is not None:
+        if not isinstance(technique_profile, Mapping):
+            raise EvidenceError("E_TECHNIQUE_PROFILE", "technique_profile must be an object")
+        derived_primary = technique_profile.get("primary_technique")
+        if derived_primary not in _TECHNIQUES:
+            raise EvidenceError("E_TECHNIQUE_PROFILE", "invalid derived primary technique")
+        confirmed = technique_profile.get("confirmed_tags")
+        if not isinstance(confirmed, list) or any(
+            item not in _TECHNIQUES for item in confirmed
+        ):
+            raise EvidenceError("E_TECHNIQUE_PROFILE", "confirmed_tags must be technique labels")
+        derived_vector = sorted(set(confirmed) | {derived_primary})
     records = verified_bridge.get("records")
     if not isinstance(records, list):
         raise EvidenceError("E_BRIDGE_RECORDS", "verified bridge records are absent")
@@ -530,6 +554,12 @@ def build_subject_frames(
             or feature["primary_technique"] not in vector
         ):
             raise EvidenceError("E_TECHNIQUE", "technique vector is not canonical")
+        if derived_primary is not None and derived_vector is not None:
+            feature = {
+                **feature,
+                "primary_technique": derived_primary,
+                "technique_vector": list(derived_vector),
+            }
         features[neutral] = feature
     record_ids = {record["neutral_snapshot_id"] for record in records}
     if set(features) != record_ids:
@@ -1018,3 +1048,190 @@ def select_profiling_workload(frame: Mapping[str, Any], scale_class: str) -> dic
         "selected_category_counts": counts,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _serialize_fraction(value: Fraction) -> str:
+    text = format(Decimal(value.numerator) / Decimal(value.denominator), "f")
+    if "." in text:
+        text = text.rstrip("0").rstrip(".")
+    return text or "0"
+
+
+def classify_technique(
+    workload: Mapping[str, Any],
+    profiling_results: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    if not isinstance(workload, Mapping):
+        raise EvidenceError("E_WORKLOAD", "profiling workload must be an object")
+    selected_rows = workload.get("selected_rows")
+    if not isinstance(selected_rows, list):
+        raise EvidenceError("E_WORKLOAD", "selected_rows are absent")
+    selected: list[dict[str, Any]] = []
+    selected_ids: list[str] = []
+    seen_ids: set[str] = set()
+    for index, candidate in enumerate(selected_rows):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError("E_WORKLOAD_ROW", f"selected_rows[{index}] must be an object")
+        behavior_id = validate_sha256(
+            candidate.get("behavior_id"), f"selected_rows[{index}].behavior_id"
+        )
+        category = candidate.get("category")
+        if category not in _BEHAVIOR_CATEGORIES:
+            raise EvidenceError("E_WORKLOAD_ROW", f"selected_rows[{index}] category is invalid")
+        if behavior_id in seen_ids:
+            raise EvidenceError("E_WORKLOAD_ROW", f"duplicate selected behavior: {behavior_id}")
+        seen_ids.add(behavior_id)
+        selected.append({"behavior_id": behavior_id, "category": category})
+        selected_ids.append(behavior_id)
+    if not isinstance(profiling_results, Sequence) or isinstance(profiling_results, (str, bytes)):
+        raise EvidenceError("E_PROFILE_RESULTS", "profiling_results must be a sequence")
+    results_by_id: dict[str, Mapping[str, Any]] = {}
+    for index, candidate in enumerate(profiling_results):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError("E_PROFILE_RESULTS", f"profiling_results[{index}] must be an object")
+        behavior_id = validate_sha256(
+            candidate.get("behavior_id"), f"profiling_results[{index}].behavior_id"
+        )
+        if behavior_id not in seen_ids:
+            raise EvidenceError(
+                "E_PROFILE_RESULTS",
+                f"result behavior is not in workload: {behavior_id}",
+            )
+        if behavior_id in results_by_id:
+            raise EvidenceError("E_PROFILE_RESULTS", f"duplicate result: {behavior_id}")
+        results_by_id[behavior_id] = candidate
+    if set(results_by_id) != seen_ids:
+        missing = sorted(seen_ids - set(results_by_id))
+        raise EvidenceError(
+            "E_PROFILE_RESULTS",
+            f"profiling results do not cover selected rows: {missing[0]}",
+        )
+
+    categories = [
+        category
+        for category in BEHAVIOR_CATEGORY_ORDER
+        if any(row["category"] == category for row in selected)
+    ]
+    if not categories:
+        return {
+            "lower_scores": {},
+            "upper_scores": {},
+            "confirmed_tags": [],
+            "possible_tags": [],
+            "primary_technique": "TECH_UNCERTAIN",
+            "category_funnel": [],
+        }
+
+    category_size = Fraction(len(categories))
+    lower: dict[str, Fraction] = {technique: Fraction(0) for technique in _PROFILE_TECHNIQUES}
+    upper: dict[str, Fraction] = {technique: Fraction(0) for technique in _PROFILE_TECHNIQUES}
+    funnel: list[dict[str, Any]] = []
+    unresolved_total = 0
+    missing_success_category = False
+
+    for category in categories:
+        category_rows = [row for row in selected if row["category"] == category]
+        n_c = len(category_rows)
+        success_count = 0
+        unresolved_count = 0
+        technique_counts = {technique: 0 for technique in _PROFILE_TECHNIQUES}
+        for row in category_rows:
+            result = results_by_id[row["behavior_id"]]
+            status = result.get("status")
+            tags = result.get("technique_tags")
+            if status in _UNRESOLVED_STATUSES:
+                unresolved_count += 1
+                continue
+            if status != "SUCCESS":
+                raise EvidenceError(
+                    "E_PROFILE_RESULTS",
+                    f"unsupported profiling status for {row['behavior_id']}: {status!r}",
+                )
+            success_count += 1
+            if tags is None:
+                tags = []
+            if not isinstance(tags, list) or any(not isinstance(tag, str) for tag in tags):
+                raise EvidenceError(
+                    "E_PROFILE_RESULTS",
+                    f"technique_tags must be a string list for {row['behavior_id']}",
+                )
+            for tag in tags:
+                if tag == "TECH_UNCERTAIN":
+                    continue
+                if tag not in _TECHNIQUES:
+                    raise EvidenceError(
+                        "E_PROFILE_RESULTS",
+                        f"unknown technique tag for {row['behavior_id']}: {tag}",
+                    )
+                technique_counts[tag] += 1
+        if success_count == 0:
+            missing_success_category = True
+        unresolved_total += unresolved_count
+        n_fraction = Fraction(n_c)
+        for technique in _PROFILE_TECHNIQUES:
+            a_ct = Fraction(technique_counts[technique])
+            lower[technique] += (a_ct / n_fraction) / category_size
+            upper[technique] += ((a_ct + Fraction(unresolved_count)) / n_fraction) / category_size
+        funnel.append(
+            {
+                "category": category,
+                "n_c": n_c,
+                "successful_count": success_count,
+                "unresolved_count": unresolved_count,
+                "technique_counts": {
+                    technique: count
+                    for technique, count in technique_counts.items()
+                    if count > 0
+                },
+            }
+        )
+
+    confirmed_tags = [
+        technique for technique in _PROFILE_TECHNIQUES if lower[technique] > 0
+    ]
+    possible_tags = [
+        technique for technique in _PROFILE_TECHNIQUES if upper[technique] > 0
+    ]
+    lower_scores = {
+        technique: _serialize_fraction(lower[technique]) for technique in confirmed_tags
+    }
+    upper_scores = {
+        technique: _serialize_fraction(upper[technique]) for technique in possible_tags
+    }
+
+    if missing_success_category:
+        primary = "TECH_UNCERTAIN"
+    elif unresolved_total == 0:
+        best_score = max((lower[technique] for technique in _PROFILE_TECHNIQUES), default=Fraction(0))
+        if best_score <= 0:
+            primary = "TECH_UNCERTAIN"
+        else:
+            winners = [
+                technique
+                for technique in _PROFILE_TECHNIQUES
+                if lower[technique] == best_score
+            ]
+            primary = winners[0]
+    else:
+        primary = "TECH_UNCERTAIN"
+        for technique in _PROFILE_TECHNIQUES:
+            rival_upper = max(
+                (
+                    upper[other]
+                    for other in _PROFILE_TECHNIQUES
+                    if other != technique
+                ),
+                default=Fraction(0),
+            )
+            if lower[technique] > rival_upper:
+                primary = technique
+                break
+
+    return {
+        "lower_scores": lower_scores,
+        "upper_scores": upper_scores,
+        "confirmed_tags": confirmed_tags,
+        "possible_tags": possible_tags,
+        "primary_technique": primary,
+        "category_funnel": funnel,
+    }

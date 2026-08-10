@@ -14,6 +14,7 @@ from p3_v3.bridge_and_frames import (
     BEHAVIOR_CATEGORY_ORDER,
     build_public_behavior_frame,
     build_subject_frames,
+    classify_technique,
     select_construct_subjects,
     select_first_applicable_site,
     select_profiling_workload,
@@ -580,3 +581,202 @@ def test_profiling_workload_prefers_unseen_diversity_then_behavior_id(tmp_path):
     workload = select_profiling_workload(frame, "S")
     assert workload["selected_behavior_ids"][:5] == expected_first_pass
     assert len(workload["selected_behavior_ids"]) == 10
+
+
+def _behavior_id(label: str) -> str:
+    return canonical_sha256(
+        {
+            "domain": "P3-TEST-BEHAVIOR-v1",
+            "label": label,
+        }
+    )
+
+
+def _synthetic_workload(rows: list[tuple[str, str]]) -> dict:
+    selected_rows = [
+        {
+            "behavior_id": behavior_id,
+            "category": category,
+            "diversity_signature_sha256": "ab" * 32,
+            "normalized_entrypoint": f"entry:{behavior_id[:8]}",
+            "declared_input_schema_sha256": "cd" * 32,
+            "static_dependency_tags": [],
+            "provenance_path": f"docs/{category.lower()}.md",
+            "provenance_span_or_key": behavior_id[:8],
+            "entrypoint": f"entry:{behavior_id[:8]}",
+        }
+        for behavior_id, category in rows
+    ]
+    counts = {
+        category: sum(1 for _, item_category in rows if item_category == category)
+        for category in BEHAVIOR_CATEGORY_ORDER
+        if any(item_category == category for _, item_category in rows)
+    }
+    body = {
+        "schema_version": "p3-profiling-workload-v1",
+        "controlled_subject_source_id": "21" * 32,
+        "scale_class": "S",
+        "budget": 10,
+        "category_order": list(BEHAVIOR_CATEGORY_ORDER),
+        "selected_rows": selected_rows,
+        "selected_behavior_ids": [behavior_id for behavior_id, _ in rows],
+        "selected_category_counts": counts,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _success(behavior_id: str, *tags: str) -> dict:
+    return {
+        "behavior_id": behavior_id,
+        "status": "SUCCESS",
+        "technique_tags": list(tags),
+    }
+
+
+def _unresolved(behavior_id: str, status: str) -> dict:
+    return {
+        "behavior_id": behavior_id,
+        "status": status,
+        "technique_tags": [],
+    }
+
+
+def _category_balanced_fixture():
+    scalar_ids = [_behavior_id(f"scalar-{index}") for index in range(8)]
+    array_id = _behavior_id("array-0")
+    rows = [(behavior_id, "PUBLIC_API") for behavior_id in scalar_ids]
+    rows.append((array_id, "CLI"))
+    workload = _synthetic_workload(rows)
+    results = [_success(behavior_id, "SCALAR_CONTROL") for behavior_id in scalar_ids]
+    results.append(_success(array_id, "ARRAY_NUMERICAL"))
+    return workload, results, array_id
+
+
+def test_classify_technique_is_category_equal_not_row_weighted():
+    workload, results, array_id = _category_balanced_fixture()
+    profile = classify_technique(workload, results)
+    assert profile["lower_scores"]["SCALAR_CONTROL"] == "0.5"
+    assert profile["lower_scores"]["ARRAY_NUMERICAL"] == "0.5"
+    assert profile["upper_scores"]["SCALAR_CONTROL"] == "0.5"
+    assert profile["upper_scores"]["ARRAY_NUMERICAL"] == "0.5"
+    assert set(profile["confirmed_tags"]) == {"ARRAY_NUMERICAL", "SCALAR_CONTROL"}
+    assert set(profile["possible_tags"]) == {"ARRAY_NUMERICAL", "SCALAR_CONTROL"}
+
+    failed_ids = [_behavior_id(f"cli-fail-{index}") for index in range(3)]
+    extended_rows = [
+        (row["behavior_id"], row["category"]) for row in workload["selected_rows"]
+    ] + [(behavior_id, "CLI") for behavior_id in failed_ids]
+    extended_workload = _synthetic_workload(extended_rows)
+    extended_results = list(results) + [
+        _unresolved(behavior_id, "FAILURE") for behavior_id in failed_ids
+    ]
+    widened = classify_technique(extended_workload, extended_results)
+    assert widened["lower_scores"]["SCALAR_CONTROL"] == "0.5"
+    assert widened["lower_scores"]["ARRAY_NUMERICAL"] == "0.125"
+    assert widened["upper_scores"]["SCALAR_CONTROL"] == "0.875"
+    assert widened["upper_scores"]["ARRAY_NUMERICAL"] == "0.5"
+    for technique, upper in widened["upper_scores"].items():
+        baseline = profile["upper_scores"].get(technique, "0")
+        assert float(upper) >= float(baseline)
+    funnel = {row["category"]: row for row in widened["category_funnel"]}
+    assert funnel["CLI"]["n_c"] == 4
+    assert funnel["CLI"]["unresolved_count"] == 3
+    assert funnel["PUBLIC_API"]["n_c"] == 8
+    assert array_id in extended_workload["selected_behavior_ids"]
+
+
+def test_classify_technique_requires_success_in_every_selected_category():
+    scalar_id = _behavior_id("only-scalar")
+    failed_id = _behavior_id("failed-cli")
+    workload = _synthetic_workload(
+        [(scalar_id, "PUBLIC_API"), (failed_id, "CLI")]
+    )
+    results = [
+        _success(scalar_id, "SCALAR_CONTROL"),
+        _unresolved(failed_id, "TIMEOUT"),
+    ]
+    profile = classify_technique(workload, results)
+    assert profile["primary_technique"] == "TECH_UNCERTAIN"
+
+
+def test_classify_technique_overlapping_intervals_are_uncertain():
+    workload, results, _array_id = _category_balanced_fixture()
+    failed_ids = [_behavior_id(f"overlap-fail-{index}") for index in range(3)]
+    rows = [(row["behavior_id"], row["category"]) for row in workload["selected_rows"]]
+    rows.extend((behavior_id, "CLI") for behavior_id in failed_ids)
+    workload = _synthetic_workload(rows)
+    results = list(results) + [
+        _unresolved(behavior_id, "ADAPTER_UNCERTAIN") for behavior_id in failed_ids
+    ]
+    profile = classify_technique(workload, results)
+    assert profile["primary_technique"] == "TECH_UNCERTAIN"
+
+
+def test_classify_technique_strict_lower_bound_winner():
+    left = _behavior_id("winner-left")
+    right = _behavior_id("winner-right")
+    uncertain = _behavior_id("winner-uncertain")
+    workload = _synthetic_workload(
+        [
+            (left, "PUBLIC_API"),
+            (right, "CLI"),
+            (uncertain, "CLI"),
+        ]
+    )
+    results = [
+        _success(left, "SCALAR_CONTROL"),
+        _success(right, "SCALAR_CONTROL"),
+        _unresolved(uncertain, "MISSING_TRACE"),
+    ]
+    profile = classify_technique(workload, results)
+    assert profile["lower_scores"]["SCALAR_CONTROL"] == "0.75"
+    assert profile["upper_scores"]["SCALAR_CONTROL"] == "1"
+    assert profile["primary_technique"] == "SCALAR_CONTROL"
+    assert profile["confirmed_tags"] == ["SCALAR_CONTROL"]
+    assert profile["category_funnel"][1]["n_c"] == 2
+    assert profile["category_funnel"][1]["unresolved_count"] == 1
+
+
+def test_classify_technique_tie_breaks_with_frozen_technique_order():
+    left = _behavior_id("tie-left")
+    right = _behavior_id("tie-right")
+    workload = _synthetic_workload([(left, "PUBLIC_API"), (right, "CLI")])
+    results = [
+        _success(left, "SCALAR_CONTROL"),
+        _success(right, "ARRAY_NUMERICAL"),
+    ]
+    profile = classify_technique(workload, results)
+    assert profile["lower_scores"]["SCALAR_CONTROL"] == "0.5"
+    assert profile["lower_scores"]["ARRAY_NUMERICAL"] == "0.5"
+    assert profile["primary_technique"] == "ARRAY_NUMERICAL"
+
+
+def test_classify_technique_is_result_order_invariant():
+    workload, results, _array_id = _category_balanced_fixture()
+    first = classify_technique(workload, results)
+    second = classify_technique(workload, list(reversed(results)))
+    assert first == second
+    assert canonical_sha256(first) == canonical_sha256(second)
+
+
+def test_build_subject_frames_prefers_technique_profile_over_feature_label(
+    synthetic_release,
+):
+    verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
+    features = _features(verified["records"][0]["neutral_snapshot_id"])
+    assert features[0]["primary_technique"] == "ARRAY_NUMERICAL"
+    left = _behavior_id("frame-left")
+    right = _behavior_id("frame-right")
+    workload = _synthetic_workload([(left, "PUBLIC_API"), (right, "CLI")])
+    results = [
+        _success(left, "SCALAR_CONTROL"),
+        _success(right, "SCALAR_CONTROL"),
+    ]
+    profile = classify_technique(workload, results)
+    assert profile["primary_technique"] == "SCALAR_CONTROL"
+    frames = build_subject_frames(
+        verified, features, technique_profile=profile
+    )
+    subject = frames["subjects"][0]
+    assert subject["primary_technique"] == "SCALAR_CONTROL"
+    assert subject["technique_vector"] == ["SCALAR_CONTROL"]
