@@ -12,6 +12,9 @@ import pytest
 from p3_v3.artifacts import EvidenceError, canonical_sha256, file_sha256
 from p3_v3.bridge_and_frames import (
     BEHAVIOR_CATEGORY_ORDER,
+    E_COMMON_COUNT,
+    E_COMMON_GENERATOR_IDS,
+    build_common_inputs,
     build_public_behavior_frame,
     build_subject_frames,
     classify_technique,
@@ -20,11 +23,14 @@ from p3_v3.bridge_and_frames import (
     select_profiling_workload,
     validate_adapter_registry,
     validate_bridge_document,
+    validate_common_inputs_on_fixed_source,
+    validate_input_generator_registry,
     verify_pinned_bridge,
     verify_reveal,
 )
 
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "public_behavior"
+GENERATOR_FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "input_generators"
 CONFIRMATORY_ADAPTERS = {
     "PYTHON_PEP517_V1",
     "CMAKE_CTEST_V1",
@@ -780,3 +786,362 @@ def test_build_subject_frames_prefers_technique_profile_over_feature_label(
     subject = frames["subjects"][0]
     assert subject["primary_technique"] == "SCALAR_CONTROL"
     assert subject["technique_vector"] == ["SCALAR_CONTROL"]
+
+
+def _load_generator_registry() -> dict:
+    return json.loads((GENERATOR_FIXTURE_ROOT / "registry.json").read_text(encoding="utf-8"))
+
+
+def _public_schema(schema_kind: str, raw_schema: dict, **aliases) -> dict:
+    record = {
+        "schema_kind": schema_kind,
+        "raw_schema": raw_schema,
+    }
+    record.update(aliases)
+    return record
+
+
+def _public_frame_with_schemas(schemas: list[dict]) -> dict:
+    source_id = canonical_sha256(
+        {
+            "normalized_source_tree_sha256": "21" * 32,
+            "build_descriptor_sha256": "22" * 32,
+            "domain": "P3-SOURCE-v1",
+        }
+    )
+    body = {
+        "schema_version": "p3-public-behavior-frame-v1",
+        "controlled_subject_source_id": source_id,
+        "category_accounting": [
+            {
+                "category": category,
+                "discovered_count": 0,
+                "executable_count": 0,
+                "adapter_unsupported_count": 0,
+                "invalid_count": 0,
+            }
+            for category in BEHAVIOR_CATEGORY_ORDER
+        ],
+        "rows": [],
+        "public_schemas": schemas,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def test_input_generator_registry_binds_exact_five_e_common_ids_and_source_hashes():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    assert {item["generator_id"] for item in registry["generators"]} == set(
+        E_COMMON_GENERATOR_IDS
+    )
+    assert len(registry["generators"]) == 5
+    for item in registry["generators"]:
+        absolute = GENERATOR_FIXTURE_ROOT / item["implementation_path"]
+        assert file_sha256(absolute) == item["source_sha256"]
+        assert item["schema_kind"] == item["generator_id"]
+        assert item["failure_code"]
+        assert item["output_schema"]["generator_id"] == item["generator_id"]
+
+
+def test_input_generator_registry_rejects_source_hash_mismatch(tmp_path):
+    registry = _load_generator_registry()
+    for item in registry["generators"]:
+        src = GENERATOR_FIXTURE_ROOT / item["implementation_path"]
+        dst = tmp_path / item["implementation_path"]
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(src.read_bytes())
+    mutated = {
+        **registry,
+        "generators": [
+            {
+                **item,
+                "source_sha256": "0" * 64
+                if item["generator_id"] == "NUMERIC_ARRAY_DOMAIN_V1"
+                else item["source_sha256"],
+            }
+            for item in registry["generators"]
+        ],
+    }
+    body = {key: value for key, value in mutated.items() if key != "artifact_sha256"}
+    mutated = {**body, "artifact_sha256": canonical_sha256(body)}
+    with pytest.raises(EvidenceError, match="E_GENERATOR_SOURCE_HASH"):
+        validate_input_generator_registry(mutated, tmp_path)
+
+
+def test_build_common_inputs_ordinals_seeds_dedupe_and_round_robin():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    schemas = [
+        _public_schema(
+            "NUMERIC_ARRAY_DOMAIN_V1",
+            {"domain": "numeric", "shape": [2], "label": "a"},
+            subject_alias="subject-a",
+            project_alias="proj-a",
+        ),
+        _public_schema(
+            "CLI_TOKEN_GRAMMAR_V1",
+            {"domain": "cli", "tokens": ["--x"], "label": "b"},
+            subject_alias="subject-b",
+        ),
+        _public_schema(
+            "NUMERIC_ARRAY_DOMAIN_V1",
+            {"domain": "numeric", "shape": [2], "label": "a"},
+            subject_alias="subject-duplicate",
+            project_alias="proj-duplicate",
+        ),
+        _public_schema(
+            "TEXT_IO_SCHEMA_V1",
+            {"domain": "text", "encoding": "utf-8", "label": "c"},
+        ),
+    ]
+    frame = _public_frame_with_schemas(schemas)
+    inventory = build_common_inputs(_source_record(), frame, registry)
+    assert inventory["schema_version"] == "p3-evaluation-inputs-common-v1"
+    assert len(inventory["rows"]) == E_COMMON_COUNT == 30
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
+
+    source_id = frame["controlled_subject_source_id"]
+    for ordinal, row in enumerate(inventory["rows"]):
+        expected_seed = int.from_bytes(
+            bytes.fromhex(
+                canonical_sha256(
+                    {
+                        "domain": "P3-E-COMMON-SEED-v1",
+                        "controlled_subject_source_id": source_id,
+                        "ordinal": ordinal,
+                    }
+                )
+            )[:8],
+            "big",
+        )
+        assert row["seed"] == expected_seed
+
+    # Deduplicate by raw schema SHA-256 -> three eligible schemas.
+    unique_raw = []
+    seen_raw = set()
+    for schema in schemas:
+        raw_sha = canonical_sha256(schema["raw_schema"])
+        if raw_sha in seen_raw:
+            continue
+        seen_raw.add(raw_sha)
+        selection_body = {
+            key: value
+            for key, value in schema.items()
+            if key not in {"subject_alias", "project_alias", "controlled_subject_source_id"}
+        }
+        unique_raw.append(
+            (
+                canonical_sha256(selection_body),
+                raw_sha,
+                schema["schema_kind"],
+            )
+        )
+    unique_raw.sort(key=lambda item: (item[0], item[1]))
+    assert len(unique_raw) == 3
+    for ordinal, row in enumerate(inventory["rows"]):
+        expected_kind = unique_raw[ordinal % 3][2]
+        assert row["schema_kind"] == expected_kind
+        assert row["generator_id"] == expected_kind
+        assert row["status"] == "COMMON_INPUT_GENERATED"
+        assert row["raw_payload_sha256"]
+        assert row["envelope"]["generator_id"] == expected_kind
+
+    shuffled = _public_frame_with_schemas(list(reversed(schemas)))
+    shuffled_inventory = build_common_inputs(_source_record(), shuffled, registry)
+    assert [row["raw_payload_sha256"] for row in shuffled_inventory["rows"]] == [
+        row["raw_payload_sha256"] for row in inventory["rows"]
+    ]
+    assert [row["envelope"] for row in shuffled_inventory["rows"]] == [
+        row["envelope"] for row in inventory["rows"]
+    ]
+
+
+def test_build_common_inputs_rejects_forbidden_generator_inputs():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    base_schemas = [
+        _public_schema("NUMERIC_ARRAY_DOMAIN_V1", {"domain": "numeric", "shape": [1]})
+    ]
+    forbidden_cases = [
+        {"project_test_body": "assert True"},
+        {"project_test_fixture": {"x": 1}},
+        {"contracts": [{"id": "c1"}]},
+        {"contract": {"id": "c1"}},
+        {"sites": [{"path": "a.py"}]},
+        {"site": {"path": "a.py"}},
+        {"profiling_results": [{"status": "SUCCESS"}]},
+        {"profiling_result": {"status": "SUCCESS"}},
+        {"patch": {"diff": "+x"}},
+        {"mr": {"id": "mr-1"}},
+        {"p12": {"fault_id": "f1"}},
+        {"outcome": "MR_VIOLATION"},
+        {"mr_outcome": "MR_VIOLATION"},
+    ]
+    for forbidden in forbidden_cases:
+        poisoned_schema = {
+            **base_schemas[0],
+            **forbidden,
+        }
+        frame = _public_frame_with_schemas([poisoned_schema])
+        with pytest.raises(EvidenceError, match="E_GENERATOR_INPUT"):
+            build_common_inputs(_source_record(), frame, registry)
+        poisoned_frame = {
+            **_public_frame_with_schemas(base_schemas),
+            **forbidden,
+        }
+        body = {
+            key: value
+            for key, value in poisoned_frame.items()
+            if key != "artifact_sha256"
+        }
+        poisoned_frame = {**body, "artifact_sha256": canonical_sha256(body)}
+        with pytest.raises(EvidenceError, match="E_GENERATOR_INPUT"):
+            build_common_inputs(_source_record(), poisoned_frame, registry)
+
+
+def test_generator_failure_occupies_ordinal_as_common_input_invalid():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    schemas = [
+        _public_schema(
+            "JSON_SCHEMA_DRAFT2020_12_V1",
+            {"force_invalid": True},
+        ),
+        _public_schema(
+            "NUMERIC_ARRAY_DOMAIN_V1",
+            {"domain": "numeric", "shape": [3]},
+        ),
+    ]
+    inventory = build_common_inputs(
+        _source_record(), _public_frame_with_schemas(schemas), registry
+    )
+    assert len(inventory["rows"]) == 30
+    invalid_rows = [
+        row for row in inventory["rows"] if row["status"] == "COMMON_INPUT_INVALID"
+    ]
+    generated_rows = [
+        row for row in inventory["rows"] if row["status"] == "COMMON_INPUT_GENERATED"
+    ]
+    assert invalid_rows
+    assert generated_rows
+    for row in invalid_rows:
+        assert row["ordinal"] in range(30)
+        assert row["failure_code"] == "JSON_SCHEMA_DRAFT2020_12_V1_INVALID"
+        assert row["envelope"] is None
+        assert row["raw_payload_sha256"] is None
+        assert row["schema_kind"] == "JSON_SCHEMA_DRAFT2020_12_V1"
+    for row in generated_rows:
+        assert row["schema_kind"] == "NUMERIC_ARRAY_DOMAIN_V1"
+        assert row["envelope"] is not None
+    # Ordinals assigned to the failing schema via i mod k remain invalid and are not replaced.
+    ordered = []
+    for schema in schemas:
+        selection_body = {
+            key: value
+            for key, value in schema.items()
+            if key not in {"subject_alias", "project_alias", "controlled_subject_source_id"}
+        }
+        ordered.append(
+            (
+                canonical_sha256(selection_body),
+                canonical_sha256(schema["raw_schema"]),
+                schema["schema_kind"],
+            )
+        )
+    ordered.sort(key=lambda item: (item[0], item[1]))
+    failing_index = next(
+        index
+        for index, item in enumerate(ordered)
+        if item[2] == "JSON_SCHEMA_DRAFT2020_12_V1"
+    )
+    assert [row["ordinal"] for row in invalid_rows] == [
+        ordinal for ordinal in range(30) if ordinal % 2 == failing_index
+    ]
+    assert len(invalid_rows) + len(generated_rows) == 30
+
+
+def test_zero_eligible_schemas_yield_thirty_unavailable_rows():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    inventory = build_common_inputs(
+        _source_record(), _public_frame_with_schemas([]), registry
+    )
+    assert len(inventory["rows"]) == 30
+    assert {row["status"] for row in inventory["rows"]} == {"COMMON_INPUT_UNAVAILABLE"}
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
+    assert all(row["envelope"] is None for row in inventory["rows"])
+    assert all(row["raw_payload_sha256"] is None for row in inventory["rows"])
+
+
+def test_validate_common_inputs_on_fixed_source_preserves_identities():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    schemas = [
+        _public_schema("CLI_TOKEN_GRAMMAR_V1", {"domain": "cli", "tokens": ["a"]}),
+        _public_schema(
+            "BINARY_RECORD_SCHEMA_V1",
+            {"force_invalid": True},
+        ),
+    ]
+    inventory = build_common_inputs(
+        _source_record(), _public_frame_with_schemas(schemas), registry
+    )
+    frozen_payloads = [
+        (row["ordinal"], row["input_id"], row["raw_payload_sha256"], row["envelope"])
+        for row in inventory["rows"]
+    ]
+    sites = [{"site_id": "1" * 64}]
+    contracts = [{"contract_id": "2" * 64}]
+    profile = {"primary_technique": "SCALAR_CONTROL"}
+    frame_hash = "3" * 64
+
+    def validator(row):
+        if row["status"] == "COMMON_INPUT_UNAVAILABLE":
+            return "COMMON_INPUT_UNAVAILABLE"
+        if row["status"] == "COMMON_INPUT_INVALID":
+            return "COMMON_INPUT_INVALID"
+        if row["ordinal"] % 3 == 0:
+            return "COMMON_INPUT_INVALID"
+        return "COMMON_INPUT_EXECUTABLE"
+
+    report = validate_common_inputs_on_fixed_source(
+        inventory,
+        validator,
+        sites=sites,
+        contracts=contracts,
+        profile=profile,
+        frame_artifact_sha256=frame_hash,
+    )
+    assert len(report["rows"]) == 30
+    assert {row["status"] for row in report["rows"]} <= {
+        "COMMON_INPUT_EXECUTABLE",
+        "COMMON_INPUT_INVALID",
+        "COMMON_INPUT_UNAVAILABLE",
+    }
+    assert all(
+        row["status"]
+        in {
+            "COMMON_INPUT_EXECUTABLE",
+            "COMMON_INPUT_INVALID",
+            "COMMON_INPUT_UNAVAILABLE",
+        }
+        for row in report["rows"]
+    )
+    assert [row["ordinal"] for row in report["rows"]] == list(range(30))
+    for before, after in zip(frozen_payloads, report["rows"], strict=True):
+        assert after["ordinal"] == before[0]
+        assert after["input_id"] == before[1]
+        assert after["raw_payload_sha256"] == before[2]
+        assert after["envelope"] == before[3]
+    assert report["sites"] == sites
+    assert report["contracts"] == contracts
+    assert report["profile"] == profile
+    assert report["frame_artifact_sha256"] == frame_hash
+    # Validator cannot replace rows: still exactly 30 predetermined identities.
+    assert len({row["input_id"] for row in report["rows"]}) == 30

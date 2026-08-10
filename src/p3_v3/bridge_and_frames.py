@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import re
 import subprocess
@@ -74,6 +75,49 @@ P12_PRIMARY_ESTIMAND = "INTENTION_TO_EVALUATE_LOWER_BOUND"
 INFRASTRUCTURE_RETRY_LIMIT = 3
 E_COMMON_COUNT = 30
 E_CONTRACT_COUNT = 5
+E_COMMON_GENERATOR_IDS = (
+    "JSON_SCHEMA_DRAFT2020_12_V1",
+    "CLI_TOKEN_GRAMMAR_V1",
+    "NUMERIC_ARRAY_DOMAIN_V1",
+    "TEXT_IO_SCHEMA_V1",
+    "BINARY_RECORD_SCHEMA_V1",
+)
+_E_COMMON_GENERATOR_ID_SET = set(E_COMMON_GENERATOR_IDS)
+_SCHEMA_ALIAS_KEYS = frozenset(
+    {"subject_alias", "project_alias", "controlled_subject_source_id"}
+)
+_FORBIDDEN_GENERATOR_INPUT_KEYS = frozenset(
+    {
+        "project_test_body",
+        "project_test_bodies",
+        "project_test_fixture",
+        "project_test_fixtures",
+        "fixture_body",
+        "test_fixture",
+        "test_fixtures",
+        "contract",
+        "contracts",
+        "site",
+        "sites",
+        "profiling_result",
+        "profiling_results",
+        "patch",
+        "patches",
+        "mr",
+        "mrs",
+        "evaluated_mr",
+        "evaluated_mrs",
+        "p12",
+        "p12_identity",
+        "p12_identities",
+        "p12_fault_id",
+        "outcome",
+        "outcomes",
+        "mr_outcome",
+        "kill_outcome",
+        "execution_outcome",
+    }
+)
 
 _PROTOCOL_SCHEMA = {
     "schema_version": str,
@@ -197,6 +241,21 @@ _SOURCE_RECORD_SCHEMA = {
     "normalized_source_tree_sha256": str,
     "build_descriptor_sha256": str,
 }
+_GENERATOR_ENTRY_SCHEMA = {
+    "generator_id": str,
+    "schema_kind": str,
+    "implementation_path": str,
+    "source_sha256": str,
+    "output_schema": dict,
+    "failure_code": str,
+}
+_GENERATOR_REGISTRY_SCHEMA = {
+    "schema_version": str,
+    "generators": list,
+    "artifact_sha256": str,
+}
+
+
 def validate_protocol(
     protocol: Mapping[str, Any],
     expected_plan_sha256: str,
@@ -1235,3 +1294,411 @@ def classify_technique(
         "primary_technique": primary,
         "category_funnel": funnel,
     }
+
+
+def _seed_block(seed: int, counter: int) -> bytes:
+    return hashlib.sha256(
+        b"P3-INPUT-STREAM-v1" + seed.to_bytes(8, "big") + counter.to_bytes(8, "big")
+    ).digest()
+
+
+def _reject_forbidden_generator_inputs(value: Any, context: str) -> None:
+    if isinstance(value, Mapping):
+        forbidden = sorted(set(value) & _FORBIDDEN_GENERATOR_INPUT_KEYS)
+        if forbidden:
+            raise EvidenceError(
+                "E_GENERATOR_INPUT",
+                f"{context} contains forbidden generator inputs: {forbidden}",
+            )
+        for key, item in value.items():
+            _reject_forbidden_generator_inputs(item, f"{context}.{key}")
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            _reject_forbidden_generator_inputs(item, f"{context}[{index}]")
+
+
+def validate_input_generator_registry(
+    registry: Mapping[str, Any], source_root: str | Path
+) -> dict[str, Any]:
+    value = validate_exact_object(
+        dict(registry), _GENERATOR_REGISTRY_SCHEMA, "input_generator_registry"
+    )
+    if value["schema_version"] != "p3-input-generator-registry-v1":
+        raise EvidenceError("E_GENERATOR_REGISTRY", "input generator registry version differs")
+    body = {key: item for key, item in value.items() if key != "artifact_sha256"}
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError(
+            "E_GENERATOR_REGISTRY_HASH", "input generator registry self-hash differs"
+        )
+    generators = value["generators"]
+    if not isinstance(generators, list) or len(generators) != len(E_COMMON_GENERATOR_IDS):
+        raise EvidenceError(
+            "E_GENERATOR_ALLOWLIST",
+            "input generator registry must list the five E_COMMON generators exactly",
+        )
+    root = Path(source_root)
+    seen: set[str] = set()
+    normalized: list[dict[str, Any]] = []
+    for index, candidate in enumerate(generators):
+        entry = validate_exact_object(
+            candidate, _GENERATOR_ENTRY_SCHEMA, f"generators[{index}]"
+        )
+        generator_id = entry["generator_id"]
+        if generator_id not in _E_COMMON_GENERATOR_ID_SET:
+            raise EvidenceError(
+                "E_GENERATOR_ALLOWLIST", f"generator not in E_COMMON allowlist: {generator_id}"
+            )
+        if generator_id in seen:
+            raise EvidenceError("E_GENERATOR_DUPLICATE", f"duplicate generator: {generator_id}")
+        seen.add(generator_id)
+        if entry["schema_kind"] != generator_id:
+            raise EvidenceError(
+                "E_GENERATOR_KIND",
+                f"schema_kind must equal generator_id for {generator_id}",
+            )
+        if not isinstance(entry["failure_code"], str) or not entry["failure_code"]:
+            raise EvidenceError(
+                "E_GENERATOR_FAILURE_CODE", f"failure_code missing for {generator_id}"
+            )
+        output_schema = entry["output_schema"]
+        if output_schema.get("generator_id") != generator_id:
+            raise EvidenceError(
+                "E_GENERATOR_OUTPUT_SCHEMA",
+                f"output_schema.generator_id differs for {generator_id}",
+            )
+        relative = safe_relative_path(entry["implementation_path"])
+        validate_sha256(entry["source_sha256"], f"generators[{index}].source_sha256")
+        absolute = root / relative.as_posix()
+        if not absolute.is_file() or absolute.is_symlink():
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE",
+                f"generator implementation missing: {entry['implementation_path']}",
+            )
+        if file_sha256(absolute) != entry["source_sha256"]:
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE_HASH",
+                f"generator source hash differs: {generator_id}",
+            )
+        normalized.append(entry)
+    if seen != _E_COMMON_GENERATOR_ID_SET:
+        raise EvidenceError("E_GENERATOR_ALLOWLIST", "E_COMMON generator set differs")
+    return {
+        "schema_version": value["schema_version"],
+        "generators": normalized,
+        "artifact_sha256": value["artifact_sha256"],
+        "_source_root": str(root.resolve()),
+    }
+
+
+def _load_generator_callable(absolute: Path, generator_id: str) -> Callable[[bytes, int], Mapping[str, Any]]:
+    module_name = f"p3_v3_input_generator_{generator_id.lower()}"
+    spec = importlib.util.spec_from_file_location(module_name, absolute)
+    if spec is None or spec.loader is None:
+        raise EvidenceError("E_GENERATOR_LOAD", f"unable to load generator: {generator_id}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    generate = getattr(module, "generate", None)
+    if not callable(generate):
+        raise EvidenceError("E_GENERATOR_LOAD", f"generator lacks generate(): {generator_id}")
+    return generate
+
+
+def _common_input_seed(source_id: str, ordinal: int) -> int:
+    digest = canonical_sha256(
+        {
+            "domain": "P3-E-COMMON-SEED-v1",
+            "controlled_subject_source_id": source_id,
+            "ordinal": ordinal,
+        }
+    )
+    return int.from_bytes(bytes.fromhex(digest)[:8], "big")
+
+
+def _eligible_public_schemas(
+    public_frame: Mapping[str, Any],
+    kind_to_generator: Mapping[str, Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    raw_schemas = public_frame.get("public_schemas")
+    if raw_schemas is None:
+        raw_schemas = []
+    if not isinstance(raw_schemas, list):
+        raise EvidenceError("E_PUBLIC_SCHEMAS", "public_schemas must be a list")
+    eligible: list[dict[str, Any]] = []
+    seen_raw: set[str] = set()
+    for index, candidate in enumerate(raw_schemas):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError("E_PUBLIC_SCHEMAS", f"public_schemas[{index}] must be an object")
+        _reject_forbidden_generator_inputs(candidate, f"public_schemas[{index}]")
+        schema_kind = candidate.get("schema_kind")
+        if schema_kind not in kind_to_generator:
+            continue
+        if "raw_schema" not in candidate:
+            raise EvidenceError(
+                "E_PUBLIC_SCHEMAS", f"public_schemas[{index}] lacks raw_schema"
+            )
+        raw_schema = candidate["raw_schema"]
+        raw_schema_sha256 = canonical_sha256(raw_schema)
+        if raw_schema_sha256 in seen_raw:
+            continue
+        seen_raw.add(raw_schema_sha256)
+        selection_body = {
+            key: value
+            for key, value in candidate.items()
+            if key not in _SCHEMA_ALIAS_KEYS
+        }
+        schema_selection_key = canonical_sha256(selection_body)
+        eligible.append(
+            {
+                "schema_kind": schema_kind,
+                "raw_schema": raw_schema,
+                "raw_schema_sha256": raw_schema_sha256,
+                "schema_selection_key": schema_selection_key,
+                "canonical_schema_bytes": canonical_json_bytes(raw_schema),
+                "generator": kind_to_generator[schema_kind],
+            }
+        )
+    eligible.sort(
+        key=lambda item: (item["schema_selection_key"], item["raw_schema_sha256"])
+    )
+    return eligible
+
+
+def _common_input_id(
+    source_id: str,
+    ordinal: int,
+    *,
+    generator_id: str | None,
+    schema_selection_key: str | None,
+    raw_schema_sha256: str | None,
+    raw_payload_sha256: str | None,
+    status: str,
+    failure_code: str,
+) -> str:
+    return canonical_sha256(
+        {
+            "controlled_subject_source_id": source_id,
+            "ordinal": ordinal,
+            "generator_id": generator_id,
+            "schema_selection_key": schema_selection_key,
+            "raw_schema_sha256": raw_schema_sha256,
+            "raw_payload_sha256": raw_payload_sha256,
+            "status": status,
+            "failure_code": failure_code,
+            "domain": "P3-E-COMMON-INPUT-v1",
+        }
+    )
+
+
+def build_common_inputs(
+    source_record: Mapping[str, Any],
+    public_frame: Mapping[str, Any],
+    registry: Mapping[str, Any],
+) -> dict[str, Any]:
+    source = validate_exact_object(dict(source_record), _SOURCE_RECORD_SCHEMA, "source_record")
+    validate_sha256(source["normalized_source_tree_sha256"], "normalized_source_tree_sha256")
+    validate_sha256(source["build_descriptor_sha256"], "build_descriptor_sha256")
+    if not isinstance(public_frame, Mapping):
+        raise EvidenceError("E_FRAME", "public behavior frame must be an object")
+    _reject_forbidden_generator_inputs(public_frame, "public_frame")
+    registry_source_root = registry.get("_source_root") if isinstance(registry, Mapping) else None
+    registry_body = {
+        key: value
+        for key, value in dict(registry).items()
+        if key != "_source_root"
+    }
+    validated_registry = validate_exact_object(
+        registry_body, _GENERATOR_REGISTRY_SCHEMA, "input_generator_registry"
+    )
+    if {
+        entry["generator_id"] for entry in validated_registry["generators"]
+    } != _E_COMMON_GENERATOR_ID_SET:
+        raise EvidenceError("E_GENERATOR_ALLOWLIST", "input generator registry is incomplete")
+    validated_registry = {**validated_registry, "_source_root": registry_source_root}
+    source_id = _controlled_subject_source_id(source)
+    frame_source_id = public_frame.get("controlled_subject_source_id")
+    if frame_source_id != source_id:
+        raise EvidenceError(
+            "E_FRAME_SOURCE",
+            "public frame controlled_subject_source_id differs from source_record",
+        )
+    kind_to_generator = {
+        entry["schema_kind"]: entry for entry in validated_registry["generators"]
+    }
+    eligible = _eligible_public_schemas(public_frame, kind_to_generator)
+    rows: list[dict[str, Any]] = []
+    if not eligible:
+        for ordinal in range(E_COMMON_COUNT):
+            seed = _common_input_seed(source_id, ordinal)
+            status = "COMMON_INPUT_UNAVAILABLE"
+            failure_code = "COMMON_INPUT_UNAVAILABLE"
+            input_id = _common_input_id(
+                source_id,
+                ordinal,
+                generator_id=None,
+                schema_selection_key=None,
+                raw_schema_sha256=None,
+                raw_payload_sha256=None,
+                status=status,
+                failure_code=failure_code,
+            )
+            rows.append(
+                {
+                    "ordinal": ordinal,
+                    "seed": seed,
+                    "generator_id": None,
+                    "schema_kind": None,
+                    "schema_selection_key": None,
+                    "raw_schema_sha256": None,
+                    "status": status,
+                    "failure_code": failure_code,
+                    "envelope": None,
+                    "raw_payload_sha256": None,
+                    "input_id": input_id,
+                }
+            )
+    else:
+        source_root = validated_registry.get("_source_root")
+        if not isinstance(source_root, (str, Path)):
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE",
+                "input generator registry must come from validate_input_generator_registry",
+            )
+        callables: dict[str, Callable[[bytes, int], Mapping[str, Any]]] = {}
+        for entry in validated_registry["generators"]:
+            generator_id = entry["generator_id"]
+            if generator_id not in _E_COMMON_GENERATOR_ID_SET:
+                raise EvidenceError(
+                    "E_GENERATOR_ALLOWLIST",
+                    f"unregistered generator dispatch: {generator_id}",
+                )
+            relative = safe_relative_path(entry["implementation_path"])
+            absolute = Path(source_root) / relative.as_posix()
+            callables[generator_id] = _load_generator_callable(absolute, generator_id)
+
+        for ordinal in range(E_COMMON_COUNT):
+            seed = _common_input_seed(source_id, ordinal)
+            schema = eligible[ordinal % len(eligible)]
+            generator_entry = schema["generator"]
+            generator_id = generator_entry["generator_id"]
+            failure_code = generator_entry["failure_code"]
+            generate = callables[generator_id]
+            try:
+                result = generate(schema["canonical_schema_bytes"], seed)
+            except Exception:
+                result = {"failure_code": failure_code}
+            if not isinstance(result, Mapping):
+                result = {"failure_code": failure_code}
+            if result.get("failure_code"):
+                status = "COMMON_INPUT_INVALID"
+                code = str(result.get("failure_code") or failure_code)
+                envelope = None
+                raw_payload_sha256 = None
+            elif "envelope" in result and "raw_payload_sha256" in result:
+                status = "COMMON_INPUT_GENERATED"
+                code = ""
+                envelope = result["envelope"]
+                raw_payload_sha256 = validate_sha256(
+                    result["raw_payload_sha256"], "raw_payload_sha256"
+                )
+            else:
+                status = "COMMON_INPUT_INVALID"
+                code = failure_code
+                envelope = None
+                raw_payload_sha256 = None
+            input_id = _common_input_id(
+                source_id,
+                ordinal,
+                generator_id=generator_id,
+                schema_selection_key=schema["schema_selection_key"],
+                raw_schema_sha256=schema["raw_schema_sha256"],
+                raw_payload_sha256=raw_payload_sha256,
+                status=status,
+                failure_code=code,
+            )
+            rows.append(
+                {
+                    "ordinal": ordinal,
+                    "seed": seed,
+                    "generator_id": generator_id,
+                    "schema_kind": schema["schema_kind"],
+                    "schema_selection_key": schema["schema_selection_key"],
+                    "raw_schema_sha256": schema["raw_schema_sha256"],
+                    "status": status,
+                    "failure_code": code,
+                    "envelope": envelope,
+                    "raw_payload_sha256": raw_payload_sha256,
+                    "input_id": input_id,
+                }
+            )
+
+    body = {
+        "schema_version": "p3-evaluation-inputs-common-v1",
+        "controlled_subject_source_id": source_id,
+        "eligible_schema_count": len(eligible),
+        "rows": rows,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def validate_common_inputs_on_fixed_source(
+    inventory: Mapping[str, Any],
+    validator: Callable[[Mapping[str, Any]], str],
+    *,
+    sites: Any = None,
+    contracts: Any = None,
+    profile: Any = None,
+    frame_artifact_sha256: str | None = None,
+) -> dict[str, Any]:
+    if not isinstance(inventory, Mapping) or "rows" not in inventory:
+        raise EvidenceError("E_COMMON_INVENTORY", "common input inventory rows are absent")
+    rows = inventory["rows"]
+    if not isinstance(rows, list) or len(rows) != E_COMMON_COUNT:
+        raise EvidenceError(
+            "E_COMMON_INVENTORY",
+            f"common input inventory must contain exactly {E_COMMON_COUNT} rows",
+        )
+    source_id = inventory.get("controlled_subject_source_id")
+    validate_sha256(source_id, "controlled_subject_source_id")
+    report_rows: list[dict[str, Any]] = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, Mapping):
+            raise EvidenceError("E_COMMON_INVENTORY", f"rows[{index}] must be an object")
+        if row.get("ordinal") != index:
+            raise EvidenceError("E_COMMON_INVENTORY", f"rows[{index}] ordinal differs")
+        status = validator(row)
+        if status not in {
+            "COMMON_INPUT_EXECUTABLE",
+            "COMMON_INPUT_INVALID",
+            "COMMON_INPUT_UNAVAILABLE",
+        }:
+            raise EvidenceError(
+                "E_COMMON_VALIDITY",
+                f"validator returned unsupported status for ordinal {index}: {status!r}",
+            )
+        # Preserve payload identity; never replace the row.
+        report_rows.append(
+            {
+                "ordinal": row["ordinal"],
+                "input_id": row["input_id"],
+                "raw_payload_sha256": row.get("raw_payload_sha256"),
+                "envelope": row.get("envelope"),
+                "generator_id": row.get("generator_id"),
+                "schema_kind": row.get("schema_kind"),
+                "schema_selection_key": row.get("schema_selection_key"),
+                "raw_schema_sha256": row.get("raw_schema_sha256"),
+                "seed": row.get("seed"),
+                "status": status,
+                "failure_code": row.get("failure_code", ""),
+            }
+        )
+    body = {
+        "schema_version": "p3-common-input-validity-v1",
+        "controlled_subject_source_id": source_id,
+        "inventory_artifact_sha256": inventory.get("artifact_sha256"),
+        "rows": report_rows,
+        "sites": sites,
+        "contracts": contracts,
+        "profile": profile,
+        "frame_artifact_sha256": frame_artifact_sha256,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
