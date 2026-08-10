@@ -341,6 +341,24 @@ _DERIVED_SUBJECT_SCHEMA = {
     "subject": dict,
     "artifact_sha256": str,
 }
+_INDEXED_SUBJECT_REBUILD_SCHEMA = {
+    "source_root": str,
+    "source_record": dict,
+    "build_descriptor": dict,
+    "adapter_root": str,
+    "adapter_registry": dict,
+    "input_generator_root": str,
+    "input_generator_registry": dict,
+    "profiling_results": dict,
+    "adapter_discovery": dict,
+    "source_scale": dict,
+    "public_frame": dict,
+    "profiling_workload": dict,
+    "common_inputs": dict,
+    "technique_profile": dict,
+    "sites": list,
+    "subject": dict,
+}
 _SITE_SCHEMA = {
     "path": str,
     "symbol": str,
@@ -3514,6 +3532,77 @@ def derive_subject_material(
         "subject": subject,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def rebuild_indexed_subject(
+    subject_index: Mapping[str, Any], bridge_record: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Rebuild every deterministic subject artifact from indexed source bytes."""
+
+    try:
+        indexed = validate_exact_object(
+            dict(subject_index),
+            _INDEXED_SUBJECT_REBUILD_SCHEMA,
+            "subject_index",
+        )
+        adapter_registry = validate_adapter_registry(
+            {
+                key: value
+                for key, value in indexed["adapter_registry"].items()
+                if key != "_implementation_root"
+            },
+            indexed["adapter_root"],
+        )
+        generator_registry = validate_input_generator_registry(
+            {
+                key: value
+                for key, value in indexed["input_generator_registry"].items()
+                if key != "_source_root"
+            },
+            indexed["input_generator_root"],
+        )
+        rebuilt = derive_subject_material(
+            {
+                "neutral_snapshot_id": bridge_record.get("neutral_snapshot_id"),
+                "source_root": indexed["source_root"],
+                "source_record": indexed["source_record"],
+                "build_descriptor": indexed["build_descriptor"],
+                "adapter_registry": adapter_registry,
+                "input_generator_registry": generator_registry,
+                "profiling_results": indexed["profiling_results"],
+            },
+            bridge_record,
+        )
+    except EvidenceError as exc:
+        raise EvidenceError(
+            "E_INDEXED_SUBJECT_REDERIVATION",
+            f"indexed subject cannot be rebuilt: {exc.code}",
+        ) from exc
+
+    declared = {
+        "adapter_discovery": indexed["adapter_discovery"],
+        "source_scale": indexed["source_scale"],
+        "public_behavior_frame": indexed["public_frame"],
+        "profiling_workload": indexed["profiling_workload"],
+        "common_inputs": indexed["common_inputs"],
+        "profiling_results": indexed["profiling_results"],
+        "technique_profile": indexed["technique_profile"],
+        "subject": indexed["subject"],
+    }
+    for field, artifact in declared.items():
+        if canonical_json_bytes(artifact) != canonical_json_bytes(rebuilt[field]):
+            raise EvidenceError(
+                "E_INDEXED_SUBJECT_REDERIVATION",
+                f"indexed {field} differs from source-derived bytes",
+            )
+    if canonical_json_bytes(indexed["sites"]) != canonical_json_bytes(
+        rebuilt["subject"]["sites"]
+    ):
+        raise EvidenceError(
+            "E_INDEXED_SUBJECT_REDERIVATION",
+            "indexed sites differ from source-derived sites",
+        )
+    return rebuilt
 
 
 def validate_common_inputs_on_fixed_source(

@@ -861,17 +861,30 @@ def _write_evidence_index(path: Path, body: dict) -> None:
     )
 
 
+def _blocked_claim_ledger(*references: str) -> dict:
+    evidence = sorted(set(references))
+    claims = []
+    for rq in ("RQ1", "RQ2", "RQ3", "RQ4"):
+        claim_body = {
+            "claim_id": rq,
+            "rq": rq,
+            "evidence_references": evidence,
+            "status": "blocked",
+        }
+        claims.append(
+            {**claim_body, "artifact_sha256": canonical_sha256(claim_body)}
+        )
+    body = {"schema_version": "p3-claim-evidence-v1", "claims": claims}
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
 def _empty_evidence_index_body(tmp_path: Path) -> dict:
     protocol = tmp_path / "protocol.json"
     _write_protocol(protocol, _protocol_body())
     ledger = tmp_path / "ledger.jsonl"
     ledger.write_bytes(b"")
     (tmp_path / "jobs").mkdir()
-    claims_body = {
-        "schema_version": "p3-claim-evidence-v1",
-        "claims": [{"claim_id": "RQ1", "status": "blocked"}],
-    }
-    claims = {**claims_body, "artifact_sha256": canonical_sha256(claims_body)}
+    claims = _blocked_claim_ledger("protocol.json")
     claims_path = tmp_path / "claims.json"
     write_canonical_json(claims_path, claims, exclusive=True)
     return {
@@ -1033,14 +1046,10 @@ def _complete_phase_zero_evidence_index(tmp_path: Path) -> Path:
     )
     receipt_path = tmp_path / "phase-0-receipt.json"
     write_canonical_json(receipt_path, receipt, exclusive=True)
-    claims_body = {
-        "schema_version": "p3-claim-evidence-v1",
-        "claims": [{"claim_id": "RQ1", "status": "blocked"}],
-    }
     claims_path = tmp_path / "claims.json"
     write_canonical_json(
         claims_path,
-        {**claims_body, "artifact_sha256": canonical_sha256(claims_body)},
+        _blocked_claim_ledger("protocol.json"),
         exclusive=True,
     )
     body = {
@@ -1091,7 +1100,144 @@ def test_evidence_index_reconstructs_a_complete_phase_zero_set(tmp_path):
         "phase_receipt_count": 1,
         "slot_artifact_count": 0,
         "ledger_event_count": 2,
+        "verified_subject_count": 0,
+        "verified_p12_result_count": 0,
+        "verified_claim_count": 4,
     }
+
+
+@pytest.mark.parametrize("mutation", ["unindexed", "supported", "result_prose"])
+def test_claim_ledger_is_fail_closed_in_final_verification(tmp_path, mutation):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text())
+    claims_path = tmp_path / index["claims"]["path"]
+    claims = json.loads(claims_path.read_text())
+    claim = claims["claims"][0]
+    if mutation == "unindexed":
+        claim["evidence_references"] = ["not-indexed.json"]
+    elif mutation == "supported":
+        claim["status"] = "supported"
+    else:
+        claim["result_prose"] = "The results support the claim."
+    claim_body = {key: value for key, value in claim.items() if key != "artifact_sha256"}
+    claim["artifact_sha256"] = canonical_sha256(claim_body)
+    claims_body = {
+        key: value for key, value in claims.items() if key != "artifact_sha256"
+    }
+    claims["artifact_sha256"] = canonical_sha256(claims_body)
+    claims_path.write_bytes(
+        json.dumps(claims, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    index["claims"]["sha256"] = hashlib.sha256(claims_path.read_bytes()).hexdigest()
+    index_body = {
+        key: value for key, value in index.items() if key != "artifact_sha256"
+    }
+    index["artifact_sha256"] = canonical_sha256(index_body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] in {
+        "E_CLAIM_EVIDENCE",
+        "E_CLAIM_STATUS",
+        "E_SCHEMA_KEYS",
+    }
+    assert not result.stdout
+
+
+def test_protocol_binding_rejects_rehashed_indexed_adapter_bytes(tmp_path):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text())
+    registry = _adapter_registry(tmp_path)
+    registry_path = tmp_path / "adapter-registry.json"
+    write_canonical_json(registry_path, registry, exclusive=True)
+    index["adapter_registries"] = [_indexed_reference(tmp_path, registry_path)]
+    protocol_path = tmp_path / index["protocol"]["path"]
+    protocol = json.loads(protocol_path.read_text())
+    protocol["adapter_registry_sha256"] = registry["artifact_sha256"]
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    protocol_path.write_bytes(
+        json.dumps(protocol, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    index["protocol"]["sha256"] = hashlib.sha256(protocol_path.read_bytes()).hexdigest()
+    protocol_sha256 = index["protocol"]["sha256"]
+    intent_path = tmp_path / "jobs/PHASE_0/phase-0-job/1/intent.json"
+    intent = json.loads(intent_path.read_text())
+    intent["protocol_sha256"] = protocol_sha256
+    intent_path.write_bytes(
+        json.dumps(intent, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    from p3_v3.run_records import close_phase, reconstruct_attempt_events
+
+    events = reconstruct_attempt_events(tmp_path / "jobs")
+    ledger_path = tmp_path / index["ledger"]["path"]
+    ledger_path.write_bytes(
+        b"".join(
+            json.dumps(event, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+            for event in events
+        )
+    )
+    index["ledger"]["sha256"] = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
+    receipt_entry = index["phase_receipts"][0]
+    output_manifest = json.loads(
+        (tmp_path / receipt_entry["output_manifest"]["path"]).read_text()
+    )
+    receipt = close_phase(
+        "PHASE_0",
+        protocol_sha256,
+        ["phase-0-job"],
+        ledger_path,
+        output_manifest["artifact_sha256"],
+    )
+    receipt_path = tmp_path / receipt_entry["receipt"]["path"]
+    receipt_path.write_bytes(
+        json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    receipt_entry["receipt"]["sha256"] = hashlib.sha256(
+        receipt_path.read_bytes()
+    ).hexdigest()
+    index_body = {
+        key: value for key, value in index.items() if key != "artifact_sha256"
+    }
+    index["artifact_sha256"] = canonical_sha256(index_body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    assert _run_evidence_index(index_path).returncode == 0
+
+    implementation = tmp_path / registry["adapters"][0]["implementation_path"]
+    implementation.write_bytes(implementation.read_bytes() + b"# forged\n")
+    registry["adapters"][0]["source_sha256"] = hashlib.sha256(
+        implementation.read_bytes()
+    ).hexdigest()
+    registry_body = {
+        key: value for key, value in registry.items() if key != "artifact_sha256"
+    }
+    registry["artifact_sha256"] = canonical_sha256(registry_body)
+    registry_path.write_bytes(
+        json.dumps(registry, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    index["adapter_registries"][0]["sha256"] = hashlib.sha256(
+        registry_path.read_bytes()
+    ).hexdigest()
+    index_body = {
+        key: value for key, value in index.items() if key != "artifact_sha256"
+    }
+    index["artifact_sha256"] = canonical_sha256(index_body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_PROTOCOL_BINDING"
 
 
 def test_evidence_index_rejects_unindexed_attempt_file(tmp_path):
@@ -1465,11 +1611,7 @@ def test_forged_evidence_index_is_rejected_without_pass_receipt(tmp_path):
 
     protocol = tmp_path / "protocol.json"
     _write_protocol(protocol, _protocol_body())
-    claims_body = {
-        "schema_version": "p3-claim-evidence-v1",
-        "claims": [{"claim_id": "RQ1", "status": "blocked"}],
-    }
-    claims = {**claims_body, "artifact_sha256": canonical_sha256(claims_body)}
+    claims = _blocked_claim_ledger("protocol.json")
     claims_path = tmp_path / "claims.json"
     write_canonical_json(claims_path, claims, exclusive=True)
 

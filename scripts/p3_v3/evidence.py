@@ -29,6 +29,7 @@ from p3_v3.bridge_and_frames import (  # noqa: E402
     build_subject_frames,
     close_slot,
     derive_subject_material,
+    rebuild_indexed_subject,
     validate_adapter_registry,
     validate_contract_generator_registry,
     validate_input_generator_registry,
@@ -48,6 +49,8 @@ from p3_v3.packages import (  # noqa: E402
 from p3_v3.preflight import run_preflight  # noqa: E402
 from p3_v3.run_records import (  # noqa: E402
     close_phase,
+    recompute_p12_summary,
+    validate_claim_ledger,
     verify_attempt_tree,
     verify_ledger,
     verify_phase_receipt,
@@ -330,6 +333,20 @@ _SUBJECT_INDEX_SCHEMA = {
     "common_input_validity": dict,
     "slot_artifacts": list,
 }
+_SUBJECT_REBUILD_INDEX_SCHEMA = {
+    **_SUBJECT_INDEX_SCHEMA,
+    "bridge_record": dict,
+    "source_root": str,
+    "source_record": dict,
+    "build_descriptor": dict,
+    "adapter_registry_sha256": str,
+    "input_generator_registry_sha256": str,
+    "adapter_discovery": dict,
+    "source_scale": dict,
+    "technique_profile": dict,
+    "sites": dict,
+    "subject": dict,
+}
 _SLOT_INDEX_SCHEMA = {
     "slot_id": str,
     "controlled_subject_id": str,
@@ -475,10 +492,34 @@ def _load_evidence_index(
         root, value["ledger"], seen, loaded, "ledger", canonical=False
     )
     claims_path, claims = _indexed_file(root, value["claims"], seen, loaded, "claims")
+    claims = validate_claim_ledger(claims)
     job_root = _indexed_directory(root, value["job_root"], seen, "job_root")
 
+    adapter_registries: list[dict[str, Any]] = []
     for index, reference in enumerate(value["adapter_registries"]):
-        _indexed_file(root, reference, seen, loaded, f"adapter_registries[{index}]")
+        registry_path, registry = _indexed_file(
+            root, reference, seen, loaded, f"adapter_registries[{index}]"
+        )
+        verified_registry = validate_adapter_registry(registry, registry_path.parent)
+        for entry_index, entry in enumerate(verified_registry["adapters"]):
+            implementation = (
+                registry_path.parent / safe_relative_path(entry["implementation_path"])
+            ).relative_to(root).as_posix()
+            if implementation in seen:
+                raise EvidenceError(
+                    "E_INDEX_DUPLICATE", f"duplicate indexed path: {implementation}"
+                )
+            implementation_path = _safe_index_node(
+                root,
+                implementation,
+                f"adapter_registries[{index}].adapters[{entry_index}]",
+            )
+            if not stat.S_ISREG(implementation_path.lstat().st_mode):
+                raise EvidenceError(
+                    "E_INDEX_PATH", f"adapter implementation is unsafe: {implementation}"
+                )
+            seen.add(implementation)
+        adapter_registries.append(verified_registry)
     generator_registries: list[dict[str, Any]] = []
     for index, reference in enumerate(value["input_generator_registries"]):
         registry_path, registry = _indexed_file(
@@ -519,8 +560,13 @@ def _load_evidence_index(
 
     subjects: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["subjects"]):
+        schema = (
+            _SUBJECT_REBUILD_INDEX_SCHEMA
+            if isinstance(candidate, dict) and "source_root" in candidate
+            else _SUBJECT_INDEX_SCHEMA
+        )
         subject = validate_exact_object(
-            candidate, _SUBJECT_INDEX_SCHEMA, f"subjects[{index}]"
+            candidate, schema, f"subjects[{index}]"
         )
         _phase(subject["phase"], coverage, f"subjects[{index}]")
         validate_sha256(
@@ -531,6 +577,31 @@ def _load_evidence_index(
             subject["controlled_subject_id"], f"subjects[{index}].controlled_subject_id"
         )
         material = dict(subject)
+        if schema is _SUBJECT_REBUILD_INDEX_SCHEMA:
+            for field in (
+                "bridge_record",
+                "source_record",
+                "build_descriptor",
+                "adapter_discovery",
+                "source_scale",
+                "technique_profile",
+                "sites",
+                "subject",
+            ):
+                _, material[field] = _indexed_file(
+                    root, subject[field], seen, loaded, f"subjects[{index}].{field}"
+                )
+            material["source_root"] = _indexed_directory(
+                root, subject["source_root"], seen, f"subjects[{index}].source_root"
+            )
+            validate_sha256(
+                subject["adapter_registry_sha256"],
+                f"subjects[{index}].adapter_registry_sha256",
+            )
+            validate_sha256(
+                subject["input_generator_registry_sha256"],
+                f"subjects[{index}].input_generator_registry_sha256",
+            )
         for field in (
             "public_frame",
             "profiling_workload",
@@ -611,9 +682,24 @@ def _load_evidence_index(
         for field, reference in p12_index.items():
             _, p12[field] = _indexed_file(root, reference, seen, loaded, f"p12.{field}")
 
+    indexed_claim_paths = set(seen)
+    for claim in claims["claims"]:
+        if any(
+            reference not in indexed_claim_paths
+            for reference in claim["evidence_references"]
+        ):
+            raise EvidenceError(
+                "E_CLAIM_EVIDENCE", "claim names evidence absent from the index"
+            )
+
     indexed_directories = [
         value["job_root"],
         *[entry["root"] for entry in value["packages"]],
+        *[
+            entry["source_root"]
+            for entry in value["subjects"]
+            if "source_root" in entry
+        ],
     ]
     indexed_paths = set(seen) | {source.name}
     for path in root.rglob("*"):
@@ -646,7 +732,10 @@ def _load_evidence_index(
     if "PHASE_1" in coverage and (
         not value["adapter_registries"]
         or not value["input_generator_registries"]
-        or not any(subject["phase"] == "PHASE_1" for subject in subjects)
+        or not any(
+            subject["phase"] == "PHASE_1" and "source_root" in subject
+            for subject in subjects
+        )
     ):
         raise EvidenceError(
             "E_INDEX_COVERAGE", "subject evidence coverage is incomplete"
@@ -687,6 +776,7 @@ def _load_evidence_index(
         "claims": claims,
         "job_root": job_root,
         "subjects": subjects,
+        "adapter_registries": adapter_registries,
         "generator_registries": generator_registries,
         "packages": packages,
         "receipts": receipts,
@@ -700,6 +790,22 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
     validate_protocol(
         material["protocol"], SCIENTIFIC_PLAN_SHA256, EVIDENCE_DESIGN_SHA256
     )
+    if material["adapter_registries"] and (
+        len(material["adapter_registries"]) != 1
+        or material["protocol"]["adapter_registry_sha256"]
+        != material["adapter_registries"][0]["artifact_sha256"]
+    ):
+        raise EvidenceError(
+            "E_PROTOCOL_BINDING", "protocol adapter-registry binding differs"
+        )
+    if material["generator_registries"] and (
+        len(material["generator_registries"]) != 1
+        or material["protocol"]["input_generator_registry_sha256"]
+        != material["generator_registries"][0]["artifact_sha256"]
+    ):
+        raise EvidenceError(
+            "E_PROTOCOL_BINDING", "protocol input-generator binding differs"
+        )
     manifests = []
     for package in material["packages"]:
         manifest = verify_materialized_package(package["root"], package["manifest"])
@@ -731,6 +837,47 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
         manifests.append(manifest)
 
     events = verify_attempt_tree(material["job_root"], material["ledger_path"])
+    verified_p12_result_count = 0
+    if material["p12"]:
+        terminal_by_job: dict[str, dict[str, Any]] = {}
+        for event in events:
+            if event["phase"] != "PHASE_7" or event["kind"] != "RESULT":
+                continue
+            attempt_root = (
+                material["job_root"]
+                / event["phase"]
+                / event["job_id"]
+                / str(event["attempt"])
+            )
+            intent = read_canonical_json(attempt_root / "intent.json")
+            if intent.get("job_role") != "P12":
+                continue
+            result = read_canonical_json(attempt_root / "result.json")
+            terminal_by_job[event["job_id"]] = {"intent": intent, "result": result}
+        terminal_results = [terminal_by_job[job_id] for job_id in sorted(terminal_by_job)]
+        verified_p12_result_count = len(terminal_results)
+        rebuilt_summary = recompute_p12_summary(
+            material["p12"]["denominator"], terminal_results
+        )
+        rebuilt_rows = [
+            {
+                "job_id": pair["intent"]["job_id"],
+                "scientific_outcome": pair["result"]["scientific_outcome"],
+            }
+            for pair in terminal_results
+        ]
+        if canonical_json_bytes(material["p12"]["result_rows"]) != canonical_json_bytes(
+            rebuilt_rows
+        ):
+            raise EvidenceError(
+                "E_P12_RESULT_ROWS", "declared P12 results differ from terminal attempts"
+            )
+        if canonical_json_bytes(material["p12"]["summary"]) != canonical_json_bytes(
+            rebuilt_summary
+        ):
+            raise EvidenceError(
+                "E_P12_SUMMARY", "declared P12 summary differs from terminal attempts"
+            )
     protocol_sha256 = file_sha256(material["protocol_path"])
     attempt_common_ids: set[str] = set()
     common_consumer_intents: dict[str, list[dict[str, Any]]] = {}
@@ -776,6 +923,96 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
     slot_ids: set[str] = set()
     unassigned_attempt_ids = set(attempt_common_ids) if material["subjects"] else set()
     for subject in material["subjects"]:
+        if "source_root" in subject:
+            adapters = {
+                registry["artifact_sha256"]: registry
+                for registry in material["adapter_registries"]
+            }
+            generators = {
+                registry["artifact_sha256"]: registry
+                for registry in material["generator_registries"]
+            }
+            adapter_registry = adapters.get(subject["adapter_registry_sha256"])
+            generator_registry = generators.get(
+                subject["input_generator_registry_sha256"]
+            )
+            if adapter_registry is None or generator_registry is None:
+                raise EvidenceError(
+                    "E_INDEXED_SUBJECT_REDERIVATION",
+                    "subject names an unverified generator or adapter registry",
+                )
+            rebuilt = rebuild_indexed_subject(
+                {
+                    "source_root": str(subject["source_root"]),
+                    "source_record": subject["source_record"],
+                    "build_descriptor": subject["build_descriptor"],
+                    "adapter_root": adapter_registry["_implementation_root"],
+                    "adapter_registry": adapter_registry,
+                    "input_generator_root": generator_registry["_source_root"],
+                    "input_generator_registry": generator_registry,
+                    "profiling_results": subject["profiling_results"],
+                    "adapter_discovery": subject["adapter_discovery"],
+                    "source_scale": subject["source_scale"],
+                    "public_frame": subject["public_frame"],
+                    "profiling_workload": subject["profiling_workload"],
+                    "common_inputs": subject["common_inputs"],
+                    "technique_profile": subject["technique_profile"],
+                    "sites": subject["sites"],
+                    "subject": subject["subject"],
+                },
+                subject["bridge_record"],
+            )
+            if (
+                rebuilt["controlled_subject_source_id"]
+                != subject["controlled_subject_source_id"]
+                or rebuilt["subject"]["controlled_subject_id"]
+                != subject["controlled_subject_id"]
+            ):
+                raise EvidenceError(
+                    "E_INDEXED_SUBJECT_REDERIVATION", "indexed subject identity differs"
+                )
+            profiling_attempts: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+            for event in events:
+                if event["phase"] != subject["phase"] or event["kind"] != "RESULT":
+                    continue
+                attempt_root = (
+                    material["job_root"]
+                    / event["phase"]
+                    / event["job_id"]
+                    / str(event["attempt"])
+                )
+                intent = read_canonical_json(attempt_root / "intent.json")
+                if intent.get("object_id") not in {
+                    row["behavior_id"]
+                    for row in subject["profiling_results"]["results"]
+                }:
+                    continue
+                profiling_attempts[intent["object_id"]] = (
+                    intent,
+                    read_canonical_json(attempt_root / "result.json"),
+                )
+            for row in subject["profiling_results"]["results"]:
+                pair = profiling_attempts.get(row["behavior_id"])
+                if pair is None:
+                    raise EvidenceError(
+                        "E_PROFILE_ATTEMPT_BINDING",
+                        "profiling result lacks an authenticated terminal attempt",
+                    )
+                intent, result = pair
+                if (
+                    intent["argv"] != row["argv"]
+                    or intent["input_sha256"] != row["input_sha256"]
+                    or intent["environment_sha256"] != row["environment_sha256"]
+                    or result["exit_code"] != row["exit_code"]
+                    or result["stdout_sha256"] != row["stdout_sha256"]
+                    or result["stderr_sha256"] != row["stderr_sha256"]
+                    or result["failure_code"] != row["failure_code"]
+                    or result["stdout_sha256"] != row["call_trace_sha256"]
+                ):
+                    raise EvidenceError(
+                        "E_PROFILE_ATTEMPT_BINDING",
+                        "profiling receipt differs from authenticated attempt bytes",
+                    )
         subject_consumed_ids: set[str] = set()
         inventory_ids = {
             row.get("input_id") for row in subject["common_inputs"].get("rows", [])
@@ -866,6 +1103,9 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
         "phase_receipt_count": len(material["receipts"]),
         "slot_artifact_count": slot_count,
         "ledger_event_count": len(events),
+        "verified_subject_count": len(material["subjects"]),
+        "verified_p12_result_count": verified_p12_result_count,
+        "verified_claim_count": len(material["claims"]["claims"]),
     }
 
 

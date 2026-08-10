@@ -15,6 +15,7 @@ from .artifacts import (
     canonical_json_bytes,
     canonical_sha256,
     read_canonical_json,
+    safe_relative_path,
     validate_exact_object,
     validate_sha256,
     write_canonical_json,
@@ -117,6 +118,20 @@ _DENOMINATOR_SCHEMA = {
     "paired_ids_sha256": str,
     "artifact_sha256": str,
 }
+_TERMINAL_P12_SCHEMA = {"intent": dict, "result": dict}
+_CLAIM_SCHEMA = {
+    "claim_id": str,
+    "rq": str,
+    "evidence_references": list,
+    "status": str,
+    "artifact_sha256": str,
+}
+_CLAIM_LEDGER_SCHEMA = {
+    "schema_version": str,
+    "claims": list,
+    "artifact_sha256": str,
+}
+_REQUIRED_CLAIMS = ("RQ1", "RQ2", "RQ3", "RQ4")
 _PHASE_IDS = tuple(f"PHASE_{number}" for number in range(8))
 _PHASE_RECEIPT_SCHEMA = {
     "phase_id": str,
@@ -213,7 +228,7 @@ def _validate_result(
     outcome = value["scientific_outcome"]
     phase7_p12 = (
         intent is not None
-        and intent.get("phase") == "PHASE-7"
+        and intent.get("phase") == "PHASE_7"
         and intent.get("job_role") == "P12"
     )
     if phase7_p12:
@@ -890,3 +905,110 @@ def summarize_p12_outcomes(
         "denominator_sha256": frozen["artifact_sha256"],
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def recompute_p12_summary(
+    denominator: Mapping[str, Any],
+    terminal_results: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Recompute the frozen estimand from authenticated Phase 7 result bytes."""
+
+    frozen = verify_p12_denominator(denominator)
+    jobs = {job["job_id"]: job for job in frozen["jobs"]}
+    observed: list[dict[str, str]] = []
+    seen: set[str] = set()
+    identity_fields = (
+        "job_id",
+        "object_type",
+        "object_id",
+        "mr_id",
+        "evaluation_input_class",
+        "evaluation_input_id",
+        "repetition_id",
+        "environment_id",
+        "job_role",
+    )
+    for index, candidate in enumerate(terminal_results):
+        pair = validate_exact_object(
+            dict(candidate), _TERMINAL_P12_SCHEMA, f"terminal_results[{index}]"
+        )
+        intent = _validate_intent(pair["intent"])
+        result = _validate_result(pair["result"], intent)
+        job_id = intent["job_id"]
+        if job_id not in jobs or job_id in seen:
+            raise EvidenceError(
+                "E_P12_JOB_SET", "terminal P12 job set differs from denominator"
+            )
+        if any(intent[field] != jobs[job_id][field] for field in identity_fields):
+            raise EvidenceError(
+                "E_P12_IDENTITY", "terminal result identity differs from denominator"
+            )
+        if (
+            intent["phase"] != "PHASE_7"
+            or result["job_id"] != job_id
+            or result["attempt"] != intent["attempt"]
+        ):
+            raise EvidenceError(
+                "E_P12_IDENTITY", "terminal result is not the matching Phase 7 attempt"
+            )
+        seen.add(job_id)
+        observed.append(
+            {"job_id": job_id, "scientific_outcome": result["scientific_outcome"]}
+        )
+    if seen != set(jobs):
+        raise EvidenceError(
+            "E_P12_JOB_SET", "terminal P12 job set differs from denominator"
+        )
+    summary = summarize_p12_outcomes(frozen, observed)
+    body = {
+        key: value for key, value in summary.items() if key != "artifact_sha256"
+    }
+    body["missingness"] = {
+        "SCIENTIFIC_INCONCLUSIVE": body["scientific_inconclusive_count"],
+        "INFRASTRUCTURE_UNRESOLVED": body["infrastructure_unresolved_count"],
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def validate_claim_ledger(claims: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate the exact four-claim, blocked-only evidence ledger."""
+
+    value = validate_exact_object(dict(claims), _CLAIM_LEDGER_SCHEMA, "claims")
+    if value["schema_version"] != "p3-claim-evidence-v1":
+        raise EvidenceError("E_CLAIM_LEDGER", "claim ledger version differs")
+    body = {key: item for key, item in value.items() if key != "artifact_sha256"}
+    validate_sha256(value["artifact_sha256"], "claims.artifact_sha256")
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_CLAIM_HASH", "claim ledger self-hash differs")
+    normalized: list[dict[str, Any]] = []
+    for index, candidate in enumerate(value["claims"]):
+        claim = validate_exact_object(
+            candidate, _CLAIM_SCHEMA, f"claims.claims[{index}]"
+        )
+        claim_body = {
+            key: item for key, item in claim.items() if key != "artifact_sha256"
+        }
+        validate_sha256(
+            claim["artifact_sha256"], f"claims.claims[{index}].artifact_sha256"
+        )
+        if claim["artifact_sha256"] != canonical_sha256(claim_body):
+            raise EvidenceError("E_CLAIM_HASH", "claim self-hash differs")
+        if claim["status"] != "blocked":
+            raise EvidenceError("E_CLAIM_STATUS", "all scientific claims must be blocked")
+        if claim["claim_id"] != claim["rq"] or claim["rq"] not in _REQUIRED_CLAIMS:
+            raise EvidenceError("E_CLAIM_SET", "claim ID/RQ binding differs")
+        references = claim["evidence_references"]
+        if (
+            not references
+            or references != sorted(set(references))
+            or any(type(reference) is not str for reference in references)
+        ):
+            raise EvidenceError(
+                "E_CLAIM_EVIDENCE", "claim evidence references are not canonical"
+            )
+        for reference in references:
+            safe_relative_path(reference)
+        normalized.append(claim)
+    if [claim["rq"] for claim in normalized] != list(_REQUIRED_CLAIMS):
+        raise EvidenceError("E_CLAIM_SET", "claims must exactly cover RQ1 through RQ4")
+    return value

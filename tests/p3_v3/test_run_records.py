@@ -13,11 +13,28 @@ from p3_v3.run_records import (
     close_phase,
     create_intent,
     freeze_p12_denominator,
+    recompute_p12_summary,
     reduce_attempts,
     summarize_p12_outcomes,
+    validate_claim_ledger,
     verify_ledger,
     write_result,
 )
+
+
+def _claim(claim_id: str, *references: str, status: str = "blocked") -> dict:
+    body = {
+        "claim_id": claim_id,
+        "rq": claim_id,
+        "evidence_references": list(references),
+        "status": status,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _claim_ledger(*claims: dict) -> dict:
+    body = {"schema_version": "p3-claim-evidence-v1", "claims": list(claims)}
+    return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
 def _intent(
@@ -498,6 +515,122 @@ def test_p12_denominator_rejects_role_membership_and_reweight_mutations():
         summarize_p12_outcomes(reweighted, results)
 
 
+def _terminal_p12(job: dict, outcome: str) -> dict:
+    intent = _intent(
+        job_id=job["job_id"],
+        phase="PHASE_7",
+        job_role="P12",
+        evaluation_input_class=job["evaluation_input_class"],
+        object_type=job["object_type"],
+        object_id=job["object_id"],
+        mr_id=job["mr_id"],
+        evaluation_input_id=job["evaluation_input_id"],
+        repetition_id=job["repetition_id"],
+        environment_id=job["environment_id"],
+    )
+    return {
+        "intent": intent,
+        "result": _result(job_id=job["job_id"], scientific_outcome=outcome),
+    }
+
+
+def test_p12_summary_is_recomputed_from_exact_terminal_identities():
+    jobs = [
+        _p12_job("j1", "fault-a", mr_id="mr-1"),
+        _p12_job("j2", "fault-a", mr_id="mr-2"),
+        _p12_job("j3", "fault-b", mr_id="mr-1"),
+        _p12_job("j4", "fault-b", mr_id="mr-2"),
+        _p12_job("j5", "fault-b", mr_id="mr-3"),
+    ]
+    denominator = freeze_p12_denominator(["fault-a", "fault-b"], jobs)
+    outcomes = list(P12_OUTCOME_STATES)
+    terminal = [
+        _terminal_p12(job, outcome) for job, outcome in zip(jobs, outcomes)
+    ]
+
+    summary = recompute_p12_summary(denominator, terminal)
+
+    assert summary["state_counts"] == {state: 1 for state in P12_OUTCOME_STATES}
+    assert summary["lower_numerator"] == 2
+    assert summary["lower_rate"] == str(Fraction(2, 5))
+    assert summary["upper_numerator"] == 4
+    assert summary["upper_rate"] == str(Fraction(4, 5))
+    assert summary["complete_case_numerator"] == 2
+    assert summary["complete_case_denominator"] == 3
+    assert summary["complete_case_rate"] == str(Fraction(2, 3))
+    assert summary["missingness"] == {
+        "SCIENTIFIC_INCONCLUSIVE": 1,
+        "INFRASTRUCTURE_UNRESOLVED": 1,
+    }
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["omitted", "extra", "duplicate", "identity", "outcome", "declared_only"],
+)
+def test_p12_summary_rejects_nonterminal_or_drifted_result_set(mutation):
+    jobs = [
+        _p12_job("j1", "fault-a", mr_id="mr-1"),
+        _p12_job("j2", "fault-b", mr_id="mr-2"),
+    ]
+    denominator = freeze_p12_denominator(["fault-a", "fault-b"], jobs)
+    terminal = [
+        _terminal_p12(jobs[0], "MR_VIOLATION"),
+        _terminal_p12(jobs[1], "MR_SATISFIED"),
+    ]
+    if mutation == "omitted":
+        terminal.pop()
+    elif mutation == "extra":
+        terminal.append(_terminal_p12({**jobs[1], "job_id": "j3"}, "MR_SATISFIED"))
+    elif mutation == "duplicate":
+        terminal[1] = copy.deepcopy(terminal[0])
+    elif mutation == "identity":
+        terminal[0]["intent"]["mr_id"] = "mr-forged"
+    elif mutation == "outcome":
+        terminal[0]["result"]["scientific_outcome"] = "NOT_AN_OUTCOME"
+    else:
+        terminal = [
+            {"job_id": "j1", "scientific_outcome": "MR_VIOLATION"},
+            {"job_id": "j2", "scientific_outcome": "MR_SATISFIED"},
+        ]
+
+    with pytest.raises(EvidenceError):
+        recompute_p12_summary(denominator, terminal)
+
+
+def test_claim_ledger_requires_exact_blocked_rq_claims_and_self_hashes():
+    ledger = _claim_ledger(
+        *[_claim(rq, "protocol.json") for rq in ("RQ1", "RQ2", "RQ3", "RQ4")]
+    )
+    assert validate_claim_ledger(ledger) == ledger
+
+
+@pytest.mark.parametrize(
+    "mutation", ["missing", "extra", "unindexed_shape", "ready", "supported", "prose"]
+)
+def test_claim_ledger_rejects_nonblocked_or_nonexact_claims(mutation):
+    claims = [_claim(rq, "protocol.json") for rq in ("RQ1", "RQ2", "RQ3", "RQ4")]
+    if mutation == "missing":
+        claims.pop()
+    elif mutation == "extra":
+        claims.append(_claim("RQ5", "protocol.json"))
+    elif mutation == "unindexed_shape":
+        claims[0]["evidence_references"] = ["../outside.json"]
+        body = {k: v for k, v in claims[0].items() if k != "artifact_sha256"}
+        claims[0]["artifact_sha256"] = canonical_sha256(body)
+    elif mutation in {"ready", "supported"}:
+        claims[0]["status"] = mutation
+        body = {k: v for k, v in claims[0].items() if k != "artifact_sha256"}
+        claims[0]["artifact_sha256"] = canonical_sha256(body)
+    else:
+        claims[0]["result_prose"] = "The method outperformed the baseline."
+        body = {k: v for k, v in claims[0].items() if k != "artifact_sha256"}
+        claims[0]["artifact_sha256"] = canonical_sha256(body)
+
+    with pytest.raises(EvidenceError):
+        validate_claim_ledger(_claim_ledger(*claims))
+
+
 def test_phase7_p12_result_requires_scientific_outcome_and_others_forbid_it(tmp_path):
     controlled = tmp_path / "jobs/controlled/1"
     create_intent(controlled, _intent(job_id="controlled"))
@@ -513,7 +646,7 @@ def test_phase7_p12_result_requires_scientific_outcome_and_others_forbid_it(tmp_
         p12,
         _intent(
             job_id="p12-job",
-            phase="PHASE-7",
+            phase="PHASE_7",
             job_role="P12",
             object_type="P12_FAULT",
             object_id="fault-1",

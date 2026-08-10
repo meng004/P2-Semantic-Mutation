@@ -27,6 +27,7 @@ from p3_v3.bridge_and_frames import (
     classify_technique,
     close_slot,
     derive_source_scale,
+    rebuild_indexed_subject,
     run_adapter_discovery,
     select_construct_subjects,
     select_first_applicable_site,
@@ -699,6 +700,134 @@ def test_subject_material_recomputes_source_tree_commitment_before_adapter(
 
     with pytest.raises(EvidenceError, match="E_SOURCE_TREE_COMMITMENT"):
         frames_module.derive_subject_material(spec, record)
+
+
+def _subject_index_for_rederivation(spec: dict, material: dict, adapter_root: Path) -> dict:
+    return {
+        "source_root": spec["source_root"],
+        "source_record": spec["source_record"],
+        "build_descriptor": spec["build_descriptor"],
+        "adapter_root": str(adapter_root),
+        "adapter_registry": spec["adapter_registry"],
+        "input_generator_root": str(GENERATOR_FIXTURE_ROOT),
+        "input_generator_registry": spec["input_generator_registry"],
+        "profiling_results": spec["profiling_results"],
+        "adapter_discovery": material["adapter_discovery"],
+        "source_scale": material["source_scale"],
+        "public_frame": material["public_behavior_frame"],
+        "profiling_workload": material["profiling_workload"],
+        "common_inputs": material["common_inputs"],
+        "technique_profile": material["technique_profile"],
+        "sites": material["subject"]["sites"],
+        "subject": material["subject"],
+    }
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["declaration", "scale", "workload", "site", "technique", "schema"],
+)
+def test_rederive_subject_rejects_rehashed_declared_derivation(
+    synthetic_release, tmp_path, mutation
+):
+    adapter_root = tmp_path / "rederive-adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    record = verify_pinned_bridge(
+        synthetic_release.root, synthetic_release.lock
+    )["records"][0]
+    source_root = tmp_path / "rederive-subject"
+    source_root.mkdir()
+    spec = _derived_subject_spec(
+        source_root,
+        "python.json",
+        record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    material = frames_module.derive_subject_material(spec, record)
+    indexed = _subject_index_for_rederivation(spec, material, adapter_root)
+
+    if mutation == "declaration":
+        indexed["public_frame"]["rows"][0]["entrypoint"] += "_forged"
+        indexed["public_frame"]["artifact_sha256"] = canonical_sha256(
+            {k: v for k, v in indexed["public_frame"].items() if k != "artifact_sha256"}
+        )
+    elif mutation == "scale":
+        indexed["source_scale"]["scale_class"] = "L"
+        indexed["source_scale"]["artifact_sha256"] = canonical_sha256(
+            {k: v for k, v in indexed["source_scale"].items() if k != "artifact_sha256"}
+        )
+    elif mutation == "workload":
+        indexed["profiling_workload"]["budget"] += 1
+        indexed["profiling_workload"]["artifact_sha256"] = canonical_sha256(
+            {
+                k: v
+                for k, v in indexed["profiling_workload"].items()
+                if k != "artifact_sha256"
+            }
+        )
+    elif mutation == "site":
+        indexed["sites"][0]["symbol"] += "_forged"
+    elif mutation == "technique":
+        indexed["technique_profile"]["primary_technique"] = "HYBRID_NATIVE"
+        indexed["technique_profile"]["artifact_sha256"] = canonical_sha256(
+            {
+                k: v
+                for k, v in indexed["technique_profile"].items()
+                if k != "artifact_sha256"
+            }
+        )
+    else:
+        indexed["public_frame"]["public_schemas"][0]["schema_kind"] = "forged"
+        indexed["public_frame"]["artifact_sha256"] = canonical_sha256(
+            {k: v for k, v in indexed["public_frame"].items() if k != "artifact_sha256"}
+        )
+
+    with pytest.raises(EvidenceError, match="E_INDEXED_SUBJECT_REDERIVATION"):
+        rebuild_indexed_subject(indexed, record)
+
+
+def test_rederive_subject_starts_from_source_and_adapter_bytes(
+    synthetic_release, tmp_path
+):
+    adapter_root = tmp_path / "rederive-byte-adapters"
+    adapter_root.mkdir()
+    adapter_registry = validate_adapter_registry(
+        _adapter_registry(adapter_root), adapter_root
+    )
+    generator_registry = validate_input_generator_registry(
+        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+    )
+    record = verify_pinned_bridge(
+        synthetic_release.root, synthetic_release.lock
+    )["records"][0]
+    source_root = tmp_path / "rederive-byte-subject"
+    source_root.mkdir()
+    spec = _derived_subject_spec(
+        source_root,
+        "python.json",
+        record,
+        adapter_registry,
+        generator_registry,
+        "SCALAR_CONTROL",
+    )
+    material = frames_module.derive_subject_material(spec, record)
+    indexed = _subject_index_for_rederivation(spec, material, adapter_root)
+
+    rebuilt = rebuild_indexed_subject(indexed, record)
+    assert rebuilt == material
+
+    source_path = source_root / _load_fixture("python.json")["source_files"][0]
+    source_path.write_bytes(source_path.read_bytes() + b"# mutation\n")
+    with pytest.raises(EvidenceError, match="E_INDEXED_SUBJECT_REDERIVATION"):
+        rebuild_indexed_subject(indexed, record)
 
 
 @pytest.mark.parametrize(
