@@ -6,7 +6,6 @@ import hashlib
 import json
 from typing import Any
 
-
 FAILURE_CODE = "BINARY_RECORD_SCHEMA_V1_INVALID"
 GENERATOR_ID = "BINARY_RECORD_SCHEMA_V1"
 

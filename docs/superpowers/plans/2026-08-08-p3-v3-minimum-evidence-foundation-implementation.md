@@ -1,5 +1,10 @@
 # P3 v3 Minimum Evidence Foundation Implementation Plan
 
+> **Material Passport / supersession (2026-08-10):** This historical
+> implementation plan is superseded for alignment work by
+> `docs/superpowers/plans/2026-08-10-p3-v3-minimum-evidence-foundation-alignment-implementation.md`.
+> Completed task history below is retained as lineage and must not be rewritten.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > `superpowers:subagent-driven-development` (recommended) or
 > `superpowers:executing-plans` to implement this plan task-by-task. Steps use

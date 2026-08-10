@@ -6,7 +6,6 @@ import hashlib
 import json
 from typing import Any
 
-
 FAILURE_CODE = "NUMERIC_ARRAY_DOMAIN_V1_INVALID"
 GENERATOR_ID = "NUMERIC_ARRAY_DOMAIN_V1"
 

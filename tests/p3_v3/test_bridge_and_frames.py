@@ -16,6 +16,7 @@ from p3_v3.bridge_and_frames import (
     E_COMMON_GENERATOR_IDS,
     E_CONTRACT_COUNT,
     E_CONTRACT_GENERATOR_IDS,
+    UNAVAILABLE_NOT_CLAIMED,
     build_common_inputs,
     build_contract_inputs,
     build_public_behavior_frame,
@@ -25,11 +26,13 @@ from p3_v3.bridge_and_frames import (
     select_construct_subjects,
     select_first_applicable_site,
     select_profiling_workload,
+    tag_site_reachability,
     validate_adapter_registry,
     validate_bridge_document,
     validate_common_inputs_on_fixed_source,
     validate_contract_generator_registry,
     validate_input_generator_registry,
+    validate_proposal_record,
     verify_pinned_bridge,
     verify_reveal,
     verify_slot_chronology,
@@ -1515,3 +1518,86 @@ def test_post_patch_witness_in_either_input_inventory_fails(tmp_path):
     }
     with pytest.raises(EvidenceError, match="E_WITNESS_INVENTORY"):
         verify_slot_chronology(artifacts_common)
+
+
+def test_unexecuted_static_site_is_unprofiled_not_not_applicable():
+    sites = _canonical_sites()
+    tagged = tag_site_reachability(sites, [], lambda _site: True)
+    assert [row["site_id"] for row in tagged] == ["a1" * 32, "b2" * 32]
+    assert all(row["reachability"] == "UNPROFILED" for row in tagged)
+    assert all(row["applicability"] == "APPLICABLE" for row in tagged)
+    assert all(row["reachability"] != "NOT_APPLICABLE" for row in tagged)
+    assert all(row["reachability"] != row["applicability"] or row["reachability"] == "UNPROFILED" for row in tagged)
+
+    failed_predicate = tag_site_reachability(sites, [], lambda _site: False)
+    assert all(row["reachability"] == "UNPROFILED" for row in failed_predicate)
+    assert all(row["applicability"] == "NOT_APPLICABLE" for row in failed_predicate)
+
+
+def test_only_failed_static_semantic_predicate_yields_not_applicable():
+    sites = _canonical_sites()
+    results = [
+        {
+            "behavior_id": "11" * 32,
+            "status": "SUCCESS",
+            "technique_tags": ["SCALAR_CONTROL"],
+            "observed_site_ids": ["a1" * 32],
+        }
+    ]
+    tagged = tag_site_reachability(
+        sites, results, lambda site: site["symbol"] == "f"
+    )
+    by_id = {row["site_id"]: row for row in tagged}
+    assert by_id["a1" * 32]["reachability"] == "OBSERVED_REACHABLE"
+    assert by_id["a1" * 32]["applicability"] == "APPLICABLE"
+    assert by_id["b2" * 32]["reachability"] == "UNPROFILED"
+    assert by_id["b2" * 32]["applicability"] == "NOT_APPLICABLE"
+
+    # Independent reconstruction: reachability from observed ids only; applicability
+    # from predicate only. Unobserved + applicable is never NOT_APPLICABLE.
+    observed = {"a1" * 32}
+    rebuilt = []
+    for site in sites:
+        reachability = (
+            "OBSERVED_REACHABLE" if site["site_id"] in observed else "UNPROFILED"
+        )
+        applicability = (
+            "APPLICABLE" if site["symbol"] == "f" else "NOT_APPLICABLE"
+        )
+        rebuilt.append(
+            {
+                "site_id": site["site_id"],
+                "reachability": reachability,
+                "applicability": applicability,
+            }
+        )
+    assert tagged == rebuilt
+
+
+def test_proposal_record_rejects_missing_hashes_and_fabricated_provider_parameters():
+    base = {
+        "schema_version": "p3-proposal-record-v1",
+        "provider_model": "synthetic/fixture-v1",
+        "prompt_sha256": "a1" * 32,
+        "context_sha256": "b2" * 32,
+        "response_sha256": "c3" * 32,
+        "timestamp_utc": "2026-08-10T00:00:00Z",
+        "exposed_generation_metadata": {"finish_reason": "stop"},
+        "temperature": UNAVAILABLE_NOT_CLAIMED,
+        "seed": UNAVAILABLE_NOT_CLAIMED,
+        "top_p": UNAVAILABLE_NOT_CLAIMED,
+    }
+    accepted = validate_proposal_record(base)
+    assert accepted["temperature"] == UNAVAILABLE_NOT_CLAIMED
+    assert accepted["seed"] == UNAVAILABLE_NOT_CLAIMED
+    assert accepted["top_p"] == UNAVAILABLE_NOT_CLAIMED
+    assert "artifact_sha256" in accepted
+
+    for missing in ("prompt_sha256", "context_sha256", "response_sha256"):
+        broken = {key: value for key, value in base.items() if key != missing}
+        with pytest.raises(EvidenceError, match="E_PROPOSAL"):
+            validate_proposal_record(broken)
+
+    fabricated = {**base, "temperature": 0.7, "seed": 42}
+    with pytest.raises(EvidenceError, match="E_PROPOSAL_UNAVAILABLE"):
+        validate_proposal_record(fabricated)

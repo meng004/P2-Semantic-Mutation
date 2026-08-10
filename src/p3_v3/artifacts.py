@@ -7,9 +7,9 @@ import json
 import os
 import re
 import tempfile
+from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
-from typing import Any, Mapping
-
+from typing import Any
 
 _SHA256_RE = re.compile(r"[0-9a-f]{64}")
 

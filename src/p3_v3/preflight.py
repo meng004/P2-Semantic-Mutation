@@ -10,8 +10,9 @@ import re
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from .artifacts import (
     EvidenceError,
@@ -21,7 +22,6 @@ from .artifacts import (
     validate_exact_object,
     validate_sha256,
 )
-
 
 _SPEC_SCHEMA = {
     "schema_version": str,

@@ -6,8 +6,9 @@ import os
 import shutil
 import stat
 import tempfile
+from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 from .artifacts import (
     EvidenceError,
@@ -17,7 +18,6 @@ from .artifacts import (
     validate_exact_object,
     validate_sha256,
 )
-
 
 PACKAGE_A_CLASSES = {
     "PUBLIC_BEHAVIOR_FRAME",
@@ -199,6 +199,12 @@ def _validate_manifest(manifest: Mapping[str, Any]) -> dict[str, Any]:
     if value["package_tree_sha256"] != canonical_sha256(value["files"]):
         raise EvidenceError("E_PACKAGE_TREE", "package tree hash differs")
     return value
+
+
+def validate_package_manifest(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate package manifest structure and self-hash without filesystem binding."""
+
+    return _validate_manifest(manifest)
 
 
 def verify_package(source_root: str | Path, manifest: Mapping[str, Any]) -> None:

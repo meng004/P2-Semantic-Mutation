@@ -6,7 +6,6 @@ import hashlib
 import json
 from typing import Any
 
-
 FAILURE_CODE = "CLI_TOKEN_GRAMMAR_V1_INVALID"
 GENERATOR_ID = "CLI_TOKEN_GRAMMAR_V1"
 

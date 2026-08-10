@@ -6,7 +6,6 @@ import hashlib
 import json
 from typing import Any
 
-
 FAILURE_CODE = "JSON_SCHEMA_DRAFT2020_12_V1_INVALID"
 GENERATOR_ID = "JSON_SCHEMA_DRAFT2020_12_V1"
 

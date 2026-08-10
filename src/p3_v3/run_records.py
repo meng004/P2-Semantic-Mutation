@@ -5,9 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+from collections.abc import Mapping, Sequence
 from fractions import Fraction
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 from .artifacts import (
     EvidenceError,
@@ -454,7 +455,7 @@ def freeze_p12_denominator(
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
-def _verify_p12_denominator(denominator: Mapping[str, Any]) -> dict[str, Any]:
+def verify_p12_denominator(denominator: Mapping[str, Any]) -> dict[str, Any]:
     value = validate_exact_object(dict(denominator), _DENOMINATOR_SCHEMA, "denominator")
     if value["schema_version"] != "p3-p12-denominator-v1":
         raise EvidenceError("E_P12_DENOMINATOR", "unsupported P12 denominator schema")
@@ -472,6 +473,10 @@ def _verify_p12_denominator(denominator: Mapping[str, Any]) -> dict[str, Any]:
             raise EvidenceError("E_P12_WEIGHT", "P12 denominator weights were altered")
         raise EvidenceError("E_P12_DENOMINATOR", "denominator contents were altered")
     return value
+
+
+# Backward-compatible private alias used by summarize_p12_outcomes.
+_verify_p12_denominator = verify_p12_denominator
 
 
 def summarize_p12_outcomes(

@@ -7,10 +7,11 @@ import importlib.util
 import json
 import re
 import subprocess
+from collections.abc import Callable, Mapping, Sequence
 from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any
 
 from .artifacts import (
     EvidenceError,
@@ -21,7 +22,6 @@ from .artifacts import (
     validate_exact_object,
     validate_sha256,
 )
-
 
 _GIT_OID_RE = re.compile(r"[0-9a-f]{40}")
 _SCALE_ORDER = ("S", "M", "L")
@@ -100,6 +100,20 @@ APPLICABLE_SLOT_CHRONOLOGY = (
     "TERMINAL_STATE",
 )
 NOT_APPLICABLE_SLOT_CHRONOLOGY = ("APPLICABILITY_CLOSED_NOT_APPLICABLE",)
+UNAVAILABLE_NOT_CLAIMED = "UNAVAILABLE_NOT_CLAIMED"
+_PROPOSAL_SCHEMA = {
+    "schema_version": str,
+    "provider_model": str,
+    "prompt_sha256": str,
+    "context_sha256": str,
+    "response_sha256": str,
+    "timestamp_utc": str,
+    "exposed_generation_metadata": dict,
+    "temperature": str,
+    "seed": str,
+    "top_p": str,
+}
+_PROPOSAL_UNAVAILABLE_FIELDS = ("temperature", "seed", "top_p")
 _SCHEMA_ALIAS_KEYS = frozenset(
     {"subject_alias", "project_alias", "controlled_subject_source_id"}
 )
@@ -544,6 +558,116 @@ def select_first_applicable_site(
         if applicable:
             return site["site_id"]
     return None
+
+
+def tag_site_reachability(
+    sites: Sequence[Mapping[str, Any]],
+    profiling_results: Sequence[Mapping[str, Any]],
+    applicability_predicate: Callable[[Mapping[str, Any]], bool],
+) -> list[dict[str, str]]:
+    """Tag static sites with reachability and independent applicability.
+
+    Reachability is derived only from observed profiling site IDs. Applicability
+    is derived only from the frozen static semantic predicate. An unexecuted
+    site is always ``UNPROFILED`` and is never reported as ``NOT_APPLICABLE``
+    through the reachability channel.
+    """
+
+    canonical: list[dict[str, Any]] = []
+    for index, candidate in enumerate(sites):
+        site = validate_exact_object(
+            dict(candidate), _CANONICAL_SITE_SCHEMA, f"canonical_sites[{index}]"
+        )
+        safe_relative_path(site["path"])
+        validate_sha256(site["site_id"], f"canonical_sites[{index}].site_id")
+        canonical.append(site)
+    def order(item: Mapping[str, Any]) -> tuple[Any, ...]:
+        return (
+            item["path"],
+            item["symbol"],
+            item["start_line"],
+            item["start_col"],
+            item["end_line"],
+            item["end_col"],
+            item["site_id"],
+        )
+    if canonical != sorted(canonical, key=order):
+        raise EvidenceError("E_SITE_ORDER", "sites are not in canonical order")
+    if not isinstance(profiling_results, Sequence) or isinstance(
+        profiling_results, (str, bytes)
+    ):
+        raise EvidenceError("E_PROFILE_RESULTS", "profiling_results must be a sequence")
+    observed: set[str] = set()
+    for index, candidate in enumerate(profiling_results):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError(
+                "E_PROFILE_RESULTS", f"profiling_results[{index}] must be an object"
+            )
+        site_ids = candidate.get("observed_site_ids", [])
+        if site_ids is None:
+            site_ids = []
+        if not isinstance(site_ids, list):
+            raise EvidenceError(
+                "E_PROFILE_RESULTS",
+                f"profiling_results[{index}].observed_site_ids must be a list",
+            )
+        for site_index, site_id in enumerate(site_ids):
+            observed.add(
+                validate_sha256(
+                    site_id,
+                    f"profiling_results[{index}].observed_site_ids[{site_index}]",
+                )
+            )
+    tagged: list[dict[str, str]] = []
+    for site in canonical:
+        applicable = applicability_predicate(site)
+        if type(applicable) is not bool:
+            raise EvidenceError("E_APPLICABILITY_RESULT", "predicate must return bool")
+        reachability = (
+            "OBSERVED_REACHABLE" if site["site_id"] in observed else "UNPROFILED"
+        )
+        applicability = "APPLICABLE" if applicable else "NOT_APPLICABLE"
+        if reachability == "NOT_APPLICABLE":
+            raise EvidenceError(
+                "E_SITE_REACHABILITY",
+                "reachability channel cannot emit NOT_APPLICABLE",
+            )
+        tagged.append(
+            {
+                "site_id": site["site_id"],
+                "reachability": reachability,
+                "applicability": applicability,
+            }
+        )
+    return tagged
+
+
+def validate_proposal_record(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate proposal provenance; reject missing hashes and fabricated params."""
+
+    if not isinstance(record, Mapping):
+        raise EvidenceError("E_PROPOSAL", "proposal record must be an object")
+    for field in ("prompt_sha256", "context_sha256", "response_sha256"):
+        if field not in record:
+            raise EvidenceError("E_PROPOSAL", f"proposal record missing {field}")
+    for field in _PROPOSAL_UNAVAILABLE_FIELDS:
+        if field in record and record[field] != UNAVAILABLE_NOT_CLAIMED:
+            raise EvidenceError(
+                "E_PROPOSAL_UNAVAILABLE",
+                f"{field} must be the literal {UNAVAILABLE_NOT_CLAIMED}",
+            )
+    value = validate_exact_object(dict(record), _PROPOSAL_SCHEMA, "proposal_record")
+    if value["schema_version"] != "p3-proposal-record-v1":
+        raise EvidenceError("E_PROPOSAL", "unsupported proposal record schema")
+    if not value["provider_model"]:
+        raise EvidenceError("E_PROPOSAL", "provider_model must be nonempty")
+    if not value["timestamp_utc"]:
+        raise EvidenceError("E_PROPOSAL", "timestamp_utc must be nonempty")
+    validate_sha256(value["prompt_sha256"], "prompt_sha256")
+    validate_sha256(value["context_sha256"], "context_sha256")
+    validate_sha256(value["response_sha256"], "response_sha256")
+    body = dict(value)
+    return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
 def select_construct_subjects(
@@ -1621,7 +1745,7 @@ def build_common_inputs(
             generate = callables[generator_id]
             try:
                 result = generate(schema["canonical_schema_bytes"], seed)
-            except Exception:
+            except Exception:  # noqa: BLE001 - generator failures occupy the ordinal
                 result = {"failure_code": failure_code}
             if not isinstance(result, Mapping):
                 result = {"failure_code": failure_code}
@@ -1987,7 +2111,7 @@ def build_contract_inputs(
             seed = _contract_input_seed(subject_id, slot_id, ordinal)
             try:
                 result = generate(domain_bytes, seed)
-            except Exception:
+            except Exception:  # noqa: BLE001 - generator failures occupy the ordinal
                 result = {"failure_code": failure_code}
             if not isinstance(result, Mapping):
                 result = {"failure_code": failure_code}
