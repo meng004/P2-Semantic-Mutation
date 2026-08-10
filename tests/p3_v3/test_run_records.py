@@ -1,24 +1,42 @@
 from __future__ import annotations
 
 import copy
+from fractions import Fraction
 
 import pytest
 
-from p3_v3.artifacts import EvidenceError
+from p3_v3.artifacts import EvidenceError, canonical_sha256
 from p3_v3.run_records import (
+    INFRASTRUCTURE_RETRY_LIMIT,
+    P12_OUTCOME_STATES,
     close_phase,
     create_intent,
+    freeze_p12_denominator,
     reduce_attempts,
+    summarize_p12_outcomes,
     verify_ledger,
     write_result,
 )
 
 
-def _intent(job_id="job-1", attempt=1):
+def _intent(
+    job_id="job-1",
+    attempt=1,
+    *,
+    phase="PHASE-2",
+    job_role="PRIMARY_CONTROLLED",
+    evaluation_input_class="E_COMMON",
+    object_type="SEMANTIC_MUTANT",
+    object_id="mut-1",
+    mr_id="mr-1",
+    evaluation_input_id="e-common-0",
+    repetition_id=1,
+    environment_id="env-1",
+):
     return {
         "job_id": job_id,
         "protocol_sha256": "a" * 64,
-        "phase": "PHASE-2",
+        "phase": phase,
         "argv": ["python3", "-c", "print(1)"],
         "cwd_identity": "fixture-root",
         "environment_sha256": "b" * 64,
@@ -26,10 +44,18 @@ def _intent(job_id="job-1", attempt=1):
         "seed": None,
         "timeout_seconds": 30,
         "attempt": attempt,
+        "object_type": object_type,
+        "object_id": object_id,
+        "mr_id": mr_id,
+        "evaluation_input_class": evaluation_input_class,
+        "evaluation_input_id": evaluation_input_id,
+        "repetition_id": repetition_id,
+        "environment_id": environment_id,
+        "job_role": job_role,
     }
 
 
-def _result(job_id="job-1", attempt=1, status="PASS"):
+def _result(job_id="job-1", attempt=1, status="PASS", scientific_outcome=None):
     return {
         "job_id": job_id,
         "attempt": attempt,
@@ -39,6 +65,7 @@ def _result(job_id="job-1", attempt=1, status="PASS"):
         "stderr_sha256": "e" * 64,
         "duration_seconds": 0.25,
         "failure_code": "" if status == "PASS" else "E_SYNTHETIC",
+        "scientific_outcome": scientific_outcome,
     }
 
 
@@ -126,8 +153,6 @@ def test_ledger_rejects_rehashed_non_digest_artifact_identity(tmp_path):
     changed = copy.deepcopy(events)
     changed[0]["artifact_sha256"] = "not-a-digest"
     body = {key: value for key, value in changed[0].items() if key != "event_sha256"}
-    from p3_v3.artifacts import canonical_sha256
-
     changed[0]["event_sha256"] = canonical_sha256(body)
     ledger.write_text(
         "\n".join(
@@ -163,3 +188,266 @@ def test_phase_close_rejects_empty_phase_identity(tmp_path):
     ledger.write_bytes(b"")
     with pytest.raises(EvidenceError, match="E_PHASE_ID"):
         close_phase("", "a" * 64, [], ledger, "f" * 64)
+
+
+def test_primary_controlled_and_p12_jobs_require_e_common(tmp_path):
+    controlled = tmp_path / "jobs/controlled/1"
+    with pytest.raises(EvidenceError, match="E_JOB_ROLE_INPUT"):
+        create_intent(
+            controlled,
+            _intent(
+                job_id="controlled",
+                job_role="PRIMARY_CONTROLLED",
+                evaluation_input_class="E_CONTRACT",
+            ),
+        )
+
+    p12 = tmp_path / "jobs/p12-job/1"
+    with pytest.raises(EvidenceError, match="E_JOB_ROLE_INPUT"):
+        create_intent(
+            p12,
+            _intent(
+                job_id="p12-job",
+                phase="PHASE-7",
+                job_role="P12",
+                object_type="P12_FAULT",
+                object_id="fault-1",
+                evaluation_input_class="E_CONTRACT",
+            ),
+        )
+
+    create_intent(
+        tmp_path / "jobs/ok-controlled/1",
+        _intent(job_id="ok-controlled", job_role="PRIMARY_CONTROLLED"),
+    )
+    create_intent(
+        tmp_path / "jobs/ok-p12/1",
+        _intent(
+            job_id="ok-p12",
+            phase="PHASE-7",
+            job_role="P12",
+            object_type="P12_FAULT",
+            object_id="fault-1",
+            evaluation_input_class="E_COMMON",
+        ),
+    )
+
+
+def test_contract_sensitivity_requires_e_contract(tmp_path):
+    bad = tmp_path / "jobs/sens-bad/1"
+    with pytest.raises(EvidenceError, match="E_JOB_ROLE_INPUT"):
+        create_intent(
+            bad,
+            _intent(
+                job_id="sens-bad",
+                job_role="CONTRACT_SENSITIVITY",
+                evaluation_input_class="E_COMMON",
+            ),
+        )
+    create_intent(
+        tmp_path / "jobs/sens-ok/1",
+        _intent(
+            job_id="sens-ok",
+            job_role="CONTRACT_SENSITIVITY",
+            evaluation_input_class="E_CONTRACT",
+            evaluation_input_id="e-contract-0",
+        ),
+    )
+
+
+def test_rejects_profiling_or_certification_witness_input_classes(tmp_path):
+    for forbidden in ("PROFILING", "CERTIFICATION_WITNESS"):
+        with pytest.raises(EvidenceError, match="E_EVALUATION_INPUT_CLASS"):
+            create_intent(
+                tmp_path / f"jobs/bad-{forbidden}/1",
+                _intent(
+                    job_id=f"bad-{forbidden}",
+                    evaluation_input_class=forbidden,
+                ),
+            )
+
+
+def test_rejects_attempt_four_after_three_infrastructure_failures(tmp_path):
+    assert INFRASTRUCTURE_RETRY_LIMIT == 3
+    jobs = tmp_path / "jobs"
+    for attempt in (1, 2, 3):
+        path = jobs / f"job-1/{attempt}"
+        create_intent(path, _intent(attempt=attempt))
+        write_result(path, _result(attempt=attempt, status="FAIL_INFRASTRUCTURE"))
+    fourth = jobs / "job-1/4"
+    create_intent(fourth, _intent(attempt=4))
+    write_result(fourth, _result(attempt=4, status="FAIL_INFRASTRUCTURE"))
+    with pytest.raises(EvidenceError, match="E_RETRY_POLICY"):
+        reduce_attempts(jobs, tmp_path / "four.jsonl")
+
+
+def test_rejects_retry_after_any_scientific_terminal_result(tmp_path):
+    for status in ("PASS", "FAIL_SCIENTIFIC", "INCONCLUSIVE", "MISSING_WITH_REASON"):
+        root = tmp_path / f"jobs-{status}"
+        first = root / "job-1/1"
+        second = root / "job-1/2"
+        create_intent(first, _intent(attempt=1))
+        write_result(first, _result(attempt=1, status=status))
+        create_intent(second, _intent(attempt=2))
+        write_result(second, _result(attempt=2))
+        with pytest.raises(EvidenceError, match="E_RETRY_POLICY"):
+            reduce_attempts(root, tmp_path / f"{status}.jsonl")
+
+
+def _p12_job(
+    job_id,
+    object_id,
+    *,
+    mr_id="mr-1",
+    evaluation_input_id="e-common-0",
+    weight=1,
+):
+    return {
+        "job_id": job_id,
+        "object_type": "P12_FAULT",
+        "object_id": object_id,
+        "mr_id": mr_id,
+        "evaluation_input_class": "E_COMMON",
+        "evaluation_input_id": evaluation_input_id,
+        "repetition_id": 1,
+        "environment_id": "env-1",
+        "job_role": "P12",
+        "weight": weight,
+    }
+
+
+def test_freeze_p12_denominator_before_results_and_summary_covers_five_outcomes():
+    paired_ids = ["fault-a", "fault-b", "fault-c", "fault-d", "fault-e"]
+    jobs = [
+        _p12_job("j-violation", "fault-a"),
+        _p12_job("j-declared", "fault-b", evaluation_input_id="e-common-1"),
+        _p12_job("j-satisfied", "fault-c", evaluation_input_id="e-common-2"),
+        _p12_job("j-inconclusive", "fault-d", evaluation_input_id="e-common-3"),
+        _p12_job("j-infra", "fault-e", evaluation_input_id="e-common-4"),
+    ]
+    denominator = freeze_p12_denominator(paired_ids, jobs)
+    assert denominator["planned_count"] == 5
+    assert denominator["p12_paired_ids"] == paired_ids
+    assert "artifact_sha256" in denominator
+
+    results = [
+        {"job_id": "j-violation", "scientific_outcome": "MR_VIOLATION"},
+        {
+            "job_id": "j-declared",
+            "scientific_outcome": "DECLARED_EXCEPTION_OR_TIMEOUT_VIOLATION",
+        },
+        {"job_id": "j-satisfied", "scientific_outcome": "MR_SATISFIED"},
+        {"job_id": "j-inconclusive", "scientific_outcome": "SCIENTIFIC_INCONCLUSIVE"},
+        {"job_id": "j-infra", "scientific_outcome": "INFRASTRUCTURE_UNRESOLVED"},
+    ]
+    summary = summarize_p12_outcomes(denominator, results)
+    assert summary["planned_count"] == 5
+    assert summary["state_counts"] == {
+        "MR_VIOLATION": 1,
+        "MR_SATISFIED": 1,
+        "DECLARED_EXCEPTION_OR_TIMEOUT_VIOLATION": 1,
+        "SCIENTIFIC_INCONCLUSIVE": 1,
+        "INFRASTRUCTURE_UNRESOLVED": 1,
+    }
+    assert list(summary["state_counts"]) == list(P12_OUTCOME_STATES)
+    assert summary["lower_numerator"] == 2
+    assert summary["upper_numerator"] == 4
+    assert summary["lower_rate"] == str(Fraction(2, 5))
+    assert summary["upper_rate"] == str(Fraction(4, 5))
+    assert summary["complete_case_numerator"] == 2
+    assert summary["complete_case_denominator"] == 3
+    assert summary["complete_case_rate"] == str(Fraction(2, 3))
+    assert summary["scientific_inconclusive_count"] == 1
+    assert summary["infrastructure_unresolved_count"] == 1
+
+
+def test_p12_denominator_rejects_role_membership_and_reweight_mutations():
+    paired_ids = ["fault-a", "fault-b"]
+    jobs = [
+        _p12_job("j1", "fault-a"),
+        _p12_job("j2", "fault-b", evaluation_input_id="e-common-1"),
+    ]
+    denominator = freeze_p12_denominator(paired_ids, jobs)
+
+    with pytest.raises(EvidenceError, match="E_P12_INPUT_CLASS"):
+        freeze_p12_denominator(
+            paired_ids,
+            [
+                {
+                    **_p12_job("j1", "fault-a"),
+                    "evaluation_input_class": "E_CONTRACT",
+                }
+            ],
+        )
+
+    with pytest.raises(EvidenceError, match="E_P12_PAIRED"):
+        freeze_p12_denominator(["fault-a"], jobs)
+
+    results = [
+        {"job_id": "j1", "scientific_outcome": "MR_VIOLATION"},
+        {"job_id": "j2", "scientific_outcome": "MR_SATISFIED"},
+    ]
+    summarize_p12_outcomes(denominator, results)
+
+    with pytest.raises(EvidenceError, match="E_P12_JOB_SET"):
+        summarize_p12_outcomes(
+            denominator,
+            results
+            + [{"job_id": "j3", "scientific_outcome": "MR_VIOLATION"}],
+        )
+
+    with pytest.raises(EvidenceError, match="E_P12_JOB_SET"):
+        summarize_p12_outcomes(denominator, results[:1])
+
+    mutated_paired = copy.deepcopy(denominator)
+    mutated_paired["p12_paired_ids"] = ["fault-a", "fault-x"]
+    body = {
+        key: value for key, value in mutated_paired.items() if key != "artifact_sha256"
+    }
+    mutated_paired["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_P12_PAIRED|E_P12_DENOMINATOR"):
+        summarize_p12_outcomes(mutated_paired, results)
+
+    reweighted = copy.deepcopy(denominator)
+    reweighted["jobs"] = [
+        {**job, "weight": 2 if job["job_id"] == "j1" else job["weight"]}
+        for job in reweighted["jobs"]
+    ]
+    body = {key: value for key, value in reweighted.items() if key != "artifact_sha256"}
+    reweighted["artifact_sha256"] = canonical_sha256(body)
+    with pytest.raises(EvidenceError, match="E_P12_WEIGHT|E_P12_DENOMINATOR"):
+        summarize_p12_outcomes(reweighted, results)
+
+
+def test_phase7_p12_result_requires_scientific_outcome_and_others_forbid_it(tmp_path):
+    controlled = tmp_path / "jobs/controlled/1"
+    create_intent(controlled, _intent(job_id="controlled"))
+    with pytest.raises(EvidenceError, match="E_SCIENTIFIC_OUTCOME"):
+        write_result(
+            controlled,
+            _result(job_id="controlled", scientific_outcome="MR_VIOLATION"),
+        )
+    write_result(controlled, _result(job_id="controlled", scientific_outcome=None))
+
+    p12 = tmp_path / "jobs/p12-job/1"
+    create_intent(
+        p12,
+        _intent(
+            job_id="p12-job",
+            phase="PHASE-7",
+            job_role="P12",
+            object_type="P12_FAULT",
+            object_id="fault-1",
+        ),
+    )
+    with pytest.raises(EvidenceError, match="E_SCIENTIFIC_OUTCOME"):
+        write_result(p12, _result(job_id="p12-job", scientific_outcome=None))
+    with pytest.raises(EvidenceError, match="E_SCIENTIFIC_OUTCOME"):
+        write_result(
+            p12,
+            _result(job_id="p12-job", scientific_outcome="NOT_A_STATE"),
+        )
+    write_result(
+        p12,
+        _result(job_id="p12-job", scientific_outcome="MR_SATISFIED"),
+    )
