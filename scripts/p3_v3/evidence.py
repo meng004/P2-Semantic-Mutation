@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import stat
 import sys
 from collections.abc import Mapping
@@ -309,6 +310,7 @@ _INDEX_SCHEMA = {
     "schema_version": str,
     "phase_coverage": list,
     "protocol": dict,
+    "protocol_artifacts": dict,
     "adapter_registries": list,
     "input_generator_registries": list,
     "subjects": list,
@@ -321,20 +323,33 @@ _INDEX_SCHEMA = {
     "claims": dict,
     "artifact_sha256": str,
 }
+_PROTOCOL_ARTIFACT_FIELDS = (
+    "rq_spec_sha256",
+    "claim_ceiling_sha256",
+    "p12_contract_sha256",
+    "operator_catalogue_sha256",
+    "mr_policy_sha256",
+    "site_policy_sha256",
+    "analysis_spec_sha256",
+    "package_policy_sha256",
+    "environment_lock_sha256",
+)
+_PROTOCOL_ARTIFACT_SCHEMA = {field: dict for field in _PROTOCOL_ARTIFACT_FIELDS}
+_CLAIM_CEILING_SCHEMA = {
+    "schema_version": str,
+    "claims": list,
+    "artifact_sha256": str,
+}
+_CLAIM_AUTHORITY_ROW_SCHEMA = {
+    "claim_id": str,
+    "rqs": list,
+    "initial_status": str,
+}
 _REFERENCE_SCHEMA = {"path": str, "sha256": str}
 _SUBJECT_INDEX_SCHEMA = {
     "phase": str,
     "controlled_subject_source_id": str,
     "controlled_subject_id": str,
-    "public_frame": dict,
-    "profiling_workload": dict,
-    "profiling_results": dict,
-    "common_inputs": dict,
-    "common_input_validity": dict,
-    "slot_artifacts": list,
-}
-_SUBJECT_REBUILD_INDEX_SCHEMA = {
-    **_SUBJECT_INDEX_SCHEMA,
     "bridge_record": dict,
     "source_root": str,
     "source_record": dict,
@@ -343,9 +358,22 @@ _SUBJECT_REBUILD_INDEX_SCHEMA = {
     "input_generator_registry_sha256": str,
     "adapter_discovery": dict,
     "source_scale": dict,
+    "public_frame": dict,
+    "profiling_workload": dict,
+    "profiling_results": dict,
+    "profiling_traces": list,
+    "common_inputs": dict,
+    "common_input_validity": dict,
     "technique_profile": dict,
     "sites": dict,
     "subject": dict,
+    "slot_artifacts": list,
+}
+_PROFILE_TRACE_INDEX_SCHEMA = {
+    "job_id": str,
+    "attempt": int,
+    "behavior_id": str,
+    "artifact": dict,
 }
 _SLOT_INDEX_SCHEMA = {
     "slot_id": str,
@@ -488,6 +516,26 @@ def _load_evidence_index(
     protocol_path, protocol = _indexed_file(
         root, value["protocol"], seen, loaded, "protocol"
     )
+    protocol_artifact_index = validate_exact_object(
+        value["protocol_artifacts"],
+        _PROTOCOL_ARTIFACT_SCHEMA,
+        "protocol_artifacts",
+    )
+    protocol_artifact_paths: dict[str, Path] = {}
+    for field in _PROTOCOL_ARTIFACT_FIELDS:
+        artifact_path, _ = _indexed_file(
+            root,
+            protocol_artifact_index[field],
+            seen,
+            loaded,
+            f"protocol_artifacts.{field}",
+            canonical=False,
+        )
+        if protocol[field] != protocol_artifact_index[field]["sha256"]:
+            raise EvidenceError(
+                "E_PROTOCOL_BINDING", f"protocol byte binding differs: {field}"
+            )
+        protocol_artifact_paths[field] = artifact_path
     ledger_path, _ = _indexed_file(
         root, value["ledger"], seen, loaded, "ledger", canonical=False
     )
@@ -495,7 +543,23 @@ def _load_evidence_index(
     claims = validate_claim_ledger(claims)
     job_root = _indexed_directory(root, value["job_root"], seen, "job_root")
 
+    if len(value["adapter_registries"]) != 1 or len(
+        value["input_generator_registries"]
+    ) != 1:
+        raise EvidenceError(
+            "E_PROTOCOL_BINDING", "exactly one adapter and input-generator registry is required"
+        )
+    if (
+        protocol["adapter_registry_sha256"]
+        != value["adapter_registries"][0].get("sha256")
+        or protocol["input_generator_registry_sha256"]
+        != value["input_generator_registries"][0].get("sha256")
+    ):
+        raise EvidenceError(
+            "E_PROTOCOL_BINDING", "protocol registry byte binding differs"
+        )
     adapter_registries: list[dict[str, Any]] = []
+    adapter_registry_file_sha256: list[str] = []
     for index, reference in enumerate(value["adapter_registries"]):
         registry_path, registry = _indexed_file(
             root, reference, seen, loaded, f"adapter_registries[{index}]"
@@ -520,7 +584,9 @@ def _load_evidence_index(
                 )
             seen.add(implementation)
         adapter_registries.append(verified_registry)
+        adapter_registry_file_sha256.append(reference["sha256"])
     generator_registries: list[dict[str, Any]] = []
+    generator_registry_file_sha256: list[str] = []
     for index, reference in enumerate(value["input_generator_registries"]):
         registry_path, registry = _indexed_file(
             root,
@@ -557,16 +623,12 @@ def _load_evidence_index(
                 )
             seen.add(implementation)
         generator_registries.append(verified_registry)
+        generator_registry_file_sha256.append(reference["sha256"])
 
     subjects: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["subjects"]):
-        schema = (
-            _SUBJECT_REBUILD_INDEX_SCHEMA
-            if isinstance(candidate, dict) and "source_root" in candidate
-            else _SUBJECT_INDEX_SCHEMA
-        )
         subject = validate_exact_object(
-            candidate, schema, f"subjects[{index}]"
+            candidate, _SUBJECT_INDEX_SCHEMA, f"subjects[{index}]"
         )
         _phase(subject["phase"], coverage, f"subjects[{index}]")
         validate_sha256(
@@ -577,31 +639,30 @@ def _load_evidence_index(
             subject["controlled_subject_id"], f"subjects[{index}].controlled_subject_id"
         )
         material = dict(subject)
-        if schema is _SUBJECT_REBUILD_INDEX_SCHEMA:
-            for field in (
-                "bridge_record",
-                "source_record",
-                "build_descriptor",
-                "adapter_discovery",
-                "source_scale",
-                "technique_profile",
-                "sites",
-                "subject",
-            ):
-                _, material[field] = _indexed_file(
-                    root, subject[field], seen, loaded, f"subjects[{index}].{field}"
-                )
-            material["source_root"] = _indexed_directory(
-                root, subject["source_root"], seen, f"subjects[{index}].source_root"
+        for field in (
+            "bridge_record",
+            "source_record",
+            "build_descriptor",
+            "adapter_discovery",
+            "source_scale",
+            "technique_profile",
+            "sites",
+            "subject",
+        ):
+            _, material[field] = _indexed_file(
+                root, subject[field], seen, loaded, f"subjects[{index}].{field}"
             )
-            validate_sha256(
-                subject["adapter_registry_sha256"],
-                f"subjects[{index}].adapter_registry_sha256",
-            )
-            validate_sha256(
-                subject["input_generator_registry_sha256"],
-                f"subjects[{index}].input_generator_registry_sha256",
-            )
+        material["source_root"] = _indexed_directory(
+            root, subject["source_root"], seen, f"subjects[{index}].source_root"
+        )
+        validate_sha256(
+            subject["adapter_registry_sha256"],
+            f"subjects[{index}].adapter_registry_sha256",
+        )
+        validate_sha256(
+            subject["input_generator_registry_sha256"],
+            f"subjects[{index}].input_generator_registry_sha256",
+        )
         for field in (
             "public_frame",
             "profiling_workload",
@@ -612,6 +673,38 @@ def _load_evidence_index(
             _, material[field] = _indexed_file(
                 root, subject[field], seen, loaded, f"subjects[{index}].{field}"
             )
+        traces = []
+        for trace_index, candidate_trace in enumerate(subject["profiling_traces"]):
+            trace_entry = validate_exact_object(
+                candidate_trace,
+                _PROFILE_TRACE_INDEX_SCHEMA,
+                f"subjects[{index}].profiling_traces[{trace_index}]",
+            )
+            if (
+                not trace_entry["job_id"]
+                or "/" in trace_entry["job_id"]
+                or type(trace_entry["attempt"]) is bool
+                or trace_entry["attempt"] < 1
+                or not trace_entry["behavior_id"]
+            ):
+                raise EvidenceError(
+                    "E_PROFILE_ATTEMPT_BINDING", "profiling trace identity is invalid"
+                )
+            trace_path, trace = _indexed_file(
+                root,
+                trace_entry["artifact"],
+                seen,
+                loaded,
+                f"subjects[{index}].profiling_traces[{trace_index}]",
+            )
+            traces.append(
+                {
+                    **trace_entry,
+                    "artifact": trace,
+                    "artifact_sha256": file_sha256(trace_path),
+                }
+            )
+        material["profiling_traces"] = traces
         slots = []
         for slot_index, candidate_slot in enumerate(subject["slot_artifacts"]):
             slot_entry = validate_exact_object(
@@ -692,14 +785,65 @@ def _load_evidence_index(
                 "E_CLAIM_EVIDENCE", "claim names evidence absent from the index"
             )
 
+    claim_ceiling = validate_exact_object(
+        read_canonical_json(protocol_artifact_paths["claim_ceiling_sha256"]),
+        _CLAIM_CEILING_SCHEMA,
+        "claim_ceiling_authority",
+    )
+    if claim_ceiling["schema_version"] != "p3-claim-ceiling-authority-v1":
+        raise EvidenceError("E_CLAIM_SET", "claim ceiling authority version differs")
+    claim_ceiling_body = {
+        key: value
+        for key, value in claim_ceiling.items()
+        if key != "artifact_sha256"
+    }
+    if claim_ceiling["artifact_sha256"] != canonical_sha256(claim_ceiling_body):
+        raise EvidenceError("E_CLAIM_SET", "claim ceiling authority hash differs")
+    authoritative_claims = [
+        validate_exact_object(
+            candidate,
+            _CLAIM_AUTHORITY_ROW_SCHEMA,
+            f"claim_ceiling_authority.claims[{index}]",
+        )
+        for index, candidate in enumerate(claim_ceiling["claims"])
+    ]
+    rq_spec_raw = protocol_artifact_paths["rq_spec_sha256"].read_text(encoding="utf-8")
+    authoritative_rqs = sorted(
+        set(re.findall(r"^### (RQ[0-9]+)：", rq_spec_raw, flags=re.MULTILINE))
+    )
+    authoritative_claim_ids = [claim["claim_id"] for claim in authoritative_claims]
+    authoritative_associations = {
+        claim["claim_id"]: claim["rqs"] for claim in authoritative_claims
+    }
+    if (
+        not authoritative_claim_ids
+        or authoritative_claim_ids != list(dict.fromkeys(authoritative_claim_ids))
+        or any(
+            claim["initial_status"] != "blocked"
+            or not claim["rqs"]
+            or claim["rqs"] != sorted(set(claim["rqs"]))
+            or not set(claim["rqs"]) <= set(authoritative_rqs)
+            for claim in authoritative_claims
+        )
+        or not authoritative_rqs
+        or claims["claim_authority_sha256"]
+        != protocol["claim_ceiling_sha256"]
+        or claims["rq_authority_sha256"] != protocol["rq_spec_sha256"]
+        or [claim["claim_id"] for claim in claims["claims"]]
+        != authoritative_claim_ids
+        or {
+            claim["claim_id"]: claim["rqs"] for claim in claims["claims"]
+        }
+        != authoritative_associations
+    ):
+        raise EvidenceError(
+            "E_CLAIM_SET", "claim ledger differs from byte-verified frozen authority"
+        )
+
     indexed_directories = [
         value["job_root"],
         *[entry["root"] for entry in value["packages"]],
-        *[
-            entry["source_root"]
-            for entry in value["subjects"]
-            if "source_root" in entry
-        ],
+        *[entry["source_root"] for entry in value["subjects"]],
     ]
     indexed_paths = set(seen) | {source.name}
     for path in root.rglob("*"):
@@ -732,10 +876,7 @@ def _load_evidence_index(
     if "PHASE_1" in coverage and (
         not value["adapter_registries"]
         or not value["input_generator_registries"]
-        or not any(
-            subject["phase"] == "PHASE_1" and "source_root" in subject
-            for subject in subjects
-        )
+        or not any(subject["phase"] == "PHASE_1" for subject in subjects)
     ):
         raise EvidenceError(
             "E_INDEX_COVERAGE", "subject evidence coverage is incomplete"
@@ -771,13 +912,16 @@ def _load_evidence_index(
         "root": root,
         "protocol_path": protocol_path,
         "protocol": protocol,
+        "protocol_artifact_paths": protocol_artifact_paths,
         "ledger_path": ledger_path,
         "claims_path": claims_path,
         "claims": claims,
         "job_root": job_root,
         "subjects": subjects,
         "adapter_registries": adapter_registries,
+        "adapter_registry_file_sha256": adapter_registry_file_sha256,
         "generator_registries": generator_registries,
+        "generator_registry_file_sha256": generator_registry_file_sha256,
         "packages": packages,
         "receipts": receipts,
         "mr_chain": mr_chain,
@@ -790,19 +934,15 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
     validate_protocol(
         material["protocol"], SCIENTIFIC_PLAN_SHA256, EVIDENCE_DESIGN_SHA256
     )
-    if material["adapter_registries"] and (
-        len(material["adapter_registries"]) != 1
-        or material["protocol"]["adapter_registry_sha256"]
-        != material["adapter_registries"][0]["artifact_sha256"]
-    ):
+    if material["protocol"]["adapter_registry_sha256"] != material[
+        "adapter_registry_file_sha256"
+    ][0]:
         raise EvidenceError(
             "E_PROTOCOL_BINDING", "protocol adapter-registry binding differs"
         )
-    if material["generator_registries"] and (
-        len(material["generator_registries"]) != 1
-        or material["protocol"]["input_generator_registry_sha256"]
-        != material["generator_registries"][0]["artifact_sha256"]
-    ):
+    if material["protocol"]["input_generator_registry_sha256"] != material[
+        "generator_registry_file_sha256"
+    ][0]:
         raise EvidenceError(
             "E_PROTOCOL_BINDING", "protocol input-generator binding differs"
         )
@@ -887,7 +1027,11 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             raise EvidenceError(
                 "E_PROTOCOL_BINDING", "attempt intent is bound to another protocol"
             )
-        if intent.get("evaluation_input_class") == "E_COMMON":
+        if (
+            intent.get("evaluation_input_class") == "E_COMMON"
+            and intent.get("phase") != "PHASE_0"
+            and intent.get("job_role") != "PROFILING"
+        ):
             attempt_common_ids.add(intent["evaluation_input_id"])
             common_consumer_intents.setdefault(
                 intent["evaluation_input_id"], []
@@ -923,96 +1067,130 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
     slot_ids: set[str] = set()
     unassigned_attempt_ids = set(attempt_common_ids) if material["subjects"] else set()
     for subject in material["subjects"]:
-        if "source_root" in subject:
-            adapters = {
-                registry["artifact_sha256"]: registry
-                for registry in material["adapter_registries"]
-            }
-            generators = {
-                registry["artifact_sha256"]: registry
-                for registry in material["generator_registries"]
-            }
-            adapter_registry = adapters.get(subject["adapter_registry_sha256"])
-            generator_registry = generators.get(
-                subject["input_generator_registry_sha256"]
+        adapters = {
+            registry["artifact_sha256"]: registry
+            for registry in material["adapter_registries"]
+        }
+        generators = {
+            registry["artifact_sha256"]: registry
+            for registry in material["generator_registries"]
+        }
+        adapter_registry = adapters.get(subject["adapter_registry_sha256"])
+        generator_registry = generators.get(
+            subject["input_generator_registry_sha256"]
+        )
+        if adapter_registry is None or generator_registry is None:
+            raise EvidenceError(
+                "E_INDEXED_SUBJECT_REDERIVATION",
+                "subject names an unverified generator or adapter registry",
             )
-            if adapter_registry is None or generator_registry is None:
+        rebuilt = rebuild_indexed_subject(
+            {
+                "source_root": str(subject["source_root"]),
+                "source_record": subject["source_record"],
+                "build_descriptor": subject["build_descriptor"],
+                "adapter_root": adapter_registry["_implementation_root"],
+                "adapter_registry": adapter_registry,
+                "input_generator_root": generator_registry["_source_root"],
+                "input_generator_registry": generator_registry,
+                "profiling_results": subject["profiling_results"],
+                "adapter_discovery": subject["adapter_discovery"],
+                "source_scale": subject["source_scale"],
+                "public_frame": subject["public_frame"],
+                "profiling_workload": subject["profiling_workload"],
+                "common_inputs": subject["common_inputs"],
+                "technique_profile": subject["technique_profile"],
+                "sites": subject["sites"],
+                "subject": subject["subject"],
+            },
+            subject["bridge_record"],
+        )
+        if (
+            rebuilt["controlled_subject_source_id"]
+            != subject["controlled_subject_source_id"]
+            or rebuilt["subject"]["controlled_subject_id"]
+            != subject["controlled_subject_id"]
+        ):
+            raise EvidenceError(
+                "E_INDEXED_SUBJECT_REDERIVATION", "indexed subject identity differs"
+            )
+
+        terminal_attempts: dict[tuple[str, int], tuple[dict[str, Any], dict[str, Any]]] = {}
+        for event in events:
+            if event["phase"] != "PHASE_1" or event["kind"] != "RESULT":
+                continue
+            coordinate = (event["job_id"], event["attempt"])
+            attempt_root = (
+                material["job_root"]
+                / event["phase"]
+                / event["job_id"]
+                / str(event["attempt"])
+            )
+            terminal_attempts[coordinate] = (
+                read_canonical_json(attempt_root / "intent.json"),
+                read_canonical_json(attempt_root / "result.json"),
+            )
+        traces_by_behavior: dict[str, dict[str, Any]] = {}
+        for trace in subject["profiling_traces"]:
+            if trace["behavior_id"] in traces_by_behavior:
                 raise EvidenceError(
-                    "E_INDEXED_SUBJECT_REDERIVATION",
-                    "subject names an unverified generator or adapter registry",
+                    "E_PROFILE_ATTEMPT_BINDING", "duplicate profiling trace behavior"
                 )
-            rebuilt = rebuild_indexed_subject(
+            traces_by_behavior[trace["behavior_id"]] = trace
+        receipt_rows = subject["profiling_results"]["results"]
+        if set(traces_by_behavior) != {row["behavior_id"] for row in receipt_rows}:
+            raise EvidenceError(
+                "E_PROFILE_ATTEMPT_BINDING",
+                "profiling trace coverage differs from profiling receipt",
+            )
+        used_attempts: set[tuple[str, int]] = set()
+        for row in receipt_rows:
+            trace = traces_by_behavior[row["behavior_id"]]
+            coordinate = (trace["job_id"], trace["attempt"])
+            pair = terminal_attempts.get(coordinate)
+            if pair is None or coordinate in used_attempts:
+                raise EvidenceError(
+                    "E_PROFILE_ATTEMPT_BINDING",
+                    "profiling result lacks a unique authenticated terminal attempt",
+                )
+            used_attempts.add(coordinate)
+            intent, result = pair
+            expected_trace_identity = canonical_sha256(
                 {
-                    "source_root": str(subject["source_root"]),
-                    "source_record": subject["source_record"],
-                    "build_descriptor": subject["build_descriptor"],
-                    "adapter_root": adapter_registry["_implementation_root"],
-                    "adapter_registry": adapter_registry,
-                    "input_generator_root": generator_registry["_source_root"],
-                    "input_generator_registry": generator_registry,
-                    "profiling_results": subject["profiling_results"],
-                    "adapter_discovery": subject["adapter_discovery"],
-                    "source_scale": subject["source_scale"],
-                    "public_frame": subject["public_frame"],
-                    "profiling_workload": subject["profiling_workload"],
-                    "common_inputs": subject["common_inputs"],
-                    "technique_profile": subject["technique_profile"],
-                    "sites": subject["sites"],
-                    "subject": subject["subject"],
-                },
-                subject["bridge_record"],
+                    "job_id": trace["job_id"],
+                    "attempt": trace["attempt"],
+                    "behavior_id": trace["behavior_id"],
+                    "call_trace_sha256": trace["artifact_sha256"],
+                    "domain": "P3-PROFILING-TRACE-v1",
+                }
             )
             if (
-                rebuilt["controlled_subject_source_id"]
+                subject["phase"] != "PHASE_1"
+                or intent["phase"] != "PHASE_1"
+                or intent["job_id"] != trace["job_id"]
+                or intent["attempt"] != trace["attempt"]
+                or intent["job_role"] != "PROFILING"
+                or intent["object_type"] != "PROFILING_BEHAVIOR"
+                or intent["object_id"] != trace["behavior_id"]
+                or intent["cwd_identity"]
                 != subject["controlled_subject_source_id"]
-                or rebuilt["subject"]["controlled_subject_id"]
-                != subject["controlled_subject_id"]
+                or intent["argv"] != row["argv"]
+                or intent["input_sha256"] != row["input_sha256"]
+                or intent["environment_sha256"] != row["environment_sha256"]
+                or result["exit_code"] != row["exit_code"]
+                or result["stdout_sha256"] != row["stdout_sha256"]
+                or result["stderr_sha256"] != row["stderr_sha256"]
+                or result["failure_code"] != row["failure_code"]
+                or result["call_trace_sha256"] != trace["artifact_sha256"]
+                or result["call_trace_sha256"] != row["call_trace_sha256"]
+                or result["call_trace_identity"] != expected_trace_identity
+                or canonical_json_bytes(trace["artifact"])
+                != canonical_json_bytes(row["call_trace"])
             ):
                 raise EvidenceError(
-                    "E_INDEXED_SUBJECT_REDERIVATION", "indexed subject identity differs"
+                    "E_PROFILE_ATTEMPT_BINDING",
+                    "profiling receipt differs from authenticated attempt and trace bytes",
                 )
-            profiling_attempts: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
-            for event in events:
-                if event["phase"] != subject["phase"] or event["kind"] != "RESULT":
-                    continue
-                attempt_root = (
-                    material["job_root"]
-                    / event["phase"]
-                    / event["job_id"]
-                    / str(event["attempt"])
-                )
-                intent = read_canonical_json(attempt_root / "intent.json")
-                if intent.get("object_id") not in {
-                    row["behavior_id"]
-                    for row in subject["profiling_results"]["results"]
-                }:
-                    continue
-                profiling_attempts[intent["object_id"]] = (
-                    intent,
-                    read_canonical_json(attempt_root / "result.json"),
-                )
-            for row in subject["profiling_results"]["results"]:
-                pair = profiling_attempts.get(row["behavior_id"])
-                if pair is None:
-                    raise EvidenceError(
-                        "E_PROFILE_ATTEMPT_BINDING",
-                        "profiling result lacks an authenticated terminal attempt",
-                    )
-                intent, result = pair
-                if (
-                    intent["argv"] != row["argv"]
-                    or intent["input_sha256"] != row["input_sha256"]
-                    or intent["environment_sha256"] != row["environment_sha256"]
-                    or result["exit_code"] != row["exit_code"]
-                    or result["stdout_sha256"] != row["stdout_sha256"]
-                    or result["stderr_sha256"] != row["stderr_sha256"]
-                    or result["failure_code"] != row["failure_code"]
-                    or result["stdout_sha256"] != row["call_trace_sha256"]
-                ):
-                    raise EvidenceError(
-                        "E_PROFILE_ATTEMPT_BINDING",
-                        "profiling receipt differs from authenticated attempt bytes",
-                    )
         subject_consumed_ids: set[str] = set()
         inventory_ids = {
             row.get("input_id") for row in subject["common_inputs"].get("rows", [])

@@ -25,7 +25,7 @@ from p3_v3.run_records import (
 def _claim(claim_id: str, *references: str, status: str = "blocked") -> dict:
     body = {
         "claim_id": claim_id,
-        "rq": claim_id,
+        "rqs": ["RQ1"],
         "evidence_references": list(references),
         "status": status,
     }
@@ -33,7 +33,12 @@ def _claim(claim_id: str, *references: str, status: str = "blocked") -> dict:
 
 
 def _claim_ledger(*claims: dict) -> dict:
-    body = {"schema_version": "p3-claim-evidence-v1", "claims": list(claims)}
+    body = {
+        "schema_version": "p3-claim-evidence-v1",
+        "claim_authority_sha256": "a" * 64,
+        "rq_authority_sha256": "b" * 64,
+        "claims": list(claims),
+    }
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
@@ -73,7 +78,15 @@ def _intent(
     }
 
 
-def _result(job_id="job-1", attempt=1, status="PASS", scientific_outcome=None):
+def _result(
+    job_id="job-1",
+    attempt=1,
+    status="PASS",
+    scientific_outcome=None,
+    *,
+    call_trace_sha256=None,
+    call_trace_identity=None,
+):
     return {
         "job_id": job_id,
         "attempt": attempt,
@@ -84,7 +97,52 @@ def _result(job_id="job-1", attempt=1, status="PASS", scientific_outcome=None):
         "duration_seconds": 0.25,
         "failure_code": "" if status == "PASS" else "E_SYNTHETIC",
         "scientific_outcome": scientific_outcome,
+        "call_trace_sha256": call_trace_sha256,
+        "call_trace_identity": call_trace_identity,
     }
+
+
+def test_profile_trace_result_requires_dedicated_role_type_digest_and_identity(tmp_path):
+    trace = [{"sequence": 1, "module": "builtins", "symbol": "abs"}]
+    trace_sha256 = canonical_sha256(trace)
+    intent = _intent(
+        job_id="profile-job",
+        phase="PHASE_1",
+        job_role="PROFILING",
+        object_type="PROFILING_BEHAVIOR",
+        object_id="behavior-1",
+    )
+    identity = canonical_sha256(
+        {
+            "job_id": "profile-job",
+            "attempt": 1,
+            "behavior_id": "behavior-1",
+            "call_trace_sha256": trace_sha256,
+            "domain": "P3-PROFILING-TRACE-v1",
+        }
+    )
+    attempt = tmp_path / "jobs/PHASE_1/profile-job/1"
+    create_intent(attempt, intent)
+    write_result(
+        attempt,
+        _result(
+            job_id="profile-job",
+            call_trace_sha256=trace_sha256,
+            call_trace_identity=identity,
+        ),
+    )
+
+    wrong_role = tmp_path / "wrong-role/1"
+    create_intent(wrong_role, _intent(job_id="wrong-role", phase="PHASE_1"))
+    with pytest.raises(EvidenceError, match="E_PROFILE_TRACE_BINDING"):
+        write_result(
+            wrong_role,
+            _result(
+                job_id="wrong-role",
+                call_trace_sha256=trace_sha256,
+                call_trace_identity=identity,
+            ),
+        )
 
 
 def test_result_requires_existing_intent(tmp_path):
@@ -600,21 +658,21 @@ def test_p12_summary_rejects_nonterminal_or_drifted_result_set(mutation):
 
 def test_claim_ledger_requires_exact_blocked_rq_claims_and_self_hashes():
     ledger = _claim_ledger(
-        *[_claim(rq, "protocol.json") for rq in ("RQ1", "RQ2", "RQ3", "RQ4")]
+        _claim("C1_SEMANTIC_MUTATION_SYSTEM_PROTOCOL", "protocol.json"),
+        _claim("C2_CROSS_PROJECT_OPERATOR_EFFECTIVENESS", "protocol.json"),
     )
     assert validate_claim_ledger(ledger) == ledger
 
 
 @pytest.mark.parametrize(
-    "mutation", ["missing", "extra", "unindexed_shape", "ready", "supported", "prose"]
+    "mutation", ["unindexed_shape", "ready", "supported", "prose"]
 )
 def test_claim_ledger_rejects_nonblocked_or_nonexact_claims(mutation):
-    claims = [_claim(rq, "protocol.json") for rq in ("RQ1", "RQ2", "RQ3", "RQ4")]
-    if mutation == "missing":
-        claims.pop()
-    elif mutation == "extra":
-        claims.append(_claim("RQ5", "protocol.json"))
-    elif mutation == "unindexed_shape":
+    claims = [
+        _claim("C1_SEMANTIC_MUTATION_SYSTEM_PROTOCOL", "protocol.json"),
+        _claim("C2_CROSS_PROJECT_OPERATOR_EFFECTIVENESS", "protocol.json"),
+    ]
+    if mutation == "unindexed_shape":
         claims[0]["evidence_references"] = ["../outside.json"]
         body = {k: v for k, v in claims[0].items() if k != "artifact_sha256"}
         claims[0]["artifact_sha256"] = canonical_sha256(body)

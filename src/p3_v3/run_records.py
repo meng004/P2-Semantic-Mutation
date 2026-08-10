@@ -33,11 +33,13 @@ JOB_ROLES = {
     "PRIMARY_CONTROLLED",
     "P12",
     "CONTRACT_SENSITIVITY",
+    "PROFILING",
 }
 _ROLE_REQUIRED_INPUT_CLASS = {
     "PRIMARY_CONTROLLED": "E_COMMON",
     "P12": "E_COMMON",
     "CONTRACT_SENSITIVITY": "E_CONTRACT",
+    "PROFILING": "E_COMMON",
 }
 FORBIDDEN_EVALUATION_INPUT_CLASSES = frozenset({"PROFILING", "CERTIFICATION_WITNESS"})
 _LOWER_OUTCOMES = frozenset({"MR_VIOLATION", "DECLARED_EXCEPTION_OR_TIMEOUT_VIOLATION"})
@@ -81,6 +83,8 @@ _RESULT_SCHEMA = {
     "duration_seconds": (int, float),
     "failure_code": str,
     "scientific_outcome": (str, type(None)),
+    "call_trace_sha256": (str, type(None)),
+    "call_trace_identity": (str, type(None)),
 }
 _EVENT_SCHEMA = {
     "sequence": int,
@@ -121,17 +125,18 @@ _DENOMINATOR_SCHEMA = {
 _TERMINAL_P12_SCHEMA = {"intent": dict, "result": dict}
 _CLAIM_SCHEMA = {
     "claim_id": str,
-    "rq": str,
+    "rqs": list,
     "evidence_references": list,
     "status": str,
     "artifact_sha256": str,
 }
 _CLAIM_LEDGER_SCHEMA = {
     "schema_version": str,
+    "claim_authority_sha256": str,
+    "rq_authority_sha256": str,
     "claims": list,
     "artifact_sha256": str,
 }
-_REQUIRED_CLAIMS = ("RQ1", "RQ2", "RQ3", "RQ4")
 _PHASE_IDS = tuple(f"PHASE_{number}" for number in range(8))
 _PHASE_RECEIPT_SCHEMA = {
     "phase_id": str,
@@ -241,6 +246,40 @@ def _validate_result(
         raise EvidenceError(
             "E_SCIENTIFIC_OUTCOME",
             "only Phase 7 P12 results may carry a scientific outcome",
+        )
+    trace_sha256 = value["call_trace_sha256"]
+    trace_identity = value["call_trace_identity"]
+    profiling = (
+        intent is not None
+        and intent.get("phase") == "PHASE_1"
+        and intent.get("job_role") == "PROFILING"
+        and intent.get("object_type") == "PROFILING_BEHAVIOR"
+    )
+    if profiling:
+        if trace_sha256 is None or trace_identity is None:
+            raise EvidenceError(
+                "E_PROFILE_TRACE_BINDING",
+                "profiling result requires a trace digest and identity",
+            )
+        validate_sha256(trace_sha256, "result.call_trace_sha256")
+        validate_sha256(trace_identity, "result.call_trace_identity")
+        expected_trace_identity = canonical_sha256(
+            {
+                "job_id": intent["job_id"],
+                "attempt": intent["attempt"],
+                "behavior_id": intent["object_id"],
+                "call_trace_sha256": trace_sha256,
+                "domain": "P3-PROFILING-TRACE-v1",
+            }
+        )
+        if trace_identity != expected_trace_identity:
+            raise EvidenceError(
+                "E_PROFILE_TRACE_BINDING", "profiling trace identity differs"
+            )
+    elif trace_sha256 is not None or trace_identity is not None:
+        raise EvidenceError(
+            "E_PROFILE_TRACE_BINDING",
+            "only a Phase 1 profiling attempt may bind a call trace",
         )
     return value
 
@@ -971,7 +1010,7 @@ def recompute_p12_summary(
 
 
 def validate_claim_ledger(claims: Mapping[str, Any]) -> dict[str, Any]:
-    """Validate the exact four-claim, blocked-only evidence ledger."""
+    """Validate a self-hashed, blocked-only ledger bound to frozen authorities."""
 
     value = validate_exact_object(dict(claims), _CLAIM_LEDGER_SCHEMA, "claims")
     if value["schema_version"] != "p3-claim-evidence-v1":
@@ -980,6 +1019,10 @@ def validate_claim_ledger(claims: Mapping[str, Any]) -> dict[str, Any]:
     validate_sha256(value["artifact_sha256"], "claims.artifact_sha256")
     if value["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_CLAIM_HASH", "claim ledger self-hash differs")
+    validate_sha256(
+        value["claim_authority_sha256"], "claims.claim_authority_sha256"
+    )
+    validate_sha256(value["rq_authority_sha256"], "claims.rq_authority_sha256")
     normalized: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["claims"]):
         claim = validate_exact_object(
@@ -995,8 +1038,15 @@ def validate_claim_ledger(claims: Mapping[str, Any]) -> dict[str, Any]:
             raise EvidenceError("E_CLAIM_HASH", "claim self-hash differs")
         if claim["status"] != "blocked":
             raise EvidenceError("E_CLAIM_STATUS", "all scientific claims must be blocked")
-        if claim["claim_id"] != claim["rq"] or claim["rq"] not in _REQUIRED_CLAIMS:
-            raise EvidenceError("E_CLAIM_SET", "claim ID/RQ binding differs")
+        if not claim["claim_id"]:
+            raise EvidenceError("E_CLAIM_SET", "claim ID is empty")
+        rqs = claim["rqs"]
+        if (
+            not rqs
+            or rqs != sorted(set(rqs))
+            or any(type(rq) is not str or not rq for rq in rqs)
+        ):
+            raise EvidenceError("E_CLAIM_SET", "claim RQ associations are not canonical")
         references = claim["evidence_references"]
         if (
             not references
@@ -1009,6 +1059,7 @@ def validate_claim_ledger(claims: Mapping[str, Any]) -> dict[str, Any]:
         for reference in references:
             safe_relative_path(reference)
         normalized.append(claim)
-    if [claim["rq"] for claim in normalized] != list(_REQUIRED_CLAIMS):
-        raise EvidenceError("E_CLAIM_SET", "claims must exactly cover RQ1 through RQ4")
+    claim_ids = [claim["claim_id"] for claim in normalized]
+    if claim_ids != list(dict.fromkeys(claim_ids)):
+        raise EvidenceError("E_CLAIM_SET", "claim IDs must be unique")
     return value
