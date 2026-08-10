@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import os
 
 import pytest
 
@@ -119,7 +120,9 @@ def test_package_a_verifies_with_both_input_inventories(tmp_path):
     source = tmp_path / "source"
     source.mkdir()
     (source / "e_common.json").write_text('{"inventory":"common"}\n', encoding="utf-8")
-    (source / "e_contract.json").write_text('{"inventory":"contract"}\n', encoding="utf-8")
+    (source / "e_contract.json").write_text(
+        '{"inventory":"contract"}\n', encoding="utf-8"
+    )
     for content_class in ("E_COMMON", "E_CONTRACT"):
         assert content_class in PACKAGE_A_CLASSES
     manifest = build_package(
@@ -158,7 +161,11 @@ def test_proposer_materialization_excludes_profiling_and_inventories(tmp_path):
         source, proposer_root, full, allowed_classes=PROPOSER_ALLOWED_CLASSES
     )
     assert full == original
-    materialized = {path.relative_to(proposer_root).as_posix() for path in proposer_root.rglob("*") if path.is_file()}
+    materialized = {
+        path.relative_to(proposer_root).as_posix()
+        for path in proposer_root.rglob("*")
+        if path.is_file()
+    }
     assert materialized == {"source.py", "contract.json", "proposal.json"}
     assert "profiling_result.json" not in materialized
     assert "e_common.json" not in materialized
@@ -230,7 +237,16 @@ def test_package_c_classes_remain_forbidden_from_a_and_b(tmp_path):
 
 @pytest.mark.parametrize(
     "mutation",
-    ["extra", "omission", "bytes", "mode", "symlink", "unsafe_manifest_path"],
+    [
+        "extra",
+        "extra_directory",
+        "fifo",
+        "omission",
+        "bytes",
+        "mode",
+        "symlink",
+        "unsafe_manifest_path",
+    ],
 )
 def test_verify_materialized_package_requires_exact_tree(tmp_path, mutation):
     root = tmp_path / "materialized-package"
@@ -245,6 +261,10 @@ def test_verify_materialized_package_requires_exact_tree(tmp_path, mutation):
     )
     if mutation == "extra":
         (root / "extra.txt").write_text("extra", encoding="utf-8")
+    elif mutation == "extra_directory":
+        (root / "empty").mkdir()
+    elif mutation == "fifo":
+        os.mkfifo(root / "named-pipe")
     elif mutation == "omission":
         program.unlink()
     elif mutation == "bytes":
@@ -305,6 +325,14 @@ def test_verify_materialized_package_rejects_symlink_root(tmp_path):
 
 def _common_input_fixture():
     source_id = "21" * 32
+    public_schema = {
+        "schema_kind": "NUMERIC_ARRAY_DOMAIN_V1",
+        "raw_schema": {"type": "array", "items": {"type": "number"}},
+        "provenance_path": "public-schema.json",
+        "provenance_span_or_key": "numeric",
+    }
+    raw_schema_sha256 = canonical_sha256(public_schema["raw_schema"])
+    schema_selection_key = canonical_sha256(public_schema)
     rows = []
     for ordinal in range(1, 31):
         seed = int.from_bytes(
@@ -325,8 +353,8 @@ def _common_input_fixture():
             "controlled_subject_source_id": source_id,
             "ordinal": ordinal,
             "generator_id": "NUMERIC_ARRAY_DOMAIN_V1",
-            "schema_selection_key": "31" * 32,
-            "raw_schema_sha256": "32" * 32,
+            "schema_selection_key": schema_selection_key,
+            "raw_schema_sha256": raw_schema_sha256,
             "schema_provenance_path": "public-schema.json",
             "schema_provenance_span_or_key": "numeric",
             "generator_source_sha256": "33" * 32,
@@ -341,8 +369,8 @@ def _common_input_fixture():
                 "seed": seed,
                 "generator_id": "NUMERIC_ARRAY_DOMAIN_V1",
                 "schema_kind": "NUMERIC_ARRAY_DOMAIN_V1",
-                "schema_selection_key": "31" * 32,
-                "raw_schema_sha256": "32" * 32,
+                "schema_selection_key": schema_selection_key,
+                "raw_schema_sha256": raw_schema_sha256,
                 "schema_provenance_path": "public-schema.json",
                 "schema_provenance_span_or_key": "numeric",
                 "generator_source_sha256": "33" * 32,
@@ -363,10 +391,16 @@ def _common_input_fixture():
         **inventory_body,
         "artifact_sha256": canonical_sha256(inventory_body),
     }
-    frame_body = {"controlled_subject_source_id": source_id}
+    frame_body = {
+        "schema_version": "p3-public-behavior-frame-v1",
+        "controlled_subject_source_id": source_id,
+        "rows": [],
+        "public_schemas": [public_schema],
+    }
     frame = {**frame_body, "artifact_sha256": canonical_sha256(frame_body)}
-    workload_body = {"controlled_subject_source_id": source_id}
-    workload = {**workload_body, "artifact_sha256": canonical_sha256(workload_body)}
+    from p3_v3.bridge_and_frames import select_profiling_workload
+
+    workload = select_profiling_workload(frame, "S")
     validity_rows = [
         {
             key: row[key]
@@ -400,6 +434,28 @@ def _common_input_fixture():
     return inventory, validity, frame, workload
 
 
+def _common_generator_registries():
+    generator_ids = (
+        "JSON_SCHEMA_DRAFT2020_12_V1",
+        "CLI_TOKEN_GRAMMAR_V1",
+        "NUMERIC_ARRAY_DOMAIN_V1",
+        "TEXT_IO_SCHEMA_V1",
+        "BINARY_RECORD_SCHEMA_V1",
+    )
+    return [
+        {
+            "generators": [
+                {
+                    "generator_id": generator_id,
+                    "schema_kind": generator_id,
+                    "source_sha256": "33" * 32,
+                }
+                for generator_id in generator_ids
+            ]
+        }
+    ]
+
+
 @pytest.mark.parametrize(
     "mutation",
     [
@@ -415,6 +471,7 @@ def _common_input_fixture():
         "validity_identity",
         "frame_hash",
         "preconsumer",
+        "nonempty_preconsumer",
     ],
 )
 def test_common_input_evidence_rejects_identity_or_chronology_drift(mutation):
@@ -446,8 +503,10 @@ def test_common_input_evidence_rejects_identity_or_chronology_drift(mutation):
         validity["rows"][0]["input_id"] = "0" * 64
     elif mutation == "frame_hash":
         validity["frame_artifact_sha256"] = "0" * 64
-    else:
+    elif mutation == "preconsumer":
         validity["rows"][0]["status"] = "COMMON_INPUT_INVALID"
+    else:
+        validity["sites"] = [{"site_id": "fabricated"}]
     for artifact in (inventory, validity, frame, workload):
         artifact["artifact_sha256"] = canonical_sha256(
             {key: value for key, value in artifact.items() if key != "artifact_sha256"}
@@ -461,6 +520,7 @@ def test_common_input_evidence_rejects_identity_or_chronology_drift(mutation):
             public_frame=frame,
             profiling_workload=workload,
             consumer_input_ids=consumers,
+            generator_registries=_common_generator_registries(),
         )
 
 
@@ -474,7 +534,76 @@ def test_common_input_evidence_accepts_exact_preconsumer_receipt():
         public_frame=frame,
         profiling_workload=workload,
         consumer_input_ids=[row["input_id"] for row in inventory["rows"]],
+        generator_registries=_common_generator_registries(),
     )
 
     assert verified["inventory"] == inventory
     assert verified["validity"] == validity
+
+
+def test_common_input_evidence_rejects_invented_allowlisted_generator_authority():
+    inventory, validity, frame, workload = _common_input_fixture()
+    invented = _common_generator_registries()
+    invented[0]["generators"][2]["source_sha256"] = "44" * 32
+
+    with pytest.raises(EvidenceError, match="E_COMMON_GENERATOR"):
+        packages_module.verify_common_input_evidence(
+            inventory,
+            validity,
+            controlled_subject_source_id="21" * 32,
+            public_frame=frame,
+            profiling_workload=workload,
+            consumer_input_ids=[],
+            generator_registries=invented,
+        )
+
+
+def test_common_input_evidence_rejects_rehashed_invented_public_schema():
+    inventory, validity, frame, workload = _common_input_fixture()
+    frame["public_schemas"][0]["raw_schema"] = {"type": "invented"}
+    frame["artifact_sha256"] = canonical_sha256(
+        {key: value for key, value in frame.items() if key != "artifact_sha256"}
+    )
+    from p3_v3.bridge_and_frames import select_profiling_workload
+
+    workload = select_profiling_workload(frame, "S")
+    validity["frame_artifact_sha256"] = frame["artifact_sha256"]
+    validity["artifact_sha256"] = canonical_sha256(
+        {key: value for key, value in validity.items() if key != "artifact_sha256"}
+    )
+
+    with pytest.raises(EvidenceError, match="E_COMMON_SCHEMA"):
+        packages_module.verify_common_input_evidence(
+            inventory,
+            validity,
+            controlled_subject_source_id="21" * 32,
+            public_frame=frame,
+            profiling_workload=workload,
+            consumer_input_ids=[],
+            generator_registries=_common_generator_registries(),
+        )
+
+
+def test_common_input_evidence_requires_validity_hash_in_first_consumer_intent():
+    inventory, validity, frame, workload = _common_input_fixture()
+    input_id = inventory["rows"][0]["input_id"]
+
+    with pytest.raises(EvidenceError, match="E_COMMON_CHRONOLOGY"):
+        packages_module.verify_common_input_evidence(
+            inventory,
+            validity,
+            controlled_subject_source_id="21" * 32,
+            public_frame=frame,
+            profiling_workload=workload,
+            consumer_input_ids=[input_id],
+            generator_registries=_common_generator_registries(),
+            consumer_intents=[
+                {
+                    "phase": "PHASE_5",
+                    "job_id": "consumer",
+                    "attempt": 1,
+                    "evaluation_input_id": input_id,
+                    "input_sha256": ["aa" * 32],
+                }
+            ],
+        )

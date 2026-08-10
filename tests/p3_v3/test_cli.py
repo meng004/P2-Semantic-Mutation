@@ -33,8 +33,12 @@ COMMANDS = {
     "close-phase",
     "verify-evidence",
 }
-SCIENTIFIC_PLAN_SHA256 = "fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830"
-EVIDENCE_DESIGN_SHA256 = "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
+SCIENTIFIC_PLAN_SHA256 = (
+    "fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830"
+)
+EVIDENCE_DESIGN_SHA256 = (
+    "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
+)
 TECHNIQUE_ORDER = [
     "HYBRID_NATIVE",
     "TENSOR_AUTODIFF",
@@ -65,8 +69,7 @@ _ADAPTER_SPECS = (
     ("AUTOTOOLS_MAKECHECK_V1", "autotools", "adapters/autotools_makecheck_v1.py"),
 )
 SECRET_ORIGIN = (
-    "https://audit-user:TOP_SECRET_TOKEN@github.com/"
-    "meng004/P3-Semantic-Mutation.git"
+    "https://audit-user:TOP_SECRET_TOKEN@github.com/" "meng004/P3-Semantic-Mutation.git"
 )
 SECRET_IDENTITY = "github.com/meng004/P3-Semantic-Mutation"
 SECRET_ORIGIN_SHA256 = (
@@ -91,9 +94,7 @@ def _source_tree_sha256(root: Path) -> str:
         for path in sorted(root.rglob("*"))
         if path.is_file() and not path.is_symlink()
     ]
-    return canonical_sha256(
-        {"domain": "P3-NORMALIZED-SOURCE-TREE-v1", "files": files}
-    )
+    return canonical_sha256({"domain": "P3-NORMALIZED-SOURCE-TREE-v1", "files": files})
 
 
 def _profiling_receipt(
@@ -245,7 +246,9 @@ def _adapter_registry(tmp_path: Path) -> dict:
                 "adapter_id": adapter_id,
                 "ecosystem": ecosystem,
                 "implementation_path": rel,
-                "source_sha256": __import__("hashlib").sha256(path.read_bytes()).hexdigest(),
+                "source_sha256": __import__("hashlib")
+                .sha256(path.read_bytes())
+                .hexdigest(),
             }
         )
     body = {"schema_version": "p3-adapter-registry-v1", "adapters": adapters}
@@ -266,10 +269,16 @@ def _tagged_declarations(name: str) -> list[dict]:
 
 def test_cli_help_lists_only_frozen_commands():
     result = subprocess.run(
-        ["python3", str(CLI), "--help"], capture_output=True, check=False, text=True, env=_env()
+        ["python3", str(CLI), "--help"],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
     )
     assert result.returncode == 0
-    line = next(item for item in result.stdout.splitlines() if "{" in item and "}" in item)
+    line = next(
+        item for item in result.stdout.splitlines() if "{" in item and "}" in item
+    )
     observed = set(line[line.index("{") + 1 : line.index("}")].split(","))
     assert observed == COMMANDS
 
@@ -470,7 +479,8 @@ def test_validate_protocol_prints_one_canonical_json_result(tmp_path):
     raw = _write_protocol(protocol, _protocol_body())
     result = subprocess.run(
         ["python3", str(CLI), "validate-protocol", "--protocol", str(protocol)],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )
@@ -478,7 +488,10 @@ def test_validate_protocol_prints_one_canonical_json_result(tmp_path):
     payload = json.loads(result.stdout)
     assert payload["status"] == "PASS"
     assert payload["protocol_sha256"] == __import__("hashlib").sha256(raw).hexdigest()
-    assert result.stdout == json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n"
+    assert (
+        result.stdout
+        == json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n"
+    )
 
 
 def test_validate_protocol_rejects_a_different_well_formed_plan_hash(tmp_path):
@@ -486,7 +499,8 @@ def test_validate_protocol_rejects_a_different_well_formed_plan_hash(tmp_path):
     _write_protocol(protocol, _protocol_body(scientific_plan_sha256="a" * 64))
     result = subprocess.run(
         ["python3", str(CLI), "validate-protocol", "--protocol", str(protocol)],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )
@@ -512,7 +526,8 @@ def test_validate_protocol_rejects_extra_key_before_writing_output(tmp_path):
             "--protocol",
             str(protocol),
         ],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )
@@ -530,7 +545,8 @@ def test_validate_protocol_rejects_missing_key(tmp_path):
     )
     result = subprocess.run(
         ["python3", str(CLI), "validate-protocol", "--protocol", str(protocol)],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )
@@ -549,7 +565,8 @@ def test_validate_protocol_rejects_old_authority_digest(tmp_path):
     )
     result = subprocess.run(
         ["python3", str(CLI), "validate-protocol", "--protocol", str(protocol)],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )
@@ -577,7 +594,8 @@ def test_validate_protocol_rejects_wrong_counts_retry_or_outcome_order(tmp_path)
         _write_protocol(protocol, _protocol_body(**overrides))
         result = subprocess.run(
             ["python3", str(CLI), "validate-protocol", "--protocol", str(protocol)],
-            capture_output=True, check=False,
+            capture_output=True,
+            check=False,
             text=True,
             env=_env(),
         )
@@ -649,7 +667,8 @@ def test_verify_mr_inventory_accepts_exact_chronology(tmp_path):
             "--portfolios",
             str(paths["portfolios"]),
         ],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )
@@ -657,7 +676,13 @@ def test_verify_mr_inventory_accepts_exact_chronology(tmp_path):
     assert json.loads(result.stdout)["status"] == "PASS"
 
     legacy = subprocess.run(
-        ["python3", str(CLI), "verify-mr-inventory", "--inventory", str(paths["inventory"])],
+        [
+            "python3",
+            str(CLI),
+            "verify-mr-inventory",
+            "--inventory",
+            str(paths["inventory"]),
+        ],
         capture_output=True,
         check=False,
         text=True,
@@ -728,9 +753,7 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
                     "normalized_source_tree_sha256"
                 ],
                 "source_archive_sha256": "5" * 64,
-                "build_descriptor_sha256": source_record[
-                    "build_descriptor_sha256"
-                ],
+                "build_descriptor_sha256": source_record["build_descriptor_sha256"],
                 "eligibility_reason": "fixture",
                 "eligible_for_construct": True,
                 "eligible_for_criterion": True,
@@ -740,8 +763,7 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
     bridge = {**bridge, "artifact_sha256": canonical_sha256(bridge)}
     generator_registry = json.loads(
         (
-            Path(__file__).resolve().parent
-            / "fixtures/input_generators/registry.json"
+            Path(__file__).resolve().parent / "fixtures/input_generators/registry.json"
         ).read_text(encoding="utf-8")
     )
     generator_root = Path(__file__).resolve().parent / "fixtures/input_generators"
@@ -794,7 +816,8 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
             "--output-root",
             str(output_root),
         ],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )
@@ -993,10 +1016,12 @@ def _complete_phase_zero_evidence_index(tmp_path: Path) -> Path:
     )
     events = reconstruct_attempt_events(tmp_path / "jobs")
     ledger = tmp_path / "ledger.jsonl"
-    ledger.write_bytes(b"".join(
-        json.dumps(event, sort_keys=True, separators=(",", ":")).encode() + b"\n"
-        for event in events
-    ))
+    ledger.write_bytes(
+        b"".join(
+            json.dumps(event, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+            for event in events
+        )
+    )
     expected_jobs_path = tmp_path / "phase-0-expected-jobs.json"
     write_canonical_json(expected_jobs_path, [job_id], exclusive=True)
     receipt = close_phase(
@@ -1087,6 +1112,52 @@ def test_evidence_index_rejects_unindexed_file_outside_declared_roots(tmp_path):
 
     assert result.returncode == 2
     assert json.loads(result.stderr)["code"] == "E_INDEX_UNINDEXED"
+
+
+def test_evidence_index_rejects_symlink_in_indexed_path_ancestor(tmp_path):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text())
+    claims_path = tmp_path / index["claims"]["path"]
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    os.rename(claims_path, outside / "claims.json")
+    (tmp_path / "linked").symlink_to(outside, target_is_directory=True)
+    index["claims"] = {
+        "path": "linked/claims.json",
+        "sha256": hashlib.sha256((outside / "claims.json").read_bytes()).hexdigest(),
+    }
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_INDEX_PATH"
+
+
+def test_evidence_index_rejects_duplicate_phase_receipt(tmp_path):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text())
+    duplicate = {"phase": "PHASE_0"}
+    for field in ("receipt", "expected_jobs", "output_manifest"):
+        source = tmp_path / index["phase_receipts"][0][field]["path"]
+        target = tmp_path / f"duplicate-{field}.json"
+        target.write_bytes(source.read_bytes())
+        duplicate[field] = _indexed_reference(tmp_path, target)
+    index["phase_receipts"].append(duplicate)
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_INDEX_COVERAGE"
 
 
 def test_evidence_index_rejects_rebuilt_attempts_bound_to_another_protocol(tmp_path):
@@ -1184,10 +1255,14 @@ def _phase_zero_index_with_slots(tmp_path: Path, slots: list[dict]) -> Path:
                 "input_id": canonical_sha256(identity),
             }
         )
-    frame_body = {"controlled_subject_source_id": source_id}
+    frame_body = {
+        "schema_version": "p3-public-behavior-frame-v1",
+        "controlled_subject_source_id": source_id,
+        "rows": [],
+        "public_schemas": [],
+    }
     frame = {**frame_body, "artifact_sha256": canonical_sha256(frame_body)}
-    workload_body = {"controlled_subject_source_id": source_id}
-    workload = {**workload_body, "artifact_sha256": canonical_sha256(workload_body)}
+    workload = select_profiling_workload(frame, "S")
     common_body = {
         "schema_version": "p3-evaluation-inputs-common-v1",
         "controlled_subject_source_id": source_id,
@@ -1250,11 +1325,19 @@ def _phase_zero_index_with_slots(tmp_path: Path, slots: list[dict]) -> Path:
             "phase": "PHASE_0",
             "controlled_subject_source_id": source_id,
             "controlled_subject_id": "22" * 32,
-            "public_frame": _indexed_reference(tmp_path, tmp_path / "public-frame.json"),
-            "profiling_workload": _indexed_reference(tmp_path, tmp_path / "workload.json"),
-            "profiling_results": _indexed_reference(tmp_path, tmp_path / "profiling-results.json"),
+            "public_frame": _indexed_reference(
+                tmp_path, tmp_path / "public-frame.json"
+            ),
+            "profiling_workload": _indexed_reference(
+                tmp_path, tmp_path / "workload.json"
+            ),
+            "profiling_results": _indexed_reference(
+                tmp_path, tmp_path / "profiling-results.json"
+            ),
             "common_inputs": _indexed_reference(tmp_path, tmp_path / "common.json"),
-            "common_input_validity": _indexed_reference(tmp_path, tmp_path / "validity.json"),
+            "common_input_validity": _indexed_reference(
+                tmp_path, tmp_path / "validity.json"
+            ),
             "slot_artifacts": slot_refs,
         }
     ]
@@ -1278,7 +1361,7 @@ def test_evidence_index_requires_common_validity_before_attempt_consumption(tmp_
     [
         ("coordinate", "E_SLOT_COORDINATE"),
         ("input_role", "E_SLOT_INPUT_ROLE"),
-        ("unknown_common", "E_COMMON_CHRONOLOGY"),
+        ("unknown_common", "E_SLOT_INPUT_ROLE"),
     ],
 )
 def test_evidence_index_rejects_slot_coordinate_or_input_role_drift(
@@ -1323,6 +1406,58 @@ def test_evidence_index_rejects_slot_coordinate_or_input_role_drift(
 
     assert result.returncode == 2
     assert json.loads(result.stderr)["code"] == expected_code
+
+
+@pytest.mark.parametrize("mutation", ["contract_rows", "hidden_overlap"])
+def test_evidence_index_binds_slot_role_lists_to_real_inventories(tmp_path, mutation):
+    slot_id = "61" * 32
+    slot = {
+        "slot_id": slot_id,
+        "chronology": [
+            "SITE_FROZEN",
+            "CONTRACT_FROZEN",
+            "E_CONTRACT_FROZEN",
+            "PATCH_FROZEN",
+            "CERTIFICATION_WITNESS_SELECTED",
+            "TERMINAL_STATE",
+        ],
+        "contract": {"contract_id": "72" * 32},
+        "e_contract": {"rows": [{"input_id": "75" * 32}]},
+        "patch": {"patch_id": "73" * 32},
+        "certification_witness": {"witness_id": "74" * 32},
+        "e_common_input_ids": [],
+        "e_contract_input_ids": ["76" * 32],
+    }
+    index_path = _phase_zero_index_with_slots(tmp_path, [slot])
+    index = json.loads(index_path.read_text())
+    common = json.loads(
+        (tmp_path / index["subjects"][0]["common_inputs"]["path"]).read_text()
+    )
+    common_id = common["rows"][0]["input_id"]
+    slot_path = tmp_path / index["subjects"][0]["slot_artifacts"][0]["artifact"]["path"]
+    material = json.loads(slot_path.read_text())
+    if mutation == "contract_rows":
+        material["e_contract_input_ids"] = ["76" * 32]
+    else:
+        material["e_common_input_ids"] = [common_id]
+        material["e_contract"]["rows"] = [{"input_id": common_id}]
+        material["e_contract_input_ids"] = ["76" * 32]
+    slot_path.write_bytes(
+        json.dumps(material, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+    index["subjects"][0]["slot_artifacts"][0]["artifact"]["sha256"] = hashlib.sha256(
+        slot_path.read_bytes()
+    ).hexdigest()
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(
+        json.dumps(index, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    )
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_SLOT_INPUT_ROLE"
 
 
 def test_forged_evidence_index_is_rejected_without_pass_receipt(tmp_path):
@@ -1427,7 +1562,8 @@ def test_forged_evidence_index_is_rejected_without_pass_receipt(tmp_path):
             "--index",
             str(index_path),
         ],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
         text=True,
         env=_env(),
     )

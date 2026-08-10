@@ -53,8 +53,12 @@ from p3_v3.run_records import (  # noqa: E402
     verify_phase_receipt,
 )
 
-SCIENTIFIC_PLAN_SHA256 = "fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830"
-EVIDENCE_DESIGN_SHA256 = "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
+SCIENTIFIC_PLAN_SHA256 = (
+    "fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830"
+)
+EVIDENCE_DESIGN_SHA256 = (
+    "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
+)
 
 
 def _write(payload: dict) -> None:
@@ -69,7 +73,9 @@ def _write_output(path: str | None, payload: dict) -> None:
 def _write_under(output_root: Path, name: str, payload: Any) -> None:
     target = output_root / name
     if target.resolve().parent != output_root.resolve():
-        raise EvidenceError("E_OUTPUT_ROOT", f"refusing to write outside output-root: {name}")
+        raise EvidenceError(
+            "E_OUTPUT_ROOT", f"refusing to write outside output-root: {name}"
+        )
     write_canonical_json(target, payload, exclusive=True)
 
 
@@ -146,7 +152,9 @@ def _subject_specs_by_neutral(
     records_by_neutral: dict[str, Mapping[str, Any]] = {}
     for index, record in enumerate(records):
         if not isinstance(record, Mapping):
-            raise EvidenceError("E_BRIDGE_RECORDS", f"records[{index}] must be an object")
+            raise EvidenceError(
+                "E_BRIDGE_RECORDS", f"records[{index}] must be an object"
+            )
         neutral = validate_sha256(
             record.get("neutral_snapshot_id"), f"records[{index}].neutral_snapshot_id"
         )
@@ -158,7 +166,9 @@ def _subject_specs_by_neutral(
     specs_by_neutral: dict[str, dict[str, Any]] = {}
     for index, candidate in enumerate(subject_specs):
         if not isinstance(candidate, Mapping):
-            raise EvidenceError("E_SUBJECT_SPEC", f"subject_specs[{index}] must be an object")
+            raise EvidenceError(
+                "E_SUBJECT_SPEC", f"subject_specs[{index}] must be an object"
+            )
         spec = validate_exact_object(
             dict(candidate), _SUBJECT_SPEC_SCHEMA, f"subject_specs[{index}]"
         )
@@ -234,7 +244,8 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
     if not isinstance(applicability_map, Mapping):
         raise EvidenceError("E_APPLICABILITY", "applicability-map must be an object")
     subjects_by_id = {
-        subject["controlled_subject_id"]: subject for subject in subject_frames["subjects"]
+        subject["controlled_subject_id"]: subject
+        for subject in subject_frames["subjects"]
     }
     contract_registry = None
     for index, slot in enumerate(slots):
@@ -285,8 +296,7 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
         "output_root": str(output_root),
         "artifacts": sorted(written),
         "common_input_count": sum(
-            len(material["common_inputs"]["rows"])
-            for material in derived_subjects
+            len(material["common_inputs"]["rows"]) for material in derived_subjects
         ),
         "subject_count": len(subject_frames["subjects"]),
     }
@@ -350,16 +360,53 @@ _PHASES = tuple(f"PHASE_{number}" for number in range(8))
 def _indexed_directory(root: Path, relative: Any, seen: set[str], context: str) -> Path:
     normalized = safe_relative_path(relative).as_posix()
     if normalized in seen:
-        raise EvidenceError("E_INDEX_DUPLICATE", f"duplicate indexed path: {normalized}")
+        raise EvidenceError(
+            "E_INDEX_DUPLICATE", f"duplicate indexed path: {normalized}"
+        )
     seen.add(normalized)
-    path = root / normalized
+    path = _safe_index_node(root, normalized, context)
     try:
         info = path.lstat()
     except FileNotFoundError as exc:
-        raise EvidenceError("E_INDEX_PATH", f"missing indexed directory: {normalized}") from exc
+        raise EvidenceError(
+            "E_INDEX_PATH", f"missing indexed directory: {normalized}"
+        ) from exc
     if path.is_symlink() or not stat.S_ISDIR(info.st_mode):
-        raise EvidenceError("E_INDEX_PATH", f"indexed directory is unsafe: {normalized}")
+        raise EvidenceError(
+            "E_INDEX_PATH", f"indexed directory is unsafe: {normalized}"
+        )
     return path
+
+
+def _safe_index_node(root: Path, relative: str, context: str) -> Path:
+    """Resolve an indexed node without traversing any symlink component."""
+
+    try:
+        declared_root = root.resolve(strict=True)
+    except OSError as exc:
+        raise EvidenceError(
+            "E_INDEX_PATH", "evidence index root is unavailable"
+        ) from exc
+    cursor = root
+    for part in safe_relative_path(relative).parts:
+        cursor = cursor / part
+        try:
+            info = cursor.lstat()
+        except FileNotFoundError as exc:
+            raise EvidenceError(
+                "E_INDEX_PATH", f"missing indexed path component: {relative}"
+            ) from exc
+        if stat.S_ISLNK(info.st_mode):
+            raise EvidenceError(
+                "E_INDEX_PATH", f"indexed path contains a symlink: {relative}"
+            )
+    try:
+        cursor.resolve(strict=True).relative_to(declared_root)
+    except (OSError, ValueError) as exc:
+        raise EvidenceError(
+            "E_INDEX_PATH", f"indexed path escapes declared root: {relative}"
+        ) from exc
+    return cursor
 
 
 def _indexed_file(
@@ -377,11 +424,13 @@ def _indexed_file(
     if relative in seen:
         raise EvidenceError("E_INDEX_DUPLICATE", f"duplicate indexed path: {relative}")
     seen.add(relative)
-    path = root / relative
+    path = _safe_index_node(root, relative, context)
     try:
         info = path.lstat()
     except FileNotFoundError as exc:
-        raise EvidenceError("E_INDEX_PATH", f"missing indexed file: {relative}") from exc
+        raise EvidenceError(
+            "E_INDEX_PATH", f"missing indexed file: {relative}"
+        ) from exc
     if path.is_symlink() or not stat.S_ISREG(info.st_mode):
         raise EvidenceError("E_INDEX_PATH", f"indexed file is unsafe: {relative}")
     if file_sha256(path) != reference["sha256"]:
@@ -397,9 +446,13 @@ def _phase(value: Any, coverage: list[str], context: str) -> str:
     return value
 
 
-def _load_evidence_index(index_path: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
+def _load_evidence_index(
+    index_path: str | Path,
+) -> tuple[dict[str, Any], dict[str, Any]]:
     source = Path(index_path)
-    value = validate_exact_object(read_canonical_json(source), _INDEX_SCHEMA, "evidence_index")
+    value = validate_exact_object(
+        read_canonical_json(source), _INDEX_SCHEMA, "evidence_index"
+    )
     if value["schema_version"] != "P3_V3_EVIDENCE_INDEX_V1":
         raise EvidenceError("E_INDEX_SCHEMA", "evidence index schema version differs")
     body = {key: item for key, item in value.items() if key != "artifact_sha256"}
@@ -415,20 +468,60 @@ def _load_evidence_index(index_path: str | Path) -> tuple[dict[str, Any], dict[s
     root = source.parent
     seen: set[str] = set()
     loaded: dict[str, Any] = {}
-    protocol_path, protocol = _indexed_file(root, value["protocol"], seen, loaded, "protocol")
+    protocol_path, protocol = _indexed_file(
+        root, value["protocol"], seen, loaded, "protocol"
+    )
     ledger_path, _ = _indexed_file(
         root, value["ledger"], seen, loaded, "ledger", canonical=False
     )
     claims_path, claims = _indexed_file(root, value["claims"], seen, loaded, "claims")
     job_root = _indexed_directory(root, value["job_root"], seen, "job_root")
 
-    for collection_name in ("adapter_registries", "input_generator_registries"):
-        for index, reference in enumerate(value[collection_name]):
-            _indexed_file(root, reference, seen, loaded, f"{collection_name}[{index}]")
+    for index, reference in enumerate(value["adapter_registries"]):
+        _indexed_file(root, reference, seen, loaded, f"adapter_registries[{index}]")
+    generator_registries: list[dict[str, Any]] = []
+    for index, reference in enumerate(value["input_generator_registries"]):
+        registry_path, registry = _indexed_file(
+            root,
+            reference,
+            seen,
+            loaded,
+            f"input_generator_registries[{index}]",
+        )
+        verified_registry = validate_input_generator_registry(
+            registry, registry_path.parent
+        )
+        for entry_index, entry in enumerate(verified_registry["generators"]):
+            implementation = (
+                (
+                    registry_path.parent
+                    / safe_relative_path(entry["implementation_path"])
+                )
+                .relative_to(root)
+                .as_posix()
+            )
+            if implementation in seen:
+                raise EvidenceError(
+                    "E_INDEX_DUPLICATE", f"duplicate indexed path: {implementation}"
+                )
+            implementation_path = _safe_index_node(
+                root,
+                implementation,
+                f"input_generator_registries[{index}].generators[{entry_index}]",
+            )
+            if not stat.S_ISREG(implementation_path.lstat().st_mode):
+                raise EvidenceError(
+                    "E_INDEX_PATH",
+                    f"generator implementation is unsafe: {implementation}",
+                )
+            seen.add(implementation)
+        generator_registries.append(verified_registry)
 
     subjects: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["subjects"]):
-        subject = validate_exact_object(candidate, _SUBJECT_INDEX_SCHEMA, f"subjects[{index}]")
+        subject = validate_exact_object(
+            candidate, _SUBJECT_INDEX_SCHEMA, f"subjects[{index}]"
+        )
         _phase(subject["phase"], coverage, f"subjects[{index}]")
         validate_sha256(
             subject["controlled_subject_source_id"],
@@ -476,11 +569,15 @@ def _load_evidence_index(index_path: str | Path) -> tuple[dict[str, Any], dict[s
 
     packages: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["packages"]):
-        entry = validate_exact_object(candidate, _PACKAGE_INDEX_SCHEMA, f"packages[{index}]")
+        entry = validate_exact_object(
+            candidate, _PACKAGE_INDEX_SCHEMA, f"packages[{index}]"
+        )
         _phase(entry["phase"], coverage, f"packages[{index}]")
         if entry["input_role"] not in {"A", "B_PRIMARY", "B_SENSITIVITY", "C"}:
             raise EvidenceError("E_PACKAGE_INPUT_ROLE", "package input role is unknown")
-        package_root = _indexed_directory(root, entry["root"], seen, f"packages[{index}].root")
+        package_root = _indexed_directory(
+            root, entry["root"], seen, f"packages[{index}].root"
+        )
         _, manifest = _indexed_file(
             root, entry["manifest"], seen, loaded, f"packages[{index}].manifest"
         )
@@ -488,7 +585,9 @@ def _load_evidence_index(index_path: str | Path) -> tuple[dict[str, Any], dict[s
 
     receipts: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["phase_receipts"]):
-        entry = validate_exact_object(candidate, _RECEIPT_INDEX_SCHEMA, f"phase_receipts[{index}]")
+        entry = validate_exact_object(
+            candidate, _RECEIPT_INDEX_SCHEMA, f"phase_receipts[{index}]"
+        )
         _phase(entry["phase"], coverage, f"phase_receipts[{index}]")
         material = dict(entry)
         for field in ("receipt", "expected_jobs", "output_manifest"):
@@ -499,16 +598,23 @@ def _load_evidence_index(index_path: str | Path) -> tuple[dict[str, Any], dict[s
 
     mr_chain: dict[str, Any] = {}
     if value["mr_chain"]:
-        chain = validate_exact_object(value["mr_chain"], _MR_CHAIN_INDEX_SCHEMA, "mr_chain")
+        chain = validate_exact_object(
+            value["mr_chain"], _MR_CHAIN_INDEX_SCHEMA, "mr_chain"
+        )
         for field, reference in chain.items():
-            _, mr_chain[field] = _indexed_file(root, reference, seen, loaded, f"mr_chain.{field}")
+            _, mr_chain[field] = _indexed_file(
+                root, reference, seen, loaded, f"mr_chain.{field}"
+            )
     p12: dict[str, Any] = {}
     if value["p12"]:
         p12_index = validate_exact_object(value["p12"], _P12_INDEX_SCHEMA, "p12")
         for field, reference in p12_index.items():
             _, p12[field] = _indexed_file(root, reference, seen, loaded, f"p12.{field}")
 
-    indexed_directories = [value["job_root"], *[entry["root"] for entry in value["packages"]]]
+    indexed_directories = [
+        value["job_root"],
+        *[entry["root"] for entry in value["packages"]],
+    ]
     indexed_paths = set(seen) | {source.name}
     for path in root.rglob("*"):
         relative = path.relative_to(root).as_posix()
@@ -527,25 +633,49 @@ def _load_evidence_index(index_path: str | Path) -> tuple[dict[str, Any], dict[s
             continue
         raise EvidenceError("E_INDEX_UNINDEXED", f"unindexed path: {relative}")
 
-    if coverage:
-        phase_set = set(coverage)
-        if (
-            not packages
-            or not receipts
-            or {entry["phase"] for entry in packages} != phase_set
-            or {entry["phase"] for entry in receipts} != phase_set
-        ):
-            raise EvidenceError("E_INDEX_COVERAGE", "phase package/receipt coverage is incomplete")
-    else:
+    if not coverage:
         raise EvidenceError("E_INDEX_COVERAGE", "phase coverage must be nonempty")
-    if any(_PHASES.index(phase) >= 1 for phase in coverage) and (
+    receipt_phases = [entry["phase"] for entry in receipts]
+    if len(receipt_phases) != len(set(receipt_phases)) or set(receipt_phases) != set(
+        coverage
+    ):
+        raise EvidenceError(
+            "E_INDEX_COVERAGE",
+            "phase receipts must uniquely and exactly cover phase_coverage",
+        )
+    if "PHASE_1" in coverage and (
         not value["adapter_registries"]
         or not value["input_generator_registries"]
-        or not subjects
+        or not any(subject["phase"] == "PHASE_1" for subject in subjects)
     ):
-        raise EvidenceError("E_INDEX_COVERAGE", "subject evidence coverage is incomplete")
-    if any(_PHASES.index(phase) >= 4 for phase in coverage) and not mr_chain:
+        raise EvidenceError(
+            "E_INDEX_COVERAGE", "subject evidence coverage is incomplete"
+        )
+    if any(phase in coverage for phase in ("PHASE_2", "PHASE_3")) and not any(
+        subject["slot_artifacts"] for subject in subjects
+    ):
+        raise EvidenceError("E_INDEX_COVERAGE", "slot evidence coverage is incomplete")
+    if "PHASE_4" in coverage and not mr_chain:
         raise EvidenceError("E_INDEX_COVERAGE", "MR chain coverage is incomplete")
+    if "PHASE_5" in coverage:
+        phase_5_root = job_root / "PHASE_5"
+        try:
+            phase_5_info = phase_5_root.lstat()
+        except FileNotFoundError as exc:
+            raise EvidenceError(
+                "E_INDEX_COVERAGE", "Phase 5 job coverage is absent"
+            ) from exc
+        if (
+            stat.S_ISLNK(phase_5_info.st_mode)
+            or not stat.S_ISDIR(phase_5_info.st_mode)
+            or not any(phase_5_root.iterdir())
+            or ledger_path.stat().st_size == 0
+        ):
+            raise EvidenceError("E_INDEX_COVERAGE", "job/ledger coverage is incomplete")
+    if "PHASE_6" in coverage and not any(
+        package["phase"] == "PHASE_6" for package in packages
+    ):
+        raise EvidenceError("E_INDEX_COVERAGE", "package coverage is incomplete")
     if "PHASE_7" in coverage and not p12:
         raise EvidenceError("E_INDEX_COVERAGE", "P12 coverage is incomplete")
     return value, {
@@ -557,6 +687,7 @@ def _load_evidence_index(index_path: str | Path) -> tuple[dict[str, Any], dict[s
         "claims": claims,
         "job_root": job_root,
         "subjects": subjects,
+        "generator_registries": generator_registries,
         "packages": packages,
         "receipts": receipts,
         "mr_chain": mr_chain,
@@ -575,20 +706,34 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
         classes = {record["class"] for record in manifest["files"]}
         role = package["input_role"]
         if role == "A" and manifest["role"] != "CONSTRUCTION_A":
-            raise EvidenceError("E_PACKAGE_INPUT_ROLE", "A package has a non-A manifest")
-        if role in {"B_PRIMARY", "B_SENSITIVITY"} and manifest["role"] != "CONTROLLED_B":
-            raise EvidenceError("E_PACKAGE_INPUT_ROLE", "B package has a non-B manifest")
+            raise EvidenceError(
+                "E_PACKAGE_INPUT_ROLE", "A package has a non-A manifest"
+            )
+        if (
+            role in {"B_PRIMARY", "B_SENSITIVITY"}
+            and manifest["role"] != "CONTROLLED_B"
+        ):
+            raise EvidenceError(
+                "E_PACKAGE_INPUT_ROLE", "B package has a non-B manifest"
+            )
         if role == "B_PRIMARY" and not classes <= PACKAGE_B_PRIMARY_CLASSES:
-            raise EvidenceError("E_PACKAGE_INPUT_ROLE", "primary B package contains sensitivity input")
+            raise EvidenceError(
+                "E_PACKAGE_INPUT_ROLE", "primary B package contains sensitivity input"
+            )
         if role == "B_SENSITIVITY" and not classes <= PACKAGE_B_SENSITIVITY_CLASSES:
-            raise EvidenceError("E_PACKAGE_INPUT_ROLE", "sensitivity B package contains primary input")
+            raise EvidenceError(
+                "E_PACKAGE_INPUT_ROLE", "sensitivity B package contains primary input"
+            )
         if role == "C" and manifest["role"] != "REAL_HOLDOUT_C":
-            raise EvidenceError("E_PACKAGE_INPUT_ROLE", "C package has a non-C manifest")
+            raise EvidenceError(
+                "E_PACKAGE_INPUT_ROLE", "C package has a non-C manifest"
+            )
         manifests.append(manifest)
 
     events = verify_attempt_tree(material["job_root"], material["ledger_path"])
     protocol_sha256 = file_sha256(material["protocol_path"])
     attempt_common_ids: set[str] = set()
+    common_consumer_intents: dict[str, list[dict[str, Any]]] = {}
     for intent_path in material["job_root"].rglob("intent.json"):
         intent = read_canonical_json(intent_path)
         if intent.get("protocol_sha256") != protocol_sha256:
@@ -597,6 +742,9 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             )
         if intent.get("evaluation_input_class") == "E_COMMON":
             attempt_common_ids.add(intent["evaluation_input_id"])
+            common_consumer_intents.setdefault(
+                intent["evaluation_input_id"], []
+            ).append(intent)
     for entry in material["receipts"]:
         receipt = entry["receipt"]
         if receipt.get("protocol_sha256") != protocol_sha256:
@@ -604,11 +752,12 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
                 "E_PROTOCOL_BINDING", "phase receipt is bound to another protocol"
             )
         event_count = receipt.get("ledger_event_count")
-        if type(event_count) is not int or not 0 <= event_count <= len(events):
+        phase_events = [event for event in events if event["phase"] == entry["phase"]]
+        if type(event_count) is not int or not 0 <= event_count <= len(phase_events):
             raise EvidenceError("E_PHASE_RECEIPT", "receipt ledger prefix is invalid")
         verify_phase_receipt(
             receipt,
-            events[:event_count],
+            phase_events[:event_count],
             entry["expected_jobs"],
             entry["output_manifest"],
         )
@@ -639,14 +788,55 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             verify_slot_chronology(slot)
             slot_id = validate_sha256(slot.get("slot_id"), "slot.slot_id")
             if slot_id != slot_entry["slot_id"]:
-                raise EvidenceError("E_SLOT_COORDINATE", "slot artifact coordinate differs")
+                raise EvidenceError(
+                    "E_SLOT_COORDINATE", "slot artifact coordinate differs"
+                )
             coordinate = f"{slot_entry['controlled_subject_id']}:{slot_id}"
             if coordinate in slot_ids:
                 raise EvidenceError("E_SLOT_COORDINATE", "duplicate slot identity")
             slot_ids.add(coordinate)
             common_ids = slot["e_common_input_ids"]
             contract_ids = slot["e_contract_input_ids"]
-            if set(common_ids) & set(contract_ids):
+            if (
+                any(
+                    type(input_id) is not str
+                    for input_id in [*common_ids, *contract_ids]
+                )
+                or common_ids != list(dict.fromkeys(common_ids))
+                or contract_ids != list(dict.fromkeys(contract_ids))
+                or not set(common_ids) <= inventory_ids
+            ):
+                raise EvidenceError(
+                    "E_SLOT_INPUT_ROLE", "slot input role inventories are not canonical"
+                )
+            contract_inventory = slot.get("e_contract")
+            if contract_inventory is None:
+                contract_row_ids: list[str] = []
+            elif not isinstance(contract_inventory, Mapping) or not isinstance(
+                contract_inventory.get("rows"), list
+            ):
+                raise EvidenceError(
+                    "E_SLOT_INPUT_ROLE", "slot contract inventory is absent"
+                )
+            else:
+                contract_row_ids = []
+                for row in contract_inventory["rows"]:
+                    if (
+                        not isinstance(row, Mapping)
+                        or type(row.get("input_id")) is not str
+                    ):
+                        raise EvidenceError(
+                            "E_SLOT_INPUT_ROLE", "slot contract row identity is invalid"
+                        )
+                    contract_row_ids.append(row["input_id"])
+            if contract_ids != contract_row_ids:
+                raise EvidenceError(
+                    "E_SLOT_INPUT_ROLE",
+                    "declared contract IDs differ from contract rows",
+                )
+            if set(common_ids) & (set(contract_ids) | set(contract_row_ids)) or (
+                inventory_ids & set(contract_row_ids)
+            ):
                 raise EvidenceError("E_SLOT_INPUT_ROLE", "slot A/B input roles overlap")
             subject_consumed_ids.update(common_ids)
             slot_count += 1
@@ -657,6 +847,12 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             public_frame=subject["public_frame"],
             profiling_workload=subject["profiling_workload"],
             consumer_input_ids=sorted(subject_consumed_ids),
+            generator_registries=material["generator_registries"],
+            consumer_intents=[
+                intent
+                for input_id in subject_attempt_ids
+                for intent in common_consumer_intents[input_id]
+            ],
         )
     if unassigned_attempt_ids:
         raise EvidenceError(
@@ -703,7 +899,9 @@ def dispatch(args: argparse.Namespace) -> dict:
         if args.allowed_classes:
             allowed = read_canonical_json(args.allowed_classes)
             if not isinstance(allowed, list):
-                raise EvidenceError("E_PACKAGE_ALLOWED_CLASSES", "allowed-classes must be a list")
+                raise EvidenceError(
+                    "E_PACKAGE_ALLOWED_CLASSES", "allowed-classes must be a list"
+                )
         manifest = build_package(
             args.role,
             args.root,
@@ -746,7 +944,9 @@ def main() -> int:
     try:
         payload = dispatch(build_parser().parse_args())
     except EvidenceError as exc:
-        sys.stderr.buffer.write(canonical_json_bytes({"status": "FAIL", "code": exc.code}))
+        sys.stderr.buffer.write(
+            canonical_json_bytes({"status": "FAIL", "code": exc.code})
+        )
         return 2
     _write(payload)
     return 0

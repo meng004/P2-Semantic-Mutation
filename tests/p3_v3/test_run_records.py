@@ -155,9 +155,7 @@ _RETRY_IDENTITY_MUTATIONS = {
     _RETRY_IDENTITY_MUTATIONS.items(),
     ids=_RETRY_IDENTITY_MUTATIONS,
 )
-def test_retry_rejects_every_mutated_identity_field(
-    tmp_path, field, mutated_value
-):
+def test_retry_rejects_every_mutated_identity_field(tmp_path, field, mutated_value):
     jobs = tmp_path / "jobs"
     first = jobs / "job-1/1"
     second = jobs / "job-1/2"
@@ -178,7 +176,9 @@ def test_retry_rejects_every_mutated_identity_field(
 def test_retry_invariant_validates_intent_and_removes_only_attempt():
     intent = _intent(attempt=2)
     invariant = run_records_module.retry_invariant(intent)
-    assert invariant == {key: value for key, value in intent.items() if key != "attempt"}
+    assert invariant == {
+        key: value for key, value in intent.items() if key != "attempt"
+    }
 
     with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
         run_records_module.retry_invariant(
@@ -212,7 +212,13 @@ def test_ledger_tampering_breaks_event_hash(tmp_path):
     events = reduce_attempts(jobs, ledger)
     changed = copy.deepcopy(events)
     changed[0]["job_id"] = "other"
-    ledger.write_text("\n".join(__import__("json").dumps(x, sort_keys=True, separators=(",", ":")) for x in changed) + "\n")
+    ledger.write_text(
+        "\n".join(
+            __import__("json").dumps(x, sort_keys=True, separators=(",", ":"))
+            for x in changed
+        )
+        + "\n"
+    )
     with pytest.raises(EvidenceError, match="E_LEDGER_EVENT_HASH"):
         verify_ledger(ledger)
 
@@ -466,8 +472,7 @@ def test_p12_denominator_rejects_role_membership_and_reweight_mutations():
     with pytest.raises(EvidenceError, match="E_P12_JOB_SET"):
         summarize_p12_outcomes(
             denominator,
-            results
-            + [{"job_id": "j3", "scientific_outcome": "MR_VIOLATION"}],
+            results + [{"job_id": "j3", "scientific_outcome": "MR_VIOLATION"}],
         )
 
     with pytest.raises(EvidenceError, match="E_P12_JOB_SET"):
@@ -544,18 +549,13 @@ def test_reconstruct_attempt_events_orders_phase_job_attempt_and_ordinal(tmp_pat
     jobs = tmp_path / "jobs"
     _complete_attempt(jobs, "PHASE_3", "job-b")
     _complete_attempt(jobs, "PHASE_1", "job-z")
-    first = _complete_attempt(
-        jobs, "PHASE_1", "job-a", status="FAIL_INFRASTRUCTURE"
-    )
+    first = _complete_attempt(jobs, "PHASE_1", "job-a", status="FAIL_INFRASTRUCTURE")
     assert first.is_dir()
     _complete_attempt(jobs, "PHASE_1", "job-a", attempt=2)
 
     events = run_records_module.reconstruct_attempt_events(jobs)
 
-    assert [
-        (event["job_id"], event["attempt"], event["kind"])
-        for event in events
-    ] == [
+    assert [(event["job_id"], event["attempt"], event["kind"]) for event in events] == [
         ("job-a", 1, "INTENT"),
         ("job-a", 1, "RESULT"),
         ("job-a", 2, "INTENT"),
@@ -566,6 +566,16 @@ def test_reconstruct_attempt_events_orders_phase_job_attempt_and_ordinal(tmp_pat
         ("job-b", 1, "RESULT"),
     ]
     assert [event["sequence"] for event in events] == list(range(1, 9))
+    assert [event["phase"] for event in events] == [
+        "PHASE_1",
+        "PHASE_1",
+        "PHASE_1",
+        "PHASE_1",
+        "PHASE_1",
+        "PHASE_1",
+        "PHASE_3",
+        "PHASE_3",
+    ]
 
 
 @pytest.mark.parametrize("mutation", ["unknown_file", "gap", "drifted_intent"])
@@ -584,7 +594,9 @@ def test_reconstruct_attempt_events_rejects_nonfrozen_tree(tmp_path, mutation):
         )
         write_result(second, _result(job_id="job-1", attempt=2))
 
-    with pytest.raises(EvidenceError, match="E_ATTEMPT_(TREE|SEQUENCE)|E_RETRY_IDENTITY"):
+    with pytest.raises(
+        EvidenceError, match="E_ATTEMPT_(TREE|SEQUENCE)|E_RETRY_IDENTITY"
+    ):
         run_records_module.reconstruct_attempt_events(jobs)
 
 
@@ -610,9 +622,7 @@ def test_verify_attempt_tree_requires_exact_ledger_bytes(tmp_path):
     altered = copy.deepcopy(events)
     altered[-1]["status"] = "FAIL_SCIENTIFIC"
     altered_path = tmp_path / "altered.jsonl"
-    altered_path.write_bytes(
-        b"".join(canonical_json_bytes(event) for event in altered)
-    )
+    altered_path.write_bytes(b"".join(canonical_json_bytes(event) for event in altered))
     with pytest.raises(EvidenceError, match="E_LEDGER_RECONSTRUCTION"):
         run_records_module.verify_attempt_tree(jobs, altered_path)
 
@@ -642,9 +652,7 @@ def test_verify_phase_receipt_recomputes_every_closed_phase_binding(tmp_path):
         output_manifest["artifact_sha256"],
     )
     assert receipt["phase_status"] == "CLOSED"
-    run_records_module.verify_phase_receipt(
-        receipt, events, ["job-1"], output_manifest
-    )
+    run_records_module.verify_phase_receipt(receipt, events, ["job-1"], output_manifest)
 
     mutations = {
         "ledger_event_count": 1,
@@ -663,3 +671,33 @@ def test_verify_phase_receipt_recomputes_every_closed_phase_binding(tmp_path):
             run_records_module.verify_phase_receipt(
                 changed, events, ["job-1"], output_manifest
             )
+
+
+def test_phase_receipt_rejects_relabelled_or_cross_phase_events(tmp_path):
+    jobs = tmp_path / "jobs"
+    _complete_attempt(jobs, "PHASE_1", "job-1")
+    _complete_attempt(jobs, "PHASE_2", "job-2")
+    events = run_records_module.reconstruct_attempt_events(jobs)
+    phase_1_events = [event for event in events if event["phase"] == "PHASE_1"]
+    ledger = tmp_path / "phase-1.jsonl"
+    ledger.write_bytes(
+        b"".join(canonical_json_bytes(event) for event in phase_1_events)
+    )
+    output_body = {"files": []}
+    output = {**output_body, "artifact_sha256": canonical_sha256(output_body)}
+    receipt = close_phase(
+        "PHASE_1", "a" * 64, ["job-1"], ledger, output["artifact_sha256"]
+    )
+
+    run_records_module.verify_phase_receipt(receipt, phase_1_events, ["job-1"], output)
+    with pytest.raises(EvidenceError, match="E_PHASE_RECEIPT"):
+        run_records_module.verify_phase_receipt(receipt, events, ["job-1"], output)
+
+    relabelled = {**receipt, "phase_id": "PHASE_2"}
+    relabelled["artifact_sha256"] = canonical_sha256(
+        {key: value for key, value in relabelled.items() if key != "artifact_sha256"}
+    )
+    with pytest.raises(EvidenceError, match="E_PHASE_RECEIPT"):
+        run_records_module.verify_phase_receipt(
+            relabelled, phase_1_events, ["job-1"], output
+        )

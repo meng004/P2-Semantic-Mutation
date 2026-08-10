@@ -139,11 +139,27 @@ _COMMON_VALIDITY_ROW_SCHEMA = {
 
 
 def _regular_file(root: Path, relative: str) -> Path:
-    path = root / safe_relative_path(relative)
+    relative_path = safe_relative_path(relative)
+    path = root / relative_path
+    cursor = root
+    for part in relative_path.parts:
+        cursor = cursor / part
+        try:
+            component = cursor.lstat()
+        except FileNotFoundError as exc:
+            raise EvidenceError(
+                "E_PACKAGE_MISSING", f"declared file is absent: {relative}"
+            ) from exc
+        if stat.S_ISLNK(component.st_mode):
+            raise EvidenceError(
+                "E_PACKAGE_FILE_TYPE", f"package path contains a symlink: {relative}"
+            )
     try:
         info = path.lstat()
     except FileNotFoundError as exc:
-        raise EvidenceError("E_PACKAGE_MISSING", f"declared file is absent: {relative}") from exc
+        raise EvidenceError(
+            "E_PACKAGE_MISSING", f"declared file is absent: {relative}"
+        ) from exc
     if not stat.S_ISREG(info.st_mode) or path.is_symlink():
         raise EvidenceError("E_PACKAGE_FILE_TYPE", f"not a regular file: {relative}")
     return path
@@ -155,7 +171,9 @@ def _validate_role(role: Any) -> str:
     return role
 
 
-def _resolve_allowed_classes(role: str, allowed_classes: Sequence[str] | set[str] | frozenset[str] | None) -> frozenset[str]:
+def _resolve_allowed_classes(
+    role: str, allowed_classes: Sequence[str] | set[str] | frozenset[str] | None
+) -> frozenset[str]:
     role_classes = ALLOWED_CLASSES[role]
     if allowed_classes is None:
         return role_classes
@@ -181,11 +199,15 @@ def build_package(
     for index, parent in enumerate(parents):
         validate_sha256(parent, f"parents[{index}]")
     if list(parents) != sorted(set(parents)):
-        raise EvidenceError("E_PACKAGE_PARENTS", "parent hashes must be sorted and unique")
+        raise EvidenceError(
+            "E_PACKAGE_PARENTS", "parent hashes must be sorted and unique"
+        )
     files: list[dict[str, Any]] = []
     seen: set[str] = set()
     for index, candidate in enumerate(file_specs):
-        spec = validate_exact_object(dict(candidate), _SPEC_SCHEMA, f"file_specs[{index}]")
+        spec = validate_exact_object(
+            dict(candidate), _SPEC_SCHEMA, f"file_specs[{index}]"
+        )
         relative = safe_relative_path(spec["path"]).as_posix()
         if relative in seen:
             raise EvidenceError("E_PACKAGE_DUPLICATE", f"duplicate path: {relative}")
@@ -231,18 +253,24 @@ def _validate_manifest(manifest: Mapping[str, Any]) -> dict[str, Any]:
         validate_sha256(parent, f"manifest.parents[{index}]")
     paths: list[str] = []
     for index, candidate in enumerate(value["files"]):
-        record = validate_exact_object(candidate, _FILE_SCHEMA, f"manifest.files[{index}]")
+        record = validate_exact_object(
+            candidate, _FILE_SCHEMA, f"manifest.files[{index}]"
+        )
         relative = safe_relative_path(record["path"]).as_posix()
         paths.append(relative)
         if record["class"] not in ALLOWED_CLASSES[role]:
-            raise EvidenceError("E_PACKAGE_CONTENT_CLASS", "manifest contains forbidden class")
+            raise EvidenceError(
+                "E_PACKAGE_CONTENT_CLASS", "manifest contains forbidden class"
+            )
         if type(record["mode"]) is not int or not 0 <= record["mode"] <= 0o7777:
             raise EvidenceError("E_PACKAGE_MODE", f"invalid mode: {relative}")
         if type(record["size"]) is not int or record["size"] < 0:
             raise EvidenceError("E_PACKAGE_SIZE", f"invalid size: {relative}")
         validate_sha256(record["sha256"], f"manifest.files[{index}].sha256")
     if paths != sorted(set(paths)):
-        raise EvidenceError("E_PACKAGE_DUPLICATE", "manifest paths are not sorted and unique")
+        raise EvidenceError(
+            "E_PACKAGE_DUPLICATE", "manifest paths are not sorted and unique"
+        )
     if value["package_tree_sha256"] != canonical_sha256(value["files"]):
         raise EvidenceError("E_PACKAGE_TREE", "package tree hash differs")
     return value
@@ -258,17 +286,43 @@ def verify_package(source_root: str | Path, manifest: Mapping[str, Any]) -> None
     root = Path(source_root)
     value = _validate_manifest(manifest)
     declared = {item["path"] for item in value["files"]}
+    declared_directories = {
+        parent.as_posix()
+        for relative in declared
+        for parent in safe_relative_path(relative).parents
+        if parent != Path(".")
+    }
     observed: set[str] = set()
-    for path in root.rglob("*"):
-        relative = path.relative_to(root).as_posix()
-        if path.is_symlink():
-            raise EvidenceError("E_PACKAGE_FILE_TYPE", f"symlink present: {relative}")
-        if path.is_file():
-            observed.add(relative)
+    observed_directories: set[str] = set()
+    for directory, names, filenames in os.walk(root, followlinks=False):
+        current = Path(directory)
+        for name in [*names, *filenames]:
+            path = current / name
+            relative = path.relative_to(root).as_posix()
+            info = path.lstat()
+            if stat.S_ISLNK(info.st_mode):
+                raise EvidenceError(
+                    "E_PACKAGE_FILE_TYPE", f"symlink present: {relative}"
+                )
+            if stat.S_ISDIR(info.st_mode):
+                observed_directories.add(relative)
+            elif stat.S_ISREG(info.st_mode):
+                observed.add(relative)
+            else:
+                raise EvidenceError(
+                    "E_PACKAGE_FILE_TYPE", f"special node present: {relative}"
+                )
     if observed != declared:
         raise EvidenceError(
             "E_PACKAGE_FILE_SET",
             f"file set differs: missing={sorted(declared - observed)}, extra={sorted(observed - declared)}",
+        )
+    if observed_directories != declared_directories:
+        raise EvidenceError(
+            "E_PACKAGE_FILE_SET",
+            "directory set differs: "
+            f"missing={sorted(declared_directories - observed_directories)}, "
+            f"extra={sorted(observed_directories - declared_directories)}",
         )
     for record in value["files"]:
         path = _regular_file(root, record["path"])
@@ -290,7 +344,9 @@ def verify_materialized_package(
     try:
         info = root.lstat()
     except FileNotFoundError as exc:
-        raise EvidenceError("E_PACKAGE_MISSING", f"package root is absent: {root}") from exc
+        raise EvidenceError(
+            "E_PACKAGE_MISSING", f"package root is absent: {root}"
+        ) from exc
     if root.is_symlink() or not stat.S_ISDIR(info.st_mode):
         raise EvidenceError("E_PACKAGE_FILE_TYPE", f"package root is unsafe: {root}")
     value = _validate_manifest(manifest)
@@ -315,6 +371,8 @@ def verify_common_input_evidence(
     public_frame: Mapping[str, Any],
     profiling_workload: Mapping[str, Any],
     consumer_input_ids: Sequence[str],
+    generator_registries: Sequence[Mapping[str, Any]],
+    consumer_intents: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     """Validate exact E_COMMON identities and their pre-consumer validity receipt."""
 
@@ -323,6 +381,7 @@ def verify_common_input_evidence(
         E_COMMON_GENERATOR_IDS,
         _common_input_id,
         _common_input_seed,
+        select_profiling_workload,
     )
 
     source_id = validate_sha256(
@@ -337,6 +396,108 @@ def verify_common_input_evidence(
         raise EvidenceError(
             "E_COMMON_IDENTITY", "frame/workload subject identity differs"
         )
+    if frame.get("schema_version") != "p3-public-behavior-frame-v1":
+        raise EvidenceError("E_COMMON_SCHEMA", "public frame schema version differs")
+    if workload.get("schema_version") != "p3-profiling-workload-v1":
+        raise EvidenceError(
+            "E_COMMON_SCHEMA", "profiling workload schema version differs"
+        )
+    scale_class = workload.get("scale_class")
+    if (
+        not isinstance(scale_class, str)
+        or select_profiling_workload(frame, scale_class) != workload
+    ):
+        raise EvidenceError(
+            "E_COMMON_IDENTITY",
+            "profiling workload does not reconstruct from public frame",
+        )
+
+    generator_authority: dict[str, tuple[str, str]] = {}
+    for registry_index, registry in enumerate(generator_registries):
+        if not isinstance(registry, Mapping) or not isinstance(
+            registry.get("generators"), list
+        ):
+            raise EvidenceError(
+                "E_COMMON_GENERATOR",
+                f"generator_registries[{registry_index}] is not verified registry material",
+            )
+        for entry_index, entry in enumerate(registry["generators"]):
+            if not isinstance(entry, Mapping):
+                raise EvidenceError(
+                    "E_COMMON_GENERATOR", "generator registry entry is not an object"
+                )
+            generator_id = entry.get("generator_id")
+            schema_kind = entry.get("schema_kind")
+            source_sha256 = entry.get("source_sha256")
+            if (
+                generator_id not in E_COMMON_GENERATOR_IDS
+                or schema_kind != generator_id
+            ):
+                raise EvidenceError(
+                    "E_COMMON_GENERATOR", "generator registry identity differs"
+                )
+            validate_sha256(
+                source_sha256,
+                f"generator_registries[{registry_index}].generators[{entry_index}].source_sha256",
+            )
+            identity = (schema_kind, source_sha256)
+            previous = generator_authority.setdefault(generator_id, identity)
+            if previous != identity:
+                raise EvidenceError(
+                    "E_COMMON_GENERATOR", "generator registries disagree on authority"
+                )
+    if generator_authority and set(generator_authority) != set(E_COMMON_GENERATOR_IDS):
+        raise EvidenceError(
+            "E_COMMON_GENERATOR", "verified generator authority is incomplete"
+        )
+
+    raw_public_schemas = frame.get("public_schemas")
+    if not isinstance(raw_public_schemas, list):
+        raise EvidenceError("E_COMMON_SCHEMA", "public frame schemas are absent")
+    public_schemas: dict[str, dict[str, Any]] = {}
+    seen_schema_hashes: set[str] = set()
+    for schema_index, candidate in enumerate(raw_public_schemas):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError("E_COMMON_SCHEMA", "public schema is not an object")
+        schema = dict(candidate)
+        schema_kind = schema.get("schema_kind")
+        if schema_kind not in generator_authority:
+            continue
+        provenance_path = schema.get("provenance_path")
+        provenance_span = schema.get("provenance_span_or_key")
+        if (
+            "raw_schema" not in schema
+            or not isinstance(provenance_path, str)
+            or not provenance_path
+            or not isinstance(provenance_span, str)
+            or not provenance_span
+        ):
+            raise EvidenceError(
+                "E_COMMON_SCHEMA", f"public_schemas[{schema_index}] is incomplete"
+            )
+        safe_relative_path(provenance_path)
+        raw_schema_sha256 = canonical_sha256(schema["raw_schema"])
+        if raw_schema_sha256 in seen_schema_hashes:
+            continue
+        seen_schema_hashes.add(raw_schema_sha256)
+        selection_key = canonical_sha256(
+            {
+                key: item
+                for key, item in schema.items()
+                if key
+                not in {
+                    "subject_alias",
+                    "project_alias",
+                    "controlled_subject_source_id",
+                }
+            }
+        )
+        public_schemas[selection_key] = {
+            "schema_kind": schema_kind,
+            "raw_schema_sha256": raw_schema_sha256,
+            "schema_provenance_path": provenance_path,
+            "schema_provenance_span_or_key": provenance_span,
+        }
     value = validate_exact_object(
         dict(inventory), _COMMON_INVENTORY_SCHEMA, "common_inputs"
     )
@@ -344,8 +505,15 @@ def verify_common_input_evidence(
         raise EvidenceError("E_COMMON_SCHEMA", "common input schema version differs")
     if value["controlled_subject_source_id"] != source_id:
         raise EvidenceError("E_COMMON_IDENTITY", "common input subject differs")
-    if type(value["eligible_schema_count"]) is bool or value["eligible_schema_count"] < 0:
+    if (
+        type(value["eligible_schema_count"]) is bool
+        or value["eligible_schema_count"] < 0
+    ):
         raise EvidenceError("E_COMMON_SCHEMA", "eligible schema count is invalid")
+    if value["eligible_schema_count"] != len(public_schemas):
+        raise EvidenceError(
+            "E_COMMON_SCHEMA", "eligible schema count differs from frame"
+        )
     inventory_body = {
         key: item for key, item in value.items() if key != "artifact_sha256"
     }
@@ -353,13 +521,16 @@ def verify_common_input_evidence(
         raise EvidenceError("E_COMMON_HASH", "common input inventory self-hash differs")
     if len(value["rows"]) != E_COMMON_COUNT:
         raise EvidenceError("E_COMMON_ROWS", "common input row count differs")
-    generator_ids = set(E_COMMON_GENERATOR_IDS)
     rows: list[dict[str, Any]] = []
     input_ids: set[str] = set()
     for index, candidate in enumerate(value["rows"], 1):
-        row = validate_exact_object(candidate, _COMMON_ROW_SCHEMA, f"common_inputs.rows[{index}]")
+        row = validate_exact_object(
+            candidate, _COMMON_ROW_SCHEMA, f"common_inputs.rows[{index}]"
+        )
         if row["ordinal"] != index or type(row["seed"]) is bool:
-            raise EvidenceError("E_COMMON_ORDINAL", f"common input ordinal {index} differs")
+            raise EvidenceError(
+                "E_COMMON_ORDINAL", f"common input ordinal {index} differs"
+            )
         if row["seed"] != _common_input_seed(source_id, index):
             raise EvidenceError("E_COMMON_SEED", f"common input seed {index} differs")
         status = row["status"]
@@ -374,30 +545,62 @@ def verify_common_input_evidence(
         )
         if status == "COMMON_INPUT_UNAVAILABLE":
             if any(row[field] is not None for field in identity_fields):
-                raise EvidenceError("E_COMMON_IDENTITY", "unavailable row has schema identity")
+                raise EvidenceError(
+                    "E_COMMON_IDENTITY", "unavailable row has schema identity"
+                )
             if (
                 row["failure_code"] != "COMMON_INPUT_UNAVAILABLE"
                 or row["envelope"] is not None
                 or row["raw_payload_sha256"] is not None
             ):
-                raise EvidenceError("E_COMMON_STATUS", "unavailable row payload differs")
+                raise EvidenceError(
+                    "E_COMMON_STATUS", "unavailable row payload differs"
+                )
         elif status in {"COMMON_INPUT_EXECUTABLE", "COMMON_INPUT_INVALID"}:
-            if row["generator_id"] not in generator_ids:
+            if row["generator_id"] not in generator_authority:
                 raise EvidenceError("E_COMMON_GENERATOR", "generator identity differs")
             if row["schema_kind"] != row["generator_id"]:
-                raise EvidenceError("E_COMMON_SCHEMA", "schema/generator identity differs")
+                raise EvidenceError(
+                    "E_COMMON_SCHEMA", "schema/generator identity differs"
+                )
             for field in (
                 "schema_selection_key",
                 "raw_schema_sha256",
                 "generator_source_sha256",
             ):
                 validate_sha256(row[field], f"common_inputs.rows[{index}].{field}")
-            if not row["schema_provenance_path"] or not row["schema_provenance_span_or_key"]:
+            if (
+                not row["schema_provenance_path"]
+                or not row["schema_provenance_span_or_key"]
+            ):
                 raise EvidenceError("E_COMMON_SCHEMA", "schema provenance is absent")
             safe_relative_path(row["schema_provenance_path"])
+            schema = public_schemas.get(row["schema_selection_key"])
+            if schema is None or any(
+                row[field] != schema[field]
+                for field in (
+                    "schema_kind",
+                    "raw_schema_sha256",
+                    "schema_provenance_path",
+                    "schema_provenance_span_or_key",
+                )
+            ):
+                raise EvidenceError(
+                    "E_COMMON_SCHEMA", "row schema is not public-frame authority"
+                )
+            if (
+                row["generator_source_sha256"]
+                != generator_authority[row["generator_id"]][1]
+            ):
+                raise EvidenceError(
+                    "E_COMMON_GENERATOR",
+                    "row generator source is not registry authority",
+                )
             if status == "COMMON_INPUT_EXECUTABLE":
                 if row["failure_code"] or row["envelope"] is None:
-                    raise EvidenceError("E_COMMON_STATUS", "executable row payload differs")
+                    raise EvidenceError(
+                        "E_COMMON_STATUS", "executable row payload differs"
+                    )
                 validate_sha256(
                     row["raw_payload_sha256"],
                     f"common_inputs.rows[{index}].raw_payload_sha256",
@@ -445,26 +648,37 @@ def verify_common_input_evidence(
         or len(receipt["rows"]) != E_COMMON_COUNT
     ):
         raise EvidenceError("E_COMMON_VALIDITY", "validity receipt binding differs")
+    if receipt["sites"] != [] or receipt["contracts"] != [] or receipt["profile"] != {}:
+        raise EvidenceError(
+            "E_COMMON_CHRONOLOGY", "validity receipt is not in exact preconsumer state"
+        )
     valid_by_id: dict[str, str] = {}
     projected_fields = tuple(_COMMON_VALIDITY_ROW_SCHEMA)
     for index, (source_row, candidate) in enumerate(
         zip(rows, receipt["rows"], strict=True), 1
     ):
         row = validate_exact_object(
-            candidate, _COMMON_VALIDITY_ROW_SCHEMA, f"common_input_validity.rows[{index}]"
+            candidate,
+            _COMMON_VALIDITY_ROW_SCHEMA,
+            f"common_input_validity.rows[{index}]",
         )
         for field in projected_fields:
             if field == "status":
                 continue
             if row[field] != source_row[field]:
-                raise EvidenceError("E_COMMON_VALIDITY", "validity row identity differs")
+                raise EvidenceError(
+                    "E_COMMON_VALIDITY", "validity row identity differs"
+                )
         if row["status"] not in {
             "COMMON_INPUT_EXECUTABLE",
             "COMMON_INPUT_INVALID",
             "COMMON_INPUT_UNAVAILABLE",
         }:
             raise EvidenceError("E_COMMON_VALIDITY", "validity row status differs")
-        if source_row["status"] != "COMMON_INPUT_EXECUTABLE" and row["status"] != source_row["status"]:
+        if (
+            source_row["status"] != "COMMON_INPUT_EXECUTABLE"
+            and row["status"] != source_row["status"]
+        ):
             raise EvidenceError("E_COMMON_VALIDITY", "validity upgraded a frozen row")
         valid_by_id[row["input_id"]] = row["status"]
     consumers = list(consumer_input_ids)
@@ -472,10 +686,43 @@ def verify_common_input_evidence(
         type(input_id) is not str for input_id in consumers
     ):
         raise EvidenceError("E_COMMON_CHRONOLOGY", "consumer input IDs are duplicated")
-    if any(valid_by_id.get(input_id) != "COMMON_INPUT_EXECUTABLE" for input_id in consumers):
+    if any(
+        valid_by_id.get(input_id) != "COMMON_INPUT_EXECUTABLE" for input_id in consumers
+    ):
         raise EvidenceError(
             "E_COMMON_CHRONOLOGY", "consumer used input before executable validity"
         )
+    intents_by_input: dict[str, list[Mapping[str, Any]]] = {}
+    for intent in consumer_intents:
+        if not isinstance(intent, Mapping):
+            raise EvidenceError(
+                "E_COMMON_CHRONOLOGY", "consumer intent is not an object"
+            )
+        input_id = intent.get("evaluation_input_id")
+        input_hashes = intent.get("input_sha256")
+        if type(input_id) is not str or not isinstance(input_hashes, list):
+            raise EvidenceError(
+                "E_COMMON_CHRONOLOGY", "consumer intent binding is absent"
+            )
+        intents_by_input.setdefault(input_id, []).append(intent)
+    for input_id, intents in intents_by_input.items():
+        if input_id not in valid_by_id:
+            raise EvidenceError(
+                "E_COMMON_CHRONOLOGY", "consumer intent input is unknown"
+            )
+        first = min(
+            intents,
+            key=lambda intent: (
+                str(intent.get("phase")),
+                str(intent.get("job_id")),
+                intent.get("attempt") if type(intent.get("attempt")) is int else -1,
+            ),
+        )
+        if receipt["artifact_sha256"] not in first["input_sha256"]:
+            raise EvidenceError(
+                "E_COMMON_CHRONOLOGY",
+                "first consumer intent does not bind preconsumer validity",
+            )
     return {"inventory": value, "validity": receipt}
 
 
@@ -483,7 +730,9 @@ def _project_manifest(
     manifest: Mapping[str, Any],
     allowed_classes: frozenset[str],
 ) -> dict[str, Any]:
-    files = [dict(item) for item in manifest["files"] if item["class"] in allowed_classes]
+    files = [
+        dict(item) for item in manifest["files"] if item["class"] in allowed_classes
+    ]
     body = {
         "schema_version": manifest["schema_version"],
         "role": manifest["role"],
@@ -517,7 +766,10 @@ def materialize_package(
         for record in active_manifest["files"]:
             destination = temporary / safe_relative_path(record["path"])
             destination.parent.mkdir(parents=True, exist_ok=True)
-            with (source / record["path"]).open("rb") as reader, destination.open("xb") as writer:
+            with (
+                (source / record["path"]).open("rb") as reader,
+                destination.open("xb") as writer,
+            ):
                 shutil.copyfileobj(reader, writer)
                 writer.flush()
                 os.fsync(writer.fileno())
