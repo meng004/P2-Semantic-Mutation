@@ -61,9 +61,10 @@ scientific result claim remain `blocked`.
 
 The verifier trusts only:
 
-1. its reviewed implementation bytes;
-2. the literal expected Authority Lock SHA-256 supplied by an independently
-   frozen execution plan or launch packet; and
+1. the controller implementation identity and bytes committed by the Authority
+   Lock;
+2. the literal expected Authority Lock SHA-256 supplied by a separately frozen,
+   non-self-referential launch packet; and
 3. the canonical Authority Lock bytes that match that literal digest.
 
 The expected digest must not be read from the evidence index, the Authority
@@ -100,10 +101,24 @@ expected digest. Those are distinct supply-chain authorities.
 
 ### 4.1 Freeze
 
-Before any evidence-producing job, Local Desktop materializes one canonical
-Authority Lock from reviewed, non-secret inputs. The lock is written outside
-the mutable evidence root. Its SHA-256 is recorded literally in the execution
-plan or launch packet and supplied later to final verification.
+Local Desktop creates one Authority Lock through two deterministic passes:
+
+1. **Authority preparation:** validate and commit the controller repository,
+   every subject repository/materialization, governing documents, protocol,
+   policies, registries, preflight policy, and job-derivation rules. This pass
+   performs no scientific, profiling, P12, mutant, or MR execution.
+2. **Inventory derivation:** from only those prepared bytes, deterministically
+   derive the complete subject identities and base-job intent templates,
+   validate the derivation against the protocol, and insert that exact inventory
+   into the candidate lock. This pass also performs no evidence-producing job.
+
+The completed canonical lock is then written outside the mutable evidence root.
+Its SHA-256 is recorded literally in a separate launch packet before the first
+evidence-producing intent. The implementation plan is already an input to the
+lock and therefore must not embed the resulting lock digest. The launch packet
+records both the fixed implementation-plan digest and the resulting lock digest,
+avoiding a self-hash cycle. The same prepared inputs must always produce
+byte-identical lock bytes.
 
 Freezing the lock is not evidence collection and does not unlock scientific
 claims. Any byte change after freeze creates a new digest and therefore a new
@@ -117,6 +132,26 @@ but may not redefine the expected repository, policy, job role, execution
 class, or P12-access class.
 
 ### 4.3 Verify
+
+The freeze interface is:
+
+```text
+freeze-authority-lock \
+  --controller-root PATH \
+  --authority-inputs PATH \
+  --output PATH
+```
+
+`authority-inputs` is a canonical, exact-schema declaration of subject roots
+and governing artifact paths. It is an input to deterministic freezing, never a
+trusted verification artifact. The freezer reads only safe regular tracked
+bytes, may execute only source-hash-verified deterministic adapters through their
+reviewed in-process interface, invokes no evidence-producing or scientific
+executable, performs no network operation, and writes the output atomically with
+create-new semantics. It may inspect live Git metadata only during freeze to
+compare commit/tree and normalize origin in memory; it never copies `.git` or raw
+origin/userinfo bytes into the lock. If `--output` already exists, it fails
+rather than overwriting it.
 
 The final interface is:
 
@@ -138,7 +173,7 @@ Verification order is fail-closed:
 7. run the existing evidence reconstruction gates; and
 8. emit only infrastructure counts and the verified lock/index digests.
 
-No evidence or index content is executed at any step.
+No Authority Lock, evidence, or index content is executed at any step.
 
 ### 4.4 Publish
 
@@ -149,12 +184,20 @@ it.
 
 ## 5. Canonical schema
 
-The Authority Lock is canonical JSON with an exact top-level schema:
+The Authority Lock is UTF-8 canonical JSON with an exact top-level schema.
+Canonicalization uses the repository's reviewed `canonical_json_bytes`
+implementation: sorted object keys, compact separators, JSON booleans/null,
+integers only for numeric authority fields, no floats, no Unicode escaping,
+and exactly one trailing LF. Duplicate keys, byte-order marks, non-UTF-8 input,
+and noncanonical re-encodings fail.
+
+The exact top-level schema is:
 
 ```text
 schema_version
 task_id
-repository
+controller_repository
+subjects
 governing_materials
 protocol
 registries
@@ -163,9 +206,9 @@ jobs
 claim_policy
 ```
 
-### 5.1 Repository authority
+### 5.1 Controller and subject authority
 
-`repository` contains only stable, non-secret identities:
+`controller_repository` contains the reviewed verifier/controller identity:
 
 ```text
 normalized_repository_identity
@@ -174,19 +217,44 @@ base_tree
 tracked_source_manifest_sha256
 ```
 
+`subjects` is a sorted, nonempty exact list. Each row contains:
+
+```text
+subject_id
+repository_role
+normalized_repository_identity
+base_commit
+base_tree
+tracked_source_manifest_sha256
+build_descriptor_sha256
+adapter_id
+```
+
 - The repository identity is host/path form with scheme, userinfo, query,
   fragment, and credentials removed.
 - Commit and tree are 40 lowercase hexadecimal object identities.
-- The tracked-source manifest covers safe project files required by the
-  experiment. It never contains `.git`, worktree administration files,
-  untracked credential files, absolute paths, symlinks, or special nodes.
-- Final verification reads indexed canonical source artifacts and compares the
-  manifest; it does not inspect or trust a live `.git` directory.
+- The controller manifest covers the verifier implementation, thin CLI, schema
+  validators, and dependency lock used by verification.
+- Every subject has its own repository/materialization commitment; no aggregate
+  digest may hide subject membership, repository role, or per-subject paths.
+- Each tracked-source manifest is canonical JSON with exact rows
+  `(relative_path, mode, sha256)`, sorted by UTF-8 relative path. It covers every
+  safe tracked regular file required by that role and forbids missing, extra,
+  duplicate, symlink, and special-node entries.
+- Manifests never contain `.git`, worktree administration files, untracked
+  credential files, absolute paths, or path escapes.
+- Final verification reads indexed canonical controller/subject source
+  artifacts and compares each exact manifest; it does not inspect or trust a
+  live `.git` directory.
 
 ### 5.2 Governing materials and protocol
 
 `governing_materials` locks the scientific plan, evidence design, this design,
-and the implementation plan by SHA-256.
+the already-final implementation plan, and the controller implementation
+manifest by SHA-256. The later launch packet records the Authority Lock digest
+beside those governing identities; neither the design nor implementation plan
+embeds its own resulting lock digest, and the packet may not derive that digest
+from the evidence package.
 
 `protocol` locks the canonical protocol and every policy artifact referenced by
 it. The mapping is exact, nonempty, safe-path-independent, and sorted by frozen
@@ -214,9 +282,11 @@ forbidden_credential_fields
 ```
 
 The final verifier reconstructs the canonical origin/preflight receipt from
-the lock and authenticated preflight event fields. It does not rerun a command
-from the index. Variable machine observations such as free memory or disk are
-evidence observations, not origin authority, and cannot redefine the lock.
+the lock and hash-linked, exact-schema preflight event fields. These fields are
+validated records, not signed platform attestations, and therefore do not prove
+that a physical command ran. The verifier does not rerun a command from the
+index. Variable machine observations such as free memory or disk are evidence
+observations, not origin authority, and cannot redefine the lock.
 
 ### 5.5 Job and execution authority
 
@@ -228,9 +298,23 @@ phase
 job_role
 object_identity
 input_identity_sha256
+intent_template_sha256
+maximum_attempts
+retry_trigger
 execution_class
 p12_access_class
 ```
+
+`intent_template_sha256` is the canonical SHA-256 of the complete production
+intent after removing only `attempt`. It therefore commits protocol, phase,
+argv, cwd identity, environment, all input hashes, seed, timeout, object/MR/input
+and repetition identities, environment identity, and job role. No individual
+field may be omitted merely because another aggregate input digest exists.
+
+`maximum_attempts` and `retry_trigger` lock the existing failure-only retry
+policy. Every attempt after 1 must retain the same intent template and must be
+preceded by the exact permitted infrastructure-failure state. Inventory
+derivation freezes base jobs, not a guessed number of future result records.
 
 `execution_class` is one of the frozen protocol values, including distinct
 synthetic-infrastructure, real-scientific, and non-scientific-control classes.
@@ -238,9 +322,21 @@ synthetic-infrastructure, real-scientific, and non-scientific-control classes.
 to touch the separately authorized P12 envelope.
 
 Final completion metadata is derived from terminal intent/result pairs matched
-one-to-one to these locked rows. It is not derived from cwd names, result labels,
-or a caller-supplied execution-scope artifact. Missing, extra, duplicate, or
-relabeled jobs fail.
+one-to-one to these locked base-job rows and their retry policy. It is not
+derived from cwd names, result labels, or a caller-supplied execution-scope
+artifact. Missing, extra, duplicate, or relabeled jobs fail.
+
+The completion vocabulary is deliberately observational:
+
+```text
+authorized_real_p12_job_count
+recorded_real_scientific_terminal_count
+```
+
+Zero means that the lock authorized no such job or that the reconstructed
+terminal ledger contains no such record. It does not prove platform-level
+physical non-access. A claim of physical absence requires a separately scoped
+and independently verified platform attestation and is outside this design.
 
 ### 5.6 Claim policy
 
@@ -252,14 +348,16 @@ upgrade a claim.
 
 ### Authority Lock validator
 
-The existing evidence module owns canonical lock loading, digest comparison,
-schema validation, and reconstruction orchestration. It exposes one narrow
-validated-lock value to downstream checks. It must not become a generic trust
-framework.
+The existing evidence module owns deterministic lock freezing, canonical lock
+loading, external digest comparison, schema validation, and reconstruction
+orchestration. Its interface remains two deep operations—freeze and verify—and
+it exposes one narrow validated-lock value to downstream checks. It must not
+become a generic trust framework.
 
 ### Run-record reconstruction
 
-The existing run-record module reconstructs terminal intent/result pairs and
+The existing run-record module reconstructs terminal intent/result pairs,
+recomputes each intent template, validates failure-only retry transitions, and
 matches them to validated locked jobs. It derives completion counts and classes
 from that match. It never accepts an execution classification as authority from
 an evidence result.
@@ -272,8 +370,8 @@ execute commands or read Git metadata named by the evidence index.
 
 ### CLI
 
-The CLI remains thin: it parses three explicit paths/values, calls the evidence
-validator, and prints only verified infrastructure identities and counts.
+The CLI remains thin: it exposes the freeze and verify interfaces, calls the
+evidence module, and prints only verified infrastructure identities and counts.
 
 ## 7. Failure behavior
 
@@ -283,7 +381,9 @@ All failures are fail-closed and occur before a PASS record:
 - `E_AUTHORITY_LOCK_SCHEMA`: noncanonical, missing, extra, or invalid fields;
 - `E_AUTHORITY_LOCK_PATH`: symlink, special node, unsafe path, or path escape;
 - `E_AUTHORITY_ORIGIN`: receipt/repository divergence from the lock;
+- `E_AUTHORITY_MANIFEST`: controller or subject manifest divergence;
 - `E_AUTHORITY_JOB_SET`: missing, extra, duplicate, or reordered job authority;
+- `E_AUTHORITY_INTENT`: intent-template or retry-policy divergence;
 - `E_AUTHORITY_EXECUTION_CLASS`: result/intent role or access-class divergence;
 - `E_AUTHORITY_CREDENTIAL`: credential-bearing field or forbidden Git material;
 - existing evidence errors for downstream artifact reconstruction.
@@ -295,9 +395,9 @@ The verifier does not repair, rewrite, fetch, execute, or retry.
 ### 8.1 Positive path
 
 A two-subject synthetic Phase 0-7 package uses one independently frozen lock,
-two ecosystems, S/M scales, blocked claims, no P12 access, and zero real
-scientific jobs. Final verification succeeds only with the exact external
-digest.
+two repositories/materializations, two ecosystems, S/M scales, blocked claims,
+zero authorized real-P12 jobs, and zero recorded real-scientific terminal jobs.
+Final verification succeeds only with the exact external digest.
 
 ### 8.2 Root-of-trust mutations
 
@@ -315,9 +415,19 @@ Each negative test recomputes every package-local self-hash:
 9. introduce `.git`, userinfo, token, password, authorization, or credential
    material;
 10. insert an argv, shell fragment, or executable path into an authority field.
+11. change any intent field or retry transition while retaining job/input IDs;
+12. omit, add, or swap a controller or subject repository/manifest;
+13. supply a valid lock/index containing command-like strings while spies prove
+    that verifier subprocess and socket attempt counts remain exactly zero.
 
 Every case must fail at the intended production boundary. Test-only composite
 oracles do not count as final verification.
+
+Credential checks apply to Authority Lock/index metadata, repository identities,
+preflight metadata, and persisted provenance fields. They do not reject subject
+source merely because program text contains words such as `password` or `token`.
+Dedicated fixtures prove both secret-metadata rejection and source-code
+noninterference.
 
 ### 8.3 Regression and evidence map
 
@@ -343,13 +453,20 @@ The design is complete only when:
 
 1. the external expected digest is mandatory and cannot be sourced from the
    evidence package;
-2. the lock and index have exact canonical schemas and safe regular-file reads;
-3. coordinated resealing fails without changing the independent digest;
-4. execution classification and P12 access derive from locked jobs plus terminal
-   events;
-5. no indexed command executes and no `.git` or credential bytes are persisted;
-6. the complete two-subject synthetic path passes;
-7. every root-of-trust mutation fails through production final verification;
-8. all P3 tests and required quality gates pass or an environment-only blocker
+2. deterministic two-pass freezing is byte-identical and atomic, and precedes
+   every evidence-producing intent;
+3. controller plus every subject has an exact independently enumerable tracked
+   manifest;
+4. the lock and index have exact canonical schemas and safe regular-file reads;
+5. coordinated resealing fails without changing the independent digest;
+6. complete intent templates, retry policy, execution classification, and P12
+   authorization derive from locked jobs plus terminal events;
+7. reported zero counts are explicitly recorded/authorized counts, not claims of
+   physical platform absence;
+8. subprocess and socket spies remain exactly zero during final verification,
+   and no `.git` or credential bytes are persisted;
+9. the complete two-subject synthetic path passes;
+10. every root-of-trust mutation fails through production final verification;
+11. all P3 tests and required quality gates pass or an environment-only blocker
    is reported without overstating completion; and
-9. RQ1-RQ4 and all scientific result claims remain blocked.
+12. RQ1-RQ4 and all scientific result claims remain blocked.
