@@ -1073,7 +1073,6 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         "credential.interactive=never",
         "core.useReplaceRefs=false",
         "protocol.allow=never",
-        "status.showUntrackedFiles=all",
     )
     fixed_config_argv = [
         item
@@ -1088,7 +1087,6 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         "GIT_CONFIG_NOSYSTEM": "1",
         "GIT_CONFIG_GLOBAL": os.devnull,
         "GIT_DIR": str(metadata),
-        "GIT_WORK_TREE": str(root),
         "GIT_OPTIONAL_LOCKS": "0",
         "GIT_TERMINAL_PROMPT": "0",
         "GIT_PAGER": "",
@@ -1131,16 +1129,12 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
     base_commit = object_id(run_query(head_query))
     tree_query = ("rev-parse", f"{base_commit}^{{tree}}")
     base_tree = object_id(run_query(tree_query))
-    status_query = ("status", "--porcelain=v1", "--ignore-submodules=all")
     for query in (
-        status_query,
         ("remote", "get-url", "origin"),
         ("ls-files", "--stage", "-z"),
     ):
         run_query(query)
 
-    if outputs[status_query] != b"":
-        raise EvidenceError("E_AUTHORITY_GIT", "checkout is not clean")
     origin_raw = outputs[("remote", "get-url", "origin")]
     if not origin_raw.endswith(b"\n") or origin_raw.count(b"\n") != 1:
         raise EvidenceError("E_AUTHORITY_GIT", "Git origin output is malformed")
@@ -1256,27 +1250,238 @@ def _git_tree_oid(entries: Sequence[Mapping[str, Any]]) -> str:
     return tree_oid(root)
 
 
-def _read_git_tracked_snapshot(
-    root: Path, entries: Sequence[Mapping[str, Any]]
-) -> dict[str, tuple[bytes, str]]:
-    snapshot: dict[str, tuple[bytes, str]] = {}
-    for entry in entries:
-        path = entry["path"]
-        try:
-            raw, opened_mode = read_regular_file_snapshot(
-                root / path, f"Git tracked file {path}"
-            )
-        except EvidenceError as exc:
+def _read_checkout_file_snapshot(
+    directory_fd: int, name: str, relative_path: str
+) -> tuple[bytes, int]:
+    fd: int | None = None
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_NONBLOCK", 0)
+    )
+    try:
+        fd = os.open(name, flags, dir_fd=directory_fd)
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode):
             raise EvidenceError(
-                "E_AUTHORITY_GIT", "Git tracked file could not be snapshotted"
+                "E_AUTHORITY_GIT", "checkout file is not regular"
+            )
+        chunks: list[bytes] = []
+        while True:
+            chunk = os.read(fd, 1024 * 1024)
+            if not chunk:
+                return b"".join(chunks), os.fstat(fd).st_mode
+            chunks.append(chunk)
+    except EvidenceError:
+        raise
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT",
+            f"checkout file {relative_path!r} could not be snapshotted",
+        ) from exc
+    finally:
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+
+
+def _open_checkout_root(root: Path, directory_flags: int) -> int:
+    absolute = root if root.is_absolute() else Path.cwd() / root
+    components = absolute.parts[1:]
+    if any(
+        component in {"", ".", ".."} or "\x00" in component
+        for component in components
+    ):
+        raise EvidenceError("E_AUTHORITY_GIT", "checkout root is unsafe")
+    current_fd: int | None = None
+    try:
+        current_fd = os.open(absolute.parts[0], directory_flags)
+        for component in components:
+            next_fd = os.open(component, directory_flags, dir_fd=current_fd)
+            previous_fd = current_fd
+            current_fd = next_fd
+            os.close(previous_fd)
+        return current_fd
+    except OSError as exc:
+        if current_fd is not None:
+            try:
+                os.close(current_fd)
+            except OSError:
+                pass
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "checkout root could not be anchored"
+        ) from exc
+
+
+def _capture_git_checkout_snapshot(
+    root: Path,
+    entries: Sequence[Mapping[str, Any]],
+    separate_checkout_roots: Sequence[str] = (),
+) -> dict[str, tuple[bytes, str]]:
+    expected = {entry["path"]: entry for entry in entries}
+    try:
+        separate = frozenset(
+            safe_relative_path(value).as_posix()
+            for value in separate_checkout_roots
+        )
+    except EvidenceError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "separate checkout root is unsafe"
+        ) from exc
+    if any(
+        path == checkout or path.startswith(f"{checkout}/")
+        for path in expected
+        for checkout in separate
+    ):
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "separate checkout overlaps fixed HEAD"
+        )
+    expected_directories = frozenset(
+        "/".join(path.split("/")[:depth])
+        for path in expected
+        for depth in range(1, len(path.split("/")))
+    )
+    captured: dict[str, tuple[bytes, str]] = {}
+    directory_flags = (
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
+
+    def visit(directory_fd: int, relative: Path) -> None:
+        try:
+            with os.scandir(directory_fd) as iterator:
+                children = sorted(
+                    (child.name for child in iterator),
+                    key=lambda name: name.encode("utf-8"),
+                )
+        except (OSError, UnicodeError) as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "checkout directory could not be inventoried"
             ) from exc
-        mode = _project_git_mode(opened_mode)
+        for name in children:
+            child_relative = (
+                Path(name) if relative == Path(".") else relative / name
+            )
+            try:
+                info = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
+            except OSError as exc:
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "checkout node is unavailable"
+                ) from exc
+            if child_relative == Path(".git"):
+                if stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode):
+                    continue
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "checkout .git node is unsafe"
+                )
+            if child_relative.name == ".git":
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "nested checkout .git metadata is forbidden"
+                )
+            if stat.S_ISLNK(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "checkout contains a symlink"
+                )
+            relative_text = child_relative.as_posix()
+            if relative_text in separate:
+                if not stat.S_ISDIR(info.st_mode):
+                    raise EvidenceError(
+                        "E_AUTHORITY_GIT",
+                        "separate checkout root is not a directory",
+                    )
+                continue
+            if any(
+                part in _TRANSIENT_SOURCE_NAMES for part in child_relative.parts
+            ):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "checkout contains a transient path"
+                )
+            if stat.S_ISDIR(info.st_mode):
+                if not (
+                    relative_text in expected_directories
+                    or any(
+                        checkout.startswith(f"{relative_text}/")
+                        for checkout in separate
+                    )
+                ):
+                    raise EvidenceError(
+                        "E_AUTHORITY_GIT",
+                        "checkout contains an undeclared directory",
+                    )
+                child_fd: int | None = None
+                try:
+                    child_fd = os.open(
+                        name, directory_flags, dir_fd=directory_fd
+                    )
+                    if not stat.S_ISDIR(os.fstat(child_fd).st_mode):
+                        raise EvidenceError(
+                            "E_AUTHORITY_GIT",
+                            "checkout directory is unavailable",
+                        )
+                    visit(child_fd, child_relative)
+                except EvidenceError:
+                    raise
+                except OSError as exc:
+                    raise EvidenceError(
+                        "E_AUTHORITY_GIT",
+                        "checkout directory could not be anchored",
+                    ) from exc
+                finally:
+                    if child_fd is not None:
+                        try:
+                            os.close(child_fd)
+                        except OSError:
+                            pass
+                continue
+            if not stat.S_ISREG(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "checkout contains a special node"
+                )
+            try:
+                safe_relative_path(relative_text)
+                raw, opened_mode = _read_checkout_file_snapshot(
+                    directory_fd, name, relative_text
+                )
+            except EvidenceError as exc:
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "checkout file could not be snapshotted"
+                ) from exc
+            captured[relative_text] = (raw, _project_git_mode(opened_mode))
+
+    root_fd: int | None = None
+    try:
+        root_fd = _open_checkout_root(root, directory_flags)
+        if not stat.S_ISDIR(os.fstat(root_fd).st_mode):
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "checkout root is not a directory"
+            )
+        visit(root_fd, Path("."))
+    except EvidenceError:
+        raise
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "checkout root could not be anchored"
+        ) from exc
+    finally:
+        if root_fd is not None:
+            try:
+                os.close(root_fd)
+            except OSError:
+                pass
+    if set(captured) != set(expected):
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "checkout inventory differs from fixed HEAD"
+        )
+    for path, entry in expected.items():
+        raw, mode = captured[path]
         if mode != entry["mode"] or _git_blob_oid(raw) != entry["blob_oid"]:
             raise EvidenceError(
                 "E_AUTHORITY_GIT", "live tracked bytes differ from fixed HEAD"
             )
-        snapshot[path] = (raw, mode)
-    return snapshot
+    return {path: captured[path] for path in expected}
 
 
 def _manifest_from_git_snapshot(
@@ -1341,7 +1546,10 @@ def _normalize_git_origin(origin: str) -> str:
 
 
 def _checkout_authority(
-    root: Path, role_roots: Sequence[str], role: str
+    root: Path,
+    role_roots: Sequence[str],
+    role: str,
+    separate_checkout_roots: Sequence[str] = (),
 ) -> tuple[
     dict[str, Any],
     dict[str, Any],
@@ -1350,7 +1558,11 @@ def _checkout_authority(
 ]:
     safe_root = _lstat_directory_components(root)
     git = _run_fixed_git_queries(safe_root)
-    captured = _read_git_tracked_snapshot(safe_root, git["tracked_entries"])
+    captured = _capture_git_checkout_snapshot(
+        safe_root,
+        git["tracked_entries"],
+        separate_checkout_roots,
+    )
     if role == "controller-source":
         tracked = [
             item
@@ -1667,12 +1879,31 @@ def prepare_authority(
 
     inputs = validate_authority_inputs(authority_inputs)
     controller_root = _lstat_directory_components(Path(controller_root))
+    subject_roots: list[Path] = []
+    for subject in inputs["subjects"]:
+        raw_root = Path(subject["root"])
+        subject_roots.append(
+            raw_root if raw_root.is_absolute() else controller_root / raw_root
+        )
+    nested_subject_roots: list[str] = []
+    for subject_root in subject_roots:
+        try:
+            nested_subject_roots.append(
+                subject_root.relative_to(controller_root).as_posix()
+            )
+        except ValueError:
+            continue
     (
         controller_repository,
         controller_manifest,
         controller_tracked,
         controller_snapshot,
-    ) = _checkout_authority(controller_root, _CONTROLLER_ROLE_ROOTS, "controller-source")
+    ) = _checkout_authority(
+        controller_root,
+        _CONTROLLER_ROLE_ROOTS,
+        "controller-source",
+        nested_subject_roots,
+    )
     declared_authority_paths = [
         path
         for field in (
@@ -1803,9 +2034,9 @@ def prepare_authority(
         )
 
     subjects = []
-    for subject_input in inputs["subjects"]:
-        raw_root = Path(subject_input["root"])
-        subject_root = raw_root if raw_root.is_absolute() else controller_root / raw_root
+    for subject_input, subject_root in zip(
+        inputs["subjects"], subject_roots, strict=True
+    ):
         (
             repository,
             source_manifest,

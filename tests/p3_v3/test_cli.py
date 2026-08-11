@@ -1566,7 +1566,6 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
         else:
             allowed_after_capture = {
                 ("rev-parse", f"{captured_commits[-1]}^{{tree}}"),
-                ("status", "--porcelain=v1", "--ignore-submodules=all"),
                 ("remote", "get-url", "origin"),
                 ("ls-files", "--stage", "-z"),
             }
@@ -1590,10 +1589,11 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
     evidence_module.build_authority_lock(controller, inputs)
 
     assert observed[0] == ("rev-parse", "HEAD")
-    assert observed[5] == ("rev-parse", "HEAD")
+    assert observed[4] == ("rev-parse", "HEAD")
     assert observed[1] == ("rev-parse", f"{captured_commits[0]}^{{tree}}")
-    assert observed[6] == ("rev-parse", f"{captured_commits[1]}^{{tree}}")
-    assert len(observed) == 10
+    assert observed[5] == ("rev-parse", f"{captured_commits[1]}^{{tree}}")
+    assert len(observed) == 8
+    assert all(query[0] != "status" for query in observed)
     assert (
         real_run(
             ["/usr/bin/git", "-C", str(controller), "status", "--porcelain=v1"],
@@ -1606,7 +1606,7 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
 
 
 @pytest.mark.parametrize(
-    "failure", ["nonzero", "dirty", "malformed", "stderr", "divergence"]
+    "failure", ["nonzero", "dirty", "mode", "malformed", "stderr", "divergence"]
 )
 def test_freeze_authority_fails_closed_on_git_checkout_anomalies(
     tmp_path, monkeypatch, failure
@@ -1614,6 +1614,9 @@ def test_freeze_authority_fails_closed_on_git_checkout_anomalies(
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
     if failure == "dirty":
         (controller / "src/p3_v3/controller.py").write_text("dirty\n", encoding="utf-8")
+    elif failure == "mode":
+        tracked = controller / "src/p3_v3/controller.py"
+        tracked.chmod(tracked.stat().st_mode | stat.S_IXUSR)
     elif failure == "divergence":
         (controller / "src/p3_v3/untracked.py").write_text("untracked\n", encoding="utf-8")
     else:
@@ -1658,6 +1661,7 @@ def test_fixed_git_queries_apply_deterministic_execution_sanitizers(
     tmp_path, monkeypatch
 ):
     controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    expected_commit = _run_git(controller, "rev-parse", "HEAD")
     real_run = subprocess.run
     invocations: list[tuple[list[str], dict]] = []
 
@@ -1669,7 +1673,16 @@ def test_fixed_git_queries_apply_deterministic_execution_sanitizers(
 
     evidence_module._run_fixed_git_queries(controller)
 
-    assert len(invocations) == 5
+    assert len(invocations) == 4
+    assert [_fixed_git_query(argv) for argv, _kwargs in invocations] == [
+        ("rev-parse", "HEAD"),
+        (
+            "rev-parse",
+            f"{expected_commit}^{{tree}}",
+        ),
+        ("remote", "get-url", "origin"),
+        ("ls-files", "--stage", "-z"),
+    ]
     for argv, kwargs in invocations:
         joined = "\0".join(argv)
         assert argv[0] == "/usr/bin/git"
@@ -1678,7 +1691,9 @@ def test_fixed_git_queries_apply_deterministic_execution_sanitizers(
         assert "core.pager=" in joined
         assert "core.pager=cat" not in joined
         assert "credential.helper=" in joined
+        assert "status.showUntrackedFiles=all" not in joined
         assert "PATH" not in kwargs["env"]
+        assert "GIT_WORK_TREE" not in kwargs["env"]
         assert kwargs["env"]["TMPDIR"] == "/tmp"
         assert kwargs["env"]["GIT_CONFIG_NOSYSTEM"] == "1"
         assert kwargs["env"]["GIT_OPTIONAL_LOCKS"] == "0"
@@ -1789,6 +1804,77 @@ def test_fixed_git_queries_reject_executable_filter_before_first_query(
     assert caught.code == "E_AUTHORITY_GIT"
 
 
+@pytest.mark.parametrize("section_style", ["modern", "legacy"])
+@pytest.mark.parametrize("worktree_change", ["touch", "modify"])
+@pytest.mark.parametrize("driver", ["clean", "process"])
+def test_config_race_cannot_reintroduce_worktree_filter_execution(
+    tmp_path, monkeypatch, section_style, worktree_change, driver
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    attributes = controller / ".gitattributes"
+    attributes.write_text(
+        "src/p3_v3/controller.py filter=audit\n", encoding="utf-8"
+    )
+    _run_git(controller, "add", ".gitattributes")
+    _run_git(controller, "commit", "-m", "filter race fixture")
+    tracked = controller / "src/p3_v3/controller.py"
+    marker = tmp_path / f"raced-{section_style}-{driver}-executed"
+    executable_filter = tmp_path / f"raced-{section_style}-{driver}"
+    executable_filter.write_text(
+        f"#!/bin/sh\n: > {marker.as_posix()}\n"
+        + ("/bin/cat\n" if driver == "clean" else "exit 1\n"),
+        encoding="utf-8",
+    )
+    executable_filter.chmod(executable_filter.stat().st_mode | stat.S_IXUSR)
+    section = (
+        '[filter "audit"]' if section_style == "modern" else "[filter.audit]"
+    )
+    included = tmp_path / f"raced-{section_style}-{driver}.config"
+    included.write_text(
+        f"[core]\n\tfsmonitor = {executable_filter.as_posix()}\n"
+        f"{section}\n\t{driver} = {executable_filter.as_posix()}\n",
+        encoding="utf-8",
+    )
+    original_config = (controller / ".git/config").read_text(encoding="utf-8")
+    real_metadata = evidence_module._validated_local_git_metadata
+    raced = False
+
+    def race_after_metadata_validation(root):
+        nonlocal raced
+        metadata = real_metadata(root)
+        if Path(root) == controller and not raced:
+            raced = True
+            (metadata / "config").write_text(
+                original_config
+                + f"\n[include]\n\tpath = {included.as_posix()}\n",
+                encoding="utf-8",
+            )
+            if worktree_change == "touch":
+                os.utime(tracked, None)
+            else:
+                tracked.write_text("CONTROLLER = 'raced'\n", encoding="utf-8")
+        return metadata
+
+    monkeypatch.setattr(
+        evidence_module,
+        "_validated_local_git_metadata",
+        race_after_metadata_validation,
+    )
+    caught: EvidenceError | None = None
+    try:
+        evidence_module.build_authority_lock(controller, inputs)
+    except EvidenceError as exc:
+        caught = exc
+
+    assert raced
+    assert not marker.exists()
+    if worktree_change == "touch":
+        assert caught is None
+    else:
+        assert caught is not None
+        assert caught.code == "E_AUTHORITY_GIT"
+
+
 @pytest.mark.parametrize("indirection", ["gitdir_file", "objects_symlink"])
 def test_fixed_git_queries_reject_out_of_root_git_metadata(tmp_path, indirection):
     controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
@@ -1821,7 +1907,7 @@ def test_fixed_git_queries_do_not_execute_repository_fsmonitor(tmp_path):
     assert not marker.exists()
 
 
-def test_fixed_git_queries_ignore_submodules_and_use_exactly_five_processes(
+def test_fixed_git_queries_reject_submodules_with_exactly_four_processes(
     tmp_path, monkeypatch
 ):
     controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
@@ -1862,12 +1948,14 @@ def test_fixed_git_queries_ignore_submodules_and_use_exactly_five_processes(
     with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
         evidence_module._run_fixed_git_queries(controller)
 
-    assert len(invocations) == 5
-    assert (
-        "status",
-        "--porcelain=v1",
-        "--ignore-submodules=all",
-    ) in invocations
+    assert len(invocations) == 4
+    assert [query[0] for query in invocations] == [
+        "rev-parse",
+        "rev-parse",
+        "remote",
+        "ls-files",
+    ]
+    assert all(query[0] != "status" for query in invocations)
     assert not marker.exists()
 
 
@@ -1914,20 +2002,20 @@ def test_git_mode_projection_rejects_owner_to_group_execute_race(
     _run_git(controller, "add", relative)
     _run_git(controller, "commit", "-m", "owner executable authority")
     git = evidence_module._run_fixed_git_queries(controller)
-    real_reader = evidence_module.read_regular_file_snapshot
+    real_reader = evidence_module._read_checkout_file_snapshot
 
-    def group_execute_snapshot(path, context):
-        raw, mode = real_reader(path, context)
-        if Path(path) == tracked_path:
+    def group_execute_snapshot(directory_fd, name, relative_path):
+        raw, mode = real_reader(directory_fd, name, relative_path)
+        if relative_path == relative:
             mode = (mode & ~stat.S_IXUSR) | stat.S_IXGRP
         return raw, mode
 
     monkeypatch.setattr(
-        evidence_module, "read_regular_file_snapshot", group_execute_snapshot
+        evidence_module, "_read_checkout_file_snapshot", group_execute_snapshot
     )
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
-        evidence_module._read_git_tracked_snapshot(
+        evidence_module._capture_git_checkout_snapshot(
             controller, git["tracked_entries"]
         )
 
@@ -1958,7 +2046,7 @@ def test_fixed_git_stage_inventory_rejects_nonregular_or_malformed_rows(
         evidence_module._run_fixed_git_queries(controller)
 
 
-def test_freeze_rejects_tracked_live_byte_drift_after_clean_status(
+def test_freeze_rejects_tracked_live_byte_drift_after_stage_inventory(
     tmp_path, monkeypatch
 ):
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
@@ -1985,17 +2073,15 @@ def test_checkout_captures_each_tracked_file_once_for_all_authority_derivations(
     tmp_path, monkeypatch
 ):
     controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
-    real_reader = evidence_module.read_regular_file_snapshot
+    real_reader = evidence_module._read_checkout_file_snapshot
     reads: dict[str, int] = {}
 
-    def counting_reader(path, context):
-        relative = Path(path).relative_to(controller).as_posix()
-        if not relative.startswith(".git/"):
-            reads[relative] = reads.get(relative, 0) + 1
-        return real_reader(path, context)
+    def counting_reader(directory_fd, name, relative_path):
+        reads[relative_path] = reads.get(relative_path, 0) + 1
+        return real_reader(directory_fd, name, relative_path)
 
     monkeypatch.setattr(
-        evidence_module, "read_regular_file_snapshot", counting_reader
+        evidence_module, "_read_checkout_file_snapshot", counting_reader
     )
 
     _repository, manifest, tracked, snapshot = evidence_module._checkout_authority(
@@ -2017,7 +2103,170 @@ def test_checkout_captures_each_tracked_file_once_for_all_authority_derivations(
     assert [entry.relative_path for entry in snapshot.entries] == list(tracked)
 
 
-def test_freeze_rejects_staged_tree_drift_after_clean_status(
+@pytest.mark.parametrize(
+    ("node_kind", "relative"),
+    [
+        ("regular", "ignored.txt"),
+        ("directory", "ignored-dir"),
+        ("transient", "build/generated.bin"),
+        ("symlink", "ignored-link"),
+        ("fifo", "ignored.fifo"),
+    ],
+)
+def test_checkout_snapshot_rejects_every_ignored_non_git_node(
+    tmp_path, monkeypatch, node_kind, relative
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    candidate = controller / relative
+    candidate.parent.mkdir(parents=True, exist_ok=True)
+    if node_kind in {"regular", "transient"}:
+        candidate.write_bytes(b"ignored checkout bytes\n")
+    elif node_kind == "directory":
+        candidate.mkdir()
+    elif node_kind == "symlink":
+        candidate.symlink_to(controller / "src/p3_v3/controller.py")
+    else:
+        os.mkfifo(candidate)
+    with (controller / ".git/info/exclude").open("a", encoding="utf-8") as handle:
+        handle.write(f"/{relative}\n")
+    real_reader = evidence_module._read_checkout_file_snapshot
+    reads: dict[str, int] = {}
+
+    def counting_reader(directory_fd, name, relative_path):
+        reads[relative_path] = reads.get(relative_path, 0) + 1
+        return real_reader(directory_fd, name, relative_path)
+
+    monkeypatch.setattr(
+        evidence_module, "_read_checkout_file_snapshot", counting_reader
+    )
+    caught: EvidenceError | None = None
+    try:
+        evidence_module._checkout_authority(
+            controller,
+            evidence_module._CONTROLLER_ROLE_ROOTS,
+            "controller-source",
+        )
+    except EvidenceError as exc:
+        caught = exc
+
+    assert caught is not None
+    assert caught.code == "E_AUTHORITY_GIT"
+    if node_kind == "regular":
+        assert reads[relative] == 1
+
+
+def test_checkout_snapshot_rejects_tracked_transient_node(tmp_path):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    generated = controller / "build/generated.bin"
+    generated.parent.mkdir()
+    generated.write_bytes(b"tracked transient\n")
+    _run_git(controller, "add", "-f", "build/generated.bin")
+    _run_git(controller, "commit", "-m", "tracked transient fixture")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._checkout_authority(
+            controller,
+            evidence_module._CONTROLLER_ROLE_ROOTS,
+            "controller-source",
+        )
+
+
+def test_checkout_snapshot_never_follows_parent_swap_during_traversal(
+    tmp_path, monkeypatch
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    source = controller / "src"
+    held_source = tmp_path / "held-controller-src"
+    source_inode = source.stat().st_ino
+    real_scandir = os.scandir
+    real_reader = evidence_module.read_regular_file_snapshot
+    raced = False
+    escaped = False
+
+    def swap_parent_before_scan(target):
+        nonlocal raced
+        target_is_source_path = Path(target) == source if not isinstance(target, int) else False
+        target_is_source_fd = (
+            isinstance(target, int) and os.fstat(target).st_ino == source_inode
+        )
+        if not raced and (target_is_source_path or target_is_source_fd):
+            source.rename(held_source)
+            source.symlink_to(held_source, target_is_directory=True)
+            raced = True
+        return real_scandir(target)
+
+    def reject_escaped_reader(path, context):
+        nonlocal escaped
+        if Path(path).resolve().is_relative_to(held_source):
+            escaped = True
+        return real_reader(path, context)
+
+    monkeypatch.setattr(evidence_module.os, "scandir", swap_parent_before_scan)
+    monkeypatch.setattr(
+        evidence_module, "read_regular_file_snapshot", reject_escaped_reader
+    )
+
+    try:
+        evidence_module._checkout_authority(
+            controller,
+            evidence_module._CONTROLLER_ROLE_ROOTS,
+            "controller-source",
+        )
+    except EvidenceError as exc:
+        assert exc.code == "E_AUTHORITY_GIT"
+
+    assert raced
+    assert not escaped
+
+
+def test_checkout_snapshot_root_open_never_follows_swapped_parent(
+    tmp_path, monkeypatch
+):
+    authority_parent = tmp_path / "authority-parent"
+    authority_parent.mkdir()
+    controller, _inputs, _governing = _authority_freeze_fixture(authority_parent)
+    held_parent = tmp_path / "held-authority-parent"
+    parent_inode = tmp_path.stat().st_ino
+    real_run = subprocess.run
+    real_open = os.open
+    armed = False
+    raced = False
+
+    def arm_after_stage_inventory(argv, *args, **kwargs):
+        nonlocal armed
+        result = real_run(argv, *args, **kwargs)
+        if _fixed_git_query(argv) == ("ls-files", "--stage", "-z"):
+            armed = True
+        return result
+
+    def swap_parent_before_root_open(path, flags, *args, dir_fd=None, **kwargs):
+        nonlocal raced
+        full_root_open = Path(path) == controller
+        component_root_open = (
+            path == authority_parent.name
+            and dir_fd is not None
+            and os.fstat(dir_fd).st_ino == parent_inode
+        )
+        if armed and not raced and (full_root_open or component_root_open):
+            authority_parent.rename(held_parent)
+            authority_parent.symlink_to(held_parent, target_is_directory=True)
+            raced = True
+        return real_open(path, flags, *args, dir_fd=dir_fd, **kwargs)
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", arm_after_stage_inventory)
+    monkeypatch.setattr(evidence_module.os, "open", swap_parent_before_root_open)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._checkout_authority(
+            controller,
+            evidence_module._CONTROLLER_ROLE_ROOTS,
+            "controller-source",
+        )
+
+    assert raced
+
+
+def test_freeze_rejects_staged_tree_drift_after_identity_query(
     tmp_path, monkeypatch
 ):
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
@@ -2026,14 +2275,10 @@ def test_freeze_rejects_staged_tree_drift_after_clean_status(
     real_run = subprocess.run
     drifted = False
 
-    def stage_drift_after_status(argv, *args, **kwargs):
+    def stage_drift_after_identity(argv, *args, **kwargs):
         nonlocal drifted
         result = real_run(argv, *args, **kwargs)
-        if _fixed_git_query(argv) == (
-            "status",
-            "--porcelain=v1",
-            "--ignore-submodules=all",
-        ) and not drifted:
+        if _fixed_git_query(argv) == ("remote", "get-url", "origin") and not drifted:
             drifted = True
             tracked_path.write_text("CONTROLLER = 'staged-drift'\n", encoding="utf-8")
             real_run(
@@ -2043,7 +2288,7 @@ def test_freeze_rejects_staged_tree_drift_after_clean_status(
             )
         return result
 
-    monkeypatch.setattr(evidence_module.subprocess, "run", stage_drift_after_status)
+    monkeypatch.setattr(evidence_module.subprocess, "run", stage_drift_after_identity)
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
         evidence_module.build_authority_lock(controller, inputs)
@@ -2501,6 +2746,30 @@ def test_build_authority_lock_relative_subject_root_uses_controller_root(tmp_pat
 
     lock = evidence_module.build_authority_lock(controller, inputs)
 
+    assert lock["subjects"][0]["subject_id"] == "subject-a"
+
+
+@pytest.mark.parametrize("nested_name", ["nested-subject", "build"])
+def test_freeze_authority_carves_out_resolved_subject_nested_in_controller(
+    tmp_path, nested_name
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    subject_in_controller = controller / nested_name
+    shutil.copytree(tmp_path / "subject", subject_in_controller)
+    with (controller / ".git/info/exclude").open("a", encoding="utf-8") as handle:
+        handle.write(f"{nested_name}/\n")
+    inputs["subjects"][0]["root"] = f"controller/{nested_name}"
+    authority_inputs = tmp_path / "authority-inputs.json"
+    output = tmp_path / "authority-lock.json"
+    write_canonical_json(authority_inputs, inputs, exclusive=True)
+
+    lock = evidence_module.freeze_authority_lock(
+        controller,
+        authority_inputs,
+        output,
+    )
+
+    assert output.exists()
     assert lock["subjects"][0]["subject_id"] == "subject-a"
 
 

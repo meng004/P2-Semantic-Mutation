@@ -181,7 +181,7 @@ The controller role roots are fixed in production to `src/p3_v3`,
 `scripts/p3_v3`, and `requirements-frozen.txt`; every subject uses its
 complete tracked checkout. Fixed, local, non-network Git queries during freeze
 derive normalized repository identity, commit, tree, and the complete
-tracked-file set. Those five queries run with a minimal deterministic environment
+tracked-file set. Those four queries run with a minimal deterministic environment
 and command-level configuration that disables fsmonitor, hooks, pagers,
 credential helpers, interactive prompting, replacement refs, network protocols,
 and optional locks. On Darwin and Linux the Git executable is the fixed
@@ -190,10 +190,16 @@ as root-owned, non-symlink, and non-group/world-writable, with an executable
 regular file at the leaf. No caller `PATH` or other caller-derived execution
 environment value is used. Local includes, executable `filter.*.clean/process`
 configuration, and out-of-root Git metadata indirection fail before any query.
-The fixed-HEAD stage inventory is the only tracked-file list;
-each listed file is opened once through an anchored descriptor, and that one
-immutable `(bytes, mode)` capture supplies Git binding, the manifest, and every
-derived input. There is no second live source read.
+No Git query performs worktree conversion. The fixed-HEAD stage inventory is
+the only tracked-file list, while one descriptor-anchored full-checkout traversal
+inventories every non-root-`.git` node. It rejects undeclared files or directories,
+transient paths, symlinks, and special nodes; each regular file is opened once
+relative to its anchored parent descriptor, and that one
+immutable `(bytes, mode)` capture is compared in-process with the stage
+blob/mode inventory and captured HEAD tree before supplying the manifest and
+every derived input. A relative subject checkout nested below the controller is
+skipped only when explicitly declared and is then independently captured and
+bound as a subject checkout. There is no second live source read.
 Only normalized host/path identity enters the lock; raw remote transport and
 userinfo never do.
 The lock's `preflight.environment_policy_sha256` must equal
@@ -789,18 +795,20 @@ Tests must prove:
   code, never by Authority Inputs text;
 - for controller and every subject checkout, the exact read-only Git query set
   is `rev-parse HEAD`, then `rev-parse <captured-commit>^{tree}`, followed by
-  `status --porcelain=v1 --ignore-submodules=all`, `remote get-url origin`, and
-  `ls-files --stage -z`; each tracked row is parsed
+  `remote get-url origin` and `ls-files --stage -z`; no `status` or other
+  worktree-aware query is permitted. Each tracked row is parsed
   as exact `(mode, blob_oid, stage=0, path)` authority, and one anchored live-byte
-  snapshot must match its fixed-HEAD Git blob SHA-1 and regular-file mode before
+  full-checkout snapshot must exactly cover the stage paths, reject undeclared,
+  transient, symlink, special, and nested-`.git` nodes, and match each fixed-HEAD
+  Git blob SHA-1 and regular-file mode before
   the same explicit immutable `(relative_path, mode, sha256, content)` values feed
   manifest, adapter discovery, frame, scale, workload, common-input, and site
   derivation without temporary materialization or later source-root reads. Every
   query carries the deterministic environment and command-level safeguards
   specified above; repository fsmonitor/hook/helper/pager/filter/submodule
   configuration cannot spawn a child, local includes, executable filters, and
-  out-of-root metadata fail before queries, and no sixth subprocess is permitted.
-  Nonzero exit, dirty status, malformed
+  out-of-root metadata fail before queries, and no fifth subprocess is permitted.
+  Nonzero exit, incomplete checkout inventory, malformed
   output, credential-bearing normalized identity, or live/fixed-HEAD byte/mode
   drift fails before output;
 - source-hash-verified deterministic adapters may run only through the reviewed
@@ -1191,9 +1199,9 @@ under RED/GREEN tests:
 - final execution snapshots require a result for every locked job's final
   attempt, and phase receipts consume the complete phase event set with the
   Authority Lock's exact phase job inventory;
-- the five freezer Git subprocesses use deterministic environment and
-  command-level safeguards, reject includes/out-of-root metadata, and remain the
-  only subprocesses at that boundary;
+- the freezer Git subprocess boundary uses a deterministic environment and
+  command-level safeguards, rejects includes/out-of-root metadata, and remains
+  the only subprocess boundary;
 - registry implementation paths have one controller-root-relative meaning in
   freeze and verification, with nested registries covered positively;
 - composite credential keys and Bearer/userinfo-shaped metadata values fail at
@@ -1214,17 +1222,47 @@ The independent D2 review tightened three existing boundaries without changing
 any artifact schema:
 
 - Darwin and Linux freeze use only the mechanically validated absolute
-  `/usr/bin/git`, never caller `PATH`; the five subprocesses receive a literal
+  `/usr/bin/git`, never caller `PATH`; the four subprocesses receive a literal
   minimal environment with pagers disabled rather than executable pager names.
 - The safe local `.git/config` and `.git/config.worktree` bytes are inspected
   before the first subprocess. Modern `[filter "name"]` and legacy
-  `[filter.name]` sections defining `clean` or `process` both fail closed, and
-  the status query explicitly includes
-  `--ignore-submodules=all`. The query count remains exactly five and neither
-  filter nor submodule configuration may produce a child process.
+  `[filter.name]` sections defining `clean` or `process` both fail closed. Repair
+  E removes the status/worktree execution point entirely; the query count is
+  exactly four and neither raced filter/fsmonitor configuration nor submodule
+  metadata may produce a child process.
 - Credential-metadata component scanning covers `key` and `secret`, including
   snake-case and camel-case forms such as `api_key`, `apiKey`, and
   `client_secret`, with stable `E_CREDENTIAL_METADATA` precedence at Authority
   Inputs, lock, and Evidence Index boundaries. The exact
   `forbidden_credential_fields` policy key remains exempt, and SourceSnapshot
   source bytes remain outside metadata scanning.
+
+### Task 6 Repair E: Worktree-free Git authority and in-process cleanliness
+
+The final operational P1 is closed architecturally rather than by pre/post
+configuration validation:
+
+- freeze invokes exactly four absolute `/usr/bin/git` queries per controller or
+  subject checkout: `rev-parse HEAD`, `rev-parse <captured-commit>^{tree}`,
+  `remote get-url origin`, and `ls-files --stage -z`. `GIT_WORK_TREE`, `git
+  status`, and the status-specific command configuration are absent. The
+  remaining queries read refs/objects,
+  repository identity configuration, or the index only and do not perform
+  worktree conversion;
+- one component-by-component root/child-directory-FD-anchored traversal captures
+  the complete checkout file inventory once without following a root-parent or
+  descendant-parent swap to a symlink,
+  excluding only the root `.git` directory and any explicitly declared nested
+  subject checkout (including a transient-named subject root) that is
+  subsequently bound independently. Undeclared files,
+  undeclared directories, transient paths, nested `.git`, symlinks, and special
+  nodes fail closed;
+- the in-process comparison requires exact path equality with the stage
+  inventory, reconstructs and compares the stage tree to the captured HEAD
+  tree, and checks each captured regular file's Git blob SHA-1 and projected
+  executable mode. Thus untracked, missing, modified, staged, and mode drift are
+  rejected without invoking any worktree-aware Git command; and
+- tests replace local config after metadata validation with included modern or
+  legacy clean/process filters plus fsmonitor, then touch or modify a filtered
+  tracked file. All remaining Git queries leave the marker absent; byte-stable
+  touch passes and byte-changing modification returns stable `E_AUTHORITY_GIT`.
