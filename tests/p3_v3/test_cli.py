@@ -783,9 +783,20 @@ def _job_derivation_fixture():
         field: {"schema_version": "PROTOCOL_ARTIFACT_V1", "role": field}
         for field in _PROTOCOL_AUTHORITY_KEYS
     }
+    rq_spec_raw = b"# Frozen research questions\n\n### RQ1\xef\xbc\x9aFixture question\n"
+    protocol_artifacts["rq_spec_sha256"] = {
+        "schema_version": "P3_V3_RAW_AUTHORITY_BYTES_V1",
+        "relative_path": "protocol/rq_spec.md",
+        "sha256": hashlib.sha256(rq_spec_raw).hexdigest(),
+        "bytes_hex": rq_spec_raw.hex(),
+    }
     protocol_artifacts["job_derivation_policy_sha256"] = copy.deepcopy(policy)
     protocol = {
-        field: canonical_sha256(protocol_artifacts[field])
+        field: (
+            protocol_artifacts[field]["sha256"]
+            if field == "rq_spec_sha256"
+            else canonical_sha256(protocol_artifacts[field])
+        )
         for field in _PROTOCOL_AUTHORITY_KEYS
     }
     registry_artifacts = {
@@ -1182,10 +1193,9 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
         **claim_ceiling_body,
         "artifact_sha256": canonical_sha256(claim_ceiling_body),
     }
-    protocol_artifacts: dict[str, dict] = {
+    protocol_artifacts: dict[str, dict | bytes] = {
         role: {"schema_version": "P3_V3_PROTOCOL_ARTIFACT_V1", "role": role}
         for role in (
-            "rq_spec",
             "operator_catalogue",
             "mr_policy",
             "site_policy",
@@ -1193,6 +1203,9 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
             "package_policy",
         )
     }
+    protocol_artifacts["rq_spec"] = (
+        b"# Frozen research questions\n\n### RQ1\xef\xbc\x9aFixture question\n"
+    )
     protocol_artifacts.update(
         {
             "claim_ceiling": claim_ceiling,
@@ -1203,12 +1216,20 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
     )
     protocol_paths: dict[str, str] = {}
     for role, artifact in protocol_artifacts.items():
-        path = protocol_root / f"{role}.json"
-        write_canonical_json(path, artifact, exclusive=True)
+        suffix = "md" if role == "rq_spec" else "json"
+        path = protocol_root / f"{role}.{suffix}"
+        if isinstance(artifact, bytes):
+            path.write_bytes(artifact)
+        else:
+            write_canonical_json(path, artifact, exclusive=True)
         protocol_paths[role] = path.relative_to(controller).as_posix()
 
     protocol_hashes = {
-        f"{role}_sha256": canonical_sha256(artifact)
+        f"{role}_sha256": (
+            hashlib.sha256(artifact).hexdigest()
+            if isinstance(artifact, bytes)
+            else canonical_sha256(artifact)
+        )
         for role, artifact in protocol_artifacts.items()
         if role != "job_derivation_policy"
     }
@@ -1620,6 +1641,68 @@ def test_freeze_authority_relative_subject_root_uses_inputs_parent(
     )
 
     assert lock["subjects"][0]["subject_id"] == "subject-a"
+
+
+def test_freeze_rq_markdown_bytes_are_the_claim_verifiers_authority(tmp_path):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    rq_path = controller / inputs["protocol_artifact_paths"]["rq_spec"]
+    rq_bytes = (
+        b"# Frozen research questions\n\n### RQ1\xef\xbc\x9aVerified fixture question\n"
+    )
+    rq_path.write_bytes(rq_bytes)
+    protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    protocol["rq_spec_sha256"] = hashlib.sha256(rq_bytes).hexdigest()
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    write_canonical_json(protocol_path, protocol, exclusive=False)
+    _run_git(controller, "add", ".")
+    _run_git(controller, "commit", "-m", "bind markdown rq authority")
+
+    inputs_path = tmp_path / "authority-inputs.json"
+    lock_path = tmp_path / "authority-lock.json"
+    write_canonical_json(inputs_path, inputs, exclusive=True)
+    evidence_module.freeze_authority_lock(controller, inputs_path, lock_path)
+    literal_lock_sha256 = hashlib.sha256(lock_path.read_bytes()).hexdigest()
+    lock = evidence_module.load_authority_lock(lock_path, literal_lock_sha256)
+
+    claim_body = {
+        "claim_id": "claim-1",
+        "rqs": ["RQ1"],
+        "evidence_references": ["rq_spec.md"],
+        "status": "blocked",
+    }
+    claim = {**claim_body, "artifact_sha256": canonical_sha256(claim_body)}
+    claims_body = {
+        "schema_version": "p3-claim-evidence-v1",
+        "claim_authority_sha256": lock["protocol"]["claim_ceiling_sha256"],
+        "rq_authority_sha256": lock["protocol"]["rq_spec_sha256"],
+        "claims": [claim],
+    }
+    claims = {
+        **claims_body,
+        "artifact_sha256": canonical_sha256(claims_body),
+    }
+    claims_path = tmp_path / "claims.json"
+    write_canonical_json(claims_path, claims, exclusive=True)
+    claim_ceiling_path = (
+        controller / inputs["protocol_artifact_paths"]["claim_ceiling"]
+    )
+
+    assert evidence_module._verify_claim_reconstruction(
+        {
+            "claims_path": claims_path,
+            "claims_raw": claims_path.read_bytes(),
+            "indexed_paths": frozenset({"rq_spec.md"}),
+            "protocol_artifact_paths": {
+                "rq_spec_sha256": rq_path,
+                "claim_ceiling_sha256": claim_ceiling_path,
+            },
+            "protocol": lock["protocol"],
+        }
+    ) == claims
 
 
 def test_build_authority_lock_relative_subject_root_uses_controller_root(tmp_path):
@@ -3370,7 +3453,7 @@ def _complete_reconstructable_subject_index(tmp_path: Path) -> Path:
                 "protocol_sha256": protocol_sha256,
                 "phase": "PHASE_1",
                 "argv": row["argv"],
-                "cwd_identity": material["controlled_subject_source_id"],
+                "cwd_identity": "subject:subject-a",
                 "environment_sha256": row["environment_sha256"],
                 "input_sha256": row["input_sha256"],
                 "seed": None,
@@ -3984,6 +4067,45 @@ def test_verify_evidence_reconstructs_every_indexed_subject(tmp_path):
 
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)["subject_count"] == 1
+
+
+def test_verify_evidence_accepts_locked_subject_root_profiling_cwd(tmp_path):
+    index_path = _complete_reconstructable_subject_index(tmp_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    for intent_path in sorted((tmp_path / "jobs/PHASE_1").rglob("intent.json")):
+        intent = json.loads(intent_path.read_text(encoding="utf-8"))
+        intent["cwd_identity"] = "subject:subject-a"
+        intent_path.write_bytes(canonical_json_bytes(intent))
+    _refresh_attempt_evidence(tmp_path, index)
+    _refresh_external_authority_jobs(tmp_path, index)
+    index_body = {
+        key: value for key, value in index.items() if key != "artifact_sha256"
+    }
+    index["artifact_sha256"] = canonical_sha256(index_body)
+    index_path.write_bytes(canonical_json_bytes(index))
+    lock_path = tmp_path / "authority-lock.json"
+    literal_lock_sha256 = hashlib.sha256(lock_path.read_bytes()).hexdigest()
+
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "verify-evidence",
+            "--index",
+            str(index_path),
+            "--authority-lock",
+            str(lock_path),
+            "--authority-lock-sha256",
+            literal_lock_sha256,
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=_env(),
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["status"] == "PASS"
 
 
 def test_no_execution_verifier_uses_only_installed_reviewed_registries(

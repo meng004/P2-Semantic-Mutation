@@ -369,7 +369,7 @@ def _write_subject_index(
             "protocol_sha256": protocol_sha256,
             "phase": "PHASE_1",
             "argv": row["argv"],
-            "cwd_identity": material["controlled_subject_source_id"],
+            "cwd_identity": f"subject:{name}",
             "environment_sha256": row["environment_sha256"],
             "input_sha256": row["input_sha256"],
             "seed": None,

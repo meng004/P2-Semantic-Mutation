@@ -986,10 +986,10 @@ def _registered_implementation_paths(
 
 
 def _raw_authority_envelope(
-    controller_root: Path, relative_path: str, role: str
+    controller_root: Path, relative_path: str, context: str
 ) -> tuple[dict[str, Any], str]:
     raw = read_canonical_regular_bytes(
-        controller_root / relative_path, f"governing material {role}"
+        controller_root / relative_path, context
     )
     digest = hashlib.sha256(raw).hexdigest()
     return (
@@ -1001,6 +1001,17 @@ def _raw_authority_envelope(
         },
         digest,
     )
+
+
+def _rq_ids_from_spec_bytes(raw: bytes) -> list[str]:
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise EvidenceError("E_CLAIM_SET", "RQ authority is not UTF-8 Markdown") from exc
+    rq_ids = sorted(set(re.findall(r"^### (RQ[0-9]+)：", text, flags=re.MULTILINE)))
+    if not rq_ids:
+        raise EvidenceError("E_CLAIM_SET", "RQ authority has no research questions")
+    return rq_ids
 
 
 def _validate_environment_lock(artifact: Mapping[str, Any]) -> dict[str, Any]:
@@ -1254,7 +1265,9 @@ def prepare_authority(
     governing_materials: dict[str, str] = {}
     governing_artifacts: dict[str, dict[str, Any]] = {}
     for role, relative_path in inputs["governing_material_paths"].items():
-        envelope, digest = _raw_authority_envelope(controller_root, relative_path, role)
+        envelope, digest = _raw_authority_envelope(
+            controller_root, relative_path, f"governing material {role}"
+        )
         governing_materials[f"{role}_sha256"] = digest
         governing_artifacts[f"{role}_sha256"] = envelope
     governing_materials["controller_implementation_manifest_sha256"] = (
@@ -1266,10 +1279,16 @@ def prepare_authority(
 
     protocol_artifacts: dict[str, dict[str, Any]] = {}
     for role, relative_path in inputs["protocol_artifact_paths"].items():
-        artifact = read_canonical_regular_json(
-            controller_root / relative_path, f"protocol artifact {role}"
-        )
-        _reject_credential_metadata(artifact)
+        if role == "rq_spec":
+            artifact, _digest = _raw_authority_envelope(
+                controller_root, relative_path, "protocol artifact rq_spec"
+            )
+            _rq_ids_from_spec_bytes(bytes.fromhex(artifact["bytes_hex"]))
+        else:
+            artifact = read_canonical_regular_json(
+                controller_root / relative_path, f"protocol artifact {role}"
+            )
+            _reject_credential_metadata(artifact)
         protocol_artifacts[f"{role}_sha256"] = artifact
     protocol_artifact = validate_protocol(
         protocol_artifacts["protocol_sha256"],
@@ -1277,7 +1296,11 @@ def prepare_authority(
         EVIDENCE_DESIGN_SHA256,
     )
     protocol = {
-        field: canonical_sha256(protocol_artifacts[field])
+        field: (
+            protocol_artifacts[field]["sha256"]
+            if field == "rq_spec_sha256"
+            else canonical_sha256(protocol_artifacts[field])
+        )
         for field in _PROTOCOL_AUTHORITY_SCHEMA
     }
     for field in _PROTOCOL_AUTHORITY_SCHEMA:
@@ -1918,8 +1941,39 @@ def _snapshot_prepared_authority(
         )
         for field, digest in protocol.items():
             validate_sha256(digest, f"prepared protocol.{field}")
-            if canonical_sha256(protocol_artifacts[field]) != digest:
+            observed_digest = (
+                protocol_artifacts[field].get("sha256")
+                if field == "rq_spec_sha256"
+                else canonical_sha256(protocol_artifacts[field])
+            )
+            if observed_digest != digest:
                 _authority_intent_failure("prepared protocol artifact binding differs")
+            if field == "rq_spec_sha256":
+                envelope = validate_exact_object(
+                    protocol_artifacts[field],
+                    _RAW_AUTHORITY_BYTES_SCHEMA,
+                    "prepared protocol_artifacts.rq_spec_sha256",
+                )
+                if envelope["schema_version"] != "P3_V3_RAW_AUTHORITY_BYTES_V1":
+                    _authority_intent_failure(
+                        "prepared rq_spec authority envelope differs"
+                    )
+                safe_relative_path(envelope["relative_path"])
+                validate_sha256(envelope["sha256"], "prepared rq_spec bytes digest")
+                try:
+                    raw = bytes.fromhex(envelope["bytes_hex"])
+                except ValueError as exc:
+                    raise EvidenceError(
+                        "E_AUTHORITY_INTENT", "prepared rq_spec bytes are invalid"
+                    ) from exc
+                _rq_ids_from_spec_bytes(raw)
+                if (
+                    raw.hex() != envelope["bytes_hex"]
+                    or hashlib.sha256(raw).hexdigest() != digest
+                ):
+                    _authority_intent_failure(
+                        "prepared rq_spec byte binding differs"
+                    )
 
         registries = validate_exact_object(
             value["registries"], _REGISTRY_AUTHORITY_SCHEMA, "prepared registries"
@@ -3296,11 +3350,8 @@ def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
         )
         for index, candidate in enumerate(claim_ceiling["claims"])
     ]
-    rq_spec_raw = material["protocol_artifact_paths"]["rq_spec_sha256"].read_text(
-        encoding="utf-8"
-    )
-    authoritative_rqs = sorted(
-        set(re.findall(r"^### (RQ[0-9]+)：", rq_spec_raw, flags=re.MULTILINE))
+    authoritative_rqs = _rq_ids_from_spec_bytes(
+        material["protocol_artifact_paths"]["rq_spec_sha256"].read_bytes()
     )
     authoritative_claim_ids = [claim["claim_id"] for claim in authoritative_claims]
     authoritative_associations = {
@@ -3605,8 +3656,7 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
                 or intent["job_role"] != "PROFILING"
                 or intent["object_type"] != "PROFILING_BEHAVIOR"
                 or intent["object_id"] != trace["behavior_id"]
-                or intent["cwd_identity"]
-                != subject["controlled_subject_source_id"]
+                or intent["cwd_identity"] != f"subject:{subject['subject_id']}"
                 or intent["argv"] != row["argv"]
                 or intent["input_sha256"] != row["input_sha256"]
                 or intent["environment_sha256"] != row["environment_sha256"]
