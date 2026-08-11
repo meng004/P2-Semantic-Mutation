@@ -67,6 +67,7 @@ from p3_v3.run_records import (  # noqa: E402
     validate_claim_ledger,
     verify_attempt_tree,
     verify_ledger,
+    verify_locked_execution,
     verify_phase_receipt,
 )
 
@@ -257,6 +258,20 @@ _CONTROLLER_ROLE_ROOTS = (
     "scripts/p3_v3",
     "requirements-frozen.txt",
 )
+_TRACKED_SOURCE_MANIFEST_SCHEMA = {
+    "schema_version": str,
+    "role": str,
+    "files": list,
+}
+_TRACKED_SOURCE_FILE_SCHEMA = {
+    "relative_path": str,
+    "mode": str,
+    "sha256": str,
+}
+_LOCKED_REGISTRIES_SCHEMA = {
+    "adapter_registry": dict,
+    "input_generator_registry": dict,
+}
 _TRANSIENT_SOURCE_NAMES = frozenset(
     {
         ".mypy_cache",
@@ -562,6 +577,116 @@ def build_tracked_source_manifest(
         "role": role,
         "files": rows,
     }
+
+
+def verify_running_controller(
+    lock: Mapping[str, Any],
+    controller_manifest: Mapping[str, Any],
+    locked_registries: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Bind installed verifier and registry bytes to the external lock."""
+
+    try:
+        validated_lock = validate_authority_lock(lock)
+        manifest = validate_exact_object(
+            dict(controller_manifest),
+            _TRACKED_SOURCE_MANIFEST_SCHEMA,
+            "controller manifest",
+        )
+        if (
+            manifest["schema_version"]
+            != "P3_V3_TRACKED_SOURCE_MANIFEST_V1"
+            or manifest["role"] != "controller-source"
+            or canonical_sha256(manifest)
+            != validated_lock["controller_repository"][
+                "tracked_source_manifest_sha256"
+            ]
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "controller manifest authority differs"
+            )
+        rows = [
+            validate_exact_object(
+                candidate,
+                _TRACKED_SOURCE_FILE_SCHEMA,
+                f"controller manifest files[{index}]",
+            )
+            for index, candidate in enumerate(manifest["files"])
+        ]
+        relative_paths = [row["relative_path"] for row in rows]
+        if (
+            not rows
+            or relative_paths
+            != sorted(relative_paths, key=lambda value: value.encode("utf-8"))
+            or len(relative_paths) != len(set(relative_paths))
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "controller manifest rows differ"
+            )
+        installed_root = Path(__file__).resolve().parents[2]
+        for row in rows:
+            relative = safe_relative_path(row["relative_path"])
+            if not any(
+                relative.as_posix() == role_root
+                or relative.as_posix().startswith(f"{role_root}/")
+                for role_root in _CONTROLLER_ROLE_ROOTS
+            ):
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "controller manifest path is not installed"
+                )
+            cursor = installed_root
+            for part in relative.parts:
+                cursor /= part
+                try:
+                    installed_node = cursor.lstat()
+                except OSError as exc:
+                    raise EvidenceError(
+                        "E_AUTHORITY_MANIFEST",
+                        "installed controller path is unavailable",
+                    ) from exc
+                if stat.S_ISLNK(installed_node.st_mode):
+                    raise EvidenceError(
+                        "E_AUTHORITY_MANIFEST", "installed controller path is unsafe"
+                    )
+            raw, mode = _read_manifest_regular_file(cursor)
+            validate_sha256(row["sha256"], "controller manifest file digest")
+            installed_mode = "100755" if mode & 0o111 else "100644"
+            if (
+                hashlib.sha256(raw).hexdigest() != row["sha256"]
+                or installed_mode != row["mode"]
+            ):
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "installed controller bytes differ"
+                )
+
+        registries = validate_exact_object(
+            dict(locked_registries),
+            _LOCKED_REGISTRIES_SCHEMA,
+            "locked registries",
+        )
+        if (
+            canonical_sha256(registries["adapter_registry"])
+            != validated_lock["registries"]["adapter_registry_sha256"]
+            or canonical_sha256(registries["input_generator_registry"])
+            != validated_lock["registries"]["input_generator_registry_sha256"]
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "locked registry bytes differ"
+            )
+        return {
+            "adapter_registry": validate_adapter_registry(
+                registries["adapter_registry"], installed_root
+            ),
+            "input_generator_registry": validate_input_generator_registry(
+                registries["input_generator_registry"], installed_root
+            ),
+        }
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_MANIFEST":
+            raise
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "running controller authority is invalid"
+        ) from exc
 
 
 def validate_authority_inputs(
@@ -1520,6 +1645,101 @@ def load_authority_lock(lock_path: Path, expected_sha256: str) -> dict[str, Any]
     return validate_authority_lock(value)
 
 
+_PREFLIGHT_EVENT_SCHEMA = {
+    "schema_version": str,
+    "normalized_repository_identity": str,
+    "base_commit": str,
+    "base_tree": str,
+    "dependency_lock_sha256": str,
+    "environment_policy_sha256": str,
+    "capability_results": list,
+    "event_sha256": str,
+}
+_CAPABILITY_RESULT_SCHEMA = {
+    "capability": str,
+    "status": str,
+    "observation_sha256": str,
+}
+
+
+def reconstruct_origin_receipt(
+    lock_preflight: Mapping[str, Any], preflight_event: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Rebuild the canonical Phase 0 origin receipt from locked authority."""
+
+    try:
+        locked = validate_exact_object(
+            dict(lock_preflight), _PREFLIGHT_AUTHORITY_SCHEMA, "lock preflight"
+        )
+        event = validate_exact_object(
+            dict(preflight_event), _PREFLIGHT_EVENT_SCHEMA, "preflight event"
+        )
+        if event["schema_version"] != "P3_V3_PREFLIGHT_EVENT_V1":
+            raise EvidenceError("E_AUTHORITY_ORIGIN", "preflight event version differs")
+        event_body = {key: value for key, value in event.items() if key != "event_sha256"}
+        validate_sha256(event["event_sha256"], "preflight event digest")
+        if event["event_sha256"] != canonical_sha256(event_body):
+            raise EvidenceError("E_AUTHORITY_ORIGIN", "preflight event hash differs")
+        stable_fields = (
+            "normalized_repository_identity",
+            "base_commit",
+            "base_tree",
+            "dependency_lock_sha256",
+            "environment_policy_sha256",
+        )
+        if any(event[field] != locked[field] for field in stable_fields):
+            raise EvidenceError("E_AUTHORITY_ORIGIN", "preflight authority differs")
+        results = [
+            validate_exact_object(
+                candidate,
+                _CAPABILITY_RESULT_SCHEMA,
+                f"preflight event capability_results[{index}]",
+            )
+            for index, candidate in enumerate(event["capability_results"])
+        ]
+        for index, result in enumerate(results):
+            _validate_authority_text(
+                result["capability"], f"capability_results[{index}].capability"
+            )
+            if result["status"] not in {"PASS", "FAIL"}:
+                raise EvidenceError(
+                    "E_AUTHORITY_ORIGIN", "preflight capability status is invalid"
+                )
+            validate_sha256(
+                result["observation_sha256"],
+                f"capability_results[{index}].observation_sha256",
+            )
+        capability_names = [result["capability"] for result in results]
+        if capability_names != sorted(capability_names) or len(capability_names) != len(
+            set(capability_names)
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_ORIGIN", "preflight capabilities are not sorted and unique"
+            )
+        by_capability = {result["capability"]: result for result in results}
+        required_results = []
+        for capability in locked["required_capabilities"]:
+            result = by_capability.get(capability)
+            if result is None or result["status"] != "PASS":
+                raise EvidenceError(
+                    "E_AUTHORITY_ORIGIN", "required preflight capability did not pass"
+                )
+            required_results.append(result)
+        receipt_body = {
+            "schema_version": "P3_V3_ORIGIN_RECEIPT_V1",
+            **{field: locked[field] for field in stable_fields},
+            "required_capability_results": required_results,
+            "preflight_event_sha256": event["event_sha256"],
+        }
+        return {**receipt_body, "artifact_sha256": canonical_sha256(receipt_body)}
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_ORIGIN":
+            raise
+        raise EvidenceError(
+            "E_AUTHORITY_ORIGIN", "preflight origin receipt is invalid"
+        ) from exc
+
+
 def _authority_intent_failure(detail: str) -> None:
     raise EvidenceError("E_AUTHORITY_INTENT", detail)
 
@@ -2110,6 +2330,8 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--output", required=True)
     command = sub.add_parser("verify-evidence")
     command.add_argument("--index", required=True)
+    command.add_argument("--authority-lock", required=True)
+    command.add_argument("--authority-lock-sha256", required=True)
     return parser
 
 
@@ -2286,6 +2508,8 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
 _INDEX_SCHEMA = {
     "schema_version": str,
     "phase_coverage": list,
+    "controller_source": dict,
+    "subject_sources": list,
     "protocol": dict,
     "protocol_artifacts": dict,
     "adapter_registries": list,
@@ -2296,6 +2520,8 @@ _INDEX_SCHEMA = {
     "job_root": str,
     "ledger": dict,
     "phase_receipts": list,
+    "preflight_event": dict,
+    "origin_receipt": dict,
     "p12": dict,
     "claims": dict,
     "artifact_sha256": str,
@@ -2310,6 +2536,7 @@ _PROTOCOL_ARTIFACT_FIELDS = (
     "analysis_spec_sha256",
     "package_policy_sha256",
     "environment_lock_sha256",
+    "job_derivation_policy_sha256",
 )
 _PROTOCOL_ARTIFACT_SCHEMA = {field: dict for field in _PROTOCOL_ARTIFACT_FIELDS}
 _CLAIM_CEILING_SCHEMA = {
@@ -2323,7 +2550,25 @@ _CLAIM_AUTHORITY_ROW_SCHEMA = {
     "initial_status": str,
 }
 _REFERENCE_SCHEMA = {"path": str, "sha256": str}
+_CONTROLLER_SOURCE_INDEX_SCHEMA = {"root": str, "manifest": dict}
+_SUBJECT_SOURCE_INDEX_SCHEMA = {
+    "subject_id": str,
+    "root": str,
+    "manifest": dict,
+}
+_ORIGIN_RECEIPT_SCHEMA = {
+    "schema_version": str,
+    "normalized_repository_identity": str,
+    "base_commit": str,
+    "base_tree": str,
+    "dependency_lock_sha256": str,
+    "environment_policy_sha256": str,
+    "required_capability_results": list,
+    "preflight_event_sha256": str,
+    "artifact_sha256": str,
+}
 _SUBJECT_INDEX_SCHEMA = {
+    "subject_id": str,
     "phase": str,
     "controlled_subject_source_id": str,
     "controlled_subject_id": str,
@@ -2470,12 +2715,14 @@ def _phase(value: Any, coverage: list[str], context: str) -> str:
 
 def _load_evidence_index(
     index_path: str | Path,
+    validated_lock: Mapping[str, Any],
+    authority_lock_path: Path,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     source = Path(index_path)
     value = validate_exact_object(
         read_canonical_json(source), _INDEX_SCHEMA, "evidence_index"
     )
-    if value["schema_version"] != "P3_V3_EVIDENCE_INDEX_V1":
+    if value["schema_version"] != "P3_V3_EVIDENCE_INDEX_V3":
         raise EvidenceError("E_INDEX_SCHEMA", "evidence index schema version differs")
     body = {key: item for key, item in value.items() if key != "artifact_sha256"}
     validate_sha256(value["artifact_sha256"], "evidence_index.artifact_sha256")
@@ -2490,9 +2737,161 @@ def _load_evidence_index(
     root = source.parent
     seen: set[str] = set()
     loaded: dict[str, Any] = {}
+    controller_index = validate_exact_object(
+        value["controller_source"],
+        _CONTROLLER_SOURCE_INDEX_SCHEMA,
+        "controller_source",
+    )
+    controller_root = _indexed_directory(
+        root, controller_index["root"], seen, "controller_source.root"
+    )
+    _, controller_manifest = _indexed_file(
+        root,
+        controller_index["manifest"],
+        seen,
+        loaded,
+        "controller_source.manifest",
+    )
+    rebuilt_controller_manifest = build_tracked_source_manifest(
+        controller_root, _CONTROLLER_ROLE_ROOTS, "controller-source"
+    )
+    if (
+        canonical_json_bytes(controller_manifest)
+        != canonical_json_bytes(rebuilt_controller_manifest)
+        or canonical_sha256(controller_manifest)
+        != validated_lock["controller_repository"][
+            "tracked_source_manifest_sha256"
+        ]
+    ):
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "controller source manifest differs"
+        )
+
+    if len(value["adapter_registries"]) != 1 or len(
+        value["input_generator_registries"]
+    ) != 1:
+        raise EvidenceError(
+            "E_PROTOCOL_BINDING",
+            "exactly one adapter and input-generator registry is required",
+        )
+    adapter_registries: list[dict[str, Any]] = []
+    adapter_registry_file_sha256: list[str] = []
+    for index, reference in enumerate(value["adapter_registries"]):
+        locked_reference = validate_exact_object(
+            reference, _REFERENCE_SCHEMA, f"adapter_registries[{index}]"
+        )
+        validate_sha256(
+            locked_reference["sha256"], f"adapter_registries[{index}].sha256"
+        )
+        if locked_reference["sha256"] != validated_lock["registries"][
+            "adapter_registry_sha256"
+        ]:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "adapter registry bytes differ from lock"
+            )
+        _, registry = _indexed_file(
+            root, reference, seen, loaded, f"adapter_registries[{index}]"
+        )
+        adapter_registries.append(registry)
+        adapter_registry_file_sha256.append(locked_reference["sha256"])
+    generator_registries: list[dict[str, Any]] = []
+    generator_registry_file_sha256: list[str] = []
+    for index, reference in enumerate(value["input_generator_registries"]):
+        locked_reference = validate_exact_object(
+            reference,
+            _REFERENCE_SCHEMA,
+            f"input_generator_registries[{index}]",
+        )
+        validate_sha256(
+            locked_reference["sha256"],
+            f"input_generator_registries[{index}].sha256",
+        )
+        if locked_reference["sha256"] != validated_lock["registries"][
+            "input_generator_registry_sha256"
+        ]:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "generator registry bytes differ from lock"
+            )
+        _, registry = _indexed_file(
+            root,
+            reference,
+            seen,
+            loaded,
+            f"input_generator_registries[{index}]",
+        )
+        generator_registries.append(registry)
+        generator_registry_file_sha256.append(locked_reference["sha256"])
+
+    subject_authority = {
+        subject["subject_id"]: subject for subject in validated_lock["subjects"]
+    }
+    subject_source_ids = [
+        candidate.get("subject_id")
+        for candidate in value["subject_sources"]
+        if isinstance(candidate, Mapping)
+    ]
+    if subject_source_ids != list(subject_authority):
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "subject source identities differ"
+        )
+    subject_sources = []
+    for index, candidate in enumerate(value["subject_sources"]):
+        entry = validate_exact_object(
+            candidate,
+            _SUBJECT_SOURCE_INDEX_SCHEMA,
+            f"subject_sources[{index}]",
+        )
+        subject_root = _indexed_directory(
+            root,
+            entry["root"],
+            seen,
+            f"subject_sources[{index}].root",
+        )
+        try:
+            (subject_root / ".git").lstat()
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "subject Git metadata is unsafe"
+            ) from exc
+        else:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "subject Git metadata is forbidden"
+            )
+        _, declared_manifest = _indexed_file(
+            root,
+            entry["manifest"],
+            seen,
+            loaded,
+            f"subject_sources[{index}].manifest",
+        )
+        rebuilt_manifest = build_tracked_source_manifest(
+            subject_root, ["."], "subject-source"
+        )
+        if (
+            canonical_json_bytes(declared_manifest)
+            != canonical_json_bytes(rebuilt_manifest)
+            or canonical_sha256(declared_manifest)
+            != subject_authority[entry["subject_id"]][
+                "tracked_source_manifest_sha256"
+            ]
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "subject source manifest differs"
+            )
+        subject_sources.append(
+            {**entry, "root": subject_root, "manifest": declared_manifest}
+        )
+    subject_sources_by_id = {
+        entry["subject_id"]: entry for entry in subject_sources
+    }
+
     protocol_path, protocol = _indexed_file(
         root, value["protocol"], seen, loaded, "protocol"
     )
+    if file_sha256(protocol_path) != validated_lock["protocol"]["protocol_sha256"]:
+        raise EvidenceError("E_AUTHORITY_PROTOCOL", "protocol bytes differ from lock")
     protocol_artifact_index = validate_exact_object(
         value["protocol_artifacts"],
         _PROTOCOL_ARTIFACT_SCHEMA,
@@ -2508,7 +2907,16 @@ def _load_evidence_index(
             f"protocol_artifacts.{field}",
             canonical=False,
         )
-        if protocol[field] != protocol_artifact_index[field]["sha256"]:
+        protocol_digest = (
+            protocol[field]
+            if field in protocol
+            else validated_lock["protocol"][field]
+        )
+        if (
+            protocol_digest != protocol_artifact_index[field]["sha256"]
+            or protocol_artifact_index[field]["sha256"]
+            != validated_lock["protocol"][field]
+        ):
             raise EvidenceError(
                 "E_PROTOCOL_BINDING", f"protocol byte binding differs: {field}"
             )
@@ -2520,12 +2928,14 @@ def _load_evidence_index(
     claims = validate_claim_ledger(claims)
     job_root = _indexed_directory(root, value["job_root"], seen, "job_root")
 
-    if len(value["adapter_registries"]) != 1 or len(
-        value["input_generator_registries"]
-    ) != 1:
-        raise EvidenceError(
-            "E_PROTOCOL_BINDING", "exactly one adapter and input-generator registry is required"
-        )
+    _, preflight_event = _indexed_file(
+        root, value["preflight_event"], seen, loaded, "preflight_event"
+    )
+    _, origin_receipt = _indexed_file(
+        root, value["origin_receipt"], seen, loaded, "origin_receipt"
+    )
+    validate_exact_object(origin_receipt, _ORIGIN_RECEIPT_SCHEMA, "origin_receipt")
+
     if (
         protocol["adapter_registry_sha256"]
         != value["adapter_registries"][0].get("sha256")
@@ -2535,72 +2945,6 @@ def _load_evidence_index(
         raise EvidenceError(
             "E_PROTOCOL_BINDING", "protocol registry byte binding differs"
         )
-    adapter_registries: list[dict[str, Any]] = []
-    adapter_registry_file_sha256: list[str] = []
-    for index, reference in enumerate(value["adapter_registries"]):
-        registry_path, registry = _indexed_file(
-            root, reference, seen, loaded, f"adapter_registries[{index}]"
-        )
-        verified_registry = validate_adapter_registry(registry, registry_path.parent)
-        for entry_index, entry in enumerate(verified_registry["adapters"]):
-            implementation = (
-                registry_path.parent / safe_relative_path(entry["implementation_path"])
-            ).relative_to(root).as_posix()
-            if implementation in seen:
-                raise EvidenceError(
-                    "E_INDEX_DUPLICATE", f"duplicate indexed path: {implementation}"
-                )
-            implementation_path = _safe_index_node(
-                root,
-                implementation,
-                f"adapter_registries[{index}].adapters[{entry_index}]",
-            )
-            if not stat.S_ISREG(implementation_path.lstat().st_mode):
-                raise EvidenceError(
-                    "E_INDEX_PATH", f"adapter implementation is unsafe: {implementation}"
-                )
-            seen.add(implementation)
-        adapter_registries.append(verified_registry)
-        adapter_registry_file_sha256.append(reference["sha256"])
-    generator_registries: list[dict[str, Any]] = []
-    generator_registry_file_sha256: list[str] = []
-    for index, reference in enumerate(value["input_generator_registries"]):
-        registry_path, registry = _indexed_file(
-            root,
-            reference,
-            seen,
-            loaded,
-            f"input_generator_registries[{index}]",
-        )
-        verified_registry = validate_input_generator_registry(
-            registry, registry_path.parent
-        )
-        for entry_index, entry in enumerate(verified_registry["generators"]):
-            implementation = (
-                (
-                    registry_path.parent
-                    / safe_relative_path(entry["implementation_path"])
-                )
-                .relative_to(root)
-                .as_posix()
-            )
-            if implementation in seen:
-                raise EvidenceError(
-                    "E_INDEX_DUPLICATE", f"duplicate indexed path: {implementation}"
-                )
-            implementation_path = _safe_index_node(
-                root,
-                implementation,
-                f"input_generator_registries[{index}].generators[{entry_index}]",
-            )
-            if not stat.S_ISREG(implementation_path.lstat().st_mode):
-                raise EvidenceError(
-                    "E_INDEX_PATH",
-                    f"generator implementation is unsafe: {implementation}",
-                )
-            seen.add(implementation)
-        generator_registries.append(verified_registry)
-        generator_registry_file_sha256.append(reference["sha256"])
 
     subjects: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["subjects"]):
@@ -2629,9 +2973,18 @@ def _load_evidence_index(
             _, material[field] = _indexed_file(
                 root, subject[field], seen, loaded, f"subjects[{index}].{field}"
             )
-        material["source_root"] = _indexed_directory(
-            root, subject["source_root"], seen, f"subjects[{index}].source_root"
-        )
+        source_authority = subject_sources_by_id.get(subject["subject_id"])
+        if (
+            source_authority is None
+            or subject["source_root"]
+            != value["subject_sources"][subject_source_ids.index(subject["subject_id"])][
+                "root"
+            ]
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "indexed subject source authority differs"
+            )
+        material["source_root"] = source_authority["root"]
         validate_sha256(
             subject["adapter_registry_sha256"],
             f"subjects[{index}].adapter_registry_sha256",
@@ -2807,11 +3160,17 @@ def _load_evidence_index(
         )
 
     indexed_directories = [
+        value["controller_source"]["root"],
+        *[entry["root"] for entry in value["subject_sources"]],
         value["job_root"],
         *[entry["root"] for entry in value["packages"]],
         *[entry["source_root"] for entry in value["subjects"]],
     ]
     indexed_paths = set(seen) | {source.name}
+    try:
+        indexed_paths.add(authority_lock_path.relative_to(root).as_posix())
+    except ValueError:
+        pass
     for path in root.rglob("*"):
         relative = path.relative_to(root).as_posix()
         inside_indexed_directory = any(
@@ -2876,6 +3235,11 @@ def _load_evidence_index(
         raise EvidenceError("E_INDEX_COVERAGE", "P12 coverage is incomplete")
     return value, {
         "root": root,
+        "controller_manifest": controller_manifest,
+        "controller_source": controller_root,
+        "subject_sources": subject_sources,
+        "preflight_event": preflight_event,
+        "origin_receipt": origin_receipt,
         "protocol_path": protocol_path,
         "protocol": protocol,
         "protocol_artifact_paths": protocol_artifact_paths,
@@ -2896,7 +3260,36 @@ def _load_evidence_index(
 
 
 def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
-    index, material = _load_evidence_index(args.index)
+    validated_lock = load_authority_lock(
+        Path(args.authority_lock), args.authority_lock_sha256
+    )
+    _index, material = _load_evidence_index(
+        args.index, validated_lock, Path(args.authority_lock)
+    )
+    installed_registries = verify_running_controller(
+        validated_lock,
+        material["controller_manifest"],
+        {
+            "adapter_registry": material["adapter_registries"][0],
+            "input_generator_registry": material["generator_registries"][0],
+        },
+    )
+    material["adapter_registries"] = [
+        installed_registries["adapter_registry"]
+    ]
+    material["generator_registries"] = [
+        installed_registries["input_generator_registry"]
+    ]
+    rebuilt_origin = reconstruct_origin_receipt(
+        validated_lock["preflight"], material["preflight_event"]
+    )
+    if canonical_json_bytes(rebuilt_origin) != canonical_json_bytes(
+        material["origin_receipt"]
+    ):
+        raise EvidenceError("E_AUTHORITY_ORIGIN", "origin receipt bytes differ")
+    completion = verify_locked_execution(
+        validated_lock["jobs"], material["job_root"], material["ledger_path"]
+    )
     validate_protocol(
         material["protocol"], SCIENTIFIC_PLAN_SHA256, EVIDENCE_DESIGN_SHA256
     )
@@ -2943,7 +3336,6 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
         manifests.append(manifest)
 
     events = verify_attempt_tree(material["job_root"], material["ledger_path"])
-    verified_p12_result_count = 0
     if material["p12"]:
         terminal_by_job: dict[str, dict[str, Any]] = {}
         for event in events:
@@ -2961,7 +3353,6 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             result = read_canonical_json(attempt_root / "result.json")
             terminal_by_job[event["job_id"]] = {"intent": intent, "result": result}
         terminal_results = [terminal_by_job[job_id] for job_id in sorted(terminal_by_job)]
-        verified_p12_result_count = len(terminal_results)
         rebuilt_summary = recompute_p12_summary(
             material["p12"]["denominator"], terminal_results
         )
@@ -3241,15 +3632,16 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
         )
     return {
         "status": "PASS",
-        "index_sha256": file_sha256(args.index),
-        "phase_coverage": index["phase_coverage"],
-        "manifest_count": len(manifests),
-        "phase_receipt_count": len(material["receipts"]),
-        "slot_artifact_count": slot_count,
-        "ledger_event_count": len(events),
-        "verified_subject_count": len(material["subjects"]),
-        "verified_p12_result_count": verified_p12_result_count,
-        "verified_claim_count": len(material["claims"]["claims"]),
+        "authority_lock_sha256": args.authority_lock_sha256,
+        "evidence_index_sha256": file_sha256(args.index),
+        "subject_count": len(validated_lock["subjects"]),
+        "authorized_real_p12_job_count": completion[
+            "authorized_real_p12_job_count"
+        ],
+        "recorded_real_scientific_terminal_count": completion[
+            "recorded_real_scientific_terminal_count"
+        ],
+        "claims_status": "blocked",
     }
 
 

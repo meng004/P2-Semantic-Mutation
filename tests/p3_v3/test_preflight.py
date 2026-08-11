@@ -6,8 +6,9 @@ from pathlib import Path
 
 import pytest
 
+import scripts.p3_v3.evidence as evidence_module
 from p3_v3 import preflight
-from p3_v3.artifacts import EvidenceError, canonical_json_bytes
+from p3_v3.artifacts import EvidenceError, canonical_json_bytes, canonical_sha256
 from p3_v3.preflight import (
     _available_memory_bytes,
     normalize_repository_identity,
@@ -377,3 +378,110 @@ def test_preflight_module_does_not_import_create_intent():
     source = Path(__file__).resolve().parents[2] / "src/p3_v3/preflight.py"
     text = source.read_text(encoding="utf-8")
     assert "create_intent" not in text
+
+
+def test_authority_origin_receipt_reconstructs_locked_phase_zero_event():
+    lock_preflight = {
+        "normalized_repository_identity": "github.com/example/controller",
+        "base_commit": "1" * 40,
+        "base_tree": "2" * 40,
+        "dependency_lock_sha256": "3" * 64,
+        "environment_policy_sha256": "4" * 64,
+        "required_capabilities": ["CPU", "DISK"],
+        "forbidden_credential_fields": [
+            "authorization",
+            "credential",
+            "password",
+            "token",
+        ],
+    }
+    event_body = {
+        "schema_version": "P3_V3_PREFLIGHT_EVENT_V1",
+        "normalized_repository_identity": "github.com/example/controller",
+        "base_commit": "1" * 40,
+        "base_tree": "2" * 40,
+        "dependency_lock_sha256": "3" * 64,
+        "environment_policy_sha256": "4" * 64,
+        "capability_results": [
+            {
+                "capability": "CPU",
+                "status": "PASS",
+                "observation_sha256": "5" * 64,
+            },
+            {
+                "capability": "DISK",
+                "status": "PASS",
+                "observation_sha256": "6" * 64,
+            },
+        ],
+    }
+    event = {**event_body, "event_sha256": canonical_sha256(event_body)}
+
+    receipt = evidence_module.reconstruct_origin_receipt(lock_preflight, event)
+
+    receipt_body = {
+        "schema_version": "P3_V3_ORIGIN_RECEIPT_V1",
+        "normalized_repository_identity": "github.com/example/controller",
+        "base_commit": "1" * 40,
+        "base_tree": "2" * 40,
+        "dependency_lock_sha256": "3" * 64,
+        "environment_policy_sha256": "4" * 64,
+        "required_capability_results": event_body["capability_results"],
+        "preflight_event_sha256": event["event_sha256"],
+    }
+    assert receipt == {
+        **receipt_body,
+        "artifact_sha256": canonical_sha256(receipt_body),
+    }
+
+
+@pytest.mark.parametrize(
+    ("mutation", "secret"),
+    [
+        ("stable_field", ""),
+        ("authorization", "Bearer TOP_SECRET_AUTHORITY_TOKEN"),
+    ],
+)
+def test_authority_origin_rejects_coordinated_reseal_without_secret_echo(
+    mutation, secret
+):
+    lock_preflight = {
+        "normalized_repository_identity": "github.com/example/controller",
+        "base_commit": "1" * 40,
+        "base_tree": "2" * 40,
+        "dependency_lock_sha256": "3" * 64,
+        "environment_policy_sha256": "4" * 64,
+        "required_capabilities": ["CPU"],
+        "forbidden_credential_fields": [
+            "authorization",
+            "credential",
+            "password",
+            "token",
+        ],
+    }
+    event_body = {
+        "schema_version": "P3_V3_PREFLIGHT_EVENT_V1",
+        "normalized_repository_identity": "github.com/example/controller",
+        "base_commit": "1" * 40,
+        "base_tree": "2" * 40,
+        "dependency_lock_sha256": "3" * 64,
+        "environment_policy_sha256": "4" * 64,
+        "capability_results": [
+            {
+                "capability": "CPU",
+                "status": "PASS",
+                "observation_sha256": "5" * 64,
+            }
+        ],
+    }
+    if mutation == "stable_field":
+        event_body["base_tree"] = "9" * 40
+    else:
+        event_body["authorization"] = secret
+    event = {**event_body, "event_sha256": canonical_sha256(event_body)}
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_ORIGIN") as caught:
+        evidence_module.reconstruct_origin_receipt(lock_preflight, event)
+
+    if secret:
+        assert secret not in str(caught.value)
