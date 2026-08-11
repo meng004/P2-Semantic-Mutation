@@ -4343,6 +4343,46 @@ def test_verify_evidence_reconstructs_every_indexed_subject(tmp_path):
     assert json.loads(result.stdout)["subject_count"] == 1
 
 
+def test_verify_evidence_consumes_one_locked_execution_snapshot_after_swap(
+    tmp_path, monkeypatch
+):
+    index_path = _complete_reconstructable_subject_index(tmp_path)
+    original_snapshot_verifier = evidence_module._verify_locked_execution_snapshot
+    swapped = False
+
+    def verify_then_swap(*args, **kwargs):
+        nonlocal swapped
+        snapshot = original_snapshot_verifier(*args, **kwargs)
+        result_path = next((tmp_path / "jobs/PHASE_1").rglob("result.json"))
+        changed = json.loads(result_path.read_text(encoding="utf-8"))
+        changed["stdout_sha256"] = "0" * 64
+        result_path.write_bytes(canonical_json_bytes(changed))
+        (tmp_path / "ledger.jsonl").write_bytes(b"{}\n")
+        swapped = True
+        return snapshot
+
+    monkeypatch.setattr(
+        evidence_module, "_verify_locked_execution_snapshot", verify_then_swap
+    )
+    lock_path = tmp_path / "authority-lock.json"
+    args = evidence_module.build_parser().parse_args(
+        [
+            "verify-evidence",
+            "--index",
+            str(index_path),
+            "--authority-lock",
+            str(lock_path),
+            "--authority-lock-sha256",
+            hashlib.sha256(lock_path.read_bytes()).hexdigest(),
+        ]
+    )
+
+    result = evidence_module.dispatch(args)
+
+    assert swapped
+    assert result["status"] == "PASS"
+
+
 def test_verify_evidence_rederives_subject_only_from_manifest_snapshot(
     tmp_path, monkeypatch
 ):
@@ -4385,6 +4425,82 @@ def test_verify_evidence_rederives_subject_only_from_manifest_snapshot(
     result = evidence_module.dispatch(args)
 
     assert swapped
+    assert result["status"] == "PASS"
+
+
+@pytest.mark.parametrize("replacement", ["bytes", "symlink"])
+def test_verify_evidence_consumes_verified_registry_snapshot_after_path_swap(
+    tmp_path, tmp_path_factory, monkeypatch, replacement
+):
+    index_path = _complete_reconstructable_subject_index(tmp_path)
+    installed_root = _copy_installed_controller(
+        tmp_path_factory.mktemp(f"registry-snapshot-{replacement}")
+    )
+    monkeypatch.setattr(
+        evidence_module,
+        "__file__",
+        str(installed_root / "scripts/p3_v3/evidence.py"),
+    )
+    original_verifier = evidence_module._verify_running_controller_for_evidence
+    original_consumer = frames_module._consume_verified_registry
+    state = {"swapped": False, "consumer_calls": 0, "path_reads": 0}
+
+    def verify_then_swap(*args, **kwargs):
+        installed = original_verifier(*args, **kwargs)
+        relative = installed["adapter_registry"]["adapters"][0][
+            "implementation_path"
+        ]
+        implementation = installed_root / relative
+        replacement_path = installed_root / "replacement-adapter.py"
+        replacement_path.write_text(
+            "raise RuntimeError('replacement registry bytes executed')\n",
+            encoding="utf-8",
+        )
+        implementation.unlink()
+        if replacement == "symlink":
+            implementation.symlink_to(replacement_path)
+        else:
+            implementation.write_bytes(replacement_path.read_bytes())
+        state["swapped"] = True
+        return installed
+
+    def counting_consumer(*args, **kwargs):
+        state["consumer_calls"] += 1
+        return original_consumer(*args, **kwargs)
+
+    def forbidden_path_read(*_args, **_kwargs):
+        state["path_reads"] += 1
+        raise AssertionError("downstream registry consumer reopened a path")
+
+    monkeypatch.setattr(
+        evidence_module,
+        "_verify_running_controller_for_evidence",
+        verify_then_swap,
+    )
+    monkeypatch.setattr(
+        frames_module, "_consume_verified_registry", counting_consumer
+    )
+    monkeypatch.setattr(
+        frames_module, "read_canonical_regular_bytes", forbidden_path_read
+    )
+    lock_path = tmp_path / "authority-lock.json"
+    args = evidence_module.build_parser().parse_args(
+        [
+            "verify-evidence",
+            "--index",
+            str(index_path),
+            "--authority-lock",
+            str(lock_path),
+            "--authority-lock-sha256",
+            hashlib.sha256(lock_path.read_bytes()).hexdigest(),
+        ]
+    )
+
+    result = evidence_module.dispatch(args)
+
+    assert state["swapped"]
+    assert state["consumer_calls"] >= 2
+    assert state["path_reads"] == 0
     assert result["status"] == "PASS"
 
 

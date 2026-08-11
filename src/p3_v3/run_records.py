@@ -6,8 +6,10 @@ import hashlib
 import json
 import os
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 from .artifacts import (
@@ -15,6 +17,7 @@ from .artifacts import (
     canonical_json_bytes,
     canonical_sha256,
     read_canonical_json,
+    read_canonical_regular_bytes,
     safe_relative_path,
     validate_exact_object,
     validate_sha256,
@@ -167,6 +170,69 @@ _PHASE_RECEIPT_SCHEMA = {
     "output_manifest_sha256": str,
     "artifact_sha256": str,
 }
+
+
+def _freeze_snapshot_value(value: Any) -> Any:
+    if type(value) is dict:
+        return MappingProxyType(
+            {key: _freeze_snapshot_value(item) for key, item in value.items()}
+        )
+    if type(value) is list:
+        return tuple(_freeze_snapshot_value(item) for item in value)
+    return value
+
+
+def _thaw_snapshot_value(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return {key: _thaw_snapshot_value(item) for key, item in value.items()}
+    if type(value) is tuple:
+        return [_thaw_snapshot_value(item) for item in value]
+    return value
+
+
+@dataclass(frozen=True)
+class _VerifiedAttemptRecord:
+    """One deeply immutable, exact validated intent/result pair."""
+
+    intent: Mapping[str, Any]
+    result: Mapping[str, Any] | None
+
+
+@dataclass(frozen=True)
+class VerifiedExecutionSnapshot:
+    """One authority state shared by every post-lock execution consumer."""
+
+    records: tuple[_VerifiedAttemptRecord, ...]
+    events: tuple[Mapping[str, Any], ...]
+    ledger_raw: bytes
+    ledger_event_count: int
+    terminal_result_count: int
+    authorized_real_p12_job_count: int
+    recorded_real_scientific_terminal_count: int
+
+    def attempt_records(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "intent": _thaw_snapshot_value(record.intent),
+                "result": (
+                    None
+                    if record.result is None
+                    else _thaw_snapshot_value(record.result)
+                ),
+            }
+            for record in self.records
+        ]
+
+    def ledger_events(self) -> list[dict[str, Any]]:
+        return [_thaw_snapshot_value(event) for event in self.events]
+
+    def completion_counts(self) -> dict[str, int]:
+        return {
+            "authorized_real_p12_job_count": self.authorized_real_p12_job_count,
+            "recorded_real_scientific_terminal_count": (
+                self.recorded_real_scientific_terminal_count
+            ),
+        }
 
 
 def _validate_intent(intent: Mapping[str, Any]) -> dict[str, Any]:
@@ -477,6 +543,24 @@ def _require_directory(path: Path, context: str) -> list[Path]:
     return list(path.iterdir())
 
 
+def _read_canonical_attempt_object(path: Path, context: str) -> dict[str, Any]:
+    raw = read_canonical_regular_bytes(path, context)
+    try:
+        value = json.loads(
+            raw.decode("utf-8"),
+            parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise EvidenceError(
+            "E_ATTEMPT_TREE", f"{context} is not canonical JSON"
+        ) from exc
+    if type(value) is not dict or canonical_json_bytes(value) != raw:
+        raise EvidenceError(
+            "E_ATTEMPT_TREE", f"{context} is not a canonical JSON object"
+        )
+    return value
+
+
 def _reconstruct_attempt_snapshot(
     job_root: Path,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -548,13 +632,10 @@ def _reconstruct_attempt_snapshot(
                         "E_ATTEMPT_TREE",
                         f"attempt files differ from frozen grammar: {attempt_directory}",
                     )
-                if any(entry.is_symlink() or not entry.is_file() for entry in entries):
-                    raise EvidenceError(
-                        "E_ATTEMPT_TREE",
-                        f"attempt contains a non-regular file: {attempt_directory}",
-                    )
                 intent = _validate_intent(
-                    read_canonical_json(attempt_directory / "intent.json")
+                    _read_canonical_attempt_object(
+                        attempt_directory / "intent.json", "attempt intent"
+                    )
                 )
                 if (
                     intent["phase"] != phase_directory.name
@@ -584,7 +665,10 @@ def _reconstruct_attempt_snapshot(
                 result: dict[str, Any] | None = None
                 if "result.json" in names:
                     result_path = attempt_directory / "result.json"
-                    result = _validate_result(read_canonical_json(result_path), intent)
+                    result = _validate_result(
+                        _read_canonical_attempt_object(result_path, "attempt result"),
+                        intent,
+                    )
                     if (
                         result["job_id"] != intent["job_id"]
                         or result["attempt"] != intent["attempt"]
@@ -627,7 +711,7 @@ def verify_attempt_tree(
 
     _records, events = _reconstruct_attempt_snapshot(Path(job_root))
     expected = b"".join(canonical_json_bytes(event) for event in events)
-    raw = Path(ledger).read_bytes()
+    raw = read_canonical_regular_bytes(Path(ledger), "attempt ledger")
     if raw != expected:
         raise EvidenceError(
             "E_LEDGER_RECONSTRUCTION", "ledger bytes differ from reconstructed attempts"
@@ -700,14 +784,16 @@ def _validate_locked_jobs(
     return jobs
 
 
-def verify_locked_execution(
+def _verify_locked_execution_snapshot(
     locked_jobs: Sequence[Mapping[str, Any]],
     job_root: Path,
-    ledger_path: Path,
-) -> dict[str, Any]:
-    """Match complete attempt records to externally locked base-job authority."""
+    ledger_raw: bytes,
+) -> VerifiedExecutionSnapshot:
+    """Capture and verify the one execution state shared by all consumers."""
 
     jobs = _validate_locked_jobs(locked_jobs)
+    if type(ledger_raw) is not bytes:
+        raise EvidenceError("E_AUTHORITY_INTENT", "ledger snapshot must be exact bytes")
     try:
         records, events = _reconstruct_attempt_snapshot(Path(job_root))
     except EvidenceError as exc:
@@ -747,7 +833,6 @@ def verify_locked_execution(
         latest[intent["job_id"]] = record
 
     try:
-        ledger_raw = Path(ledger_path).read_bytes()
         expected_ledger = b"".join(canonical_json_bytes(event) for event in events)
         if ledger_raw != expected_ledger:
             raise EvidenceError(
@@ -763,16 +848,50 @@ def verify_locked_execution(
         raise EvidenceError(
             "E_AUTHORITY_INTENT", "ledger differs from complete attempt records"
         ) from exc
-    return {
-        "authorized_real_p12_job_count": sum(
+    frozen_records = tuple(
+        _VerifiedAttemptRecord(
+            intent=_freeze_snapshot_value(record["intent"]),
+            result=(
+                None
+                if record["result"] is None
+                else _freeze_snapshot_value(record["result"])
+            ),
+        )
+        for record in records
+    )
+    return VerifiedExecutionSnapshot(
+        records=frozen_records,
+        events=tuple(_freeze_snapshot_value(event) for event in events),
+        ledger_raw=ledger_raw,
+        ledger_event_count=len(events),
+        terminal_result_count=sum(record["result"] is not None for record in records),
+        authorized_real_p12_job_count=sum(
             job["p12_access_class"] in {"PERMITTED", "REQUIRED"} for job in jobs
         ),
-        "recorded_real_scientific_terminal_count": sum(
+        recorded_real_scientific_terminal_count=sum(
             job["execution_class"] == "REAL_SCIENTIFIC"
             and latest[job["job_id"]]["result"] is not None
             for job in jobs
         ),
-    }
+    )
+
+
+def verify_locked_execution(
+    locked_jobs: Sequence[Mapping[str, Any]],
+    job_root: Path,
+    ledger_path: Path,
+) -> dict[str, Any]:
+    """Compatibility wrapper returning only the two observational counts."""
+
+    try:
+        ledger_raw = read_canonical_regular_bytes(Path(ledger_path), "attempt ledger")
+    except EvidenceError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_INTENT", "ledger differs from complete attempt records"
+        ) from exc
+    return _verify_locked_execution_snapshot(
+        locked_jobs, Path(job_root), ledger_raw
+    ).completion_counts()
 
 
 def _verify_ledger_bytes(raw: bytes) -> list[dict[str, Any]]:

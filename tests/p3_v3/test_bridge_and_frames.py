@@ -1595,6 +1595,60 @@ def test_adapter_execution_consumes_validated_snapshot_without_path_reopen(tmp_p
     assert discovery["discovery_status"] == "EXECUTABLE"
 
 
+@pytest.mark.parametrize("replacement", ["bytes", "symlink"])
+def test_verified_registry_consumer_compiles_captured_bytes_without_path_reopen(
+    tmp_path, monkeypatch, replacement
+):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    verified = validate_adapter_registry(
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
+    )
+    consumed = frames_module._consume_verified_registry(
+        verified, registry_kind="adapter"
+    )
+    descriptor = _write_adapter_project(source_root, "python.json")
+    implementation = implementation_root / "adapters/python_pep517_v1.py"
+    replacement_path = tmp_path / "replacement.py"
+    replacement_path.write_text(
+        "raise RuntimeError('replacement bytes executed')\n", encoding="utf-8"
+    )
+    implementation.unlink()
+    if replacement == "symlink":
+        implementation.symlink_to(replacement_path)
+    else:
+        implementation.write_bytes(replacement_path.read_bytes())
+    path_reads = 0
+
+    def forbidden_path_read(*_args, **_kwargs):
+        nonlocal path_reads
+        path_reads += 1
+        raise AssertionError("verified registry consumer reopened an implementation path")
+
+    monkeypatch.setattr(
+        frames_module, "read_canonical_regular_bytes", forbidden_path_read
+    )
+
+    discovery = run_adapter_discovery(
+        _source_snapshot(source_root), descriptor, consumed, "PYTHON_PEP517_V1"
+    )
+
+    assert discovery["discovery_status"] == "EXECUTABLE"
+    assert path_reads == 0
+
+
+def test_verified_registry_consumer_revalidates_in_memory_snapshot_digest(tmp_path):
+    verified = validate_adapter_registry(
+        _adapter_registry(tmp_path), _source_snapshot(tmp_path)
+    )
+    snapshot = verified["_implementation_snapshots"]["PYTHON_PEP517_V1"]
+    object.__setattr__(snapshot, "source_bytes", b"raise RuntimeError('forged')\n")
+
+    with pytest.raises(EvidenceError, match="E_ADAPTER_REGISTRY"):
+        frames_module._consume_verified_registry(verified, registry_kind="adapter")
+
+
 @pytest.mark.parametrize("registry_kind", ["contract"])
 @pytest.mark.parametrize("replacement", ["symlink", "bytes"])
 def test_registry_snapshot_safe_read_fails_closed_on_post_lstat_replacement(

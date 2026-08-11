@@ -64,13 +64,12 @@ from p3_v3.packages import (  # noqa: E402
 )
 from p3_v3.preflight import run_preflight  # noqa: E402
 from p3_v3.run_records import (  # noqa: E402
+    _verify_locked_execution_snapshot,
     close_phase,
     intent_template_sha256,
     recompute_p12_summary,
     validate_claim_ledger,
-    verify_attempt_tree,
     verify_ledger,
-    verify_locked_execution,
     verify_phase_receipt,
 )
 
@@ -3767,9 +3766,12 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
         material["origin_receipt"]
     ):
         raise EvidenceError("E_AUTHORITY_ORIGIN", "origin receipt bytes differ")
-    completion = verify_locked_execution(
-        validated_lock["jobs"], material["job_root"], material["ledger_path"]
+    execution_snapshot = _verify_locked_execution_snapshot(
+        validated_lock["jobs"], material["job_root"], material["ledger_raw"]
     )
+    completion = execution_snapshot.completion_counts()
+    attempt_records = execution_snapshot.attempt_records()
+    events = execution_snapshot.ledger_events()
     validate_protocol(
         material["protocol"], SCIENTIFIC_PLAN_SHA256, EVIDENCE_DESIGN_SHA256
     )
@@ -3815,23 +3817,18 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             )
         manifests.append(manifest)
 
-    events = verify_attempt_tree(material["job_root"], material["ledger_path"])
     if material["p12"]:
         terminal_by_job: dict[str, dict[str, Any]] = {}
-        for event in events:
-            if event["phase"] != "PHASE_7" or event["kind"] != "RESULT":
+        for pair in attempt_records:
+            intent = pair["intent"]
+            result = pair["result"]
+            if (
+                result is None
+                or intent["phase"] != "PHASE_7"
+                or intent["job_role"] != "P12"
+            ):
                 continue
-            attempt_root = (
-                material["job_root"]
-                / event["phase"]
-                / event["job_id"]
-                / str(event["attempt"])
-            )
-            intent = read_canonical_json(attempt_root / "intent.json")
-            if intent.get("job_role") != "P12":
-                continue
-            result = read_canonical_json(attempt_root / "result.json")
-            terminal_by_job[event["job_id"]] = {"intent": intent, "result": result}
+            terminal_by_job[intent["job_id"]] = {"intent": intent, "result": result}
         terminal_results = [terminal_by_job[job_id] for job_id in sorted(terminal_by_job)]
         rebuilt_summary = recompute_p12_summary(
             material["p12"]["denominator"], terminal_results
@@ -3858,8 +3855,8 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
     protocol_sha256 = material["protocol_sha256"]
     attempt_common_ids: set[str] = set()
     common_consumer_intents: dict[str, list[dict[str, Any]]] = {}
-    for intent_path in material["job_root"].rglob("intent.json"):
-        intent = read_canonical_json(intent_path)
+    for pair in attempt_records:
+        intent = pair["intent"]
         if intent.get("protocol_sha256") != protocol_sha256:
             raise EvidenceError(
                 "E_PROTOCOL_BINDING", "attempt intent is bound to another protocol"
@@ -3951,20 +3948,13 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             )
 
         terminal_attempts: dict[tuple[str, int], tuple[dict[str, Any], dict[str, Any]]] = {}
-        for event in events:
-            if event["phase"] != "PHASE_1" or event["kind"] != "RESULT":
+        for pair in attempt_records:
+            intent = pair["intent"]
+            result = pair["result"]
+            if result is None or intent["phase"] != "PHASE_1":
                 continue
-            coordinate = (event["job_id"], event["attempt"])
-            attempt_root = (
-                material["job_root"]
-                / event["phase"]
-                / event["job_id"]
-                / str(event["attempt"])
-            )
-            terminal_attempts[coordinate] = (
-                read_canonical_json(attempt_root / "intent.json"),
-                read_canonical_json(attempt_root / "result.json"),
-            )
+            coordinate = (intent["job_id"], intent["attempt"])
+            terminal_attempts[coordinate] = (intent, result)
         traces_by_behavior: dict[str, dict[str, Any]] = {}
         for trace in subject["profiling_traces"]:
             if trace["behavior_id"] in traces_by_behavior:

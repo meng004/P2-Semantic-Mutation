@@ -1709,6 +1709,42 @@ def _validated_snapshot_map(
     return raw
 
 
+def _consume_verified_registry(
+    registry: Mapping[str, Any], *, registry_kind: str
+) -> dict[str, Any]:
+    """Project a verified registry to revalidated in-memory implementation bytes."""
+
+    if not isinstance(registry, Mapping):
+        raise EvidenceError("E_ADAPTER_REGISTRY", "verified registry is absent")
+    if registry_kind == "adapter":
+        public_keys = ("schema_version", "adapters", "artifact_sha256")
+        validated = _validate_adapter_registry_structure(
+            {key: registry.get(key) for key in public_keys}
+        )
+        entries = validated["adapters"]
+        id_field = "adapter_id"
+        code = "E_ADAPTER_REGISTRY"
+    elif registry_kind == "input_generator":
+        public_keys = ("schema_version", "generators", "artifact_sha256")
+        validated = _validate_input_generator_registry_structure(
+            {key: registry.get(key) for key in public_keys}
+        )
+        entries = validated["generators"]
+        id_field = "generator_id"
+        code = "E_GENERATOR_REGISTRY"
+    else:
+        raise EvidenceError(
+            "E_GENERATOR_REGISTRY", "verified registry kind is unsupported"
+        )
+    snapshots = _validated_snapshot_map(registry, entries, id_field, code)
+    return {
+        **validated,
+        "_implementation_snapshots": {
+            entry[id_field]: snapshots[entry[id_field]] for entry in entries
+        },
+    }
+
+
 def validate_adapter_registry(
     registry: Mapping[str, Any], implementation_source: SourceSnapshot
 ) -> dict[str, Any]:
@@ -3754,8 +3790,12 @@ def rebuild_indexed_subject(
             _INDEXED_SUBJECT_REBUILD_SCHEMA,
             "subject_index",
         )
-        adapter_registry = indexed["adapter_registry"]
-        generator_registry = indexed["input_generator_registry"]
+        adapter_registry = _consume_verified_registry(
+            indexed["adapter_registry"], registry_kind="adapter"
+        )
+        generator_registry = _consume_verified_registry(
+            indexed["input_generator_registry"], registry_kind="input_generator"
+        )
         rebuilt = derive_subject_material(
             {
                 "neutral_snapshot_id": bridge_record.get("neutral_snapshot_id"),

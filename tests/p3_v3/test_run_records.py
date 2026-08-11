@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+import p3_v3.artifacts as artifacts_module
 import p3_v3.run_records as run_records_module
 from p3_v3.artifacts import EvidenceError, canonical_json_bytes, canonical_sha256
 from p3_v3.run_records import (
@@ -345,8 +346,8 @@ def test_execution_relabel_cannot_override_locked_execution_class(tmp_path):
         run_records_module.verify_locked_execution([relabelled], jobs, ledger)
 
 
-def test_locked_execution_uses_one_attempt_snapshot_under_result_ledger_race(
-    tmp_path, monkeypatch
+def test_locked_execution_snapshot_survives_post_verification_result_and_ledger_swap(
+    tmp_path,
 ):
     intent = _intent(
         job_id="4" * 64,
@@ -355,64 +356,80 @@ def test_locked_execution_uses_one_attempt_snapshot_under_result_ledger_race(
         object_type="P12_FAULT",
         object_id="fault-race",
     )
-    jobs, ledger = _locked_attempt_tree(tmp_path, [(intent, None)])
-    result = _result(
+    first_result = _result(
         job_id=intent["job_id"], scientific_outcome="MR_SATISFIED"
     )
-    result_path = jobs / "PHASE_7" / intent["job_id"] / "1/result.json"
-    original_exists = Path.exists
-    original_read_bytes = Path.read_bytes
-    state = {"result_exists_calls": 0, "mutated": False}
-
-    def publish_terminal_result_and_ledger():
-        if state["mutated"]:
-            return
-        state["mutated"] = True
-        write_result(result_path.parent, result)
-        intent_event = run_records_module._event(
-            1, "INTENT", intent, None, phase=intent["phase"]
-        )
-        result_event = run_records_module._event(
-            2,
-            "RESULT",
-            result,
-            intent_event["event_sha256"],
-            phase=intent["phase"],
-        )
-        ledger.write_bytes(
-            canonical_json_bytes(intent_event) + canonical_json_bytes(result_event)
-        )
-
-    def racing_exists(path):
-        observed = original_exists(path)
-        if path == result_path:
-            state["result_exists_calls"] += 1
-            if state["result_exists_calls"] == 2:
-                publish_terminal_result_and_ledger()
-        return observed
-
-    def racing_read_bytes(path):
-        if path == ledger and not state["mutated"]:
-            publish_terminal_result_and_ledger()
-        return original_read_bytes(path)
-
-    monkeypatch.setattr(Path, "exists", racing_exists)
-    monkeypatch.setattr(Path, "read_bytes", racing_read_bytes)
+    jobs, ledger = _locked_attempt_tree(tmp_path, [(intent, first_result)])
     locked = _locked_job(
         intent,
         execution_class="REAL_SCIENTIFIC",
         p12_access_class="REQUIRED",
     )
 
-    try:
-        completion = run_records_module.verify_locked_execution(
-            [locked], jobs, ledger
-        )
-    except EvidenceError as exc:
-        assert "E_AUTHORITY_INTENT" in str(exc)
-    else:
-        assert completion["recorded_real_scientific_terminal_count"] == 1
-    assert state["mutated"]
+    snapshot = run_records_module._verify_locked_execution_snapshot(
+        [locked], jobs, ledger.read_bytes()
+    )
+
+    result = _result(
+        job_id=intent["job_id"], scientific_outcome="MR_VIOLATION"
+    )
+    result_path = jobs / "PHASE_7" / intent["job_id"] / "1/result.json"
+    result_path.write_bytes(canonical_json_bytes(result))
+    intent_event = run_records_module._event(
+        1, "INTENT", intent, None, phase=intent["phase"]
+    )
+    result_event = run_records_module._event(
+        2,
+        "RESULT",
+        result,
+        intent_event["event_sha256"],
+        phase=intent["phase"],
+    )
+    ledger.write_bytes(canonical_json_bytes(intent_event) + canonical_json_bytes(result_event))
+
+    assert snapshot.records[0].result["scientific_outcome"] == "MR_SATISFIED"
+    assert snapshot.events[-1]["status"] == "PASS"
+    assert snapshot.ledger_event_count == 2
+    assert snapshot.terminal_result_count == 1
+    assert snapshot.completion_counts() == {
+        "authorized_real_p12_job_count": 1,
+        "recorded_real_scientific_terminal_count": 1,
+    }
+
+
+def test_locked_execution_safe_reads_each_attempt_file_and_ledger_once(
+    tmp_path, monkeypatch
+):
+    intent = _intent(job_id="5" * 64, phase="PHASE_2")
+    jobs, ledger = _locked_attempt_tree(
+        tmp_path, [(intent, _result(job_id=intent["job_id"]))]
+    )
+    reads: dict[Path, int] = {}
+
+    def counting_safe_read(path, context):
+        resolved = Path(path)
+        reads[resolved] = reads.get(resolved, 0) + 1
+        return artifacts_module.read_canonical_regular_bytes(resolved, context)
+
+    monkeypatch.setattr(
+        run_records_module,
+        "read_canonical_regular_bytes",
+        counting_safe_read,
+        raising=False,
+    )
+
+    assert run_records_module.verify_locked_execution(
+        [_locked_job(intent)], jobs, ledger
+    ) == {
+        "authorized_real_p12_job_count": 0,
+        "recorded_real_scientific_terminal_count": 0,
+    }
+    attempt = jobs / "PHASE_2" / intent["job_id"] / "1"
+    assert reads == {
+        attempt / "intent.json": 1,
+        attempt / "result.json": 1,
+        ledger: 1,
+    }
 
 
 def test_profile_trace_result_requires_dedicated_role_type_digest_and_identity(tmp_path):
