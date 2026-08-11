@@ -54,6 +54,7 @@ from p3_v3.packages import (  # noqa: E402
 from p3_v3.preflight import run_preflight  # noqa: E402
 from p3_v3.run_records import (  # noqa: E402
     close_phase,
+    intent_template_sha256,
     recompute_p12_summary,
     validate_claim_ledger,
     verify_attempt_tree,
@@ -153,6 +154,89 @@ _EXECUTION_CLASSES = frozenset(
     {"SYNTHETIC_INFRASTRUCTURE", "NON_SCIENTIFIC_CONTROL", "REAL_SCIENTIFIC"}
 )
 _P12_ACCESS_CLASSES = frozenset({"FORBIDDEN", "PERMITTED", "REQUIRED"})
+_PREPARED_OBJECT_SOURCES = frozenset(
+    {"SUBJECT", "SUBJECT_BEHAVIOR", "SUBJECT_COMMON_INPUT", "SYNTHETIC_P12_CASE"}
+)
+_PREPARED_FORBIDDEN_FIELDS = frozenset(
+    {
+        "base_intents",
+        "jobs",
+        "intent",
+        "result",
+        "completion",
+        "execution_scope",
+        "execution_class",
+        "p12_access_class",
+        "classes",
+        "completed_intent",
+    }
+)
+_PREPARED_AUTHORITY_FIELDS = frozenset(
+    {
+        "controller_repository",
+        "controller_manifest",
+        "subjects",
+        "governing_materials",
+        "governing_artifacts",
+        "protocol",
+        "protocol_artifacts",
+        "registries",
+        "registry_artifacts",
+        "preflight",
+        "claim_policy",
+        "objects",
+        "environments",
+        "job_derivation_policy",
+    }
+)
+_PREPARED_OBJECT_SCHEMA = {
+    "object_source": str,
+    "inventory_id": str,
+    "subject_id": str,
+    "object_type": str,
+    "object_id": str,
+    "mr_id": str,
+    "evaluation_input_class": str,
+    "evaluation_input_id": str,
+    "inputs": list,
+}
+_PREPARED_INPUT_SCHEMA = {"role": str, "sha256": str}
+_PREPARED_ENVIRONMENT_SCHEMA = {
+    "environment_role": str,
+    "environment_id": str,
+    "environment_sha256": str,
+}
+_JOB_DERIVATION_POLICY_SCHEMA = {
+    "schema_version": str,
+    "maximum_attempts": int,
+    "retry_trigger": str,
+    "templates": list,
+}
+_JOB_DERIVATION_TEMPLATE_SCHEMA = {
+    "template_id": str,
+    "phase": str,
+    "job_role": str,
+    "object_source": str,
+    "argv_template": list,
+    "cwd_role": str,
+    "environment_role": str,
+    "input_roles": list,
+    "seed_rule": str,
+    "timeout_seconds": int,
+    "repetition_ids": list,
+    "execution_class": str,
+    "p12_access_class": str,
+}
+_ARGV_PLACEHOLDERS = frozenset(
+    {
+        "${protocol_sha256}",
+        "${subject_id}",
+        "${object_id}",
+        "${evaluation_input_id}",
+        "${environment_id}",
+        "${repetition_id}",
+    }
+)
 _CONTROLLER_ROLE_ROOTS = (
     "src/p3_v3",
     "scripts/p3_v3",
@@ -603,6 +687,326 @@ def load_authority_lock(lock_path: Path, expected_sha256: str) -> dict[str, Any]
             "E_AUTHORITY_LOCK_SCHEMA", "authority lock is noncanonical"
         )
     return validate_authority_lock(value)
+
+
+def _authority_intent_failure(detail: str) -> None:
+    raise EvidenceError("E_AUTHORITY_INTENT", detail)
+
+
+def _validate_derivation_inputs(
+    prepared_authority: Mapping[str, Any],
+    job_derivation_policy: Mapping[str, Any],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+    if not isinstance(prepared_authority, Mapping):
+        raise EvidenceError("E_AUTHORITY_INPUTS", "prepared authority must be an object")
+    forbidden = _PREPARED_FORBIDDEN_FIELDS.intersection(prepared_authority)
+    unexpected = set(prepared_authority).difference(_PREPARED_AUTHORITY_FIELDS)
+    if forbidden or unexpected:
+        raise EvidenceError(
+            "E_AUTHORITY_INPUTS",
+            "caller-supplied execution authority is forbidden",
+        )
+    protocol = prepared_authority.get("protocol")
+    objects_value = prepared_authority.get("objects")
+    environments_value = prepared_authority.get("environments")
+    if (
+        not isinstance(protocol, Mapping)
+        or not isinstance(objects_value, list)
+        or not isinstance(environments_value, list)
+    ):
+        _authority_intent_failure("prepared authority inventories are unavailable")
+    try:
+        protocol_sha256 = protocol["protocol_sha256"]
+        policy_sha256 = protocol["job_derivation_policy_sha256"]
+        validate_sha256(protocol_sha256, "prepared protocol.protocol_sha256")
+        validate_sha256(
+            policy_sha256, "prepared protocol.job_derivation_policy_sha256"
+        )
+    except (KeyError, EvidenceError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_INTENT", "prepared protocol authority differs"
+        ) from exc
+    if not isinstance(job_derivation_policy, Mapping):
+        _authority_intent_failure("job derivation policy must be an object")
+    try:
+        policy = validate_exact_object(
+            dict(job_derivation_policy),
+            _JOB_DERIVATION_POLICY_SCHEMA,
+            "job_derivation_policy",
+        )
+    except (TypeError, ValueError, EvidenceError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_INTENT", "job derivation policy schema differs"
+        ) from exc
+    if canonical_sha256(policy) != policy_sha256:
+        _authority_intent_failure("job derivation policy bytes differ from protocol")
+    if (
+        policy["schema_version"] != "P3_V3_JOB_DERIVATION_POLICY_V1"
+        or policy["maximum_attempts"] != 3
+        or policy["retry_trigger"] != "FAIL_INFRASTRUCTURE"
+        or not policy["templates"]
+    ):
+        _authority_intent_failure("job derivation policy contract differs")
+
+    objects: list[dict[str, Any]] = []
+    for index, candidate in enumerate(objects_value):
+        try:
+            item = validate_exact_object(
+                candidate, _PREPARED_OBJECT_SCHEMA, f"prepared objects[{index}]"
+            )
+        except (TypeError, ValueError, EvidenceError) as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_INTENT", "prepared object inventory differs"
+            ) from exc
+        if (
+            item["object_source"] not in _PREPARED_OBJECT_SOURCES
+            or not all(
+                item[field]
+                for field in (
+                    "inventory_id",
+                    "object_type",
+                    "object_id",
+                    "mr_id",
+                    "evaluation_input_class",
+                    "evaluation_input_id",
+                )
+            )
+            or not item["inputs"]
+        ):
+            _authority_intent_failure("prepared object inventory is invalid")
+        inputs = []
+        for input_index, candidate_input in enumerate(item["inputs"]):
+            try:
+                prepared_input = validate_exact_object(
+                    candidate_input,
+                    _PREPARED_INPUT_SCHEMA,
+                    f"prepared objects[{index}].inputs[{input_index}]",
+                )
+                validate_sha256(
+                    prepared_input["sha256"],
+                    f"prepared objects[{index}].inputs[{input_index}].sha256",
+                )
+            except (TypeError, ValueError, EvidenceError) as exc:
+                raise EvidenceError(
+                    "E_AUTHORITY_INTENT", "prepared object input differs"
+                ) from exc
+            if not prepared_input["role"]:
+                _authority_intent_failure("prepared object input role is empty")
+            inputs.append(prepared_input)
+        roles = [item["role"] for item in inputs]
+        if roles != sorted(roles) or len(roles) != len(set(roles)):
+            _authority_intent_failure("prepared object inputs are not sorted and unique")
+        objects.append({**item, "inputs": inputs})
+    object_keys = [(item["object_source"], item["inventory_id"]) for item in objects]
+    if (
+        not objects
+        or object_keys != sorted(object_keys)
+        or len(object_keys) != len(set(object_keys))
+    ):
+        _authority_intent_failure("prepared objects are not sorted and unique")
+
+    environments: list[dict[str, Any]] = []
+    for index, candidate in enumerate(environments_value):
+        try:
+            environment = validate_exact_object(
+                candidate,
+                _PREPARED_ENVIRONMENT_SCHEMA,
+                f"prepared environments[{index}]",
+            )
+            validate_sha256(
+                environment["environment_sha256"],
+                f"prepared environments[{index}].environment_sha256",
+            )
+        except (TypeError, ValueError, EvidenceError) as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_INTENT", "prepared environment inventory differs"
+            ) from exc
+        if not environment["environment_role"] or not environment["environment_id"]:
+            _authority_intent_failure("prepared environment identity is empty")
+        environments.append(environment)
+    environment_roles = [item["environment_role"] for item in environments]
+    if (
+        not environments
+        or environment_roles != sorted(environment_roles)
+        or len(environment_roles) != len(set(environment_roles))
+    ):
+        _authority_intent_failure("prepared environments are not sorted and unique")
+    return objects, environments, policy
+
+
+def _expand_base_intents(
+    prepared_authority: Mapping[str, Any],
+    job_derivation_policy: Mapping[str, Any],
+) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    objects, environments, policy = _validate_derivation_inputs(
+        prepared_authority, job_derivation_policy
+    )
+    protocol_sha256 = prepared_authority["protocol"]["protocol_sha256"]
+    environment_by_role = {
+        item["environment_role"]: item for item in environments
+    }
+    templates: list[dict[str, Any]] = []
+    for index, candidate in enumerate(policy["templates"]):
+        try:
+            template = validate_exact_object(
+                candidate,
+                _JOB_DERIVATION_TEMPLATE_SCHEMA,
+                f"job_derivation_policy.templates[{index}]",
+            )
+        except (TypeError, ValueError, EvidenceError) as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_INTENT", "job derivation template schema differs"
+            ) from exc
+        if (
+            not template["template_id"]
+            or template["phase"] not in {f"PHASE_{number}" for number in range(8)}
+            or template["object_source"] not in _PREPARED_OBJECT_SOURCES
+            or template["cwd_role"] not in {"CONTROLLER_ROOT", "SUBJECT_ROOT"}
+            or template["seed_rule"] not in {"NONE", "REPETITION_ID"}
+            or template["execution_class"] not in _EXECUTION_CLASSES
+            or template["p12_access_class"] not in _P12_ACCESS_CLASSES
+            or type(template["timeout_seconds"]) is bool
+            or template["timeout_seconds"] < 1
+        ):
+            _authority_intent_failure("job derivation template value is invalid")
+        argv = template["argv_template"]
+        if (
+            not argv
+            or any(
+                type(token) is not str
+                or not token
+                or ("$" in token and token not in _ARGV_PLACEHOLDERS)
+                for token in argv
+            )
+        ):
+            _authority_intent_failure("argv template contains an unsafe token")
+        input_roles = template["input_roles"]
+        repetitions = template["repetition_ids"]
+        if (
+            not input_roles
+            or any(type(role) is not str or not role for role in input_roles)
+            or input_roles != sorted(input_roles)
+            or len(input_roles) != len(set(input_roles))
+            or not repetitions
+            or any(type(item) is not int or item < 1 for item in repetitions)
+            or repetitions != sorted(repetitions)
+            or len(repetitions) != len(set(repetitions))
+        ):
+            _authority_intent_failure("template expansion dimensions are invalid")
+        templates.append(template)
+    template_ids = [item["template_id"] for item in templates]
+    if template_ids != sorted(template_ids) or len(template_ids) != len(set(template_ids)):
+        _authority_intent_failure("job derivation templates are not sorted and unique")
+
+    expanded: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    for template in templates:
+        selected = [
+            item
+            for item in objects
+            if item["object_source"] == template["object_source"]
+        ]
+        environment = environment_by_role.get(template["environment_role"])
+        if not selected or environment is None:
+            _authority_intent_failure("template names an unavailable inventory role")
+        for item in selected:
+            input_by_role = {value["role"]: value["sha256"] for value in item["inputs"]}
+            try:
+                input_sha256 = sorted(input_by_role[role] for role in template["input_roles"])
+            except KeyError as exc:
+                raise EvidenceError(
+                    "E_AUTHORITY_INTENT", "template names an unavailable input role"
+                ) from exc
+            if template["cwd_role"] == "SUBJECT_ROOT" and not item["subject_id"]:
+                _authority_intent_failure("subject cwd role has no subject identity")
+            cwd_identity = (
+                "controller"
+                if template["cwd_role"] == "CONTROLLER_ROOT"
+                else f'subject:{item["subject_id"]}'
+            )
+            for repetition_id in template["repetition_ids"]:
+                substitutions = {
+                    "${protocol_sha256}": protocol_sha256,
+                    "${subject_id}": item["subject_id"],
+                    "${object_id}": item["object_id"],
+                    "${evaluation_input_id}": item["evaluation_input_id"],
+                    "${environment_id}": environment["environment_id"],
+                    "${repetition_id}": str(repetition_id),
+                }
+                intent = {
+                    "job_id": canonical_sha256(
+                        {
+                            "template_id": template["template_id"],
+                            "object_source": item["object_source"],
+                            "inventory_id": item["inventory_id"],
+                            "repetition_id": repetition_id,
+                        }
+                    ),
+                    "protocol_sha256": protocol_sha256,
+                    "phase": template["phase"],
+                    "argv": [substitutions.get(token, token) for token in template["argv_template"]],
+                    "cwd_identity": cwd_identity,
+                    "environment_sha256": environment["environment_sha256"],
+                    "input_sha256": input_sha256,
+                    "seed": repetition_id if template["seed_rule"] == "REPETITION_ID" else None,
+                    "timeout_seconds": template["timeout_seconds"],
+                    "attempt": 1,
+                    "object_type": item["object_type"],
+                    "object_id": item["object_id"],
+                    "mr_id": item["mr_id"],
+                    "evaluation_input_class": item["evaluation_input_class"],
+                    "evaluation_input_id": item["evaluation_input_id"],
+                    "repetition_id": repetition_id,
+                    "environment_id": environment["environment_id"],
+                    "job_role": template["job_role"],
+                }
+                try:
+                    intent_template_sha256(intent)
+                except EvidenceError as exc:
+                    raise EvidenceError(
+                        "E_AUTHORITY_INTENT", "derived intent is invalid"
+                    ) from exc
+                expanded.append((intent, template))
+    expanded.sort(key=lambda pair: pair[0]["job_id"])
+    job_ids = [pair[0]["job_id"] for pair in expanded]
+    if len(job_ids) != len(set(job_ids)):
+        _authority_intent_failure("job derivation produced duplicate expansions")
+    return expanded
+
+
+def derive_base_intents(
+    prepared_authority: Mapping[str, Any],
+    job_derivation_policy: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Mechanically expand base intents from byte-bound prepared inventories."""
+
+    return [intent for intent, _template in _expand_base_intents(
+        prepared_authority, job_derivation_policy
+    )]
+
+
+def derive_locked_jobs(
+    prepared_authority: Mapping[str, Any],
+    job_derivation_policy: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Derive the exact external job-authority rows from frozen templates."""
+
+    expanded = _expand_base_intents(prepared_authority, job_derivation_policy)
+    policy = dict(job_derivation_policy)
+    return [
+        {
+            "job_id": intent["job_id"],
+            "phase": intent["phase"],
+            "job_role": intent["job_role"],
+            "object_identity": f'{intent["object_type"]}:{intent["object_id"]}',
+            "input_identity_sha256": canonical_sha256(intent["input_sha256"]),
+            "intent_template_sha256": intent_template_sha256(intent),
+            "maximum_attempts": policy["maximum_attempts"],
+            "retry_trigger": policy["retry_trigger"],
+            "execution_class": template["execution_class"],
+            "p12_access_class": template["p12_access_class"],
+        }
+        for intent, template in expanded
+    ]
 
 
 def _write(payload: dict) -> None:

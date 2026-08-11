@@ -46,7 +46,14 @@ def _intent(
     job_id="job-1",
     attempt=1,
     *,
+    protocol_sha256="a" * 64,
     phase="PHASE-2",
+    argv=None,
+    cwd_identity="fixture-root",
+    environment_sha256="b" * 64,
+    input_sha256=None,
+    seed=None,
+    timeout_seconds=30,
     job_role="PRIMARY_CONTROLLED",
     evaluation_input_class="E_COMMON",
     object_type="SEMANTIC_MUTANT",
@@ -58,14 +65,14 @@ def _intent(
 ):
     return {
         "job_id": job_id,
-        "protocol_sha256": "a" * 64,
+        "protocol_sha256": protocol_sha256,
         "phase": phase,
-        "argv": ["python3", "-c", "print(1)"],
-        "cwd_identity": "fixture-root",
-        "environment_sha256": "b" * 64,
-        "input_sha256": ["c" * 64],
-        "seed": None,
-        "timeout_seconds": 30,
+        "argv": ["python3", "-c", "print(1)"] if argv is None else argv,
+        "cwd_identity": cwd_identity,
+        "environment_sha256": environment_sha256,
+        "input_sha256": ["c" * 64] if input_sha256 is None else input_sha256,
+        "seed": seed,
+        "timeout_seconds": timeout_seconds,
         "attempt": attempt,
         "object_type": object_type,
         "object_id": object_id,
@@ -100,6 +107,241 @@ def _result(
         "call_trace_sha256": call_trace_sha256,
         "call_trace_identity": call_trace_identity,
     }
+
+
+def _locked_job(intent=None, **overrides):
+    intent = _intent(job_id="1" * 64, phase="PHASE_2") if intent is None else intent
+    row = {
+        "job_id": intent["job_id"],
+        "phase": intent["phase"],
+        "job_role": intent["job_role"],
+        "object_identity": f'{intent["object_type"]}:{intent["object_id"]}',
+        "input_identity_sha256": canonical_sha256(intent["input_sha256"]),
+        "intent_template_sha256": run_records_module.intent_template_sha256(intent),
+        "maximum_attempts": 3,
+        "retry_trigger": "FAIL_INFRASTRUCTURE",
+        "execution_class": "NON_SCIENTIFIC_CONTROL",
+        "p12_access_class": "FORBIDDEN",
+    }
+    return {**row, **overrides}
+
+
+def _locked_attempt_tree(tmp_path, intents_and_results):
+    jobs = tmp_path / "jobs"
+    for intent, result in intents_and_results:
+        directory = jobs / intent["phase"] / intent["job_id"] / str(intent["attempt"])
+        create_intent(directory, intent)
+        if result is not None:
+            write_result(directory, result)
+    events = run_records_module.reconstruct_attempt_events(jobs)
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(b"".join(canonical_json_bytes(event) for event in events))
+    return jobs, ledger
+
+
+def test_intent_template_removes_only_attempt():
+    first = _intent(attempt=1, seed=7)
+    retry = dict(first, attempt=2)
+
+    assert run_records_module.intent_template_sha256(
+        first
+    ) == run_records_module.intent_template_sha256(retry)
+    assert run_records_module.intent_template_sha256(
+        first
+    ) != run_records_module.intent_template_sha256(
+        dict(first, seed=first["seed"] + 1)
+    )
+
+
+_AUTHORITY_INTENT_MUTATIONS = {
+    "job_id": "0" * 64,
+    "protocol_sha256": "0" * 64,
+    "phase": "PHASE_3",
+    "argv": ["python3", "-c", "print(2)"],
+    "cwd_identity": "other-root",
+    "environment_sha256": "1" * 64,
+    "input_sha256": ["2" * 64],
+    "seed": 11,
+    "timeout_seconds": 31,
+    "object_type": "OTHER_OBJECT",
+    "object_id": "mut-2",
+    "mr_id": "mr-2",
+    "evaluation_input_class": "E_CONTRACT",
+    "evaluation_input_id": "e-common-1",
+    "repetition_id": 2,
+    "environment_id": "env-2",
+    "job_role": "CONTRACT_SENSITIVITY",
+}
+
+
+@pytest.mark.parametrize("field", sorted(_AUTHORITY_INTENT_MUTATIONS))
+def test_authority_intent_rejects_every_nonattempt_field_mutation(tmp_path, field):
+    authorized = _intent(job_id="1" * 64, phase="PHASE_2")
+    jobs, ledger = _locked_attempt_tree(
+        tmp_path,
+        [(authorized, _result(job_id=authorized["job_id"]))],
+    )
+    changed = {**authorized, field: _AUTHORITY_INTENT_MUTATIONS[field]}
+    attempt_directory = jobs / "PHASE_2" / authorized["job_id"] / "1"
+    if field == "job_id":
+        destination = jobs / "PHASE_2" / changed["job_id"] / "1"
+        destination.parent.mkdir(parents=True)
+        attempt_directory.rename(destination)
+        attempt_directory.parent.rmdir()
+        attempt_directory = destination
+    elif field == "phase":
+        destination = jobs / changed["phase"] / authorized["job_id"] / "1"
+        destination.parent.mkdir(parents=True)
+        attempt_directory.rename(destination)
+        attempt_directory.parent.rmdir()
+        attempt_directory.parent.parent.rmdir()
+        attempt_directory = destination
+    intent_path = attempt_directory / "intent.json"
+    intent_path.write_bytes(canonical_json_bytes(changed))
+    result = _result(job_id=changed["job_id"])
+    (attempt_directory / "result.json").write_bytes(canonical_json_bytes(result))
+    intent_event = run_records_module._event(
+        1, "INTENT", changed, None, phase=changed["phase"]
+    )
+    result_event = run_records_module._event(
+        2,
+        "RESULT",
+        result,
+        intent_event["event_sha256"],
+        phase=changed["phase"],
+    )
+    ledger.write_bytes(
+        canonical_json_bytes(intent_event) + canonical_json_bytes(result_event)
+    )
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
+        run_records_module.verify_locked_execution(
+            [_locked_job(authorized)], jobs, ledger
+        )
+
+
+@pytest.mark.parametrize(
+    ("statuses", "attempt_numbers"),
+    [
+        (["PASS", "PASS"], [1, 2]),
+        (["FAIL_SCIENTIFIC", "PASS"], [1, 2]),
+        (["FAIL_INFRASTRUCTURE", "PASS"], [1, 3]),
+        (["FAIL_INFRASTRUCTURE"] * 4, [1, 2, 3, 4]),
+    ],
+)
+def test_locked_retry_rejects_unauthorized_transition_or_attempt_shape(
+    tmp_path, statuses, attempt_numbers
+):
+    jobs = tmp_path / "jobs"
+    job_id = "1" * 64
+    for attempt, status in zip(attempt_numbers, statuses, strict=True):
+        intent = _intent(job_id=job_id, attempt=attempt, phase="PHASE_2")
+        directory = jobs / "PHASE_2" / job_id / str(attempt)
+        create_intent(directory, intent)
+        write_result(
+            directory, _result(job_id=job_id, attempt=attempt, status=status)
+        )
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(b"")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
+        run_records_module.verify_locked_execution(
+            [_locked_job(_intent(job_id=job_id, phase="PHASE_2"))], jobs, ledger
+        )
+
+
+def test_locked_retry_allows_exact_maximum_attempts(tmp_path):
+    attempts = []
+    job_id = "1" * 64
+    for attempt in range(1, 4):
+        status = "FAIL_INFRASTRUCTURE" if attempt < 3 else "PASS"
+        attempts.append(
+            (
+                _intent(job_id=job_id, attempt=attempt, phase="PHASE_2"),
+                _result(job_id=job_id, attempt=attempt, status=status),
+            )
+        )
+    jobs, ledger = _locked_attempt_tree(tmp_path, attempts)
+
+    assert run_records_module.verify_locked_execution([_locked_job()], jobs, ledger) == {
+        "authorized_real_p12_job_count": 0,
+        "recorded_real_scientific_terminal_count": 0,
+    }
+
+
+@pytest.mark.parametrize("mutation", ["omit", "add", "duplicate"])
+def test_locked_job_set_rejects_omission_addition_or_duplication(tmp_path, mutation):
+    first = _intent(job_id="1" * 64, phase="PHASE_2")
+    second = _intent(job_id="2" * 64, phase="PHASE_2")
+    jobs, ledger = _locked_attempt_tree(
+        tmp_path,
+        [
+            (first, _result(job_id=first["job_id"])),
+            (second, _result(job_id=second["job_id"])),
+        ],
+    )
+    locked = [_locked_job(first), _locked_job(second)]
+    if mutation == "omit":
+        locked = locked[:1]
+    elif mutation == "add":
+        locked.append(_locked_job(_intent(job_id="3" * 64, phase="PHASE_2")))
+        locked.sort(key=lambda row: row["job_id"])
+    else:
+        locked.append(copy.deepcopy(locked[-1]))
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_JOB_SET"):
+        run_records_module.verify_locked_execution(locked, jobs, ledger)
+
+
+def test_observational_completion_uses_locked_classes_and_terminal_pairs(tmp_path):
+    intent = _intent(
+        job_id="3" * 64,
+        phase="PHASE_7",
+        job_role="P12",
+        object_type="P12_FAULT",
+        object_id="fault-1",
+    )
+    jobs, ledger = _locked_attempt_tree(
+        tmp_path,
+        [
+            (
+                intent,
+                _result(
+                    job_id=intent["job_id"],
+                    scientific_outcome="MR_SATISFIED",
+                ),
+            )
+        ],
+    )
+    locked = _locked_job(
+        intent,
+        execution_class="REAL_SCIENTIFIC",
+        p12_access_class="REQUIRED",
+    )
+
+    assert run_records_module.reconstruct_attempt_records(jobs) == [
+        {
+            "intent": intent,
+            "result": _result(
+                job_id=intent["job_id"], scientific_outcome="MR_SATISFIED"
+            ),
+        }
+    ]
+    assert run_records_module.verify_locked_execution([locked], jobs, ledger) == {
+        "authorized_real_p12_job_count": 1,
+        "recorded_real_scientific_terminal_count": 1,
+    }
+
+
+def test_execution_relabel_cannot_override_locked_execution_class(tmp_path):
+    intent = _intent(job_id="1" * 64, phase="PHASE_2")
+    jobs, ledger = _locked_attempt_tree(
+        tmp_path, [(intent, _result(job_id=intent["job_id"]))]
+    )
+    relabelled = _locked_job(intent, execution_class="RELABELED")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_EXECUTION_CLASS"):
+        run_records_module.verify_locked_execution([relabelled], jobs, ledger)
 
 
 def test_profile_trace_result_requires_dedicated_role_type_digest_and_identity(tmp_path):

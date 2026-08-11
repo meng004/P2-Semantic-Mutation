@@ -123,6 +123,22 @@ _DENOMINATOR_SCHEMA = {
     "artifact_sha256": str,
 }
 _TERMINAL_P12_SCHEMA = {"intent": dict, "result": dict}
+_LOCKED_JOB_SCHEMA = {
+    "job_id": str,
+    "phase": str,
+    "job_role": str,
+    "object_identity": str,
+    "input_identity_sha256": str,
+    "intent_template_sha256": str,
+    "maximum_attempts": int,
+    "retry_trigger": str,
+    "execution_class": str,
+    "p12_access_class": str,
+}
+_EXECUTION_CLASSES = frozenset(
+    {"SYNTHETIC_INFRASTRUCTURE", "NON_SCIENTIFIC_CONTROL", "REAL_SCIENTIFIC"}
+)
+_P12_ACCESS_CLASSES = frozenset({"FORBIDDEN", "PERMITTED", "REQUIRED"})
 _CLAIM_SCHEMA = {
     "claim_id": str,
     "rqs": list,
@@ -207,6 +223,12 @@ def retry_invariant(intent: Mapping[str, Any]) -> dict[str, Any]:
 
     value = _validate_intent(intent)
     return {key: item for key, item in value.items() if key != "attempt"}
+
+
+def intent_template_sha256(intent: Mapping[str, Any]) -> str:
+    """Hash every validated production-intent field except the attempt number."""
+
+    return canonical_sha256(retry_invariant(intent))
 
 
 def _validate_result(
@@ -447,7 +469,7 @@ def reduce_attempts(
 
 def _require_directory(path: Path, context: str) -> list[Path]:
     try:
-        info = path.lstat()
+        path.lstat()
     except FileNotFoundError as exc:
         raise EvidenceError("E_ATTEMPT_TREE", f"missing {context}: {path}") from exc
     if path.is_symlink() or not path.is_dir():
@@ -581,6 +603,32 @@ def reconstruct_attempt_events(job_root: Path) -> list[dict[str, Any]]:
     return events
 
 
+def reconstruct_attempt_records(job_root: Path) -> list[dict[str, Any]]:
+    """Return the exact validated intent/result records behind ledger events."""
+
+    root = Path(job_root)
+    reconstruct_attempt_events(root)
+    records: list[dict[str, Any]] = []
+    for phase_directory in sorted(
+        root.iterdir(), key=lambda path: _PHASE_IDS.index(path.name)
+    ):
+        for job_directory in sorted(phase_directory.iterdir(), key=lambda path: path.name):
+            for attempt_directory in sorted(
+                job_directory.iterdir(), key=lambda path: int(path.name)
+            ):
+                intent = _validate_intent(
+                    read_canonical_json(attempt_directory / "intent.json")
+                )
+                result_path = attempt_directory / "result.json"
+                result = (
+                    _validate_result(read_canonical_json(result_path), intent)
+                    if result_path.exists()
+                    else None
+                )
+                records.append({"intent": intent, "result": result})
+    return records
+
+
 def verify_attempt_tree(
     job_root: str | Path, ledger: str | Path
 ) -> list[dict[str, Any]]:
@@ -599,6 +647,129 @@ def verify_attempt_tree(
             "ledger events differ from reconstructed attempts",
         )
     return events
+
+
+def _validate_locked_jobs(
+    locked_jobs: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    if isinstance(locked_jobs, (str, bytes)) or not isinstance(locked_jobs, Sequence):
+        raise EvidenceError("E_AUTHORITY_JOB_SET", "locked jobs must be a sequence")
+    jobs: list[dict[str, Any]] = []
+    for index, candidate in enumerate(locked_jobs):
+        try:
+            job = validate_exact_object(
+                dict(candidate), _LOCKED_JOB_SCHEMA, f"locked_jobs[{index}]"
+            )
+        except (TypeError, ValueError, EvidenceError) as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_JOB_SET", "locked job schema differs"
+            ) from exc
+        if (
+            job["execution_class"] not in _EXECUTION_CLASSES
+            or job["p12_access_class"] not in _P12_ACCESS_CLASSES
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_EXECUTION_CLASS",
+                "locked execution or P12-access class is invalid",
+            )
+        try:
+            for field in (
+                "job_id",
+                "input_identity_sha256",
+                "intent_template_sha256",
+            ):
+                validate_sha256(job[field], f"locked_jobs[{index}].{field}")
+        except EvidenceError as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_JOB_SET", "locked job digest differs"
+            ) from exc
+        if (
+            not job["phase"]
+            or not job["job_role"]
+            or not job["object_identity"]
+            or job["maximum_attempts"] != INFRASTRUCTURE_RETRY_LIMIT
+            or job["retry_trigger"] != "FAIL_INFRASTRUCTURE"
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_INTENT", "locked retry or intent metadata differs"
+            )
+        jobs.append(job)
+    job_ids = [job["job_id"] for job in jobs]
+    template_ids = [job["intent_template_sha256"] for job in jobs]
+    if (
+        not jobs
+        or job_ids != sorted(job_ids)
+        or len(job_ids) != len(set(job_ids))
+        or len(template_ids) != len(set(template_ids))
+    ):
+        raise EvidenceError(
+            "E_AUTHORITY_JOB_SET", "locked jobs are not sorted and unique"
+        )
+    return jobs
+
+
+def verify_locked_execution(
+    locked_jobs: Sequence[Mapping[str, Any]],
+    job_root: Path,
+    ledger_path: Path,
+) -> dict[str, Any]:
+    """Match complete attempt records to externally locked base-job authority."""
+
+    jobs = _validate_locked_jobs(locked_jobs)
+    try:
+        records = reconstruct_attempt_records(Path(job_root))
+    except EvidenceError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_INTENT", "attempt tree differs from locked intent authority"
+        ) from exc
+    by_job = {job["job_id"]: job for job in jobs}
+    record_job_ids = sorted({record["intent"]["job_id"] for record in records})
+    if record_job_ids != list(by_job):
+        if len(record_job_ids) == len(by_job):
+            raise EvidenceError(
+                "E_AUTHORITY_INTENT", "recorded job identity differs from the lock"
+            )
+        raise EvidenceError(
+            "E_AUTHORITY_JOB_SET", "recorded base-job set differs from the lock"
+        )
+
+    latest: dict[str, dict[str, Any]] = {}
+    for record in records:
+        intent = record["intent"]
+        locked = by_job[intent["job_id"]]
+        expected = {
+            "phase": intent["phase"],
+            "job_role": intent["job_role"],
+            "object_identity": f'{intent["object_type"]}:{intent["object_id"]}',
+            "input_identity_sha256": canonical_sha256(intent["input_sha256"]),
+            "intent_template_sha256": intent_template_sha256(intent),
+        }
+        if any(locked[field] != value for field, value in expected.items()):
+            raise EvidenceError(
+                "E_AUTHORITY_INTENT", "recorded intent differs from locked authority"
+            )
+        if intent["attempt"] > locked["maximum_attempts"]:
+            raise EvidenceError(
+                "E_AUTHORITY_INTENT", "recorded attempt exceeds locked retry policy"
+            )
+        latest[intent["job_id"]] = record
+
+    try:
+        verify_attempt_tree(job_root, ledger_path)
+    except (OSError, EvidenceError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_INTENT", "ledger differs from complete attempt records"
+        ) from exc
+    return {
+        "authorized_real_p12_job_count": sum(
+            job["p12_access_class"] in {"PERMITTED", "REQUIRED"} for job in jobs
+        ),
+        "recorded_real_scientific_terminal_count": sum(
+            job["execution_class"] == "REAL_SCIENTIFIC"
+            and latest[job["job_id"]]["result"] is not None
+            for job in jobs
+        ),
+    }
 
 
 def verify_ledger(ledger_path: str | Path) -> list[dict[str, Any]]:

@@ -698,6 +698,189 @@ def test_load_authority_lock_normalizes_matching_digest_lone_surrogate(tmp_path)
         evidence_module.load_authority_lock(path, hashlib.sha256(raw).hexdigest())
 
 
+def _job_derivation_fixture():
+    policy = {
+        "schema_version": "P3_V3_JOB_DERIVATION_POLICY_V1",
+        "maximum_attempts": 3,
+        "retry_trigger": "FAIL_INFRASTRUCTURE",
+        "templates": [
+            {
+                "template_id": "controlled",
+                "phase": "PHASE_2",
+                "job_role": "PRIMARY_CONTROLLED",
+                "object_source": "SUBJECT",
+                "argv_template": [
+                    "runner",
+                    "${subject_id}",
+                    "${object_id}",
+                    "${evaluation_input_id}",
+                    "${environment_id}",
+                    "${repetition_id}",
+                    "${protocol_sha256}",
+                ],
+                "cwd_role": "SUBJECT_ROOT",
+                "environment_role": "CONTROLLED_ENV",
+                "input_roles": ["EVALUATION_INPUT"],
+                "seed_rule": "REPETITION_ID",
+                "timeout_seconds": 30,
+                "repetition_ids": [1],
+                "execution_class": "NON_SCIENTIFIC_CONTROL",
+                "p12_access_class": "FORBIDDEN",
+            }
+        ],
+    }
+    prepared = {
+        "protocol": {
+            "protocol_sha256": "a" * 64,
+            "job_derivation_policy_sha256": canonical_sha256(policy),
+        },
+        "objects": [
+            {
+                "object_source": "SUBJECT",
+                "inventory_id": "subject-a:mut-1:e-common-0",
+                "subject_id": "subject-a",
+                "object_type": "SEMANTIC_MUTANT",
+                "object_id": "mut-1",
+                "mr_id": "mr-1",
+                "evaluation_input_class": "E_COMMON",
+                "evaluation_input_id": "e-common-0",
+                "inputs": [{"role": "EVALUATION_INPUT", "sha256": "b" * 64}],
+            }
+        ],
+        "environments": [
+            {
+                "environment_role": "CONTROLLED_ENV",
+                "environment_id": "env-1",
+                "environment_sha256": "c" * 64,
+            }
+        ],
+    }
+    return prepared, policy
+
+
+def test_locked_job_derivation_expands_only_prepared_byte_bound_inventory():
+    prepared, policy = _job_derivation_fixture()
+    intents = evidence_module.derive_base_intents(prepared, policy)
+    expected_job_id = canonical_sha256(
+        {
+            "template_id": "controlled",
+            "object_source": "SUBJECT",
+            "inventory_id": "subject-a:mut-1:e-common-0",
+            "repetition_id": 1,
+        }
+    )
+    assert intents == [
+        {
+            "job_id": expected_job_id,
+            "protocol_sha256": "a" * 64,
+            "phase": "PHASE_2",
+            "argv": [
+                "runner",
+                "subject-a",
+                "mut-1",
+                "e-common-0",
+                "env-1",
+                "1",
+                "a" * 64,
+            ],
+            "cwd_identity": "subject:subject-a",
+            "environment_sha256": "c" * 64,
+            "input_sha256": ["b" * 64],
+            "seed": 1,
+            "timeout_seconds": 30,
+            "attempt": 1,
+            "object_type": "SEMANTIC_MUTANT",
+            "object_id": "mut-1",
+            "mr_id": "mr-1",
+            "evaluation_input_class": "E_COMMON",
+            "evaluation_input_id": "e-common-0",
+            "repetition_id": 1,
+            "environment_id": "env-1",
+            "job_role": "PRIMARY_CONTROLLED",
+        }
+    ]
+    intent = intents[0]
+    assert evidence_module.derive_locked_jobs(prepared, policy) == [
+        {
+            "job_id": expected_job_id,
+            "phase": "PHASE_2",
+            "job_role": "PRIMARY_CONTROLLED",
+            "object_identity": "SEMANTIC_MUTANT:mut-1",
+            "input_identity_sha256": canonical_sha256(["b" * 64]),
+            "intent_template_sha256": evidence_module.intent_template_sha256(
+                intent
+            ),
+            "maximum_attempts": 3,
+            "retry_trigger": "FAIL_INFRASTRUCTURE",
+            "execution_class": "NON_SCIENTIFIC_CONTROL",
+            "p12_access_class": "FORBIDDEN",
+        }
+    ]
+
+
+@pytest.mark.parametrize(
+    "caller_field",
+    [
+        "base_intents",
+        "jobs",
+        "intent",
+        "completed_intent",
+        "execution_class",
+        "p12_access_class",
+        "classes",
+    ],
+)
+def test_authority_inputs_reject_caller_supplied_execution_authority_before_inventory(
+    caller_field,
+):
+    prepared, policy = _job_derivation_fixture()
+    prepared["objects"] = [{"not": "an inventory"}]
+    prepared[caller_field] = (
+        [] if caller_field in {"base_intents", "jobs", "classes"} else {}
+    )
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INPUTS"):
+        evidence_module.derive_base_intents(prepared, policy)
+
+
+@pytest.mark.parametrize("source", ["subject", "protocol", "registry", "environment"])
+def test_locked_job_derivation_changes_when_prepared_authority_changes(source):
+    prepared, policy = _job_derivation_fixture()
+    original_intent = evidence_module.derive_base_intents(prepared, policy)[0]
+    original_job = evidence_module.derive_locked_jobs(prepared, policy)[0]
+    changed = copy.deepcopy(prepared)
+    if source == "subject":
+        changed["objects"][0]["object_id"] = "mut-2"
+    elif source == "protocol":
+        changed["protocol"]["protocol_sha256"] = "d" * 64
+    elif source == "registry":
+        changed["objects"][0]["inputs"][0]["sha256"] = "e" * 64
+    else:
+        changed["environments"][0]["environment_sha256"] = "f" * 64
+
+    changed_intent = evidence_module.derive_base_intents(changed, policy)[0]
+    changed_job = evidence_module.derive_locked_jobs(changed, policy)[0]
+    assert changed_intent != original_intent
+    assert changed_job != original_job
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("object_source", "UNAVAILABLE"),
+        ("input_roles", ["UNAVAILABLE"]),
+        ("environment_role", "UNAVAILABLE"),
+    ],
+)
+def test_locked_job_derivation_rejects_unavailable_prepared_role(field, value):
+    prepared, policy = _job_derivation_fixture()
+    policy["templates"][0][field] = value
+    prepared["protocol"]["job_derivation_policy_sha256"] = canonical_sha256(policy)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
+        evidence_module.derive_locked_jobs(prepared, policy)
+
+
 def test_load_authority_lock_accepts_matching_canonical_bytes(tmp_path):
     path = tmp_path / "authority-lock.json"
     raw = canonical_json_bytes(_authority_lock())
