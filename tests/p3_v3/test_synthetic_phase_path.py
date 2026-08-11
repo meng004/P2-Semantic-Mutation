@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -14,7 +15,12 @@ import pytest
 
 import p3_v3.bridge_and_frames as frames_module
 import scripts.p3_v3.evidence as evidence_module
-from p3_v3.artifacts import canonical_json_bytes, canonical_sha256, read_canonical_json
+from p3_v3.artifacts import (
+    EvidenceError,
+    canonical_json_bytes,
+    canonical_sha256,
+    read_canonical_json,
+)
 from p3_v3.bridge_and_frames import (
     APPLICABLE_SLOT_CHRONOLOGY,
     P12_OUTCOME_STATES,
@@ -72,6 +78,50 @@ def generate(domain: dict, seed: int):
     }}
 '''
 PHASES = [f"PHASE_{number}" for number in range(8)]
+EXPECTED_LOCKED_PHASE_HISTOGRAM = {
+    "PHASE_0": 2,
+    "PHASE_1": 2,
+    "PHASE_2": 5,
+    "PHASE_3": 5,
+    "PHASE_4": 5,
+    "PHASE_5": 5,
+    "PHASE_6": 5,
+    "PHASE_7": 5,
+}
+
+
+def _assert_required_phase_shape(
+    lock: dict,
+    base_intents: list[dict],
+    phase_coverage: list[str] | None = None,
+    attempt_phases: list[str] | None = None,
+    receipt_phases: list[str] | None = None,
+) -> None:
+    assert len(lock["jobs"]) == 34, "locked job count differs"
+    assert len(base_intents) == 34, "base intent count differs"
+    locked_histogram = {
+        phase: sum(job["phase"] == phase for job in lock["jobs"])
+        for phase in PHASES
+    }
+    intent_histogram = {
+        phase: sum(intent["phase"] == phase for intent in base_intents)
+        for phase in PHASES
+    }
+    assert locked_histogram == EXPECTED_LOCKED_PHASE_HISTOGRAM, (
+        "locked phase histogram differs"
+    )
+    assert intent_histogram == EXPECTED_LOCKED_PHASE_HISTOGRAM, (
+        "base intent phase histogram differs"
+    )
+    assert all(locked_histogram[phase] > 0 for phase in PHASES), (
+        "every required phase must be nonempty"
+    )
+    if phase_coverage is not None:
+        assert phase_coverage == PHASES, "index phase coverage differs"
+    if attempt_phases is not None:
+        assert attempt_phases == PHASES, "attempt phase coverage differs"
+    if receipt_phases is not None:
+        assert receipt_phases == PHASES, "receipt phase coverage differs"
 SOCKET_BLOCKED_CLI = """
 import runpy
 import socket
@@ -562,6 +612,7 @@ def _authority_fixture(tmp_path: Path) -> dict:
     prepared = evidence_module.prepare_authority(controller, inputs)
     base_intents = evidence_module.derive_base_intents(prepared, policy)
     assert lock["jobs"] == evidence_module.derive_locked_jobs(prepared, policy)
+    _assert_required_phase_shape(lock, base_intents)
     return {
         "controller": controller,
         "subjects": {
@@ -570,6 +621,7 @@ def _authority_fixture(tmp_path: Path) -> dict:
         },
         "inputs": inputs,
         "prepared": prepared,
+        "policy": policy,
         "base_intents": base_intents,
         "pre_materials": pre_materials,
         "bridge_records": bridge_records,
@@ -1518,6 +1570,13 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
     }
     index_path = evidence_root / "evidence-index.json"
     _write_evidence_index(index_path, index_body)
+    _assert_required_phase_shape(
+        authority["lock"],
+        authority["base_intents"],
+        index_body["phase_coverage"],
+        sorted(path.name for path in (evidence_root / "jobs").iterdir()),
+        [entry["phase"] for entry in index_body["phase_receipts"]],
+    )
     return {
         "root": evidence_root,
         "index_path": index_path,
@@ -1838,6 +1897,26 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
         _rewrite_index(index_path, index)
         return
     raise AssertionError(f"unknown mutation: {mutation}")
+
+
+def _reseal_indexed_rq_markdown(fixture: dict) -> None:
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    rq_reference = index["protocol_artifacts"]["rq_spec_sha256"]
+    rq_path = root / rq_reference["path"]
+    rq_path.write_bytes(rq_path.read_bytes() + b"\n<!-- coordinated RQ reseal -->\n")
+    rq_reference["sha256"] = hashlib.sha256(rq_path.read_bytes()).hexdigest()
+
+    protocol_path = root / index["protocol"]["path"]
+    protocol = read_canonical_json(protocol_path)
+    protocol["rq_spec_sha256"] = rq_reference["sha256"]
+    _refresh_self_hash(protocol)
+    protocol_path.write_bytes(canonical_json_bytes(protocol))
+    index["protocol"]["sha256"] = hashlib.sha256(
+        protocol_path.read_bytes()
+    ).hexdigest()
+    _refresh_protocol_bound_attempts(root, index)
+    _rewrite_index(fixture["index_path"], index)
 
 
 def test_two_subject_phase0_to_phase7_path_is_production_verified(tmp_path):
@@ -2234,3 +2313,88 @@ def test_source_text_named_password_and_token_is_not_credential_metadata(tmp_pat
     result, observed_code = _run_complete_verification(fixture)
     assert observed_code is None
     assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize(
+    ("mutation", "production_error", "oracle_error"),
+    [
+        pytest.param(
+            "delete_template",
+            "E_AUTHORITY_EXECUTION_CLASS",
+            "locked job count differs",
+            id="delete_template",
+        ),
+        pytest.param(
+            "change_template_phase",
+            "E_AUTHORITY_INTENT",
+            "locked phase histogram differs",
+            id="change_template_phase",
+        ),
+    ],
+)
+def test_required_phase_shape_oracle_rejects_coordinated_fixture_shrink(
+    tmp_path, mutation, production_error, oracle_error
+):
+    authority = _authority_fixture(tmp_path)
+    lock = copy.deepcopy(authority["lock"])
+    base_intents = copy.deepcopy(authority["base_intents"])
+    policy = copy.deepcopy(authority["policy"])
+    phase_6_template = next(
+        template for template in policy["templates"] if template["phase"] == "PHASE_6"
+    )
+    if mutation == "delete_template":
+        policy["templates"].remove(phase_6_template)
+    else:
+        phase_6_template["phase"] = "PHASE_5"
+    with pytest.raises(EvidenceError, match=production_error):
+        evidence_module.derive_base_intents(authority["prepared"], policy)
+
+    if mutation == "delete_template":
+        lock["jobs"] = [job for job in lock["jobs"] if job["phase"] != "PHASE_6"]
+        base_intents = [
+            intent for intent in base_intents if intent["phase"] != "PHASE_6"
+        ]
+    else:
+        for record in [*lock["jobs"], *base_intents]:
+            if record["phase"] == "PHASE_6":
+                record["phase"] = "PHASE_5"
+    jointly_reduced_phases = [
+        phase
+        for phase in PHASES
+        if any(intent["phase"] == phase for intent in base_intents)
+    ]
+
+    with pytest.raises(AssertionError, match=oracle_error):
+        _assert_required_phase_shape(
+            lock,
+            base_intents,
+            jointly_reduced_phases,
+            jointly_reduced_phases,
+            jointly_reduced_phases,
+        )
+
+
+def test_rehashed_indexed_rq_markdown_bytes_remain_bound_to_external_lock(tmp_path):
+    fixture = _build_complete_evidence(tmp_path)
+    _reseal_indexed_rq_markdown(fixture)
+    index = read_canonical_json(fixture["index_path"])
+    rq_reference = index["protocol_artifacts"]["rq_spec_sha256"]
+    protocol_reference = index["protocol"]
+    assert rq_reference["sha256"] == hashlib.sha256(
+        (fixture["root"] / rq_reference["path"]).read_bytes()
+    ).hexdigest()
+    assert protocol_reference["sha256"] == hashlib.sha256(
+        (fixture["root"] / protocol_reference["path"]).read_bytes()
+    ).hexdigest()
+    assert (
+        read_canonical_json(fixture["root"] / protocol_reference["path"])[
+            "rq_spec_sha256"
+        ]
+        == rq_reference["sha256"]
+    )
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_PROTOCOL", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
