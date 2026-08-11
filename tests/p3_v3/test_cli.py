@@ -2177,11 +2177,19 @@ def test_checkout_snapshot_never_follows_parent_swap_during_traversal(
     controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
     source = controller / "src"
     held_source = tmp_path / "held-controller-src"
+    attack_source = tmp_path / "attack-controller-src"
+    shutil.copytree(source, attack_source)
+    relative = "src/p3_v3/controller.py"
+    original_bytes = (source / "p3_v3/controller.py").read_bytes()
+    attack_bytes = b"CONTROLLER = 'attacker-controlled'\n"
+    (attack_source / "p3_v3/controller.py").write_bytes(attack_bytes)
     source_inode = source.stat().st_ino
+    original_parent_inode = (source / "p3_v3").stat().st_ino
     real_scandir = os.scandir
-    real_reader = evidence_module.read_regular_file_snapshot
+    real_reader = evidence_module._read_checkout_file_snapshot
     raced = False
-    escaped = False
+    observed_parent_inode: int | None = None
+    observed_bytes: bytes | None = None
 
     def swap_parent_before_scan(target):
         nonlocal raced
@@ -2191,32 +2199,38 @@ def test_checkout_snapshot_never_follows_parent_swap_during_traversal(
         )
         if not raced and (target_is_source_path or target_is_source_fd):
             source.rename(held_source)
-            source.symlink_to(held_source, target_is_directory=True)
+            source.symlink_to(attack_source, target_is_directory=True)
             raced = True
         return real_scandir(target)
 
-    def reject_escaped_reader(path, context):
-        nonlocal escaped
-        if Path(path).resolve().is_relative_to(held_source):
-            escaped = True
-        return real_reader(path, context)
+    def instrument_checkout_reader(directory_fd, name, relative_path):
+        nonlocal observed_parent_inode, observed_bytes
+        raw, mode = real_reader(directory_fd, name, relative_path)
+        if relative_path == relative:
+            observed_parent_inode = os.fstat(directory_fd).st_ino
+            observed_bytes = raw
+        return raw, mode
 
     monkeypatch.setattr(evidence_module.os, "scandir", swap_parent_before_scan)
     monkeypatch.setattr(
-        evidence_module, "read_regular_file_snapshot", reject_escaped_reader
+        evidence_module, "_read_checkout_file_snapshot", instrument_checkout_reader
     )
 
-    try:
-        evidence_module._checkout_authority(
-            controller,
-            evidence_module._CONTROLLER_ROLE_ROOTS,
-            "controller-source",
-        )
-    except EvidenceError as exc:
-        assert exc.code == "E_AUTHORITY_GIT"
+    repository, manifest, _tracked, snapshot = evidence_module._checkout_authority(
+        controller,
+        evidence_module._CONTROLLER_ROLE_ROOTS,
+        "controller-source",
+    )
 
     assert raced
-    assert not escaped
+    assert observed_parent_inode == original_parent_inode
+    assert observed_parent_inode == (held_source / "p3_v3").stat().st_ino
+    assert observed_bytes == original_bytes
+    assert observed_bytes != attack_bytes
+    assert snapshot.read_bytes(relative) == original_bytes
+    row = next(item for item in manifest["files"] if item["relative_path"] == relative)
+    assert row["sha256"] == hashlib.sha256(original_bytes).hexdigest()
+    assert repository["tracked_source_manifest_sha256"] == canonical_sha256(manifest)
 
 
 def test_checkout_snapshot_root_open_never_follows_swapped_parent(
