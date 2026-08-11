@@ -1,16 +1,24 @@
 from __future__ import annotations
 
-import json
+import copy
 import hashlib
+import json
 import os
 import shutil
+import stat
 import subprocess
 from pathlib import Path
 
 import pytest
 
 import p3_v3.bridge_and_frames as frames_module
-from p3_v3.artifacts import canonical_json_bytes, canonical_sha256, write_canonical_json
+import scripts.p3_v3.evidence as evidence_module
+from p3_v3.artifacts import (
+    EvidenceError,
+    canonical_json_bytes,
+    canonical_sha256,
+    write_canonical_json,
+)
 from p3_v3.bridge_and_frames import (
     build_public_behavior_frame,
     derive_subject_material,
@@ -87,6 +95,586 @@ def _env():
 
 def _digest(label: str) -> str:
     return canonical_sha256({"fixture": label})
+
+
+AUTHORITY_LOCK_KEYS = {
+    "schema_version",
+    "task_id",
+    "controller_repository",
+    "subjects",
+    "governing_materials",
+    "protocol",
+    "registries",
+    "preflight",
+    "jobs",
+    "claim_policy",
+}
+_CONTROLLER_AUTHORITY_KEYS = {
+    "normalized_repository_identity",
+    "base_commit",
+    "base_tree",
+    "tracked_source_manifest_sha256",
+}
+_SUBJECT_AUTHORITY_KEYS = {
+    "subject_id",
+    "repository_role",
+    "normalized_repository_identity",
+    "base_commit",
+    "base_tree",
+    "tracked_source_manifest_sha256",
+    "build_descriptor_sha256",
+    "adapter_id",
+}
+_GOVERNING_AUTHORITY_KEYS = {
+    "scientific_plan_sha256",
+    "evidence_design_sha256",
+    "authority_lock_design_sha256",
+    "implementation_plan_sha256",
+    "controller_implementation_manifest_sha256",
+}
+_PROTOCOL_AUTHORITY_KEYS = {
+    "protocol_sha256",
+    "rq_spec_sha256",
+    "claim_ceiling_sha256",
+    "p12_contract_sha256",
+    "operator_catalogue_sha256",
+    "mr_policy_sha256",
+    "site_policy_sha256",
+    "analysis_spec_sha256",
+    "package_policy_sha256",
+    "environment_lock_sha256",
+    "job_derivation_policy_sha256",
+}
+_REGISTRY_AUTHORITY_KEYS = {
+    "adapter_registry_sha256",
+    "input_generator_registry_sha256",
+}
+_PREFLIGHT_AUTHORITY_KEYS = {
+    "normalized_repository_identity",
+    "base_commit",
+    "base_tree",
+    "dependency_lock_sha256",
+    "environment_policy_sha256",
+    "required_capabilities",
+    "forbidden_credential_fields",
+}
+_JOB_AUTHORITY_KEYS = {
+    "job_id",
+    "phase",
+    "job_role",
+    "object_identity",
+    "input_identity_sha256",
+    "intent_template_sha256",
+    "maximum_attempts",
+    "retry_trigger",
+    "execution_class",
+    "p12_access_class",
+}
+_CLAIM_POLICY_AUTHORITY_KEYS = {"claim_ceiling_sha256", "required_status"}
+_AUTHORITY_OBJECT_SCHEMAS = (
+    ((), AUTHORITY_LOCK_KEYS),
+    (("controller_repository",), _CONTROLLER_AUTHORITY_KEYS),
+    (("subjects", 0), _SUBJECT_AUTHORITY_KEYS),
+    (("governing_materials",), _GOVERNING_AUTHORITY_KEYS),
+    (("protocol",), _PROTOCOL_AUTHORITY_KEYS),
+    (("registries",), _REGISTRY_AUTHORITY_KEYS),
+    (("preflight",), _PREFLIGHT_AUTHORITY_KEYS),
+    (("jobs", 0), _JOB_AUTHORITY_KEYS),
+    (("claim_policy",), _CLAIM_POLICY_AUTHORITY_KEYS),
+)
+
+
+def _authority_lock() -> dict:
+    protocol = {
+        "protocol_sha256": "6" * 64,
+        "rq_spec_sha256": "7" * 64,
+        "claim_ceiling_sha256": "8" * 64,
+        "p12_contract_sha256": "9" * 64,
+        "operator_catalogue_sha256": "a" * 64,
+        "mr_policy_sha256": "b" * 64,
+        "site_policy_sha256": "c" * 64,
+        "analysis_spec_sha256": "d" * 64,
+        "package_policy_sha256": "e" * 64,
+        "environment_lock_sha256": "f" * 64,
+        "job_derivation_policy_sha256": "0" * 64,
+    }
+    return {
+        "schema_version": "P3_V3_AUTHORITY_LOCK_V1",
+        "task_id": "p3-v3-foundation",
+        "controller_repository": {
+            "normalized_repository_identity": "github.com/example/controller",
+            "base_commit": "1" * 40,
+            "base_tree": "2" * 40,
+            "tracked_source_manifest_sha256": "1" * 64,
+        },
+        "subjects": [
+            {
+                "subject_id": "subject-a",
+                "repository_role": "CONTROLLED_A",
+                "normalized_repository_identity": "github.com/example/subject-a",
+                "base_commit": "3" * 40,
+                "base_tree": "4" * 40,
+                "tracked_source_manifest_sha256": "2" * 64,
+                "build_descriptor_sha256": "4" * 64,
+                "adapter_id": "PYTHON_PEP517_V1",
+            },
+            {
+                "subject_id": "subject-b",
+                "repository_role": "CONTROLLED_B",
+                "normalized_repository_identity": "github.com/example/subject-b",
+                "base_commit": "5" * 40,
+                "base_tree": "6" * 40,
+                "tracked_source_manifest_sha256": "3" * 64,
+                "build_descriptor_sha256": "5" * 64,
+                "adapter_id": "CMAKE_CTEST_V1",
+            },
+        ],
+        "governing_materials": {
+            "scientific_plan_sha256": "1" * 64,
+            "evidence_design_sha256": "2" * 64,
+            "authority_lock_design_sha256": "3" * 64,
+            "implementation_plan_sha256": "4" * 64,
+            "controller_implementation_manifest_sha256": "1" * 64,
+        },
+        "protocol": protocol,
+        "registries": {
+            "adapter_registry_sha256": "a" * 64,
+            "input_generator_registry_sha256": "b" * 64,
+        },
+        "preflight": {
+            "normalized_repository_identity": "github.com/example/controller",
+            "base_commit": "1" * 40,
+            "base_tree": "2" * 40,
+            "dependency_lock_sha256": "c" * 64,
+            "environment_policy_sha256": protocol["environment_lock_sha256"],
+            "required_capabilities": ["cpu", "disk", "memory"],
+            "forbidden_credential_fields": [
+                "authorization",
+                "credential",
+                "password",
+                "token",
+            ],
+        },
+        "jobs": [
+            {
+                "job_id": "1" * 64,
+                "phase": "PHASE_0",
+                "job_role": "PREFLIGHT_CONTROL",
+                "object_identity": "CONTROL:preflight",
+                "input_identity_sha256": "2" * 64,
+                "intent_template_sha256": "3" * 64,
+                "maximum_attempts": 3,
+                "retry_trigger": "FAIL_INFRASTRUCTURE",
+                "execution_class": "NON_SCIENTIFIC_CONTROL",
+                "p12_access_class": "FORBIDDEN",
+            },
+            {
+                "job_id": "2" * 64,
+                "phase": "PHASE_1",
+                "job_role": "SYNTHETIC_CHECK",
+                "object_identity": "SYNTHETIC:case-1",
+                "input_identity_sha256": "4" * 64,
+                "intent_template_sha256": "5" * 64,
+                "maximum_attempts": 3,
+                "retry_trigger": "FAIL_INFRASTRUCTURE",
+                "execution_class": "SYNTHETIC_INFRASTRUCTURE",
+                "p12_access_class": "PERMITTED",
+            },
+        ],
+        "claim_policy": {
+            "claim_ceiling_sha256": protocol["claim_ceiling_sha256"],
+            "required_status": "blocked",
+        },
+    }
+
+
+def _nested_value(value, path):
+    for component in path:
+        value = value[component]
+    return value
+
+
+def test_controller_manifest_covers_exact_controller_role_roots(tmp_path):
+    source = tmp_path / "src/p3_v3/controller.py"
+    script = tmp_path / "scripts/p3_v3/evidence.py"
+    dependency_lock = tmp_path / "requirements-frozen.txt"
+    source.parent.mkdir(parents=True)
+    script.parent.mkdir(parents=True)
+    source.write_text("controller = True\n", encoding="utf-8")
+    script.write_text("#!/usr/bin/env python3\n", encoding="utf-8")
+    script.chmod(script.stat().st_mode | stat.S_IXUSR)
+    dependency_lock.write_text("pytest==8.4.2\n", encoding="utf-8")
+
+    manifest = evidence_module.build_tracked_source_manifest(
+        tmp_path,
+        ["src/p3_v3", "scripts/p3_v3", "requirements-frozen.txt"],
+        "controller-source",
+    )
+
+    assert set(manifest) == {"schema_version", "role", "files"}
+    assert manifest["schema_version"] == "P3_V3_TRACKED_SOURCE_MANIFEST_V1"
+    assert manifest["role"] == "controller-source"
+    assert manifest["files"] == [
+        {
+            "relative_path": "requirements-frozen.txt",
+            "mode": "100644",
+            "sha256": hashlib.sha256(dependency_lock.read_bytes()).hexdigest(),
+        },
+        {
+            "relative_path": "scripts/p3_v3/evidence.py",
+            "mode": "100755",
+            "sha256": hashlib.sha256(script.read_bytes()).hexdigest(),
+        },
+        {
+            "relative_path": "src/p3_v3/controller.py",
+            "mode": "100644",
+            "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+        },
+    ]
+
+
+def test_controller_manifest_rejects_omitted_role_root(tmp_path):
+    (tmp_path / "src/p3_v3").mkdir(parents=True)
+    (tmp_path / "scripts/p3_v3").mkdir(parents=True)
+    (tmp_path / "requirements-frozen.txt").write_text("locked\n", encoding="utf-8")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path,
+            ["src/p3_v3", "scripts/p3_v3"],
+            "controller-source",
+        )
+
+
+def test_subject_manifest_includes_complete_root_and_excludes_git(tmp_path):
+    source = tmp_path / "subject.py"
+    vendor = tmp_path / "vendor/dependency.py"
+    fixture = tmp_path / "fixtures/input.txt"
+    generated = tmp_path / "generated/parser.py"
+    git_config = tmp_path / ".git/config"
+    for path in (source, vendor, fixture, generated, git_config):
+        path.parent.mkdir(parents=True, exist_ok=True)
+    source.write_text("password = token\n", encoding="utf-8")
+    vendor.write_text("vendor = True\n", encoding="utf-8")
+    fixture.write_text("fixture\n", encoding="utf-8")
+    generated.write_text("generated = True\n", encoding="utf-8")
+    git_config.write_text("authorization = credential\n", encoding="utf-8")
+
+    manifest = evidence_module.build_tracked_source_manifest(
+        tmp_path, ["."], "subject-source"
+    )
+
+    assert [row["relative_path"] for row in manifest["files"]] == [
+        "fixtures/input.txt",
+        "generated/parser.py",
+        "subject.py",
+        "vendor/dependency.py",
+    ]
+    assert all(set(row) == {"relative_path", "mode", "sha256"} for row in manifest["files"])
+
+
+def test_subject_manifest_rejects_selective_file_roots(tmp_path):
+    (tmp_path / "subject.py").write_text("subject = True\n", encoding="utf-8")
+    (tmp_path / "omitted.py").write_text("omitted = True\n", encoding="utf-8")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["subject.py"], "subject-source"
+        )
+
+
+@pytest.mark.parametrize(
+    "transient",
+    [".venv", "venv", "__pycache__", ".pytest_cache", "build", "dist"],
+)
+def test_subject_manifest_rejects_transient_environment_or_build_paths(
+    tmp_path, transient
+):
+    path = tmp_path / transient / "generated.bin"
+    path.parent.mkdir()
+    path.write_bytes(b"transient")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["."], "subject-source"
+        )
+
+
+@pytest.mark.parametrize("node_kind", ["symlink", "fifo", "git-symlink"])
+def test_subject_manifest_rejects_symlink_and_special_nodes(tmp_path, node_kind):
+    source = tmp_path / "subject.py"
+    source.write_text("subject = True\n", encoding="utf-8")
+    if node_kind == "symlink":
+        (tmp_path / "linked.py").symlink_to(source)
+    elif node_kind == "fifo":
+        os.mkfifo(tmp_path / "source.fifo")
+    else:
+        outside = tmp_path / "worktree-admin"
+        outside.mkdir()
+        (tmp_path / ".git").symlink_to(outside, target_is_directory=True)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["."], "subject-source"
+        )
+
+
+def test_source_manifest_rejects_missing_and_overlapping_role_roots(tmp_path):
+    tree = tmp_path / "tree"
+    nested = tree / "nested"
+    nested.mkdir(parents=True)
+    (nested / "source.py").write_text("source = True\n", encoding="utf-8")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["missing"], "fixture-source"
+        )
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["tree", "tree/nested"], "fixture-source"
+        )
+
+
+def test_source_manifest_rejects_symlinked_role_root_parent(tmp_path):
+    actual = tmp_path / "actual/nested"
+    actual.mkdir(parents=True)
+    (actual / "source.py").write_text("source = True\n", encoding="utf-8")
+    (tmp_path / "linked").symlink_to(tmp_path / "actual", target_is_directory=True)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["linked/nested"], "fixture-source"
+        )
+
+
+def test_controller_and_subject_manifests_are_independent(tmp_path):
+    controller = tmp_path / "controller"
+    subject_a = tmp_path / "subject-a"
+    subject_b = tmp_path / "subject-b"
+    for root, content in ((subject_a, "a\n"), (subject_b, "b\n")):
+        root.mkdir()
+        (root / "source.py").write_text(content, encoding="utf-8")
+    (controller / "src/p3_v3").mkdir(parents=True)
+    (controller / "scripts/p3_v3").mkdir(parents=True)
+    (controller / "src/p3_v3/controller.py").write_text("c\n", encoding="utf-8")
+    (controller / "scripts/p3_v3/evidence.py").write_text("e\n", encoding="utf-8")
+    (controller / "requirements-frozen.txt").write_text("r\n", encoding="utf-8")
+
+    manifests = [
+        evidence_module.build_tracked_source_manifest(
+            controller,
+            ["src/p3_v3", "scripts/p3_v3", "requirements-frozen.txt"],
+            "controller-source",
+        ),
+        evidence_module.build_tracked_source_manifest(
+            subject_a, ["."], "subject-source"
+        ),
+        evidence_module.build_tracked_source_manifest(
+            subject_b, ["."], "subject-source"
+        ),
+    ]
+
+    assert len({hashlib.sha256(canonical_json_bytes(item)).hexdigest() for item in manifests}) == 3
+
+
+def test_validate_authority_lock_accepts_exact_schema():
+    lock = _authority_lock()
+
+    assert evidence_module.validate_authority_lock(lock) == lock
+
+
+@pytest.mark.parametrize(
+    ("path", "missing_key"),
+    [
+        (path, key)
+        for path, keys in _AUTHORITY_OBJECT_SCHEMAS
+        for key in sorted(keys)
+    ],
+)
+def test_authority_lock_rejects_every_missing_top_level_or_nested_key(
+    path, missing_key
+):
+    lock = _authority_lock()
+    del _nested_value(lock, path)[missing_key]
+
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        evidence_module.validate_authority_lock(lock)
+
+
+@pytest.mark.parametrize("path", [path for path, _keys in _AUTHORITY_OBJECT_SCHEMAS])
+def test_authority_lock_rejects_extra_top_level_or_nested_key(path):
+    lock = _authority_lock()
+    _nested_value(lock, path)["unexpected"] = "not-authority"
+
+    with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
+        evidence_module.validate_authority_lock(lock)
+
+
+@pytest.mark.parametrize(
+    ("collection", "mutation"),
+    [
+        ("subjects", "swapped"),
+        ("subjects", "duplicated"),
+        ("jobs", "swapped"),
+        ("jobs", "duplicated"),
+    ],
+)
+def test_authority_lock_rejects_swapped_or_duplicated_rows(collection, mutation):
+    lock = _authority_lock()
+    if mutation == "swapped":
+        lock[collection].reverse()
+    else:
+        lock[collection][1] = copy.deepcopy(lock[collection][0])
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        evidence_module.validate_authority_lock(lock)
+
+
+def test_authority_lock_rejects_duplicate_intent_templates_under_distinct_job_ids():
+    lock = _authority_lock()
+    lock["jobs"][1]["intent_template_sha256"] = lock["jobs"][0][
+        "intent_template_sha256"
+    ]
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        evidence_module.validate_authority_lock(lock)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("execution_class", "RELABELED"),
+        ("p12_access_class", "UNKNOWN"),
+        ("retry_trigger", "ALWAYS"),
+        ("maximum_attempts", 4),
+    ],
+)
+def test_authority_lock_rejects_invalid_job_enums_and_retry_policy(field, value):
+    lock = _authority_lock()
+    lock["jobs"][0][field] = value
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        evidence_module.validate_authority_lock(lock)
+
+
+@pytest.mark.parametrize(
+    ("path", "field", "value", "error"),
+    [
+        (("controller_repository",), "base_commit", "A" * 40, "E_AUTHORITY_LOCK_SCHEMA"),
+        (
+            ("controller_repository",),
+            "tracked_source_manifest_sha256",
+            "A" * 64,
+            "E_SHA256",
+        ),
+        (("jobs", 0), "maximum_attempts", True, "E_SCHEMA_TYPE"),
+        ((), "schema_version", "P3_V3_AUTHORITY_LOCK_V2", "E_AUTHORITY_LOCK_SCHEMA"),
+    ],
+)
+def test_authority_lock_rejects_invalid_hash_type_and_version(path, field, value, error):
+    lock = _authority_lock()
+    _nested_value(lock, path)[field] = value
+
+    with pytest.raises(EvidenceError, match=error):
+        evidence_module.validate_authority_lock(lock)
+
+
+@pytest.mark.parametrize("field", ["required_capabilities", "forbidden_credential_fields"])
+def test_authority_lock_rejects_unsorted_or_duplicated_preflight_lists(field):
+    lock = _authority_lock()
+    lock["preflight"][field] = list(reversed(lock["preflight"][field]))
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        evidence_module.validate_authority_lock(lock)
+
+
+@pytest.mark.parametrize("field", ["token", "password", "authorization", "credential"])
+def test_authority_lock_rejects_credential_metadata_without_echoing_value(field):
+    lock = _authority_lock()
+    secret = "TOP_SECRET_DO_NOT_ECHO"
+    lock["preflight"][field] = secret
+
+    with pytest.raises(EvidenceError, match="E_CREDENTIAL_METADATA") as caught:
+        evidence_module.validate_authority_lock(lock)
+
+    assert secret not in str(caught.value)
+
+
+def test_authority_lock_rejects_raw_origin_userinfo_without_echoing_value():
+    lock = _authority_lock()
+    secret = "TOP_SECRET_DO_NOT_ECHO"
+    lock["controller_repository"]["normalized_repository_identity"] = (
+        f"https://audit-user:{secret}@github.com/example/controller"
+    )
+
+    with pytest.raises(EvidenceError, match="E_CREDENTIAL_METADATA") as caught:
+        evidence_module.validate_authority_lock(lock)
+
+    assert secret not in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "preflight-identity",
+        "preflight-commit",
+        "preflight-tree",
+        "environment-policy",
+        "claim-ceiling",
+        "subject-role-duplicate",
+        "subject-manifest-duplicate",
+    ],
+)
+def test_authority_lock_rejects_cross_field_divergence(mutation):
+    lock = _authority_lock()
+    if mutation == "preflight-identity":
+        lock["preflight"]["normalized_repository_identity"] = "github.com/example/other"
+    elif mutation == "preflight-commit":
+        lock["preflight"]["base_commit"] = "9" * 40
+    elif mutation == "preflight-tree":
+        lock["preflight"]["base_tree"] = "9" * 40
+    elif mutation == "environment-policy":
+        lock["preflight"]["environment_policy_sha256"] = "9" * 64
+    elif mutation == "claim-ceiling":
+        lock["claim_policy"]["claim_ceiling_sha256"] = "9" * 64
+    elif mutation == "subject-role-duplicate":
+        lock["subjects"][1]["repository_role"] = lock["subjects"][0]["repository_role"]
+    else:
+        lock["subjects"][1]["tracked_source_manifest_sha256"] = lock["subjects"][0][
+            "tracked_source_manifest_sha256"
+        ]
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        evidence_module.validate_authority_lock(lock)
+
+
+def test_load_authority_lock_rejects_changed_bytes_before_parsing_fields(tmp_path):
+    path = tmp_path / "authority-lock.json"
+    original_raw = canonical_json_bytes(_authority_lock())
+    expected_sha256 = hashlib.sha256(original_raw).hexdigest()
+    path.write_bytes(b"not-json\n")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_DIGEST"):
+        evidence_module.load_authority_lock(path, expected_sha256)
+
+
+def test_load_authority_lock_rejects_matching_noncanonical_bytes(tmp_path):
+    path = tmp_path / "authority-lock.json"
+    raw = json.dumps(_authority_lock(), sort_keys=True, indent=2).encode("utf-8") + b"\n"
+    path.write_bytes(raw)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        evidence_module.load_authority_lock(path, hashlib.sha256(raw).hexdigest())
+
+
+def test_load_authority_lock_accepts_matching_canonical_bytes(tmp_path):
+    path = tmp_path / "authority-lock.json"
+    raw = canonical_json_bytes(_authority_lock())
+    path.write_bytes(raw)
+
+    assert evidence_module.load_authority_lock(
+        path, hashlib.sha256(raw).hexdigest()
+    ) == _authority_lock()
 
 
 def _source_tree_sha256(root: Path) -> str:

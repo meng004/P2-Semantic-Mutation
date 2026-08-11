@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import tempfile
 from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
@@ -109,24 +110,53 @@ def write_canonical_json(path: str | Path, value: Any, *, exclusive: bool) -> No
     """Durably create or atomically replace one canonical JSON file."""
 
     target = Path(path)
-    target.parent.mkdir(parents=True, exist_ok=True)
     payload = canonical_json_bytes(value)
     if exclusive:
+        temporary: Path | None = None
+        fd: int | None = None
         try:
-            fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
-        except FileExistsError as exc:
-            raise EvidenceError("E_EXISTS", f"artifact already exists: {target}") from exc
-        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            fd, temporary_name = tempfile.mkstemp(
+                prefix=f".{target.name}.", suffix=".tmp", dir=target.parent
+            )
+            temporary = Path(temporary_name)
+            os.fchmod(fd, 0o644)
             _write_all(fd, payload)
             os.fsync(fd)
-        except BaseException:
             os.close(fd)
+            fd = None
+            try:
+                os.link(temporary, target)
+            except FileExistsError as exc:
+                raise EvidenceError(
+                    "E_EXISTS", f"artifact already exists: {target}"
+                ) from exc
+            temporary.unlink()
+            temporary = None
+            _fsync_directory(target.parent)
+        except EvidenceError:
+            if fd is not None:
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
             raise
-        else:
-            os.close(fd)
-        _fsync_directory(target.parent)
+        except BaseException as exc:
+            if fd is not None:
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+            raise EvidenceError(
+                "E_ARTIFACT_WRITE", f"unable to create artifact: {target}"
+            ) from exc
         return
 
+    target.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary_name = tempfile.mkstemp(prefix=f".{target.name}.", dir=target.parent)
     temporary = Path(temporary_name)
     try:
@@ -142,6 +172,87 @@ def write_canonical_json(path: str | Path, value: Any, *, exclusive: bool) -> No
             pass
         temporary.unlink(missing_ok=True)
         raise
+
+
+def _lstat_regular_path(path: Path, context: str) -> Path:
+    absolute = path if path.is_absolute() else Path.cwd() / path
+    parts = absolute.parts
+    current = Path(parts[0])
+    try:
+        for index, part in enumerate(parts[1:], 1):
+            current /= part
+            info = current.lstat()
+            is_target = index == len(parts) - 1
+            if stat.S_ISLNK(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_LOCK_PATH", f"{context} path is not symlink-free"
+                )
+            if is_target:
+                if not stat.S_ISREG(info.st_mode):
+                    raise EvidenceError(
+                        "E_AUTHORITY_LOCK_PATH",
+                        f"{context} path is not a regular file",
+                    )
+            elif not stat.S_ISDIR(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_LOCK_PATH",
+                    f"{context} parent is not a directory",
+                )
+    except EvidenceError:
+        raise
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_LOCK_PATH", f"{context} path is unavailable"
+        ) from exc
+    return absolute
+
+
+def read_canonical_regular_bytes(path: Path, context: str) -> bytes:
+    """Read one symlink-free regular file without resolving path components."""
+
+    source = _lstat_regular_path(Path(path), context)
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        fd = os.open(source, flags)
+        try:
+            if not stat.S_ISREG(os.fstat(fd).st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_LOCK_PATH", f"{context} path is not a regular file"
+                )
+            chunks: list[bytes] = []
+            while True:
+                chunk = os.read(fd, 1024 * 1024)
+                if not chunk:
+                    return b"".join(chunks)
+                chunks.append(chunk)
+        finally:
+            os.close(fd)
+    except EvidenceError:
+        raise
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_LOCK_PATH", f"{context} path could not be read safely"
+        ) from exc
+
+
+def read_canonical_regular_json(path: Path, context: str) -> dict[str, Any]:
+    """Safely read one canonical JSON object from a regular file."""
+
+    raw = read_canonical_regular_bytes(path, context)
+    try:
+        value = json.loads(
+            raw.decode("utf-8"),
+            parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_LOCK_SCHEMA", f"{context} is not canonical JSON"
+        ) from exc
+    if not isinstance(value, dict) or canonical_json_bytes(value) != raw:
+        raise EvidenceError(
+            "E_AUTHORITY_LOCK_SCHEMA", f"{context} is not a canonical JSON object"
+        )
+    return value
 
 
 def read_canonical_json(path: str | Path) -> Any:

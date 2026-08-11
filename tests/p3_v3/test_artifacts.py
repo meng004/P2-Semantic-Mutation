@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import hashlib
+import os
 
 import pytest
 
+import p3_v3.artifacts as artifacts_module
 from p3_v3.artifacts import (
     EvidenceError,
     canonical_json_bytes,
@@ -29,6 +31,137 @@ def test_exclusive_write_preserves_existing_bytes(tmp_path):
     with pytest.raises(EvidenceError, match="E_EXISTS"):
         write_canonical_json(path, {"a": 1}, exclusive=True)
     assert path.read_bytes() == b"original\n"
+
+
+def test_exclusive_write_retries_short_writes_and_publishes_complete_bytes(
+    tmp_path, monkeypatch
+):
+    path = tmp_path / "artifact.json"
+    real_write = os.write
+
+    def short_write(fd, payload):
+        return real_write(fd, payload[:2])
+
+    monkeypatch.setattr(artifacts_module.os, "write", short_write)
+
+    write_canonical_json(path, {"message": "complete"}, exclusive=True)
+
+    assert path.read_bytes() == b'{"message":"complete"}\n'
+    assert list(tmp_path.iterdir()) == [path]
+
+
+def test_exclusive_write_link_failure_removes_temporary_and_final_path(
+    tmp_path, monkeypatch
+):
+    path = tmp_path / "artifact.json"
+
+    def fail_link(_source, _target):
+        raise OSError("injected link failure")
+
+    monkeypatch.setattr(artifacts_module.os, "link", fail_link)
+
+    with pytest.raises(EvidenceError, match="E_ARTIFACT_WRITE"):
+        write_canonical_json(path, {"secret": "must not appear in error"}, exclusive=True)
+
+    assert not path.exists()
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_exclusive_write_failure_before_publish_removes_partial_temporary(
+    tmp_path, monkeypatch
+):
+    path = tmp_path / "artifact.json"
+
+    def fail_write(_fd, _payload):
+        raise OSError("injected write failure")
+
+    monkeypatch.setattr(artifacts_module.os, "write", fail_write)
+
+    with pytest.raises(EvidenceError, match="E_ARTIFACT_WRITE"):
+        write_canonical_json(path, {"a": 1}, exclusive=True)
+
+    assert not path.exists()
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_exclusive_write_existing_target_leaves_no_temporary(tmp_path):
+    path = tmp_path / "artifact.json"
+    path.write_bytes(b"original\n")
+
+    with pytest.raises(EvidenceError, match="E_EXISTS"):
+        write_canonical_json(path, {"replacement": True}, exclusive=True)
+
+    assert path.read_bytes() == b"original\n"
+    assert list(tmp_path.iterdir()) == [path]
+
+
+def test_exclusive_write_directory_fsync_failure_keeps_published_target(
+    tmp_path, monkeypatch
+):
+    path = tmp_path / "artifact.json"
+
+    def fail_directory_fsync(_directory):
+        raise OSError("injected directory fsync failure")
+
+    monkeypatch.setattr(artifacts_module, "_fsync_directory", fail_directory_fsync)
+
+    with pytest.raises(EvidenceError, match="E_ARTIFACT_WRITE"):
+        write_canonical_json(path, {"published": True}, exclusive=True)
+
+    assert path.read_bytes() == b'{"published":true}\n'
+    assert list(tmp_path.iterdir()) == [path]
+
+
+def test_authority_lock_reader_accepts_one_canonical_regular_file(tmp_path):
+    path = tmp_path / "lock.json"
+    write_canonical_json(path, {"schema_version": "P3_V3_AUTHORITY_LOCK_V1"}, exclusive=True)
+
+    assert artifacts_module.read_canonical_regular_bytes(
+        path, "authority lock"
+    ) == path.read_bytes()
+    assert artifacts_module.read_canonical_regular_json(path, "authority lock") == {
+        "schema_version": "P3_V3_AUTHORITY_LOCK_V1"
+    }
+
+
+def test_authority_lock_reader_rejects_symlinked_parent(tmp_path):
+    real_parent = tmp_path / "real"
+    real_parent.mkdir()
+    target = real_parent / "lock.json"
+    write_canonical_json(target, {"schema_version": "P3_V3_AUTHORITY_LOCK_V1"}, exclusive=True)
+    linked_parent = tmp_path / "linked"
+    linked_parent.symlink_to(real_parent, target_is_directory=True)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_PATH"):
+        artifacts_module.read_canonical_regular_json(
+            linked_parent / "lock.json", "authority lock"
+        )
+
+
+def test_authority_lock_reader_rejects_file_symlink(tmp_path):
+    target = tmp_path / "lock.json"
+    write_canonical_json(target, {"schema_version": "P3_V3_AUTHORITY_LOCK_V1"}, exclusive=True)
+    link = tmp_path / "lock-link.json"
+    link.symlink_to(target)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_PATH"):
+        artifacts_module.read_canonical_regular_json(link, "authority lock")
+
+
+def test_authority_lock_reader_rejects_special_node_without_opening_it(tmp_path):
+    fifo = tmp_path / "lock.fifo"
+    os.mkfifo(fifo)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_PATH"):
+        artifacts_module.read_canonical_regular_json(fifo, "authority lock")
+
+
+def test_authority_lock_reader_rejects_noncanonical_bytes(tmp_path):
+    path = tmp_path / "lock.json"
+    path.write_bytes(b'{"schema_version": "P3_V3_AUTHORITY_LOCK_V1"}\n')
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        artifacts_module.read_canonical_regular_json(path, "authority lock")
 
 
 def test_reader_rejects_noncanonical_json_bytes(tmp_path):

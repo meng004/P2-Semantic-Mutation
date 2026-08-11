@@ -4,10 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
+import os
 import re
 import stat
 import sys
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -19,10 +22,11 @@ from p3_v3.artifacts import (  # noqa: E402
     canonical_json_bytes,
     canonical_sha256,
     file_sha256,
+    read_canonical_regular_bytes,
     read_canonical_json,
+    safe_relative_path,
     validate_exact_object,
     validate_sha256,
-    safe_relative_path,
     write_canonical_json,
 )
 from p3_v3.bridge_and_frames import (  # noqa: E402
@@ -63,6 +67,538 @@ SCIENTIFIC_PLAN_SHA256 = (
 EVIDENCE_DESIGN_SHA256 = (
     "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
 )
+
+_AUTHORITY_LOCK_SCHEMA = {
+    "schema_version": str,
+    "task_id": str,
+    "controller_repository": dict,
+    "subjects": list,
+    "governing_materials": dict,
+    "protocol": dict,
+    "registries": dict,
+    "preflight": dict,
+    "jobs": list,
+    "claim_policy": dict,
+}
+_CONTROLLER_AUTHORITY_SCHEMA = {
+    "normalized_repository_identity": str,
+    "base_commit": str,
+    "base_tree": str,
+    "tracked_source_manifest_sha256": str,
+}
+_SUBJECT_AUTHORITY_SCHEMA = {
+    "subject_id": str,
+    "repository_role": str,
+    "normalized_repository_identity": str,
+    "base_commit": str,
+    "base_tree": str,
+    "tracked_source_manifest_sha256": str,
+    "build_descriptor_sha256": str,
+    "adapter_id": str,
+}
+_GOVERNING_AUTHORITY_SCHEMA = {
+    "scientific_plan_sha256": str,
+    "evidence_design_sha256": str,
+    "authority_lock_design_sha256": str,
+    "implementation_plan_sha256": str,
+    "controller_implementation_manifest_sha256": str,
+}
+_PROTOCOL_AUTHORITY_SCHEMA = {
+    "protocol_sha256": str,
+    "rq_spec_sha256": str,
+    "claim_ceiling_sha256": str,
+    "p12_contract_sha256": str,
+    "operator_catalogue_sha256": str,
+    "mr_policy_sha256": str,
+    "site_policy_sha256": str,
+    "analysis_spec_sha256": str,
+    "package_policy_sha256": str,
+    "environment_lock_sha256": str,
+    "job_derivation_policy_sha256": str,
+}
+_REGISTRY_AUTHORITY_SCHEMA = {
+    "adapter_registry_sha256": str,
+    "input_generator_registry_sha256": str,
+}
+_PREFLIGHT_AUTHORITY_SCHEMA = {
+    "normalized_repository_identity": str,
+    "base_commit": str,
+    "base_tree": str,
+    "dependency_lock_sha256": str,
+    "environment_policy_sha256": str,
+    "required_capabilities": list,
+    "forbidden_credential_fields": list,
+}
+_JOB_AUTHORITY_SCHEMA = {
+    "job_id": str,
+    "phase": str,
+    "job_role": str,
+    "object_identity": str,
+    "input_identity_sha256": str,
+    "intent_template_sha256": str,
+    "maximum_attempts": int,
+    "retry_trigger": str,
+    "execution_class": str,
+    "p12_access_class": str,
+}
+_CLAIM_POLICY_AUTHORITY_SCHEMA = {
+    "claim_ceiling_sha256": str,
+    "required_status": str,
+}
+_GIT_OBJECT_RE = re.compile(r"[0-9a-f]{40}")
+_CREDENTIAL_FIELD_NAMES = frozenset(
+    {"authorization", "credential", "password", "token"}
+)
+_EXECUTION_CLASSES = frozenset(
+    {"SYNTHETIC_INFRASTRUCTURE", "NON_SCIENTIFIC_CONTROL", "REAL_SCIENTIFIC"}
+)
+_P12_ACCESS_CLASSES = frozenset({"FORBIDDEN", "PERMITTED", "REQUIRED"})
+_CONTROLLER_ROLE_ROOTS = (
+    "src/p3_v3",
+    "scripts/p3_v3",
+    "requirements-frozen.txt",
+)
+_TRANSIENT_SOURCE_NAMES = frozenset(
+    {
+        ".mypy_cache",
+        ".nox",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".tox",
+        ".venv",
+        "__pycache__",
+        "build",
+        "dist",
+        "node_modules",
+        "venv",
+    }
+)
+
+
+def _authority_failure(detail: str) -> None:
+    raise EvidenceError("E_AUTHORITY_LOCK_SCHEMA", detail)
+
+
+def _require_authority(condition: bool, detail: str) -> None:
+    if not condition:
+        _authority_failure(detail)
+
+
+def _validate_authority_text(value: str, field: str) -> str:
+    _require_authority(bool(value) and not any(ord(char) < 32 for char in value), f"{field} is invalid")
+    return value
+
+
+def _validate_git_object(value: str, field: str) -> str:
+    _require_authority(_GIT_OBJECT_RE.fullmatch(value) is not None, f"{field} is invalid")
+    return value
+
+
+def _validate_repository_identity(value: str, field: str) -> str:
+    _validate_authority_text(value, field)
+    unsafe = (
+        "://" in value
+        or "@" in value
+        or "?" in value
+        or "#" in value
+        or "\\" in value
+        or value.startswith("/")
+    )
+    if unsafe:
+        raise EvidenceError(
+            "E_CREDENTIAL_METADATA", f"{field} is not a normalized repository identity"
+        )
+    parts = value.split("/")
+    _require_authority(
+        len(parts) >= 2 and all(part not in {"", ".", ".."} for part in parts),
+        f"{field} is invalid",
+    )
+    return value
+
+
+def _reject_credential_metadata(value: Any) -> None:
+    if isinstance(value, Mapping):
+        for key, nested in value.items():
+            if isinstance(key, str) and key.casefold() in _CREDENTIAL_FIELD_NAMES:
+                raise EvidenceError(
+                    "E_CREDENTIAL_METADATA", "credential-bearing metadata field is forbidden"
+                )
+            _reject_credential_metadata(nested)
+    elif isinstance(value, list):
+        for nested in value:
+            _reject_credential_metadata(nested)
+
+
+def _lstat_directory_components(root: Path) -> Path:
+    absolute = root if root.is_absolute() else Path.cwd() / root
+    parts = absolute.parts
+    current = Path(parts[0])
+    try:
+        for part in parts[1:]:
+            current /= part
+            info = current.lstat()
+            if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "manifest root is not a safe directory"
+                )
+    except EvidenceError:
+        raise
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "manifest root is unavailable"
+        ) from exc
+    return absolute
+
+
+def _read_manifest_regular_file(path: Path) -> tuple[bytes, int]:
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        fd = os.open(path, flags)
+        try:
+            info = os.fstat(fd)
+            if not stat.S_ISREG(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "manifest node is not a regular file"
+                )
+            chunks: list[bytes] = []
+            while True:
+                chunk = os.read(fd, 1024 * 1024)
+                if not chunk:
+                    return b"".join(chunks), info.st_mode
+                chunks.append(chunk)
+        finally:
+            os.close(fd)
+    except EvidenceError:
+        raise
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "manifest file could not be read safely"
+        ) from exc
+
+
+def _validate_role_root_components(base: Path, relative: Path) -> None:
+    current = base
+    try:
+        for index, part in enumerate(relative.parts):
+            current /= part
+            info = current.lstat()
+            if stat.S_ISLNK(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "manifest role root contains a symlink"
+                )
+            if index < len(relative.parts) - 1 and not stat.S_ISDIR(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST",
+                    "manifest role root parent is not a directory",
+                )
+    except EvidenceError:
+        raise
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "manifest role root is unavailable"
+        ) from exc
+
+
+def build_tracked_source_manifest(
+    root: Path, role_roots: Sequence[str], role: str
+) -> dict[str, Any]:
+    """Inventory every safe regular file below the exact roots for one role."""
+
+    base = _lstat_directory_components(Path(root))
+    if not isinstance(role, str) or not role:
+        raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest role is invalid")
+    if isinstance(role_roots, (str, bytes)) or not isinstance(role_roots, Sequence):
+        raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest role roots are invalid")
+    root_names = list(role_roots)
+    if not root_names or any(type(item) is not str for item in root_names):
+        raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest role roots are invalid")
+    if role == "subject-source" and root_names != ["."]:
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "subject manifest must cover the complete root"
+        )
+    if role == "controller-source" and tuple(root_names) != _CONTROLLER_ROLE_ROOTS:
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "controller manifest role roots differ"
+        )
+
+    normalized = []
+    for name in root_names:
+        if name == ".":
+            normalized.append(Path("."))
+        else:
+            try:
+                normalized.append(Path(safe_relative_path(name).as_posix()))
+            except EvidenceError as exc:
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "manifest role root is unsafe"
+                ) from exc
+    part_sets = [item.parts for item in normalized]
+    if len(set(part_sets)) != len(part_sets):
+        raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest role roots overlap")
+    for index, left in enumerate(part_sets):
+        for right in part_sets[index + 1 :]:
+            shorter = min(len(left), len(right))
+            if left[:shorter] == right[:shorter]:
+                raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest role roots overlap")
+
+    rows: list[dict[str, Any]] = []
+
+    def visit(path: Path, relative: Path) -> None:
+        try:
+            info = path.lstat()
+        except OSError as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "manifest node is unavailable"
+            ) from exc
+        if stat.S_ISLNK(info.st_mode):
+            raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest contains a symlink")
+        if relative.name == ".git":
+            if stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode):
+                return
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "manifest .git node is not ordinary"
+            )
+        if any(part in _TRANSIENT_SOURCE_NAMES for part in relative.parts):
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "manifest contains a transient path"
+            )
+        if stat.S_ISDIR(info.st_mode):
+            try:
+                entries = sorted(os.scandir(path), key=lambda item: item.name.encode("utf-8"))
+            except OSError as exc:
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "manifest directory could not be inventoried"
+                ) from exc
+            for entry in entries:
+                child_relative = relative / entry.name if relative != Path(".") else Path(entry.name)
+                visit(Path(entry.path), child_relative)
+            return
+        if not stat.S_ISREG(info.st_mode):
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "manifest contains a special node"
+            )
+        raw, opened_mode = _read_manifest_regular_file(path)
+        rows.append(
+            {
+                "relative_path": relative.as_posix(),
+                "mode": "100755" if opened_mode & 0o111 else "100644",
+                "sha256": hashlib.sha256(raw).hexdigest(),
+            }
+        )
+
+    for relative_root in normalized:
+        _validate_role_root_components(base, relative_root)
+        visit(base / relative_root, relative_root)
+    rows.sort(key=lambda row: row["relative_path"].encode("utf-8"))
+    if not rows:
+        raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest contains no source files")
+    if len({row["relative_path"] for row in rows}) != len(rows):
+        raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest contains duplicate files")
+    return {
+        "schema_version": "P3_V3_TRACKED_SOURCE_MANIFEST_V1",
+        "role": role,
+        "files": rows,
+    }
+
+
+def validate_authority_lock(lock: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate the exact structural and cross-field Authority Lock contract."""
+
+    if not isinstance(lock, Mapping):
+        raise EvidenceError("E_SCHEMA_TYPE", "authority lock must be an object")
+    _reject_credential_metadata(lock)
+    value = validate_exact_object(dict(lock), _AUTHORITY_LOCK_SCHEMA, "authority lock")
+    _require_authority(
+        value["schema_version"] == "P3_V3_AUTHORITY_LOCK_V1",
+        "authority lock schema version differs",
+    )
+    _validate_authority_text(value["task_id"], "authority lock task_id")
+
+    controller = validate_exact_object(
+        value["controller_repository"],
+        _CONTROLLER_AUTHORITY_SCHEMA,
+        "authority lock controller_repository",
+    )
+    _validate_repository_identity(
+        controller["normalized_repository_identity"],
+        "authority lock controller repository identity",
+    )
+    for field in ("base_commit", "base_tree"):
+        _validate_git_object(controller[field], f"controller_repository.{field}")
+    validate_sha256(
+        controller["tracked_source_manifest_sha256"],
+        "controller_repository.tracked_source_manifest_sha256",
+    )
+
+    _require_authority(bool(value["subjects"]), "authority lock subjects are empty")
+    subjects = []
+    for index, candidate in enumerate(value["subjects"]):
+        subject = validate_exact_object(
+            candidate, _SUBJECT_AUTHORITY_SCHEMA, f"authority lock subjects[{index}]"
+        )
+        for field in ("subject_id", "repository_role", "adapter_id"):
+            _validate_authority_text(subject[field], f"subjects[{index}].{field}")
+        _validate_repository_identity(
+            subject["normalized_repository_identity"],
+            f"subjects[{index}].normalized_repository_identity",
+        )
+        for field in ("base_commit", "base_tree"):
+            _validate_git_object(subject[field], f"subjects[{index}].{field}")
+        for field in ("tracked_source_manifest_sha256", "build_descriptor_sha256"):
+            validate_sha256(subject[field], f"subjects[{index}].{field}")
+        subjects.append(subject)
+    subject_ids = [item["subject_id"] for item in subjects]
+    _require_authority(
+        subject_ids == sorted(subject_ids) and len(subject_ids) == len(set(subject_ids)),
+        "authority lock subjects are not sorted and unique",
+    )
+    for field in ("repository_role", "tracked_source_manifest_sha256"):
+        observed = [item[field] for item in subjects]
+        _require_authority(
+            len(observed) == len(set(observed)),
+            f"authority lock subjects have duplicate {field}",
+        )
+    _require_authority(
+        controller["tracked_source_manifest_sha256"]
+        not in {item["tracked_source_manifest_sha256"] for item in subjects},
+        "controller and subject manifests are not independent",
+    )
+
+    governing = validate_exact_object(
+        value["governing_materials"],
+        _GOVERNING_AUTHORITY_SCHEMA,
+        "authority lock governing_materials",
+    )
+    for field, digest in governing.items():
+        validate_sha256(digest, f"governing_materials.{field}")
+    _require_authority(
+        governing["controller_implementation_manifest_sha256"]
+        == controller["tracked_source_manifest_sha256"],
+        "controller implementation manifest differs",
+    )
+
+    protocol = validate_exact_object(
+        value["protocol"], _PROTOCOL_AUTHORITY_SCHEMA, "authority lock protocol"
+    )
+    for field, digest in protocol.items():
+        validate_sha256(digest, f"protocol.{field}")
+
+    registries = validate_exact_object(
+        value["registries"], _REGISTRY_AUTHORITY_SCHEMA, "authority lock registries"
+    )
+    for field, digest in registries.items():
+        validate_sha256(digest, f"registries.{field}")
+
+    preflight = validate_exact_object(
+        value["preflight"], _PREFLIGHT_AUTHORITY_SCHEMA, "authority lock preflight"
+    )
+    _validate_repository_identity(
+        preflight["normalized_repository_identity"],
+        "authority lock preflight repository identity",
+    )
+    for field in ("base_commit", "base_tree"):
+        _validate_git_object(preflight[field], f"preflight.{field}")
+    for field in ("dependency_lock_sha256", "environment_policy_sha256"):
+        validate_sha256(preflight[field], f"preflight.{field}")
+    for field in ("required_capabilities", "forbidden_credential_fields"):
+        items = preflight[field]
+        _require_authority(
+            bool(items)
+            and all(type(item) is str and bool(item) for item in items)
+            and items == sorted(items)
+            and len(items) == len(set(items)),
+            f"preflight.{field} must be a sorted unique nonempty string list",
+        )
+    _require_authority(
+        preflight["forbidden_credential_fields"] == sorted(_CREDENTIAL_FIELD_NAMES),
+        "preflight forbidden credential fields differ",
+    )
+    for field in ("normalized_repository_identity", "base_commit", "base_tree"):
+        _require_authority(
+            preflight[field] == controller[field],
+            f"preflight.{field} differs from controller authority",
+        )
+    _require_authority(
+        preflight["environment_policy_sha256"] == protocol["environment_lock_sha256"],
+        "preflight environment policy differs from protocol authority",
+    )
+
+    _require_authority(bool(value["jobs"]), "authority lock jobs are empty")
+    jobs = []
+    for index, candidate in enumerate(value["jobs"]):
+        job = validate_exact_object(
+            candidate, _JOB_AUTHORITY_SCHEMA, f"authority lock jobs[{index}]"
+        )
+        for field in ("job_id", "input_identity_sha256", "intent_template_sha256"):
+            validate_sha256(job[field], f"jobs[{index}].{field}")
+        for field in ("phase", "job_role", "object_identity"):
+            _validate_authority_text(job[field], f"jobs[{index}].{field}")
+        _require_authority(
+            job["maximum_attempts"] == 3,
+            "authority lock job maximum_attempts differs",
+        )
+        _require_authority(
+            job["retry_trigger"] == "FAIL_INFRASTRUCTURE",
+            "authority lock job retry_trigger differs",
+        )
+        _require_authority(
+            job["execution_class"] in _EXECUTION_CLASSES,
+            "authority lock job execution_class is invalid",
+        )
+        _require_authority(
+            job["p12_access_class"] in _P12_ACCESS_CLASSES,
+            "authority lock job p12_access_class is invalid",
+        )
+        jobs.append(job)
+    job_ids = [item["job_id"] for item in jobs]
+    _require_authority(
+        job_ids == sorted(job_ids) and len(job_ids) == len(set(job_ids)),
+        "authority lock jobs are not sorted and unique",
+    )
+    intent_templates = [item["intent_template_sha256"] for item in jobs]
+    _require_authority(
+        len(intent_templates) == len(set(intent_templates)),
+        "authority lock jobs have duplicate intent templates",
+    )
+
+    claim_policy = validate_exact_object(
+        value["claim_policy"],
+        _CLAIM_POLICY_AUTHORITY_SCHEMA,
+        "authority lock claim_policy",
+    )
+    validate_sha256(claim_policy["claim_ceiling_sha256"], "claim_policy.claim_ceiling_sha256")
+    _require_authority(
+        claim_policy["claim_ceiling_sha256"] == protocol["claim_ceiling_sha256"],
+        "claim ceiling differs from protocol authority",
+    )
+    _require_authority(
+        claim_policy["required_status"] == "blocked",
+        "authority lock claim status differs",
+    )
+    return value
+
+
+def load_authority_lock(lock_path: Path, expected_sha256: str) -> dict[str, Any]:
+    """Load one canonical Authority Lock only under its external byte digest."""
+
+    validate_sha256(expected_sha256, "authority_lock_sha256")
+    raw = read_canonical_regular_bytes(lock_path, "authority lock")
+    if hashlib.sha256(raw).hexdigest() != expected_sha256:
+        raise EvidenceError(
+            "E_AUTHORITY_LOCK_DIGEST", "authority lock digest differs"
+        )
+    try:
+        value = json.loads(raw.decode("utf-8"))
+        is_canonical = canonical_json_bytes(value) == raw
+    except (UnicodeDecodeError, json.JSONDecodeError, EvidenceError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_LOCK_SCHEMA", "authority lock is noncanonical"
+        ) from exc
+    if not is_canonical:
+        raise EvidenceError(
+            "E_AUTHORITY_LOCK_SCHEMA", "authority lock is noncanonical"
+        )
+    return validate_authority_lock(value)
 
 
 def _write(payload: dict) -> None:
