@@ -162,6 +162,16 @@ _CREDENTIAL_FIELD_NAMES = frozenset(
     {"authorization", "credential", "password", "token"}
 )
 _SAFE_CREDENTIAL_POLICY_FIELDS = frozenset({"forbidden_credential_fields"})
+_CREDENTIAL_METADATA_COMPONENTS = _CREDENTIAL_FIELD_NAMES | frozenset(
+    {"key", "secret"}
+)
+_NON_CREDENTIAL_KEY_FIELDS = frozenset(
+    {
+        "provenance_span_or_key",
+        "schema_provenance_span_or_key",
+        "schema_selection_key",
+    }
+)
 _BEARER_VALUE_RE = re.compile(r"(?i)(?:^|[\s:])bearer[ \t]+[^\s]+")
 _USERINFO_VALUE_RE = re.compile(
     r"(?i)\b[a-z][a-z0-9+.-]*://[^/\s@]+@"
@@ -294,6 +304,10 @@ _TRANSIENT_SOURCE_NAMES = frozenset(
         "venv",
     }
 )
+_FIXED_GIT_BINARY_BY_PLATFORM = {
+    "darwin": Path("/usr/bin/git"),
+    "linux": Path("/usr/bin/git"),
+}
 _AUTHORITY_INPUTS_SCHEMA = {
     "schema_version": str,
     "task_id": str,
@@ -407,7 +421,8 @@ def _reject_credential_metadata(value: Any) -> None:
                 )
                 if (
                     key.casefold() not in _SAFE_CREDENTIAL_POLICY_FIELDS
-                    and components & _CREDENTIAL_FIELD_NAMES
+                    and key.casefold() not in _NON_CREDENTIAL_KEY_FIELDS
+                    and components & _CREDENTIAL_METADATA_COMPONENTS
                 ):
                     raise EvidenceError(
                         "E_CREDENTIAL_METADATA",
@@ -912,6 +927,73 @@ def validate_authority_inputs(
     return value
 
 
+def _validated_fixed_git_binary() -> Path:
+    candidate = _FIXED_GIT_BINARY_BY_PLATFORM.get(sys.platform)
+    if candidate is None or not candidate.is_absolute():
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "platform has no fixed trusted Git binary"
+        )
+    current = Path(candidate.anchor)
+    try:
+        for index, part in enumerate(candidate.parts):
+            if index:
+                current /= part
+            info = current.lstat()
+            is_final = index == len(candidate.parts) - 1
+            if stat.S_ISLNK(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "fixed Git binary path contains a symlink"
+                )
+            if info.st_uid != 0 or info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "fixed Git binary path is caller-writable"
+                )
+            if is_final:
+                if not stat.S_ISREG(info.st_mode) or not info.st_mode & (
+                    stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+                ):
+                    raise EvidenceError(
+                        "E_AUTHORITY_GIT", "fixed Git binary is not executable"
+                    )
+            elif not stat.S_ISDIR(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "fixed Git binary path is not a directory"
+                )
+        if current.resolve(strict=True) != candidate:
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "fixed Git binary path is not stable"
+            )
+    except EvidenceError:
+        raise
+    except (OSError, ValueError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "fixed trusted Git binary is unavailable"
+        ) from exc
+    return candidate
+
+
+def _reject_executable_filter_config(raw: bytes) -> None:
+    in_filter_section = False
+    for raw_line in raw.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith((b"#", b";")):
+            continue
+        if line.startswith(b"["):
+            closing = line.find(b"]")
+            if closing < 0:
+                in_filter_section = False
+                continue
+            section = line[1:closing].strip().split(None, 1)[0]
+            in_filter_section = section.lower() == b"filter"
+            continue
+        if in_filter_section and re.match(
+            rb"(?i)^(?:clean|process)(?:\s|=|$)", line
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "executable Git filters are forbidden"
+            )
+
+
 def _validated_local_git_metadata(root: Path) -> Path:
     metadata = root / ".git"
     try:
@@ -966,6 +1048,7 @@ def _validated_local_git_metadata(root: Path) -> Path:
                 raise EvidenceError(
                     "E_AUTHORITY_GIT", "Git configuration includes are forbidden"
                 )
+            _reject_executable_filter_config(raw)
     except EvidenceError:
         raise
     except (OSError, ValueError) as exc:
@@ -976,12 +1059,13 @@ def _validated_local_git_metadata(root: Path) -> Path:
 
 
 def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
+    git_binary = _validated_fixed_git_binary()
     metadata = _validated_local_git_metadata(root)
     outputs: dict[tuple[str, ...], bytes] = {}
     fixed_config = (
         "core.fsmonitor=false",
         f"core.hooksPath={os.devnull}",
-        "core.pager=cat",
+        "core.pager=",
         "credential.helper=",
         "credential.interactive=never",
         "core.useReplaceRefs=false",
@@ -994,10 +1078,9 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         for item in ("-c", setting)
     ]
     git_env = {
-        "PATH": os.environ.get("PATH", os.defpath),
         "LANG": "C",
         "LC_ALL": "C",
-        "TMPDIR": os.environ.get("TMPDIR", "/tmp"),
+        "TMPDIR": "/tmp",
         "GIT_ATTR_NOSYSTEM": "1",
         "GIT_CONFIG_NOSYSTEM": "1",
         "GIT_CONFIG_GLOBAL": os.devnull,
@@ -1005,14 +1088,14 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         "GIT_WORK_TREE": str(root),
         "GIT_OPTIONAL_LOCKS": "0",
         "GIT_TERMINAL_PROMPT": "0",
-        "GIT_PAGER": "cat",
-        "PAGER": "cat",
+        "GIT_PAGER": "",
+        "PAGER": "",
     }
 
     def run_query(query: tuple[str, ...]) -> bytes:
         try:
             result = subprocess.run(
-                ["git", "-C", str(root), *fixed_config_argv, *query],
+                [str(git_binary), "-C", str(root), *fixed_config_argv, *query],
                 capture_output=True,
                 check=False,
                 env=git_env,
@@ -1045,14 +1128,15 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
     base_commit = object_id(run_query(head_query))
     tree_query = ("rev-parse", f"{base_commit}^{{tree}}")
     base_tree = object_id(run_query(tree_query))
+    status_query = ("status", "--porcelain=v1", "--ignore-submodules=all")
     for query in (
-        ("status", "--porcelain=v1"),
+        status_query,
         ("remote", "get-url", "origin"),
         ("ls-files", "--stage", "-z"),
     ):
         run_query(query)
 
-    if outputs[("status", "--porcelain=v1")] != b"":
+    if outputs[status_query] != b"":
         raise EvidenceError("E_AUTHORITY_GIT", "checkout is not clean")
     origin_raw = outputs[("remote", "get-url", "origin")]
     if not origin_raw.endswith(b"\n") or origin_raw.count(b"\n") != 1:

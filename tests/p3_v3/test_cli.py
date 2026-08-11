@@ -1558,7 +1558,7 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
     captured_commits: list[str] = []
 
     def fixed_git_only(argv, *args, **kwargs):
-        assert argv[0] == "git"
+        assert argv[0] == "/usr/bin/git"
         query = _fixed_git_query(argv)
         if query == ("rev-parse", "HEAD"):
             result = real_run(argv, *args, **kwargs)
@@ -1566,7 +1566,7 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
         else:
             allowed_after_capture = {
                 ("rev-parse", f"{captured_commits[-1]}^{{tree}}"),
-                ("status", "--porcelain=v1"),
+                ("status", "--porcelain=v1", "--ignore-submodules=all"),
                 ("remote", "get-url", "origin"),
                 ("ls-files", "--stage", "-z"),
             }
@@ -1594,7 +1594,15 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
     assert observed[1] == ("rev-parse", f"{captured_commits[0]}^{{tree}}")
     assert observed[6] == ("rev-parse", f"{captured_commits[1]}^{{tree}}")
     assert len(observed) == 10
-    assert _run_git(controller, "status", "--porcelain=v1") == ""
+    assert (
+        real_run(
+            ["/usr/bin/git", "-C", str(controller), "status", "--porcelain=v1"],
+            capture_output=True,
+            check=True,
+            text=True,
+        ).stdout
+        == ""
+    )
 
 
 @pytest.mark.parametrize(
@@ -1664,14 +1672,61 @@ def test_fixed_git_queries_apply_deterministic_execution_sanitizers(
     assert len(invocations) == 5
     for argv, kwargs in invocations:
         joined = "\0".join(argv)
+        assert argv[0] == "/usr/bin/git"
         assert "core.fsmonitor=false" in joined
         assert "core.hooksPath=" in joined
-        assert "core.pager=cat" in joined
+        assert "core.pager=" in joined
+        assert "core.pager=cat" not in joined
         assert "credential.helper=" in joined
+        assert "PATH" not in kwargs["env"]
+        assert kwargs["env"]["TMPDIR"] == "/tmp"
         assert kwargs["env"]["GIT_CONFIG_NOSYSTEM"] == "1"
         assert kwargs["env"]["GIT_OPTIONAL_LOCKS"] == "0"
         assert kwargs["env"]["GIT_TERMINAL_PROMPT"] == "0"
-        assert kwargs["env"]["GIT_PAGER"] == "cat"
+        assert kwargs["env"]["GIT_PAGER"] == ""
+        assert kwargs["env"]["PAGER"] == ""
+
+
+def test_fixed_git_queries_never_execute_git_from_caller_path(tmp_path, monkeypatch):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    marker = tmp_path / "caller-path-git-executed"
+    malicious_bin = tmp_path / "malicious-bin"
+    malicious_bin.mkdir()
+    malicious_git = malicious_bin / "git"
+    malicious_git.write_text(
+        f"#!/bin/sh\n: > {marker.as_posix()}\nprintf 'forged-git\\n'\n",
+        encoding="utf-8",
+    )
+    malicious_git.chmod(malicious_git.stat().st_mode | stat.S_IXUSR)
+    monkeypatch.setenv("PATH", str(malicious_bin))
+
+    git = evidence_module._run_fixed_git_queries(controller)
+
+    assert git["tracked"]
+    assert not marker.exists()
+
+
+@pytest.mark.parametrize("unsafe_kind", ["symlink", "writable"])
+def test_fixed_git_binary_validation_rejects_caller_controlled_nodes(
+    tmp_path, monkeypatch, unsafe_kind
+):
+    executable = tmp_path / "git-real"
+    executable.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    executable.chmod(0o755)
+    candidate = executable
+    if unsafe_kind == "symlink":
+        candidate = tmp_path / "git"
+        candidate.symlink_to(executable)
+    else:
+        executable.chmod(0o777)
+    monkeypatch.setitem(
+        evidence_module._FIXED_GIT_BINARY_BY_PLATFORM,
+        sys.platform,
+        candidate,
+    )
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._validated_fixed_git_binary()
 
 
 def test_fixed_git_queries_reject_repository_include_config(tmp_path):
@@ -1682,6 +1737,46 @@ def test_fixed_git_queries_reject_repository_include_config(tmp_path):
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
         evidence_module._run_fixed_git_queries(controller)
+
+
+@pytest.mark.parametrize("driver", ["clean", "process"])
+def test_fixed_git_queries_reject_executable_filter_before_first_query(
+    tmp_path, monkeypatch, driver
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    attributes = controller / ".gitattributes"
+    attributes.write_text(
+        "src/p3_v3/controller.py filter=audit\n", encoding="utf-8"
+    )
+    _run_git(controller, "add", ".gitattributes")
+    _run_git(controller, "commit", "-m", "filter fixture")
+    marker = tmp_path / f"filter-{driver}-executed"
+    executable_filter = tmp_path / f"filter-{driver}"
+    executable_filter.write_text(
+        f"#!/bin/sh\n: > {marker.as_posix()}\n"
+        + ("/bin/cat\n" if driver == "clean" else "exit 1\n"),
+        encoding="utf-8",
+    )
+    executable_filter.chmod(executable_filter.stat().st_mode | stat.S_IXUSR)
+    _run_git(controller, "config", f"filter.audit.{driver}", str(executable_filter))
+    invocations: list[list[str]] = []
+    real_run = subprocess.run
+
+    def capture(argv, *args, **kwargs):
+        invocations.append(list(argv))
+        return real_run(argv, *args, **kwargs)
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", capture)
+    caught: EvidenceError | None = None
+    try:
+        evidence_module._run_fixed_git_queries(controller)
+    except EvidenceError as exc:
+        caught = exc
+
+    assert not marker.exists()
+    assert invocations == []
+    assert caught is not None
+    assert caught.code == "E_AUTHORITY_GIT"
 
 
 @pytest.mark.parametrize("indirection", ["gitdir_file", "objects_symlink"])
@@ -1713,6 +1808,56 @@ def test_fixed_git_queries_do_not_execute_repository_fsmonitor(tmp_path):
 
     evidence_module._run_fixed_git_queries(controller)
 
+    assert not marker.exists()
+
+
+def test_fixed_git_queries_ignore_submodules_and_use_exactly_five_processes(
+    tmp_path, monkeypatch
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    submodule_source = tmp_path / "submodule-source"
+    submodule_source.mkdir()
+    (submodule_source / "tracked.txt").write_text("submodule\n", encoding="utf-8")
+    _init_authority_repo(
+        submodule_source, "git@github.com:example/submodule-fixture.git"
+    )
+    _run_git(
+        controller,
+        "-c",
+        "protocol.file.allow=always",
+        "submodule",
+        "add",
+        str(submodule_source),
+        "vendor/submodule",
+    )
+    _run_git(controller, "commit", "-m", "tracked submodule fixture")
+    submodule = controller / "vendor/submodule"
+    marker = tmp_path / "submodule-fsmonitor-executed"
+    fsmonitor = tmp_path / "submodule-fsmonitor"
+    fsmonitor.write_text(
+        f"#!/bin/sh\n: > {marker.as_posix()}\nexit 0\n", encoding="utf-8"
+    )
+    fsmonitor.chmod(fsmonitor.stat().st_mode | stat.S_IXUSR)
+    _run_git(submodule, "config", "core.fsmonitor", str(fsmonitor))
+    (submodule / "tracked.txt").write_text("dirty submodule\n", encoding="utf-8")
+    invocations: list[tuple[str, ...]] = []
+    real_run = subprocess.run
+
+    def capture(argv, *args, **kwargs):
+        invocations.append(_fixed_git_query(argv))
+        return real_run(argv, *args, **kwargs)
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", capture)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._run_fixed_git_queries(controller)
+
+    assert len(invocations) == 5
+    assert (
+        "status",
+        "--porcelain=v1",
+        "--ignore-submodules=all",
+    ) in invocations
     assert not marker.exists()
 
 
@@ -1874,7 +2019,11 @@ def test_freeze_rejects_staged_tree_drift_after_clean_status(
     def stage_drift_after_status(argv, *args, **kwargs):
         nonlocal drifted
         result = real_run(argv, *args, **kwargs)
-        if _fixed_git_query(argv) == ("status", "--porcelain=v1") and not drifted:
+        if _fixed_git_query(argv) == (
+            "status",
+            "--porcelain=v1",
+            "--ignore-submodules=all",
+        ) and not drifted:
             drifted = True
             tracked_path.write_text("CONTROLLER = 'staged-drift'\n", encoding="utf-8")
             real_run(
@@ -3841,6 +3990,45 @@ def test_evidence_index_rejects_composite_credential_metadata_before_schema(
     assert result.returncode == 2
     assert json.loads(result.stderr)["code"] == "E_CREDENTIAL_METADATA"
     assert "TOP_SECRET_INDEX_TOKEN" not in result.stderr
+    assert not result.stdout
+
+
+@pytest.mark.parametrize("scope", ["authority_inputs", "authority_lock", "index"])
+@pytest.mark.parametrize("field", ["api_key", "apiKey", "client_secret"])
+def test_key_and_secret_credential_composites_fail_at_every_metadata_boundary(
+    tmp_path, scope, field
+):
+    secret = "TOP_SECRET_D2_CREDENTIAL"
+    if scope == "authority_lock":
+        candidate = _authority_lock()
+        candidate[field] = secret
+        with pytest.raises(EvidenceError, match="E_CREDENTIAL_METADATA") as caught:
+            evidence_module.validate_authority_lock(candidate)
+        assert secret not in str(caught.value)
+        return
+    if scope == "authority_inputs":
+        candidate = {
+            "schema_version": "P3_V3_AUTHORITY_INPUTS_V1",
+            "task_id": "fixture",
+            "subjects": [],
+            "governing_material_paths": {},
+            "protocol_artifact_paths": {},
+            "registry_artifact_paths": {},
+            field: secret,
+        }
+        with pytest.raises(EvidenceError, match="E_CREDENTIAL_METADATA") as caught:
+            evidence_module.validate_authority_inputs(candidate)
+        assert secret not in str(caught.value)
+        return
+
+    body = _empty_evidence_index_body(tmp_path)
+    body[field] = secret
+    index_path = tmp_path / "evidence-index.json"
+    _write_evidence_index(index_path, body)
+    result = _run_evidence_index(index_path)
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_CREDENTIAL_METADATA"
+    assert secret not in result.stderr
     assert not result.stdout
 
 

@@ -184,8 +184,13 @@ derive normalized repository identity, commit, tree, and the complete
 tracked-file set. Those five queries run with a minimal deterministic environment
 and command-level configuration that disables fsmonitor, hooks, pagers,
 credential helpers, interactive prompting, replacement refs, network protocols,
-and optional locks. Local includes and out-of-root Git metadata indirection fail
-before any query. The fixed-HEAD stage inventory is the only tracked-file list;
+and optional locks. On Darwin and Linux the Git executable is the fixed
+`/usr/bin/git`; every path component and the executable are mechanically checked
+as root-owned, non-symlink, and non-group/world-writable, with an executable
+regular file at the leaf. No caller `PATH` or other caller-derived execution
+environment value is used. Local includes, executable `filter.*.clean/process`
+configuration, and out-of-root Git metadata indirection fail before any query.
+The fixed-HEAD stage inventory is the only tracked-file list;
 each listed file is opened once through an anchored descriptor, and that one
 immutable `(bytes, mode)` capture supplies Git binding, the manifest, and every
 derived input. There is no second live source read.
@@ -784,7 +789,7 @@ Tests must prove:
   code, never by Authority Inputs text;
 - for controller and every subject checkout, the exact read-only Git query set
   is `rev-parse HEAD`, then `rev-parse <captured-commit>^{tree}`, followed by
-  `status --porcelain=v1`, `remote get-url origin`, and
+  `status --porcelain=v1 --ignore-submodules=all`, `remote get-url origin`, and
   `ls-files --stage -z`; each tracked row is parsed
   as exact `(mode, blob_oid, stage=0, path)` authority, and one anchored live-byte
   snapshot must match its fixed-HEAD Git blob SHA-1 and regular-file mode before
@@ -792,9 +797,10 @@ Tests must prove:
   manifest, adapter discovery, frame, scale, workload, common-input, and site
   derivation without temporary materialization or later source-root reads. Every
   query carries the deterministic environment and command-level safeguards
-  specified above; repository fsmonitor/hook/helper/pager configuration cannot
-  spawn a child, local includes and out-of-root metadata fail before queries,
-  and no sixth subprocess is permitted. Nonzero exit, dirty status, malformed
+  specified above; repository fsmonitor/hook/helper/pager/filter/submodule
+  configuration cannot spawn a child, local includes, executable filters, and
+  out-of-root metadata fail before queries, and no sixth subprocess is permitted.
+  Nonzero exit, dirty status, malformed
   output, credential-bearing normalized identity, or live/fixed-HEAD byte/mode
   drift fails before output;
 - source-hash-verified deterministic adapters may run only through the reviewed
@@ -1201,3 +1207,23 @@ The repair changes no Authority Lock, Authority Inputs, Evidence Index, receipt,
 or result schema fields. It strengthens derivation, path interpretation, and
 verification only. Scientific execution, P12 access, claim upgrades, network,
 push, PR, and merge remain unauthorized.
+
+### Task 6 Repair D2: Fixed executable and metadata-execution closure
+
+The independent D2 review tightened three existing boundaries without changing
+any artifact schema:
+
+- Darwin and Linux freeze use only the mechanically validated absolute
+  `/usr/bin/git`, never caller `PATH`; the five subprocesses receive a literal
+  minimal environment with pagers disabled rather than executable pager names.
+- The safe local `.git/config` and `.git/config.worktree` bytes are inspected
+  before the first subprocess. Any `filter` section defining `clean` or
+  `process` fails closed, and the status query explicitly includes
+  `--ignore-submodules=all`. The query count remains exactly five and neither
+  filter nor submodule configuration may produce a child process.
+- Credential-metadata component scanning covers `key` and `secret`, including
+  snake-case and camel-case forms such as `api_key`, `apiKey`, and
+  `client_secret`, with stable `E_CREDENTIAL_METADATA` precedence at Authority
+  Inputs, lock, and Evidence Index boundaries. The exact
+  `forbidden_credential_fields` policy key remains exempt, and SourceSnapshot
+  source bytes remain outside metadata scanning.
