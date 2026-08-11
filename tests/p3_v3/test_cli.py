@@ -95,6 +95,24 @@ SECRET_ORIGIN_SHA256 = (
 )
 
 
+def _source_snapshot(root: Path):
+    entries = []
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or ".git" in path.relative_to(root).parts:
+            continue
+        raw = path.read_bytes()
+        entries.append(
+            frames_module.SourceSnapshotEntry(
+                relative_path=path.relative_to(root).as_posix(),
+                mode="100755" if path.stat().st_mode & stat.S_IXUSR else "100644",
+                sha256=hashlib.sha256(raw).hexdigest(),
+                content=raw,
+            )
+        )
+    entries.sort(key=lambda entry: entry.relative_path.encode("utf-8"))
+    return frames_module.SourceSnapshot(entries=tuple(entries))
+
+
 def _env():
     return {**os.environ, "PYTHONPATH": str(ROOT / "src")}
 
@@ -337,6 +355,18 @@ def test_controller_manifest_covers_exact_controller_role_roots(tmp_path):
             "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
         },
     ]
+
+
+def test_manifest_mode_projection_uses_owner_execute_only(tmp_path):
+    source = tmp_path / "subject.py"
+    source.write_text("subject = True\n", encoding="utf-8")
+    source.chmod((source.stat().st_mode & ~stat.S_IXUSR) | stat.S_IXGRP)
+
+    manifest = evidence_module.build_tracked_source_manifest(
+        tmp_path, ["."], "subject-source"
+    )
+
+    assert manifest["files"][0]["mode"] == "100644"
 
 
 def test_controller_manifest_rejects_omitted_role_root(tmp_path):
@@ -1392,20 +1422,25 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
     real_run = subprocess.run
     observed: list[tuple[str, ...]] = []
-    allowed = {
-        ("rev-parse", "HEAD"),
-        ("rev-parse", "HEAD^{tree}"),
-        ("status", "--porcelain=v1"),
-        ("remote", "get-url", "origin"),
-        ("ls-files", "--stage", "-z"),
-    }
+    captured_commits: list[str] = []
 
     def fixed_git_only(argv, *args, **kwargs):
         assert argv[0] == "git"
         query = tuple(argv[3:])
-        assert query in allowed
+        if query == ("rev-parse", "HEAD"):
+            result = real_run(argv, *args, **kwargs)
+            captured_commits.append(result.stdout.decode("ascii").strip())
+        else:
+            allowed_after_capture = {
+                ("rev-parse", f"{captured_commits[-1]}^{{tree}}"),
+                ("status", "--porcelain=v1"),
+                ("remote", "get-url", "origin"),
+                ("ls-files", "--stage", "-z"),
+            }
+            assert query in allowed_after_capture
+            result = real_run(argv, *args, **kwargs)
         observed.append(query)
-        return real_run(argv, *args, **kwargs)
+        return result
 
     def forbidden_execution(*_args, **_kwargs):
         raise AssertionError("freeze reached an evidence/scientific execution path")
@@ -1421,7 +1456,10 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
 
     evidence_module.build_authority_lock(controller, inputs)
 
-    assert sorted(observed) == sorted([*allowed, *allowed])
+    assert observed[0] == ("rev-parse", "HEAD")
+    assert observed[5] == ("rev-parse", "HEAD")
+    assert observed[1] == ("rev-parse", f"{captured_commits[0]}^{{tree}}")
+    assert observed[6] == ("rev-parse", f"{captured_commits[1]}^{{tree}}")
     assert len(observed) == 10
     assert _run_git(controller, "status", "--porcelain=v1") == ""
 
@@ -1473,6 +1511,67 @@ def test_fixed_git_stage_inventory_reports_exact_live_blob_and_mode(tmp_path):
         "stage": 0,
         "path": path,
     }
+
+
+def test_fixed_git_tree_query_stays_bound_to_commit_captured_first(
+    tmp_path, monkeypatch
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    first_commit = _run_git(controller, "rev-parse", "HEAD")
+    tracked_path = controller / "src/p3_v3/controller.py"
+    tracked_path.write_text("CONTROLLER = 'second-commit'\n", encoding="utf-8")
+    _run_git(controller, "add", tracked_path.relative_to(controller).as_posix())
+    _run_git(controller, "commit", "-m", "second authority commit")
+    second_commit = _run_git(controller, "rev-parse", "HEAD")
+    _run_git(controller, "checkout", "--detach", first_commit)
+    real_run = subprocess.run
+    switched = False
+
+    def switch_head_after_first_query(argv, *args, **kwargs):
+        nonlocal switched
+        result = real_run(argv, *args, **kwargs)
+        if tuple(argv[3:]) == ("rev-parse", "HEAD") and not switched:
+            switched = True
+            real_run(
+                ["git", "-C", str(controller), "checkout", "--detach", second_commit],
+                capture_output=True,
+                check=True,
+            )
+        return result
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", switch_head_after_first_query)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._run_fixed_git_queries(controller)
+    assert switched
+
+
+def test_git_mode_projection_rejects_owner_to_group_execute_race(
+    tmp_path, monkeypatch
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    relative = "src/p3_v3/controller.py"
+    tracked_path = controller / relative
+    tracked_path.chmod(tracked_path.stat().st_mode | stat.S_IXUSR)
+    _run_git(controller, "add", relative)
+    _run_git(controller, "commit", "-m", "owner executable authority")
+    git = evidence_module._run_fixed_git_queries(controller)
+    real_reader = evidence_module.read_regular_file_snapshot
+
+    def group_execute_snapshot(path, context):
+        raw, mode = real_reader(path, context)
+        if Path(path) == tracked_path:
+            mode = (mode & ~stat.S_IXUSR) | stat.S_IXGRP
+        return raw, mode
+
+    monkeypatch.setattr(
+        evidence_module, "read_regular_file_snapshot", group_execute_snapshot
+    )
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._read_git_tracked_snapshot(
+            controller, git["tracked_entries"]
+        )
 
 
 @pytest.mark.parametrize(
@@ -1645,15 +1744,19 @@ def test_freeze_authority_executes_generator_snapshot_not_replaced_path(
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
     marker = tmp_path / "unverified-generator-ran"
     real_validate = evidence_module.validate_input_generator_registry
+    registry_path = controller / inputs["registry_artifact_paths"][
+        "input_generator_registry"
+    ]
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    entry = next(
+        row
+        for row in registry["generators"]
+        if row["generator_id"] == "JSON_SCHEMA_DRAFT2020_12_V1"
+    )
+    source = registry_path.parent / entry["implementation_path"]
 
-    def replace_after_validation(registry, source_root):
-        validated = real_validate(registry, source_root)
-        entry = next(
-            row
-            for row in validated["generators"]
-            if row["generator_id"] == "JSON_SCHEMA_DRAFT2020_12_V1"
-        )
-        source = Path(source_root) / entry["implementation_path"]
+    def replace_after_validation(registry, source_snapshot):
+        validated = real_validate(registry, source_snapshot)
         source.write_text(
             "from pathlib import Path\n"
             "def generate(_schema, _seed):\n"
@@ -1685,13 +1788,13 @@ def test_concurrent_freezes_do_not_cross_snapshots_leak_state_or_write_pyc(
     second_controller, second_inputs, _ = _authority_freeze_fixture(second_root)
     real_build_common_inputs = evidence_module.build_common_inputs
     rendezvous = threading.Barrier(2)
-    observed_snapshot_roots: list[str] = []
+    observed_snapshot_ids: list[int] = []
     observed_lock = threading.Lock()
 
     def synchronized_common_inputs(source_record, public_frame, registry):
         rendezvous.wait(timeout=10)
         with observed_lock:
-            observed_snapshot_roots.append(registry["_source_root"])
+            observed_snapshot_ids.append(id(registry["_implementation_snapshots"]))
         return real_build_common_inputs(source_record, public_frame, registry)
 
     monkeypatch.setattr(
@@ -1714,8 +1817,8 @@ def test_concurrent_freezes_do_not_cross_snapshots_leak_state_or_write_pyc(
         second_lock = second_future.result(timeout=20)
 
     assert first_lock["jobs"] and second_lock["jobs"]
-    assert len(observed_snapshot_roots) == 2
-    assert len(set(observed_snapshot_roots)) == 2
+    assert len(observed_snapshot_ids) == 2
+    assert len(set(observed_snapshot_ids)) == 2
     assert sys.dont_write_bytecode is False
     assert capsys.readouterr() == ("", "")
     assert not list(first_controller.rglob("__pycache__"))
@@ -2590,7 +2693,7 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
     adapter_root = tmp_path / "adapters-root"
     adapter_root.mkdir()
     raw_registry = _adapter_registry(adapter_root)
-    registry = validate_adapter_registry(raw_registry, adapter_root)
+    registry = validate_adapter_registry(raw_registry, _source_snapshot(adapter_root))
     source_root = tmp_path / "source-root"
     source_root.mkdir()
     fixture = json.loads((FIXTURE_ROOT / "python.json").read_text(encoding="utf-8"))
@@ -2611,7 +2714,7 @@ def test_build_frames_writes_declared_artifacts_under_output_root_only(tmp_path)
     }
     neutral = canonical_sha256({"fixture": "neutral"})
     discovery = run_adapter_discovery(
-        source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
     )
     frame = build_public_behavior_frame(source_record, discovery)
     workload = select_profiling_workload(frame, "S")
@@ -3299,20 +3402,27 @@ def test_indexed_file_hash_and_canonical_parse_share_one_immutable_read(
     artifact = tmp_path / "artifact.json"
     artifact.write_bytes(canonical_json_bytes(original))
     reference = _indexed_reference(tmp_path, artifact)
-    real_file_sha256 = evidence_module.file_sha256
+    real_reader = evidence_module.read_canonical_regular_bytes
+    artifact_reads = 0
 
-    def hash_then_swap(path):
-        digest = real_file_sha256(path)
-        Path(path).write_bytes(canonical_json_bytes(replacement))
-        return digest
+    def read_then_swap(path, context):
+        nonlocal artifact_reads
+        raw = real_reader(path, context)
+        if Path(path) == artifact:
+            artifact_reads += 1
+            artifact.write_bytes(canonical_json_bytes(replacement))
+        return raw
 
-    monkeypatch.setattr(evidence_module, "file_sha256", hash_then_swap)
+    monkeypatch.setattr(
+        evidence_module, "read_canonical_regular_bytes", read_then_swap
+    )
 
     _path, value = evidence_module._indexed_file(
         tmp_path, reference, set(), {}, "artifact"
     )
 
     assert value == original
+    assert artifact_reads == 1
 
 
 def _complete_phase_zero_evidence_index(tmp_path: Path) -> Path:
@@ -3487,10 +3597,10 @@ def _complete_reconstructable_subject_index(tmp_path: Path) -> Path:
     adapter_registry_path = tmp_path / index["adapter_registries"][0]["path"]
     generator_registry_path = tmp_path / index["input_generator_registries"][0]["path"]
     adapter_registry = validate_adapter_registry(
-        json.loads(adapter_registry_path.read_text()), ROOT
+        json.loads(adapter_registry_path.read_text()), _source_snapshot(ROOT)
     )
     generator_registry = validate_input_generator_registry(
-        json.loads(generator_registry_path.read_text()), ROOT
+        json.loads(generator_registry_path.read_text()), _source_snapshot(ROOT)
     )
     for cache in generator_registry_path.parent.rglob("__pycache__"):
         shutil.rmtree(cache)
@@ -3526,7 +3636,7 @@ def _complete_reconstructable_subject_index(tmp_path: Path) -> Path:
         "eligible_for_criterion": True,
     }
     discovery = run_adapter_discovery(
-        source_root, descriptor, adapter_registry, "PYTHON_PEP517_V1"
+        _source_snapshot(source_root), descriptor, adapter_registry, "PYTHON_PEP517_V1"
     )
     frame = build_public_behavior_frame(source_record, discovery)
     workload = select_profiling_workload(frame, "S")
@@ -3539,7 +3649,7 @@ def _complete_reconstructable_subject_index(tmp_path: Path) -> Path:
     material = derive_subject_material(
         {
             "neutral_snapshot_id": neutral,
-            "source_root": str(source_root),
+            "source_snapshot": _source_snapshot(source_root),
             "source_record": source_record,
             "build_descriptor": descriptor,
             "adapter_registry": adapter_registry,
@@ -4231,6 +4341,51 @@ def test_verify_evidence_reconstructs_every_indexed_subject(tmp_path):
 
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)["subject_count"] == 1
+
+
+def test_verify_evidence_rederives_subject_only_from_manifest_snapshot(
+    tmp_path, monkeypatch
+):
+    index_path = _complete_reconstructable_subject_index(tmp_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    source_root = tmp_path / index["subject_sources"][0]["root"]
+    descriptor_reference = index["subjects"][0]["build_descriptor"]
+    descriptor = json.loads(
+        (tmp_path / descriptor_reference["path"]).read_text(encoding="utf-8")
+    )
+    adapter_manifest = source_root / descriptor["manifest_path"]
+    original_verifier = evidence_module._verify_running_controller_for_evidence
+    swapped = False
+
+    def verify_then_swap(*args, **kwargs):
+        nonlocal swapped
+        installed = original_verifier(*args, **kwargs)
+        adapter_manifest.write_bytes(b"{}\n")
+        swapped = True
+        return installed
+
+    monkeypatch.setattr(
+        evidence_module,
+        "_verify_running_controller_for_evidence",
+        verify_then_swap,
+    )
+    lock_path = tmp_path / "authority-lock.json"
+    args = evidence_module.build_parser().parse_args(
+        [
+            "verify-evidence",
+            "--index",
+            str(index_path),
+            "--authority-lock",
+            str(lock_path),
+            "--authority-lock-sha256",
+            hashlib.sha256(lock_path.read_bytes()).hexdigest(),
+        ]
+    )
+
+    result = evidence_module.dispatch(args)
+
+    assert swapped
+    assert result["status"] == "PASS"
 
 
 def _complete_two_subject_reconstructable_index(tmp_path: Path) -> Path:

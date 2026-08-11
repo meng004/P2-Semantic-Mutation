@@ -7,6 +7,7 @@ import inspect
 import json
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 import threading
@@ -112,6 +113,42 @@ def _source_tree_sha256(root: Path) -> str:
             "files": files,
         }
     )
+
+
+def _source_snapshot(root: Path):
+    entry_type = frames_module.SourceSnapshotEntry
+    snapshot_type = frames_module.SourceSnapshot
+    entries = []
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            raise EvidenceError(
+                "E_SOURCE_TREE_PATH", "test source snapshot contains a symlink"
+            )
+        if not path.is_file() or ".git" in path.relative_to(root).parts:
+            continue
+        raw = path.read_bytes()
+        entries.append(
+            entry_type(
+                relative_path=path.relative_to(root).as_posix(),
+                mode="100755" if path.stat().st_mode & stat.S_IXUSR else "100644",
+                sha256=hashlib.sha256(raw).hexdigest(),
+                content=raw,
+            )
+        )
+    entries.sort(key=lambda entry: entry.relative_path.encode("utf-8"))
+    return snapshot_type(entries=tuple(entries))
+
+
+def test_source_snapshot_consumer_revalidates_entry_integrity(tmp_path):
+    assert hasattr(frames_module, "SourceSnapshotEntry")
+    assert hasattr(frames_module, "SourceSnapshot")
+    source = tmp_path / "source.py"
+    source.write_bytes(b"value = 1\n")
+    snapshot = _source_snapshot(tmp_path)
+    object.__setattr__(snapshot.entries[0], "mode", "100600")
+
+    with pytest.raises(EvidenceError, match="E_SOURCE_SNAPSHOT"):
+        frames_module.canonical_source_tree_sha256(snapshot)
 
 
 def _run(root: Path, *argv: str) -> str:
@@ -636,13 +673,16 @@ def _derived_subject_spec(
         source_path.write_text("int value = 1;\n" * effective_lines, encoding="utf-8")
     ecosystem = _load_fixture(fixture_name)["ecosystem"]
     descriptor = {**descriptor, "ecosystem": ecosystem}
+    source_snapshot = _source_snapshot(root)
     record["normalized_source_tree_sha256"] = _source_tree_sha256(root)
     record["build_descriptor_sha256"] = canonical_sha256(descriptor)
     adapter_id = {
         "python": "PYTHON_PEP517_V1",
         "cmake": "CMAKE_CTEST_V1",
     }[ecosystem]
-    discovery = run_adapter_discovery(root, descriptor, adapter_registry, adapter_id)
+    discovery = run_adapter_discovery(
+        source_snapshot, descriptor, adapter_registry, adapter_id
+    )
     frame = build_public_behavior_frame(
         {
             "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
@@ -650,7 +690,7 @@ def _derived_subject_spec(
         },
         discovery,
     )
-    scale = derive_source_scale(root, discovery)["scale_class"]
+    scale = derive_source_scale(source_snapshot, discovery)["scale_class"]
     workload = select_profiling_workload(frame, scale)
     profiling_results = _profiling_receipt(
         workload,
@@ -664,7 +704,7 @@ def _derived_subject_spec(
     )
     return {
         "neutral_snapshot_id": record["neutral_snapshot_id"],
-        "source_root": str(root),
+        "source_snapshot": source_snapshot,
         "source_record": {
             "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
             "build_descriptor_sha256": record["build_descriptor_sha256"],
@@ -682,10 +722,10 @@ def test_subject_material_recomputes_source_tree_commitment_before_adapter(
     adapter_root = tmp_path / "adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     record = verify_pinned_bridge(
         synthetic_release.root, synthetic_release.lock
@@ -702,6 +742,7 @@ def test_subject_material_recomputes_source_tree_commitment_before_adapter(
     )
     source_path = source_root / _load_fixture("python.json")["source_files"][0]
     source_path.write_bytes(source_path.read_bytes() + b"\n# unauthorized mutation\n")
+    spec["source_snapshot"] = _source_snapshot(source_root)
 
     with pytest.raises(EvidenceError, match="E_SOURCE_TREE_COMMITMENT"):
         frames_module.derive_subject_material(spec, record)
@@ -709,12 +750,10 @@ def test_subject_material_recomputes_source_tree_commitment_before_adapter(
 
 def _subject_index_for_rederivation(spec: dict, material: dict, adapter_root: Path) -> dict:
     return {
-        "source_root": spec["source_root"],
+        "source_snapshot": spec["source_snapshot"],
         "source_record": spec["source_record"],
         "build_descriptor": spec["build_descriptor"],
-        "adapter_root": str(adapter_root),
         "adapter_registry": spec["adapter_registry"],
-        "input_generator_root": str(GENERATOR_FIXTURE_ROOT),
         "input_generator_registry": spec["input_generator_registry"],
         "profiling_results": spec["profiling_results"],
         "adapter_discovery": material["adapter_discovery"],
@@ -738,10 +777,10 @@ def test_rederive_subject_rejects_rehashed_declared_derivation(
     adapter_root = tmp_path / "rederive-adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     record = verify_pinned_bridge(
         synthetic_release.root, synthetic_release.lock
@@ -805,10 +844,10 @@ def test_rederive_subject_starts_from_source_and_adapter_bytes(
     adapter_root = tmp_path / "rederive-byte-adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     record = verify_pinned_bridge(
         synthetic_release.root, synthetic_release.lock
@@ -831,6 +870,7 @@ def test_rederive_subject_starts_from_source_and_adapter_bytes(
 
     source_path = source_root / _load_fixture("python.json")["source_files"][0]
     source_path.write_bytes(source_path.read_bytes() + b"# mutation\n")
+    indexed["source_snapshot"] = _source_snapshot(source_root)
     with pytest.raises(EvidenceError, match="E_INDEXED_SUBJECT_REDERIVATION"):
         rebuild_indexed_subject(indexed, record)
 
@@ -845,10 +885,10 @@ def test_source_tree_commitment_binds_vendor_fixture_and_external_bytes(
     adapter_root = tmp_path / "adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     record = verify_pinned_bridge(
         synthetic_release.root, synthetic_release.lock
@@ -870,7 +910,9 @@ def test_source_tree_commitment_binds_vendor_fixture_and_external_bytes(
 
     included.write_bytes(b"project-material-v2")
 
-    assert frames_module.canonical_source_tree_sha256(source_root) != committed
+    changed_snapshot = _source_snapshot(source_root)
+    assert frames_module.canonical_source_tree_sha256(changed_snapshot) != committed
+    spec["source_snapshot"] = changed_snapshot
     with pytest.raises(EvidenceError, match="E_SOURCE_TREE_COMMITMENT"):
         frames_module.derive_subject_material(spec, record)
 
@@ -906,11 +948,11 @@ def test_source_tree_commitment_sorts_all_project_files_and_excludes_only_vcs_me
         }
     )
 
-    observed = frames_module.canonical_source_tree_sha256(root)
+    observed = frames_module.canonical_source_tree_sha256(_source_snapshot(root))
     (root / ".git/index").write_bytes(b"vcs-v2")
 
     assert observed == expected
-    assert frames_module.canonical_source_tree_sha256(root) == expected
+    assert frames_module.canonical_source_tree_sha256(_source_snapshot(root)) == expected
 
 
 @pytest.mark.parametrize("transient", ["build/output.o", ".venv/bin/python"])
@@ -924,7 +966,7 @@ def test_source_tree_commitment_rejects_transient_build_or_environment_output(
     path.write_bytes(b"transient")
 
     with pytest.raises(EvidenceError, match="E_SOURCE_TREE_PATH"):
-        frames_module.canonical_source_tree_sha256(root)
+        frames_module.canonical_source_tree_sha256(_source_snapshot(root))
 
 
 def test_source_tree_commitment_rejects_included_symlink(tmp_path):
@@ -935,7 +977,7 @@ def test_source_tree_commitment_rejects_included_symlink(tmp_path):
     (root / "alias.txt").symlink_to(target)
 
     with pytest.raises(EvidenceError, match="E_SOURCE_TREE_PATH"):
-        frames_module.canonical_source_tree_sha256(root)
+        frames_module.canonical_source_tree_sha256(_source_snapshot(root))
 
 
 def test_subject_material_recomputes_build_descriptor_commitment_before_adapter(
@@ -944,10 +986,10 @@ def test_subject_material_recomputes_build_descriptor_commitment_before_adapter(
     adapter_root = tmp_path / "adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     record = verify_pinned_bridge(
         synthetic_release.root, synthetic_release.lock
@@ -976,10 +1018,10 @@ def test_two_subject_material_is_fully_derived_and_order_invariant(
     adapter_root = tmp_path / "adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
     python_record = verified["records"][0]
@@ -1075,10 +1117,10 @@ def _two_subject_material_fixture(synthetic_release, tmp_path):
     adapter_root = tmp_path / "parent-binding-adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
     python_record = verified["records"][0]
@@ -1290,10 +1332,10 @@ def test_subject_alias_merge_does_not_mutate_derived_material(
     adapter_root = tmp_path / "adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     verified = verify_pinned_bridge(synthetic_release.root, synthetic_release.lock)
     first_record = verified["records"][0]
@@ -1350,7 +1392,7 @@ def test_subject_spec_rejects_non_exact_keys_before_adapter_execution(
     )["records"][0]
     spec: dict[str, object] = {
         "neutral_snapshot_id": record["neutral_snapshot_id"],
-        "source_root": str(tmp_path / "does-not-exist"),
+        "source_snapshot": object(),
         "source_record": {
             "normalized_source_tree_sha256": record["normalized_source_tree_sha256"],
             "build_descriptor_sha256": record["build_descriptor_sha256"],
@@ -1374,10 +1416,10 @@ def test_unsupported_subject_common_inputs_remain_explicitly_unavailable(
     adapter_root = tmp_path / "adapters"
     adapter_root.mkdir()
     adapter_registry = validate_adapter_registry(
-        _adapter_registry(adapter_root), adapter_root
+        _adapter_registry(adapter_root), _source_snapshot(adapter_root)
     )
     generator_registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     record = verify_pinned_bridge(
         synthetic_release.root, synthetic_release.lock
@@ -1392,15 +1434,15 @@ def test_unsupported_subject_common_inputs_remain_explicitly_unavailable(
         "build_descriptor_sha256": record["build_descriptor_sha256"],
     }
     discovery = run_adapter_discovery(
-        source_root, descriptor, adapter_registry, None
+        _source_snapshot(source_root), descriptor, adapter_registry, None
     )
     frame = build_public_behavior_frame(source_record, discovery)
     workload = select_profiling_workload(
-        frame, derive_source_scale(source_root, discovery)["scale_class"]
+        frame, derive_source_scale(_source_snapshot(source_root), discovery)["scale_class"]
     )
     spec = {
         "neutral_snapshot_id": record["neutral_snapshot_id"],
-        "source_root": str(source_root),
+        "source_snapshot": _source_snapshot(source_root),
         "source_record": source_record,
         "build_descriptor": descriptor,
         "adapter_registry": adapter_registry,
@@ -1428,7 +1470,7 @@ def test_unsupported_subject_common_inputs_remain_explicitly_unavailable(
 
 def test_adapter_registry_binds_exact_implementation_paths_and_source_hashes(tmp_path):
     registry = _adapter_registry(tmp_path)
-    validated = validate_adapter_registry(registry, tmp_path)
+    validated = validate_adapter_registry(registry, _source_snapshot(tmp_path))
     assert {item["adapter_id"] for item in validated["adapters"]} == CONFIRMATORY_ADAPTERS
     for item in validated["adapters"]:
         absolute = tmp_path / item["implementation_path"]
@@ -1476,7 +1518,7 @@ def test_adapter_registry_rejects_one_field_mutations(tmp_path, mutator):
     body = {key: value for key, value in registry.items() if key != "artifact_sha256"}
     registry = {**body, "artifact_sha256": canonical_sha256(body)}
     with pytest.raises(EvidenceError):
-        validate_adapter_registry(registry, tmp_path)
+        validate_adapter_registry(registry, _source_snapshot(tmp_path))
 
 
 def _rehash_adapter_registry(registry: dict, root: Path, adapter_id: str) -> dict:
@@ -1509,14 +1551,17 @@ def test_pinned_adapter_executes_and_normalizes_discovery(
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, fixture_name)
     first = run_adapter_discovery(
-        source_root, descriptor, registry, adapter_id
+        _source_snapshot(source_root), descriptor, registry, adapter_id
     )
     shuffled = run_adapter_discovery(
-        source_root, {**descriptor, "reverse": True}, registry, adapter_id
+        _source_snapshot(source_root),
+        {**descriptor, "reverse": True},
+        registry,
+        adapter_id,
     )
     fixture = _load_fixture(fixture_name)
     assert first == shuffled
@@ -1536,20 +1581,20 @@ def test_adapter_execution_consumes_validated_snapshot_without_path_reopen(tmp_p
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     implementation = implementation_root / "adapters/python_pep517_v1.py"
     implementation.write_text("raise RuntimeError('changed bytes executed')\n", encoding="utf-8")
 
     discovery = run_adapter_discovery(
-        source_root, descriptor, registry, "PYTHON_PEP517_V1"
+        _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
     )
 
     assert discovery["discovery_status"] == "EXECUTABLE"
 
 
-@pytest.mark.parametrize("registry_kind", ["adapter", "generator", "contract"])
+@pytest.mark.parametrize("registry_kind", ["contract"])
 @pytest.mark.parametrize("replacement", ["symlink", "bytes"])
 def test_registry_snapshot_safe_read_fails_closed_on_post_lstat_replacement(
     tmp_path, monkeypatch, registry_kind, replacement
@@ -1630,7 +1675,7 @@ def test_verified_adapter_execution_rejects_output_and_network_side_effects(
     implementation.write_text(
         "import socket\n"
         "import sys\n"
-        "def discover(source_root, build_descriptor):\n"
+        "def discover(source_snapshot, build_descriptor):\n"
         f"    {actions[effect]}\n"
         f"    return {fixture_result!r}\n",
         encoding="utf-8",
@@ -1638,7 +1683,9 @@ def test_verified_adapter_execution_rejects_output_and_network_side_effects(
     registry = _rehash_adapter_registry(
         registry, implementation_root, "PYTHON_PEP517_V1"
     )
-    validated = validate_adapter_registry(registry, implementation_root)
+    validated = validate_adapter_registry(
+        registry, _source_snapshot(implementation_root)
+    )
 
     def forbid_real_network(*_args, **_kwargs):
         raise AssertionError("test must not perform real network access")
@@ -1651,7 +1698,7 @@ def test_verified_adapter_execution_rejects_output_and_network_side_effects(
         EvidenceError, match="E_VERIFIED_EXECUTION_(OUTPUT|NETWORK)"
     ):
         run_adapter_discovery(
-            source_root, descriptor, validated, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, validated, "PYTHON_PEP517_V1"
         )
 
     assert capsys.readouterr() == ("", "")
@@ -1683,9 +1730,11 @@ def test_verified_execution_context_serializes_and_restores_process_state(
             )
         executions.append(
             (
-                source_root,
+                _source_snapshot(source_root),
                 descriptor,
-                validate_adapter_registry(registry, implementation_root),
+                validate_adapter_registry(
+                    registry, _source_snapshot(implementation_root)
+                ),
             )
         )
 
@@ -1716,14 +1765,14 @@ def test_adapter_registry_is_revalidated_at_execution_boundary(tmp_path):
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     mutated = copy.deepcopy(registry)
     mutated["adapters"][0]["source_sha256"] = "0" * 64
     with pytest.raises(EvidenceError, match="E_ADAPTER_REGISTRY_HASH"):
         run_adapter_discovery(
-            source_root, descriptor, mutated, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, mutated, "PYTHON_PEP517_V1"
         )
 
 
@@ -1733,9 +1782,13 @@ def test_adapter_rejects_unregistered_and_wrong_returned_adapter_ids(tmp_path):
     source_root.mkdir()
     registry = _adapter_registry(implementation_root)
     descriptor = _write_adapter_project(source_root, "python.json")
-    validated = validate_adapter_registry(registry, implementation_root)
+    validated = validate_adapter_registry(
+        registry, _source_snapshot(implementation_root)
+    )
     with pytest.raises(EvidenceError, match="E_ADAPTER_UNREGISTERED"):
-        run_adapter_discovery(source_root, descriptor, validated, "CARGO_TEST_V1")
+        run_adapter_discovery(
+            _source_snapshot(source_root), descriptor, validated, "CARGO_TEST_V1"
+        )
 
     implementation = implementation_root / "adapters/python_pep517_v1.py"
     implementation.write_text(
@@ -1746,11 +1799,11 @@ def test_adapter_rejects_unregistered_and_wrong_returned_adapter_ids(tmp_path):
     )
     validated = validate_adapter_registry(
         _rehash_adapter_registry(registry, implementation_root, "PYTHON_PEP517_V1"),
-        implementation_root,
+        _source_snapshot(implementation_root),
     )
     with pytest.raises(EvidenceError, match="E_ADAPTER_ID"):
         run_adapter_discovery(
-            source_root, descriptor, validated, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, validated, "PYTHON_PEP517_V1"
         )
 
 
@@ -1775,9 +1828,9 @@ def test_adapter_requires_exact_callable_and_result_schema(tmp_path, result_muta
     elif result_mutation == "extra":
         fixture_result["manual_fallback"] = "python -m demo"
     signature = (
-        "source_root, build_descriptor, caller_discovery=None"
+        "source_snapshot, build_descriptor, caller_discovery=None"
         if result_mutation == "bad_signature"
-        else "source_root, build_descriptor"
+        else "source_snapshot, build_descriptor"
     )
     implementation.write_text(
         f"def discover({signature}):\n    return {fixture_result!r}\n",
@@ -1785,11 +1838,11 @@ def test_adapter_requires_exact_callable_and_result_schema(tmp_path, result_muta
     )
     validated = validate_adapter_registry(
         _rehash_adapter_registry(registry, implementation_root, "PYTHON_PEP517_V1"),
-        implementation_root,
+        _source_snapshot(implementation_root),
     )
     with pytest.raises(EvidenceError, match="E_ADAPTER_(SIGNATURE|RESULT)"):
         run_adapter_discovery(
-            source_root, descriptor, validated, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, validated, "PYTHON_PEP517_V1"
         )
 
 
@@ -1801,7 +1854,7 @@ def test_adapter_rejects_mixed_type_declaration_collections_with_evidence_error(
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     manifest = source_root / descriptor["manifest_path"]
@@ -1810,7 +1863,7 @@ def test_adapter_rejects_mixed_type_declaration_collections_with_evidence_error(
     manifest.write_bytes(_bytes(value))
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
         run_adapter_discovery(
-            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
         )
 
 
@@ -1822,7 +1875,7 @@ def test_adapter_rejects_non_list_declaration_collections_with_evidence_error(
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     manifest = source_root / descriptor["manifest_path"]
@@ -1831,7 +1884,7 @@ def test_adapter_rejects_non_list_declaration_collections_with_evidence_error(
     manifest.write_bytes(_bytes(value))
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
         run_adapter_discovery(
-            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
         )
 
 
@@ -1840,7 +1893,7 @@ def test_adapter_rejects_non_object_site_with_evidence_error(tmp_path):
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     manifest = source_root / descriptor["manifest_path"]
@@ -1849,7 +1902,7 @@ def test_adapter_rejects_non_object_site_with_evidence_error(tmp_path):
     manifest.write_bytes(_bytes(value))
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
         run_adapter_discovery(
-            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
         )
 
 
@@ -1858,7 +1911,7 @@ def test_adapter_rejects_convertible_list_of_pairs_site(tmp_path):
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     manifest = source_root / descriptor["manifest_path"]
@@ -1876,7 +1929,7 @@ def test_adapter_rejects_convertible_list_of_pairs_site(tmp_path):
     manifest.write_bytes(_bytes(value))
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
         run_adapter_discovery(
-            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
         )
 
 
@@ -1886,7 +1939,7 @@ def test_adapter_rejects_unsafe_or_duplicate_source_paths(tmp_path, source_files
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     manifest = source_root / descriptor["manifest_path"]
@@ -1895,7 +1948,7 @@ def test_adapter_rejects_unsafe_or_duplicate_source_paths(tmp_path, source_files
     manifest.write_bytes(_bytes(value))
     with pytest.raises(EvidenceError, match="E_ADAPTER_SOURCE_PATH"):
         run_adapter_discovery(
-            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
         )
 
 
@@ -1904,13 +1957,13 @@ def test_adapter_rejects_caller_supplied_discovery_collections(tmp_path):
     source_root = tmp_path / "source"
     source_root.mkdir()
     registry = validate_adapter_registry(
-        _adapter_registry(implementation_root), implementation_root
+        _adapter_registry(implementation_root), _source_snapshot(implementation_root)
     )
     descriptor = _write_adapter_project(source_root, "python.json")
     descriptor["declarations"] = _load_fixture("python.json")["declarations"]
     with pytest.raises(EvidenceError, match="E_ADAPTER_AUTHORITY"):
         run_adapter_discovery(
-            source_root, descriptor, registry, "PYTHON_PEP517_V1"
+            _source_snapshot(source_root), descriptor, registry, "PYTHON_PEP517_V1"
         )
 
 
@@ -1918,9 +1971,11 @@ def test_unsupported_adapter_emits_receipt_without_manual_fallback(tmp_path):
     fixture = _load_fixture("unsupported.json")
     assert fixture["declarations"] == []
     assert "hand_command" not in json.dumps(fixture)
-    registry = validate_adapter_registry(_adapter_registry(tmp_path), tmp_path)
+    registry = validate_adapter_registry(
+        _adapter_registry(tmp_path), _source_snapshot(tmp_path)
+    )
     discovery = run_adapter_discovery(
-        tmp_path,
+        _source_snapshot(tmp_path),
         {"ecosystem": "cargo"},
         registry,
         None,
@@ -1947,7 +2002,7 @@ def test_source_scale_is_derived_at_frozen_boundaries(
     discovery["source_files"] = ["src/program.py"]
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
-    scale = derive_source_scale(tmp_path, discovery)
+    scale = derive_source_scale(_source_snapshot(tmp_path), discovery)
     assert scale["per_file_effective_lines"] == [
         {"path": "src/program.py", "effective_lines": effective_lines}
     ]
@@ -1988,7 +2043,7 @@ def test_source_scale_rejects_excluded_source_paths(tmp_path, relative):
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_SCALE_SOURCE_PATH"):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 def test_source_scale_counts_frozen_python_and_cmake_comment_rules(tmp_path):
@@ -2010,8 +2065,9 @@ def test_source_scale_counts_frozen_python_and_cmake_comment_rules(tmp_path):
     cmake_discovery["source_files"] = ["src/a.cpp"]
     body = {key: value for key, value in cmake_discovery.items() if key != "artifact_sha256"}
     cmake_discovery["artifact_sha256"] = canonical_sha256(body)
-    assert derive_source_scale(tmp_path, python_discovery)["total_effective_lines"] == 1
-    assert derive_source_scale(tmp_path, cmake_discovery)["total_effective_lines"] == 1
+    snapshot = _source_snapshot(tmp_path)
+    assert derive_source_scale(snapshot, python_discovery)["total_effective_lines"] == 1
+    assert derive_source_scale(snapshot, cmake_discovery)["total_effective_lines"] == 1
 
 
 def test_cmake_adapter_counts_cpp_directives_and_comment_markers_in_strings(tmp_path):
@@ -2027,7 +2083,7 @@ def test_cmake_adapter_counts_cpp_directives_and_comment_markers_in_strings(tmp_
     discovery["source_files"] = ["src/a.cpp"]
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
-    assert derive_source_scale(tmp_path, discovery)["total_effective_lines"] == 3
+    assert derive_source_scale(_source_snapshot(tmp_path), discovery)["total_effective_lines"] == 3
 
 
 @pytest.mark.parametrize(
@@ -2067,7 +2123,7 @@ def test_source_scale_dispatches_frozen_comment_rules_per_file_language(
     discovery["source_files"] = sorted(sources)
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
-    scale = derive_source_scale(tmp_path, discovery)
+    scale = derive_source_scale(_source_snapshot(tmp_path), discovery)
     assert {
         row["path"]: row["effective_lines"]
         for row in scale["per_file_effective_lines"]
@@ -2083,7 +2139,7 @@ def test_source_scale_rejects_unsupported_source_language(tmp_path):
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_SCALE_SOURCE_LANGUAGE"):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 def test_non_utf8_unsupported_source_reports_language_error_before_decode(tmp_path):
@@ -2095,7 +2151,7 @@ def test_non_utf8_unsupported_source_reports_language_error_before_decode(tmp_pa
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_SCALE_SOURCE_LANGUAGE"):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 @pytest.mark.parametrize(
@@ -2126,7 +2182,7 @@ def test_discovery_receipts_are_deeply_validated_before_consumption(tmp_path, mu
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 @pytest.mark.parametrize("field", ["static_dependency_tags", "prerequisites"])
@@ -2138,7 +2194,7 @@ def test_discovery_rejects_mixed_type_collections_with_evidence_error(tmp_path, 
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 @pytest.mark.parametrize("field", ["static_dependency_tags", "prerequisites"])
@@ -2150,7 +2206,7 @@ def test_discovery_rejects_non_list_collections_with_evidence_error(tmp_path, fi
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 def test_discovery_rejects_non_object_site_with_evidence_error(tmp_path):
@@ -2159,7 +2215,7 @@ def test_discovery_rejects_non_object_site_with_evidence_error(tmp_path):
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 def test_discovery_rejects_convertible_list_of_pairs_site(tmp_path):
@@ -2177,19 +2233,19 @@ def test_discovery_rejects_convertible_list_of_pairs_site(tmp_path):
     body = {key: value for key, value in discovery.items() if key != "artifact_sha256"}
     discovery["artifact_sha256"] = canonical_sha256(body)
     with pytest.raises(EvidenceError, match="E_ADAPTER_RESULT"):
-        derive_source_scale(tmp_path, discovery)
+        derive_source_scale(_source_snapshot(tmp_path), discovery)
 
 
 def test_scale_interface_has_no_caller_scale_class():
     assert list(inspect.signature(derive_source_scale).parameters) == [
-        "source_root",
+        "source_snapshot",
         "discovery",
     ]
 
 
 def test_discovery_and_public_frame_interfaces_reject_legacy_caller_authority():
     assert list(inspect.signature(run_adapter_discovery).parameters) == [
-        "source_root",
+        "source_snapshot",
         "build_descriptor",
         "registry",
         "adapter_id",
@@ -2837,7 +2893,7 @@ def _public_frame_with_schemas(
 
 def test_input_generator_registry_binds_exact_five_e_common_ids_and_source_hashes():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     assert {item["generator_id"] for item in registry["generators"]} == set(
         E_COMMON_GENERATOR_IDS
@@ -2873,14 +2929,16 @@ def test_input_generator_registry_rejects_source_hash_mismatch(tmp_path):
     body = {key: value for key, value in mutated.items() if key != "artifact_sha256"}
     mutated = {**body, "artifact_sha256": canonical_sha256(body)}
     with pytest.raises(EvidenceError, match="E_GENERATOR_SOURCE_HASH"):
-        validate_input_generator_registry(mutated, tmp_path)
+        validate_input_generator_registry(mutated, _source_snapshot(tmp_path))
 
 
 def test_generator_execution_consumes_validated_snapshot_without_path_reopen(
     tmp_path,
 ):
     shutil.copytree(GENERATOR_FIXTURE_ROOT, tmp_path, dirs_exist_ok=True)
-    registry = validate_input_generator_registry(_load_generator_registry(), tmp_path)
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), _source_snapshot(tmp_path)
+    )
     selected = next(
         row
         for row in registry["generators"]
@@ -2932,7 +2990,9 @@ def test_verified_generator_execution_rejects_output_and_network_side_effects(
     selected["source_sha256"] = hashlib.sha256(implementation.read_bytes()).hexdigest()
     body = {key: value for key, value in registry.items() if key != "artifact_sha256"}
     registry = {**body, "artifact_sha256": canonical_sha256(body)}
-    validated = validate_input_generator_registry(registry, tmp_path)
+    validated = validate_input_generator_registry(
+        registry, _source_snapshot(tmp_path)
+    )
     frame = _public_frame_with_schemas(
         [
             _public_schema(
@@ -2957,7 +3017,7 @@ def test_verified_generator_execution_rejects_output_and_network_side_effects(
 
 def test_build_common_inputs_ordinals_seeds_dedupe_and_round_robin():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     schemas = [
         _public_schema(
@@ -3049,7 +3109,7 @@ def test_build_common_inputs_ordinals_seeds_dedupe_and_round_robin():
 
 def test_build_common_inputs_rejects_forbidden_generator_inputs():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     base_schemas = [
         _public_schema("NUMERIC_ARRAY_DOMAIN_V1", {"domain": "numeric", "shape": [1]})
@@ -3081,7 +3141,7 @@ def test_build_common_inputs_rejects_forbidden_generator_inputs():
 
 def test_generator_failure_occupies_ordinal_as_common_input_invalid():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     schemas = [
         _public_schema(
@@ -3143,7 +3203,7 @@ def test_generator_failure_occupies_ordinal_as_common_input_invalid():
 
 def test_supported_common_input_generation_fails_closed_when_all_rows_invalid():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     frame = _public_frame_with_schemas(
         [
@@ -3160,7 +3220,7 @@ def test_supported_common_input_generation_fails_closed_when_all_rows_invalid():
 
 def test_executable_discovery_with_zero_eligible_schemas_fails_closed():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
 
     with pytest.raises(EvidenceError, match="E_COMMON_EXECUTABLE"):
@@ -3169,7 +3229,7 @@ def test_executable_discovery_with_zero_eligible_schemas_fails_closed():
 
 def test_unsupported_discovery_yields_thirty_unavailable_rows():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     inventory = build_common_inputs(
         _source_record(),
@@ -3185,7 +3245,7 @@ def test_unsupported_discovery_yields_thirty_unavailable_rows():
 
 def test_validate_common_inputs_on_fixed_source_preserves_identities():
     registry = validate_input_generator_registry(
-        _load_generator_registry(), GENERATOR_FIXTURE_ROOT
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
     schemas = [
         _public_schema("CLI_TOKEN_GRAMMAR_V1", {"domain": "cli", "tokens": ["a"]}),

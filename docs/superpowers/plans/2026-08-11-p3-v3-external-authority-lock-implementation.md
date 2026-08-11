@@ -749,11 +749,14 @@ Tests must prove:
   tree, origin-normalization, and tracked-file queries constructed by production
   code, never by Authority Inputs text;
 - for controller and every subject checkout, the exact read-only Git query set
-  is `rev-parse HEAD`, `rev-parse HEAD^{tree}`, `status --porcelain=v1`,
-  `remote get-url origin`, and `ls-files --stage -z`; each tracked row is parsed
+  is `rev-parse HEAD`, then `rev-parse <captured-commit>^{tree}`, followed by
+  `status --porcelain=v1`, `remote get-url origin`, and
+  `ls-files --stage -z`; each tracked row is parsed
   as exact `(mode, blob_oid, stage=0, path)` authority, and one anchored live-byte
   snapshot must match its fixed-HEAD Git blob SHA-1 and regular-file mode before
-  the same bytes feed manifest and adapter derivation. Nonzero exit, dirty status,
+  the same explicit immutable `(relative_path, mode, sha256, content)` values feed
+  manifest, adapter discovery, frame, scale, workload, common-input, and site
+  derivation without temporary materialization or later source-root reads. Nonzero exit, dirty status,
   malformed output, credential-bearing normalized identity, live/fixed-HEAD byte
   drift, or filesystem/Git inventory divergence fails before output;
 - source-hash-verified deterministic adapters may run only through the reviewed

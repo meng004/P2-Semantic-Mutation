@@ -11,7 +11,6 @@ import re
 import stat
 import subprocess
 import sys
-import tempfile
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -35,6 +34,8 @@ from p3_v3.artifacts import (  # noqa: E402
     write_canonical_json,
 )
 from p3_v3.bridge_and_frames import (  # noqa: E402
+    SourceSnapshot,
+    SourceSnapshotEntry,
     build_contract_inputs,
     build_common_inputs,
     build_public_behavior_frame,
@@ -426,30 +427,73 @@ def _lstat_directory_components(root: Path) -> Path:
     return absolute
 
 
-def _read_manifest_regular_file(path: Path) -> tuple[bytes, int]:
-    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
-    try:
-        fd = os.open(path, flags)
+def _project_git_mode(mode: int) -> str:
+    return "100755" if mode & stat.S_IXUSR else "100644"
+
+
+def _snapshot_from_captured_files(
+    captured: Mapping[str, tuple[bytes, str]], paths: Sequence[str] | None = None
+) -> SourceSnapshot:
+    selected = list(captured) if paths is None else list(paths)
+    entries = []
+    for relative in sorted(selected, key=lambda value: value.encode("utf-8")):
+        raw, mode = captured[relative]
+        entries.append(
+            SourceSnapshotEntry(
+                relative_path=relative,
+                mode=mode,
+                sha256=hashlib.sha256(raw).hexdigest(),
+                content=raw,
+            )
+        )
+    return SourceSnapshot(entries=tuple(entries))
+
+
+def _capture_declared_source_snapshot(
+    root: Path, paths: Sequence[str], context: str
+) -> SourceSnapshot:
+    entries = []
+    ordered = sorted(set(paths), key=lambda value: value.encode("utf-8"))
+    for relative in ordered:
+        safe_relative_path(relative)
         try:
-            info = os.fstat(fd)
-            if not stat.S_ISREG(info.st_mode):
-                raise EvidenceError(
-                    "E_AUTHORITY_MANIFEST", "manifest node is not a regular file"
-                )
-            chunks: list[bytes] = []
-            while True:
-                chunk = os.read(fd, 1024 * 1024)
-                if not chunk:
-                    return b"".join(chunks), info.st_mode
-                chunks.append(chunk)
-        finally:
-            os.close(fd)
-    except EvidenceError:
-        raise
-    except OSError as exc:
-        raise EvidenceError(
-            "E_AUTHORITY_MANIFEST", "manifest file could not be read safely"
-        ) from exc
+            raw, mode = read_regular_file_snapshot(
+                root / relative, f"{context} {relative}"
+            )
+        except EvidenceError as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", f"{context} cannot be captured safely"
+            ) from exc
+        entries.append(
+            SourceSnapshotEntry(
+                relative_path=relative,
+                mode=_project_git_mode(mode),
+                sha256=hashlib.sha256(raw).hexdigest(),
+                content=raw,
+            )
+        )
+    return SourceSnapshot(entries=tuple(entries))
+
+
+def _scope_source_snapshot(snapshot: SourceSnapshot, parent: Path) -> SourceSnapshot:
+    prefix = "" if parent == Path(".") else parent.as_posix().rstrip("/") + "/"
+    entries = []
+    for entry in snapshot.entries:
+        if not entry.relative_path.startswith(prefix):
+            continue
+        relative = entry.relative_path[len(prefix) :]
+        if not relative:
+            continue
+        entries.append(
+            SourceSnapshotEntry(
+                relative_path=relative,
+                mode=entry.mode,
+                sha256=entry.sha256,
+                content=entry.content,
+            )
+        )
+    entries.sort(key=lambda entry: entry.relative_path.encode("utf-8"))
+    return SourceSnapshot(entries=tuple(entries))
 
 
 def _validate_role_root_components(base: Path, relative: Path) -> None:
@@ -475,10 +519,10 @@ def _validate_role_root_components(base: Path, relative: Path) -> None:
         ) from exc
 
 
-def build_tracked_source_manifest(
+def _capture_tracked_source_manifest(
     root: Path, role_roots: Sequence[str], role: str
-) -> dict[str, Any]:
-    """Inventory every safe regular file below the exact roots for one role."""
+) -> tuple[dict[str, Any], SourceSnapshot]:
+    """Inventory and capture every safe regular file below exact role roots."""
 
     base = _lstat_directory_components(Path(root))
     if not isinstance(role, str) or not role:
@@ -518,6 +562,7 @@ def build_tracked_source_manifest(
                 raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest role roots overlap")
 
     rows: list[dict[str, Any]] = []
+    snapshot_entries: list[SourceSnapshotEntry] = []
 
     def visit(path: Path, relative: Path) -> None:
         try:
@@ -557,13 +602,30 @@ def build_tracked_source_manifest(
             raise EvidenceError(
                 "E_AUTHORITY_MANIFEST", "manifest contains a special node"
             )
-        raw, opened_mode = _read_manifest_regular_file(path)
+        try:
+            raw, opened_mode = read_regular_file_snapshot(
+                path, f"manifest file {relative.as_posix()}"
+            )
+        except EvidenceError as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "manifest file could not be read safely"
+            ) from exc
+        mode = _project_git_mode(opened_mode)
+        digest = hashlib.sha256(raw).hexdigest()
         rows.append(
             {
                 "relative_path": relative.as_posix(),
-                "mode": "100755" if opened_mode & 0o111 else "100644",
-                "sha256": hashlib.sha256(raw).hexdigest(),
+                "mode": mode,
+                "sha256": digest,
             }
+        )
+        snapshot_entries.append(
+            SourceSnapshotEntry(
+                relative_path=relative.as_posix(),
+                mode=mode,
+                sha256=digest,
+                content=raw,
+            )
         )
 
     for relative_root in normalized:
@@ -574,11 +636,22 @@ def build_tracked_source_manifest(
         raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest contains no source files")
     if len({row["relative_path"] for row in rows}) != len(rows):
         raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest contains duplicate files")
-    return {
+    manifest = {
         "schema_version": "P3_V3_TRACKED_SOURCE_MANIFEST_V1",
         "role": role,
         "files": rows,
     }
+    snapshot_entries.sort(key=lambda entry: entry.relative_path.encode("utf-8"))
+    return manifest, SourceSnapshot(entries=tuple(snapshot_entries))
+
+
+def build_tracked_source_manifest(
+    root: Path, role_roots: Sequence[str], role: str
+) -> dict[str, Any]:
+    """Inventory every safe regular file below the exact roots for one role."""
+
+    manifest, _snapshot = _capture_tracked_source_manifest(root, role_roots, role)
+    return manifest
 
 
 def verify_running_controller(
@@ -650,9 +723,16 @@ def verify_running_controller(
                     raise EvidenceError(
                         "E_AUTHORITY_MANIFEST", "installed controller path is unsafe"
                     )
-            raw, mode = _read_manifest_regular_file(cursor)
+            try:
+                raw, mode = read_regular_file_snapshot(
+                    cursor, f"installed controller {row['relative_path']}"
+                )
+            except EvidenceError as exc:
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "installed controller path is unsafe"
+                ) from exc
             validate_sha256(row["sha256"], "controller manifest file digest")
-            installed_mode = "100755" if mode & 0o111 else "100644"
+            installed_mode = _project_git_mode(mode)
             if (
                 hashlib.sha256(raw).hexdigest() != row["sha256"]
                 or installed_mode != row["mode"]
@@ -660,7 +740,6 @@ def verify_running_controller(
                 raise EvidenceError(
                     "E_AUTHORITY_MANIFEST", "installed controller bytes differ"
                 )
-
         registries = validate_exact_object(
             dict(locked_registries),
             _LOCKED_REGISTRIES_SCHEMA,
@@ -675,12 +754,25 @@ def verify_running_controller(
             raise EvidenceError(
                 "E_AUTHORITY_MANIFEST", "locked registry bytes differ"
             )
+        implementation_paths = [
+            entry["implementation_path"]
+            for registry_name, entries_field in (
+                ("adapter_registry", "adapters"),
+                ("input_generator_registry", "generators"),
+            )
+            for entry in registries[registry_name][entries_field]
+        ]
+        implementation_snapshot = _capture_declared_source_snapshot(
+            installed_root,
+            implementation_paths,
+            "installed registry implementation",
+        )
         return {
             "adapter_registry": validate_adapter_registry(
-                registries["adapter_registry"], installed_root
+                registries["adapter_registry"], implementation_snapshot
             ),
             "input_generator_registry": validate_input_generator_registry(
-                registries["input_generator_registry"], installed_root
+                registries["input_generator_registry"], implementation_snapshot
             ),
         }
     except EvidenceError as exc:
@@ -822,14 +914,8 @@ def validate_authority_inputs(
 
 def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
     outputs: dict[tuple[str, ...], bytes] = {}
-    queries = (
-        ("rev-parse", "HEAD"),
-        ("rev-parse", "HEAD^{tree}"),
-        ("status", "--porcelain=v1"),
-        ("remote", "get-url", "origin"),
-        ("ls-files", "--stage", "-z"),
-    )
-    for query in queries:
+
+    def run_query(query: tuple[str, ...]) -> bytes:
         try:
             result = subprocess.run(
                 ["git", "-C", str(root), *query],
@@ -849,9 +935,9 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
                 "E_AUTHORITY_GIT", "fixed read-only Git query failed"
             )
         outputs[query] = result.stdout
+        return result.stdout
 
-    def object_id(query: tuple[str, ...]) -> str:
-        raw = outputs[query]
+    def object_id(raw: bytes) -> str:
         try:
             value = raw[:-1].decode("ascii") if raw.endswith(b"\n") else ""
         except UnicodeDecodeError as exc:
@@ -859,6 +945,17 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         if len(raw) != 41 or _GIT_OBJECT_RE.fullmatch(value) is None:
             raise EvidenceError("E_AUTHORITY_GIT", "Git object output is malformed")
         return value
+
+    head_query = ("rev-parse", "HEAD")
+    base_commit = object_id(run_query(head_query))
+    tree_query = ("rev-parse", f"{base_commit}^{{tree}}")
+    base_tree = object_id(run_query(tree_query))
+    for query in (
+        ("status", "--porcelain=v1"),
+        ("remote", "get-url", "origin"),
+        ("ls-files", "--stage", "-z"),
+    ):
+        run_query(query)
 
     if outputs[("status", "--porcelain=v1")] != b"":
         raise EvidenceError("E_AUTHORITY_GIT", "checkout is not clean")
@@ -919,8 +1016,6 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         )
     ):
         raise EvidenceError("E_AUTHORITY_GIT", "Git tracked inventory is malformed")
-    base_commit = object_id(("rev-parse", "HEAD"))
-    base_tree = object_id(("rev-parse", "HEAD^{tree}"))
     if not tracked_entries or _git_tree_oid(tracked_entries) != base_tree:
         raise EvidenceError(
             "E_AUTHORITY_GIT", "Git staged inventory differs from fixed HEAD tree"
@@ -993,7 +1088,7 @@ def _read_git_tracked_snapshot(
             raise EvidenceError(
                 "E_AUTHORITY_GIT", "Git tracked file could not be snapshotted"
             ) from exc
-        mode = "100755" if opened_mode & 0o111 else "100644"
+        mode = _project_git_mode(opened_mode)
         if mode != entry["mode"] or _git_blob_oid(raw) != entry["blob_oid"]:
             raise EvidenceError(
                 "E_AUTHORITY_GIT", "live tracked bytes differ from fixed HEAD"
@@ -1022,10 +1117,10 @@ def _manifest_from_git_snapshot(
 
 
 def _snapshot_canonical_json(
-    snapshot: Mapping[str, tuple[bytes, str]], path: str, context: str
+    snapshot: SourceSnapshot, path: str, context: str
 ) -> dict[str, Any]:
     try:
-        raw = snapshot[path][0]
+        raw = snapshot.read_bytes(path)
         value = json.loads(
             raw.decode("utf-8"),
             parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
@@ -1037,16 +1132,6 @@ def _snapshot_canonical_json(
         raise EvidenceError(
             "E_AUTHORITY_GIT", f"{context} is not a tracked canonical snapshot"
         ) from exc
-
-
-def _materialize_git_snapshot(
-    destination: Path, snapshot: Mapping[str, tuple[bytes, str]]
-) -> None:
-    for relative, (raw, mode) in snapshot.items():
-        target = destination / safe_relative_path(relative).as_posix()
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(raw)
-        target.chmod(0o755 if mode == "100755" else 0o644)
 
 
 def _normalize_git_origin(origin: str) -> str:
@@ -1079,11 +1164,12 @@ def _checkout_authority(
     dict[str, Any],
     dict[str, Any],
     tuple[str, ...],
-    dict[str, tuple[bytes, str]],
+    SourceSnapshot,
 ]:
     safe_root = _lstat_directory_components(root)
     git = _run_fixed_git_queries(safe_root)
-    snapshot = _read_git_tracked_snapshot(safe_root, git["tracked_entries"])
+    observed_manifest = build_tracked_source_manifest(safe_root, role_roots, role)
+    captured = _read_git_tracked_snapshot(safe_root, git["tracked_entries"])
     if role == "controller-source":
         tracked = [
             item
@@ -1092,12 +1178,12 @@ def _checkout_authority(
         ]
     else:
         tracked = git["tracked"]
-    manifest = _manifest_from_git_snapshot(snapshot, tracked, role)
-    observed_manifest = build_tracked_source_manifest(safe_root, role_roots, role)
+    manifest = _manifest_from_git_snapshot(captured, tracked, role)
     if canonical_json_bytes(observed_manifest) != canonical_json_bytes(manifest):
         raise EvidenceError(
             "E_AUTHORITY_GIT", "filesystem and fixed-HEAD tracked snapshot differ"
         )
+    snapshot = _snapshot_from_captured_files(captured)
     return (
         {
             "normalized_repository_identity": _normalize_git_origin(git["origin"]),
@@ -1432,7 +1518,7 @@ def prepare_authority(
             controller_root,
             relative_path,
             f"governing material {role}",
-            raw=controller_snapshot[relative_path][0],
+            raw=controller_snapshot.read_bytes(relative_path),
         )
         governing_materials[f"{role}_sha256"] = digest
         governing_artifacts[f"{role}_sha256"] = envelope
@@ -1450,7 +1536,7 @@ def prepare_authority(
                 controller_root,
                 relative_path,
                 "protocol artifact rq_spec",
-                raw=controller_snapshot[relative_path][0],
+                raw=controller_snapshot.read_bytes(relative_path),
             )
             _rq_ids_from_spec_bytes(bytes.fromhex(artifact["bytes_hex"]))
         else:
@@ -1519,15 +1605,14 @@ def prepare_authority(
     _require_tracked_paths(
         controller_tracked, implementation_paths, "registry implementations"
     )
-    with tempfile.TemporaryDirectory(prefix="p3-authority-controller-") as temporary:
-        snapshot_root = Path(temporary).resolve(strict=True)
-        _materialize_git_snapshot(snapshot_root, controller_snapshot)
-        adapter_registry = validate_adapter_registry(
-            adapter_artifact, (snapshot_root / adapter_relative).parent
-        )
-        generator_registry = validate_input_generator_registry(
-            generator_artifact, (snapshot_root / generator_relative).parent
-        )
+    adapter_registry = validate_adapter_registry(
+        adapter_artifact,
+        _scope_source_snapshot(controller_snapshot, Path(adapter_relative).parent),
+    )
+    generator_registry = validate_input_generator_registry(
+        generator_artifact,
+        _scope_source_snapshot(controller_snapshot, Path(generator_relative).parent),
+    )
     registry_artifacts = {
         "adapter_registry_sha256": adapter_artifact,
         "input_generator_registry_sha256": generator_artifact,
@@ -1577,25 +1662,22 @@ def prepare_authority(
             ],
             "build_descriptor_sha256": canonical_sha256(build_descriptor),
         }
-        with tempfile.TemporaryDirectory(prefix="p3-authority-subject-") as temporary:
-            snapshot_root = Path(temporary).resolve(strict=True)
-            _materialize_git_snapshot(snapshot_root, subject_snapshot)
-            adapter_discovery = run_adapter_discovery(
-                snapshot_root,
-                build_descriptor,
-                adapter_registry,
-                subject_input["adapter_id"],
-            )
-            public_behavior_frame = build_public_behavior_frame(
-                source_record, adapter_discovery
-            )
-            scale = derive_source_scale(snapshot_root, adapter_discovery)
-            profiling_workload = select_profiling_workload(
-                public_behavior_frame, scale["scale_class"]
-            )
-            common_inputs = build_common_inputs(
-                source_record, public_behavior_frame, generator_registry
-            )
+        adapter_discovery = run_adapter_discovery(
+            subject_snapshot,
+            build_descriptor,
+            adapter_registry,
+            subject_input["adapter_id"],
+        )
+        public_behavior_frame = build_public_behavior_frame(
+            source_record, adapter_discovery
+        )
+        scale = derive_source_scale(subject_snapshot, adapter_discovery)
+        profiling_workload = select_profiling_workload(
+            public_behavior_frame, scale["scale_class"]
+        )
+        common_inputs = build_common_inputs(
+            source_record, public_behavior_frame, generator_registry
+        )
         authority_row = {
             "subject_id": subject_input["subject_id"],
             "repository_role": subject_input["repository_role"],
@@ -1624,7 +1706,7 @@ def prepare_authority(
         ),
     ]
     objects.sort(key=lambda row: (row["object_source"], row["inventory_id"]))
-    dependency_lock = controller_snapshot["requirements-frozen.txt"][0]
+    dependency_lock = controller_snapshot.read_bytes("requirements-frozen.txt")
     prepared = {
         "controller_repository": controller_repository,
         "controller_manifest": controller_manifest,
@@ -2693,13 +2775,33 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
     )
     derived_subjects = []
     for spec, record in indexed_specs:
+        _manifest, source_snapshot = _capture_tracked_source_manifest(
+            Path(spec["source_root"]), ["."], "subject-source"
+        )
+        adapter_paths = [
+            entry["implementation_path"]
+            for entry in spec["adapter_registry"]["adapters"]
+        ]
+        generator_paths = [
+            entry["implementation_path"]
+            for entry in spec["input_generator_registry"]["generators"]
+        ]
         prepared = {
-            **spec,
+            **{key: value for key, value in spec.items() if key != "source_root"},
+            "source_snapshot": source_snapshot,
             "adapter_registry": validate_adapter_registry(
-                spec["adapter_registry"], args.adapter_root
+                spec["adapter_registry"],
+                _capture_declared_source_snapshot(
+                    Path(args.adapter_root), adapter_paths, "adapter implementation"
+                ),
             ),
             "input_generator_registry": validate_input_generator_registry(
-                spec["input_generator_registry"], args.generator_root
+                spec["input_generator_registry"],
+                _capture_declared_source_snapshot(
+                    Path(args.generator_root),
+                    generator_paths,
+                    "input generator implementation",
+                ),
             ),
         }
         derived_subjects.append(derive_subject_material(prepared, record))
@@ -3214,7 +3316,7 @@ def _load_evidence_index(
             loaded,
             f"subject_sources[{index}].manifest",
         )
-        rebuilt_manifest = build_tracked_source_manifest(
+        rebuilt_manifest, source_snapshot = _capture_tracked_source_manifest(
             subject_root, ["."], "subject-source"
         )
         if (
@@ -3229,7 +3331,12 @@ def _load_evidence_index(
                 "E_AUTHORITY_MANIFEST", "subject source manifest differs"
             )
         subject_sources.append(
-            {**entry, "root": subject_root, "manifest": declared_manifest}
+            {
+                **entry,
+                "root": subject_root,
+                "manifest": declared_manifest,
+                "source_snapshot": source_snapshot,
+            }
         )
     subject_sources_by_id = {
         entry["subject_id"]: entry for entry in subject_sources
@@ -3337,7 +3444,7 @@ def _load_evidence_index(
             raise EvidenceError(
                 "E_AUTHORITY_MANIFEST", "indexed subject source authority differs"
             )
-        material["source_root"] = source_authority["root"]
+        material["source_snapshot"] = source_authority["source_snapshot"]
         validate_sha256(
             subject["adapter_registry_sha256"],
             f"subjects[{index}].adapter_registry_sha256",
@@ -3816,12 +3923,10 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             )
         rebuilt = rebuild_indexed_subject(
             {
-                "source_root": str(subject["source_root"]),
+                "source_snapshot": subject["source_snapshot"],
                 "source_record": subject["source_record"],
                 "build_descriptor": subject["build_descriptor"],
-                "adapter_root": adapter_registry["_implementation_root"],
                 "adapter_registry": adapter_registry,
-                "input_generator_root": generator_registry["_source_root"],
                 "input_generator_registry": generator_registry,
                 "profiling_results": subject["profiling_results"],
                 "adapter_discovery": subject["adapter_discovery"],

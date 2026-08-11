@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -88,6 +89,24 @@ EXPECTED_LOCKED_PHASE_HISTOGRAM = {
     "PHASE_6": 5,
     "PHASE_7": 5,
 }
+
+
+def _source_snapshot(root: Path):
+    entries = []
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or ".git" in path.relative_to(root).parts:
+            continue
+        raw = path.read_bytes()
+        entries.append(
+            frames_module.SourceSnapshotEntry(
+                relative_path=path.relative_to(root).as_posix(),
+                mode="100755" if path.stat().st_mode & stat.S_IXUSR else "100644",
+                sha256=hashlib.sha256(raw).hexdigest(),
+                content=raw,
+            )
+        )
+    entries.sort(key=lambda entry: entry.relative_path.encode("utf-8"))
+    return frames_module.SourceSnapshot(entries=tuple(entries))
 
 
 def _assert_required_phase_shape(
@@ -324,9 +343,12 @@ def _authority_fixture(tmp_path: Path) -> dict:
         10_000,
         "git@github.com:example/cmake-ctest-m.git",
     )
-    validated_adapters = validate_adapter_registry(adapter_registry, controller)
+    controller_snapshot = _source_snapshot(controller)
+    validated_adapters = validate_adapter_registry(
+        adapter_registry, controller_snapshot
+    )
     validated_generators = validate_input_generator_registry(
-        generator_registry, controller
+        generator_registry, controller_snapshot
     )
     package_root = "1" * 64
     pre_materials = {}
@@ -349,13 +371,16 @@ def _authority_fixture(tmp_path: Path) -> dict:
             "abs",
         ),
     ):
+        source_snapshot = _source_snapshot(root)
         source_record = {
-            "normalized_source_tree_sha256": canonical_source_tree_sha256(root),
+            "normalized_source_tree_sha256": canonical_source_tree_sha256(
+                source_snapshot
+            ),
             "build_descriptor_sha256": canonical_sha256(descriptor),
         }
         neutral = _neutral_id(package_root, source_record, archive_sha256)
         discovery = run_adapter_discovery(
-            root,
+            source_snapshot,
             descriptor,
             validated_adapters,
             "CMAKE_CTEST_V1" if name.startswith("cmake") else "PYTHON_PEP517_V1",
@@ -383,7 +408,7 @@ def _authority_fixture(tmp_path: Path) -> dict:
         material = derive_subject_material(
             {
                 "neutral_snapshot_id": neutral,
-                "source_root": str(root),
+                "source_snapshot": source_snapshot,
                 "source_record": source_record,
                 "build_descriptor": descriptor,
                 "adapter_registry": validated_adapters,
@@ -957,9 +982,12 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         "generator_registry": authority["generator_registry"],
         "generator_registry_path": generator_registry_path,
     }
-    validated_adapters = validate_adapter_registry(authority["adapter_registry"], ROOT)
+    controller_snapshot = _source_snapshot(ROOT)
+    validated_adapters = validate_adapter_registry(
+        authority["adapter_registry"], controller_snapshot
+    )
     validated_generators = validate_input_generator_registry(
-        authority["generator_registry"], ROOT
+        authority["generator_registry"], controller_snapshot
     )
 
     controller_source = evidence_root / "controller-source"
@@ -1033,16 +1061,16 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         bridge_record = next(
             record for record in verified_bridge["records"] if record == prepared_material["record"]
         )
-        spec = {
+        derive_spec = {
             "neutral_snapshot_id": bridge_record["neutral_snapshot_id"],
-            "source_root": str(source_root),
+            "source_snapshot": _source_snapshot(source_root),
             "source_record": source_record,
             "build_descriptor": descriptor,
             "adapter_registry": validated_adapters,
             "input_generator_registry": validated_generators,
             "profiling_results": profiling,
         }
-        material = derive_subject_material(spec, bridge_record)
+        material = derive_subject_material(derive_spec, bridge_record)
         scale_class = "S" if name.endswith("-s") else "M"
         assert material["source_scale"]["scale_class"] == scale_class
         assert any(
@@ -1051,7 +1079,12 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         )
         specs.append(
             {
-                **spec,
+                **{
+                    key: value
+                    for key, value in derive_spec.items()
+                    if key != "source_snapshot"
+                },
+                "source_root": str(source_root),
                 "adapter_registry": authority["adapter_registry"],
                 "input_generator_registry": authority["generator_registry"],
             }

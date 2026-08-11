@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
-from pathlib import Path
 from typing import Any
 
 
-def discover(source_root: Path, build_descriptor: Mapping[str, Any]) -> Mapping[str, Any]:
-    value = json.loads((source_root / build_descriptor["manifest_path"]).read_text())
+def discover(source_snapshot, build_descriptor: Mapping[str, Any]) -> Mapping[str, Any]:
+    value = json.loads(source_snapshot.read_text(build_descriptor["manifest_path"]))
     collections = {
         key: list(reversed(value[key])) if build_descriptor.get("reverse") else value[key]
         for key in ("source_files", "declarations", "public_schemas", "sites")

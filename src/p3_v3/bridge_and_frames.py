@@ -54,6 +54,91 @@ class _VerifiedImplementationSnapshot:
     source_bytes: bytes
 
 
+@dataclass(frozen=True)
+class SourceSnapshotEntry:
+    """One explicit regular-file value captured by an authority boundary."""
+
+    relative_path: str
+    mode: str
+    sha256: str
+    content: bytes
+
+
+@dataclass(frozen=True)
+class SourceSnapshot:
+    """Immutable source values; possession does not itself confer authority."""
+
+    entries: tuple[SourceSnapshotEntry, ...]
+
+    def read_bytes(self, relative_path: str) -> bytes:
+        entries = _validate_source_snapshot(self)
+        try:
+            return entries[safe_relative_path(relative_path).as_posix()].content
+        except (KeyError, EvidenceError) as exc:
+            raise EvidenceError(
+                "E_SOURCE_SNAPSHOT", f"source snapshot path is absent: {relative_path}"
+            ) from exc
+
+    def read_text(self, relative_path: str) -> str:
+        try:
+            return self.read_bytes(relative_path).decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise EvidenceError(
+                "E_SOURCE_SNAPSHOT", f"source snapshot path is not UTF-8: {relative_path}"
+            ) from exc
+
+
+def _validate_source_snapshot(
+    snapshot: SourceSnapshot,
+) -> dict[str, SourceSnapshotEntry]:
+    """Revalidate every explicit value at each source-consuming seam."""
+
+    if type(snapshot) is not SourceSnapshot or type(snapshot.entries) is not tuple:
+        raise EvidenceError("E_SOURCE_SNAPSHOT", "source snapshot schema differs")
+    validated: dict[str, SourceSnapshotEntry] = {}
+    ordered_paths: list[str] = []
+    for index, entry in enumerate(snapshot.entries):
+        if type(entry) is not SourceSnapshotEntry:
+            raise EvidenceError(
+                "E_SOURCE_SNAPSHOT", f"source snapshot entry {index} schema differs"
+            )
+        if type(entry.relative_path) is not str:
+            raise EvidenceError(
+                "E_SOURCE_SNAPSHOT", f"source snapshot entry {index} value differs"
+            )
+        try:
+            canonical_path = safe_relative_path(entry.relative_path).as_posix()
+            validate_sha256(entry.sha256, f"source snapshot entry {index} sha256")
+        except EvidenceError as exc:
+            raise EvidenceError(
+                "E_SOURCE_SNAPSHOT", f"source snapshot entry {index} value differs"
+            ) from exc
+        if (
+            canonical_path != entry.relative_path
+            or entry.mode not in {"100644", "100755"}
+            or type(entry.sha256) is not str
+            or type(entry.content) is not bytes
+        ):
+            raise EvidenceError(
+                "E_SOURCE_SNAPSHOT", f"source snapshot entry {index} value differs"
+            )
+        if hashlib.sha256(entry.content).hexdigest() != entry.sha256:
+            raise EvidenceError(
+                "E_SOURCE_SNAPSHOT", f"source snapshot entry {index} digest differs"
+            )
+        if entry.relative_path in validated:
+            raise EvidenceError("E_SOURCE_SNAPSHOT", "source snapshot paths duplicate")
+        validated[entry.relative_path] = entry
+        ordered_paths.append(entry.relative_path)
+    if ordered_paths != sorted(
+        ordered_paths, key=lambda value: value.encode("utf-8")
+    ):
+        raise EvidenceError(
+            "E_SOURCE_SNAPSHOT", "source snapshot paths are not sorted"
+        )
+    return validated
+
+
 _VERIFIED_EXECUTION_LOCK = threading.RLock()
 _BLOCKED_SOCKET_ATTRIBUTES = (
     "create_connection",
@@ -331,7 +416,7 @@ _RECORD_SCHEMA = {
 }
 _SUBJECT_SPEC_SCHEMA = {
     "neutral_snapshot_id": str,
-    "source_root": str,
+    "source_snapshot": SourceSnapshot,
     "source_record": dict,
     "build_descriptor": dict,
     "adapter_registry": dict,
@@ -370,12 +455,10 @@ _DERIVED_SUBJECT_SCHEMA = {
     "artifact_sha256": str,
 }
 _INDEXED_SUBJECT_REBUILD_SCHEMA = {
-    "source_root": str,
+    "source_snapshot": SourceSnapshot,
     "source_record": dict,
     "build_descriptor": dict,
-    "adapter_root": str,
     "adapter_registry": dict,
-    "input_generator_root": str,
     "input_generator_registry": dict,
     "profiling_results": dict,
     "adapter_discovery": dict,
@@ -1562,6 +1645,25 @@ def _validate_adapter_registry_structure(
 
 
 def _implementation_snapshot(
+    source_snapshot: SourceSnapshot,
+    entry: Mapping[str, Any],
+    implementation_id: str,
+    kind: str,
+) -> _VerifiedImplementationSnapshot:
+    relative = safe_relative_path(entry["implementation_path"])
+    source_bytes = source_snapshot.read_bytes(relative.as_posix())
+    digest = hashlib.sha256(source_bytes).hexdigest()
+    if digest != entry["source_sha256"]:
+        code = "E_ADAPTER_SOURCE_HASH" if kind == "adapter" else "E_GENERATOR_SOURCE_HASH"
+        raise EvidenceError(code, f"{kind} source hash differs: {implementation_id}")
+    return _VerifiedImplementationSnapshot(
+        absolute_path=Path(relative.as_posix()),
+        source_sha256=digest,
+        source_bytes=source_bytes,
+    )
+
+
+def _path_implementation_snapshot(
     root: Path,
     entry: Mapping[str, Any],
     implementation_id: str,
@@ -1607,21 +1709,19 @@ def _validated_snapshot_map(
 
 
 def validate_adapter_registry(
-    registry: Mapping[str, Any], implementation_root: str | Path
+    registry: Mapping[str, Any], implementation_source: SourceSnapshot
 ) -> dict[str, Any]:
     value = _validate_adapter_registry_structure(registry)
-    root = Path(implementation_root)
-    if not root.is_absolute():
-        root = Path.cwd() / root
+    _validate_source_snapshot(implementation_source)
     snapshots = {
         entry["adapter_id"]: _implementation_snapshot(
-            root, entry, entry["adapter_id"], "adapter"
+            implementation_source, entry, entry["adapter_id"], "adapter"
         )
         for entry in value["adapters"]
     }
     return {
         **value,
-        "_implementation_root": str(root),
+        "_implementation_source": implementation_source,
         "_implementation_snapshots": snapshots,
     }
 
@@ -1712,27 +1812,6 @@ _CPP_SOURCE_SUFFIXES = frozenset(
 )
 
 
-def _verified_regular_file(root: Path, relative: str, code: str) -> Path:
-    path = safe_relative_path(relative)
-    absolute = root / path.as_posix()
-    try:
-        resolved = absolute.resolve(strict=True)
-    except OSError as exc:
-        raise EvidenceError(code, f"source file is unavailable: {relative}") from exc
-    try:
-        resolved.relative_to(root)
-    except ValueError as exc:
-        raise EvidenceError(code, f"source file escapes verified root: {relative}") from exc
-    cursor = root
-    for part in path.parts:
-        cursor = cursor / part
-        if cursor.is_symlink():
-            raise EvidenceError(code, f"source path contains a symlink: {relative}")
-    if not resolved.is_file():
-        raise EvidenceError(code, f"source path is not a regular file: {relative}")
-    return resolved
-
-
 def _reject_caller_discovery(value: Mapping[str, Any]) -> None:
     forbidden = sorted(set(value) & _CALLER_DISCOVERY_KEYS)
     if forbidden:
@@ -1812,7 +1891,7 @@ def _load_adapter_discover(
     parameters = list(inspect.signature(discover).parameters.values())
     if (
         [parameter.name for parameter in parameters]
-        != ["source_root", "build_descriptor"]
+        != ["source_snapshot", "build_descriptor"]
         or any(
             parameter.kind is not inspect.Parameter.POSITIONAL_OR_KEYWORD
             or parameter.default is not inspect.Parameter.empty
@@ -1821,7 +1900,7 @@ def _load_adapter_discover(
     ):
         raise EvidenceError(
             "E_ADAPTER_SIGNATURE",
-            "discover must accept exactly source_root and build_descriptor",
+            "discover must accept exactly source_snapshot and build_descriptor",
         )
     return discover
 
@@ -1836,7 +1915,7 @@ def _canonical_collection(values: list[Any], context: str) -> list[Any]:
 def _normalize_adapter_result(
     result: Any,
     *,
-    source_root: Path,
+    source_snapshot: SourceSnapshot,
     adapter_id: str,
     ecosystem: str,
 ) -> dict[str, Any]:
@@ -1870,7 +1949,7 @@ def _normalize_adapter_result(
                 "E_ADAPTER_SOURCE_PATH", f"source path is excluded: {raw}"
             )
         try:
-            _verified_regular_file(source_root, raw, "E_ADAPTER_SOURCE_PATH")
+            source_snapshot.read_bytes(raw)
         except EvidenceError as exc:
             raise EvidenceError("E_ADAPTER_SOURCE_PATH", str(exc)) from exc
         source_files.append(raw)
@@ -1945,7 +2024,7 @@ def _normalize_adapter_result(
 
 
 def run_adapter_discovery(
-    source_root: str | Path,
+    source_snapshot: SourceSnapshot,
     build_descriptor: Mapping[str, Any],
     registry: Mapping[str, Any],
     adapter_id: str | None,
@@ -1968,9 +2047,7 @@ def run_adapter_discovery(
         "adapter_id",
         "E_ADAPTER_REGISTRY",
     )
-    root = Path(source_root).resolve()
-    if not root.is_dir():
-        raise EvidenceError("E_ADAPTER_SOURCE_ROOT", "source_root must be a directory")
+    _validate_source_snapshot(source_snapshot)
 
     if adapter_id is None:
         ecosystem = build_descriptor.get("ecosystem")
@@ -2008,7 +2085,7 @@ def run_adapter_discovery(
         discover = _load_adapter_discover(
             snapshot.absolute_path, adapter_id, snapshot.source_bytes
         )
-        return discover(root, dict(build_descriptor))
+        return discover(source_snapshot, dict(build_descriptor))
 
     try:
         raw_result = _execute_verified_python(invoke_adapter)
@@ -2018,7 +2095,7 @@ def run_adapter_discovery(
         raise EvidenceError("E_ADAPTER_EXECUTION", f"adapter failed: {adapter_id}") from exc
     normalized = _normalize_adapter_result(
         raw_result,
-        source_root=root,
+        source_snapshot=source_snapshot,
         adapter_id=adapter_id,
         ecosystem=entry["ecosystem"],
     )
@@ -2174,64 +2251,26 @@ def _excluded_scale_path(relative: str) -> bool:
     )
 
 
-def canonical_source_tree_sha256(source_root: str | Path) -> str:
-    """Hash the canonical regular-file manifest for a verified source root."""
+def canonical_source_tree_sha256(source_snapshot: SourceSnapshot) -> str:
+    """Hash the canonical regular-file manifest from explicit captured values."""
 
-    supplied_root = Path(source_root)
-    if supplied_root.is_symlink():
-        raise EvidenceError("E_SOURCE_TREE_PATH", "source root must not be a symlink")
-    try:
-        root = supplied_root.resolve(strict=True)
-    except OSError as exc:
-        raise EvidenceError("E_SOURCE_TREE_PATH", "source root is unavailable") from exc
-    if not root.is_dir():
-        raise EvidenceError("E_SOURCE_TREE_PATH", "source root must be a directory")
-
+    entries = _validate_source_snapshot(source_snapshot)
     files: list[dict[str, str]] = []
-
-    def visit(directory: Path) -> None:
-        try:
-            children = sorted(directory.iterdir(), key=lambda path: path.name)
-        except OSError as exc:
+    for relative, entry in entries.items():
+        parts = tuple(part.casefold() for part in safe_relative_path(relative).parts)
+        if any(part in _VCS_METADATA_PARTS for part in parts):
+            continue
+        if any(
+            part in _TRANSIENT_SOURCE_PARTS
+            or part.startswith("cmake-build-")
+            or part.startswith("build-")
+            for part in parts
+        ) or Path(relative).name.casefold() in _TRANSIENT_SOURCE_NAMES:
             raise EvidenceError(
-                "E_SOURCE_TREE_PATH", "source directory cannot be enumerated"
-            ) from exc
-        for path in children:
-            relative = path.relative_to(root).as_posix()
-            parts = tuple(part.casefold() for part in safe_relative_path(relative).parts)
-            if any(part in _VCS_METADATA_PARTS for part in parts):
-                continue
-            if any(
-                part in _TRANSIENT_SOURCE_PARTS
-                or part.startswith("cmake-build-")
-                or part.startswith("build-")
-                for part in parts
-            ) or path.name.casefold() in _TRANSIENT_SOURCE_NAMES:
-                raise EvidenceError(
-                    "E_SOURCE_TREE_PATH",
-                    f"source root contains transient output: {relative}",
-                )
-            if path.is_symlink():
-                raise EvidenceError(
-                    "E_SOURCE_TREE_PATH", f"source path contains a symlink: {relative}"
-                )
-            if path.is_dir():
-                visit(path)
-                continue
-            if not path.is_file():
-                raise EvidenceError(
-                    "E_SOURCE_TREE_PATH", f"source path is not regular: {relative}"
-                )
-            try:
-                content_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
-            except OSError as exc:
-                raise EvidenceError(
-                    "E_SOURCE_TREE_PATH", f"source file cannot be read: {relative}"
-                ) from exc
-            files.append({"path": relative, "byte_sha256": content_sha256})
-
-    visit(root)
-    files.sort(key=lambda item: item["path"])
+                "E_SOURCE_TREE_PATH",
+                f"source snapshot contains transient output: {relative}",
+            )
+        files.append({"path": relative, "byte_sha256": entry.sha256})
     return canonical_sha256(
         {
             "domain": "P3-NORMALIZED-SOURCE-TREE-v1",
@@ -2240,7 +2279,8 @@ def canonical_source_tree_sha256(source_root: str | Path) -> str:
     )
 
 
-def _source_language(path: Path) -> str:
+def _source_language(relative_path: str) -> str:
+    path = Path(relative_path)
     suffix = path.suffix.casefold()
     if path.name.casefold() == "cmakelists.txt" or suffix == ".cmake":
         return "cmake"
@@ -2253,13 +2293,13 @@ def _source_language(path: Path) -> str:
     )
 
 
-def _effective_line_count(path: Path) -> int:
-    language = _source_language(path)
+def _effective_line_count(relative_path: str, raw: bytes) -> int:
+    language = _source_language(relative_path)
     try:
-        lines = path.read_text(encoding="utf-8").splitlines()
-    except (OSError, UnicodeDecodeError) as exc:
+        lines = raw.decode("utf-8").splitlines()
+    except UnicodeDecodeError as exc:
         raise EvidenceError(
-            "E_SCALE_SOURCE", f"source file is not UTF-8 text: {path.name}"
+            "E_SCALE_SOURCE", f"source file is not UTF-8 text: {relative_path}"
         ) from exc
     if language in {"python", "cmake"}:
         return sum(
@@ -2307,27 +2347,29 @@ def _effective_line_count(path: Path) -> int:
 
 
 def derive_source_scale(
-    source_root: str | Path, discovery: Mapping[str, Any]
+    source_snapshot: SourceSnapshot, discovery: Mapping[str, Any]
 ) -> dict[str, Any]:
     """Derive scale solely from validated adapter-enumerated source files."""
 
     value = _validate_discovery(
         discovery, source_path_error_code="E_SCALE_SOURCE_PATH"
     )
-    root = Path(source_root).resolve()
-    if not root.is_dir():
-        raise EvidenceError("E_SCALE_SOURCE_ROOT", "source_root must be a directory")
+    entries = _validate_source_snapshot(source_snapshot)
     counts: list[dict[str, Any]] = []
     seen: set[str] = set()
     for relative in value["source_files"]:
         if not isinstance(relative, str) or relative in seen or _excluded_scale_path(relative):
             raise EvidenceError("E_SCALE_SOURCE_PATH", f"source path is excluded: {relative}")
         seen.add(relative)
-        absolute = _verified_regular_file(root, relative, "E_SCALE_SOURCE_PATH")
+        entry = entries.get(relative)
+        if entry is None:
+            raise EvidenceError(
+                "E_SCALE_SOURCE_PATH", f"source path is absent: {relative}"
+            )
         counts.append(
             {
                 "path": relative,
-                "effective_lines": _effective_line_count(absolute),
+                "effective_lines": _effective_line_count(relative, entry.content),
             }
         )
     counts.sort(key=lambda item: item["path"])
@@ -3161,21 +3203,19 @@ def _validate_input_generator_registry_structure(
 
 
 def validate_input_generator_registry(
-    registry: Mapping[str, Any], source_root: str | Path
+    registry: Mapping[str, Any], implementation_source: SourceSnapshot
 ) -> dict[str, Any]:
     value = _validate_input_generator_registry_structure(registry)
-    root = Path(source_root)
-    if not root.is_absolute():
-        root = Path.cwd() / root
+    _validate_source_snapshot(implementation_source)
     snapshots = {
         entry["generator_id"]: _implementation_snapshot(
-            root, entry, entry["generator_id"], "generator"
+            implementation_source, entry, entry["generator_id"], "generator"
         )
         for entry in value["generators"]
     }
     return {
         **value,
-        "_source_root": str(root),
+        "_implementation_source": implementation_source,
         "_implementation_snapshots": snapshots,
     }
 
@@ -3323,7 +3363,11 @@ def build_common_inputs(
     validate_sha256(source["build_descriptor_sha256"], "build_descriptor_sha256")
     if not isinstance(public_frame, Mapping):
         raise EvidenceError("E_FRAME", "public behavior frame must be an object")
-    registry_source_root = registry.get("_source_root") if isinstance(registry, Mapping) else None
+    implementation_source = (
+        registry.get("_implementation_source")
+        if isinstance(registry, Mapping)
+        else None
+    )
     implementation_snapshots = (
         registry.get("_implementation_snapshots")
         if isinstance(registry, Mapping)
@@ -3332,7 +3376,7 @@ def build_common_inputs(
     registry_body = {
         key: value
         for key, value in dict(registry).items()
-        if key not in {"_source_root", "_implementation_snapshots"}
+        if key not in {"_implementation_source", "_implementation_snapshots"}
     }
     validated_registry = _validate_input_generator_registry_structure(
         registry_body
@@ -3343,7 +3387,7 @@ def build_common_inputs(
         raise EvidenceError("E_GENERATOR_ALLOWLIST", "input generator registry is incomplete")
     validated_registry = {
         **validated_registry,
-        "_source_root": registry_source_root,
+        "_implementation_source": implementation_source,
         "_implementation_snapshots": implementation_snapshots,
     }
     snapshots = _validated_snapshot_map(
@@ -3561,7 +3605,9 @@ def derive_subject_material(
         raise EvidenceError(
             "E_BUILD_DESCRIPTOR_COMMITMENT", "build descriptor commitment differs"
         )
-    if canonical_source_tree_sha256(spec["source_root"]) != record[
+    source_snapshot = spec["source_snapshot"]
+    _validate_source_snapshot(source_snapshot)
+    if canonical_source_tree_sha256(source_snapshot) != record[
         "normalized_source_tree_sha256"
     ]:
         raise EvidenceError(
@@ -3583,7 +3629,7 @@ def derive_subject_material(
     adapter_id = _ecosystem_to_adapter(adapter_registry).get(ecosystem)
     source_id = _controlled_subject_source_id(source_record)
     raw_discovery = run_adapter_discovery(
-        spec["source_root"],
+        source_snapshot,
         spec["build_descriptor"],
         adapter_registry,
         adapter_id,
@@ -3607,7 +3653,7 @@ def derive_subject_material(
             "adapter_discovery_sha256": discovery["artifact_sha256"],
         },
     )
-    raw_source_scale = derive_source_scale(spec["source_root"], raw_discovery)
+    raw_source_scale = derive_source_scale(source_snapshot, raw_discovery)
     source_scale = _bind_artifact(
         raw_source_scale,
         {
@@ -3707,26 +3753,12 @@ def rebuild_indexed_subject(
             _INDEXED_SUBJECT_REBUILD_SCHEMA,
             "subject_index",
         )
-        adapter_registry = validate_adapter_registry(
-            {
-                key: value
-                for key, value in indexed["adapter_registry"].items()
-                if key not in {"_implementation_root", "_implementation_snapshots"}
-            },
-            indexed["adapter_root"],
-        )
-        generator_registry = validate_input_generator_registry(
-            {
-                key: value
-                for key, value in indexed["input_generator_registry"].items()
-                if key not in {"_source_root", "_implementation_snapshots"}
-            },
-            indexed["input_generator_root"],
-        )
+        adapter_registry = indexed["adapter_registry"]
+        generator_registry = indexed["input_generator_registry"]
         rebuilt = derive_subject_material(
             {
                 "neutral_snapshot_id": bridge_record.get("neutral_snapshot_id"),
-                "source_root": indexed["source_root"],
+                "source_snapshot": indexed["source_snapshot"],
                 "source_record": indexed["source_record"],
                 "build_descriptor": indexed["build_descriptor"],
                 "adapter_registry": adapter_registry,
@@ -3903,7 +3935,7 @@ def validate_contract_generator_registry(
     if not root.is_absolute():
         root = Path.cwd() / root
     snapshots = {
-        entry["generator_id"]: _implementation_snapshot(
+        entry["generator_id"]: _path_implementation_snapshot(
             root, entry, entry["generator_id"], "generator"
         )
         for entry in value["generators"]
