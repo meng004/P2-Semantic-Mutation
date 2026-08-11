@@ -491,7 +491,14 @@ def _authority_fixture(tmp_path: Path) -> dict:
             "SUBJECT",
             "PRIMARY_CONTROLLED",
             "SUBJECT_ROOT",
-            ["SOURCE_MANIFEST"],
+            [
+                "ADAPTER_REGISTRY",
+                "BUILD_DESCRIPTOR",
+                "COMMON_INPUT_INVENTORY",
+                "INPUT_GENERATOR_REGISTRY",
+                "PUBLIC_BEHAVIOR_FRAME",
+                "SOURCE_MANIFEST",
+            ],
         ),
         _job_template(
             "phase-1-subject",
@@ -499,7 +506,14 @@ def _authority_fixture(tmp_path: Path) -> dict:
             "SUBJECT",
             "PROFILING",
             "SUBJECT_ROOT",
-            ["SOURCE_MANIFEST"],
+            [
+                "ADAPTER_REGISTRY",
+                "BUILD_DESCRIPTOR",
+                "COMMON_INPUT_INVENTORY",
+                "INPUT_GENERATOR_REGISTRY",
+                "PUBLIC_BEHAVIOR_FRAME",
+                "SOURCE_MANIFEST",
+            ],
         ),
     ]
     for phase_number in range(2, 8):
@@ -1469,8 +1483,8 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
             output_body = {
                 "schema_version": "p3-synthetic-completion-v1",
                 "claims_status": "blocked",
-                "real_p12_access": False,
-                "real_scientific_jobs": 0,
+                "authorized_real_p12_job_count": 0,
+                "recorded_real_scientific_terminal_count": 0,
                 "subject_count": 2,
                 "ecosystem_count": 2,
                 "ecosystems": ["cmake", "python"],
@@ -1981,8 +1995,8 @@ def test_two_subject_phase0_to_phase7_path_is_production_verified(tmp_path):
         {
             "schema_version": "p3-synthetic-completion-v1",
             "claims_status": "blocked",
-            "real_p12_access": False,
-            "real_scientific_jobs": 0,
+            "authorized_real_p12_job_count": 0,
+            "recorded_real_scientific_terminal_count": 0,
             "subject_count": 2,
             "ecosystem_count": 2,
             "ecosystems": ["cmake", "python"],
@@ -2113,7 +2127,7 @@ def test_coordinated_execution_role_and_completion_relabel_is_rejected(tmp_path)
     )
     output_path = root / phase_7["output_manifest"]["path"]
     output = read_canonical_json(output_path)
-    output["real_scientific_jobs"] = 1
+    output["recorded_real_scientific_terminal_count"] = 1
     _refresh_self_hash(output)
     output_path.write_bytes(canonical_json_bytes(output))
     phase_7["output_manifest"]["sha256"] = hashlib.sha256(

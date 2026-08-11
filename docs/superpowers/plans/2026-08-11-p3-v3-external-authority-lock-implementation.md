@@ -218,7 +218,11 @@ templates[] sorted by template_id:
 
 `object_source` selects only a prepared, byte-bound inventory from controller,
 subjects, registries, or protocol artifacts. Expansion is the sorted Cartesian
-product of the selected objects and `repetition_ids`; job IDs, argv, cwd
+product of the selected objects and `repetition_ids`. Every object selected by
+one `object_source` must expose the same complete, sorted, unique input-role
+set, and the template's `input_roles` must equal that set exactly. It is a
+validated declaration of complete consumption, not a caller-controlled subset;
+missing or extra roles fail before expansion. Job IDs, argv, cwd
 identity, environment hash, input hashes, seed, timeout, and all object/MR/input
 identities are derived by production code. No caller supplies a completed base
 intent. Current foundation fixtures authorize only `SYNTHETIC_INFRASTRUCTURE`
@@ -283,8 +287,10 @@ splitting, or evaluation. `cwd_role` is `CONTROLLER_ROOT` or `SUBJECT_ROOT` and
 derives the stored identity `controller` or the literal `subject:` prefix
 concatenated with `subject_id`—never a local
 path. `environment_role` resolves exactly one prepared environment. Every
-`input_roles` item resolves exactly one prepared object input and the resulting
-hash list is sorted. `seed_rule` is `NONE` or `REPETITION_ID`.
+`input_roles` item resolves exactly one prepared object input, the list equals
+the selected source's complete sorted unique role set, and `input_sha256` is
+derived from every selected object's input hash before being sorted. No caller
+subset can reduce intent authority. `seed_rule` is `NONE` or `REPETITION_ID`.
 
 For each sorted template/object/repetition tuple, the job ID is the full
 lowercase SHA-256 of canonical
@@ -626,7 +632,12 @@ Add Authority Inputs mutations proving that a caller-supplied `base_intents`,
 `jobs`, completed intent row, execution class, or P12-access class is rejected
 before inventory derivation. Mutate each prepared subject/protocol/registry
 input and prove that the mechanically derived intent and locked job change or
-fail; there is no path that simply accepts the caller's old intent.
+fail; there is no path that simply accepts the caller's old intent. Add a real
+`prepare_authority` -> `_subject_objects` -> `derive_locked_jobs` test that
+commits tracked subject-source, selected-registry, and common-behavior drift and
+proves that the complete derived input list, intent template, and locked job
+change or fail. A direct mutation of a preconstructed `objects` mapping is not
+sufficient evidence for this boundary.
 
 Add explicit tests equivalent to:
 
@@ -666,7 +677,10 @@ or lacks the new locked-job interfaces.
 `derive_base_intents` expands the frozen Job Derivation Policy V1 over only the
 prepared, byte-bound object inventories. It derives every `_INTENT_SCHEMA`
 field, sorts by job ID, and rejects duplicate expansions or a template that
-names an unavailable object/input/environment role. `intent_template_sha256`
+names an unavailable object/input/environment role. Objects sharing an
+`object_source` must have one identical sorted unique input-role set; every
+template naming that source must declare exactly that complete set, and the
+derived `input_sha256` contains every object input digest. `intent_template_sha256`
 validates one derived production intent, removes only `attempt`, and hashes
 canonical bytes. `derive_locked_jobs` first calls `derive_base_intents`, then
 emits:

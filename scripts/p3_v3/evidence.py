@@ -1967,7 +1967,15 @@ def validate_authority_lock(lock: Mapping[str, Any]) -> dict[str, Any]:
 def load_authority_lock(lock_path: Path, expected_sha256: str) -> dict[str, Any]:
     """Load one canonical Authority Lock only under its external byte digest."""
 
-    validate_sha256(expected_sha256, "authority_lock_sha256")
+    try:
+        validate_sha256(expected_sha256, "authority_lock_sha256")
+    except EvidenceError as exc:
+        if exc.code == "E_SHA256":
+            raise EvidenceError(
+                "E_AUTHORITY_LOCK_DIGEST",
+                "authority lock digest is malformed",
+            ) from exc
+        raise
     raw = read_canonical_regular_bytes(lock_path, "authority lock")
     if hashlib.sha256(raw).hexdigest() != expected_sha256:
         raise EvidenceError(
@@ -2412,6 +2420,16 @@ def _validate_derivation_inputs(
         or len(object_keys) != len(set(object_keys))
     ):
         _authority_intent_failure("prepared objects are not sorted and unique")
+    input_roles_by_source: dict[str, list[str]] = {}
+    for item in objects:
+        input_roles = [prepared_input["role"] for prepared_input in item["inputs"]]
+        expected_roles = input_roles_by_source.setdefault(
+            item["object_source"], input_roles
+        )
+        if input_roles != expected_roles:
+            _authority_intent_failure(
+                "prepared objects from one source have inconsistent input roles"
+            )
 
     environments: list[dict[str, Any]] = []
     for index, candidate in enumerate(environments_value):
@@ -2522,14 +2540,15 @@ def _expand_base_intents(
         environment = environment_by_role.get(template["environment_role"])
         if not selected or environment is None:
             _authority_intent_failure("template names an unavailable inventory role")
+        complete_input_roles = [
+            value["role"] for value in selected[0]["inputs"]
+        ]
+        if template["input_roles"] != complete_input_roles:
+            _authority_intent_failure(
+                "template input roles do not exactly cover selected objects"
+            )
         for item in selected:
-            input_by_role = {value["role"]: value["sha256"] for value in item["inputs"]}
-            try:
-                input_sha256 = sorted(input_by_role[role] for role in template["input_roles"])
-            except KeyError as exc:
-                raise EvidenceError(
-                    "E_AUTHORITY_INTENT", "template names an unavailable input role"
-                ) from exc
+            input_sha256 = sorted(value["sha256"] for value in item["inputs"])
             if template["cwd_role"] == "SUBJECT_ROOT" and not item["subject_id"]:
                 _authority_intent_failure("subject cwd role has no subject identity")
             cwd_identity = (

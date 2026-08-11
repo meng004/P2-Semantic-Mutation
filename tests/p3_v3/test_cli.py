@@ -720,6 +720,14 @@ def test_load_authority_lock_rejects_changed_bytes_before_parsing_fields(tmp_pat
         evidence_module.load_authority_lock(path, expected_sha256)
 
 
+def test_load_authority_lock_normalizes_malformed_expected_digest(tmp_path):
+    path = tmp_path / "authority-lock.json"
+    path.write_bytes(canonical_json_bytes(_authority_lock()))
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_DIGEST"):
+        evidence_module.load_authority_lock(path, "not-a-sha256")
+
+
 def test_load_authority_lock_rejects_matching_noncanonical_bytes(tmp_path):
     path = tmp_path / "authority-lock.json"
     raw = json.dumps(_authority_lock(), sort_keys=True, indent=2).encode("utf-8") + b"\n"
@@ -991,6 +999,26 @@ def test_locked_job_derivation_expands_only_prepared_byte_bound_inventory():
     ]
 
 
+@pytest.mark.parametrize("shape", ["caller_subset", "inconsistent_source_roles"])
+def test_locked_job_derivation_requires_complete_uniform_input_roles(shape):
+    prepared, policy = _job_derivation_fixture()
+    if shape == "caller_subset":
+        prepared["objects"][0]["inputs"].append(
+            {"role": "SECOND_INPUT", "sha256": "d" * 64}
+        )
+    else:
+        second = copy.deepcopy(prepared["objects"][0])
+        second["inventory_id"] = "subject-a:mut-2:e-common-0"
+        second["object_id"] = "mut-2"
+        second["inputs"].append(
+            {"role": "SECOND_INPUT", "sha256": "d" * 64}
+        )
+        prepared["objects"].append(second)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
+        evidence_module.derive_locked_jobs(prepared, policy)
+
+
 @pytest.mark.parametrize(
     "caller_field",
     [
@@ -1183,7 +1211,14 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
                 ],
                 "cwd_role": "SUBJECT_ROOT",
                 "environment_role": "CONTROLLED_ENV",
-                "input_roles": ["SOURCE_MANIFEST"],
+                "input_roles": [
+                    "ADAPTER_REGISTRY",
+                    "BUILD_DESCRIPTOR",
+                    "COMMON_INPUT_INVENTORY",
+                    "INPUT_GENERATOR_REGISTRY",
+                    "PUBLIC_BEHAVIOR_FRAME",
+                    "SOURCE_MANIFEST",
+                ],
                 "seed_rule": "NONE",
                 "timeout_seconds": 10,
                 "repetition_ids": [1],
@@ -1699,6 +1734,84 @@ def test_authority_determinism_coordinated_registry_drift_changes_objects(tmp_pa
     changed = evidence_module.prepare_authority(controller, inputs)
 
     assert changed["objects"] != original["objects"]
+
+
+@pytest.mark.parametrize(
+    "drift", ["tracked_subject_source", "selected_registry", "common_behavior"]
+)
+def test_real_preparation_drift_changes_derived_intent_and_locked_job(
+    tmp_path, drift
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    original = evidence_module.prepare_authority(controller, inputs)
+    original_policy = original["job_derivation_policy"]
+    original_intent = evidence_module.derive_base_intents(
+        original, original_policy
+    )[0]
+    original_job = evidence_module.derive_locked_jobs(original, original_policy)[0]
+
+    subject = Path(inputs["subjects"][0]["root"])
+    if drift == "tracked_subject_source":
+        source = subject / "subject.py"
+        source.write_text(
+            source.read_text(encoding="utf-8") + "\n# tracked source drift\n",
+            encoding="utf-8",
+        )
+        _run_git(subject, "add", ".")
+        _run_git(subject, "commit", "-m", "tracked subject source drift")
+    elif drift == "common_behavior":
+        discovery_path = subject / "discovery.json"
+        discovery = json.loads(discovery_path.read_text(encoding="utf-8"))
+        discovery["declarations"][0]["declared_input_schema_sha256"] = "b" * 64
+        write_canonical_json(discovery_path, discovery, exclusive=False)
+        _run_git(subject, "add", ".")
+        _run_git(subject, "commit", "-m", "common behavior drift")
+    else:
+        registry_path = controller / inputs["registry_artifact_paths"][
+            "adapter_registry"
+        ]
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        selected = next(
+            row
+            for row in registry["adapters"]
+            if row["adapter_id"] == "PYTHON_PEP517_V1"
+        )
+        implementation = registry_path.parent / selected["implementation_path"]
+        implementation.write_text(
+            implementation.read_text(encoding="utf-8")
+            + "\n# selected registry drift\n",
+            encoding="utf-8",
+        )
+        selected["source_sha256"] = hashlib.sha256(
+            implementation.read_bytes()
+        ).hexdigest()
+        registry_body = {
+            key: value for key, value in registry.items() if key != "artifact_sha256"
+        }
+        registry["artifact_sha256"] = canonical_sha256(registry_body)
+        write_canonical_json(registry_path, registry, exclusive=False)
+        protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+        protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+        protocol["adapter_registry_sha256"] = canonical_sha256(registry)
+        protocol_body = {
+            key: value for key, value in protocol.items() if key != "artifact_sha256"
+        }
+        protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+        write_canonical_json(protocol_path, protocol, exclusive=False)
+        _run_git(controller, "add", ".")
+        _run_git(controller, "commit", "-m", "selected registry drift")
+
+    changed = evidence_module.prepare_authority(controller, inputs)
+    changed_policy = changed["job_derivation_policy"]
+    changed_intent = evidence_module.derive_base_intents(changed, changed_policy)[0]
+    changed_job = evidence_module.derive_locked_jobs(changed, changed_policy)[0]
+
+    assert changed["objects"] != original["objects"]
+    assert changed_intent["input_sha256"] != original_intent["input_sha256"]
+    assert changed_job["intent_template_sha256"] != original_job[
+        "intent_template_sha256"
+    ]
+    assert changed_job != original_job
 
 
 @pytest.mark.parametrize("untracked_role", ["authority_artifact", "implementation"])
@@ -5794,7 +5907,7 @@ def test_external_authority_digest_fails_before_index_loading(tmp_path):
         env=_env(),
     )
     assert malformed.returncode == 2
-    assert json.loads(malformed.stderr)["code"] == "E_SHA256"
+    assert json.loads(malformed.stderr)["code"] == "E_AUTHORITY_LOCK_DIGEST"
     assert "E_INDEX" not in malformed.stderr
 
     changed_lock = _authority_lock()
@@ -5823,3 +5936,30 @@ def test_external_authority_digest_fails_before_index_loading(tmp_path):
     assert changed.returncode == 2
     assert json.loads(changed.stderr)["code"] == "E_AUTHORITY_LOCK_DIGEST"
     assert "E_INDEX" not in changed.stderr
+
+
+@pytest.mark.parametrize("expected_digest", ["not-a-sha256", "0" * 64])
+def test_verify_evidence_parser_dispatch_checks_external_digest_before_index(
+    tmp_path, monkeypatch, expected_digest
+):
+    lock_path = tmp_path / "authority-lock.json"
+    lock_path.write_bytes(canonical_json_bytes(_authority_lock()))
+    index_path = tmp_path / "missing-index.json"
+    args = evidence_module.build_parser().parse_args(
+        [
+            "verify-evidence",
+            "--index",
+            str(index_path),
+            "--authority-lock",
+            str(lock_path),
+            "--authority-lock-sha256",
+            expected_digest,
+        ]
+    )
+
+    def forbid_index_loading(*_args, **_kwargs):
+        raise AssertionError("index loaded before external authority digest")
+
+    monkeypatch.setattr(evidence_module, "_load_evidence_index", forbid_index_loading)
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_DIGEST"):
+        evidence_module.dispatch(args)
