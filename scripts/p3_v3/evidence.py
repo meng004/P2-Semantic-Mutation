@@ -2424,6 +2424,7 @@ def reconstruct_origin_receipt(
 ) -> dict[str, Any]:
     """Rebuild the canonical Phase 0 origin receipt from locked authority."""
 
+    _reject_credential_metadata(preflight_event)
     try:
         locked = validate_exact_object(
             dict(lock_preflight), _PREFLIGHT_AUTHORITY_SCHEMA, "lock preflight"

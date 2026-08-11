@@ -2049,6 +2049,78 @@ def test_external_literal_digest_rejects_lock_reseal_before_evidence(
     assert not result.stdout
 
 
+@pytest.mark.parametrize(
+    ("credential_capability", "secret"),
+    [
+        (
+            "Authorization: Bearer TOP_SECRET_PREFLIGHT_TOKEN",
+            "TOP_SECRET_PREFLIGHT_TOKEN",
+        ),
+        (
+            "probe https://audit-user:TOP_SECRET_PREFLIGHT_PASSWORD@"
+            "example.invalid/capability",
+            "TOP_SECRET_PREFLIGHT_PASSWORD",
+        ),
+    ],
+    ids=["bearer", "userinfo"],
+)
+def test_fully_resealed_extra_preflight_capability_rejects_credential_metadata(
+    tmp_path, credential_capability, secret
+):
+    fixture = _build_complete_evidence(tmp_path)
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+
+    preflight_path = root / index["preflight_event"]["path"]
+    preflight = read_canonical_json(preflight_path)
+    preflight["capability_results"].append(
+        {
+            "capability": credential_capability,
+            "status": "PASS",
+            "observation_sha256": "e" * 64,
+        }
+    )
+    preflight["capability_results"].sort(key=lambda row: row["capability"])
+    preflight["event_sha256"] = canonical_sha256(
+        {key: value for key, value in preflight.items() if key != "event_sha256"}
+    )
+    preflight_path.write_bytes(canonical_json_bytes(preflight))
+    index["preflight_event"]["sha256"] = hashlib.sha256(
+        preflight_path.read_bytes()
+    ).hexdigest()
+
+    origin_path = root / index["origin_receipt"]["path"]
+    origin = read_canonical_json(origin_path)
+    origin["preflight_event_sha256"] = preflight["event_sha256"]
+    _refresh_self_hash(origin)
+    origin_path.write_bytes(canonical_json_bytes(origin))
+    index["origin_receipt"]["sha256"] = hashlib.sha256(
+        origin_path.read_bytes()
+    ).hexdigest()
+
+    phase_0 = next(
+        entry for entry in index["phase_receipts"] if entry["phase"] == "PHASE_0"
+    )
+    output_path = root / phase_0["output_manifest"]["path"]
+    output = read_canonical_json(output_path)
+    output["preflight_event_sha256"] = preflight["event_sha256"]
+    _refresh_self_hash(output)
+    output_path.write_bytes(canonical_json_bytes(output))
+    phase_0["output_manifest"]["sha256"] = hashlib.sha256(
+        output_path.read_bytes()
+    ).hexdigest()
+    _refresh_indexed_phase_receipt(root, index, "PHASE_0")
+    _rewrite_index(fixture["index_path"], index)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_CREDENTIAL_METADATA", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+    assert secret not in result.stdout
+    assert secret not in result.stderr
+
+
 def test_coordinated_origin_protocol_attempt_and_completion_reseal_is_rejected(
     tmp_path,
 ):

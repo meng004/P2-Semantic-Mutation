@@ -436,14 +436,18 @@ def test_authority_origin_receipt_reconstructs_locked_phase_zero_event():
 
 
 @pytest.mark.parametrize(
-    ("mutation", "secret"),
+    ("mutation", "secret", "expected_code"),
     [
-        ("stable_field", ""),
-        ("authorization", "Bearer TOP_SECRET_AUTHORITY_TOKEN"),
+        ("stable_field", "", "E_AUTHORITY_ORIGIN"),
+        (
+            "authorization",
+            "Bearer TOP_SECRET_AUTHORITY_TOKEN",
+            "E_CREDENTIAL_METADATA",
+        ),
     ],
 )
 def test_authority_origin_rejects_coordinated_reseal_without_secret_echo(
-    mutation, secret
+    mutation, secret, expected_code
 ):
     lock_preflight = {
         "normalized_repository_identity": "github.com/example/controller",
@@ -480,7 +484,7 @@ def test_authority_origin_rejects_coordinated_reseal_without_secret_echo(
         event_body["authorization"] = secret
     event = {**event_body, "event_sha256": canonical_sha256(event_body)}
 
-    with pytest.raises(EvidenceError, match="E_AUTHORITY_ORIGIN") as caught:
+    with pytest.raises(EvidenceError, match=expected_code) as caught:
         evidence_module.reconstruct_origin_receipt(lock_preflight, event)
 
     if secret:

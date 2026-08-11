@@ -5038,8 +5038,8 @@ def test_authority_origin_rejects_package_local_reseal(tmp_path, target):
 @pytest.mark.parametrize(
     ("mutation", "expected_code"),
     [
-        ("https_userinfo", "E_AUTHORITY_ORIGIN"),
-        ("authorization", "E_AUTHORITY_ORIGIN"),
+        ("https_userinfo", "E_CREDENTIAL_METADATA"),
+        ("authorization", "E_CREDENTIAL_METADATA"),
         ("git_config", "E_AUTHORITY_MANIFEST"),
         ("symlinked_manifest", "E_INDEX_PATH"),
         ("out_of_root", "E_PATH"),

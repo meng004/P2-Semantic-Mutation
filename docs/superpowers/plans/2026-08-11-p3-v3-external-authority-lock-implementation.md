@@ -371,9 +371,11 @@ event, compares every locked stable field, rebuilds the receipt, and raises
 credential bytes are absent by construction. Local self-hashes preserve package
 closure but never replace comparison with the external lock.
 Credential scanning is applied before exact-schema projection to Authority
-Inputs, Authority Lock, and Evidence Index metadata. It rejects exact and
-composite credential keys plus credential-shaped string values such as Bearer
-authorization and URI userinfo, without scanning `SourceSnapshot` source text.
+Inputs, Authority Lock, Evidence Index metadata, and the complete indexed
+preflight event. It rejects exact and composite credential keys plus
+credential-shaped string values such as Bearer authorization and URI userinfo,
+including values in otherwise valid extra capability rows, without scanning
+`SourceSnapshot` source text.
 `event_sha256` and the receipt artifact hash are computed from their respective
 exact objects with only that object's own hash field removed.
 Each sorted `capability_results[]` row has exact keys
@@ -1266,3 +1268,20 @@ configuration validation:
   legacy clean/process filters plus fsmonitor, then touch or modify a filtered
   tracked file. All remaining Git queries leave the marker absent; byte-stable
   touch passes and byte-changing modification returns stable `E_AUTHORITY_GIT`.
+
+### Task 6 Repair F: Complete preflight-event credential boundary
+
+The final operational credential P1 is closed without changing any artifact
+schema:
+
+- `reconstruct_origin_receipt` scans the complete caller-supplied preflight
+  event with the shared credential-metadata validator before any dictionary
+  copy, exact-schema projection, stable-field comparison, or required-capability
+  projection;
+- exact/composite credential keys and Bearer/userinfo-shaped strings therefore
+  fail with stable `E_CREDENTIAL_METADATA`, including a credential-shaped value
+  in the legal `capability` field of an extra capability row. SourceSnapshot
+  source bytes remain outside metadata scanning; and
+- end-to-end mutations add Bearer and URI-userinfo capabilities, then reclose
+  the event, origin receipt, Phase 0 output and phase receipt, and Evidence
+  Index. Both must fail without emitting the secret to stdout or stderr.
