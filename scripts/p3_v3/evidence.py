@@ -583,8 +583,6 @@ def verify_running_controller(
     lock: Mapping[str, Any],
     controller_manifest: Mapping[str, Any],
     locked_registries: Mapping[str, Any],
-    *,
-    evidence_root: str | Path,
 ) -> dict[str, Any]:
     """Bind installed verifier and registry bytes to the external lock."""
 
@@ -675,12 +673,38 @@ def verify_running_controller(
             raise EvidenceError(
                 "E_AUTHORITY_MANIFEST", "locked registry bytes differ"
             )
-        try:
-            resolved_evidence_root = Path(evidence_root).resolve(strict=True)
-        except OSError as exc:
-            raise EvidenceError(
-                "E_AUTHORITY_MANIFEST", "evidence root identity is unavailable"
-            ) from exc
+        return {
+            "adapter_registry": validate_adapter_registry(
+                registries["adapter_registry"], installed_root
+            ),
+            "input_generator_registry": validate_input_generator_registry(
+                registries["input_generator_registry"], installed_root
+            ),
+        }
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_MANIFEST":
+            raise
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "running controller authority is invalid"
+        ) from exc
+
+
+def _verify_running_controller_for_evidence(
+    lock: Mapping[str, Any],
+    controller_manifest: Mapping[str, Any],
+    locked_registries: Mapping[str, Any],
+    evidence_root: str | Path,
+) -> dict[str, Any]:
+    """Reject evidence-root implementations before invoking the public verifier."""
+
+    try:
+        registries = validate_exact_object(
+            dict(locked_registries),
+            _LOCKED_REGISTRIES_SCHEMA,
+            "locked registries",
+        )
+        installed_root = Path(__file__).resolve().parents[2]
+        resolved_evidence_root = Path(evidence_root).resolve(strict=True)
         for registry_name, entries_field in (
             ("adapter_registry", "adapters"),
             ("input_generator_registry", "generators"),
@@ -696,15 +720,9 @@ def verify_running_controller(
                         "E_AUTHORITY_MANIFEST", "locked registry entry is malformed"
                     )
                 relative = safe_relative_path(entry.get("implementation_path"))
-                try:
-                    resolved_implementation = (
-                        installed_root / relative
-                    ).resolve(strict=True)
-                except OSError as exc:
-                    raise EvidenceError(
-                        "E_AUTHORITY_MANIFEST",
-                        "installed registry implementation is unavailable",
-                    ) from exc
+                resolved_implementation = (installed_root / relative).resolve(
+                    strict=True
+                )
                 if resolved_implementation == resolved_evidence_root or (
                     resolved_implementation.is_relative_to(resolved_evidence_root)
                 ):
@@ -712,20 +730,17 @@ def verify_running_controller(
                         "E_AUTHORITY_MANIFEST",
                         "registry implementation overlaps the evidence root",
                     )
-        return {
-            "adapter_registry": validate_adapter_registry(
-                registries["adapter_registry"], installed_root
-            ),
-            "input_generator_registry": validate_input_generator_registry(
-                registries["input_generator_registry"], installed_root
-            ),
-        }
     except EvidenceError as exc:
         if exc.code == "E_AUTHORITY_MANIFEST":
             raise
         raise EvidenceError(
-            "E_AUTHORITY_MANIFEST", "running controller authority is invalid"
+            "E_AUTHORITY_MANIFEST", "registry implementation identity is invalid"
         ) from exc
+    except OSError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST", "registry implementation identity is unavailable"
+        ) from exc
+    return verify_running_controller(lock, controller_manifest, registries)
 
 
 def validate_authority_inputs(
@@ -2963,7 +2978,14 @@ def _load_evidence_index(
     ledger_path, _ = _indexed_file(
         root, value["ledger"], seen, loaded, "ledger", canonical=False
     )
-    claims_path, claims = _indexed_file(root, value["claims"], seen, loaded, "claims")
+    claims_path, _ = _indexed_file(
+        root, value["claims"], seen, loaded, "claims", canonical=False
+    )
+    claims_raw = read_canonical_regular_bytes(claims_path, "indexed claims")
+    if hashlib.sha256(claims_raw).hexdigest() != value["claims"]["sha256"]:
+        raise EvidenceError(
+            "E_INDEX_FILE_HASH", "indexed claims changed during safe loading"
+        )
     job_root = _indexed_directory(root, value["job_root"], seen, "job_root")
 
     _, preflight_event = _indexed_file(
@@ -3229,7 +3251,7 @@ def _load_evidence_index(
         "protocol_artifact_paths": protocol_artifact_paths,
         "ledger_path": ledger_path,
         "claims_path": claims_path,
-        "claims": claims,
+        "claims_raw": claims_raw,
         "indexed_paths": frozenset(seen),
         "job_root": job_root,
         "subjects": subjects,
@@ -3245,7 +3267,12 @@ def _load_evidence_index(
 
 
 def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
-    claims = validate_claim_ledger(material["claims"])
+    claims = read_canonical_json(material["claims_path"])
+    if canonical_json_bytes(claims) != material["claims_raw"]:
+        raise EvidenceError(
+            "E_INDEX_FILE_HASH", "indexed claims changed during verification"
+        )
+    claims = validate_claim_ledger(claims)
     indexed_claim_paths = material["indexed_paths"]
     for claim in claims["claims"]:
         if any(
@@ -3314,14 +3341,14 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
     _index, material = _load_evidence_index(
         args.index, validated_lock, Path(args.authority_lock)
     )
-    installed_registries = verify_running_controller(
+    installed_registries = _verify_running_controller_for_evidence(
         validated_lock,
         material["controller_manifest"],
         {
             "adapter_registry": material["adapter_registries"][0],
             "input_generator_registry": material["generator_registries"][0],
         },
-        evidence_root=material["root"],
+        material["root"],
     )
     material["adapter_registries"] = [
         installed_registries["adapter_registry"]

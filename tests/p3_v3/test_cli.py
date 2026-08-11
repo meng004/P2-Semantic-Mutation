@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import concurrent.futures
 import hashlib
+import inspect
 import json
 import os
 import shutil
@@ -3623,6 +3624,29 @@ def test_locked_intent_failure_precedes_malformed_claim_reconstruction(tmp_path)
     assert json.loads(result.stderr)["code"] == "E_AUTHORITY_INTENT"
 
 
+@pytest.mark.parametrize("claim_bytes", [b"{invalid", b'{\n  "claims": []\n}\n'])
+def test_locked_intent_failure_precedes_claim_json_parsing(tmp_path, claim_bytes):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    intent_path = next((tmp_path / "jobs/PHASE_0").rglob("intent.json"))
+    intent = json.loads(intent_path.read_text(encoding="utf-8"))
+    intent["object_id"] = "lock-mismatched-before-claim-json"
+    intent_path.write_bytes(canonical_json_bytes(intent))
+    _refresh_attempt_evidence(tmp_path, index)
+
+    claims_path = tmp_path / index["claims"]["path"]
+    claims_path.write_bytes(claim_bytes)
+    index["claims"] = _indexed_reference(tmp_path, claims_path)
+    index_body = {key: item for key, item in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(index_body)
+    index_path.write_bytes(canonical_json_bytes(index))
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_AUTHORITY_INTENT"
+
+
 @pytest.mark.parametrize("target", ["origin_receipt", "preflight_event"])
 def test_authority_origin_rejects_package_local_reseal(tmp_path, target):
     index_path = _complete_phase_zero_evidence_index(tmp_path)
@@ -3880,7 +3904,8 @@ def test_authority_manifest_rejects_registry_implementation_under_evidence_root(
         adapter_registry
     )
 
-    calls = {"adapter": 0, "generator": 0}
+    calls = {"controller": 0, "adapter": 0, "generator": 0}
+    original_controller_verifier = evidence_module.verify_running_controller
     original_adapter_validator = evidence_module.validate_adapter_registry
     original_generator_validator = evidence_module.validate_input_generator_registry
 
@@ -3892,24 +3917,39 @@ def test_authority_manifest_rejects_registry_implementation_under_evidence_root(
         calls["generator"] += 1
         return original_generator_validator(*args, **kwargs)
 
+    def controller_attempt(*args, **kwargs):
+        calls["controller"] += 1
+        return original_controller_verifier(*args, **kwargs)
+
+    monkeypatch.setattr(
+        evidence_module, "verify_running_controller", controller_attempt
+    )
     monkeypatch.setattr(evidence_module, "validate_adapter_registry", adapter_attempt)
     monkeypatch.setattr(
         evidence_module, "validate_input_generator_registry", generator_attempt
     )
 
     with pytest.raises(EvidenceError) as exc_info:
-        evidence_module.verify_running_controller(
+        evidence_module._verify_running_controller_for_evidence(
             lock,
             manifest,
             {
                 "adapter_registry": adapter_registry,
                 "input_generator_registry": generator_registry,
             },
-            evidence_root=evidence_root,
+            evidence_root,
         )
 
     assert exc_info.value.code == "E_AUTHORITY_MANIFEST"
-    assert calls == {"adapter": 0, "generator": 0}
+    assert calls == {"controller": 0, "adapter": 0, "generator": 0}
+
+
+def test_verify_running_controller_public_interface_has_exact_three_arguments():
+    assert list(inspect.signature(evidence_module.verify_running_controller).parameters) == [
+        "lock",
+        "controller_manifest",
+        "locked_registries",
+    ]
 
 
 def test_authority_manifest_checks_registry_bytes_before_protocol_bytes(tmp_path):
