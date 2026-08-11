@@ -2931,6 +2931,130 @@ def test_freeze_authority_refuses_overwrite_and_cli_stdout_is_thin(tmp_path):
     assert output.read_bytes() == original
 
 
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        {"description": "Authorization=Bearer TOP_SECRET_REPAIR_I"},
+        {
+            "description": (
+                "https://registry-user:TOP_SECRET_REPAIR_I@example.invalid/schema"
+            )
+        },
+        {"api_key": "TOP_SECRET_REPAIR_I"},
+    ],
+    ids=["bearer_description", "userinfo_description", "api_key"],
+)
+def test_freeze_cli_rejects_credential_metadata_in_open_registry_schema(
+    tmp_path, metadata
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    registry_path = controller / inputs["registry_artifact_paths"][
+        "input_generator_registry"
+    ]
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    registry["generators"][0]["output_schema"].update(metadata)
+    registry_body = {
+        key: value for key, value in registry.items() if key != "artifact_sha256"
+    }
+    registry["artifact_sha256"] = canonical_sha256(registry_body)
+    write_canonical_json(registry_path, registry, exclusive=False)
+    protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    protocol["input_generator_registry_sha256"] = canonical_sha256(registry)
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    write_canonical_json(protocol_path, protocol, exclusive=False)
+    _run_git(controller, "add", ".")
+    _run_git(controller, "commit", "-m", "registry credential metadata fixture")
+    authority_inputs = tmp_path / "authority-inputs.json"
+    output = tmp_path / "authority-lock.json"
+    write_canonical_json(authority_inputs, inputs, exclusive=True)
+
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "freeze-authority-lock",
+            "--controller-root",
+            str(controller),
+            "--authority-inputs",
+            str(authority_inputs),
+            "--output",
+            str(output),
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env={**_env(), "PYTHONDONTWRITEBYTECODE": "1"},
+    )
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_CREDENTIAL_METADATA"
+    assert result.stdout == ""
+    assert "TOP_SECRET_REPAIR_I" not in result.stderr
+    assert not output.exists()
+
+
+def test_freeze_cli_does_not_scan_registry_implementation_source_bytes(tmp_path):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    secret = "TOP_SECRET_REPAIR_I_SOURCE"
+    registry_path = controller / inputs["registry_artifact_paths"][
+        "input_generator_registry"
+    ]
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    entry = registry["generators"][0]
+    implementation = controller / entry["implementation_path"]
+    implementation.write_bytes(
+        implementation.read_bytes()
+        + f"\n# Authorization=Bearer {secret}\n".encode()
+    )
+    entry["source_sha256"] = hashlib.sha256(implementation.read_bytes()).hexdigest()
+    registry_body = {
+        key: value for key, value in registry.items() if key != "artifact_sha256"
+    }
+    registry["artifact_sha256"] = canonical_sha256(registry_body)
+    write_canonical_json(registry_path, registry, exclusive=False)
+    protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    protocol["input_generator_registry_sha256"] = canonical_sha256(registry)
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    write_canonical_json(protocol_path, protocol, exclusive=False)
+    _run_git(controller, "add", ".")
+    _run_git(controller, "commit", "-m", "registry implementation source fixture")
+    authority_inputs = tmp_path / "authority-inputs.json"
+    output = tmp_path / "authority-lock.json"
+    write_canonical_json(authority_inputs, inputs, exclusive=True)
+
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "freeze-authority-lock",
+            "--controller-root",
+            str(controller),
+            "--authority-inputs",
+            str(authority_inputs),
+            "--output",
+            str(output),
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env={**_env(), "PYTHONDONTWRITEBYTECODE": "1"},
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["subject_count"] == 1
+    assert result.stderr == ""
+    assert secret not in result.stdout
+    assert output.exists()
+
+
 def test_freeze_cli_captures_verified_implementation_output_and_fails_closed(
     tmp_path,
 ):

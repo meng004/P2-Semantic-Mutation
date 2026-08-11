@@ -1342,3 +1342,28 @@ scientific plan without changing any scientific result:
   assert every internal hash/reference before CLI dispatch and demonstrate that
   bypassing only the exact-four/claim-coverage gate makes each mutated package
   pass.
+
+### Task 6 Repair I: Complete registry credential-metadata boundaries
+
+- Every canonical adapter, input-generator, and contract-generator registry is
+  scanned recursively with the shared credential-metadata scanner immediately
+  after load and before any entry lookup, implementation-path extraction,
+  exact-schema projection, semantic validator, or authority-binding derivation.
+  This applies to freeze preparation, build-frames registry inputs, indexed
+  final-verification registry references, and installed-controller registry
+  verification.
+- Open nested metadata such as an input or contract generator's
+  `output_schema.description` cannot carry Bearer tokens or URI userinfo, and
+  composite keys such as `api_key` fail with stable `E_CREDENTIAL_METADATA`.
+  Adapter registries receive the same complete recursive scan even though their
+  current public entry schema is exact.
+- Registry implementation source remains a `SourceSnapshot`, not metadata.
+  Source bytes containing credential-shaped text are still hash-bound and may
+  be executed only through the existing verified in-process seam, but are not
+  inspected by the metadata scanner or printed on failure.
+- The freeze RED/GREEN matrix covers Bearer, URI-userinfo, and `api_key` values
+  in legal open input-generator metadata. The final mutation fully reseals the
+  registry, protocol, external lock, subject registry identity, all locked job
+  inputs/templates, intents, ledger, eight phase receipts, and Evidence Index;
+  all hashes/references are asserted before the real CLI rejects the registry
+  without emitting the secret.

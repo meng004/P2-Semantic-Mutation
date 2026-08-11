@@ -691,6 +691,7 @@ def verify_running_controller(
     """Bind installed verifier and registry bytes to the external lock."""
 
     try:
+        _reject_credential_metadata(locked_registries)
         validated_lock = validate_authority_lock(lock)
         manifest = validate_exact_object(
             dict(controller_manifest),
@@ -805,7 +806,7 @@ def verify_running_controller(
             ),
         }
     except EvidenceError as exc:
-        if exc.code == "E_AUTHORITY_MANIFEST":
+        if exc.code in {"E_AUTHORITY_MANIFEST", "E_CREDENTIAL_METADATA"}:
             raise
         raise EvidenceError(
             "E_AUTHORITY_MANIFEST", "running controller authority is invalid"
@@ -821,6 +822,7 @@ def _verify_running_controller_for_evidence(
     """Reject evidence-root implementations before invoking the public verifier."""
 
     try:
+        _reject_credential_metadata(locked_registries)
         registries = validate_exact_object(
             dict(locked_registries),
             _LOCKED_REGISTRIES_SCHEMA,
@@ -854,7 +856,7 @@ def _verify_running_controller_for_evidence(
                         "registry implementation overlaps the evidence root",
                     )
     except EvidenceError as exc:
-        if exc.code == "E_AUTHORITY_MANIFEST":
+        if exc.code in {"E_AUTHORITY_MANIFEST", "E_CREDENTIAL_METADATA"}:
             raise
         raise EvidenceError(
             "E_AUTHORITY_MANIFEST", "registry implementation identity is invalid"
@@ -2195,9 +2197,11 @@ def prepare_authority(
     adapter_artifact = _snapshot_canonical_json(
         controller_snapshot, adapter_relative, "adapter registry"
     )
+    _reject_credential_metadata(adapter_artifact)
     generator_artifact = _snapshot_canonical_json(
         controller_snapshot, generator_relative, "input generator registry"
     )
+    _reject_credential_metadata(generator_artifact)
     implementation_paths = [
         *_registered_implementation_paths(
             adapter_relative,
@@ -3417,6 +3421,8 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
         _manifest, source_snapshot = _capture_tracked_source_manifest(
             Path(spec["source_root"]), ["."], "subject-source"
         )
+        _reject_credential_metadata(spec["adapter_registry"])
+        _reject_credential_metadata(spec["input_generator_registry"])
         adapter_paths = [
             entry["implementation_path"]
             for entry in spec["adapter_registry"]["adapters"]
@@ -3519,8 +3525,12 @@ def _dispatch_build_frames(args: argparse.Namespace) -> dict:
                     "E_CONTRACT_GENERATOR",
                     "applicable slot contracts require --contract-generator-registry/root",
                 )
+            contract_registry_artifact = read_canonical_json(
+                args.contract_generator_registry
+            )
+            _reject_credential_metadata(contract_registry_artifact)
             contract_registry = validate_contract_generator_registry(
-                read_canonical_json(args.contract_generator_registry),
+                contract_registry_artifact,
                 args.contract_generator_root,
             )
         inventory = build_contract_inputs(closure, contract, contract_registry)
@@ -3882,6 +3892,7 @@ def _load_evidence_index(
         _, registry = _indexed_file(
             root, reference, seen, loaded, f"adapter_registries[{index}]"
         )
+        _reject_credential_metadata(registry)
         adapter_registries.append(registry)
         adapter_registry_file_sha256.append(locked_reference["sha256"])
     generator_registries: list[dict[str, Any]] = []
@@ -3909,6 +3920,7 @@ def _load_evidence_index(
             loaded,
             f"input_generator_registries[{index}]",
         )
+        _reject_credential_metadata(registry)
         generator_registries.append(registry)
         generator_registry_file_sha256.append(locked_reference["sha256"])
 

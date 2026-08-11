@@ -1939,6 +1939,56 @@ def _refresh_protocol_bound_attempts(
         ).hexdigest()
 
 
+def _reseal_input_generator_registry_metadata(
+    fixture: dict, metadata: dict
+) -> str:
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    registry_ref = index["input_generator_registries"][0]
+    registry_path = root / registry_ref["path"]
+    registry = read_canonical_json(registry_path)
+    previous_registry_sha256 = registry_ref["sha256"]
+    registry["generators"][0]["output_schema"].update(metadata)
+    _refresh_self_hash(registry)
+    registry_path.write_bytes(canonical_json_bytes(registry))
+    registry_ref["sha256"] = hashlib.sha256(registry_path.read_bytes()).hexdigest()
+    registry_sha256 = registry_ref["sha256"]
+
+    protocol_ref = index["protocol"]
+    protocol_path = root / protocol_ref["path"]
+    protocol = read_canonical_json(protocol_path)
+    protocol["input_generator_registry_sha256"] = registry_sha256
+    _refresh_self_hash(protocol)
+    protocol_path.write_bytes(canonical_json_bytes(protocol))
+    protocol_ref["sha256"] = hashlib.sha256(protocol_path.read_bytes()).hexdigest()
+
+    for subject in index["subjects"]:
+        subject["input_generator_registry_sha256"] = registry["artifact_sha256"]
+    for intent_path in (root / index["job_root"]).rglob("intent.json"):
+        intent = read_canonical_json(intent_path)
+        intent["input_sha256"] = sorted(
+            registry_sha256 if value == previous_registry_sha256 else value
+            for value in intent["input_sha256"]
+        )
+        intent_path.write_bytes(canonical_json_bytes(intent))
+
+    lock_path = fixture["authority"]["lock_path"]
+    lock = read_canonical_json(lock_path)
+    lock["registries"]["input_generator_registry_sha256"] = registry_sha256
+    lock["protocol"]["protocol_sha256"] = protocol_ref["sha256"]
+    _refresh_protocol_bound_attempts(root, index, lock=lock)
+    input_identities: dict[str, str] = {}
+    for intent_path in (root / index["job_root"]).rglob("intent.json"):
+        intent = read_canonical_json(intent_path)
+        identity = canonical_sha256(intent["input_sha256"])
+        assert input_identities.setdefault(intent["job_id"], identity) == identity
+    for job in lock["jobs"]:
+        job["input_identity_sha256"] = input_identities[job["job_id"]]
+    lock_path.write_bytes(canonical_json_bytes(lock))
+    _rewrite_index(fixture["index_path"], index)
+    return hashlib.sha256(lock_path.read_bytes()).hexdigest()
+
+
 def _refresh_indexed_phase_receipt(root: Path, index: dict, phase: str) -> None:
     entry = next(item for item in index["phase_receipts"] if item["phase"] == phase)
     expected_jobs = read_canonical_json(root / entry["expected_jobs"]["path"])
@@ -2434,6 +2484,78 @@ def test_fully_resealed_extra_preflight_capability_rejects_credential_metadata(
     assert result.returncode == 2
     assert not result.stdout
     assert secret not in result.stdout
+    assert secret not in result.stderr
+
+
+def test_fully_resealed_registry_metadata_rejects_credentials_at_final_load(
+    tmp_path,
+):
+    fixture = _build_complete_evidence(tmp_path)
+    secret = "TOP_SECRET_REPAIR_I_FINAL"
+    literal_lock_sha256 = _reseal_input_generator_registry_metadata(
+        fixture,
+        {
+            "description": (
+                f"https://registry-user:{secret}@example.invalid/output-schema"
+            )
+        },
+    )
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    lock_path = fixture["authority"]["lock_path"]
+    lock = read_canonical_json(lock_path)
+    registry_ref = index["input_generator_registries"][0]
+    registry_path = root / registry_ref["path"]
+    registry = read_canonical_json(registry_path)
+    protocol_ref = index["protocol"]
+    protocol_path = root / protocol_ref["path"]
+    protocol = read_canonical_json(protocol_path)
+    assert literal_lock_sha256 == hashlib.sha256(lock_path.read_bytes()).hexdigest()
+    assert registry_ref["sha256"] == hashlib.sha256(
+        registry_path.read_bytes()
+    ).hexdigest()
+    assert registry["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in registry.items() if key != "artifact_sha256"}
+    )
+    assert protocol["input_generator_registry_sha256"] == registry_ref["sha256"]
+    assert protocol_ref["sha256"] == hashlib.sha256(
+        protocol_path.read_bytes()
+    ).hexdigest()
+    assert lock["protocol"]["protocol_sha256"] == protocol_ref["sha256"]
+    assert lock["registries"]["input_generator_registry_sha256"] == registry_ref[
+        "sha256"
+    ]
+    assert all(
+        subject["input_generator_registry_sha256"] == registry["artifact_sha256"]
+        for subject in index["subjects"]
+    )
+    intents = {
+        intent["job_id"]: intent
+        for path in (root / index["job_root"]).rglob("intent.json")
+        for intent in [read_canonical_json(path)]
+    }
+    assert all(
+        job["input_identity_sha256"]
+        == canonical_sha256(intents[job["job_id"]]["input_sha256"])
+        and job["intent_template_sha256"]
+        == intent_template_sha256(intents[job["job_id"]])
+        for job in lock["jobs"]
+    )
+    ledger_path = root / index["ledger"]["path"]
+    assert ledger_path.read_bytes() == b"".join(
+        canonical_json_bytes(event)
+        for event in reconstruct_attempt_events(root / index["job_root"])
+    )
+    assert index["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in index.items() if key != "artifact_sha256"}
+    )
+    result, observed_code = _run_complete_verification(
+        fixture, literal_lock_sha256=literal_lock_sha256
+    )
+
+    assert observed_code == "E_CREDENTIAL_METADATA", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
     assert secret not in result.stderr
 
 
