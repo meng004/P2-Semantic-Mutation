@@ -3174,6 +3174,13 @@ def _load_evidence_index(
             slots.append({**slot_entry, "artifact": slot})
         material["slot_artifacts"] = slots
         subjects.append(material)
+    if "PHASE_1" in coverage and [
+        subject["subject_id"] for subject in subjects
+    ] != list(subject_authority):
+        raise EvidenceError(
+            "E_AUTHORITY_MANIFEST",
+            "indexed subject identities do not exactly cover authority lock",
+        )
 
     packages: list[dict[str, Any]] = []
     for index, candidate in enumerate(value["packages"]):

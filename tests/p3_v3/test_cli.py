@@ -4069,6 +4069,158 @@ def test_verify_evidence_reconstructs_every_indexed_subject(tmp_path):
     assert json.loads(result.stdout)["subject_count"] == 1
 
 
+def _complete_two_subject_reconstructable_index(tmp_path: Path) -> Path:
+    index_path = _complete_reconstructable_subject_index(tmp_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    subject_a = index["subjects"][0]
+    subject_b = copy.deepcopy(subject_a)
+
+    source_a = tmp_path / index["subject_sources"][0]["root"]
+    source_b = tmp_path / "indexed-subject-source-b"
+    shutil.copytree(source_a, source_b)
+    mode_marker = next(path for path in sorted(source_b.rglob("*")) if path.is_file())
+    mode_marker.chmod(mode_marker.stat().st_mode | stat.S_IXUSR)
+    manifest_b = evidence_module.build_tracked_source_manifest(
+        source_b, ["."], "subject-source"
+    )
+    manifest_b_path = tmp_path / "subject-source-b-manifest.json"
+    write_canonical_json(manifest_b_path, manifest_b, exclusive=True)
+    index["subject_sources"].append(
+        {
+            "subject_id": "subject-b",
+            "root": source_b.relative_to(tmp_path).as_posix(),
+            "manifest": _indexed_reference(tmp_path, manifest_b_path),
+        }
+    )
+
+    lock_path = tmp_path / "authority-lock.json"
+    lock = json.loads(lock_path.read_text(encoding="utf-8"))
+    lock_subject_b = copy.deepcopy(lock["subjects"][0])
+    lock_subject_b.update(
+        {
+            "subject_id": "subject-b",
+            "repository_role": "CONTROLLED_B",
+            "normalized_repository_identity": "github.com/example/subject-b",
+            "tracked_source_manifest_sha256": canonical_sha256(manifest_b),
+        }
+    )
+    lock["subjects"].append(lock_subject_b)
+    lock_path.write_bytes(canonical_json_bytes(lock))
+
+    reference_fields = (
+        "bridge_record",
+        "source_record",
+        "build_descriptor",
+        "adapter_discovery",
+        "source_scale",
+        "public_frame",
+        "profiling_workload",
+        "profiling_results",
+        "common_inputs",
+        "common_input_validity",
+        "technique_profile",
+        "sites",
+        "subject",
+    )
+    for field in reference_fields:
+        source = tmp_path / subject_a[field]["path"]
+        clone = tmp_path / f"subject-b-{field}.json"
+        clone.write_bytes(source.read_bytes())
+        subject_b[field] = _indexed_reference(tmp_path, clone)
+
+    cloned_job_ids = []
+    cloned_traces = []
+    for ordinal, trace_a in enumerate(subject_a["profiling_traces"], start=1):
+        trace_source = tmp_path / trace_a["artifact"]["path"]
+        trace_clone = tmp_path / f"subject-b-profile-trace-{ordinal:02d}.json"
+        trace_clone.write_bytes(trace_source.read_bytes())
+        job_id = _digest(f"subject-b-profile-{ordinal:02d}")
+        cloned_job_ids.append(job_id)
+        attempt_a = tmp_path / f"jobs/PHASE_1/{trace_a['job_id']}/1"
+        intent = json.loads((attempt_a / "intent.json").read_text(encoding="utf-8"))
+        result = json.loads((attempt_a / "result.json").read_text(encoding="utf-8"))
+        intent["job_id"] = job_id
+        intent["cwd_identity"] = "subject:subject-b"
+        result["job_id"] = job_id
+        result["call_trace_identity"] = canonical_sha256(
+            {
+                "job_id": job_id,
+                "attempt": 1,
+                "behavior_id": trace_a["behavior_id"],
+                "call_trace_sha256": trace_a["artifact"]["sha256"],
+                "domain": "P3-PROFILING-TRACE-v1",
+            }
+        )
+        attempt_b = tmp_path / f"jobs/PHASE_1/{job_id}/1"
+        attempt_b.mkdir(parents=True)
+        (attempt_b / "intent.json").write_bytes(canonical_json_bytes(intent))
+        (attempt_b / "result.json").write_bytes(canonical_json_bytes(result))
+        cloned_traces.append(
+            {
+                **trace_a,
+                "job_id": job_id,
+                "artifact": _indexed_reference(tmp_path, trace_clone),
+            }
+        )
+    subject_b.update(
+        {
+            "subject_id": "subject-b",
+            "source_root": source_b.relative_to(tmp_path).as_posix(),
+            "profiling_traces": cloned_traces,
+        }
+    )
+    index["subjects"].append(subject_b)
+
+    phase_one = next(
+        entry for entry in index["phase_receipts"] if entry["phase"] == "PHASE_1"
+    )
+    expected_path = tmp_path / phase_one["expected_jobs"]["path"]
+    expected_jobs = json.loads(expected_path.read_text(encoding="utf-8"))
+    expected_path.write_bytes(canonical_json_bytes(sorted(expected_jobs + cloned_job_ids)))
+    phase_one["expected_jobs"] = _indexed_reference(tmp_path, expected_path)
+    _refresh_attempt_evidence(tmp_path, index)
+    _refresh_external_authority_jobs(tmp_path, index)
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(canonical_json_bytes(index))
+    return index_path
+
+
+def test_verify_evidence_accepts_complete_sorted_two_subject_set(tmp_path):
+    result = _run_evidence_index(_complete_two_subject_reconstructable_index(tmp_path))
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["subject_count"] == 2
+
+
+@pytest.mark.parametrize("mutation", ["omission", "duplicate_clone", "swap_order"])
+def test_verify_evidence_rejects_subject_rows_not_exactly_covering_lock(
+    tmp_path, mutation
+):
+    index_path = _complete_two_subject_reconstructable_index(tmp_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    if mutation == "omission":
+        index["subjects"].pop()
+    elif mutation == "duplicate_clone":
+        index["subjects"][1]["subject_id"] = "subject-a"
+        index["subjects"][1]["source_root"] = index["subjects"][0]["source_root"]
+        for trace_a, trace_clone in zip(
+            index["subjects"][0]["profiling_traces"],
+            index["subjects"][1]["profiling_traces"],
+        ):
+            trace_clone["job_id"] = trace_a["job_id"]
+    else:
+        index["subjects"].reverse()
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(canonical_json_bytes(index))
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_AUTHORITY_MANIFEST"
+
+
 def test_verify_evidence_accepts_locked_subject_root_profiling_cwd(tmp_path):
     index_path = _complete_reconstructable_subject_index(tmp_path)
     index = json.loads(index_path.read_text(encoding="utf-8"))
