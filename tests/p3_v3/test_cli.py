@@ -34,6 +34,7 @@ CLI = ROOT / "scripts/p3_v3/evidence.py"
 FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "public_behavior"
 ADAPTER_FIXTURE_ROOT = Path(__file__).resolve().parent / "fixtures" / "adapters"
 COMMANDS = {
+    "freeze-authority-lock",
     "validate-protocol",
     "verify-bridge",
     "build-frames",
@@ -752,14 +753,23 @@ def _job_derivation_fixture():
         ],
     }
     build_descriptor = {"schema_version": "BUILD_V1", "language": "python"}
-    governing_artifacts = {
-        field: {"schema_version": "GOVERNING_V1", "role": field}
+    governing_raw = {
+        field: canonical_json_bytes({"schema_version": "GOVERNING_V1", "role": field})
         for field in (
             "scientific_plan_sha256",
             "evidence_design_sha256",
             "authority_lock_design_sha256",
             "implementation_plan_sha256",
         )
+    }
+    governing_artifacts = {
+        field: {
+            "schema_version": "P3_V3_RAW_AUTHORITY_BYTES_V1",
+            "relative_path": f"governing/{field}.json",
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "bytes_hex": raw.hex(),
+        }
+        for field, raw in governing_raw.items()
     }
     governing_artifacts["controller_implementation_manifest_sha256"] = (
         controller_manifest
@@ -820,7 +830,7 @@ def _job_derivation_fixture():
             }
         ],
         "governing_materials": {
-            field: canonical_sha256(artifact)
+            field: artifact.get("sha256", canonical_sha256(artifact))
             for field, artifact in governing_artifacts.items()
         },
         "governing_artifacts": governing_artifacts,
@@ -1038,6 +1048,612 @@ def test_locked_job_derivation_rejects_stale_top_level_authority(authority):
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
         evidence_module.derive_base_intents(prepared, policy)
+
+
+def _init_authority_repo(root: Path, origin: str) -> None:
+    _run_git(root, "init")
+    _run_git(root, "config", "user.name", "Authority Fixture")
+    _run_git(root, "config", "user.email", "authority@example.invalid")
+    _run_git(root, "remote", "add", "origin", origin)
+    _run_git(root, "add", ".")
+    _run_git(root, "commit", "-m", "authority fixture")
+
+
+def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Path]]:
+    controller = tmp_path / "controller"
+    subject = tmp_path / "subject"
+    for root in (controller, subject):
+        root.mkdir()
+
+    controller_source = controller / "src/p3_v3/controller.py"
+    controller_cli = controller / "scripts/p3_v3/evidence.py"
+    dependency_lock = controller / "requirements-frozen.txt"
+    controller_source.parent.mkdir(parents=True)
+    controller_cli.parent.mkdir(parents=True)
+    controller_source.write_text("CONTROLLER = True\n", encoding="utf-8")
+    controller_cli.write_text("#!/usr/bin/env python3\n", encoding="utf-8")
+    controller_cli.chmod(controller_cli.stat().st_mode | stat.S_IXUSR)
+    dependency_lock.write_text("pytest==8.4.2\n", encoding="utf-8")
+
+    adapter_root = controller / "registries/adapters"
+    adapter_root.mkdir(parents=True)
+    adapter_registry = _adapter_registry(adapter_root)
+    adapter_registry_path = adapter_root / "registry.json"
+    write_canonical_json(adapter_registry_path, adapter_registry, exclusive=True)
+
+    generator_root = controller / "registries/input_generators"
+    shutil.copytree(
+        Path(__file__).resolve().parent / "fixtures/input_generators",
+        generator_root,
+        dirs_exist_ok=True,
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    )
+
+    governing_paths: dict[str, str] = {}
+    governing_files: dict[str, Path] = {}
+    for role in (
+        "scientific_plan",
+        "evidence_design",
+        "authority_lock_design",
+        "implementation_plan",
+    ):
+        path = controller / f"authorities/governing/{role}.md"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if role == "scientific_plan":
+            path.write_bytes(
+                (ROOT / "docs/superpowers/plans/2026-08-08-p3-semantic-mutant-argumentation-experiment.md").read_bytes()
+            )
+        elif role == "evidence_design":
+            path.write_bytes(
+                (ROOT / "docs/superpowers/specs/2026-08-08-p3-v3-evidence-foundation-design.md").read_bytes()
+            )
+        else:
+            path.write_bytes(f"# {role}\nfixture bytes\n".encode())
+        governing_paths[role] = path.relative_to(controller).as_posix()
+        governing_files[role] = path
+
+    protocol_root = controller / "authorities/protocol"
+    protocol_root.mkdir(parents=True)
+    policy = {
+        "schema_version": "P3_V3_JOB_DERIVATION_POLICY_V1",
+        "maximum_attempts": 3,
+        "retry_trigger": "FAIL_INFRASTRUCTURE",
+        "templates": [
+            {
+                "template_id": "subject-control",
+                "phase": "PHASE_0",
+                "job_role": "PRIMARY_CONTROLLED",
+                "object_source": "SUBJECT",
+                "argv_template": [
+                    "controller",
+                    "${subject_id}",
+                    "${object_id}",
+                    "${environment_id}",
+                    "${repetition_id}",
+                ],
+                "cwd_role": "SUBJECT_ROOT",
+                "environment_role": "CONTROLLED_ENV",
+                "input_roles": ["SOURCE_MANIFEST"],
+                "seed_rule": "NONE",
+                "timeout_seconds": 10,
+                "repetition_ids": [1],
+                "execution_class": "NON_SCIENTIFIC_CONTROL",
+                "p12_access_class": "FORBIDDEN",
+            }
+        ],
+    }
+    environment_lock = {
+        "schema_version": "P3_V3_ENVIRONMENT_LOCK_V1",
+        "required_capabilities": ["cpu"],
+        "forbidden_credential_fields": [
+            "authorization",
+            "credential",
+            "password",
+            "token",
+        ],
+        "environments": [
+            {
+                "environment_role": "CONTROLLED_ENV",
+                "environment_id": "fixture-env",
+                "environment_sha256": _digest("fixture-env"),
+            }
+        ],
+    }
+    p12_contract = {
+        "schema_version": "P3_V3_P12_CONTRACT_V1",
+        "synthetic_cases": [],
+    }
+    claim_ceiling_body = {
+        "schema_version": "p3-claim-ceiling-authority-v1",
+        "claims": [
+            {
+                "claim_id": "claim-1",
+                "rqs": ["RQ1"],
+                "initial_status": "blocked",
+            }
+        ],
+    }
+    claim_ceiling = {
+        **claim_ceiling_body,
+        "artifact_sha256": canonical_sha256(claim_ceiling_body),
+    }
+    protocol_artifacts: dict[str, dict] = {
+        role: {"schema_version": "P3_V3_PROTOCOL_ARTIFACT_V1", "role": role}
+        for role in (
+            "rq_spec",
+            "operator_catalogue",
+            "mr_policy",
+            "site_policy",
+            "analysis_spec",
+            "package_policy",
+        )
+    }
+    protocol_artifacts.update(
+        {
+            "claim_ceiling": claim_ceiling,
+            "p12_contract": p12_contract,
+            "environment_lock": environment_lock,
+            "job_derivation_policy": policy,
+        }
+    )
+    protocol_paths: dict[str, str] = {}
+    for role, artifact in protocol_artifacts.items():
+        path = protocol_root / f"{role}.json"
+        write_canonical_json(path, artifact, exclusive=True)
+        protocol_paths[role] = path.relative_to(controller).as_posix()
+
+    protocol_hashes = {
+        f"{role}_sha256": canonical_sha256(artifact)
+        for role, artifact in protocol_artifacts.items()
+        if role != "job_derivation_policy"
+    }
+    protocol_hashes.update(
+        {
+            "adapter_registry_sha256": canonical_sha256(adapter_registry),
+            "input_generator_registry_sha256": hashlib.sha256(
+                (generator_root / "registry.json").read_bytes()
+            ).hexdigest(),
+        }
+    )
+    protocol = protocol_root / "protocol.json"
+    _write_protocol(protocol, _protocol_body(**protocol_hashes))
+    protocol_paths["protocol"] = protocol.relative_to(controller).as_posix()
+
+    discovery = {
+        "source_files": ["subject.py"],
+        "declarations": [
+            {
+                "category": "PUBLIC_API",
+                "provenance_path": "subject.py",
+                "provenance_span_or_key": "solve",
+                "entrypoint": "subject:solve",
+                "normalized_entrypoint": "subject:solve",
+                "declared_inputs": {"kind": "array"},
+                "declared_input_schema_sha256": "a" * 64,
+                "static_dependency_tags": [],
+                "prerequisites": [],
+            }
+        ],
+        "public_schemas": [
+            {
+                "schema_kind": "JSON_SCHEMA_DRAFT2020_12_V1",
+                "raw_schema": {"type": "array", "items": {"type": "number"}},
+                "provenance_path": "subject.py",
+                "provenance_span_or_key": "input-schema",
+            }
+        ],
+        "sites": [
+            {
+                "path": "subject.py",
+                "symbol": "solve",
+                "start_line": 1,
+                "start_col": 0,
+                "end_line": 2,
+                "end_col": 1,
+            }
+        ],
+    }
+    build_descriptor = {"ecosystem": "python", "manifest_path": "discovery.json"}
+    (subject / "subject.py").write_text("def solve(value):\n    return value\n", encoding="utf-8")
+    write_canonical_json(subject / "discovery.json", discovery, exclusive=True)
+    write_canonical_json(subject / "build.json", build_descriptor, exclusive=True)
+
+    _init_authority_repo(controller, SECRET_ORIGIN)
+    _init_authority_repo(
+        subject,
+        "git@github.com:example/subject-fixture.git",
+    )
+    inputs = {
+        "schema_version": "P3_V3_AUTHORITY_INPUTS_V1",
+        "task_id": "p3-v3-freeze-fixture",
+        "subjects": [
+            {
+                "subject_id": "subject-a",
+                "repository_role": "CONTROLLED_A",
+                "root": str(subject),
+                "build_descriptor_path": "build.json",
+                "adapter_id": "PYTHON_PEP517_V1",
+            }
+        ],
+        "governing_material_paths": governing_paths,
+        "protocol_artifact_paths": protocol_paths,
+        "registry_artifact_paths": {
+            "adapter_registry": adapter_registry_path.relative_to(controller).as_posix(),
+            "input_generator_registry": (
+                generator_root / "registry.json"
+            ).relative_to(controller).as_posix(),
+        },
+    }
+    return controller, inputs, governing_files
+
+
+def test_authority_determinism_freezes_real_bytes_and_derived_inventory(tmp_path):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    first = evidence_module.build_authority_lock(controller, inputs)
+    reordered = dict(reversed(list(inputs.items())))
+    second = evidence_module.build_authority_lock(controller, reordered)
+
+    assert canonical_json_bytes(first) == canonical_json_bytes(second)
+    assert first["controller_repository"]["normalized_repository_identity"] == SECRET_IDENTITY
+    assert first["subjects"][0]["normalized_repository_identity"] == (
+        "github.com/example/subject-fixture"
+    )
+    assert first["jobs"]
+    assert SECRET_ORIGIN.encode() not in canonical_json_bytes(first)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "missing",
+        "extra",
+        "duplicate_subject",
+        "reordered_subjects",
+        "unsafe_artifact_path",
+        "unsafe_build_path",
+        "unsafe_subject_root",
+        "duplicate_cross_path",
+        "base_intents",
+        "intent_template_sha256",
+        "execution_class",
+        "p12_access_class",
+    ],
+)
+def test_freeze_authority_inputs_reject_exact_schema_and_direct_intent_fields(
+    tmp_path, monkeypatch, mutation
+):
+    _controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    candidate = copy.deepcopy(inputs)
+    if mutation == "missing":
+        del candidate["task_id"]
+    elif mutation == "extra":
+        candidate["extra"] = True
+    elif mutation == "duplicate_subject":
+        candidate["subjects"].append(copy.deepcopy(candidate["subjects"][0]))
+    elif mutation == "reordered_subjects":
+        second = copy.deepcopy(candidate["subjects"][0])
+        second["subject_id"] = "subject-b"
+        second["repository_role"] = "CONTROLLED_B"
+        candidate["subjects"] = [second, candidate["subjects"][0]]
+    elif mutation == "unsafe_artifact_path":
+        candidate["protocol_artifact_paths"]["rq_spec"] = "../rq.json"
+    elif mutation == "unsafe_build_path":
+        candidate["subjects"][0]["build_descriptor_path"] = "../build.json"
+    elif mutation == "unsafe_subject_root":
+        candidate["subjects"][0]["root"] = "subject//checkout"
+    elif mutation == "duplicate_cross_path":
+        candidate["registry_artifact_paths"]["adapter_registry"] = candidate[
+            "protocol_artifact_paths"
+        ]["rq_spec"]
+    else:
+        candidate[mutation] = [] if mutation == "base_intents" else "forbidden"
+
+    def forbid_git(*_args, **_kwargs):
+        raise AssertionError("Authority Inputs must fail before any Git query")
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", forbid_git)
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INPUTS"):
+        evidence_module.build_authority_lock(tmp_path / "unused", candidate)
+
+
+def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
+    tmp_path, monkeypatch
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    real_run = subprocess.run
+    observed: list[tuple[str, ...]] = []
+    allowed = {
+        ("rev-parse", "HEAD"),
+        ("rev-parse", "HEAD^{tree}"),
+        ("status", "--porcelain=v1"),
+        ("remote", "get-url", "origin"),
+        ("ls-files", "-z"),
+    }
+
+    def fixed_git_only(argv, *args, **kwargs):
+        assert argv[0] == "git"
+        query = tuple(argv[3:])
+        assert query in allowed
+        observed.append(query)
+        return real_run(argv, *args, **kwargs)
+
+    def forbidden_execution(*_args, **_kwargs):
+        raise AssertionError("freeze reached an evidence/scientific execution path")
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", fixed_git_only)
+    for name in (
+        "run_preflight",
+        "derive_subject_material",
+        "recompute_p12_summary",
+        "validate_mr_inventory",
+    ):
+        monkeypatch.setattr(evidence_module, name, forbidden_execution)
+
+    evidence_module.build_authority_lock(controller, inputs)
+
+    assert sorted(observed) == sorted([*allowed, *allowed])
+    assert len(observed) == 10
+    assert _run_git(controller, "status", "--porcelain=v1") == ""
+
+
+@pytest.mark.parametrize(
+    "failure", ["nonzero", "dirty", "malformed", "stderr", "divergence"]
+)
+def test_freeze_authority_fails_closed_on_git_checkout_anomalies(
+    tmp_path, monkeypatch, failure
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    if failure == "dirty":
+        (controller / "src/p3_v3/controller.py").write_text("dirty\n", encoding="utf-8")
+    elif failure == "divergence":
+        (controller / "src/p3_v3/untracked.py").write_text("untracked\n", encoding="utf-8")
+    else:
+        real_run = subprocess.run
+
+        def faulty_git(argv, *args, **kwargs):
+            if tuple(argv[3:]) == ("rev-parse", "HEAD"):
+                if failure == "nonzero":
+                    return subprocess.CompletedProcess(argv, 1, b"", b"failure")
+                if failure == "stderr":
+                    return subprocess.CompletedProcess(argv, 0, b"1" * 40 + b"\n", b"warning")
+                return subprocess.CompletedProcess(argv, 0, b"not-an-object\n", b"")
+            return real_run(argv, *args, **kwargs)
+
+        monkeypatch.setattr(evidence_module.subprocess, "run", faulty_git)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module.build_authority_lock(controller, inputs)
+
+
+def test_authority_determinism_raw_governing_byte_drift_changes_lock(tmp_path):
+    controller, inputs, governing = _authority_freeze_fixture(tmp_path)
+    first = evidence_module.build_authority_lock(controller, inputs)
+    governing["authority_lock_design"].write_bytes(b"changed authority bytes\n")
+    _run_git(controller, "add", ".")
+    _run_git(controller, "commit", "-m", "governing drift")
+    second = evidence_module.build_authority_lock(controller, inputs)
+
+    assert first["governing_materials"] != second["governing_materials"]
+    assert canonical_json_bytes(first) != canonical_json_bytes(second)
+
+
+def test_authority_determinism_coordinated_registry_drift_changes_objects(tmp_path):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    original = evidence_module.prepare_authority(controller, inputs)
+    adapter_registry_path = controller / inputs["registry_artifact_paths"][
+        "adapter_registry"
+    ]
+    adapter_registry = json.loads(adapter_registry_path.read_text(encoding="utf-8"))
+    unused = next(
+        row
+        for row in adapter_registry["adapters"]
+        if row["adapter_id"] == "CMAKE_CTEST_V1"
+    )
+    unused_source = adapter_registry_path.parent / unused["implementation_path"]
+    unused_source.write_text("# coordinated registry drift\n", encoding="utf-8")
+    unused["source_sha256"] = hashlib.sha256(unused_source.read_bytes()).hexdigest()
+    adapter_body = {
+        key: value for key, value in adapter_registry.items() if key != "artifact_sha256"
+    }
+    adapter_registry["artifact_sha256"] = canonical_sha256(adapter_body)
+    write_canonical_json(adapter_registry_path, adapter_registry, exclusive=False)
+
+    protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    protocol["adapter_registry_sha256"] = canonical_sha256(adapter_registry)
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    write_canonical_json(protocol_path, protocol, exclusive=False)
+    _run_git(controller, "add", ".")
+    _run_git(controller, "commit", "-m", "coordinated registry drift")
+
+    changed = evidence_module.prepare_authority(controller, inputs)
+
+    assert changed["objects"] != original["objects"]
+
+
+@pytest.mark.parametrize("untracked_role", ["authority_artifact", "implementation"])
+def test_freeze_authority_rejects_ignored_untracked_authority_bytes(
+    tmp_path, untracked_role
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    if untracked_role == "authority_artifact":
+        untracked = controller / "authorities/governing/ignored-design.md"
+        untracked.write_bytes(b"ignored but authority-bearing\n")
+        inputs["governing_material_paths"]["authority_lock_design"] = (
+            untracked.relative_to(controller).as_posix()
+        )
+    else:
+        registry_path = controller / inputs["registry_artifact_paths"][
+            "adapter_registry"
+        ]
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        unused = next(
+            row
+            for row in registry["adapters"]
+            if row["adapter_id"] == "CMAKE_CTEST_V1"
+        )
+        untracked = registry_path.parent / unused["implementation_path"]
+        _run_git(
+            controller,
+            "rm",
+            "--cached",
+            untracked.relative_to(controller).as_posix(),
+        )
+        _run_git(controller, "commit", "-m", "untrack ignored implementation")
+    exclude = controller / ".git/info/exclude"
+    with exclude.open("a", encoding="utf-8") as handle:
+        handle.write(untracked.relative_to(controller).as_posix() + "\n")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module.build_authority_lock(controller, inputs)
+
+
+def test_freeze_authority_never_executes_generator_replaced_after_hash_check(
+    tmp_path, monkeypatch
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    marker = tmp_path / "unverified-generator-ran"
+    real_validate = evidence_module.validate_input_generator_registry
+
+    def replace_after_validation(registry, source_root):
+        validated = real_validate(registry, source_root)
+        entry = next(
+            row
+            for row in validated["generators"]
+            if row["generator_id"] == "JSON_SCHEMA_DRAFT2020_12_V1"
+        )
+        source = Path(source_root) / entry["implementation_path"]
+        source.write_text(
+            "from pathlib import Path\n"
+            "def generate(_schema, _seed):\n"
+            f"    Path({str(marker)!r}).write_text('executed')\n"
+            "    return {'failure_code': 'UNVERIFIED'}\n",
+            encoding="utf-8",
+        )
+        return validated
+
+    monkeypatch.setattr(
+        evidence_module,
+        "validate_input_generator_registry",
+        replace_after_validation,
+    )
+    with pytest.raises(EvidenceError):
+        evidence_module.build_authority_lock(controller, inputs)
+
+    assert not marker.exists()
+
+
+def test_freeze_authority_relative_subject_root_uses_inputs_parent(
+    tmp_path, monkeypatch
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    inputs["subjects"][0]["root"] = "subject"
+    authority_inputs = tmp_path / "authority-inputs.json"
+    output = tmp_path / "authority-lock.json"
+    write_canonical_json(authority_inputs, inputs, exclusive=True)
+    monkeypatch.chdir(tmp_path)
+
+    lock = evidence_module.freeze_authority_lock(
+        controller,
+        Path("authority-inputs.json"),
+        output,
+    )
+
+    assert lock["subjects"][0]["subject_id"] == "subject-a"
+
+
+def test_build_authority_lock_relative_subject_root_uses_controller_root(tmp_path):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    subject_in_controller = controller / "subject-api"
+    shutil.copytree(tmp_path / "subject", subject_in_controller)
+    with (controller / ".git/info/exclude").open("a", encoding="utf-8") as handle:
+        handle.write("subject-api/\n")
+    inputs["subjects"][0]["root"] = "subject-api"
+
+    lock = evidence_module.build_authority_lock(controller, inputs)
+
+    assert lock["subjects"][0]["subject_id"] == "subject-a"
+
+
+def test_freeze_authority_rejects_semantically_invalid_claim_ceiling(tmp_path):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    ceiling_path = controller / inputs["protocol_artifact_paths"]["claim_ceiling"]
+    ceiling = json.loads(ceiling_path.read_text(encoding="utf-8"))
+    ceiling["claims"][0]["initial_status"] = "accepted"
+    ceiling_body = {
+        key: value for key, value in ceiling.items() if key != "artifact_sha256"
+    }
+    ceiling["artifact_sha256"] = canonical_sha256(ceiling_body)
+    write_canonical_json(ceiling_path, ceiling, exclusive=False)
+
+    protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    protocol["claim_ceiling_sha256"] = canonical_sha256(ceiling)
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    write_canonical_json(protocol_path, protocol, exclusive=False)
+    _run_git(controller, "add", ".")
+    _run_git(controller, "commit", "-m", "invalid claim ceiling semantics")
+
+    with pytest.raises(EvidenceError, match="E_CLAIM_SET"):
+        evidence_module.build_authority_lock(controller, inputs)
+
+
+def test_freeze_authority_refuses_overwrite_and_cli_stdout_is_thin(tmp_path):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    authority_inputs = tmp_path / "authority-inputs.json"
+    output = tmp_path / "authority-lock.json"
+    write_canonical_json(authority_inputs, inputs, exclusive=True)
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "freeze-authority-lock",
+            "--controller-root",
+            str(controller),
+            "--authority-inputs",
+            str(authority_inputs),
+            "--output",
+            str(output),
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env={**_env(), "PYTHONDONTWRITEBYTECODE": "1"},
+    )
+
+    assert result.returncode == 0
+    assert set(json.loads(result.stdout)) == {
+        "authority_lock_sha256",
+        "controller_manifest_sha256",
+        "subject_count",
+    }
+    original = output.read_bytes()
+    repeated = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "freeze-authority-lock",
+            "--controller-root",
+            str(controller),
+            "--authority-inputs",
+            str(authority_inputs),
+            "--output",
+            str(output),
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env={**_env(), "PYTHONDONTWRITEBYTECODE": "1"},
+    )
+    assert repeated.returncode == 2
+    assert json.loads(repeated.stderr)["code"] == "E_EXISTS"
+    assert output.read_bytes() == original
 
 
 def test_load_authority_lock_accepts_matching_canonical_bytes(tmp_path):

@@ -6,6 +6,7 @@ import os
 import pytest
 
 import p3_v3.artifacts as artifacts_module
+import scripts.p3_v3.evidence as evidence_module
 from p3_v3.artifacts import (
     EvidenceError,
     canonical_json_bytes,
@@ -82,6 +83,89 @@ def test_exclusive_write_failure_before_publish_removes_partial_temporary(
 
     assert not path.exists()
     assert list(tmp_path.iterdir()) == []
+
+
+def test_authority_atomicity_injected_freeze_write_failure_leaves_no_partial(
+    tmp_path, monkeypatch
+):
+    authority_inputs = tmp_path / "authority-inputs.json"
+    output = tmp_path / "authority-lock.json"
+    write_canonical_json(
+        authority_inputs,
+        {
+            "schema_version": "P3_V3_AUTHORITY_INPUTS_V1",
+            "task_id": "atomicity-fixture",
+            "subjects": [
+                {
+                    "subject_id": "subject-a",
+                    "repository_role": "CONTROLLED_A",
+                    "root": str(tmp_path),
+                    "build_descriptor_path": "build.json",
+                    "adapter_id": "PYTHON_PEP517_V1",
+                }
+            ],
+            "governing_material_paths": {
+                "scientific_plan": "scientific-plan.md",
+                "evidence_design": "evidence-design.md",
+                "authority_lock_design": "authority-lock-design.md",
+                "implementation_plan": "implementation-plan.md",
+            },
+            "protocol_artifact_paths": {
+                "protocol": "protocol.json",
+                "rq_spec": "rq-spec.json",
+                "claim_ceiling": "claim-ceiling.json",
+                "p12_contract": "p12-contract.json",
+                "operator_catalogue": "operator-catalogue.json",
+                "mr_policy": "mr-policy.json",
+                "site_policy": "site-policy.json",
+                "analysis_spec": "analysis-spec.json",
+                "package_policy": "package-policy.json",
+                "environment_lock": "environment-lock.json",
+                "job_derivation_policy": "job-derivation-policy.json",
+            },
+            "registry_artifact_paths": {
+                "adapter_registry": "adapter-registry.json",
+                "input_generator_registry": "input-generator-registry.json",
+            },
+        },
+        exclusive=True,
+    )
+    monkeypatch.setattr(
+        evidence_module,
+        "build_authority_lock",
+        lambda _root, _inputs: {"schema_version": "P3_V3_AUTHORITY_LOCK_V1"},
+    )
+
+    real_fsync_directory = artifacts_module._fsync_directory
+    real_write = artifacts_module.os.write
+    fsynced: list[object] = []
+
+    def record_fsync(directory):
+        fsynced.append(directory)
+        return real_fsync_directory(directory)
+
+    def fail_write(_fd, _payload):
+        raise OSError("injected write failure")
+
+    monkeypatch.setattr(artifacts_module, "_fsync_directory", record_fsync)
+    monkeypatch.setattr(artifacts_module.os, "write", fail_write)
+
+    with pytest.raises(EvidenceError, match="E_ARTIFACT_WRITE"):
+        evidence_module.freeze_authority_lock(
+            tmp_path,
+            authority_inputs,
+            output,
+        )
+
+    assert not output.exists()
+    assert list(tmp_path.iterdir()) == [authority_inputs]
+    assert fsynced == []
+
+    monkeypatch.setattr(artifacts_module.os, "write", real_write)
+    evidence_module.freeze_authority_lock(tmp_path, authority_inputs, output)
+
+    assert output.exists()
+    assert fsynced == [tmp_path]
 
 
 def test_exclusive_write_existing_target_leaves_no_temporary(tmp_path):

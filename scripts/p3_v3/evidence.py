@@ -9,20 +9,24 @@ import json
 import os
 import re
 import stat
+import subprocess
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
+import p3_v3.bridge_and_frames as bridge_frames_module  # noqa: E402
 from p3_v3.artifacts import (  # noqa: E402
     EvidenceError,
     canonical_json_bytes,
     canonical_sha256,
     file_sha256,
     read_canonical_regular_bytes,
+    read_canonical_regular_json,
     read_canonical_json,
     safe_relative_path,
     validate_exact_object,
@@ -31,10 +35,15 @@ from p3_v3.artifacts import (  # noqa: E402
 )
 from p3_v3.bridge_and_frames import (  # noqa: E402
     build_contract_inputs,
+    build_common_inputs,
+    build_public_behavior_frame,
     build_subject_frames,
     close_slot,
     derive_subject_material,
+    derive_source_scale,
     rebuild_indexed_subject,
+    run_adapter_discovery,
+    select_profiling_workload,
     validate_adapter_registry,
     validate_contract_generator_registry,
     validate_input_generator_registry,
@@ -264,6 +273,66 @@ _TRANSIENT_SOURCE_NAMES = frozenset(
         "venv",
     }
 )
+_AUTHORITY_INPUTS_SCHEMA = {
+    "schema_version": str,
+    "task_id": str,
+    "subjects": list,
+    "governing_material_paths": dict,
+    "protocol_artifact_paths": dict,
+    "registry_artifact_paths": dict,
+}
+_AUTHORITY_INPUT_SUBJECT_SCHEMA = {
+    "subject_id": str,
+    "repository_role": str,
+    "root": str,
+    "build_descriptor_path": str,
+    "adapter_id": str,
+}
+_GOVERNING_PATH_SCHEMA = {
+    "scientific_plan": str,
+    "evidence_design": str,
+    "authority_lock_design": str,
+    "implementation_plan": str,
+}
+_PROTOCOL_PATH_SCHEMA = {
+    "protocol": str,
+    "rq_spec": str,
+    "claim_ceiling": str,
+    "p12_contract": str,
+    "operator_catalogue": str,
+    "mr_policy": str,
+    "site_policy": str,
+    "analysis_spec": str,
+    "package_policy": str,
+    "environment_lock": str,
+    "job_derivation_policy": str,
+}
+_REGISTRY_PATH_SCHEMA = {
+    "adapter_registry": str,
+    "input_generator_registry": str,
+}
+_RAW_AUTHORITY_BYTES_SCHEMA = {
+    "schema_version": str,
+    "relative_path": str,
+    "sha256": str,
+    "bytes_hex": str,
+}
+_ENVIRONMENT_LOCK_SCHEMA = {
+    "schema_version": str,
+    "required_capabilities": list,
+    "forbidden_credential_fields": list,
+    "environments": list,
+}
+_P12_CONTRACT_SCHEMA = {"schema_version": str, "synthetic_cases": list}
+_SYNTHETIC_CASE_SCHEMA = {
+    "inventory_id": str,
+    "object_type": str,
+    "object_id": str,
+    "mr_id": str,
+    "evaluation_input_class": str,
+    "evaluation_input_id": str,
+    "inputs": list,
+}
 
 
 def _authority_failure(detail: str) -> None:
@@ -494,6 +563,821 @@ def build_tracked_source_manifest(
         "role": role,
         "files": rows,
     }
+
+
+def validate_authority_inputs(
+    authority_inputs: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate the non-authoritative, exact-schema freezer declaration."""
+
+    try:
+        snapshot = json.loads(canonical_json_bytes(authority_inputs).decode("utf-8"))
+        value = validate_exact_object(
+            snapshot, _AUTHORITY_INPUTS_SCHEMA, "authority inputs"
+        )
+        if value["schema_version"] != "P3_V3_AUTHORITY_INPUTS_V1":
+            raise EvidenceError("E_AUTHORITY_INPUTS", "schema version differs")
+        _validate_authority_text(value["task_id"], "authority inputs task_id")
+
+        subjects: list[dict[str, Any]] = []
+        for index, candidate in enumerate(value["subjects"]):
+            subject = validate_exact_object(
+                candidate,
+                _AUTHORITY_INPUT_SUBJECT_SCHEMA,
+                f"authority inputs subjects[{index}]",
+            )
+            for field in ("subject_id", "repository_role", "adapter_id"):
+                _validate_authority_text(
+                    subject[field], f"authority inputs subjects[{index}].{field}"
+                )
+            raw_root = subject["root"]
+            if (
+                not raw_root
+                or "\\" in raw_root
+                or "\x00" in raw_root
+                or Path(raw_root).as_posix() != raw_root
+                or any(part in {".", ".."} for part in Path(raw_root).parts)
+            ):
+                raise EvidenceError("E_AUTHORITY_INPUTS", "subject root is unsafe")
+            safe_relative_path(subject["build_descriptor_path"])
+            subjects.append(subject)
+        subject_ids = [row["subject_id"] for row in subjects]
+        repository_roles = [row["repository_role"] for row in subjects]
+        if (
+            not subjects
+            or subject_ids != sorted(subject_ids)
+            or len(subject_ids) != len(set(subject_ids))
+            or len(repository_roles) != len(set(repository_roles))
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_INPUTS", "subjects must be sorted and unique"
+            )
+
+        all_artifact_paths: list[str] = []
+        for field, schema in (
+            ("governing_material_paths", _GOVERNING_PATH_SCHEMA),
+            ("protocol_artifact_paths", _PROTOCOL_PATH_SCHEMA),
+            ("registry_artifact_paths", _REGISTRY_PATH_SCHEMA),
+        ):
+            paths = validate_exact_object(value[field], schema, f"authority inputs {field}")
+            for path in paths.values():
+                safe_relative_path(path)
+                all_artifact_paths.append(path)
+            if len(set(paths.values())) != len(paths):
+                raise EvidenceError(
+                    "E_AUTHORITY_INPUTS", f"{field} paths must be unique"
+                )
+        if len(all_artifact_paths) != len(set(all_artifact_paths)):
+            raise EvidenceError(
+                "E_AUTHORITY_INPUTS", "authority artifact paths must be globally unique"
+            )
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_INPUTS":
+            raise
+        raise EvidenceError(
+            "E_AUTHORITY_INPUTS", "authority inputs schema differs"
+        ) from exc
+    return value
+
+
+def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
+    outputs: dict[tuple[str, ...], bytes] = {}
+    queries = (
+        ("rev-parse", "HEAD"),
+        ("rev-parse", "HEAD^{tree}"),
+        ("status", "--porcelain=v1"),
+        ("remote", "get-url", "origin"),
+        ("ls-files", "-z"),
+    )
+    for query in queries:
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(root), *query],
+                capture_output=True,
+                check=False,
+            )
+        except (OSError, ValueError) as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "fixed read-only Git query failed"
+            ) from exc
+        if (
+            result.returncode != 0
+            or not isinstance(result.stdout, bytes)
+            or result.stderr != b""
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "fixed read-only Git query failed"
+            )
+        outputs[query] = result.stdout
+
+    def object_id(query: tuple[str, ...]) -> str:
+        raw = outputs[query]
+        try:
+            value = raw[:-1].decode("ascii") if raw.endswith(b"\n") else ""
+        except UnicodeDecodeError as exc:
+            raise EvidenceError("E_AUTHORITY_GIT", "Git object output is malformed") from exc
+        if len(raw) != 41 or _GIT_OBJECT_RE.fullmatch(value) is None:
+            raise EvidenceError("E_AUTHORITY_GIT", "Git object output is malformed")
+        return value
+
+    if outputs[("status", "--porcelain=v1")] != b"":
+        raise EvidenceError("E_AUTHORITY_GIT", "checkout is not clean")
+    origin_raw = outputs[("remote", "get-url", "origin")]
+    if not origin_raw.endswith(b"\n") or origin_raw.count(b"\n") != 1:
+        raise EvidenceError("E_AUTHORITY_GIT", "Git origin output is malformed")
+    try:
+        origin = origin_raw[:-1].decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise EvidenceError("E_AUTHORITY_GIT", "Git origin output is malformed") from exc
+    tracked_raw = outputs[("ls-files", "-z")]
+    if tracked_raw and not tracked_raw.endswith(b"\0"):
+        raise EvidenceError("E_AUTHORITY_GIT", "Git tracked inventory is malformed")
+    try:
+        tracked = [
+            item.decode("utf-8") for item in tracked_raw.split(b"\0") if item
+        ]
+    except UnicodeDecodeError as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "Git tracked inventory is malformed"
+        ) from exc
+    if (
+        tracked != sorted(tracked, key=lambda value: value.encode("utf-8"))
+        or len(tracked) != len(set(tracked))
+        or any(
+            not item
+            or "\\" in item
+            or "\x00" in item
+            or Path(item).is_absolute()
+            or any(part in {"", ".", ".."} for part in item.split("/"))
+            for item in tracked
+        )
+    ):
+        raise EvidenceError("E_AUTHORITY_GIT", "Git tracked inventory is malformed")
+    return {
+        "base_commit": object_id(("rev-parse", "HEAD")),
+        "base_tree": object_id(("rev-parse", "HEAD^{tree}")),
+        "origin": origin,
+        "tracked": tracked,
+    }
+
+
+def _normalize_git_origin(origin: str) -> str:
+    try:
+        if "://" in origin:
+            parsed = urlsplit(origin)
+            host = parsed.hostname
+            path = unquote(parsed.path)
+        else:
+            remote, separator, path = origin.partition(":")
+            if not separator:
+                raise ValueError("origin has no host/path separator")
+            host = remote.rsplit("@", 1)[-1]
+        if not host:
+            raise ValueError("origin host is absent")
+        path = path.strip("/")
+        if path.endswith(".git"):
+            path = path[:-4]
+        identity = f"{host.casefold()}/{path}"
+        return _validate_repository_identity(identity, "normalized Git origin")
+    except (EvidenceError, UnicodeError, ValueError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "Git origin cannot be normalized safely"
+        ) from exc
+
+
+def _checkout_authority(
+    root: Path, role_roots: Sequence[str], role: str
+) -> tuple[dict[str, Any], dict[str, Any], tuple[str, ...]]:
+    safe_root = _lstat_directory_components(root)
+    git = _run_fixed_git_queries(safe_root)
+    manifest = build_tracked_source_manifest(safe_root, role_roots, role)
+    manifest_paths = [row["relative_path"] for row in manifest["files"]]
+    if role == "controller-source":
+        tracked = [
+            item
+            for item in git["tracked"]
+            if any(item == root_name or item.startswith(f"{root_name}/") for root_name in role_roots)
+        ]
+    else:
+        tracked = git["tracked"]
+    if manifest_paths != tracked:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "filesystem and Git tracked inventories differ"
+        )
+    return (
+        {
+            "normalized_repository_identity": _normalize_git_origin(git["origin"]),
+            "base_commit": git["base_commit"],
+            "base_tree": git["base_tree"],
+            "tracked_source_manifest_sha256": canonical_sha256(manifest),
+        },
+        manifest,
+        tuple(git["tracked"]),
+    )
+
+
+def _require_tracked_paths(
+    tracked: Sequence[str], required: Sequence[str], context: str
+) -> None:
+    tracked_set = set(tracked)
+    if any(path not in tracked_set for path in required):
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", f"{context} contains untracked authority bytes"
+        )
+
+
+def _registered_implementation_paths(
+    registry_relative_path: str, entries: Any
+) -> list[str]:
+    if type(entries) is not list:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "registry implementation declarations are malformed"
+        )
+    parent = Path(registry_relative_path).parent
+    paths = []
+    for entry in entries:
+        if not isinstance(entry, Mapping) or type(entry.get("implementation_path")) is not str:
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "registry implementation declaration is malformed"
+            )
+        implementation = safe_relative_path(entry.get("implementation_path"))
+        combined = (parent / implementation.as_posix()).as_posix()
+        safe_relative_path(combined)
+        paths.append(combined)
+    return paths
+
+
+def _verified_generator_loader(
+    expected_sources: Mapping[tuple[str, str], str],
+):
+    def load(absolute: Path, generator_id: str):
+        expected = expected_sources.get((str(absolute), generator_id))
+        if expected is None:
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE", "generator is absent from verified authority"
+            )
+        source_bytes = read_canonical_regular_bytes(
+            absolute, f"input generator {generator_id}"
+        )
+        if hashlib.sha256(source_bytes).hexdigest() != expected:
+            raise EvidenceError(
+                "E_GENERATOR_SOURCE_HASH",
+                f"generator source hash differs: {generator_id}",
+            )
+        namespace = {
+            "__name__": f"_p3_v3_generator_{generator_id.casefold()}",
+            "__file__": str(absolute),
+        }
+        try:
+            exec(compile(source_bytes, str(absolute), "exec"), namespace)
+        except Exception as exc:
+            raise EvidenceError(
+                "E_GENERATOR_LOAD", f"unable to load generator: {generator_id}"
+            ) from exc
+        generate = namespace.get("generate")
+        if not callable(generate):
+            raise EvidenceError(
+                "E_GENERATOR_LOAD", f"generator lacks generate(): {generator_id}"
+            )
+        return generate
+
+    return load
+
+
+def _raw_authority_envelope(
+    controller_root: Path, relative_path: str, role: str
+) -> tuple[dict[str, Any], str]:
+    raw = read_canonical_regular_bytes(
+        controller_root / relative_path, f"governing material {role}"
+    )
+    digest = hashlib.sha256(raw).hexdigest()
+    return (
+        {
+            "schema_version": "P3_V3_RAW_AUTHORITY_BYTES_V1",
+            "relative_path": relative_path,
+            "sha256": digest,
+            "bytes_hex": raw.hex(),
+        },
+        digest,
+    )
+
+
+def _validate_environment_lock(artifact: Mapping[str, Any]) -> dict[str, Any]:
+    value = validate_exact_object(
+        dict(artifact), _ENVIRONMENT_LOCK_SCHEMA, "environment lock"
+    )
+    if value["schema_version"] != "P3_V3_ENVIRONMENT_LOCK_V1":
+        _authority_failure("environment lock schema version differs")
+    for field in ("required_capabilities", "forbidden_credential_fields"):
+        items = value[field]
+        _require_authority(
+            bool(items)
+            and all(type(item) is str and bool(item) for item in items)
+            and items == sorted(items)
+            and len(items) == len(set(items)),
+            f"environment lock {field} differs",
+        )
+    _require_authority(
+        value["forbidden_credential_fields"] == sorted(_CREDENTIAL_FIELD_NAMES),
+        "environment lock forbidden credential fields differ",
+    )
+    environments = []
+    for index, candidate in enumerate(value["environments"]):
+        row = validate_exact_object(
+            candidate,
+            _PREPARED_ENVIRONMENT_SCHEMA,
+            f"environment lock environments[{index}]",
+        )
+        for field in ("environment_role", "environment_id"):
+            _validate_authority_text(row[field], f"environment lock {field}")
+        validate_sha256(row["environment_sha256"], "environment lock digest")
+        environments.append(row)
+    roles = [row["environment_role"] for row in environments]
+    _require_authority(
+        bool(environments)
+        and roles == sorted(roles)
+        and len(roles) == len(set(roles)),
+        "environment lock environments are not sorted and unique",
+    )
+    return value
+
+
+def _synthetic_objects(artifact: Mapping[str, Any]) -> list[dict[str, Any]]:
+    value = validate_exact_object(dict(artifact), _P12_CONTRACT_SCHEMA, "P12 contract")
+    _require_authority(
+        value["schema_version"] == "P3_V3_P12_CONTRACT_V1",
+        "P12 contract schema version differs",
+    )
+    objects = []
+    for index, candidate in enumerate(value["synthetic_cases"]):
+        case = validate_exact_object(
+            candidate, _SYNTHETIC_CASE_SCHEMA, f"P12 synthetic_cases[{index}]"
+        )
+        inputs = []
+        for input_index, candidate_input in enumerate(case["inputs"]):
+            input_row = validate_exact_object(
+                candidate_input,
+                _PREPARED_INPUT_SCHEMA,
+                f"P12 synthetic_cases[{index}].inputs[{input_index}]",
+            )
+            _validate_authority_text(input_row["role"], "P12 synthetic input role")
+            validate_sha256(input_row["sha256"], "P12 synthetic input digest")
+            inputs.append(input_row)
+        roles = [row["role"] for row in inputs]
+        _require_authority(
+            bool(inputs)
+            and roles == sorted(roles)
+            and len(roles) == len(set(roles)),
+            "P12 synthetic inputs are not sorted and unique",
+        )
+        for field in _SYNTHETIC_CASE_SCHEMA:
+            if field != "inputs":
+                _validate_authority_text(case[field], f"P12 synthetic case {field}")
+        objects.append(
+            {
+                "object_source": "SYNTHETIC_P12_CASE",
+                "subject_id": "",
+                **case,
+                "inputs": inputs,
+            }
+        )
+    inventory_ids = [row["inventory_id"] for row in objects]
+    _require_authority(
+        inventory_ids == sorted(inventory_ids)
+        and len(inventory_ids) == len(set(inventory_ids)),
+        "P12 synthetic cases are not sorted and unique",
+    )
+    return objects
+
+
+def _validate_claim_ceiling_authority(
+    artifact: Mapping[str, Any],
+) -> dict[str, Any]:
+    value = validate_exact_object(
+        dict(artifact), _CLAIM_CEILING_SCHEMA, "claim_ceiling_authority"
+    )
+    if value["schema_version"] != "p3-claim-ceiling-authority-v1":
+        raise EvidenceError("E_CLAIM_SET", "claim ceiling authority version differs")
+    body = {key: nested for key, nested in value.items() if key != "artifact_sha256"}
+    if value["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_CLAIM_SET", "claim ceiling authority hash differs")
+    claims = [
+        validate_exact_object(
+            candidate,
+            _CLAIM_AUTHORITY_ROW_SCHEMA,
+            f"claim_ceiling_authority.claims[{index}]",
+        )
+        for index, candidate in enumerate(value["claims"])
+    ]
+    claim_ids = [claim["claim_id"] for claim in claims]
+    if (
+        not claim_ids
+        or claim_ids != list(dict.fromkeys(claim_ids))
+        or any(
+            claim["initial_status"] != "blocked"
+            or not claim["rqs"]
+            or claim["rqs"] != sorted(set(claim["rqs"]))
+            or any(type(rq) is not str or not rq for rq in claim["rqs"])
+            for claim in claims
+        )
+    ):
+        raise EvidenceError("E_CLAIM_SET", "claim ceiling authority differs")
+    return value
+
+
+def _subject_objects(
+    subject: Mapping[str, Any], registries: Mapping[str, str]
+) -> list[dict[str, Any]]:
+    authority = subject["authority_row"]
+    subject_id = authority["subject_id"]
+    shared = [
+        {
+            "role": "ADAPTER_REGISTRY",
+            "sha256": registries["adapter_registry_sha256"],
+        },
+        {"role": "BUILD_DESCRIPTOR", "sha256": authority["build_descriptor_sha256"]},
+        {
+            "role": "COMMON_INPUT_INVENTORY",
+            "sha256": canonical_sha256(subject["common_inputs"]),
+        },
+        {
+            "role": "INPUT_GENERATOR_REGISTRY",
+            "sha256": registries["input_generator_registry_sha256"],
+        },
+        {
+            "role": "PUBLIC_BEHAVIOR_FRAME",
+            "sha256": canonical_sha256(subject["public_behavior_frame"]),
+        },
+        {
+            "role": "SOURCE_MANIFEST",
+            "sha256": authority["tracked_source_manifest_sha256"],
+        },
+    ]
+    objects = [
+        {
+            "object_source": "SUBJECT",
+            "inventory_id": subject_id,
+            "subject_id": subject_id,
+            "object_type": "CONTROLLED_SUBJECT",
+            "object_id": subject_id,
+            "mr_id": "NOT_APPLICABLE",
+            "evaluation_input_class": "E_COMMON",
+            "evaluation_input_id": subject_id,
+            "inputs": shared,
+        }
+    ]
+    for row in subject["public_behavior_frame"]["rows"]:
+        behavior_id = row["behavior_id"]
+        objects.append(
+            {
+                "object_source": "SUBJECT_BEHAVIOR",
+                "inventory_id": f"{subject_id}:{behavior_id}",
+                "subject_id": subject_id,
+                "object_type": "PUBLIC_BEHAVIOR",
+                "object_id": behavior_id,
+                "mr_id": "NOT_APPLICABLE",
+                "evaluation_input_class": "PUBLIC_BEHAVIOR",
+                "evaluation_input_id": behavior_id,
+                "inputs": [
+                    {
+                        "role": "ADAPTER_REGISTRY",
+                        "sha256": registries["adapter_registry_sha256"],
+                    },
+                    {"role": "BEHAVIOR", "sha256": canonical_sha256(row)},
+                    {
+                        "role": "INPUT_GENERATOR_REGISTRY",
+                        "sha256": registries["input_generator_registry_sha256"],
+                    },
+                    {
+                        "role": "SOURCE_MANIFEST",
+                        "sha256": authority["tracked_source_manifest_sha256"],
+                    },
+                ],
+            }
+        )
+    for row in subject["common_inputs"]["rows"]:
+        input_id = row["input_id"]
+        objects.append(
+            {
+                "object_source": "SUBJECT_COMMON_INPUT",
+                "inventory_id": f"{subject_id}:{input_id}",
+                "subject_id": subject_id,
+                "object_type": "COMMON_INPUT",
+                "object_id": input_id,
+                "mr_id": "NOT_APPLICABLE",
+                "evaluation_input_class": "E_COMMON",
+                "evaluation_input_id": input_id,
+                "inputs": [
+                    {
+                        "role": "ADAPTER_REGISTRY",
+                        "sha256": registries["adapter_registry_sha256"],
+                    },
+                    {"role": "COMMON_INPUT", "sha256": canonical_sha256(row)},
+                    {
+                        "role": "INPUT_GENERATOR_REGISTRY",
+                        "sha256": registries["input_generator_registry_sha256"],
+                    },
+                    {
+                        "role": "SOURCE_MANIFEST",
+                        "sha256": authority["tracked_source_manifest_sha256"],
+                    },
+                ],
+            }
+        )
+    return objects
+
+
+def prepare_authority(
+    controller_root: Path, authority_inputs: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Mechanically prepare byte-bound authority from declared paths."""
+
+    inputs = validate_authority_inputs(authority_inputs)
+    controller_root = _lstat_directory_components(Path(controller_root))
+    controller_repository, controller_manifest, controller_tracked = _checkout_authority(
+        controller_root, _CONTROLLER_ROLE_ROOTS, "controller-source"
+    )
+    declared_authority_paths = [
+        path
+        for field in (
+            "governing_material_paths",
+            "protocol_artifact_paths",
+            "registry_artifact_paths",
+        )
+        for path in inputs[field].values()
+    ]
+    _require_tracked_paths(
+        controller_tracked, declared_authority_paths, "controller authority"
+    )
+
+    governing_materials: dict[str, str] = {}
+    governing_artifacts: dict[str, dict[str, Any]] = {}
+    for role, relative_path in inputs["governing_material_paths"].items():
+        envelope, digest = _raw_authority_envelope(controller_root, relative_path, role)
+        governing_materials[f"{role}_sha256"] = digest
+        governing_artifacts[f"{role}_sha256"] = envelope
+    governing_materials["controller_implementation_manifest_sha256"] = (
+        controller_repository["tracked_source_manifest_sha256"]
+    )
+    governing_artifacts["controller_implementation_manifest_sha256"] = (
+        controller_manifest
+    )
+
+    protocol_artifacts: dict[str, dict[str, Any]] = {}
+    for role, relative_path in inputs["protocol_artifact_paths"].items():
+        artifact = read_canonical_regular_json(
+            controller_root / relative_path, f"protocol artifact {role}"
+        )
+        _reject_credential_metadata(artifact)
+        protocol_artifacts[f"{role}_sha256"] = artifact
+    protocol_artifact = validate_protocol(
+        protocol_artifacts["protocol_sha256"],
+        SCIENTIFIC_PLAN_SHA256,
+        EVIDENCE_DESIGN_SHA256,
+    )
+    protocol = {
+        field: canonical_sha256(protocol_artifacts[field])
+        for field in _PROTOCOL_AUTHORITY_SCHEMA
+    }
+    for field in _PROTOCOL_AUTHORITY_SCHEMA:
+        if field not in {"protocol_sha256", "job_derivation_policy_sha256"}:
+            _require_authority(
+                protocol_artifact[field] == protocol[field],
+                f"protocol artifact binding differs for {field}",
+            )
+    _require_authority(
+        protocol_artifact["scientific_plan_sha256"]
+        == governing_materials["scientific_plan_sha256"]
+        and protocol_artifact["evidence_design_sha256"]
+        == governing_materials["evidence_design_sha256"],
+        "protocol governing-material binding differs",
+    )
+    job_derivation_policy = protocol_artifacts["job_derivation_policy_sha256"]
+    _validate_claim_ceiling_authority(
+        protocol_artifacts["claim_ceiling_sha256"]
+    )
+    environment_lock = _validate_environment_lock(
+        protocol_artifacts["environment_lock_sha256"]
+    )
+    synthetic_objects = _synthetic_objects(
+        protocol_artifacts["p12_contract_sha256"]
+    )
+
+    adapter_path = controller_root / inputs["registry_artifact_paths"][
+        "adapter_registry"
+    ]
+    generator_path = controller_root / inputs["registry_artifact_paths"][
+        "input_generator_registry"
+    ]
+    adapter_artifact = read_canonical_regular_json(adapter_path, "adapter registry")
+    generator_artifact = read_canonical_regular_json(
+        generator_path, "input generator registry"
+    )
+    implementation_paths = [
+        *_registered_implementation_paths(
+            inputs["registry_artifact_paths"]["adapter_registry"],
+            adapter_artifact.get("adapters", []),
+        ),
+        *_registered_implementation_paths(
+            inputs["registry_artifact_paths"]["input_generator_registry"],
+            generator_artifact.get("generators", []),
+        ),
+    ]
+    _require_tracked_paths(
+        controller_tracked, implementation_paths, "registry implementations"
+    )
+    adapter_registry = validate_adapter_registry(adapter_artifact, adapter_path.parent)
+    generator_registry = validate_input_generator_registry(
+        generator_artifact, generator_path.parent
+    )
+    registry_artifacts = {
+        "adapter_registry_sha256": adapter_artifact,
+        "input_generator_registry_sha256": generator_artifact,
+    }
+    registries = {
+        field: canonical_sha256(registry_artifacts[field])
+        for field in _REGISTRY_AUTHORITY_SCHEMA
+    }
+    for field in _REGISTRY_AUTHORITY_SCHEMA:
+        _require_authority(
+            protocol_artifact[field] == registries[field],
+            f"protocol registry binding differs for {field}",
+        )
+
+    subjects = []
+    for subject_input in inputs["subjects"]:
+        raw_root = Path(subject_input["root"])
+        subject_root = raw_root if raw_root.is_absolute() else controller_root / raw_root
+        repository, source_manifest, _subject_tracked = _checkout_authority(
+            subject_root, ["."], "subject-source"
+        )
+        build_descriptor = read_canonical_regular_json(
+            subject_root / subject_input["build_descriptor_path"],
+            f"subject {subject_input['subject_id']} build descriptor",
+        )
+        entries = {
+            row["adapter_id"]: row for row in adapter_registry["adapters"]
+        }
+        adapter_entry = entries.get(subject_input["adapter_id"])
+        _require_authority(
+            adapter_entry is not None
+            and build_descriptor.get("ecosystem") == adapter_entry["ecosystem"],
+            "subject adapter and build descriptor differ",
+        )
+        source_record = {
+            "normalized_source_tree_sha256": repository[
+                "tracked_source_manifest_sha256"
+            ],
+            "build_descriptor_sha256": canonical_sha256(build_descriptor),
+        }
+        previous_dont_write_bytecode = sys.dont_write_bytecode
+        sys.dont_write_bytecode = True
+        try:
+            adapter_discovery = run_adapter_discovery(
+                subject_root,
+                build_descriptor,
+                adapter_registry,
+                subject_input["adapter_id"],
+            )
+            public_behavior_frame = build_public_behavior_frame(
+                source_record, adapter_discovery
+            )
+            scale = derive_source_scale(subject_root, adapter_discovery)
+            profiling_workload = select_profiling_workload(
+                public_behavior_frame, scale["scale_class"]
+            )
+            expected_generator_sources = {
+                (
+                    str(
+                        Path(generator_registry["_source_root"])
+                        / entry["implementation_path"]
+                    ),
+                    entry["generator_id"],
+                ): entry["source_sha256"]
+                for entry in generator_registry["generators"]
+            }
+            original_generator_loader = bridge_frames_module._load_generator_callable
+            bridge_frames_module._load_generator_callable = _verified_generator_loader(
+                expected_generator_sources
+            )
+            try:
+                common_inputs = build_common_inputs(
+                    source_record, public_behavior_frame, generator_registry
+                )
+            finally:
+                bridge_frames_module._load_generator_callable = original_generator_loader
+        finally:
+            sys.dont_write_bytecode = previous_dont_write_bytecode
+        authority_row = {
+            "subject_id": subject_input["subject_id"],
+            "repository_role": subject_input["repository_role"],
+            **repository,
+            "build_descriptor_sha256": canonical_sha256(build_descriptor),
+            "adapter_id": subject_input["adapter_id"],
+        }
+        subjects.append(
+            {
+                "authority_row": authority_row,
+                "source_manifest": source_manifest,
+                "build_descriptor": build_descriptor,
+                "adapter_discovery": adapter_discovery,
+                "public_behavior_frame": public_behavior_frame,
+                "profiling_workload": profiling_workload,
+                "common_inputs": common_inputs,
+            }
+        )
+
+    objects = [
+        *synthetic_objects,
+        *(
+            item
+            for subject in subjects
+            for item in _subject_objects(subject, registries)
+        ),
+    ]
+    objects.sort(key=lambda row: (row["object_source"], row["inventory_id"]))
+    dependency_lock = read_canonical_regular_bytes(
+        controller_root / "requirements-frozen.txt", "controller dependency lock"
+    )
+    prepared = {
+        "controller_repository": controller_repository,
+        "controller_manifest": controller_manifest,
+        "subjects": subjects,
+        "governing_materials": governing_materials,
+        "governing_artifacts": governing_artifacts,
+        "protocol": protocol,
+        "protocol_artifacts": protocol_artifacts,
+        "registries": registries,
+        "registry_artifacts": registry_artifacts,
+        "preflight": {
+            "normalized_repository_identity": controller_repository[
+                "normalized_repository_identity"
+            ],
+            "base_commit": controller_repository["base_commit"],
+            "base_tree": controller_repository["base_tree"],
+            "dependency_lock_sha256": hashlib.sha256(dependency_lock).hexdigest(),
+            "environment_policy_sha256": protocol["environment_lock_sha256"],
+            "required_capabilities": environment_lock["required_capabilities"],
+            "forbidden_credential_fields": environment_lock[
+                "forbidden_credential_fields"
+            ],
+        },
+        "claim_policy": {
+            "claim_ceiling_sha256": protocol["claim_ceiling_sha256"],
+            "required_status": "blocked",
+        },
+        "objects": objects,
+        "environments": environment_lock["environments"],
+        "job_derivation_policy": job_derivation_policy,
+    }
+    snapshot = _snapshot_prepared_authority(prepared)
+    _validate_derivation_inputs(snapshot, snapshot["job_derivation_policy"])
+    return snapshot
+
+
+def build_authority_lock(
+    controller_root: Path, authority_inputs: Mapping[str, Any]
+) -> dict[str, Any]:
+    inputs = validate_authority_inputs(authority_inputs)
+    prepared = prepare_authority(controller_root, inputs)
+    jobs = derive_locked_jobs(prepared, prepared["job_derivation_policy"])
+    return validate_authority_lock(
+        {
+            "schema_version": "P3_V3_AUTHORITY_LOCK_V1",
+            "task_id": inputs["task_id"],
+            "controller_repository": prepared["controller_repository"],
+            "subjects": [row["authority_row"] for row in prepared["subjects"]],
+            "governing_materials": prepared["governing_materials"],
+            "protocol": prepared["protocol"],
+            "registries": prepared["registries"],
+            "preflight": prepared["preflight"],
+            "jobs": jobs,
+            "claim_policy": prepared["claim_policy"],
+        }
+    )
+
+
+def freeze_authority_lock(
+    controller_root: Path, authority_inputs_path: Path, output_path: Path
+) -> dict[str, Any]:
+    declared_inputs_path = Path(authority_inputs_path)
+    if any(part in {".", ".."} for part in declared_inputs_path.parts):
+        raise EvidenceError("E_AUTHORITY_INPUTS", "authority inputs path is unsafe")
+    inputs_path = (
+        declared_inputs_path
+        if declared_inputs_path.is_absolute()
+        else Path.cwd() / declared_inputs_path
+    )
+    inputs = read_canonical_regular_json(inputs_path, "authority inputs")
+    inputs = validate_authority_inputs(inputs)
+    resolved = json.loads(canonical_json_bytes(inputs).decode("utf-8"))
+    for subject in resolved["subjects"]:
+        root = Path(subject["root"])
+        if not root.is_absolute():
+            subject["root"] = str(inputs_path.parent / root)
+    lock = build_authority_lock(controller_root, resolved)
+    write_canonical_json(output_path, lock, exclusive=True)
+    return lock
 
 
 def validate_authority_lock(lock: Mapping[str, Any]) -> dict[str, Any]:
@@ -777,7 +1661,37 @@ def _snapshot_prepared_authority(
         )
         for field, digest in governing.items():
             validate_sha256(digest, f"prepared governing_materials.{field}")
-            if canonical_sha256(governing_artifacts[field]) != digest:
+            artifact = governing_artifacts[field]
+            if field == "controller_implementation_manifest_sha256":
+                observed_digest = canonical_sha256(artifact)
+            else:
+                envelope = validate_exact_object(
+                    artifact,
+                    _RAW_AUTHORITY_BYTES_SCHEMA,
+                    f"prepared governing_artifacts.{field}",
+                )
+                if envelope["schema_version"] != "P3_V3_RAW_AUTHORITY_BYTES_V1":
+                    _authority_intent_failure(
+                        "prepared governing artifact envelope differs"
+                    )
+                safe_relative_path(envelope["relative_path"])
+                validate_sha256(envelope["sha256"], "governing bytes digest")
+                try:
+                    raw = bytes.fromhex(envelope["bytes_hex"])
+                except ValueError as exc:
+                    raise EvidenceError(
+                        "E_AUTHORITY_INTENT", "prepared governing bytes are invalid"
+                    ) from exc
+                if raw.hex() != envelope["bytes_hex"]:
+                    _authority_intent_failure(
+                        "prepared governing bytes encoding differs"
+                    )
+                observed_digest = hashlib.sha256(raw).hexdigest()
+                if observed_digest != envelope["sha256"]:
+                    _authority_intent_failure(
+                        "prepared governing byte binding differs"
+                    )
+            if observed_digest != digest:
                 _authority_intent_failure("prepared governing artifact binding differs")
 
         protocol = validate_exact_object(
@@ -1205,6 +2119,10 @@ def _write_under(output_root: Path, name: str, payload: Any) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
+    command = sub.add_parser("freeze-authority-lock")
+    command.add_argument("--controller-root", required=True)
+    command.add_argument("--authority-inputs", required=True)
+    command.add_argument("--output", required=True)
     command = sub.add_parser("validate-protocol")
     command.add_argument("--protocol", required=True)
     command = sub.add_parser("verify-bridge")
@@ -1904,20 +2822,9 @@ def _load_evidence_index(
                 "E_CLAIM_EVIDENCE", "claim names evidence absent from the index"
             )
 
-    claim_ceiling = validate_exact_object(
-        read_canonical_json(protocol_artifact_paths["claim_ceiling_sha256"]),
-        _CLAIM_CEILING_SCHEMA,
-        "claim_ceiling_authority",
+    claim_ceiling = _validate_claim_ceiling_authority(
+        read_canonical_json(protocol_artifact_paths["claim_ceiling_sha256"])
     )
-    if claim_ceiling["schema_version"] != "p3-claim-ceiling-authority-v1":
-        raise EvidenceError("E_CLAIM_SET", "claim ceiling authority version differs")
-    claim_ceiling_body = {
-        key: value
-        for key, value in claim_ceiling.items()
-        if key != "artifact_sha256"
-    }
-    if claim_ceiling["artifact_sha256"] != canonical_sha256(claim_ceiling_body):
-        raise EvidenceError("E_CLAIM_SET", "claim ceiling authority hash differs")
     authoritative_claims = [
         validate_exact_object(
             candidate,
@@ -2407,6 +3314,19 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
 
 
 def dispatch(args: argparse.Namespace) -> dict:
+    if args.command == "freeze-authority-lock":
+        lock = freeze_authority_lock(
+            Path(args.controller_root),
+            Path(args.authority_inputs),
+            Path(args.output),
+        )
+        return {
+            "authority_lock_sha256": canonical_sha256(lock),
+            "controller_manifest_sha256": lock["controller_repository"][
+                "tracked_source_manifest_sha256"
+            ],
+            "subject_count": len(lock["subjects"]),
+        }
     if args.command == "validate-protocol":
         validate_protocol(
             read_canonical_json(args.protocol),
