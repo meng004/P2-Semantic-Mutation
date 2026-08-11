@@ -1915,6 +1915,14 @@ def _reseal_indexed_rq_markdown(fixture: dict) -> None:
     index["protocol"]["sha256"] = hashlib.sha256(
         protocol_path.read_bytes()
     ).hexdigest()
+
+    claims_reference = index["claims"]
+    claims_path = root / claims_reference["path"]
+    claims = read_canonical_json(claims_path)
+    claims["rq_authority_sha256"] = rq_reference["sha256"]
+    _refresh_self_hash(claims)
+    claims_path.write_bytes(canonical_json_bytes(claims))
+    claims_reference["sha256"] = hashlib.sha256(claims_path.read_bytes()).hexdigest()
     _refresh_protocol_bound_attempts(root, index)
     _rewrite_index(fixture["index_path"], index)
 
@@ -2391,6 +2399,25 @@ def test_rehashed_indexed_rq_markdown_bytes_remain_bound_to_external_lock(tmp_pa
             "rq_spec_sha256"
         ]
         == rq_reference["sha256"]
+    )
+    claims = read_canonical_json(fixture["root"] / index["claims"]["path"])
+    assert claims["rq_authority_sha256"] == rq_reference["sha256"]
+    assert claims["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in claims.items() if key != "artifact_sha256"}
+    )
+    affected_references = [
+        rq_reference,
+        protocol_reference,
+        index["claims"],
+        index["ledger"],
+        *[entry["receipt"] for entry in index["phase_receipts"]],
+    ]
+    for reference in affected_references:
+        assert reference["sha256"] == hashlib.sha256(
+            (fixture["root"] / reference["path"]).read_bytes()
+        ).hexdigest()
+    assert index["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in index.items() if key != "artifact_sha256"}
     )
 
     result, observed_code = _run_complete_verification(fixture)
