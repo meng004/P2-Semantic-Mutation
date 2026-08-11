@@ -194,7 +194,11 @@ _JOB_AUTHORITY_KEYS = {
     "execution_class",
     "p12_access_class",
 }
-_CLAIM_POLICY_AUTHORITY_KEYS = {"claim_ceiling_sha256", "required_status"}
+_CLAIM_POLICY_AUTHORITY_KEYS = {
+    "claim_ceiling_sha256",
+    "required_status",
+    "rq_ids",
+}
 _AUTHORITY_OBJECT_SCHEMAS = (
     ((), AUTHORITY_LOCK_KEYS),
     (("controller_repository",), _CONTROLLER_AUTHORITY_KEYS),
@@ -308,6 +312,7 @@ def _authority_lock() -> dict:
         "claim_policy": {
             "claim_ceiling_sha256": protocol["claim_ceiling_sha256"],
             "required_status": "blocked",
+            "rq_ids": ["RQ1", "RQ2", "RQ3", "RQ4"],
         },
     }
 
@@ -830,6 +835,10 @@ def _job_derivation_fixture():
             "implementation_plan_sha256",
         )
     }
+    governing_raw["scientific_plan_sha256"] = (
+        ROOT
+        / "docs/superpowers/plans/2026-08-08-p3-semantic-mutant-argumentation-experiment.md"
+    ).read_bytes()
     governing_artifacts = {
         field: {
             "schema_version": "P3_V3_RAW_AUTHORITY_BYTES_V1",
@@ -846,13 +855,16 @@ def _job_derivation_fixture():
         field: {"schema_version": "PROTOCOL_ARTIFACT_V1", "role": field}
         for field in _PROTOCOL_AUTHORITY_KEYS
     }
-    rq_spec_raw = b"# Frozen research questions\n\n### RQ1\xef\xbc\x9aFixture question\n"
+    rq_spec_raw = (
+        ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md"
+    ).read_bytes()
     protocol_artifacts["rq_spec_sha256"] = {
         "schema_version": "P3_V3_RAW_AUTHORITY_BYTES_V1",
         "relative_path": "protocol/rq_spec.md",
         "sha256": hashlib.sha256(rq_spec_raw).hexdigest(),
         "bytes_hex": rq_spec_raw.hex(),
     }
+    protocol_artifacts["claim_ceiling_sha256"] = _claim_authority()
     protocol_artifacts["job_derivation_policy_sha256"] = copy.deepcopy(policy)
     protocol = {
         field: (
@@ -934,6 +946,7 @@ def _job_derivation_fixture():
         "claim_policy": {
             "claim_ceiling_sha256": protocol["claim_ceiling_sha256"],
             "required_status": "blocked",
+            "rq_ids": ["RQ1", "RQ2", "RQ3", "RQ4"],
         },
         "objects": [
             {
@@ -1298,20 +1311,7 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
         "schema_version": "P3_V3_P12_CONTRACT_V1",
         "synthetic_cases": [],
     }
-    claim_ceiling_body = {
-        "schema_version": "p3-claim-ceiling-authority-v1",
-        "claims": [
-            {
-                "claim_id": "claim-1",
-                "rqs": ["RQ1"],
-                "initial_status": "blocked",
-            }
-        ],
-    }
-    claim_ceiling = {
-        **claim_ceiling_body,
-        "artifact_sha256": canonical_sha256(claim_ceiling_body),
-    }
+    claim_ceiling = _claim_authority()
     protocol_artifacts: dict[str, dict | bytes] = {
         role: {"schema_version": "P3_V3_PROTOCOL_ARTIFACT_V1", "role": role}
         for role in (
@@ -1323,8 +1323,8 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
         )
     }
     protocol_artifacts["rq_spec"] = (
-        b"# Frozen research questions\n\n### RQ1\xef\xbc\x9aFixture question\n"
-    )
+        ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md"
+    ).read_bytes()
     protocol_artifacts.update(
         {
             "claim_ceiling": claim_ceiling,
@@ -2693,7 +2693,9 @@ def test_freeze_rq_markdown_bytes_are_the_claim_verifiers_authority(tmp_path):
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
     rq_path = controller / inputs["protocol_artifact_paths"]["rq_spec"]
     rq_bytes = (
-        b"# Frozen research questions\n\n### RQ1\xef\xbc\x9aVerified fixture question\n"
+        ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md"
+    ).read_bytes() + (
+        b"\n<!-- verified byte-bound RQ authority fixture -->\n"
     )
     rq_path.write_bytes(rq_bytes)
     protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
@@ -2714,23 +2716,15 @@ def test_freeze_rq_markdown_bytes_are_the_claim_verifiers_authority(tmp_path):
     literal_lock_sha256 = hashlib.sha256(lock_path.read_bytes()).hexdigest()
     lock = evidence_module.load_authority_lock(lock_path, literal_lock_sha256)
 
-    claim_body = {
-        "claim_id": "claim-1",
-        "rqs": ["RQ1"],
-        "evidence_references": ["rq_spec.md"],
-        "status": "blocked",
-    }
-    claim = {**claim_body, "artifact_sha256": canonical_sha256(claim_body)}
+    claims = _blocked_claim_ledger("rq_spec.md")
+    claims["rq_authority_sha256"] = lock["protocol"]["rq_spec_sha256"]
+    claims["claim_authority_sha256"] = lock["protocol"][
+        "claim_ceiling_sha256"
+    ]
     claims_body = {
-        "schema_version": "p3-claim-evidence-v1",
-        "claim_authority_sha256": lock["protocol"]["claim_ceiling_sha256"],
-        "rq_authority_sha256": lock["protocol"]["rq_spec_sha256"],
-        "claims": [claim],
+        key: value for key, value in claims.items() if key != "artifact_sha256"
     }
-    claims = {
-        **claims_body,
-        "artifact_sha256": canonical_sha256(claims_body),
-    }
+    claims["artifact_sha256"] = canonical_sha256(claims_body)
     claims_path = tmp_path / "claims.json"
     write_canonical_json(claims_path, claims, exclusive=True)
     claim_ceiling_path = (
@@ -2746,6 +2740,7 @@ def test_freeze_rq_markdown_bytes_are_the_claim_verifiers_authority(tmp_path):
                 "claim_ceiling_sha256": claim_ceiling_path.read_bytes(),
             },
             "protocol": lock["protocol"],
+            "authority_rq_ids": ["RQ1", "RQ2", "RQ3", "RQ4"],
         }
     ) == claims
 
@@ -3727,7 +3722,7 @@ def _write_evidence_index(path: Path, body: dict) -> None:
     )
 
 
-def _claim_authority() -> dict:
+def _legacy_three_rq_claim_authority() -> dict:
     associations = {
         "C1_SEMANTIC_MUTATION_SYSTEM_PROTOCOL": ["RQ1", "RQ2", "RQ3"],
         "C2_CROSS_PROJECT_OPERATOR_EFFECTIVENESS": ["RQ1"],
@@ -3736,6 +3731,30 @@ def _claim_authority() -> dict:
         "C5_CONTROLLED_REAL_CONSISTENCY": ["RQ3"],
         "C6_STRUCTURED_VS_NATIVE_SUPERIORITY": ["RQ2"],
         "C7_REPRODUCIBLE_EVIDENCE_INFRASTRUCTURE": ["RQ1", "RQ2", "RQ3"],
+    }
+    claims = [
+        {"claim_id": claim_id, "rqs": rqs, "initial_status": "blocked"}
+        for claim_id, rqs in associations.items()
+    ]
+    body = {"schema_version": "p3-claim-ceiling-authority-v1", "claims": claims}
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _claim_authority() -> dict:
+    associations = {
+        "C1_ARTIFACT_FIRST_SEMANTIC_MUTANT_PROTOCOL": [
+            "RQ1",
+            "RQ2",
+            "RQ3",
+            "RQ4",
+        ],
+        "C2_CERTIFIED_MUTANTS_ACROSS_SCALES_TECHNIQUES": ["RQ1"],
+        "C3_SEMANTIC_CONSTRUCT_DISTINCTNESS": ["RQ2"],
+        "C4_FAMILY_AWARE_SMS_RESIDUAL_EXPLANATION": ["RQ3"],
+        "C5_P12_CRITERION_INCREMENTAL_VALUE": ["RQ4"],
+        "C6_UNIVERSAL_SUPERIORITY_CEILING": ["RQ3", "RQ4"],
+        "C7_LANGUAGE_INDEPENDENT_AUTOMATION_CEILING": ["RQ1"],
+        "C8_PROFILING_REPRESENTATIVENESS_CEILING": ["RQ1"],
     }
     claims = [
         {"claim_id": claim_id, "rqs": rqs, "initial_status": "blocked"}
@@ -3767,7 +3786,7 @@ def _blocked_claim_ledger(*references: str) -> dict:
         "rq_authority_sha256": hashlib.sha256(
             (
                 ROOT
-                / "research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md"
+                / "research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md"
             ).read_bytes()
         ).hexdigest(),
         "claims": claims,
@@ -3797,7 +3816,7 @@ def _install_protocol_authorities(tmp_path: Path) -> dict:
             path.write_bytes(
                 (
                     ROOT
-                    / "research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md"
+                    / "research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md"
                 ).read_bytes()
             )
         elif field == "claim_ceiling_sha256":
@@ -4025,6 +4044,7 @@ def _install_external_authority(
         "claim_policy": {
             "claim_ceiling_sha256": protocol["claim_ceiling_sha256"],
             "required_status": "blocked",
+            "rq_ids": ["RQ1", "RQ2", "RQ3", "RQ4"],
         },
     }
     lock_path = tmp_path / "authority-lock.json"

@@ -1,0 +1,69 @@
+ledger_id: p3-semantic-mutation-claim-ledger-v1.3.0
+status: frozen-execution-ceiling
+frozen_at: "2026-08-12T00:00:00+08:00"
+scope_authority: research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md
+governing_scientific_plan: docs/superpowers/plans/2026-08-08-p3-semantic-mutant-argumentation-experiment.md
+governing_scientific_plan_sha256: fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830
+supersedes_execution_authority:
+  - research/evidence/p3_claim_ledger_v1.2.0.yml
+
+claims:
+  - claim_id: C1_ARTIFACT_FIRST_SEMANTIC_MUTANT_PROTOCOL
+    rqs: [RQ1, RQ2, RQ3, RQ4]
+    text: "P3 defines an artifact-first semantic-mutant protocol"
+    governing_initial_status: supported
+    status: blocked
+    upgrade_condition: "Governing design and frozen schemas remain consistent"
+
+  - claim_id: C2_CERTIFIED_MUTANTS_ACROSS_SCALES_TECHNIQUES
+    rqs: [RQ1]
+    text: "The protocol constructs certified mutants across scales and techniques"
+    governing_initial_status: blocked
+    status: blocked
+    upgrade_condition: "RQ1 evidence meets behavior-frame, profiling, diversity, and completeness gates"
+
+  - claim_id: C3_SEMANTIC_CONSTRUCT_DISTINCTNESS
+    rqs: [RQ2]
+    text: "Semantic mutants are construct-distinct from the chosen syntactic baseline"
+    governing_initial_status: blocked
+    status: blocked
+    upgrade_condition: "RQ2 paired evidence and uncertainty accounting complete"
+
+  - claim_id: C4_FAMILY_AWARE_SMS_RESIDUAL_EXPLANATION
+    rqs: [RQ3]
+    text: "Family-aware SMS compares and explains MR-set residuals"
+    governing_initial_status: blocked
+    status: blocked
+    upgrade_condition: "Frozen kill matrix and all required adequacy views complete"
+
+  - claim_id: C5_P12_CRITERION_INCREMENTAL_VALUE
+    rqs: [RQ4]
+    text: "Semantic adequacy adds explanatory value on P12"
+    governing_initial_status: blocked
+    status: blocked
+    upgrade_condition: "RQ4 project-clustered analysis supports the prespecified criterion"
+
+  - claim_id: C6_UNIVERSAL_SUPERIORITY_CEILING
+    rqs: [RQ3, RQ4]
+    text: "Semantic mutation is superior for all programs or defects"
+    governing_initial_status: blocked permanently
+    status: blocked
+    upgrade_condition: "Outside P3's sampling domain and design"
+
+  - claim_id: C7_LANGUAGE_INDEPENDENT_AUTOMATION_CEILING
+    rqs: [RQ1]
+    text: "P3 provides language-independent automatic mutant generation"
+    governing_initial_status: blocked permanently
+    status: blocked
+    upgrade_condition: "Reserved for a later paper"
+
+  - claim_id: C8_PROFILING_REPRESENTATIVENESS_CEILING
+    rqs: [RQ1]
+    text: "The Profiling Workload represents all real-world uses or proves whole-program dynamic reachability"
+    governing_initial_status: blocked permanently
+    status: blocked
+    upgrade_condition: "Public repository evidence and selected traces do not identify the full operational population"
+
+status_policy:
+  execution_authority_requires: blocked
+  note: "The synthetic infrastructure path records no scientific result and cannot upgrade any claim."

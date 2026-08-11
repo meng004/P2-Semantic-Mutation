@@ -56,6 +56,7 @@ from tests.p3_v3.test_cli import (
     _blocked_claim_ledger,
     _claim_authority,
     _indexed_reference,
+    _legacy_three_rq_claim_authority,
     _protocol_body,
     _write_evidence_index,
     _write_protocol,
@@ -260,7 +261,13 @@ def _job_template(
     }
 
 
-def _authority_fixture(tmp_path: Path) -> dict:
+def _authority_fixture(
+    tmp_path: Path,
+    *,
+    rq_spec_path: Path | None = None,
+    claim_ceiling_authority: dict | None = None,
+    return_freeze_result: bool = False,
+) -> dict:
     controller = tmp_path / "authority-controller"
     controller.mkdir()
     ignored = shutil.ignore_patterns("__pycache__", "*.pyc")
@@ -553,9 +560,10 @@ def _authority_fixture(tmp_path: Path) -> dict:
     }
     protocol_artifacts: dict[str, dict | bytes] = {
         "rq_spec": (
-            ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md"
+            rq_spec_path
+            or ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md"
         ).read_bytes(),
-        "claim_ceiling": _claim_authority(),
+        "claim_ceiling": claim_ceiling_authority or _claim_authority(),
         "p12_contract": {
             "schema_version": "P3_V3_P12_CONTRACT_V1",
             "synthetic_cases": synthetic_cases,
@@ -645,6 +653,8 @@ def _authority_fixture(tmp_path: Path) -> dict:
         "--output",
         str(lock_path),
     )
+    if return_freeze_result:
+        return {"freeze_result": frozen}
     assert frozen.returncode == 0, frozen.stderr
     literal_lock_sha256 = hashlib.sha256(lock_path.read_bytes()).hexdigest()
     lock = read_canonical_json(lock_path)
@@ -1648,6 +1658,78 @@ def _rewrite_reference(root: Path, index: dict, reference: dict, value) -> None:
     _rewrite_index(root / "evidence-index.json", index)
 
 
+def _reseal_rq_and_claim_authority(fixture: dict, mutation: str) -> str:
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    if mutation == "three_rq_authority":
+        rq_raw = (
+            ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md"
+        ).read_bytes()
+        claim_authority = _legacy_three_rq_claim_authority()
+    else:
+        rq_ref = index["protocol_artifacts"]["rq_spec_sha256"]
+        rq_raw = (root / rq_ref["path"]).read_bytes()
+        claim_authority = copy.deepcopy(_claim_authority())
+        claim_authority["claims"] = [
+            claim for claim in claim_authority["claims"] if "RQ4" not in claim["rqs"]
+        ]
+        _refresh_self_hash(claim_authority)
+
+    rq_ref = index["protocol_artifacts"]["rq_spec_sha256"]
+    rq_path = root / rq_ref["path"]
+    rq_path.write_bytes(rq_raw)
+    rq_ref["sha256"] = hashlib.sha256(rq_raw).hexdigest()
+
+    claim_ref = index["protocol_artifacts"]["claim_ceiling_sha256"]
+    claim_path = root / claim_ref["path"]
+    claim_path.write_bytes(canonical_json_bytes(claim_authority))
+    claim_ref["sha256"] = hashlib.sha256(claim_path.read_bytes()).hexdigest()
+
+    protocol_path = root / index["protocol"]["path"]
+    protocol = read_canonical_json(protocol_path)
+    protocol["rq_spec_sha256"] = rq_ref["sha256"]
+    protocol["claim_ceiling_sha256"] = claim_ref["sha256"]
+    _refresh_self_hash(protocol)
+    protocol_path.write_bytes(canonical_json_bytes(protocol))
+    index["protocol"]["sha256"] = hashlib.sha256(
+        protocol_path.read_bytes()
+    ).hexdigest()
+
+    old_claims = read_canonical_json(root / index["claims"]["path"])
+    evidence_references = old_claims["claims"][0]["evidence_references"]
+    claim_rows = []
+    for authority_claim in claim_authority["claims"]:
+        body = {
+            "claim_id": authority_claim["claim_id"],
+            "rqs": authority_claim["rqs"],
+            "evidence_references": evidence_references,
+            "status": "blocked",
+        }
+        claim_rows.append({**body, "artifact_sha256": canonical_sha256(body)})
+    claims_body = {
+        "schema_version": "p3-claim-evidence-v1",
+        "claim_authority_sha256": claim_ref["sha256"],
+        "rq_authority_sha256": rq_ref["sha256"],
+        "claims": claim_rows,
+    }
+    claims = {**claims_body, "artifact_sha256": canonical_sha256(claims_body)}
+    claims_path = root / index["claims"]["path"]
+    claims_path.write_bytes(canonical_json_bytes(claims))
+    index["claims"]["sha256"] = hashlib.sha256(
+        claims_path.read_bytes()
+    ).hexdigest()
+
+    lock_path = fixture["authority"]["lock_path"]
+    lock = read_canonical_json(lock_path)
+    lock["protocol"]["rq_spec_sha256"] = rq_ref["sha256"]
+    lock["protocol"]["claim_ceiling_sha256"] = claim_ref["sha256"]
+    lock["protocol"]["protocol_sha256"] = index["protocol"]["sha256"]
+    lock["claim_policy"]["claim_ceiling_sha256"] = claim_ref["sha256"]
+    lock_path.write_bytes(canonical_json_bytes(lock))
+    _rewrite_index(fixture["index_path"], index)
+    return hashlib.sha256(lock_path.read_bytes()).hexdigest()
+
+
 def _rehash_ledger_events(events: list[dict]) -> list[dict]:
     previous = None
     rebuilt = []
@@ -1974,6 +2056,23 @@ def _reseal_indexed_rq_markdown(fixture: dict) -> None:
     _rewrite_index(fixture["index_path"], index)
 
 
+def test_freeze_rejects_legacy_three_rq_authority(tmp_path):
+    fixture = _authority_fixture(
+        tmp_path,
+        rq_spec_path=(
+            ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md"
+        ),
+        claim_ceiling_authority=_legacy_three_rq_claim_authority(),
+        return_freeze_result=True,
+    )
+
+    result = fixture["freeze_result"]
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr) == {"code": "E_CLAIM_SET", "status": "FAIL"}
+    assert not result.stdout
+
+
 def test_two_subject_phase0_to_phase7_path_is_production_verified(tmp_path):
     fixture = _build_complete_evidence(tmp_path)
 
@@ -1990,6 +2089,30 @@ def test_two_subject_phase0_to_phase7_path_is_production_verified(tmp_path):
     assert payload["authorized_real_p12_job_count"] == 0
     assert payload["recorded_real_scientific_terminal_count"] == 0
     assert payload["claims_status"] == "blocked"
+    index = read_canonical_json(fixture["index_path"])
+    claims = read_canonical_json(fixture["root"] / index["claims"]["path"])
+    assert sorted({rq for claim in claims["claims"] for rq in claim["rqs"]}) == [
+        "RQ1",
+        "RQ2",
+        "RQ3",
+        "RQ4",
+    ]
+    assert all(claim["status"] == "blocked" for claim in claims["claims"])
+    assert {claim["claim_id"]: claim["rqs"] for claim in claims["claims"]} == {
+        "C1_ARTIFACT_FIRST_SEMANTIC_MUTANT_PROTOCOL": [
+            "RQ1",
+            "RQ2",
+            "RQ3",
+            "RQ4",
+        ],
+        "C2_CERTIFIED_MUTANTS_ACROSS_SCALES_TECHNIQUES": ["RQ1"],
+        "C3_SEMANTIC_CONSTRUCT_DISTINCTNESS": ["RQ2"],
+        "C4_FAMILY_AWARE_SMS_RESIDUAL_EXPLANATION": ["RQ3"],
+        "C5_P12_CRITERION_INCREMENTAL_VALUE": ["RQ4"],
+        "C6_UNIVERSAL_SUPERIORITY_CEILING": ["RQ3", "RQ4"],
+        "C7_LANGUAGE_INDEPENDENT_AUTOMATION_CEILING": ["RQ1"],
+        "C8_PROFILING_REPRESENTATIVENESS_CEILING": ["RQ1"],
+    }
     completion = read_canonical_json(fixture["phase_outputs"]["PHASE_7"])
     assert completion == _self_hashed(
         {
@@ -2004,6 +2127,24 @@ def test_two_subject_phase0_to_phase7_path_is_production_verified(tmp_path):
             "infrastructure_only": True,
         }
     )
+
+
+@pytest.mark.parametrize(
+    "mutation", ["three_rq_authority", "missing_rq4_claim"]
+)
+def test_fully_resealed_rq_and_claim_authority_requires_exact_rq1_to_rq4_coverage(
+    tmp_path, mutation
+):
+    fixture = _build_complete_evidence(tmp_path)
+    literal_lock_sha256 = _reseal_rq_and_claim_authority(fixture, mutation)
+
+    result, observed_code = _run_complete_verification(
+        fixture, literal_lock_sha256=literal_lock_sha256
+    )
+
+    assert observed_code == "E_CLAIM_SET", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
 
 
 @pytest.mark.parametrize(("mutation", "expected_code"), MUTATION_ERRORS.items())
@@ -2057,12 +2198,16 @@ def test_external_literal_digest_rejects_lock_reseal_before_evidence(
             "TOP_SECRET_PREFLIGHT_TOKEN",
         ),
         (
+            "Authorization=Bearer TOP_SECRET_PREFLIGHT_EQUALS_TOKEN",
+            "TOP_SECRET_PREFLIGHT_EQUALS_TOKEN",
+        ),
+        (
             "probe https://audit-user:TOP_SECRET_PREFLIGHT_PASSWORD@"
             "example.invalid/capability",
             "TOP_SECRET_PREFLIGHT_PASSWORD",
         ),
     ],
-    ids=["bearer", "userinfo"],
+    ids=["colon_bearer", "equals_bearer", "userinfo"],
 )
 def test_fully_resealed_extra_preflight_capability_rejects_credential_metadata(
     tmp_path, credential_capability, secret

@@ -156,6 +156,7 @@ _JOB_AUTHORITY_SCHEMA = {
 _CLAIM_POLICY_AUTHORITY_SCHEMA = {
     "claim_ceiling_sha256": str,
     "required_status": str,
+    "rq_ids": list,
 }
 _GIT_OBJECT_RE = re.compile(r"[0-9a-f]{40}")
 _CREDENTIAL_FIELD_NAMES = frozenset(
@@ -172,9 +173,23 @@ _NON_CREDENTIAL_KEY_FIELDS = frozenset(
         "schema_selection_key",
     }
 )
-_BEARER_VALUE_RE = re.compile(r"(?i)(?:^|[\s:])bearer[ \t]+[^\s]+")
+_BEARER_VALUE_RE = re.compile(r"(?i)bearer[ \t]+[^\s]+")
 _USERINFO_VALUE_RE = re.compile(
     r"(?i)\b[a-z][a-z0-9+.-]*://[^/\s@]+@"
+)
+_REQUIRED_RQ_IDS = ("RQ1", "RQ2", "RQ3", "RQ4")
+_REQUIRED_CLAIM_ASSOCIATIONS = (
+    (
+        "C1_ARTIFACT_FIRST_SEMANTIC_MUTANT_PROTOCOL",
+        ("RQ1", "RQ2", "RQ3", "RQ4"),
+    ),
+    ("C2_CERTIFIED_MUTANTS_ACROSS_SCALES_TECHNIQUES", ("RQ1",)),
+    ("C3_SEMANTIC_CONSTRUCT_DISTINCTNESS", ("RQ2",)),
+    ("C4_FAMILY_AWARE_SMS_RESIDUAL_EXPLANATION", ("RQ3",)),
+    ("C5_P12_CRITERION_INCREMENTAL_VALUE", ("RQ4",)),
+    ("C6_UNIVERSAL_SUPERIORITY_CEILING", ("RQ3", "RQ4")),
+    ("C7_LANGUAGE_INDEPENDENT_AUTOMATION_CEILING", ("RQ1",)),
+    ("C8_PROFILING_REPRESENTATIVENESS_CEILING", ("RQ1",)),
 )
 _EXECUTION_CLASSES = frozenset(
     {"SYNTHETIC_INFRASTRUCTURE", "NON_SCIENTIFIC_CONTROL", "REAL_SCIENTIFIC"}
@@ -1641,7 +1656,15 @@ def _rq_ids_from_spec_bytes(raw: bytes) -> list[str]:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise EvidenceError("E_CLAIM_SET", "RQ authority is not UTF-8 Markdown") from exc
-    rq_ids = sorted(set(re.findall(r"^### (RQ[0-9]+)：", text, flags=re.MULTILINE)))
+    rq_ids = sorted(
+        set(
+            re.findall(
+                r"^### (RQ[0-9]+)(?:：|[ \t]+[—-][ \t]+)",
+                text,
+                flags=re.MULTILINE,
+            )
+        )
+    )
     if not rq_ids:
         raise EvidenceError("E_CLAIM_SET", "RQ authority has no research questions")
     return rq_ids
@@ -1768,6 +1791,37 @@ def _validate_claim_ceiling_authority(
     ):
         raise EvidenceError("E_CLAIM_SET", "claim ceiling authority differs")
     return value
+
+
+def _validate_rq_claim_authority(
+    rq_spec_raw: bytes,
+    claim_ceiling: Mapping[str, Any],
+    *,
+    scientific_plan_raw: bytes | None = None,
+) -> list[str]:
+    rq_ids = _rq_ids_from_spec_bytes(rq_spec_raw)
+    required_rqs = list(_REQUIRED_RQ_IDS)
+    if rq_ids != required_rqs:
+        raise EvidenceError(
+            "E_CLAIM_SET", "RQ authority must exactly enumerate RQ1 through RQ4"
+        )
+    if (
+        scientific_plan_raw is not None
+        and _rq_ids_from_spec_bytes(scientific_plan_raw) != required_rqs
+    ):
+        raise EvidenceError(
+            "E_CLAIM_SET",
+            "scientific plan and RQ authority do not exactly enumerate RQ1 through RQ4",
+        )
+    authority = _validate_claim_ceiling_authority(claim_ceiling)
+    observed = tuple(
+        (claim["claim_id"], tuple(claim["rqs"])) for claim in authority["claims"]
+    )
+    if observed != _REQUIRED_CLAIM_ASSOCIATIONS:
+        raise EvidenceError(
+            "E_CLAIM_SET", "claim authority differs from the governing claim table"
+        )
+    return rq_ids
 
 
 def _subject_objects(
@@ -1919,15 +1973,18 @@ def prepare_authority(
 
     governing_materials: dict[str, str] = {}
     governing_artifacts: dict[str, dict[str, Any]] = {}
+    governing_raw: dict[str, bytes] = {}
     for role, relative_path in inputs["governing_material_paths"].items():
+        raw = controller_snapshot.read_bytes(relative_path)
         envelope, digest = _raw_authority_envelope(
             controller_root,
             relative_path,
             f"governing material {role}",
-            raw=controller_snapshot.read_bytes(relative_path),
+            raw=raw,
         )
         governing_materials[f"{role}_sha256"] = digest
         governing_artifacts[f"{role}_sha256"] = envelope
+        governing_raw[role] = raw
     governing_materials["controller_implementation_manifest_sha256"] = (
         controller_repository["tracked_source_manifest_sha256"]
     )
@@ -1978,8 +2035,10 @@ def prepare_authority(
         "protocol governing-material binding differs",
     )
     job_derivation_policy = protocol_artifacts["job_derivation_policy_sha256"]
-    _validate_claim_ceiling_authority(
-        protocol_artifacts["claim_ceiling_sha256"]
+    rq_ids = _validate_rq_claim_authority(
+        bytes.fromhex(protocol_artifacts["rq_spec_sha256"]["bytes_hex"]),
+        protocol_artifacts["claim_ceiling_sha256"],
+        scientific_plan_raw=governing_raw["scientific_plan"],
     )
     environment_lock = _validate_environment_lock(
         protocol_artifacts["environment_lock_sha256"]
@@ -2139,6 +2198,7 @@ def prepare_authority(
         "claim_policy": {
             "claim_ceiling_sha256": protocol["claim_ceiling_sha256"],
             "required_status": "blocked",
+            "rq_ids": rq_ids,
         },
         "objects": objects,
         "environments": environment_lock["environments"],
@@ -2368,6 +2428,10 @@ def validate_authority_lock(lock: Mapping[str, Any]) -> dict[str, Any]:
         claim_policy["required_status"] == "blocked",
         "authority lock claim status differs",
     )
+    if claim_policy["rq_ids"] != list(_REQUIRED_RQ_IDS):
+        raise EvidenceError(
+            "E_CLAIM_SET", "authority lock RQ coverage differs from RQ1 through RQ4"
+        )
     return value
 
 
@@ -2677,6 +2741,13 @@ def _snapshot_prepared_authority(
             _CLAIM_POLICY_AUTHORITY_SCHEMA,
             "prepared claim_policy",
         )
+        rq_ids = _validate_rq_claim_authority(
+            bytes.fromhex(protocol_artifacts["rq_spec_sha256"]["bytes_hex"]),
+            protocol_artifacts["claim_ceiling_sha256"],
+            scientific_plan_raw=bytes.fromhex(
+                governing_artifacts["scientific_plan_sha256"]["bytes_hex"]
+            ),
+        )
         if (
             preflight["normalized_repository_identity"]
             != controller["normalized_repository_identity"]
@@ -2687,6 +2758,7 @@ def _snapshot_prepared_authority(
             or claim_policy["claim_ceiling_sha256"]
             != protocol["claim_ceiling_sha256"]
             or claim_policy["required_status"] != "blocked"
+            or claim_policy["rq_ids"] != rq_ids
         ):
             _authority_intent_failure("prepared cross-authority binding differs")
     except EvidenceError as exc:
@@ -3807,6 +3879,17 @@ def _load_evidence_index(
         protocol_artifact_bytes[field] = loaded[
             protocol_artifact_index[field]["path"]
         ]
+    authority_rq_ids = _validate_rq_claim_authority(
+        protocol_artifact_bytes["rq_spec_sha256"],
+        _canonical_index_snapshot(
+            protocol_artifact_bytes["claim_ceiling_sha256"],
+            "claim ceiling authority",
+        ),
+    )
+    if authority_rq_ids != validated_lock["claim_policy"]["rq_ids"]:
+        raise EvidenceError(
+            "E_CLAIM_SET", "indexed RQ authority differs from Authority Lock"
+        )
     ledger_path, ledger_raw = _indexed_file(
         root, value["ledger"], seen, loaded, "ledger", canonical=False
     )
@@ -4085,6 +4168,7 @@ def _load_evidence_index(
         "protocol": protocol,
         "protocol_artifacts": protocol_artifacts,
         "protocol_artifact_bytes": protocol_artifact_bytes,
+        "authority_rq_ids": authority_rq_ids,
         "ledger_path": ledger_path,
         "ledger_raw": ledger_raw,
         "claims_raw": claims_raw,
@@ -4116,11 +4200,13 @@ def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
                 "E_CLAIM_EVIDENCE", "claim names evidence absent from the index"
             )
 
-    claim_ceiling = _validate_claim_ceiling_authority(
-        _canonical_index_snapshot(
-            material["protocol_artifact_bytes"]["claim_ceiling_sha256"],
-            "claim ceiling authority",
-        )
+    claim_ceiling = _canonical_index_snapshot(
+        material["protocol_artifact_bytes"]["claim_ceiling_sha256"],
+        "claim ceiling authority",
+    )
+    authoritative_rqs = _validate_rq_claim_authority(
+        material["protocol_artifact_bytes"]["rq_spec_sha256"],
+        claim_ceiling,
     )
     authoritative_claims = [
         validate_exact_object(
@@ -4130,9 +4216,6 @@ def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
         )
         for index, candidate in enumerate(claim_ceiling["claims"])
     ]
-    authoritative_rqs = _rq_ids_from_spec_bytes(
-        material["protocol_artifact_bytes"]["rq_spec_sha256"]
-    )
     authoritative_claim_ids = [claim["claim_id"] for claim in authoritative_claims]
     authoritative_associations = {
         claim["claim_id"]: claim["rqs"] for claim in authoritative_claims
@@ -4149,6 +4232,7 @@ def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
             for claim in authoritative_claims
         )
         or not authoritative_rqs
+        or authoritative_rqs != material["authority_rq_ids"]
         or claims["claim_authority_sha256"]
         != protocol["claim_ceiling_sha256"]
         or claims["rq_authority_sha256"] != protocol["rq_spec_sha256"]

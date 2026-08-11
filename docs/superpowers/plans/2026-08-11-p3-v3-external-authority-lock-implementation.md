@@ -1285,3 +1285,29 @@ schema:
 - end-to-end mutations add Bearer and URI-userinfo capabilities, then reclose
   the event, origin receipt, Phase 0 output and phase receipt, and Evidence
   Index. Both must fail without emitting the secret to stdout or stderr.
+
+### Task 6 Repair G: Credential syntax and four-RQ scientific authority
+
+The final credential and RQ-authority P1s are closed under the governing
+scientific plan without changing any scientific result:
+
+- credential-shaped metadata detects a case-insensitive `Bearer` scheme wherever
+  it is followed by horizontal whitespace and a nonempty token. It does
+  not depend on beginning-of-string, whitespace, or colon punctuation, so legal
+  extra capabilities using `Authorization: Bearer ...` and
+  `Authorization=Bearer ...` both fail with stable `E_CREDENTIAL_METADATA`;
+  URI userinfo remains covered and SourceSnapshot source text remains excluded;
+- `research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md` succeeds, but does
+  not rewrite, historical v1.2.0. It copies the governing plan's RQ1–RQ4 and
+  eight-row claim ceiling verbatim. The corresponding v1.3 claim ledger assigns
+  stable claim IDs and RQ associations while conservatively keeping every
+  execution claim `blocked`;
+- freeze extracts the RQ IDs from both byte-bound scientific-plan and RQ-spec
+  Markdown, requires exact `RQ1`–`RQ4`, requires the claim authority's exact
+  governing associations, and records the four IDs in the externally digested
+  lock claim policy. Final verification requires the indexed RQ/claim authority,
+  locked IDs, and claims ledger to agree exactly; and
+- RED/GREEN tests cover the legacy three-RQ freeze, fully resealed three-RQ and
+  missing-RQ4-claim lock/index substitutions, the four-RQ positive path with
+  every claim blocked, and colon/equals/userinfo credential capabilities with
+  no secret output.
