@@ -139,13 +139,14 @@ def _source_snapshot(root: Path):
     return snapshot_type(entries=tuple(entries))
 
 
-def test_source_snapshot_consumer_revalidates_entry_integrity(tmp_path):
+@pytest.mark.parametrize("invalid_mode", ["100600", [], {}])
+def test_source_snapshot_consumer_revalidates_entry_integrity(tmp_path, invalid_mode):
     assert hasattr(frames_module, "SourceSnapshotEntry")
     assert hasattr(frames_module, "SourceSnapshot")
     source = tmp_path / "source.py"
     source.write_bytes(b"value = 1\n")
     snapshot = _source_snapshot(tmp_path)
-    object.__setattr__(snapshot.entries[0], "mode", "100600")
+    object.__setattr__(snapshot.entries[0], "mode", invalid_mode)
 
     with pytest.raises(EvidenceError, match="E_SOURCE_SNAPSHOT"):
         frames_module.canonical_source_tree_sha256(snapshot)

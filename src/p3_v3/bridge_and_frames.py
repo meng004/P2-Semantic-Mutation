@@ -115,6 +115,7 @@ def _validate_source_snapshot(
             ) from exc
         if (
             canonical_path != entry.relative_path
+            or type(entry.mode) is not str
             or entry.mode not in {"100644", "100755"}
             or type(entry.sha256) is not str
             or type(entry.content) is not bytes
