@@ -1737,20 +1737,71 @@ def test_authority_determinism_coordinated_registry_drift_changes_objects(tmp_pa
 
 
 @pytest.mark.parametrize(
-    "drift", ["tracked_subject_source", "selected_registry", "common_behavior"]
+    ("drift", "target_role", "expected_changed_roles"),
+    [
+        (
+            "tracked_subject_source",
+            "SOURCE_MANIFEST",
+            {
+                "COMMON_INPUT_INVENTORY",
+                "PUBLIC_BEHAVIOR_FRAME",
+                "SOURCE_MANIFEST",
+            },
+        ),
+        (
+            "selected_registry",
+            "ADAPTER_REGISTRY",
+            {
+                "ADAPTER_REGISTRY",
+                "PUBLIC_BEHAVIOR_FRAME",
+            },
+        ),
+        (
+            "build_descriptor",
+            "BUILD_DESCRIPTOR",
+            {
+                "BUILD_DESCRIPTOR",
+                "COMMON_INPUT_INVENTORY",
+                "PUBLIC_BEHAVIOR_FRAME",
+                "SOURCE_MANIFEST",
+            },
+        ),
+        (
+            "public_behavior_frame",
+            "PUBLIC_BEHAVIOR_FRAME",
+            {
+                "COMMON_INPUT_INVENTORY",
+                "PUBLIC_BEHAVIOR_FRAME",
+                "SOURCE_MANIFEST",
+            },
+        ),
+        (
+            "common_input_derivation",
+            "COMMON_INPUT_INVENTORY",
+            {"COMMON_INPUT_INVENTORY", "INPUT_GENERATOR_REGISTRY"},
+        ),
+    ],
 )
-def test_real_preparation_drift_changes_derived_intent_and_locked_job(
-    tmp_path, drift
+def test_real_preparation_role_drift_changes_derived_intent_and_locked_job(
+    tmp_path, drift, target_role, expected_changed_roles
 ):
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    subject = Path(inputs["subjects"][0]["root"])
+    assert _run_git(controller, "status", "--porcelain=v1") == ""
+    assert _run_git(subject, "status", "--porcelain=v1") == ""
     original = evidence_module.prepare_authority(controller, inputs)
     original_policy = original["job_derivation_policy"]
     original_intent = evidence_module.derive_base_intents(
         original, original_policy
     )[0]
     original_job = evidence_module.derive_locked_jobs(original, original_policy)[0]
+    original_subject_object = next(
+        item for item in original["objects"] if item["object_source"] == "SUBJECT"
+    )
+    original_roles = {
+        item["role"]: item["sha256"] for item in original_subject_object["inputs"]
+    }
 
-    subject = Path(inputs["subjects"][0]["root"])
     if drift == "tracked_subject_source":
         source = subject / "subject.py"
         source.write_text(
@@ -1759,14 +1810,21 @@ def test_real_preparation_drift_changes_derived_intent_and_locked_job(
         )
         _run_git(subject, "add", ".")
         _run_git(subject, "commit", "-m", "tracked subject source drift")
-    elif drift == "common_behavior":
+    elif drift == "build_descriptor":
+        descriptor_path = subject / inputs["subjects"][0]["build_descriptor_path"]
+        descriptor = json.loads(descriptor_path.read_text(encoding="utf-8"))
+        descriptor["reverse"] = True
+        write_canonical_json(descriptor_path, descriptor, exclusive=False)
+        _run_git(subject, "add", ".")
+        _run_git(subject, "commit", "-m", "build descriptor drift")
+    elif drift == "public_behavior_frame":
         discovery_path = subject / "discovery.json"
         discovery = json.loads(discovery_path.read_text(encoding="utf-8"))
         discovery["declarations"][0]["declared_input_schema_sha256"] = "b" * 64
         write_canonical_json(discovery_path, discovery, exclusive=False)
         _run_git(subject, "add", ".")
-        _run_git(subject, "commit", "-m", "common behavior drift")
-    else:
+        _run_git(subject, "commit", "-m", "public behavior frame drift")
+    elif drift == "selected_registry":
         registry_path = controller / inputs["registry_artifact_paths"][
             "adapter_registry"
         ]
@@ -1800,13 +1858,65 @@ def test_real_preparation_drift_changes_derived_intent_and_locked_job(
         write_canonical_json(protocol_path, protocol, exclusive=False)
         _run_git(controller, "add", ".")
         _run_git(controller, "commit", "-m", "selected registry drift")
+    else:
+        registry_path = controller / inputs["registry_artifact_paths"][
+            "input_generator_registry"
+        ]
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        selected = next(
+            row
+            for row in registry["generators"]
+            if row["generator_id"] == "JSON_SCHEMA_DRAFT2020_12_V1"
+        )
+        implementation = registry_path.parent / selected["implementation_path"]
+        implementation.write_text(
+            implementation.read_text(encoding="utf-8").replace(
+                'b"P3-INPUT-STREAM-v1"', 'b"P3-INPUT-STREAM-v2"'
+            ),
+            encoding="utf-8",
+        )
+        selected["source_sha256"] = hashlib.sha256(
+            implementation.read_bytes()
+        ).hexdigest()
+        registry_body = {
+            key: value for key, value in registry.items() if key != "artifact_sha256"
+        }
+        registry["artifact_sha256"] = canonical_sha256(registry_body)
+        write_canonical_json(registry_path, registry, exclusive=False)
+        protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+        protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+        protocol["input_generator_registry_sha256"] = canonical_sha256(registry)
+        protocol_body = {
+            key: value for key, value in protocol.items() if key != "artifact_sha256"
+        }
+        protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+        write_canonical_json(protocol_path, protocol, exclusive=False)
+        _run_git(controller, "add", ".")
+        _run_git(controller, "commit", "-m", "common input derivation drift")
 
+    assert _run_git(controller, "status", "--porcelain=v1") == ""
+    assert _run_git(subject, "status", "--porcelain=v1") == ""
     changed = evidence_module.prepare_authority(controller, inputs)
     changed_policy = changed["job_derivation_policy"]
     changed_intent = evidence_module.derive_base_intents(changed, changed_policy)[0]
     changed_job = evidence_module.derive_locked_jobs(changed, changed_policy)[0]
+    changed_subject_object = next(
+        item for item in changed["objects"] if item["object_source"] == "SUBJECT"
+    )
+    changed_roles = {
+        item["role"]: item["sha256"] for item in changed_subject_object["inputs"]
+    }
 
-    assert changed["objects"] != original["objects"]
+    assert changed_roles[target_role] != original_roles[target_role]
+    assert {
+        role
+        for role in original_roles
+        if changed_roles[role] != original_roles[role]
+    } == expected_changed_roles
+    assert original_intent["input_sha256"] == sorted(original_roles.values())
+    assert changed_intent["input_sha256"] == sorted(changed_roles.values())
+    assert original_roles[target_role] in original_intent["input_sha256"]
+    assert changed_roles[target_role] in changed_intent["input_sha256"]
     assert changed_intent["input_sha256"] != original_intent["input_sha256"]
     assert changed_job["intent_template_sha256"] != original_job[
         "intent_template_sha256"
