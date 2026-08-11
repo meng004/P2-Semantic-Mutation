@@ -131,6 +131,7 @@ preflight:
 claim_policy:
   claim_ceiling_sha256
   required_status
+  rq_ids
 ```
 
 Each `jobs[]` row has exactly the ten fields in design Section 5.5. SHA fields
@@ -1311,3 +1312,21 @@ scientific plan without changing any scientific result:
   missing-RQ4-claim lock/index substitutions, the four-RQ positive path with
   every claim blocked, and colon/equals/userinfo credential capabilities with
   no secret output.
+
+### Task 6 Repair G2: Ordered RQ headings and complete mutation resealing
+
+- RQ extraction preserves the original Markdown heading sequence and accepts
+  exactly `RQ1, RQ2, RQ3, RQ4`; reordered, duplicate, and contradictory duplicate
+  headings fail with `E_CLAIM_SET` instead of being normalized by sorting or set
+  conversion.
+- Bearer-shaped metadata requires a non-alphanumeric left boundary. Start,
+  whitespace, colon, and equals forms remain forbidden, while words such as
+  `nonbearer` and `icebearer` are not credential-shaped values.
+- The exact Authority Lock `claim_policy` keys are
+  `claim_ceiling_sha256, required_status, rq_ids`.
+- Fully resealed RQ/claim mutations update the lock RQ IDs and all changed
+  protocol consumers: intent fields and argv, locked intent-template hashes,
+  ledger, all eight phase receipts, origin receipt, and Evidence Index. Tests
+  assert every internal hash/reference before CLI dispatch and demonstrate that
+  bypassing only the exact-four/claim-coverage gate makes each mutated package
+  pass.

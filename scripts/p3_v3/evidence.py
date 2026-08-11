@@ -173,7 +173,7 @@ _NON_CREDENTIAL_KEY_FIELDS = frozenset(
         "schema_selection_key",
     }
 )
-_BEARER_VALUE_RE = re.compile(r"(?i)bearer[ \t]+[^\s]+")
+_BEARER_VALUE_RE = re.compile(r"(?i)(?<![A-Za-z0-9])bearer[ \t]+[^\s]+")
 _USERINFO_VALUE_RE = re.compile(
     r"(?i)\b[a-z][a-z0-9+.-]*://[^/\s@]+@"
 )
@@ -1656,17 +1656,18 @@ def _rq_ids_from_spec_bytes(raw: bytes) -> list[str]:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise EvidenceError("E_CLAIM_SET", "RQ authority is not UTF-8 Markdown") from exc
-    rq_ids = sorted(
-        set(
-            re.findall(
-                r"^### (RQ[0-9]+)(?:：|[ \t]+[—-][ \t]+)",
-                text,
-                flags=re.MULTILINE,
-            )
-        )
+    rq_ids = re.findall(
+        r"^### (RQ[0-9]+)(?:：|[ \t]+[—-][ \t]+)",
+        text,
+        flags=re.MULTILINE,
     )
     if not rq_ids:
         raise EvidenceError("E_CLAIM_SET", "RQ authority has no research questions")
+    if rq_ids != list(_REQUIRED_RQ_IDS):
+        raise EvidenceError(
+            "E_CLAIM_SET",
+            "RQ authority headings must exactly enumerate RQ1 through RQ4 in order",
+        )
     return rq_ids
 
 

@@ -702,6 +702,30 @@ def test_authority_lock_rejects_composite_keys_and_credential_shaped_values(
 
 
 @pytest.mark.parametrize(
+    ("value", "rejected"),
+    [
+        ("Bearer TOKEN_AT_START", True),
+        ("prefix Bearer TOKEN_AFTER_SPACE", True),
+        ("Authorization:Bearer TOKEN_AFTER_COLON", True),
+        ("Authorization=Bearer TOKEN_AFTER_EQUALS", True),
+        ("nonbearer BENIGN_VALUE", False),
+        ("icebearer BENIGN_VALUE", False),
+    ],
+    ids=["start", "space", "colon", "equals", "nonbearer", "icebearer"],
+)
+def test_bearer_metadata_requires_a_non_alphanumeric_left_boundary(value, rejected):
+    lock = _authority_lock()
+    lock["task_id"] = value
+
+    if rejected:
+        with pytest.raises(EvidenceError, match="E_CREDENTIAL_METADATA") as caught:
+            evidence_module.validate_authority_lock(lock)
+        assert value not in str(caught.value)
+    else:
+        evidence_module.validate_authority_lock(lock)
+
+
+@pytest.mark.parametrize(
     "mutation",
     [
         "preflight-identity",
@@ -2743,6 +2767,36 @@ def test_freeze_rq_markdown_bytes_are_the_claim_verifiers_authority(tmp_path):
             "authority_rq_ids": ["RQ1", "RQ2", "RQ3", "RQ4"],
         }
     ) == claims
+
+
+@pytest.mark.parametrize(
+    "headings",
+    [
+        [
+            ("RQ1", "one"),
+            ("RQ2", "two"),
+            ("RQ3", "three"),
+            ("RQ4", "four"),
+            ("RQ4", "four"),
+        ],
+        [("RQ2", "two"), ("RQ1", "one"), ("RQ3", "three"), ("RQ4", "four")],
+        [
+            ("RQ1", "one"),
+            ("RQ2", "two"),
+            ("RQ3", "three"),
+            ("RQ4", "four"),
+            ("RQ2", "contradictory"),
+        ],
+    ],
+    ids=["duplicate", "reordered", "contradictory_duplicate"],
+)
+def test_rq_authority_rejects_nonexact_original_heading_sequence(headings):
+    raw = "\n".join(
+        f"### {rq} — {title}" for rq, title in headings
+    ).encode()
+
+    with pytest.raises(EvidenceError, match="E_CLAIM_SET"):
+        evidence_module._rq_ids_from_spec_bytes(raw)
 
 
 def test_build_authority_lock_relative_subject_root_uses_controller_root(tmp_path):

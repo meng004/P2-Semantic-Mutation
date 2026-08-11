@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 import shutil
 import socket
 import stat
@@ -46,6 +47,7 @@ from p3_v3.run_records import (
     close_phase,
     create_intent,
     freeze_p12_denominator,
+    intent_template_sha256,
     recompute_p12_summary,
     reconstruct_attempt_events,
     write_result,
@@ -1725,9 +1727,158 @@ def _reseal_rq_and_claim_authority(fixture: dict, mutation: str) -> str:
     lock["protocol"]["claim_ceiling_sha256"] = claim_ref["sha256"]
     lock["protocol"]["protocol_sha256"] = index["protocol"]["sha256"]
     lock["claim_policy"]["claim_ceiling_sha256"] = claim_ref["sha256"]
+    lock["claim_policy"]["rq_ids"] = re.findall(
+        r"^### (RQ[0-9]+)(?:：|[ \t]+[—-][ \t]+)",
+        rq_raw.decode(),
+        flags=re.MULTILINE,
+    )
+    _refresh_protocol_bound_attempts(root, index, lock=lock)
+
+    preflight = read_canonical_json(root / index["preflight_event"]["path"])
+    origin = evidence_module.reconstruct_origin_receipt(lock["preflight"], preflight)
+    origin_path = root / index["origin_receipt"]["path"]
+    origin_path.write_bytes(canonical_json_bytes(origin))
+    index["origin_receipt"]["sha256"] = hashlib.sha256(
+        origin_path.read_bytes()
+    ).hexdigest()
+
     lock_path.write_bytes(canonical_json_bytes(lock))
     _rewrite_index(fixture["index_path"], index)
     return hashlib.sha256(lock_path.read_bytes()).hexdigest()
+
+
+def _assert_rq_claim_mutation_is_internally_resealed(
+    fixture: dict, literal_lock_sha256: str
+) -> None:
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    lock_path = fixture["authority"]["lock_path"]
+    lock = read_canonical_json(lock_path)
+    assert hashlib.sha256(lock_path.read_bytes()).hexdigest() == literal_lock_sha256
+    assert index["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in index.items() if key != "artifact_sha256"}
+    )
+
+    protocol_ref = index["protocol"]
+    rq_ref = index["protocol_artifacts"]["rq_spec_sha256"]
+    claim_ref = index["protocol_artifacts"]["claim_ceiling_sha256"]
+    claims_ref = index["claims"]
+    for reference in (protocol_ref, rq_ref, claim_ref, claims_ref, index["ledger"]):
+        assert reference["sha256"] == hashlib.sha256(
+            (root / reference["path"]).read_bytes()
+        ).hexdigest()
+
+    protocol = read_canonical_json(root / protocol_ref["path"])
+    assert protocol["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in protocol.items() if key != "artifact_sha256"}
+    )
+    assert protocol["rq_spec_sha256"] == rq_ref["sha256"]
+    assert protocol["claim_ceiling_sha256"] == claim_ref["sha256"]
+    assert lock["protocol"]["protocol_sha256"] == protocol_ref["sha256"]
+    assert lock["protocol"]["rq_spec_sha256"] == rq_ref["sha256"]
+    assert lock["protocol"]["claim_ceiling_sha256"] == claim_ref["sha256"]
+
+    rq_raw = (root / rq_ref["path"]).read_text()
+    rq_ids = re.findall(
+        r"^### (RQ[0-9]+)(?:：|[ \t]+[—-][ \t]+)", rq_raw, flags=re.MULTILINE
+    )
+    assert lock["claim_policy"]["rq_ids"] == rq_ids
+    assert lock["claim_policy"]["claim_ceiling_sha256"] == claim_ref["sha256"]
+
+    claim_authority = read_canonical_json(root / claim_ref["path"])
+    assert claim_authority["artifact_sha256"] == canonical_sha256(
+        {
+            key: value
+            for key, value in claim_authority.items()
+            if key != "artifact_sha256"
+        }
+    )
+    claims = read_canonical_json(root / claims_ref["path"])
+    assert claims["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in claims.items() if key != "artifact_sha256"}
+    )
+    assert claims["rq_authority_sha256"] == rq_ref["sha256"]
+    assert claims["claim_authority_sha256"] == claim_ref["sha256"]
+    assert {claim["claim_id"]: claim["rqs"] for claim in claims["claims"]} == {
+        claim["claim_id"]: claim["rqs"] for claim in claim_authority["claims"]
+    }
+    assert all(
+        claim["artifact_sha256"]
+        == canonical_sha256(
+            {key: value for key, value in claim.items() if key != "artifact_sha256"}
+        )
+        and claim["status"] == "blocked"
+        for claim in claims["claims"]
+    )
+
+    intent_templates = {}
+    for intent_path in (root / index["job_root"]).rglob("intent.json"):
+        intent = read_canonical_json(intent_path)
+        assert intent["protocol_sha256"] == protocol_ref["sha256"]
+        assert protocol_ref["sha256"] in intent["argv"]
+        template_sha256 = intent_template_sha256(intent)
+        assert intent_templates.setdefault(intent["job_id"], template_sha256) == (
+            template_sha256
+        )
+    assert {job["job_id"]: job["intent_template_sha256"] for job in lock["jobs"]} == (
+        intent_templates
+    )
+
+    ledger_path = root / index["ledger"]["path"]
+    events = reconstruct_attempt_events(root / index["job_root"])
+    assert ledger_path.read_bytes() == b"".join(
+        canonical_json_bytes(event) for event in events
+    )
+    assert [entry["phase"] for entry in index["phase_receipts"]] == PHASES
+    for entry in index["phase_receipts"]:
+        for reference in (
+            entry["expected_jobs"],
+            entry["output_manifest"],
+            entry["receipt"],
+        ):
+            assert reference["sha256"] == hashlib.sha256(
+                (root / reference["path"]).read_bytes()
+            ).hexdigest()
+        expected_jobs = read_canonical_json(root / entry["expected_jobs"]["path"])
+        output = read_canonical_json(root / entry["output_manifest"]["path"])
+        assert read_canonical_json(root / entry["receipt"]["path"]) == close_phase(
+            entry["phase"],
+            protocol_ref["sha256"],
+            expected_jobs,
+            ledger_path,
+            output["artifact_sha256"],
+        )
+
+    preflight = read_canonical_json(root / index["preflight_event"]["path"])
+    origin = read_canonical_json(root / index["origin_receipt"]["path"])
+    assert origin == evidence_module.reconstruct_origin_receipt(
+        lock["preflight"], preflight
+    )
+    for reference in (index["preflight_event"], index["origin_receipt"]):
+        assert reference["sha256"] == hashlib.sha256(
+            (root / reference["path"]).read_bytes()
+        ).hexdigest()
+
+
+def _assert_rq_claim_target_gate_is_the_only_remaining_failure(
+    fixture: dict, literal_lock_sha256: str, monkeypatch
+) -> None:
+    lock = read_canonical_json(fixture["authority"]["lock_path"])
+    rq_ids = lock["claim_policy"]["rq_ids"]
+    monkeypatch.setattr(evidence_module, "_REQUIRED_RQ_IDS", tuple(rq_ids))
+    monkeypatch.setattr(
+        evidence_module,
+        "_validate_rq_claim_authority",
+        lambda *_args, **_kwargs: list(rq_ids),
+    )
+    payload = evidence_module._dispatch_verify_evidence(
+        SimpleNamespace(
+            index=fixture["index_path"],
+            authority_lock=fixture["authority"]["lock_path"],
+            authority_lock_sha256=literal_lock_sha256,
+        )
+    )
+    assert payload["status"] == "PASS"
 
 
 def _rehash_ledger_events(events: list[dict]) -> list[dict]:
@@ -1745,12 +1896,28 @@ def _rehash_ledger_events(events: list[dict]) -> list[dict]:
     return rebuilt
 
 
-def _refresh_protocol_bound_attempts(root: Path, index: dict) -> None:
+def _refresh_protocol_bound_attempts(
+    root: Path, index: dict, *, lock: dict | None = None
+) -> None:
     protocol_sha256 = index["protocol"]["sha256"]
+    intent_templates = {}
     for intent_path in (root / index["job_root"]).rglob("intent.json"):
         intent = read_canonical_json(intent_path)
+        previous_protocol_sha256 = intent["protocol_sha256"]
         intent["protocol_sha256"] = protocol_sha256
+        intent["argv"] = [
+            protocol_sha256 if token == previous_protocol_sha256 else token
+            for token in intent["argv"]
+        ]
         intent_path.write_bytes(canonical_json_bytes(intent))
+        template_sha256 = intent_template_sha256(intent)
+        assert intent_templates.setdefault(intent["job_id"], template_sha256) == (
+            template_sha256
+        )
+    if lock is not None:
+        assert {job["job_id"] for job in lock["jobs"]} == set(intent_templates)
+        for job in lock["jobs"]:
+            job["intent_template_sha256"] = intent_templates[job["job_id"]]
     events = reconstruct_attempt_events(root / index["job_root"])
     ledger_path = root / index["ledger"]["path"]
     ledger_path.write_bytes(b"".join(canonical_json_bytes(event) for event in events))
@@ -2133,10 +2300,14 @@ def test_two_subject_phase0_to_phase7_path_is_production_verified(tmp_path):
     "mutation", ["three_rq_authority", "missing_rq4_claim"]
 )
 def test_fully_resealed_rq_and_claim_authority_requires_exact_rq1_to_rq4_coverage(
-    tmp_path, mutation
+    tmp_path, mutation, monkeypatch
 ):
     fixture = _build_complete_evidence(tmp_path)
     literal_lock_sha256 = _reseal_rq_and_claim_authority(fixture, mutation)
+    _assert_rq_claim_mutation_is_internally_resealed(fixture, literal_lock_sha256)
+    _assert_rq_claim_target_gate_is_the_only_remaining_failure(
+        fixture, literal_lock_sha256, monkeypatch
+    )
 
     result, observed_code = _run_complete_verification(
         fixture, literal_lock_sha256=literal_lock_sha256
