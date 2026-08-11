@@ -358,7 +358,18 @@ artifact_sha256
 All file fields use the existing exact `{path, sha256}` reference schema; root
 fields use safe relative paths. Controller and subject source roots are fully
 enumerated and compared to the Authority Lock manifests—no directory subtree is
-exempt from symlink/special-node and undeclared-file checks.
+exempt from symlink/special-node and undeclared-file checks. In particular,
+final verification opens `controller_source` one path component at a time and
+walks it only through anchored directory descriptors. Its complete regular-file
+set must exactly equal the fixed-role manifest rows, and its directory set must
+equal the fixed role roots plus the ancestors required by those roots and files.
+An otherwise unindexed regular file (including a credential-bearing file), an
+unneeded directory, `.git` metadata at any depth, a transient path, a symlink,
+or a special node fails with `E_AUTHORITY_MANIFEST`; source bytes remain source
+content rather than credential metadata and are never echoed. The manifest is
+derived from that one immutable capture, so a parent-directory replacement
+cannot redirect a later read. The whole `controller_source` root is never an
+inventory exemption.
 
 The indexed Phase 0 preflight event has exact keys
 `schema_version, normalized_repository_identity, base_commit, base_tree,

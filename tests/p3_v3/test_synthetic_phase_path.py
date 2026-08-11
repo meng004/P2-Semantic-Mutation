@@ -2556,6 +2556,107 @@ def test_repository_authority_matrix_rejects_rehashed_substitution(tmp_path, mut
     assert not result.stdout
 
 
+@pytest.mark.parametrize(
+    "node_kind",
+    ["git_config", "credential_regular", "symlink", "fifo"],
+)
+def test_verify_evidence_rejects_undeclared_controller_source_nodes(
+    tmp_path, node_kind
+):
+    fixture = _build_complete_evidence(tmp_path)
+    controller_source = fixture["root"] / "controller-source"
+    secret = "TOP_SECRET_REPAIR_H"
+    if node_kind == "git_config":
+        target = controller_source / ".git/config"
+        target.parent.mkdir()
+        target.write_text("[core]\n\trepositoryformatversion = 0\n")
+    elif node_kind == "credential_regular":
+        target = controller_source / "credentials.json"
+        target.write_text(f'{{"Authorization":"Bearer {secret}"}}\n')
+    elif node_kind == "symlink":
+        target = controller_source / "undeclared-link"
+        target.symlink_to("requirements-frozen.txt")
+    else:
+        target = controller_source / "undeclared.fifo"
+        os.mkfifo(target)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_MANIFEST", (node_kind, result.stderr)
+    assert result.returncode == 2
+    assert not result.stdout
+    assert secret not in result.stderr
+
+
+def test_controller_source_inventory_never_follows_parent_swap(tmp_path, monkeypatch):
+    fixture = _build_complete_evidence(tmp_path)
+    controller_source = fixture["root"] / "controller-source"
+    source = controller_source / "src"
+    held_source = tmp_path / "held-controller-source"
+    attack_source = tmp_path / "attack-controller-source"
+    shutil.copytree(source, attack_source)
+    relative = "src/p3_v3/artifacts.py"
+    original_bytes = (source / "p3_v3/artifacts.py").read_bytes()
+    attack_bytes = b"ATTACKER_CONTROLLED = True\n"
+    (attack_source / "p3_v3/artifacts.py").write_bytes(attack_bytes)
+    source_inode = source.stat().st_ino
+    original_parent_inode = (source / "p3_v3").stat().st_ino
+    real_scandir = os.scandir
+    real_reader = evidence_module._read_checkout_file_snapshot
+    raced = False
+    observed_parent_inode: int | None = None
+    observed_bytes: bytes | None = None
+
+    def swap_parent_before_scan(target):
+        nonlocal raced
+        if (
+            not raced
+            and isinstance(target, int)
+            and os.fstat(target).st_ino == source_inode
+        ):
+            source.rename(held_source)
+            source.symlink_to(attack_source, target_is_directory=True)
+            raced = True
+        return real_scandir(target)
+
+    def instrument_reader(directory_fd, name, relative_path):
+        nonlocal observed_parent_inode, observed_bytes
+        raw, mode = real_reader(directory_fd, name, relative_path)
+        if relative_path == relative:
+            observed_parent_inode = os.fstat(directory_fd).st_ino
+            observed_bytes = raw
+        return raw, mode
+
+    monkeypatch.setattr(evidence_module.os, "scandir", swap_parent_before_scan)
+    monkeypatch.setattr(
+        evidence_module, "_read_checkout_file_snapshot", instrument_reader
+    )
+
+    manifest = evidence_module._capture_complete_controller_source_manifest(
+        controller_source
+    )
+
+    assert raced
+    assert observed_parent_inode == original_parent_inode
+    assert observed_parent_inode == (held_source / "p3_v3").stat().st_ino
+    assert observed_bytes == original_bytes
+    assert observed_bytes != attack_bytes
+    row = next(item for item in manifest["files"] if item["relative_path"] == relative)
+    assert row["sha256"] == hashlib.sha256(original_bytes).hexdigest()
+
+
+def test_verify_evidence_rejects_unneeded_controller_source_directory(tmp_path):
+    fixture = _build_complete_evidence(tmp_path)
+    unneeded = fixture["root"] / "controller-source/src/p3_v3/unneeded"
+    unneeded.mkdir()
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_MANIFEST", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+
+
 INTENT_FIELD_MUTATIONS = {
     "job_id": "f" * 64,
     "protocol_sha256": "e" * 64,

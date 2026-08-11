@@ -1499,6 +1499,146 @@ def _capture_git_checkout_snapshot(
     return {path: captured[path] for path in expected}
 
 
+def _capture_complete_controller_source_manifest(root: Path) -> dict[str, Any]:
+    """Capture the complete controller-source tree and admit only fixed role roots."""
+
+    role_roots = tuple(Path(value).as_posix() for value in _CONTROLLER_ROLE_ROOTS)
+    captured: dict[str, tuple[bytes, str]] = {}
+    directories: set[str] = set()
+    directory_flags = (
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
+
+    def related_to_role_root(relative: str) -> bool:
+        return any(
+            relative == role_root
+            or relative.startswith(f"{role_root}/")
+            or role_root.startswith(f"{relative}/")
+            for role_root in role_roots
+        )
+
+    def manifest_failure(detail: str, exc: BaseException | None = None) -> None:
+        error = EvidenceError("E_AUTHORITY_MANIFEST", detail)
+        if exc is None:
+            raise error
+        raise error from exc
+
+    def visit(directory_fd: int, relative: Path) -> None:
+        try:
+            with os.scandir(directory_fd) as iterator:
+                children = sorted(
+                    (child.name for child in iterator),
+                    key=lambda name: name.encode("utf-8"),
+                )
+        except (OSError, UnicodeError) as exc:
+            manifest_failure("controller source directory could not be inventoried", exc)
+        for name in children:
+            child_relative = (
+                Path(name) if relative == Path(".") else relative / name
+            )
+            relative_text = child_relative.as_posix()
+            try:
+                safe_relative_path(relative_text)
+                info = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
+            except (EvidenceError, OSError) as exc:
+                manifest_failure("controller source node is unavailable", exc)
+            if child_relative.name == ".git":
+                manifest_failure("controller source contains forbidden .git metadata")
+            if any(part in _TRANSIENT_SOURCE_NAMES for part in child_relative.parts):
+                manifest_failure("controller source contains a transient path")
+            if stat.S_ISLNK(info.st_mode):
+                manifest_failure("controller source contains a symlink")
+            if stat.S_ISDIR(info.st_mode):
+                if not related_to_role_root(relative_text):
+                    manifest_failure("controller source contains an undeclared directory")
+                directories.add(relative_text)
+                child_fd: int | None = None
+                try:
+                    child_fd = os.open(
+                        name, directory_flags, dir_fd=directory_fd
+                    )
+                    if not stat.S_ISDIR(os.fstat(child_fd).st_mode):
+                        manifest_failure("controller source directory is unavailable")
+                    visit(child_fd, child_relative)
+                except EvidenceError:
+                    raise
+                except OSError as exc:
+                    manifest_failure(
+                        "controller source directory could not be anchored", exc
+                    )
+                finally:
+                    if child_fd is not None:
+                        try:
+                            os.close(child_fd)
+                        except OSError:
+                            pass
+                continue
+            if not stat.S_ISREG(info.st_mode):
+                manifest_failure("controller source contains a special node")
+            if not any(
+                relative_text == role_root
+                or relative_text.startswith(f"{role_root}/")
+                for role_root in role_roots
+            ):
+                manifest_failure("controller source contains an undeclared file")
+            try:
+                raw, opened_mode = _read_checkout_file_snapshot(
+                    directory_fd, name, relative_text
+                )
+            except EvidenceError as exc:
+                manifest_failure("controller source file could not be snapshotted", exc)
+            captured[relative_text] = (raw, _project_git_mode(opened_mode))
+
+    root_fd: int | None = None
+    try:
+        root_fd = _open_checkout_root(root, directory_flags)
+        if not stat.S_ISDIR(os.fstat(root_fd).st_mode):
+            manifest_failure("controller source root is not a directory")
+        visit(root_fd, Path("."))
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_MANIFEST":
+            raise
+        manifest_failure("controller source root could not be anchored", exc)
+    except OSError as exc:
+        manifest_failure("controller source root could not be anchored", exc)
+    finally:
+        if root_fd is not None:
+            try:
+                os.close(root_fd)
+            except OSError:
+                pass
+
+    if any(role_root not in captured and role_root not in directories for role_root in role_roots):
+        manifest_failure("controller source role root is unavailable")
+    expected_directories = {
+        "/".join(path.split("/")[:depth])
+        for path in (*captured, *role_roots)
+        for depth in range(1, len(path.split("/")))
+    }
+    expected_directories.update(
+        role_root for role_root in role_roots if role_root in directories
+    )
+    if directories != expected_directories:
+        manifest_failure("controller source directory inventory differs")
+    ordered = sorted(captured, key=lambda value: value.encode("utf-8"))
+    if not ordered:
+        manifest_failure("controller source manifest contains no files")
+    return {
+        "schema_version": "P3_V3_TRACKED_SOURCE_MANIFEST_V1",
+        "role": "controller-source",
+        "files": [
+            {
+                "relative_path": path,
+                "mode": captured[path][1],
+                "sha256": hashlib.sha256(captured[path][0]).hexdigest(),
+            }
+            for path in ordered
+        ],
+    }
+
+
 def _manifest_from_git_snapshot(
     snapshot: Mapping[str, tuple[bytes, str]],
     tracked_paths: Sequence[str],
@@ -3702,8 +3842,8 @@ def _load_evidence_index(
         loaded,
         "controller_source.manifest",
     )
-    rebuilt_controller_manifest = build_tracked_source_manifest(
-        controller_root, _CONTROLLER_ROLE_ROOTS, "controller-source"
+    rebuilt_controller_manifest = _capture_complete_controller_source_manifest(
+        controller_root
     )
     if (
         canonical_json_bytes(controller_manifest)
